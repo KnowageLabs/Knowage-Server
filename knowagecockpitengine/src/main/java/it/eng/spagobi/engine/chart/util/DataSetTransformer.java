@@ -1,3 +1,4 @@
+
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
@@ -29,8 +30,11 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -39,9 +43,12 @@ import org.json.JSONObject;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 import it.eng.knowage.engine.cockpit.CockpitEngineRuntimeException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class DataSetTransformer {
+
+	private static final String COLUMN = "column";
 
 	public static transient Logger logger = Logger.getLogger(DataSetTransformer.class);
 
@@ -738,6 +745,162 @@ public class DataSetTransformer {
 
 	}
 
+	public JSONArray getCategoriesCardinality(List<Object> dataRows, Object categories, Map<String, String> dataColumnsMapper) {
+
+		final JSONArray categoriesCardinality = new JSONArray();
+		JSONObject jsonObject = new JSONObject();
+		if (categories instanceof ArrayList) {
+			ArrayList objectArrayList = ((ArrayList) categories);
+			objectArrayList.forEach(x -> addDistinctForCategory(dataRows, dataColumnsMapper, jsonObject, x));
+
+		} else if (categories instanceof LinkedHashMap) {
+			addDistinctForCategory(dataRows, dataColumnsMapper, jsonObject, categories);
+
+		}
+
+		if (jsonObject.length() != 0) {
+			categoriesCardinality.put(jsonObject);
+
+		}
+
+		return categoriesCardinality;
+
+	}
+
+	/**
+	 * @param dataRows
+	 * @param jsonObject
+	 * @param innerEntrySet
+	 */
+	private void addDistinctForCategory(List<Object> dataRows, Map<String, String> dataColumnsMapper, JSONObject jsonObject, Object object) {
+		Set entrySet = ((LinkedHashMap) object).entrySet();
+		Optional<Map.Entry> columnName = entrySet.stream().filter(y -> String.valueOf(((Map.Entry) y).getKey()).equals(COLUMN)).findFirst();
+
+		if (columnName.isPresent()) {
+			String value = String.valueOf((columnName.get().getValue()));
+			String columnMappedValue = getColumnMappedValue(dataColumnsMapper, value, "");
+
+			Long count = dataRows.stream().map(x -> {
+				LinkedHashMap lhm = (LinkedHashMap) x;
+				return String.valueOf(lhm.get(columnMappedValue));
+
+			}).distinct().count();
+
+			try {
+				jsonObject.put(value, count);
+			} catch (JSONException e) {
+				throw new SpagoBIEngineRuntimeException("An error occurred while looking for category cardinality", e);
+			}
+		}
+	}
+
+	public JSONArray getRange(List<Object> dataRows, Map<String, String> dataColumnsMapper, LinkedHashMap<String, LinkedHashMap> serieMap) {
+
+		JSONArray ranges = new JSONArray();
+		if (dataRows != null && dataRows.size() > 0) {
+
+			serieMap.keySet().stream().forEach(
+
+					x -> {
+						LinkedHashMap elementMap = serieMap.get(x);
+						String name = String.valueOf(elementMap.get("name")).toLowerCase();
+						String groupingFunction = String.valueOf(elementMap.get("groupingFunction")).toLowerCase();
+						String columnMappedValue = getColumnMappedValue(dataColumnsMapper, name, groupingFunction);
+
+						OptionalDouble min = getMinValue(dataRows, columnMappedValue);
+
+						OptionalDouble max = getMaxValue(dataRows, columnMappedValue);
+
+						if (min.isPresent() && max.isPresent()) {
+							JSONObject r = new JSONObject();
+							try {
+								r.put("serie", name);
+								r.put("min", min.getAsDouble());
+								r.put("max", max.getAsDouble());
+							} catch (JSONException e) {
+								throw new SpagoBIServiceException("Error while calculating min and max for serie" + elementMap.get("name"), e);
+							}
+							ranges.put(r);
+						}
+
+					});
+
+		}
+
+		return ranges;
+	}
+
+	/**
+	 * @param dataColumnsMapper
+	 * @param name
+	 * @param groupingFunction
+	 * @return
+	 */
+	private String getColumnMappedValue(Map<String, String> dataColumnsMapper, String name, String groupingFunction) {
+		String completeName = StringUtils.isNotBlank(groupingFunction) ? name + "_" + groupingFunction : name;
+
+		Optional<String> mappedColumn = dataColumnsMapper.keySet().stream().filter(x -> completeName.equalsIgnoreCase(x)).findFirst();
+
+		if (mappedColumn.isPresent())
+			return dataColumnsMapper.get(mappedColumn.get());
+
+		throw new SpagoBIEngineRuntimeException("Impossible to find mapped column for chart");
+	}
+
+	/**
+	 * @param dataRows
+	 * @param columnMap
+	 * @return
+	 */
+	private OptionalDouble getMaxValue(List<Object> dataRows, String columnMap) {
+		OptionalDouble maxOD = dataRows.stream().filter(x -> {
+			LinkedHashMap lhm = (LinkedHashMap) x;
+			return StringUtils.isNotBlank(String.valueOf(lhm.get(columnMap)));
+
+		}).mapToDouble(c -> {
+
+			LinkedHashMap lhm = (LinkedHashMap) c;
+			Double d = null;
+			String value = null;
+			try {
+				value = String.valueOf(lhm.get(columnMap));
+				d = new Double(value);
+			} catch (NumberFormatException e1) {
+				throw new SpagoBIServiceException("Error while calculating max. Value [" + value + "] not allowed", e1);
+			}
+
+			return d;
+		}).max();
+		return maxOD;
+	}
+
+	/**
+	 * @param dataRows
+	 * @param columnMap
+	 * @return
+	 */
+	private OptionalDouble getMinValue(List<Object> dataRows, String columnMap) {
+		OptionalDouble minOD = dataRows.stream().filter(x -> {
+			LinkedHashMap lhm = (LinkedHashMap) x;
+			return StringUtils.isNotBlank(String.valueOf(lhm.get(columnMap)));
+
+		}).mapToDouble(c -> {
+
+			LinkedHashMap lhm = (LinkedHashMap) c;
+			Double d = null;
+			String value = null;
+			try {
+				value = String.valueOf(lhm.get(columnMap));
+				d = new Double(value);
+			} catch (NumberFormatException e1) {
+				throw new SpagoBIServiceException("Error while calculating min. Value [" + value + "] not allowed", e1);
+			}
+
+			return d;
+		}).min();
+		return minOD;
+	}
+
 	public JSONObject prepareDataForOrderingColumnForBar(List<Object> dataRows, List<Object> metadataRows, Map<String, Object> drillOrder, String groupBy) {
 		String orderColumn = "";
 		if (drillOrder != null) {
@@ -811,7 +974,7 @@ public class DataSetTransformer {
 					secCat = "column_2";
 					seria = "column_3";
 				} else {
-					primCat = dataColumnsMapper.get(categorieColumns.get("column").toLowerCase());
+					primCat = dataColumnsMapper.get(categorieColumns.get(COLUMN).toLowerCase());
 					secCat = columnForGroupingSerie;
 					seria = dataColumnsMapper.get(categorieColumns.get("groupby").toLowerCase());
 				}
@@ -902,13 +1065,13 @@ public class DataSetTransformer {
 			for (String key : drillOrder.keySet()) {
 				Map<String, String> keyMapper = (Map<String, String>) drillOrder.get(key);
 				if (keyMapper.get("orderColumn") != null && !keyMapper.get("orderColumn").equals("")
-						&& !keyMapper.get("orderColumn").equals(categorieColumns.get("column")) && !drillOrder.containsKey(keyMapper.get("orderColumn"))) {
+						&& !keyMapper.get("orderColumn").equals(categorieColumns.get(COLUMN)) && !drillOrder.containsKey(keyMapper.get("orderColumn"))) {
 					dataColumnsMapper.remove(keyMapper.get("orderColumn").toLowerCase());
 				}
 			}
 		} else {
 			if (categorieColumns.get("orderColumn") != null && !categorieColumns.get("orderColumn").equals("")
-					&& !categorieColumns.get("orderColumn").equals(categorieColumns.get("column"))
+					&& !categorieColumns.get("orderColumn").equals(categorieColumns.get(COLUMN))
 					&& !categorieColumns.get("groupby").contains(categorieColumns.get("orderColumn"))) {
 				dataColumnsMapper.remove(categorieColumns.get("orderColumn").toLowerCase());
 			}
@@ -923,15 +1086,15 @@ public class DataSetTransformer {
 		try {
 			String columnForGroupingSerie = dataColumnsMapper.get(groupedSerie).toLowerCase();
 
-			if (!categorieColumns.get("orderColumn").equals("") && !categorieColumns.get("orderColumn").equals(categorieColumns.get("column"))
+			if (!categorieColumns.get("orderColumn").equals("") && !categorieColumns.get("orderColumn").equals(categorieColumns.get(COLUMN))
 					&& !categorieColumns.get("groupby").contains(categorieColumns.get("orderColumn"))) {
 				dataColumnsMapper.remove(categorieColumns.get("orderColumn").toLowerCase());
 			}
 
-			String primCateg = categorieColumns.get("column");
-			String primColumn = dataColumnsMapper.get((categorieColumns).get("column"));
+			String primCateg = categorieColumns.get(COLUMN);
+			String primColumn = dataColumnsMapper.get((categorieColumns).get(COLUMN));
 			if (primColumn == null)
-				primColumn = dataColumnsMapper.get((categorieColumns).get("column").toLowerCase());
+				primColumn = dataColumnsMapper.get((categorieColumns).get(COLUMN).toLowerCase());
 			String seriaColumn = null;
 			String seria = null;
 			if (categorieColumns.get("groupby") != null && categorieColumns.get("groupby") != "") {
@@ -1162,14 +1325,14 @@ public class DataSetTransformer {
 			LinkedHashMap value = entry.getValue();
 			if (value.get("type").equals("arearangelow") || value.get("type").equals("arearangehigh")) {
 				if (counter == 1) {
-					serieName += value.get("column") + " / ";
+					serieName += value.get(COLUMN) + " / ";
 					counter += 1;
 				} else {
-					serieName += value.get("column") + " ";
+					serieName += value.get(COLUMN) + " ";
 				}
 				value.put("type", "arearange");
 
-				value.put("column", serieName);
+				value.put(COLUMN, serieName);
 				value.put("name", serieName);
 				key = "common";
 
@@ -1189,7 +1352,7 @@ public class DataSetTransformer {
 		for (Map.Entry<String, LinkedHashMap> entry : serieMap.entrySet()) {
 			LinkedHashMap value = entry.getValue();
 			if (value.get("type").equals("arearangelow") || value.get("type").equals("arearangehigh")) {
-				serieName += value.get("column") + " ";
+				serieName += value.get(COLUMN) + " ";
 			}
 		}
 		return serieName;
@@ -1372,32 +1535,34 @@ public class DataSetTransformer {
 
 		ArrayList<String> listColumns = new ArrayList<>();
 
+		Map<String, Object> columnsIndex = new HashMap<String, Object>();
+
 		HashMap<Integer, HashMap> firstresult = new HashMap<>();
 
-		for (int i = 0; i < columns.size(); i++) {
-
-			Object cndata = columns.get(i);
-
-			if (mapper.get(cndata) != null)
+		for (Map.Entry<String, String> entry : columns.entrySet()) {
+			Object cndata = entry.getValue();
+			if (mapper.get(cndata) != null) {
 				listColumns.add(mapper.get(cndata).toString());
-
-		}
-
-		for (int i = 0; i < dataRows.size(); i++) {
-			Map<String, Object> row = (Map<String, Object>) dataRows.get(i);
-			HashMap<String, Object> record = new HashMap<>();
-
-			/* For every record take these columns */
-			for (int j = 0; j < listColumns.size(); j++) {
-				Object x = row.get(listColumns.get(j));
-				record.put(columns.get(j).toString(), x);
+				columnsIndex.put(mapper.get(cndata).toString(), entry.getKey());
 			}
-
-			record.put(serie.toString(), row.get(serieRawColumn));
-
-			firstresult.put(new Integer(i), record);
 		}
 
+		if (dataRows != null) {
+			for (int i = 0; i < dataRows.size(); i++) {
+				Map<String, Object> row = (Map<String, Object>) dataRows.get(i);
+				HashMap<String, Object> record = new HashMap<>();
+
+				/* For every record take these columns */
+				for (String column : listColumns) {
+					Object x = row.get(column);
+					record.put(columns.get(columnsIndex.get(column)).toString(), x);
+				}
+
+				record.put(serie.toString(), row.get(serieRawColumn));
+
+				firstresult.put(new Integer(i), record);
+			}
+		}
 		return firstresult;
 
 	}
@@ -1542,9 +1707,15 @@ public class DataSetTransformer {
 						jo.put(columns.get(0).toString(), value);
 					}
 
-					String value = (String) firstresult.get(i).get(columns.get(1).toString());
+					if (firstresult.get(i).get(columns.get(1).toString()) != null && firstresult.get(i).get(columns.get(1).toString()) instanceof Integer) {
+						Integer value = (Integer) firstresult.get(i).get(columns.get(1).toString());
 
-					jo.put(columns.get(1).toString(), value);
+						jo.put(columns.get(1).toString(), value);
+					} else {
+						String value = (String) firstresult.get(i).get(columns.get(1).toString());
+
+						jo.put(columns.get(1).toString(), value);
+					}
 
 				}
 

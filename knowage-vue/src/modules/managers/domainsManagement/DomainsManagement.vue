@@ -73,101 +73,101 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iDomain } from './DomainsManagement'
-import { FilterOperator } from 'primevue/api'
-import { filterDefault } from '@/helpers/commons/filterHelper'
-import { AxiosResponse } from 'axios'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import domainsManagementDescriptor from './DomainsManagementDescriptor.json'
-import DomainsManagementDialog from './DomainsManagementDialog.vue'
-import KnFabButton from '@/components/UI/KnFabButton.vue'
+    import { defineComponent } from 'vue'
+    import { iDomain } from './DomainsManagement'
+    import { FilterOperator } from 'primevue/api'
+    import { filterDefault } from '@/helpers/commons/filterHelper'
+    import { AxiosResponse } from 'axios'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import domainsManagementDescriptor from './DomainsManagementDescriptor.json'
+    import DomainsManagementDialog from './DomainsManagementDialog.vue'
+    import KnFabButton from '@/components/UI/KnFabButton.vue'
 
-export default defineComponent({
-    name: 'domains-management',
-    components: {
-        Column,
-        DataTable,
-        DomainsManagementDialog,
-        KnFabButton
-    },
-    data() {
-        return {
-            domainsManagementDescriptor: domainsManagementDescriptor,
-            domains: [] as iDomain[],
-            filters: {
-                global: [filterDefault],
-                valueCd: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                valueName: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                domainCode: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                domainName: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                valueDescription: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                }
-            } as Object,
-            formVisible: false,
-            loading: false,
-            selectedDomain: null as iDomain | null
-        }
-    },
-    created() {
-        this.loadAllDomains()
-    },
-    methods: {
-        async loadAllDomains() {
-            this.loading = true
-            await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains')
-                .then((response: AxiosResponse<any>) => {
-                    this.domains = response.data
-                })
-                .finally(() => (this.loading = false))
+    export default defineComponent({
+        name: 'domains-management',
+        components: {
+            Column,
+            DataTable,
+            DomainsManagementDialog,
+            KnFabButton
         },
-        deleteDomainConfirm(domainId: number) {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteConfirmTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteDomain(domainId)
-            })
-        },
-        async deleteDomain(domainId: number) {
-            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/' + domainId).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
-                })
-                this.loadAllDomains()
-            })
-        },
-        showForm(event: any) {
-            if (event) {
-                this.selectedDomain = event.data
+        data() {
+            return {
+                domainsManagementDescriptor: domainsManagementDescriptor,
+                domains: [] as iDomain[],
+                filters: {
+                    global: [filterDefault],
+                    valueCd: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    valueName: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    domainCode: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    domainName: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    valueDescription: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    }
+                } as Object,
+                formVisible: false,
+                loading: false,
+                selectedDomain: null as iDomain | null
             }
-            this.formVisible = true
         },
-        closeForm() {
-            this.selectedDomain = null
-            this.formVisible = false
-        },
-        reloadDomains() {
-            this.formVisible = false
+        created() {
             this.loadAllDomains()
+        },
+        methods: {
+            async loadAllDomains() {
+                this.loading = true
+                await this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains')
+                    .then((response: AxiosResponse<any>) => {
+                        this.domains = response.data
+                    })
+                    .finally(() => (this.loading = false))
+            },
+            deleteDomainConfirm(domainId: number) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteConfirmTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.deleteDomain(domainId)
+                })
+            },
+            async deleteDomain(domainId: number) {
+                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/' + domainId).then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.loadAllDomains()
+                })
+            },
+            showForm(event: any) {
+                if (event) {
+                    this.selectedDomain = event.data
+                }
+                this.formVisible = true
+            },
+            closeForm() {
+                this.selectedDomain = null
+                this.formVisible = false
+            },
+            reloadDomains() {
+                this.formVisible = false
+                this.loadAllDomains()
+            }
         }
-    }
-})
+    })
 </script>

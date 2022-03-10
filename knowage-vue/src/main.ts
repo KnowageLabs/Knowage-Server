@@ -46,6 +46,9 @@ import internationalizationPlugin from './plugins/internationalization.js'
 
 import i18n from '@/App.i18n'
 
+import QBEOperator from './modules/qbe/qbeDialogs/qbeAdvancedFilterDialog/QBEOperator.vue'
+
+
 createApp(App)
     .use(VueAxios, interceptor)
     .use(store)
@@ -64,5 +67,6 @@ createApp(App)
     .component('InputText', InputText)
     .component('ProgressBar', ProgressBar)
     .component('Toolbar', Toolbar)
+    .component('QBEOperator', QBEOperator)
 
     .mount('#app')

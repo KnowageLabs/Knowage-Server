@@ -12,7 +12,7 @@
     </Toolbar>
     <Card v-show="expandTableCard">
         <template #content>
-            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.restRequestAdditionalParameters" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
+            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.restRequestAdditionalParameters" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
                 <template #empty>
                     {{ $t('managers.datasetManagement.tableEmpty') }}
                 </template>
@@ -94,6 +94,9 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => (this.dataset.restRequestAdditionalParameters = [])
             })
+        },
+        onCellEditComplete(event) {
+            this.dataset.restRequestAdditionalParameters[event.index] = event.newData
         }
     }
 })

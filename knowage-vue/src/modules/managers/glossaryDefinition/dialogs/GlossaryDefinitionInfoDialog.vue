@@ -108,9 +108,11 @@ export default defineComponent({
         list-style: none;
         padding: 0;
         li {
+            display: inline-flex;
+            justify-content: flex-start;
             height: 40px;
             &:nth-child(even) {
-                background-color: $list-item-alternated-background-color;
+                background-color: var(--kn-list-item-alternated-background-color);
             }
             span {
                 height: 40px;
@@ -122,8 +124,6 @@ export default defineComponent({
                     padding-left: 10px;
                     text-transform: capitalize;
                     width: 150px;
-                    display: inline-flex;
-                    justify-content: flex-start;
                     align-items: center;
                 }
                 &:nth-child(2) {

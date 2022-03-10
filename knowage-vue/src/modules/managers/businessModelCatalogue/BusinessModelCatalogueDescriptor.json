@@ -1,3 +1,22 @@
 {
-    "filterFields": ["name", "description"]
+    "filterFields": ["name", "description"],
+    "knListSettings": {
+        "buttons": [
+            {
+                "emits": "delete",
+                "icon": "far fa-trash-alt",
+                "label": "common.delete"
+            }
+        ],
+        "defaultSortField": "label",
+        "filterFields": ["name", "description"],
+        "interaction": {
+            "parameterLabel": "id",
+            "parameterValue": "id",
+            "type": "event"
+        },
+        "sortFields": ["name", "description"],
+        "textField": "description",
+        "titleField": "name"
+    }
 }

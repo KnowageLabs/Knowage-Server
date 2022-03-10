@@ -32,7 +32,7 @@
             </div>
         </template>
 
-        <Column v-if="multivalue" selectionMode="multiple" :headerStyle="knParameterPopupDialogDescriptor.styles.checkboxColumn"></Column>
+        <Column v-if="multivalue" selectionMode="multiple" :style="knParameterPopupDialogDescriptor.styles.checkboxColumn"></Column>
         <Column class="kn-truncated" v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" :sortable="true"> </Column>
     </DataTable>
 </template>
@@ -78,9 +78,7 @@ export default defineComponent({
 
             this.columns.forEach((el: any) => this.globalFilterFields.push(el.field))
 
-            if (this.multivalue) {
-                this.selectedRow = this.multipleSelectedRows
-            }
+            this.selectedRow = this.multipleSelectedRows
         }
     }
 })

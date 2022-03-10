@@ -1,13 +1,13 @@
 <template>
-    <div class="p-grid p-mt-3 table-list-container">
-        <div class="p-col-6">
+    <div class="p-grid p-m-2 table-list-container">
+        <div class="p-col-6 p-d-flex p-flex-column">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #start>
                     {{ $t('managers.datasetManagement.availableTables') }}
                 </template>
             </Toolbar>
             <Listbox
-                class="kn-list link-list"
+                class="kn-list link-list kn-flex"
                 :listStyle="linkTabDescriptor.style.listbox"
                 :options="availableTables"
                 :filter="true"
@@ -26,14 +26,14 @@
                 </template>
             </Listbox>
         </div>
-        <div class="p-col-6">
+        <div class="p-col-6 p-d-flex p-flex-column">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #start>
                     {{ $t('managers.datasetManagement.selectedTables') }}
                 </template>
             </Toolbar>
             <Listbox
-                class="kn-list link-list"
+                class="kn-list link-list kn-flex"
                 :listStyle="linkTabDescriptor.style.listbox"
                 :options="selectedTables"
                 :filter="true"
@@ -175,6 +175,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .table-list-container {
+    height: calc(100% - 1rem);
     :deep(.p-card-body) {
         padding: 0;
         .p-card-content {
@@ -182,7 +183,7 @@ export default defineComponent({
         }
     }
     .link-list {
-        border: 1px solid $color-borders;
+        border: 1px solid var(--kn-color-borders);
         border-top: none;
     }
 }

@@ -127,4 +127,14 @@ describe('Business Model Detail', () => {
         expect(wrapper.vm.metaWebVisible).toBe(false)
         expect(wrapper.find('[data-test="metaweb-button"]').exists()).toBe(false)
     })
+
+    it('should show a generate button exiting from meta when something is changed and saved in the model', async () => {
+        const wrapper = factory()
+
+        await wrapper.setProps({ selectedBusinessModel: mockedBusinessModel, toGenerate: true })
+        await wrapper.find('[data-test="metaweb-switch"]').trigger('click')
+
+        expect(wrapper.vm.toGenerate).toBe(true)
+        expect(wrapper.find('[data-test="generate-button"]').exists()).toBe(true)
+    })
 })

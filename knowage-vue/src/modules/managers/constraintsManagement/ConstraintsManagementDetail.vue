@@ -121,121 +121,125 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { AxiosResponse } from 'axios'
-import { iConstraint } from './ConstraintsManagement'
-import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import useValidate from '@vuelidate/core'
-import Dropdown from 'primevue/dropdown'
-import InputNumber from 'primevue/inputnumber'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import constraintsManagementDetailDescriptor from './ConstraintsManagementDetailDescriptor.json'
-import constraintsManagementValidationDescriptor from './ConstraintsManagementValidationDescriptor.json'
-export default defineComponent({
-    name: 'constraint-management-detail',
-    components: { Dropdown, KnValidationMessages, InputNumber },
-    props: {
-        selectedConstraint: {
-            type: Object as PropType<iConstraint>,
-            required: false
-        },
-        domains: {
-            type: Array as PropType<any[]>,
-            required: true
-        }
-    },
-    emits: ['close', 'created', 'touched'],
-    data() {
-        return {
-            constraintsManagementDetailDescriptor,
-            constraint: {} as iConstraint,
-            constraintsManagementValidationDescriptor,
-            operation: 'insert',
-            v$: useValidate() as any
-        }
-    },
-    validations() {
-        const customValidators: ICustomValidatorMap = {
-            'range-check': () => {
-                return (this.constraint && this.constraint.firstValue && this.constraint.secondValue && this.constraint.firstValue < this.constraint.secondValue) || this.constraint.valueTypeCd != 'RANGE'
+    import { defineComponent, PropType } from 'vue'
+    import { AxiosResponse } from 'axios'
+    import { iConstraint } from './ConstraintsManagement'
+    import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+    import useValidate from '@vuelidate/core'
+    import Dropdown from 'primevue/dropdown'
+    import InputNumber from 'primevue/inputnumber'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import constraintsManagementDetailDescriptor from './ConstraintsManagementDetailDescriptor.json'
+    import constraintsManagementValidationDescriptor from './ConstraintsManagementValidationDescriptor.json'
+    export default defineComponent({
+        name: 'constraint-management-detail',
+        components: { Dropdown, KnValidationMessages, InputNumber },
+        props: {
+            selectedConstraint: {
+                type: Object as PropType<iConstraint>,
+                required: false
+            },
+            domains: {
+                type: Array as PropType<any[]>,
+                required: true
             }
-        }
-        return {
-            constraint: createValidations('constraint', constraintsManagementValidationDescriptor.validations.constraint, customValidators)
-        }
-    },
-    computed: {
-        inputDisabled(): any {
-            return this.constraint.predifined == true
         },
-        buttonDisabled(): any {
-            return this.constraint.predifined == true || this.v$.$invalid
+        emits: ['close', 'created', 'touched'],
+        data() {
+            return {
+                constraintsManagementDetailDescriptor,
+                constraint: {} as iConstraint,
+                constraintsManagementValidationDescriptor,
+                operation: 'insert',
+                v$: useValidate() as any
+            }
         },
-        numberType(): any {
-            return this.constraint.valueTypeCd == 'MAXLENGTH' || this.constraint.valueTypeCd == 'RANGE' || this.constraint.valueTypeCd == 'DECIMALS' || this.constraint.valueTypeCd == 'MINLENGTH'
-        }
-    },
-    watch: {
-        selectedConstraint() {
-            this.v$.$reset()
-            this.constraint = { ...this.selectedConstraint } as iConstraint
-        }
-    },
-    mounted() {
-        if (this.selectedConstraint) {
-            this.constraint = { ...this.selectedConstraint } as iConstraint
-        }
-    },
-    methods: {
-        async handleSubmit() {
-            if (this.v$.$invalid) {
-                return
+        validations() {
+            const customValidators: ICustomValidatorMap = {
+                'range-check': () => {
+                    return this.rangeCheck || this.constraint.valueTypeCd != 'RANGE'
+                }
             }
-            delete this.constraint.predifined
-            let selectedDomain = this.domains.filter((cd) => {
-                return cd.VALUE_CD == this.constraint?.valueTypeCd
-            })
-            this.constraint.valueTypeId = selectedDomain[0].VALUE_ID
-
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/customChecks/'
-            if (this.constraint.checkId) {
-                this.operation = 'update'
-                url += this.constraint.checkId
-            } else {
-                this.operation = 'insert'
+            return {
+                constraint: createValidations('constraint', constraintsManagementValidationDescriptor.validations.constraint, customValidators)
             }
-
-            await this.sendRequest(url)
-                .then((response: AxiosResponse<any>) => {
-                    this.constraint.checkId = response.data
-                    this.$store.commit('setInfo', {
-                        title: this.$t(this.constraintsManagementDetailDescriptor.operation[this.operation].toastTitle),
-                        msg: this.$t(this.constraintsManagementDetailDescriptor.operation.success)
-                    })
-                    this.$emit('created', this.constraint)
+        },
+        computed: {
+            inputDisabled(): any {
+                return this.constraint.predifined == true
+            },
+            buttonDisabled(): any {
+                return this.constraint.predifined == true || this.v$.$invalid
+            },
+            numberType(): any {
+                return this.constraint.valueTypeCd == 'MAXLENGTH' || this.constraint.valueTypeCd == 'RANGE' || this.constraint.valueTypeCd == 'DECIMALS' || this.constraint.valueTypeCd == 'MINLENGTH'
+            },
+            rangeCheck(): any {
+                let test = this.constraint.firstValue < this.constraint.secondValue
+                return test
+            }
+        },
+        watch: {
+            selectedConstraint() {
+                this.v$.$reset()
+                this.constraint = { ...this.selectedConstraint } as iConstraint
+            }
+        },
+        mounted() {
+            if (this.selectedConstraint) {
+                this.constraint = { ...this.selectedConstraint } as iConstraint
+            }
+        },
+        methods: {
+            async handleSubmit() {
+                if (this.v$.$invalid) {
+                    return
+                }
+                delete this.constraint.predifined
+                let selectedDomain = this.domains.filter((cd) => {
+                    return cd.VALUE_CD == this.constraint?.valueTypeCd
                 })
-                .catch((error) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('managers.constraintManagement.saveError'),
-                        msg: error.message
+                this.constraint.valueTypeId = selectedDomain[0].VALUE_ID
+
+                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/customChecks/'
+                if (this.constraint.checkId) {
+                    this.operation = 'update'
+                    url += this.constraint.checkId
+                } else {
+                    this.operation = 'insert'
+                }
+
+                await this.sendRequest(url)
+                    .then((response: AxiosResponse<any>) => {
+                        this.constraint.checkId = response.data
+                        this.$store.commit('setInfo', {
+                            title: this.$t(this.constraintsManagementDetailDescriptor.operation[this.operation].toastTitle),
+                            msg: this.$t(this.constraintsManagementDetailDescriptor.operation.success)
+                        })
+                        this.$emit('created', this.constraint)
                     })
-                })
-        },
-        sendRequest(url: string) {
-            if (this.operation === 'insert') {
-                return this.$http.post(url, this.constraint)
-            } else {
-                return this.$http.put(url, this.constraint)
+                    .catch((error) => {
+                        this.$store.commit('setError', {
+                            title: this.$t('managers.constraintManagement.saveError'),
+                            msg: error.message
+                        })
+                    })
+            },
+            sendRequest(url: string) {
+                if (this.operation === 'insert') {
+                    return this.$http.post(url, this.constraint)
+                } else {
+                    return this.$http.put(url, this.constraint)
+                }
+            },
+            clearInput() {
+                this.constraint.firstValue = null
+                this.constraint.secondValue = null
+                this.$emit('touched')
+            },
+            closeForm() {
+                this.$emit('close')
             }
-        },
-        clearInput() {
-            this.constraint.firstValue = null
-            this.constraint.secondValue = null
-            this.$emit('touched')
-        },
-        closeForm() {
-            this.$emit('close')
         }
-    }
-})
+    })
 </script>

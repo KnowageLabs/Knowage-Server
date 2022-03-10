@@ -20,9 +20,11 @@
                 :user="user"
                 :toGenerate="toGenerate"
                 :readonly="readonly"
+                :businessModelVersions="businessModelVersions"
                 @fieldChanged="onFieldChange"
                 @fileUploaded="uploadedFile = $event"
                 @datamartGenerated="loadPage"
+                @modelGenerated="loadVersions"
             ></BusinessModelDetailsCard>
         </TabPanel>
 

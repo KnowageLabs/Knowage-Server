@@ -1,41 +1,41 @@
 .overlappingPanel {
-	width: 100%;
-	z-index: 1000;
-	height: 100%;
-	background-color: $color-default;
-	box-shadow: 0px 0px 10px $color-default;
-	opacity: 0.8;
-	position: absolute;
+    width: 100%;
+    z-index: 1000;
+    height: 100%;
+    background-color: var(--kn-color-default);
+    box-shadow: 0px 0px 10px var(--kn-color-default);
+    opacity: 0.8;
+    position: absolute;
 }
 
 .p-progress-spinner {
-	top: 50%;
-	left: 50%;
-	margin-right: -50%;
-	transform: translate(-50%, -50%);
-	opacity: 1;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    opacity: 1;
 }
 
 @keyframes p-progress-spinner-color {
-	0% {
-		stroke: $color-primary;
-	}
-	20% {
-		stroke: $color-secondary;
-	}
-	40% {
-		stroke: $color-fab;
-	}
-	60% {
-		stroke: $color-borders;
-	}
-	80% {
-		stroke: $color-primary;
-	}
-	90% {
-		stroke: $color-secondary;
-	}
-	100% {
-		stroke: $color-fab;
-	}
+    0% {
+        stroke: var(--kn-color-primary);
+    }
+    20% {
+        stroke: var(--kn-color-secondary);
+    }
+    40% {
+        stroke: var(--kn-color-fab);
+    }
+    60% {
+        stroke: var(--kn-color-borders);
+    }
+    80% {
+        stroke: var(--kn-color-primary);
+    }
+    90% {
+        stroke: var(--kn-color-secondary);
+    }
+    100% {
+        stroke: var(--kn-color-fab);
+    }
 }

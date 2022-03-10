@@ -64,64 +64,64 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iFilter, iLov } from '../../KpiScheduler'
-import AutoComplete from 'primevue/autocomplete'
-import Card from 'primevue/card'
-import Dropdown from 'primevue/dropdown'
-import kpiSchedulerFilterDetailCardDescriptor from './KpiSchedulerFilterDetailCardDescriptor.json'
+    import { defineComponent } from 'vue'
+    import { iFilter, iLov } from '../../KpiScheduler'
+    import AutoComplete from 'primevue/autocomplete'
+    import Card from 'primevue/card'
+    import Dropdown from 'primevue/dropdown'
+    import kpiSchedulerFilterDetailCardDescriptor from './KpiSchedulerFilterDetailCardDescriptor.json'
 
-export default defineComponent({
-    name: 'filters-card',
-    components: { AutoComplete, Card, Dropdown },
-    props: { filter: { type: Object }, placeholderType: { type: Array }, temporalType: { type: Array }, lovs: { type: Array, required: true } },
-    emits: ['touched'],
-    data() {
-        return {
-            kpiSchedulerFilterDetailCardDescriptor,
-            currentFilter: {} as iFilter,
-            filteredLovs: [] as iLov[]
-        }
-    },
-    watch: {
-        filter() {
-            this.loadFilter()
-        }
-    },
-    created() {
-        this.loadFilter()
-    },
-    methods: {
-        loadFilter() {
-            this.currentFilter = this.filter as iFilter
-            if (this.currentFilter.type.valueCd === 'LOV') {
-                this.currentFilter.value = this.getLovValue(this.currentFilter.value as string)
+    export default defineComponent({
+        name: 'filters-card',
+        components: { AutoComplete, Card, Dropdown },
+        props: { filter: { type: Object }, placeholderType: { type: Array }, temporalType: { type: Array }, lovs: { type: Array, required: true } },
+        emits: ['touched'],
+        data() {
+            return {
+                kpiSchedulerFilterDetailCardDescriptor,
+                currentFilter: {} as iFilter,
+                filteredLovs: [] as iLov[]
             }
         },
-
-        searchCategories(event) {
-            setTimeout(() => {
-                if (!event.query.trim().length) {
-                    this.filteredLovs = [...this.lovs] as { id: number; name: string; label: string }[]
-                } else {
-                    this.filteredLovs = this.lovs.filter((lov: any) => {
-                        return lov.name.toLowerCase().startsWith(event.query.toLowerCase())
-                    }) as iLov[]
+        watch: {
+            filter() {
+                this.loadFilter()
+            }
+        },
+        created() {
+            this.loadFilter()
+        },
+        methods: {
+            loadFilter() {
+                this.currentFilter = this.filter as iFilter
+                if (this.currentFilter.type.valueCd === 'LOV') {
+                    this.currentFilter.value = this.getLovValue(this.currentFilter.value as string)
                 }
-            }, 250)
-        },
-        setLovValue(value: iLov, filter: iFilter) {
-            filter.value = this.getLovValue(value.label)
-            this.$emit('touched')
-        },
-        getLovValue(value: string) {
-            const tempLov = this.lovs.find((lov: any) => lov.label === value) as iLov
-            return tempLov ? tempLov.name : ''
-        },
-        resetValue() {
-            this.currentFilter.value = null
-            this.$emit('touched')
+            },
+
+            searchCategories(event) {
+                setTimeout(() => {
+                    if (!event.query.trim().length) {
+                        this.filteredLovs = [...this.lovs] as { id: number; name: string; label: string }[]
+                    } else {
+                        this.filteredLovs = this.lovs.filter((lov: any) => {
+                            return lov.name.toLowerCase().startsWith(event.query.toLowerCase())
+                        }) as iLov[]
+                    }
+                }, 250)
+            },
+            setLovValue(value: iLov, filter: iFilter) {
+                filter.value = this.getLovValue(value.label)
+                this.$emit('touched')
+            },
+            getLovValue(value: string) {
+                const tempLov = this.lovs.find((lov: any) => lov.label === value) as iLov
+                return tempLov ? tempLov.name : ''
+            },
+            resetValue() {
+                this.currentFilter.value = null
+                this.$emit('touched')
+            }
         }
-    }
-})
+    })
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <InputText class="kn-material-input" v-if="column.editorType !== 'COMBO' && column.columnInfo.type !== 'date'" :type="setDataType(column.columnInfo.type)" :step="getStep(column.columnInfo.type)" v-model="row[column.field]" @input="$emit('rowChanged', row)" />
+    <InputText class="kn-material-input" v-if="column.editorType !== 'COMBO' && column.columnInfo.type !== 'date' && column.columnInfo.type !== 'timestamp'" :type="setDataType(column.columnInfo.type)" :step="getStep(column.columnInfo.type)" v-model="row[column.field]" @input="$emit('rowChanged', row)" />
     <Dropdown
         class="kn-material-input"
         v-else-if="column.editorType === 'COMBO'"
@@ -16,10 +16,10 @@
     <Calendar
         :style="registryDatatableDescriptor.pivotStyles.inputFields"
         class="pivot-calendar"
-        v-else-if="column.columnInfo.type === 'date'"
+        v-else-if="column.columnInfo.type === 'date' || column.columnInfo.type === 'timestamp'"
         v-model="row[column.field]"
-        :showTime="column.columnInfo.subtype === 'timestamp'"
-        :showSeconds="column.columnInfo.subtype === 'timestamp'"
+        :showTime="column.columnInfo.type === 'timestamp'"
+        :showSeconds="column.columnInfo.type === 'timestamp'"
         :showButtonBar="true"
         @date-select="$emit('rowChanged', row)"
     />
@@ -64,7 +64,7 @@
         methods: {
             loadRow() {
                 this.row = this.propRow
-                if (this.column?.columnInfo.type === 'date' && this.row[this.column.field]) {
+                if ((this.column?.columnInfo.type === 'date' || this.column?.columnInfo.type === 'timestamp') && this.row[this.column.field]) {
                     this.row[this.column.field] = this.getFormattedDate(this.row[this.column.field], 'MM/DD/YYYY HH:mm:ss')
                 }
             },

@@ -14,39 +14,39 @@
     </Dialog>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Dialog from 'primevue/dialog'
-import dialogDescriptor from './CrossNavigationManagementDialogDescriptor.json'
-export default defineComponent({
-    name: 'doc-dialog',
-    components: {
-        Dialog
-    },
-    props: {
-        dialogVisible: {
-            type: Boolean,
-            default: false
+    import { defineComponent } from 'vue'
+    import Dialog from 'primevue/dialog'
+    import dialogDescriptor from './CrossNavigationManagementDialogDescriptor.json'
+    export default defineComponent({
+        name: 'doc-dialog',
+        components: {
+            Dialog
         },
-        title: {
-            type: String,
-            required: true
+        props: {
+            dialogVisible: {
+                type: Boolean,
+                default: false
+            },
+            title: {
+                type: String,
+                required: true
+            },
+            message: {
+                type: String,
+                required: true
+            }
         },
-        message: {
-            type: String,
-            required: true
+        emits: ['close', 'apply'],
+        data() {
+            return {
+                dialogDescriptor
+            }
+        },
+        watch: {},
+        methods: {
+            closeDialog() {
+                this.$emit('close')
+            }
         }
-    },
-    emits: ['close', 'apply'],
-    data() {
-        return {
-            dialogDescriptor
-        }
-    },
-    watch: {},
-    methods: {
-        closeDialog() {
-            this.$emit('close')
-        }
-    }
-})
+    })
 </script>

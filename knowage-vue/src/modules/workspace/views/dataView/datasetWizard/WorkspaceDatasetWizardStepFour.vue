@@ -53,47 +53,47 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import useValidate from '@vuelidate/core'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import dataViewDescriptor from './WorkspaceDatasetWizardDescriptor.json'
-import Card from 'primevue/card'
-import InputSwitch from 'primevue/inputswitch'
+    import { defineComponent } from 'vue'
+    import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+    import useValidate from '@vuelidate/core'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import dataViewDescriptor from './WorkspaceDatasetWizardDescriptor.json'
+    import Card from 'primevue/card'
+    import InputSwitch from 'primevue/inputswitch'
 
-export default defineComponent({
-    components: { Card, KnValidationMessages, InputSwitch },
-    props: { selectedDataset: { type: Object as any } },
-    data() {
-        return {
-            v$: useValidate() as any,
-            dataViewDescriptor,
-            dataset: {} as any
-        }
-    },
-    created() {
-        this.dataset = this.selectedDataset
-    },
-    watch: {
-        selectedDataset() {
+    export default defineComponent({
+        components: { Card, KnValidationMessages, InputSwitch },
+        props: { selectedDataset: { type: Object as any } },
+        data() {
+            return {
+                v$: useValidate() as any,
+                dataViewDescriptor,
+                dataset: {} as any
+            }
+        },
+        created() {
             this.dataset = this.selectedDataset
+        },
+        watch: {
+            selectedDataset() {
+                this.dataset = this.selectedDataset
+            }
+        },
+        validations() {
+            const wizardFieldsRequired = (value) => {
+                return value
+            }
+            const persistFieldsRequired = (value) => {
+                return !this.dataset.isPersisted || value
+            }
+            const customValidators: ICustomValidatorMap = {
+                'wizard-field-required': wizardFieldsRequired,
+                'persist-field-required': persistFieldsRequired
+            }
+            const validationObject = {
+                dataset: createValidations('dataset', dataViewDescriptor.validations.dataset, customValidators)
+            }
+            return validationObject
         }
-    },
-    validations() {
-        const wizardFieldsRequired = (value) => {
-            return value
-        }
-        const persistFieldsRequired = (value) => {
-            return !this.dataset.isPersisted || value
-        }
-        const customValidators: ICustomValidatorMap = {
-            'wizard-field-required': wizardFieldsRequired,
-            'persist-field-required': persistFieldsRequired
-        }
-        const validationObject = {
-            dataset: createValidations('dataset', dataViewDescriptor.validations.dataset, customValidators)
-        }
-        return validationObject
-    }
-})
+    })
 </script>

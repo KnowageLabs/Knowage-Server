@@ -81,85 +81,85 @@
     <KnInputFile v-if="!uploading" :changeFunction="uploadAnalysisFile" accept="image/*" :triggerInput="triggerUpload" />
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
-import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
-import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
-import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
-import KnFabButton from '@/components/UI/KnFabButton.vue'
-import DataTable from 'primevue/datatable'
-import Menu from 'primevue/contextmenu'
-import Message from 'primevue/message'
-import Column from 'primevue/column'
-import KnInputFile from '@/components/UI/KnInputFile.vue'
-import WorkspaceAnalysisViewEditDialog from './dialogs/WorkspaceAnalysisViewEditDialog.vue'
-import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
-import WorkspaceAnalysisViewShareDialog from './dialogs/WorkspaceAnalysisViewShareDialog.vue'
-import { AxiosResponse } from 'axios'
+    import { defineComponent } from 'vue'
+    import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
+    import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
+    import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
+    import KnFabButton from '@/components/UI/KnFabButton.vue'
+    import DataTable from 'primevue/datatable'
+    import Menu from 'primevue/contextmenu'
+    import Message from 'primevue/message'
+    import Column from 'primevue/column'
+    import KnInputFile from '@/components/UI/KnInputFile.vue'
+    import WorkspaceAnalysisViewEditDialog from './dialogs/WorkspaceAnalysisViewEditDialog.vue'
+    import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
+    import WorkspaceAnalysisViewShareDialog from './dialogs/WorkspaceAnalysisViewShareDialog.vue'
+    import { AxiosResponse } from 'axios'
+    import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 
-export default defineComponent({
-    name: 'workspace-analysis-view',
-    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, Message, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceWarningDialog, WorkspaceAnalysisViewShareDialog },
-    emits: ['showMenu', 'toggleDisplayView', 'execute'],
-    props: { toggleCardDisplay: { type: Boolean } },
-    computed: {
-        isOwner(): any {
-            return (this.$store.state as any).user.fullName === this.selectedAnalysis.creationUser
+    export default defineComponent({
+        name: 'workspace-analysis-view',
+        components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, Message, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceWarningDialog, WorkspaceAnalysisViewShareDialog },
+        emits: ['showMenu', 'toggleDisplayView', 'execute'],
+        props: { toggleCardDisplay: { type: Boolean } },
+        computed: {
+            isOwner(): any {
+                return (this.$store.state as any).user.fullName === this.selectedAnalysis.creationUser
+            },
+            isShared(): any {
+                return this.selectedAnalysis.functionalities.length > 1
+            }
         },
-        isShared(): any {
-            return this.selectedAnalysis.functionalities.length > 1
-        }
-    },
-    data() {
-        return {
-            mainDescriptor,
-            loading: false,
-            showDetailSidebar: false,
-            analysisDocuments: [] as any,
-            filteredAnalysisDocuments: [] as any[],
-            selectedAnalysis: {} as any,
-            menuButtons: [] as any,
-            folders: [] as any[],
-            searchWord: '' as string,
-            editDialogVisible: false,
-            warningDialogVisbile: false,
-            warningMessage: '',
-            triggerUpload: false,
-            uploading: false,
-            shareDialogVisible: false,
-            creationMenuButtons: [] as any
-        }
-    },
-    created() {
-        this.getAnalysisDocs()
-    },
-    methods: {
-        getAnalysisDocs() {
-            this.loading = true
-            return this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/myAnalysisDocsList`)
-                .then((response: AxiosResponse<any>) => {
-                    this.analysisDocuments = [...response.data.root]
-                    this.filteredAnalysisDocuments = [...this.analysisDocuments]
-                })
-                .finally(() => (this.loading = false))
+        data() {
+            return {
+                mainDescriptor,
+                loading: false,
+                showDetailSidebar: false,
+                analysisDocuments: [] as any,
+                filteredAnalysisDocuments: [] as any[],
+                selectedAnalysis: {} as any,
+                menuButtons: [] as any,
+                folders: [] as any[],
+                searchWord: '' as string,
+                editDialogVisible: false,
+                warningDialogVisbile: false,
+                warningMessage: '',
+                triggerUpload: false,
+                uploading: false,
+                shareDialogVisible: false,
+                creationMenuButtons: [] as any
+            }
         },
-        formatDate(date) {
-            let fDate = new Date(date)
-            return fDate.toLocaleString()
+        created() {
+            this.getAnalysisDocs()
         },
-        showSidebar(clickedDocument) {
-            this.selectedAnalysis = clickedDocument
-            this.showDetailSidebar = true
-        },
-        showMenu(event, clickedDocument) {
-            this.selectedAnalysis = clickedDocument
-            this.createMenuItems()
-            // eslint-disable-next-line
-            // @ts-ignore
-            this.$refs.optionsMenu.toggle(event)
-        },
-        // prettier-ignore
-        createMenuItems() {
+        methods: {
+            getAnalysisDocs() {
+                this.loading = true
+                return this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/myAnalysisDocsList`)
+                    .then((response: AxiosResponse<any>) => {
+                        this.analysisDocuments = [...response.data.root]
+                        this.filteredAnalysisDocuments = [...this.analysisDocuments]
+                    })
+                    .finally(() => (this.loading = false))
+            },
+            formatDate(date) {
+                return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
+            },
+            showSidebar(clickedDocument) {
+                this.selectedAnalysis = clickedDocument
+                this.showDetailSidebar = true
+            },
+            showMenu(event, clickedDocument) {
+                this.selectedAnalysis = clickedDocument
+                this.createMenuItems()
+                // eslint-disable-next-line
+                // @ts-ignore
+                this.$refs.optionsMenu.toggle(event)
+            },
+            // prettier-ignore
+            createMenuItems() {
             this.menuButtons = []
             this.menuButtons.push(
                 { key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: () => { this.editAnalysisDocument(this.selectedAnalysis) }, visible: this.isOwner},
@@ -170,192 +170,192 @@ export default defineComponent({
                 { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: () => { this.uploadAnalysisPreviewFile(this.selectedAnalysis) }}
             )
         },
-        executeAnalysisDocument(document: any) {
-            this.$emit('execute', document)
-        },
-        editAnalysisDocument(analysis: any) {
-            this.selectedAnalysis = analysis
-            this.editDialogVisible = true
-        },
-        async handleEditAnalysis(analysis: any) {
-            const formatedAnalysis = {
-                document: {
-                    name: analysis.label,
-                    label: analysis.name,
-                    description: analysis.description,
-                    id: analysis.id
-                },
-                updateFromWorkspace: true
-            }
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/saveDocument/', formatedAnalysis, { headers: { 'X-Disable-Errors': 'true' } })
-                .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.updateTitle'),
-                        msg: this.$t('common.toast.success')
-                    })
-                    this.editDialogVisible = false
-                    this.showDetailSidebar = false
-                    this.getAnalysisDocs()
-                })
-                .catch((response: any) => {
-                    this.warningMessage = response
-                    this.warningDialogVisbile = true
-                })
-        },
-        async shareAnalysisDocument(analysis: any) {
-            this.selectedAnalysis = analysis
-            this.loading = true
-            const shared = this.selectedAnalysis.functionalities.length > 1
-            if (!shared) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/forsharing/${analysis.id}`).then((response: AxiosResponse<any>) => {
-                    this.folders = response.data
-                    this.shareDialogVisible = true
-                })
-            } else {
-                await this.handleAnalysShared(null, shared)
-            }
-            this.loading = false
-        },
-        async handleAnalysShared(selectedFolders: any, shared: boolean) {
-            this.loading = true
-
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/share?docId=${this.selectedAnalysis.id}&`
-            if (!shared) {
-                Object.keys(selectedFolders).forEach((id: any) => (url += `functs=${selectedFolders[id]}&`))
-            }
-            url += `isShare=${!shared}`
-
-            await this.$http
-                .post(url)
-                .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.updateTitle'),
-                        msg: this.$t('common.toast.success')
-                    })
-                    this.shareDialogVisible = false
-                    this.showDetailSidebar = false
-                    this.getAnalysisDocs()
-                })
-                .catch(() => {})
-
-            this.loading = false
-        },
-        async cloneAnalysisDocumentConfirm(analysis: any) {
-            this.$confirm.require({
-                header: this.$t('common.toast.cloneConfirmTitle'),
-                accept: async () => await this.cloneAnalysisDocument(analysis)
-            })
-        },
-        async cloneAnalysisDocument(analysis: any) {
-            this.loading = true
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/clone?docId=${analysis.id}`)
-                .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.createTitle'),
-                        msg: this.$t('common.toast.success')
-                    })
-                    this.showDetailSidebar = false
-                    this.getAnalysisDocs()
-                })
-                .catch(() => {})
-            this.loading = true
-        },
-        deleteAnalysisDocumentConfirm(analysis: any) {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteAnalysis(analysis)
-            })
-        },
-        deleteAnalysis(analysis: any) {
-            this.loading = true
-            this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${analysis.label}`)
-                .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.deleteTitle'),
-                        msg: this.$t('common.toast.success')
-                    })
-                    this.showDetailSidebar = false
-                    this.getAnalysisDocs()
-                })
-                .catch(() => {})
-            this.loading = false
-        },
-        uploadAnalysisPreviewFile(analysis: any) {
-            this.selectedAnalysis = analysis
-            this.triggerUpload = false
-            setTimeout(() => (this.triggerUpload = true), 200)
-        },
-        uploadAnalysisFile(event: any) {
-            this.uploading = true
-            let uploadedFile = event.target.files[0]
-
-            this.startUpload(uploadedFile)
-
-            this.triggerUpload = false
-            setTimeout(() => (this.uploading = false), 200)
-        },
-        startUpload(uploadedFile: any) {
-            var formData = new FormData()
-            formData.append('file', uploadedFile)
-            this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analysis/${this.selectedAnalysis.id}`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                })
-                .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.uploading'),
-                        msg: this.$t('common.toast.uploadSuccess')
-                    })
-                    this.showDetailSidebar = false
-                    this.getAnalysisDocs()
-                })
-                .catch()
-                .finally(() => {
-                    this.triggerUpload = false
-                })
-        },
-        closeWarningDialog() {
-            this.warningMessage = ''
-            this.warningDialogVisbile = false
-        },
-        searchItems() {
-            setTimeout(() => {
-                if (!this.searchWord.trim().length) {
-                    this.filteredAnalysisDocuments = [...this.analysisDocuments] as any[]
-                } else {
-                    this.filteredAnalysisDocuments = this.analysisDocuments.filter((el: any) => {
-                        return el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.creationUser?.toLowerCase().includes(this.searchWord.toLowerCase())
-                    })
+            executeAnalysisDocument(document: any) {
+                this.$emit('execute', document)
+            },
+            editAnalysisDocument(analysis: any) {
+                this.selectedAnalysis = analysis
+                this.editDialogVisible = true
+            },
+            async handleEditAnalysis(analysis: any) {
+                const formatedAnalysis = {
+                    document: {
+                        name: analysis.label,
+                        label: analysis.name,
+                        description: analysis.description,
+                        id: analysis.id
+                    },
+                    updateFromWorkspace: true
                 }
-            }, 250)
-        },
-        showCreationMenu(event) {
-            this.createCreationMenuButtons()
-            // eslint-disable-next-line
-            // @ts-ignore
-            this.$refs.creationMenu.toggle(event)
-        },
-        createCreationMenuButtons() {
-            this.creationMenuButtons = []
-            this.creationMenuButtons.push(
-                { key: '0', label: this.$t('common.cockpit'), command: this.todoToast, visible: true },
-                { key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.todoToast, visible: true },
-                { key: '2', label: this.$t('common.kpi'), command: this.todoToast, visible: true }
-            )
-        },
-        todoToast() {
-            this.$store.commit('setInfo', {
-                title: 'TODO',
-                msg: 'Functionality not in this sprint'
-            })
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/saveDocument/', formatedAnalysis, { headers: { 'X-Disable-Errors': 'true' } })
+                    .then(() => {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.updateTitle'),
+                            msg: this.$t('common.toast.success')
+                        })
+                        this.editDialogVisible = false
+                        this.showDetailSidebar = false
+                        this.getAnalysisDocs()
+                    })
+                    .catch((response: any) => {
+                        this.warningMessage = response
+                        this.warningDialogVisbile = true
+                    })
+            },
+            async shareAnalysisDocument(analysis: any) {
+                this.selectedAnalysis = analysis
+                this.loading = true
+                const shared = this.selectedAnalysis.functionalities.length > 1
+                if (!shared) {
+                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/forsharing/${analysis.id}`).then((response: AxiosResponse<any>) => {
+                        this.folders = response.data
+                        this.shareDialogVisible = true
+                    })
+                } else {
+                    await this.handleAnalysShared(null, shared)
+                }
+                this.loading = false
+            },
+            async handleAnalysShared(selectedFolders: any, shared: boolean) {
+                this.loading = true
+
+                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/share?docId=${this.selectedAnalysis.id}&`
+                if (!shared) {
+                    Object.keys(selectedFolders).forEach((id: any) => (url += `functs=${selectedFolders[id]}&`))
+                }
+                url += `isShare=${!shared}`
+
+                await this.$http
+                    .post(url)
+                    .then(() => {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.updateTitle'),
+                            msg: this.$t('common.toast.success')
+                        })
+                        this.shareDialogVisible = false
+                        this.showDetailSidebar = false
+                        this.getAnalysisDocs()
+                    })
+                    .catch(() => {})
+
+                this.loading = false
+            },
+            async cloneAnalysisDocumentConfirm(analysis: any) {
+                this.$confirm.require({
+                    header: this.$t('common.toast.cloneConfirmTitle'),
+                    accept: async () => await this.cloneAnalysisDocument(analysis)
+                })
+            },
+            async cloneAnalysisDocument(analysis: any) {
+                this.loading = true
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/clone?docId=${analysis.id}`)
+                    .then(() => {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.createTitle'),
+                            msg: this.$t('common.toast.success')
+                        })
+                        this.showDetailSidebar = false
+                        this.getAnalysisDocs()
+                    })
+                    .catch(() => {})
+                this.loading = true
+            },
+            deleteAnalysisDocumentConfirm(analysis: any) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.deleteAnalysis(analysis)
+                })
+            },
+            deleteAnalysis(analysis: any) {
+                this.loading = true
+                this.$http
+                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${analysis.label}`)
+                    .then(() => {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.deleteTitle'),
+                            msg: this.$t('common.toast.success')
+                        })
+                        this.showDetailSidebar = false
+                        this.getAnalysisDocs()
+                    })
+                    .catch(() => {})
+                this.loading = false
+            },
+            uploadAnalysisPreviewFile(analysis: any) {
+                this.selectedAnalysis = analysis
+                this.triggerUpload = false
+                setTimeout(() => (this.triggerUpload = true), 200)
+            },
+            uploadAnalysisFile(event: any) {
+                this.uploading = true
+                let uploadedFile = event.target.files[0]
+
+                this.startUpload(uploadedFile)
+
+                this.triggerUpload = false
+                setTimeout(() => (this.uploading = false), 200)
+            },
+            startUpload(uploadedFile: any) {
+                var formData = new FormData()
+                formData.append('file', uploadedFile)
+                this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analysis/${this.selectedAnalysis.id}`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                    .then(() => {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.uploading'),
+                            msg: this.$t('common.toast.uploadSuccess')
+                        })
+                        this.showDetailSidebar = false
+                        this.getAnalysisDocs()
+                    })
+                    .catch()
+                    .finally(() => {
+                        this.triggerUpload = false
+                    })
+            },
+            closeWarningDialog() {
+                this.warningMessage = ''
+                this.warningDialogVisbile = false
+            },
+            searchItems() {
+                setTimeout(() => {
+                    if (!this.searchWord.trim().length) {
+                        this.filteredAnalysisDocuments = [...this.analysisDocuments] as any[]
+                    } else {
+                        this.filteredAnalysisDocuments = this.analysisDocuments.filter((el: any) => {
+                            return el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.creationUser?.toLowerCase().includes(this.searchWord.toLowerCase())
+                        })
+                    }
+                }, 250)
+            },
+            showCreationMenu(event) {
+                this.createCreationMenuButtons()
+                // eslint-disable-next-line
+                // @ts-ignore
+                this.$refs.creationMenu.toggle(event)
+            },
+            createCreationMenuButtons() {
+                this.creationMenuButtons = []
+                this.creationMenuButtons.push(
+                    { key: '0', label: this.$t('common.cockpit'), command: this.todoToast, visible: true },
+                    { key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.todoToast, visible: true },
+                    { key: '2', label: this.$t('common.kpi'), command: this.todoToast, visible: true }
+                )
+            },
+            todoToast() {
+                this.$store.commit('setInfo', {
+                    title: 'TODO',
+                    msg: 'Functionality not in this sprint'
+                })
+            }
         }
-    }
-})
+    })
 </script>

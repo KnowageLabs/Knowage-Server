@@ -13,7 +13,7 @@
                     <div v-if="selectedRoles.length > 1">
                         <div class="p-inputgroup">
                             <span class="p-float-label">
-                                <Dropdown v-model="defaultRole" :options="selectedRolesWithEmpty()" @change="onSelectDefaultRole($event)" optionLabel="name" class="p-inputtext p-component kn-material-input">
+                                <Dropdown v-model="defaultRole" showClear="true" :options="selectedRolesWithEmpty()" @change="onSelectDefaultRole($event)" optionLabel="name" class="p-inputtext p-component kn-material-input">
                                     <template #value="slotProps">
                                         <span>{{ slotProps.value?.name }}</span>
                                     </template>

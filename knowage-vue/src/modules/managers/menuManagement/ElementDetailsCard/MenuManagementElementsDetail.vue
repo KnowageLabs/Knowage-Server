@@ -68,10 +68,10 @@
                                         <Dropdown
                                             id="staticPage"
                                             v-model="v$.menuNode.staticPage.$model"
-                                            :options="staticPageOptions"
+                                            :options="staticPagesList"
                                             @change="onStaticPageSelect(v$.menuNode.staticPage)"
                                             optionLabel="name"
-                                            optionValue="value"
+                                            optionValue="id"
                                             class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input"
                                         />
                                         <label for="staticPage">{{ $t('managers.menuManagement.form.staticPage') }} *</label>
@@ -155,363 +155,404 @@
             </Card>
         </div>
         <div class="p-col-12">
-            <RolesCard :hidden="hideForm" :rolesList="roles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)"></RolesCard>
+            <RolesCard :hidden="hideForm" :rolesList="roles" :parentNodeRoles="parentNodeRoles" :selected="selectedMenuNode.roles" @changed="setSelectedRoles($event)"></RolesCard>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { AxiosResponse } from 'axios'
-import { iMenuNode } from '../MenuManagement'
-import { iRole } from '../../usersManagement/UsersManagement'
-import useValidate from '@vuelidate/core'
-import { createValidations } from '@/helpers/commons/validationHelper'
-import Dropdown from 'primevue/dropdown'
-import Dialog from 'primevue/dialog'
-import RelatedDocumentList from '../RelatedDocumentsList/MenuManagementRelatedDocumentList.vue'
-import RolesCard from '../RolesCard/MenuManagementRolesCard.vue'
-import DocumentBrowserTree from '../DocumentBrowserTree/MenuManagementDocumentBrowserTree.vue'
-import FontAwesomePicker from '../IconPicker/IconPicker.vue'
+    import { defineComponent } from 'vue'
+    import { AxiosResponse } from 'axios'
+    import { iMenuNode } from '../MenuManagement'
+    import { iRole } from '../../usersManagement/UsersManagement'
+    import useValidate from '@vuelidate/core'
+    import { createValidations } from '@/helpers/commons/validationHelper'
+    import Dropdown from 'primevue/dropdown'
+    import Dialog from 'primevue/dialog'
+    import RelatedDocumentList from '../RelatedDocumentsList/MenuManagementRelatedDocumentList.vue'
+    import RolesCard from '../RolesCard/MenuManagementRolesCard.vue'
+    import DocumentBrowserTree from '../DocumentBrowserTree/MenuManagementDocumentBrowserTree.vue'
+    import FontAwesomePicker from '../IconPicker/IconPicker.vue'
 
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import MenuConfigurationDescriptor from '../MenuManagementDescriptor.json'
-import MenuConfigurationValidationDescriptor from './MenuManagementValidationDescriptor.json'
-import MenuManagementElementDetailDescriptor from './MenuManagementElementDetailDescriptor.json'
-export default defineComponent({
-    name: 'profile-attributes-detail',
-    components: { Dropdown, DocumentBrowserTree, RelatedDocumentList, KnValidationMessages, Dialog, FontAwesomePicker, RolesCard },
-    props: {
-        roles: {
-            type: Array
-        },
-        selectedMenuNode: {
-            type: Object,
-            required: true
-        },
-        selectedRoles: {
-            type: Array
-        }
-    },
-    computed: {
-        formValid(): any {
-            return this.v$.$invalid
-        }
-    },
-    watch: {
-        selectedMenuNode: {
-            handler: function(node) {
-                this.v$.$reset()
-                this.loadNode(node)
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import MenuConfigurationDescriptor from '../MenuManagementDescriptor.json'
+    import MenuConfigurationValidationDescriptor from './MenuManagementValidationDescriptor.json'
+    import MenuManagementElementDetailDescriptor from './MenuManagementElementDetailDescriptor.json'
+    export default defineComponent({
+        name: 'profile-attributes-detail',
+        components: { Dropdown, DocumentBrowserTree, RelatedDocumentList, KnValidationMessages, Dialog, FontAwesomePicker, RolesCard },
+        props: {
+            roles: {
+                type: Array
+            },
+            selectedMenuNode: {
+                type: Object,
+                required: true
+            },
+            selectedRoles: {
+                type: Array
+            },
+            staticPagesList: {
+                type: Array
+            },
+            menuNodes: {
+                type: Array
+            },
+            parentNodeRoles: {
+                type: Array
             }
         },
-        selectedRoles: {
-            handler: function(roles) {
+        computed: {
+            formValid(): any {
+                return this.v$.$invalid
+            }
+        },
+        watch: {
+            selectedMenuNode: {
+                handler: function(node) {
+                    this.v$.$reset()
+                    console.log('node', node)
+                    this.loadNode(node)
+                }
+            },
+            selectedRoles: {
+                handler: function(roles) {
+                    this.menuNode.roles = roles
+                }
+            },
+            menuNodes() {
+                this.loadNodes()
+            }
+        },
+        emits: ['refreshRecordSet', 'closesForm', 'dataChanged'],
+        data() {
+            return {
+                v$: useValidate() as any,
+                apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
+                menuNode: {} as iMenuNode,
+                loading: false as Boolean,
+                hideForm: false as Boolean,
+                documentHidden: true as Boolean,
+                staticPageHidden: true as Boolean,
+                externalAppHidden: true as Boolean,
+                functionalityHidden: true as Boolean,
+                workspaceInitialHidden: true as Boolean,
+                documentTreeHidden: true as Boolean,
+                dirty: false as Boolean,
+                displayModal: false as Boolean,
+                chooseIconModalShown: false as Boolean,
+                relatedDocuments: [],
+                selectedRelatedDocument: null as string | null,
+                selectedIcon: null as string | null,
+                selectedFunctionality: {},
+                menuNodeContent: MenuConfigurationDescriptor.menuNodeContent,
+                workspaceOptions: MenuConfigurationDescriptor.workspaceOptions,
+                menuNodeContentFunctionalies: MenuConfigurationDescriptor.menuNodeContentFunctionalies,
+                menuManagementElementDetailDescriptor: MenuManagementElementDetailDescriptor.importantfields,
+                nodes: [] as iMenuNode[]
+            }
+        },
+        validations() {
+            return {
+                menuNode: createValidations('menuNode', MenuConfigurationValidationDescriptor.validations.menuNode)
+            }
+        },
+        async created() {
+            this.loadNodes()
+            if (this.selectedMenuNode) {
+                this.loadNode(this.selectedMenuNode)
+            }
+        },
+        methods: {
+            loadNodes() {
+                this.nodes = this.menuNodes as iMenuNode[]
+            },
+            resetForm() {
+                Object.keys(this.menuNode).forEach((k) => delete this.menuNode[k])
+            },
+            openRelatedDocumentModal() {
+                this.displayModal = true
+            },
+            closeRelatedDocumentModal() {
+                this.displayModal = false
+            },
+            showForm() {
+                this.resetForm()
+                this.hideForm = false
+            },
+            clearSelectedIcon() {
+                this.selectedIcon = ''
+                this.menuNode.custIcon = null
+                this.menuNode.icon = null
+            },
+            setSelectedRoles(roles: iRole[]) {
                 this.menuNode.roles = roles
-            }
-        }
-    },
-    emits: ['refreshRecordSet', 'closesForm', 'dataChanged'],
-    data() {
-        return {
-            v$: useValidate() as any,
-            apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
-            menuNode: {} as iMenuNode,
-            loading: false as Boolean,
-            hideForm: false as Boolean,
-            documentHidden: true as Boolean,
-            staticPageHidden: true as Boolean,
-            externalAppHidden: true as Boolean,
-            functionalityHidden: true as Boolean,
-            workspaceInitialHidden: true as Boolean,
-            documentTreeHidden: true as Boolean,
-            dirty: false as Boolean,
-            displayModal: false as Boolean,
-            chooseIconModalShown: false as Boolean,
-            relatedDocuments: [],
-            selectedRelatedDocument: null as string | null,
-            selectedIcon: null as string | null,
-            selectedFunctionality: {},
-            menuNodeContent: MenuConfigurationDescriptor.menuNodeContent,
-            workspaceOptions: MenuConfigurationDescriptor.workspaceOptions,
-            staticPageOptions: MenuConfigurationDescriptor.staticPageOptions,
-            menuNodeContentFunctionalies: MenuConfigurationDescriptor.menuNodeContentFunctionalies,
-            menuManagementElementDetailDescriptor: MenuManagementElementDetailDescriptor.importantfields
-        }
-    },
-    validations() {
-        return {
-            menuNode: createValidations('menuNode', MenuConfigurationValidationDescriptor.validations.menuNode)
-        }
-    },
-    async created() {
-        if (this.selectedMenuNode) {
-            this.loadNode(this.selectedMenuNode)
-        }
-    },
-    methods: {
-        resetForm() {
-            Object.keys(this.menuNode).forEach((k) => delete this.menuNode[k])
-        },
-        openRelatedDocumentModal() {
-            this.displayModal = true
-        },
-        closeRelatedDocumentModal() {
-            this.displayModal = false
-        },
-        showForm() {
-            this.resetForm()
-            this.hideForm = false
-        },
-        clearSelectedIcon() {
-            this.selectedIcon = ''
-            this.menuNode.custIcon = null
-            this.menuNode.icon = null
-        },
-        setSelectedRoles(roles: iRole[]) {
-            this.menuNode.roles = roles
-        },
-        toggleDocument() {
-            this.functionalityHidden = this.staticPageHidden = this.externalAppHidden = this.documentTreeHidden = this.workspaceInitialHidden = true
-            this.documentHidden = false
-        },
-        toggleStaticPage() {
-            this.functionalityHidden = this.externalAppHidden = this.documentHidden = this.documentTreeHidden = this.workspaceInitialHidden = true
-            this.staticPageHidden = false
-        },
-        toggleExternalApp() {
-            this.functionalityHidden = this.documentHidden = this.staticPageHidden = this.documentTreeHidden = this.workspaceInitialHidden = true
-            this.externalAppHidden = false
-        },
-        toggleFunctionality() {
-            this.externalAppHidden = this.documentHidden = this.staticPageHidden = true
-            this.functionalityHidden = false
-            if (this.menuNode.functionality == 'WorkspaceManagement') {
-                this.toggleWorkspaceInitial()
-            } else if (this.menuNode.functionality == 'DocumentUserBrowser') {
-                this.toggleDocumentTreeSelect()
-            }
-        },
-        isIconSelectorShown(node: iMenuNode) {
-            if (node.level == 1) {
-                return true
-            }
-        },
-        isFaIconShown(node: iMenuNode) {
-            if (node.level == 1 && node.icon != null) {
-                return true
-            }
-        },
-        isCustomIconShown(node: iMenuNode) {
-            if (node.level == 1 && node.custIcon != null) {
-                return true
-            }
-        },
-        toggleEmpty() {
-            this.functionalityHidden = this.externalAppHidden = this.documentHidden = this.staticPageHidden = this.documentTreeHidden = this.workspaceInitialHidden = true
-        },
-        toggleWorkspaceInitial() {
-            this.workspaceInitialHidden = false
-            this.documentTreeHidden = true
-        },
-        toggleDocumentTreeSelect() {
-            this.documentTreeHidden = false
-            this.workspaceInitialHidden = true
-        },
-        onMenuNodeChange(menuNodeContent) {
-            if (menuNodeContent.$model == 1) {
-                this.toggleDocument()
-            } else if (menuNodeContent.$model == 3) {
-                this.toggleStaticPage()
-            } else if (menuNodeContent.$model == 2) {
-                this.toggleExternalApp()
-            } else if (menuNodeContent.$model == 4) {
-                this.toggleFunctionality()
-            } else {
-                this.toggleEmpty()
-            }
-        },
-        onFunctionalityTypeChange(functionality) {
-            if (functionality.$model == 'WorkspaceManagement') {
-                this.toggleWorkspaceInitial()
-            } else if (functionality.$model == 'DocumentUserBrowser') {
-                this.toggleDocumentTreeSelect()
-            }
-        },
-        openFontAwesomeSelectionModal() {
-            this.chooseIconModalShown = true
-        },
-        closeFontAwesomeSelectionModal() {
-            this.chooseIconModalShown = false
-        },
-        setBase64Image(base64image) {
-            console.log(base64image)
-            this.menuNode.icon = null
-            this.menuNode.custIcon = {
-                id: null,
-                className: 'custom',
-                unicode: null,
-                category: 'custom',
-                label: 'logo.png',
-                src: base64image,
-                visible: true
-            }
-            this.selectedIcon = base64image
-        },
-        onChoosenIcon(choosenIcon) {
-            if (typeof choosenIcon == 'string') {
-                this.setBase64Image(choosenIcon)
-            } else {
-                this.menuNode.icon = {
-                    id: choosenIcon.id,
-                    className: 'fas fa-' + choosenIcon.name,
-                    unicode: choosenIcon.value,
-                    category: 'solid',
-                    label: '',
-                    src: null,
+            },
+            toggleDocument() {
+                this.functionalityHidden = this.staticPageHidden = this.externalAppHidden = this.documentTreeHidden = this.workspaceInitialHidden = true
+                this.documentHidden = false
+            },
+            toggleStaticPage() {
+                this.functionalityHidden = this.externalAppHidden = this.documentHidden = this.documentTreeHidden = this.workspaceInitialHidden = true
+                this.staticPageHidden = false
+            },
+            toggleExternalApp() {
+                this.functionalityHidden = this.documentHidden = this.staticPageHidden = this.documentTreeHidden = this.workspaceInitialHidden = true
+                this.externalAppHidden = false
+            },
+            toggleFunctionality() {
+                this.externalAppHidden = this.documentHidden = this.staticPageHidden = true
+                this.functionalityHidden = false
+                if (this.menuNode.functionality == 'WorkspaceManagement') {
+                    this.toggleWorkspaceInitial()
+                } else if (this.menuNode.functionality == 'DocumentUserBrowser') {
+                    this.toggleDocumentTreeSelect()
+                }
+            },
+            isIconSelectorShown(node: iMenuNode) {
+                if (node.level == 1) {
+                    return true
+                }
+            },
+            isFaIconShown(node: iMenuNode) {
+                if (node.level == 1 && node.icon != null) {
+                    return true
+                }
+            },
+            isCustomIconShown(node: iMenuNode) {
+                if (node.level == 1 && node.custIcon != null) {
+                    return true
+                }
+            },
+            toggleEmpty() {
+                this.functionalityHidden = this.externalAppHidden = this.documentHidden = this.staticPageHidden = this.documentTreeHidden = this.workspaceInitialHidden = true
+            },
+            toggleWorkspaceInitial() {
+                this.workspaceInitialHidden = false
+                this.documentTreeHidden = true
+            },
+            toggleDocumentTreeSelect() {
+                this.documentTreeHidden = false
+                this.workspaceInitialHidden = true
+            },
+            onMenuNodeChange(menuNodeContent) {
+                if (menuNodeContent.$model == 1) {
+                    this.toggleDocument()
+                } else if (menuNodeContent.$model == 3) {
+                    this.toggleStaticPage()
+                } else if (menuNodeContent.$model == 2) {
+                    this.toggleExternalApp()
+                } else if (menuNodeContent.$model == 4) {
+                    this.toggleFunctionality()
+                } else {
+                    this.toggleEmpty()
+                }
+            },
+            onFunctionalityTypeChange(functionality) {
+                if (functionality.$model == 'WorkspaceManagement') {
+                    this.toggleWorkspaceInitial()
+                } else if (functionality.$model == 'DocumentUserBrowser') {
+                    this.toggleDocumentTreeSelect()
+                }
+            },
+            openFontAwesomeSelectionModal() {
+                this.chooseIconModalShown = true
+            },
+            closeFontAwesomeSelectionModal() {
+                this.chooseIconModalShown = false
+            },
+            setBase64Image(base64image) {
+                this.menuNode.icon = null
+                this.menuNode.custIcon = {
+                    id: null,
+                    className: 'custom',
+                    unicode: null,
+                    category: 'custom',
+                    label: 'logo.png',
+                    src: base64image,
                     visible: true
                 }
-
-                this.menuNode.custIcon = null
-                this.selectedIcon = this.menuNode.icon.className = 'fas fa-' + choosenIcon.name
-                this.menuNode.icon.id = choosenIcon.id
-            }
-
-            this.closeFontAwesomeSelectionModal()
-        },
-        onDocumentSelect(document) {
-            this.menuNode.objId = document.DOCUMENT_ID
-            this.menuNode.document = document.DOCUMENT_NAME
-            this.closeRelatedDocumentModal()
-        },
-        async save() {
-            let response: AxiosResponse<any>
-
-            if (this.menuNode.menuId != null) {
-                response = await this.$http.put(this.apiUrl + 'menu/' + this.menuNode.menuId, this.getMenuDataForSave(), MenuConfigurationDescriptor.headers)
-            } else {
-                response = await this.$http.post(this.apiUrl + 'menu/', this.getMenuDataForSave(), MenuConfigurationDescriptor.headers)
-            }
-            if (response.status == 200) {
-                if (response.data.errors) {
-                    this.$store.commit('setError', { title: this.$t('managers.menuManagement.info.errorTitle'), msg: this.$t('managers.menuManagement.info.errorMessage') })
+                this.selectedIcon = base64image
+            },
+            onChoosenIcon(choosenIcon) {
+                if (typeof choosenIcon == 'string') {
+                    this.setBase64Image(choosenIcon)
                 } else {
-                    this.$store.commit('setInfo', { title: this.$t('managers.menuManagement.info.saveTitle'), msg: this.$t('managers.menuManagement.info.saveMessage') })
+                    this.menuNode.icon = {
+                        id: choosenIcon.id,
+                        className: 'fas fa-' + choosenIcon.name,
+                        unicode: choosenIcon.value,
+                        category: 'solid',
+                        label: '',
+                        src: null,
+                        visible: true
+                    }
+
+                    this.menuNode.custIcon = null
+                    this.selectedIcon = this.menuNode.icon.className = 'fas fa-' + choosenIcon.name
+                    this.menuNode.icon.id = choosenIcon.id
                 }
-            }
-            this.$emit('refreshRecordSet')
-            this.resetForm()
-        },
-        closeForm() {
-            this.$emit('closesForm')
-        },
-        onAttributeSelect(event: any) {
-            this.populateForm(event.data)
-        },
-        populateForm(menuNode: iMenuNode) {
-            this.hideForm = false
-            this.menuNode = { ...menuNode }
-            if (menuNode.objId) {
-                this.getDocumentNameByID(menuNode.objId)
-            }
 
-            if (menuNode.custIcon != null) {
-                //var base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
-                this.selectedIcon = menuNode.custIcon.src
-            } else if (menuNode.icon != null) {
-                this.selectedIcon = menuNode.icon.className
-            } else {
-                this.selectedIcon = null
-            }
-            if (this.menuNode.functionality != null) {
-                this.menuNode.menuNodeContent = 4
-                this.toggleFunctionality()
-            } else if (this.menuNode.externalApplicationUrl != null) {
-                this.menuNode.menuNodeContent = 2
-                this.toggleExternalApp()
-            } else if (this.menuNode.objId != null) {
-                this.menuNode.menuNodeContent = 1
-                this.toggleDocument()
-            } else if (this.menuNode.staticPage != null) {
-                this.menuNode.menuNodeContent = 3
-                this.toggleStaticPage()
-            } else {
-                this.menuNode.menuNodeContent = 0
-                this.toggleEmpty()
-            }
-        },
-        getMenuDataForSave() {
-            const menuNodeForSave = { ...this.menuNode }
+                this.closeFontAwesomeSelectionModal()
+            },
+            onDocumentSelect(document) {
+                this.menuNode.objId = document.DOCUMENT_ID
+                this.menuNode.document = document.DOCUMENT_NAME
+                this.closeRelatedDocumentModal()
+            },
+            async save() {
+                if (this.checkIfNodeExists()) {
+                    this.$store.commit('setError', { title: this.$t('managers.menuManagement.info.errorTitle'), msg: this.$t('managers.menuManagement.info.duplicateErrorMessage') })
+                    return
+                }
 
-            const fieldsList: string[] = this.menuManagementElementDetailDescriptor.fieldsList
-            const fieldToSave: any = this.menuManagementElementDetailDescriptor.filedsToSave[menuNodeForSave.menuNodeContent]
+                let response: AxiosResponse<any>
 
-            fieldsList.forEach((field) => !fieldToSave.fields.includes(field) && (menuNodeForSave[field] = null))
+                if (this.menuNode.menuId != null) {
+                    response = await this.$http.put(this.apiUrl + 'menu/' + this.menuNode.menuId, this.getMenuDataForSave())
+                } else {
+                    response = await this.$http.post(this.apiUrl + 'menu/', this.getMenuDataForSave())
+                }
 
-            delete menuNodeForSave.menuNodeContent
-            return menuNodeForSave
-        },
-        async getDocumentNameByID(id: any) {
-            await this.$http.get(this.apiUrl + 'documents/' + id).then((response: AxiosResponse<any>) => {
-                this.menuNode.document = response.data.name
-            })
-        },
-        onStaticPageSelect() {
-            this.menuNode.initialPath = this.menuNode.functionality = this.menuNode.objParameters = this.menuNode.objId = this.menuNode.externalApplicationUrl = null
-        },
-        onDataChange(v$Comp) {
-            v$Comp.$touch()
-            this.$emit('dataChanged')
-        },
-        loadNode(menuNode) {
-            if (menuNode.menuId === null) {
+                if (response.status == 200) {
+                    if (response.data.errors) {
+                        this.$store.commit('setError', { title: this.$t('managers.menuManagement.info.errorTitle'), msg: this.$t('managers.menuManagement.info.errorMessage') })
+                    } else {
+                        this.$store.commit('setInfo', { title: this.$t('managers.menuManagement.info.saveTitle'), msg: this.$t('managers.menuManagement.info.saveMessage') })
+                    }
+                }
+                this.$emit('refreshRecordSet')
                 this.resetForm()
-                return
-            }
-            this.populateForm(menuNode)
-        },
+            },
+            checkIfNodeExists() {
+                let exists = false
+                const menuItemForSave = this.getMenuDataForSave()
 
-        onSelectedDocumentNode(documentInitialPath) {
-            this.menuNode.initialPath = documentInitialPath
+                if (!menuItemForSave.parentId) menuItemForSave.parentId = null
+
+                for (let i = 0; i < this.nodes.length; i++) {
+                    const tempNode = this.nodes[i] as iMenuNode
+                    if (tempNode.menuId != menuItemForSave.menuId && tempNode.parentId === menuItemForSave.parentId && tempNode.name === menuItemForSave.name) {
+                        exists = true
+                        break
+                    }
+                }
+
+                return exists
+            },
+            closeForm() {
+                this.$emit('closesForm')
+            },
+            onAttributeSelect(event: any) {
+                this.populateForm(event.data)
+            },
+            populateForm(menuNode: iMenuNode) {
+                this.hideForm = false
+                this.menuNode = { ...menuNode }
+                if (menuNode.objId) {
+                    this.getDocumentNameByID(menuNode.objId)
+                }
+
+                if (menuNode.custIcon != null) {
+                    //var base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+                    this.selectedIcon = menuNode.custIcon.src
+                } else if (menuNode.icon != null) {
+                    this.selectedIcon = menuNode.icon.className
+                } else {
+                    this.selectedIcon = null
+                }
+                if (this.menuNode.functionality != null) {
+                    this.menuNode.menuNodeContent = 4
+                    this.toggleFunctionality()
+                } else if (this.menuNode.externalApplicationUrl != null) {
+                    this.menuNode.menuNodeContent = 2
+                    this.toggleExternalApp()
+                } else if (this.menuNode.objId != null) {
+                    this.menuNode.menuNodeContent = 1
+                    this.toggleDocument()
+                } else if (this.menuNode.staticPage != null) {
+                    this.menuNode.menuNodeContent = 3
+                    this.toggleStaticPage()
+                } else {
+                    this.menuNode.menuNodeContent = 0
+                    this.toggleEmpty()
+                }
+            },
+            getMenuDataForSave() {
+                const menuNodeForSave = { ...this.menuNode }
+
+                const fieldsList: string[] = this.menuManagementElementDetailDescriptor.fieldsList
+                const fieldToSave: any = this.menuManagementElementDetailDescriptor.filedsToSave[menuNodeForSave.menuNodeContent]
+
+                fieldsList.forEach((field) => !fieldToSave.fields.includes(field) && (menuNodeForSave[field] = null))
+
+                delete menuNodeForSave.menuNodeContent
+
+                if (!menuNodeForSave.parentId) menuNodeForSave.parentId = null
+
+                return menuNodeForSave
+            },
+            async getDocumentNameByID(id: any) {
+                await this.$http.get(this.apiUrl + 'documents/' + id).then((response: AxiosResponse<any>) => {
+                    this.menuNode.document = response.data.name
+                })
+            },
+            onStaticPageSelect() {
+                this.menuNode.initialPath = this.menuNode.functionality = this.menuNode.objParameters = this.menuNode.objId = this.menuNode.externalApplicationUrl = null
+            },
+            onDataChange(v$Comp) {
+                v$Comp.$touch()
+                this.$emit('dataChanged')
+            },
+            loadNode(menuNode) {
+                if (menuNode.menuId === null) {
+                    this.resetForm()
+                    return
+                }
+                this.populateForm(menuNode)
+            },
+
+            onSelectedDocumentNode(documentInitialPath) {
+                this.menuNode.initialPath = documentInitialPath
+            }
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-.table-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    .table-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
 
-    @media screen and (max-width: 960px) {
-        align-items: start;
-    }
-}
-
-.record-image {
-    width: 50px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-}
-
-.p-dialog .record-image {
-    width: 50px;
-    margin: 0 auto 2rem auto;
-    display: block;
-}
-
-.confirmation-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-@media screen and (max-width: 960px) {
-    ::v-deep(.p-toolbar) {
-        flex-wrap: wrap;
-
-        .p-button {
-            margin-bottom: 0.25rem;
+        @media screen and (max-width: 960px) {
+            align-items: start;
         }
     }
-}
+
+    .record-image {
+        width: 50px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    }
+
+    .p-dialog .record-image {
+        width: 50px;
+        margin: 0 auto 2rem auto;
+        display: block;
+    }
+
+    .confirmation-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    @media screen and (max-width: 960px) {
+        ::v-deep(.p-toolbar) {
+            flex-wrap: wrap;
+
+            .p-button {
+                margin-bottom: 0.25rem;
+            }
+        }
+    }
 </style>

@@ -127,6 +127,7 @@
     import Card from 'primevue/card'
     import DataTable from 'primevue/datatable'
     import Column from 'primevue/column'
+    import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 
     export default defineComponent({
         name: 'detail-tab',
@@ -256,8 +257,7 @@
                 })
             },
             formatDate(date) {
-                let fDate = new Date(date)
-                return fDate.toLocaleString()
+                return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
             }
         }
     })

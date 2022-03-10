@@ -34,7 +34,7 @@
                     {{ $t('managers.lovsManagement.definition') }}
                 </template>
             </Toolbar>
-            <DataTable :value="selectedValues" class="p-datatable-sm kn-table p-m-5" editMode="cell" responsiveLayout="stack" breakpoint="960px">
+            <DataTable :value="selectedValues" class="p-datatable-sm kn-table p-m-5" editMode="cell" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
                 <Column class="kn-truncated" field="level" :header="$t('managers.lovsManagement.level')"></Column>
                 <Column class="kn-truncated p-mr-2" field="value" :header="$t('managers.lovsManagement.value')">
                     <template #editor="slotProps">
@@ -145,6 +145,9 @@ export default defineComponent({
         removeValue(index: number) {
             this.selectedValues.splice(index, 1)
             this.$emit('modelChanged', this.selectedValues)
+        },
+        onCellEditComplete(event: any) {
+            this.selectedValues[event.index] = event.newData
         }
     }
 })

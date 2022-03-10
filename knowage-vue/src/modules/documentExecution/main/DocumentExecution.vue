@@ -1,20 +1,20 @@
 <template>
     <div class="kn-height-full detail-page-container">
-        <Toolbar v-if="!embed" class="kn-toolbar kn-toolbar--primary p-col-12">
+        <Toolbar v-if="!embed && !olapDesignerMode" class="kn-toolbar kn-toolbar--primary p-col-12">
             <template #start>
                 <span>{{ document?.label }}</span>
             </template>
 
             <template #end>
                 <div class="p-d-flex p-jc-around">
-                    <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'" class="pi pi-pencil kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></i>
-                    <i v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" class="fa fa-eye kn-cursor-pointer p-mx-4" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></i>
-                    <i class="pi pi-book kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></i>
-                    <i class="pi pi-refresh kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.refresh')" @click="refresh"></i>
-                    <i v-if="filtersData?.filterStatus?.length > 0 || !sessionRole" class="fa fa-filter kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></i>
-                    <i class="fa fa-ellipsis-v kn-cursor-pointer  p-mx-4" v-tooltip.left="$t('common.menu')" @click="toggle"></i>
+                    <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></Button>
+                    <Button icon="fa fa-eye" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></Button>
+                    <Button icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></Button>
+                    <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
+                    <Button icon="fa fa-filter" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="isParameterSidebarVisible" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></Button>
+                    <Button icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
                     <Menu ref="menu" :model="toolbarMenuItems" :popup="true" />
-                    <i class="fa fa-times kn-cursor-pointer p-mx-4" v-tooltip.left="$t('common.close')" @click="closeDocument"></i>
+                    <Button icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.close')" @click="closeDocument"></Button>
                 </div>
             </template>
         </Toolbar>
@@ -25,8 +25,19 @@
             <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
 
             <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
-                <Registry v-if="mode === 'registry'" :id="urlData.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
+                <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
                 <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
+                <Olap
+                    v-else-if="mode === 'olap'"
+                    :id="urlData?.sbiExecutionId"
+                    :olapId="document.id"
+                    :olapName="document.name"
+                    :reloadTrigger="reloadTrigger"
+                    :olapCustomViewVisible="olapCustomViewVisible"
+                    @closeOlapCustomView="olapCustomViewVisible = false"
+                    @applyCustomView="executeOlapCustomView"
+                    @executeCrossNavigation="executeOLAPCrossNavigation"
+                ></Olap>
             </template>
 
             <iframe
@@ -46,6 +57,7 @@
                 :filtersData="filtersData"
                 :propDocument="document"
                 :userRole="userRole"
+                :sessionEnabled="sessionEnabled"
                 @execute="onExecute"
                 @exportCSV="onExportCSV"
                 @roleChanged="onRoleChange"
@@ -65,7 +77,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
-import { formatDate } from '@/helpers/commons/localeHelper'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 import { iURLData, iExporter, iSchedulation } from './DocumentExecution'
 import DocumentExecutionBreadcrumb from './breadcrumbs/DocumentExecutionBreadcrumb.vue'
@@ -80,6 +91,10 @@ import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSi
 import Menu from 'primevue/menu'
 import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
+import Olap from '../olap/Olap.vue'
+import moment from 'moment'
+
+const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'document-execution',
@@ -95,10 +110,11 @@ export default defineComponent({
         KnParameterSidebar,
         Menu,
         Registry,
-        Dossier
+        Dossier,
+        Olap
     },
     props: { id: { type: String } },
-    emits: ['close'],
+    emits: ['close', 'updateDocumentName'],
     data() {
         return {
             document: null as any,
@@ -129,8 +145,11 @@ export default defineComponent({
             breadcrumbs: [] as any[],
             linkParameters: [],
             embed: false,
+            olapCustomViewVisible: false,
             userRole: null,
-            loading: false
+            loading: false,
+            olapDesignerMode: false,
+            sessionEnabled: false
         }
     },
     async activated() {
@@ -158,6 +177,18 @@ export default defineComponent({
             } else {
                 return ''
             }
+        },
+        isParameterSidebarVisible(): boolean {
+            let parameterVisible = false
+            for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {
+                const tempFilter = this.filtersData.filterStatus[i]
+                if (tempFilter.showOnPanel === 'true') {
+                    parameterVisible = true
+                    break
+                }
+            }
+
+            return parameterVisible || !this.sessionRole
         }
     },
     async created() {
@@ -170,6 +201,9 @@ export default defineComponent({
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
 
+        await this.loadUserConfig()
+
+        this.isOlapDesignerMode()
         this.setMode()
 
         this.document = { label: this.id }
@@ -199,7 +233,7 @@ export default defineComponent({
             this.loading = true
             this.documentMode = this.documentMode === 'EDIT' ? 'VIEW' : 'EDIT'
             this.hiddenFormData.set('documentMode', this.documentMode)
-            await this.loadURL()
+            await this.loadURL(null)
             this.loading = false
         },
         openHelp() {
@@ -207,7 +241,7 @@ export default defineComponent({
         },
         async refresh() {
             this.parameterSidebarVisible = false
-            await this.loadURL()
+            await this.loadURL(null)
             this.reloadTrigger = !this.reloadTrigger
         },
         toggle(event: Event) {
@@ -252,6 +286,14 @@ export default defineComponent({
 
             if (this.user.functionalities.includes('SeeSnapshotsFunctionality')) {
                 this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
+            }
+
+            if (this.isOrganizerEnabled()) {
+                this.toolbarMenuItems[3].items.unshift({ icon: 'fa fa-suitcase ', label: this.$t('documentExecution.main.addToWorkspace'), command: () => this.addToWorkspace() })
+            }
+
+            if (this.mode === 'olap') {
+                this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showOLAPCustomView'), command: () => this.showOLAPCustomView() })
             }
 
             if (this.user.functionalities.includes('EnableToCopyAndEmbed')) {
@@ -323,6 +365,8 @@ export default defineComponent({
                 this.mode = 'registry'
             } else if (this.$route.path.includes('dossier')) {
                 this.mode = 'dossier'
+            } else if (this.$route.path.includes('olap')) {
+                this.mode = 'olap'
             } else {
                 this.mode = 'iframe'
             }
@@ -332,13 +376,25 @@ export default defineComponent({
 
             await this.loadFilters()
             if (this.filtersData?.isReadyForExecution) {
-                await this.loadURL()
+                await this.loadURL(null)
                 await this.loadExporters()
             } else if (this.filtersData?.filterStatus) {
                 this.parameterSidebarVisible = true
             }
 
+            this.updateMode()
             this.loading = false
+        },
+        updateMode() {
+            if (this.document.typeCode === 'DATAMART') {
+                this.mode = 'registry'
+            } else if (this.document.typeCode === 'DOSSIER') {
+                this.mode = 'dossier'
+            } else if (this.document.typeCode === 'OLAP') {
+                this.mode = 'olap'
+            } else {
+                this.mode = 'iframe'
+            }
         },
         async loadDocument() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.document?.label}`).then((response: AxiosResponse<any>) => (this.document = response.data))
@@ -352,6 +408,19 @@ export default defineComponent({
             }
         },
         async loadFilters() {
+            if (this.sessionEnabled) {
+                const tempFilters = sessionStorage.getItem(this.document.label)
+                if (tempFilters) {
+                    this.filtersData = JSON.parse(tempFilters) as { filterStatus: iParameter[]; isReadyForExecution: boolean }
+                    this.filtersData.filterStatus?.forEach((filter: any) => {
+                        if (filter.type === 'DATE' && filter.parameterValue[0].value) {
+                            filter.parameterValue[0].value = new Date(filter.parameterValue[0].value)
+                        }
+                    })
+                    return
+                }
+            }
+
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.document.label, role: this.userRole, parameters: this.document.navigationParams ?? {} })
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
@@ -367,9 +436,20 @@ export default defineComponent({
             this.filtersData?.filterStatus?.forEach((el: iParameter) => {
                 el.parameterValue = el.multivalue ? [] : [{ value: '', description: '' }]
                 if (el.driverDefaultValue?.length > 0) {
+                    let valueIndex = '_col0'
+                    let descriptionIndex = 'col1'
+                    if (el.metadata?.colsMap) {
+                        valueIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.valueColumn) as any
+                        descriptionIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.descriptionColumn) as any
+                    }
+
                     el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {
-                        return { value: defaultValue.value ?? defaultValue._col0, description: defaultValue.desc ?? defaultValue._col1 }
+                        return { value: defaultValue.value ?? defaultValue[valueIndex], description: defaultValue.desc ?? defaultValue[descriptionIndex] }
                     })
+
+                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true') {
+                        el.parameterValue[0].value = moment(el.parameterValue[0].description?.split('#')[0]).toDate() as any
+                    }
                 }
                 if (el.data) {
                     el.data = el.data.map((data: any) => {
@@ -388,8 +468,8 @@ export default defineComponent({
                     el.parameterValue = [{ value: '', description: '' }]
                 }
 
-                if (!el.parameterValue[0].description) {
-                    el.parameterValue[0].description = ''
+                if (el.parameterValue[0] && !el.parameterValue[0].description) {
+                    el.parameterValue[0].description = el.parameterDescription ? el.parameterDescription[0] : ''
                 }
             })
 
@@ -419,20 +499,23 @@ export default defineComponent({
 
             return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
         },
-        async loadURL() {
-            const postData = { label: this.document.label, role: this.userRole, parameters: this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
+        async loadURL(olapParameters: any) {
+            const postData = { label: this.document.label, role: this.userRole, parameters: olapParameters ? olapParameters : this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
 
             if (this.sbiExecutionId) {
                 postData.SBI_EXECUTION_ID = this.sbiExecutionId
             }
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData)
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData, { headers: { 'X-Disable-Interceptor': 'true' } })
                 .then((response: AxiosResponse<any>) => {
                     this.urlData = response.data
                     this.sbiExecutionId = this.urlData?.sbiExecutionId as string
                 })
-                .catch(() => {})
+                .catch((response: AxiosResponse<any>) => {
+                    this.urlData = response.data
+                    this.sbiExecutionId = this.urlData?.sbiExecutionId as string
+                })
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) {
@@ -477,6 +560,7 @@ export default defineComponent({
                 if (inputElement) {
                     inputElement.value = decodeURIComponent(postObject.params[k])
                     inputElement.value = inputElement.value.replace(/\+/g, ' ')
+
                     this.hiddenFormData.set(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 } else {
                     const element = document.createElement('input')
@@ -485,23 +569,24 @@ export default defineComponent({
                     element.name = k
                     element.value = decodeURIComponent(postObject.params[k])
                     element.value = element.value.replace(/\+/g, ' ')
-                    postForm.appendChild(element)
 
+                    postForm.appendChild(element)
                     this.hiddenFormData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 }
             }
 
             for (let i = postForm.elements.length - 1; i >= 0; i--) {
-                const postFormElement = postForm.elements[i].id.replace('postForm_', '')
+                const postFormElement = postForm.elements[i].id.replace('postForm_' + postObject.params.document, '')
 
                 if (!(postFormElement in postObject.params)) {
+                    postForm.removeChild(postForm.elements[i])
                     this.hiddenFormData.delete(postFormElement)
                 }
             }
 
             this.hiddenFormData.append('documentMode', this.documentMode)
 
-            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER') {
+            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP') {
                 await this.sendHiddenFormData()
             } else {
                 postForm.submit()
@@ -524,9 +609,13 @@ export default defineComponent({
         async onExecute() {
             this.loading = true
             this.filtersData.isReadyForExecution = true
-            await this.loadURL()
+            await this.loadURL(null)
             this.parameterSidebarVisible = false
             this.reloadTrigger = !this.reloadTrigger
+
+            if (this.sessionEnabled) {
+                this.saveParametersInSession()
+            }
             this.loading = false
         },
         async onExportCSV() {
@@ -555,8 +644,8 @@ export default defineComponent({
 
                 if (parameter.parameterValue) {
                     if (parameter.type === 'DATE') {
-                        parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value, 'MM/DD/YYYY')
-                        parameters[parameter.urlName + '_field_visible_description'] = this.getFormattedDate(parameter.parameterValue[0].value, 'MM/DD/YYYY')
+                        parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value)
+                        parameters[parameter.urlName + '_field_visible_description'] = this.getFormattedDate(parameter.parameterValue[0].value)
                     } else if (parameter.valueSelection === 'man_in') {
                         parameters[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
                         parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
@@ -589,7 +678,7 @@ export default defineComponent({
 
                 if (parameter.parameterValue) {
                     if (parameter.type === 'DATE') {
-                        parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value, 'MM/DD/YYYY')
+                        parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value)
                     } else if (parameter.valueSelection === 'man_in' && !parameter.multivalue) {
                         parameters[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
                     } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
@@ -708,14 +797,15 @@ export default defineComponent({
             const index = this.schedulations.findIndex((el: any) => el.id === schedulation.id)
             if (index !== -1) this.schedulations.splice(index, 1)
         },
-        getFormattedDate(date: any, format: any) {
-            return formatDate(date, format)
+        getFormattedDate(date: any) {
+            return moment(date).format('DDMMYYYY')
         },
         onBreadcrumbClick(item: any) {
             this.document = item.document
             this.filtersData = item.filtersData
             this.urlData = item.urlData
             this.hiddenFormData = item.hiddenFormData
+            this.updateMode()
         },
         async onRoleChange(role: string) {
             this.userRole = role as any
@@ -757,6 +847,101 @@ export default defineComponent({
             })
 
             return formatedParams
+        },
+        showOLAPCustomView() {
+            this.olapCustomViewVisible = true
+        },
+        async executeOlapCustomView(payload: any) {
+            this.loading = true
+            this.olapCustomViewVisible = false
+            await this.loadURL(payload)
+            this.reloadTrigger = !this.reloadTrigger
+            this.loading = false
+        },
+        async executeOLAPCrossNavigation(crossNavigationParams: any) {
+            let temp = {} as any
+            this.loading = true
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
+            this.loading = false
+
+            if (!temp || temp.length === 0) {
+                this.$store.commit('setError', {
+                    title: this.$t('common.error.generic'),
+                    msg: this.$t('documentExecution.main.crossNavigationNoTargetError')
+                })
+                return
+            }
+
+            this.document = { ...temp[0].document, navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams) }
+
+            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+            if (index !== -1) {
+                this.breadcrumbs[index].document = this.document
+            } else {
+                this.breadcrumbs.push({ label: this.document.label, document: this.document })
+            }
+
+            await this.loadPage()
+            this.reloadTrigger = !this.reloadTrigger
+        },
+        formatOLAPNavigationParams(crossNavigationParams: any, navigationParams: any) {
+            const crossNavigationParamKeys = Object.keys(crossNavigationParams)
+            let formattedParams = {} as any
+
+            Object.keys(navigationParams).forEach((key: string) => {
+                const index = crossNavigationParamKeys.findIndex((el: string) => el === navigationParams[key].value.label)
+                if (index !== -1) {
+                    formattedParams[key] = crossNavigationParams[crossNavigationParamKeys[index]]
+                }
+            })
+
+            return formattedParams
+        },
+        isOlapDesignerMode() {
+            if (this.$route.name === 'olap-designer') {
+                this.olapDesignerMode = true
+            }
+        },
+        isOrganizerEnabled() {
+            return this.user.isSuperadmin || this.user.functionalities.includes('SaveIntoFolderFunctionality')
+        },
+        async addToWorkspace() {
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.document.id}`, {}, { headers: { 'X-Disable-Errors': 'true' } })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                })
+                .catch((error) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: error.message === 'sbi.workspace.organizer.document.addtoorganizer.error.duplicateentry' ? this.$t('documentExecution.main.addToWorkspaceError') : error.message
+                    })
+                })
+            this.loading = false
+        },
+        async loadUserConfig() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
+                if (response.data) {
+                    this.sessionEnabled = response.data['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
+                }
+            })
+        },
+        saveParametersInSession() {
+            const tempFilters = deepcopy(this.filtersData)
+            tempFilters.filterStatus?.forEach((filter: any) => {
+                delete filter.dataDependsOnParameters
+                delete filter.dataDependentParameters
+                delete filter.dependsOnParameters
+                delete filter.dependentParameters
+                delete filter.lovDependsOnParameters
+                delete filter.lovDependentParameters
+            })
+
+            sessionStorage.setItem(this.document.label, JSON.stringify(tempFilters))
         }
     }
 })

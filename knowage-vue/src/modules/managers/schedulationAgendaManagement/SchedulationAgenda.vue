@@ -100,179 +100,179 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iDataItem } from './SchedulationAgenda'
-import { formatDate } from '@/helpers/commons/localeHelper'
-import Calendar from 'primevue/calendar'
-import Card from 'primevue/card'
-import Toolbar from 'primevue/toolbar'
-import ProgressBar from 'primevue/progressbar'
-import schedulationAgendaDescriptor from './SchedulationAgendaDescriptor.json'
-import SchedulationAgendaDialog from './SchedulationAgendaDialog.vue'
-import { AxiosResponse } from 'axios'
+    import { defineComponent } from 'vue'
+    import { iDataItem } from './SchedulationAgenda'
+    import { formatDate } from '@/helpers/commons/localeHelper'
+    import Calendar from 'primevue/calendar'
+    import Card from 'primevue/card'
+    import Toolbar from 'primevue/toolbar'
+    import ProgressBar from 'primevue/progressbar'
+    import schedulationAgendaDescriptor from './SchedulationAgendaDescriptor.json'
+    import SchedulationAgendaDialog from './SchedulationAgendaDialog.vue'
+    import { AxiosResponse } from 'axios'
 
-export default defineComponent({
-    name: 'schedulation-agenda',
-    components: {
-        Calendar,
-        Card,
-        Toolbar,
-        ProgressBar,
-        SchedulationAgendaDialog
-    },
-    data() {
-        return {
-            schedulationAgendaDescriptor: schedulationAgendaDescriptor,
-            schedulations: [] as any,
-            selectedPackage: null as iDataItem | null,
-            selectedDocument: null as iDataItem | null,
-            selectedPackageName: '',
-            selectedDocumentName: '',
-            packageList: [] as iDataItem[],
-            documentList: [] as iDataItem[],
-            loading: false,
-            startDateTime: null as Date | null,
-            endDateTime: null as Date | null,
-            displayFormType: ''
-        }
-    },
-    computed: {
-        minStartDate() {
-            return new Date()
-        }
-    },
-    created() {
-        this.startDateTime = new Date()
-        this.endDateTime = new Date()
-        this.endDateTime.setDate(this.endDateTime.getDate() + 7)
-
-        this.loadPackages()
-        this.loadDocuments()
-    },
-    watch: {
-        selectedPackage() {
-            if (this.selectedPackage) this.selectedPackageName = this.selectedPackage.name
+    export default defineComponent({
+        name: 'schedulation-agenda',
+        components: {
+            Calendar,
+            Card,
+            Toolbar,
+            ProgressBar,
+            SchedulationAgendaDialog
         },
-        selectedDocument() {
-            if (this.selectedDocument) this.selectedDocumentName = this.selectedDocument.name
-        }
-    },
-    methods: {
-        async loadPackages() {
-            this.loading = true
-            await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/scheduleree/listAllJobs')
-                .then((response: AxiosResponse<any>) => {
-                    let rawList = response.data.root
-                    let filteredList = rawList.filter((x) => x.jobGroup == 'BIObjectExecutions')
+        data() {
+            return {
+                schedulationAgendaDescriptor: schedulationAgendaDescriptor,
+                schedulations: [] as any,
+                selectedPackage: null as iDataItem | null,
+                selectedDocument: null as iDataItem | null,
+                selectedPackageName: '',
+                selectedDocumentName: '',
+                packageList: [] as iDataItem[],
+                documentList: [] as iDataItem[],
+                loading: false,
+                startDateTime: null as Date | null,
+                endDateTime: null as Date | null,
+                displayFormType: ''
+            }
+        },
+        computed: {
+            minStartDate() {
+                return new Date()
+            }
+        },
+        created() {
+            this.startDateTime = new Date()
+            this.endDateTime = new Date()
+            this.endDateTime.setDate(this.endDateTime.getDate() + 7)
 
-                    filteredList.map((item: any) => {
-                        this.packageList.push({
-                            id: item.jobName,
-                            name: item.jobName,
-                            description: item.jobDescription
-                        } as iDataItem)
+            this.loadPackages()
+            this.loadDocuments()
+        },
+        watch: {
+            selectedPackage() {
+                if (this.selectedPackage) this.selectedPackageName = this.selectedPackage.name
+            },
+            selectedDocument() {
+                if (this.selectedDocument) this.selectedDocumentName = this.selectedDocument.name
+            }
+        },
+        methods: {
+            async loadPackages() {
+                this.loading = true
+                await this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/scheduleree/listAllJobs')
+                    .then((response: AxiosResponse<any>) => {
+                        let rawList = response.data.root
+                        let filteredList = rawList.filter((x) => x.jobGroup == 'BIObjectExecutions')
+
+                        filteredList.map((item: any) => {
+                            this.packageList.push({
+                                id: item.jobName,
+                                name: item.jobName,
+                                description: item.jobDescription
+                            } as iDataItem)
+                        })
                     })
-                })
-                .finally(() => (this.loading = false))
-        },
-        async loadDocuments() {
-            this.loading = true
-            await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents')
-                .then((response: AxiosResponse<any>) => {
-                    this.documentList = response.data
-                })
-                .finally(() => (this.loading = false))
-        },
-        showForm(formType) {
-            this.displayFormType = formType
-        },
-        closeForm() {
-            this.displayFormType = ''
-        },
-        selectedPackageChanged(dataItem: any) {
-            this.selectedPackage = dataItem
-            this.displayFormType = ''
-        },
-        selectedDocumentChanged(dataItem: any) {
-            this.selectedDocument = dataItem
-            this.displayFormType = ''
-        },
-        runSearch() {
-            this.loading = true
+                    .finally(() => (this.loading = false))
+            },
+            async loadDocuments() {
+                this.loading = true
+                await this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents')
+                    .then((response: AxiosResponse<any>) => {
+                        this.documentList = response.data
+                    })
+                    .finally(() => (this.loading = false))
+            },
+            showForm(formType) {
+                this.displayFormType = formType
+            },
+            closeForm() {
+                this.displayFormType = ''
+            },
+            selectedPackageChanged(dataItem: any) {
+                this.selectedPackage = dataItem
+                this.displayFormType = ''
+            },
+            selectedDocumentChanged(dataItem: any) {
+                this.selectedDocument = dataItem
+                this.displayFormType = ''
+            },
+            runSearch() {
+                this.loading = true
 
-            let path = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/nextExecutions?start=${this.formatDateTime(this.startDateTime)}&end=${this.formatDateTime(this.endDateTime)}`
-            if (this.selectedPackage) {
-                path += `&jobPackageName=${this.selectedPackage.id}`
-            }
-            if (this.selectedDocument) {
-                path += `&document=${this.selectedDocument.label}`
-            }
-            this.$http
-                .get(path)
-                .then((response: AxiosResponse<any>) => {
-                    this.schedulations = response.data.root
-                })
-                .finally(() => (this.loading = false))
+                let path = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/nextExecutions?start=${this.formatDateTime(this.startDateTime)}&end=${this.formatDateTime(this.endDateTime)}`
+                if (this.selectedPackage) {
+                    path += `&jobPackageName=${this.selectedPackage.id}`
+                }
+                if (this.selectedDocument) {
+                    path += `&document=${this.selectedDocument.label}`
+                }
+                this.$http
+                    .get(path)
+                    .then((response: AxiosResponse<any>) => {
+                        this.schedulations = response.data.root
+                    })
+                    .finally(() => (this.loading = false))
 
-            this.$router.push('/schedulation-agenda/search-result')
-        },
-        formatDateTime(date: any) {
-            return formatDate(date, 'YYYY-MM-DDTHH:MM:SS')
-        },
-        removeSelectedPackage() {
-            this.selectedPackage = null
-            this.selectedPackageName = ''
-        },
-        removeSelectedDocument() {
-            this.selectedDocument = null
-            this.selectedDocumentName = ''
+                this.$router.push('/schedulation-agenda/search-result')
+            },
+            formatDateTime(date: any) {
+                return formatDate(date, 'YYYY-MM-DDTHH:MM:SS')
+            },
+            removeSelectedPackage() {
+                this.selectedPackage = null
+                this.selectedPackageName = ''
+            },
+            removeSelectedDocument() {
+                this.selectedDocument = null
+                this.selectedDocumentName = ''
+            }
         }
-    }
-})
+    })
 </script>
 <style lang="scss" scoped>
-.flex-container-overflow-auto {
-    flex: 1;
-    overflow: auto;
-}
-.flex-no-resize {
-    flex-grow: 0;
-    flex-shrink: 0;
-}
-
-.custom-timepicker {
-    &:deep(.p-datepicker) {
-        border-color: transparent;
+    .flex-container-overflow-auto {
+        flex: 1;
+        overflow: auto;
     }
-}
+    .flex-no-resize {
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
 
-.card-no-padding {
-    :deep(.p-card-body) {
-        padding: 0;
-        .p-card-content {
-            padding: 0;
+    .custom-timepicker {
+        &:deep(.p-datepicker) {
+            border-color: transparent;
         }
     }
 
-    :deep(.p-datepicker) {
-        padding: 0;
-        .p-timepicker {
+    .card-no-padding {
+        :deep(.p-card-body) {
             padding: 0;
+            .p-card-content {
+                padding: 0;
+            }
+        }
+
+        :deep(.p-datepicker) {
+            padding: 0;
+            .p-timepicker {
+                padding: 0;
+            }
         }
     }
-}
-.custom-overflow-parent-container {
-    overflow: hidden;
-    min-width: 0;
-}
-.custom-overflow-auto {
-    min-width: 0;
-    overflow: auto;
-    flex-grow: 1;
-}
-.custom-kn-page-width {
-    width: calc(100vw - #{$mainmenu-width});
-}
+    .custom-overflow-parent-container {
+        overflow: hidden;
+        min-width: 0;
+    }
+    .custom-overflow-auto {
+        min-width: 0;
+        overflow: auto;
+        flex-grow: 1;
+    }
+    .custom-kn-page-width {
+        width: calc(100vw - var(--kn-mainmenu-width));
+    }
 </style>

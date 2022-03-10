@@ -28,47 +28,47 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Dialog from 'primevue/dialog'
-import Rating from 'primevue/rating'
+    import { defineComponent } from 'vue'
+    import Dialog from 'primevue/dialog'
+    import Rating from 'primevue/rating'
 
-export default defineComponent({
-    name: 'document-execution-help-dialog',
-    components: { Dialog, Rating },
-    props: { visible: { type: Boolean }, propDocumentRank: { type: Object } },
-    emits: ['close', 'saveRank'],
-    data() {
-        return {
-            documentRank: null as string | null,
-            newRank: null as string | null
-        }
-    },
-    watch: {
-        propDocumentRank() {
+    export default defineComponent({
+        name: 'document-execution-help-dialog',
+        components: { Dialog, Rating },
+        props: { visible: { type: Boolean }, propDocumentRank: { type: Object } },
+        emits: ['close', 'saveRank'],
+        data() {
+            return {
+                documentRank: null as string | null,
+                newRank: null as string | null
+            }
+        },
+        watch: {
+            propDocumentRank() {
+                this.loadDocumentRank()
+            }
+        },
+        created() {
             this.loadDocumentRank()
-        }
-    },
-    created() {
-        this.loadDocumentRank()
-    },
-    methods: {
-        loadDocumentRank() {
-            this.newRank = null
-            this.documentRank = this.propDocumentRank as any
         },
-        closeDialog() {
-            this.newRank = null
-            this.$emit('close')
-        },
-        save() {
-            this.$emit('saveRank', this.newRank)
+        methods: {
+            loadDocumentRank() {
+                this.newRank = null
+                this.documentRank = this.propDocumentRank as any
+            },
+            closeDialog() {
+                this.newRank = null
+                this.$emit('close')
+            },
+            save() {
+                this.$emit('saveRank', this.newRank)
+            }
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss">
-.document-execution-rank-stars .p-rating-icon {
-    font-size: 2rem;
-}
+    .document-execution-rank-stars .p-rating-icon {
+        font-size: 2rem;
+    }
 </style>

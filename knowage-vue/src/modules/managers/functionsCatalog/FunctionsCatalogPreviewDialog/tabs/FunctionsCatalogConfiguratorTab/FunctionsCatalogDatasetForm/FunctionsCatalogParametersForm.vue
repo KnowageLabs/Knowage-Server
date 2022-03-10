@@ -19,34 +19,34 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Card from 'primevue/card'
+    import { defineComponent } from 'vue'
+    import Card from 'primevue/card'
 
-export default defineComponent({
-    name: 'function-catalog-parameters-form',
-    components: { Card },
-    props: { propParameters: { type: Array } },
-    data() {
-        return {
-            parameters: [] as any[]
-        }
-    },
-    watch: {
-        propParameters() {
+    export default defineComponent({
+        name: 'function-catalog-parameters-form',
+        components: { Card },
+        props: { propParameters: { type: Array } },
+        data() {
+            return {
+                parameters: [] as any[]
+            }
+        },
+        watch: {
+            propParameters() {
+                this.loadParameters()
+            }
+        },
+        created() {
             this.loadParameters()
+        },
+        methods: {
+            loadParameters() {
+                this.parameters = []
+                this.propParameters?.forEach((el: any) => {
+                    el.value = el.defaultValue
+                    this.parameters.push(el)
+                })
+            }
         }
-    },
-    created() {
-        this.loadParameters()
-    },
-    methods: {
-        loadParameters() {
-            this.parameters = []
-            this.propParameters?.forEach((el: any) => {
-                el.value = el.defaultValue
-                this.parameters.push(el)
-            })
-        }
-    }
-})
+    })
 </script>

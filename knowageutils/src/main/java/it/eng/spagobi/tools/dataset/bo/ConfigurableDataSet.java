@@ -144,6 +144,7 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 					((FileDatasetCsvDataReader) dataReader).setMetaData(this.getMetadata());
 			} catch (Exception e) {
 				// Yes, it's mute
+				logger.debug("Cannot set user metadata", e);
 			}
 
 			dataStore = dataProxy.load(dataReader);

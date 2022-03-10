@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-mt-3">
+    <Card class="p-m-2">
         <template #content>
             <div class="p-field">
                 <span class="p-float-label">
@@ -31,6 +31,9 @@
                     <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandQueryCard = false" />
                     {{ $t('managers.datasetManagement.editQuery') }}
                 </template>
+                <template #end>
+                    <Button icon="fas fa-info-circle" class="p-button-text p-button-rounded p-button-plain p-col-1" @click="helpDialogVisible = true" />
+                </template>
             </Toolbar>
             <Card v-show="expandQueryCard">
                 <template #content>
@@ -56,6 +59,8 @@
             </Card>
         </template>
     </Card>
+
+    <HelpDialog :visible="helpDialogVisible" @close="helpDialogVisible = false" />
 </template>
 
 <script lang="ts">
@@ -67,9 +72,10 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import queryDescriptor from './DatasetManagementQueryDataset.json'
 import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
+import HelpDialog from './DatasetManagementQueryHelpDialog.vue'
 
 export default defineComponent({
-    components: { Card, Dropdown, KnValidationMessages, VCodeMirror },
+    components: { Card, Dropdown, KnValidationMessages, VCodeMirror, HelpDialog },
     props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, scriptTypes: { type: Array as any } },
     emits: ['touched'],
     data() {
@@ -80,6 +86,7 @@ export default defineComponent({
             codeMirrorScript: {} as any,
             v$: useValidate() as any,
             expandQueryCard: true,
+            helpDialogVisible: false,
             expandScriptCard: false,
             codemirrorOptions: {
                 mode: 'text/x-sql',

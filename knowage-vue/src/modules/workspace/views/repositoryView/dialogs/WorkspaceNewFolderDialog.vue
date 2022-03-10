@@ -71,47 +71,47 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { createValidations } from '@/helpers/commons/validationHelper'
-import Dialog from 'primevue/dialog'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import workspaceNewFolderDialogDescriptor from './WorkspaceNewFolderDialogDescriptor.json'
-import useValidate from '@vuelidate/core'
+    import { defineComponent } from 'vue'
+    import { createValidations } from '@/helpers/commons/validationHelper'
+    import Dialog from 'primevue/dialog'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import workspaceNewFolderDialogDescriptor from './WorkspaceNewFolderDialogDescriptor.json'
+    import useValidate from '@vuelidate/core'
 
-export default defineComponent({
-    name: 'workspace-repository-move-dialog',
-    components: { Dialog, KnValidationMessages },
-    props: { visible: { type: Boolean } },
-    emits: ['close', 'create'],
-    data() {
-        return {
-            v$: useValidate() as any,
-            workspaceNewFolderDialogDescriptor,
-            newFolder: {} as any
-        }
-    },
-    validations() {
-        return {
-            newFolder: createValidations('newFolder', workspaceNewFolderDialogDescriptor.validations.newFolder)
-        }
-    },
-    computed: {
-        buttonDisabled(): any {
-            return this.v$.$invalid
-        }
-    },
-    created() {},
-    methods: {
-        closeDialog() {
-            this.newFolder = {} as any
-            this.v$.$reset()
-            this.$emit('close')
+    export default defineComponent({
+        name: 'workspace-repository-move-dialog',
+        components: { Dialog, KnValidationMessages },
+        props: { visible: { type: Boolean } },
+        emits: ['close', 'create'],
+        data() {
+            return {
+                v$: useValidate() as any,
+                workspaceNewFolderDialogDescriptor,
+                newFolder: {} as any
+            }
         },
-        createFolder() {
-            this.$emit('create', this.newFolder)
-            this.newFolder = {} as any
-            this.v$.$reset()
+        validations() {
+            return {
+                newFolder: createValidations('newFolder', workspaceNewFolderDialogDescriptor.validations.newFolder)
+            }
+        },
+        computed: {
+            buttonDisabled(): any {
+                return this.v$.$invalid
+            }
+        },
+        created() {},
+        methods: {
+            closeDialog() {
+                this.newFolder = {} as any
+                this.v$.$reset()
+                this.$emit('close')
+            },
+            createFolder() {
+                this.$emit('create', this.newFolder)
+                this.newFolder = {} as any
+                this.v$.$reset()
+            }
         }
-    }
-})
+    })
 </script>

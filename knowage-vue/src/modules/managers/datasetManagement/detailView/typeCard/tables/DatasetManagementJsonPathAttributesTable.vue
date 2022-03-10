@@ -13,7 +13,7 @@
     </Toolbar>
     <Card v-show="expandTableCard">
         <template #content>
-            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.restJsonPathAttributes" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
+            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.restJsonPathAttributes" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
                 <template #empty>
                     {{ $t('managers.datasetManagement.tableEmpty') }}
                 </template>
@@ -35,11 +35,6 @@
                         <Dropdown id="scope" class="kn-material-input" :style="tableDescriptor.style.columnStyle" :options="jsonPathTypes" v-model="data.jsonPathType" />
                     </template>
                 </Column>
-                <!-- <Column field="typeOrJsonPathValue" :header="$t('managers.datasetManagement.typeOrJsonPathValue')" :sortable="true">
-                    <template #editor="{data}">
-                        <Dropdown id="scope" class="kn-material-input" :style="tableDescriptor.style.columnStyle" :options="jsonPathTypes" v-model="data.jsonPathType" />
-                    </template>
-                </Column> -->
                 <Column @rowClick="false">
                     <template #body="slotProps">
                         <Button icon="pi pi-trash" class="p-button-link" @click="deleteParam(slotProps)" />
@@ -115,6 +110,9 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => (this.dataset.restJsonPathAttributes = [])
             })
+        },
+        onCellEditComplete(event) {
+            this.dataset.restJsonPathAttributes[event.index] = event.newData
         }
     }
 })

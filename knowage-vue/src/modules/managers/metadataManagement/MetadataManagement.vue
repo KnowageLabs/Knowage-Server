@@ -45,107 +45,107 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iMetadata } from './MetadataManagement'
-import { AxiosResponse } from 'axios'
-import KnFabButton from '@/components/UI/KnFabButton.vue'
-import KnHint from '@/components/UI/KnHint.vue'
-import Listbox from 'primevue/listbox'
-import metadataManagementDescriptor from './MetadataManagementDescriptor.json'
-import MetadataManagementDetail from './MetadataManagementDetail.vue'
+    import { defineComponent } from 'vue'
+    import { iMetadata } from './MetadataManagement'
+    import { AxiosResponse } from 'axios'
+    import KnFabButton from '@/components/UI/KnFabButton.vue'
+    import KnHint from '@/components/UI/KnHint.vue'
+    import Listbox from 'primevue/listbox'
+    import metadataManagementDescriptor from './MetadataManagementDescriptor.json'
+    import MetadataManagementDetail from './MetadataManagementDetail.vue'
 
-export default defineComponent({
-    name: 'metadata-management',
-    components: { KnFabButton, Listbox, MetadataManagementDetail, KnHint },
-    data() {
-        return {
-            metadataManagementDescriptor: metadataManagementDescriptor,
-            metadataList: [] as iMetadata[],
-            formVisible: false,
-            loading: false,
-            touched: false,
-            selectedMetadata: {} as iMetadata
-        }
-    },
-    created() {
-        this.loadAllMetadata()
-    },
-    methods: {
-        async loadAllMetadata() {
-            this.loading = true
-            this.metadataList = []
-            await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata')
-                .then((response: AxiosResponse<any>) =>
-                    response.data.map((metadata: any) => {
-                        this.metadataList.push({
-                            id: metadata.objMetaId,
-                            label: metadata.label,
-                            name: metadata.name,
-                            description: metadata.description,
-                            dataType: metadata.dataTypeCode
-                        })
-                    })
-                )
-                .finally(() => (this.loading = false))
-        },
-        showForm(event: any) {
-            if (!this.touched) {
-                this.setSelectedMetadata(event)
-            } else {
-                this.$confirm.require({
-                    message: this.$t('common.toast.unsavedChangesMessage'),
-                    header: this.$t('common.toast.unsavedChangesHeader'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        this.touched = false
-                        this.setSelectedMetadata(event)
-                    }
-                })
+    export default defineComponent({
+        name: 'metadata-management',
+        components: { KnFabButton, Listbox, MetadataManagementDetail, KnHint },
+        data() {
+            return {
+                metadataManagementDescriptor: metadataManagementDescriptor,
+                metadataList: [] as iMetadata[],
+                formVisible: false,
+                loading: false,
+                touched: false,
+                selectedMetadata: {} as iMetadata
             }
         },
-        deleteMetadataConfirm(metadataId: number) {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteMetadata(metadataId)
-            })
-        },
-        async deleteMetadata(metadataId: number) {
-            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata/' + metadataId).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
-                })
-                this.closeForm()
-                this.loadAllMetadata()
-            })
-        },
-        closeForm() {
-            this.formVisible = false
-        },
-        reloadMetadata() {
-            this.touched = false
-            this.formVisible = false
+        created() {
             this.loadAllMetadata()
         },
-        setSelectedMetadata(event: any) {
-            if (event) {
-                this.selectedMetadata = event.value
+        methods: {
+            async loadAllMetadata() {
+                this.loading = true
+                this.metadataList = []
+                await this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata')
+                    .then((response: AxiosResponse<any>) =>
+                        response.data.map((metadata: any) => {
+                            this.metadataList.push({
+                                id: metadata.objMetaId,
+                                label: metadata.label,
+                                name: metadata.name,
+                                description: metadata.description,
+                                dataType: metadata.dataTypeCode
+                            })
+                        })
+                    )
+                    .finally(() => (this.loading = false))
+            },
+            showForm(event: any) {
+                if (!this.touched) {
+                    this.setSelectedMetadata(event)
+                } else {
+                    this.$confirm.require({
+                        message: this.$t('common.toast.unsavedChangesMessage'),
+                        header: this.$t('common.toast.unsavedChangesHeader'),
+                        icon: 'pi pi-exclamation-triangle',
+                        accept: () => {
+                            this.touched = false
+                            this.setSelectedMetadata(event)
+                        }
+                    })
+                }
+            },
+            deleteMetadataConfirm(metadataId: number) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.deleteMetadata(metadataId)
+                })
+            },
+            async deleteMetadata(metadataId: number) {
+                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata/' + metadataId).then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.closeForm()
+                    this.loadAllMetadata()
+                })
+            },
+            closeForm() {
+                this.formVisible = false
+            },
+            reloadMetadata() {
+                this.touched = false
+                this.formVisible = false
+                this.loadAllMetadata()
+            },
+            setSelectedMetadata(event: any) {
+                if (event) {
+                    this.selectedMetadata = event.value
+                }
+                this.formVisible = true
             }
-            this.formVisible = true
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-.kn-list-column {
-    border-right: 1px solid #ccc;
-}
+    .kn-list-column {
+        border-right: 1px solid #ccc;
+    }
 
-.list-header {
-    font-weight: bold;
-}
+    .list-header {
+        font-weight: bold;
+    }
 </style>

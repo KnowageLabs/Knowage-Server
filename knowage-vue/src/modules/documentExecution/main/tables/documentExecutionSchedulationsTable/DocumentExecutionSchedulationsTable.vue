@@ -54,69 +54,69 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { filterDefault } from '@/helpers/commons/filterHelper'
-import { formatDate } from '@/helpers/commons/localeHelper'
-import { iSchedulation } from '../../DocumentExecution'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import Message from 'primevue/message'
-import documentExecutionSchedulationsTableDescriptor from './DocumentExecutionSchedulationsTableDescriptor.json'
-import DocumentExecutionSnapshotDialog from './DocumentExecutionSnapshotDialog.vue'
+    import { defineComponent } from 'vue'
+    import { filterDefault } from '@/helpers/commons/filterHelper'
+    import { formatDate } from '@/helpers/commons/localeHelper'
+    import { iSchedulation } from '../../DocumentExecution'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import Message from 'primevue/message'
+    import documentExecutionSchedulationsTableDescriptor from './DocumentExecutionSchedulationsTableDescriptor.json'
+    import DocumentExecutionSnapshotDialog from './DocumentExecutionSnapshotDialog.vue'
 
-export default defineComponent({
-    name: 'document-execution-schedulations-table',
-    components: { Column, DataTable, DocumentExecutionSnapshotDialog, Message },
-    props: { propSchedulations: { type: Array } },
-    emits: ['deleteSchedulation', 'close'],
-    data() {
-        return {
-            documentExecutionSchedulationsTableDescriptor,
-            schedulations: [] as iSchedulation[],
-            filters: { global: [filterDefault] } as Object,
-            url: '' as string,
-            snapshotDialogVisible: false,
-            user: null as any
-        }
-    },
-    watch: {
-        propSchedulations() {
+    export default defineComponent({
+        name: 'document-execution-schedulations-table',
+        components: { Column, DataTable, DocumentExecutionSnapshotDialog, Message },
+        props: { propSchedulations: { type: Array } },
+        emits: ['deleteSchedulation', 'close'],
+        data() {
+            return {
+                documentExecutionSchedulationsTableDescriptor,
+                schedulations: [] as iSchedulation[],
+                filters: { global: [filterDefault] } as Object,
+                url: '' as string,
+                snapshotDialogVisible: false,
+                user: null as any
+            }
+        },
+        watch: {
+            propSchedulations() {
+                this.loadSchedulations()
+            }
+        },
+        created() {
+            this.user = (this.$store.state as any).user
             this.loadSchedulations()
+        },
+        methods: {
+            loadSchedulations() {
+                this.schedulations = this.propSchedulations as any[]
+            },
+            getFormattedDate(date: any, format: any) {
+                return formatDate(date, format)
+            },
+            downloadSnapshot(schedulation: any) {
+                this.url = process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?NEW_SESSION=TRUE&user_id=${this.user?.userUniqueIdentifier}&ACTION_NAME=GET_SNAPSHOT_CONTENT&SNAPSHOT_ID=${schedulation.id}&LIGHT_NAVIGATOR_DISABLED=TRUE&OBJECT_ID=${schedulation.biobjId}`
+                this.snapshotDialogVisible = true
+            },
+            deleteSchedulationConfirm(schedulation: iSchedulation) {
+                this.$confirm.require({
+                    message: this.$t('documentExecution.dossier.deleteConfirm'),
+                    header: this.$t('documentExecution.dossier.deleteTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.$emit('deleteSchedulation', schedulation)
+                })
+            },
+            closeTable() {
+                this.schedulations = []
+                this.$emit('close')
+            }
         }
-    },
-    created() {
-        this.user = (this.$store.state as any).user
-        this.loadSchedulations()
-    },
-    methods: {
-        loadSchedulations() {
-            this.schedulations = this.propSchedulations as any[]
-        },
-        getFormattedDate(date: any, format: any) {
-            return formatDate(date, format)
-        },
-        downloadSnapshot(schedulation: any) {
-            this.url = process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?NEW_SESSION=TRUE&user_id=${this.user?.userUniqueIdentifier}&ACTION_NAME=GET_SNAPSHOT_CONTENT&SNAPSHOT_ID=${schedulation.id}&LIGHT_NAVIGATOR_DISABLED=TRUE&OBJECT_ID=${schedulation.biobjId}`
-            this.snapshotDialogVisible = true
-        },
-        deleteSchedulationConfirm(schedulation: iSchedulation) {
-            this.$confirm.require({
-                message: this.$t('documentExecution.dossier.deleteConfirm'),
-                header: this.$t('documentExecution.dossier.deleteTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.$emit('deleteSchedulation', schedulation)
-            })
-        },
-        closeTable() {
-            this.schedulations = []
-            this.$emit('close')
-        }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-#document-execution-schedulations-close-button {
-    font-size: 0.75rem;
-}
+    #document-execution-schedulations-close-button {
+        font-size: 0.75rem;
+    }
 </style>

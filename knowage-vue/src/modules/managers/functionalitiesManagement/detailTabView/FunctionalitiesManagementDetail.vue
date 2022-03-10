@@ -113,197 +113,197 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { createValidations } from '@/helpers/commons/validationHelper'
-import { AxiosResponse } from 'axios'
-import useValidate from '@vuelidate/core'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import detailDescriptor from './FunctionalitiesManagementDetailDescriptor.json'
-import validationDescriptor from './FunctionalitiesManagementValidation.json'
-import Card from 'primevue/card'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import Checkbox from 'primevue/checkbox'
+    import { defineComponent } from 'vue'
+    import { createValidations } from '@/helpers/commons/validationHelper'
+    import { AxiosResponse } from 'axios'
+    import useValidate from '@vuelidate/core'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import detailDescriptor from './FunctionalitiesManagementDetailDescriptor.json'
+    import validationDescriptor from './FunctionalitiesManagementValidation.json'
+    import Card from 'primevue/card'
+    import DataTable from 'primevue/datatable'
+    import Column from 'primevue/column'
+    import Checkbox from 'primevue/checkbox'
 
-export default defineComponent({
-    emits: ['touched', 'close', 'inserted'],
-    props: {
-        functionality: Object,
-        rolesShort: Array as any,
-        parentId: Number
-    },
-    components: {
-        Card,
-        DataTable,
-        Column,
-        Checkbox,
-        KnValidationMessages
-    },
-    data() {
-        return {
-            v$: useValidate() as any,
-            detailDescriptor,
-            validationDescriptor,
-            formVisible: false,
-            selectedFolder: {} as any,
-            parentFolder: null as any,
-            roles: [] as any,
-            checked: [] as any,
-            loading: false,
-            dirty: false
-        }
-    },
-    computed: {
-        buttonDisabled(): Boolean {
-            return this.v$.$invalid
-        }
-    },
-    validations() {
-        return {
-            selectedFolder: createValidations('selectedFolder', validationDescriptor.validations.selectedFolder)
-        }
-    },
-    async created() {
-        this.loading = true
-        this.selectedFolder = { ...this.functionality }
-        await this.loadParentFolder()
-        this.loadRoles()
-        this.loading = false
-    },
-    watch: {
-        async functionality() {
+    export default defineComponent({
+        emits: ['touched', 'close', 'inserted'],
+        props: {
+            functionality: Object,
+            rolesShort: Array as any,
+            parentId: Number
+        },
+        components: {
+            Card,
+            DataTable,
+            Column,
+            Checkbox,
+            KnValidationMessages
+        },
+        data() {
+            return {
+                v$: useValidate() as any,
+                detailDescriptor,
+                validationDescriptor,
+                formVisible: false,
+                selectedFolder: {} as any,
+                parentFolder: null as any,
+                roles: [] as any,
+                checked: [] as any,
+                loading: false,
+                dirty: false
+            }
+        },
+        computed: {
+            buttonDisabled(): Boolean {
+                return this.v$.$invalid
+            }
+        },
+        validations() {
+            return {
+                selectedFolder: createValidations('selectedFolder', validationDescriptor.validations.selectedFolder)
+            }
+        },
+        async created() {
             this.loading = true
-            this.v$.$reset()
             this.selectedFolder = { ...this.functionality }
             await this.loadParentFolder()
             this.loadRoles()
             this.loading = false
         },
-        rolesShort() {
-            this.loadRoles()
-        }
-    },
-    methods: {
-        closeTemplate() {
-            this.$emit('close')
-        },
-        loadRoles() {
-            this.roles = []
-            const tempFolder = this.selectedFolder.id ? this.selectedFolder : this.parentFolder
-            this.rolesShort.forEach((role: any) => {
-                const tempRole = {
-                    id: role.id,
-                    name: role.name,
-                    development: false,
-                    test: false,
-                    execution: false,
-                    creation: false,
-                    isButtonDisabled: false
-                }
-                this.roleIsChecked(tempRole, tempFolder.devRoles, 'development')
-                this.roleIsChecked(tempRole, tempFolder.testRoles, 'test')
-                this.roleIsChecked(tempRole, tempFolder.execRoles, 'execution')
-                this.roleIsChecked(tempRole, tempFolder.createRoles, 'creation')
-
-                for (let field of ['devRoles', 'testRoles', 'execRoles', 'createRoles']) {
-                    this.isCheckable(tempRole, field)
-                }
-
-                if (tempRole['devRoles'].checkable == false && tempRole['testRoles'].checkable == false && tempRole['execRoles'].checkable == false && tempRole['createRoles'].checkable == false) tempRole.isButtonDisabled = true
-
-                this.roles.push(tempRole)
-            })
-        },
-        async loadParentFolder() {
-            if (this.parentId) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/getParent/${this.parentId}`).then((response: AxiosResponse<any>) => (this.parentFolder = response.data))
+        watch: {
+            async functionality() {
+                this.loading = true
+                this.v$.$reset()
+                this.selectedFolder = { ...this.functionality }
+                await this.loadParentFolder()
+                this.loadRoles()
+                this.loading = false
+            },
+            rolesShort() {
+                this.loadRoles()
             }
         },
-        roleIsChecked(role: any, roles: [], roleField: string) {
-            if (roles) {
-                const index = roles.findIndex((currentRole: any) => role.id === currentRole.id)
+        methods: {
+            closeTemplate() {
+                this.$emit('close')
+            },
+            loadRoles() {
+                this.roles = []
+                const tempFolder = this.selectedFolder.id ? this.selectedFolder : this.parentFolder
+                this.rolesShort.forEach((role: any) => {
+                    const tempRole = {
+                        id: role.id,
+                        name: role.name,
+                        development: false,
+                        test: false,
+                        execution: false,
+                        creation: false,
+                        isButtonDisabled: false
+                    }
+                    this.roleIsChecked(tempRole, tempFolder.devRoles, 'development')
+                    this.roleIsChecked(tempRole, tempFolder.testRoles, 'test')
+                    this.roleIsChecked(tempRole, tempFolder.execRoles, 'execution')
+                    this.roleIsChecked(tempRole, tempFolder.createRoles, 'creation')
 
-                if (index > -1) {
-                    role[roleField] = true
+                    for (let field of ['devRoles', 'testRoles', 'execRoles', 'createRoles']) {
+                        this.isCheckable(tempRole, field)
+                    }
+
+                    if (tempRole['devRoles'].checkable == false && tempRole['testRoles'].checkable == false && tempRole['execRoles'].checkable == false && tempRole['createRoles'].checkable == false) tempRole.isButtonDisabled = true
+
+                    this.roles.push(tempRole)
+                })
+            },
+            async loadParentFolder() {
+                if (this.parentId) {
+                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/getParent/${this.parentId}`).then((response: AxiosResponse<any>) => (this.parentFolder = response.data))
                 }
-            }
-        },
-        isCheckable(role: any, roleField: string) {
-            role[roleField] = { checkable: false }
-            if (this.parentFolder.path === '/Functionalities') {
-                role[roleField].checkable = true
-            } else if (this.parentFolder[roleField] && this.parentFolder[roleField].length > 0) {
-                this.parentFolder[roleField].forEach((currentRole) => {
-                    if (role.name === currentRole.name) {
-                        role[roleField].checkable = true
+            },
+            roleIsChecked(role: any, roles: [], roleField: string) {
+                if (roles) {
+                    const index = roles.findIndex((currentRole: any) => role.id === currentRole.id)
+
+                    if (index > -1) {
+                        role[roleField] = true
+                    }
+                }
+            },
+            isCheckable(role: any, roleField: string) {
+                role[roleField] = { checkable: false }
+                if (this.parentFolder.path === '/Functionalities') {
+                    role[roleField].checkable = true
+                } else if (this.parentFolder[roleField] && this.parentFolder[roleField].length > 0) {
+                    this.parentFolder[roleField].forEach((currentRole) => {
+                        if (role.name === currentRole.name) {
+                            role[roleField].checkable = true
+                        }
+                    })
+                }
+            },
+            prepareFunctionalityToSend(functionalityToSend) {
+                var roles = [...this.roles]
+                functionalityToSend.codeType = functionalityToSend.codType
+                delete functionalityToSend.codType
+                delete functionalityToSend.biObjects
+                this.emptyFunctionalityRoles(functionalityToSend)
+                roles.forEach((role) => {
+                    if (role.development) functionalityToSend.devRoles.push(role)
+                    if (role.test) functionalityToSend.testRoles.push(role)
+                    if (role.execution) functionalityToSend.execRoles.push(role)
+                    if (role.creation) functionalityToSend.createRoles.push(role)
+                })
+                if (!functionalityToSend.id) {
+                    this.prepareNewFunctionality(functionalityToSend)
+                }
+            },
+            prepareNewFunctionality(functionalityToSend) {
+                functionalityToSend.codeType = this.parentFolder.codType
+                functionalityToSend.parentId = this.parentFolder.id
+                functionalityToSend.path = this.parentFolder.path + '/' + functionalityToSend.name
+                if (!functionalityToSend.description) functionalityToSend.description = ''
+            },
+            emptyFunctionalityRoles(functionality) {
+                functionality.devRoles = []
+                functionality.testRoles = []
+                functionality.execRoles = []
+                functionality.createRoles = []
+            },
+            async createOrUpdate(functionalityToSend) {
+                return this.selectedFolder.id ? this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityToSend.id}`, functionalityToSend) : this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/', functionalityToSend)
+            },
+            async handleSubmit() {
+                if (this.v$.$invalid) {
+                    return
+                }
+                let functionalityToSend = { ...this.selectedFolder }
+                this.prepareFunctionalityToSend(functionalityToSend)
+                await this.createOrUpdate(functionalityToSend).then((response: AxiosResponse<any>) => {
+                    if (response.data.errors) {
+                        this.$store.commit('setError', { title: 'Error', msg: response.data.error })
+                    } else {
+                        this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
+                        this.$emit('inserted', response.data.id)
                     }
                 })
-            }
-        },
-        prepareFunctionalityToSend(functionalityToSend) {
-            var roles = [...this.roles]
-            functionalityToSend.codeType = functionalityToSend.codType
-            delete functionalityToSend.codType
-            delete functionalityToSend.biObjects
-            this.emptyFunctionalityRoles(functionalityToSend)
-            roles.forEach((role) => {
-                if (role.development) functionalityToSend.devRoles.push(role)
-                if (role.test) functionalityToSend.testRoles.push(role)
-                if (role.execution) functionalityToSend.execRoles.push(role)
-                if (role.creation) functionalityToSend.createRoles.push(role)
-            })
-            if (!functionalityToSend.id) {
-                this.prepareNewFunctionality(functionalityToSend)
-            }
-        },
-        prepareNewFunctionality(functionalityToSend) {
-            functionalityToSend.codeType = this.parentFolder.codType
-            functionalityToSend.parentId = this.parentFolder.id
-            functionalityToSend.path = this.parentFolder.path + '/' + functionalityToSend.name
-            if (!functionalityToSend.description) functionalityToSend.description = ''
-        },
-        emptyFunctionalityRoles(functionality) {
-            functionality.devRoles = []
-            functionality.testRoles = []
-            functionality.execRoles = []
-            functionality.createRoles = []
-        },
-        async createOrUpdate(functionalityToSend) {
-            return this.selectedFolder.id ? this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityToSend.id}`, functionalityToSend) : this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/', functionalityToSend)
-        },
-        async handleSubmit() {
-            if (this.v$.$invalid) {
-                return
-            }
-            let functionalityToSend = { ...this.selectedFolder }
-            this.prepareFunctionalityToSend(functionalityToSend)
-            await this.createOrUpdate(functionalityToSend).then((response: AxiosResponse<any>) => {
-                if (response.data.errors) {
-                    this.$store.commit('setError', { title: 'Error', msg: response.data.error })
-                } else {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
-                    this.$emit('inserted', response.data.id)
+                this.dirty = false
+            },
+            checkSingleRole(role, roleField, checkboxField, value) {
+                if (role[roleField].checkable) {
+                    role[checkboxField] = value
                 }
-            })
-            this.dirty = false
-        },
-        checkSingleRole(role, roleField, checkboxField, value) {
-            if (role[roleField].checkable) {
-                role[checkboxField] = value
+            },
+            checkAll(role) {
+                this.checkSingleRole(role, 'createRoles', 'creation', true)
+                this.checkSingleRole(role, 'devRoles', 'development', true)
+                this.checkSingleRole(role, 'execRoles', 'execution', true)
+                this.checkSingleRole(role, 'testRoles', 'test', true)
+            },
+            uncheckAll(role) {
+                this.checkSingleRole(role, 'createRoles', 'creation', false)
+                this.checkSingleRole(role, 'devRoles', 'development', false)
+                this.checkSingleRole(role, 'execRoles', 'execution', false)
+                this.checkSingleRole(role, 'testRoles', 'test', false)
             }
-        },
-        checkAll(role) {
-            this.checkSingleRole(role, 'createRoles', 'creation', true)
-            this.checkSingleRole(role, 'devRoles', 'development', true)
-            this.checkSingleRole(role, 'execRoles', 'execution', true)
-            this.checkSingleRole(role, 'testRoles', 'test', true)
-        },
-        uncheckAll(role) {
-            this.checkSingleRole(role, 'createRoles', 'creation', false)
-            this.checkSingleRole(role, 'devRoles', 'development', false)
-            this.checkSingleRole(role, 'execRoles', 'execution', false)
-            this.checkSingleRole(role, 'testRoles', 'test', false)
         }
-    }
-})
+    })
 </script>

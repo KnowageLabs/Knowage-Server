@@ -91,75 +91,75 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { createValidations } from '@/helpers/commons/validationHelper'
-import Dialog from 'primevue/dialog'
-import Dropdown from 'primevue/dropdown'
-import knParameterSaveDialogDescriptor from './KnParameterSaveDialogDescriptor.json'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import useValidate from '@vuelidate/core'
+    import { defineComponent } from 'vue'
+    import { createValidations } from '@/helpers/commons/validationHelper'
+    import Dialog from 'primevue/dialog'
+    import Dropdown from 'primevue/dropdown'
+    import knParameterSaveDialogDescriptor from './KnParameterSaveDialogDescriptor.json'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import useValidate from '@vuelidate/core'
 
-export default defineComponent({
-    name: 'kn-parameter-save-dialog',
-    components: { Dialog, Dropdown, KnValidationMessages },
-    props: { visible: { type: Boolean }, propLoading: { type: Boolean } },
-    emits: ['close', 'saveViewpoint'],
-    data() {
-        return {
-            knParameterSaveDialogDescriptor,
-            viewpoint: {} as any,
-            loading: false,
-            v$: useValidate() as any
-        }
-    },
-    validations() {
-        return {
-            viewpoint: createValidations('viewpoint', this.knParameterSaveDialogDescriptor.validations.viewpoint)
-        }
-    },
-    computed: {
-        nameHelp(): string {
-            return (this.viewpoint.NAME?.length ?? '0') + ' / ' + this.knParameterSaveDialogDescriptor.nameMaxLength
+    export default defineComponent({
+        name: 'kn-parameter-save-dialog',
+        components: { Dialog, Dropdown, KnValidationMessages },
+        props: { visible: { type: Boolean }, propLoading: { type: Boolean } },
+        emits: ['close', 'saveViewpoint'],
+        data() {
+            return {
+                knParameterSaveDialogDescriptor,
+                viewpoint: {} as any,
+                loading: false,
+                v$: useValidate() as any
+            }
         },
-        descriptionHelp(): string {
-            return (this.viewpoint.DESCRIPTION?.length ?? '0') + ' / ' + this.knParameterSaveDialogDescriptor.descriptionMaxLength
+        validations() {
+            return {
+                viewpoint: createValidations('viewpoint', this.knParameterSaveDialogDescriptor.validations.viewpoint)
+            }
         },
-        saveButtonDisabled(): any {
-            return this.v$.$invalid
-        }
-    },
-    watch: {
-        visible() {
-            this.v$.$reset()
-            this.viewpoint = {}
+        computed: {
+            nameHelp(): string {
+                return (this.viewpoint.NAME?.length ?? '0') + ' / ' + this.knParameterSaveDialogDescriptor.nameMaxLength
+            },
+            descriptionHelp(): string {
+                return (this.viewpoint.DESCRIPTION?.length ?? '0') + ' / ' + this.knParameterSaveDialogDescriptor.descriptionMaxLength
+            },
+            saveButtonDisabled(): any {
+                return this.v$.$invalid
+            }
         },
-        propLoading() {
+        watch: {
+            visible() {
+                this.v$.$reset()
+                this.viewpoint = {}
+            },
+            propLoading() {
+                this.setLoading()
+            }
+        },
+        created() {
             this.setLoading()
-        }
-    },
-    created() {
-        this.setLoading()
-    },
-    methods: {
-        setLoading() {
-            this.loading = this.propLoading
         },
-        closeDialog() {
-            this.viewpoint = {}
-            this.v$.$reset()
-            this.$emit('close')
-        },
-        saveViewpoint() {
-            this.$emit('saveViewpoint', this.viewpoint)
+        methods: {
+            setLoading() {
+                this.loading = this.propLoading
+            },
+            closeDialog() {
+                this.viewpoint = {}
+                this.v$.$reset()
+                this.$emit('close')
+            },
+            saveViewpoint() {
+                this.$emit('saveViewpoint', this.viewpoint)
+            }
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-.input-help {
-    font-size: smaller;
-    margin-top: auto;
-    margin-left: auto;
-}
+    .input-help {
+        font-size: smaller;
+        margin-top: auto;
+        margin-left: auto;
+    }
 </style>

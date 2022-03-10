@@ -285,7 +285,7 @@
     .p-breadcrumb {
         border: none;
         border-radius: 0;
-        border-bottom: 1px solid $list-border-color;
+        border-bottom: 1px solid var(--kn-list-border-color);
 
         cursor: default !important;
 

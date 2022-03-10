@@ -86,201 +86,201 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { createValidations } from '@/helpers/commons/validationHelper'
-import { filterDefault } from '@/helpers/commons/filterHelper'
-import { AxiosResponse } from 'axios'
-import useValidate from '@vuelidate/core'
-import dossierDescriptor from './DossierDescriptor.json'
-import Card from 'primevue/card'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import KnHint from '@/components/UI/KnHint.vue'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import { defineComponent } from 'vue'
+    import { createValidations } from '@/helpers/commons/validationHelper'
+    import { filterDefault } from '@/helpers/commons/filterHelper'
+    import { AxiosResponse } from 'axios'
+    import useValidate from '@vuelidate/core'
+    import dossierDescriptor from './DossierDescriptor.json'
+    import Card from 'primevue/card'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import KnHint from '@/components/UI/KnHint.vue'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 
-export default defineComponent({
-    name: 'dossier',
-    components: { Card, Column, DataTable, KnHint, KnValidationMessages },
-    props: { id: { type: String, required: false }, reloadTrigger: { type: Boolean } },
-    computed: {
-        showHint() {
-            if (this.dossierActivities.length != 0) {
-                return false
+    export default defineComponent({
+        name: 'dossier',
+        components: { Card, Column, DataTable, KnHint, KnValidationMessages },
+        props: { id: { type: String, required: false }, reloadTrigger: { type: Boolean } },
+        computed: {
+            showHint() {
+                if (this.dossierActivities.length != 0) {
+                    return false
+                }
+                return true
+            },
+            buttonDisabled(): any {
+                return this.v$.$invalid
             }
-            return true
         },
-        buttonDisabled(): any {
-            return this.v$.$invalid
-        }
-    },
-    watch: {
-        async reloadTrigger() {
+        watch: {
+            async reloadTrigger() {
+                this.getDossierTemplate()
+                this.getDossierActivities()
+                this.interval = setInterval(() => {
+                    this.getDossierActivities()
+                }, 10000)
+            }
+        },
+        created() {
             this.getDossierTemplate()
             this.getDossierActivities()
             this.interval = setInterval(() => {
                 this.getDossierActivities()
             }, 10000)
-        }
-    },
-    created() {
-        this.getDossierTemplate()
-        this.getDossierActivities()
-        this.interval = setInterval(() => {
-            this.getDossierActivities()
-        }, 10000)
-    },
-    deactivated() {
-        clearInterval(this.interval)
-    },
-    data() {
-        return {
-            v$: useValidate() as any,
-            dossierDescriptor,
-            activity: { activityName: '' } as any,
-            loading: false,
-            interval: null as any,
-            dossierActivities: [] as any,
-            columns: dossierDescriptor.columns,
-            jsonTemplate: {} as any,
-            filters: {
-                global: [filterDefault]
-            } as Object
-        }
-    },
-    validations() {
-        return {
-            activity: createValidations('activity', dossierDescriptor.validations.activity)
-        }
-    },
-    methods: {
-        formatDate(date) {
-            let fDate = new Date(date)
-            return fDate.toLocaleString()
         },
-        async getDossierActivities() {
-            this.loading = true
-            await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activities/${this.id}`)
-                .then((response: AxiosResponse<any>) => {
-                    this.dossierActivities = [...response.data]
-                })
-                .finally(() => {
-                    this.loading = false
-                })
+        deactivated() {
+            clearInterval(this.interval)
         },
-        async getDossierTemplate() {
-            this.loading = true
-            let url = `/knowagedossierengine/api/start/dossierTemplate?documentId=${this.id}`
-            await this.$http
-                .get(url, { headers: { Accept: 'application/json, text/plain, */*' } })
-                .then((response: AxiosResponse<any>) => {
-                    this.jsonTemplate = { ...response.data }
-                })
-                .finally(() => {
-                    this.loading = false
-                })
+        data() {
+            return {
+                v$: useValidate() as any,
+                dossierDescriptor,
+                activity: { activityName: '' } as any,
+                loading: false,
+                interval: null as any,
+                dossierActivities: [] as any,
+                columns: dossierDescriptor.columns,
+                jsonTemplate: {} as any,
+                filters: {
+                    global: [filterDefault]
+                } as Object
+            }
         },
-        deleteDossierConfirm(selectedDossier) {
-            this.$confirm.require({
-                message: this.$t('documentExecution.dossier.deleteConfirm'),
-                header: this.$t('documentExecution.dossier.deleteTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteDossier(selectedDossier)
-            })
+        validations() {
+            return {
+                activity: createValidations('activity', dossierDescriptor.validations.activity)
+            }
         },
-        async deleteDossier(selectedDossier) {
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedDossier.id}`
-
-            if (selectedDossier.status == 'DOWNLOAD' || selectedDossier.status == 'ERROR') {
+        methods: {
+            formatDate(date) {
+                return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
+            },
+            async getDossierActivities() {
+                this.loading = true
                 await this.$http
-                    .delete(url, { headers: { Accept: 'application/json, text/plain, */*' } })
-                    .then(() => {
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.deleteTitle'),
-                            msg: this.$t('documentExecution.dossier.deleteSuccess')
-                        })
-                        this.getDossierActivities()
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activities/${this.id}`)
+                    .then((response: AxiosResponse<any>) => {
+                        this.dossierActivities = [...response.data]
                     })
-                    .catch((error) => {
-                        if (error) {
-                            this.$store.commit('setError', {
-                                title: this.$t('common.error.generic'),
-                                msg: error.message
-                            })
-                        }
+                    .finally(() => {
+                        this.loading = false
                     })
-            } else {
-                this.$store.commit('setError', {
-                    title: this.$t('common.error.generic'),
-                    msg: this.$t('documentExecution.dossier.progressNotFinished')
+            },
+            async getDossierTemplate() {
+                this.loading = true
+                let url = `/knowagedossierengine/api/start/dossierTemplate?documentId=${this.id}`
+                await this.$http
+                    .get(url, { headers: { Accept: 'application/json, text/plain, */*' } })
+                    .then((response: AxiosResponse<any>) => {
+                        this.jsonTemplate = { ...response.data }
+                    })
+                    .finally(() => {
+                        this.loading = false
+                    })
+            },
+            deleteDossierConfirm(selectedDossier) {
+                this.$confirm.require({
+                    message: this.$t('documentExecution.dossier.deleteConfirm'),
+                    header: this.$t('documentExecution.dossier.deleteTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.deleteDossier(selectedDossier)
                 })
-            }
-        },
-        async createNewActivity() {
-            let url = `/knowagedossierengine/api/dossier/run?activityName=${this.activity.activityName}&documentId=${this.id}`
-            await this.$http.post(url, this.jsonTemplate, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response: AxiosResponse<any>) => {
-                if (response.data.errors) {
-                    this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: response.data.errors })
-                } else {
-                    this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.dossier.saveSuccess') })
-                }
-            })
-            this.getDossierActivities()
-        },
-        async downloadActivity(selectedActivity) {
-            if (selectedActivity.status == 'ERROR') {
-                if (selectedActivity.hasBinContent) {
-                    var link = process.env.VUE_APP_DOSSIER_PATH + `dossier/activity/${selectedActivity.id}/txt?activityName=${selectedActivity.activity}`
-                    window.open(link)
-                } else {
-                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`).then((response: AxiosResponse<any>) => {
-                        var url = `../api/start/errorFile?activityId=${selectedActivity.id}&randomKey=${response.data}&activityName=${selectedActivity.activity}`
-                        if (this.jsonTemplate.PPT_TEMPLATE != null) {
-                            url += '&type=PPT'
-                            url += '&templateName=' + this.jsonTemplate.PPT_TEMPLATE.name
-                        } else {
-                            url += '&type=DOC'
-                            url += '&templateName=' + this.jsonTemplate.DOC_TEMPLATE.name
-                        }
-                        link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + url
-                        window.open(link)
-                        response.data.errors ? this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: response.data.errors[0].message }) : ''
-                    })
-                }
-            } else if (selectedActivity.partial == selectedActivity.total) {
-                if (selectedActivity.hasBinContent) {
-                    link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/pptx?activityName=${selectedActivity.activity}`
-                    window.open(link)
-                } else if (selectedActivity.hasDocBinContent) {
-                    link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/doc?activityName=${selectedActivity.activity}`
-                    window.open(link)
-                } else {
-                    link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`
-                    await this.$http.get(link, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response: AxiosResponse<any>) => {
-                        if (this.jsonTemplate.PPT_TEMPLATE != null) {
-                            this.storePPT(selectedActivity.id, response.data, selectedActivity.activity)
-                        } else {
-                            this.storeDOC(selectedActivity.id, response.data, selectedActivity.activity)
-                        }
-                        response.data.errors ? this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: response.data.errors[0].message }) : ''
-                    })
-                }
-            } else {
-                this.$store.commit('setError', {
-                    title: this.$t('common.error.generic'),
-                    msg: this.$t('documentExecution.dossier.progressNotFinished')
-                })
-            }
-        },
-        storePPT(id, randomKey, activityName) {
-            var link = process.env.VUE_APP_HOST_URL + `/knowagedossierengine/api/start/generatePPT?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.PPT_TEMPLATE.name}&activityName=${activityName}`
-            window.open(link)
-        },
+            },
+            async deleteDossier(selectedDossier) {
+                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedDossier.id}`
 
-        storeDOC(id, randomKey, activityName) {
-            var link = process.env.VUE_APP_HOST_URL + `/knowagedossierengine/api/start/generateDOC?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.DOC_TEMPLATE.name}&activityName=${activityName}`
-            window.open(link)
+                if (selectedDossier.status == 'DOWNLOAD' || selectedDossier.status == 'ERROR') {
+                    await this.$http
+                        .delete(url, { headers: { Accept: 'application/json, text/plain, */*' } })
+                        .then(() => {
+                            this.$store.commit('setInfo', {
+                                title: this.$t('common.toast.deleteTitle'),
+                                msg: this.$t('documentExecution.dossier.deleteSuccess')
+                            })
+                            this.getDossierActivities()
+                        })
+                        .catch((error) => {
+                            if (error) {
+                                this.$store.commit('setError', {
+                                    title: this.$t('common.error.generic'),
+                                    msg: error.message
+                                })
+                            }
+                        })
+                } else {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: this.$t('documentExecution.dossier.progressNotFinished')
+                    })
+                }
+            },
+            async createNewActivity() {
+                let url = `/knowagedossierengine/api/dossier/run?activityName=${this.activity.activityName}&documentId=${this.id}`
+                await this.$http.post(url, this.jsonTemplate, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response: AxiosResponse<any>) => {
+                    if (response.data.errors) {
+                        this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: response.data.errors })
+                    } else {
+                        this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.dossier.saveSuccess') })
+                    }
+                })
+                this.getDossierActivities()
+            },
+            async downloadActivity(selectedActivity) {
+                if (selectedActivity.status == 'ERROR') {
+                    if (selectedActivity.hasBinContent) {
+                        var link = process.env.VUE_APP_DOSSIER_PATH + `dossier/activity/${selectedActivity.id}/txt?activityName=${selectedActivity.activity}`
+                        window.open(link)
+                    } else {
+                        await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`).then((response: AxiosResponse<any>) => {
+                            var url = `../api/start/errorFile?activityId=${selectedActivity.id}&randomKey=${response.data}&activityName=${selectedActivity.activity}`
+                            if (this.jsonTemplate.PPT_TEMPLATE != null) {
+                                url += '&type=PPT'
+                                url += '&templateName=' + this.jsonTemplate.PPT_TEMPLATE.name
+                            } else {
+                                url += '&type=DOC'
+                                url += '&templateName=' + this.jsonTemplate.DOC_TEMPLATE.name
+                            }
+                            link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + url
+                            window.open(link)
+                            response.data.errors ? this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: response.data.errors[0].message }) : ''
+                        })
+                    }
+                } else if (selectedActivity.partial == selectedActivity.total) {
+                    if (selectedActivity.hasBinContent) {
+                        link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/pptx?activityName=${selectedActivity.activity}`
+                        window.open(link)
+                    } else if (selectedActivity.hasDocBinContent) {
+                        link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/doc?activityName=${selectedActivity.activity}`
+                        window.open(link)
+                    } else {
+                        link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`
+                        await this.$http.get(link, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response: AxiosResponse<any>) => {
+                            if (this.jsonTemplate.PPT_TEMPLATE != null) {
+                                this.storePPT(selectedActivity.id, response.data, selectedActivity.activity)
+                            } else {
+                                this.storeDOC(selectedActivity.id, response.data, selectedActivity.activity)
+                            }
+                            response.data.errors ? this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: response.data.errors[0].message }) : ''
+                        })
+                    }
+                } else {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: this.$t('documentExecution.dossier.progressNotFinished')
+                    })
+                }
+            },
+            storePPT(id, randomKey, activityName) {
+                var link = process.env.VUE_APP_HOST_URL + `/knowagedossierengine/api/start/generatePPT?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.PPT_TEMPLATE.name}&activityName=${activityName}`
+                window.open(link)
+            },
+
+            storeDOC(id, randomKey, activityName) {
+                var link = process.env.VUE_APP_HOST_URL + `/knowagedossierengine/api/start/generateDOC?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.DOC_TEMPLATE.name}&activityName=${activityName}`
+                window.open(link)
+            }
         }
-    }
-})
+    })
 </script>

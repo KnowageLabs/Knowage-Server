@@ -159,6 +159,6 @@
     .inputFileToggleWithToolbar {
         @extend .inputFileToggle;
 
-        top: 100px;
+        top: 80px;
     }
 </style>

@@ -74,106 +74,106 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iConfiguration } from './ConfigurationManagement'
-import { FilterOperator } from 'primevue/api'
-import { filterDefault } from '@/helpers/commons/filterHelper'
-import configurationManagementDescriptor from './ConfigurationManagementDescriptor.json'
-import { AxiosResponse } from 'axios'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import KnFabButton from '@/components/UI/KnFabButton.vue'
-import ConfigurationManagementDialog from './ConfigurationManagementDialog.vue'
+    import { defineComponent } from 'vue'
+    import { iConfiguration } from './ConfigurationManagement'
+    import { FilterOperator } from 'primevue/api'
+    import { filterDefault } from '@/helpers/commons/filterHelper'
+    import configurationManagementDescriptor from './ConfigurationManagementDescriptor.json'
+    import { AxiosResponse } from 'axios'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import KnFabButton from '@/components/UI/KnFabButton.vue'
+    import ConfigurationManagementDialog from './ConfigurationManagementDialog.vue'
 
-export default defineComponent({
-    name: 'configuration-management',
-    components: {
-        Column,
-        DataTable,
-        KnFabButton,
-        ConfigurationManagementDialog
-    },
-    data() {
-        return {
-            configurationManagementDescriptor: configurationManagementDescriptor,
-            configurations: [] as iConfiguration[],
-            selectedConfiguration: null as iConfiguration | null,
-            columns: configurationManagementDescriptor.columns,
-            formVisible: false,
-            loading: false,
+    export default defineComponent({
+        name: 'configuration-management',
+        components: {
+            Column,
+            DataTable,
+            KnFabButton,
+            ConfigurationManagementDialog
+        },
+        data() {
+            return {
+                configurationManagementDescriptor: configurationManagementDescriptor,
+                configurations: [] as iConfiguration[],
+                selectedConfiguration: null as iConfiguration | null,
+                columns: configurationManagementDescriptor.columns,
+                formVisible: false,
+                loading: false,
 
-            filters: {
-                global: [filterDefault],
-                label: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                name: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                category: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                valueCheck: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                active: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                }
-            } as Object
-        }
-    },
-    created() {
-        this.loadConfigurations()
-    },
-    methods: {
-        async loadConfigurations() {
-            this.loading = true
-            await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs')
-                .then((response: AxiosResponse<any>) => {
-                    this.configurations = response.data
-                })
-                .finally(() => (this.loading = false))
-        },
-        showDeleteDialog(configurationId: number) {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteConfirmTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteConfiguration(configurationId)
-            })
-        },
-        async deleteConfiguration(configurationId: number) {
-            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/' + configurationId).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
-                })
-                this.loadConfigurations()
-            })
-        },
-
-        showForm(event) {
-            if (event) {
-                this.selectedConfiguration = event.data
+                filters: {
+                    global: [filterDefault],
+                    label: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    name: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    category: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    valueCheck: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    active: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    }
+                } as Object
             }
-            this.formVisible = true
         },
-        closeForm() {
-            this.selectedConfiguration = null
-            this.formVisible = false
-        },
-        reload() {
-            this.formVisible = false
+        created() {
             this.loadConfigurations()
+        },
+        methods: {
+            async loadConfigurations() {
+                this.loading = true
+                await this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs')
+                    .then((response: AxiosResponse<any>) => {
+                        this.configurations = response.data
+                    })
+                    .finally(() => (this.loading = false))
+            },
+            showDeleteDialog(configurationId: number) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteConfirmTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.deleteConfiguration(configurationId)
+                })
+            },
+            async deleteConfiguration(configurationId: number) {
+                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/' + configurationId).then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.loadConfigurations()
+                })
+            },
+
+            showForm(event) {
+                if (event) {
+                    this.selectedConfiguration = event.data
+                }
+                this.formVisible = true
+            },
+            closeForm() {
+                this.selectedConfiguration = null
+                this.formVisible = false
+            },
+            reload() {
+                this.formVisible = false
+                this.loadConfigurations()
+            }
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped></style>

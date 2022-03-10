@@ -7,7 +7,7 @@
                 </template>
             </Toolbar>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <Listbox v-if="displayMenu" :options="menuItems" data-test="menu-list">
+            <Listbox v-if="displayMenu && storeFunctionalitiesExist" :options="menuItems" data-test="menu-list">
                 <template #option="slotProps">
                     <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
                         <i :class="slotProps.option.icon"></i>
@@ -46,8 +46,28 @@
                 @reloadRepositoryMenu="getAllFolders"
                 @breadcrumbClicked="setSelectedBreadcrumb($event)"
                 @execute="executeDocument($event)"
+                @showQbeDialog="prepareDataForQbe"
             />
         </div>
+
+        <Dialog class="metaweb-dialog remove-padding p-fluid" :contentStyle="workspaceDescriptor.style.flex" :visible="qbeDialogVisible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+            <template #header>
+                <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
+                    <template #start>
+                        {{ qbeDataset.name }}
+                    </template>
+                    <template #end>
+                        <Button icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
+                        <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveQbeDataset" />
+                        <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeQbeIframe" />
+                    </template>
+                </Toolbar>
+            </template>
+            <div id="qbe-iframe-container" class="p-d-flex p-flex-row kn-flex">
+                <iframe v-if="qbeIframeVisible" id="qbeIframe" ref="qbeIframe" class="kn-width-full kn-height-full" :src="qbeUrl"></iframe>
+                <KnParameterSidebar style="position:inherit;margin-left:auto" v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="qbeDataset" :userRole="userRole" :propQBEParameters="qbeParameters" :propMode="'qbeView'" @execute="initiateQbeIframe"></KnParameterSidebar>
+            </div>
+        </Dialog>
     </div>
 
     <Sidebar class="mySidebar" v-model:visible="sidebarVisible" :showCloseIcon="false">
@@ -95,13 +115,25 @@ import Listbox from 'primevue/listbox'
 import WorkspaceDocumentTree from './genericComponents/WorkspaceDocumentTree.vue'
 import workspaceDescriptor from './WorkspaceDescriptor.json'
 import WorkspaceNewFolderDialog from './views/repositoryView/dialogs/WorkspaceNewFolderDialog.vue'
+import Dialog from 'primevue/dialog'
+import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
+import moment from 'moment'
+
+const crypto = require('crypto')
 
 export default defineComponent({
     name: 'dataset-management',
-    components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree, WorkspaceNewFolderDialog },
+    components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree, WorkspaceNewFolderDialog, Dialog, KnParameterSidebar },
     computed: {
         showRepository(): any {
-            return !(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.includes('SaveIntoFolderFunctionality')
+            return (this.$store.state as any).user.functionalities.includes('SaveIntoFolderFunctionality')
+        },
+        storeFunctionalitiesExist(): any {
+            this.createMenuItems()
+            return (this.$store.state as any).user.functionalities.length > 0
+        },
+        userRole(): any {
+            return (this.$store.state as any).user.sessionRole !== 'No default role selected' ? (this.$store.state as any).user.sessionRole : null
         }
     },
     data() {
@@ -119,11 +151,23 @@ export default defineComponent({
             selectedBreadcrumb: null as any,
             accordionIcon: true,
             loading: false,
-            menuItems: [] as any
+            qbeIframeVisible: false,
+            qbeDialogVisible: false,
+            parameterSidebarVisible: false,
+            uniqueID: null as any,
+            qbeDataset: null as any,
+            datasetDrivers: null as any,
+            qbeParameters: [] as any,
+            menuItems: [] as any,
+            filtersData: null as any,
+            qbeUrl: ''
         }
     },
     created() {
+        this.uniqueID = crypto.randomBytes(16).toString('hex')
         this.getAllRepositoryData()
+    },
+    mounted() {
         this.createMenuItems()
     },
     methods: {
@@ -216,14 +260,14 @@ export default defineComponent({
         createMenuItems() {
             this.menuItems = []
             this.menuItems.push({ icon: 'fas fa-history', key: '0', label: 'workspace.menuLabels.recent', value: 'recent' }, { icon: 'fas fa-folder', key: '1', label: 'workspace.menuLabels.myRepository', value: 'repository' })
-            if (!(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.includes('SeeMyData')) {
+            if ((this.$store.state as any).user.functionalities.includes('SeeMyData')) {
                 this.menuItems.push({ icon: 'fas fa-database', key: '2', label: 'workspace.menuLabels.myData', value: 'data' })
             }
             this.menuItems.push({ icon: 'fas fa-table', key: '3', label: 'workspace.menuLabels.myModels', value: 'models' })
             if ((this.$store.state as any).user.functionalities.includes('CreateDocument')) {
                 this.menuItems.push({ icon: 'fas fa-th-large', key: '4', label: 'workspace.menuLabels.myAnalysis', value: 'analysis' })
             }
-            if (!(this.$store.state as any).user.isSuperadmin && (this.$store.state as any).user.functionalities.includes('SeeSnapshotsFunctionality') && (this.$store.state as any).user.functionalities.includes('ViewScheduledWorkspace')) {
+            if ((this.$store.state as any).user.functionalities.includes('SeeSnapshotsFunctionality') && (this.$store.state as any).user.functionalities.includes('ViewScheduledWorkspace')) {
                 this.menuItems.push({
                     icon: 'fas fa-stopwatch',
                     key: '5',
@@ -231,7 +275,7 @@ export default defineComponent({
                     value: 'schedulation'
                 })
             }
-            this.menuItems.push({ icon: 'fas fa-filter', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced' })
+            this.menuItems.push({ icon: 'fas fa-cogs', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced' })
         },
         executeDocument(document: any) {
             const routeType = this.getRouteDocumentType(document)
@@ -274,6 +318,126 @@ export default defineComponent({
             }
 
             return routeDocumentType
+        },
+        async loadQBEDataset(dataset) {
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
+                .then((response: AxiosResponse<any>) => {
+                    this.qbeDataset = response.data
+                })
+                .catch(() => {})
+        },
+        async loadDatasetDrivers(dataset) {
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/businessmodel/${dataset.name}/filters`, { name: dataset.name, role: this.userRole })
+                .then((response: AxiosResponse<any>) => {
+                    this.filtersData = response.data
+                    this.formatDrivers()
+                    if (response.data.isReadyForExecution) {
+                        this.parameterSidebarVisible = false
+                        this.initiateQbeIframe()
+                    } else {
+                        this.parameterSidebarVisible = true
+                    }
+                })
+                .catch(() => {})
+        },
+        formatDrivers() {
+            this.filtersData?.filterStatus?.forEach((el: any) => {
+                el.parameterValue = el.multivalue ? [] : [{ value: '', description: '' }]
+                if (el.driverDefaultValue?.length > 0) {
+                    let valueIndex = '_col0'
+                    let descriptionIndex = 'col1'
+                    if (el.metadata?.colsMap) {
+                        valueIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.valueColumn) as any
+                        descriptionIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.descriptionColumn) as any
+                    }
+
+                    el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {
+                        return { value: defaultValue.value ?? defaultValue[valueIndex], description: defaultValue.desc ?? defaultValue[descriptionIndex] }
+                    })
+
+                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true') {
+                        el.parameterValue[0].value = moment(el.parameterValue[0].description?.split('#')[0]).toDate() as any
+                    }
+                }
+                if (el.data) {
+                    el.data = el.data.map((data: any) => {
+                        return this.formatParameterDataOptions(el, data)
+                    })
+
+                    if (el.data.length === 1) {
+                        el.parameterValue = [...el.data]
+                    }
+                }
+                if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
+                    el.showOnPanel = 'false'
+                }
+
+                if (!el.parameterValue) {
+                    el.parameterValue = [{ value: '', description: '' }]
+                }
+
+                if (el.parameterValue[0] && !el.parameterValue[0].description) {
+                    el.parameterValue[0].description = el.parameterDescription ? el.parameterDescription[0] : ''
+                }
+            })
+        },
+        formatParameterDataOptions(parameter: any, data: any) {
+            const valueColumn = parameter.metadata.valueColumn
+            const descriptionColumn = parameter.metadata.descriptionColumn
+            const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
+            const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
+
+            return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
+        },
+        async buildQbeUrl(dataset) {
+            let initialUrl = ''
+            let language = (this.$store.state as any).user.locale.split('_')[0]
+            let country = (this.$store.state as any).user.locale.split('_')[1]
+            let drivers = encodeURI(JSON.stringify(this.datasetDrivers))
+            initialUrl = `/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&SBI_SCRIPT=&user_id=${(this.$store.state as any).user.userUniqueIdentifier}&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=${country}&SBI_EXECUTION_ID=${
+                this.uniqueID
+            }&ACTION_NAME=QBE_ENGINE_START_ACTION_FROM_BM&MODEL_NAME=${dataset.name}&DATA_SOURCE_LABEL=${dataset.dataSourceLabel}&DATA_SOURCE_ID=${dataset.dataSourceId}&isTechnicalUser=true&DRIVERS=${drivers}`
+            this.qbeUrl = process.env.VUE_APP_HOST_URL + initialUrl
+        },
+        getFormattedParameters(loadedParameters: { filterStatus: any[]; isReadyForExecution: boolean }) {
+            let parameters = {} as any
+
+            Object.keys(loadedParameters.filterStatus).forEach((key: any) => {
+                const parameter = loadedParameters.filterStatus[key]
+
+                if (!parameter.multivalue) {
+                    parameters[parameter.urlName] = { value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description }
+                } else {
+                    parameters[parameter.urlName] = { value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription }
+                }
+            })
+
+            return parameters
+        },
+        async prepareDataForQbe(dataset) {
+            this.qbeDataset = dataset
+            this.qbeDialogVisible = true
+            await this.loadDatasetDrivers(dataset)
+        },
+        initiateQbeIframe() {
+            this.datasetDrivers = this.getFormattedParameters(this.filtersData)
+            this.buildQbeUrl(this.qbeDataset)
+            this.qbeIframeVisible = true
+            this.parameterSidebarVisible = false
+        },
+        closeQbeIframe() {
+            this.qbeDialogVisible = false
+            this.qbeIframeVisible = false
+            this.parameterSidebarVisible = false
+            this.datasetDrivers = null
+            this.qbeUrl = ''
+            this.qbeDataset = {}
+        },
+        saveQbeDataset() {
+            let iframe = this.$refs.qbeIframe as any
+            iframe.contentWindow.postMessage('saveDS', '*')
         }
     }
 })
@@ -283,7 +447,7 @@ export default defineComponent({
     width: 33.3333%;
 }
 .custom-kn-page-width {
-    width: calc(100vw - #{$mainmenu-width});
+    width: calc(100vw - var(--kn-mainmenu-width));
 }
 @media screen and (max-width: 1024px) {
     #sideMenu {
@@ -340,5 +504,18 @@ export default defineComponent({
     #showSidenavIcon {
         display: none;
     }
+}
+
+.metaweb-dialog.p-dialog {
+    max-height: 100%;
+    height: 100vh;
+    width: calc(100vw - var(--kn-mainmenu-width));
+    margin: 0;
+}
+.remove-padding.p-dialog .p-dialog-header,
+.remove-padding.p-dialog .p-dialog-content {
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
 }
 </style>

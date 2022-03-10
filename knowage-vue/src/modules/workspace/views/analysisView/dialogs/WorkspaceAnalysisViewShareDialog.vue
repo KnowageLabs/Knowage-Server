@@ -20,46 +20,46 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { INode } from '../../../Workspace'
-import Dialog from 'primevue/dialog'
-import workspaceAnalysisViewShareDialogDescriptor from './WorkspaceAnalysisViewShareDialogDescriptor.json'
-import WorkspaceAnalysisFolderTree from '../tree/WorkspaceAnalysisFolderTree.vue'
+    import { defineComponent } from 'vue'
+    import { INode } from '../../../Workspace'
+    import Dialog from 'primevue/dialog'
+    import workspaceAnalysisViewShareDialogDescriptor from './WorkspaceAnalysisViewShareDialogDescriptor.json'
+    import WorkspaceAnalysisFolderTree from '../tree/WorkspaceAnalysisFolderTree.vue'
 
-export default defineComponent({
-    name: 'workspace-analysis-view-share-dialog',
-    components: { Dialog, WorkspaceAnalysisFolderTree },
-    props: { visible: { type: Boolean }, propFolders: { type: Array } },
-    emits: ['close', 'share'],
-    data() {
-        return {
-            workspaceAnalysisViewShareDialogDescriptor,
-            folders: [] as any[],
-            selectedFoldersKeys: {} as any
-        }
-    },
-    watch: {
-        propFolders() {
+    export default defineComponent({
+        name: 'workspace-analysis-view-share-dialog',
+        components: { Dialog, WorkspaceAnalysisFolderTree },
+        props: { visible: { type: Boolean }, propFolders: { type: Array } },
+        emits: ['close', 'share'],
+        data() {
+            return {
+                workspaceAnalysisViewShareDialogDescriptor,
+                folders: [] as any[],
+                selectedFoldersKeys: {} as any
+            }
+        },
+        watch: {
+            propFolders() {
+                this.loadFolders()
+            }
+        },
+        created() {
             this.loadFolders()
+        },
+        methods: {
+            loadFolders() {
+                this.folders = this.propFolders as any[]
+            },
+            closeDialog() {
+                this.folders = []
+                this.$emit('close')
+            },
+            shareDocument() {
+                this.$emit('share', this.selectedFoldersKeys)
+            },
+            setSelectedFolders(folders: INode[]) {
+                this.selectedFoldersKeys = folders
+            }
         }
-    },
-    created() {
-        this.loadFolders()
-    },
-    methods: {
-        loadFolders() {
-            this.folders = this.propFolders as any[]
-        },
-        closeDialog() {
-            this.folders = []
-            this.$emit('close')
-        },
-        shareDocument() {
-            this.$emit('share', this.selectedFoldersKeys)
-        },
-        setSelectedFolders(folders: INode[]) {
-            this.selectedFoldersKeys = folders
-        }
-    }
-})
+    })
 </script>

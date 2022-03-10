@@ -22,39 +22,39 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Editor from 'primevue/editor'
+    import { defineComponent } from 'vue'
+    import Editor from 'primevue/editor'
 
-export default defineComponent({
-    name: 'document-execution-notes-list',
-    components: { Editor },
-    props: { propNotes: { type: Array }, document: { type: Object } },
-    emits: ['editNote', 'deleteNote'],
-    data() {
-        return {
-            notes: [] as any[]
-        }
-    },
-    watch: {
-        propNotes() {
-            this.loadNotes()
-        }
-    },
-    created() {
-        this.loadNotes()
-    },
-    methods: {
-        loadNotes() {
-            this.notes = this.propNotes as any[]
+    export default defineComponent({
+        name: 'document-execution-notes-list',
+        components: { Editor },
+        props: { propNotes: { type: Array }, document: { type: Object } },
+        emits: ['editNote', 'deleteNote'],
+        data() {
+            return {
+                notes: [] as any[]
+            }
         },
-        deleteNoteConfirm(note: any) {
-            this.$confirm.require({
-                message: this.$t('documentExecution.dossier.deleteConfirm'),
-                header: this.$t('documentExecution.dossier.deleteTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.$emit('deleteNote', note)
-            })
+        watch: {
+            propNotes() {
+                this.loadNotes()
+            }
+        },
+        created() {
+            this.loadNotes()
+        },
+        methods: {
+            loadNotes() {
+                this.notes = this.propNotes as any[]
+            },
+            deleteNoteConfirm(note: any) {
+                this.$confirm.require({
+                    message: this.$t('documentExecution.dossier.deleteConfirm'),
+                    header: this.$t('documentExecution.dossier.deleteTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.$emit('deleteNote', note)
+                })
+            }
         }
-    }
-})
+    })
 </script>

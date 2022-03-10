@@ -47,92 +47,92 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iSchema } from './MondrianSchemas'
-import { AxiosResponse } from 'axios'
-import mondrianDescriptor from './MondrianSchemasManagementDescriptor.json'
-import FabButton from '@/components/UI/KnFabButton.vue'
-import KnHint from '@/components/UI/KnHint.vue'
-import Listbox from 'primevue/listbox'
+    import { defineComponent } from 'vue'
+    import { iSchema } from './MondrianSchemas'
+    import { AxiosResponse } from 'axios'
+    import mondrianDescriptor from './MondrianSchemasManagementDescriptor.json'
+    import FabButton from '@/components/UI/KnFabButton.vue'
+    import KnHint from '@/components/UI/KnHint.vue'
+    import Listbox from 'primevue/listbox'
 
-export default defineComponent({
-    name: 'mondrian-schemas-management',
-    components: {
-        FabButton,
-        Listbox,
-        KnHint
-    },
-    computed: {
-        toggleHint() {
-            if (this.$route.fullPath == '/mondrian-schemas-management') {
-                return true
-            }
-            return false
-        }
-    },
-    data() {
-        return {
-            loading: false,
-            touched: false,
-            schemas: [] as iSchema[],
-            mondrianDescriptor: mondrianDescriptor
-        }
-    },
-    async created() {
-        await this.loadAllSchemas()
-    },
-    methods: {
-        async loadAllSchemas() {
-            this.loading = true
-            await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/mondrianSchemasResource')
-                .then((response: AxiosResponse<any>) => {
-                    this.schemas = response.data
-                })
-                .finally(() => (this.loading = false))
+    export default defineComponent({
+        name: 'mondrian-schemas-management',
+        components: {
+            FabButton,
+            Listbox,
+            KnHint
         },
-        showForm(event: any) {
-            const path = event.value ? `/mondrian-schemas-management/${event.value.id}` : '/mondrian-schemas-management/new-schema'
+        computed: {
+            toggleHint() {
+                if (this.$route.fullPath == '/mondrian-schemas-management') {
+                    return true
+                }
+                return false
+            }
+        },
+        data() {
+            return {
+                loading: false,
+                touched: false,
+                schemas: [] as iSchema[],
+                mondrianDescriptor: mondrianDescriptor
+            }
+        },
+        async created() {
+            await this.loadAllSchemas()
+        },
+        methods: {
+            async loadAllSchemas() {
+                this.loading = true
+                await this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/mondrianSchemasResource')
+                    .then((response: AxiosResponse<any>) => {
+                        this.schemas = response.data
+                    })
+                    .finally(() => (this.loading = false))
+            },
+            showForm(event: any) {
+                const path = event.value ? `/mondrian-schemas-management/${event.value.id}` : '/mondrian-schemas-management/new-schema'
 
-            if (!this.touched) {
-                this.$router.push(path)
-            } else {
+                if (!this.touched) {
+                    this.$router.push(path)
+                } else {
+                    this.$confirm.require({
+                        message: this.$t('common.toast.unsavedChangesMessage'),
+                        header: this.$t('common.toast.unsavedChangesHeader'),
+                        icon: 'pi pi-exclamation-triangle',
+                        accept: () => {
+                            this.touched = false
+                            this.$router.push(path)
+                        }
+                    })
+                }
+            },
+            deleteSchemaConfirm(schemaId: number) {
                 this.$confirm.require({
-                    message: this.$t('common.toast.unsavedChangesMessage'),
-                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteTitle'),
                     icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        this.touched = false
-                        this.$router.push(path)
-                    }
+                    accept: () => this.deleteSchema(schemaId)
                 })
-            }
-        },
-        deleteSchemaConfirm(schemaId: number) {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteSchema(schemaId)
-            })
-        },
-        async deleteSchema(schemaId: number) {
-            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/mondrianSchemasResource/' + schemaId).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
+            },
+            async deleteSchema(schemaId: number) {
+                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/mondrianSchemasResource/' + schemaId).then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.$router.push('/mondrian-schemas-management')
+                    this.loadAllSchemas()
                 })
-                this.$router.push('/mondrian-schemas-management')
+            },
+            closeForm() {
+                this.touched = false
+            },
+            reloadPage() {
+                this.touched = false
                 this.loadAllSchemas()
-            })
-        },
-        closeForm() {
-            this.touched = false
-        },
-        reloadPage() {
-            this.touched = false
-            this.loadAllSchemas()
+            }
         }
-    }
-})
+    })
 </script>

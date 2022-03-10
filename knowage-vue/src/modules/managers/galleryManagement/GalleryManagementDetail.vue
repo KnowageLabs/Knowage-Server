@@ -97,242 +97,240 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { VCodeMirror } from 'vue3-code-mirror'
-    import { AxiosResponse } from 'axios'
-    import Chips from 'primevue/chips'
-    import { downloadDirect } from '@/helpers/commons/fileHelper'
-    import Dropdown from 'primevue/dropdown'
-    import InputText from 'primevue/inputtext'
-    import TabView from 'primevue/tabview'
-    import TabPanel from 'primevue/tabpanel'
-    import Textarea from 'primevue/textarea'
-    import galleryDescriptor from './GalleryManagementDescriptor.json'
-    import { IGalleryTemplate } from './GalleryManagement'
+import { defineComponent } from 'vue'
+import { VCodeMirror } from 'vue3-code-mirror'
+import { AxiosResponse } from 'axios'
+import Chips from 'primevue/chips'
+import { downloadDirect } from '@/helpers/commons/fileHelper'
+import Dropdown from 'primevue/dropdown'
+import InputText from 'primevue/inputtext'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
+import Textarea from 'primevue/textarea'
+import galleryDescriptor from './GalleryManagementDescriptor.json'
+import { IGalleryTemplate } from './GalleryManagement'
 
-    export default defineComponent({
-        name: 'gallery-management-detail',
-        components: {
-            Chips,
-            VCodeMirror,
-            Dropdown,
-            InputText,
-            TabView,
-            TabPanel,
-            Textarea
-        },
-        emits: ['saved'],
-        props: {
-            id: String
-        },
-        data() {
-            return {
-                dirty: false as Boolean,
-                files: [],
-                loading: false as Boolean,
-                test: '' as String,
-                galleryTemplates: [],
-                template: {} as IGalleryTemplate,
-                galleryDescriptor: galleryDescriptor,
-                windowWidth: window.innerWidth,
-                windowWidthBreakPoint: 1500
-            }
-        },
-        created() {
-            this.loadTemplate(this.id)
-            window.addEventListener('resize', this.resizeHandler)
-            console.log('OPTIONS: ', this.galleryDescriptor.options['html'])
-        },
-        methods: {
-            downloadTemplate(): void {
-                if (this.dirty) {
-                    this.$confirm.require({
-                        message: this.$t('managers.widgetGallery.templateIsNotSaved'),
-                        header: this.$t('managers.widgetGallery.downloadTemplate'),
-                        icon: 'pi pi-exclamation-triangle',
-                        accept: () => {
-                            downloadDirect(JSON.stringify(this.template), this.template.name, 'application/json')
-                        }
-                    })
-                } else {
-                    downloadDirect(JSON.stringify(this.template), this.template.name, 'application/json')
-                }
-            },
-            closeTemplate(): void {
-                this.$router.push('/gallery-management')
-            },
-            loadTemplate(id?: string): void {
-                this.loading = true
-                if (id) {
-                    this.$http
-                        .get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/' + (id || this.id))
-                        .then((response: AxiosResponse<any>) => {
-                            this.template = response.data
-                            // TODO remove after backend implementation
-                            this.template.label = this.template.label || this.template.name
-                        })
-                        .catch((error) => console.error(error))
-                        .finally(() => {
-                            this.loading = false
-                            this.dirty = false
-                        })
-                } else {
-                    this.template = { type: 'html', code: { html: '', css: '', javascript: '', python: '' } } as IGalleryTemplate
-                    this.loading = false
-                    this.dirty = false
-                }
-            },
-            onCmCodeChange(): void {
-                this.setDirty()
-            },
-            saveTemplate(): void {
-                if (this.validateTags()) {
-                    let postUrl = this.id ? '1.0/widgetgallery/' + this.id : '1.0/widgetgallery'
-                    this.$http
-                        .post(process.env.VUE_APP_API_PATH + postUrl, this.template)
-                        .then((response: AxiosResponse<any>) => {
-                            this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.saveTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullySaved') })
-                            this.$router.push('/gallery-management/' + response.data.id)
-                            this.$emit('saved')
-                        })
-                        .catch((error) => console.error(error))
-                }
-            },
-            setDirty(): void {
-                this.dirty = true
-            },
-            uploadFile(event): void {
-                const reader = new FileReader()
-                let self = this
-                reader.addEventListener(
-                    'load',
-                    function() {
-                        self.template.image = reader.result || ''
-                    },
-                    false
-                )
-                if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
-                    reader.readAsDataURL(event.srcElement.files[0])
-                    this.setDirty()
-                } else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
-            },
-            resizeHandler(): void {
-                this.windowWidth = window.innerWidth
-            },
-            validateTags(): Boolean {
-                const validationRegex = /^([a-zA-Z0-9-_])*$/g
-                for (var idx in this.template.tags) {
-                    let currentTag = this.template.tags[idx]
-                    const valid = currentTag.match(validationRegex)
-                    if (!valid) {
-                        this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.tags.tagIsNotValid', { tag: currentTag }) })
-                        return false
-                    }
-                }
-                return true
-            },
-            tabChange(e) {
-                let ref = 'editor_' + e.index
-                // eslint-disable-next-line
-                // @ts-ignore
-                this.$refs[ref].editor.refresh()
-            }
-        },
-        watch: {
-            '$route.params.id': function(id) {
-                this.loadTemplate(id)
-            }
-        },
-        unmounted() {
-            window.removeEventListener('resize', this.resizeHandler)
+export default defineComponent({
+    name: 'gallery-management-detail',
+    components: {
+        Chips,
+        VCodeMirror,
+        Dropdown,
+        InputText,
+        TabView,
+        TabPanel,
+        Textarea
+    },
+    emits: ['saved'],
+    props: {
+        id: String
+    },
+    data() {
+        return {
+            dirty: false as Boolean,
+            files: [],
+            loading: false as Boolean,
+            test: '' as String,
+            galleryTemplates: [],
+            template: {} as IGalleryTemplate,
+            galleryDescriptor: galleryDescriptor,
+            windowWidth: window.innerWidth,
+            windowWidthBreakPoint: 1500
         }
-    })
+    },
+    created() {
+        this.loadTemplate(this.id)
+        window.addEventListener('resize', this.resizeHandler)
+        console.log('OPTIONS: ', this.galleryDescriptor.options['html'])
+    },
+    methods: {
+        downloadTemplate(): void {
+            if (this.dirty) {
+                this.$confirm.require({
+                    message: this.$t('managers.widgetGallery.templateIsNotSaved'),
+                    header: this.$t('managers.widgetGallery.downloadTemplate'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        downloadDirect(JSON.stringify(this.template), this.template.name, 'application/json')
+                    }
+                })
+            } else {
+                downloadDirect(JSON.stringify(this.template), this.template.name, 'application/json')
+            }
+        },
+        closeTemplate(): void {
+            this.$router.push('/gallery-management')
+        },
+        loadTemplate(id?: string): void {
+            this.loading = true
+            if (id) {
+                this.$http
+                    .get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/' + (id || this.id))
+                    .then((response: AxiosResponse<any>) => {
+                        this.template = response.data
+                    })
+                    .catch((error) => console.error(error))
+                    .finally(() => {
+                        this.loading = false
+                        this.dirty = false
+                    })
+            } else {
+                this.template = { type: 'html', code: { html: '', css: '', javascript: '', python: '' } } as IGalleryTemplate
+                this.loading = false
+                this.dirty = false
+            }
+        },
+        onCmCodeChange(): void {
+            this.setDirty()
+        },
+        saveTemplate(): void {
+            if (this.validateTags()) {
+                let postUrl = this.id ? '1.0/widgetgallery/' + this.id : '1.0/widgetgallery'
+                this.$http
+                    .post(process.env.VUE_APP_API_PATH + postUrl, this.template)
+                    .then((response: AxiosResponse<any>) => {
+                        this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.saveTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullySaved') })
+                        this.$router.push('/gallery-management/' + response.data.id)
+                        this.$emit('saved')
+                    })
+                    .catch((error) => console.error(error))
+            }
+        },
+        setDirty(): void {
+            this.dirty = true
+        },
+        uploadFile(event): void {
+            const reader = new FileReader()
+            let self = this
+            reader.addEventListener(
+                'load',
+                function() {
+                    self.template.image = reader.result || ''
+                },
+                false
+            )
+            if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
+                reader.readAsDataURL(event.srcElement.files[0])
+                this.setDirty()
+            } else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
+        },
+        resizeHandler(): void {
+            this.windowWidth = window.innerWidth
+        },
+        validateTags(): Boolean {
+            const validationRegex = /^([a-zA-Z0-9-_])*$/g
+            for (var idx in this.template.tags) {
+                let currentTag = this.template.tags[idx]
+                const valid = currentTag.match(validationRegex)
+                if (!valid) {
+                    this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.tags.tagIsNotValid', { tag: currentTag }) })
+                    return false
+                }
+            }
+            return true
+        },
+        tabChange(e) {
+            let ref = 'editor_' + e.index
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs[ref].editor.refresh()
+        }
+    },
+    watch: {
+        '$route.params.id': function(id) {
+            this.loadTemplate(id)
+        }
+    },
+    unmounted() {
+        window.removeEventListener('resize', this.resizeHandler)
+    }
+})
 </script>
 
 <style lang="scss" scoped>
-    .managerDetail {
-        overflow: auto;
-        flex: 1;
+.managerDetail {
+    overflow: auto;
+    flex: 1;
 
-        #inputImage {
-            display: none;
-        }
-        label[for='inputImage'] {
-            float: right;
-            transition: background-color 0.3s linear;
-            border-radius: 50%;
-            width: 2.25rem;
-            line-height: 1rem;
-            top: -5px;
-            height: 2.25rem;
-            padding: 0.571rem;
-            position: relative;
-            cursor: pointer;
-            user-select: none;
-            &:hover {
-                background-color: $color-secondary;
-            }
-        }
-        &:deep(.p-tabview) {
-            display: flex;
-            flex-direction: column;
-            .p-tabview-panels {
-                padding: 0;
-                flex: 1;
-                .p-tabview-panel {
-                    height: 100%;
-                    .v-code-mirror {
-                        height: 100%;
-                    }
-                }
-            }
-        }
-        &:deep(.CodeMirror) {
-            font-size: 0.8rem;
-        }
-        display: flex;
-        height: 100%;
-        flex-direction: column;
-        .flex {
-            flex: 1;
-        }
-        h4 {
-            margin: 0;
-            padding: 8px;
-            background-color: #1a1b1f;
-            color: #aaaebc;
-            text-transform: uppercase;
-        }
-        &:deep(.imageUploader) {
-            .p-fileupload {
-                display: inline-block;
-                float: right;
-                .p-button {
-                    background-color: transparent;
-                    color: black;
-                }
-            }
-        }
-        .imageContainer {
-            height: 100%;
-            .icon {
-                color: $color-secondary;
-            }
-            img {
-                height: auto;
-                max-height: 100%;
-                max-width: 100%;
-            }
-        }
-        .codemirrorContainer {
-            width: 100%;
-            display: inline-flex;
-            .editorContainer {
-                flex: 1;
-            }
-        }
-        &:deep(.p-card-content) {
-            height: 220px;
+    #inputImage {
+        display: none;
+    }
+    label[for='inputImage'] {
+        float: right;
+        transition: background-color 0.3s linear;
+        border-radius: 50%;
+        width: 2.25rem;
+        line-height: 1rem;
+        top: -5px;
+        height: 2.25rem;
+        padding: 0.571rem;
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+        &:hover {
+            background-color: var(--kn-color-secondary);
         }
     }
+    &:deep(.p-tabview) {
+        display: flex;
+        flex-direction: column;
+        .p-tabview-panels {
+            padding: 0;
+            flex: 1;
+            .p-tabview-panel {
+                height: 100%;
+                .v-code-mirror {
+                    height: 100%;
+                }
+            }
+        }
+    }
+    &:deep(.CodeMirror) {
+        font-size: 0.8rem;
+    }
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    .flex {
+        flex: 1;
+    }
+    h4 {
+        margin: 0;
+        padding: 8px;
+        background-color: #1a1b1f;
+        color: #aaaebc;
+        text-transform: uppercase;
+    }
+    &:deep(.imageUploader) {
+        .p-fileupload {
+            display: inline-block;
+            float: right;
+            .p-button {
+                background-color: transparent;
+                color: black;
+            }
+        }
+    }
+    .imageContainer {
+        height: 100%;
+        .icon {
+            color: var(--kn-color-secondary);
+        }
+        img {
+            height: auto;
+            max-height: 100%;
+            max-width: 100%;
+        }
+    }
+    .codemirrorContainer {
+        width: 100%;
+        display: inline-flex;
+        .editorContainer {
+            flex: 1;
+        }
+    }
+    &:deep(.p-card-content) {
+        height: 220px;
+    }
+}
 </style>

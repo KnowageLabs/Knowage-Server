@@ -29,41 +29,41 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { AxiosResponse } from 'axios'
-import { filterDefault } from '@/helpers/commons/filterHelper'
-import mainDescriptor from '../../DocumentDetailsDescriptor.json'
-import infoDescriptor from './DocumentDetailsInformationsDescriptor.json'
-import Dialog from 'primevue/dialog'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
+    import { defineComponent } from 'vue'
+    import { AxiosResponse } from 'axios'
+    import { filterDefault } from '@/helpers/commons/filterHelper'
+    import mainDescriptor from '../../DocumentDetailsDescriptor.json'
+    import infoDescriptor from './DocumentDetailsInformationsDescriptor.json'
+    import Dialog from 'primevue/dialog'
+    import DataTable from 'primevue/datatable'
+    import Column from 'primevue/column'
 
-export default defineComponent({
-    name: 'dataset-dialog',
-    components: { Dialog, DataTable, Column },
-    props: { visible: { type: Boolean, required: false } },
-    emits: ['closeDialog', 'saveSelectedDataset'],
-    data() {
-        return {
-            mainDescriptor,
-            infoDescriptor,
-            loading: false,
-            filters: { global: [filterDefault] } as Object,
-            datasets: [] as any,
-            selectedDataset: {} as any
+    export default defineComponent({
+        name: 'dataset-dialog',
+        components: { Dialog, DataTable, Column },
+        props: { visible: { type: Boolean, required: false } },
+        emits: ['closeDialog', 'saveSelectedDataset'],
+        data() {
+            return {
+                mainDescriptor,
+                infoDescriptor,
+                loading: false,
+                filters: { global: [filterDefault] } as Object,
+                datasets: [] as any,
+                selectedDataset: {} as any
+            }
+        },
+        created() {
+            this.getAllDatasets()
+        },
+        methods: {
+            async getAllDatasets() {
+                this.loading = true
+                this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/basicinfo/all/`)
+                    .then((response: AxiosResponse<any>) => (this.datasets = response.data))
+                    .finally(() => (this.loading = false))
+            }
         }
-    },
-    created() {
-        this.getAllDatasets()
-    },
-    methods: {
-        async getAllDatasets() {
-            this.loading = true
-            this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/basicinfo/all/`)
-                .then((response: AxiosResponse<any>) => (this.datasets = response.data))
-                .finally(() => (this.loading = false))
-        }
-    }
-})
+    })
 </script>

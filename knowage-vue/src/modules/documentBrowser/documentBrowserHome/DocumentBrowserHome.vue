@@ -3,9 +3,9 @@
         <template #start>
             <i class="fa fa-ellipsis-v p-mr-3" id="sidebar-button" @click="toggleSidebarView" />
             <span>{{ searchMode ? $t('documentBrowser.documentsSearch') : $t('documentBrowser.title') }}</span>
-            <span v-if="searchMode" class="p-mx-4">
+            <span v-show="searchMode" class="p-mx-4">
                 <i class="fa fa-arrow-left search-pointer p-mx-4" @click="exitSearchMode" />
-                <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2" v-model="searchWord" :placeholder="$t('common.search')" />
+                <InputText id="document-search" class="kn-material-input p-inputtext-sm p-mx-2" ref="searchBar" @keyup.enter="loadDocuments" v-model="searchWord" :placeholder="$t('common.search')" autofocus />
                 <i class="fa fa-times search-pointer p-mx-4" @click="searchWord = ''" />
                 <i class="pi pi-search search-pointer p-mx-4" @click="loadDocuments" />
             </span>
@@ -13,9 +13,9 @@
 
         <template #end>
             <span v-if="!searchMode" class="p-mx-4">
-                <i class="pi pi-search search-pointer" @click="searchMode = true" />
+                <i class="pi pi-search search-pointer" @click="openSearchBar()" />
             </span>
-            <KnFabButton v-if="isSuperAdmin && selectedFolder && selectedFolder.parentId" icon="fas fa-plus" @click="toggle($event)" aria-haspopup="true" aria-controls="overlay_menu"></KnFabButton>
+            <KnFabButton v-if="(isSuperAdmin || canAddNewDocument) && selectedFolder && selectedFolder.parentId" icon="fas fa-plus" @click="toggle($event)" aria-haspopup="true" aria-controls="overlay_menu"></KnFabButton>
             <Menu ref="menu" :model="items" :popup="true" />
         </template>
     </Toolbar>
@@ -24,7 +24,7 @@
     <div id="document-browser-detail" class="p-d-flex p-flex-row kn-flex p-m-0">
         <div v-if="sidebarVisible && windowWidth < 1024" id="document-browser-sidebar-backdrop" @click="sidebarVisible = false"></div>
 
-        <div v-show="!searchMode" class="document-sidebar kn-flex kn-overflow-y" :class="{ 'sidebar-hidden': isSidebarHidden, 'document-sidebar-absolute': sidebarVisible && windowWidth < 1024 }">
+        <div v-show="!searchMode" class="document-sidebar kn-flex" style="width:350px" :class="{ 'sidebar-hidden': isSidebarHidden, 'document-sidebar-absolute': sidebarVisible && windowWidth < 1024 }">
             <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
         </div>
 
@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <DocumentDetails v-if="showDocumentDetails" :docId="documentId" :selectedDocument="selectedDocument" :selectedFolder="selectedFolder" :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" @reloadDocument="getSelectedDocument" />
+    <DocumentDetails v-if="showDocumentDetails" :docId="documentId" :selectedDocument="selectedDocument" :selectedFolder="selectedFolder" :visible="showDocumentDetails" @closeDetails="onCloseDetails" @reloadDocument="getSelectedDocument" />
 </template>
 
 <script lang="ts">
@@ -84,6 +84,9 @@ export default defineComponent({
     computed: {
         isSuperAdmin(): boolean {
             return this.user?.isSuperadmin
+        },
+        canAddNewDocument(): boolean {
+            return this.user?.functionalities.includes('DocumentManagement')
         },
         hasCreateCockpitFunctionality(): boolean {
             return this.user.functionalities.includes('CreateCockpitFunctionality')
@@ -181,6 +184,17 @@ export default defineComponent({
         },
         toggleSidebarView() {
             this.sidebarVisible = !this.sidebarVisible
+        },
+        openSearchBar() {
+            this.searchMode = true
+            setTimeout(() => {
+                // @ts-ignore
+                this.$refs.searchBar.$el.focus()
+            }, 0)
+        },
+        onCloseDetails() {
+            this.showDocumentDetails = false
+            this.loadDocuments()
         }
     }
 })
@@ -194,7 +208,6 @@ export default defineComponent({
 
 .document-sidebar {
     border-right: 1px solid #c2c2c2;
-    height: 85vh;
 }
 
 .document-sidebar-absolute {
@@ -240,9 +253,13 @@ export default defineComponent({
 
 #document-search {
     min-width: 500px;
-    background-color: $color-primary;
+    background-color: var(--kn-color-primary);
     color: white;
     border-bottom-color: white;
+}
+
+#document-search::placeholder {
+    color: white;
 }
 
 .full-width {
@@ -250,6 +267,8 @@ export default defineComponent({
 }
 
 #detail-container {
+    overflow: auto;
+    max-height: calc(100vh - 71px);
     flex: 3;
 }
 </style>

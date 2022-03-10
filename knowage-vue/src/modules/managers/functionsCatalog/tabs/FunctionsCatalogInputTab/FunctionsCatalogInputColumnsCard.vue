@@ -22,33 +22,33 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iInputColumn } from '../../FunctionsCatalog'
-import Card from 'primevue/card'
-import FunctionCatalogInputColumn from './FunctionsCatalogInputColumn.vue'
+    import { defineComponent } from 'vue'
+    import { iInputColumn } from '../../FunctionsCatalog'
+    import Card from 'primevue/card'
+    import FunctionCatalogInputColumn from './FunctionsCatalogInputColumn.vue'
 
-export default defineComponent({
-    name: 'function-catalog-input-columns-card',
-    components: { Card, FunctionCatalogInputColumn },
-    props: { columns: { type: Array }, readonly: { type: Boolean } },
-    data() {
-        return {
-            inputColumns: [] as iInputColumn[]
-        }
-    },
-    created() {
-        this.loadInputColumns()
-    },
-    methods: {
-        loadInputColumns() {
-            this.inputColumns = this.columns as iInputColumn[]
+    export default defineComponent({
+        name: 'function-catalog-input-columns-card',
+        components: { Card, FunctionCatalogInputColumn },
+        props: { columns: { type: Array }, readonly: { type: Boolean } },
+        data() {
+            return {
+                inputColumns: [] as iInputColumn[]
+            }
         },
-        addInputColumn() {
-            this.inputColumns.push({ name: '', type: '' })
+        created() {
+            this.loadInputColumns()
         },
-        deleteInputColumn(index: number) {
-            this.inputColumns.splice(index, 1)
+        methods: {
+            loadInputColumns() {
+                this.inputColumns = this.columns as iInputColumn[]
+            },
+            addInputColumn() {
+                this.inputColumns.push({ name: '', type: '' })
+            },
+            deleteInputColumn(index: number) {
+                this.inputColumns.splice(index, 1)
+            }
         }
-    }
-})
+    })
 </script>

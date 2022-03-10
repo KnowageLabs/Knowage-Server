@@ -34,58 +34,58 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iCategory } from './../../RolesManagement'
-import Card from 'primevue/card'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import domainCategoryTabDescriptor from './DomainCategoryTabDescriptor.json'
+    import { defineComponent } from 'vue'
+    import { iCategory } from './../../RolesManagement'
+    import Card from 'primevue/card'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import domainCategoryTabDescriptor from './DomainCategoryTabDescriptor.json'
 
-export default defineComponent({
-    name: 'domain-category-tab',
-    components: {
-        Card,
-        Column,
-        DataTable
-    },
-    props: {
-        title: String,
-        categoryList: Array,
-        selected: Array
-    },
-    emits: ['changed'],
-    data() {
-        return {
-            domainCategoryTabDescriptor,
-            selectedCategories: [] as iCategory[]
-        }
-    },
-    watch: {
-        selected() {
+    export default defineComponent({
+        name: 'domain-category-tab',
+        components: {
+            Card,
+            Column,
+            DataTable
+        },
+        props: {
+            title: String,
+            categoryList: Array,
+            selected: Array
+        },
+        emits: ['changed'],
+        data() {
+            return {
+                domainCategoryTabDescriptor,
+                selectedCategories: [] as iCategory[]
+            }
+        },
+        watch: {
+            selected() {
+                this.selectedCategories = this.selected as iCategory[]
+            }
+        },
+        created() {
             this.selectedCategories = this.selected as iCategory[]
+        },
+        methods: {
+            setDirty() {
+                this.$emit('changed', this.selectedCategories)
+            }
         }
-    },
-    created() {
-        this.selectedCategories = this.selected as iCategory[]
-    },
-    methods: {
-        setDirty() {
-            this.$emit('changed', this.selectedCategories)
-        }
-    }
-})
+    })
 </script>
 <style lang="scss" scoped>
-.domainCard {
-    &:deep(.p-card-body){
-        height: calc(100% - 35px);
-        .p-card-content {
-            height: 100%;
-            padding-bottom: 0;
-            .p-paginator-bottom {
-                border: none;
+    .domainCard {
+        &:deep(.p-card-body) {
+            height: calc(100% - 35px);
+            .p-card-content {
+                height: 100%;
+                padding-bottom: 0;
+                .p-paginator-bottom {
+                    border: none;
+                }
             }
         }
     }
-}
 </style>

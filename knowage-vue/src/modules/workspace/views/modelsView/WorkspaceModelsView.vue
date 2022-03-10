@@ -29,7 +29,7 @@
                     :viewType="document && document.federation_id ? 'federationDataset' : 'businessModel'"
                     :document="document"
                     @openSidebar="setSelectedModel"
-                    @openDatasetInQBE="openDatasetInQBE"
+                    @openDatasetInQBE="openDatasetInQBE($event)"
                     @editDataset="editDataset"
                     @deleteDataset="deleteDatasetConfirm"
                 />
@@ -41,12 +41,14 @@
         :visible="showDetailSidebar"
         :viewType="selectedModel && selectedModel.federation_id ? 'federationDataset' : 'businessModel'"
         :document="selectedModel"
-        @openDatasetInQBE="openDatasetInQBE"
+        @openDatasetInQBE="openDatasetInQBE($event)"
         @editDataset="editDataset"
         @deleteDataset="deleteDatasetConfirm"
         @close="showDetailSidebar = false"
         data-test="detail-sidebar"
     />
+
+    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="selectedQbeDataset" @close="closeQbe" />
 </template>
 
 <script lang="ts">
@@ -60,11 +62,12 @@ import KnFabButton from '@/components/UI/KnFabButton.vue'
 import SelectButton from 'primevue/selectbutton'
 import WorkspaceModelsTable from './tables/WorkspaceModelsTable.vue'
 import { AxiosResponse } from 'axios'
+import QBE from '@/modules/qbe/QBE.vue'
 
 export default defineComponent({
     name: 'workspace-models-view',
-    components: { DetailSidebar, KnFabButton, Message, SelectButton, WorkspaceModelsTable, WorkspaceCard },
-    emits: ['showMenu', 'toggleDisplayView'],
+    components: { DetailSidebar, KnFabButton, Message, SelectButton, WorkspaceModelsTable, WorkspaceCard, QBE },
+    emits: ['showMenu', 'toggleDisplayView', 'showQbeDialog'],
     props: { toggleCardDisplay: { type: Boolean } },
     data() {
         return {
@@ -79,7 +82,11 @@ export default defineComponent({
             searchWord: '' as string,
             showDetailSidebar: false,
             user: null as any,
-            loading: false
+            loading: false,
+            datasetDrivers: null as any,
+            datasetName: '',
+            qbeVisible: false,
+            selectedQbeDataset: null
         }
     },
     computed: {
@@ -150,11 +157,13 @@ export default defineComponent({
         resetSearch() {
             this.searchWord = ''
         },
-        openDatasetInQBE() {
-            this.$store.commit('setInfo', {
-                title: 'Todo',
-                msg: 'Functionality not in this sprint'
-            })
+        openDatasetInQBE(dataset: any) {
+            if (process.env.VUE_APP_USE_OLD_QBE_IFRAME == 'true') {
+                this.$emit('showQbeDialog', dataset)
+            } else {
+                this.selectedQbeDataset = dataset
+                this.qbeVisible = true
+            }
         },
         createNewFederation() {
             this.$router.push('models/federation-definition/new-federation')
@@ -208,6 +217,10 @@ export default defineComponent({
                 case 'All':
                     this.filteredItems = [...this.allItems]
             }
+        },
+        closeQbe() {
+            this.qbeVisible = false
+            this.selectedQbeDataset = null
         }
     }
 })

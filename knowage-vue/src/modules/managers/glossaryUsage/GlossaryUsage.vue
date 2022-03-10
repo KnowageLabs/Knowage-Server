@@ -118,6 +118,7 @@
 
                 if (!parent) {
                     this.selectedWords = []
+                    this.selectedKeys = []
                 }
 
                 if (parent?.WORD_ID || this.searchWord) {

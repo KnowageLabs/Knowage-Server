@@ -33,43 +33,43 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Card from 'primevue/card'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import tabViewDescriptor from '../TenantManagementTabViewDescriptor.json'
+    import { defineComponent } from 'vue'
+    import Card from 'primevue/card'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import tabViewDescriptor from '../TenantManagementTabViewDescriptor.json'
 
-export default defineComponent({
-    name: 'selection-table',
-    components: {
-        Card,
-        Column,
-        DataTable
-    },
-    props: {
-        title: String,
-        dataList: Array,
-        selectedData: Array
-    },
-    emits: ['changed'],
-    data() {
-        return {
-            tabViewDescriptor,
-            selectedCategories: [] as any[]
-        }
-    },
-    watch: {
-        selectedData() {
+    export default defineComponent({
+        name: 'selection-table',
+        components: {
+            Card,
+            Column,
+            DataTable
+        },
+        props: {
+            title: String,
+            dataList: Array,
+            selectedData: Array
+        },
+        emits: ['changed'],
+        data() {
+            return {
+                tabViewDescriptor,
+                selectedCategories: [] as any[]
+            }
+        },
+        watch: {
+            selectedData() {
+                this.selectedCategories = this.selectedData as any[]
+            }
+        },
+        created() {
             this.selectedCategories = this.selectedData as any[]
+        },
+        methods: {
+            setDirty() {
+                this.$emit('changed', this.selectedCategories)
+            }
         }
-    },
-    created() {
-        this.selectedCategories = this.selectedData as any[]
-    },
-    methods: {
-        setDirty() {
-            this.$emit('changed', this.selectedCategories)
-        }
-    }
-})
+    })
 </script>

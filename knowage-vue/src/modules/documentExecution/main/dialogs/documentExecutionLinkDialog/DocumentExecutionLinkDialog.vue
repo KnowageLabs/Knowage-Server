@@ -84,6 +84,8 @@ export default defineComponent({
         getPublicUrl() {
             const tenet = (this.$store.state as any).user.organization
 
+            if (!this.document) return
+
             if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER') {
                 if (this.embedHTML) {
                     this.publicUrl = '<iframe width="600" height="600" src=' + process.env.VUE_APP_HOST_URL + this.$route.fullPath + ' frameborder="0"></iframe>'

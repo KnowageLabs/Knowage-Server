@@ -124,7 +124,7 @@
             "parameterValue": "id",
             "type": "event"
         },
-        "sortFields": ["label", "name"],
+        "sortFields": ["label", "name", "dsTypeCd"],
         "textField": "name",
         "titleField": "label"
     }

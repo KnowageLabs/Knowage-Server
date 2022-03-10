@@ -12,42 +12,42 @@
 </template>
 
 <script lang="ts">
-import { AxiosResponse } from 'axios'
-import { defineComponent } from 'vue'
-import { IPackage } from '../../Workspace'
-import WorkspaceSchedulationOldSchedulationsDialog from './dialog/WorkspaceSchedulationOldSchedulationsDialog.vue'
-import WorkspaceSchedulationTable from './tables/WorkspaceSchedulationTable.vue'
+    import { AxiosResponse } from 'axios'
+    import { defineComponent } from 'vue'
+    import { IPackage } from '../../Workspace'
+    import WorkspaceSchedulationOldSchedulationsDialog from './dialog/WorkspaceSchedulationOldSchedulationsDialog.vue'
+    import WorkspaceSchedulationTable from './tables/WorkspaceSchedulationTable.vue'
 
-export default defineComponent({
-    name: 'workspace-schedulation-view',
-    components: { WorkspaceSchedulationOldSchedulationsDialog, WorkspaceSchedulationTable },
-    emits: ['showMenu'],
-    data() {
-        return {
-            jobs: [] as IPackage[],
-            selectedSchedulations: {} as any,
-            schedulationsDialogVisible: false,
-            selectedJob: null as IPackage | null,
-            loading: false
-        }
-    },
-    async created() {
-        await this.loadJobs()
-    },
-    methods: {
-        async loadJobs() {
-            this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/listAllJobs`).then((response: AxiosResponse<any>) => (this.jobs = response.data.root))
-            this.loading = false
+    export default defineComponent({
+        name: 'workspace-schedulation-view',
+        components: { WorkspaceSchedulationOldSchedulationsDialog, WorkspaceSchedulationTable },
+        emits: ['showMenu'],
+        data() {
+            return {
+                jobs: [] as IPackage[],
+                selectedSchedulations: {} as any,
+                schedulationsDialogVisible: false,
+                selectedJob: null as IPackage | null,
+                loading: false
+            }
         },
-        viewOldSchedulations(job: IPackage) {
-            this.selectedJob = job
-            this.schedulationsDialogVisible = true
+        async created() {
+            await this.loadJobs()
         },
-        closeOldSchedulationsDialog() {
-            this.schedulationsDialogVisible = false
-            this.selectedJob = null
+        methods: {
+            async loadJobs() {
+                this.loading = true
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/listAllJobs`).then((response: AxiosResponse<any>) => (this.jobs = response.data.root))
+                this.loading = false
+            },
+            viewOldSchedulations(job: IPackage) {
+                this.selectedJob = job
+                this.schedulationsDialogVisible = true
+            },
+            closeOldSchedulationsDialog() {
+                this.schedulationsDialogVisible = false
+                this.selectedJob = null
+            }
         }
-    }
-})
+    })
 </script>

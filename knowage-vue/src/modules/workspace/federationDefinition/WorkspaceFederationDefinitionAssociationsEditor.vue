@@ -27,39 +27,39 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Card from 'primevue/card'
-import WorkspaceFederationDefinitionMetafieldsList from './WorkspaceFederationDefinitionMetafieldsList.vue'
-import workspaceFederationDatasetListDescriptor from './WorkspaceFederationDatasetListDescriptor.json'
+    import { defineComponent } from 'vue'
+    import Card from 'primevue/card'
+    import WorkspaceFederationDefinitionMetafieldsList from './WorkspaceFederationDefinitionMetafieldsList.vue'
+    import workspaceFederationDatasetListDescriptor from './WorkspaceFederationDatasetListDescriptor.json'
 
-export default defineComponent({
-    name: 'workspace-federation-definition-associations-editor',
-    components: { Card, WorkspaceFederationDefinitionMetafieldsList },
-    props: { selectedDatasets: { type: Array }, selectedMetafields: { type: Array }, resetSelectedMetafield: { type: Boolean } },
-    data() {
-        return {
-            datasets: [] as any[],
-            workspaceFederationDatasetListDescriptor
-        }
-    },
-    watch: {
-        selectedDatasets() {
+    export default defineComponent({
+        name: 'workspace-federation-definition-associations-editor',
+        components: { Card, WorkspaceFederationDefinitionMetafieldsList },
+        props: { selectedDatasets: { type: Array }, selectedMetafields: { type: Array }, resetSelectedMetafield: { type: Boolean } },
+        data() {
+            return {
+                datasets: [] as any[],
+                workspaceFederationDatasetListDescriptor
+            }
+        },
+        watch: {
+            selectedDatasets() {
+                this.loadDatasets()
+            }
+        },
+        created() {
             this.loadDatasets()
+        },
+        methods: {
+            loadDatasets() {
+                this.datasets = this.selectedDatasets as any[]
+            }
         }
-    },
-    created() {
-        this.loadDatasets()
-    },
-    methods: {
-        loadDatasets() {
-            this.datasets = this.selectedDatasets as any[]
-        }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-.metafield-select-list {
-    width: 250px;
-}
+    .metafield-select-list {
+        width: 250px;
+    }
 </style>

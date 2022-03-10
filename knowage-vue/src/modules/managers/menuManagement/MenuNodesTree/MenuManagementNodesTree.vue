@@ -11,7 +11,7 @@
         @node-select="onNodeSelect"
         @nodeUnselect="onNodeUnselect"
         data-test="menu-nodes-tree"
-        class="kn-tree kn-flex"
+        class="kn-tree kn-flex toolbar-height"
         scrollHeight="flex"
     >
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
@@ -59,7 +59,7 @@ export default defineComponent({
                     return item
                 })
 
-                this.menuElements = arrayToTree(element, { dataField: null, style: this.menuNodesTreeDescriptor['node-style'] })
+                this.menuElements = [{ label: this.$t('common.home'), name: this.$t('common.home'), menuId: null, children: arrayToTree(element, { dataField: null, style: this.menuNodesTreeDescriptor['node-style'] }) }]
                 this.expandAll()
             }
         },
@@ -107,6 +107,16 @@ export default defineComponent({
             })
             return canBeMoved
         },
+        findNode(menuId: any, nodes: iMenuNode[]): iMenuNode | null {
+            for (let node of nodes) {
+                if (node.menuId === menuId) {
+                    return node
+                }
+                const foundNode = this.findNode(menuId, node.children)
+                if (foundNode) return foundNode
+            }
+            return null
+        },
         canBeDeleted(node: iMenuNode) {
             return !(node.children?.length > 0)
         },
@@ -139,5 +149,8 @@ export default defineComponent({
     &:deep(.p-treenode-content) {
         padding: 0 !important;
     }
+}
+.toolbar-height {
+    padding-bottom: var(--kn-toolbar-height);
 }
 </style>

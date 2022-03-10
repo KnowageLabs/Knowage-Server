@@ -11,53 +11,67 @@
         </span>
     </div>
     <div class="kn-overflow-y last-flex-container kn-flex">
-        <div class="table-container-box">
-            <DataTable
-                id="documents-datatable"
-                :value="documents"
-                :paginator="documents.length > documentBrowserTableDescriptor.rows"
-                :rows="documentBrowserTableDescriptor.rows"
-                v-model:filters="filters"
-                filterDisplay="menu"
-                class="p-datatable-sm kn-table"
-                dataKey="id"
-                :responsiveLayout="documentBrowserTableDescriptor.responsiveLayout"
-                :breakpoint="documentBrowserTableDescriptor.breakpoint"
-                @rowClick="$emit('selected', $event.data)"
-                data-test="documents-datatable"
-            >
-                <template #empty>
-                    <Message class="p-m-2" severity="info" :closable="false" :style="documentBrowserTableDescriptor.styles.message" data-test="no-documents-hint">
-                        {{ $t('documentBrowser.noDocumentsHint') }}
-                    </Message>
+        <DataTable
+            id="documents-datatable"
+            v-model:first="first"
+            :value="documents"
+            :paginator="documents.length > documentBrowserTableDescriptor.rows"
+            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+            :currentPageReportTemplate="
+                $t('common.table.footer.paginated', {
+                    first: '{first}',
+                    last: '{last}',
+                    totalRecords: '{totalRecords}'
+                })
+            "
+            :rows="documentBrowserTableDescriptor.rows"
+            v-model:filters="filters"
+            filterDisplay="menu"
+            selectionMode="single"
+            class="p-datatable-sm kn-table"
+            dataKey="id"
+            :responsiveLayout="documentBrowserTableDescriptor.responsiveLayout"
+            :breakpoint="documentBrowserTableDescriptor.breakpoint"
+            @rowClick="$emit('selected', $event.data)"
+            data-test="documents-datatable"
+            style="width:100%;"
+            :scrollable="true"
+            scrollHeight="100%"
+        >
+            <template #empty>
+                <Message class="p-m-2" severity="info" :closable="false" :style="documentBrowserTableDescriptor.styles.message" data-test="no-documents-hint">
+                    {{ $t('documentBrowser.noDocumentsHint') }}
+                </Message>
+            </template>
+            <Column class="kn-truncated" :style="col.style" v-for="col of documentBrowserTableDescriptor.columns" :header="$t(col.header)" :field="col.field" :key="col.field" :sortField="col.field" :sortable="true">
+                <template #filter="{filterModel}">
+                    <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                 </template>
-                <Column class="kn-truncated" :style="col.style" v-for="col of documentBrowserTableDescriptor.columns" :header="$t(col.header)" :field="col.field" :key="col.field" :sortField="col.field" :sortable="true">
-                    <template #filter="{filterModel}">
-                        <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
-                    </template>
-                </Column>
-                <Column v-if="isSuperAdmin" class="kn-truncated" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true">
-                    <template #filter="{filterModel}">
-                        <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
-                    </template>
-                    <template #body="slotProps">
-                        <span data-test="document-status"> {{ slotProps.data['stateCodeStr'] }}</span>
-                    </template></Column
-                >
-                <Column v-if="isSuperAdmin" :style="documentBrowserTableDescriptor.table.iconColumn.style" :header="$t('common.visible')" field="visible" sortField="visible" :sortable="true">
-                    <template #body="slotProps">
-                        <span class="fa-stack">
-                            <i class="fa fa-eye fa-stack-1x"></i>
-                            <i v-if="!slotProps.data['visible']" class="fa fa-ban fa-stack-2x"></i>
-                        </span> </template
-                ></Column>
-                <Column :style="documentBrowserTableDescriptor.table.iconColumn.style">
-                    <template #body="slotProps">
-                        <Button icon="fa fa-play-circle" class="p-button-link" @click.stop="executeDocument(slotProps.data)" />
-                    </template>
-                </Column>
-            </DataTable>
-        </div>
+                <template #body="slotProps">
+                    <span class="kn-truncated" v-tooltip.top="slotProps.data[col.field]">{{ slotProps.data[col.field] }}</span>
+                </template>
+            </Column>
+            <Column v-if="isSuperAdmin" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true" :style="documentBrowserTableDescriptor.table.smallmessage">
+                <template #filter="{filterModel}">
+                    <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
+                </template>
+                <template #body="slotProps" :style="documentBrowserTableDescriptor.table.iconColumn.smallmessage">
+                    <span data-test="document-status"> {{ slotProps.data['stateCodeStr'] }}</span>
+                </template></Column
+            >
+            <Column v-if="isSuperAdmin" :header="$t('common.visible')" field="visible" sortField="visible" :sortable="true" :style="documentBrowserTableDescriptor.table.iconColumn.style">
+                <template #body="slotProps">
+                    <span class="fa-stack" v-tooltip="slotProps.data['visible'] ? $t('common.visible') : $t('common.notVisible')">
+                        <i class="fa fa-eye fa-stack-1x"></i>
+                        <i v-if="!slotProps.data['visible']" class="fa fa-ban fa-stack-2x"></i>
+                    </span> </template
+            ></Column>
+            <Column :style="documentBrowserTableDescriptor.table.iconColumn.style">
+                <template #body="slotProps">
+                    <Button icon="fa fa-play-circle" class="p-button-link" v-tooltip.left="$t('documentBrowser.executeDocument')" @click.stop="executeDocument(slotProps.data)" />
+                </template>
+            </Column>
+        </DataTable>
     </div>
 </template>
 
@@ -102,12 +116,14 @@ export default defineComponent({
                     constraints: [filterDefault]
                 }
             } as any,
-            user: null as any
+            user: null as any,
+            first: 0
         }
     },
     watch: {
         propDocuments() {
             this.loadDocuments()
+            this.first = 0
         }
     },
     computed: {
@@ -117,11 +133,13 @@ export default defineComponent({
     },
     created() {
         this.loadDocuments()
+        this.first = 0
         this.user = (this.$store.state as any).user
     },
     methods: {
         loadDocuments() {
             this.documents = this.propDocuments?.map((el: any) => {
+                if (el.field === 'status') el.style = documentBrowserTableDescriptor.table.smallmessage
                 return { ...el, stateCodeStr: this.getTranslatedStatus(el.stateCodeStr) }
             }) as any[]
         },
@@ -138,30 +156,5 @@ export default defineComponent({
 <style lang="scss">
 #documents-found-hint {
     flex: 0.5;
-}
-
-.overflow {
-    overflow: auto;
-}
-
-.last-flex-container {
-    position: relative;
-}
-
-.table-container-box {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: flex;
-}
-
-#documents-datatable .p-paginator {
-    position: fixed;
-    bottom: 0;
-    right: 20px;
-}
-
-#documents-datatable .p-datatable-wrapper {
-    margin-bottom: 50px;
 }
 </style>
