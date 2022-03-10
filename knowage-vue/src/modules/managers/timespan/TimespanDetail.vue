@@ -19,6 +19,7 @@ import { defineComponent, PropType } from 'vue'
 import { iTimespan, iCategory, iInterval } from './Timespan'
 import { AxiosResponse } from 'axios'
 import { formatDate } from '@/helpers/commons/localeHelper'
+import { createDateFromIntervalTime } from './timespanHelpers'
 import TimespanForm from './TimespanForm.vue'
 import TimespanIntervalTable from './TimespanIntervalTable.vue'
 
@@ -183,17 +184,20 @@ export default defineComponent({
         createFirstIntervalForClonedTimespan(tempTimespan: iTimespan) {
             const firstInterval = tempTimespan.definition[tempTimespan.definition.length - 1]
 
-            const fromDate = new Date(firstInterval.from.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3'))
-            const toDate = new Date(firstInterval.to.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3'))
+            const fromDate = createDateFromIntervalTime(firstInterval.from)
+            const toDate = createDateFromIntervalTime(firstInterval.to)
 
             const millsDay = 86400000
             const tempInterval = { from: toDate, to: new Date() }
             tempInterval.from.setTime(toDate.getTime() + millsDay)
             tempInterval.to.setTime(tempInterval.from.getTime() + toDate.getTime() - fromDate.getTime() - millsDay)
 
-            firstInterval.from = tempInterval.from.getDate() + '/' + (tempInterval.from.getMonth() + 1) + '/' + tempInterval.from.getFullYear()
-            firstInterval.to = tempInterval.to.getDate() + '/' + (tempInterval.to.getMonth() + 1) + '/' + tempInterval.to.getFullYear()
+            firstInterval.from = this.getFormattedDateString(tempInterval.from)
+            firstInterval.to = this.getFormattedDateString(tempInterval.to)
             tempTimespan.definition = [firstInterval]
+        },
+        getFormattedDateString(date: Date) {
+            return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear()
         }
     }
 })

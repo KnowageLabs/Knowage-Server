@@ -10,6 +10,7 @@
 import { defineComponent, PropType } from 'vue'
 import { iTimespan, iInterval } from './Timespan'
 import { formatDate } from '@/helpers/commons/localeHelper'
+import { createDateFromIntervalTime } from './timespanHelpers'
 import Calendar from 'primevue/calendar'
 
 const deepcopy = require('deepcopy')
@@ -61,28 +62,29 @@ export default defineComponent({
             this.$emit('touched')
         },
         createNewTimeInterval(interval: iInterval) {
-            if (interval.from instanceof Date && interval.to instanceof Date) {
-                const from = this.padTo2Digits(interval.from.getHours()) + ':' + this.padTo2Digits(interval.from.getMinutes())
-                const to = this.padTo2Digits(interval.to.getHours()) + ':' + this.padTo2Digits(interval.to.getMinutes())
-
-                const fromTime = Date.parse('01/01/2011 ' + from)
-                const toTime = Date.parse('01/01/2011 ' + to)
-
-                if (fromTime > toTime) {
-                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.startTimeGreaterError') })
-                    return
-                }
-
-                this.addNewTimeInterval(interval, from, to, fromTime, toTime)
-            } else {
+            if (!(interval.from instanceof Date) || !(interval.to instanceof Date)) {
                 this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.invalidDatesError') })
+                return
             }
+
+            const from = this.getHoursAndMinutes(interval.from)
+            const to = this.getHoursAndMinutes(interval.to)
+
+            const fromTime = this.createDateFromHoursAndMinutes(from)
+            const toTime = this.createDateFromHoursAndMinutes(to)
+
+            if (fromTime > toTime) {
+                this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.startTimeGreaterError') })
+                return
+            }
+
+            this.addNewTimeInterval(interval, from, to, fromTime, toTime)
         },
         addNewTimeInterval(interval: iInterval, from: string, to: string, fromTime: number, toTime: number) {
             if (this.timespan) {
                 for (let i in this.timespan.definition) {
-                    const tempStart = Date.parse('01/01/2011 ' + this.timespan.definition[i].from)
-                    const tempEnd = Date.parse('01/01/2011 ' + this.timespan.definition[i].to)
+                    const tempStart = this.createDateFromHoursAndMinutes(this.timespan.definition[i].from)
+                    const tempEnd = this.createDateFromHoursAndMinutes(this.timespan.definition[i].to)
                     if (fromTime <= tempEnd && toTime >= tempStart) {
                         this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.timeOverlapError') })
                         return
@@ -102,33 +104,34 @@ export default defineComponent({
             this.interval = deepcopy(this.interval)
         },
         createNewTemporalInterval(interval: iInterval) {
-            if (interval.from instanceof Date && interval.to instanceof Date) {
-                const fromDate = interval.from
-                const toDate = interval.to
-
-                if (fromDate > toDate) {
-                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.startDateGreaterError') })
-                    return
-                }
-
-                this.addNewTemporalInterval(fromDate, toDate)
-            } else {
+            if (!(interval.from instanceof Date) || !(interval.to instanceof Date)) {
                 this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.invalidDatesError') })
+                return
             }
+
+            const fromDate = interval.from
+            const toDate = interval.to
+
+            if (fromDate > toDate) {
+                this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.startDateGreaterError') })
+                return
+            }
+
+            this.addNewTemporalInterval(fromDate, toDate)
         },
         addNewTemporalInterval(fromDate: Date, toDate: Date) {
             if (this.timespan) {
                 for (let i in this.timespan.definition) {
-                    const tempStart = new Date(this.timespan.definition[i].from.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3'))
-                    const tempEnd = new Date(this.timespan.definition[i].to.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3'))
+                    const tempStart = createDateFromIntervalTime(this.timespan.definition[i].from)
+                    const tempEnd = createDateFromIntervalTime(this.timespan.definition[i].to)
 
                     if (fromDate <= tempEnd && toDate >= tempStart) {
                         this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.temporalOverlapError') })
                         return
                     }
                 }
-                const from = ('0' + fromDate.getDate()).slice(-2) + '/' + ('0' + (fromDate.getMonth() + 1)).slice(-2) + '/' + fromDate.getFullYear()
-                const to = ('0' + toDate.getDate()).slice(-2) + '/' + ('0' + (toDate.getMonth() + 1)).slice(-2) + '/' + toDate.getFullYear()
+                const from = this.getFormattedDateString(fromDate)
+                const to = this.getFormattedDateString(toDate)
                 const fromLocalized = this.getFormattedDate(from)
                 const toLocalized = this.getFormattedDate(to)
                 this.timespan.definition.push({ from: from, to: to, fromLocalized: fromLocalized, toLocalized: toLocalized })
@@ -148,6 +151,15 @@ export default defineComponent({
         },
         getFormattedDate(date: string) {
             return formatDate(date, '', 'DD/MM/yyyy')
+        },
+        getHoursAndMinutes(date: Date) {
+            return this.padTo2Digits(date.getHours()) + ':' + this.padTo2Digits(date.getMinutes())
+        },
+        createDateFromHoursAndMinutes(date: string) {
+            return Date.parse('01/01/2011 ' + date)
+        },
+        getFormattedDateString(date: Date) {
+            return ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear()
         }
     }
 })
