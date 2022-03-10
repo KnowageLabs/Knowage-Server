@@ -267,6 +267,8 @@ export default defineComponent({
 }
 
 #detail-container {
+    overflow: auto;
+    max-height: calc(100vh - 71px);
     flex: 3;
 }
 </style>
