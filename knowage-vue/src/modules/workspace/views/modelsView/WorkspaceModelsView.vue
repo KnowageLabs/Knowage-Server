@@ -62,10 +62,11 @@ import KnFabButton from '@/components/UI/KnFabButton.vue'
 import SelectButton from 'primevue/selectbutton'
 import WorkspaceModelsTable from './tables/WorkspaceModelsTable.vue'
 import { AxiosResponse } from 'axios'
+import QBE from '@/modules/qbe/QBE.vue'
 
 export default defineComponent({
     name: 'workspace-models-view',
-    components: { DetailSidebar, KnFabButton, Message, SelectButton, WorkspaceModelsTable, WorkspaceCard },
+    components: { DetailSidebar, KnFabButton, Message, SelectButton, WorkspaceModelsTable, WorkspaceCard, QBE },
     emits: ['showMenu', 'toggleDisplayView', 'showQbeDialog'],
     props: { toggleCardDisplay: { type: Boolean } },
     data() {

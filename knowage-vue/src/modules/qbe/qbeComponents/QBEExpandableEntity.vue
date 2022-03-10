@@ -8,10 +8,10 @@
             <Button v-else icon="pi pi-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="entity.expanded = true" />
         </h4>
         <ul v-show="entity.expanded">
-            <li :style="{ 'border-left': `5px solid ${child.color}` }" v-for="(child, index) in entity.children" :key="index" draggable="true" @dragstart="onDragStart($event, child)">
+            <li :style="{ 'border-left': `5px solid ${child.color}` }" v-for="(child, index) in entity.children" :key="index" draggable="true" @click="$emit('entityChildClicked', child)" @dragstart="onDragStart($event, child)">
                 <i :class="getIconCls(child.attributes.iconCls)" class="p-mx-2" v-tooltip.top="$t(`qbe.entities.types.${child.attributes.iconCls}`)" />
-                <span @click="$emit('entityChildClicked', child)" :data-test="'entity-' + entity.id">{{ child.text }}</span>
-                <Button icon="fas fa-filter" :class="{ 'qbe-active-filter-icon': fieldHasFilters(child) }" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click="openFiltersDialog(child)" :data-test="'child-' + child.id" />
+                <span :data-test="'entity-' + entity.id">{{ child.text }}</span>
+                <Button icon="fas fa-filter" :class="{ 'qbe-active-filter-icon': fieldHasFilters(child) }" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click.stop="openFiltersDialog(child)" :data-test="'child-' + child.id" />
             </li>
         </ul>
     </div>
@@ -77,6 +77,8 @@ export default defineComponent({
                     return 'fas fa-font'
                 case 'generic':
                     return 'fas fa-layer-group'
+                case 'geographic_dimension':
+                    return 'fas fa-globe'
                 default:
                     return 'fas fa-cube'
             }
@@ -132,6 +134,7 @@ export default defineComponent({
             }
             span {
                 padding-left: 5px;
+                flex: 1;
             }
         }
     }
