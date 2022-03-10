@@ -28,9 +28,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
-import org.apache.avro.Conversion;
 import org.apache.avro.Conversions;
-import org.apache.avro.LogicalType;
 import org.apache.avro.LogicalTypes;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
@@ -82,13 +80,16 @@ public class AvroExportJob extends AbstractExportJob {
 	protected void export(JobExecutionContext context) throws JobExecutionException {
 		logger.debug("Start Avro export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
 		try {
+
+			GenericData model = new GenericData();
+			model.addLogicalTypeConversion(new Conversions.DecimalConversion());
 			dataSet = getDataSet();
 			dsMeta = dataSet.getMetadata();
 			Schema schema = getSchema(dataSet);
 
 			try (OutputStream exportFileOS = getDataOutputStream()) {
 				clearStatusFiles();
-				DatumWriter<GenericRecord> dout = new GenericDatumWriter<GenericRecord>();
+				DatumWriter<GenericRecord> dout = new GenericDatumWriter<GenericRecord>(schema, model);
 
 				try (DataFileWriter<GenericRecord> writer = new DataFileWriter<GenericRecord>(dout)) {
 					writer.create(schema, exportFileOS);
@@ -138,11 +139,7 @@ public class AvroExportJob extends AbstractExportJob {
 				value = timestampFormatter.format(value);
 			} else if (BigDecimal.class.isAssignableFrom(type)) {
 				BigDecimal bigDecimalValue = (BigDecimal) value;
-				bigDecimalValue.setScale(BIG_DECIMAL_SCALE);
-				LogicalType decimal = LogicalTypes.decimal(BIG_DECIMAL_PRECISION, BIG_DECIMAL_SCALE);
-				Schema bytesSchema = Schema.create(Schema.Type.BYTES);
-				Conversion<BigDecimal> conversion = new Conversions.DecimalConversion();
-				value = conversion.toBytes(bigDecimalValue, bytesSchema, decimal);
+				value = bigDecimalValue.setScale(BIG_DECIMAL_SCALE);
 			} else if (Double.class.isAssignableFrom(type)) {
 				value = Double.valueOf(value.toString());
 			} else if (Integer.class.isAssignableFrom(type)) {
