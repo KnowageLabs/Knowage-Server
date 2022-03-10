@@ -381,7 +381,6 @@ export default defineComponent({
                     if (showPreview) this.qbePreviewDialogVisible = false
                 })
             this.selectedQuery.fields.forEach((field) => (field.uniqueID = crypto.randomBytes(4).toString('hex')))
-            console.log('EXECUTE QBE QUERY', this.selectedQuery)
             this.loading = false
         },
         async updatePagination(lazyParams: any) {
