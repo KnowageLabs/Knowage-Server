@@ -205,6 +205,7 @@ export default defineComponent({
         border-bottom: 1px solid #a9a9a9 !important;
         .p-column-header-content {
             flex: 1;
+            min-width: 0;
         }
     }
     td {
