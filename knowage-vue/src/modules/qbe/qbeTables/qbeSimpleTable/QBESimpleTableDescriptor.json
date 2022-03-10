@@ -5,44 +5,52 @@
         {
             "field": "entity",
             "header": "qbe.simpleTable.entity",
-            "style": "width: 10%"
+            "style": ""
         },
         {
             "field": "field",
             "header": "common.field",
-            "style": "width: 33%"
+            "style": ""
         },
         {
             "field": "alias",
             "header": "common.alias",
-            "style": "width: 16%"
+            "style": ""
         },
         {
             "field": "group",
             "header": "common.group",
-            "style": "width: 8%"
+            "style": "width: 5%"
         },
         {
             "field": "order",
             "header": "common.order",
-            "style": "width: 9%"
+            "style": ""
         },
         {
             "field": "funct",
             "header": "qbe.simpleTable.aggregationShort",
-            "style": "width: 9%"
+            "style": ""
         },
         {
             "field": "visible",
             "header": "common.show",
-            "style": "width: 9%"
+            "style": "width: 5%"
         },
         {
             "field": "inUse",
             "header": "common.inUse",
-            "style": "width: 9%"
+            "style": "width: 5%"
         }
     ],
     "headerStyle": "width: 3rem",
-    "orderingOptions": ["NONE", "ASC", "DESC"]
+    "orderingOptions": ["NONE", "ASC", "DESC"],
+    "style": {
+        "firstColumn": {
+            "width": "3%"
+        },
+        "lastColumn": {
+            "width": "1%"
+        }
+    }
 }
