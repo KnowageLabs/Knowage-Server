@@ -27,6 +27,7 @@ import schedulerRoutes from '@/modules/managers/scheduler/Scheduler.routes.js'
 import schedulationAgendaRoutes from '@/modules/managers/schedulationAgendaManagement/SchedulationAgenda.routes.js'
 import datasetManagementRoutes from '@/modules/managers/datasetManagement/DatasetManagement.routes.js'
 import themeManagementRoutes from '@/modules/managers/themeManagement/ThemeManagement.routes.js'
+import timespanRoutes from '@/modules/managers/timespan/Timespan.routes.js'
 
 const baseRoutes = []
 
@@ -60,5 +61,6 @@ const routes = baseRoutes
     .concat(schedulationAgendaRoutes)
     .concat(datasetManagementRoutes)
     .concat(themeManagementRoutes)
+    .concat(timespanRoutes)
 
 export default routes

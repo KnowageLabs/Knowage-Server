@@ -67,6 +67,7 @@
         "file": "File",
         "fileName": "File Name",
         "filters": "Filters",
+        "from": "From",
         "general": "General",
         "group": "Group",
         "home": "Home",
@@ -159,6 +160,7 @@
             "table": "Table"
         },
         "tags": "tags",
+        "temporal": "Temporal",
         "tenant": "tenant",
         "test": "test",
         "time": "Time",
@@ -1711,6 +1713,16 @@
         "themeManagement": {
             "hint": "Theme management allows you to create a theme, changing the default  colors/dimensions of different interface elements of Knowage. You can also create more than one theme and switch them as you like. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Theme Management"
+        },
+        "timespan": {
+            "invalidDatesError": "The dates are not valid",
+            "cloneAlreadyDefined": "The next timespan is already defiend",
+            "noIntervalError": "Please define at least one interval",
+            "startDateGreaterError": "Start date greater than end date",
+            "startTimeGreaterError": "Start time greater than end time",
+            "temporalOverlapError": "The date interval overlaps with an existing one",
+            "timeOverlapError": "The time interval overlaps with an existing one",
+            "title": "Timespan"
         },
         "usersManagement": {
             "attributes": "Attributes",
