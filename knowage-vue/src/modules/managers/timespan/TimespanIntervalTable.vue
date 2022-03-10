@@ -3,7 +3,7 @@
         <template #content>
             <TimespanIntervalForm :propTimespan="propTimespan" />
 
-            <DataTable v-if="timespan" class="p-datatable-sm kn-table p-m-2" :value="timespan.definition" responsiveLayout="stack" breakpoint="960px" :scrollable="true" scrollHeight="60vh">
+            <DataTable v-if="timespan && timespan.definition?.length > 0" class="p-datatable-sm kn-table p-m-2" :value="timespan.definition" responsiveLayout="stack" breakpoint="960px" :scrollable="true" scrollHeight="60vh">
                 <Column v-for="column in columns" :key="column.header" :field="column.field" :header="$t(column.header)" :style="column.style"> </Column>
                 <Column :style="timespanDescriptor.iconColumnStyle">
                     <template #body="slotProps">

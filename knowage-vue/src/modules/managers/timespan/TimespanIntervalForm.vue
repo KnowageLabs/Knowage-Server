@@ -1,7 +1,17 @@
 <template>
     <div v-if="timespan" class="p-d-flex kn-flex">
-        <Calendar class="timespan-interval-calendar kn-flex " v-model="interval.from" :manualInput="true" :timeOnly="timespan.type === 'time'" hourFormat="24"></Calendar>
-        <Calendar class="timespan-interval-calendar kn-flex p-mx-auto" v-model="interval.to" :manualInput="true" :timeOnly="timespan.type === 'time'" hourFormat="24"></Calendar>
+        <div class="timespan-interval-calendar p-fluid kn-flex">
+            <span class="p-float-label">
+                <Calendar v-model="interval.from" :manualInput="true" :timeOnly="timespan.type === 'time'" hourFormat="24"></Calendar>
+                <label class="kn-material-input-label"> {{ $t('common.from') }}</label>
+            </span>
+        </div>
+        <div class="timespan-interval-calendar p-fluid  kn-flex p-mx-auto">
+            <span class="p-float-label">
+                <Calendar v-model="interval.to" :manualInput="true" :timeOnly="timespan.type === 'time'" hourFormat="24"></Calendar>
+                <label class="kn-material-input-label"> {{ $t('common.to') }}</label>
+            </span>
+        </div>
         <Button id="timespan-interval-add-button" class="kn-button kn-button--primary p-ml-auto" :disabled="addButtonDisabled" @click="onAddInterval" data-test="add-button"> {{ $t('common.add') }}</Button>
     </div>
 </template>
