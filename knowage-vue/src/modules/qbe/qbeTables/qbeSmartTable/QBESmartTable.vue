@@ -40,11 +40,11 @@
                 <div class="customHeader">
                     <div class="qbeCustomTopColor" :style="`background-color: ${col.color}`" :title="col.entity"></div>
                     <div class="qbeHeaderContainer">
-                        <i class="fas fa-sort p-ml-2" @click="changeOrder(col)" :data-test="'change-order-' + col.alias" />
-                        <span class="p-mx-2 kn-truncated">{{ col.alias }}</span>
-                        <i class="fas fa-cog p-ml-auto" @click="showMenu($event, col)" />
-                        <i class="fas fa-filter p-mx-2" :class="{ 'qbe-active-filter-icon': fieldHasFilters(col) }" @click="openFiltersDialog(col)" />
-                        <i class="fas fa-times p-mr-2" @click="$emit('removeFieldFromQuery', index)" :data-test="'delete-column-' + col.alias" />
+                        <i class="fas fa-sort p-ml-2" @click="changeOrder(col)" :data-test="'change-order-' + col.alias" v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.sorting`)" />
+                        <span class="p-mx-2 kn-truncated" v-tooltip.bottom="col.alias">{{ col.alias }}</span>
+                        <i class="fas fa-cog p-ml-auto" v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.colset`)" @click="showMenu($event, col)" />
+                        <i class="fas fa-filter p-mx-2" :class="{ 'qbe-active-filter-icon': fieldHasFilters(col) }" v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.colfil`)" @click="openFiltersDialog(col)" />
+                        <i class="fas fa-times p-mr-2" v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.coldel`)" @click="$emit('removeFieldFromQuery', index)" :data-test="'delete-column-' + col.alias" />
                     </div>
                 </div>
             </template>
