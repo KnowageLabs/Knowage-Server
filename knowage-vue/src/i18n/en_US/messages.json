@@ -1898,6 +1898,10 @@
                     "sum": "Sum",
                     "title": "Aggregation"
                 },
+                "sorting": "Sorting",
+                "colset": "Column settings",
+                "colfil": "Column filters",
+                "coldel": "Delete column",
                 "group": "Group",
                 "rename": "Rename Alias",
                 "showField": "Show field"
