@@ -1,7 +1,5 @@
 <template>
     <div v-if="filter">
-        {{ 'TODO' }}
-        {{ filter }}
         <div class="p-grid p-m-2">
             <div class="p-col-4">
                 <label class="kn-material-input-label"> {{ $t('common.field') }} </label>
