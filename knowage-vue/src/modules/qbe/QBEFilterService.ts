@@ -25,7 +25,7 @@ export function onFiltersSaveCallback(filters: iFilter[], field: iField, paramet
     qbe.pars = parameters ? [...parameters] : []
 
     if (smartView) {
-        executeQBEQuery()
+        executeQBEQuery(false)
     }
 }
 

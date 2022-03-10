@@ -265,7 +265,7 @@ export default defineComponent({
             await this.loadEntities()
 
             if (!this.dataset?.dataSourceLabel) {
-                await this.executeQBEQuery()
+                await this.executeQBEQuery(false)
             }
         },
         async loadDataset() {
@@ -362,7 +362,7 @@ export default defineComponent({
                 entity.expanded = false
             })
         },
-        async executeQBEQuery() {
+        async executeQBEQuery(showPreview: boolean) {
             this.loading = true
 
             if (!this.qbe) return
@@ -373,14 +373,17 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.queryPreviewData = response.data
                     this.pagination.size = response.data.results
+                    if (showPreview) this.qbePreviewDialogVisible = true
                 })
-                .catch(() => {})
+                .catch(() => {
+                    if (showPreview) this.qbePreviewDialogVisible = false
+                })
             this.loading = false
         },
         async updatePagination(lazyParams: any) {
             this.pagination.start = lazyParams.paginationStart
             this.pagination.limit = lazyParams.paginationLimit
-            await this.executeQBEQuery()
+            await this.executeQBEQuery((this.qbePreviewDialogVisible = true))
         },
         formatQbeMeta() {
             const meta = [] as any[]
@@ -400,7 +403,7 @@ export default defineComponent({
         deleteAllSelectedFields() {
             this.selectedQuery.fields = []
             this.selectedQuery.havings = []
-            if (this.smartView) this.executeQBEQuery()
+            if (this.smartView) this.executeQBEQuery(false)
         },
         checkIfHiddenColumnsExist() {
             if (this.qbe) {
@@ -493,7 +496,7 @@ export default defineComponent({
             this.discardRepetitions = !this.discardRepetitions
             this.qbe ? (this.qbe.qbeJSONQuery.catalogue.queries[0].distinct = this.discardRepetitions) : ''
             if (this.smartView) {
-                this.executeQBEQuery()
+                this.executeQBEQuery(false)
             }
         },
         onHavingsSave(havings: iFilter[]) {
@@ -514,7 +517,7 @@ export default defineComponent({
         onJoinDefinitionDialogClose() {
             this.joinDefinitionDialogVisible = false
             if (this.smartView) {
-                this.executeQBEQuery()
+                this.executeQBEQuery(false)
             }
         },
         deleteAllFilters() {
@@ -522,7 +525,7 @@ export default defineComponent({
                 this.selectedQuery.filters = []
                 this.selectedQuery.havings = []
                 this.selectedQuery.expression = {}
-                if (this.smartView) this.executeQBEQuery()
+                if (this.smartView) this.executeQBEQuery(false)
             }
         },
         async showSQLQuery() {
@@ -708,11 +711,10 @@ export default defineComponent({
         },
         async openPreviewDialog() {
             this.pagination.limit = 20
-            await this.executeQBEQuery()
-            this.qbePreviewDialogVisible = true
+            await this.executeQBEQuery(true)
         },
         updateSmartView() {
-            this.smartView ? this.executeQBEQuery() : ''
+            this.smartView ? this.executeQBEQuery(false) : ''
         },
         smartViewFieldHidden() {
             this.checkIfHiddenColumnsExist()
