@@ -17,6 +17,15 @@
  */
 package it.eng.spagobi.tools.scheduler.dispatcher;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.quartz.JobExecutionContext;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -36,15 +45,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.quartz.JobExecutionContext;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -145,7 +145,7 @@ public class FunctionalityTreeDocumentDispatchChannel implements IDocumentDispat
 			}
 			// create biobject
 
-			String jobName = jex.getJobDetail().getName();
+			String jobName = jex.getJobDetail().getKey().getName();
 			String completeLabel = "scheduler_" + jobName + "_" + docName;
 			String label = "sched_" + String.valueOf(Math.abs(completeLabel.hashCode()));
 
