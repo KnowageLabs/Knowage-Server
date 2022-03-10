@@ -742,6 +742,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				 
 				window.addEventListener("message", (event) => {	
 					if (event.data && event.data.action == 'closeDialog') {
+						if($scope.selectedBusinessModel.id)
+							$scope.bmVersions = $scope.getVersions($scope.selectedBusinessModel.id);
 						$mdDialog.cancel();
 					}	
 				}, false);

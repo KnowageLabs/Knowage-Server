@@ -44,7 +44,7 @@
 	List<String> avaiableRoles = (List<String>) request.getSession().getAttribute("avaiableRoles") ;
 	
 	
-	Locale locale= locale =ioManager.getLocale();
+	Locale locale= ioManager.getLocale();
 
 	
 	//load user profile 

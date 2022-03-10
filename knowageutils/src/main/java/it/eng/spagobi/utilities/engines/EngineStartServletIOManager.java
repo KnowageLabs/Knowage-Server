@@ -346,16 +346,20 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 			script = getParameterAsString(SCRIPT);
 			logger.debug("Locale parameters received: language = [" + language + "] ; country = [" + country + "]");
 
-			try {
-				Builder builder = new Builder().setLanguage(language).setRegion(country);
-				if (StringUtils.isNotBlank(script)) {
-					builder.setScript(script);
-				}
-				locale = builder.build();
-			} catch (Exception e) {
-				logger.debug("Error while creating Locale object from input parameters: language = [" + language + "] ; country = [" + country + "]");
-				logger.debug("Creating default locale [en,US].");
+			if (language == null && country == null) {
 				locale = new Locale("en", "US");
+			} else {
+				try {
+					Builder builder = new Builder().setLanguage(language).setRegion(country);
+					if (StringUtils.isNotBlank(script)) {
+						builder.setScript(script);
+					}
+					locale = builder.build();
+				} catch (Exception e) {
+					logger.debug("Error while creating Locale object from input parameters: language = [" + language + "] ; country = [" + country + "]");
+					logger.debug("Creating default locale [en,US].");
+					locale = new Locale("en", "US");
+				}
 			}
 
 			logger.debug("IN");
