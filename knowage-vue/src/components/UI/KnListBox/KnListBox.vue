@@ -68,7 +68,7 @@
                 <Badge v-if="settings.badgeIcon && slotProps.option[settings.badgeIcon] === true" :severity="settings.badgeSeverity || 'info'">
                     <i class="fas fa-check"></i>
                 </Badge>
-                <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />
+                <KnListButtonRenderer :buttons="settings.buttons" :selectedItem="slotProps.option" @click="clickedButton($event, slotProps.option)" />
             </div>
         </template>
     </Listbox>

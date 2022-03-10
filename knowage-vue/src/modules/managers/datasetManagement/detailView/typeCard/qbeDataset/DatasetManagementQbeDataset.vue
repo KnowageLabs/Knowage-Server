@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-mt-3">
+    <Card class="p-m-2">
         <template #content>
             <form v-if="dataset.dsTypeCd == 'Qbe'" class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-6">

@@ -319,12 +319,26 @@ export default defineComponent({
         async initializeQBE() {
             const label = this.dataset?.dataSourceLabel ? this.dataset.dataSourceLabel : this.qbe?.qbeDataSource
             const datamart = this.dataset?.dataSourceLabel ? this.dataset.name : this.qbe?.qbeDatamarts
+            const temp = this.getFormattedParameters(this.filtersData)
+            const drivers = encodeURI(JSON.stringify(temp))
             if (this.dataset) {
                 await this.$http
-                    .get(process.env.VUE_APP_QBE_PATH + `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}`)
+                    .get(process.env.VUE_APP_QBE_PATH + `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`)
                     .then(() => {})
                     .catch(() => {})
             }
+        },
+        getFormattedParameters(loadedParameters: { filterStatus: any[]; isReadyForExecution: boolean }) {
+            let parameters = {} as any
+            Object.keys(loadedParameters.filterStatus).forEach((key: any) => {
+                const parameter = loadedParameters.filterStatus[key]
+                if (!parameter.multivalue) {
+                    parameters[parameter.urlName] = { value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description }
+                } else {
+                    parameters[parameter.urlName] = { value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription }
+                }
+            })
+            return parameters
         },
         async loadCustomizedDatasetFunctions() {
             const id = this.dataset?.dataSourceId ? this.dataset.dataSourceId : this.qbe?.qbeDataSourceId
@@ -681,7 +695,13 @@ export default defineComponent({
         async onExecute(qbeParameters: any[]) {
             if (this.qbe) {
                 this.qbe.pars = [...qbeParameters]
+                if (this.dataset && !this.dataset.dataSourceId) {
+                    await this.loadDataset()
+                } else {
+                    this.qbe = this.getQBEFromModel()
+                }
                 await this.loadQBE()
+                this.loadQuery()
                 this.qbeLoaded = true
                 this.parameterSidebarVisible = false
             }
