@@ -44,7 +44,7 @@
                         <span class="p-mx-2 kn-truncated" v-tooltip.bottom="col.alias">{{ col.alias }}</span>
                         <i class="fas fa-cog p-ml-auto" v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.colset`)" @click="showMenu($event, col)" />
                         <i class="fas fa-filter p-mx-2" :class="{ 'qbe-active-filter-icon': fieldHasFilters(col) }" v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.colfil`)" @click="openFiltersDialog(col)" />
-                        <i class="fas fa-times p-mr-2" v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.coldel`)" @click="$emit('removeFieldFromQuery', index)" :data-test="'delete-column-' + col.alias" />
+                        <i class="fas fa-times p-mr-2" v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.coldel`)" @click="$emit('removeFieldFromQuery', col.uniqueID)" :data-test="'delete-column-' + col.alias" />
                     </div>
                 </div>
             </template>
