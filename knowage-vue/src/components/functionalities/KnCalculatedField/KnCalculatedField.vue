@@ -100,295 +100,295 @@
 </template>
 
 <script lang="ts">
-    import { AxiosResponse } from 'axios'
-    import { createValidations } from '@/helpers/commons/validationHelper'
-    import { defineComponent } from 'vue'
-    import { IKnCalculatedField } from '@/components/functionalities/KnCalculatedField/KnCalculatedField'
-    import { VCodeMirror } from 'vue3-code-mirror'
+import { AxiosResponse } from 'axios'
+import { createValidations } from '@/helpers/commons/validationHelper'
+import { defineComponent } from 'vue'
+import { IKnCalculatedField } from '@/components/functionalities/KnCalculatedField/KnCalculatedField'
+import { VCodeMirror } from 'vue3-code-mirror'
 
-    import Dropdown from 'primevue/dropdown'
-    import Dialog from 'primevue/dialog'
-    import Divider from 'primevue/divider'
-    import Listbox from 'primevue/listbox'
-    import Message from 'primevue/message'
-    import ScrollPanel from 'primevue/scrollpanel'
-    import useValidate from '@vuelidate/core'
+import Dropdown from 'primevue/dropdown'
+import Dialog from 'primevue/dialog'
+import Divider from 'primevue/divider'
+import Listbox from 'primevue/listbox'
+import Message from 'primevue/message'
+import ScrollPanel from 'primevue/scrollpanel'
+import useValidate from '@vuelidate/core'
 
-    export default defineComponent({
-        name: 'calculated-field',
-        components: { Dialog, Divider, Dropdown, Listbox, Message, ScrollPanel, VCodeMirror },
-        props: {
-            fields: Array,
-            visibility: Boolean,
-            descriptor: Object
+export default defineComponent({
+    name: 'calculated-field',
+    components: { Dialog, Divider, Dropdown, Listbox, Message, ScrollPanel, VCodeMirror },
+    props: {
+        fields: Array,
+        visibility: Boolean,
+        descriptor: Object
+    },
+    data() {
+        return {
+            cf: { formula: '' } as IKnCalculatedField,
+            allCategories: { name: 'ALL', code: 'ALL' },
+            selectedFunction: {},
+            selectedCategory: '',
+
+            availableFunctions: [] as any,
+            scriptOptions: {
+                mode: 'text/x-mathematica',
+                indentWithTabs: true,
+                smartIndent: true,
+                lineWrapping: true,
+                matchBrackets: true,
+                autofocus: true,
+                theme: 'eclipse',
+                lineNumbers: true
+            },
+            v$: useValidate() as any,
+            formulaValidationInterval: {} as any,
+            isValidFormula: false
+        }
+    },
+    emits: ['save', 'cancel'],
+    created() {
+        this.availableFunctions = [...this.descriptor?.availableFunctions]
+        this.availableFunctions.forEach((x) => {
+            x.category = x.category.toUpperCase()
+        })
+
+        this.cf = { formula: '' } as IKnCalculatedField
+    },
+
+    updated() {
+        if (!this.cf.formula) this.cf.formula = ''
+    },
+
+    validations() {
+        if (this.descriptor) {
+            return { cf: createValidations('cf', this.descriptor.validations) }
+        }
+        return {}
+    },
+
+    methods: {
+        apply(): void {
+            this.$emit('save', this.cf)
+            this.clearForm()
         },
-        data() {
-            return {
-                cf: { formula: '' } as IKnCalculatedField,
-                allCategories: { name: 'ALL', code: 'ALL' },
-                selectedFunction: {},
-                selectedCategory: '',
-
-                availableFunctions: [] as any,
-                scriptOptions: {
-                    mode: 'text/x-mathematica',
-                    indentWithTabs: true,
-                    smartIndent: true,
-                    lineWrapping: true,
-                    matchBrackets: true,
-                    autofocus: true,
-                    theme: 'eclipse',
-                    lineNumbers: true
-                },
-                v$: useValidate() as any,
-                formulaValidationInterval: {} as any,
-                isValidFormula: false
-            }
+        cancel(): void {
+            this.$emit('cancel', this.cf)
+            this.clearForm()
         },
-        emits: ['save', 'cancel'],
-        created() {
-            this.availableFunctions = [...this.descriptor?.availableFunctions]
+        clearForm(): void {
+            this.cf = {} as IKnCalculatedField
+            this.selectedFunction = {}
+            this.selectedCategory = ''
+        },
+        filterFunctions() {
+            let tmp = [...this.descriptor?.availableFunctions]
             this.availableFunctions.forEach((x) => {
                 x.category = x.category.toUpperCase()
             })
-
-            this.cf = { formula: '' } as IKnCalculatedField
-        },
-
-        updated() {
-            if (!this.cf.formula) this.cf.formula = ''
-        },
-
-        validations() {
-            if (this.descriptor) {
-                return { cf: createValidations('cf', this.descriptor.validations) }
+            this.availableFunctions = tmp
+            if (this.selectedCategory && this.selectedCategory !== this.allCategories.name) {
+                let cat = this.selectedCategory as any
+                this.availableFunctions = tmp.filter((x) => x.category.toUpperCase() === cat.toUpperCase())
             }
-            return {}
         },
+        handleOptions() {
+            let tmp = [] as any
 
-        methods: {
-            apply(): void {
-                this.$emit('save', this.cf)
-                this.clearForm()
-            },
-            cancel(): void {
-                this.$emit('cancel', this.cf)
-                this.clearForm()
-            },
-            clearForm(): void {
-                this.cf = {} as IKnCalculatedField
-                this.selectedFunction = {}
-                this.selectedCategory = ''
-            },
-            filterFunctions() {
-                let tmp = [...this.descriptor?.availableFunctions]
-                this.availableFunctions.forEach((x) => {
-                    x.category = x.category.toUpperCase()
+            this.descriptor?.availableFunctions
+                .map((x) => ({ name: x.category, code: x.category.toUpperCase() }))
+                .forEach((element) => {
+                    console.log(element)
+                    if (tmp.filter((y) => y.code === element.code).length == 0) tmp.push({ name: element.name, code: element.code })
                 })
-                this.availableFunctions = tmp
-                if (this.selectedCategory && this.selectedCategory !== this.allCategories.name) {
-                    let cat = this.selectedCategory as any
-                    this.availableFunctions = tmp.filter((x) => x.category.toUpperCase() === cat.toUpperCase())
-                }
-            },
-            handleOptions() {
-                let tmp = [] as any
 
-                this.descriptor?.availableFunctions
-                    .map((x) => ({ name: x.category, code: x.category.toUpperCase() }))
-                    .forEach((element) => {
-                        console.log(element)
-                        if (tmp.filter((y) => y.code === element.code).length == 0) tmp.push({ name: element.name, code: element.code })
-                    })
+            if (tmp.filter((x) => x.name === this.allCategories.name).length == 0) tmp = [this.allCategories, ...tmp]
 
-                if (tmp.filter((x) => x.name === this.allCategories.name).length == 0) tmp = [this.allCategories, ...tmp]
-
-                return tmp
-            },
-            allowDrop(ev) {
-                ev.preventDefault()
-            },
-            clearCodemirror(editor, cursor, data) {
-                if (editor.somethingSelected()) {
-                    let selections = editor.getSelections()
-                    for (var sel of selections) {
-                        editor.replaceRange('', { line: cursor.line, ch: cursor.ch - JSON.stringify(data).length }, { line: cursor.line, ch: cursor.ch - JSON.stringify(data).length + sel.length })
-                    }
-                }
-            },
-            handleDragover(ev) {
-                const doc = this.$refs.formula as any
-                var cursor = doc.editor.getCursor()
-                if (ev.target.className.includes('field-')) {
-                    doc.editor.markText(0, cursor)
-                }
-            },
-            dragElement(ev, item, elementType: String) {
-                if (elementType === 'function') {
-                    ev.dataTransfer.setData('text/plain', JSON.stringify({ item: item.formula, elementType: elementType }))
-                } else if (elementType === 'field') {
-                    ev.dataTransfer.setData('text/plain', JSON.stringify({ item: item, elementType: elementType }))
-                }
-                ev.dataTransfer.effectAllowed = 'copy'
-            },
-
-            drop(ev) {
-                ev.stopPropagation()
-                ev.preventDefault()
-
-                var data = JSON.parse(ev.dataTransfer.getData('text/plain'))
-
-                const doc = this.$refs.formula as any
-                let editor = doc.editor
-                var cursor = editor.getCursor()
-
-                this.clearCodemirror(editor, cursor, data)
-
-                editor.clearHistory()
-
-                cursor = editor.getCursor()
-
-                let start = editor.findWordAt(cursor).anchor.ch
-                let end = editor.findWordAt(cursor).head.ch
-
-                let from = { line: cursor.line, ch: start }
-                let to = { line: cursor.line, ch: end }
-
-                let range = editor.getRange(from, to)
-                let spContent = data.elementType === 'function' ? data.item : data.item.fieldAlias
-
-                if (range === '' || range.match(/\(|\)|,|\./g)) {
-                    editor.replaceSelection(spContent, cursor)
-                } else {
-                    const sp = document.createElement('span')
-                    sp.textContent = spContent
-                    editor.doc.markText(from, to, {
-                        replacedWith: sp,
-                        inclusiveLeft: false,
-                        inclusiveRight: false
-                    })
-                }
-            },
-            applyValidationResultsToFormula() {
-                const doc = this.$refs.formula as any
-                let editor = doc.editor
-
-                let from = { line: editor.firstLine(), ch: 0 }
-                let to = { line: editor.lastLine(), ch: editor.getLine(editor.lastLine()).length }
-
-                if (!this.isValidFormula) {
-                    editor.markText(from, to, { className: 'syntax-error' })
-                } else {
-                    editor.markText(from, to, { className: 'no-syntax-error' })
+            return tmp
+        },
+        allowDrop(ev) {
+            ev.preventDefault()
+        },
+        clearCodemirror(editor, cursor, data) {
+            if (editor.somethingSelected()) {
+                let selections = editor.getSelections()
+                for (var sel of selections) {
+                    editor.replaceRange('', { line: cursor.line, ch: cursor.ch - JSON.stringify(data).length }, { line: cursor.line, ch: cursor.ch - JSON.stringify(data).length + sel.length })
                 }
             }
         },
-        watch: {
-            visibility(newV, oldV) {
-                if (newV && newV !== oldV) {
-                    if (!this.selectedCategory) {
-                        if (this.descriptor?.defaultSelectedCategory) this.selectedCategory = this.descriptor?.defaultSelectedCategory
-                        else this.selectedCategory = this.allCategories.name
-                    }
-                }
-            },
-            cf: {
-                handler() {
-                    if (this.cf.formula) {
-                        if (this.descriptor?.validationServiceUrl) {
-                            this.formulaValidationInterval = setInterval(() => {
-                                this.$http.get(this.descriptor?.validationServiceUrl).then((response: AxiosResponse<any>) => {
-                                    this.isValidFormula = response.data[0]
-                                    this.applyValidationResultsToFormula()
-                                })
-                                clearInterval(this.formulaValidationInterval)
-                                this.formulaValidationInterval = null
-                            }, 2500)
-                        } else {
-                            this.isValidFormula = true
-                        }
-                    }
-                },
-                deep: true
+        handleDragover(ev) {
+            const doc = this.$refs.formula as any
+            var cursor = doc.editor.getCursor()
+            if (ev.target.className.includes('field-')) {
+                doc.editor.markText(0, cursor)
             }
         },
-        computed: {
-            saveButtonDisabled(): any {
-                return this.v$.$invalid || !this.isValidFormula
+        dragElement(ev, item, elementType: String) {
+            if (elementType === 'function') {
+                ev.dataTransfer.setData('text/plain', JSON.stringify({ item: item.formula, elementType: elementType }))
+            } else if (elementType === 'field') {
+                ev.dataTransfer.setData('text/plain', JSON.stringify({ item: item, elementType: elementType }))
+            }
+            ev.dataTransfer.effectAllowed = 'copy'
+        },
+
+        drop(ev) {
+            ev.stopPropagation()
+            ev.preventDefault()
+
+            var data = JSON.parse(ev.dataTransfer.getData('text/plain'))
+
+            const doc = this.$refs.formula as any
+            let editor = doc.editor
+            var cursor = editor.getCursor()
+
+            this.clearCodemirror(editor, cursor, data)
+
+            editor.clearHistory()
+
+            cursor = editor.getCursor()
+
+            let start = editor.findWordAt(cursor).anchor.ch
+            let end = editor.findWordAt(cursor).head.ch
+
+            let from = { line: cursor.line, ch: start }
+            let to = { line: cursor.line, ch: end }
+
+            let range = editor.getRange(from, to)
+            let spContent = data.elementType === 'function' ? data.item : data.item.fieldAlias
+
+            if (range === '' || range.match(/\(|\)|,|\./g)) {
+                editor.replaceSelection(spContent, cursor)
+            } else {
+                const sp = document.createElement('span')
+                sp.textContent = spContent
+                editor.doc.markText(from, to, {
+                    replacedWith: sp,
+                    inclusiveLeft: false,
+                    inclusiveRight: false
+                })
+            }
+        },
+        applyValidationResultsToFormula() {
+            const doc = this.$refs.formula as any
+            let editor = doc.editor
+
+            let from = { line: editor.firstLine(), ch: 0 }
+            let to = { line: editor.lastLine(), ch: editor.getLine(editor.lastLine()).length }
+
+            if (!this.isValidFormula) {
+                editor.markText(from, to, { className: 'syntax-error' })
+            } else {
+                editor.markText(from, to, { className: 'no-syntax-error' })
             }
         }
-    })
+    },
+    watch: {
+        visibility(newV, oldV) {
+            if (newV && newV !== oldV) {
+                if (!this.selectedCategory) {
+                    if (this.descriptor?.defaultSelectedCategory) this.selectedCategory = this.descriptor?.defaultSelectedCategory
+                    else this.selectedCategory = this.allCategories.name
+                }
+            }
+        },
+        cf: {
+            handler() {
+                if (this.cf.formula) {
+                    if (this.descriptor?.validationServiceUrl) {
+                        this.formulaValidationInterval = setInterval(() => {
+                            this.$http.get(this.descriptor?.validationServiceUrl).then((response: AxiosResponse<any>) => {
+                                this.isValidFormula = response.data[0]
+                                this.applyValidationResultsToFormula()
+                            })
+                            clearInterval(this.formulaValidationInterval)
+                            this.formulaValidationInterval = null
+                        }, 2500)
+                    } else {
+                        this.isValidFormula = true
+                    }
+                }
+            },
+            deep: true
+        }
+    },
+    computed: {
+        saveButtonDisabled(): any {
+            return this.v$.$invalid || !this.isValidFormula
+        }
+    }
+})
 </script>
 <style lang="scss">
-    .calculatedFieldDialogClass {
-        min-width: 600px;
-        width: 60%;
-        max-width: 1200px;
-    }
+.calculatedFieldDialogClass {
+    min-width: 600px;
+    width: 60%;
+    max-width: 1200px;
+}
 
-    .codeMirrorClass {
-        height: 100px;
-        max-height: 100px;
-    }
+.codeMirrorClass {
+    height: 100px;
+    max-height: 100px;
+}
 
-    .field-header {
-        font-weight: bold;
-    }
+.field-header {
+    font-weight: bold;
+}
 
-    .kn-remove-card-padding .data-condition-list {
-        border: 1px solid $color-borders;
-        border-top: none;
-    }
+.kn-remove-card-padding .data-condition-list {
+    border: 1px solid var(--kn-color-borders);
+    border-top: none;
+}
 
-    .p-listbox-item {
+.p-listbox-item {
+    height: 24px;
+    .kn-list-item {
         height: 24px;
-        .kn-list-item {
-            height: 24px;
-        }
     }
+}
 
-    .card-0-padding .p-card-body,
-    .card-0-padding .p-card-content {
-        padding: 0.25rem;
+.card-0-padding .p-card-body,
+.card-0-padding .p-card-content {
+    padding: 0.25rem;
+}
+
+.helpCol {
+    height: 100%;
+    width: 100%;
+
+    .helpScrollPanel {
+        height: 120px;
     }
+}
 
-    .helpCol {
-        height: 100%;
-        width: 100%;
-
-        .helpScrollPanel {
-            height: 120px;
-        }
+::v-deep(.p-scrollpanel) {
+    p {
+        padding: 0.5rem;
+        line-height: 1.5;
+        margin: 0;
     }
-
-    ::v-deep(.p-scrollpanel) {
-        p {
-            padding: 0.5rem;
-            line-height: 1.5;
-            margin: 0;
+    &.custombar1 {
+        .p-scrollpanel-wrapper {
+            border-right: 9px solid var(--surface-ground);
         }
-        &.custombar1 {
-            .p-scrollpanel-wrapper {
-                border-right: 9px solid var(--surface-ground);
-            }
-            .p-scrollpanel-bar {
-                background-color: var(--primary-color);
-                opacity: 1;
-                transition: background-color 0.2s;
-                &:hover {
-                    background-color: #007ad9;
-                }
+        .p-scrollpanel-bar {
+            background-color: var(--primary-color);
+            opacity: 1;
+            transition: background-color 0.2s;
+            &:hover {
+                background-color: #007ad9;
             }
         }
     }
+}
 
-    .syntax-error {
-        text-decoration: underline;
-        text-decoration-style: wavy;
-        text-decoration-color: red;
-    }
+.syntax-error {
+    text-decoration: underline;
+    text-decoration-style: wavy;
+    text-decoration-color: red;
+}
 
-    .no-syntax-error {
-        text-decoration: none;
-    }
+.no-syntax-error {
+    text-decoration: none;
+}
 </style>
