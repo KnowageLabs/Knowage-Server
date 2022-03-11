@@ -169,7 +169,7 @@ export default defineComponent({
         async exportNotes(type: string) {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}/${this.notes[0].id}/${type}`, {
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}/download/${type}`, {
                     headers: {
                         Accept: 'application/json, text/plain, */*'
                     }
