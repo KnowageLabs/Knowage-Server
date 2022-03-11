@@ -2,7 +2,7 @@
     <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #start>
+                <template #left>
                     {{ $t('managers.businessModelManager.savedVersions') }}
                 </template>
             </Toolbar>
@@ -167,4 +167,8 @@ export default defineComponent({
         }
     }
 })
+<<<<<<< HEAD
 </script>
+=======
+</script>
+>>>>>>> a8d393aa57ad01103bf02b34247d1fb63c4df772
