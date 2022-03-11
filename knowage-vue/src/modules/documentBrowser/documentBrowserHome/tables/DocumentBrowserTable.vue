@@ -128,7 +128,7 @@ export default defineComponent({
     },
     computed: {
         isAdmin(): boolean {
-            return this.user.functionalities.includes('DocumentManagement') || this.user.isSuperadmin
+            return this.user?.functionalities.includes('DocumentManagement') || this.user?.isSuperadmin
         }
     },
     created() {
