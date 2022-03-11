@@ -147,7 +147,7 @@ export default defineComponent({
             this.loading = false
         },
         async loadDatasetDrivers() {
-            if (this.dataset.label && this.dataset.id) {
+            if (this.dataset.label && this.dataset.id && this.dataset.dsTypeCd != 'Prepared') {
                 await this.$http
                     .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${this.dataset.label}/filters`, { role: this.userRole })
                     .then((response: AxiosResponse<any>) => {

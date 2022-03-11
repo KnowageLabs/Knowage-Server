@@ -296,6 +296,7 @@ export default defineComponent({
             if (this.transformations) {
                 if (!this.dataset.config) this.dataset.config = {}
                 this.dataset.config.transformations = this.transformations
+                this.loading = true
             }
         },
         initWebsocket(): void {
