@@ -32,6 +32,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
@@ -312,7 +313,10 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 			String driverName = obj.getEngine().getDriverName();
 			if (driverName != null && !"".equals(driverName)) {
 				IEngineDriver driver = (IEngineDriver) Class.forName(driverName).newInstance();
-				ArrayList<String> datasetsAssociated = driver.getDatasetAssociated(obj.getActiveTemplate().getContent());
+				ObjTemplate template = obj.getActiveTemplate();
+				ArrayList<String> datasetsAssociated = null;
+				if (template != null)
+					datasetsAssociated = driver.getDatasetAssociated(template.getContent());
 				if (datasetsAssociated != null) {
 					HashMap<Integer, Boolean> lstDsInsertedForObj = new HashMap<Integer, Boolean>();
 					for (Iterator<String> iterator = datasetsAssociated.iterator(); iterator.hasNext();) {
