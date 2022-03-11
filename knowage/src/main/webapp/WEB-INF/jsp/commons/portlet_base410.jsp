@@ -249,6 +249,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	//	.then(reg => console.log('SW registered!', reg))
 	//	.catch(err => console.log('Error registering SW!', err));
 	//}*/
+	
+	//Knowage identification variable instantiation
+	var __KNOWAGE__ = true
 </script>
 <meta name="viewport" content="initial-scale=1" />
 <% if (forceIE8Compatibility == true){ %>

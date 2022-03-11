@@ -1,0 +1,172 @@
+{
+    "cronDataset": {
+        "actions": [
+            {
+                "description": "Dataset detail",
+                "name": "detaildataset"
+            },
+            {
+                "description": "Delete dataset",
+                "name": "delete"
+            },
+            {
+                "description": "Show Qbe",
+                "name": "qbe"
+            }
+        ],
+        "canLoadData": true,
+        "catTypeId": null,
+        "catTypeVn": null,
+        "csvDelimiter": "",
+        "csvEncoding": "UTF-8",
+        "csvQuote": "",
+        "dateFormat": "",
+        "dateIn": "2021-10-18T12:10:43.000+02:00",
+        "description": "CR Test",
+        "dsTypeCd": "File",
+        "dsVersions": [
+            {
+                "dateIn": "2021/10/18 12:09:27",
+                "dsId": 136,
+                "type": "File",
+                "userIn": "demo_admin",
+                "versNum": 1
+            },
+            {
+                "dateIn": "2021/10/18 12:10:37",
+                "dsId": 136,
+                "type": "File",
+                "userIn": "demo_admin",
+                "versNum": 2
+            }
+        ],
+        "endDate": "2021-12-31T00:00:00.000Z",
+        "fileName": "CR Test_2.xlsx",
+        "fileType": "XLSX",
+        "fileUploaded": false,
+        "id": 136,
+        "isIterable": false,
+        "isPersisted": true,
+        "isPersistedHDFS": false,
+        "isRealtime": false,
+        "isScheduled": true,
+        "label": "CR Test",
+        "limitRows": "",
+        "meta": [
+            {
+                "displayedName": "MONTH_YEAR",
+                "fieldType": "ATTRIBUTE",
+                "name": "MONTH_YEAR",
+                "type": "java.lang.String"
+            },
+            {
+                "displayedName": "Numero Assunti_SUM",
+                "fieldType": "MEASURE",
+                "name": "Numero Assunti_SUM",
+                "type": "java.lang.Double"
+            },
+            {
+                "displayedName": "Numero Cessati_SUM",
+                "fieldType": "MEASURE",
+                "name": "Numero Cessati_SUM",
+                "type": "java.lang.Double"
+            },
+            {
+                "displayedName": "YEAR_MONTH",
+                "fieldType": "ATTRIBUTE",
+                "name": "YEAR_MONTH",
+                "type": "java.lang.String"
+            }
+        ],
+        "name": "CR Test",
+        "owner": "demo_admin",
+        "pars": [],
+        "persistTableName": "dbtest",
+        "pivotColName": null,
+        "pivotColValue": null,
+        "pivotIsNumRows": false,
+        "pivotRowName": null,
+        "recalculateMetadata": true,
+        "schedulingCronLine": "0 0,2,4 * * * ?",
+        "scopeCd": "USER",
+        "scopeId": 186,
+        "selected": true,
+        "skipRows": "0",
+        "startDate": "2021-12-01T00:00:00.000Z",
+        "tags": [
+            {
+                "name": "dar",
+                "tagId": 1
+            }
+        ],
+        "timestampFormat": "",
+        "trasfTypeCd": null,
+        "usedByNDocs": 0,
+        "userIn": "demo_admin",
+        "versNum": 3,
+        "xslSheetNumber": "1"
+    },
+    "newDataset": {
+        "catTypeId": "",
+        "catTypeVn": "",
+        "dataSource": "",
+        "dataframeName": "",
+        "dateIn": "",
+        "description": "",
+        "dsTypeCd": "",
+        "dsVersions": "",
+        "isPersisted": false,
+        "isPersistedHDFS": false,
+        "label": "",
+        "name": "",
+        "owner": "",
+        "pars": "",
+        "persistTableName": "",
+        "pivotIsNumRows": "",
+        "pythonEnvironment": {
+            "label": "",
+            "value": ""
+        },
+        "pythonScript": "",
+        "query": "",
+        "queryScript": "",
+        "queryScriptLanguage": "",
+        "restAddress": "",
+        "restDirectlyJSONAttributes": "",
+        "restFetchSize": "",
+        "restHttpMethod": "",
+        "restJsonPathAttributes": "",
+        "restJsonPathItems": "",
+        "restMaxResults": "",
+        "restNGSI": "",
+        "restOffset": "",
+        "restRequestAdditionalParameters": [],
+        "restRequestBody": "*:*",
+        "restRequestHeaders": [],
+        "scopeCd": "",
+        "scopeId": "",
+        "solrCollection": "",
+        "solrFacetField": "",
+        "solrFacetPrefix": "",
+        "solrFacetQuery": "",
+        "solrFieldList": "",
+        "solrType": "FACETS",
+        "sparqlDefaultGraphIri": "",
+        "sparqlEndpoint": "",
+        "sparqlExecutionTimeout": 30,
+        "sparqlQuery": "",
+        "tags": [],
+        "trasfTypeCd": "",
+        "usedByNDocs": "",
+        "userIn": "",
+        "versNum": ""
+    },
+    "style": {
+        "infoDialog": {
+            "width": "60vw"
+        },
+        "previewDialog": {
+            "width": "80vw"
+        }
+    }
+}

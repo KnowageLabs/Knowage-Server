@@ -1,10 +1,25 @@
+#app {
+    background-color: var(--kn-app-background-color);
+}
 .kn-decoration-none {
     text-decoration: none;
     color: inherit;
 }
 
 .kn-height-full {
-    height: 100%;
+    height: 100% !important;
+}
+
+.kn-width-full {
+    width: 100%;
+}
+
+.kn-width-full {
+    width: 100%;
+}
+
+.kn-width-full-with-menu {
+    width: calc(100vw - var(kn-mainmenu-width));
 }
 
 .kn-detail {
@@ -17,6 +32,12 @@
 
 .kn-draggable {
     cursor: grab;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .kn-height-full-vertical {
@@ -32,8 +53,53 @@
     flex: 1;
 }
 
+.kn-relative {
+    position: relative;
+}
+
+.kn-absolute {
+    position: absolute;
+}
+
+.kn-flex-0 {
+    flex: 0;
+}
+
+.kn-absolute {
+    position: absolute;
+}
+
+.kn-flex-05 {
+    flex: 0.5;
+}
+
 .kn-overflow-y {
     overflow-y: auto;
+}
+
+.kn-overflow-x {
+    overflow-x: auto;
+}
+
+.kn-overflow {
+    overflow: auto;
+}
+
+.kn-overflow-hidden {
+    overflow: hidden;
+}
+
+.kn-uppercase {
+    text-transform: uppercase;
+}
+
+.kn-remove-card-padding {
+    :deep(.p-card-body) {
+        padding: 0;
+        .p-card-content {
+            padding: 0;
+        }
+    }
 }
 
 .kn-no-select {
@@ -57,6 +123,16 @@
     flex-direction: column;
 }
 
+.kn-small-paginator {
+    @media screen and (max-width: 1200px) {
+        .p-paginator-first,
+        .p-paginator-last,
+        .p-paginator-pages {
+            display: none;
+        }
+    }
+}
+
 .kn-truncated {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -64,9 +140,29 @@
 }
 
 .kn-text-success {
-    color: $color-success !important;
+    color: var(--kn-color-success) !important;
 }
 
 .kn-text-error {
-    color: $color-error !important;
+    color: var(--kn-color-error) !important;
+}
+
+.kn-warning-icon {
+    color: var(--kn-color-warning);
+}
+
+.kn-cursor-pointer {
+    cursor: pointer;
+}
+
+.kn-white-color {
+    color: var(--kn-font-text-light-color) !important;
+}
+
+.kn-alternated-rows {
+    & > div {
+        &:nth-child(even) {
+            background-color: var(--kn-list-item-alternated-background-color);
+        }
+    }
 }

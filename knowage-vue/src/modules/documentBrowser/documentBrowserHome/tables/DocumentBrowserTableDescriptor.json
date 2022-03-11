@@ -1,0 +1,54 @@
+{
+    "breakpoint": "960px",
+    "columns": [
+        {
+            "field": "typeCode",
+            "header": "common.type",
+            "style": {}
+        },
+        {
+            "field": "name",
+            "header": "common.name",
+            "style": {}
+        },
+        {
+            "field": "label",
+            "header": "common.label",
+            "style": {}
+        },
+        {
+            "field": "creationUser",
+            "header": "common.author",
+            "style": {}
+        }
+    ],
+    "responsiveLayout": "stack",
+    "rows": 15,
+    "status": {
+        "sbidomains.nm.dev": "common.development",
+        "sbidomains.nm.rel": "common.released",
+        "sbidomains.nm.susp": "common.suspended",
+        "sbidomains.nm.test": "common.test"
+    },
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    },
+    "table": {
+        "iconColumn": {
+            "style": {
+                "flex-basis": "40px",
+                "flex-grow": 0.3,
+                "justify-content": "center"
+            }
+        },
+        "smallmessage": {
+            "flex-basis": "40px",
+            "flex-grow": 0.3
+        }
+    }
+}

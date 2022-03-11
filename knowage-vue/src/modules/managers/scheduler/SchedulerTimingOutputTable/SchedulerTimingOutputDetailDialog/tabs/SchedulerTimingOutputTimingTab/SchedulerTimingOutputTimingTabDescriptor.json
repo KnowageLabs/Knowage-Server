@@ -1,0 +1,34 @@
+{
+    "style": {
+        "advancedDayDropdown": {
+            "width": "100px"
+        },
+        "calendarInput": {
+            "width": "75%"
+        },
+        "cardContainer": {
+            "width": "100%"
+        },
+        "intervalInput": {
+            "min-width": "200px"
+        },
+        "timePicker": {
+            "border-color": "transparent",
+            "height": "40px"
+        }
+    },
+    "types": [
+        {
+            "label": "managers.scheduler.singleExecution",
+            "value": "single"
+        },
+        {
+            "label": "managers.scheduler.schedulerExecution",
+            "value": "scheduler"
+        },
+        {
+            "label": "managers.scheduler.eventExecution",
+            "value": "event"
+        }
+    ]
+}

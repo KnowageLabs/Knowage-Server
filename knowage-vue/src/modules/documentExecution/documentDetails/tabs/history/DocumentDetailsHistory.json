@@ -1,0 +1,61 @@
+{
+    "knListSettings": {
+        "avatar": {
+            "property": "active",
+            "values": {
+                "false": {
+                    "icon": "fas fa-history",
+                    "style": {
+                        "background-color": "#ffc107",
+                        "color": "white"
+                    }
+                },
+                "true": {
+                    "icon": "fas fa-check",
+                    "style": {
+                        "background-color": "#74a748",
+                        "color": "white"
+                    }
+                }
+            }
+        },
+        "buttons": [
+            {
+                "emits": "setActive",
+                "icon": "fas fa-check-circle",
+                "label": "documentExecution.documentDetails.history.activeButton"
+            },
+            {
+                "emits": "download",
+                "icon": "fas fa-download",
+                "label": "documentExecution.documentDetails.history.downloadButton"
+            },
+            {
+                "emits": "delete",
+                "icon": "fas fa-trash-alt",
+                "label": "documentExecution.documentDetails.history.deleteButton"
+            }
+        ],
+        "defaultSortField": "active",
+        "filterFields": ["name"],
+        "interaction": {
+            "type": "event"
+        },
+        "sortFields": ["name", "active"],
+        "textField": "creationDate",
+        "textFieldType": "date",
+        "titleField": "name"
+    },
+    "validations": {
+        "selectedParam": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            }
+        ]
+    }
+}

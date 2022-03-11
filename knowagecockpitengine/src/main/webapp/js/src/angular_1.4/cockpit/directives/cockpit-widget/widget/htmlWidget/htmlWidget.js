@@ -414,7 +414,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.addslashes = function( str ) {
-		    return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+		    return (str + '').replace(/\"/g, '&quot;').replace(/\'/g, '&apos;').replace(/\u0000/g, '\\0');
 		}
 
 		$scope.calcReplacer = function(match,p1,min,max,precision,format){
@@ -442,9 +442,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.ifConditionParamsReplacer = function(match, p1, p2){
-			var paramLabel = cockpitModule_analyticalDrivers[p1+'_description'] ? p1+'_description' : p1;
-			if(p2) paramLabel = p1;
-			var textToReturn = cockpitModule_analyticalDrivers[paramLabel] || null;
+			var textToReturn = cockpitModule_analyticalDrivers[p2 ? p1 + '_description' : p1] || null;
 			if(typeof(textToReturn) == 'string'){
 				textToReturn = '\''+$scope.addslashes(textToReturn)+'\''
 			}
@@ -469,9 +467,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		}
 		$scope.paramsReplacer = function(match, p1, p2){
-			var paramLabel = cockpitModule_analyticalDrivers[p1+'_description'] ? p1+'_description' : p1;
-			if(p2) paramLabel = p1;
-			p1 = cockpitModule_analyticalDrivers[paramLabel] || null;
+			p1 = cockpitModule_analyticalDrivers[p2 ? p1 + '_description' : p1] || null;
 			return $scope.addslashes(p1);
 		}
 

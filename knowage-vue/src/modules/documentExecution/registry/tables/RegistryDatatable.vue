@@ -2,7 +2,7 @@
     <Card class="p-m-2 kn-card no-padding">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #right>
+                <template #end>
                     <div class="p-d-flex p-flex-row">
                         <Button class="kn-button p-button-text" :label="$t('managers.businessModelManager.add')" v-if="buttons.enableButtons || buttons.enableAddRecords" @click="addNewRow" data-test="new-row-button" />
                     </div>
@@ -35,9 +35,11 @@
                     stripedRows
                     showGridlines
                     @page="onPage($event)"
+                    @cell-edit-complete="onCellEditComplete"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <Column class="kn-truncated" :style="registryDatatableDescriptor.numerationColumn.style" :field="columns[0].field" :header="columns[0].title"></Column>
+
                     <template v-for="col of columns.slice(1)" :key="col.field">
                         <Column
                             class="kn-truncated"
@@ -86,7 +88,7 @@
                                         <span v-if="(col.columnInfo.type === 'int' || col.columnInfo.type === 'float') && slotProps.data[col.field]">{{ getFormatedNumber(slotProps.data[col.field]) }}</span>
                                         <span v-else> {{ slotProps.data[col.field] }}</span>
                                     </div>
-                                    <span v-else-if="col.columnInfo.type === 'date'"> {{ getFormatedDate(slotProps.data[col.field], 'MM/DD/YYYY hh:mm:ss') }}</span>
+                                    <span v-else-if="col.columnInfo.type === 'date'"> {{ getFormattedDate(slotProps.data[col.field], 'MM/DD/YYYY hh:mm:ss') }}</span>
                                     <span v-else> {{ slotProps.data[col.field] }}</span>
                                 </div>
                             </template>
@@ -111,7 +113,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { formatDate, formatNumberWithLocale } from '@/helpers/commons/localeHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
@@ -121,7 +123,7 @@ import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
 import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue'
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
 
-// Date format is fixed to MM/DD/YYYY hh:mm:ss for compatibility with Primevue Calendar with Davide Vernassa approval
+const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'registry-datatable',
@@ -224,7 +226,7 @@ export default defineComponent({
             })
         },
         loadRows() {
-            this.rows = [...(this.propRows as any[])]
+            this.rows = deepcopy(this.propRows)
         },
         loadConfiguration() {
             this.configuration = this.propConfiguration
@@ -290,7 +292,7 @@ export default defineComponent({
                 return 'any'
             }
         },
-        getFormatedDate(date: any, format: any) {
+        getFormattedDate(date: any, format: any) {
             return formatDate(date, format)
         },
         getFormatedNumber(number: number, precision?: number, format?: any) {
@@ -324,9 +326,9 @@ export default defineComponent({
             if (column.dependences && row && row[column.dependences]) {
                 postData.append('DEPENDENCES', this.entity + subEntity + ':' + column.dependences + '=' + row[column.dependences])
             }
-            await axios
+            await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-                .then((response) => (this.comboColumnOptions[column.field][row[column.dependences]] = response.data.rows))
+                .then((response: AxiosResponse<any>) => (this.comboColumnOptions[column.field][row[column.dependences]] = response.data.rows))
         },
         addNewRow() {
             const newRow = { id: this.rows.length, isNew: true }
@@ -393,6 +395,9 @@ export default defineComponent({
         setRowEdited(row: any) {
             row.edited = true
             this.$emit('rowChanged', row)
+        },
+        onCellEditComplete(event: any) {
+            this.rows[event.index] = event.newData
         }
     }
 })

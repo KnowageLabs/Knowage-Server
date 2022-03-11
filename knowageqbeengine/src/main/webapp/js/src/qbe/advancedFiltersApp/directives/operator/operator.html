@@ -1,5 +1,5 @@
 <operand node="node.childNodes[0]" layout="row" layout-align="center center"></operand>
-<md-input-container layout="row" layout-align="center center">
+<md-input-container layout="row" layout-align="center center" ng-show="node.childNodes.length > 1">
   <md-select ng-model="node.value" ng-click="$event.stopPropagation()" aria-label="node.value">
     <md-option ng-value="opt" ng-repeat="opt in ['AND','OR']">{{ opt }}</md-option>
   </md-select>

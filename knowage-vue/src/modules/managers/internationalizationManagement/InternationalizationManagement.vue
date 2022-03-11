@@ -1,5 +1,6 @@
 <template>
     <div class="kn-page">
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
         <TabView @tab-click="switchTabConfirm($event.index)" v-model:activeIndex="activeTab" lazy data-test="tab-view" class="internationalization-management kn-tab kn-page-content">
             <TabPanel v-for="language in languages" :key="language">
                 <template #header>
@@ -7,7 +8,6 @@
                     <span v-if="language.defaultLanguage">{{ $t('managers.internationalizationManagement.defaultLanguage') }}</span>
                 </template>
 
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <DataTable v-if="!loading" editMode="cell" :value="messages" :loading="loading" class="p-datatable kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" v-model:filters="filters" data-test="messages-table">
                     <template #header>
                         <div class="table-header p-d-flex">
@@ -36,11 +36,8 @@
 
                     <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :class="{ disabledColumn: col.disabled, editableColumn: !col.disabled }">
                         <template #body="slotProps">
-                            <span :class="{ disabledCell: col.disabled, 'kn-disabled-text': col.disabled, editableCell: !col.disabled }">{{ slotProps.data[slotProps.column.props.field] }}</span>
-                        </template>
-                        <template #editor="slotProps">
-                            <InputText v-model="slotProps.data[slotProps.column.props.field]" v-if="!col.disabled" @input="atFieldChange(slotProps)" class="p-p-2" />
-                            <span class="disabledEditableField kn-disabled-text" v-if="col.disabled">{{ slotProps.data[slotProps.column.props.field] }}</span>
+                            <InputText v-model="slotProps.data[slotProps.column.props.field]" v-if="!col.disabled" class="kn-material-input p-inputtext-sm p-p-2" @input="atFieldChange(slotProps)" />
+                            <span v-else :class="{ disabledCell: col.disabled, 'kn-disabled-text': col.disabled, editableCell: !col.disabled }">{{ slotProps.data[slotProps.column.props.field] }}</span>
                         </template>
                     </Column>
 
@@ -51,8 +48,8 @@
                         <template #body="slotProps">
                             <div class="p-d-flex p-jc-center p-ai-center">
                                 <Button icon="pi pi-save" class="p-button-link" @click="saveLabel(language, slotProps.data)" v-tooltip.top="$t('common.save')" />
-                                <Button v-if="language.defaultLanguage" icon="pi pi-trash" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" v-tooltip.top="$t('common.delete')" />
-                                <Button v-if="!language.defaultLanguage" icon="pi pi-times" class="p-button-link" @click="deleteLabelConfirm(language, slotProps.data)" v-tooltip.top="$t('common.cancel')" />
+                                <Button v-if="language.defaultLanguage" icon="pi pi-trash" class="p-button-link" @click="deleteLabelConfirm(language, slotProps, true)" v-tooltip.top="$t('common.delete')" />
+                                <Button v-if="!language.defaultLanguage" icon="pi pi-times" class="p-button-link" @click="deleteLabelConfirm(language, slotProps, false)" v-tooltip.top="$t('common.cancel')" />
                             </div>
                         </template>
                     </Column>
@@ -67,7 +64,7 @@ import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { iLanguage, iMessage } from './InternationalizationManagement'
 import intDescriptor from './InternationalizationManagementDescriptor.json'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import Column from 'primevue/column'
@@ -107,6 +104,7 @@ export default defineComponent({
             allMessages: [] as iMessage[],
             defaultLangMessages: [] as iMessage[],
             showOnlyEmptyFields: false,
+            initialShowEmptyFields: false,
             dirty: false,
             activeTab: 0,
             previousActiveTab: -1,
@@ -158,22 +156,18 @@ export default defineComponent({
             this.getMessages(selectedTab)
         },
 
-        switchTabConfirm(index) {
+        async switchTabConfirm(index) {
             if (!this.dirty) {
-                this.showOnlyEmptyFields = false
-                this.activeTab = index
+                this.switchTab(index)
                 this.previousActiveTab = this.activeTab
-                this.selectLanguage(index)
             } else {
                 this.$confirm.require({
                     message: this.$t('common.toast.unsavedChangesMessage'),
                     header: this.$t('common.toast.unsavedChangesHeader'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
-                        this.showOnlyEmptyFields = false
+                        this.switchTab(index)
                         this.dirty = false
-                        this.activeTab = index
-                        this.selectLanguage(index)
                     },
                     reject: () => {
                         this.activeTab = this.previousActiveTab
@@ -181,17 +175,33 @@ export default defineComponent({
                 })
             }
         },
+        switchTab(index) {
+            this.initialShowEmptyFields = this.showOnlyEmptyFields.valueOf()
+            this.showOnlyEmptyFields = false
+            this.activeTab = index
+            this.selectLanguage(index)
+        },
 
-        setDataForDefaultLanguage(response) {
+        initCheck() {
+            if (this.initialShowEmptyFields) {
+                this.showOnlyEmptyFields = true
+                this.filterEmptyMessages()
+            }
+        },
+        async setDataForDefaultLanguage(response: AxiosResponse<any>) {
             if (response.data.length == 0) {
                 this.addEmptyLabel()
             } else {
-                this.defaultLangMessages = response.data
-                this.messages = response.data
+                await this.setDefaultLanguageValues(response)
+                this.initCheck()
             }
         },
+        async setDefaultLanguageValues(response: AxiosResponse<any>) {
+            this.defaultLangMessages = response.data
+            this.messages = response.data
+        },
 
-        setEmptyDatatableData(selectedTab) {
+        async setEmptyDatatableData(selectedTab) {
             this.defaultLangMessages.forEach((defMess) => {
                 var newMess = {} as any
                 newMess.language = selectedTab.languageTag
@@ -202,7 +212,16 @@ export default defineComponent({
             })
         },
 
-        setFilledDatatableData(response, selectedTab) {
+        async checkForMessages(response, selectedTab) {
+            if (response.data.length != 0) {
+                await this.setFilledDatatableData(response, selectedTab)
+            } else {
+                await this.setEmptyDatatableData(selectedTab)
+            }
+            this.initCheck()
+        },
+
+        async setFilledDatatableData(response, selectedTab) {
             this.defaultLangMessages.forEach((defMess) => {
                 var translatedMessage = response.data.find((item) => {
                     return item.label == defMess.label
@@ -222,20 +241,12 @@ export default defineComponent({
             })
         },
 
-        checkForMessages(response, selectedTab) {
-            if (response.data.length != 0) {
-                this.setFilledDatatableData(response, selectedTab)
-            } else {
-                this.setEmptyDatatableData(selectedTab)
-            }
-        },
-
         getMessages(selectedTab) {
             this.messages = []
             this.loading = true
-            return axios
+            return this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization/?currLanguage=' + selectedTab.languageTag)
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     if (selectedTab.defaultLanguage) {
                         this.setDataForDefaultLanguage(response)
                     } else {
@@ -248,11 +259,9 @@ export default defineComponent({
 
         async getLanguages() {
             this.loading = true
-            return axios
+            return this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/internationalization/languages')
-                .then((response) => {
-                    console.log('REQUEST', response.data.wrappedObject)
-                    console.log('DESCRIPTRO', this.languages)
+                .then((response: AxiosResponse<any>) => {
                     this.languages = response.data.wrappedObject
                 })
                 .finally(() => (this.loading = false))
@@ -262,11 +271,11 @@ export default defineComponent({
             if (toSave.id) {
                 delete toSave.defaultMessageCode
 
-                return axios.put(url, toSave)
+                return this.$http.put(url, toSave)
             } else {
                 if (toSave.defaultMessageCode) delete toSave.defaultMessageCode
                 toSave.language = langObj.languageTag
-                return axios.post(url, toSave)
+                return this.$http.post(url, toSave)
             }
         },
 
@@ -274,7 +283,7 @@ export default defineComponent({
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages'
             var toSave = { ...message } as iMessage
             delete toSave.dirty
-            this.saveOrUpdateMessage(url, toSave, langObj).then((response) => {
+            this.saveOrUpdateMessage(url, toSave, langObj).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
                     this.$store.commit('setError', { msg: response.data.errors })
                 } else {
@@ -282,19 +291,23 @@ export default defineComponent({
                 }
                 this.getMessages(langObj)
             })
+            this.initialShowEmptyFields = false
+            this.showOnlyEmptyFields = false
             this.dirty = false
         },
 
-        deleteLabelConfirm(langObj, message) {
-            if (message.id) {
+        deleteLabelConfirm(langObj, message, isDefault) {
+            let msgToDelete = message.data
+            let index = message.index
+            if (msgToDelete.id) {
                 let url = ''
-                if (message.defaultMessageCode) {
+                if (msgToDelete.defaultMessageCode) {
                     url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/'
                     this.$confirm.require({
                         message: this.$t('managers.internationalizationManagement.delete.deleteMessage'),
                         header: this.$t('managers.internationalizationManagement.delete.deleteMessageTitle'),
                         icon: 'pi pi-exclamation-triangle',
-                        accept: () => this.deleteLabel(url, message.id, langObj)
+                        accept: () => this.deleteLabel(url, msgToDelete.id, langObj)
                     })
                 } else {
                     url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/deletedefault/'
@@ -303,16 +316,16 @@ export default defineComponent({
                         header: this.$t('managers.internationalizationManagement.delete.deleteDefaultTitle'),
 
                         icon: 'pi pi-exclamation-triangle',
-                        accept: () => this.deleteLabel(url, message.id, langObj)
+                        accept: () => this.deleteLabel(url, msgToDelete.id, langObj)
                     })
                 }
             } else {
-                this.$store.commit('setError', { title: this.$t('managers.internationalizationManagement.delete.deleteDefaultTitle'), msg: this.$t('managers.internationalizationManagement.delete.cantDelete') })
+                isDefault ? this.messages.splice(index, 1) : this.$store.commit('setError', { title: this.$t('managers.internationalizationManagement.delete.deleteDefaultTitle'), msg: this.$t('managers.internationalizationManagement.delete.cantDelete') })
             }
         },
 
         async deleteLabel(url, id, langObj) {
-            await axios.delete(url + id).then((response) => {
+            await this.$http.delete(url + id).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
                     this.$store.commit('setError', { title: 'Error', msg: response.data.errors })
                 } else {
@@ -320,6 +333,8 @@ export default defineComponent({
                     this.getMessages(langObj)
                 }
             })
+            this.initialShowEmptyFields = false
+            this.showOnlyEmptyFields = false
         }
     }
 })
@@ -337,7 +352,7 @@ export default defineComponent({
         cursor: pointer;
     }
     .p-datatable .p-datatable-tbody > tr:hover {
-        background-color: $color-selected;
+        background-color: var(--kn-color-selected);
     }
 }
 </style>

@@ -1234,8 +1234,8 @@ public class ManageDataSetsForREST {
 		String limitRows = json.optString(DataSetConstants.XSL_FILE_LIMIT_ROWS);
 		String xslSheetNumber = json.optString(DataSetConstants.XSL_FILE_SHEET_NUMBER);
 
-		JSONArray dsMeta = json.optJSONArray(DataSetConstants.FILE_DS_METADATA);
-		if (dsMeta != null && dsMeta.length() > 0) {
+		if (json.optJSONObject(DataSetConstants.METADATA) != null && json.optJSONObject(DataSetConstants.METADATA).optJSONArray("columns") != null) {
+			JSONArray dsMeta = json.optJSONObject(DataSetConstants.METADATA).getJSONArray("columns");
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
 			String metadataXML = dsp.metadataToXML(getUserMetaData(dsMeta));
 			dataSet.setDsMetadata(metadataXML);
@@ -1341,13 +1341,9 @@ public class ManageDataSetsForREST {
 
 	private IMetaData getUserMetaData(JSONArray dsMeta) throws JSONException {
 		MetaData toReturn = new MetaData();
-		toReturn.setFieldsMeta(getFieldsMeta(dsMeta));
-		return toReturn;
-	}
 
-	private List<IFieldMetaData> getFieldsMeta(JSONArray dsMeta) throws JSONException {
-		List<IFieldMetaData> toReturn = new ArrayList<IFieldMetaData>();
-		for (int i = 0; i < dsMeta.length() - 1; i = i + 2) {
+		List<IFieldMetaData> fieldsMeta = new ArrayList<IFieldMetaData>();
+		for (int i = 0; i < dsMeta.length() - 1; i = i + 3) {
 			JSONObject currMetaType = dsMeta.getJSONObject(i);
 			JSONObject currMetaFieldType = dsMeta.getJSONObject(i + 1);
 			IFieldMetaData m = new FieldMetadata();
@@ -1357,23 +1353,27 @@ public class ManageDataSetsForREST {
 			m.setProperties(new HashMap<>());
 			m.setFieldType(getFieldTypeFromColumn(currMetaFieldType.getString("pvalue")));
 			m.setMultiValue(false);
-			toReturn.add(m);
+			fieldsMeta.add(m);
 		}
+
+		toReturn.setFieldsMeta(fieldsMeta);
 		return toReturn;
 	}
 
 	private Class getClassTypeFromColumn(String columnClass) {
-		if (columnClass.equalsIgnoreCase("String"))
+		if (columnClass.equalsIgnoreCase("java.lang.String"))
 			return java.lang.String.class;
-		else if (columnClass.equalsIgnoreCase("Long"))
+		else if (columnClass.equalsIgnoreCase("java.lang.Long"))
 			return java.lang.Long.class;
-		else if (columnClass.equalsIgnoreCase("Integer"))
+		else if (columnClass.equalsIgnoreCase("java.lang.Integer"))
+			return java.lang.Integer.class;
+		else if (columnClass.equalsIgnoreCase("java.math.BigDecimal"))
 			return java.math.BigDecimal.class;
-		else if (columnClass.equalsIgnoreCase("Double"))
+		else if (columnClass.equalsIgnoreCase("java.lang.Double"))
 			return java.lang.Double.class;
-		else if (columnClass.equalsIgnoreCase("Date"))
+		else if (columnClass.equalsIgnoreCase("java.util.Date"))
 			return java.sql.Date.class;
-		else if (columnClass.equalsIgnoreCase("Timestamp"))
+		else if (columnClass.equalsIgnoreCase("java.util.Timestamp"))
 			return java.sql.Timestamp.class;
 		else
 			throw new SpagoBIRuntimeException("Couldn't map class <" + columnClass + ">");
@@ -1408,12 +1408,6 @@ public class ManageDataSetsForREST {
 	private PythonDataSet managePythonDataSet(boolean savingDataset, JSONObject config, JSONObject json) throws JSONException {
 		for (String sa : PythonDataSetConstants.PYTHON_STRING_ATTRIBUTES) {
 			config.put(sa, json.optString(sa));
-		}
-		for (String ja : PythonDataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
-			config.put(ja, new JSONObject(json.getString(ja)));
-		}
-		for (String ja : PythonDataSetConstants.REST_JSON_ARRAY_ATTRIBUTES) {
-			config.put(ja, new JSONArray(json.getString(ja)));
 		}
 		config.put(DataSetConstants.DATA_SET_TYPE, DataSetConstants.DS_PYTHON_TYPE);
 		PythonDataSet res = new PythonDataSet(config);
@@ -1473,6 +1467,46 @@ public class ManageDataSetsForREST {
 
 			if ((!(value.startsWith("'") && value.endsWith("'")))) {
 				toReturn = "'" + value + "'";
+			} else {
+				toReturn = value;
+			}
+
+		} else if (type.equalsIgnoreCase(DataSetUtilities.NUMBER_TYPE)) {
+
+			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
+				toReturn = value.substring(1, value.length() - 1);
+			} else {
+				toReturn = value;
+			}
+			if (toReturn == null || toReturn.length() == 0) {
+				toReturn = "";
+			}
+		} else if (type.equalsIgnoreCase(DataSetUtilities.GENERIC_TYPE)) {
+			toReturn = value;
+		} else if (type.equalsIgnoreCase(DataSetUtilities.RAW_TYPE)) {
+			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
+				toReturn = value.substring(1, value.length() - 1);
+			} else {
+				toReturn = value;
+			}
+		}
+
+		return toReturn;
+	}
+
+	/**
+	 * Protected for testing purposes
+	 *
+	 * @param value
+	 * @param type
+	 * @return
+	 */
+	static String getSingleValueSolr(String value, String type) {
+		String toReturn = "";
+		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
+
+			if ((!(value.startsWith("'") && value.endsWith("'")))) {
+				toReturn = "\"" + value + "\"";
 			} else {
 				toReturn = value;
 			}

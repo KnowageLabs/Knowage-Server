@@ -22,7 +22,9 @@ import Dialog from 'primevue/dialog'
 import Listbox from 'primevue/listbox'
 import { mapState } from 'vuex'
 import store from '@/App.store'
-import axios from 'axios'
+import { usePrimeVue } from 'primevue/config'
+
+import { AxiosResponse } from 'axios'
 
 interface Language {
     locale: string
@@ -40,7 +42,14 @@ export default defineComponent({
             languages: Array<Language>()
         }
     },
-    created() {},
+    created() {
+        const primevue = usePrimeVue() as any
+        // @ts-ignore
+        if (this.$i18n.messages[this.$i18n.locale.replaceAll('-', '_')]) {
+            // @ts-ignore
+            primevue.config.locale = { ...primevue.config.locale, ...this.$i18n.messages[this.$i18n.locale.replaceAll('-', '_')].locale }
+        }
+    },
     props: {
         visibility: Boolean
     },
@@ -57,7 +66,7 @@ export default defineComponent({
             url += '&THEME_NAME=sbi_default'
 
             this.$emit('update:loading', true)
-            axios.get(url).then(
+            this.$http.get(url).then(
                 () => {
                     store.commit('setLocale', language.locale)
                     localStorage.setItem('locale', language.locale)
@@ -83,8 +92,8 @@ export default defineComponent({
     watch: {
         visibility(newVisibility) {
             if (newVisibility && this.languages.length == 0) {
-                axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages').then(
-                    (response) => {
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages').then(
+                    (response: AxiosResponse<any>) => {
                         let languagesArray = response.data.sort()
 
                         for (var idx in languagesArray) {

@@ -1,18 +1,30 @@
 <template>
     <div class="kn-page">
-        <div class="kn-page-content p-grid p-m-0">
+        <div class="p-grid p-m-0">
             <div class="p-col-4 p-sm-4 p-md-3 p-p-0 p-d-flex p-flex-column">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.functionalitiesManagement.title') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <FabButton v-if="selectedFunctionality" icon="fas fa-plus" @click="showForm(null, selectedFunctionality.id)" data-test="new-button" />
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
 
-                <Tree id="document-tree" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" :filter="true" filterMode="lenient" @node-select="showForm($event.data, $event.data.parentId)" data-test="functionality-tree" class="kn-tree kn-flex">
+                <Tree
+                    id="document-tree"
+                    scrollHeight="calc(100vh - 91px)"
+                    maximizable
+                    :value="nodes"
+                    selectionMode="single"
+                    :expandedKeys="expandedKeys"
+                    :filter="true"
+                    filterMode="lenient"
+                    @node-select="showForm($event.data, $event.data.parentId)"
+                    data-test="functionality-tree"
+                    class="kn-tree kn-column-tree kn-flex p-p-0"
+                >
                     <template #default="slotProps">
                         <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonsVisible[slotProps.node.id] = true" @mouseleave="buttonsVisible[slotProps.node.id] = false" :data-test="'tree-item-' + slotProps.node.id">
                             <span>{{ slotProps.node.label }}</span>
@@ -45,7 +57,7 @@
 import { defineComponent } from 'vue'
 import { iFunctionality, iNode } from './FunctionalitiesManagement'
 import FunctionalitiesManagementDetail from './detailTabView/FunctionalitiesManagementDetail.vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import functionalitiesManagementDescriptor from './FunctionalitiesManagementDescriptor.json'
 import KnHint from '@/components/UI/KnHint.vue'
@@ -80,11 +92,11 @@ export default defineComponent({
     },
     methods: {
         async loadFunctionalities() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/').then((response) => (this.functionalities = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/').then((response: AxiosResponse<any>) => (this.functionalities = response.data))
         },
         async loadRolesShort() {
             this.rolesShort = []
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/short/').then((response) => (this.rolesShort = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/short/').then((response: AxiosResponse<any>) => (this.rolesShort = response.data))
         },
         createNodeTree() {
             this.nodes = []
@@ -193,7 +205,7 @@ export default defineComponent({
             return functionality.prog !== 1
         },
         moveUp(functionalityId: number) {
-            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveUp/${functionalityId}`).then(() => this.loadPage(null))
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveUp/${functionalityId}`).then(() => this.loadPage(null))
         },
         canBeMovedDown(functionality: iFunctionality) {
             let canBeMoved = false
@@ -206,7 +218,7 @@ export default defineComponent({
             return canBeMoved
         },
         moveDown(functionalityId: number) {
-            axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveDown/${functionalityId}`).then(() => this.loadPage(null))
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/moveDown/${functionalityId}`).then(() => this.loadPage(null))
         },
         canBeDeleted(functionality: iFunctionality) {
             return functionality.parentId && functionality.codType !== 'LOW_FUNCT'
@@ -223,7 +235,7 @@ export default defineComponent({
             })
         },
         async deleteFunctionality(functionalityId: number) {
-            await axios
+            await this.$http
                 .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityId}`)
                 .then(() => {
                     this.$store.commit('setInfo', {

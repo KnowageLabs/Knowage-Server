@@ -2,7 +2,7 @@
     <div class="p-d-flex p-flex-row">
         <div class="p-col-3">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.lovsManagement.fields') }}
                 </template>
             </Toolbar>
@@ -30,11 +30,11 @@
         </div>
         <div class="p-col-9">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.lovsManagement.definition') }}
                 </template>
             </Toolbar>
-            <DataTable :value="selectedValues" class="p-datatable-sm kn-table p-m-5" editMode="cell" responsiveLayout="stack" breakpoint="960px">
+            <DataTable :value="selectedValues" class="p-datatable-sm kn-table p-m-5" editMode="cell" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
                 <Column class="kn-truncated" field="level" :header="$t('managers.lovsManagement.level')"></Column>
                 <Column class="kn-truncated p-mr-2" field="value" :header="$t('managers.lovsManagement.value')">
                     <template #editor="slotProps">
@@ -116,6 +116,14 @@ export default defineComponent({
         },
         loadModel() {
             this.selectedValues = this.treeModel as any[]
+
+            this.removeUnusedSelectedValues()
+        },
+        removeUnusedSelectedValues() {
+            for (let i = 0; i < this.selectedValues.length; i++) {
+                const index = this.data.findIndex((el: any) => el.name === this.selectedValues[i].value)
+                if (index === -1) this.selectedValues.splice(i, 1)
+            }
         },
         setSelectedValue(value: any) {
             const index = this.selectedValues.findIndex((el: any) => el.level === value.name)
@@ -137,6 +145,9 @@ export default defineComponent({
         removeValue(index: number) {
             this.selectedValues.splice(index, 1)
             this.$emit('modelChanged', this.selectedValues)
+        },
+        onCellEditComplete(event: any) {
+            this.selectedValues[event.index] = event.newData
         }
     }
 })

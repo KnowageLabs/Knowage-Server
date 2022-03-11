@@ -30,7 +30,10 @@ import javax.validation.constraints.Pattern;
 @Pattern(regexp = "^([a-zA-Z0-9\\s\\-\\_])*$", message = "is not alphanumeric")
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 @Retention(value = RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = GenericValidator.class)
+/*
+ * It seems a workaround but it's the legal way: see @Pattern
+ */
+@Constraint(validatedBy = {})
 @Documented
 public @interface Alphanumeric {
 	String message() default "";

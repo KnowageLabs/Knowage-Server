@@ -1,11 +1,20 @@
 <template>
-    <Dialog :header="$t('kpi.targetDefinition.addKpiBtn')" :breakpoints="targetDefinitionDetailDescriptor.dialog.breakpoints" :style="targetDefinitionDetailDescriptor.dialog.style" :visible="dialogVisible" :modal="true" :closable="false" class="p-fluid kn-dialog--toolbar--primary">
+    <Dialog
+        :header="$t('kpi.targetDefinition.addKpiBtn')"
+        :breakpoints="targetDefinitionDetailDescriptor.dialog.breakpoints"
+        :style="targetDefinitionDetailDescriptor.dialog.style"
+        :contentStyle="targetDefinitionDetailDescriptor.dialog.contentStyle"
+        :visible="dialogVisible"
+        :modal="true"
+        :closable="false"
+        class="p-fluid kn-dialog--toolbar--primary"
+    >
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('kpi.targetDefinition.addKpiBtn') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" @click="addKpi" />
                     <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="closeKpiDialog" />
                 </template>
@@ -23,6 +32,8 @@
             responsiveLayout="stack"
             v-model:filters="filters"
             filterDisplay="menu"
+            :scrollable="true"
+            :scrollHeight="targetDefinitionDetailDescriptor.dialog.scrollHeight"
             :globalFilterFields="targetDefinitionDetailDescriptor.globalFilterFields"
         >
             <template #header>
@@ -51,76 +62,76 @@
     </Dialog>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import Dialog from 'primevue/dialog'
-import { iValues } from './TargetDefinition'
-import { filterDefault } from '@/helpers/commons/filterHelper'
-import { FilterOperator } from 'primevue/api'
-import targetDefinitionDetailDescriptor from './TargetDefinitionDetailDescriptor.json'
-import { formatDate } from '@/helpers/commons/localeHelper'
+    import { defineComponent, PropType } from 'vue'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import Dialog from 'primevue/dialog'
+    import { iValues } from './TargetDefinition'
+    import { filterDefault } from '@/helpers/commons/filterHelper'
+    import { FilterOperator } from 'primevue/api'
+    import targetDefinitionDetailDescriptor from './TargetDefinitionDetailDescriptor.json'
+    import { formatDate } from '@/helpers/commons/localeHelper'
 
-export default defineComponent({
-    name: 'add-kpi-dialog',
-    components: {
-        DataTable,
-        Column,
-        Dialog
-    },
-    props: {
-        dialogVisible: {
-            type: Boolean,
-            default: false
+    export default defineComponent({
+        name: 'add-kpi-dialog',
+        components: {
+            DataTable,
+            Column,
+            Dialog
         },
-        kpi: {
-            type: Array as PropType<iValues[]>,
-            required: false
+        props: {
+            dialogVisible: {
+                type: Boolean,
+                default: false
+            },
+            kpi: {
+                type: Array as PropType<iValues[]>,
+                required: false
+            },
+            loadingKpi: {
+                type: Boolean,
+                default: false
+            }
         },
-        loadingKpi: {
-            type: Boolean,
-            default: false
-        }
-    },
-    emits: ['close', 'add'],
-    data() {
-        return {
-            selectedKpi: [] as iValues[],
-            targetDefinitionDetailDescriptor: targetDefinitionDetailDescriptor,
-            filters: {
-                global: [filterDefault],
-                kpiName: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                kpiCategory: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                domainCode: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                kpiDate: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                kpiAuthor: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                }
-            } as Object,
-            formatDate: formatDate
-        }
-    },
-    methods: {
-        addKpi() {
-            this.$emit('add', this.selectedKpi)
-            this.selectedKpi = []
+        emits: ['close', 'add'],
+        data() {
+            return {
+                selectedKpi: [] as iValues[],
+                targetDefinitionDetailDescriptor: targetDefinitionDetailDescriptor,
+                filters: {
+                    global: [filterDefault],
+                    kpiName: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    kpiCategory: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    domainCode: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    kpiDate: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    kpiAuthor: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    }
+                } as Object,
+                formatDate: formatDate
+            }
         },
-        closeKpiDialog() {
-            this.$emit('close')
+        methods: {
+            addKpi() {
+                this.$emit('add', this.selectedKpi)
+                this.selectedKpi = []
+            },
+            closeKpiDialog() {
+                this.$emit('close')
+            }
         }
-    }
-})
+    })
 </script>

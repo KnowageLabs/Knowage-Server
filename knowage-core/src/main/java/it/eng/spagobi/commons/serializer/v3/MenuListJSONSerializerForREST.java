@@ -509,28 +509,33 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		String requiredLicensesString = (String) itemSB.getAttribute(TO_BE_LICENSED);
 		if (requiredLicensesString != null) {
-			if (requiredLicensesString.isEmpty()) {
-				try {
-					Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
 
-					isLicensed = !DocumentUtilities.getValidLicenses().isEmpty();
-				} catch (ClassNotFoundException e) {
-					isLicensed = false;
+			if (isEnterpriseEdition()) {
+				if (requiredLicensesString.isEmpty()) {
+					try {
+						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
+
+						isLicensed = !DocumentUtilities.getValidLicenses().isEmpty();
+					} catch (ClassNotFoundException e) {
+						isLicensed = false;
+					}
+				} else {
+					try {
+						String[] requiredLicenses = requiredLicensesString.split(",", -1);
+						Class productProfilerEE = Class.forName("it.eng.knowage.enterprise.security.ProductProfiler");
+						Method getActiveProductsMethod = productProfilerEE.getMethod("getActiveProducts");
+						List<String> activeProducts = (List<String>) getActiveProductsMethod.invoke(productProfilerEE);
+						for (String lic : requiredLicenses) {
+							isLicensed = activeProducts.contains(lic);
+							if (isLicensed)
+								break;
+						}
+					} catch (Exception e) {
+						isLicensed = false;
+					}
 				}
 			} else {
-				try {
-					String[] requiredLicenses = requiredLicensesString.split(",", -1);
-					Class productProfilerEE = Class.forName("it.eng.knowage.enterprise.security.ProductProfiler");
-					Method getActiveProductsMethod = productProfilerEE.getMethod("getActiveProducts");
-					List<String> activeProducts = (List<String>) getActiveProductsMethod.invoke(productProfilerEE);
-					for (String lic : requiredLicenses) {
-						isLicensed = activeProducts.contains(lic);
-						if (isLicensed)
-							break;
-					}
-				} catch (Exception e) {
-					isLicensed = false;
-				}
+				isLicensed = false;
 			}
 		}
 
@@ -758,6 +763,11 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			}
 		}
 
+		String[] roleNames = new String[childElem.getRoles().length];
+		for (int i = 0; i < childElem.getRoles().length; i++) {
+			roleNames[i] = childElem.getRoles()[i].getName();
+		}
+		temp2.put("roles", roleNames);
 		tempMenuList.put(temp2);
 
 		return tempMenuList;

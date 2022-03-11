@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
+import java.math.BigDecimal;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
@@ -38,7 +40,8 @@ public abstract class AbstractDataReader implements IDataReader {
 		return isOffsetSupported() && isFetchSizeSupported() && isMaxResultsSupported();
 	}
 
-	public boolean isPaginationRequested(){
+	@Override
+	public boolean isPaginationRequested() {
 		return getOffset() != 0 || getFetchSize() != -1;
 	}
 
@@ -95,5 +98,19 @@ public abstract class AbstractDataReader implements IDataReader {
 	@Override
 	public void setCalculateResultNumberEnabled(boolean enabled) {
 		this.calculateResultNumberEnabled = enabled;
+	}
+
+	protected Class getNewMetaType(Class oldType, Class newType) {
+		if (oldType == null)
+			return newType;
+		if (oldType == String.class)
+			return String.class;
+		if (newType == Integer.class) {
+			if (oldType == Double.class || oldType == Long.class || oldType == BigDecimal.class)
+				return oldType;
+			else
+				return newType;
+		} else
+			return newType;
 	}
 }

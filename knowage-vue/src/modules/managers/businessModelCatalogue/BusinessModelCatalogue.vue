@@ -3,16 +3,17 @@
         <div class="kn-page-content p-grid p-m-0">
             <div class="p-col-4 p-sm-4 p-md-3 p-p-0 kn-page">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.businessModelManager.title') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <FabButton icon="fas fa-plus" @click="showForm" data-test="new-button" />
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+                <KnListBox :options="businessModelList" :settings="businessModelCatalogueDescriptor.knListSettings" @click="showForm" @delete.stop="deleteBusinessModelConfirm" />
 
-                <Listbox
+                <!--Listbox
                     v-if="!loading"
                     class="kn-list--column kn-page-content"
                     :options="businessModelList"
@@ -36,7 +37,7 @@
                             <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteBusinessModelConfirm(slotProps.option.id)" data-test="delete-button" />
                         </div>
                     </template>
-                </Listbox>
+                </!--Listbox-->
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
@@ -48,90 +49,90 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iBusinessModel } from './BusinessModelCatalogue'
-import axios from 'axios'
-import businessModelCatalogueDescriptor from './BusinessModelCatalogueDescriptor.json'
-import FabButton from '@/components/UI/KnFabButton.vue'
-import KnHint from '@/components/UI/KnHint.vue'
-import Listbox from 'primevue/listbox'
+    import { defineComponent } from 'vue'
+    import { iBusinessModel } from './BusinessModelCatalogue'
+    import { AxiosResponse } from 'axios'
+    import businessModelCatalogueDescriptor from './BusinessModelCatalogueDescriptor.json'
+    import FabButton from '@/components/UI/KnFabButton.vue'
+    import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+    import KnHint from '@/components/UI/KnHint.vue'
 
-export default defineComponent({
-    name: 'business-model-catalogue',
-    components: {
-        FabButton,
-        Listbox,
-        KnHint
-    },
-    data() {
-        return {
-            businessModelCatalogueDescriptor,
-            businessModelList: [] as iBusinessModel[],
-            showHint: true,
-            touched: false,
-            loading: false
-        }
-    },
-    async created() {
-        if (this.$route.path !== '/business-model-catalogue') {
-            this.showHint = false
-        }
-        await this.loadAllCatalogues()
-    },
-    methods: {
-        async loadAllCatalogues() {
-            this.loading = true
-            await axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels')
-                .then((response) => (this.businessModelList = response.data))
-                .finally(() => (this.loading = false))
+    export default defineComponent({
+        name: 'business-model-catalogue',
+        components: {
+            FabButton,
+            KnListBox,
+            KnHint
         },
-        showForm(event: any) {
-            this.showHint = false
-            const path = event.value ? `/business-model-catalogue/${event.value.id}` : '/business-model-catalogue/new-business-model'
-            if (!this.touched) {
-                this.$router.push(path)
-            } else {
+        data() {
+            return {
+                businessModelCatalogueDescriptor,
+                businessModelList: [] as iBusinessModel[],
+                showHint: true,
+                touched: false,
+                loading: false
+            }
+        },
+        async created() {
+            if (this.$route.path !== '/business-model-catalogue') {
+                this.showHint = false
+            }
+            await this.loadAllCatalogues()
+        },
+        methods: {
+            async loadAllCatalogues() {
+                this.loading = true
+                await this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels')
+                    .then((response: AxiosResponse<any>) => (this.businessModelList = response.data))
+                    .finally(() => (this.loading = false))
+            },
+            showForm(event: any) {
+                this.showHint = false
+                const path = event.item ? `/business-model-catalogue/${event.item.id}` : '/business-model-catalogue/new-business-model'
+                if (!this.touched) {
+                    this.$router.push(path)
+                } else {
+                    this.$confirm.require({
+                        message: this.$t('common.toast.unsavedChangesMessage'),
+                        header: this.$t('common.toast.unsavedChangesHeader'),
+                        icon: 'pi pi-exclamation-triangle',
+                        accept: () => {
+                            this.touched = false
+                            this.$router.push(path)
+                        }
+                    })
+                }
+            },
+            deleteBusinessModelConfirm(event: any) {
                 this.$confirm.require({
-                    message: this.$t('common.toast.unsavedChangesMessage'),
-                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteTitle'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.touched = false
-                        this.$router.push(path)
+                        this.deleteBusinessModel(event.item.id)
                     }
                 })
-            }
-        },
-        deleteBusinessModelConfirm(businessModelId: number) {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => {
-                    this.touched = false
-                    this.deleteBusinessModel(businessModelId)
-                }
-            })
-        },
-        async deleteBusinessModel(businessModelId: number) {
-            await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/' + businessModelId).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t('common.toast.deleteTitle'),
-                    msg: this.$t('common.toast.deleteSuccess')
+            },
+            async deleteBusinessModel(businessModelId: number) {
+                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/' + businessModelId).then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.$router.replace('/business-model-catalogue')
+                    this.loadAllCatalogues()
                 })
-                this.$router.replace('/business-model-catalogue')
+            },
+            pageReload() {
+                this.touched = false
                 this.loadAllCatalogues()
-            })
-        },
-        pageReload() {
-            this.touched = false
-            this.loadAllCatalogues()
-        },
-        onClose() {
-            this.touched = false
-            this.showHint = true
+            },
+            onClose() {
+                this.touched = false
+                this.showHint = true
+            }
         }
-    }
-})
+    })
 </script>

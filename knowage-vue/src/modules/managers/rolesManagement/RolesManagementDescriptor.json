@@ -1,3 +1,20 @@
 {
-    "filterFields": ["name", "roleTypeCD"]
+    "filterFields": ["name", "roleTypeCD"],
+    "knListSettings": {
+        "buttons": [
+            {
+                "emits": "delete",
+                "icon": "fas fa-trash-alt",
+                "label": "common.delete"
+            }
+        ],
+        "defaultSortField": "name",
+        "filterFields": ["name"],
+        "interaction": {
+            "type": "event"
+        },
+        "sortFields": ["name"],
+        "textField": "roleTypeCD",
+        "titleField": "name"
+    }
 }

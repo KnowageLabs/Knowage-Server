@@ -25,10 +25,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if(chartTemplate.TOOLTIP) {
 					 chartTemplate.TOOLTIP.borderWidth= 0;
 					 chartTemplate.TOOLTIP.borderRadius= 0;
-				}
+					if(!chartTemplate.TOOLTIP.backgroundColor) {
+						chartTemplate.TOOLTIP.backgroundColor= "#D6D6D6"
+					}
+				}				
 				if(chartTemplate.VALUES.SERIE[0].TOOLTIP) {
 					delete chartTemplate.VALUES.SERIE[0].TOOLTIP
-				}
+				}				
+				
 			}
 			return chartTemplate;
 		};

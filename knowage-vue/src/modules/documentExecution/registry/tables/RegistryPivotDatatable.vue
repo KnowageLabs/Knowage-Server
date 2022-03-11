@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import registryDescriptor from '../RegistryDescriptor.json'
 import KnPivotTable from '@/components/UI/KnPivotTable/KnPivotTable.vue'
 
@@ -111,9 +111,9 @@ export default defineComponent({
             if (column.dependences && row && row[column.dependences].data) {
                 postData.append('DEPENDENCES', this.entity + subEntity + ':' + column.dependences + '=' + row[column.dependences].data)
             }
-            await axios
+            await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-                .then((response) => (this.comboColumnOptions[column.field][row[column.dependences]?.data] = response.data.rows))
+                .then((response: AxiosResponse<any>) => (this.comboColumnOptions[column.field][row[column.dependences]?.data] = response.data.rows))
         }
     }
 })

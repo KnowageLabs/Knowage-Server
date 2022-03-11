@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-        <template #left> Template {{ template.label }} </template>
-        <template #right>
+        <template #start> Template {{ template.label }} </template>
+        <template #end>
             <Button icon="pi pi-download" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.download')" @click="downloadTemplate" :disabled="!template.id" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" :disabled="!dirty" @click="saveTemplate" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeTemplate($event)" />
@@ -99,7 +99,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { VCodeMirror } from 'vue3-code-mirror'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Chips from 'primevue/chips'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
 import Dropdown from 'primevue/dropdown'
@@ -164,12 +164,10 @@ export default defineComponent({
         loadTemplate(id?: string): void {
             this.loading = true
             if (id) {
-                axios
+                this.$http
                     .get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/' + (id || this.id))
-                    .then((response) => {
+                    .then((response: AxiosResponse<any>) => {
                         this.template = response.data
-                        // TODO remove after backend implementation
-                        this.template.label = this.template.label || this.template.name
                     })
                     .catch((error) => console.error(error))
                     .finally(() => {
@@ -188,9 +186,9 @@ export default defineComponent({
         saveTemplate(): void {
             if (this.validateTags()) {
                 let postUrl = this.id ? '1.0/widgetgallery/' + this.id : '1.0/widgetgallery'
-                axios
+                this.$http
                     .post(process.env.VUE_APP_API_PATH + postUrl, this.template)
-                    .then((response) => {
+                    .then((response: AxiosResponse<any>) => {
                         this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.saveTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullySaved') })
                         this.$router.push('/gallery-management/' + response.data.id)
                         this.$emit('saved')
@@ -270,7 +268,7 @@ export default defineComponent({
         cursor: pointer;
         user-select: none;
         &:hover {
-            background-color: $color-secondary;
+            background-color: var(--kn-color-secondary);
         }
     }
     &:deep(.p-tabview) {
@@ -316,7 +314,7 @@ export default defineComponent({
     .imageContainer {
         height: 100%;
         .icon {
-            color: $color-secondary;
+            color: var(--kn-color-secondary);
         }
         img {
             height: auto;
