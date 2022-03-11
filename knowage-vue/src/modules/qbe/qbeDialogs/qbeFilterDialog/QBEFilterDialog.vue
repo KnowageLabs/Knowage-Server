@@ -245,7 +245,7 @@ export default defineComponent({
             })
         },
         save() {
-            if (this.propParameters.length > 0 && !this.parameterTableVisible) {
+            if (this.propParameters.length > 0 && !this.parameterTableVisible && this.filterUsesParameters()) {
                 this.parameterTableVisible = true
             } else {
                 this.$emit('save', this.filters, this.filterDialogData?.field, this.updatedParameters, this.expression)
@@ -254,6 +254,17 @@ export default defineComponent({
         },
         onParametersUpdated(updatedParameters: any[]) {
             this.updatedParameters = updatedParameters
+        },
+        filterUsesParameters() {
+            let usesParameters = false
+            for (let i = 0; i < this.filters.length; i++) {
+                if (this.filters[i].rightType === 'parameter') {
+                    usesParameters = true
+                    break
+                }
+            }
+
+            return usesParameters
         }
     }
 })
