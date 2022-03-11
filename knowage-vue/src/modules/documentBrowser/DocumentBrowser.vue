@@ -241,6 +241,7 @@ export default defineComponent({
     position: absolute;
     top: 39px;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 39px);
+    border: none;
 }
 </style>

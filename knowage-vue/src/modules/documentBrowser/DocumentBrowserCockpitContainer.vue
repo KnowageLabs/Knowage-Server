@@ -27,6 +27,12 @@ export default defineComponent({
         }
     },
     created() {
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'crossNavigation') {
+                console.log('EVENT FROM ANGULAR: ', event)
+            }
+        })
+
         this.name = this.id as string
         this.createUrl()
         this.setMode()
