@@ -151,10 +151,7 @@ public class ExportJobBuilder {
 		logger.debug("\t- Resource path: " + String.valueOf(resoursePath));
 		logger.debug("\t- Type: " + String.valueOf(type));
 
-		JobBuilder newJob = newJob().withIdentity(jobName, EXPORT_GROUP)
-			.withDescription(jobDescription)
-			.usingJobData(jobDataMap)
-			.storeDurably(false);
+		JobBuilder newJob = newJob().withIdentity(jobName, EXPORT_GROUP).withDescription(jobDescription).usingJobData(jobDataMap).storeDurably(true);
 
 		switch (type) {
 		case EXPORT_TYPE_CSV:
