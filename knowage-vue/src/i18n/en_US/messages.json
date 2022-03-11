@@ -201,6 +201,17 @@
         "warning": "Warning",
         "yes": "Yes"
     },
+    "components": {
+        "knCalculatedField": {
+            "columnName": "Column Name",
+            "description": "Calculated field description",
+            "fields": "Fields",
+            "formula": "Formula",
+            "functions": "Functions",
+            "officialDocumentation": "Official documentation ({function})",
+            "title": "Calculated field"
+        }
+    },
     "cron": {
         "advanced": "Advanced",
         "april": "April",
@@ -1766,6 +1777,122 @@
             "templateSuccessfullyUploaded": "@:managers.widgetGallery.templateSuccessfully uploaded",
             "title": "Gallery management",
             "uploadTemplate": "Upload template"
+        },
+        "workspaceManagement": {
+            "dataPreparation": {
+                "dataset": {
+                    "description": "Description",
+                    "label": "Label",
+                    "name": "Name",
+                    "refreshRate": {
+                        "frequency": {
+                            "DAILY": "Every day",
+                            "HOURL": "Every hour",
+                            "MONTHLY": "Every month",
+                            "NEVER": "Never",
+                            "WEEKLY": "Every week",
+                            "YEARLY": "Every year"
+                        },
+                        "label": "Refresh rate"
+                    },
+                    "visibility": "Visibility"
+                },
+                "label": "Data preparation",
+                "originalDataset": "Original",
+                "parametersConfiguration": "Parameters configuration",
+                "roles": {
+                    "attribute": "ATTRIBUTE",
+                    "measure": "MEASURE"
+                },
+                "savePreparedDataset": "Save prepared dataset",
+                "transformations": {
+                    "calculatedField": {
+                        "label": "Add column"
+                    },
+                    "changeRole": {
+                        "description": "Change role for the fields",
+                        "label": "Change role"
+                    },
+                    "changeType": {
+                        "description": "Change type for the fields",
+                        "label": "Change type"
+                    },
+                    "column": "Column",
+                    "column1": "Column 1",
+                    "column2": "Column 2",
+                    "columnName": "Column Name",
+                    "columns": "Columns",
+                    "condition": "Condition",
+                    "conditions": "Conditions",
+                    "destType": "Destination type",
+                    "drop": {
+                        "description": "TODO",
+                        "label": "Drop column"
+                    },
+                    "endDate": "End Date",
+                    "filter": {
+                        "description": "Filter the dataset using the selected conditions. If more then one AND logical operator will be used",
+                        "label": "Filter"
+                    },
+                    "format": {
+                        "description": "TODO",
+                        "label": "Format"
+                    },
+                    "formula": "Formula",
+                    "label": "Transformations",
+                    "logicOperator": "Logical operator",
+                    "merge": {
+                        "description": "The output type is always String",
+                        "label": "Merge columns"
+                    },
+                    "newChar": "New char",
+                    "number": "Number",
+                    "numberOfChars": "Number of characters",
+                    "oldChar": "Old char",
+                    "outputType": "Output Type",
+                    "padding": {
+                        "description": "TODO",
+                        "label": "Padding"
+                    },
+                    "prefix": "Prefix",
+                    "removeDuplicates": {
+                        "description": "Removes duplicate values from a range of values.",
+                        "label": "Remove duplicates"
+                    },
+                    "removeNull": {
+                        "description": "TODO",
+                        "label": "Remove NULL"
+                    },
+                    "replace": {
+                        "description": "replace(searchvalue, newvalue)",
+                        "label": "Replace"
+                    },
+                    "separator": "Separator",
+                    "split": {
+                        "description": "Split the column content in two different columns. Choose the split type and define the two returning columns.",
+                        "label": "Split column",
+                        "numOfChars": "Number of characters",
+                        "outputColumn": "Output Column",
+                        "outputType": "Output Type",
+                        "separator": "Separator"
+                    },
+                    "splitMethod": "Split column method",
+                    "startDate": "Start Date",
+                    "statistics": {
+                        "description": "TODO",
+                        "label": "Statistics"
+                    },
+                    "suffix": "Suffix",
+                    "text": "Text",
+                    "trim": {
+                        "description": "TODO",
+                        "label": "Trim"
+                    },
+                    "useNumberOfChars": "Use number of characters",
+                    "useSeparator": "Use separator",
+                    "values": "Values"
+                }
+            }
         }
     },
     "menu": {
@@ -2072,6 +2199,7 @@
             "fileDownload": "Download Dataset file",
             "modified": "Modified",
             "openData": "Import Open Data",
+            "openDataPreparation": "Open Data Preparation",
             "parametrical": "Parametrical",
             "parseError": "Impossible to parse file. Check its content and upload it again",
             "prepareData": "Prepare Data",

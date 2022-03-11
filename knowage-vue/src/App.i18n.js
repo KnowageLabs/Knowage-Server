@@ -13,7 +13,7 @@ const i18n = createI18n({
     messages: messages
 })
 
-const loadedLanguages = ['en_US']
+const loadedLanguages = []
 
 export default i18n
 
@@ -34,8 +34,14 @@ export function loadLanguageAsync(lang) {
 
     // If the language hasn't been loaded yet
     return import(`@/i18n/${lang}/messages.json`).then((messages) => {
-        i18n.global.setLocaleMessage(lang, messages.default)
-        loadedLanguages.push(lang)
-        return setI18nLanguage(lang)
+        require(`@/i18n/${lang}/helper-messages.json`)
+        import(`@/i18n/${lang}/helper-messages.json`).then((m) => {
+            // eslint-disable-next-line
+            // @ts-ignore
+            i18n.global.setLocaleMessage(lang, messages.default)
+            i18n.global.mergeLocaleMessage(lang, m.default)
+            loadedLanguages.push(lang)
+            return setI18nLanguage(lang)
+        })
     })
 }
