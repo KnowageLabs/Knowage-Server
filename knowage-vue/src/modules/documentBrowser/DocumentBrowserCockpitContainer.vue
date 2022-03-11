@@ -28,7 +28,7 @@ export default defineComponent({
     },
     created() {
         window.addEventListener('message', (event) => {
-            if (event.data.type === 'crossNavigation') {
+            if (event.data.type === 'savedCockpit') {
                 console.log('EVENT FROM ANGULAR: ', event)
             }
         })
