@@ -1080,9 +1080,9 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 					
 					// temporary section needed as a workaround to get vue instance
 					var hasVueParent = false
-					if(window.parent.__VUE__){
+					if(window.parent.__VUE__ || window.parent.document.getElementById('_KNOWAGE_VUE')){
 						hasVueParent = window.parent
-					}else if(window.parent.parent.__VUE__){
+					}else if(window.parent.parent.__VUE__ || window.parent.parent.document.getElementById('_KNOWAGE_VUE')){
 						hasVueParent = window.parent.parent
 					}
 					
