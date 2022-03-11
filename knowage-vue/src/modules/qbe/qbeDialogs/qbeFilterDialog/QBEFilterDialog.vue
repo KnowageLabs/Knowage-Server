@@ -13,8 +13,6 @@
             </Toolbar>
         </template>
 
-        {{ expression }}
-
         <Message v-if="filters.length === 0 && !parameterTableVisible" class="p-m-4" severity="info" :closable="false" :style="QBEFilterDialogDescriptor.styles.message">
             {{ $t('common.info.noDataFound') }}
         </Message>
