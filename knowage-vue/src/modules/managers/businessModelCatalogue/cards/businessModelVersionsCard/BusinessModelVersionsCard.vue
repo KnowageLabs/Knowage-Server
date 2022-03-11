@@ -167,8 +167,4 @@ export default defineComponent({
         }
     }
 })
-<<<<<<< HEAD
 </script>
-=======
-</script>
->>>>>>> a8d393aa57ad01103bf02b34247d1fb63c4df772
