@@ -31,7 +31,7 @@
                 <label class="kn-material-input-label"> {{ $t('qbe.filters.target') }} </label>
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <InputText v-if="having.rightType === ''" class="kn-material-input" v-model="having.rightOperandDescription" @input="onManualValueChange" />
-                    <Dropdown class="kn-material-input kn-flex" v-else-if="having.rightType === 'anotherEntity'" v-model="having.rightOperandDescription" :options="entities" optionLabel="field" optionValue="field" @change="onEntityTypeChanged" />
+                    <Dropdown class="kn-material-input kn-flex" v-else-if="having.rightType === 'anotherEntity'" v-model="having.rightOperandDescription" :options="entities" optionLabel="field" optionValue="id" @change="onEntityTypeChanged" />
                 </div>
             </div>
 
