@@ -380,6 +380,7 @@ export default defineComponent({
                 .catch(() => {
                     if (showPreview) this.qbePreviewDialogVisible = false
                 })
+            this.selectedQuery.fields.forEach((field) => (field.uniqueID = crypto.randomBytes(4).toString('hex')))
             this.loading = false
         },
         async updatePagination(lazyParams: any) {
@@ -732,8 +733,11 @@ export default defineComponent({
             this.qbePreviewDialogVisible = false
             this.pagination = { start: 0, limit: 25 }
         },
-        onQueryFieldRemoved(fieldId) {
-            this.selectedQuery.fields.splice(fieldId, 1)
+        onQueryFieldRemoved(uniqueID) {
+            let indexOfFieldToDelete = this.selectedQuery.fields.findIndex((field) => {
+                return field.uniqueID === uniqueID
+            })
+            this.selectedQuery.fields.splice(indexOfFieldToDelete, 1)
             this.updateSmartView()
         }
     }
