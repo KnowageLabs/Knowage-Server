@@ -7,6 +7,7 @@ import java.util.Locale;
 import org.json.JSONObject;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIMetaModelParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.MetaModelParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
@@ -35,7 +36,7 @@ public class BusinessModelRuntime extends AbstractBIResourceRuntime<BIMetaModelP
 	}
 
 	@Override
-	public List<MetaModelParuse> getDependencies(BIMetaModelParameter driver, String role) {
+	public List<MetaModelParuse> getDependencies(AbstractDriver driver, String role) {
 
 		List<MetaModelParuse> biParameterExecDependencies = new ArrayList<MetaModelParuse>();
 		try {

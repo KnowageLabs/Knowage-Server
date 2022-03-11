@@ -1,10 +1,10 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary" :style="mainDescriptor.style.maxWidth">
-        <template #left>
+        <template #start>
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.myData.title') }}
         </template>
-        <template #right>
+        <template #end>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
             <KnFabButton v-if="tableMode === 'My Datasets'" icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
@@ -58,7 +58,7 @@
                     :document="dataset"
                     @previewDataset="previewDataset"
                     @editFileDataset="editFileDataset"
-                    @openDatasetInQBE="openDatasetInQBE"
+                    @openDatasetInQBE="openDatasetInQBE($event)"
                     @exportToXlsx="exportDataset($event, 'xls')"
                     @exportToCsv="exportDataset($event, 'csv')"
                     @downloadDatasetFile="downloadDatasetFile"
@@ -79,7 +79,7 @@
         :datasetCategories="datasetCategories"
         @previewDataset="previewDataset"
         @editFileDataset="editFileDataset"
-        @openDatasetInQBE="openDatasetInQBE"
+        @openDatasetInQBE="openDatasetInQBE($event)"
         @exportToXlsx="exportDataset($event, 'xls')"
         @exportToCsv="exportDataset($event, 'csv')"
         @downloadDatasetFile="downloadDatasetFile"
@@ -97,8 +97,10 @@
 
     <WorkspaceDataCloneDialog :visible="cloneDialogVisible" :propDataset="selectedDataset" @close="cloneDialogVisible = false" @clone="handleDatasetClone"></WorkspaceDataCloneDialog>
     <WorkspaceDataShareDialog :visible="shareDialogVisible" :propDataset="selectedDataset" :datasetCategories="datasetCategories" @close="shareDialogVisible = false" @share="handleDatasetShare"></WorkspaceDataShareDialog>
-    <WorkspaceDataPreviewDialog :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false" previewType="workspace"></WorkspaceDataPreviewDialog>
+    <WorkspaceDataPreviewDialog v-if="previewDialogVisible" :visible="previewDialogVisible" :propDataset="selectedDataset" @close="previewDialogVisible = false" previewType="workspace"></WorkspaceDataPreviewDialog>
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.myData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
+
+    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="selectedQbeDataset" @close="closeQbe" />
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -120,9 +122,10 @@ import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDial
 import { AxiosResponse } from 'axios'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
 import SelectButton from 'primevue/selectbutton'
+import QBE from '@/modules/qbe/QBE.vue'
 
 export default defineComponent({
-    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, SelectButton, Message },
+    components: { QBE, DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, SelectButton, Message },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -181,7 +184,9 @@ export default defineComponent({
             warningMessage: '',
             tableMode: 'My Datasets',
             selectButtonOptions: ['My Datasets', 'Enterprise', 'Shared', 'All Datasets'],
-            searchWord: '' as string
+            searchWord: '' as string,
+            qbeVisible: false,
+            selectedQbeDataset: null
         }
     },
     created() {
@@ -239,7 +244,7 @@ export default defineComponent({
             this.menuButtons = []
             this.menuButtons.push(
                 { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.editFileDataset, visible: this.isDatasetOwner && this.selectedDataset.dsTypeCd == 'File' },
-                { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: this.openDatasetInQBE, visible: this.showQbeEditButton },
+                { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: () => this.openDatasetInQBE(clickedDocument), visible: this.showQbeEditButton },
                 { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
                 { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
                 { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' },
@@ -272,15 +277,13 @@ export default defineComponent({
         openDataPreparation(dataset: any) {
             this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
         },
-        openDatasetInQBE() {
-            this.$store.commit('setInfo', {
-                title: 'Todo',
-                msg: 'Functionality not in this sprint'
-            })
+        openDatasetInQBE(dataset: any) {
+            this.selectedQbeDataset = dataset
+            this.qbeVisible = true
         },
         async exportDataset(dataset: any, format: string) {
             this.loading = true
-            //  { 'Content-Type': 'application/x-www-form-urlencoded' }
+
             await this.$http
                 .post(
                     process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${dataset.id}/${format}`,
@@ -453,6 +456,10 @@ export default defineComponent({
                 }
             }, 250)
         },
+        closeQbe() {
+            this.qbeVisible = false
+            this.selectedQbeDataset = null
+        },
         datasetTagFound(dataset: any) {
             let tagFound = false
             for (let i = 0; i < dataset.tags.length; i++) {
@@ -467,6 +474,7 @@ export default defineComponent({
     }
 })
 </script>
+
 <style lang="scss" scoped>
 #model-select-buttons {
     margin: 2rem 2rem 2rem auto;

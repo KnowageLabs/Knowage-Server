@@ -20,14 +20,14 @@ export interface iSchedulation {
 }
 
 export interface iNote {
-    owner: string,
+    content: string,
     creationDate: string | Date,
+    documentId: number,
+    id?: number,
     lastChangeDate: string | Date,
-    nota: string,
-    profile: string,
-    type?: string,
-    content?: string,
-    execReq?: string
+    owner: string,
+    public: boolean,
+    type: string
 }
 
 export interface iMail {

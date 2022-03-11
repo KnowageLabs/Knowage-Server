@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-mt-3">
+    <Card class="p-m-2">
         <template #content>
             <div class="p-d-flex">
                 <div class="p-field" :style="fileDescriptor.style.maxwidth">
@@ -72,13 +72,13 @@
 
     <div id="preview-container" v-if="rows.length > 0">
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
-            <template #left>
+            <template #start>
                 <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = true" />
                 <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = false" />
                 {{ $t('managers.lovsManagement.preview') }}
             </template>
         </Toolbar>
-        <Card v-show="expandTableCard">
+        <Card class="p-m-2" v-show="expandTableCard">
             <template #content>
                 <DataTable :value="rows" class="p-datatable-sm kn-table" :loading="loading" responsiveLayout="scroll" :scrollable="true" scrollDirection="both" scrollHeight="800px" stripedRows rowHover style="width:70vw">
                     <Column v-for="col of columns" :field="col.name" :header="col.header" :key="col.dataIndex" class="kn-truncated" style="width:250px" />
@@ -158,7 +158,7 @@ export default defineComponent({
             var formData = new FormData()
             formData.append('file', uploadedFile)
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `/selfservicedatasetupload/fileupload`, formData, {
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `selfservicedatasetupload/fileupload`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryFYwjkDOpT85ZFN3L'
                     }

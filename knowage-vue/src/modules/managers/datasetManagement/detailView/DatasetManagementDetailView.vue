@@ -1,14 +1,14 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-        <template #left>{{ selectedDataset.label }}</template>
-        <template #right>
-            <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" @click="showPreviewDialog = true" :disabled="buttonDisabled" />
+        <template #start>{{ selectedDataset.label }}</template>
+        <template #end>
+            <Button :label="$t('managers.lovsManagement.preview')" class="p-button-text p-button-rounded p-button-plain" @click="sendDatasetForPreview" :disabled="buttonDisabled" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="checkFormulaForParams" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('close')" />
         </template>
     </Toolbar>
     <div class="datasetDetail">
-        <TabView class="tabview-custom" v-model:activeIndex="activeTab" data-test="tab-view">
+        <TabView class="tabview-custom kn-tab" v-model:activeIndex="activeTab" data-test="tab-view">
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.mondrianSchemasManagement.detail.title') }}</span>
@@ -67,7 +67,7 @@
             </TabPanel>
         </TabView>
 
-        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="selectedDataset" @close="showPreviewDialog = false" :previewType="'dataset'"></WorkspaceDataPreviewDialog>
+        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="previewDataset" @close="showPreviewDialog = false" :previewType="'dataset'" :loadFromDatasetManagement="true"></WorkspaceDataPreviewDialog>
     </div>
 </template>
 
@@ -115,6 +115,7 @@ export default defineComponent({
             tablesToAdd: [] as any,
             tablesToRemove: [] as any,
             selectedDataset: {} as any,
+            previewDataset: {} as any,
             selectedDatasetVersions: [] as any,
             scheduling: {
                 repeatInterval: null as String | null
@@ -177,7 +178,6 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 message: this.$t('kpi.kpiDefinition.confirmClone'),
                 header: this.$t(' '),
-                datasetId,
                 accept: () => this.cloneDataset(datasetId)
             })
         },
@@ -203,7 +203,7 @@ export default defineComponent({
                     restRequestHeadersTemp[dsToSave.restRequestHeaders[i]['name']] = dsToSave.restRequestHeaders[i]['value']
                 }
             }
-            dsToSave['restRequestHeaders'] && dsToSave['restRequestHeaders'].length > 0 ? (dsToSave.restRequestHeaders = JSON.stringify(restRequestHeadersTemp)) : (dsToSave.restRequestHeaders = '')
+            this.previewDataset['restRequestHeaders'] = JSON.stringify(restRequestHeadersTemp)
             dsToSave['restJsonPathAttributes'] && dsToSave['restJsonPathAttributes'].length > 0 ? (dsToSave.restJsonPathAttributes = JSON.stringify(dsToSave.restJsonPathAttributes)) : (dsToSave.restJsonPathAttributes = '')
             dsToSave.pars ? '' : (dsToSave.pars = [])
             dsToSave.pythonEnvironment ? (dsToSave.pythonEnvironment = JSON.stringify(dsToSave.pythonEnvironment)) : ''
@@ -387,6 +387,28 @@ export default defineComponent({
             }
         },
         //#endregion ===============================================================================================
+
+        async sendDatasetForPreview() {
+            if (this.selectedDataset.dsTypeCd === 'Solr') {
+                this.previewDataset = JSON.parse(JSON.stringify(this.selectedDataset))
+                let restRequestHeadersTemp = {}
+                if (this.previewDataset.dsTypeCd.toLowerCase() == 'rest' || this.previewDataset.dsTypeCd.toLowerCase() == 'solr') {
+                    for (let i = 0; i < this.previewDataset.restRequestHeaders.length; i++) {
+                        restRequestHeadersTemp[this.previewDataset.restRequestHeaders[i]['name']] = this.previewDataset.restRequestHeaders[i]['value']
+                    }
+                }
+                this.previewDataset['restRequestHeaders'] = JSON.stringify(restRequestHeadersTemp)
+                this.previewDataset['restJsonPathAttributes'] && this.previewDataset['restJsonPathAttributes'].length > 0 ? (this.previewDataset.restJsonPathAttributes = JSON.stringify(this.previewDataset.restJsonPathAttributes)) : (this.previewDataset.restJsonPathAttributes = '')
+                this.previewDataset.pars ? '' : (this.previewDataset.pars = [])
+                this.previewDataset.pythonEnvironment ? (this.previewDataset.pythonEnvironment = JSON.stringify(this.previewDataset.pythonEnvironment)) : ''
+                this.previewDataset.meta ? (this.previewDataset.meta = await this.manageDatasetFieldMetadata(this.previewDataset.meta)) : (this.previewDataset.meta = [])
+
+                this.showPreviewDialog = true
+            } else {
+                this.previewDataset = this.selectedDataset
+                this.showPreviewDialog = true
+            }
+        },
 
         onAddLinkedTables(event) {
             this.tablesToAdd = event

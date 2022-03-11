@@ -2,10 +2,10 @@
     <div class="p-grid p-m-0 kn-flex">
         <div class="p-col-7 p-m-0 p-p-0 right-border p-d-flex p-flex-column kn-flex">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.documentDetails.info.infoTitle') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-plain" @click="openDesignerConfirm" />
                 </template>
             </Toolbar>
@@ -64,7 +64,7 @@
                                 </div>
 
                                 <div class="p-field p-col-12 p-lg-6">
-                                    <img id="image-preview" :src="getImageUrl" :height="mainDescriptor.style.previewImage" />
+                                    <img v-if="selectedDocument?.previewFile" id="image-preview" :src="getImageUrl" :height="mainDescriptor.style.previewImage" />
                                 </div>
 
                                 <div class="p-field p-col-12 p-lg-6">
@@ -198,7 +198,7 @@
         </div>
         <div class="p-col-5 p-m-0 p-p-0 p-d-flex p-flex-column kn-flex">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.documentDetails.info.positionTitle') }}
                 </template>
             </Toolbar>
@@ -206,7 +206,7 @@
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <div id="restriction-container" class="p-m-2">
                         <Toolbar class="kn-toolbar kn-toolbar--default">
-                            <template #left>
+                            <template #start>
                                 {{ $t('documentExecution.documentDetails.info.restrictionsTitle') }}
                             </template>
                         </Toolbar>
@@ -236,7 +236,7 @@
                     </div>
                     <div id="tree-container" class="p-m-2">
                         <Toolbar class="kn-toolbar kn-toolbar--default">
-                            <template #left>
+                            <template #start>
                                 {{ $t('documentExecution.documentDetails.info.visibilityLocationTitle') }}
                             </template>
                         </Toolbar>
@@ -346,7 +346,7 @@ export default defineComponent({
         this.setData()
     },
     watch: {
-        document() {
+        selectedDocument() {
             this.setData()
         }
     },

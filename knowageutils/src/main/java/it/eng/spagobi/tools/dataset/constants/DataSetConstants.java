@@ -143,7 +143,6 @@ public class DataSetConstants {
 	public static final String FILTERS = "FILTERS";
 
 	public static final String FILE_TYPE = "fileType";
-	public static final String FILE_DS_METADATA = "fileDsMetadata";
 	public static final String CSV_FILE_DELIMITER_CHARACTER = "csvDelimiter";
 	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
 	public static final String CSV_FILE_ENCODING = "csvEncoding";

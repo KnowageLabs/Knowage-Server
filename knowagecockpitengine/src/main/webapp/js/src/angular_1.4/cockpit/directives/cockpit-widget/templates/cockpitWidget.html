@@ -55,6 +55,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
 					<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
 				</md-button>
+				
+				<md-button class="md-fab md-raised md-mini"  ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();" ng-if="enterpriseEdition && checkType(ngModel.type, ['chart'])">
+					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.chartType")}}</md-tooltip>
+					<md-icon md-font-icon="fa fa-bar-chart"></md-icon>
+				</md-button>
 			
 				<!-- SEARCH BUTTON for table widget only -->
 				<md-button class="md-fab md-raised md-mini" aria-label="search button" ng-class="{'md-primary':activeSearch}" ng-if="cockpitModule_properties.EDIT_MODE && checkType(ngModel.type, ['table'])" ng-click="openSearchBar($event);$event.stopPropagation();" >
@@ -180,7 +185,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-icon md-font-icon="fa fa-search"></md-icon>
 				</md-button>
 				
-				<md-button class="md-fab md-raised md-mini"  ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();" ng-if="checkType(ngModel.type, ['chart']) && checkChartType(ngModel, ['chord','gauge','scatter'])">
+				<md-button class="md-fab md-raised md-mini"  ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();" ng-if="enterpriseEdition && checkType(ngModel.type, ['chart'])">
 					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.chartType")}}</md-tooltip>
 					<md-icon md-font-icon="fa fa-bar-chart"></md-icon>
 				</md-button>
