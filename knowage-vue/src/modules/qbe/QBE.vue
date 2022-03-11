@@ -441,6 +441,7 @@ export default defineComponent({
         onAdvancedFiltersSave(expression: any) {
             this.selectedQuery.expression = expression
             this.advancedFilterDialogVisible = false
+            this.updateSmartView()
         },
         showMenu(event) {
             this.createMenuItems()
