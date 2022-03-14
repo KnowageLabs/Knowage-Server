@@ -1031,6 +1031,10 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 		IDataSet dataset = getDatasetManagementAPI().getDataSet(label);
 
+		if (dataset.getDsType().equalsIgnoreCase(DataSetConstants.PREPARED_DATASET)) {
+			// TODO delete process and instances
+		}
+
 		try {
 			datasetDao.deleteDataSet(dataset.getId());
 		} catch (Exception e) {
