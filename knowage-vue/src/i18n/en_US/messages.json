@@ -759,6 +759,11 @@
         "weekHeader": "Wk"
     },
     "managers": {
+        "bml": {
+            "title": "Behavioural Model Lineage",
+            "lovsTitle": "Lovs",
+            "drivers": "Analytical Drivers"
+        },
         "businessModelManager": {
             "add": "Add",
             "addCondition": "Add Condition",
