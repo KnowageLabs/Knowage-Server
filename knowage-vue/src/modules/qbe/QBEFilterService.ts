@@ -1,5 +1,5 @@
 import { iField, iFilter, iQBE, iQuery } from './QBE'
-import { findByName, replace, removeInPlace } from './qbeDialogs/qbeAdvancedFilterDialog/treeService'
+import { findByName, replace } from './qbeDialogs/qbeAdvancedFilterDialog/treeService'
 
 export function onFiltersSaveCallback(filters: iFilter[], field: iField, parameters: any[], expression: any, qbe: iQBE | null, selectedQuery: iQuery, smartView: boolean, executeQBEQuery: Function) {
     if (!qbe) return
@@ -25,7 +25,7 @@ export function onFiltersSaveCallback(filters: iFilter[], field: iField, paramet
     qbe.pars = parameters ? [...parameters] : []
 
     if (smartView) {
-        executeQBEQuery()
+        executeQBEQuery(false)
     }
 }
 
@@ -60,7 +60,7 @@ export function removeDeletedFilters(filters: iFilter[], field: iField, expressi
             const index = filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
             if (index === -1) {
                 selectedQuery.filters.splice(i, 1)
-                removeInPlace(expression, '$F{' + tempFilter.filterId + '}')
+                // removeInPlace(expression, '$F{' + tempFilter.filterId + '}')
             }
         }
     }

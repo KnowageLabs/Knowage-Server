@@ -1,5 +1,5 @@
 <template>
-    <Card>
+    <Card class="p-m-2">
         <template #content>
             <div class="date-picker-container p-ml-2 p-mb-5">
                 <div class="p-field p-grid">

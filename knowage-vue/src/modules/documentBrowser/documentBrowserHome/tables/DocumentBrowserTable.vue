@@ -16,11 +16,19 @@
             v-model:first="first"
             :value="documents"
             :paginator="documents.length > documentBrowserTableDescriptor.rows"
+            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+            :currentPageReportTemplate="
+                $t('common.table.footer.paginated', {
+                    first: '{first}',
+                    last: '{last}',
+                    totalRecords: '{totalRecords}'
+                })
+            "
             :rows="documentBrowserTableDescriptor.rows"
             v-model:filters="filters"
             filterDisplay="menu"
             selectionMode="single"
-            class="p-datatable-sm"
+            class="p-datatable-sm kn-table"
             dataKey="id"
             :responsiveLayout="documentBrowserTableDescriptor.responsiveLayout"
             :breakpoint="documentBrowserTableDescriptor.breakpoint"
@@ -28,7 +36,7 @@
             data-test="documents-datatable"
             style="width:100%;"
             :scrollable="true"
-            scrollHeight="70vh"
+            scrollHeight="100%"
         >
             <template #empty>
                 <Message class="p-m-2" severity="info" :closable="false" :style="documentBrowserTableDescriptor.styles.message" data-test="no-documents-hint">
@@ -39,25 +47,28 @@
                 <template #filter="{filterModel}">
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                 </template>
+                <template #body="slotProps">
+                    <span class="kn-truncated" v-tooltip.top="slotProps.data[col.field]">{{ slotProps.data[col.field] }}</span>
+                </template>
             </Column>
-            <Column v-if="isSuperAdmin" class="kn-truncated" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true">
+            <Column v-if="isAdmin" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true" :style="documentBrowserTableDescriptor.table.smallmessage">
                 <template #filter="{filterModel}">
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                 </template>
-                <template #body="slotProps">
+                <template #body="slotProps" :style="documentBrowserTableDescriptor.table.iconColumn.smallmessage">
                     <span data-test="document-status"> {{ slotProps.data['stateCodeStr'] }}</span>
                 </template></Column
             >
-            <Column v-if="isSuperAdmin" :style="documentBrowserTableDescriptor.table.iconColumn.style" :header="$t('common.visible')" field="visible" sortField="visible" :sortable="true">
+            <Column v-if="isAdmin" :header="$t('common.visible')" field="visible" sortField="visible" :sortable="true" :style="documentBrowserTableDescriptor.table.iconColumn.style">
                 <template #body="slotProps">
-                    <span class="fa-stack">
+                    <span class="fa-stack" v-tooltip="slotProps.data['visible'] ? $t('common.visible') : $t('common.notVisible')">
                         <i class="fa fa-eye fa-stack-1x"></i>
                         <i v-if="!slotProps.data['visible']" class="fa fa-ban fa-stack-2x"></i>
                     </span> </template
             ></Column>
             <Column :style="documentBrowserTableDescriptor.table.iconColumn.style">
                 <template #body="slotProps">
-                    <Button icon="fa fa-play-circle" class="p-button-link" @click.stop="executeDocument(slotProps.data)" />
+                    <Button icon="fa fa-play-circle" class="p-button-link" v-tooltip.left="$t('documentBrowser.executeDocument')" @click.stop="executeDocument(slotProps.data)" />
                 </template>
             </Column>
         </DataTable>
@@ -116,8 +127,8 @@ export default defineComponent({
         }
     },
     computed: {
-        isSuperAdmin(): boolean {
-            return this.user?.isSuperadmin
+        isAdmin(): boolean {
+            return this.user?.functionalities.includes('DocumentManagement') || this.user?.isSuperadmin
         }
     },
     created() {
@@ -128,6 +139,7 @@ export default defineComponent({
     methods: {
         loadDocuments() {
             this.documents = this.propDocuments?.map((el: any) => {
+                if (el.field === 'status') el.style = documentBrowserTableDescriptor.table.smallmessage
                 return { ...el, stateCodeStr: this.getTranslatedStatus(el.stateCodeStr) }
             }) as any[]
         },

@@ -153,7 +153,7 @@ export default defineComponent({
         }
     },
     async activated() {
-        if (this.mode === 'iframe') {
+        if (this.mode === 'iframe' && this.$route.name !== 'new-dashboard') {
             if (this.userRole) {
                 await this.loadPage()
             } else {
@@ -207,6 +207,9 @@ export default defineComponent({
         this.setMode()
 
         this.document = { label: this.id }
+        if (!this.document.label) return
+
+        if (!this.document.label) return
 
         await this.loadDocument()
 

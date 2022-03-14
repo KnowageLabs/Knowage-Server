@@ -1248,12 +1248,21 @@ function cockpitChartWidgetControllerFunction(
 
 
 			// if destination document is specified don't ask
+			var hasVueParent = false
+			if(window.parent.document.getElementById('_KNOWAGE_VUE')){
+				hasVueParent = window.parent
+			}else if(window.parent.parent.document.getElementById('_KNOWAGE_VUE')){
+				hasVueParent = window.parent.parent
+			}
+			
 			if(model.cross.crossName != undefined){
-				parent.execExternalCrossNavigation(outputParameter,{},model.cross.crossName,null,otherOutputParameters);
+				if(hasVueParent) hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":crossSettings,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
+				else parent.execExternalCrossNavigation(outputParameter,{},model.cross.crossName,null,otherOutputParameters);
 				return;
 			}
 			else{
-				parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
+				if(hasVueParent) hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":crossSettings,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
+				else parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
 				return;
 			}
 		}
