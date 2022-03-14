@@ -247,6 +247,25 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	}
 
 	@Override
+	public IDataSource loadDataSourceUseForDataprep() throws EMFUserError {
+		Session aSession = null;
+		IDataSource toReturn;
+		try {
+			aSession = getSession();
+			toReturn = loadDataSourceUseForDataprep(aSession);
+		} catch (HibernateException he) {
+			logger.error("Error while loading data source for data prep", he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		return toReturn;
+	}
+
+	@Override
 	public IDataSource loadDataSourceUseForDataprep(Session aSession) throws EMFUserError {
 		logger.debug("IN");
 		IDataSource toReturn = null;

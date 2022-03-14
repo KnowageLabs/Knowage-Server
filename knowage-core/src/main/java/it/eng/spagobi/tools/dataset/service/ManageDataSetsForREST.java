@@ -1016,7 +1016,7 @@ public class ManageDataSetsForREST {
 		jsonDsConfig.put(DataSetConstants.DATA_SOURCE, dataSourceLabel);
 		jsonDsConfig.put(DataSetConstants.DATA_PREPARATION_INSTANCE_ID, dataPrepInstanceId);
 		dataSet.setTableName(tableName);
-		IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dataSourceLabel);
+		IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceUseForDataprep();
 		dataSet.setDataSource(dataSource);
 		dataSet.setDataPreparationInstance(dataPrepInstanceId);
 		return dataSet;

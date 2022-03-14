@@ -60,26 +60,6 @@
         </div>
         <div class="p-d-flex">
             <span class="p-float-label p-field p-ml-2 kn-flex">
-                <InputText
-                    class="kn-material-input"
-                    type="text"
-                    v-model.trim="v$.preparedDataset.dataSource.$model"
-                    :class="{
-                        'p-invalid': v$.preparedDataset.dataSource.$invalid
-                    }"
-                    maxLength="100"
-                />
-                <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.dataSource') }}</label>
-                <KnValidationMessages
-                    :vComp="v$.preparedDataset.dataSource"
-                    :additionalTranslateParams="{
-                        fieldName: $t('managers.configurationManagement.headers.dataSource')
-                    }"
-                ></KnValidationMessages>
-            </span>
-        </div>
-        <div class="p-d-flex">
-            <span class="p-float-label p-field p-ml-2 kn-flex">
                 <InputText class="kn-material-input" type="text" v-model="preparedDataset.visibility" maxLength="100" />
                 <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.visibility') }}</label>
             </span>
@@ -168,7 +148,6 @@ export default defineComponent({
             toReturn['destinationDataSetLabel'] = this.preparedDataset.label
             toReturn['destinationDataSetName'] = this.preparedDataset.name
             toReturn['destinationDataSetDescription'] = this.preparedDataset.description
-            toReturn['destinationDataSource'] = this.preparedDataset.dataSource
             toReturn['meta'] = this.createMetaDefinition()
             return toReturn
         },

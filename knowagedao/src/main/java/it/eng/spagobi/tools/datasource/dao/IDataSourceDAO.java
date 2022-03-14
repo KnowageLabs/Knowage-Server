@@ -148,4 +148,6 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 
 	IDataSource loadDataSourceUseForDataprep(Session aSession) throws EMFUserError;
 
+	IDataSource loadDataSourceUseForDataprep() throws EMFUserError;
+
 }
