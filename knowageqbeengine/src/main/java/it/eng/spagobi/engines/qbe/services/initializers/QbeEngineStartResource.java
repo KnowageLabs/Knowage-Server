@@ -19,6 +19,7 @@
 package it.eng.spagobi.engines.qbe.services.initializers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -40,6 +41,7 @@ import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
 import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -62,7 +64,7 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response startQbe(@QueryParam("datamart") String datamart) {
+	public Response startQbe(@QueryParam("datamart") String datamart, @QueryParam("drivers") String drivers) {
 
 		QbeEngineInstance qbeEngineInstance = null;
 
@@ -72,8 +74,10 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 			SourceBean templateBean = getTemplateAsSourceBean(datamart);
 			logger.debug("Template: " + templateBean);
 			logger.debug("Creating engine instance ...");
+			Map env = getEnv();
+			env.put("DRIVERS", decodeParameterValue(drivers));
 			try {
-				qbeEngineInstance = QbeEngine.createInstance(templateBean, getEnv());
+				qbeEngineInstance = QbeEngine.createInstance(templateBean, env);
 			} catch (Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				Throwable rootException = t;
@@ -142,7 +146,6 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 		Map env = new HashMap();
 
 		IDataSource dataSource = getDataSource();
-//		copyRequestParametersIntoEnv(env, getSpagoBIRequestContainer());
 		try {
 			env.put(EngineConstants.ENV_DATASOURCE, dataSource);
 		} catch (Exception e) {
@@ -174,6 +177,24 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 		}
 
 		return env;
+	}
+
+	private String decodeParameterValue(String parValue) {
+		String newParValue;
+
+		ParametersDecoder decoder = new ParametersDecoder();
+		if (decoder.isMultiValues(parValue)) {
+			List values = decoder.decode(parValue);
+			newParValue = "";
+			for (int i = 0; i < values.size(); i++) {
+				newParValue += (i > 0 ? "," : "");
+				newParValue += values.get(i);
+			}
+		} else {
+			newParValue = parValue;
+		}
+
+		return newParValue;
 	}
 
 	public IDataSource getDataSource() {

@@ -76,7 +76,7 @@
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiProductTypeEngine.hbm.xml" />
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiOrganizationDatasource.hbm.xml" />
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiOrganizationProductType.hbm.xml" />
-		
+		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiOrganizationTheme.hbm.xml" />	
 		
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiBinContents.hbm.xml" />
 		<mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjTemplates.hbm.xml" />

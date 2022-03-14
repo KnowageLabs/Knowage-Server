@@ -2,7 +2,7 @@
     <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="schedulerTimingOutputInfoDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('managers.scheduler.schedulationInformations') }}
                 </template>
             </Toolbar>
@@ -46,48 +46,48 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Dialog from 'primevue/dialog'
-import schedulerTimingOutputInfoDialogDescriptor from './SchedulerTimingOutputInfoDialogDescriptor.json'
-import TabView from 'primevue/tabview'
-import TabPanel from 'primevue/tabpanel'
+    import { defineComponent } from 'vue'
+    import Dialog from 'primevue/dialog'
+    import schedulerTimingOutputInfoDialogDescriptor from './SchedulerTimingOutputInfoDialogDescriptor.json'
+    import TabView from 'primevue/tabview'
+    import TabPanel from 'primevue/tabpanel'
 
-export default defineComponent({
-    name: 'scheduler-timing-output-info-dialog',
-    components: { Dialog, TabView, TabPanel },
-    props: { visible: { type: Boolean }, triggerInfo: { type: Object } },
-    emits: ['close'],
-    data() {
-        return {
-            schedulerTimingOutputInfoDialogDescriptor,
-            info: null as any
-        }
-    },
-    watch: {
-        triggerInfo() {
-            this.loadTriggerInfo()
-        }
-    },
-    created() {
-        this.loadTriggerInfo()
-    },
-    methods: {
-        loadTriggerInfo() {
-            this.info = this.triggerInfo
+    export default defineComponent({
+        name: 'scheduler-timing-output-info-dialog',
+        components: { Dialog, TabView, TabPanel },
+        props: { visible: { type: Boolean }, triggerInfo: { type: Object } },
+        emits: ['close'],
+        data() {
+            return {
+                schedulerTimingOutputInfoDialogDescriptor,
+                info: null as any
+            }
         },
-        closeDialog() {
-            this.$emit('close')
+        watch: {
+            triggerInfo() {
+                this.loadTriggerInfo()
+            }
+        },
+        created() {
+            this.loadTriggerInfo()
+        },
+        methods: {
+            loadTriggerInfo() {
+                this.info = this.triggerInfo
+            },
+            closeDialog() {
+                this.$emit('close')
+            }
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-.document-label {
-    text-transform: uppercase;
-}
+    .document-label {
+        text-transform: uppercase;
+    }
 
-.info-value {
-    flex: 2;
-}
+    .info-value {
+        flex: 2;
+    }
 </style>

@@ -1,7 +1,7 @@
 <template>
     <div class="kn-page">
         <div class="document-browser-tab-container kn-page-content">
-            <TabView id="document-browser-tab-view" class="p-d-flex p-flex-column kn-flex" v-model:activeIndex="activeIndex" @tab-change="onTabChange">
+            <TabView id="document-browser-tab-view" class="p-d-flex p-flex-column kn-flex kn-tab" v-model:activeIndex="activeIndex" @tab-change="onTabChange">
                 <TabPanel>
                     <template #header>
                         <i class="fa fa-folder-open"></i>

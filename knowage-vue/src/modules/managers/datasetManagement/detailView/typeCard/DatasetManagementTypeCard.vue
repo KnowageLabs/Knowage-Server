@@ -3,7 +3,7 @@
         <label>{{ $t('managers.datasetManagement.selectDatasetType') }}: </label> <b>Federated</b>
     </div>
     <div id="is-not-federated" v-else>
-        <Card>
+        <Card class="p-m-2">
             <template #content>
                 <div id="dropdownContainer">
                     <span class="p-float-label">

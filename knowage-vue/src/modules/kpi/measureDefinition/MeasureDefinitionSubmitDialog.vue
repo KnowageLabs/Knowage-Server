@@ -7,7 +7,7 @@
             </span>
         </div>
         <Toolbar v-if="newAlias.length > 0 || reusedAlias.length > 0" class="kn-toolbar kn-toolbar--primary">
-            <template #left>
+            <template #start>
                 {{ $t('kpi.measureDefinition.alias') }}
             </template>
         </Toolbar>
@@ -22,7 +22,7 @@
         </div>
 
         <Toolbar v-if="newPlaceholder.length > 0 || reusedPlaceholder.length > 0" class="kn-toolbar kn-toolbar--primary">
-            <template #left>
+            <template #start>
                 {{ $t('kpi.measureDefinition.placeholder') }}
             </template>
         </Toolbar>
@@ -45,39 +45,39 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Chip from 'primevue/chip'
-import Dialog from 'primevue/dialog'
-import metadataDefinitionTabViewDescriptor from './MetadataDefinitionTabViewDescriptor.json'
+    import { defineComponent } from 'vue'
+    import Chip from 'primevue/chip'
+    import Dialog from 'primevue/dialog'
+    import metadataDefinitionTabViewDescriptor from './MetadataDefinitionTabViewDescriptor.json'
 
-export default defineComponent({
-    name: 'measure-definition-submit-dialog',
-    components: { Chip, Dialog },
-    props: { ruleName: { type: String }, newAlias: { type: Array }, reusedAlias: { type: Array }, newPlaceholder: { type: Array }, reusedPlaceholder: { type: Array } },
-    emits: ['close'],
-    data() {
-        return {
-            metadataDefinitionTabViewDescriptor,
-            name: null as String | null
-        }
-    },
-    computed: {
-        saveRuleButtonDisabled(): Boolean {
-            return !this.name
-        }
-    },
-    watch: {
-        currentRule() {
+    export default defineComponent({
+        name: 'measure-definition-submit-dialog',
+        components: { Chip, Dialog },
+        props: { ruleName: { type: String }, newAlias: { type: Array }, reusedAlias: { type: Array }, newPlaceholder: { type: Array }, reusedPlaceholder: { type: Array } },
+        emits: ['close'],
+        data() {
+            return {
+                metadataDefinitionTabViewDescriptor,
+                name: null as String | null
+            }
+        },
+        computed: {
+            saveRuleButtonDisabled(): Boolean {
+                return !this.name
+            }
+        },
+        watch: {
+            currentRule() {
+                this.loadRuleName()
+            }
+        },
+        async created() {
             this.loadRuleName()
+        },
+        methods: {
+            loadRuleName() {
+                this.name = this.ruleName as String
+            }
         }
-    },
-    async created() {
-        this.loadRuleName()
-    },
-    methods: {
-        loadRuleName() {
-            this.name = this.ruleName as String
-        }
-    }
-})
+    })
 </script>

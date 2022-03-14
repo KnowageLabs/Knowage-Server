@@ -27,11 +27,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.apache.commons.lang3.StringUtils;
 
 import it.eng.knowage.knowageapi.dao.SbiWidgetGalleryDao;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
@@ -120,6 +120,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			newSbiWidgetGallery.setAuthor(profile.getUserId());
 			newSbiWidgetGallery.setDescription(widgetGalleryDTO.getDescription());
 			newSbiWidgetGallery.setName(widgetGalleryDTO.getName());
+			newSbiWidgetGallery.setLabel(widgetGalleryDTO.getLabel());
 			newSbiWidgetGallery.getId().setOrganization(profile.getOrganization());
 			newSbiWidgetGallery.setPreviewImage(widgetGalleryDTO.getImage() != null ? widgetGalleryDTO.getImage().getBytes() : "".getBytes());
 			newSbiWidgetGallery.setSbiVersionIn("");
@@ -142,7 +143,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 
 	public WidgetGalleryDTO importNewWidget(WidgetGalleryDTO widgetGalleryDTO, SpagoBIUserProfile profile) {
 		/* The import procedure must also manage widgets with the id field not filled in */
-		return makeNewWidget(widgetGalleryDTO, profile,StringUtils.isBlank(widgetGalleryDTO.getId()));
+		return makeNewWidget(widgetGalleryDTO, profile, StringUtils.isBlank(widgetGalleryDTO.getId()));
 	}
 
 	@Override
@@ -170,6 +171,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			newSbiWidgetGallery.setAuthor(profile.getUserId());
 			newSbiWidgetGallery.setDescription(widgetGalleryDTO.getDescription());
 			newSbiWidgetGallery.setName(widgetGalleryDTO.getName());
+			newSbiWidgetGallery.setLabel(widgetGalleryDTO.getLabel());
 			newSbiWidgetGallery.getId().setOrganization(profile.getOrganization());
 			newSbiWidgetGallery.setPreviewImage(widgetGalleryDTO.getImage() != null ? widgetGalleryDTO.getImage().getBytes() : "".getBytes());
 			newSbiWidgetGallery.setSbiVersionIn("");

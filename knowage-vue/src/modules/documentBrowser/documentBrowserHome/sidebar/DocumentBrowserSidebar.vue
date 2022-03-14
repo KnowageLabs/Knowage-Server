@@ -1,21 +1,26 @@
 <template>
     <div id="document-browser-sidebar">
         <Toolbar id="document-detail-toolbar" class="kn-toolbar kn-toolbar--secondary">
-            <template #left>
+            <template #start>
                 <div id="document-icons-container" class="p-d-flex p-flex-row p-jc-around ">
                     <i class="fa fa-play-circle document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.executeDocument')" @click="executeDocument" />
-                    <template v-if="isSuperAdmin || user.userId === selectedDocument?.creationUser">
+                    <template v-if="canEditDocument">
                         <i class="pi pi-pencil document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.editDocument')" @click="$emit('showDocumentDetails', document)" />
                         <i class="far fa-copy document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.cloneDocument')" @click="cloneDocumentConfirm" />
                         <i class="far fa-trash-alt document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.deleteDocument')" @click="deleteDocumentConfirm" />
-                        <i v-if="document.stateCode === 'TEST'" class="fa fa-arrow-up document-pointer p-mx-4" v-tooltip.left="$t('documentBrowser.moveUpDocumentState')" @click="changeStateDocumentConfirm('UP')" />
-                        <i v-if="document.stateCode === 'TEST' || document.stateCode === 'REL'" class="fa fa-arrow-down document-pointer p-mx-4" v-tooltip.left="$t('documentBrowser.moveDownDocumentState')" @click="changeStateDocumentConfirm('DOWN')" />
                     </template>
+                    <i v-if="user?.functionalities.includes('DocumentMoveUpState') && document.stateCode === 'TEST'" class="fa fa-arrow-up document-pointer p-mx-4" v-tooltip.left="$t('documentBrowser.moveUpDocumentState')" @click="changeStateDocumentConfirm('UP')" />
+                    <i
+                        v-if="user?.functionalities.includes('DocumentMoveDownState') && (document.stateCode === 'TEST' || document.stateCode === 'REL')"
+                        class="fa fa-arrow-down document-pointer p-mx-4"
+                        v-tooltip.left="$t('documentBrowser.moveDownDocumentState')"
+                        @click="changeStateDocumentConfirm('DOWN')"
+                    />
                 </div>
             </template>
         </Toolbar>
         <div class="p-m-4">
-            <div v-if="selectedDocument.previewFile" class="p-text-center">
+            <div v-if="selectedDocument?.previewFile" class="p-text-center">
                 <img id="image-preview" :src="getImageUrl" />
             </div>
 
@@ -84,6 +89,9 @@ export default defineComponent({
         },
         getImageUrl(): string {
             return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
+        },
+        canEditDocument(): boolean {
+            return this.user?.functionalities.includes('DocumentManagement')
         }
     },
     created() {

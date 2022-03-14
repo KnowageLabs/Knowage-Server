@@ -1,7 +1,7 @@
 <template>
     <div id="kn-parameter-sidebar">
-        <Toolbar id="kn-parameter-sidebar-toolbar" class="kn-toolbar kn-toolbar--secondary">
-            <template #left>
+        <Toolbar v-if="mode !== 'workspaceView' && mode !== 'qbeView'" id="kn-parameter-sidebar-toolbar" class="kn-toolbar kn-toolbar--secondary">
+            <template #start>
                 <div id="kn-parameter-sidebar-toolbar-icons-container" class="p-d-flex p-flex-row p-jc-around">
                     <i class="fa fa-eraser kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.resetParametersTooltip')" @click="resetAllParameters"></i>
                     <i class="pi pi-pencil kn-cursor-pointer" v-tooltip.top="$t('documentExecution.main.savedParametersTooltip')" @click="openSavedParametersDialog"></i>
@@ -17,6 +17,18 @@
                 </div>
                 <Dropdown class="kn-material-input" v-model="role" :options="user.roles" @change="setNewSessionRole" />
             </div>
+
+            <template v-if="mode === 'qbeView' || mode === 'workspaceView'">
+                <div v-for="(qbeParameter, index) in qbeParameters" :key="index">
+                    <div class="p-field p-m-4">
+                        <div class="p-d-flex">
+                            <label class="kn-material-input-label">{{ qbeParameter.name }}</label>
+                            <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="qbeParameter.value = qbeParameter.defaultValue"></i>
+                        </div>
+                        <InputText class="kn-material-input p-inputtext-sm" v-model="qbeParameter.value" />
+                    </div>
+                </div>
+            </template>
 
             <div v-for="(parameter, index) in parameters.filterStatus" :key="index">
                 <div class="p-field p-m-1 p-p-2" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
@@ -69,7 +81,7 @@
                     </div>
                     <div class="p-d-flex p-flex-column">
                         <div class="p-field-radiobutton" v-for="(option, index) in parameter.data" :key="index" :data-test="'parameter-list-' + parameter.id">
-                            <RadioButton v-if="!parameter.multivalue && parameter.parameterValue" :value="option.value" v-model="parameter.parameterValue[0].value" @change="updateDependency(parameter)" />
+                            <RadioButton v-if="!parameter.multivalue && parameter.parameterValue" :value="option.value" v-model="parameter.parameterValue[0].value" @change="setRadioButtonValue(parameter)" />
                             <Checkbox v-if="parameter.multivalue && parameter.parameterValue" :value="option.value" v-model="selectedParameterCheckbox[parameter.id]" @change="setCheckboxValue(parameter)" />
                             <label>{{ option.description }}</label>
                         </div>
@@ -130,13 +142,13 @@
                 </div>
             </div>
         </div>
-        <div v-if="parameters && parameters.filterStatus.length > 0" class="p-fluid p-d-flex p-flex-row p-mx-5 kn-parameter-sidebar-buttons">
-            <Button class="kn-button kn-button--primary" :disabled="buttonsDisabled" @click="$emit('execute')"> {{ $t('common.execute') }}</Button>
-            <Button class="kn-button kn-button--primary p-ml-1" icon="fa fa-chevron-down" :disabled="buttonsDisabled" @click="toggle($event)" />
+        <div v-if="(parameters && parameters.filterStatus.length > 0) || mode === 'qbeView' || mode === 'workspaceView'" class="p-fluid p-d-flex p-flex-row p-mx-5 kn-parameter-sidebar-buttons">
+            <Button class="kn-button kn-button--primary" :disabled="buttonsDisabled" @click="$emit('execute', qbeParameters)"> {{ $t('common.execute') }}</Button>
+            <Button v-if="mode !== 'qbeView' && mode !== 'workspaceView'" class="kn-button kn-button--primary p-ml-1" icon="fa fa-chevron-down" :disabled="buttonsDisabled" @click="toggle($event)" />
             <Menu ref="executeButtonMenu" :model="executeMenuItems" :popup="true" />
         </div>
         <KnParameterPopupDialog v-if="popupDialogVisible" :visible="popupDialogVisible" :selectedParameter="selectedParameter" :propLoading="loading" :parameterPopUpData="parameterPopUpData" @close="popupDialogVisible = false" @save="onPopupSave"></KnParameterPopupDialog>
-        <KnParameterTreeDialog v-if="treeDialogVisible" :visible="treeDialogVisible" :selectedParameter="selectedParameter" :formatedParameterValues="formatedParameterValues" :document="document" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
+        <KnParameterTreeDialog v-if="treeDialogVisible" :visible="treeDialogVisible" :selectedParameter="selectedParameter" :formatedParameterValues="formatedParameterValues" :document="document" :mode="mode" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
         <KnParameterSaveDialog :visible="parameterSaveDialogVisible" :propLoading="loading" @close="parameterSaveDialogVisible = false" @saveViewpoint="saveViewpoint"></KnParameterSaveDialog>
         <KnParameterSavedParametersDialog :visible="savedParametersDialogVisible" :propViewpoints="viewpoints" @close="savedParametersDialogVisible = false" @fillForm="fillParameterForm" @executeViewpoint="executeViewpoint" @deleteViewpoint="deleteViewpoint"></KnParameterSavedParametersDialog>
     </div>
@@ -160,11 +172,10 @@ import KnParameterSavedParametersDialog from './dialogs/KnParameterSavedParamete
 import Menu from 'primevue/menu'
 import MultiSelect from 'primevue/multiselect'
 import RadioButton from 'primevue/radiobutton'
-
 export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton },
-    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String } },
+    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String }, propMode: { type: String }, propQBEParameters: { type: Array } },
     emits: ['execute', 'exportCSV', 'roleChanged'],
     data() {
         return {
@@ -184,6 +195,8 @@ export default defineComponent({
             role: null as string | null,
             loading: false,
             updateVisualDependency,
+            mode: 'execution',
+            qbeParameters: [] as any,
             primary: true
         }
     },
@@ -198,6 +211,12 @@ export default defineComponent({
         },
         userRole() {
             this.role = this.userRole as string
+        },
+        propMode() {
+            this.loadMode()
+        },
+        propQBEParameters() {
+            this.loadQBEParameters()
         }
     },
     computed: {
@@ -209,6 +228,9 @@ export default defineComponent({
         }
     },
     created() {
+        this.loadMode()
+        if (this.mode === 'qbeView' || this.mode === 'workspaceView') this.loadQBEParameters()
+
         this.user = (this.$store.state as any).user
         this.role = this.userRole as string
         this.loadDocument()
@@ -240,6 +262,20 @@ export default defineComponent({
             this.parameters?.filterStatus.forEach((el: any) => setDataDependency(this.parameters, el))
             this.parameters?.filterStatus.forEach((el: any) => setLovsDependency(this.parameters, el))
             this.parameters?.filterStatus.forEach((el: any) => this.updateVisualDependency(el))
+        },
+        setDataDependency(parameter: iParameter) {
+            if (parameter.dependencies.data.length !== 0) {
+                parameter.dependencies.data.forEach((dependency: any) => {
+                    const index = this.parameters.filterStatus.findIndex((param: any) => {
+                        return param.urlName === dependency.parFatherUrlName
+                    })
+                    if (index !== -1) {
+                        const tempParameter = this.parameters.filterStatus[index]
+                        parameter.dataDependsOnParameters ? parameter.dataDependsOnParameters.push(tempParameter) : (parameter.dataDependsOnParameters = [tempParameter])
+                        tempParameter.dataDependentParameters ? tempParameter.dataDependentParameters.push(parameter) : (tempParameter.dataDependentParameters = [parameter])
+                    }
+                })
+            }
         },
         resetParameterValue(parameter: any) {
             if (!parameter.driverDefaultValue) {
@@ -280,11 +316,9 @@ export default defineComponent({
                 }
                 parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value ?? parameter.driverDefaultValue[0][valueIndex]
             }
-            this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
         },
         resetAllParameters() {
             this.parameters.filterStatus.forEach((el: any) => this.resetParameterValue(el))
-            this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
         },
         toggle(event: Event) {
             this.createMenuItems()
@@ -312,6 +346,11 @@ export default defineComponent({
             }
             return false
         },
+        setRadioButtonValue(parameter: iParameter) {
+            const index = parameter.data?.findIndex((el: any) => el.value === parameter.parameterValue[0].value)
+            if (index !== -1) parameter.parameterValue[0].description = parameter.data[index].description
+            this.updateDependency(parameter)
+        },
         setCheckboxValue(parameter: iParameter) {
             parameter.parameterValue = this.selectedParameterCheckbox[parameter.id].map((el: any) => {
                 return { value: el, description: el }
@@ -336,8 +375,14 @@ export default defineComponent({
         async getParameterPopupInfo(parameter: iParameter) {
             this.loading = true
             const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole }
+
+            let url = '2.0/documentExeParameters/admissibleValues'
+            if (this.mode !== 'execution' && this.document) {
+                url = this.document.type === 'businessModel' ? `1.0/businessmodel/${this.document.name}/admissibleValues` : `/3.0/datasets/${this.document.label}/admissibleValues`
+            }
+
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentExeParameters/admissibleValues`, postData)
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
                 .then((response: AxiosResponse<any>) => (this.parameterPopUpData = response.data))
                 .catch((error: any) => console.log('ERROR: ', error))
             this.loading = false
@@ -349,7 +394,7 @@ export default defineComponent({
                 if (!parameter.multivalue) {
                     parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
                 } else {
-                    parameters.push({ label: parameter.label, value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription ?? '' })
+                    parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription ?? '' })
                 }
             })
             return parameters
@@ -372,6 +417,9 @@ export default defineComponent({
                         tempString += i === parameter.parameterValue.length - 1 ? '' : ';'
                     }
                     parameters[parameter.urlName + '_field_visible_description'] = tempString
+                } else {
+                    parameters[parameter.urlName] = parameter.parameterValue[0].value
+                    parameters[parameter.urlName + '_field_visible_description'] = parameter.parameterValue[0].description
                 }
             })
             return parameters
@@ -386,8 +434,8 @@ export default defineComponent({
         },
         updateDependency(parameter: iParameter) {
             this.updateVisualDependency(parameter)
-            updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http)
-            updateLovDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http)
+            updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode)
+            updateLovDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode)
         },
         openSaveParameterDialog() {
             this.parameterSaveDialogVisible = true
@@ -436,6 +484,9 @@ export default defineComponent({
                         if (parameter.selectionType === 'LIST') {
                             this.selectedParameterCheckbox[parameter.id] = parameter.parameterValue?.map((parameterValue: any) => parameterValue.value)
                         }
+                    } else {
+                        parameter.parameterValue[0].value = tempParameters[key]
+                        parameter.parameterValue[0].description = tempParameters[key + '_field_visible_description']
                     }
                 }
                 this.savedParametersDialogVisible = false
@@ -475,6 +526,16 @@ export default defineComponent({
         removeViewpoint(viewpoint: any) {
             const index = this.viewpoints.findIndex((el: any) => el.vpId === viewpoint.vpId)
             if (index !== -1) this.viewpoints.splice(index, 1)
+        },
+        loadMode() {
+            this.mode = this.propMode ? this.propMode : 'execution'
+        },
+        loadQBEParameters() {
+            this.qbeParameters = []
+            this.propQBEParameters?.forEach((parameter: any) => {
+                if (!parameter.value) parameter.value = parameter.defaultValue
+                this.qbeParameters.push(parameter)
+            })
         }
     }
 })

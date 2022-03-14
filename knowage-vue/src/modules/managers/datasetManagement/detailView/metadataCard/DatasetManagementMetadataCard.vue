@@ -1,18 +1,20 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--secondary">
-        <template #left>
-            {{ $t('managers.datasetManagement.fieldsMetadata') }}
+    <Card class="p-m-2">
+        <template #header>
+            <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                <template #start>
+                    {{ $t('managers.datasetManagement.fieldsMetadata') }}
+                </template>
+            </Toolbar>
         </template>
-    </Toolbar>
-    <Card>
         <template #content>
-            <DataTable v-if="dataset.meta" class="p-datatable-sm kn-table kn-table-small-input" :scrollable="true" scrollHeight="750px" :value="fieldsMetadata" responsiveLayout="stack" breakpoint="960px">
+            <DataTable v-if="dataset.meta && dataset.meta.length > 0" class="p-datatable-sm kn-table kn-table-small-input" :scrollable="true" scrollHeight="750px" :value="fieldsMetadata" responsiveLayout="stack" breakpoint="960px">
                 <Column field="fieldAlias" :header="$t('managers.datasetManagement.fieldAlias')" :sortable="true">
                     <template #body="{data}"> {{ data.fieldAlias }} </template>
                 </Column>
                 <Column field="Type" :header="$t('importExport.catalogFunction.column.type')" :sortable="true">
                     <template #body="{data}">
-                        <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.Type" :options="valueTypes" optionLabel="value" optionValue="name" @change="saveFieldsMetadata" />
+                        <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.Type" :options="valueTypes" optionDisabled="disabled" optionLabel="value" optionValue="name" @change="saveFieldsMetadata" />
                     </template>
                 </Column>
                 <Column field="fieldType" :header="$t('managers.datasetManagement.fieldType')" :sortable="true">
@@ -21,7 +23,7 @@
                     </template>
                 </Column>
             </DataTable>
-            <div v-else>
+            <div v-if="!dataset.meta || dataset.meta.length == 0">
                 <Message severity="info" :closable="false">{{ $t('managers.datasetManagement.metadataInfo') }}</Message>
             </div>
         </template>

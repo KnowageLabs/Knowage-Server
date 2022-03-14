@@ -1,13 +1,12 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-        <template #left>{{ selectedBusinessModel.name }} </template>
-        <template #right>
+        <template #start>{{ selectedBusinessModel.name }} </template>
+        <template #end>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" data-test="submit-button" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-
     <TabView class="tabview-custom kn-page-content" v-else>
         <TabPanel>
             <template #header>
@@ -102,7 +101,6 @@ export default defineComponent({
             loading: false,
             touched: false,
             uploadingError: false,
-            businessModelSavingError: false,
             v$: useValidate() as any
         }
     },
@@ -135,6 +133,8 @@ export default defineComponent({
                 await this.loadSelectedBusinessModel()
                 await this.loadVersions()
                 await this.loadDrivers()
+
+                this.formatBusinessModelAnalyticalDriver()
             } else {
                 this.selectedBusinessModel = { modelLocked: false, smartView: false } as iBusinessModel
                 this.businessModelVersions = []
@@ -184,12 +184,6 @@ export default defineComponent({
                 await this.saveBusinessModel()
             }
 
-            if (this.businessModelSavingError) {
-                this.businessModelSavingError = false
-                this.loading = false
-                return
-            }
-
             if (this.selectedBusinessModel.id && this.uploadedFile && !this.uploadingError) {
                 await this.uploadFile()
             }
@@ -235,20 +229,13 @@ export default defineComponent({
             this.$store.commit('setError', { title: this.$t('common.toast.' + title), msg: message })
         },
         async saveBusinessModel() {
-            if (this.selectedBusinessModel.category.VALUE_ID) {
-                this.selectedBusinessModel.category = this.selectedBusinessModel.category.VALUE_ID
-            }
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.userId })
-                .then((response: AxiosResponse<any>) => {
-                    if (response.data.errors) {
-                        this.setUploadingError('createTitle', response.data.errors[0].message)
-                    } else {
-                        this.selectedBusinessModel = response.data
-                    }
-                })
-                .catch(() => (this.businessModelSavingError = true))
-                .finally(() => this.formatBusinessModelAnalyticalDriver())
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.userId }).then((response: AxiosResponse<any>) => {
+                if (response.data.errors) {
+                    this.setUploadingError('createTitle', response.data.errors[0].message)
+                } else {
+                    this.selectedBusinessModel = response.data
+                }
+            })
         },
         async updateBusinessModel() {
             if (this.selectedBusinessModel.category.VALUE_ID) {
@@ -263,7 +250,6 @@ export default defineComponent({
                         this.selectedBusinessModel = response.data
                     }
                 })
-                .catch(() => (this.businessModelSavingError = true))
                 .finally(() => this.formatBusinessModelAnalyticalDriver())
         },
         saveActiveVersion(businessModelVersion) {

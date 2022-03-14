@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-mt-3">
+    <Card class="p-m-2">
         <template #content>
             <div class="p-field">
                 <span class="p-float-label">
@@ -26,12 +26,12 @@
                 />
             </div>
             <Toolbar class="kn-toolbar kn-toolbar--secondary ">
-                <template #left>
+                <template #start>
                     <Button v-if="!expandQueryCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandQueryCard = true" />
                     <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandQueryCard = false" />
                     {{ $t('managers.datasetManagement.editQuery') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button icon="fas fa-info-circle" class="p-button-text p-button-rounded p-button-plain p-col-1" @click="helpDialogVisible = true" />
                 </template>
             </Toolbar>
@@ -42,7 +42,7 @@
             </Card>
 
             <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-2">
-                <template #left>
+                <template #start>
                     <Button v-if="!expandScriptCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandScriptCard = true" />
                     <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandScriptCard = false" />
                     {{ $t('managers.datasetManagement.editScript') }}

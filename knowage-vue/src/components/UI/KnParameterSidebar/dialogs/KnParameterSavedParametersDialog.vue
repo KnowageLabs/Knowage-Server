@@ -2,8 +2,8 @@
     <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="knParameterSavedParametersDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left> {{ $t('documentExecution.main.savedParameters') }} </template>
-                <template #right>
+                <template #start> {{ $t('documentExecution.main.savedParameters') }} </template>
+                <template #end>
                     <Button id="saved-parameters-dialog-close-button" class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.close') }}</Button>
                 </template>
             </Toolbar>
