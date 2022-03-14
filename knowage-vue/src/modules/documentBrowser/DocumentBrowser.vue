@@ -16,7 +16,6 @@
                     </template>
                 </TabPanel>
             </TabView>
-            {{ selectedItem }}
 
             <DocumentBrowserTab v-show="selectedItem" :item="selectedItem?.item" :mode="selectedItem?.mode" :functionalityId="selectedItem?.functionalityId" @close="closeDocument('current')" @iframeCreated="onIFrameCreated" @closeIframe="closeIframe"></DocumentBrowserTab>
             <div v-for="(iframe, index) in iFrameContainers" :key="index">
@@ -211,7 +210,8 @@ export default defineComponent({
         },
         loadSavedCockpit(cockpit: any) {
             this.closeIframe()
-            this.selectedItem = { item: { ...cockpit, routerId: crypto.randomBytes(16).toString('hex'), name: cockpit.DOCUMENT_NAME } }
+            this.selectedItem = { item: { ...cockpit, routerId: crypto.randomBytes(16).toString('hex'), name: cockpit.DOCUMENT_NAME, label: cockpit.DOCUMENT_LABEL, mode: 'document-composite' } }
+            this.tabs[this.activeIndex - 1] = this.selectedItem
             this.$router.push(`/document-browser/document-composite/${cockpit.DOCUMENT_LABEL}`)
         }
     }
