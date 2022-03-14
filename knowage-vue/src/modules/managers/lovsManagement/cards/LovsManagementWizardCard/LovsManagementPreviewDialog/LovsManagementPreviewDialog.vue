@@ -1,15 +1,13 @@
 <template>
-    <Dialog :contentStyle="lovsManagementPreviewDialogDescriptor.dialog.style" :header="$t('managers.lovsManagement.preview')" :visible="visible" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
-        <div class="p-col">
-            <div id="filter-info" class="p-d-flex p-ai-center p-jc-center">
-                <p>{{ $t('managers.lovsManagement.filterNullValues') }}</p>
-            </div>
+    <Dialog :header="$t('managers.lovsManagement.preview')" :visible="visible" :modal="true" class="lovPreviewDialog kn-dialog--toolbar--primary" :closable="false">
+        <Message class="p-m-4" severity="info" :closable="false">
+            {{ $t('managers.lovsManagement.filterNullValues') }}
+        </Message>
 
-            <DataTable :value="rows" class="p-datatable-sm kn-table" dataKey="field" :lazy="true" :paginator="true" :rows="20" :totalRecords="lazyParams.size" responsiveLayout="stack" breakpoint="960px" @page="onPage($event)" @sort="onSort">
-                <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                <Column class="kn-truncated" v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" :sortable="true"></Column>
-            </DataTable>
-        </div>
+        <DataTable :value="rows" class="p-datatable-sm kn-table" dataKey="field" scrollHeight="flex" :scrollable="true" scrollDirection="both" :lazy="true" :paginator="true" :rows="15" :totalRecords="lazyParams.size" responsiveLayout="stack" breakpoint="960px" @page="onPage($event)" @sort="onSort">
+            <template #empty>{{ $t('common.info.noDataFound') }}</template>
+            <Column class="kn-truncated" v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" :sortable="true" style="flex-grow:1; flex-basis:200px"></Column>
+        </DataTable>
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
         </template>
@@ -21,11 +19,11 @@ import { defineComponent } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
-import lovsManagementPreviewDialogDescriptor from './LovsManagementPreviewDialogDescriptor.json'
+import Message from 'primevue/message'
 
 export default defineComponent({
     name: 'lovs-management-preview-dialog',
-    components: { Column, DataTable, Dialog },
+    components: { Column, DataTable, Dialog, Message },
     emits: ['close', 'pageChanged'],
     props: {
         visible: { type: Boolean },
@@ -34,7 +32,6 @@ export default defineComponent({
     },
     data() {
         return {
-            lovsManagementPreviewDialogDescriptor,
             columns: [] as any[],
             rows: [] as any[],
             lazyParams: {} as any,
@@ -83,17 +80,10 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
-#filter-info {
-    margin: 2rem 0;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    display: flex;
-    justify-content: center;
-    border: 1px solid rgba(59, 103, 140, 0.1);
-    background-color: #eaf0f6;
-    p {
-        margin: 0.3rem;
+<style lang="scss">
+.lovPreviewDialog {
+    .p-dialog-content {
+        max-width: 960px;
     }
 }
 </style>
