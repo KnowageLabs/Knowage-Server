@@ -3,7 +3,7 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #start>
-                    {{ $t('managers.businessModelManager.driversDetails') }}
+                    {{ $t('managers.businessModelManager.details') }}
                 </template>
             </Toolbar>
         </template>

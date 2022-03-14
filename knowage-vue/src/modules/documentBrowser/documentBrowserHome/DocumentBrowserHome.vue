@@ -180,7 +180,7 @@ export default defineComponent({
             this.showDocumentDetails = true
         },
         createNewCockpit() {
-            this.$emit('itemSelected', { item: null, mode: 'createCockpit' })
+            this.$emit('itemSelected', { item: null, mode: 'createCockpit', functionalityId: this.selectedFolder.id })
         },
         toggleSidebarView() {
             this.sidebarVisible = !this.sidebarVisible
