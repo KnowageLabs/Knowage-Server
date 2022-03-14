@@ -48,10 +48,9 @@
                             <label class="kn-material-input-label"> {{ $t('qbe.filters.highLimit') }} </label>
                         </div>
                     </div>
-
                     <div v-else-if="filter.rightType === 'manual' && ['IN', 'NOT IN'].includes(filter.operator) && field.dataType !== 'java.sql.Timestamp' && field.dataType !== 'java.sql.Date'" class="kn-width-full">
                         <label class="kn-material-input-label"> {{ $t('qbe.filters.enterValue') }} </label>
-                        <Chips v-model="multiManualValues" @add="onManualMultivalueChanged" @remove="onManualMultivalueChanged" />
+                        <Chips v-model="multiManualValues" @add="onManualMultivalueChanged" @remove="onManualMultivalueChanged" :addOnBlur="true" />
                     </div>
 
                     <InputText v-else-if="filter.rightType === 'manual' && field.dataType !== 'java.sql.Timestamp' && field.dataType !== 'java.sql.Date'" class="kn-material-input" v-model="filter.rightOperandDescription" @input="onManualValueChange" />
