@@ -192,12 +192,14 @@
                 selectButtonOptions: ['My Datasets', 'Enterprise', 'Shared', 'All Datasets'],
                 searchWord: '' as string,
                 qbeVisible: false,
-                selectedQbeDataset: null
+                selectedQbeDataset: null,
+                user: null as any
             }
         },
         async created() {
             await this.getAllData()
             await this.getAllPreparedData()
+            this.user = (this.$store.state as any).user
         },
 
         methods: {
@@ -256,8 +258,9 @@
             },
             // prettier-ignore
             createMenuItems(clickedDocument: any) {
-            this.menuButtons = []
-            this.menuButtons.push(
+
+            let tmp = [] as any
+            tmp.push(
                 { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.editFileDataset, visible: this.isDatasetOwner && this.selectedDataset.dsTypeCd == 'File' },
                 { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: () => this.openDatasetInQBE(), visible: this.showQbeEditButton },
                 { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
@@ -265,10 +268,20 @@
                 { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' },
                 { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(), visible: this.canLoadData && this.isDatasetOwner && this.selectedDataset.dsTypeCd != 'Prepared' },
                 { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
-                { key: '7', label: this.$t('workspace.myData.prepareData'), icon: 'fas fa-cogs', command: () => this.prepareData(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' && this.selectedDataset.dsTypeCd != 'Prepared' },
-                { key: '8', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: (this.isAvroReady(this.selectedDataset) || this.selectedDataset.dsTypeCd == 'Prepared') && this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' },
+                
                 { key: '9', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
             )
+
+            if (this.user?.functionalities.includes('DataPreparation')) {
+
+                this.menuButtons.push({ key: '7', label: this.$t('workspace.myData.prepareData'), icon: 'fas fa-cogs', command: () => this.prepareData(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' && this.selectedDataset.dsTypeCd != 'Prepared' })
+                
+                this.menuButtons.push({ key: '8', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: (this.isAvroReady(this.selectedDataset) || this.selectedDataset.dsTypeCd == 'Prepared') && this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' })
+            }
+
+            tmp = tmp.sort((a,b)=>a.key.compareTo(b.key))
+
+            this.menuButtons = tmp
 
         },
             createCreationMenuButtons() {
