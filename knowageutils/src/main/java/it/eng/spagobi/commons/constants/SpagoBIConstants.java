@@ -613,6 +613,6 @@ public class SpagoBIConstants {
 
 	// Data Preparation
 
-	public static final String MANAGE_DATA_PREPARATION = "DataPreparationManagement";
+	public static final String MANAGE_DATA_PREPARATION = "DataPreparation";
 
 }

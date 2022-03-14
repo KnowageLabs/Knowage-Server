@@ -274,9 +274,9 @@ export default defineComponent({
 
             if (this.user?.functionalities.includes('DataPreparation')) {
 
-                this.menuButtons.push({ key: '7', label: this.$t('workspace.myData.prepareData'), icon: 'fas fa-cogs', command: () => this.prepareData(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' && this.selectedDataset.dsTypeCd != 'Prepared' })
+                tmp.push({ key: '7', label: this.$t('workspace.myData.prepareData'), icon: 'fas fa-cogs', command: () => this.prepareData(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' && this.selectedDataset.dsTypeCd != 'Prepared' })
                 
-                this.menuButtons.push({ key: '8', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: (this.isAvroReady(this.selectedDataset) || this.selectedDataset.dsTypeCd == 'Prepared') && this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' })
+                tmp.push({ key: '8', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: (this.isAvroReady(this.selectedDataset) || this.selectedDataset.dsTypeCd == 'Prepared') && this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' })
             }
 
             tmp = tmp.sort((a,b)=>a.key.localeCompare(b.key))
