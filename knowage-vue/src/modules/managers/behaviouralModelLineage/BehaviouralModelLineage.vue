@@ -10,10 +10,10 @@
             </template>
         </Toolbar>
 
-        <div id="table-container" class="p-d-flex p-flex-row kn-height-full">
-            <BMLTable :tableData="allLovs" :headerTitle="$t('managers.bml.lovsTitle')" :loading="loading" dataType="lovs" @rowSelected="onRowSelect" @rowUnselected="onRowSelect" />
-            <BMLTable :tableData="allDrivers" :headerTitle="$t('managers.bml.drivers')" :loading="loading" dataType="analyticalDrivers" @rowSelected="onRowSelect" @rowUnselected="onRowSelect" />
-            <BMLTable :tableData="allDocuments" :headerTitle="$t('managers.datasetManagement.documents')" :loading="loading" dataType="documents" @rowSelected="onRowSelect" @rowUnselected="onRowSelect" />
+        <div id="table-container" class="p-d-flex p-flex-row bml-table-container">
+            <BMLTable :tableData="allLovs" :headerTitle="$t('managers.bml.lovsTitle')" :loading="loading" dataType="lovs" @rowSelected="onRowSelect" @rowUnselected="onRowUnselect" />
+            <BMLTable :tableData="allDrivers" :headerTitle="$t('managers.bml.drivers')" :loading="loading" dataType="analyticalDrivers" @rowSelected="onRowSelect" @rowUnselected="onRowUnselect" />
+            <BMLTable :tableData="allDocuments" :headerTitle="$t('managers.datasetManagement.documents')" :loading="loading" dataType="documents" @rowSelected="onRowSelect" @rowUnselected="onRowUnselect" />
         </div>
     </div>
 </template>
@@ -80,6 +80,10 @@ export default defineComponent({
                     break
             }
         },
+        onRowUnselect() {
+            console.log('UNSELECTED -----------------')
+            this.loadAllData()
+        },
         async filterByLovs(lov) {
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/${lov.id}/analyticalDrivers/`).then((response: AxiosResponse<any>) => (this.allDrivers = response.data))
@@ -104,5 +108,8 @@ export default defineComponent({
 <style lang="scss">
 .bml-table .p-datatable-header {
     padding: 0 !important;
+}
+.bml-table-container {
+    height: calc(100% - var(--kn-toolbar-height));
 }
 </style>

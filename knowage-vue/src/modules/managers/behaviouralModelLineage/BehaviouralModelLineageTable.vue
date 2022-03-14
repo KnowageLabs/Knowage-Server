@@ -2,6 +2,7 @@
     <DataTable
         class="p-datatable-sm kn-table bml-table kn-flex"
         :value="tableData"
+        v-model:selection="selectedRow"
         selectionMode="single"
         dataKey="id"
         responsiveLayout="scroll"
@@ -12,6 +13,7 @@
         :loading="loading"
         paginatorTemplate="PrevPageLink PageLinks NextPageLink"
         stripedRows
+        :metaKeySelection="false"
         @rowSelect="$emit('rowSelected', $event, dataType)"
         @rowUnselect="$emit('rowUnselected', $event, dataType)"
     >
