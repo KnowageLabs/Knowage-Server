@@ -16,6 +16,7 @@
                     </template>
                 </TabPanel>
             </TabView>
+            {{ selectedItem }}
 
             <DocumentBrowserTab v-show="selectedItem" :item="selectedItem?.item" :mode="selectedItem?.mode" :functionalityId="selectedItem?.functionalityId" @close="closeDocument('current')" @iframeCreated="onIFrameCreated" @closeIframe="closeIframe"></DocumentBrowserTab>
             <div v-for="(iframe, index) in iFrameContainers" :key="index">
@@ -54,6 +55,12 @@ export default defineComponent({
         }
     },
     async created() {
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'saveCockpit') {
+                this.loadSavedCockpit(event.data.model)
+            }
+        })
+
         if (this.$route.params.id && this.$route.name === 'document-browser-document-execution') {
             let tempDocument = {} as any
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$route.params.id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
@@ -200,8 +207,12 @@ export default defineComponent({
         },
         closeIframe() {
             const index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
-            console.log('closeIframe INDEX: ', index)
             if (index !== -1) this.iFrameContainers.splice(index, 1)
+        },
+        loadSavedCockpit(cockpit: any) {
+            this.closeIframe()
+            this.selectedItem = { item: { ...cockpit, routerId: crypto.randomBytes(16).toString('hex'), name: cockpit.DOCUMENT_NAME } }
+            this.$router.push(`/document-browser/document-composite/${cockpit.DOCUMENT_LABEL}`)
         }
     }
 })
