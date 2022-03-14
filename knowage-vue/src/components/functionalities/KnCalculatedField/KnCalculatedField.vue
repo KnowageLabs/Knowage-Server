@@ -70,8 +70,8 @@
                                 <a :href="selectedFunction.officialDocumentationLink" target="_blank"> {{ $t('components.knCalculatedField.officialDocumentation', { function: selectedFunction.label }) }}</a>
                             </div>
                         </span>
-                        <span class="p-m-2 formulaType formulaType" v-else>
-                            <KnHint class="formulaType" :title="'components.knCalculatedField.title'" :hint="$t(descriptor.hint)" data-test="hint"></KnHint>
+                        <span class="p-m-2" v-else>
+                            <KnHint class="kn-hint-sm" :title="'components.knCalculatedField.title'" :hint="$t(descriptor.hint)" data-test="hint"></KnHint>
                         </span>
                     </div>
                 </div>
@@ -92,7 +92,7 @@
         />
 
         <template #footer>
-            <Button class="p-button-text kn-button thirdButton" :label="$t('common.cancel')" @click="cancel" />
+            <Button class="kn-button kn-button--secondary" :label="$t('common.cancel')" @click="cancel" />
             <Button class="kn-button kn-button--primary" v-t="'common.apply'" @click="apply" :disabled="saveButtonDisabled" />
         </template>
     </Dialog>
@@ -333,8 +333,9 @@
     }
 
     .codeMirrorClass {
-        height: 100px;
+        height: 80px;
         max-height: 80px;
+        border: 1px solid var(--kn-color-borders);
 
         .CodeMirror-scroll {
             overflow-x: hidden !important;
