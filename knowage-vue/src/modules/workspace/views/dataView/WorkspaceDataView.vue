@@ -107,157 +107,157 @@
     <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="selectedQbeDataset" @close="closeQbe" />
 </template>
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { filterDefault } from '@/helpers/commons/filterHelper'
-    import KnFabButton from '@/components/UI/KnFabButton.vue'
-    import DatasetWizard from './datasetWizard/WorkspaceDatasetWizardContainer.vue'
-    import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
-    import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
-    import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
-    import DataTable from 'primevue/datatable'
-    import Column from 'primevue/column'
-    import Chip from 'primevue/chip'
-    import Menu from 'primevue/contextmenu'
-    import Message from 'primevue/message'
-    import WorkspaceDataCloneDialog from './dialogs/WorkspaceDataCloneDialog.vue'
-    import WorkspaceDataPreviewDialog from './dialogs/WorkspaceDataPreviewDialog.vue'
-    import WorkspaceDataShareDialog from './dialogs/WorkspaceDataShareDialog.vue'
-    import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
-    import { AxiosResponse } from 'axios'
-    import { downloadDirect } from '@/helpers/commons/fileHelper'
-    import SelectButton from 'primevue/selectbutton'
-    import QBE from '@/modules/qbe/QBE.vue'
-    import { Client } from '@stomp/stompjs'
+import { defineComponent } from 'vue'
+import { filterDefault } from '@/helpers/commons/filterHelper'
+import KnFabButton from '@/components/UI/KnFabButton.vue'
+import DatasetWizard from './datasetWizard/WorkspaceDatasetWizardContainer.vue'
+import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
+import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
+import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Chip from 'primevue/chip'
+import Menu from 'primevue/contextmenu'
+import Message from 'primevue/message'
+import WorkspaceDataCloneDialog from './dialogs/WorkspaceDataCloneDialog.vue'
+import WorkspaceDataPreviewDialog from './dialogs/WorkspaceDataPreviewDialog.vue'
+import WorkspaceDataShareDialog from './dialogs/WorkspaceDataShareDialog.vue'
+import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
+import { AxiosResponse } from 'axios'
+import { downloadDirect } from '@/helpers/commons/fileHelper'
+import SelectButton from 'primevue/selectbutton'
+import QBE from '@/modules/qbe/QBE.vue'
+import { Client } from '@stomp/stompjs'
 
-    export default defineComponent({
-        components: { QBE, DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, SelectButton, Message },
-        emits: ['toggleDisplayView'],
-        props: { toggleCardDisplay: { type: Boolean } },
-        computed: {
-            isDatasetOwner(): any {
-                return (this.$store.state as any).user.userId === this.selectedDataset.owner
-            },
-            showCkanIntegration(): any {
-                return (this.$store.state as any).user.functionalities.indexOf('CkanIntegrationFunctionality') > -1
-            },
-            showQbeEditButton(): any {
-                return (this.$store.state as any).user.userId === this.selectedDataset.owner && (this.selectedDataset.dsTypeCd == 'Federated' || this.selectedDataset.dsTypeCd == 'Qbe')
-            },
-            datasetHasDrivers(): any {
-                return this.selectedDataset.drivers && this.selectedDataset.length > 0
-            },
-            datasetHasParams(): any {
-                return this.selectedDataset.pars && this.selectedDataset.pars > 0
-            },
-            datasetIsIterable(): any {
-                // in order to export to XLSX, dataset must implement an iterator (BE side)
-                let notIterableDataSets = ['Federated']
-                if (notIterableDataSets.includes(this.selectedDataset.dsTypeCd)) return false
-                else return true
-            },
-            canLoadData(): any {
-                if (this.selectedDataset.actions) {
-                    for (let i = 0; i < this.selectedDataset.actions.length; i++) {
-                        const action = this.selectedDataset.actions[i]
-                        if (action.name == 'loaddata') {
-                            return true
-                        }
+export default defineComponent({
+    components: { QBE, DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, SelectButton, Message },
+    emits: ['toggleDisplayView'],
+    props: { toggleCardDisplay: { type: Boolean } },
+    computed: {
+        isDatasetOwner(): any {
+            return (this.$store.state as any).user.userId === this.selectedDataset.owner
+        },
+        showCkanIntegration(): any {
+            return (this.$store.state as any).user.functionalities.indexOf('CkanIntegrationFunctionality') > -1
+        },
+        showQbeEditButton(): any {
+            return (this.$store.state as any).user.userId === this.selectedDataset.owner && (this.selectedDataset.dsTypeCd == 'Federated' || this.selectedDataset.dsTypeCd == 'Qbe')
+        },
+        datasetHasDrivers(): any {
+            return this.selectedDataset.drivers && this.selectedDataset.length > 0
+        },
+        datasetHasParams(): any {
+            return this.selectedDataset.pars && this.selectedDataset.pars > 0
+        },
+        datasetIsIterable(): any {
+            // in order to export to XLSX, dataset must implement an iterator (BE side)
+            let notIterableDataSets = ['Federated']
+            if (notIterableDataSets.includes(this.selectedDataset.dsTypeCd)) return false
+            else return true
+        },
+        canLoadData(): any {
+            if (this.selectedDataset.actions) {
+                for (let i = 0; i < this.selectedDataset.actions.length; i++) {
+                    const action = this.selectedDataset.actions[i]
+                    if (action.name == 'loaddata') {
+                        return true
                     }
                 }
-                return false
             }
-        },
-        data() {
-            return {
-                mainDescriptor,
-                loading: false,
-                showDetailSidebar: false,
-                showDatasetDialog: false,
-                datasetList: [] as any,
-                filteredDatasets: [] as any,
-                preparedDatasets: [] as any,
-                datasetCategories: [] as any,
-                selectedDataset: {} as any,
-                menuButtons: [] as any,
-                creationMenuButtons: [] as any,
-                filters: {
-                    global: [filterDefault]
-                } as Object,
-                cloneDialogVisible: false,
-                shareDialogVisible: false,
-                previewDialogVisible: false,
-                warningDialogVisbile: false,
-                warningMessage: '',
-                tableMode: 'My Datasets',
-                selectButtonOptions: ['My Datasets', 'Enterprise', 'Shared', 'All Datasets'],
-                searchWord: '' as string,
-                qbeVisible: false,
-                selectedQbeDataset: null,
-                user: null as any
-            }
-        },
-        async created() {
-            await this.getAllData()
-            await this.getAllPreparedData()
-            this.user = (this.$store.state as any).user
-        },
+            return false
+        }
+    },
+    data() {
+        return {
+            mainDescriptor,
+            loading: false,
+            showDetailSidebar: false,
+            showDatasetDialog: false,
+            datasetList: [] as any,
+            filteredDatasets: [] as any,
+            preparedDatasets: [] as any,
+            datasetCategories: [] as any,
+            selectedDataset: {} as any,
+            menuButtons: [] as any,
+            creationMenuButtons: [] as any,
+            filters: {
+                global: [filterDefault]
+            } as Object,
+            cloneDialogVisible: false,
+            shareDialogVisible: false,
+            previewDialogVisible: false,
+            warningDialogVisbile: false,
+            warningMessage: '',
+            tableMode: 'My Datasets',
+            selectButtonOptions: ['My Datasets', 'Enterprise', 'Shared', 'All Datasets'],
+            searchWord: '' as string,
+            qbeVisible: false,
+            selectedQbeDataset: null,
+            user: null as any
+        }
+    },
+    async created() {
+        await this.getAllData()
+        await this.getAllPreparedData()
+        this.user = (this.$store.state as any).user
+    },
 
-        methods: {
-            getDatasets(filter: string) {
-                this.loading = true
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${filter}/`)
-            },
-            async getAllPreparedData() {
-                await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/prepared`)
-                    .then((response: AxiosResponse<any>) => {
-                        this.preparedDatasets = response.data
-                    })
-                    .catch(() => {})
-            },
-            async getAllData() {
-                await this.getDatasetsByFilter()
-                await this.getDatasetCategories()
-                // this.loading = false
-            },
-            async getDatasetCategories() {
-                this.loading = true
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domainsforfinaluser/ds-categories`).then((response: AxiosResponse<any>) => {
-                    this.datasetCategories = [...response.data]
+    methods: {
+        getDatasets(filter: string) {
+            this.loading = true
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${filter}/`)
+        },
+        async getAllPreparedData() {
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/prepared`)
+                .then((response: AxiosResponse<any>) => {
+                    this.preparedDatasets = response.data
                 })
-            },
-            async loadDataset(datasetLabel: string) {
-                this.loading = true
-                await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${datasetLabel}`)
-                    .then((response: AxiosResponse<any>) => {
-                        this.selectedDataset = response.data[0]
-                    })
-                    .catch(() => {})
-                this.loading = false
-            },
-            toggleDisplayView() {
-                this.$emit('toggleDisplayView')
-            },
-            showSidebar(clickedDataset) {
-                this.selectedDataset = clickedDataset
-                this.showDetailSidebar = true
-            },
-            showCreationMenu(event) {
-                this.createCreationMenuButtons()
-                // eslint-disable-next-line
-                // @ts-ignore
-                this.$refs.creationMenu.toggle(event)
-            },
-            showMenu(event, clickedDocument) {
-                this.selectedDataset = clickedDocument
-                this.createMenuItems(clickedDocument)
-                // eslint-disable-next-line
-                // @ts-ignore
-                this.$refs.optionsMenu.toggle(event)
-            },
-            // prettier-ignore
-            createMenuItems(clickedDocument: any) {
+                .catch(() => {})
+        },
+        async getAllData() {
+            await this.getDatasetsByFilter()
+            await this.getDatasetCategories()
+            // this.loading = false
+        },
+        async getDatasetCategories() {
+            this.loading = true
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domainsforfinaluser/ds-categories`).then((response: AxiosResponse<any>) => {
+                this.datasetCategories = [...response.data]
+            })
+        },
+        async loadDataset(datasetLabel: string) {
+            this.loading = true
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${datasetLabel}`)
+                .then((response: AxiosResponse<any>) => {
+                    this.selectedDataset = response.data[0]
+                })
+                .catch(() => {})
+            this.loading = false
+        },
+        toggleDisplayView() {
+            this.$emit('toggleDisplayView')
+        },
+        showSidebar(clickedDataset) {
+            this.selectedDataset = clickedDataset
+            this.showDetailSidebar = true
+        },
+        showCreationMenu(event) {
+            this.createCreationMenuButtons()
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.creationMenu.toggle(event)
+        },
+        showMenu(event, clickedDocument) {
+            this.selectedDataset = clickedDocument
+            this.createMenuItems(clickedDocument)
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.optionsMenu.toggle(event)
+        },
+        // prettier-ignore
+        createMenuItems(clickedDocument: any) {
 
             let tmp = [] as any
             tmp.push(
@@ -279,139 +279,40 @@
                 this.menuButtons.push({ key: '8', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: (this.isAvroReady(this.selectedDataset) || this.selectedDataset.dsTypeCd == 'Prepared') && this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' })
             }
 
-            tmp = tmp.sort((a,b)=>a.key.compareTo(b.key))
+            tmp = tmp.sort((a,b)=>a.key.localeCompare(b.key))
 
             this.menuButtons = tmp
 
         },
-            createCreationMenuButtons() {
-                this.creationMenuButtons = []
-                this.creationMenuButtons.push(
-                    { key: '0', label: this.$t('managers.businessModelManager.uploadFile'), command: this.toggleDatasetDialog, visible: true },
-                    { key: '1', label: this.$t('workspace.myData.prepareData'), command: this.openDatasetInQBE, visible: true },
-                    { key: '2', label: this.$t('workspace.myData.openData'), command: this.openDatasetInQBE, visible: this.showCkanIntegration }
-                )
-            },
-            toggleDatasetDialog() {
-                this.selectedDataset = {}
-                this.showDatasetDialog = true
-            },
-            async previewDataset(dataset: any) {
-                await this.loadDataset(dataset.label)
-                this.previewDialogVisible = true
-            },
-            editFileDataset() {
-                this.showDatasetDialog = true
-            },
-            isAvroReady(dataset: any) {
-                if (dataset && this.preparedDatasets.indexOf(dataset.label) >= 0) return true
-                else return false
-            },
-            async prepareData(dataset: any) {
-                if (dataset) {
-                    // launch avro export job
-                    this.$http
-                        .post(
-                            process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${dataset.id}`,
-                            {},
-                            {
-                                headers: {
-                                    Accept: 'application/json, text/plain, */*',
-                                    'Content-Type': 'application/json;charset=UTF-8'
-                                }
-                            }
-                        )
-                        .then(() => {
-                            this.$store.commit('setInfo', {
-                                title: this.$t('workspace.myData.isPreparing')
-                            })
-                        })
-                        .catch(() => {})
-
-                    // listen on websocket for avro export job to be finished
-                    let url = process.env.VUE_APP_HOST_URL.replace('http', 'ws') + '/knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
-                    let client = new Client({
-                        brokerURL: url,
-                        connectHeaders: {},
-                        heartbeatIncoming: 4000,
-                        heartbeatOutgoing: 4000
-                    })
-
-                    client.onConnect = (frame) => {
-                        // Do something, all subscribes must be done is this callback
-                        // This is needed because this will be executed after a (re)connect
-                        console.log(frame)
-
-                        client.subscribe(
-                            '/user/queue/prepare',
-                            (message) => {
-                                // called when the client receives a STOMP message from the server
-                                if (message.body) {
-                                    let avroJobResponse = JSON.parse(message.body)
-                                    if (avroJobResponse.statusOk) this.$store.commit('setInfo', { title: 'Dataset ' + avroJobResponse.dsLabel + ' prepared successfully' })
-                                    else this.$store.commit('setError', { title: 'Cannot prepare dataset ' + avroJobResponse.dsLabel, msg: avroJobResponse.errorMessage })
-
-                                    this.preparedDatasets.push(avroJobResponse.dsLabel)
-                                    client.deactivate()
-                                } else {
-                                    this.$store.commit('setError', { title: 'Websocket error', msg: 'got empty message' })
-                                }
-                            },
-                            {
-                                dsLabel: dataset.label
-                            }
-                        )
-                    }
-
-                    client.onStompError = function(frame) {
-                        // Will be invoked in case of error encountered at Broker
-                        // Bad login/passcode typically will cause an error
-                        // Complaint brokers will set `message` header with a brief message. Body may contain details.
-                        // Compliant brokers will terminate the connection after any error
-                        console.log('Broker reported error: ' + frame.headers['message'])
-                        console.log('Additional details: ' + frame.body)
-                    }
-                    client.activate()
-                }
-            },
-            openDataPreparation(dataset: any) {
-                if (dataset.dsTypeCd == 'Prepared') {
-                    this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.label}`).then(
-                        (response: AxiosResponse<any>) => {
-                            let instanceId = response.data.configuration.dataPrepInstanceId
-                            this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
-                                (response: AxiosResponse<any>) => {
-                                    let transformations = response.data.definition
-                                    let datasetLabel = response.data.instances[0].dataSetLabel
-                                    this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations) } })
-                                },
-                                () => {
-                                    this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
-                                }
-                            )
-                        },
-                        () => {
-                            this.$store.commit('setError', {
-                                title: 'Cannot open data preparation'
-                            })
-                        }
-                    )
-                } else {
-                    this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
-                }
-            },
-            openDatasetInQBE() {
-                this.$store.commit('setInfo', {
-                    title: 'Todo',
-                    msg: 'Functionality not in this sprint'
-                })
-            },
-            async exportDataset(dataset: any, format: string) {
-                this.loading = true
-
-                await this.$http
+        createCreationMenuButtons() {
+            this.creationMenuButtons = []
+            this.creationMenuButtons.push(
+                { key: '0', label: this.$t('managers.businessModelManager.uploadFile'), command: this.toggleDatasetDialog, visible: true },
+                { key: '1', label: this.$t('workspace.myData.prepareData'), command: this.openDatasetInQBE, visible: true },
+                { key: '2', label: this.$t('workspace.myData.openData'), command: this.openDatasetInQBE, visible: this.showCkanIntegration }
+            )
+        },
+        toggleDatasetDialog() {
+            this.selectedDataset = {}
+            this.showDatasetDialog = true
+        },
+        async previewDataset(dataset: any) {
+            await this.loadDataset(dataset.label)
+            this.previewDialogVisible = true
+        },
+        editFileDataset() {
+            this.showDatasetDialog = true
+        },
+        isAvroReady(dataset: any) {
+            if (dataset && this.preparedDatasets.indexOf(dataset.label) >= 0) return true
+            else return false
+        },
+        async prepareData(dataset: any) {
+            if (dataset) {
+                // launch avro export job
+                this.$http
                     .post(
-                        process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${dataset.id}/${format}`,
+                        process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${dataset.id}`,
                         {},
                         {
                             headers: {
@@ -422,190 +323,289 @@
                     )
                     .then(() => {
                         this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.updateTitle'),
-                            msg: this.$t('workspace.myData.exportSuccess')
+                            title: this.$t('workspace.myData.isPreparing')
                         })
                     })
                     .catch(() => {})
-                this.loading = false
-            },
-            async downloadDatasetFile(dataset: any) {
-                await this.loadDataset(dataset.label)
-                await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${this.selectedDataset.label}&type=${this.selectedDataset.fileType.toLowerCase()}`, {
-                        headers: {
-                            Accept: 'application/json, text/plain, */*'
-                        },
-                        responseType: 'blob'
-                    })
-                    .then((response: AxiosResponse<any>) => {
-                        if (response.data.errors) {
-                            this.$store.commit('setError', {
-                                title: this.$t('common.error.downloading'),
-                                msg: this.$t('common.error.downloading')
-                            })
-                        } else {
-                            downloadDirect(response.data, this.selectedDataset.label, this.getFileType(this.selectedDataset.fileType.toLowerCase()))
-                            this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
-                        }
-                    })
-            },
-            getFileType(type: string) {
-                switch (type) {
-                    case 'csv':
-                        return 'text/csv'
-                    case 'xls':
-                        return 'application/vnd.ms-excel'
-                    case 'xlsx':
-                        return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                }
-            },
-            shareDataset() {
-                this.shareDialogVisible = true
-            },
-            async handleDatasetShare(dataset: any) {
-                this.loading = true
 
-                const url = dataset.catTypeId ? `selfservicedataset/share/?catTypeId=${dataset.catTypeId}&id=${dataset.id}` : `selfservicedataset/share/?id=${dataset.id}`
-
-                await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
-                    .then(() => {
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.updateTitle'),
-                            msg: this.$t('common.toast.success')
-                        })
-                        this.showDetailSidebar = false
-                        this.shareDialogVisible = false
-                        this.getDatasetsByFilter()
-                    })
-                    .catch(() => {})
-                this.loading = false
-            },
-            async cloneDataset(dataset: any) {
-                await this.loadDataset(dataset.label)
-                this.cloneDialogVisible = true
-            },
-            async handleDatasetClone(dataset: any) {
-                await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets`, dataset, { headers: { 'X-Disable-Errors': 'true' } })
-                    .then(() => {
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.deleteTitle'),
-                            msg: this.$t('common.toast.success')
-                        })
-                        this.showDetailSidebar = false
-                        this.cloneDialogVisible = false
-                        this.getDatasetsByFilter()
-                    })
-                    .catch((response: any) => {
-                        this.warningDialogVisbile = true
-                        this.warningMessage = response
-                    })
-            },
-            datasetPreparation(dataset: any) {
-                this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
-            },
-
-            deleteDatasetConfirm(dataset: any) {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: async () => await this.deleteDataset(dataset)
+                // listen on websocket for avro export job to be finished
+                let url = process.env.VUE_APP_HOST_URL.replace('http', 'ws') + '/knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+                let client = new Client({
+                    brokerURL: url,
+                    connectHeaders: {},
+                    heartbeatIncoming: 4000,
+                    heartbeatOutgoing: 4000
                 })
-            },
-            async deleteDataset(dataset: any) {
-                this.loading = true
-                await this.$http
-                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
-                    .then(() => {
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.deleteTitle'),
-                            msg: this.$t('common.toast.success')
-                        })
-                        this.showDetailSidebar = false
-                        this.getDatasetsByFilter()
-                    })
-                    .catch(() => {})
-                this.loading = false
-            },
-            closeWarningDialog() {
-                this.warningMessage = ''
-                this.warningDialogVisbile = false
-            },
-            closeWizardAndRealod() {
-                this.showDatasetDialog = false
-                this.getDatasetsByFilter()
-            },
-            async getDatasetsByFilter() {
-                this.searchWord = ''
-                switch (this.tableMode) {
-                    case 'My Datasets':
-                        this.datasetList = this.getDatasets('owned')
-                            .then((response: AxiosResponse<any>) => {
-                                this.datasetList = [...response.data.root]
-                                this.filteredDatasets = [...this.datasetList]
-                            })
-                            .finally(() => (this.loading = false))
-                        break
-                    case 'Enterprise':
-                        this.datasetList = this.getDatasets('enterprise')
-                            .then((response: AxiosResponse<any>) => {
-                                this.datasetList = [...response.data.root]
-                                this.filteredDatasets = [...this.datasetList]
-                            })
-                            .finally(() => (this.loading = false))
-                        break
-                    case 'Shared':
-                        this.datasetList = this.getDatasets('shared')
-                            .then((response: AxiosResponse<any>) => {
-                                this.datasetList = [...response.data.root]
-                                this.filteredDatasets = [...this.datasetList]
-                            })
-                            .finally(() => (this.loading = false))
-                        break
-                    case 'All Datasets':
-                        this.datasetList = this.getDatasets('mydata')
-                            .then((response: AxiosResponse<any>) => {
-                                this.datasetList = [...response.data.root]
-                                this.filteredDatasets = [...this.datasetList]
-                            })
-                            .finally(() => (this.loading = false))
+
+                client.onConnect = (frame) => {
+                    // Do something, all subscribes must be done is this callback
+                    // This is needed because this will be executed after a (re)connect
+                    console.log(frame)
+
+                    client.subscribe(
+                        '/user/queue/prepare',
+                        (message) => {
+                            // called when the client receives a STOMP message from the server
+                            if (message.body) {
+                                let avroJobResponse = JSON.parse(message.body)
+                                if (avroJobResponse.statusOk) this.$store.commit('setInfo', { title: 'Dataset ' + avroJobResponse.dsLabel + ' prepared successfully' })
+                                else this.$store.commit('setError', { title: 'Cannot prepare dataset ' + avroJobResponse.dsLabel, msg: avroJobResponse.errorMessage })
+
+                                this.preparedDatasets.push(avroJobResponse.dsLabel)
+                                client.deactivate()
+                            } else {
+                                this.$store.commit('setError', { title: 'Websocket error', msg: 'got empty message' })
+                            }
+                        },
+                        {
+                            dsLabel: dataset.label
+                        }
+                    )
                 }
-            },
-            searchItems() {
-                setTimeout(() => {
-                    if (!this.searchWord.trim().length) {
-                        this.filteredDatasets = [...this.datasetList] as any[]
-                    } else {
-                        this.filteredDatasets = this.datasetList.filter((el: any) => {
-                            return el.label?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.dsTypeCd?.toLowerCase().includes(this.searchWord.toLowerCase()) || this.datasetTagFound(el)
-                        })
-                    }
-                }, 250)
-            },
-            closeQbe() {
-                this.qbeVisible = false
-                this.selectedQbeDataset = null
-            },
-            datasetTagFound(dataset: any) {
-                let tagFound = false
-                for (let i = 0; i < dataset.tags.length; i++) {
-                    const tempTag = dataset.tags[i]
-                    if (tempTag.name.toLowerCase() === this.searchWord.toLowerCase()) {
-                        tagFound = true
-                        break
-                    }
+
+                client.onStompError = function(frame) {
+                    // Will be invoked in case of error encountered at Broker
+                    // Bad login/passcode typically will cause an error
+                    // Complaint brokers will set `message` header with a brief message. Body may contain details.
+                    // Compliant brokers will terminate the connection after any error
+                    console.log('Broker reported error: ' + frame.headers['message'])
+                    console.log('Additional details: ' + frame.body)
                 }
-                return tagFound
+                client.activate()
             }
+        },
+        openDataPreparation(dataset: any) {
+            if (dataset.dsTypeCd == 'Prepared') {
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.label}`).then(
+                    (response: AxiosResponse<any>) => {
+                        let instanceId = response.data.configuration.dataPrepInstanceId
+                        this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
+                            (response: AxiosResponse<any>) => {
+                                let transformations = response.data.definition
+                                let datasetLabel = response.data.instances[0].dataSetLabel
+                                this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations) } })
+                            },
+                            () => {
+                                this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
+                            }
+                        )
+                    },
+                    () => {
+                        this.$store.commit('setError', {
+                            title: 'Cannot open data preparation'
+                        })
+                    }
+                )
+            } else {
+                this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+            }
+        },
+        openDatasetInQBE() {
+            this.$store.commit('setInfo', {
+                title: 'Todo',
+                msg: 'Functionality not in this sprint'
+            })
+        },
+        async exportDataset(dataset: any, format: string) {
+            this.loading = true
+
+            await this.$http
+                .post(
+                    process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${dataset.id}/${format}`,
+                    {},
+                    {
+                        headers: {
+                            Accept: 'application/json, text/plain, */*',
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    }
+                )
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('workspace.myData.exportSuccess')
+                    })
+                })
+                .catch(() => {})
+            this.loading = false
+        },
+        async downloadDatasetFile(dataset: any) {
+            await this.loadDataset(dataset.label)
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${this.selectedDataset.label}&type=${this.selectedDataset.fileType.toLowerCase()}`, {
+                    headers: {
+                        Accept: 'application/json, text/plain, */*'
+                    },
+                    responseType: 'blob'
+                })
+                .then((response: AxiosResponse<any>) => {
+                    if (response.data.errors) {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.error.downloading'),
+                            msg: this.$t('common.error.downloading')
+                        })
+                    } else {
+                        downloadDirect(response.data, this.selectedDataset.label, this.getFileType(this.selectedDataset.fileType.toLowerCase()))
+                        this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
+                    }
+                })
+        },
+        getFileType(type: string) {
+            switch (type) {
+                case 'csv':
+                    return 'text/csv'
+                case 'xls':
+                    return 'application/vnd.ms-excel'
+                case 'xlsx':
+                    return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            }
+        },
+        shareDataset() {
+            this.shareDialogVisible = true
+        },
+        async handleDatasetShare(dataset: any) {
+            this.loading = true
+
+            const url = dataset.catTypeId ? `selfservicedataset/share/?catTypeId=${dataset.catTypeId}&id=${dataset.id}` : `selfservicedataset/share/?id=${dataset.id}`
+
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.showDetailSidebar = false
+                    this.shareDialogVisible = false
+                    this.getDatasetsByFilter()
+                })
+                .catch(() => {})
+            this.loading = false
+        },
+        async cloneDataset(dataset: any) {
+            await this.loadDataset(dataset.label)
+            this.cloneDialogVisible = true
+        },
+        async handleDatasetClone(dataset: any) {
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets`, dataset, { headers: { 'X-Disable-Errors': 'true' } })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.showDetailSidebar = false
+                    this.cloneDialogVisible = false
+                    this.getDatasetsByFilter()
+                })
+                .catch((response: any) => {
+                    this.warningDialogVisbile = true
+                    this.warningMessage = response
+                })
+        },
+        datasetPreparation(dataset: any) {
+            this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+        },
+
+        deleteDatasetConfirm(dataset: any) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: async () => await this.deleteDataset(dataset)
+            })
+        },
+        async deleteDataset(dataset: any) {
+            this.loading = true
+            await this.$http
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.showDetailSidebar = false
+                    this.getDatasetsByFilter()
+                })
+                .catch(() => {})
+            this.loading = false
+        },
+        closeWarningDialog() {
+            this.warningMessage = ''
+            this.warningDialogVisbile = false
+        },
+        closeWizardAndRealod() {
+            this.showDatasetDialog = false
+            this.getDatasetsByFilter()
+        },
+        async getDatasetsByFilter() {
+            this.searchWord = ''
+            switch (this.tableMode) {
+                case 'My Datasets':
+                    this.datasetList = this.getDatasets('owned')
+                        .then((response: AxiosResponse<any>) => {
+                            this.datasetList = [...response.data.root]
+                            this.filteredDatasets = [...this.datasetList]
+                        })
+                        .finally(() => (this.loading = false))
+                    break
+                case 'Enterprise':
+                    this.datasetList = this.getDatasets('enterprise')
+                        .then((response: AxiosResponse<any>) => {
+                            this.datasetList = [...response.data.root]
+                            this.filteredDatasets = [...this.datasetList]
+                        })
+                        .finally(() => (this.loading = false))
+                    break
+                case 'Shared':
+                    this.datasetList = this.getDatasets('shared')
+                        .then((response: AxiosResponse<any>) => {
+                            this.datasetList = [...response.data.root]
+                            this.filteredDatasets = [...this.datasetList]
+                        })
+                        .finally(() => (this.loading = false))
+                    break
+                case 'All Datasets':
+                    this.datasetList = this.getDatasets('mydata')
+                        .then((response: AxiosResponse<any>) => {
+                            this.datasetList = [...response.data.root]
+                            this.filteredDatasets = [...this.datasetList]
+                        })
+                        .finally(() => (this.loading = false))
+            }
+        },
+        searchItems() {
+            setTimeout(() => {
+                if (!this.searchWord.trim().length) {
+                    this.filteredDatasets = [...this.datasetList] as any[]
+                } else {
+                    this.filteredDatasets = this.datasetList.filter((el: any) => {
+                        return el.label?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.dsTypeCd?.toLowerCase().includes(this.searchWord.toLowerCase()) || this.datasetTagFound(el)
+                    })
+                }
+            }, 250)
+        },
+        closeQbe() {
+            this.qbeVisible = false
+            this.selectedQbeDataset = null
+        },
+        datasetTagFound(dataset: any) {
+            let tagFound = false
+            for (let i = 0; i < dataset.tags.length; i++) {
+                const tempTag = dataset.tags[i]
+                if (tempTag.name.toLowerCase() === this.searchWord.toLowerCase()) {
+                    tagFound = true
+                    break
+                }
+            }
+            return tagFound
         }
-    })
+    }
+})
 </script>
 
 <style lang="scss" scoped>
-    #model-select-buttons {
-        margin: 2rem 2rem 2rem auto;
-    }
+#model-select-buttons {
+    margin: 2rem 2rem 2rem auto;
+}
 </style>

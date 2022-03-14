@@ -224,7 +224,7 @@ public class UserProfile implements IEngUserProfile {
 	/**
 	 * Checks if is data preparation user.
 	 *
-	 * @return true, if checks if is scheduler user
+	 * @return true, if checks if is preparation user
 	 */
 	public static boolean isDataPreparationUser(String jwtToken) {
 		if (jwtToken == null) {
