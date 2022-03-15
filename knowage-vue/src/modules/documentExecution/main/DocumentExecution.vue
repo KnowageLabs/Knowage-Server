@@ -149,7 +149,8 @@ export default defineComponent({
             userRole: null,
             loading: false,
             olapDesignerMode: false,
-            sessionEnabled: false
+            sessionEnabled: false,
+            dateFormat: '' as string
         }
     },
     async activated() {
@@ -428,7 +429,7 @@ export default defineComponent({
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.document.label, role: this.userRole, parameters: this.document.navigationParams ?? {} })
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
                 .catch((error: any) => {
-                    if (error.response.status === 500) {
+                    if (error.response?.status === 500) {
                         this.$store.commit('setError', {
                             title: this.$t('common.error.generic'),
                             msg: this.$t('documentExecution.main.userRoleError')
@@ -801,7 +802,7 @@ export default defineComponent({
             if (index !== -1) this.schedulations.splice(index, 1)
         },
         getFormattedDate(date: any) {
-            return moment(date).format('DDMMYYYY')
+            return moment(date).format(this.dateFormat)
         },
         onBreadcrumbClick(item: any) {
             this.document = item.document
@@ -930,6 +931,7 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
                 if (response.data) {
                     this.sessionEnabled = response.data['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
+                    this.dateFormat = response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === 'dd/MM/yyyy' ? 'DD/MM/YYYY' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
                 }
             })
         },
