@@ -419,7 +419,7 @@ export default defineComponent({
                 if (!parameter.multivalue) {
                     parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
                 } else {
-                    parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription ?? '' })
+                    parameters.push({ label: parameter.label, value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription ?? '' })
                 }
             })
             return parameters
