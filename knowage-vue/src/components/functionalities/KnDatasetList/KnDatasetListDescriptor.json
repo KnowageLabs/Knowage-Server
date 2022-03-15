@@ -1,0 +1,29 @@
+{
+    "breakpoint": "960px",
+    "columns": [
+        {
+            "field": "label",
+            "header": "common.label",
+            "style": {}
+        },
+        {
+            "field": "name",
+            "header": "common.name",
+            "style": {}
+        },
+        {
+            "field": "dsTypeCd",
+            "header": "common.type",
+            "style": {}
+        }
+    ],
+    "responsiveLayout": "stack",
+    "rows": 15,
+    "table": {
+        "iconColumn": {
+            "style": {
+                "text-align": "end"
+            }
+        }
+    }
+}
