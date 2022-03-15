@@ -110,18 +110,19 @@ export default defineComponent({
         },
         addNewFilter() {
             const field = this.filterDialogData ? this.filterDialogData.field : ({} as any)
+
             const filter = {
                 filterId: 'Filter' + this.nextFilterIndex,
                 filterDescripion: 'Filter' + this.nextFilterIndex,
                 filterInd: this.nextFilterIndex,
                 promptable: false,
                 leftOperandValue: field.id,
-                leftOperandDescription: field.longDescription,
-                leftOperandLongDescription: field.longDescription,
+                leftOperandDescription: field.longDescription ?? field.attributes.longDescription,
+                leftOperandLongDescription: field.longDescription ?? field.attributes.longDescription,
                 leftOperandType: 'Field Content',
                 leftOperandDefaultValue: null,
                 leftOperandLastValue: null,
-                leftOperandAlias: field.alias,
+                leftOperandAlias: field.alias ?? field.attributes.field,
                 leftOperandDataType: '',
                 operator: 'EQUALS TO',
                 rightOperandDescription: '',
