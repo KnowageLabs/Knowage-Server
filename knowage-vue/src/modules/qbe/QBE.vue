@@ -386,7 +386,7 @@ export default defineComponent({
         async updatePagination(lazyParams: any) {
             this.pagination.start = lazyParams.paginationStart
             this.pagination.limit = lazyParams.paginationLimit
-            await this.executeQBEQuery((this.qbePreviewDialogVisible = true))
+            await this.executeQBEQuery(false)
         },
         formatQbeMeta() {
             const meta = [] as any[]
@@ -441,6 +441,7 @@ export default defineComponent({
         onAdvancedFiltersSave(expression: any) {
             this.selectedQuery.expression = expression
             this.advancedFilterDialogVisible = false
+            this.updateSmartView()
         },
         showMenu(event) {
             this.createMenuItems()

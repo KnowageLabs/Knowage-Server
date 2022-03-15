@@ -27,6 +27,7 @@ import schedulerRoutes from '@/modules/managers/scheduler/Scheduler.routes.js'
 import schedulationAgendaRoutes from '@/modules/managers/schedulationAgendaManagement/SchedulationAgenda.routes.js'
 import datasetManagementRoutes from '@/modules/managers/datasetManagement/DatasetManagement.routes.js'
 import themeManagementRoutes from '@/modules/managers/themeManagement/ThemeManagement.routes.js'
+import behaviouralModelLineage from '@/modules/managers/behaviouralModelLineage/BehaviouralModelLineage.routes.js'
 import layersManagementRoutes from '@/modules/managers/layersManagement/LayersManagement.routes.js'
 import timespanRoutes from '@/modules/managers/timespan/Timespan.routes.js'
 
@@ -62,6 +63,7 @@ const routes = baseRoutes
     .concat(schedulationAgendaRoutes)
     .concat(datasetManagementRoutes)
     .concat(themeManagementRoutes)
+    .concat(behaviouralModelLineage)
     .concat(layersManagementRoutes)
     .concat(timespanRoutes)
 

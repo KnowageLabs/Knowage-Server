@@ -1,5 +1,5 @@
 <template>
-    <Dialog :contentStyle="lovsManagementTestDialogDescriptor.dialog.style" :header="$t('managers.lovsManagement.test')" :visible="visible" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :header="$t('managers.lovsManagement.test')" :visible="visible" :modal="true" class="testLovDialog p-fluid kn-dialog--toolbar--primary" :closable="false">
         <div class="p-fluid p-m-4">
             <div>
                 <span>
@@ -11,7 +11,7 @@
         <LovsManagementSimpleDatatable v-if="treeListTypeModel.LOVTYPE === 'simple'" :tableData="model" :treeListTypeModel="treeListTypeModel" @modelChanged="onModelChange($event)"></LovsManagementSimpleDatatable>
         <LovsManagementTree v-else :listData="model" :treeModel="treeModel" @modelChanged="onTreeModelChange($event)"></LovsManagementTree>
         <template #footer>
-            <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
+            <Button class="kn-button kn-button--secondary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
             <Button class="kn-button kn-button--primary" @click="onSave" :disabled="buttonDisabled"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
@@ -124,6 +124,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.testLovDialog {
+    width: 960px;
+}
 .full-screen-dialog.p-dialog {
     max-height: 100%;
 }

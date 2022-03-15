@@ -22,10 +22,16 @@
                 <div v-for="(qbeParameter, index) in qbeParameters" :key="index">
                     <div class="p-field p-m-4">
                         <div class="p-d-flex">
-                            <label class="kn-material-input-label">{{ qbeParameter.name }}</label>
+                            <label class="kn-material-input-label">{{ qbeParameter.name + ' *' }} </label>
                             <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="qbeParameter.value = qbeParameter.defaultValue"></i>
                         </div>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="qbeParameter.value" />
+                        <InputText
+                            class="kn-material-input p-inputtext-sm"
+                            v-model="qbeParameter.value"
+                            :class="{
+                                'p-invalid': !qbeParameter.value
+                            }"
+                        />
                     </div>
                 </div>
             </template>
@@ -279,9 +285,15 @@ export default defineComponent({
         },
         resetParameterValue(parameter: any) {
             if (!parameter.driverDefaultValue) {
-                parameter.parameterValue[0] = { value: '', description: '' }
+                if (parameter.multivalue) {
+                    parameter.parameterValue = []
+                    this.selectedParameterCheckbox[parameter.id] = []
+                } else {
+                    parameter.parameterValue[0] = { value: '', description: '' }
+                }
                 return
             }
+
             const valueColumn = parameter.metadata.valueColumn
             const descriptionColumn = parameter.metadata.descriptionColumn
             let valueIndex = null as any
@@ -303,7 +315,9 @@ export default defineComponent({
                     }
                 }
             } else if (parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true' && parameter.multivalue) {
-                parameter.parameterValue = [...parameter.driverDefaultValue]
+                parameter.parameterValue = parameter.driverDefaultValue?.map((el: { value: string; desc: string }) => {
+                    return { value: el.value, description: el.desc }
+                })
             } else if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'LOOKUP') && parameter.showOnPanel === 'true' && !parameter.multivalue) {
                 parameter.parameterValue[0] = { value: parameter.driverDefaultValue[0][valueIndex], description: parameter.driverDefaultValue[0][descriptionIndex] }
             } else if (parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true' && parameter.multivalue) {
@@ -316,9 +330,11 @@ export default defineComponent({
                 }
                 parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value ?? parameter.driverDefaultValue[0][valueIndex]
             }
+            this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
         },
         resetAllParameters() {
             this.parameters.filterStatus.forEach((el: any) => this.resetParameterValue(el))
+            this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
         },
         toggle(event: Event) {
             this.createMenuItems()
@@ -330,6 +346,14 @@ export default defineComponent({
             this.executeMenuItems.push({ label: this.$t('common.exportCSV'), command: () => this.$emit('exportCSV') })
         },
         requiredFiledMissing() {
+            if (this.mode === 'qbeView' || this.mode === 'workspaceView') {
+                for (let i = 0; i < this.qbeParameters.length; i++) {
+                    if (!this.qbeParameters[i].value) {
+                        return true
+                    }
+                }
+            }
+
             for (let i = 0; i < this.parameters.filterStatus.length; i++) {
                 const parameter = this.parameters.filterStatus[i]
                 if (parameter.mandatory && parameter.showOnPanel == 'true') {
