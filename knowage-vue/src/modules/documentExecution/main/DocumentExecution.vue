@@ -149,7 +149,8 @@ export default defineComponent({
             userRole: null,
             loading: false,
             olapDesignerMode: false,
-            sessionEnabled: false
+            sessionEnabled: false,
+            dateFormat: '' as string
         }
     },
     async activated() {
@@ -801,7 +802,7 @@ export default defineComponent({
             if (index !== -1) this.schedulations.splice(index, 1)
         },
         getFormattedDate(date: any) {
-            return moment(date).format('DDMMYYYY')
+            return moment(date).format(this.dateFormat)
         },
         onBreadcrumbClick(item: any) {
             this.document = item.document
@@ -929,7 +930,9 @@ export default defineComponent({
         async loadUserConfig() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
                 if (response.data) {
+                    console.log('RESPONSE DATA: ', response.data)
                     this.sessionEnabled = response.data['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
+                    this.dateFormat = response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === 'dd/MM/yyyy' ? 'DD/MM/YYYY' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
                 }
             })
         },
