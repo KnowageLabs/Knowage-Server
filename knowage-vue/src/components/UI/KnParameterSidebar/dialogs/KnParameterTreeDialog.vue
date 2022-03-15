@@ -135,7 +135,7 @@ export default defineComponent({
                 data: { value: el.data, description: el.label },
                 style: this.knParameterTreeDialogDescriptor.node.style,
                 leaf: el.leaf,
-                selectable: el.leaf,
+                selectable: true,
                 parent: parent,
                 icon: el.leaf ? 'pi pi-file' : 'pi pi-folder'
             }
