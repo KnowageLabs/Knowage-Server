@@ -3,11 +3,11 @@
         <Toolbar id="document-detail-toolbar" class="kn-toolbar kn-toolbar--secondary">
             <template #start>
                 <div id="document-icons-container" class="p-d-flex p-flex-row p-jc-around ">
-                    <i class="fa fa-play-circle document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.executeDocument')" @click="executeDocument" />
+                    <i class="fa fa-play-circle document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.executeDocument')" @click="executeDocument" v-if="user?.functionalities.includes('DocumentUserManagement')" />
                     <template v-if="canEditDocument">
                         <i class="pi pi-pencil document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.editDocument')" @click="$emit('showDocumentDetails', document)" />
                         <i class="far fa-copy document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.cloneDocument')" @click="cloneDocumentConfirm" />
-                        <i class="far fa-trash-alt document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.deleteDocument')" @click="deleteDocumentConfirm" />
+                        <i class="far fa-trash-alt document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.deleteDocument')" @click="deleteDocumentConfirm" v-if="user?.functionalities.includes('DocumentDeleteManagement')" />
                     </template>
                     <i v-if="user?.functionalities.includes('DocumentMoveUpState') && document.stateCode === 'TEST'" class="fa fa-arrow-up document-pointer p-mx-4" v-tooltip.left="$t('documentBrowser.moveUpDocumentState')" @click="changeStateDocumentConfirm('UP')" />
                     <i
@@ -91,7 +91,11 @@ export default defineComponent({
             return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
         },
         canEditDocument(): boolean {
-            return this.user?.functionalities.includes('DocumentManagement')
+            if (this.document.stateCode === 'TEST') return this.user?.functionalities.includes('DocumentTestManagement')
+            if (this.document.stateCode === 'DEV') return this.user?.functionalities.includes('DocumentDevManagement')
+            if (this.document.stateCode === 'REL') return this.user?.functionalities.includes('DocumentAdminManagement')
+            if (this.document.stateCode === 'SUSPENDED') return this.user?.functionalities.includes('DocumentAdminManagement')
+            return false
         }
     },
     created() {
