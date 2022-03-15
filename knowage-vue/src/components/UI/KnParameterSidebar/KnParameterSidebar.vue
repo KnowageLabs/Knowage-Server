@@ -291,6 +291,7 @@ export default defineComponent({
                 } else {
                     parameter.parameterValue[0] = { value: '', description: '' }
                 }
+                this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
                 return
             }
 
