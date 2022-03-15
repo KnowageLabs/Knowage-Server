@@ -20,7 +20,8 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 			"SbiSolrDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.solr'),
 			"SbiSPARQLDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.sparql'),
 			"SbiRESTDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.rest'),
-			"SbiPythonDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.python')
+			"SbiPythonDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.python'),
+			"SbiPreparedDataSet": sbiModule_translate.load('kn.cockpit.dataset.type.prepared')
 	}
 
 	this.isDatasetFromTemplateLoaded = false;
