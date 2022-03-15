@@ -285,9 +285,16 @@ export default defineComponent({
         },
         resetParameterValue(parameter: any) {
             if (!parameter.driverDefaultValue) {
-                parameter.parameterValue[0] = { value: '', description: '' }
+                if (parameter.multivalue) {
+                    parameter.parameterValue = []
+                    this.selectedParameterCheckbox[parameter.id] = []
+                } else {
+                    parameter.parameterValue[0] = { value: '', description: '' }
+                }
+                this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
                 return
             }
+
             const valueColumn = parameter.metadata.valueColumn
             const descriptionColumn = parameter.metadata.descriptionColumn
             let valueIndex = null as any
@@ -309,7 +316,9 @@ export default defineComponent({
                     }
                 }
             } else if (parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true' && parameter.multivalue) {
-                parameter.parameterValue = [...parameter.driverDefaultValue]
+                parameter.parameterValue = parameter.driverDefaultValue?.map((el: { value: string; desc: string }) => {
+                    return { value: el.value, description: el.desc }
+                })
             } else if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'LOOKUP') && parameter.showOnPanel === 'true' && !parameter.multivalue) {
                 parameter.parameterValue[0] = { value: parameter.driverDefaultValue[0][valueIndex], description: parameter.driverDefaultValue[0][descriptionIndex] }
             } else if (parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true' && parameter.multivalue) {
@@ -322,9 +331,11 @@ export default defineComponent({
                 }
                 parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value ?? parameter.driverDefaultValue[0][valueIndex]
             }
+            this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
         },
         resetAllParameters() {
             this.parameters.filterStatus.forEach((el: any) => this.resetParameterValue(el))
+            this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
         },
         toggle(event: Event) {
             this.createMenuItems()

@@ -1,13 +1,11 @@
 <template>
-    <div>
-        <Tree class="documents-tree" :value="nodes" :expandedKeys="expandedKeys" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)">
-            <template #default="slotProps">
-                <i class="p-mr-2" :class="slotProps.node.customIcon"></i>
-                <Checkbox v-if="slotProps.node.selectable" name="folders" v-model="selectedFolders" :value="slotProps.node.path" @change="emitSelectedFolders" />
-                <b>{{ slotProps.node.label }}</b>
-            </template>
-        </Tree>
-    </div>
+    <Tree class="documents-tree" :value="nodes" :expandedKeys="expandedKeys" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)">
+        <template #default="slotProps">
+            <i class="p-mr-2" :class="slotProps.node.customIcon"></i>
+            <Checkbox v-if="slotProps.node.selectable" name="folders" v-model="selectedFolders" :value="slotProps.node.path" @change="emitSelectedFolders" />
+            <b>{{ slotProps.node.label }}</b>
+        </template>
+    </Tree>
 </template>
 
 <script lang="ts">
