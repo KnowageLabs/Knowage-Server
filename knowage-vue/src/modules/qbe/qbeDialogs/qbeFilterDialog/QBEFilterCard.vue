@@ -1,9 +1,11 @@
 <template>
     <div v-if="filter">
         <div class="p-grid p-m-2">
-            <div class="p-col-4">
-                <label class="kn-material-input-label"> {{ $t('common.field') }} </label>
-                <InputText class="kn-material-input" v-model="filter.leftOperandDescription" :disabled="true" />
+            <div class="p-col-4 p-d-flex p-flex-row p-ai-center">
+                <div class="kn-flex">
+                    <label class="kn-material-input-label"> {{ $t('common.field') }} </label>
+                    <InputText class="kn-material-input" v-model="filter.leftOperandDescription" :disabled="true" />
+                </div>
             </div>
 
             <div class="p-col-2 p-d-flex p-flex-row p-ai-center">
@@ -53,7 +55,7 @@
                         </div>
                         <div v-else-if="filter.rightType === 'manual' && ['IN', 'NOT IN'].includes(filter.operator) && field.dataType !== 'java.sql.Timestamp' && field.dataType !== 'java.sql.Date'" class="kn-width-full">
                             <label class="kn-material-input-label"> {{ $t('qbe.filters.enterValue') }} </label>
-                            <Chips v-model="multiManualValues" @add="onManualMultivalueChanged" @remove="onManualMultivalueChanged" :addOnBlur="true" />
+                            <Chips class="kn-material-input" v-model="multiManualValues" @add="onManualMultivalueChanged" @remove="onManualMultivalueChanged" :addOnBlur="true" />
                         </div>
 
                         <InputText v-else-if="filter.rightType === 'manual' && field.dataType !== 'java.sql.Timestamp' && field.dataType !== 'java.sql.Date'" class="kn-material-input" v-model="filter.rightOperandDescription" @input="onManualValueChange" />
