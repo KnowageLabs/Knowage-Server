@@ -330,9 +330,11 @@ export default defineComponent({
                 }
                 parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value ?? parameter.driverDefaultValue[0][valueIndex]
             }
+            this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
         },
         resetAllParameters() {
             this.parameters.filterStatus.forEach((el: any) => this.resetParameterValue(el))
+            this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
         },
         toggle(event: Event) {
             this.createMenuItems()
