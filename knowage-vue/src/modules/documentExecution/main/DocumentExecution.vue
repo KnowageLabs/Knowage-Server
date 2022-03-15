@@ -491,6 +491,7 @@ export default defineComponent({
 
                     if (key === tempParam.urlName) {
                         tempParam.parameterValue[0].value = this.document.navigationParams[key]
+                        if (this.document.navigationParams[key + '_field_visible_description']) tempParam.parameterValue[0].description = this.document.navigationParams[key + '_field_visible_description']
                     }
                 }
             })
