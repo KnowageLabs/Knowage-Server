@@ -13,7 +13,7 @@
             </Toolbar>
         </template>
         <KnOverlaySpinnerPanel :visibility="loading" />
-        <div v-if="!loading && !qbePreviewDialogVisible" class="kn-relative p-d-flex p-flex-row kn-height-full kn-width-full">
+        <div v-if="!qbePreviewDialogVisible" class="kn-relative p-d-flex p-flex-row kn-height-full kn-width-full">
             <div v-if="parameterSidebarVisible" :style="qbeDescriptor.style.backdrop" @click="parameterSidebarVisible = false"></div>
             <div v-show="showEntitiesLists && qbeLoaded" :style="qbeDescriptor.style.entitiesLists">
                 <div class="p-d-flex p-flex-column kn-flex kn-overflow-hidden">
@@ -386,7 +386,7 @@ export default defineComponent({
         async updatePagination(lazyParams: any) {
             this.pagination.start = lazyParams.paginationStart
             this.pagination.limit = lazyParams.paginationLimit
-            await this.executeQBEQuery((this.qbePreviewDialogVisible = true))
+            await this.executeQBEQuery(false)
         },
         formatQbeMeta() {
             const meta = [] as any[]
@@ -441,6 +441,7 @@ export default defineComponent({
         onAdvancedFiltersSave(expression: any) {
             this.selectedQuery.expression = expression
             this.advancedFilterDialogVisible = false
+            this.updateSmartView()
         },
         showMenu(event) {
             this.createMenuItems()

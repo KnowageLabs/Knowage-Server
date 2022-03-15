@@ -126,6 +126,9 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 						        .hideDelay(3000));
 						cockpitModule_properties.DOCUMENT_ID=response.data.id;
 						window.parent.postMessage(cockpitModule_properties);
+						if(window.parent.document.getElementById('_KNOWAGE_VUE')){
+							window.parent.postMessage({"type":"saveCockpit","model":cockpitModule_properties}, '*');
+						}
 					},
 					function(response){
 						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.error"));
