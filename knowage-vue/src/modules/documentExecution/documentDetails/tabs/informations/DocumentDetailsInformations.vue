@@ -6,7 +6,7 @@
                     {{ $t('documentExecution.documentDetails.info.infoTitle') }}
                 </template>
                 <template #end>
-                    <Button :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-plain" @click="openDesignerConfirm" />
+                    <Button v-if="designerButtonVisible" :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-plain" @click="openDesignerConfirm" />
                 </template>
             </Toolbar>
             <div id="informations-content" class="kn-flex kn-relative">
@@ -320,6 +320,9 @@ export default defineComponent({
         },
         getImageUrl(): string {
             return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
+        },
+        designerButtonVisible(): boolean {
+            return this.document.typeCode == 'OLAP' || this.document.typeCode == 'KPI' || this.document.engine == 'knowagegisengine'
         }
     },
     data() {
