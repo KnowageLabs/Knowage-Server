@@ -285,9 +285,15 @@ export default defineComponent({
         },
         resetParameterValue(parameter: any) {
             if (!parameter.driverDefaultValue) {
-                parameter.parameterValue[0] = { value: '', description: '' }
+                if (parameter.multivalue) {
+                    parameter.parameterValue = []
+                    this.selectedParameterCheckbox[parameter.id] = []
+                } else {
+                    parameter.parameterValue[0] = { value: '', description: '' }
+                }
                 return
             }
+
             const valueColumn = parameter.metadata.valueColumn
             const descriptionColumn = parameter.metadata.descriptionColumn
             let valueIndex = null as any

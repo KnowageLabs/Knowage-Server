@@ -429,7 +429,7 @@ export default defineComponent({
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.document.label, role: this.userRole, parameters: this.document.navigationParams ?? {} })
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
                 .catch((error: any) => {
-                    if (error.response.status === 500) {
+                    if (error.response?.status === 500) {
                         this.$store.commit('setError', {
                             title: this.$t('common.error.generic'),
                             msg: this.$t('documentExecution.main.userRoleError')
@@ -930,7 +930,6 @@ export default defineComponent({
         async loadUserConfig() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
                 if (response.data) {
-                    console.log('RESPONSE DATA: ', response.data)
                     this.sessionEnabled = response.data['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
                     this.dateFormat = response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === 'dd/MM/yyyy' ? 'DD/MM/YYYY' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
                 }
