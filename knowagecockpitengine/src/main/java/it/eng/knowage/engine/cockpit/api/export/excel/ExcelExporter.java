@@ -128,8 +128,14 @@ public class ExcelExporter {
 	// leverages on an external script that uses chromium to open the cockpit and click on the export button
 	public byte[] getBinaryData(String documentLabel) throws IOException, InterruptedException, EMFUserError {
 		try {
+			logger.debug("Creating temp dir...");
 			final Path outputDir = Files.createTempDirectory("knowage-xls-exporter-");
-
+			logger.debug("Created temp dir: " + outputDir);
+			if (Files.exists(outputDir) && Files.isDirectory(outputDir)) {
+				logger.debug("Temp dir exists");
+			} else {
+				logger.debug("Temp dir DOES NOT exist");
+			}
 			String encodedUserId = Base64.encodeBase64String(userUniqueIdentifier.getBytes("UTF-8"));
 
 			// Script
