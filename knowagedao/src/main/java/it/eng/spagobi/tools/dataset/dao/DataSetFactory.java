@@ -473,8 +473,7 @@ public class DataSetFactory {
 				if (userProfile != null)
 					dataSourceDao.setUserProfile(userProfile);
 
-				String dataSourceName = jsonConf.getString(DataSetConstants.DATA_SOURCE);
-				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(dataSourceName);
+				IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceUseForDataprep();
 				((PreparedDataSet) ds).setDataSource(dataSource);
 				((PreparedDataSet) ds).setTableName(jsonConf.getString(DataSetConstants.TABLE_NAME));
 				((PreparedDataSet) ds).setDataPreparationInstance(jsonConf.getString(DataSetConstants.DATA_PREPARATION_INSTANCE_ID));

@@ -121,7 +121,7 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 		while (iterator.hasNext()) {
 			Domain domain = iterator.next();
 			String valueName = domain.getValueName();
-			if (!ProductProfiler.canCreateDataset(valueName)) {
+			if (!ProductProfiler.canCreateDataset(valueName, getUserProfile())) {
 				iterator.remove();
 			}
 		}

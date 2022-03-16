@@ -7,10 +7,11 @@
         <template #end>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
-            <KnFabButton icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
+            <KnFabButton icon="fas fa-plus" data-test="new-folder-button" @click="showDataSetCatalog" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
+    <KnDatasetList v-model:visibility="showDatasetList" :items="availableDatasets" @selected="newDataPrep" @save="goToDataPrep" @cancel="hideDataSetCatalog" />
 
     <div class="p-d-flex p-flex-row p-ai-center">
         <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
@@ -97,6 +98,7 @@ import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
 import DataTable from 'primevue/datatable'
+import KnDatasetList from '@/components/functionalities/KnDatasetList/KnDatasetList.vue'
 import Column from 'primevue/column'
 import Chip from 'primevue/chip'
 import Menu from 'primevue/contextmenu'
@@ -108,7 +110,7 @@ import WorkspaceWarningDialog from '@/modules/workspace/genericComponents/Worksp
 import { AxiosResponse } from 'axios'
 
 export default defineComponent({
-    components: { DataTable, Column, Chip, DetailSidebar, WorkspaceCard, KnFabButton, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataPreviewDialog, Message, Menu },
+    components: { DataTable, KnDatasetList, Column, Chip, DetailSidebar, WorkspaceCard, KnFabButton, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataPreviewDialog, Message, Menu },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -132,10 +134,13 @@ export default defineComponent({
             mainDescriptor,
             loading: false,
             showDetailSidebar: false,
+            showDatasetList: false as Boolean,
             showDatasetDialog: false,
             datasetList: [] as Array<IDataset>,
             preparedDatasets: [] as any,
+            availableDatasets: [] as any,
             selectedDataset: {} as any,
+            selectedDsForDataPrep: {} as any,
             menuButtons: [] as any,
             creationMenuButtons: [] as any,
             filters: {
@@ -167,15 +172,30 @@ export default defineComponent({
         toggleDisplayView() {
             this.$emit('toggleDisplayView')
         },
+        newDataPrep(dataset) {
+            this.selectedDsForDataPrep = dataset
+        },
         showSidebar(clickedDataset) {
             this.selectedDataset = clickedDataset
             this.showDetailSidebar = true
         },
-        showCreationMenu(event) {
-            this.createCreationMenuButtons()
-            // eslint-disable-next-line
-            // @ts-ignore
-            this.$refs.creationMenu.toggle(event)
+        hideDataSetCatalog() {
+            this.showDatasetList = false
+            this.selectedDsForDataPrep = {}
+        },
+        goToDataPrep() {
+            this.$router.push({ name: 'data-preparation', params: { id: this.selectedDsForDataPrep.label } })
+        },
+        showDataSetCatalog() {
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/for-dataprep`).then(
+                (response: AxiosResponse<any>) => {
+                    this.availableDatasets = [...response.data.root]
+                    this.showDatasetList = true
+                },
+                () => {
+                    this.$store.commit('setError', { title: 'Error', msg: 'Cannot load dataset list' })
+                }
+            )
         },
         showMenu(event, clickedDocument) {
             this.selectedDataset = clickedDocument

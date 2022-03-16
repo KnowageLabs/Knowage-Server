@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.config.bo.Engine;
 
 public class ProductProfiler {
@@ -80,14 +81,14 @@ public class ProductProfiler {
 		}
 	}
 
-	public static boolean canCreateDataset(String type) {
+	public static boolean canCreateDataset(String type, UserProfile profile) {
 		if (isCommunity) {
 			return true;
 		} else {
 			boolean toReturn = false;
 			try {
-				Method canCreateDatasetMethod = productProfilerEE.getMethod("canCreateDataset", String.class);
-				toReturn = (boolean) canCreateDatasetMethod.invoke(productProfilerEE, type);
+				Method canCreateDatasetMethod = productProfilerEE.getMethod("canCreateDataset", String.class, UserProfile.class);
+				toReturn = (boolean) canCreateDatasetMethod.invoke(productProfilerEE, type, profile);
 			} catch (Exception e) {
 				logger.error("Error while filtering datasets by product: ", e);
 			}
