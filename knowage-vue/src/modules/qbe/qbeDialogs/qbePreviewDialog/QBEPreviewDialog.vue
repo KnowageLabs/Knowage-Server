@@ -92,14 +92,12 @@ export default defineComponent({
             this.columns = []
             for (let i = 1; i < data.metaData?.fields?.length; i++) {
                 const tempColumn = data.metaData?.fields[i]
-                if (['timestamp', 'time', 'date'].includes(tempColumn.type)) {
-                    console.log('TIME COLUMN FOUND!: ', tempColumn)
+                if (['timestamp', 'date'].includes(tempColumn.type)) {
                     const field = this.findField(tempColumn) as any
                     if (field) tempColumn.metawebDateFormat = field.format
                 }
                 this.columns.push(data.metaData?.fields[i])
             }
-            console.log('COLUMNs: ', this.columns)
         },
         findField(column: any) {
             if (!this.entities) return
@@ -132,17 +130,12 @@ export default defineComponent({
             this.lazyParams = {}
         },
         getFormattedDate(date: any, column: any) {
-            console.log('DATE: ', date)
-            console.log('METAWEB FORMAT: ', column.metawebDateFormat)
-            console.log('INPUT FORMAT: ', column.dateFormat)
+            const inputFormat = column.type === 'timestamp' ? 'DD/MM/YYYY HH:mm:ss.SSS' : 'DD/MM/YYYY'
             let format = undefined as string | undefined
             if (QBEDescriptor.admissibleDateFormats.includes(column.metawebDateFormat)) {
-                console.log('ENTERED 1!')
                 format = column.metawebDateFormat
-            } else {
-                console.log('ENTERED 2!')
             }
-            return formatDate(date, format, column.dateFormat)
+            return formatDate(date, format, inputFormat)
         }
     }
 })
