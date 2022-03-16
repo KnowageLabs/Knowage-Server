@@ -493,9 +493,16 @@ export default defineComponent({
                     if (key === tempParam.urlName) {
                         tempParam.parameterValue[0].value = this.document.navigationParams[key]
                         if (this.document.navigationParams[key + '_field_visible_description']) tempParam.parameterValue[0].description = this.document.navigationParams[key + '_field_visible_description']
+                        if (tempParam.selectionType === 'COMBOBOX') this.setCrossNavigationComboParameterDescription(tempParam)
                     }
                 }
             })
+        },
+        setCrossNavigationComboParameterDescription(tempParam: any) {
+            if (tempParam.parameterValue[0]) {
+                const index = tempParam.data.findIndex((option: any) => option.value === tempParam.parameterValue[0].value)
+                if (index !== -1) tempParam.parameterValue[0].description = tempParam.data[index].description
+            }
         },
         formatParameterDataOptions(parameter: iParameter, data: any) {
             const valueColumn = parameter.metadata.valueColumn
