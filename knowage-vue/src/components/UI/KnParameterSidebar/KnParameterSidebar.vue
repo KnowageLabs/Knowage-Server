@@ -178,10 +178,12 @@ import KnParameterSavedParametersDialog from './dialogs/KnParameterSavedParamete
 import Menu from 'primevue/menu'
 import MultiSelect from 'primevue/multiselect'
 import RadioButton from 'primevue/radiobutton'
+import moment from 'moment'
+
 export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton },
-    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String }, propMode: { type: String }, propQBEParameters: { type: Array } },
+    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String } },
     emits: ['execute', 'exportCSV', 'roleChanged'],
     data() {
         return {
@@ -319,12 +321,18 @@ export default defineComponent({
                 parameter.parameterValue = parameter.driverDefaultValue?.map((el: { value: string; desc: string }) => {
                     return { value: el.value, description: el.desc }
                 })
+            } else if (parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true' && !parameter.multivalue) {
+                parameter.parameterValue[0] = { value: parameter.driverDefaultValue[0].value, description: parameter.driverDefaultValue[0].desc }
             } else if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'LOOKUP') && parameter.showOnPanel === 'true' && !parameter.multivalue) {
                 parameter.parameterValue[0] = { value: parameter.driverDefaultValue[0][valueIndex], description: parameter.driverDefaultValue[0][descriptionIndex] }
             } else if (parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true' && parameter.multivalue) {
                 parameter.parameterValue = parameter.driverDefaultValue.map((el: any) => {
                     return { value: valueIndex ? el[valueIndex] : '', description: descriptionIndex ? el[descriptionIndex] : '' }
                 })
+            } else if (parameter.type === 'DATE' && parameter.showOnPanel === 'true') {
+                if (parameter.driverDefaultValue[0].value?.split('#')[0]) {
+                    parameter.parameterValue[0].value = this.getUserConfigFormattedDate(parameter.driverDefaultValue[0].description?.split('#')[0])
+                }
             } else {
                 if (!parameter.parameterValue[0]) {
                     parameter.parameterValue[0] = { value: '', description: '' }
@@ -336,6 +344,9 @@ export default defineComponent({
         resetAllParameters() {
             this.parameters.filterStatus.forEach((el: any) => this.resetParameterValue(el))
             this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
+        },
+        getUserConfigFormattedDate(date: any) {
+            return moment(date, 'YYYY-MM-DD').format(this.dateFormat)
         },
         toggle(event: Event) {
             this.createMenuItems()

@@ -58,6 +58,7 @@
                 :propDocument="document"
                 :userRole="userRole"
                 :sessionEnabled="sessionEnabled"
+                :dateFormat="dateFormat"
                 @execute="onExecute"
                 @exportCSV="onExportCSV"
                 @roleChanged="onRoleChange"
