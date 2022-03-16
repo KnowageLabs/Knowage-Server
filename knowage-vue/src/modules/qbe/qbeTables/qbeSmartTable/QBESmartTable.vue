@@ -50,6 +50,8 @@
             </template>
             <template #body="slotProps">
                 <span v-if="typeof slotProps.data[`column_${index + 1}`] === 'number' && slotProps.data[`column_${index + 1}`]"> {{ getFormattedNumber(slotProps.data[`column_${index + 1}`]) }}</span>
+                <span v-else-if="previewData?.metaData?.fields[index + 1]?.type === 'date'">{{ getFormattedDate(slotProps.data[`column_${index + 1}`], previewData.metaData.fields[index + 1].metawebDateFormat, 'DD/MM/YYYY') }} </span>
+                <span v-else-if="previewData?.metaData?.fields[index + 1]?.type === 'timestamp'">{{ getFormattedDate(slotProps.data[`column_${index + 1}`], previewData.metaData.fields[index + 1].metawebDateFormat, 'DD/MM/YYYY HH:mm:ss.SSS') }} </span>
                 <span v-else v-tooltip.bottom="slotProps.data[`column_${index + 1}`]">{{ slotProps.data[`column_${index + 1}`] }}</span>
             </template>
         </Column>
@@ -88,6 +90,7 @@ import Menu from 'primevue/contextmenu'
 import Dialog from 'primevue/dialog'
 import qbeSimpleTableDescriptor from './QBESmartTableDescriptor.json'
 import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
+import { formatDate } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     name: 'qbe-simple-table',
@@ -202,6 +205,9 @@ export default defineComponent({
         },
         getFormattedNumber(number: number, precision?: number, format?: any) {
             return formatNumberWithLocale(number, precision, format)
+        },
+        getFormattedDate(date: any, output: any, input: any) {
+            return formatDate(date, output, input)
         }
     }
 })
