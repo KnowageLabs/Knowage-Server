@@ -205,7 +205,8 @@ export default defineComponent({
             updateVisualDependency,
             mode: 'execution',
             qbeParameters: [] as any,
-            primary: true
+            primary: true,
+            userDateFormat: '' as string
         }
     },
     watch: {
@@ -225,6 +226,9 @@ export default defineComponent({
         },
         propQBEParameters() {
             this.loadQBEParameters()
+        },
+        dateFormat() {
+            this.userDateFormat = this.dateFormat as string
         }
     },
     computed: {
@@ -243,6 +247,7 @@ export default defineComponent({
         this.role = this.userRole as string
         this.loadDocument()
         this.loadParameters()
+        this.userDateFormat = this.dateFormat as string
     },
     methods: {
         applyFieldClass(cssClass: string): string {
@@ -330,8 +335,8 @@ export default defineComponent({
                     return { value: valueIndex ? el[valueIndex] : '', description: descriptionIndex ? el[descriptionIndex] : '' }
                 })
             } else if (parameter.type === 'DATE' && parameter.showOnPanel === 'true') {
-                if (parameter.driverDefaultValue[0].value?.split('#')[0]) {
-                    parameter.parameterValue[0].value = this.getUserConfigFormattedDate(parameter.driverDefaultValue[0].description?.split('#')[0])
+                if (parameter.driverDefaultValue[0].desc?.split('#')[0]) {
+                    parameter.parameterValue[0].value = this.getUserConfigFormattedDate(parameter.driverDefaultValue[0].desc?.split('#')[0])
                 }
             } else {
                 if (!parameter.parameterValue[0]) {
@@ -346,7 +351,7 @@ export default defineComponent({
             this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
         },
         getUserConfigFormattedDate(date: any) {
-            return moment(date, 'YYYY-MM-DD').format(this.dateFormat)
+            return moment(date).format(this.userDateFormat)
         },
         toggle(event: Event) {
             this.createMenuItems()
