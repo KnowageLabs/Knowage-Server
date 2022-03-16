@@ -39,7 +39,7 @@
             <div v-for="(parameter, index) in parameters.filterStatus" :key="index">
                 <div class="p-field p-m-1 p-p-2" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
-                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }" :data-test="'parameter-input-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
+                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters }" :data-test="'parameter-input-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-input-clear-' + parameter.id"></i>
                     </div>
                     <InputText
@@ -56,7 +56,7 @@
                 </div>
                 <div class="p-field p-m-1 p-p-2" v-if="parameter.type === 'DATE' && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
-                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }" :data-test="'parameter-date-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
+                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters }" :data-test="'parameter-date-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-date-clear-' + parameter.id"></i>
                     </div>
                     <Calendar
@@ -78,7 +78,7 @@
                             class="kn-material-input-label"
                             :class="{
                                 'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length === 0)),
-                                'p-text-italic': parameter.dependsOnParameters
+                                'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
                             }"
                             :data-test="'parameter-checkbox-label-' + parameter.id"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
@@ -99,7 +99,7 @@
                             class="kn-material-input-label"
                             :class="{
                                 'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
-                                'p-text-italic': parameter.dependsOnParameters
+                                'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
@@ -114,7 +114,7 @@
                             class="kn-material-input-label"
                             :class="{
                                 'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
-                                'p-text-italic': parameter.dependsOnParameters
+                                'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
@@ -133,7 +133,7 @@
                             class="kn-material-input-label"
                             :class="{
                                 'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
-                                'p-text-italic': parameter.dependsOnParameters
+                                'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
