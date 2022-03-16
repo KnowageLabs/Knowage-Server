@@ -1,5 +1,4 @@
 <template>
-    <Button class="kn-button kn-button--primary" @click="logStuff">log stuff</Button>
     <DataTable
         class="qbe-smart-table"
         v-if="previewData != null"
@@ -206,10 +205,6 @@ export default defineComponent({
         },
         getFormattedNumber(number: number, precision?: number, format?: any) {
             return formatNumberWithLocale(number, precision, format)
-        },
-        logStuff() {
-            console.log('filteredVisible ---------------------------------', this.filteredVisibleFields)
-            console.log('previewData ---------------------------------', this.previewData)
         },
         getFormattedDate(date: any, output: any, input: any) {
             return formatDate(date, output, input)
