@@ -38,7 +38,7 @@
             </template>
             <Column class="kn-truncated" v-for="col of columns" :field="col.dataIndex" :header="col.header" :key="col.field" :sortable="true">
                 <template #body="slotProps">
-                    {{ col.type === 'date' ? getFormattedDate(slotProps.data[col.dataIndex], col.dateFormat) : slotProps.data[col.dataIndex] }}
+                    {{ col.metawebDateFormat ? getFormattedDate(slotProps.data[col.dataIndex], col) : slotProps.data[col.dataIndex] }}
                 </template>
             </Column>
         </DataTable>
@@ -51,15 +51,17 @@ import { formatDate } from '@/helpers/commons/localeHelper'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import QBEPreviewDialogDescriptor from './QBEPreviewDialogDescriptor.json'
+import QBEDescriptor from '../../QBEDescriptor.json'
 
 export default defineComponent({
     name: 'qbe-preview-dialog',
     components: { Column, DataTable },
-    props: { id: { type: String }, queryPreviewData: { type: Object }, pagination: { type: Object } },
+    props: { id: { type: String }, queryPreviewData: { type: Object }, pagination: { type: Object }, entities: { type: Array } },
     emits: ['close', 'pageChanged'],
     data() {
         return {
             QBEPreviewDialogDescriptor,
+            QBEDescriptor,
             columns: [] as any[],
             rows: [] as any[],
             lazyParams: {} as any,
@@ -89,8 +91,32 @@ export default defineComponent({
         setPreviewColumns(data: any) {
             this.columns = []
             for (let i = 1; i < data.metaData?.fields?.length; i++) {
+                const tempColumn = data.metaData?.fields[i]
+                if (['timestamp', 'time', 'date'].includes(tempColumn.type)) {
+                    console.log('TIME COLUMN FOUND!: ', tempColumn)
+                    const field = this.findField(tempColumn) as any
+                    if (field) tempColumn.metawebDateFormat = field.format
+                }
                 this.columns.push(data.metaData?.fields[i])
             }
+            console.log('COLUMNs: ', this.columns)
+        },
+        findField(column: any) {
+            if (!this.entities) return
+
+            let field = null
+
+            for (let i = 0; i < this.entities.length; i++) {
+                const tempEntity = this.entities[i] as any
+                for (let j = 0; j < tempEntity.children.length; j++) {
+                    if (tempEntity.children[j].attributes.field === column.header) {
+                        field = tempEntity.children[j]
+                        break
+                    }
+                }
+            }
+
+            return field
         },
         loadPagination() {
             this.lazyParams = this.pagination as any
@@ -105,8 +131,18 @@ export default defineComponent({
             this.first = 0
             this.lazyParams = {}
         },
-        getFormattedDate(date: any, format: any) {
-            return formatDate(date, format)
+        getFormattedDate(date: any, column: any) {
+            console.log('DATE: ', date)
+            console.log('METAWEB FORMAT: ', column.metawebDateFormat)
+            console.log('INPUT FORMAT: ', column.dateFormat)
+            let format = undefined as string | undefined
+            if (QBEDescriptor.admissibleDateFormats.includes(column.metawebDateFormat)) {
+                console.log('ENTERED 1!')
+                format = column.metawebDateFormat
+            } else {
+                console.log('ENTERED 2!')
+            }
+            return formatDate(date, format, column.dateFormat)
         }
     }
 })
