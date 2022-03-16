@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -66,7 +67,7 @@ public class AvroExportJob extends AbstractExportJob {
 
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
 	private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.S";
-	private static final int BIG_DECIMAL_PRECISION = 10;
+	private static final int BIG_DECIMAL_PRECISION = 38;
 	private static final int BIG_DECIMAL_SCALE = 6;
 
 	private IDataSet dataSet;
@@ -139,7 +140,7 @@ public class AvroExportJob extends AbstractExportJob {
 				value = timestampFormatter.format(value);
 			} else if (BigDecimal.class.isAssignableFrom(type)) {
 				BigDecimal bigDecimalValue = (BigDecimal) value;
-				value = bigDecimalValue.setScale(BIG_DECIMAL_SCALE);
+				value = bigDecimalValue.setScale(BIG_DECIMAL_SCALE, RoundingMode.CEILING);
 			} else if (Double.class.isAssignableFrom(type)) {
 				value = Double.valueOf(value.toString());
 			} else if (Integer.class.isAssignableFrom(type)) {
