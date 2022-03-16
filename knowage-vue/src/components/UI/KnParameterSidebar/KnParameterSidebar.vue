@@ -39,7 +39,7 @@
             <div v-for="(parameter, index) in parameters.filterStatus" :key="index">
                 <div class="p-field p-m-1 p-p-2" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
-                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }" :data-test="'parameter-input-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
+                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters }" :data-test="'parameter-input-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-input-clear-' + parameter.id"></i>
                     </div>
                     <InputText
@@ -56,7 +56,7 @@
                 </div>
                 <div class="p-field p-m-1 p-p-2" v-if="parameter.type === 'DATE' && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
                     <div class="p-d-flex">
-                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters }" :data-test="'parameter-date-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
+                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters }" :data-test="'parameter-date-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-date-clear-' + parameter.id"></i>
                     </div>
                     <Calendar
@@ -78,7 +78,7 @@
                             class="kn-material-input-label"
                             :class="{
                                 'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length === 0)),
-                                'p-text-italic': parameter.dependsOnParameters
+                                'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
                             }"
                             :data-test="'parameter-checkbox-label-' + parameter.id"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
@@ -99,7 +99,7 @@
                             class="kn-material-input-label"
                             :class="{
                                 'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
-                                'p-text-italic': parameter.dependsOnParameters
+                                'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
@@ -114,7 +114,7 @@
                             class="kn-material-input-label"
                             :class="{
                                 'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
-                                'p-text-italic': parameter.dependsOnParameters
+                                'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
@@ -133,7 +133,7 @@
                             class="kn-material-input-label"
                             :class="{
                                 'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
-                                'p-text-italic': parameter.dependsOnParameters
+                                'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
                         >
@@ -178,10 +178,12 @@ import KnParameterSavedParametersDialog from './dialogs/KnParameterSavedParamete
 import Menu from 'primevue/menu'
 import MultiSelect from 'primevue/multiselect'
 import RadioButton from 'primevue/radiobutton'
+import moment from 'moment'
+
 export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton },
-    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String }, propMode: { type: String }, propQBEParameters: { type: Array } },
+    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String } },
     emits: ['execute', 'exportCSV', 'roleChanged'],
     data() {
         return {
@@ -285,9 +287,16 @@ export default defineComponent({
         },
         resetParameterValue(parameter: any) {
             if (!parameter.driverDefaultValue) {
-                parameter.parameterValue[0] = { value: '', description: '' }
+                if (parameter.multivalue) {
+                    parameter.parameterValue = []
+                    this.selectedParameterCheckbox[parameter.id] = []
+                } else {
+                    parameter.parameterValue[0] = { value: '', description: '' }
+                }
+                this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
                 return
             }
+
             const valueColumn = parameter.metadata.valueColumn
             const descriptionColumn = parameter.metadata.descriptionColumn
             let valueIndex = null as any
@@ -309,22 +318,35 @@ export default defineComponent({
                     }
                 }
             } else if (parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true' && parameter.multivalue) {
-                parameter.parameterValue = [...parameter.driverDefaultValue]
+                parameter.parameterValue = parameter.driverDefaultValue?.map((el: { value: string; desc: string }) => {
+                    return { value: el.value, description: el.desc }
+                })
+            } else if (parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true' && !parameter.multivalue) {
+                parameter.parameterValue[0] = { value: parameter.driverDefaultValue[0].value, description: parameter.driverDefaultValue[0].desc }
             } else if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'LOOKUP') && parameter.showOnPanel === 'true' && !parameter.multivalue) {
                 parameter.parameterValue[0] = { value: parameter.driverDefaultValue[0][valueIndex], description: parameter.driverDefaultValue[0][descriptionIndex] }
             } else if (parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true' && parameter.multivalue) {
                 parameter.parameterValue = parameter.driverDefaultValue.map((el: any) => {
                     return { value: valueIndex ? el[valueIndex] : '', description: descriptionIndex ? el[descriptionIndex] : '' }
                 })
+            } else if (parameter.type === 'DATE' && parameter.showOnPanel === 'true') {
+                if (parameter.driverDefaultValue[0].value?.split('#')[0]) {
+                    parameter.parameterValue[0].value = this.getUserConfigFormattedDate(parameter.driverDefaultValue[0].description?.split('#')[0])
+                }
             } else {
                 if (!parameter.parameterValue[0]) {
                     parameter.parameterValue[0] = { value: '', description: '' }
                 }
                 parameter.parameterValue[0].value = parameter.driverDefaultValue[0].value ?? parameter.driverDefaultValue[0][valueIndex]
             }
+            this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
         },
         resetAllParameters() {
             this.parameters.filterStatus.forEach((el: any) => this.resetParameterValue(el))
+            this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
+        },
+        getUserConfigFormattedDate(date: any) {
+            return moment(date, 'YYYY-MM-DD').format(this.dateFormat)
         },
         toggle(event: Event) {
             this.createMenuItems()
@@ -408,7 +430,7 @@ export default defineComponent({
                 if (!parameter.multivalue) {
                     parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
                 } else {
-                    parameters.push({ label: parameter.label, value: parameter.parameterValue, description: parameter.parameterDescription ?? '' })
+                    parameters.push({ label: parameter.label, value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription ?? '' })
                 }
             })
             return parameters
