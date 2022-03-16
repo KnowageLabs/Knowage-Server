@@ -51,6 +51,7 @@ export function visualDependencyCheck(parameter: iParameter, changedParameter: a
                 }
             } else {
                 showOnPanel = itemFound ? 'true' : 'false'
+                if (itemFound) break;
             }
 
         }
