@@ -5,6 +5,7 @@
     text-transform: uppercase;
     border-radius: var(--kn-button-border-radius);
     padding: 0.75rem 2rem;
+    justify-content: center;
     &:hover:enabled {
         color: var(--kn-color-secondary);
     }
@@ -13,7 +14,7 @@
         background-color: var(--kn-button-primary-background-color);
         color: var(--kn-button-primary-color);
         &:hover:enabled {
-            color: var(--kn-button-primary-text-color);
+            color: var(--kn-button-primary-color);
             background-color: var(--kn-button-primary-hover-background-color);
         }
     }

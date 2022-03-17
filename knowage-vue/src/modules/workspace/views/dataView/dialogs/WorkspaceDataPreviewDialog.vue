@@ -1,5 +1,5 @@
 <template>
-    <Dialog :style="workspaceDataPreviewDialogDescriptor.dialog.style" :contentStyle="workspaceDataPreviewDialogDescriptor.dialog.style" :visible="visible" :modal="true" class="workspace-full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :style="workspaceDataPreviewDialogDescriptor.dialog.style" :contentStyle="workspaceDataPreviewDialogDescriptor.dialog.contentStyle" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12" :style="mainDescriptor.style.maxWidth">
                 <template #start>
@@ -21,7 +21,16 @@
             </Message>
 
             <DatasetPreviewTable v-else class="p-d-flex p-flex-column kn-flex p-m-2" :previewColumns="columns" :previewRows="rows" :pagination="pagination" :previewType="previewType" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
-            <KnParameterSidebar v-if="parameterSidebarVisible" class="workspace-parameter-sidebar kn-overflow-y" :filtersData="filtersData" :propDocument="dataset" :propMode="sidebarMode" :propQBEParameters="dataset.pars" @execute="onExecute"></KnParameterSidebar>
+            <KnParameterSidebar
+                v-if="parameterSidebarVisible"
+                style="height:calc(100% - 35px)"
+                class="workspace-parameter-sidebar kn-overflow-y"
+                :filtersData="filtersData"
+                :propDocument="dataset"
+                :propMode="'workspaceView'"
+                :propQBEParameters="dataset.pars"
+                @execute="onExecute"
+            ></KnParameterSidebar>
         </div>
     </Dialog>
 </template>
