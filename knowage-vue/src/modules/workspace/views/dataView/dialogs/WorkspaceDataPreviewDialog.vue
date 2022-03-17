@@ -1,27 +1,26 @@
 <template>
-    <Dialog :style="workspaceDataPreviewDialogDescriptor.dialog.style" :contentStyle="workspaceDataPreviewDialogDescriptor.dialog.style" :visible="visible" :modal="true" class="workspace-full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
+    <Dialog :style="workspaceDataPreviewDialogDescriptor.dialog.style" :contentStyle="workspaceDataPreviewDialogDescriptor.dialog.contentStyle" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12" :style="mainDescriptor.style.maxWidth">
                 <template #start>
-                    <i class="fa fa-database p-mr-2"></i>
                     <span>{{ dataset.label }}</span>
                 </template>
                 <template #end>
                     <Button v-if="isParameterSidebarVisible" icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
-                    <Button class="kn-button p-button-text p-button-rounded p-button-plain" :label="$t('common.close')" @click="closeDialog"></Button>
+                    <Button class="kn-button p-button-text p-button-plain" :label="$t('common.close')" @click="closeDialog"></Button>
                 </template>
             </Toolbar>
         </template>
 
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
-        <div class="p-d-flex p-flex-column kn-flex col-12 workspace-scrollable-table">
+        <div class="p-d-flex p-flex-column kn-flex workspace-scrollable-table">
             <Message v-if="errorMessageVisible" class="p-m-2" severity="warn" :closable="false" :style="mainDescriptor.style.message">
                 {{ errorMessage }}
             </Message>
 
             <DatasetPreviewTable v-else class="p-d-flex p-flex-column kn-flex p-m-2" :previewColumns="columns" :previewRows="rows" :pagination="pagination" :previewType="previewType" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
-            <KnParameterSidebar v-if="parameterSidebarVisible" class="workspace-parameter-sidebar kn-overflow-y" :filtersData="filtersData" :propDocument="dataset" :propMode="sidebarMode" :propQBEParameters="dataset.pars" @execute="onExecute"></KnParameterSidebar>
+            <KnParameterSidebar v-if="parameterSidebarVisible" style="height:calc(100% - 35px)" class="workspace-parameter-sidebar kn-overflow-y" :filtersData="filtersData" :propDocument="dataset" :propMode="sidebarMode" :propQBEParameters="dataset.pars" @execute="onExecute"></KnParameterSidebar>
         </div>
     </Dialog>
 </template>
@@ -269,15 +268,19 @@ export default defineComponent({
 .workspace-full-screen-dialog .p-dialog .p-dialog-content {
     padding: 0;
 }
-.workspace-scrollable-table .p-datatable-wrapper {
-    position: relative;
-    flex: 1;
-    max-width: 96vw;
-    overflow-x: auto;
+.workspace-scrollable-table {
+    height: 100%;
+    .p-datatable-wrapper {
+        position: relative;
+        flex: 1;
+        max-width: 96vw;
+        overflow-x: auto;
+    }
+    .p-datatable {
+        max-width: 96vw;
+    }
 }
-.workspace-scrollable-table .p-datatable {
-    max-width: 96vw;
-}
+
 .workspace-parameter-sidebar {
     top: 35px !important;
 }
