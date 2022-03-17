@@ -6,6 +6,7 @@
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
             <template #start> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }})</template>
             <template #end>
+                <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.refresh')" @click="refreshOriginalDataset" />
                 <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDataset" />
                 <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeTemplate()" /> </template
         ></Toolbar>
@@ -216,6 +217,24 @@ export default defineComponent({
                     this.$emit('update:loading', false)
                 })
 
+                this.client.subscribe(
+                    '/user/queue/prepare',
+                    (message) => {
+                        // called when the client receives a STOMP message from the server
+                        if (message.body) {
+                            let avroJobResponse = JSON.parse(message.body)
+                            if (avroJobResponse.statusOk) this.$store.commit('setInfo', { title: 'Dataset ' + avroJobResponse.dsLabel + ' prepared successfully' })
+                            else this.$store.commit('setError', { title: 'Cannot prepare dataset ' + avroJobResponse.dsLabel, msg: avroJobResponse.errorMessage })
+                            //TODO: refresh data?
+                        } else {
+                            this.$store.commit('setError', { title: 'Websocket error', msg: 'got empty message' })
+                        }
+                    },
+                    {
+                        dsLabel: this.dataset.label
+                    }
+                )
+
                 if (this.transformations) {
                     this.loading = true
                     this.$emit('update:loading', true)
@@ -260,6 +279,29 @@ export default defineComponent({
         },
         closeTemplate(): void {
             this.$router.push('/workspace/data')
+        },
+        refreshOriginalDataset(): void {
+            // launch avro export job
+            this.$http
+                .post(
+                    process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${this.dataset.id}`,
+                    {},
+                    {
+                        headers: {
+                            Accept: 'application/json, text/plain, */*',
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    }
+                )
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('workspace.myData.isPreparing')
+                    })
+                })
+                .catch(() => {})
+
+            // listen on websocket for avro export job to be finished
+            this.client.publish({ destination: '/app/prepare', body: this.dataset.label })
         },
         getSidebarElementClass(index: number): string {
             let cssClass = 'p-grid p-m-0 p-p-0 p-d-flex kn-flex transformationSidebarElement p-menuitem-link'

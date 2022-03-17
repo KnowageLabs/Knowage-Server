@@ -384,7 +384,7 @@ public class DataSetResource {
 	 *
 	 */
 	@GET
-	@Path("/prepared")
+	@Path("/avro")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public List<String> getPreparedDataSets() {
