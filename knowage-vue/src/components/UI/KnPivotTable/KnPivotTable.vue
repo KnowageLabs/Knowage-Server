@@ -50,6 +50,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
+import { formatDate } from '@/helpers/commons/localeHelper'
 import Checkbox from 'primevue/checkbox'
 import KnPivotTableEditableField from './KnPivotTableEditableField.vue'
 import Paginator from 'primevue/paginator'
@@ -226,6 +227,9 @@ export default defineComponent({
         },
         loadColumnOptions() {
             this.columnOptions = this.comboColumnOptions as any[]
+        },
+        getFormattedDate(date: any, format: any) {
+            return formatDate(date, format)
         }
     }
 })

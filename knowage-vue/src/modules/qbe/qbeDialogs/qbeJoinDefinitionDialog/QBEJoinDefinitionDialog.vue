@@ -9,23 +9,20 @@
         </template>
 
         <div>
-            <div class="p-d-flex  p-ai-center p-m-5">
+            <div class="p-d-flex p-ai-center p-m-4">
                 <i class="pi pi-search kn-cursor-pointer" />
-                <InputText class="kn-material-input  p-mx-2" v-model="searchWord" :placeholder="$t('common.search')" @input="searchItems" />
-                <i class="fa fa-times kn-cursor-pointer p-mx-2" @click="searchWord = ''" />
+                <InputText class="kn-material-input p-ml-2" v-model="searchWord" :placeholder="$t('common.search')" @input="searchItems" />
             </div>
 
             <div class="p-m-4">
-                <hr />
                 <div v-for="(relation, index) in filteredRelations" :key="relation.id" class="p-d-flex p-flex-row p-ai-center p-m-3">
                     <label class="p-text-bold">{{ index + 1 }}</label>
-
-                    <Dropdown class="kn-material-input p-col-2 p-ml-4" v-model="relation.joinType" :options="QBEJoinDefinitionDialogDescriptor.joinTypes" />
-                    <label class="p-col-8 p-ml-4 p-text-bold">{{ relation.attributes.sourceEntity + ' --- ' + relation.attributes.entity }}</label>
-                    <div class="p-d-flex p-flex-row p-jc-end p-ml-auto">
+                    <Dropdown class="kn-material-input p-mx-4" v-model="relation.joinType" :options="QBEJoinDefinitionDialogDescriptor.joinTypes" />
+                    <label class="p-text-bold kn-truncated" v-tooltip.top="relation.attributes.sourceEntity + ' --- ' + relation.attributes.entity">{{ relation.attributes.sourceEntity + ' --- ' + relation.attributes.entity }}</label>
+                    <div class="p-d-flex p-flex-row p-ml-auto">
                         <i v-show="index !== 0 && searchWord.trim() === ''" class="fa fa-arrow-up kn-cursor-pointer" @click="moveUp(index)"></i>
-                        <i v-show="index !== filteredRelations.length - 1 && searchWord.trim() === ''" class="fa fa-arrow-down kn-cursor-pointer" @click="moveDown(index)"></i>
-                        <Checkbox class="p-ml-2" v-model="relation.isConsidered" :binary="true"></Checkbox>
+                        <i v-show="index !== filteredRelations.length - 1 && searchWord.trim() === ''" class="fa fa-arrow-down kn-cursor-pointer p-ml-2" @click="moveDown(index)"></i>
+                        <Checkbox class="p-ml-3" v-model="relation.isConsidered" :binary="true"></Checkbox>
                     </div>
                 </div>
             </div>

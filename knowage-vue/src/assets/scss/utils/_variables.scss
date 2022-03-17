@@ -41,6 +41,10 @@
     --kn-button-fab-hover-background-color: #d14b7c;
     --kn-button-fab-hover-color: #ffffff;
 
+    // INPUTS
+    --kn-input-checkbox-selected-background: #ce065180;
+    --kn-input-checkbox-selected-color: var(--kn-color-fab);
+
     // LIST
     --kn-list-border-color: #cccccc;
     --kn-list-item-selected-background-color: #bbd6ed;
@@ -59,6 +63,10 @@
     --kn-mainmenu-panel-text-color: #43749e;
     --kn-mainmenu-profile-box-shadow: -3px 0 4px 0 black;
     --kn-mainmenu-width: 58px;
+
+    // PAGINATOR
+    --kn-paginator-background-color: #bbd6ed90;
+    --kn-paginator-color: var(--kn-color-primary);
 
     // PROGRESS BAR
     --kn-progress-bar-background-color: rgba(#bbd6ed, 0.3);
@@ -82,7 +90,7 @@
     --kn-toolbar-primary-icon-hover-color: #a2bfd8;
 
     --kn-toolbar-secondary-background-color: #bbd6ed;
-    --kn-toolbar-secondary-color: #ffffff;
+    --kn-toolbar-secondary-color: #48525b;
     --kn-toolbar-secondary-icon-color: #1a1a1a;
     --kn-toolbar-secondary-icon-hover-color: #414141;
 

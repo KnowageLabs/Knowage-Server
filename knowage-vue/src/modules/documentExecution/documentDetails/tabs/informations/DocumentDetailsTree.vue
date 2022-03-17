@@ -1,19 +1,16 @@
 <template>
-    <div>
-        <Tree class="documents-tree" :value="nodes" :expandedKeys="expandedKeys" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)">
-            <template #default="slotProps">
-                <i class="p-mr-2" :class="slotProps.node.customIcon"></i>
-                <Checkbox v-if="slotProps.node.selectable" name="folders" v-model="selectedFolders" :value="slotProps.node.path" @change="emitSelectedFolders" />
-                <b>{{ slotProps.node.label }}</b>
-            </template>
-        </Tree>
-    </div>
+    <Tree class="documents-tree" :value="nodes" :expandedKeys="expandedKeys" @node-expand="setOpenFolderIcon($event)" @node-collapse="setClosedFolderIcon($event)">
+        <template #default="slotProps">
+            <i class="p-mr-2" :class="slotProps.node.customIcon"></i>
+            <Checkbox v-if="slotProps.node.selectable" name="folders" v-model="selectedFolders" :value="slotProps.node.path" @change="emitSelectedFolders" />
+            <b>{{ slotProps.node.label }}</b>
+        </template>
+    </Tree>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Checkbox from 'primevue/checkbox'
-import documentBrowserTreeDescriptor from '@/modules/documentBrowser/documentBrowserHome/DocumentBrowserTreeDescriptor.json'
 import Tree from 'primevue/tree'
 export default defineComponent({
     name: 'scheduler-document-accordion-tree',
@@ -21,7 +18,6 @@ export default defineComponent({
     props: { propFunctionalities: { type: Array }, propSelectedFolders: { type: Array } },
     data() {
         return {
-            documentBrowserTreeDescriptor,
             functionalities: [] as any[],
             selectedFolders: [] as any[],
             nodes: [] as any[],
@@ -62,7 +58,6 @@ export default defineComponent({
                     label: folder.name,
                     children: [] as any[],
                     data: folder,
-                    style: this.documentBrowserTreeDescriptor.node.style,
                     path: folder.path,
                     customIcon: folder.childs ? 'pi pi-folder-open' : 'pi pi-folder',
                     selectable: folder.codType === 'USER_FUNCT' || folder.parentId
