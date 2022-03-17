@@ -109,6 +109,7 @@ export default defineComponent({
         async loadPreSavePreview() {
             this.loading = true
             const postData = { ...this.dataset }
+            postData.start = this.pagination.start
             if (this.filtersData.filterStatus?.length > 0) {
                 postData.DRIVERS = this.formatDriversForPreviewData()
             }
@@ -218,6 +219,7 @@ export default defineComponent({
             return formattedDrivers
         },
         async updatePagination(lazyParams: any) {
+            console.log('PAGINATION OBJECT ', lazyParams)
             this.pagination.start = lazyParams.paginationStart
             this.pagination.limit = lazyParams.paginationLimit
             this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
