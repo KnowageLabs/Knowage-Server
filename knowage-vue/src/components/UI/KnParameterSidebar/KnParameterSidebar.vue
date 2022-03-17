@@ -178,7 +178,6 @@ import KnParameterSavedParametersDialog from './dialogs/KnParameterSavedParamete
 import Menu from 'primevue/menu'
 import MultiSelect from 'primevue/multiselect'
 import RadioButton from 'primevue/radiobutton'
-import moment from 'moment'
 
 export default defineComponent({
     name: 'kn-parameter-sidebar',
@@ -336,7 +335,7 @@ export default defineComponent({
                 })
             } else if (parameter.type === 'DATE' && parameter.showOnPanel === 'true') {
                 if (parameter.driverDefaultValue[0].desc?.split('#')[0]) {
-                    parameter.parameterValue[0].value = this.getUserConfigFormattedDate(parameter.driverDefaultValue[0].desc?.split('#')[0])
+                    parameter.parameterValue[0].value = this.getFormattedDate(parameter.driverDefaultValue[0].desc?.split('#')[0], undefined)
                 }
             } else {
                 if (!parameter.parameterValue[0]) {
@@ -349,9 +348,6 @@ export default defineComponent({
         resetAllParameters() {
             this.parameters.filterStatus.forEach((el: any) => this.resetParameterValue(el))
             this.parameters.filterStatus.forEach((el: any) => this.updateDependency(el))
-        },
-        getUserConfigFormattedDate(date: any) {
-            return moment(date).format(this.userDateFormat)
         },
         toggle(event: Event) {
             this.createMenuItems()
