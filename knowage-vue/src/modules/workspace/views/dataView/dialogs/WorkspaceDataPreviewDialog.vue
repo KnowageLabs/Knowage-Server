@@ -21,7 +21,7 @@
             </Message>
 
             <DatasetPreviewTable v-else class="p-d-flex p-flex-column kn-flex p-m-2" :previewColumns="columns" :previewRows="rows" :pagination="pagination" :previewType="previewType" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
-            <KnParameterSidebar v-if="parameterSidebarVisible" class="workspace-parameter-sidebar kn-overflow-y" :filtersData="filtersData" :propDocument="dataset" :propMode="'workspaceView'" :propQBEParameters="dataset.pars" @execute="onExecute"></KnParameterSidebar>
+            <KnParameterSidebar v-if="parameterSidebarVisible" class="workspace-parameter-sidebar kn-overflow-y" :filtersData="filtersData" :propDocument="dataset" :propMode="sidebarMode" :propQBEParameters="dataset.pars" @execute="onExecute"></KnParameterSidebar>
         </div>
     </Dialog>
 </template>
@@ -56,7 +56,8 @@ export default defineComponent({
             parameterSidebarVisible: false,
             loading: false,
             filtersData: {} as any,
-            userRole: null
+            userRole: null,
+            sidebarMode: 'workspaceView'
         }
     },
     computed: {
@@ -82,11 +83,15 @@ export default defineComponent({
             if (value) {
                 await this.loadPreview()
             }
+        },
+        previewType() {
+            this.setSidebarMode()
         }
     },
     async created() {
         this.userRole = (this.$store.state as any).user.sessionRole !== 'No default role selected' ? (this.$store.state as any).user.sessionRole : null
         await this.loadPreview()
+        this.setSidebarMode()
     },
     methods: {
         async loadPreview() {
@@ -246,6 +251,9 @@ export default defineComponent({
             this.dataset.pars = datasetParameters
             this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
             this.parameterSidebarVisible = false
+        },
+        setSidebarMode() {
+            this.sidebarMode = this.loadFromDatasetManagement ? 'datasetManagement' : 'workspaceView'
         }
     }
 })

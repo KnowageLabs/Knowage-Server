@@ -18,18 +18,18 @@
                 <Dropdown class="kn-material-input" v-model="role" :options="user.roles" @change="setNewSessionRole" />
             </div>
 
-            <template v-if="mode === 'qbeView' || mode === 'workspaceView'">
+            <template v-if="mode === 'qbeView' || mode === 'workspaceView' || mode === 'datasetManagement'">
                 <div v-for="(qbeParameter, index) in qbeParameters" :key="index">
                     <div class="p-field p-m-4">
                         <div class="p-d-flex">
-                            <label class="kn-material-input-label">{{ qbeParameter.name + ' *' }} </label>
+                            <label class="kn-material-input-label">{{ qbeParameter.name }} <span v-if="mode !== 'datasetManagement'"> *</span> </label>
                             <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="qbeParameter.value = qbeParameter.defaultValue"></i>
                         </div>
                         <InputText
                             class="kn-material-input p-inputtext-sm"
                             v-model="qbeParameter.value"
                             :class="{
-                                'p-invalid': !qbeParameter.value
+                                'p-invalid': !qbeParameter.value && mode !== 'datasetManagement'
                             }"
                         />
                     </div>
@@ -148,7 +148,7 @@
                 </div>
             </div>
         </div>
-        <div v-if="(parameters && parameters.filterStatus.length > 0) || mode === 'qbeView' || mode === 'workspaceView'" class="p-fluid p-d-flex p-flex-row p-mx-5 kn-parameter-sidebar-buttons">
+        <div v-if="(parameters && parameters.filterStatus.length > 0) || mode === 'qbeView' || mode === 'workspaceView' || mode === 'datasetManagement'" class="p-fluid p-d-flex p-flex-row p-mx-5 kn-parameter-sidebar-buttons">
             <Button class="kn-button kn-button--primary" :disabled="buttonsDisabled" @click="$emit('execute', qbeParameters)"> {{ $t('common.execute') }}</Button>
             <Button v-if="mode !== 'qbeView' && mode !== 'workspaceView'" class="kn-button kn-button--primary p-ml-1" icon="fa fa-chevron-down" :disabled="buttonsDisabled" @click="toggle($event)" />
             <Menu ref="executeButtonMenu" :model="executeMenuItems" :popup="true" />
@@ -241,7 +241,7 @@ export default defineComponent({
     },
     created() {
         this.loadMode()
-        if (this.mode === 'qbeView' || this.mode === 'workspaceView') this.loadQBEParameters()
+        if (this.mode === 'qbeView' || this.mode === 'workspaceView' || this.mode === 'datasetManagement') this.loadQBEParameters()
 
         this.user = (this.$store.state as any).user
         this.role = this.userRole as string
