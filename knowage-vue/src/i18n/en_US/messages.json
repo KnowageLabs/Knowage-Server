@@ -760,9 +760,9 @@
     },
     "managers": {
         "bml": {
-            "title": "Behavioural Model Lineage",
+            "drivers": "Analytical Drivers",
             "lovsTitle": "Lovs",
-            "drivers": "Analytical Drivers"
+            "title": "Behavioural Model Lineage"
         },
         "businessModelManager": {
             "add": "Add",
@@ -1036,6 +1036,7 @@
             "oldVersions": "Older Dataset Versions",
             "openQbeButton": "Open Qbe",
             "params": "Parameters",
+            "peristenceWarning": "Dataset with parameters cannot be persisted!",
             "persistTableName": "Persist Table Name",
             "pivotColName": "Category Column to be Pivoted",
             "pivotColValue": "Value Column to be Pivoted",
@@ -1751,8 +1752,8 @@
             "title": "Theme Management"
         },
         "timespan": {
-            "invalidDatesError": "The dates are not valid",
             "cloneAlreadyDefined": "The next timespan is already defiend",
+            "invalidDatesError": "The dates are not valid",
             "noIntervalError": "Please define at least one interval",
             "startDateGreaterError": "Start date greater than end date",
             "startTimeGreaterError": "Start time greater than end time",
@@ -1946,13 +1947,13 @@
                     "sum": "Sum",
                     "title": "Aggregation"
                 },
-                "sorting": "Sorting",
-                "colset": "Column settings",
-                "colfil": "Column filters",
                 "coldel": "Delete column",
+                "colfil": "Column filters",
+                "colset": "Column settings",
                 "group": "Group",
                 "rename": "Rename Alias",
-                "showField": "Show field"
+                "showField": "Show field",
+                "sorting": "Sorting"
             },
             "toolbarMenu": {
                 "exportTo": "Export to",
