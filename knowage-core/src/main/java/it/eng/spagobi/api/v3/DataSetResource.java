@@ -558,7 +558,8 @@ public class DataSetResource {
 
 							// get from cache, if available
 							LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-							lovResult = executionCacheManager.getLovResultBum(profile, lovProvDet, biParameterExecDependencies, drivers, true, request.getLocale());
+							lovResult = executionCacheManager.getLovResultBum(profile, lovProvDet, biParameterExecDependencies, drivers, true,
+									request.getLocale());
 
 							// get all the rows of the result
 							LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
@@ -615,7 +616,6 @@ public class DataSetResource {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get document Execution Parameter EMFUserError", e1);
 			}
 
-
 		} catch (IOException e2) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get document Execution Parameter IOException", e2);
 		} catch (JSONException e2) {
@@ -629,7 +629,8 @@ public class DataSetResource {
 	@POST
 	@Path("/{dsLabel}/admissibleValuesTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response admissibleValuesTree(@Context HttpServletRequest req, @PathParam("dsLabel") String dsLabel) throws EMFUserError, IOException, JSONException {
+	public Response admissibleValuesTree(@Context HttpServletRequest req, @PathParam("dsLabel") String dsLabel)
+			throws EMFUserError, IOException, JSONException {
 
 		Map<String, Object> resultAsMap = new HashMap<String, Object>();
 
@@ -692,7 +693,8 @@ public class DataSetResource {
 				MetaModel loadMetaModelByName = DAOFactory.getMetaModelsDAO().loadMetaModelByName(qbeDatamart);
 
 				List errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), datasetMetaModel, req,
-						this.getAttributeAsString("SBI_ENVIRONMENT"), role, biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, locale);
+						this.getAttributeAsString("SBI_ENVIRONMENT"), role, biObjectParameter.getParameter().getModalityValue().getSelectionType(), null,
+						locale);
 
 				resultAsMap.put("errors", errorList);
 			}
@@ -720,43 +722,44 @@ public class DataSetResource {
 
 	private void getParametersFromDataSet(Map<String, Object> ret, SbiDataSet ds) {
 		final List<HashMap<String, Object>> parametersArrayList = (List<HashMap<String, Object>>) ret.get("filterStatus");
-		for (DataSetParameterItem e : ds.getParametersList()) {
-			final Map<String, Object> metadata = new LinkedHashMap<>();
+		if (ds.getParametersList() != null) {
+			for (DataSetParameterItem e : ds.getParametersList()) {
+				final Map<String, Object> metadata = new LinkedHashMap<>();
 
-			String name = e.getName();
-			String type = e.getType();
-			String defaultValue = e.getDefaultValue();
-			boolean multivalue = e.isMultivalue();
+				String name = e.getName();
+				String type = e.getType();
+				String defaultValue = e.getDefaultValue();
+				boolean multivalue = e.isMultivalue();
 
-			Map<String, Object> parameterAsMap = new LinkedHashMap<String, Object>();
-			parameterAsMap.put("id", null);
-			parameterAsMap.put("label", name);
-			parameterAsMap.put("urlName", name);
-			parameterAsMap.put("type", type);
-			parameterAsMap.put("selectionType", null);
-			parameterAsMap.put("valueSelection", "MANUAL");
-			parameterAsMap.put("visible", true);
-			parameterAsMap.put("mandatory", true);
-			parameterAsMap.put("multivalue", multivalue);
-			parameterAsMap.put("driverLabel", name);
-			parameterAsMap.put("driverUseLabel", name);
-			parameterAsMap.put(PROPERTY_METADATA, metadata);
+				Map<String, Object> parameterAsMap = new LinkedHashMap<String, Object>();
+				parameterAsMap.put("id", null);
+				parameterAsMap.put("label", name);
+				parameterAsMap.put("urlName", name);
+				parameterAsMap.put("type", type);
+				parameterAsMap.put("selectionType", null);
+				parameterAsMap.put("valueSelection", "MANUAL");
+				parameterAsMap.put("visible", true);
+				parameterAsMap.put("mandatory", true);
+				parameterAsMap.put("multivalue", multivalue);
+				parameterAsMap.put("driverLabel", name);
+				parameterAsMap.put("driverUseLabel", name);
+				parameterAsMap.put(PROPERTY_METADATA, metadata);
 
-			Map<String, String> colPlaceholder2ColName = new HashMap<>();
+				Map<String, String> colPlaceholder2ColName = new HashMap<>();
 
-			/*
-			 * Here "data" is a dummy column just to simulate that
-			 * a parameter is driver.
-			 */
-			colPlaceholder2ColName.put("_col0", "data");
+				/*
+				 * Here "data" is a dummy column just to simulate that a parameter is driver.
+				 */
+				colPlaceholder2ColName.put("_col0", "data");
 
-			metadata.put("colsMap", colPlaceholder2ColName);
-			metadata.put("descriptionColumn", "data");
-			metadata.put("invisibleColumns", Collections.EMPTY_LIST);
-			metadata.put("valueColumn", "data");
-			metadata.put("visibleColumns", Arrays.asList("data"));
+				metadata.put("colsMap", colPlaceholder2ColName);
+				metadata.put("descriptionColumn", "data");
+				metadata.put("invisibleColumns", Collections.EMPTY_LIST);
+				metadata.put("valueColumn", "data");
+				metadata.put("visibleColumns", Arrays.asList("data"));
 
-			parametersArrayList.add((HashMap<String, Object>) parameterAsMap);
+				parametersArrayList.add((HashMap<String, Object>) parameterAsMap);
+			}
 		}
 	}
 
@@ -1014,36 +1017,34 @@ public class DataSetResource {
 				valueList = objParameter.getDefaultValues();
 
 				if (!valueList.isEmpty()) {
-					defValue = valueList.stream()
-						.map(e -> {
+					defValue = valueList.stream().map(e -> {
 
-							BiMap<String, String> inverse = colPlaceholder2ColName.inverse();
-							String valColName = inverse.get(lovValueColumnName);
-							String descColName = inverse.get(lovDescriptionColumnName);
+						BiMap<String, String> inverse = colPlaceholder2ColName.inverse();
+						String valColName = inverse.get(lovValueColumnName);
+						String descColName = inverse.get(lovDescriptionColumnName);
 
-							// TODO : workaround
-							valColName = Optional.ofNullable(valColName).orElse("value");
-							descColName = Optional.ofNullable(descColName).orElse("desc");
+						// TODO : workaround
+						valColName = Optional.ofNullable(valColName).orElse("value");
+						descColName = Optional.ofNullable(descColName).orElse("desc");
 
-							Map<String, Object> ret = new LinkedHashMap<>();
+						Map<String, Object> ret = new LinkedHashMap<>();
 
-							ret.put(valColName, e.getValue());
+						ret.put(valColName, e.getValue());
 
-							if (!valColName.equals(descColName)) {
-								ret.put(descColName, e.getDescription());
-							}
+						if (!valColName.equals(descColName)) {
+							ret.put(descColName, e.getDescription());
+						}
 
-							return ret;
-						})
-						.collect(Collectors.toList());
+						return ret;
+					}).collect(Collectors.toList());
 				}
 
 				// if (jsonCrossParameters.isNull(objParameter.getId())
-				// 		// && !sessionParametersMap.containsKey(objParameter.getId())) {
-				// 		&& !sessionParametersMap.containsKey(sessionKey)) {
-				// 	if (valueList != null) {
-				// 		parameterAsMap.put("parameterValue", valueList);
-				// 	}
+				// // && !sessionParametersMap.containsKey(objParameter.getId())) {
+				// && !sessionParametersMap.containsKey(sessionKey)) {
+				// if (valueList != null) {
+				// parameterAsMap.put("parameterValue", valueList);
+				// }
 				// }
 
 				// in every case fill default values!
