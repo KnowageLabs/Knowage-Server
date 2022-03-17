@@ -98,7 +98,7 @@ export default defineComponent({
             this.loadDataset()
             await this.loadDatasetDrivers()
             if (this.dataset.label && this.dataset.pars.length === 0 && (this.filtersData.isReadyForExecution === undefined || this.filtersData.isReadyForExecution)) {
-                this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
+                this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
                 this.parameterSidebarVisible = false
             } else {
                 this.parameterSidebarVisible = true
@@ -110,6 +110,9 @@ export default defineComponent({
         async loadPreSavePreview() {
             this.loading = true
             const postData = { ...this.dataset }
+            if (this.filtersData.filterStatus?.length > 0) {
+                postData.DRIVERS = this.formatDriversForPreviewData()
+            }
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, postData)
                 .then((response: AxiosResponse<any>) => {
@@ -218,16 +221,16 @@ export default defineComponent({
         async updatePagination(lazyParams: any) {
             this.pagination.start = lazyParams.paginationStart
             this.pagination.limit = lazyParams.paginationLimit
-            this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
+            this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
             this.parameterSidebarVisible = false
         },
         async onSort(event: any) {
             this.sort = event
-            this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
+            this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
         },
         async onFilter(event: any) {
             this.filter = event
-            this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
+            this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
         },
         setPreviewColumns(data: any) {
             this.columns = []
@@ -249,7 +252,7 @@ export default defineComponent({
         },
         async onExecute(datasetParameters: any[]) {
             this.dataset.pars = datasetParameters
-            this.loadFromDatasetManagement && !this.dataset.id ? await this.loadPreSavePreview() : await this.loadPreviewData()
+            this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
             this.parameterSidebarVisible = false
         },
         setSidebarMode() {
