@@ -21,7 +21,7 @@ public class CacheTriggerManagementAPI {
 		Trigger simpleTrigger = new Trigger();
 		simpleTrigger.setName(CleanCacheQuartzInitializer.DEFAULT_TRIGGER_NAME);
 		simpleTrigger.setJob(schedulerDAO.loadJob(CleanCacheQuartzInitializer.DEFAULT_JOB_NAME, CleanCacheQuartzInitializer.DEFAULT_JOB_NAME));
-
+		simpleTrigger.setGroupName(Scheduler.DEFAULT_GROUP);
 		simpleTrigger.getChronExpression().setExpression(getCronExpression(confValue));
 		simpleTrigger.setStartTime(new Date());
 		simpleTrigger.setRunImmediately(false);
