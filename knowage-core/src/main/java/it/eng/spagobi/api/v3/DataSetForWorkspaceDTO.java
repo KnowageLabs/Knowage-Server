@@ -75,7 +75,8 @@ class DataSetForWorkspaceDTO extends DataSetMainDTO {
 
 	private void initMeta() throws SourceBeanException, JSONException {
 		String metaAsString = dataset.getDsMetadata();
-		meta = metaSerializer.serializeToJson(metaAsString).getWrappedObject();
+		if (metaAsString != null)
+			meta = metaSerializer.serializeToJson(metaAsString).getWrappedObject();
 	}
 
 	private void initDrivers() throws JSONException {

@@ -72,17 +72,17 @@ export default defineComponent({
                 this.columns.forEach((column: any) => (this.filters[column.dataIndex] = { operator: FilterOperator.AND, constraints: [filterDefault] }))
 
                 this.selectedValues = []
-                this.loadedSelectedValues?.forEach((el: any) => this.selectedValues.push({ column_1: el }))
+                this.loadedSelectedValues?.forEach((el: any) => this.selectedValues.push({ column_1: '' + el }))
             }
         },
         onSelect() {
             let tempSelectedValues = [] as string[]
             if (['IN', 'NOT IN'].includes(this.filterOperator)) {
-                tempSelectedValues = this.selectedValues.map((value: any) => value.column_1)
+                tempSelectedValues = this.selectedValues.map((value: any) => '' + value.column_1)
             } else {
                 tempSelectedValues = []
                 Object.keys(this.selectedValues).forEach((key: string) => {
-                    tempSelectedValues.push(this.selectedValues[key])
+                    tempSelectedValues.push('' + this.selectedValues[key])
                 })
             }
 

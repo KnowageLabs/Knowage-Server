@@ -16,7 +16,7 @@
         <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
         <div class="p-d-flex p-flex-column kn-flex col-12 workspace-scrollable-table">
-            <Message v-if="errorMessageVisible" class="kn-flex p-m-2" severity="warn" :closable="false" :style="mainDescriptor.style.message">
+            <Message v-if="errorMessageVisible" class="p-m-2" severity="warn" :closable="false" :style="mainDescriptor.style.message">
                 {{ errorMessage }}
             </Message>
 

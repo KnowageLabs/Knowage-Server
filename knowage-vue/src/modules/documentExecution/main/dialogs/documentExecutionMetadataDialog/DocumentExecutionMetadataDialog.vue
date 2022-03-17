@@ -37,7 +37,7 @@
             <TabView v-if="(metadata.shortText.length > 0 || metadata.longText.length > 0) && metadata.longText.length > 0" scrollable>
                 <TabPanel v-for="(meta, index) in metadata.longText" :key="index">
                     <template #header>
-                        <span class="p-text-uppercase">{{ meta.name }}</span>
+                        <span class="p-text-uppercase kn-truncated">{{ meta.name }}</span>
                     </template>
 
                     <Editor v-model="meta.value" :readonly="!canModify" :editorStyle="documentExecutionMetadataDialogDescriptor.editor.style"></Editor>

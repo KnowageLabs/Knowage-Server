@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-mt-3">
+    <Card class="p-m-2">
         <template #content>
             <span class="p-float-label">
                 <div class="p-field">

@@ -587,13 +587,13 @@ public class ExcelExporter extends AbstractFormatExporter {
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 							}
-							cell.setCellStyle(getCellStyle(wb, createHelper, column.getString("name"), columnStyles[c], intCellStyle));
+							cell.setCellStyle(getCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle));
 							break;
 						case "float":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 							}
-							cell.setCellStyle(getCellStyle(wb, createHelper, column.getString("name"), columnStyles[c], floatCellStyle));
+							cell.setCellStyle(getCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle));
 							break;
 						case "date":
 							try {
@@ -647,25 +647,40 @@ public class ExcelExporter extends AbstractFormatExporter {
 		}
 	}
 
-	private CellStyle getCellStyle(Workbook wb, CreationHelper helper, String colName, JSONObject colStyle, CellStyle defaultStyle) {
+	private CellStyle getCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, CellStyle defaultStyle) {
+		String colName = null;
 		try {
+			colName = column.getString("name");
 			CellStyle toReturn = defaultStyle;
+			// precision (i.e. number of digits to right of the decimal point) that is specified on dashboard design wins
 			if (colStyle != null && colStyle.has("precision")) {
 				int precision = colStyle.getInt("precision");
-				String format = "#,##0";
-				if (precision > 0) {
-					format += ".";
-					for (int j = 0; j < precision; j++) {
-						format += "0";
-					}
-				}
+				String format = getNumberFormatByPrecision(precision);
 				toReturn = getCellStyleByFormat(wb, helper, format);
+			} else {
+				// if column has scale (the same as precision but in JDBC/SQL terms, consider for example ORACLE NUMBER(38,0) where 0 is the scale) we apply it
+				if (column.has("scale")) {
+					int precision = column.getInt("scale");
+					String format = getNumberFormatByPrecision(precision);
+					toReturn = getCellStyleByFormat(wb, helper, format);
+				}
 			}
 			return toReturn;
 		} catch (Exception e) {
 			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
 			return defaultStyle;
 		}
+	}
+
+	protected String getNumberFormatByPrecision(int precision) {
+		String format = "#,##0";
+		if (precision > 0) {
+			format += ".";
+			for (int j = 0; j < precision; j++) {
+				format += "0";
+			}
+		}
+		return format;
 	}
 
 	/*

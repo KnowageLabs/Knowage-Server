@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-mt-3">
+    <Card class="p-m-2">
         <template #content>
             <div class="p-d-flex">
                 <div class="p-field" :style="fileDescriptor.style.maxwidth">
@@ -78,7 +78,7 @@
                 {{ $t('managers.lovsManagement.preview') }}
             </template>
         </Toolbar>
-        <Card v-show="expandTableCard">
+        <Card class="p-m-2" v-show="expandTableCard">
             <template #content>
                 <DataTable :value="rows" class="p-datatable-sm kn-table" :loading="loading" responsiveLayout="scroll" :scrollable="true" scrollDirection="both" scrollHeight="800px" stripedRows rowHover style="width:70vw">
                     <Column v-for="col of columns" :field="col.name" :header="col.header" :key="col.dataIndex" class="kn-truncated" style="width:250px" />

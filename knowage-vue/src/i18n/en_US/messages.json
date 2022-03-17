@@ -3,6 +3,7 @@
         "active": "Active",
         "add": "Add",
         "addNew": "Add new",
+        "advanced": "Advanced",
         "alias": "Alias",
         "apply": "Apply",
         "attachments": "Attachments",
@@ -66,6 +67,7 @@
         "file": "File",
         "fileName": "File Name",
         "filters": "Filters",
+        "from": "From",
         "general": "General",
         "group": "Group",
         "home": "Home",
@@ -158,11 +160,12 @@
             "table": "Table"
         },
         "tags": "tags",
+        "temporal": "Temporal",
         "tenant": "tenant",
         "test": "test",
         "time": "Time",
         "title": "Title",
-        "to": "To",
+        "to": "to",
         "toast": {
             "cloneConfirmTitle": "Confirm item clone?",
             "createTitle": "Created",
@@ -396,12 +399,14 @@
             "parameterClearTooltip": "Reset to default value",
             "publicUrlExecutionDisabled": "Current document cannot be executed by public user",
             "rankSaveSucces": "Rating Saved.Thanks for your feedback",
+            "replyToHint": "Enter \"reply to\" if you want to set the sender.",
             "resetParametersTooltip": "Reset parameters form to default values",
             "saveParametersFromStateTooltip": "Save parameters form state as viewpoint",
             "savedParameters": "Saved parameters",
             "savedParametersTooltip": "Open saved parameters window",
             "scheduledExecutions": "Scheduled executions",
             "selectFileError": "Select a file to Upload!",
+            "sendEmailMessage": "Enter user / password if you want to send the email with your user, remember that it must exist in the mail server.",
             "showOLAPCustomView": "Show OLAP Custom View",
             "showScheduledExecutions": "Show scheduled executions",
             "userRoleError": "User does not have valid roles for the execution of the selected document",
@@ -754,6 +759,11 @@
         "weekHeader": "Wk"
     },
     "managers": {
+        "bml": {
+            "title": "Behavioural Model Lineage",
+            "lovsTitle": "Lovs",
+            "drivers": "Analytical Drivers"
+        },
         "businessModelManager": {
             "add": "Add",
             "addCondition": "Add Condition",
@@ -1011,7 +1021,7 @@
             "flatTableName": "Table name",
             "formulaParamError": "You cannot persist a dataset that uses profile attributes. Please verify your dataset configuration",
             "helpTitle": "Help",
-            "hint": "Please change the hint to your desire in the i18n files.",
+            "hint": "Dataset management allows you to manage and create datasets to use inside Knowage. You can select the type, the query and all related settings. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "isPersisted": "Persist",
             "isPersistedHDFS": "Exportable on HDFS",
             "isScheduled": "Schedule",
@@ -1266,6 +1276,37 @@
                 "defaultMessage": "Default Message Code",
                 "messageCode": "Message Code"
             }
+        },
+        "layersManagement": {
+            "baseLayer": "Base Layer",
+            "downloadDialogTitle": "Select type of download",
+            "downloadTypes": {
+                "geojson": "GeoJSON",
+                "kml": "KML",
+                "shp": "SHAPEFILE"
+            },
+            "fileLocation": "File Location",
+            "filterTitle": "Filter",
+            "hint": "Change the hint to your liking inside the messages.json.",
+            "layerFilter": "Layer Filter",
+            "layerFilterAdded": "Layer Filter Added",
+            "layerIdentify": "Layer ID",
+            "layerLabel": "Layer label",
+            "layerName": "Layer name",
+            "layerOptions": "Options",
+            "layerOrder": "Layer Order",
+            "layerParams": "Params",
+            "layerTitle": "Layer",
+            "layerTypes": {
+                "google": "Google",
+                "osm": "OSM",
+                "tms": "TMS",
+                "wfs": "WFS",
+                "wms": "WMS"
+            },
+            "layerURL": "URL",
+            "noFilterSelected": "No filter selected, click on an item from the left list to add them",
+            "title": "Layers Management"
         },
         "lovsManagement": {
             "add": "Add",
@@ -1709,6 +1750,16 @@
             "hint": "Theme management allows you to create a theme, changing the default  colors/dimensions of different interface elements of Knowage. You can also create more than one theme and switch them as you like. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Theme Management"
         },
+        "timespan": {
+            "invalidDatesError": "The dates are not valid",
+            "cloneAlreadyDefined": "The next timespan is already defiend",
+            "noIntervalError": "Please define at least one interval",
+            "startDateGreaterError": "Start date greater than end date",
+            "startTimeGreaterError": "Start time greater than end time",
+            "temporalOverlapError": "The date interval overlaps with an existing one",
+            "timeOverlapError": "The time interval overlaps with an existing one",
+            "title": "Timespan"
+        },
         "usersManagement": {
             "attributes": "Attributes",
             "blockedUserInfo": "This user reached the maximum number of failed login attempts and therefore he was locked. Do you want to unlock him?",
@@ -1895,6 +1946,10 @@
                     "sum": "Sum",
                     "title": "Aggregation"
                 },
+                "sorting": "Sorting",
+                "colset": "Column settings",
+                "colfil": "Column filters",
+                "coldel": "Delete column",
                 "group": "Group",
                 "rename": "Rename Alias",
                 "showField": "Show field"
@@ -1952,6 +2007,17 @@
                 "notIn": "Not in",
                 "notNull": "Not null",
                 "notStartsWith": "Not starts with",
+                "spatialContains": "Contains (spatial)",
+                "spatialCoveredBy": "Covered by (spatial)",
+                "spatialCovers": "Covers (spatial)",
+                "spatialDisjoint": "Disjoint (spatial)",
+                "spatialEqualsTo": "Equals to (spatial)",
+                "spatialFilter": "Filter (spatial)",
+                "spatialInside": "Inside (spatial)",
+                "spatialIntersects": "Intersects (spatial)",
+                "spatialNN": "NN (spatial)",
+                "spatialOverlaps": "Overlaps (spatial)",
+                "spatialTouches": "Touches (spatial)",
                 "startsWith": "Starts with"
             },
             "target": "Target",
