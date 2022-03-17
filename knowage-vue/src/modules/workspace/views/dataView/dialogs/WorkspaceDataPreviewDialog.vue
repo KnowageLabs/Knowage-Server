@@ -20,16 +20,7 @@
             </Message>
 
             <DatasetPreviewTable v-else class="p-d-flex p-flex-column kn-flex p-m-2" :previewColumns="columns" :previewRows="rows" :pagination="pagination" :previewType="previewType" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
-            <KnParameterSidebar
-                v-if="parameterSidebarVisible"
-                style="height:calc(100% - 35px)"
-                class="workspace-parameter-sidebar kn-overflow-y"
-                :filtersData="filtersData"
-                :propDocument="dataset"
-                :propMode="'workspaceView'"
-                :propQBEParameters="dataset.pars"
-                @execute="onExecute"
-            ></KnParameterSidebar>
+            <KnParameterSidebar v-if="parameterSidebarVisible" style="height:calc(100% - 35px)" class="workspace-parameter-sidebar kn-overflow-y" :filtersData="filtersData" :propDocument="dataset" :propMode="sidebarMode" :propQBEParameters="dataset.pars" @execute="onExecute"></KnParameterSidebar>
         </div>
     </Dialog>
 </template>
@@ -118,6 +109,7 @@ export default defineComponent({
         async loadPreSavePreview() {
             this.loading = true
             const postData = { ...this.dataset }
+            postData.start = this.pagination.start
             if (this.filtersData.filterStatus?.length > 0) {
                 postData.DRIVERS = this.formatDriversForPreviewData()
             }
@@ -227,6 +219,7 @@ export default defineComponent({
             return formattedDrivers
         },
         async updatePagination(lazyParams: any) {
+            console.log('PAGINATION OBJECT ', lazyParams)
             this.pagination.start = lazyParams.paginationStart
             this.pagination.limit = lazyParams.paginationLimit
             this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
