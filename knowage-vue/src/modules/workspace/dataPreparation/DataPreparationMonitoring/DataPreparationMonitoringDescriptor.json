@@ -1,0 +1,215 @@
+{
+    "columns": [
+        {
+            "field": "executionDate",
+            "header": "common.executionDate",
+            "style": {
+                "width": "30%"
+            }
+        },
+        {
+            "field": "state",
+            "header": "common.state",
+            "style": {
+                "width": "30%"
+            }
+        },
+        {
+            "field": "processedLines",
+            "header": "common.processedLines",
+            "style": {
+                "width": "30%"
+            }
+        },
+        {
+            "field": "errorFile",
+            "header": "common.errorFile",
+            "icon": "pi pi-download",
+            "style": {
+                "width": "10%"
+            }
+        }
+    ],
+    "days": [
+        {
+            "code": "mon",
+            "id": 2,
+            "name": "cron.monday"
+        },
+        {
+            "code": "tue",
+            "id": 3,
+            "name": "cron.tuesday"
+        },
+        {
+            "code": "wed",
+            "id": 4,
+            "name": "cron.wednesday"
+        },
+        {
+            "code": "thu",
+            "id": 5,
+            "name": "cron.thursday"
+        },
+        {
+            "code": "fri",
+            "id": 6,
+            "name": "cron.friday"
+        },
+        {
+            "code": "sat",
+            "id": 7,
+            "name": "cron.saturday"
+        },
+        {
+            "code": "sun",
+            "id": 1,
+            "name": "cron.sunday"
+        }
+    ],
+    "dialog": {
+        "style": {}
+    },
+    "endDateEnabled": false,
+    "logs": {
+        "columns": {}
+    },
+    "mock": {
+        "logs": [
+            {
+                "errorFile": "SY",
+                "executionDate": "03/13/2022",
+                "id": 1,
+                "processedLines": 1,
+                "state": "KO"
+            }
+        ]
+    },
+    "monthly": {
+        "ordinal": {
+            "options": [
+                {
+                    "code": "first",
+                    "id": 1,
+                    "name": "cron.first"
+                },
+                {
+                    "code": "second",
+                    "id": 2,
+                    "name": "cron.second"
+                },
+                {
+                    "code": "third",
+                    "id": 3,
+                    "name": "cron.third"
+                },
+                {
+                    "code": "fourth",
+                    "id": 4,
+                    "name": "cron.fourth"
+                },
+                {
+                    "code": "fifth",
+                    "id": 5,
+                    "name": "cron.fifth"
+                }
+            ]
+        }
+    },
+    "months": [
+        {
+            "code": "jan",
+            "id": 1,
+            "name": "cron.january"
+        },
+        {
+            "code": "feb",
+            "id": 2,
+            "name": "cron.february"
+        },
+        {
+            "code": "mar",
+            "id": 3,
+            "name": "cron.march"
+        },
+        {
+            "code": "apr",
+            "id": 4,
+            "name": "cron.april"
+        },
+        {
+            "code": "may",
+            "id": 5,
+            "name": "cron.may"
+        },
+        {
+            "code": "jun",
+            "id": 6,
+            "name": "cron.june"
+        },
+        {
+            "code": "jul",
+            "id": 7,
+            "name": "cron.july"
+        },
+        {
+            "code": "aug",
+            "id": 8,
+            "name": "cron.august"
+        },
+        {
+            "code": "sep",
+            "id": 9,
+            "name": "cron.september"
+        },
+        {
+            "code": "oct",
+            "id": 10,
+            "name": "cron.october"
+        },
+        {
+            "code": "nov",
+            "id": 11,
+            "name": "cron.november"
+        },
+        {
+            "code": "dec",
+            "id": 12,
+            "name": "cron.december"
+        }
+    ],
+    "refreshRate": {
+        "options": [
+            {
+                "code": "daily",
+                "id": 2,
+                "name": "cron.daily"
+            },
+            {
+                "code": "weekly",
+                "id": 3,
+                "name": "cron.weekly"
+            },
+            {
+                "code": "monthly",
+                "id": 4,
+                "name": "cron.monthly"
+            },
+            {
+                "code": "yearly",
+                "id": 5,
+                "name": "cron.yearly"
+            },
+            {
+                "code": "custom",
+                "id": 5,
+                "name": "cron.custom"
+            }
+        ],
+        "placeholder": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.label"
+    },
+    "startDateEnabled": false,
+    "style": {
+        "cardContainer": {}
+    }
+}

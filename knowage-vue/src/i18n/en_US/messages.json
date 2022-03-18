@@ -216,6 +216,8 @@
         "advanced": "Advanced",
         "april": "April",
         "august": "August",
+        "custom": "Custom",
+        "daily": "Daily",
         "day": "Day",
         "days": "Days",
         "december": "December",
@@ -227,6 +229,9 @@
         "everyWeekday": "Every Weekday",
         "everyday": "Every Day",
         "february": "February",
+        "fifth": "Fifth",
+        "first": "First",
+        "fourth": "Fourth",
         "friday": "Friday",
         "hour": "Hour",
         "hours": "Hours",
@@ -244,12 +249,14 @@
         "minutes": "Minutes",
         "monday": "Monday",
         "month": "Month",
+        "monthly": "Monthly",
         "months": "Months",
         "nextExecution": "Next execution",
         "november": "November",
         "october": "October",
         "repeatInterval": "Repeat Interval",
         "saturday": "Saturday",
+        "second": "Second",
         "selectDays": "Select day(s)",
         "selectHours": "Select hour(s)",
         "selectMinutes": "Select minute(s)",
@@ -262,11 +269,14 @@
         "sunday": "Sunday",
         "theDay": "The day",
         "theWeek": "The week",
+        "third": "Third",
         "thursday": "Thursday",
         "tuesday": "Tuesday",
         "wednesday": "Wednesday",
         "weekday": "Weekday",
-        "weekdays": "Weekdays"
+        "weekdays": "Weekdays",
+        "weekly": "Weekly",
+        "yearly": "Yearly"
     },
     "documentBrowser": {
         "changeStateMessage": "Are you sure you want to change the state for this document?",
@@ -584,6 +594,17 @@
         "aboutKnowage": "About Knowage",
         "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
+    },
+    "knScheduler": {
+        "everyDay": "Every {day} day/s ",
+        "everyMonth": "Every {month} month/s ",
+        "everyNotWorkingDays": "Every not working days",
+        "everyWeek": "Every {week} week/s",
+        "everyYear": "Every {year} year/s",
+        "in": "In",
+        "startingIn": "starting in {in}",
+        "the": "The",
+        "theDay": "The day"
     },
     "kpi": {
         "alert": {
@@ -979,9 +1000,9 @@
                 "schemaAttribute": "Multischema Attribute",
                 "testOk": "Tested parameters are correct!",
                 "urlConnection": "URL",
+                "useForDataprep": "Use for data preparation",
                 "user": "User",
-                "writeDefault": "Use as cache",
-                "useForDataprep": "Use for data preparation"
+                "writeDefault": "Use as cache"
             },
             "hint": "The datasources allows you to define an 'access point' for your document data. It's possible to change the type, the dialect and to set the url or settings. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Data Source Management"
