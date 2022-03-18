@@ -120,7 +120,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 			ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), encodedUserId, outputDir.toString(), url.toString());
 			Process exec = processBuilder.start();
-			exec.waitFor(2, TimeUnit.MINUTES);
+			exec.waitFor();
 			// the script creates the resulting xls and saves it to outputFile
 			Path outputFile = outputDir.resolve(documentLabel + ".xlsx");
 			return getByteArrayFromFile(outputFile, outputDir);
