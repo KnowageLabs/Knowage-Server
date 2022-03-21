@@ -27,7 +27,8 @@ public class BusinessRequestContextBuilder {
 
 	private BusinessRequestContext businessRequestContext;
 
-	private BusinessRequestContextBuilder() {}
+	private BusinessRequestContextBuilder() {
+	}
 
 	public static BusinessRequestContextBuilder newInstance() {
 		return new BusinessRequestContextBuilder();
@@ -57,6 +58,7 @@ public class BusinessRequestContextBuilder {
 		return this;
 	}
 
+	// TODO: remove gallery element
 	public BusinessRequestContextBuilder initForInitializer() {
 
 		withUserId("initializer");
