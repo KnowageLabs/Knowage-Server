@@ -161,9 +161,7 @@ public class QuartzNativeObjectsConverter {
 				spagobiTrigger.getJob().addParameter("originalTriggerName", spagobiTrigger.getOriginalTriggerName());
 				JobDataMap jobDataMap = convertParametersToNativeObject(spagobiTrigger.getJob().getParameters());
 
-				SimpleScheduleBuilder schedule = simpleSchedule()
-						.withIntervalInMinutes(0)
-						.withRepeatCount(10000);
+				SimpleScheduleBuilder schedule = simpleSchedule();
 
 				quartzTrigger = triggerBuilder.forJob(jobName, jobGroup)
 						.withDescription(description)
