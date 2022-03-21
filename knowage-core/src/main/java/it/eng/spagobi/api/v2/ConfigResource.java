@@ -317,13 +317,16 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 			for (int i = 0; i < jsonArray.length(); i++) {
 				JSONObject configObject = jsonArray.getJSONObject(i);
-				saveReceivedConfig(configObject);
+				try {
+					saveReceivedConfig(configObject);
 
-				if (configObject.get("label").equals(SimpleCacheConfiguration.CACHE_SCHEDULING_FULL_CLEAN)) {
-
-					CacheTriggerManagementAPI cacheTriggerManagementAPI = new CacheTriggerManagementAPI();
-					String confValue = configObject.getString("id");
-					cacheTriggerManagementAPI.updateCronExpression(confValue);
+					if (configObject.get("label").equals(SimpleCacheConfiguration.CACHE_SCHEDULING_FULL_CLEAN)) {
+						CacheTriggerManagementAPI cacheTriggerManagementAPI = new CacheTriggerManagementAPI();
+						String confValue = configObject.getString("id");
+						cacheTriggerManagementAPI.updateCronExpression(confValue);
+					}
+				} catch (Exception e) {
+					logger.error("Couldn't save config: " + configObject.getString("label"), e);
 				}
 			}
 
@@ -332,7 +335,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			logger.error("Error updating config", e);
-			return Response.notModified(e.getMessage()).build();
+			throw new SpagoBIRuntimeException("Error updating config", e);
 		}
 
 	}

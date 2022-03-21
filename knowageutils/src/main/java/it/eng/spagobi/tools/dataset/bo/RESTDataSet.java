@@ -282,7 +282,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 	protected Map<String, String> getRequestHeadersPropMap(String propName, JSONObject conf, boolean resolveParams) throws JSONException {
 		if (!conf.has(propName) || conf.getString(propName).isEmpty()) {
 			// optional property
-			return Collections.emptyMap();
+			return new HashMap<String, String>();
 		}
 
 		Object c = conf.get(propName);

@@ -2,10 +2,10 @@
     <div class="p-grid p-m-0 kn-flex">
         <div class="p-col-4 p-sm-4 p-md-3 p-p-0 p-d-flex p-flex-column kn-flex">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.documentDetails.history.listTitle') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button :label="$t('common.add')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="setUploadType" />
                     <KnInputFile label="" v-if="!uploading" :changeFunction="startTemplateUpload" :triggerInput="triggerUpload" />
                 </template>
@@ -28,16 +28,16 @@
         </div>
         <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0" :style="mainDescriptor.style.driverDetailsContainer">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.documentDetails.history.template') }}
                 </template>
-                <template #right>
-                    <Button label="Open Designer" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="openDesigner" />
+                <template #end>
+                    <Button :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="openDesignerConfirm" />
                 </template>
             </Toolbar>
             <div id="driver-details-container" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
-                    <VCodeMirror v-if="showTemplateContent" ref="codeMirrorScriptType" :style="mainDescriptor.style.height100" v-model:value="selectedTemplateContent" :options="scriptOptions" @keyup="$emit('touched')" />
+                    <VCodeMirror v-if="showTemplateContent" ref="codeMirrorScriptType" class="kn-height-full" v-model:value="selectedTemplateContent" :options="scriptOptions" @keyup="$emit('touched')" />
                     <div v-else>
                         <InlineMessage severity="info" class="p-m-2"> {{ $t('documentExecution.documentDetails.history.templateHint') }}</InlineMessage>
                     </div>
@@ -247,8 +247,16 @@ export default defineComponent({
                 })
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
+        openDesignerConfirm() {
+            this.$confirm.require({
+                header: this.$t('common.toast.warning'),
+                message: this.$t('documentExecution.olap.openDesignerMsg'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.openDesigner()
+            })
+        },
         openDesigner() {
-            this.$store.commit('setInfo', { title: 'TODO', msg: 'Functionality not in this sprint!!!' })
+            this.$router.push(`/olap-designer/${this.selectedDocument.id}`)
         }
     }
 })

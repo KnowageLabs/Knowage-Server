@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-        <template #left>{{ job.jobName }}</template>
-        <template #right>
+        <template #start>{{ job.jobName }}</template>
+        <template #end>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDisabled" @click="saveJob" data-test="save-button" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeJobDetail" />
         </template>
@@ -44,88 +44,88 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iPackage } from './Scheduler'
-import Card from 'primevue/card'
-import SchedulerDocumentsTable from './SchedulerDocumentsTable/SchedulerDocumentsTable.vue'
-import SchedulerTimingOutputTable from './SchedulerTimingOutputTable/SchedulerTimingOutputTable.vue'
-import { AxiosResponse } from 'axios'
+    import { defineComponent } from 'vue'
+    import { iPackage } from './Scheduler'
+    import Card from 'primevue/card'
+    import SchedulerDocumentsTable from './SchedulerDocumentsTable/SchedulerDocumentsTable.vue'
+    import SchedulerTimingOutputTable from './SchedulerTimingOutputTable/SchedulerTimingOutputTable.vue'
+    import { AxiosResponse } from 'axios'
 
-export default defineComponent({
-    name: 'scheduler-detail',
-    components: { Card, SchedulerDocumentsTable, SchedulerTimingOutputTable },
-    props: { id: { type: String }, clone: { type: String }, selectedJob: { type: Object } },
-    emits: ['documentSaved', 'close'],
-    data() {
-        return {
-            job: null as iPackage | null,
-            jobNameDirty: false,
-            operation: 'create',
-            loading: false
-        }
-    },
-    watch: {
-        selectedJob() {
+    export default defineComponent({
+        name: 'scheduler-detail',
+        components: { Card, SchedulerDocumentsTable, SchedulerTimingOutputTable },
+        props: { id: { type: String }, clone: { type: String }, selectedJob: { type: Object } },
+        emits: ['documentSaved', 'close'],
+        data() {
+            return {
+                job: null as iPackage | null,
+                jobNameDirty: false,
+                operation: 'create',
+                loading: false
+            }
+        },
+        watch: {
+            selectedJob() {
+                this.loadJob()
+            }
+        },
+        computed: {
+            saveDisabled(): any {
+                return this.job && (!this.job.jobName || this.job.documents?.length === 0 || (this.job.edit && this.job.triggers?.length === 0))
+            },
+            testReadonly(): any {
+                return this.job && this.job.edit ? true : false
+            }
+        },
+        created() {
             this.loadJob()
-        }
-    },
-    computed: {
-        saveDisabled(): any {
-            return this.job && (!this.job.jobName || this.job.documents?.length === 0 || (this.job.edit && this.job.triggers?.length === 0))
         },
-        testReadonly(): any {
-            return this.job && this.job.edit ? true : false
-        }
-    },
-    created() {
-        this.loadJob()
-    },
-    methods: {
-        loadJob() {
-            this.job = { ...this.selectedJob } as iPackage
-        },
-        setLoading(loading: boolean) {
-            this.loading = loading
-        },
-        async saveJob() {
-            this.loading = true
-            const originalJob = { ...this.job }
+        methods: {
+            loadJob() {
+                this.job = { ...this.selectedJob } as iPackage
+            },
+            setLoading(loading: boolean) {
+                this.loading = loading
+            },
+            async saveJob() {
+                this.loading = true
+                const originalJob = { ...this.job }
 
-            this.formatJob()
+                this.formatJob()
 
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveJob`, this.job)
-                .then((response: AxiosResponse<any>) => {
-                    if (response.data.resp === 'ok') {
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.' + this.operation + 'Title'),
-                            msg: this.$t('common.toast.success')
-                        })
-                        this.$router.push(`/scheduler/edit-package-schedule?id=${this.job?.jobName}&clone=false`)
-                        this.$emit('documentSaved', this.job?.jobName)
-                    }
-                })
-                .catch(() => {
-                    this.job = originalJob as iPackage
-                })
-            this.loading = false
-        },
-        formatJob() {
-            delete this.job?.edit
-            delete this.job?.numberOfDocuments
-        },
-        closeJobDetail() {
-            this.job = null
-            this.jobNameDirty = false
-            this.$emit('close')
-            this.$router.push('/scheduler')
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveJob`, this.job)
+                    .then((response: AxiosResponse<any>) => {
+                        if (response.data.resp === 'ok') {
+                            this.$store.commit('setInfo', {
+                                title: this.$t('common.toast.' + this.operation + 'Title'),
+                                msg: this.$t('common.toast.success')
+                            })
+                            this.$router.push(`/scheduler/edit-package-schedule?id=${this.job?.jobName}&clone=false`)
+                            this.$emit('documentSaved', this.job?.jobName)
+                        }
+                    })
+                    .catch(() => {
+                        this.job = originalJob as iPackage
+                    })
+                this.loading = false
+            },
+            formatJob() {
+                delete this.job?.edit
+                delete this.job?.numberOfDocuments
+            },
+            closeJobDetail() {
+                this.job = null
+                this.jobNameDirty = false
+                this.$emit('close')
+                this.$router.push('/scheduler')
+            }
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss">
-#scheduler-detail-card .p-card-body {
-    padding: 0;
-}
+    #scheduler-detail-card .p-card-body {
+        padding: 0;
+    }
 </style>

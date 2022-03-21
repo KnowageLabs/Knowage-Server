@@ -27,12 +27,8 @@
     <logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" level="ERROR">
         <AppenderRef ref="SpagoBITalendEngine"/>
     </logger>
-    <root>
-        <level value="ERROR"/>
+    <root level="ERROR">
         <AppenderRef ref="SpagoBITalendEngine"/>
     </root>
-  <Root level="ERROR">
-            <AppenderRef ref="SpagoBITalendEngine"/>
-        </Root>
     </Loggers>
 </Configuration>

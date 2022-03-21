@@ -2,8 +2,11 @@
     <div class="p-grid p-m-0 kn-flex">
         <div class="p-col-7 p-m-0 p-p-0 right-border p-d-flex p-flex-column kn-flex">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.documentDetails.info.infoTitle') }}
+                </template>
+                <template #end>
+                    <Button v-if="designerButtonVisible" :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-plain" @click="openDesignerConfirm" />
                 </template>
             </Toolbar>
             <div id="informations-content" class="kn-flex kn-relative">
@@ -61,7 +64,7 @@
                                 </div>
 
                                 <div class="p-field p-col-12 p-lg-6">
-                                    <img id="image-preview" :src="getImageUrl" :height="mainDescriptor.style.previewImage" />
+                                    <img v-if="selectedDocument?.previewFile" id="image-preview" :src="getImageUrl" :height="mainDescriptor.style.previewImage" />
                                 </div>
 
                                 <div class="p-field p-col-12 p-lg-6">
@@ -108,7 +111,7 @@
                                                 'p-invalid': v$.document.typeCode.$invalid && v$.document.typeCode.$dirty
                                             }"
                                             @blur="v$.document.typeCode.$touch()"
-                                            @change="$emit('touched')"
+                                            @change="onTypeChange"
                                         />
                                         <label for="type" class="kn-material-input-label"> {{ $t('importExport.catalogFunction.column.type') }} *</label>
                                     </span>
@@ -195,7 +198,7 @@
         </div>
         <div class="p-col-5 p-m-0 p-p-0 p-d-flex p-flex-column kn-flex">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.documentDetails.info.positionTitle') }}
                 </template>
             </Toolbar>
@@ -203,7 +206,7 @@
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <div id="restriction-container" class="p-m-2">
                         <Toolbar class="kn-toolbar kn-toolbar--default">
-                            <template #left>
+                            <template #start>
                                 {{ $t('documentExecution.documentDetails.info.restrictionsTitle') }}
                             </template>
                         </Toolbar>
@@ -233,7 +236,7 @@
                     </div>
                     <div id="tree-container" class="p-m-2">
                         <Toolbar class="kn-toolbar kn-toolbar--default">
-                            <template #left>
+                            <template #start>
                                 {{ $t('documentExecution.documentDetails.info.visibilityLocationTitle') }}
                             </template>
                         </Toolbar>
@@ -281,7 +284,7 @@ export default defineComponent({
         availableTemplates: { type: Array as PropType<iTemplate[]> },
         availableAttributes: { type: Array as PropType<iAttribute[]> }
     },
-    emits: ['setTemplateForUpload', 'setImageForUpload', 'deleteImage'],
+    emits: ['setTemplateForUpload', 'setImageForUpload', 'deleteImage', 'touched'],
     computed: {
         filteredEngines(): any {
             if (this.document.typeCode) {
@@ -317,6 +320,9 @@ export default defineComponent({
         },
         getImageUrl(): string {
             return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
+        },
+        designerButtonVisible(): boolean {
+            return this.document.typeCode == 'OLAP' || this.document.typeCode == 'KPI' || this.document.engine == 'knowagegisengine'
         }
     },
     data() {
@@ -343,7 +349,7 @@ export default defineComponent({
         this.setData()
     },
     watch: {
-        document() {
+        selectedDocument() {
             this.setData()
         }
     },
@@ -405,6 +411,21 @@ export default defineComponent({
         },
         setFunctionality(event) {
             this.document.functionalities = event
+        },
+        onTypeChange() {
+            this.$emit('touched')
+            this.document.engine = ''
+        },
+        openDesignerConfirm() {
+            this.$confirm.require({
+                header: this.$t('common.toast.warning'),
+                message: this.$t('documentExecution.olap.openDesignerMsg'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.openDesigner()
+            })
+        },
+        openDesigner() {
+            this.$router.push(`/olap-designer/${this.document.id}`)
         }
     }
 })

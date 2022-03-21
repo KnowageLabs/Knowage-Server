@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -71,6 +72,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 	private final boolean isSingleWidgetExport;
 	private int uniqueId = 0;
 	private String requestURL = "";
+
+	private Map<String, CellStyle> format2CellStyle = new HashMap<String, CellStyle>();
 
 	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "selector", "selection", "html" };
 	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
@@ -357,6 +360,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
 				String datasetLabel = dataset.getLabel();
 				JSONObject cockpitSelections = getMultiCockpitSelectionsFromBody(widget, datasetId);
+				if (isEmptyLayer(cockpitSelections))
+					continue;
 
 				if (getRealtimeFromWidget(datasetId, configuration))
 					map.put("nearRealtime", true);
@@ -379,6 +384,21 @@ public class ExcelExporter extends AbstractFormatExporter {
 			throw new SpagoBIRuntimeException("Unable to get multi datastore for map widget: ", e);
 		}
 		return multiDataStore;
+	}
+
+	private boolean isEmptyLayer(JSONObject cockpitSelections) {
+		try {
+			JSONObject aggregations = cockpitSelections.getJSONObject("aggregations");
+			JSONArray measures = aggregations.getJSONArray("measures");
+			JSONArray categories = aggregations.getJSONArray("categories");
+			if (measures.length() > 0 || categories.length() > 0)
+				return false;
+			else
+				return true;
+		} catch (Exception e) {
+			logger.warn("Error while checking if layer is empty", e);
+			return false;
+		}
 	}
 
 	public JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget) {
@@ -567,13 +587,13 @@ public class ExcelExporter extends AbstractFormatExporter {
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 							}
-							cell.setCellStyle(getCellStyle(wb, createHelper, column.getString("name"), columnStyles[c], intCellStyle));
+							cell.setCellStyle(getCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle));
 							break;
 						case "float":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 							}
-							cell.setCellStyle(getCellStyle(wb, createHelper, column.getString("name"), columnStyles[c], floatCellStyle));
+							cell.setCellStyle(getCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle));
 							break;
 						case "date":
 							try {
@@ -627,27 +647,54 @@ public class ExcelExporter extends AbstractFormatExporter {
 		}
 	}
 
-	private CellStyle getCellStyle(Workbook wb, CreationHelper helper, String colName, JSONObject colStyle, CellStyle defaultStyle) {
+	private CellStyle getCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, CellStyle defaultStyle) {
+		String colName = null;
 		try {
+			colName = column.getString("name");
 			CellStyle toReturn = defaultStyle;
+			// precision (i.e. number of digits to right of the decimal point) that is specified on dashboard design wins
 			if (colStyle != null && colStyle.has("precision")) {
 				int precision = colStyle.getInt("precision");
-				String format = "#,##0";
-				if (precision > 0) {
-					format += ".";
-					for (int j = 0; j < precision; j++) {
-						format += "0";
-					}
+				String format = getNumberFormatByPrecision(precision);
+				toReturn = getCellStyleByFormat(wb, helper, format);
+			} else {
+				// if column has scale (the same as precision but in JDBC/SQL terms, consider for example ORACLE NUMBER(38,0) where 0 is the scale) we apply it
+				if (column.has("scale")) {
+					int precision = column.getInt("scale");
+					String format = getNumberFormatByPrecision(precision);
+					toReturn = getCellStyleByFormat(wb, helper, format);
 				}
-				CellStyle cellStyle = wb.createCellStyle();
-				cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
-				toReturn = cellStyle;
 			}
 			return toReturn;
 		} catch (Exception e) {
 			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
 			return defaultStyle;
 		}
+	}
+
+	protected String getNumberFormatByPrecision(int precision) {
+		String format = "#,##0";
+		if (precision > 0) {
+			format += ".";
+			for (int j = 0; j < precision; j++) {
+				format += "0";
+			}
+		}
+		return format;
+	}
+
+	/*
+	 * This method avoids cell style objects number to increase by rows number (see https://production.eng.it/jira/browse/KNOWAGE-6692 and
+	 * https://production.eng.it/jira/browse/KNOWAGE-6693)
+	 */
+	protected CellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format) {
+		if (!format2CellStyle.containsKey(format)) {
+			// if cell style does not exist
+			CellStyle cellStyle = wb.createCellStyle();
+			cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
+			format2CellStyle.put(format, cellStyle);
+		}
+		return format2CellStyle.get(format);
 	}
 
 	private Row createHeaderColumnNames(Sheet sheet, Map<String, String> mapGroupsAndColumns, JSONArray columnsOrdered, int startRowOffset) {

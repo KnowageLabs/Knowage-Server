@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-        <template #left>{{ selectedBusinessModel.name }} </template>
-        <template #right>
+        <template #start>{{ selectedBusinessModel.name }} </template>
+        <template #end>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" data-test="submit-button" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" />
         </template>
@@ -20,9 +20,11 @@
                 :user="user"
                 :toGenerate="toGenerate"
                 :readonly="readonly"
+                :businessModelVersions="businessModelVersions"
                 @fieldChanged="onFieldChange"
                 @fileUploaded="uploadedFile = $event"
                 @datamartGenerated="loadPage"
+                @modelGenerated="loadVersions"
             ></BusinessModelDetailsCard>
         </TabPanel>
 

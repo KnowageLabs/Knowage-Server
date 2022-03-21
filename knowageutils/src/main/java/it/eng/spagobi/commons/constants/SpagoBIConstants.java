@@ -609,4 +609,6 @@ public class SpagoBIConstants {
 	// License Read Only
 	public static final String LICENSE_READ_ONLY = "LicenseReadOnly";
 
+	public static final String THEME_MANAGEMENT = "ThemeManagement";
+
 }

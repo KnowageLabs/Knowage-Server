@@ -2,7 +2,7 @@
     <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="schedulerDocumentParameterDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('managers.scheduler.documentParameter') }}
                 </template>
             </Toolbar>
@@ -22,64 +22,64 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { AxiosResponse } from 'axios'
-import Dialog from 'primevue/dialog'
-import Message from 'primevue/message'
-import schedulerDocumentParameterDialogDescriptor from './SchedulerDocumentParameterDialogDescriptor.json'
-import SchedulerDocumentParameterForm from './SchedulerDocumentParameterForm.vue'
+    import { defineComponent } from 'vue'
+    import { AxiosResponse } from 'axios'
+    import Dialog from 'primevue/dialog'
+    import Message from 'primevue/message'
+    import schedulerDocumentParameterDialogDescriptor from './SchedulerDocumentParameterDialogDescriptor.json'
+    import SchedulerDocumentParameterForm from './SchedulerDocumentParameterForm.vue'
 
-export default defineComponent({
-    name: 'scheduler-document-parameter-dialog',
-    components: { Dialog, Message, SchedulerDocumentParameterForm },
-    props: { propParameters: { type: Array }, roles: { type: Array }, deletedParams: { type: Array }, documentLabel: { type: String } },
-    emits: ['documentSelected', 'close', 'setParameters'],
-    data() {
-        return {
-            schedulerDocumentParameterDialogDescriptor,
-            parameters: [] as any[],
-            formulas: [] as any[],
-            loading: false
-        }
-    },
-    computed: {
-        deletedParamsMessage() {
-            let message = ''
-            this.deletedParams?.forEach((el: any) => (message += el.name + ' '))
-            return message
-        }
-    },
-    watch: {
-        propParameters: {
-            handler() {
-                this.loadParameters()
+    export default defineComponent({
+        name: 'scheduler-document-parameter-dialog',
+        components: { Dialog, Message, SchedulerDocumentParameterForm },
+        props: { propParameters: { type: Array }, roles: { type: Array }, deletedParams: { type: Array }, documentLabel: { type: String } },
+        emits: ['documentSelected', 'close', 'setParameters'],
+        data() {
+            return {
+                schedulerDocumentParameterDialogDescriptor,
+                parameters: [] as any[],
+                formulas: [] as any[],
+                loading: false
+            }
+        },
+        computed: {
+            deletedParamsMessage() {
+                let message = ''
+                this.deletedParams?.forEach((el: any) => (message += el.name + ' '))
+                return message
+            }
+        },
+        watch: {
+            propParameters: {
+                handler() {
+                    this.loadParameters()
+                },
+                deep: true
+            }
+        },
+        async created() {
+            this.loadParameters()
+            await this.loadFormulas()
+        },
+        methods: {
+            loadParameters() {
+                this.parameters = []
+                this.propParameters?.forEach((el: any) => this.parameters.push({ ...el }))
+                this.parameters.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
             },
-            deep: true
+            closeDialog() {
+                this.parameters = []
+                this.$emit('close')
+            },
+            async loadFormulas() {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/formulas/`).then((response: AxiosResponse<any>) => (this.formulas = response.data))
+            },
+            setParameters() {
+                this.$emit('setParameters', this.parameters)
+            },
+            setLoading(loadingValue: boolean) {
+                this.loading = loadingValue
+            }
         }
-    },
-    async created() {
-        this.loadParameters()
-        await this.loadFormulas()
-    },
-    methods: {
-        loadParameters() {
-            this.parameters = []
-            this.propParameters?.forEach((el: any) => this.parameters.push({ ...el }))
-            this.parameters.sort((a: any, b: any) => (a.name > b.name ? 1 : -1))
-        },
-        closeDialog() {
-            this.parameters = []
-            this.$emit('close')
-        },
-        async loadFormulas() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/formulas/`).then((response: AxiosResponse<any>) => (this.formulas = response.data))
-        },
-        setParameters() {
-            this.$emit('setParameters', this.parameters)
-        },
-        setLoading(loadingValue: boolean) {
-            this.loading = loadingValue
-        }
-    }
-})
+    })
 </script>

@@ -47,6 +47,11 @@ public class WidgetGalleryDTO {
 	@Xss
 	private String name;
 
+	@AlphanumericNoSpaces
+	@NotNull
+	@Xss
+	private String label;
+
 	@Xss
 	private String description;
 
@@ -93,6 +98,14 @@ public class WidgetGalleryDTO {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public String getType() {

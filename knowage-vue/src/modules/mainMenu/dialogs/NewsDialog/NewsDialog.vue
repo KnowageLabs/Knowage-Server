@@ -42,186 +42,186 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import Avatar from 'primevue/avatar'
-    import Dialog from 'primevue/dialog'
-    import Listbox from 'primevue/listbox'
-    import { mapState } from 'vuex'
-    import { AxiosResponse } from 'axios'
-    import newsDialogDescriptor from './NewsDialogDescriptor.json'
-    import TabView from 'primevue/tabview'
-    import TabPanel from 'primevue/tabpanel'
-    import { formatDate } from '@/helpers/commons/localeHelper'
-    import WS from '@/services/webSocket'
+import { defineComponent } from 'vue'
+import Avatar from 'primevue/avatar'
+import Dialog from 'primevue/dialog'
+import Listbox from 'primevue/listbox'
+import { mapState } from 'vuex'
+import { AxiosResponse } from 'axios'
+import newsDialogDescriptor from './NewsDialogDescriptor.json'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
+import { formatDate } from '@/helpers/commons/localeHelper'
+import WS from '@/services/webSocket'
 
-    interface SingleNews {
-        description?: string
-        expirationDate?: string
-        html?: string
-        id: number
-        read?: boolean | false
-        title?: string
-        type: number
-    }
+interface SingleNews {
+    description?: string
+    expirationDate?: string
+    html?: string
+    id: number
+    read?: boolean | false
+    title?: string
+    type: number
+}
 
-    export default defineComponent({
-        name: 'news-dialog',
-        components: { Avatar, Dialog, Listbox, TabView, TabPanel },
-        data() {
-            return {
-                typeDescriptor: newsDialogDescriptor,
-                selectedNews: {} as SingleNews,
-                news: {},
-                loading: true,
-                newsReadArray: Array<number>()
-            }
+export default defineComponent({
+    name: 'news-dialog',
+    components: { Avatar, Dialog, Listbox, TabView, TabPanel },
+    data() {
+        return {
+            typeDescriptor: newsDialogDescriptor,
+            selectedNews: {} as SingleNews,
+            news: {},
+            loading: true,
+            newsReadArray: Array<number>()
+        }
+    },
+    created() {},
+    props: {
+        visibility: Boolean
+    },
+    emits: ['update:visibility'],
+    methods: {
+        emptySelectedNews() {
+            this.selectedNews = {} as SingleNews
         },
-        created() {},
-        props: {
-            visibility: Boolean
+        getDate() {
+            return formatDate(this.selectedNews.expirationDate, 'LLL')
         },
-        emits: ['update:visibility'],
-        methods: {
-            emptySelectedNews() {
-                this.selectedNews = {} as SingleNews
-            },
-            getDate() {
-                return formatDate(this.selectedNews.expirationDate, 'LLL')
-            },
-            closeDialog() {
-                this.$emit('update:visibility', false)
-            },
-            async getNews(id) {
-                if (id != this.selectedNews.id) {
-                    this.loading = true
-                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/' + id + '?isTechnical=false').then(
-                        (response: AxiosResponse<any>) => {
-                            console.log(response)
-                            if (response.data.errors) {
-                                this.$store.commit('setError', { title: this.$t('common.error.news'), msg: this.$t('news.errorGettingSelectedNews') })
-                            } else {
-                                this.selectedNews = response.data
-                                this.loading = false
-                                if (!this.selectedNews.read) {
-                                    this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/newsRead/' + id).then(
-                                        () => {
-                                            WS.send(JSON.stringify({ news: true }))
-                                        },
-                                        (error) => console.error(error)
-                                    )
+        closeDialog() {
+            this.$emit('update:visibility', false)
+        },
+        async getNews(id) {
+            if (id != this.selectedNews.id) {
+                this.loading = true
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/' + id + '?isTechnical=false').then(
+                    (response: AxiosResponse<any>) => {
+                        console.log(response)
+                        if (response.data.errors) {
+                            this.$store.commit('setError', { title: this.$t('common.error.news'), msg: this.$t('news.errorGettingSelectedNews') })
+                        } else {
+                            this.selectedNews = response.data
+                            this.loading = false
+                            if (!this.selectedNews.read) {
+                                this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/newsRead/' + id).then(
+                                    () => {
+                                        WS.send(JSON.stringify({ news: true }))
+                                    },
+                                    (error) => console.error(error)
+                                )
 
-                                    this.selectedNews.read = true
-                                    var stop = false
-                                    for (var idx in this.news) {
-                                        let currNewsArray = this.news[idx]
+                                this.selectedNews.read = true
+                                var stop = false
+                                for (var idx in this.news) {
+                                    let currNewsArray = this.news[idx]
 
-                                        for (var index in currNewsArray) {
-                                            let currNews = currNewsArray[index]
-                                            if (currNews.id == id) {
-                                                currNews.read = true
-                                                stop = true
-                                                break
-                                            }
+                                    for (var index in currNewsArray) {
+                                        let currNews = currNewsArray[index]
+                                        if (currNews.id == id) {
+                                            currNews.read = true
+                                            stop = true
+                                            break
                                         }
-
-                                        if (stop) break
                                     }
+
+                                    if (stop) break
                                 }
                             }
-                        },
-                        () => {
-                            this.loading = false
                         }
-                    )
-                }
-            }
-        },
-        computed: {
-            ...mapState({
-                locale: 'locale'
-            })
-        },
-        watch: {
-            visibility(newVisibility) {
-                if (newVisibility) {
-                    this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/newsRead').then(
-                        (response: AxiosResponse<any>) => {
-                            this.newsReadArray = []
-                            this.newsReadArray = response.data
-                        },
-                        (error) => console.error(error)
-                    )
-
-                    this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news').then(
-                        (response: AxiosResponse<any>) => {
-                            var jsonData = {}
-                            let localNewsReadArray = this.newsReadArray
-                            response.data.forEach(function(column: SingleNews) {
-                                let type = column.type.toString()
-                                if (!jsonData[type]) jsonData[type] = []
-                                if (localNewsReadArray.indexOf(column.id) != -1) column.read = true
-                                jsonData[type].push(column)
-                            })
-                            this.news = jsonData
-                        },
-                        (error) => console.error(error)
-                    )
-                }
+                    },
+                    () => {
+                        this.loading = false
+                    }
+                )
             }
         }
-    })
+    },
+    computed: {
+        ...mapState({
+            locale: 'locale'
+        })
+    },
+    watch: {
+        visibility(newVisibility) {
+            if (newVisibility) {
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/newsRead').then(
+                    (response: AxiosResponse<any>) => {
+                        this.newsReadArray = []
+                        this.newsReadArray = response.data
+                    },
+                    (error) => console.error(error)
+                )
+
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news').then(
+                    (response: AxiosResponse<any>) => {
+                        var jsonData = {}
+                        let localNewsReadArray = this.newsReadArray
+                        response.data.forEach(function(column: SingleNews) {
+                            let type = column.type.toString()
+                            if (!jsonData[type]) jsonData[type] = []
+                            if (localNewsReadArray.indexOf(column.id) != -1) column.read = true
+                            jsonData[type].push(column)
+                        })
+                        this.news = jsonData
+                    },
+                    (error) => console.error(error)
+                )
+            }
+        }
+    }
+})
 </script>
 
 <style scoped lang="scss">
-    .newsDialog {
-        min-width: 800px;
-        max-width: 1200px;
-        width: 800px;
-    }
-    .knTab {
-        &.p-tabview {
+.newsDialog {
+    min-width: 800px;
+    max-width: 1200px;
+    width: 800px;
+}
+.knTab {
+    &.p-tabview {
+        display: flex;
+        flex-direction: column;
+        min-height: 400px;
+        max-height: 600px;
+        &:deep(.p-tabview-panels) {
+            padding: 0;
+            flex: 1;
             display: flex;
             flex-direction: column;
-            min-height: 400px;
-            max-height: 600px;
-            &:deep(.p-tabview-panels) {
-                padding: 0;
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-            }
-            &:deep(.p-tabview-panel) {
-                flex: 1;
-                display: flex;
-            }
+        }
+        &:deep(.p-tabview-panel) {
+            flex: 1;
+            display: flex;
+        }
 
-            &:deep(.p-tabview-title) {
-                text-transform: uppercase;
-                margin: 0;
-                min-height: 40%;
-            }
-        }
-        .newsContainer {
-            overflow-x: hidden;
+        &:deep(.p-tabview-title) {
+            text-transform: uppercase;
+            margin: 0;
+            min-height: 40%;
         }
     }
-    .knPageContent {
-        flex: 1;
-        min-width: 800px;
-        max-width: 1200px;
-        width: 800px;
-        & > div {
-            overflow: auto;
-            &:first-child {
-                border-right: 1px solid $color-borders;
-            }
+    .newsContainer {
+        overflow-x: hidden;
+    }
+}
+.knPageContent {
+    flex: 1;
+    min-width: 800px;
+    max-width: 1200px;
+    width: 800px;
+    & > div {
+        overflow: auto;
+        &:first-child {
+            border-right: 1px solid var(--kn-color-borders);
         }
     }
-    .kn-list {
-        border-right: none !important;
-    }
+}
+.kn-list {
+    border-right: none !important;
+}
 
-    .h4-text {
-        font-weight: normal;
-    }
+.h4-text {
+    font-weight: normal;
+}
 </style>

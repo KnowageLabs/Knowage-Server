@@ -2,10 +2,11 @@
     <DataTable
         class="p-datatable-sm kn-table p-m-2"
         :value="inputVariables"
-        :editMode="functionsCatalogDatasetFormVariablesTableDescriptor.editMode"
+        editMode="cell"
         :dataKey="functionsCatalogDatasetFormVariablesTableDescriptor.dataKey"
         :responsiveLayout="functionsCatalogDatasetFormVariablesTableDescriptor.responsiveLayout"
         :breakpoint="functionsCatalogDatasetFormVariablesTableDescriptor.breakpoint"
+        @cell-edit-complete="onCellEditComplete"
     >
         <Column class="kn-truncated" field="name" :header="$t('managers.functionsCatalog.variableName')"> </Column>
         <Column class="kn-truncated" field="type" :header="$t('common.type')">
@@ -72,6 +73,9 @@ export default defineComponent({
         },
         getFormatedDate(date: any) {
             return formatDate(date, 'MM/DD/YYYY')
+        },
+        onCellEditComplete(event: any) {
+            this.inputVariables[event.index] = event.newData
         }
     }
 })

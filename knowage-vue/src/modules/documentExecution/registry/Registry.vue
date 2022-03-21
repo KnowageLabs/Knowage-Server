@@ -1,10 +1,10 @@
 <template>
     <div class="kn-page--full">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #left>
+            <template #start>
                 {{ $t('documentExecution.registry.title') }}
             </template>
-            <template #right>
+            <template #end>
                 <div class="p-d-flex p-flex-row">
                     <Button class="kn-button p-button-text" @click="saveRegistry">{{ $t('common.save') }}</Button>
                 </div>

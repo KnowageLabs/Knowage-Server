@@ -30,6 +30,8 @@ export interface iParameter {
     dependsOnParameters?: iParameter[]
     dataDependentParameters?: iParameter[]
     dataDependsOnParameters?: iParameter[],
+    lovDependsOnParameters?: iParameter[],
+    lovDependentParameters?: iParameter[]
 }
 
 
@@ -61,7 +63,8 @@ export interface iDocument {
     stateCodeStr: string
     tenant: string
     typeCode: string
-    visible: boolean
+    visible: boolean,
+    type?: string
 }
 
 export interface iAdmissibleValues {

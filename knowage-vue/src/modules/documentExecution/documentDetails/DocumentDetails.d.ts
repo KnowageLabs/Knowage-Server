@@ -216,3 +216,14 @@ export interface iOutputParam {
     isChanged?: boolean
     numberOfErrors?: any
 }
+
+export interface iDocumentType {
+    domainCode: string
+    domainName: string
+    translatedValueDescription: string
+    translatedValueName: string
+    valueCd: string
+    valueDescription: string
+    valueId: number
+    valueName: string
+}

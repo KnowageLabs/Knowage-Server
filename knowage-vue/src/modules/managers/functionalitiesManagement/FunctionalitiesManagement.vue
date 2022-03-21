@@ -1,18 +1,30 @@
 <template>
     <div class="kn-page">
-        <div class="kn-page-content p-grid p-m-0">
+        <div class="p-grid p-m-0">
             <div class="p-col-4 p-sm-4 p-md-3 p-p-0 p-d-flex p-flex-column">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.functionalitiesManagement.title') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <FabButton v-if="selectedFunctionality" icon="fas fa-plus" @click="showForm(null, selectedFunctionality.id)" data-test="new-button" />
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
 
-                <Tree id="document-tree" scrollHeight="70vh" :value="nodes" selectionMode="single" :expandedKeys="expandedKeys" :filter="true" filterMode="lenient" @node-select="showForm($event.data, $event.data.parentId)" data-test="functionality-tree" class="kn-tree kn-flex">
+                <Tree
+                    id="document-tree"
+                    scrollHeight="calc(100vh - 91px)"
+                    maximizable
+                    :value="nodes"
+                    selectionMode="single"
+                    :expandedKeys="expandedKeys"
+                    :filter="true"
+                    filterMode="lenient"
+                    @node-select="showForm($event.data, $event.data.parentId)"
+                    data-test="functionality-tree"
+                    class="kn-tree kn-column-tree kn-flex p-p-0"
+                >
                     <template #default="slotProps">
                         <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonsVisible[slotProps.node.id] = true" @mouseleave="buttonsVisible[slotProps.node.id] = false" :data-test="'tree-item-' + slotProps.node.id">
                             <span>{{ slotProps.node.label }}</span>

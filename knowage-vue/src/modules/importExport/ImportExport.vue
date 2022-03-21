@@ -3,10 +3,10 @@
         <ImportDialog v-model:visibility="displayImportDialog"></ImportDialog>
         <ExportDialog v-model:visibility="displayExportDialog" @export="startExport"></ExportDialog>
         <Toolbar class="kn-toolbar kn-toolbar--primary">
-            <template #left>
+            <template #start>
                 {{ $t('importExport.title') }}
             </template>
-            <template #right>
+            <template #end>
                 <Button class="kn-button p-button-text" @click="openImportDialog">{{ $t('common.import') }}</Button>
                 <Button class="kn-button p-button-text" @click="openExportDialog" :disabled="isExportDisabled()">{{ $t('common.export') }}</Button>
             </template>

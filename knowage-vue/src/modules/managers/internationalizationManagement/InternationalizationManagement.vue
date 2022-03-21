@@ -36,11 +36,8 @@
 
                     <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :class="{ disabledColumn: col.disabled, editableColumn: !col.disabled }">
                         <template #body="slotProps">
-                            <span :class="{ disabledCell: col.disabled, 'kn-disabled-text': col.disabled, editableCell: !col.disabled }">{{ slotProps.data[slotProps.column.props.field] }}</span>
-                        </template>
-                        <template #editor="slotProps">
-                            <InputText v-model="slotProps.data[slotProps.column.props.field]" v-if="!col.disabled" @input="atFieldChange(slotProps)" class="p-p-2" />
-                            <span class="disabledEditableField kn-disabled-text" v-if="col.disabled">{{ slotProps.data[slotProps.column.props.field] }}</span>
+                            <InputText v-model="slotProps.data[slotProps.column.props.field]" v-if="!col.disabled" class="kn-material-input p-inputtext-sm p-p-2" @input="atFieldChange(slotProps)" />
+                            <span v-else :class="{ disabledCell: col.disabled, 'kn-disabled-text': col.disabled, editableCell: !col.disabled }">{{ slotProps.data[slotProps.column.props.field] }}</span>
                         </template>
                     </Column>
 
@@ -355,7 +352,7 @@ export default defineComponent({
         cursor: pointer;
     }
     .p-datatable .p-datatable-tbody > tr:hover {
-        background-color: $color-selected;
+        background-color: var(--kn-color-selected);
     }
 }
 </style>

@@ -84,16 +84,18 @@
                   <td class="recNo"> <span ng-if="!col.editable">{{$index+1}}</span> </td>
                   <td ng-repeat="col in columns | orderBy: 'position' track by $index " ng-if="col.visible"  ng-class='checkIfSelected(row)' ng-style="{'background-color':col.color, 'width':col.size + 'px'}">
                      <div>
-                        <span ng-if="!col.editable && col.dataType !== 'boolean'">{{row[col.field] }}</span>                               
+                        <span ng-if="!col.editable && col.dataType !== 'boolean' && col.dataType !== 'date'">{{row[col.field] }}</span>
+                        <span ng-if="!col.editable && col.dataType === 'date'">{{row[col.field] }}</span>
+                        <span ng-if="!col.editable && col.dataType === 'timestamp'">{{row[col.field] | momentDateAndTime:currLanguage}}</span>                                
                         <input type="checkbox" ng-model="row[col.field]" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (!col.editable)" ng-checked="{{row[col.field]}}" disabled ng-click="setSelected(row)" >
                         <input type="checkbox" ng-model="row[col.field]" aria-label="data change" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (col.editable)" ng-checked="{{row[col.field]}}" ng-click="setSelected(row)">                                                            
                         <md-menu ng-if="col.editable && col.dataType !== 'boolean'" ng-click="setSelected(row)">
                            <div layout="row" class="clickable" ng-click="addColumnOptions(col, row, $mdOpenMenu)">  
                               <span ng-if="col.dataType === 'int' && row[col.field] != ''">{{row[col.field] | number}}</span>
                               <span ng-if="col.dataType === 'int' && row[col.field] == ''">{{row[col.field]}}</span>
-                              <span ng-if="col.dataType === 'date' && col.subType === 'timestamp' && row[col.field] != ''"> {{row[col.field] | momentDateAndTime:currLanguage}} </span>                                	
-                              <span ng-if="col.dataType === 'date' && col.subType != 'timestamp' &&  row[col.field] == ''"> {{row[col.field]}} </span>
-                              <span ng-if="col.dataType !== 'float' && col.dataType !== 'date' && col.dataType !== 'int'">{{row[col.field]}}</span>
+                              <span ng-if="col.dataType === 'timestamp'  && row[col.field] != ''"> {{row[col.field] | momentDateAndTime:currLanguage}} </span>                                	
+                              <span ng-if="col.dataType === 'date' &&  row[col.field] == ''"> {{row[col.field]}} </span>
+                              <span ng-if="col.dataType !== 'float' && col.dataType !== 'date' && col.dataType !== 'timestamp' && col.dataType !== 'int'">{{row[col.field]}}</span>
                               <span ng-if="col.dataType === 'float'"> {{row[col.field] | decimal:col.format}} </span>                                                                             
                            </div>
                            <md-menu-content width="6" class="customContentMenu" >
@@ -113,12 +115,12 @@
                                           </md-select>
                                        </div>
                                     </div>
- 									<div ng-if="col.dataType === 'date' && col.subType !== 'timestamp'" layout="row">
+ 									<div ng-if="col.dataType === 'date'" layout="row">
                                        <md-datepicker ng-init="row[col.field] = row[col.field] || null" ng-model="row[col.field]" step="{{getStep(col.dataType)}}"
                                           name="dateField"  ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"> </md-datepicker>
                                        <md-icon md-font-icon="fa fa-times" ng-click="resetDateField($event, row, col);"></md-icon>
                                     </div>
-                                    <div ng-if="col.dataType === 'date' && col.subType === 'timestamp'" layout="row" layout-align="space-around center">
+                                    <div ng-if="col.dataType === 'timestamp'" layout="row" layout-align="space-around center">
 										<registry-date-time-picker ng-model="row[col.field]"></registry-date-time-picker>
                                     </div>
                                  </md-input-container>
@@ -148,16 +150,18 @@
                <tr ng-repeat="(indexF, row) in data" ng-class="setSummaryRowColor(data,indexF,columns)">
                   <td ng-repeat="col in columns | orderBy: 'position' track by $index" rowspan="{{setRowspan(data,indexF,$index,columns)}}"  ng-if="compareRowsForRowspanPrint(data,indexF,$index,columns)" ng-class="checkIfSelected(row)">
                      <div>
-                        <span ng-if="!col.editable && col.dataType !== 'boolean' ">{{row[col.field] }}</span>  
+ 	                    <span ng-if="!col.editable && col.dataType !== 'boolean' && col.dataType !== 'date'">{{row[col.field] }}</span>
+                        <span ng-if="!col.editable && col.dataType === 'date'">{{row[col.field] }}</span>
+                        <span ng-if="!col.editable && col.dataType === 'timestamp'">{{row[col.field] | momentDateAndTime:currLanguage}}</span>
                         <span ng-if= "isItSummaryRow(data,indexF,$index,columns)">{{row[col.field] | number:getDecimalPlaces(col.field) }}</span>                   
                         <input type="checkbox" ng-model="row[col.field]" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean' ) && (!col.editable) && row[col.field] !== '      '" ng-checked="{{row[col.field]}}" disabled >
                         <input type="checkbox" ng-model="row[col.field]" aria-label="data change" ng-if="(col.editor=='TEXT' && col.dataType == 'boolean') && (col.editable) && row[col.field] !== '      '" ng-checked="{{row[col.field]}}" ng-click="setSelected(row)">                                                            
                         <md-menu ng-if="col.editable && col.dataType !== 'boolean' && row[col.field] !== '      ' && !isItSummaryRow(data,indexF,$index,columns)">
                            <div layout="row" class="clickable" ng-click="addColumnOptions(col, row, $mdOpenMenu)">                                    	
                               <span ng-if="col.dataType === 'int'">{{row[col.field] | number}}</span>  
-                              <span ng-if="col.dataType === 'date' && col.subType === 'timestamp' && row[col.field] != ''"> {{row[col.field] | momentDateAndTime:currLanguage}} </span>
-                              <span ng-if="col.dataType === 'date' && col.subType != 'timestamp' &&  row[col.field] == ''"> {{row[col.field]}} </span>                                  	
-                              <span ng-if="col.dataType !== 'float' && col.dataType !== 'date' && col.dataType !== 'int'">{{row[col.field]}}</span>
+                              <span ng-if="col.dataType === 'timestamp' && row[col.field] != ''"> {{row[col.field] | momentDateAndTime:currLanguage}} </span>
+                              <span ng-if="col.dataType === 'date' &&  row[col.field] == ''"> {{row[col.field]}} </span>                                  	
+                              <span ng-if="col.dataType !== 'float' && col.dataType !== 'date' && col.dataType !== 'timestamp' && col.dataType !== 'int'">{{row[col.field]}}</span>
                               <span ng-if="col.dataType === 'float'">   {{row[col.field] |  decimal:col.format}}  </span>                                                                        
                            </div>
                            <md-menu-content width="6" class="customContentMenu" ng-click="setSelected(row)" >
@@ -177,12 +181,12 @@
                                           </md-select>
                                        </div>
                                     </div>
-                                    <div ng-if="col.dataType === 'date' && col.subType !== 'timestamp'" layout="row">
+                                    <div ng-if="col.dataType === 'date'" layout="row">
                                        <md-datepicker ng-init="row[col.field] = row[col.field] || null" ng-model="row[col.field]" step="{{getStep(col.dataType)}}"
                                           name="dateField"  ng-keyup="$event.keyCode == 13 ? $mdMenu.close() : null" aria-label="data change"> </md-datepicker>
                                        <md-icon md-font-icon="fa fa-times" ng-click="resetDateField($event, row, col);"></md-icon>
                                     </div>
-                                    <div ng-if="col.dataType === 'date' && col.subType === 'timestamp'" layout="row" layout-align="space-around center">
+                                    <div ng-if="col.dataType === 'timestamp'" layout="row" layout-align="space-around center">
 										<registry-date-time-picker ng-model="row[col.field]"></registry-date-time-picker>
                                     </div>
                                  </md-input-container>

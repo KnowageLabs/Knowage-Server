@@ -16,6 +16,12 @@ const routes = [
         name: 'document-execution-workspace',
         component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
         props: true
+    },
+    {
+        path: '/olap-designer/:id',
+        name: 'olap-designer',
+        component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
+        props: true
     }
 ]
 

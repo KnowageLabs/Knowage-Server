@@ -407,6 +407,8 @@ public class GraphUtilities {
 		public void serialize(Relationship value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
 			jgen.writeStartObject();
 			jgen.writeStringField(GraphUtilities.RELATIONSHIP_ID, value.getId());
+			jgen.writeStringField(GraphUtilities.JOIN_TYPE, value.getJoinType().toString());
+			jgen.writeBooleanField(GraphUtilities.IS_CONSIDERED, value.isConsidered());
 			jgen.writeEndObject();
 
 		}

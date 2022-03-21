@@ -10,7 +10,7 @@
             </div>
         </div>
         <template #footer>
-            <Button class="kn-button kn-button--primary" @click="$emit('preview')"> {{ $t('managers.lovsManagement.preview') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="mode === 'preview' ? $emit('preview') : $emit('test')"> {{ mode === 'preview' ? $t('managers.lovsManagement.preview') : $t('managers.lovsManagement.test') }}</Button>
             <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
         </template>
     </Dialog>
@@ -24,10 +24,11 @@ import lovsManagementParamsDialogDescriptor from './LovsManagementParamsDialogDe
 export default defineComponent({
     name: 'lovs-management-params-dialog',
     components: { Dialog },
-    emits: ['close', 'preview'],
+    emits: ['close', 'preview', 'test'],
     props: {
         visible: { type: Boolean },
-        dependenciesList: { type: Array }
+        dependenciesList: { type: Array },
+        mode: { type: String }
     },
     data() {
         return {

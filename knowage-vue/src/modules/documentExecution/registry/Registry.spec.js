@@ -20,7 +20,7 @@ const mockedRegistry = {
             { name: 'column_6', header: 'florist', dataIndex: 'column_6', type: 'boolean', multiValue: false, defaultValue: null },
             { name: 'column_7', header: 'coffee_bar', dataIndex: 'column_7', type: 'boolean', multiValue: false, defaultValue: null },
             { name: 'column_8', header: 'video_store', dataIndex: 'column_8', type: 'boolean', multiValue: false, defaultValue: null },
-            { name: 'column_9', header: 'first_opened_date', dataIndex: 'column_9', type: 'date', subtype: 'timestamp', dateFormat: 'd/m/Y H:i:s.uuu', dateFormatJava: 'dd/MM/yyyy HH:mm:ss.SSS', multiValue: false, defaultValue: null },
+            { name: 'column_9', header: 'first_opened_date', dataIndex: 'column_9', type: 'timestamp', dateFormat: 'd/m/Y H:i:s.uuu', dateFormatJava: 'dd/MM/yyyy HH:mm:ss.SSS', multiValue: false, defaultValue: null },
             { name: 'column_10', header: 'store_sqft', dataIndex: 'column_10', type: 'int', precision: 0, scale: 0, format: '#,###', multiValue: false, defaultValue: null },
             { name: 'column_11', header: 'sales_city', dataIndex: 'column_11', type: 'string', multiValue: false, defaultValue: null }
         ],

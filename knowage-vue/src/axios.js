@@ -20,6 +20,7 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
     (res) => {
+        if (res.config.headers['X-Disable-Interceptor']) return res
         if (res.data && res.data.errors) {
             if (!res.config.headers['X-Disable-Errors']) store.commit('setError', { title: 'Server error', msg: res.data.errors[0].message })
             return Promise.reject(res.data.errors[0])
@@ -29,7 +30,7 @@ axios.interceptors.response.use(
     function(error) {
         if (error.response && error.response.status) {
             if (error.response.status === 401) {
-                authHelper.logout()
+                authHelper.handleUnauthorized()
             }
             if (error.response.status === 500) {
                 console.log(500)

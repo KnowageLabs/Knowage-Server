@@ -58,8 +58,9 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	}
 	// Watch out! There are some $watch on expression attribute
 	$scope.altExpression = {};
+	$scope.currentFilter = $scope.filters[0] || null;
 	angular.copy($scope.ngModel.expression, $scope.altExpression);
-
+	
 	$scope.isloadTemporalFiltersVisible = function(dataType){
 		return sbiModule_user.functionalities.indexOf("Timespan")>-1
 			&& (typeof dataType != "undefined")
@@ -208,7 +209,11 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 			}
 		$scope.filters.push(object);
 		filters_service.push($scope.altExpression, object);
+
 		$scope.showTable.set(object.filterId, false);
+
+		$scope.changeCondition(object.operator, object);
+		$scope.changeTarget(object.rightType, object);
 	}
 
 	$scope.deleteFilter = function (filter){
@@ -299,6 +304,33 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 		}
 
 	};
+	$scope.changeCondition = function (option, filter){
+		$scope.currentFilter = filter;
+		
+		var multivalue = false;
+		switch (option) {
+		case "IN":
+		case "NOT IN":
+			multivalue = true;
+			break;
+		}
+		
+		var newRowSelection = multivalue ? "multiple" : "single";
+		if ($scope.valuesGrid && $scope.valuesGrid.api) {
+			var currRowSelection = $scope.valuesGrid.rowSelection;
+			
+			if (newRowSelection == "single" && currRowSelection == "multiple") {
+				$scope.valuesGrid
+					.api
+					.getSelectedNodes()
+					.slice(1)
+					.forEach(function(e) { e.setSelected(false); });
+			}
+		}
+
+		$scope.valuesGrid.rowSelection = newRowSelection;
+	}
+	
 	$scope.changeTarget = function (option, filter){
 		$scope.currentFilter = filter;
 		/*
@@ -514,6 +546,12 @@ function qbeFilter($scope,$rootScope, sbiModule_user,filters_service , sbiModule
 	$scope.isTableVisible = function(filter) {
 		return $scope.showTable.get(filter.filterId);
 	}
+
+	if ($scope.currentFilter) {
+		$scope.changeCondition($scope.currentFilter.operator, $scope.currentFilter);
+		$scope.changeTarget($scope.currentFilter.rightType, $scope.currentFilter);
+	}
+
 
 }
 })();

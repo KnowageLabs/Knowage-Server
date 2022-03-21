@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="org.json.JSONObject"%>
 <%@page import="java.util.regex.Matcher"%>
 <%@page import="java.util.regex.Pattern"%>
-
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <script>
 
 var sbiM=angular.module('sbiModule',["ngSanitize"]);
@@ -858,7 +858,7 @@ sbiM.factory('sbiModule_cockpitDocument', function(){
 		docId: <%= docId %>,
 		docLabel: '<%= docLabel %>',
 		docName: '<%= docName.replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\'")) %>',
-		docDescription: '<%= docDescription %>'
+		docDescription: '<%= StringEscapeUtils.escapeJavaScript(docDescription) %>'
 	}
 });
 

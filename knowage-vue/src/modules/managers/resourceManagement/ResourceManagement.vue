@@ -3,10 +3,10 @@
         <div class="kn-page-content p-grid p-m-0">
             <div class="p-col-4 p-sm-4 p-md-3 p-p-0 p-d-flex p-flex-column">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.resourceManagement.title') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <Button icon="fas fa-sync-alt" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="loadPage(showHint, formVisible)"/>
                         <Button icon="fas fa-folder-plus" class="p-button-text p-button-sm p-button-rounded p-button-plain p-p-0" @click="openCreateFolderDialog"
                     /></template>

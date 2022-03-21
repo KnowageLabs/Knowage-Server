@@ -27,6 +27,8 @@ import java.util.List;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import it.eng.spagobi.services.validation.FilesCheck;
+
 /**
  * @author albnale
  *
@@ -36,6 +38,7 @@ public class DownloadFilesDTO {
 
 	@JsonDeserialize(as = ArrayList.class, contentAs = String.class)
 	@JsonSerialize(as = ArrayList.class, contentAs = String.class)
+	@FilesCheck(message = "One or more files are not valid")
 	private List<String> selectedFilesNames;
 
 	public DownloadFilesDTO() {

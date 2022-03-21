@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+<Appenders>
+<RollingFile
+    name="SpagoBIProcessEngine"
+    fileName="${sys:catalina.base}/logs/KnowageSVGViewerEngine.log"  append="False"  filePattern="${sys:catalina.base}/logs/KnowageSVGViewerEngine.log"
+    ignoreExceptions="false" createOnDemand="true">
+    <PatternLayout>
+        <Pattern>%d{DATE} %5p %c.%M:%L - %m%n</Pattern>
+    </PatternLayout>
+    <Policies>
+        <SizeBasedTriggeringPolicy size="10000KB" />
+    </Policies>
+    <DefaultRolloverStrategy max="1" />
+</RollingFile>
+    </Appenders>
+    <Loggers>
+    <logger name="edu.yale" level="ERROR">
+        <AppenderRef ref="SpagoBIProcessEngine"/>
+    </logger>
+    <logger name="it.eng.spagobi" level="ERROR">
+        <AppenderRef ref="SpagoBIProcessEngine"/>
+    </logger>
+    <logger name="it.eng.spagobi.commons.utilities.messages" level="ERROR">
+        <AppenderRef ref="SpagoBIProcessEngine"/>
+    </logger>
+    <logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" level="ERROR">
+        <AppenderRef ref="SpagoBIProcessEngine"/>
+    </logger>
+
+  <Root level="DEBUG">
+            <AppenderRef ref="SpagoBIProcessEngine"/>
+        </Root>
+    </Loggers>
+</Configuration>

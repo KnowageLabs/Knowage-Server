@@ -31,7 +31,7 @@
 
     <div class="p-mt-4">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #left>
+            <template #start>
                 {{ $t('managers.scheduler.timeWindow') }}
             </template>
         </Toolbar>
@@ -104,7 +104,7 @@
 
         <div v-if="triggerType === 'event'" class="p-my-4" data-test="event-trigger">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('common.details') }}
                 </template>
             </Toolbar>
@@ -118,7 +118,7 @@
 
             <div v-if="trigger.chrono.parameter && trigger.chrono.parameter.type === 'dataset'">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                    <template #left>
+                    <template #start>
                         {{ $t('common.dataset') }}
                     </template>
                 </Toolbar>
@@ -147,156 +147,156 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Calendar from 'primevue/calendar'
-import Dropdown from 'primevue/dropdown'
-import RadioButton from 'primevue/radiobutton'
-import schedulerTimingOutputTimingTabDescriptor from './SchedulerTimingOutputTimingTabDescriptor.json'
-import KnCron from '@/components/UI/KnCron/KnCron.vue'
+    import { defineComponent } from 'vue'
+    import Calendar from 'primevue/calendar'
+    import Dropdown from 'primevue/dropdown'
+    import RadioButton from 'primevue/radiobutton'
+    import schedulerTimingOutputTimingTabDescriptor from './SchedulerTimingOutputTimingTabDescriptor.json'
+    import KnCron from '@/components/UI/KnCron/KnCron.vue'
 
-export default defineComponent({
-    name: 'scheduler-timing-output-timing-tab',
-    components: { Calendar, Dropdown, KnCron, RadioButton },
-    props: {
-        propTrigger: { type: Object },
-        datasets: { type: Array }
-    },
-    emits: ['cronValid'],
-    data() {
-        return {
-            schedulerTimingOutputTimingTabDescriptor,
-            trigger: null as any,
-            triggerType: 'single',
-            eventTypes: [
-                { value: 'rest', label: this.$t('managers.scheduler.restService') },
-                { value: 'contextbroker', label: this.$t('managers.scheduler.contextBroker') },
-                { value: 'dataset', label: this.$t('common.dataset') }
-            ],
-            selectedDataset: null,
-            validCron: true,
-            descriptionDirty: false
-        }
-    },
-    watch: {
-        propTrigger() {
+    export default defineComponent({
+        name: 'scheduler-timing-output-timing-tab',
+        components: { Calendar, Dropdown, KnCron, RadioButton },
+        props: {
+            propTrigger: { type: Object },
+            datasets: { type: Array }
+        },
+        emits: ['cronValid'],
+        data() {
+            return {
+                schedulerTimingOutputTimingTabDescriptor,
+                trigger: null as any,
+                triggerType: 'single',
+                eventTypes: [
+                    { value: 'rest', label: this.$t('managers.scheduler.restService') },
+                    { value: 'contextbroker', label: this.$t('managers.scheduler.contextBroker') },
+                    { value: 'dataset', label: this.$t('common.dataset') }
+                ],
+                selectedDataset: null,
+                validCron: true,
+                descriptionDirty: false
+            }
+        },
+        watch: {
+            propTrigger() {
+                this.loadTrigger()
+            }
+        },
+        computed: {
+            validDates() {
+                let valid = true
+                const now = new Date()
+
+                if (this.trigger.endDateTiming && this.trigger.endDateTiming.valueOf() < now.valueOf()) {
+                    valid = false
+                }
+
+                if (this.trigger.endDateTiming && this.trigger.endDateTiming.valueOf() < this.trigger.startTimeTiming.valueOf()) {
+                    valid = false
+                }
+
+                this.$emit('cronValid', valid)
+                return valid
+            }
+        },
+        created() {
             this.loadTrigger()
-        }
-    },
-    computed: {
-        validDates() {
-            let valid = true
-            const now = new Date()
-
-            if (this.trigger.endDateTiming && this.trigger.endDateTiming.valueOf() < now.valueOf()) {
-                valid = false
-            }
-
-            if (this.trigger.endDateTiming && this.trigger.endDateTiming.valueOf() < this.trigger.startTimeTiming.valueOf()) {
-                valid = false
-            }
-
-            this.$emit('cronValid', valid)
-            return valid
-        }
-    },
-    created() {
-        this.loadTrigger()
-    },
-    methods: {
-        loadTrigger() {
-            this.trigger = this.propTrigger as any
-            this.trigger.triggerDescription = this.trigger.triggerName
-            this.setTriggerType()
-            this.setTriggerDates()
-            if (this.triggerType === 'scheduler') this.setCronFrequency()
-            if (this.trigger.chrono.parameter?.dataset) this.trigger.chrono.parameter.dataset = +this.trigger.chrono.parameter.dataset
         },
-        setTriggerType() {
-            switch (this.trigger.chrono.type) {
-                case 'single':
-                    this.triggerType = 'single'
-                    break
-                case 'event':
-                    this.triggerType = 'event'
-                    break
-                default:
-                    this.triggerType = 'scheduler'
-            }
-        },
-        setTriggerDates() {
-            this.trigger.startDateTiming = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : new Date()
-            this.trigger.startTimeTiming = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : new Date()
-            this.trigger.startDateTiming.setHours(0)
-            this.trigger.startDateTiming.setMinutes(0)
+        methods: {
+            loadTrigger() {
+                this.trigger = this.propTrigger as any
+                this.trigger.triggerDescription = this.trigger.triggerName
+                this.setTriggerType()
+                this.setTriggerDates()
+                if (this.triggerType === 'scheduler') this.setCronFrequency()
+                if (this.trigger.chrono.parameter?.dataset) this.trigger.chrono.parameter.dataset = +this.trigger.chrono.parameter.dataset
+            },
+            setTriggerType() {
+                switch (this.trigger.chrono.type) {
+                    case 'single':
+                        this.triggerType = 'single'
+                        break
+                    case 'event':
+                        this.triggerType = 'event'
+                        break
+                    default:
+                        this.triggerType = 'scheduler'
+                }
+            },
+            setTriggerDates() {
+                this.trigger.startDateTiming = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : new Date()
+                this.trigger.startTimeTiming = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : new Date()
+                this.trigger.startDateTiming.setHours(0)
+                this.trigger.startDateTiming.setMinutes(0)
 
-            if (!this.trigger.zonedStartTime) {
-                this.trigger.zonedStartTime = this.trigger.startTimeTiming
-            }
+                if (!this.trigger.zonedStartTime) {
+                    this.trigger.zonedStartTime = this.trigger.startTimeTiming
+                }
 
-            this.trigger.endDateTiming = this.trigger.zonedEndTime ? new Date(this.trigger.zonedEndTime) : null
-            this.trigger.endTimeTiming = this.trigger.zonedEndTime ? new Date(this.trigger.zonedEndTime) : null
-            if (this.trigger.endTimeTiming) {
-                this.trigger.endDateTiming.setHours(0)
-                this.trigger.endDateTiming.setMinutes(0)
-            }
+                this.trigger.endDateTiming = this.trigger.zonedEndTime ? new Date(this.trigger.zonedEndTime) : null
+                this.trigger.endTimeTiming = this.trigger.zonedEndTime ? new Date(this.trigger.zonedEndTime) : null
+                if (this.trigger.endTimeTiming) {
+                    this.trigger.endDateTiming.setHours(0)
+                    this.trigger.endDateTiming.setMinutes(0)
+                }
 
-            if (!this.trigger.zonedEndTime) {
-                this.trigger.zonedEndTime = this.trigger.endTimeTiming
-            }
-        },
-        setCronFrequency() {
-            const startDate = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : new Date()
-            const endDate = this.trigger.zonedEndTime ? new Date(this.trigger.zonedEndTime) : null
+                if (!this.trigger.zonedEndTime) {
+                    this.trigger.zonedEndTime = this.trigger.endTimeTiming
+                }
+            },
+            setCronFrequency() {
+                const startDate = this.trigger.zonedStartTime ? new Date(this.trigger.zonedStartTime) : new Date()
+                const endDate = this.trigger.zonedEndTime ? new Date(this.trigger.zonedEndTime) : null
 
-            this.trigger.frequency = {
-                cron: this.trigger.chrono,
-                startDate: startDate.valueOf(),
-                startTime: startDate.getHours() + ':' + startDate.getMinutes(),
-                endDate: endDate ? endDate.valueOf() : null,
-                endTime: endDate ? endDate.getHours() + ':' + endDate.getMinutes() : ''
-            }
-        },
-        formatFrequency() {
-            this.trigger.chrono = { type: this.triggerType, parameter: { type: '' } }
+                this.trigger.frequency = {
+                    cron: this.trigger.chrono,
+                    startDate: startDate.valueOf(),
+                    startTime: startDate.getHours() + ':' + startDate.getMinutes(),
+                    endDate: endDate ? endDate.valueOf() : null,
+                    endTime: endDate ? endDate.getHours() + ':' + endDate.getMinutes() : ''
+                }
+            },
+            formatFrequency() {
+                this.trigger.chrono = { type: this.triggerType, parameter: { type: '' } }
 
-            switch (this.trigger.chrono.type) {
-                case 'single':
-                    delete this.trigger.endDateTiming
-                    delete this.trigger.endTimeTiming
-                    break
-                case 'scheduler':
-                    this.setCronFrequency()
-            }
-        },
-        setCronValid(value: boolean) {
-            this.validCron = value
-        },
-        setTriggerName() {
-            this.descriptionDirty = true
-            this.trigger.triggerName = this.trigger.triggerDescription.substring(0, 100)
-        },
-        setStartDate() {
-            this.trigger.zonedStartTime = this.trigger.startDateTiming
+                switch (this.trigger.chrono.type) {
+                    case 'single':
+                        delete this.trigger.endDateTiming
+                        delete this.trigger.endTimeTiming
+                        break
+                    case 'scheduler':
+                        this.setCronFrequency()
+                }
+            },
+            setCronValid(value: boolean) {
+                this.validCron = value
+            },
+            setTriggerName() {
+                this.descriptionDirty = true
+                this.trigger.triggerName = this.trigger.triggerDescription.substring(0, 100)
+            },
+            setStartDate() {
+                this.trigger.zonedStartTime = this.trigger.startDateTiming
 
-            if (this.trigger.zonedStartTime instanceof Date && this.trigger.startTimeTiming instanceof Date) {
-                this.trigger.zonedStartTime.setHours(this.trigger.startTimeTiming?.getHours())
-                this.trigger.zonedStartTime.setMinutes(this.trigger.startTimeTiming?.getMinutes())
-            }
-        },
-        setEndDate() {
-            this.trigger.zonedEndTime = this.trigger.endDateTiming
+                if (this.trigger.zonedStartTime instanceof Date && this.trigger.startTimeTiming instanceof Date) {
+                    this.trigger.zonedStartTime.setHours(this.trigger.startTimeTiming?.getHours())
+                    this.trigger.zonedStartTime.setMinutes(this.trigger.startTimeTiming?.getMinutes())
+                }
+            },
+            setEndDate() {
+                this.trigger.zonedEndTime = this.trigger.endDateTiming
 
-            if (this.trigger.zonedEndTime instanceof Date && this.trigger.endTimeTiming instanceof Date) {
-                this.trigger.zonedEndTime.setHours(this.trigger.endTimeTiming.getHours())
-                this.trigger.zonedEndTime.setMinutes(this.trigger.endTimeTiming.getMinutes())
+                if (this.trigger.zonedEndTime instanceof Date && this.trigger.endTimeTiming instanceof Date) {
+                    this.trigger.zonedEndTime.setHours(this.trigger.endTimeTiming.getHours())
+                    this.trigger.zonedEndTime.setMinutes(this.trigger.endTimeTiming.getMinutes())
+                }
             }
         }
-    }
-})
+    })
 </script>
 
 <style lang="css">
-.custom-timepicker .p-datepicker {
-    border-color: transparent;
-}
+    .custom-timepicker .p-datepicker {
+        border-color: transparent;
+    }
 </style>

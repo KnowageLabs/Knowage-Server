@@ -1,6 +1,6 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-        <template #left>
+        <template #start>
             <InputSwitch v-model="isTransformable" @change="setTransformationType" class="p-mr-2" />
             <span>{{ $t('managers.datasetManagement.pivotTransformer') }}</span>
         </template>
@@ -69,7 +69,7 @@
     </Card>
 
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
-        <template #left>
+        <template #start>
             <InputSwitch v-model="dataset.isPersistedHDFS" class="p-mr-2" @change="$emit('touched')" />
             <span>{{ $t('managers.datasetManagement.isPersistedHDFS') }}</span>
         </template>
@@ -77,9 +77,9 @@
 
     <div v-if="dataset.dsTypeCd != 'Flat'">
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
-            <template #left>
+            <template #start>
                 <InputSwitch v-model="dataset.isPersisted" :disabled="disablePersist" class="p-mr-2" @change="$emit('touched')" />
-                <span>{{ $t('managers.datasetManagement.isPersisted') }}</span>
+                <span v-tooltip.top="{ value: $t('managers.datasetManagement.peristenceWarning'), disabled: !disablePersist }">{{ $t('managers.datasetManagement.isPersisted') }}</span>
             </template>
         </Toolbar>
         <Card v-if="dataset.isPersisted">
@@ -104,7 +104,7 @@
                     </div>
                 </form>
                 <Toolbar class="kn-toolbar kn-toolbar--default p-mt-3" v-if="dataset.isPersisted">
-                    <template #left>
+                    <template #start>
                         <InputSwitch v-model="dataset.isScheduled" class="p-mr-2" @change="$emit('touched')" />
                         <span>{{ $t('managers.datasetManagement.isScheduled') }}</span>
                     </template>

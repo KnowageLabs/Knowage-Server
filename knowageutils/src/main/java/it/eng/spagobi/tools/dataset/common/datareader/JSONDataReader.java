@@ -101,12 +101,9 @@ public class JSONDataReader extends AbstractDataReader {
 				} else if (columnType.equalsIgnoreCase("float")) {
 					fieldMeta.setType(Double.class);
 				} else if (columnType.equalsIgnoreCase("date")) {
-					String subtype = parsedFieldMeta.optString("subtype");
-					if (subtype != null && subtype.equalsIgnoreCase("timestamp")) {
-						fieldMeta.setType(Timestamp.class);
-					} else {
-						fieldMeta.setType(Date.class);
-					}
+					fieldMeta.setType(Date.class);
+				} else if (columnType.equalsIgnoreCase("timestamp")) {
+					fieldMeta.setType(Timestamp.class);
 				} else if (columnType.equalsIgnoreCase("boolean")) {
 					fieldMeta.setType(Boolean.class);
 				} else {

@@ -1,7 +1,7 @@
 <template>
     <div class="kn-page">
-        <div class="document-browser-tab-container kn-page-content p-d-flex p-flex-column">
-            <TabView id="document-browser-tab-view" class="p-d-flex p-flex-column kn-flex" v-model:activeIndex="activeIndex" @tab-change="onTabChange">
+        <div class="document-browser-tab-container kn-page-content">
+            <TabView id="document-browser-tab-view" class="p-d-flex p-flex-column kn-flex kn-tab" v-model:activeIndex="activeIndex" @tab-change="onTabChange">
                 <TabPanel>
                     <template #header>
                         <i class="fa fa-folder-open"></i>
@@ -17,7 +17,10 @@
                 </TabPanel>
             </TabView>
 
-            <DocumentBrowserTab v-show="selectedItem" :item="selectedItem?.item" :mode="selectedItem?.mode" @close="closeDocument('current')"></DocumentBrowserTab>
+            <DocumentBrowserTab v-show="selectedItem" :item="selectedItem?.item" :mode="selectedItem?.mode" :functionalityId="selectedItem?.functionalityId" @close="closeDocument('current')" @iframeCreated="onIFrameCreated" @closeIframe="closeIframe"></DocumentBrowserTab>
+            <div v-for="(iframe, index) in iFrameContainers" :key="index">
+                <iframe v-show="iframe.item?.routerId === selectedItem?.item.routerId" ref="iframe" class="document-browser-cockpit-iframe" :src="iframe.iframe"></iframe>
+            </div>
             <div id="document-browser-tab-icon-container" v-if="activeIndex !== 0">
                 <i id="document-browser-tab-icon" class="fa fa-times-circle" @click="toggle($event)"></i>
                 <Menu ref="menu" :model="menuItems" :popup="true" />
@@ -28,11 +31,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
 import DocumentBrowserHome from './documentBrowserHome/DocumentBrowserHome.vue'
 import DocumentBrowserTab from './DocumentBrowserTab.vue'
 import Menu from 'primevue/menu'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+
+const crypto = require('crypto')
 
 export default defineComponent({
     name: 'document-browser',
@@ -43,12 +49,21 @@ export default defineComponent({
             activeIndex: 0,
             menuItems: [] as any[],
             selectedItem: null as any,
-            id: 0
+            id: 0,
+            iFrameContainers: [] as any[]
         }
     },
-    created() {
+    async created() {
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'saveCockpit') {
+                this.loadSavedCockpit(event.data.model)
+            }
+        })
+
         if (this.$route.params.id && this.$route.name === 'document-browser-document-execution') {
-            const tempItem = { item: { name: this.$route.params.id, label: this.$route.params.id, mode: this.$route.params.mode, routerId: this.id++ }, mode: 'execute' }
+            let tempDocument = {} as any
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$route.params.id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
+            const tempItem = { item: { name: tempDocument.name, label: this.$route.params.id, mode: this.$route.params.mode, routerId: crypto.randomBytes(16).toString('hex') }, mode: 'execute' }
             this.tabs.push(tempItem)
 
             this.activeIndex = 1
@@ -58,6 +73,7 @@ export default defineComponent({
     methods: {
         onTabChange() {
             if (this.activeIndex === 0) {
+                this.selectedItem = null
                 this.$router.push('/document-browser')
                 return
             }
@@ -67,10 +83,12 @@ export default defineComponent({
             this.selectedItem = this.tabs[this.activeIndex - 1]
 
             let routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
-            this.$router.push(`/document-browser/${routeDocumentType}/` + id)
+            routeDocumentType ? this.$router.push(`/document-browser/${routeDocumentType}/` + id) : this.$router.push('/document-browser/new-dashboard')
         },
         onItemSelect(payload: any) {
-            payload.item.routerId = this.id++
+            if (payload.item) {
+                payload.item.routerId = crypto.randomBytes(16).toString('hex')
+            }
 
             const tempItem = { ...payload, item: { ...payload.item } }
 
@@ -79,9 +97,14 @@ export default defineComponent({
             this.selectedItem = tempItem
 
             const id = payload.item ? payload.item.label : 'new-dashboard'
-            let routeDocumentType = this.getRouteDocumentType(payload.item)
+            if (payload.item) {
+                let routeDocumentType = this.getRouteDocumentType(payload.item)
+                this.$router.push(`/document-browser/${routeDocumentType}/` + id)
+            } else {
+                this.selectedItem.item = { routerId: crypto.randomBytes(16).toString('hex') }
+                this.$router.push(`/document-browser/new-dashboard`)
+            }
 
-            this.$router.push(`/document-browser/${routeDocumentType}/` + id)
             this.activeIndex = this.tabs.length
         },
         getRouteDocumentType(item: any) {
@@ -151,24 +174,45 @@ export default defineComponent({
             }
         },
         closeDocument(mode: string) {
+            let index = -1
             switch (mode) {
                 case 'current':
                     this.tabs.splice(this.activeIndex - 1, 1)
                     this.activeIndex = 0
+                    index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
+                    if (index !== -1) this.iFrameContainers.splice(index, 1)
                     this.$router.push('/document-browser')
                     break
                 case 'other':
                     this.tabs = [this.tabs[this.activeIndex - 1]]
                     this.activeIndex = 1
+                    this.iFrameContainers = this.iFrameContainers.filter((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
                     break
                 case 'right':
                     this.tabs.splice(this.activeIndex)
+                    index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
+                    if (index !== -1) this.iFrameContainers.splice(index + 1)
                     break
                 case 'all':
                     this.$router.push('/document-browser')
                     this.tabs = []
                     this.activeIndex = 0
+                    this.iFrameContainers = []
             }
+        },
+        onIFrameCreated(payload: any) {
+            const index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
+            if (index === -1) this.iFrameContainers.push(payload)
+        },
+        closeIframe() {
+            const index = this.iFrameContainers.findIndex((iframe: any) => iframe.item?.routerId === this.selectedItem?.item.routerId)
+            if (index !== -1) this.iFrameContainers.splice(index, 1)
+        },
+        loadSavedCockpit(cockpit: any) {
+            this.closeIframe()
+            this.selectedItem = { item: { ...cockpit, routerId: crypto.randomBytes(16).toString('hex'), name: cockpit.DOCUMENT_NAME, label: cockpit.DOCUMENT_LABEL, mode: 'document-composite' } }
+            this.tabs[this.activeIndex - 1] = this.selectedItem
+            this.$router.push(`/document-browser/document-composite/${cockpit.DOCUMENT_LABEL}`)
         }
     }
 })
@@ -193,6 +237,8 @@ export default defineComponent({
 
 .document-browser-tab-container {
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .document-browser-tab-container .p-tabview .p-tabview-panel,
@@ -200,5 +246,13 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     flex: 1;
+}
+
+.document-browser-cockpit-iframe {
+    position: absolute;
+    top: 39px;
+    width: 100%;
+    height: calc(100% - 39px);
+    border: none;
 }
 </style>

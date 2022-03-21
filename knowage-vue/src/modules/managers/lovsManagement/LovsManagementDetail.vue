@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-        <template #left>{{ this.selectedLov.label }}</template>
-        <template #right>
+        <template #start>{{ selectedLov.label }}</template>
+        <template #end>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveButtonDisabled" @click="saveLov" data-test="submit-button" v-tooltip="$t('common.save')" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" data-test="close-button" v-tooltip="$t('common.close')" />
         </template>

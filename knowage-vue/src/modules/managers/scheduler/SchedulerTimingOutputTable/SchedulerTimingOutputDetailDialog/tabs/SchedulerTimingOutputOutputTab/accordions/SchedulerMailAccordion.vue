@@ -179,7 +179,7 @@
 
                 <div class="p-m-4">
                     <span>
-                        <label class="kn-material-input-label">{{ $t('managers.scheduler.mailTextMessage') }} *</label>
+                        <label class="kn-material-input-label">{{ $t('managers.scheduler.mailText') }} *</label>
                         <InputText
                             class="kn-material-input p-inputtext-sm"
                             v-model="document.mailtxt"
@@ -187,6 +187,7 @@
                                 'p-invalid': mailTextDirty && (!document.mailtxt || document.mailtxt.length === 0)
                             }"
                             :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailTextMaxLength"
+                            :placeholder="$t('managers.scheduler.mailTextMessage')"
                             @input="validateDocument('mailTextDirty')"
                             @blur="validateDocument('mailTextDirty')"
                         />

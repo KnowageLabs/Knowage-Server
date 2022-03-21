@@ -1,0 +1,25 @@
+.p-message {
+    border-radius: var(--kn-message-border-radius);
+    &.p-message-success {
+        background-color: var(--kn-message-success-background-color);
+        color: var(--kn-message-success-color);
+    }
+    &.p-message-info {
+        background-color: var(--kn-message-info-background-color);
+        color: var(--kn-message-info-color);
+    }
+    &.p-message-warn {
+        background-color: var(--kn-message-warning-background-color);
+        color: var(--kn-message-warning-color);
+    }
+    &.p-message-error {
+        background-color: var(--kn-message-error-background-color);
+        color: var(--kn-message-error-color);
+    }
+    .p-message-wrapper {
+        .p-message-text {
+            font-size: var(--kn-message-font-size) !important;
+        }
+        padding: var(--kn-message-padding) !important;
+    }
+}

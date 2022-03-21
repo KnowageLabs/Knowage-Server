@@ -330,7 +330,7 @@
 			<version>8.1.0-SNAPSHOT</version>
 			<scope>runtime</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowageazuresecurityprovider</artifactId>
@@ -403,6 +403,12 @@
 			<artifactId>javax.websocket-api</artifactId>
 			<version>1.1</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-web</artifactId>
+			<version>2.17.1</version>
 		</dependency>
 
 	</dependencies>

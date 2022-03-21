@@ -41,9 +41,14 @@
     "table": {
         "iconColumn": {
             "style": {
-                "text-align": "end",
-                "width": "5%"
+                "flex-basis": "40px",
+                "flex-grow": 0.3,
+                "justify-content": "center"
             }
+        },
+        "smallmessage": {
+            "flex-basis": "40px",
+            "flex-grow": 0.3
         }
     }
 }

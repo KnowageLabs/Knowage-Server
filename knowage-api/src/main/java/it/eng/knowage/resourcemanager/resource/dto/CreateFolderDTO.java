@@ -23,7 +23,6 @@ package it.eng.knowage.resourcemanager.resource.dto;
 
 import javax.validation.constraints.NotNull;
 
-import it.eng.spagobi.services.validation.AlphanumericWithBrackets;
 import it.eng.spagobi.services.validation.Xss;
 
 /**
@@ -35,7 +34,6 @@ public class CreateFolderDTO {
 
 	@NotNull
 	@Xss
-	@AlphanumericWithBrackets
 	private String folderName;
 
 	public String getKey() {
