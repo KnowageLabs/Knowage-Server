@@ -1,0 +1,29 @@
+{
+    "template": {
+        "crossNavigation": false,
+        "crossNavigationMultiselect": true,
+        "datasetJoinColumns": "REGIONE",
+        "indicators": [
+            {
+                "label": "prov",
+                "name": "PROVINCIE"
+            }
+        ],
+        "layerJoinColumns": "Name",
+        "targetLayerConf": [
+            {
+                "label": "Italia_OK"
+            }
+        ],
+        "visibilityControls": {
+            "showBaseLayer": true,
+            "showDistanceCalculator": true,
+            "showDownloadButton": true,
+            "showLayer": true,
+            "showLegendButton": true,
+            "showMapConfig": true,
+            "showRightConfigMenu": true,
+            "showSelectMode": true
+        }
+    }
+}

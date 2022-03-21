@@ -1,4 +1,6 @@
-let routes = [
+import GeoRoutes from '@/modules/workspace/geoReferencedAnalysis/GeoReferencedAnalysis.routes.js'
+
+let baseRoutes = [
     {
         path: '/workspace',
         name: 'workspace',
@@ -47,5 +49,7 @@ let routes = [
         ]
     }
 ]
+
+const routes = baseRoutes.concat(GeoRoutes)
 
 export default routes
