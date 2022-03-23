@@ -17,7 +17,6 @@
  */
 package it.eng.knowage.knowageapi;
 
-import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -26,11 +25,9 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.transaction.ChainedTransactionManager;
@@ -39,11 +36,8 @@ import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import it.eng.knowage.knowageapi.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.service.FunctionCatalogAPI;
 import it.eng.knowage.knowageapi.service.impl.FunctionCatalogAPIImplTest;
-import it.eng.spagobi.services.security.SpagoBIUserProfile;
-import it.eng.spagobi.services.security.SpagoBIUserProfile.Attributes.Entry;
 
 @Configuration
 @Profile("test")
@@ -107,42 +101,8 @@ public class KnowageApiConfigurationTest {
 	}
 
 	@Bean
-	public BusinessRequestContext businessRequestContext(@Value("${application.version}") String version) {
-		Entry entry = new Entry();
-
-		entry.setKey("test");
-		entry.setValue("test");
-
-		SpagoBIUserProfile.Attributes attributes = new SpagoBIUserProfile.Attributes();
-
-		attributes.getEntry().add(entry);
-
-		SpagoBIUserProfile userProfile = new SpagoBIUserProfile();
-
-		userProfile.setAttributes(attributes);
-		userProfile.setIsSuperadmin(true);
-		userProfile.setOrganization("DEFAULT_TENANT");
-		userProfile.setUniqueIdentifier("biadmin");
-		userProfile.setUserId("biadmin");
-		userProfile.setUserName("biadmin");
-		userProfile.getFunctions().add("WidgetGalleryManagement");
-
-		BusinessRequestContext businessRequestContext = new BusinessRequestContext(version);
-		businessRequestContext.setUsername("biadmin");
-		businessRequestContext.setOrganization("DEFAULT_TENANT");
-		businessRequestContext.setUserProfile(userProfile);
-		return businessRequestContext;
-	}
-
-	@Bean
 	public FunctionCatalogAPI functionCatalogAPI() {
 		return new FunctionCatalogAPIImplTest();
-	}
-
-	@Lazy
-	@Bean
-	public SecurityServiceFactory securityService() throws NamingException, MalformedURLException {
-		return new SecurityServiceFactoryTest();
 	}
 
 	@Bean(name = "multipartResolver")

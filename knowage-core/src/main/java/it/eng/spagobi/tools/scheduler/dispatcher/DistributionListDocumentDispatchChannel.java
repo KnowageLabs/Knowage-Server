@@ -163,7 +163,7 @@ public class DistributionListDocumentDispatchChannel implements IDocumentDispatc
 			facade.sendMessage(msg);
 
 			if(jobExecutionContext.getNextFireTime()== null){
-				String triggername = jobExecutionContext.getTrigger().getName();
+				String triggername = jobExecutionContext.getTrigger().getKey().getName();
 				dlIds = dispatchContext.getDlIds();
 				it = dlIds.iterator();
 				while(it.hasNext()){

@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
 
-import it.eng.knowage.knowageapi.utils.ContextPropertiesConfig;
+import it.eng.knowage.boot.utils.ContextPropertiesConfig;
 
 public class WhiteList {
 

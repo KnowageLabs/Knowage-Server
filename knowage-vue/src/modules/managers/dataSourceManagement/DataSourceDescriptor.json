@@ -215,7 +215,8 @@
         "schemaAttribute": "",
         "urlConnection": "",
         "user": "",
-        "writeDefault": false
+        "writeDefault": false,
+        "useForDataprep": false
     },
     "operation": {
         "insert": {
