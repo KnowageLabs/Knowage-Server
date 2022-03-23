@@ -6,21 +6,21 @@
                     {{ $t('documentExecution.documentDetails.title') }}
                 </template>
                 <template #end>
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || v$.$invalid || savingLoad" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || v$.$invalid" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('closeDetails')" />
                 </template>
             </Toolbar>
         </template>
-        <KnOverlaySpinnerPanel :visibility="savingLoad" :style="mainDescriptor.style.spinnerStyle" />
+        <KnOverlaySpinnerPanel :visibility="loading" :style="mainDescriptor.style.spinnerStyle" />
 
         <div class="document-details-tab-container p-d-flex p-flex-column kn-flex">
-            <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
-            <TabView v-if="!loading" class="document-details-tabview p-d-flex p-flex-column kn-flex">
+            <TabView class="document-details-tabview p-d-flex p-flex-column kn-flex">
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.info.infoTitle') }}</span>
                     </template>
                     <InformationsTab
+                        v-if="!loading"
                         :selectedDocument="selectedDocument"
                         :availableFolders="availableFolders"
                         :selectedFolder="selectedFolder"
@@ -100,7 +100,6 @@ export default defineComponent({
             v$: useValidate() as any,
             mainDescriptor,
             loading: false,
-            savingLoad: false,
             templateToUpload: null as any,
             imageToUpload: null as any,
             selectedDataset: {} as any,
@@ -312,7 +311,7 @@ export default defineComponent({
             }
         },
         async saveDocument() {
-            this.savingLoad = true
+            this.loading = true
             let docToSave = { ...this.selectedDocument }
             delete docToSave.drivers
             delete docToSave.outputParameters
@@ -330,7 +329,6 @@ export default defineComponent({
                     }, 200)
                 })
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
-                .finally(() => (this.savingLoad = false))
         }
     }
 })

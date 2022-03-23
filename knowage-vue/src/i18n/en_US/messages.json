@@ -67,6 +67,7 @@
         "file": "File",
         "fileName": "File Name",
         "filters": "Filters",
+        "from": "From",
         "general": "General",
         "group": "Group",
         "home": "Home",
@@ -159,6 +160,7 @@
             "table": "Table"
         },
         "tags": "tags",
+        "temporal": "Temporal",
         "tenant": "tenant",
         "test": "test",
         "time": "Time",
@@ -789,6 +791,11 @@
         "weekHeader": "Wk"
     },
     "managers": {
+        "bml": {
+            "drivers": "Analytical Drivers",
+            "lovsTitle": "Lovs",
+            "title": "Behavioural Model Lineage"
+        },
         "businessModelManager": {
             "add": "Add",
             "addCondition": "Add Condition",
@@ -1062,6 +1069,7 @@
             "oldVersions": "Older Dataset Versions",
             "openQbeButton": "Open Qbe",
             "params": "Parameters",
+            "peristenceWarning": "Dataset with parameters cannot be persisted!",
             "persistTableName": "Persist Table Name",
             "pivotColName": "Category Column to be Pivoted",
             "pivotColValue": "Value Column to be Pivoted",
@@ -1302,6 +1310,37 @@
                 "defaultMessage": "Default Message Code",
                 "messageCode": "Message Code"
             }
+        },
+        "layersManagement": {
+            "baseLayer": "Base Layer",
+            "downloadDialogTitle": "Select type of download",
+            "downloadTypes": {
+                "geojson": "GeoJSON",
+                "kml": "KML",
+                "shp": "SHAPEFILE"
+            },
+            "fileLocation": "File Location",
+            "filterTitle": "Filter",
+            "hint": "Change the hint to your liking inside the messages.json.",
+            "layerFilter": "Layer Filter",
+            "layerFilterAdded": "Layer Filter Added",
+            "layerIdentify": "Layer ID",
+            "layerLabel": "Layer label",
+            "layerName": "Layer name",
+            "layerOptions": "Options",
+            "layerOrder": "Layer Order",
+            "layerParams": "Params",
+            "layerTitle": "Layer",
+            "layerTypes": {
+                "google": "Google",
+                "osm": "OSM",
+                "tms": "TMS",
+                "wfs": "WFS",
+                "wms": "WMS"
+            },
+            "layerURL": "URL",
+            "noFilterSelected": "No filter selected, click on an item from the left list to add them",
+            "title": "Layers Management"
         },
         "lovsManagement": {
             "add": "Add",
@@ -1745,6 +1784,16 @@
             "hint": "Theme management allows you to create a theme, changing the default  colors/dimensions of different interface elements of Knowage. You can also create more than one theme and switch them as you like. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Theme Management"
         },
+        "timespan": {
+            "cloneAlreadyDefined": "The next timespan is already defiend",
+            "invalidDatesError": "The dates are not valid",
+            "noIntervalError": "Please define at least one interval",
+            "startDateGreaterError": "Start date greater than end date",
+            "startTimeGreaterError": "Start time greater than end time",
+            "temporalOverlapError": "The date interval overlaps with an existing one",
+            "timeOverlapError": "The time interval overlaps with an existing one",
+            "title": "Timespan"
+        },
         "usersManagement": {
             "attributes": "Attributes",
             "blockedUserInfo": "This user reached the maximum number of failed login attempts and therefore he was locked. Do you want to unlock him?",
@@ -2047,9 +2096,13 @@
                     "sum": "Sum",
                     "title": "Aggregation"
                 },
+                "coldel": "Delete column",
+                "colfil": "Column filters",
+                "colset": "Column settings",
                 "group": "Group",
                 "rename": "Rename Alias",
-                "showField": "Show field"
+                "showField": "Show field",
+                "sorting": "Sorting"
             },
             "toolbarMenu": {
                 "exportTo": "Export to",

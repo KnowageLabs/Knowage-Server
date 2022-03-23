@@ -51,7 +51,7 @@
                     <span class="kn-truncated" v-tooltip.top="slotProps.data[col.field]">{{ slotProps.data[col.field] }}</span>
                 </template>
             </Column>
-            <Column v-if="isSuperAdmin" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true" :style="documentBrowserTableDescriptor.table.smallmessage">
+            <Column v-if="isAdmin" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true" :style="documentBrowserTableDescriptor.table.smallmessage">
                 <template #filter="{filterModel}">
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                 </template>
@@ -59,7 +59,7 @@
                     <span data-test="document-status"> {{ slotProps.data['stateCodeStr'] }}</span>
                 </template></Column
             >
-            <Column v-if="isSuperAdmin" :header="$t('common.visible')" field="visible" sortField="visible" :sortable="true" :style="documentBrowserTableDescriptor.table.iconColumn.style">
+            <Column v-if="isAdmin" :header="$t('common.visible')" field="visible" sortField="visible" :sortable="true" :style="documentBrowserTableDescriptor.table.iconColumn.style">
                 <template #body="slotProps">
                     <span class="fa-stack" v-tooltip="slotProps.data['visible'] ? $t('common.visible') : $t('common.notVisible')">
                         <i class="fa fa-eye fa-stack-1x"></i>
@@ -127,8 +127,8 @@ export default defineComponent({
         }
     },
     computed: {
-        isSuperAdmin(): boolean {
-            return this.user?.isSuperadmin
+        isAdmin(): boolean {
+            return this.user?.functionalities.includes('DocumentManagement') || this.user?.isSuperadmin
         }
     },
     created() {

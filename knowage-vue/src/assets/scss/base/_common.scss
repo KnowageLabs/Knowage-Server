@@ -169,4 +169,11 @@
             background-color: var(--kn-list-item-alternated-background-color);
         }
     }
+    .p-scrollpanel-content {
+        .p-field {
+            &:nth-child(even) {
+                background-color: var(--kn-list-item-alternated-background-color);
+            }
+        }
+    }
 }

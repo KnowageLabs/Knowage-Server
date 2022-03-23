@@ -12,8 +12,8 @@
                 </template>
             </Toolbar>
         </template>
-        <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
-        <div v-if="!loading && !qbePreviewDialogVisible" class="kn-relative p-d-flex p-flex-row kn-height-full kn-width-full">
+        <KnOverlaySpinnerPanel :visibility="loading" />
+        <div v-if="!qbePreviewDialogVisible" class="kn-relative p-d-flex p-flex-row kn-height-full kn-width-full">
             <div v-if="parameterSidebarVisible" :style="qbeDescriptor.style.backdrop" @click="parameterSidebarVisible = false"></div>
             <div v-show="showEntitiesLists && qbeLoaded" :style="qbeDescriptor.style.entitiesLists">
                 <div class="p-d-flex p-flex-column kn-flex kn-overflow-hidden">
@@ -107,7 +107,7 @@
             <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="dataset" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe.pars" @execute="onExecute"></KnParameterSidebar>
         </div>
 
-        <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="uniqueID" :queryPreviewData="queryPreviewData" :pagination="pagination" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
+        <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="uniqueID" :queryPreviewData="queryPreviewData" :pagination="pagination" :entities="entities?.entities" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="uniqueID" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery?.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
@@ -149,6 +149,7 @@ import QBEJoinDefinitionDialog from './qbeDialogs/qbeJoinDefinitionDialog/QBEJoi
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import QBEPreviewDialog from './qbeDialogs/qbePreviewDialog/QBEPreviewDialog.vue'
 import qbeDescriptor from './QBEDescriptor.json'
+import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 const crypto = require('crypto')
 
 export default defineComponent({
@@ -172,7 +173,8 @@ export default defineComponent({
         QBEJoinDefinitionDialog,
         KnParameterSidebar,
         QBEPreviewDialog,
-        QBESmartTable
+        QBESmartTable,
+        KnOverlaySpinnerPanel
     },
     props: { visible: { type: Boolean }, dataset: { type: Object } },
     emits: ['close'],
@@ -265,7 +267,7 @@ export default defineComponent({
             await this.loadEntities()
 
             if (!this.dataset?.dataSourceLabel) {
-                await this.executeQBEQuery()
+                await this.executeQBEQuery(false)
             }
         },
         async loadDataset() {
@@ -362,7 +364,7 @@ export default defineComponent({
                 entity.expanded = false
             })
         },
-        async executeQBEQuery() {
+        async executeQBEQuery(showPreview: boolean) {
             this.loading = true
 
             if (!this.qbe) return
@@ -373,14 +375,18 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.queryPreviewData = response.data
                     this.pagination.size = response.data.results
+                    if (showPreview) this.qbePreviewDialogVisible = true
                 })
-                .catch(() => {})
+                .catch(() => {
+                    if (showPreview) this.qbePreviewDialogVisible = false
+                })
+            this.selectedQuery.fields.forEach((field) => (field.uniqueID = crypto.randomBytes(4).toString('hex')))
             this.loading = false
         },
         async updatePagination(lazyParams: any) {
             this.pagination.start = lazyParams.paginationStart
             this.pagination.limit = lazyParams.paginationLimit
-            await this.executeQBEQuery()
+            await this.executeQBEQuery(false)
         },
         formatQbeMeta() {
             const meta = [] as any[]
@@ -400,7 +406,7 @@ export default defineComponent({
         deleteAllSelectedFields() {
             this.selectedQuery.fields = []
             this.selectedQuery.havings = []
-            if (this.smartView) this.executeQBEQuery()
+            if (this.smartView) this.executeQBEQuery(false)
         },
         checkIfHiddenColumnsExist() {
             if (this.qbe) {
@@ -435,6 +441,7 @@ export default defineComponent({
         onAdvancedFiltersSave(expression: any) {
             this.selectedQuery.expression = expression
             this.advancedFilterDialogVisible = false
+            this.updateSmartView()
         },
         showMenu(event) {
             this.createMenuItems()
@@ -493,7 +500,7 @@ export default defineComponent({
             this.discardRepetitions = !this.discardRepetitions
             this.qbe ? (this.qbe.qbeJSONQuery.catalogue.queries[0].distinct = this.discardRepetitions) : ''
             if (this.smartView) {
-                this.executeQBEQuery()
+                this.executeQBEQuery(false)
             }
         },
         onHavingsSave(havings: iFilter[]) {
@@ -514,7 +521,7 @@ export default defineComponent({
         onJoinDefinitionDialogClose() {
             this.joinDefinitionDialogVisible = false
             if (this.smartView) {
-                this.executeQBEQuery()
+                this.executeQBEQuery(false)
             }
         },
         deleteAllFilters() {
@@ -522,7 +529,7 @@ export default defineComponent({
                 this.selectedQuery.filters = []
                 this.selectedQuery.havings = []
                 this.selectedQuery.expression = {}
-                if (this.smartView) this.executeQBEQuery()
+                if (this.smartView) this.executeQBEQuery(false)
             }
         },
         async showSQLQuery() {
@@ -708,11 +715,10 @@ export default defineComponent({
         },
         async openPreviewDialog() {
             this.pagination.limit = 20
-            await this.executeQBEQuery()
-            this.qbePreviewDialogVisible = true
+            await this.executeQBEQuery(true)
         },
         updateSmartView() {
-            this.smartView ? this.executeQBEQuery() : ''
+            this.smartView ? this.executeQBEQuery(false) : ''
         },
         smartViewFieldHidden() {
             this.checkIfHiddenColumnsExist()
@@ -728,8 +734,11 @@ export default defineComponent({
             this.qbePreviewDialogVisible = false
             this.pagination = { start: 0, limit: 25 }
         },
-        onQueryFieldRemoved(fieldId) {
-            this.selectedQuery.fields.splice(fieldId, 1)
+        onQueryFieldRemoved(uniqueID) {
+            let indexOfFieldToDelete = this.selectedQuery.fields.findIndex((field) => {
+                return field.uniqueID === uniqueID
+            })
+            this.selectedQuery.fields.splice(indexOfFieldToDelete, 1)
             this.updateSmartView()
         }
     }

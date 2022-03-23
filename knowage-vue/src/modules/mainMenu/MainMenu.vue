@@ -346,7 +346,7 @@ export default defineComponent({
     padding: 0 0 18px 0;
 }
 .layout-menu-container {
-    z-index: 100;
+    z-index: 8000;
     width: var(--kn-mainmenu-width);
     top: 0;
     background-color: var(--kn-mainmenu-background-color);
