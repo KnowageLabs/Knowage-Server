@@ -19,6 +19,7 @@ package it.eng.knowage.knowageapi.error;
 
 import java.util.Locale;
 
+import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.utils.messages.EngineMessageBundle;
 
 public class KnowageRestServiceException extends KnowageRuntimeException {

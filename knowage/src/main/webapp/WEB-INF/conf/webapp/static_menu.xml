@@ -48,7 +48,7 @@
 				to="/constraint-management" />
 			<ITEM id="3005" label="menu.BehaviouralModelLineage"
 				requiredFunctionality="BehaviouralModelLineage"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=behaviouralModelLineage" />
+				to="/behavioural-model-lineage" />
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="4000" label="menu.Catalogs"
@@ -71,7 +71,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=measuresCatalogue" />
 			<ITEM id="4006" label="menu.LayersCatalogue"
 				requiredFunctionality="GeoLayersManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=layerCatalogue" />
+				to="/layers-management" />
 			<ITEM id="4007" label="menu.glossary.technical"
 				requiredFunctionality="ManageGlossaryTechnical"
 				to="/glossary-usage"
@@ -82,7 +82,7 @@
 				iconCls="fa fa-2x fa-building" />
 			<ITEM id="4009" label="menu.timespan"
 				requiredFunctionality="Timespan"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=timespan" />
+				to="/timespan" />
 			<ITEM id="4010" label="menu.calendar"
 				requiredFunctionality="Calendar"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=calendarTemplate" />

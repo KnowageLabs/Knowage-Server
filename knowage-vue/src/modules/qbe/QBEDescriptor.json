@@ -1,4 +1,5 @@
 {
+    "admissibleDateFormats": ["LLLL", "llll", "LLL", "lll", "DD/MM/YYYY HH:mm:SS", "DD/MM/YYYY HH:mm", "LL", "ll", "L", "l"],
     "style": {
         "backdrop": {
             "background-color": "rgba(33, 33, 33, 1)",

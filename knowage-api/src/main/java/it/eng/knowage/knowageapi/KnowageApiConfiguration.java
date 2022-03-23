@@ -18,38 +18,34 @@
 package it.eng.knowage.knowageapi;
 
 import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.context.support.SimpleThreadScope;
 import org.springframework.data.transaction.ChainedTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import it.eng.knowage.knowageapi.context.BusinessRequestContext;
+import it.eng.knowage.boot.context.BusinessRequestContext;
+import it.eng.knowage.boot.filter.JWTSecurityFilter;
 import it.eng.knowage.knowageapi.service.FunctionCatalogAPI;
 import it.eng.knowage.knowageapi.service.impl.FunctionCatalogAPIImpl;
+import it.eng.spagobi.services.security.SecurityServiceService;
 
 @Configuration
 @EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class })
 @Profile("production")
-@ComponentScan({ "it.eng.knowage.knowageapi", "it.eng.knowage.resourcemanager" })
+@ComponentScan({
+	"it.eng.knowage.knowageapi",
+	"it.eng.knowage.resourcemanager"
+})
 public class KnowageApiConfiguration {
 
 	@Primary /* just to prevent Spring error */
@@ -67,13 +63,6 @@ public class KnowageApiConfiguration {
 		return factoryBean;
 	}
 
-	@Bean("knowage-config")
-	public LocalEntityManagerFactoryBean entityManagerFactoryForWidgetConfig() {
-		LocalEntityManagerFactoryBean factoryBean = new LocalEntityManagerFactoryBean();
-		factoryBean.setPersistenceUnitName("knowage-config");
-		return factoryBean;
-	}
-
 	@Primary
 	@Bean
 	public PlatformTransactionManager mainTransactionManager() {
@@ -82,42 +71,24 @@ public class KnowageApiConfiguration {
 	}
 
 	@Bean
-	@Scope(scopeName = "thread", proxyMode = ScopedProxyMode.TARGET_CLASS)
-	public BusinessRequestContext businessRequestContext(@Value("${application.version}") String version) {
-		return new BusinessRequestContext(version);
-	}
-
-	@Bean
-	public static BeanFactoryPostProcessor beanFactoryPostProcessor() {
-		return new BeanFactoryPostProcessor() {
-			@Override
-			public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-				beanFactory.registerScope("thread", new SimpleThreadScope());
-			}
-		};
-	}
-
-	@Lazy
-	@Bean
-	public SecurityServiceFactory securityService() {
-		return new SecurityServiceFactory();
-	}
-
-	@Bean
 	public FunctionCatalogAPI functionCatalogAPI() {
 		return new FunctionCatalogAPIImpl();
 	}
 
-	@Bean(name = "multipartResolver")
-	public CommonsMultipartResolver multipartResolver() {
-		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-		multipartResolver.setMaxUploadSize(100000);
-		return multipartResolver;
-	}
+
 
 	@Bean
-	public Context context() throws NamingException {
-		return new InitialContext();
-	}
+	public FilterRegistrationBean<JWTSecurityFilter> jwtSecurityFilter(@Lazy SecurityServiceService securityServiceService, BusinessRequestContext businessRequestContext, Context ctx) {
+		FilterRegistrationBean<JWTSecurityFilter> filter = new FilterRegistrationBean<>();
 
+		filter.setFilter(new JWTSecurityFilter(securityServiceService, businessRequestContext, ctx));
+		filter.setOrder(2);
+
+		/*
+		 * Add all filter's patterns here.
+		 */
+		filter.addUrlPatterns("/api/*");
+
+		return filter;
+	}
 }
