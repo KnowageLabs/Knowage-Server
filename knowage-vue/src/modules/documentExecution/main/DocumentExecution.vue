@@ -58,6 +58,7 @@
                 :propDocument="document"
                 :userRole="userRole"
                 :sessionEnabled="sessionEnabled"
+                :dateFormat="dateFormat"
                 @execute="onExecute"
                 @exportCSV="onExportCSV"
                 @roleChanged="onRoleChange"
@@ -149,7 +150,8 @@ export default defineComponent({
             userRole: null,
             loading: false,
             olapDesignerMode: false,
-            sessionEnabled: false
+            sessionEnabled: false,
+            dateFormat: '' as string
         }
     },
     async activated() {
@@ -428,7 +430,7 @@ export default defineComponent({
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.document.label, role: this.userRole, parameters: this.document.navigationParams ?? {} })
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
                 .catch((error: any) => {
-                    if (error.response.status === 500) {
+                    if (error.response?.status === 500) {
                         this.$store.commit('setError', {
                             title: this.$t('common.error.generic'),
                             msg: this.$t('documentExecution.main.userRoleError')
@@ -490,9 +492,17 @@ export default defineComponent({
 
                     if (key === tempParam.urlName) {
                         tempParam.parameterValue[0].value = this.document.navigationParams[key]
+                        if (this.document.navigationParams[key + '_field_visible_description']) tempParam.parameterValue[0].description = this.document.navigationParams[key + '_field_visible_description']
+                        if (tempParam.selectionType === 'COMBOBOX') this.setCrossNavigationComboParameterDescription(tempParam)
                     }
                 }
             })
+        },
+        setCrossNavigationComboParameterDescription(tempParam: any) {
+            if (tempParam.parameterValue[0]) {
+                const index = tempParam.data.findIndex((option: any) => option.value === tempParam.parameterValue[0].value)
+                if (index !== -1) tempParam.parameterValue[0].description = tempParam.data[index].description
+            }
         },
         formatParameterDataOptions(parameter: iParameter, data: any) {
             const valueColumn = parameter.metadata.valueColumn
@@ -801,7 +811,7 @@ export default defineComponent({
             if (index !== -1) this.schedulations.splice(index, 1)
         },
         getFormattedDate(date: any) {
-            return moment(date).format('DDMMYYYY')
+            return moment(date).format(this.dateFormat)
         },
         onBreadcrumbClick(item: any) {
             this.document = item.document
@@ -930,6 +940,7 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
                 if (response.data) {
                     this.sessionEnabled = response.data['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
+                    this.dateFormat = response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === 'dd/MM/yyyy' ? 'DD/MM/YYYY' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
                 }
             })
         },

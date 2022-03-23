@@ -70,10 +70,14 @@ public class LocalePropertiesUtilities {
 
 	public static String getAngularPropertiesFileName(String currLanguage, String currScript, String currCountry, String separator) {
 		Locale locale = null;
-		if (StringUtils.isAnyBlank(currLanguage, currScript, currCountry)) {
+		if (StringUtils.isAnyBlank(currLanguage, currCountry)) {
 			locale = getDefaultLocale();
 		} else {
-			locale = new Builder().setLanguage(currLanguage).setRegion(currCountry).setScript(currScript).build();
+			Builder builder = new Builder().setLanguage(currLanguage).setRegion(currCountry);
+			if (StringUtils.isNotBlank(separator)) {
+				builder = builder.setScript(currScript);
+			}
+			locale = builder.build();
 		}
 		return "/js/lib/angular-localization/" + getAngularPropertiesFileName(locale, separator) + ".js";
 	}

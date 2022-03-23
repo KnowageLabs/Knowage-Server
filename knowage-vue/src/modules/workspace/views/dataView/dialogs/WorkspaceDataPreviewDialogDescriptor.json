@@ -1,13 +1,18 @@
 {
     "dialog": {
         "contentStyle": {
-            "height": "100%"
+            "display": "flex",
+            "flex": "1",
+            "flex-direction": "column",
+            "padding-bottom": "0"
         },
         "style": {
             "display": "flex",
             "flex-direction": "column",
-            "height": "100vh",
-            "width": "100vw"
+            "max-height": "90%",
+            "max-width": "80%",
+            "min-height": "435px",
+            "min-width": "600px"
         }
     }
 }

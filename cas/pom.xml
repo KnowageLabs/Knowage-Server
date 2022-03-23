@@ -12,8 +12,10 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<quartz.version>2.3.2</quartz.version>
+		<quartz-oracle.version>2.1.7</quartz-oracle.version>
 	</properties>
-	
+
 	<build>
 		<plugins>
 
@@ -90,10 +92,15 @@
 		</dependency>
 
 		<dependency>
-			<groupId>quartz</groupId>
+			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
-			<version>1.5.2</version>
-			<type>jar</type>
+			<version>${quartz.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz-oracle</artifactId>
+			<version>${quartz-oracle.version}</version>
 		</dependency>
 
 		<dependency>

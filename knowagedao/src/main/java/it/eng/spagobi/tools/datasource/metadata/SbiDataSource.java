@@ -67,6 +67,8 @@ public class SbiDataSource extends SbiHibernateModel {
 
 	private Boolean writeDefault = null;
 
+	private Boolean useForDataprep = null;
+
 	private Set sbiOrganizationDatasources = new HashSet(0);
 
 	// Constructors
@@ -95,8 +97,7 @@ public class SbiDataSource extends SbiHibernateModel {
 	/**
 	 * minimal constructor.
 	 *
-	 * @param dsId
-	 *            Identifier of data source
+	 * @param dsId Identifier of data source
 	 */
 	public SbiDataSource(int dsId) {
 		this.dsId = dsId;
@@ -105,34 +106,22 @@ public class SbiDataSource extends SbiHibernateModel {
 	/**
 	 * full constructor.
 	 *
-	 * @param dsId
-	 *            Identifier of data source
-	 * @param descr
-	 *            description of data source
-	 * @param label
-	 *            label of data source
-	 * @param jndi
-	 *            jndi value
-	 * @param url_connection
-	 *            url connection value
-	 * @param user
-	 *            user of data source
-	 * @param pwd
-	 *            password of data source
-	 * @param driver
-	 *            driver of data source
-	 * @param dialect
-	 *            the dialect
-	 * @param sbiObjectses
-	 *            the sbi objectses
-	 * @param sbiEngineses
-	 *            the sbi engineses
-	 * @param sbiOrganizationDatasources
-	 *            the association with tenant
+	 * @param dsId                       Identifier of data source
+	 * @param descr                      description of data source
+	 * @param label                      label of data source
+	 * @param jndi                       jndi value
+	 * @param url_connection             url connection value
+	 * @param user                       user of data source
+	 * @param pwd                        password of data source
+	 * @param driver                     driver of data source
+	 * @param dialect                    the dialect
+	 * @param sbiObjectses               the sbi objectses
+	 * @param sbiEngineses               the sbi engineses
+	 * @param sbiOrganizationDatasources the association with tenant
 	 */
 	public SbiDataSource(int dsId, String descr, SbiDomains dialect, String label, String jndi, String url_connection, String user, String pwd, String driver,
 			Set sbiObjectses, Set sbiEngineses, Boolean multiSchema, String schemaAttribute, Boolean readOnly, Boolean writeDefault,
-			Set sbiOrganizationDatasources) {
+			Set sbiOrganizationDatasources, Boolean useForDataprep) {
 		this.dsId = dsId;
 		this.dialect = dialect;
 		this.descr = descr;
@@ -149,6 +138,7 @@ public class SbiDataSource extends SbiHibernateModel {
 		this.readOnly = readOnly;
 		this.writeDefault = writeDefault;
 		this.sbiOrganizationDatasources = sbiOrganizationDatasources;
+		this.useForDataprep = useForDataprep;
 	}
 
 	/**
@@ -163,8 +153,7 @@ public class SbiDataSource extends SbiHibernateModel {
 	/**
 	 * Sets the ds id.
 	 *
-	 * @param dsId
-	 *            the new ds id
+	 * @param dsId the new ds id
 	 */
 	public void setDsId(int dsId) {
 		this.dsId = dsId;
@@ -182,8 +171,7 @@ public class SbiDataSource extends SbiHibernateModel {
 	/**
 	 * Sets the dialect.
 	 *
-	 * @param dialect
-	 *            the new dialect
+	 * @param dialect the new dialect
 	 */
 	public void setDialect(SbiDomains dialect) {
 		this.dialect = dialect;
@@ -201,8 +189,7 @@ public class SbiDataSource extends SbiHibernateModel {
 	/**
 	 * Sets the dialect descr.
 	 *
-	 * @param dialectDescr
-	 *            the new dialect descr
+	 * @param dialectDescr the new dialect descr
 	 */
 	public void setDialectDescr(String dialectDescr) {
 		this.dialectDescr = dialectDescr;
@@ -220,8 +207,7 @@ public class SbiDataSource extends SbiHibernateModel {
 	/**
 	 * Sets the descr.
 	 *
-	 * @param descr
-	 *            the new descr
+	 * @param descr the new descr
 	 */
 	public void setDescr(String descr) {
 		this.descr = descr;
@@ -239,8 +225,7 @@ public class SbiDataSource extends SbiHibernateModel {
 	/**
 	 * Sets the label.
 	 *
-	 * @param label
-	 *            the new label
+	 * @param label the new label
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -258,8 +243,7 @@ public class SbiDataSource extends SbiHibernateModel {
 	/**
 	 * Sets the jndi.
 	 *
-	 * @param jndi
-	 *            the new jndi
+	 * @param jndi the new jndi
 	 */
 	public void setJndi(String jndi) {
 		this.jndi = jndi;
@@ -277,8 +261,7 @@ public class SbiDataSource extends SbiHibernateModel {
 	/**
 	 * Sets the url_connection.
 	 *
-	 * @param url_connection
-	 *            the new url_connection
+	 * @param url_connection the new url_connection
 	 */
 	public void setUrl_connection(String url_connection) {
 		this.url_connection = url_connection;
@@ -296,8 +279,7 @@ public class SbiDataSource extends SbiHibernateModel {
 	/**
 	 * Sets the user.
 	 *
-	 * @param user
-	 *            the new user
+	 * @param user the new user
 	 */
 	public void setUser(String user) {
 		this.user = user;
@@ -315,8 +297,7 @@ public class SbiDataSource extends SbiHibernateModel {
 	/**
 	 * Sets the pwd.
 	 *
-	 * @param pwd
-	 *            the new pwd
+	 * @param pwd the new pwd
 	 */
 	public void setPwd(String pwd) {
 		this.pwd = pwd;
@@ -334,8 +315,7 @@ public class SbiDataSource extends SbiHibernateModel {
 	/**
 	 * Sets the driver.
 	 *
-	 * @param driver
-	 *            the new driver
+	 * @param driver the new driver
 	 */
 	public void setDriver(String driver) {
 		this.driver = driver;
@@ -353,8 +333,7 @@ public class SbiDataSource extends SbiHibernateModel {
 	/**
 	 * Sets the sbi objectses.
 	 *
-	 * @param sbiObjectses
-	 *            the new sbi objectses
+	 * @param sbiObjectses the new sbi objectses
 	 */
 	public void setSbiObjectses(Set sbiObjectses) {
 		this.sbiObjectses = sbiObjectses;
@@ -372,8 +351,7 @@ public class SbiDataSource extends SbiHibernateModel {
 	/**
 	 * Sets the sbi engineses.
 	 *
-	 * @param sbiEngineses
-	 *            the new sbi engineses
+	 * @param sbiEngineses the new sbi engineses
 	 */
 	public void setSbiEngineses(Set sbiEngineses) {
 		this.sbiEngineses = sbiEngineses;
@@ -393,6 +371,14 @@ public class SbiDataSource extends SbiHibernateModel {
 
 	public void setWriteDefault(Boolean writeDefault) {
 		this.writeDefault = writeDefault;
+	}
+
+	public void setUseForDataprep(Boolean useForDataprep) {
+		this.useForDataprep = useForDataprep;
+	}
+
+	public Boolean getUseForDataprep() {
+		return useForDataprep;
 	}
 
 	public Set getSbiOrganizationDatasources() {

@@ -40,6 +40,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import it.eng.knowage.boot.dao.dto.AbstractEntity;
+
 /**
  * @author Marco Libanori
  */

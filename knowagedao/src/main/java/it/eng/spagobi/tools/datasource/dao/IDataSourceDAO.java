@@ -36,55 +36,46 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 * Loads all detail information for a data source identified by its <code>dsID</code>. All these information, achived by a query to the DB, are stored into
 	 * a <code>datasource</code> object, which is returned.
 	 *
-	 * @param dsID
-	 *            The id for the datasource to load
+	 * @param dsID The id for the datasource to load
 	 * @return A <code>datasource</code> object containing all loaded information
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public IDataSource loadDataSourceByID(Integer dsID) throws EMFUserError;
 
 	/**
 	 * Loads all detail information for data source whose label is equal to <code>label</code>.
 	 *
-	 * @param label
-	 *            The label for the data source to load
+	 * @param label The label for the data source to load
 	 * @return An <code>datasource</code> object containing all loaded information
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public IDataSource loadDataSourceByLabel(String label) throws EMFUserError;
 
 	public IDataSource findDataSourceByLabel(String label);
-	
+
 	/**
 	 * Loads all detail information for all data sources. For each of them, detail information is stored into a <code>datasource</code> object. After that, all
 	 * data sources are stored into a <code>List</code>, which is returned.
 	 *
 	 * @return A list containing all datasource objects
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public List<IDataSource> loadAllDataSources() throws EMFUserError;
 
 	/**
 	 * Load dialect by id.
 	 *
-	 * @param dialectId
-	 *            the dialect id
+	 * @param dialectId the dialect id
 	 * @return the dialect
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	public Domain loadDialect(int dialectId) throws EMFUserError;
 
 	/**
 	 * Implements the query to modify a data source. All information needed is stored into the input <code>datasource</code> object.
 	 *
-	 * @param aDataSource
-	 *            The object containing all modify information
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @param aDataSource The object containing all modify information
+	 * @throws EMFUserError If an Exception occurred
 	 */
 
 	public void modifyDataSource(IDataSource aDataSource) throws EMFUserError;
@@ -92,32 +83,26 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	/**
 	 * Implements the query to insert a data source. All information needed is stored into the input <code>datasource</code> object.
 	 *
-	 * @param aDataSource
-	 *            The object containing all insert information
+	 * @param aDataSource The object containing all insert information
 	 * @return the datasource id
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public Integer insertDataSource(IDataSource aDataSource, String organization) throws EMFUserError;
 
 	/**
 	 * Implements the query to erase a data source. All information needed is stored into the input <code>datasource</code> object.
 	 *
-	 * @param aDataSource
-	 *            The object containing all delete information
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @param aDataSource The object containing all delete information
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	public void eraseDataSource(IDataSource aDataSource) throws EMFUserError;
 
 	/**
 	 * Tells if a data source is associated to any BI Object. It is useful because a data source cannot be deleted if it is used by one or more BI Objects.
 	 *
-	 * @param dsId
-	 *            The datasource identifier
+	 * @param dsId The datasource identifier
 	 * @return True if the datasource is used by one or more objects, else false
-	 * @throws EMFUserError
-	 *             If any exception occurred
+	 * @throws EMFUserError If any exception occurred
 	 */
 	public boolean hasBIObjAssociated(String dsId) throws EMFUserError;
 
@@ -146,8 +131,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 * all data sources are stored into a <code>List</code>, which is returned.
 	 *
 	 * @return A list containing all datasource objects
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 
 	public List<IDataSource> loadDataSourcesForSuperAdmin();
@@ -161,5 +145,9 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 */
 
 	public Map<String, List<String>> returnEntitiesAssociated(Integer dsId) throws EMFUserError;
+
+	IDataSource loadDataSourceUseForDataprep(Session aSession) throws EMFUserError;
+
+	IDataSource loadDataSourceUseForDataprep() throws EMFUserError;
 
 }

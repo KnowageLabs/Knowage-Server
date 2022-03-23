@@ -24,7 +24,7 @@
         "
         @page="onPage($event)"
         @column-reorder="$emit('reordered', $event)"
-        @drop="onDrop($event)"
+        @drop.stop="onDrop($event)"
         @dragover.prevent
         @dragenter.prevent
         stripedRows
@@ -35,7 +35,7 @@
                 {{ $t('common.info.noDataFound') }}
             </div>
         </template>
-        <Column v-for="(col, index) of filteredVisibleFields" :hidden="!col.visible" :field="`column_${index + 1}`" :key="index" :style="qbeSimpleTableDescriptor.style.column">
+        <Column v-for="(col, index) of filteredVisibleFields" class="kn-truncated" :hidden="!col.visible" :field="`column_${index + 1}`" :key="index" :style="qbeSimpleTableDescriptor.style.column">
             <template #header>
                 <div class="customHeader">
                     <div class="qbeCustomTopColor" :style="`background-color: ${col.color}`" :title="col.entity"></div>
@@ -47,6 +47,12 @@
                         <i class="fas fa-times p-mr-2" v-tooltip.bottom="$t(`qbe.detailView.smartViewMenu.coldel`)" @click="$emit('removeFieldFromQuery', col.uniqueID)" :data-test="'delete-column-' + col.alias" />
                     </div>
                 </div>
+            </template>
+            <template #body="slotProps">
+                <span v-if="typeof slotProps.data[`column_${index + 1}`] === 'number' && slotProps.data[`column_${index + 1}`]"> {{ getFormattedNumber(slotProps.data[`column_${index + 1}`]) }}</span>
+                <span v-else-if="previewData?.metaData?.fields[index + 1]?.type === 'date'">{{ getFormattedDate(slotProps.data[`column_${index + 1}`], previewData.metaData.fields[index + 1].metawebDateFormat, 'DD/MM/YYYY') }} </span>
+                <span v-else-if="previewData?.metaData?.fields[index + 1]?.type === 'timestamp'">{{ getFormattedDate(slotProps.data[`column_${index + 1}`], previewData.metaData.fields[index + 1].metawebDateFormat, 'DD/MM/YYYY HH:mm:ss.SSS') }} </span>
+                <span v-else v-tooltip.bottom="slotProps.data[`column_${index + 1}`]">{{ slotProps.data[`column_${index + 1}`] }}</span>
             </template>
         </Column>
     </DataTable>
@@ -83,6 +89,8 @@ import Column from 'primevue/column'
 import Menu from 'primevue/contextmenu'
 import Dialog from 'primevue/dialog'
 import qbeSimpleTableDescriptor from './QBESmartTableDescriptor.json'
+import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
+import { formatDate } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     name: 'qbe-simple-table',
@@ -194,6 +202,12 @@ export default defineComponent({
         },
         openFiltersDialog(field: any) {
             this.$emit('openFilterDialog', field)
+        },
+        getFormattedNumber(number: number, precision?: number, format?: any) {
+            return formatNumberWithLocale(number, precision, format)
+        },
+        getFormattedDate(date: any, output: any, input: any) {
+            return formatDate(date, output, input)
         }
     }
 })
