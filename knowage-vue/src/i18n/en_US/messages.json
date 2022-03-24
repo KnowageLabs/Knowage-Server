@@ -7,6 +7,7 @@
         "alias": "Alias",
         "apply": "Apply",
         "attachments": "Attachments",
+        "attributes": "Attributes",
         "author": "Author",
         "back": "back",
         "cancel": "cancel",
@@ -69,6 +70,7 @@
         "filters": "Filters",
         "from": "From",
         "general": "General",
+        "generate": "Generate",
         "group": "Group",
         "home": "Home",
         "image": "image",
@@ -220,6 +222,7 @@
         "august": "August",
         "custom": "Custom",
         "daily": "Daily",
+        "date": "Date",
         "day": "Day",
         "days": "Days",
         "december": "December",
@@ -905,6 +908,12 @@
             "yearly": "YEARLY"
         },
         "calendarManagement": {
+            "endValidityDate": "End Validity Date",
+            "generateConfirmMessage": "Because it will create a calendar with {numberOfDays} days. Continue?",
+            "generateConfirmTitle": "Warning! This action could require some time",
+            "holiday": "Holiday",
+            "publicHoliday": "Public Holiday",
+            "startValidityDate": "Start Validity Date",
             "title": "Calendar"
         },
         "catalogFunction": {

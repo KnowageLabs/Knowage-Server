@@ -1,44 +1,62 @@
 <template>
-    <Dialog id="calendar-management-dialog" class="p-fluid kn-dialog--toolbar--primary" :visible="visible" :modal="true" :closable="false" :style="calendarManagementDialogDescriptor.dialog.style">
+    <Dialog id="calendar-management-dialog" class="p-fluid kn-dialog--toolbar--primary" :visible="visible" :modal="true" :closable="false" :style="calendarManagementDialogDescriptor.dialog.style" :contentStyle="calendarManagementDialogDescriptor.dialog.contentStyle">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
-                    {{ $t('kpi.kpiDocumentDesigner.scorecardList') }}
+                    {{ calendar?.calendar }}
+                </template>
+                <template #end>
+                    <Button v-if="canManageCalendar" icon="pi pi-save" class="kn-button p-button-text p-button-rounded" @click="save" />
+                    <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="close" />
                 </template>
             </Toolbar>
         </template>
 
-        {{ calendar }}
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-        <template #footer>
-            <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="close"></Button>
-            <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="buttonDisabled" @click="saveDate"></Button>
-        </template>
+        <!-- {{ calendar }} -->
+
+        <div>
+            <CalendarManagementDetailForm :propCalendar="calendar" :generateButtonVisible="generateButtonVisible" :generateButtonDisabled="generateButtonDisabled" @generateCalendarClicked="generateCalendarConfirm"></CalendarManagementDetailForm>
+            <CalendarManagementDetailTable v-if="calendarDetailTableVisible" class="p-m-4" :propCalendarInfo="calendar.splittedCalendar" :domains="domains"></CalendarManagementDetailTable>
+        </div>
     </Dialog>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iCalendarDate } from '../CalendarManagement'
+import { iCalendar, iCalendarDate, iDomain } from '../CalendarManagement'
+import { AxiosResponse } from 'axios'
 import Dialog from 'primevue/dialog'
 import calendarManagementDialogDescriptor from './CalendarManagementDialogDescriptor.json'
+import CalendarManagementDetailForm from './CalendarManagementDetailForm/CalendarManagementDetailForm.vue'
+import CalendarManagementDetailTable from './CalendarManagementDetailTable/CalendarManagementDetailTable.vue'
+import moment from 'moment'
 
 const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'calendar-management-dialog',
-    components: { Dialog },
-    props: { visible: { type: Boolean }, propCalendar: { type: Object as PropType<iCalendarDate> } },
-    emits: ['close'],
+    components: { CalendarManagementDetailForm, CalendarManagementDetailTable, Dialog },
+    props: { visible: { type: Boolean }, propCalendar: { type: Object as PropType<iCalendar | null> }, domains: { type: Array as PropType<iDomain[]> } },
+    emits: ['close', 'calendarSaved'],
     data() {
         return {
             calendarManagementDialogDescriptor,
-            calendar: null as iCalendarDate | null
+            calendar: null as iCalendar | null,
+            calendarInfo: [] as iCalendarDate[],
+            generateButtonVisible: false,
+            generateButtonDisabled: true,
+            calendarDetailTableVisible: false,
+            loading: false
         }
     },
     computed: {
         buttonDisabled(): boolean {
-            return false
+            return this.calendar === null || !this.calendar.calendar || !this.calendar.calStartDay || !this.calendar.calEndDay
+        },
+        canManageCalendar(): boolean {
+            return (this.$store.state as any).user.functionalities.includes('ManageCalendar')
         }
     },
     watch: {
@@ -50,15 +68,136 @@ export default defineComponent({
         this.loadCalendar()
     },
     methods: {
-        loadCalendar() {
+        async loadCalendar() {
             this.calendar = deepcopy(this.propCalendar)
-            console.log('LOADED CALENDAR: ', this.calendar)
+            if (this.calendar && this.calendar.calStartDay) this.calendar.calStartDay = new Date(this.calendar.calStartDay)
+            if (this.calendar && this.calendar.calEndDay) this.calendar.calEndDay = new Date(this.calendar.calEndDay)
+
+            if (this.calendar?.calendarId) {
+                await this.loadCalendarInfo(this.calendar.calendarId)
+                this.calendarDetailTableVisible = true
+            }
         },
-        saveDate() {
-            console.log('SAVE CLICKED!')
+        async loadCalendarInfo(calendarId: number) {
+            this.loading = true
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/${calendarId}/getInfoCalendarById`)
+                .then((response: AxiosResponse<any>) => {
+                    this.calendarInfo = response.data
+                    this.generateButtonVisible = true
+                    this.getRealCalendarInfo()
+                })
+                .catch(() => {})
+            this.loading = false
+        },
+        getRealCalendarInfo() {
+            if (!this.calendar) return
+
+            this.calendar.splittedCalendar = []
+            for (let i = 0; i < this.calendarInfo.length; i++) {
+                const tempDate = deepcopy(this.calendarInfo[i])
+
+                console.log('tempDate: ', tempDate)
+
+                tempDate['day'] = tempDate.timeByDay.dayName
+                tempDate.isHoliday = tempDate.isHoliday == 1
+                tempDate.pubHoliday = tempDate.pubHoliday == 'true'
+
+                this.calendar.splittedCalendar.push(tempDate)
+            }
+            console.log(' >>> TEMP SPLIT DATA: ', this.calendar.splittedCalendar)
+        },
+        async save() {
+            this.loading = true
+            if (this.calendar?.calendarId) {
+                await this.updateCalendar()
+            } else {
+                await this.saveCalendar()
+            }
+
+            this.loading = false
+        },
+        async saveCalendar() {
+            const tempCalendar = deepcopy(this.calendar)
+            tempCalendar.calStartDay = moment(tempCalendar.calStartDay).valueOf()
+            tempCalendar.calEndDay = moment(tempCalendar.calEndDay).valueOf()
+
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/saveCalendar`, tempCalendar)
+                .then((response: AxiosResponse<any>) => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.toast.createSuccess')
+                    })
+                    if (this.calendar) this.calendar.calendarId = response.data
+                    this.generateButtonVisible = true
+                    this.generateButtonDisabled = false
+                    this.$emit('calendarSaved')
+                })
+                .catch(() => {})
+            // console.log('CALENDAR AFTER SAVE: ', this.calendar)
+        },
+        async updateCalendar() {
+            if (!this.calendar) return
+
+            const postData = this.getFormattedSplittedCalendar()
+
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/${this.calendar.calendarId}/updateDaysGenerated`, postData)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.updateSuccess')
+                    })
+                })
+                .catch(() => {})
+            // console.log('CALENDAR AFTER SAVE: ', this.calendar)
+        },
+        getFormattedSplittedCalendar() {
+            if (!this.calendar) return
+            const tempData = deepcopy(this.calendar.splittedCalendar)
+            tempData?.forEach((el: any) => {
+                el.isHoliday = el.isHoliday ? 1 : null
+                el.pubHoliday = el.pubHoliday ? 'true' : null
+                delete el.date
+                delete el.day
+                delete el.checkEvent
+            })
+
+            return tempData
+        },
+        generateCalendarConfirm() {
+            this.$confirm.require({
+                message: this.$t('managers.calendarManagement.generateConfirmMessage', { numberOfDays: this.getDays() }),
+                header: this.$t('managers.calendarManagement.generateConfirmTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.generateCalendar()
+            })
+        },
+        getDays() {
+            if (!this.calendar) return
+
+            const timeDiff = Math.abs((this.calendar.calEndDay as Date).getTime() - (this.calendar.calStartDay as Date).getTime())
+            const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24))
+            return diffDays + 1
+        },
+        async generateCalendar() {
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/${this.calendar?.calendarId}/generateCalendarDays`, {})
+                .then(async () => {
+                    await this.loadCalendarInfo(this.calendar?.calendarId as number)
+                    this.generateButtonDisabled = true
+                    this.calendarDetailTableVisible = true
+                })
+                .catch(() => {})
+            this.loading = false
         },
         close() {
             this.calendar = null
+            this.generateButtonVisible = false
+            this.generateButtonDisabled = true
+            this.calendarDetailTableVisible = false
             this.$emit('close')
         }
     }
