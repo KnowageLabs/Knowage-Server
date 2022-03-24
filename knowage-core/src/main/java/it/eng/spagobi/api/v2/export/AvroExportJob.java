@@ -151,8 +151,11 @@ public class AvroExportJob extends AbstractExportJob {
 				value = Float.valueOf(value.toString());
 			} else if (String.class.isAssignableFrom(type)) {
 				value = String.valueOf(value);
+			} else {
+				value = value.toString();
 			}
 		} catch (Exception e) {
+			logger.error("Error getting Avro value {" + value + "}", e);
 			value = value.toString();
 		}
 		return value;
