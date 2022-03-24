@@ -6,15 +6,13 @@
                     {{ calendar?.calendar }}
                 </template>
                 <template #end>
-                    <Button v-if="canManageCalendar" icon="pi pi-save" class="kn-button p-button-text p-button-rounded" @click="save" />
+                    <Button v-if="canManageCalendar" icon="pi pi-save" class="kn-button p-button-text p-button-rounded" :disabled="buttonDisabled" @click="save" />
                     <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="close" />
                 </template>
             </Toolbar>
         </template>
 
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-
-        <!-- {{ calendar }} -->
 
         <div>
             <CalendarManagementDetailForm :propCalendar="calendar" :generateButtonVisible="generateButtonVisible" :generateButtonDisabled="generateButtonDisabled" @generateCalendarClicked="generateCalendarConfirm"></CalendarManagementDetailForm>
@@ -97,15 +95,12 @@ export default defineComponent({
             for (let i = 0; i < this.calendarInfo.length; i++) {
                 const tempDate = deepcopy(this.calendarInfo[i])
 
-                console.log('tempDate: ', tempDate)
-
                 tempDate['day'] = tempDate.timeByDay.dayName
                 tempDate.isHoliday = tempDate.isHoliday == 1
                 tempDate.pubHoliday = tempDate.pubHoliday == 'true'
 
                 this.calendar.splittedCalendar.push(tempDate)
             }
-            console.log(' >>> TEMP SPLIT DATA: ', this.calendar.splittedCalendar)
         },
         async save() {
             this.loading = true
@@ -135,7 +130,6 @@ export default defineComponent({
                     this.$emit('calendarSaved')
                 })
                 .catch(() => {})
-            // console.log('CALENDAR AFTER SAVE: ', this.calendar)
         },
         async updateCalendar() {
             if (!this.calendar) return
@@ -151,7 +145,6 @@ export default defineComponent({
                     })
                 })
                 .catch(() => {})
-            // console.log('CALENDAR AFTER SAVE: ', this.calendar)
         },
         getFormattedSplittedCalendar() {
             if (!this.calendar) return

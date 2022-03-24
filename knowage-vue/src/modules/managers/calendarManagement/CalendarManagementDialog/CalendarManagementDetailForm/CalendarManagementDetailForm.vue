@@ -13,6 +13,7 @@
                         :disabled="readonly"
                         @input="calendarNameDirty = true"
                         @blur="calendarNameDirty = true"
+                        data-test="calendar-name-input"
                     />
                     <label class="kn-material-input-label"> {{ $t('common.name') + ' *' }}</label>
                 </span>
@@ -27,7 +28,7 @@
             </div>
             <div class="kn-flex">
                 <span class="p-float-label p-m-2">
-                    <InputText class="kn-material-input" v-model.trim="calendar.calType" :maxlength="calendarManagementDetailFormDescriptor.typeMaxLength" :disabled="readonly" />
+                    <InputText class="kn-material-input" v-model.trim="calendar.calType" :maxlength="calendarManagementDetailFormDescriptor.typeMaxLength" :disabled="readonly"  data-test="calendar-type-input"/>
                     <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
                 </span>
                 <div class="p-d-flex p-flex-row p-jc-end">
@@ -48,6 +49,7 @@
                         :disabled="readonly"
                         @input="startDateDirty = true"
                         @blur="startDateDirty = true"
+                         data-test="calendar-start-date-input"
                     ></Calendar>
                     <label class="kn-material-input-label"> {{ $t('managers.calendarManagement.startValidityDate') + ' *' }}</label>
                 </span>
@@ -65,6 +67,7 @@
                         :disabled="readonly"
                         @input="endDateDirty = true"
                         @blur="endDateDirty = true"
+                          data-test="calendar-end-date-input"
                     ></Calendar>
                     <label class="kn-material-input-label"> {{ $t('managers.calendarManagement.endValidityDate') + ' *' }}</label>
                 </span>
