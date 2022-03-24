@@ -1,32 +1,31 @@
 {
     "columns": [
         {
-            "field": "executionDate",
-            "header": "common.executionDate",
+            "field": "start",
+            "header": "managers.workspaceManagement.dataPreparation.monitoring.start",
             "style": {
                 "width": "30%"
             }
         },
         {
-            "field": "state",
-            "header": "common.state",
+            "field": "stop",
+            "header": "managers.workspaceManagement.dataPreparation.monitoring.stop",
             "style": {
                 "width": "30%"
             }
         },
         {
-            "field": "processedLines",
-            "header": "common.processedLines",
+            "field": "status",
+            "header": "managers.workspaceManagement.dataPreparation.monitoring.status",
             "style": {
-                "width": "30%"
+                "width": "15%"
             }
         },
         {
-            "field": "errorFile",
-            "header": "common.errorFile",
-            "icon": "pi pi-download",
+            "field": "recordsNumber",
+            "header": "managers.workspaceManagement.dataPreparation.monitoring.recordsNumber",
             "style": {
-                "width": "10%"
+                "width": "15%"
             }
         }
     ],
@@ -73,17 +72,6 @@
     "endDateEnabled": false,
     "logs": {
         "columns": {}
-    },
-    "mock": {
-        "logs": [
-            {
-                "errorFile": "SY",
-                "executionDate": "03/13/2022",
-                "id": 1,
-                "processedLines": 1,
-                "state": "KO"
-            }
-        ]
     },
     "monthly": {
         "ordinal": {
@@ -210,6 +198,6 @@
     },
     "startDateEnabled": false,
     "style": {
-        "cardContainer": {}
+        "dropdown": "kn-material-input p-mr-2 p-mb-2"
     }
 }

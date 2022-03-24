@@ -1,5 +1,5 @@
 <template>
-    <DataPreparationMonitoringDialog v-model:visibility="showMonitoring" @close="showMonitoring = false"></DataPreparationMonitoringDialog>
+    <DataPreparationMonitoringDialog v-model:visibility="showMonitoring" @close="showMonitoring = false" :dataset="selectedDataset"></DataPreparationMonitoringDialog>
     <Toolbar class="kn-toolbar kn-toolbar--secondary">
         <template #start>
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />

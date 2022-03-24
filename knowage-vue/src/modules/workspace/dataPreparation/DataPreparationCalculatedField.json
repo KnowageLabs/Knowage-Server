@@ -704,7 +704,7 @@
                     "key": "maximumCharacters",
                     "validator": {
                         "params": {
-                            "max": 1000
+                            "max": 1
                         },
                         "type": "maxLength"
                     }

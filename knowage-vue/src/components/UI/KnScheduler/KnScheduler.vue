@@ -1,26 +1,28 @@
 <template>
-    <div class="p-grid p-m-2 knScheduler">
-        <span class="p-field p-float-label p-col-12" v-if="descriptor.startDateEnabled"
-            ><Calendar id="icon" v-model="startDate" :showIcon="true" /><label for="startDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.startDate') }} </label>
-        </span>
+    <div class="p-grid p-m-2 knScheduler p-jc-between">
+        <div class="p-field p-float-label p-col-12 p-mb-1" v-if="descriptor.startDateEnabled">
+            <Calendar id="startDate" v-model="startDate" :showIcon="true" /><label for="startDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.startDate') }} </label>
+        </div>
 
-        <span class="p-field p-float-label p-col-12">
-            <Dropdown id="type" class="kn-material-input" v-model="selectedRefreshRate" dataKey="id" optionLabel="name" optionValue="code" :options="refreshRates" maxLength="100" @change="resetFormula()" :disabled="readOnly" />
+        <span class="p-field p-float-label p-col-12 p-mb-1">
+            <Dropdown id="selectedRefreshRate" class="kn-material-input" v-model="selectedRefreshRate" dataKey="id" optionLabel="name" optionValue="code" :options="refreshRates" maxLength="100" @change="resetFormula()" :disabled="readOnly" />
             <label for="refreshRate" class="kn-material-input-label"> {{ $t(descriptor.refreshRate.placeholder) }}</label>
         </span>
 
-        <div class="p-d-flex p-flex-wrap p-col-12" v-if="selectedRefreshRate">
+        <div class="p-d-flex p-flex-wrap p-col-12 p-mb-1" v-if="selectedRefreshRate">
             <div v-if="selectedRefreshRate === 'daily'">
                 <div class="p-d-flex p-ai-center">
                     <RadioButton class="p-mr-2" id="dayConf1" name="dayConf" value="everyDay" v-model="dayConf" :disabled="readOnly" />
-                    <i18n-t keypath="knScheduler.everyDay" tag="div" class="p-d-flex p-ai-center p-m-2">
+                    <i18n-t keypath="knScheduler.everyDay" tag="div" class="p-d-flex p-ai-center p-mr-2">
                         <template #day>
-                            <Dropdown id="type" class="kn-material-input" v-model="selectedDay" optionLabel="name" optionValue="code" :options="getNumberOptions(5)" maxLength="100" @change="dayConf = 'everyDay'" :disabled="readOnly" />
+                            <Dropdown id="type" class="kn-material-input p-mr-2" v-model="selectedDay" optionLabel="name" optionValue="code" :options="getNumberOptions(5)" maxLength="100" @change="dayConf = 'everyDay'" :disabled="readOnly" />
                         </template>
                     </i18n-t>
 
-                    {{ $t('knScheduler.startingIn') }}
-                    <Dropdown id="type" class="kn-material-input" v-model="selectedDayExtended" dataKey="id" optionLabel="name" optionValue="id" :options="days" maxLength="100" @change="dayConf = 'everyDay'" :disabled="readOnly" />
+                    <span class="p-mr-2" style="white-space:nowrap">
+                        {{ $t('knScheduler.startingIn') }}
+                    </span>
+                    <Dropdown id="type" :class="descriptor.style.dropdown" v-model="selectedDayExtended" dataKey="id" optionLabel="name" optionValue="id" :options="days" maxLength="100" @change="dayConf = 'everyDay'" :disabled="readOnly" />
                 </div>
 
                 <div class="field-radiobutton">
@@ -28,40 +30,28 @@
                     {{ $t('knScheduler.everyNotWorkingDays') }}
                 </div>
             </div>
-            <div v-if="selectedRefreshRate === 'weekly'" class="p-d-flex p-flex-wrap p-jc-between">
-                <!--                 <div class="p-d-flex p-ai-center">
-                    <i18n-t keypath="knScheduler.everyWeek" tag="div" class="p-d-flex p-ai-center">
-                        <template #week>
-                            <span class="p-float-label">
-                                <Dropdown id="type" class="kn-material-input" v-model="selectedWeek" optionLabel="name" optionValue="code" :options="getNumberOptions(5)" maxLength="100" @change="updateFormula()" :disabled="readOnly" />
-
-                            </span>
-                        </template>
-                    </i18n-t>
-                </div> -->
-
-                <div class="p-d-flex field-checkbox p-mb-2 p-mr-2" v-for="(day, index) in descriptor.days" v-bind:key="index">
-                    <Checkbox :id="day - `${index}`" :name="day.name" :value="day.code" v-model="selectedWeekdays[index]" /><label class="p-ml-2">{{ $t(day.name) }}</label>
+            <div v-if="selectedRefreshRate === 'weekly'" class="p-d-flex p-flex-wrap">
+                <div class="p-d-flex field-checkbox p-mb-2 p-mr-2 dayCheckbox" v-for="(day, index) in descriptor.days" v-bind:key="index">
+                    <Checkbox :id="day - `${index}`" :name="day.name" :value="day.code" v-model="selectedWeekdays[day.id]" /><label class="p-ml-2">{{ $t(day.name) }}</label>
                 </div>
             </div>
             <div v-if="selectedRefreshRate === 'monthly'">
-                <div class="p-d-flex p-ai-center">
-                    <i18n-t keypath="knScheduler.everyMonth" tag="div" class="p-d-flex p-ai-center">
-                        <template #month>
-                            <Dropdown id="type" class="kn-material-input" v-model="selectedMonth" optionLabel="name" optionValue="id" :options="getNumberOptions(5)" maxLength="100" @change="updateFormula()" :disabled="readOnly" />
-                        </template>
-                    </i18n-t>
-                </div>
+                <i18n-t keypath="knScheduler.everyMonth" tag="div" class="p-d-flex p-ai-center p-mr-2">
+                    <template #month>
+                        <Dropdown id="selectedMonth" :class="descriptor.style.dropdown" v-model="selectedMonth" optionLabel="name" optionValue="id" :options="getNumberOptions(5)" maxLength="100" @change="updateFormula()" :disabled="readOnly" />
+                    </template>
+                </i18n-t>
+
                 <div class="p-d-flex p-ai-center">
                     {{ $t('knScheduler.startingIn') }}
-                    <Dropdown id="type" class="kn-material-input" v-model="selectedMonthExtended" dataKey="id" optionLabel="name" optionValue="id" :options="months" maxLength="100" @change="updateFormula()" :disabled="readOnly" />
+                    <Dropdown id="selectedMonthExtended" :class="descriptor.style.dropdown" v-model="selectedMonthExtended" dataKey="id" optionLabel="name" optionValue="id" :options="months" maxLength="100" @change="updateFormula()" :disabled="readOnly" />
                 </div>
 
                 <div class="field-radiobutton">
                     <div class="p-d-flex p-ai-center">
                         <RadioButton class="p-mr-2" id="monthConf1" name="monthConf" v-model="monthConf" value="theDay" :disabled="readOnly" /> {{ $t('knScheduler.theDay') }}
 
-                        <Dropdown id="type" class="kn-material-input" v-model="selectedDayNumber" dataKey="id" optionLabel="name" optionValue="code" :options="getNumberOptions(31)" maxLength="100" @change="monthConf = 'theDay'" :disabled="readOnly" />
+                        <Dropdown id="selectedDayNumber" :class="descriptor.style.dropdown" v-model="selectedDayNumber" dataKey="id" optionLabel="name" optionValue="code" :options="getNumberOptions(31)" maxLength="100" @change="monthConf = 'theDay'" :disabled="readOnly" />
                     </div>
                 </div>
 
@@ -69,54 +59,52 @@
                     <div class="p-d-flex p-ai-center">
                         <RadioButton class="p-mr-2" id="monthConf2" name="monthConf" v-model="monthConf" value="theOrdinalDay" :disabled="readOnly" /> {{ $t('knScheduler.the') }}
 
-                        <Dropdown id="type" class="kn-material-input" v-model="selectedDayOrdinal" dataKey="id" optionLabel="name" optionValue="id" :options="ordinal" maxLength="100" @change="monthConf = 'theOrdinalDay'" :disabled="readOnly" />
+                        <Dropdown id="selectedDayOrdinal" :class="descriptor.style.dropdown" v-model="selectedDayOrdinal" dataKey="id" optionLabel="name" optionValue="id" :options="ordinal" maxLength="100" @change="monthConf = 'theOrdinalDay'" :disabled="readOnly" />
 
-                        <Dropdown id="type" class="kn-material-input" v-model="selectedDayExtended" dataKey="id" optionLabel="name" optionValue="id" :options="days" maxLength="100" @change="monthConf = 'theOrdinalDay'" :disabled="readOnly" />
+                        <Dropdown id="selectedDayExtended" :class="descriptor.style.dropdown" v-model="selectedDayExtended" dataKey="id" optionLabel="name" optionValue="id" :options="days" maxLength="100" @change="monthConf = 'theOrdinalDay'" :disabled="readOnly" />
                     </div>
                 </div>
             </div>
             <div v-if="selectedRefreshRate === 'yearly'">
-                <div class="p-d-flex p-ai-center">
-                    <i18n-t keypath="knScheduler.everyYear" tag="div" class="p-d-flex p-ai-center">
-                        <template #year>
-                            <Dropdown id="type" class="kn-material-input" v-model="selectedYear" optionLabel="name" optionValue="code" :options="getNumberOptions(5)" maxLength="100" @change="updateFormula()" :disabled="readOnly" />
-                        </template>
-                    </i18n-t>
-                </div>
+                <i18n-t keypath="knScheduler.everyYear" tag="div" class="p-d-flex p-ai-center p-mr-2">
+                    <template #year>
+                        <Dropdown id="selectedYear" :class="descriptor.style.dropdown" v-model="selectedYear" dataKey="id" optionLabel="name" optionValue="code" :options="getNumberOptions(5)" maxLength="100" @change="updateFormula()" :disabled="readOnly" />
+                    </template>
+                </i18n-t>
 
                 <div class="p-d-flex p-ai-center">
                     {{ $t('knScheduler.in') }}
 
-                    <Dropdown id="type" class="kn-material-input" v-model="selectedMonth" dataKey="id" optionLabel="name" optionValue="code" :options="months" maxLength="100" @change="updateFormula()" :disabled="readOnly" />
+                    <Dropdown id="selectedMonth" :class="descriptor.style.dropdown" v-model="selectedMonth" dataKey="id" optionLabel="name" optionValue="code" :options="months" maxLength="100" @change="updateFormula()" :disabled="readOnly" />
                 </div>
 
                 <div class="field-radiobutton">
                     <div class="p-d-flex p-ai-center">
                         <RadioButton class="p-mr-2" id="monthConf1" name="yearConf" v-model="yearConf" value="theDay" :disabled="readOnly" /> {{ $t('knScheduler.theDay') }}
 
-                        <Dropdown id="type" class="kn-material-input" v-model="selectedDayNumber" dataKey="id" optionLabel="name" optionValue="code" :options="getNumberOptions(31)" maxLength="100" @change="yearConf = 'theDay'" :disabled="readOnly" />
+                        <Dropdown id="type" :class="descriptor.style.dropdown" v-model="selectedDayNumber" dataKey="id" optionLabel="name" optionValue="code" :options="getNumberOptions(31)" maxLength="100" @change="yearConf = 'theDay'" :disabled="readOnly" />
                     </div>
                 </div>
                 <div class="field-radiobutton">
                     <div class="p-d-flex p-ai-center">
                         <RadioButton class="p-mr-2" id="monthConf2" name="yearConf" v-model="yearConf" value="theOrdinalDay" :disabled="readOnly" /> {{ $t('knScheduler.the') }}
 
-                        <Dropdown id="type" class="kn-material-input" v-model="selectedDayOrdinal" dataKey="id" optionLabel="name" optionValue="id" :options="ordinal" maxLength="100" @change="yearConf = 'theOrdinalDay'" :disabled="readOnly" />
+                        <Dropdown id="selectedDayOrdinal" :class="descriptor.style.dropdown" v-model="selectedDayOrdinal" dataKey="id" optionLabel="name" optionValue="id" :options="ordinal" maxLength="100" @change="yearConf = 'theOrdinalDay'" :disabled="readOnly" />
 
-                        <Dropdown id="type" class="kn-material-input" v-model="selectedDayExtended" dataKey="id" optionLabel="name" optionValue="id" :options="days" maxLength="100" @change="yearConf = 'theOrdinalDay'" :disabled="readOnly" />
+                        <Dropdown id="selectedDayExtended" :class="descriptor.style.dropdown" v-model="selectedDayExtended" dataKey="id" optionLabel="name" optionValue="id" :options="days" maxLength="100" @change="yearConf = 'theOrdinalDay'" :disabled="readOnly" />
                     </div>
                 </div>
             </div>
             <div v-if="selectedRefreshRate === 'custom'">
-                <span class="p-field p-float-label p-col-12"> <InputText :id="name" type="text" v-model="formula" v-bind="$attrs" :class="[cssClass ? cssClass + ' kn-truncated' : 'kn-material-input kn-truncated', required && !modelValue ? 'p-invalid' : '']"/></span>
+                <span class="p-field p-float-label p-col-12"> <InputText :id="name" type="text" v-model="localFormula" v-bind="$attrs" :class="[cssClass ? cssClass + ' kn-truncated' : 'kn-material-input kn-truncated', required && !modelValue ? 'p-invalid' : '']"/></span>
             </div>
         </div>
-        <span class="p-field p-float-label p-col-12" v-if="descriptor.endDateEnabled"
-            ><Calendar id="icon" v-model="endDate" :showIcon="true" /><label for="endDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.endDate') }} </label>
-        </span>
-        <span class="p-field p-float-label p-col-12">
-            <Message severity="info" :closable="false"> {{ formula }} </Message></span
-        >{{ getCronstrueFormula }}
+        <div class="p-field p-float-label p-col-12 p-mb-1" v-if="descriptor.endDateEnabled">
+            <Calendar id="icon" v-model="endDate" :showIcon="true" />
+            <label for="endDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.endDate') }} </label>
+        </div>
+
+        <Message class="p-col-12 messageClass" severity="info" :closable="false"> {{ getCronstrueFormula }} </Message>
     </div>
 </template>
 
@@ -145,16 +133,16 @@
         },
         props: {
             descriptor: Object,
-            readOnly: Boolean || false
+            readOnly: Boolean || false,
+            formula: String
         },
-        emits: ['touched', 'cronValid'],
+        emits: ['touched', 'validSchedulation'],
         data() {
             return {
-                //albnale
                 startDate: null as Date | null,
                 endDate: null as Date | null,
                 selectedRefreshRate: null,
-                selectedWeek: null,
+
                 selectedMonth: null,
                 selectedYear: null,
                 selectedDay: null,
@@ -169,11 +157,14 @@
                 months: [] as any,
                 ordinal: [] as any,
                 refreshRates: [] as any,
-                formula: {} as any,
                 nextFlush: '',
                 selectedWeekdays: {} as any,
                 startDateEnabled: false,
-                endDateEnabled: false
+                endDateEnabled: false,
+                localFormula: '',
+                // CONST
+                allValues: '*',
+                noSpecificValue: '?'
             }
         },
         computed: {
@@ -183,13 +174,9 @@
                 if (locale) {
                     let splitted = locale.split('_')
 
-                    if (locale.includes('#')) {
-                        cronLocale = splitted[0] + '_' + splitted[2]
-                    } else {
-                        cronLocale = splitted[0]
-                    }
+                    cronLocale = locale.includes('#') ? (cronLocale = splitted[0] + '_' + splitted[2]) : (cronLocale = splitted[0])
                 }
-                return cronstrue.toString(this.formula, { locale: cronLocale })
+                return cronstrue.toString(this.localFormula, { locale: cronLocale })
             }
         },
         async created() {
@@ -214,7 +201,8 @@
                 this.ordinal.push({ code: x.code, id: x.id, name: this.$t(x.name) })
             })
 
-            this.formula = '0 0 0 * * ? *'
+            this.localFormula = this.formula || '0 0 0 * * ? *'
+
             this.selectedRefreshRate = this.descriptor?.refreshRate.options[0].code
         },
         methods: {
@@ -223,9 +211,97 @@
                 for (var i = 1; i <= max; i++) tmp.push({ code: i.toString(), id: i, name: i.toString() })
                 return tmp
             },
+            isSet(formulaToken): Boolean {
+                return formulaToken !== this.allValues && formulaToken !== this.noSpecificValue
+            },
+            parseFormula(formula) {
+                if (formula === '0 0 0 ? * MON,TUE,WED,THU,FRI *') {
+                    // @ts-ignore
+                    this.selectedRefreshRate = 'daily'
+                    // @ts-ignore
+                    this.dayConf = 'everyNotWorkingDays'
+                } else {
+                    let formulaArr = formula.split(' ')
+                    if (this.isSet(formulaArr[3])) {
+                        this.selectedDayNumber = formulaArr[3]
+                    }
+                    if (this.isSet(formulaArr[4])) {
+                        let splitted = formulaArr[4].split('/')
+                        if (splitted.length > 1) {
+                            // @ts-ignore
+                            this.selectedMonthExtended = parseInt(splitted[0])
+                            // @ts-ignore
+                            this.selectedMonth = parseInt(splitted[1])
+                        } else if (this.months.filter((x) => x.code === formulaArr[4]).length == 1) {
+                            this.selectedMonth = formulaArr[4]
+                        }
+                    }
+                    if (this.isSet(formulaArr[5])) {
+                        let splitted = formulaArr[5].split('/')
+                        if (splitted.length > 1) {
+                            // @ts-ignore
+                            this.selectedDayExtended = parseInt(splitted[0])
+                            // @ts-ignore
+                            this.selectedDay = splitted[1]
+                        } else {
+                            splitted = formulaArr[5].split('#')
+                            if (splitted.length > 1) {
+                                // @ts-ignore
+                                this.selectedDayExtended = parseInt(splitted[0])
+                                // @ts-ignore
+                                this.selectedDayOrdinal = parseInt(splitted[1])
+                            } else {
+                                splitted = formulaArr[5].split(',')
+                                if (splitted.length > 0) {
+                                    for (var index in splitted) {
+                                        let day = this.descriptor?.days.filter((x) => x.code === splitted[index].toLowerCase())[0]
+
+                                        this.selectedWeekdays[day.id] = [day.code]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (this.isSet(formulaArr[6])) {
+                        // @ts-ignore
+                        this.selectedYear = formulaArr[6].split('/')[1]
+                    }
+
+                    if (this.selectedYear) {
+                        // @ts-ignore
+                        this.selectedRefreshRate = 'yearly'
+
+                        if (this.selectedDayExtended)
+                            // @ts-ignore
+                            this.yearConf = 'theOrdinalDay'
+                        // @ts-ignore
+                        else this.yearConf = 'theDay'
+                    } else if (Object.keys(this.selectedWeekdays).length > 0) {
+                        // @ts-ignore
+                        this.selectedRefreshRate = 'weekly'
+                    } else {
+                        if (this.selectedDay) {
+                            // @ts-ignore
+                            this.selectedRefreshRate = 'daily'
+                            // @ts-ignore
+                            this.dayConf = 'everyDay'
+                        } else if (this.selectedMonth) {
+                            // @ts-ignore
+                            this.selectedRefreshRate = 'monthly'
+                            if (this.selectedDayNumber) {
+                                // @ts-ignore
+                                this.monthConf = 'theDay'
+                            } else {
+                                // @ts-ignore
+                                this.monthConf = 'theOrdinalDay'
+                            }
+                        }
+                    }
+                }
+            },
             resetFormula() {
-                this.formula = '0 0 0 * * ? *'
-                this.selectedWeek = null
+                this.localFormula = '0 0 0 * * ? *'
+
                 this.selectedMonth = null
                 this.selectedYear = null
                 this.selectedDay = null
@@ -237,11 +313,11 @@
                 this.yearConf = null
             },
             updateFormula() {
-                let formulaArr = this.formula.split(' ')
+                let formulaArr = this.localFormula.split(' ')
                 formulaArr[0] = formulaArr[1] = formulaArr[2] = '0'
                 if (this.selectedRefreshRate === 'daily') {
                     if (this.dayConf === 'everyDay') {
-                        formulaArr[3] = '?'
+                        formulaArr[3] = this.noSpecificValue
 
                         if (this.selectedDay && this.selectedDayExtended) {
                             formulaArr[5] = this.selectedDayExtended + '/' + this.selectedDay
@@ -262,36 +338,36 @@
                         }
                         t = Array.from(set).join(',')
                     } else {
-                        t += '*'
+                        t += this.allValues
                     }
 
                     formulaArr[5] = t
 
-                    formulaArr[4] = this.selectedWeek ? this.selectedWeek : '*'
+                    formulaArr[4] = this.allValues
                 } else if (this.selectedRefreshRate === 'monthly') {
                     if (this.selectedMonthExtended && this.selectedMonth) {
                         formulaArr[4] = this.selectedMonthExtended + '/' + this.selectedMonth
                     }
 
                     if (this.monthConf === 'theDay') {
-                        formulaArr[3] = this.selectedDayNumber ? this.selectedDayNumber : '*'
+                        formulaArr[3] = this.selectedDayNumber ? this.selectedDayNumber! : this.allValues
 
-                        formulaArr[5] = '?'
+                        formulaArr[5] = this.noSpecificValue
                     } else if (this.monthConf === 'theOrdinalDay') {
-                        formulaArr[3] = '?'
+                        formulaArr[3] = this.noSpecificValue
 
                         if (this.selectedDayExtended && this.selectedDayOrdinal) {
                             formulaArr[5] = this.selectedDayExtended + '#' + this.selectedDayOrdinal
                         }
                     }
-                    formulaArr[6] = '*'
+                    formulaArr[6] = this.allValues
                 } else if (this.selectedRefreshRate === 'yearly') {
-                    formulaArr[4] = this.selectedMonth ? this.selectedMonth : '*'
+                    formulaArr[4] = this.selectedMonth ? this.selectedMonth! : this.allValues
 
                     if (this.yearConf === 'theDay') {
-                        formulaArr[3] = this.selectedDayNumber ? this.selectedDayNumber : '*'
+                        formulaArr[3] = this.selectedDayNumber ? this.selectedDayNumber! : this.allValues
                     } else if (this.yearConf === 'theOrdinalDay') {
-                        formulaArr[3] = '?'
+                        formulaArr[3] = this.noSpecificValue
 
                         if (this.selectedDayExtended && this.selectedDayOrdinal) {
                             formulaArr[5] = this.selectedDayExtended + '#' + this.selectedDayOrdinal
@@ -301,22 +377,17 @@
                     if (this.selectedYear) {
                         formulaArr[6] = moment().year() + '/' + this.selectedYear
                     } else {
-                        formulaArr[6] = '*'
+                        formulaArr[6] = this.allValues
                     }
-
-                    /*  var interval = this.parser.parseExpression(this.formula)
-                          this.nextFlush = 'Next: ' + interval.next().toString() + '\nFollowing: ' + interval.next().toString()*/
                 }
-                this.formula = formulaArr.join(' ')
+                this.localFormula = formulaArr.join(' ')
             }
         },
         watch: {
             selectedRefreshRate() {
                 this.updateFormula()
             },
-            selectedWeek() {
-                this.updateFormula()
-            },
+
             selectedMonth() {
                 this.updateFormula()
             },
@@ -346,6 +417,12 @@
                     this.updateFormula()
                 },
                 deep: true
+            },
+            formula(newFormula) {
+                if (newFormula) {
+                    this.localFormula = newFormula
+                    this.parseFormula(this.localFormula)
+                }
             }
         }
     })
@@ -355,7 +432,14 @@
     .knScheduler {
         min-width: 200px;
         min-height: 300px;
-        max-height: 500px;
-        justify-content: space-between;
+        height: 100%;
+        font-size: 0.9rem;
+    }
+    .dayCheckbox {
+        width: 100px;
+    }
+
+    .messageClass {
+        height: 50px;
     }
 </style>

@@ -1,6 +1,8 @@
 export interface IDataPrepLog {
-    executionDate: Date
-    state: Number
-    processedLines: Number
-    errorFile: Object
+    status: String
+    recordsNumber: Number
+    id: String
+    instanceId: String
+    start: String
+    stop: String
 }

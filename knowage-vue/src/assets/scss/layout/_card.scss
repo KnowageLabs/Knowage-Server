@@ -1,4 +1,4 @@
-.p-card.kn-card{
+.p-card.kn-card {
     &.no-padding {
         .p-card-body {
             padding: 0 0 8px 0;
@@ -6,6 +6,15 @@
                 padding: 0 0 8px 0;
             }
         }
-        
+    }
+
+    &.full-height {
+        height: 100%;
+        .p-card-body {
+            height: 100%;
+            .p-card-content {
+                height: 100%;
+            }
+        }
     }
 }

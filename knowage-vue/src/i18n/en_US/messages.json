@@ -1869,6 +1869,13 @@
                     "visibility": "Visibility"
                 },
                 "label": "Data preparation",
+                "monitoring": {
+                    "executionLogs": "Execution log",
+                    "recordsNumber": "Number of records",
+                    "start": "Start date",
+                    "status": "Status",
+                    "stop": "Stop Date"
+                },
                 "originalDataset": "Original",
                 "parametersConfiguration": "Parameters configuration",
                 "roles": {
@@ -2273,6 +2280,7 @@
             "exportSuccess": "The download has started in background. You will find the result file in your download page.",
             "fileDownload": "Download Dataset file",
             "modified": "Modified",
+            "monitoring": "Monitoring",
             "openData": "Import Open Data",
             "openDataPreparation": "Open Data Preparation",
             "parametrical": "Parametrical",
