@@ -203,10 +203,23 @@
     "warning": "attenzione",
     "yes": "si"
   },
+  "components": {
+    "knCalculatedField": {
+      "columnName": "Column Name",
+      "description": "Calculated field description",
+      "fields": "Fields",
+      "formula": "Formula",
+      "functions": "Functions",
+      "officialDocumentation": "Official documentation ({function})",
+      "title": "Calculated field"
+    }
+  },
   "cron": {
     "advanced": "avanzato",
     "april": "aprile",
     "august": "agosto",
+    "custom": "Custom",
+    "daily": "Daily",
     "day": "giorno",
     "days": "giorni",
     "december": "dicembre",
@@ -218,6 +231,9 @@
     "everyWeekday": "ogni giorno della settimana",
     "everyday": "ogni giorno",
     "february": "febbraio",
+    "fifth": "Fifth",
+    "first": "First",
+    "fourth": "Fourth",
     "friday": "venerdi",
     "hour": "ora",
     "hours": "ore",
@@ -235,12 +251,14 @@
     "minutes": "minuti",
     "monday": "lunedi",
     "month": "mese",
+    "monthly": "Monthly",
     "months": "mesi",
     "nextExecution": "prossima esecuzione",
     "november": "novembre",
     "october": "ottobre",
     "repeatInterval": "ripeti intervallo",
     "saturday": "sabato",
+    "second": "Second",
     "selectDays": "seleziona giorno/i",
     "selectHours": "seleziona ora/e",
     "selectMinutes": "seleziona minuto/i",
@@ -253,11 +271,14 @@
     "sunday": "domenica",
     "theDay": "il giorno",
     "theWeek": "la settimana",
+    "third": "Third",
     "thursday": "giovedì",
     "tuesday": "martedì",
     "wednesday": "mercoledì",
     "weekday": "giorno della settimana",
-    "weekdays": "giorni della settimana"
+    "weekdays": "giorni della settimana",
+    "weekly": "Weekly",
+    "yearly": "Yearly"
   },
   "documentBrowser": {
     "changeStateMessage": "sei sicuro di voler cambiare lo stato del documento?",
@@ -270,36 +291,36 @@
     "closeDocumentRight": "chiudi documenti a destra",
     "closeOtherDocuments": "chiudi gli altri documenti",
     "deleteDocument": "elimina documento",
-    "development": "Development",
-    "documentsFound": "Documents found",
-    "documentsSearch": "Search for documents",
-    "editDocument": "Edit Document",
-    "executeDocument": "Execute Document",
-    "genericDocument": "Generic document",
-    "hint": "No folder is selected",
-    "moveDownDocumentState": "Move Down State Document",
-    "moveUpDocumentState": "Move Up State Document",
-    "noDocumentsHint": "No documents to display",
-    "title": "Document browser"
+    "development": "sviluppo",
+    "documentsFound": "documenti trovati",
+    "documentsSearch": "ricerca documenti",
+    "editDocument": "modifica documento",
+    "executeDocument": "esegui documento",
+    "genericDocument": "documento generico",
+    "hint": "nessuna cartella selezionata",
+    "moveDownDocumentState": "abbassa lo stato del documento",
+    "moveUpDocumentState": "alza lo stato del documento",
+    "noDocumentsHint": "nessun documento da mostrare",
+    "title": "gestore documenti"
   },
   "documentExecution": {
     "documentDetails": {
       "dataLineage": {
-        "deleteError": "Error deleting table",
-        "deleteOk": "Table deleted",
-        "noDatasources": "No data source present, add some",
-        "noTables": "Data source has no tables",
-        "persistError": "Error persisting table",
-        "persistOk": "Table persisted",
-        "selectSource": "Select Source",
-        "title": "Data Lineage"
+        "deleteError": "errore nella cancellazione della tabella",
+        "deleteOk": "tabella eliminata",
+        "noDatasources": "nessuna fonte dati trovata, aggiungine una",
+        "noTables": "la fonte dati non ha tabelle",
+        "persistError": "errore nella persistenza della tabella",
+        "persistOk": "tabella persistita con successo",
+        "selectSource": "seleziona fonte dati",
+        "title": "data lineage"
       },
       "drivers": {
-        "ad": "Driver AD",
-        "adDepends": "depends from the AD",
-        "conditionSavedMsg": "Data dependency is successfully created",
-        "conditionsTitle": "Driver data conditions",
-        "dataConditionsValue": "value of the parameter",
+        "ad": "driver analitico",
+        "adDepends": "dipende dal driver analitico",
+        "conditionSavedMsg": "la dipendenza è stata creata con successo",
+        "conditionsTitle": "condizioni dei dati dei driver",
+        "dataConditionsValue": "valore del parametro",
         "dataHint": "Filter operator is used for comparing a column value of the AD",
         "dataTitle": "Driver data conditions",
         "deleteMessage": "Are You sure You want to delete this driver? It will not be deleted until the driver is saved!",
@@ -327,35 +348,35 @@
         "listTitle": "Template History",
         "template": "Template",
         "templateHint": "Content of this file type cannot be shown",
-        "title": "History",
-        "uploadError": "An error occured while uploading template"
+        "title": "storico",
+        "uploadError": "errore durante il caricamento del template"
       },
       "info": {
-        "attribute": "Select Attribute",
-        "datasetDialogTitle": "Select Dataset",
-        "engine": "Engine",
+        "attribute": "seleziona attributo",
+        "datasetDialogTitle": "seleziona dataset",
+        "engine": "motore",
         "engineHint": "Select a type to unlock the available engines",
-        "imageError": "Error deleting image",
-        "imageUploadError": "Error uploading image",
-        "infoTitle": "Informations",
-        "positionTitle": "Position",
-        "previewImage": "Preview Image",
-        "profiledVisibility": "Defined Restrictions",
-        "refresh": "Refresh (seconds)",
-        "refreshHint": "Select the number of milliseconds after the document will refresh",
-        "restrictionValueHint": "Enter Value",
-        "restrictionsTitle": "Visibility Restrictions",
-        "uploadTemplate": "Upload template",
+        "imageError": "errore durante la cancellazione dell'immagine",
+        "imageUploadError": "errore durante il caricamento dell'immagine",
+        "infoTitle": "informazioni",
+        "positionTitle": "posizione",
+        "previewImage": "anteprima immagine",
+        "profiledVisibility": "condizioni definite",
+        "refresh": "refresh (secondi)",
+        "refreshHint": "seleziona il numero di millisecondi dopo i quali il documento si aggiornerà",
+        "restrictionValueHint": "inserisci valore",
+        "restrictionsTitle": "condizioni di visibilità",
+        "uploadTemplate": "carica template",
         "visibilityLocationTitle": "Select the functionalities where the document will be visible"
       },
       "outputParams": {
-        "customValue": "Custom Value",
-        "noParamSelected": "No parameter selected",
-        "paramDetails": "Output parameter details",
-        "paramName": "Parameter Name",
-        "paramType": "Parameter Type",
-        "persistError": "Error saving output param",
-        "title": "Output Parameters"
+        "customValue": "valore personalizzato",
+        "noParamSelected": "nessun parametro selezionato",
+        "paramDetails": "dettagli parametro di output",
+        "paramName": "nome parametro",
+        "paramType": "tipo parametro",
+        "persistError": "errore durante il salvataggio del parametro di output",
+        "title": "parametro di output"
       },
       "subreports": {
         "title": "Subreports"
@@ -390,32 +411,32 @@
       "customMetadata": "Custom Metadata",
       "editCockpit": "Edit cockpit document",
       "editModeConfirm": "You are leaving edit mode. Continue?",
-      "embedInHtml": "Embed in HTML",
-      "exportInPDF": "Export in PDF",
-      "exportInRTF": "Export in RTF",
-      "fillForm": "Fill Form",
+      "embedInHtml": "embed in HTML",
+      "exportInPDF": "esporta in PDF",
+      "exportInRTF": "esporta in RTF",
+      "fillForm": "completa il form",
       "firstToRate": "Be the first rating this document",
-      "linkToDocument ": "Link to document",
-      "parameterClearTooltip": "Reset to default value",
-      "publicUrlExecutionDisabled": "Current document cannot be executed by public user",
-      "rankSaveSucces": "Rating Saved.Thanks for your feedback",
+      "linkToDocument ": "collegamento al documento",
+      "parameterClearTooltip": "reset al valore di default",
+      "publicUrlExecutionDisabled": "il documento attuale non può essere eseguito da un utente pubblico",
+      "rankSaveSucces": "valutazione salvata. grazie per il tuo feedback",
       "replyToHint": "Enter \"reply to\" if you want to set the sender.",
-      "resetParametersTooltip": "Reset parameters form to default values",
+      "resetParametersTooltip": "resetta i parametri ai loro valori di default",
       "saveParametersFromStateTooltip": "Save parameters form state as viewpoint",
-      "savedParameters": "Saved parameters",
-      "savedParametersTooltip": "Open saved parameters window",
-      "scheduledExecutions": "Scheduled executions",
-      "selectFileError": "Select a file to Upload!",
+      "savedParameters": "parametri salvati",
+      "savedParametersTooltip": "elenco parametri salvati",
+      "scheduledExecutions": "esecuzioni schedulate",
+      "selectFileError": "seleziona un file da caricare",
       "sendEmailMessage": "Enter user / password if you want to send the email with your user, remember that it must exist in the mail server.",
       "showOLAPCustomView": "Show OLAP Custom View",
-      "showScheduledExecutions": "Show scheduled executions",
-      "userRoleError": "User does not have valid roles for the execution of the selected document",
-      "viewCockpit": "View cockpit document",
-      "yourRating": "Your rating"
+      "showScheduledExecutions": "mostra esecuzioni schedulate",
+      "userRoleError": "l'utente non ha ruoli validi per l'esecuzione del documento selezionato",
+      "viewCockpit": "visualizza dashboard",
+      "yourRating": "la tua valutazione"
     },
     "olap": {
       "buttonsWizard": {
-        "title": "Buttons Wizard"
+        "title": "bottoni wizard"
       },
       "crossNavigationDefinition": {
         "crossNavigationType": "Select the type of cross navigation below",
@@ -442,37 +463,37 @@
       "editModeConfirm": "You are leaving edit mode. Continue?",
       "filterPanel": {
         "drop": "Drop here to use as a slicer",
-        "filterPanelEmpty": "Drag the member here if you want to use it as a slicer"
+        "filterPanelEmpty": "rilascia qui per utilizzare come slicer"
       },
       "filterToolbar": {
         "dragEmptyWarning": "There must be at least one dimension in the columns and in the rows",
-        "drop": "Drop here to use as a dimension",
-        "hierarchyMove": "An error occurred while moving hierarchy",
-        "hierarchyMoveError": "An error occurred while moving hierarchy",
-        "hierarchyUpdateError": "An error occurred while updating hierarchy.",
-        "noMeasure": "A measure can not be used as a filter",
+        "drop": "rilascia qui per utilizzare come dimensione",
+        "hierarchyMove": "sposta gerarchia",
+        "hierarchyMoveError": "errore durante lo spostamento gerarchia",
+        "hierarchyUpdateError": "errore durante l'aggiornamento gerarchia",
+        "noMeasure": "una misura non può essere utilizzata come filtro",
         "putFilterOnAxisError": "An error occurred while placing member on axis",
-        "swapAxisError": "An error occurred during swap axis functionality"
+        "swapAxisError": "errore durante il cambio di asse"
       },
       "multiHierarchy": {
-        "detail1": "The selected hierarchy is ",
+        "detail1": "la gerarchia selezionata è",
         "detail2": "You can change it acting on the form below.",
-        "dropdownLabel": "Available hierarchies"
+        "dropdownLabel": "gerarchie disponibili"
       },
-      "openDesigner": "Open Designer",
-      "openDesignerMsg": "By opening designer you will lose all unsaved changes, are you sure?",
-      "savingCustomizedView": "Saving customized view",
-      "showMdxQuery": "Show MDX Query",
-      "showScheduledExecutions": "Show scheduled executions",
+      "openDesigner": "apri designer",
+      "openDesignerMsg": "aprendo il designer perderai tutti i cambiamenti non salvati, sei sicuro?",
+      "savingCustomizedView": "salvataggio vista personalizzata",
+      "showMdxQuery": "mostra query MDX",
+      "showScheduledExecutions": "mostra esecuzioni schedulate",
       "sidebar": {
-        "calculatedField": "Calculated field",
-        "calculatedFieldWizard": "Calculated field wizard",
-        "closeDesigner": "Close Designer",
-        "configureButtonsVisiblity": "Configure buttons visibility",
-        "configureScenario": "Configure scenario",
-        "configureTablePagination": "Configure table pagination",
-        "defineCrossNavigation": "Define cross navigation",
-        "drillOnData": "Drill on data",
+        "calculatedField": "campo calcolato",
+        "calculatedFieldWizard": "wizard campo calcolato",
+        "closeDesigner": "chiudi designer",
+        "configureButtonsVisiblity": "configura visibilità bottoni",
+        "configureScenario": "configura scenario",
+        "configureTablePagination": "configura paginazione tabella",
+        "defineCrossNavigation": "definisci cross navigazione",
+        "drillOnData": "drill sui dati",
         "drillOnDimension": "Drill on dimension",
         "drillThrough": "Drill Through",
         "enableCrossNavigation": "Enable crossnavigation",
@@ -495,43 +516,43 @@
         "showProperties": "Show properties",
         "sortingSettings": "Sorting settings",
         "suppressEmptyRowsColumns": "Suppress empty rows/columns",
-        "tableFunctions": "Table functions",
-        "templateEditing": "Template editing",
-        "undo": "Undo"
+        "tableFunctions": "funzioni tabella",
+        "templateEditing": "modifica template",
+        "undo": "undo"
       },
-      "userRoleError": "User does not have valid roles for the execution of the selected document",
-      "viewCockpit": "View cockpit document",
-      "yourRating": "Your rating"
+      "userRoleError": "l'utente non ha ruoli validi per l'esecuzione del documento selezionato",
+      "viewCockpit": "visualizza dashboard",
+      "yourRating": "la tua valutazione"
     },
     "registry": {
-      "clearFilters": "Clear",
-      "column": "Column/s",
-      "filter": "Filter",
-      "filters": "Filters",
-      "select": "Select",
-      "title": "Registry Document",
-      "warning": "Warning",
-      "warningCheckbox": "Don't Warn Me Again",
+      "clearFilters": "pulisci",
+      "column": "colonna/e",
+      "filter": "filtro",
+      "filters": "filtri",
+      "select": "seleziona",
+      "title": "documento registry",
+      "warning": "attenzione",
+      "warningCheckbox": "non mostrare di nuovo",
       "warningDependences": "depend/s from this value. Please check them and set correct values!"
     }
   },
   "downloadsDialog": {
     "columns": {
-      "creationDate": "Creation Date",
-      "fileName": "File Name",
-      "fileSize": "File Size"
+      "creationDate": "data creazione",
+      "fileName": "nome file",
+      "fileSize": "dimensione file"
     },
-    "title": "Downloads"
+    "title": "downloads"
   },
   "home": {
     "button": {
-      "documentation": "documentation",
-      "qa": "support forum"
+      "documentation": "documentazione",
+      "qa": "forum di supporto"
     },
-    "connectYourData": "connect your data",
-    "createYourAnalysis": "create your analysis",
-    "queryYourData": "query your data",
-    "saveAndShare": "save and share",
+    "connectYourData": "connetti i tuoi dati",
+    "createYourAnalysis": "crea le tue analisi",
+    "queryYourData": "crea le tue query",
+    "saveAndShare": "salva e condividi",
     "welcome": "Welcome to Knowage",
     "welcomeText": "<b>Knowage</b> is the full open source suite for analytics and business intelligence combining traditional and big data sources to provide valuable and meaningful information.<br>Start your analysis now!"
   },
@@ -572,36 +593,47 @@
     "title": "Import/Export"
   },
   "infoDialog": {
-    "aboutKnowage": "About Knowage",
+    "aboutKnowage": "about Knowage",
     "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
-    "sourceCode": "Source code available on "
+    "sourceCode": "codice sorgente disponibile "
+  },
+  "knScheduler": {
+    "everyDay": "Every {day} day/s ",
+    "everyMonth": "Every {month} month/s ",
+    "everyNotWorkingDays": "Every not working days",
+    "everyWeek": "Every {week} week/s",
+    "everyYear": "Every {year} year/s",
+    "in": "In",
+    "startingIn": "starting in {in}",
+    "the": "The",
+    "theDay": "The day"
   },
   "kpi": {
     "alert": {
-      "actionList": "Action List",
-      "addAction": "Add new action",
+      "actionList": "lista azioni",
+      "addAction": "aggiungi nuova azione",
       "brokerType": "Context Broker Type",
       "brokerUrl": "Context Broker URL",
-      "execution": "Single Execution",
-      "expiredWarning": "WARNING: The alert is expired",
+      "execution": "singola esecuzione",
+      "expiredWarning": "ATTENZIONE: l'alert è scaduto",
       "hint": "The Alert definition allows you to define a serie of action to start when one or more KPI reach a specific threshold. You can set email alert, execute ETL or call a context broker .Click on one existing item from the list on the side, or press the \"+\" button to add one.",
       "kpiEditing": "Kpi editing in progres",
       "kpiEditingMessage": "Current kpi have associated action and will be removed. Are you sure?",
       "kpiListener": "Listener",
       "label": "Label",
-      "mailSubject": "Mail Subject",
-      "mailTo": "Mail to",
-      "name": "Name",
+      "mailSubject": "oggetto mail",
+      "mailTo": "mail a",
+      "name": "nome",
       "noOfEvents": "Number of events before triggering actions",
       "savingError": "Error while saving alert",
-      "threshold": "Threshold",
+      "threshold": "soglia",
       "title": "Alert Definition",
-      "type": "Type"
+      "type": "tipo"
     },
     "kpiDefinition": {
       "addKpiAssociations": "Add KPI associations",
-      "addNewThreshold": "Add new threshold item",
-      "aliasToolbarTitle": "Alias",
+      "addNewThreshold": "aggiungi nuova soglia",
+      "aliasToolbarTitle": "alias",
       "cardinalityTtitle": "Cardinality",
       "clone": "Clone",
       "color": "Color",
@@ -1025,6 +1057,7 @@
         "schemaAttribute": "Multischema Attribute",
         "testOk": "Tested parameters are correct!",
         "urlConnection": "URL",
+        "useForDataprep": "Use for data preparation",
         "user": "User",
         "writeDefault": "Use as cache"
       },
@@ -1865,6 +1898,129 @@
       "templateSuccessfullyUploaded": "@:managers.widgetGallery.templateSuccessfully uploaded",
       "title": "Gallery management",
       "uploadTemplate": "Upload template"
+    },
+    "workspaceManagement": {
+      "dataPreparation": {
+        "dataset": {
+          "description": "Description",
+          "label": "Label",
+          "name": "Name",
+          "refreshRate": {
+            "frequency": {
+              "DAILY": "Every day",
+              "HOURL": "Every hour",
+              "MONTHLY": "Every month",
+              "NEVER": "Never",
+              "WEEKLY": "Every week",
+              "YEARLY": "Every year"
+            },
+            "label": "Refresh rate"
+          },
+          "visibility": "Visibility"
+        },
+        "label": "Data preparation",
+        "monitoring": {
+          "executionLogs": "Execution log",
+          "recordsNumber": "Number of records",
+          "start": "Start date",
+          "status": "Status",
+          "stop": "Stop Date"
+        },
+        "originalDataset": "Original",
+        "parametersConfiguration": "Parameters configuration",
+        "roles": {
+          "attribute": "ATTRIBUTE",
+          "measure": "MEASURE"
+        },
+        "savePreparedDataset": "Save prepared dataset",
+        "transformations": {
+          "calculatedField": {
+            "label": "Add column"
+          },
+          "changeRole": {
+            "description": "Change role for the fields",
+            "label": "Change role"
+          },
+          "changeType": {
+            "description": "Change type for the fields",
+            "label": "Change type"
+          },
+          "column": "Column",
+          "column1": "Column 1",
+          "column2": "Column 2",
+          "columnName": "Column Name",
+          "columns": "Columns",
+          "condition": "Condition",
+          "conditions": "Conditions",
+          "destType": "Destination type",
+          "drop": {
+            "description": "TODO",
+            "label": "Drop column"
+          },
+          "endDate": "End Date",
+          "filter": {
+            "description": "Filter the dataset using the selected conditions. If more then one AND logical operator will be used",
+            "label": "Filter"
+          },
+          "format": {
+            "description": "TODO",
+            "label": "Format"
+          },
+          "formula": "Formula",
+          "label": "Transformations",
+          "logicOperator": "Logical operator",
+          "merge": {
+            "description": "The output type is always String",
+            "label": "Merge columns"
+          },
+          "newChar": "New char",
+          "number": "Number",
+          "numberOfChars": "Number of characters",
+          "oldChar": "Old char",
+          "outputType": "Output Type",
+          "padding": {
+            "description": "TODO",
+            "label": "Padding"
+          },
+          "prefix": "Prefix",
+          "removeDuplicates": {
+            "description": "Removes duplicate values from a range of values.",
+            "label": "Remove duplicates"
+          },
+          "removeNull": {
+            "description": "TODO",
+            "label": "Remove NULL"
+          },
+          "replace": {
+            "description": "replace(searchvalue, newvalue)",
+            "label": "Replace"
+          },
+          "separator": "Separator",
+          "split": {
+            "description": "Split the column content in two different columns. Choose the split type and define the two returning columns.",
+            "label": "Split column",
+            "numOfChars": "Number of characters",
+            "outputColumn": "Output Column",
+            "outputType": "Output Type",
+            "separator": "Separator"
+          },
+          "splitMethod": "Split column method",
+          "startDate": "Start Date",
+          "statistics": {
+            "description": "TODO",
+            "label": "Statistics"
+          },
+          "suffix": "Suffix",
+          "text": "Text",
+          "trim": {
+            "description": "TODO",
+            "label": "Trim"
+          },
+          "useNumberOfChars": "Use number of characters",
+          "useSeparator": "Use separator",
+          "values": "Values"
+        }
+      }
     }
   },
   "menu": {
@@ -2174,7 +2330,9 @@
       "exportSuccess": "The download has started in background. You will find the result file in your download page.",
       "fileDownload": "Download Dataset file",
       "modified": "Modified",
+      "monitoring": "Monitoring",
       "openData": "Import Open Data",
+      "openDataPreparation": "Open Data Preparation",
       "parametrical": "Parametrical",
       "parseError": "Impossible to parse file. Check its content and upload it again",
       "prepareData": "Prepare Data",
