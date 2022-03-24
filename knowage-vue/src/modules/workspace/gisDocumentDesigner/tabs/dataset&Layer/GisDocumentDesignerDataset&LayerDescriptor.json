@@ -1,0 +1,40 @@
+{
+    "datasetColumns": [
+        {
+            "field": "label",
+            "header": "common.id"
+        },
+        {
+            "field": "name",
+            "header": "common.name"
+        },
+        {
+            "field": "descr",
+            "header": "common.description"
+        },
+        {
+            "field": "dsTypeCd",
+            "header": "common.type"
+        }
+    ],
+    "datasetFilterFields": ["name"],
+    "layerColumns": [
+        {
+            "field": "layerId",
+            "header": "common.id"
+        },
+        {
+            "field": "layerName",
+            "header": "common.name"
+        },
+        {
+            "field": "descr",
+            "header": "common.description"
+        },
+        {
+            "field": "type",
+            "header": "common.type"
+        }
+    ],
+    "layerFilterFields": ["layerName"]
+}

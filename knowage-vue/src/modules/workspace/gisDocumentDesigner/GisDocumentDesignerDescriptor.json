@@ -1,4 +1,13 @@
 {
+    "style": {
+        "dialogSize": {
+            "width": "80%"
+        },
+        "trashColumn": {
+            "text-align": "end",
+            "width": "15%"
+        }
+    },
     "template": {
         "crossNavigation": false,
         "crossNavigationMultiselect": true,

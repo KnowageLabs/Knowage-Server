@@ -1,4 +1,4 @@
-import GeoRoutes from '@/modules/workspace/geoReferencedAnalysis/GeoReferencedAnalysis.routes.js'
+import GisRoutes from '@/modules/workspace/gisDocumentDesigner/GisDocumentDesigner.routes.js'
 
 let baseRoutes = [
     {
@@ -50,6 +50,6 @@ let baseRoutes = [
     }
 ]
 
-const routes = baseRoutes.concat(GeoRoutes)
+const routes = baseRoutes.concat(GisRoutes)
 
 export default routes

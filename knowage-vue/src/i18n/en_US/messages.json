@@ -2091,8 +2091,44 @@
             "selectedDatasetsMessage": "Click to remove from federation",
             "title": "Federation definition"
         },
-        "geoRef": {
+        "gis": {
+            "datasetJoinTitle": "Dataset Join",
+            "datasetLayerTitle": "Dataset & Layer",
+            "dnl": {
+                "addDataset": "add dataset",
+                "addLayer": "add layer",
+                "changeDataset": "change dataset",
+                "changeDsMessage": "Do you want to confirm the dataset modification? This operation will undo all previous configuration.",
+                "changeLayer": "change layer",
+                "changeLayerMessage": "Do you want to confirm the layer modification? This operation will undo all dataset join configuration.",
+                "datasetList": "Dataset List",
+                "dialogEmptyInfo": "No available datasets",
+                "emptyInfo": "Add a dataset",
+                "layerList": "Layer List",
+                "layersDialogEmpty": "No available layers",
+                "layersTableEmpty": "Add a layer"
+            },
+            "dsj": {
+                "addButton": "Add join column",
+                "dsJoinCol": "Dataset join column",
+                "lyrJoinCol": "Layer join column"
+            },
             "editMap": "Edit Map",
+            "filtersMenu": "Filters & Menu",
+            "ind": {},
+            "indicators": "Indicators",
+            "menu": {
+                "crossNavigationMultiselect": "Enable cross with multiselection",
+                "showBaseLayer": "Enable base layer selection",
+                "showDistanceCalculator": "Enable distance calculator",
+                "showDownloadButton": "Enable download button",
+                "showLayer": "Enable layer selection",
+                "showLegendButton": "Enable show/hide legend button",
+                "showMapConfig": "Enable map style configuration",
+                "showRightConfigMenu": "Enable map configuration menu",
+                "showSelectMode": "Enable mode selection"
+            },
+            "save": "Save new map",
             "title": "GIS Document Designer"
         },
         "hint": "Workspace is your personal space where you can find your documents and datasets. Click one of the items categories in the left list to select and interact with them.",
