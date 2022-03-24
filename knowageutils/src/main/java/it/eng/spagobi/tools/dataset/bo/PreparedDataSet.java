@@ -21,11 +21,17 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
+import it.eng.spagobi.tools.dataset.common.iterator.ResultSetIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -127,6 +133,24 @@ public class PreparedDataSet extends ConfigurableDataSet {
 		}
 
 		return toReturn;
+	}
+
+	@Override
+	public DataIterator iterator() {
+		LOGGER.debug("IN");
+		try {
+			String query = "select * from " + this.getTableName();
+			Connection connection = dataSource.getConnection();
+			Statement stmt = connection.createStatement();
+			stmt.setFetchSize(5000);
+			ResultSet rs = stmt.executeQuery(query);
+			DataIterator iterator = new ResultSetIterator(connection, stmt, rs);
+			return iterator;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException(e);
+		} finally {
+			LOGGER.debug("OUT");
+		}
 	}
 
 	@Override
