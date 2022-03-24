@@ -203,9 +203,11 @@ export default defineComponent({
         await this.getAllData()
         await this.getAllAvroDataSets()
         this.user = (this.$store.state as any).user
-        let url = process.env.VUE_APP_HOST_URL.replace('http', 'ws') + '/knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+        var url = new URL(window.location.origin)
+        url.protocol = url.protocol.replace('http', 'ws')
+        let uri = url + 'knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
         this.client = new Client({
-            brokerURL: url,
+            brokerURL: uri,
             connectHeaders: {},
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000
