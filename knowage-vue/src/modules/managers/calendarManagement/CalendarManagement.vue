@@ -5,7 +5,7 @@
                 {{ $t('managers.calendarManagement.title') }}
             </template>
             <template #end>
-                <KnFabButton v-show="canManageCalendar" icon="fas fa-plus" @click="showForm(null)" data-test="open-form-button"></KnFabButton>
+                <KnFabButton v-show="canManageCalendar" icon="fas fa-plus" @click="showForm(null)"></KnFabButton>
             </template>
         </Toolbar>
         <KnOverlaySpinnerPanel :visibility="loading" data-test="spinner" />
@@ -29,7 +29,7 @@
                         <div class="table-header">
                             <span class="p-input-icon-left">
                                 <i class="pi pi-search" />
-                                <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" data-test="search-input" />
+                                <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" data-test="search-input" />
                             </span>
                         </div>
                     </template>
@@ -39,7 +39,6 @@
                     <template #loading>
                         {{ $t('common.info.dataLoading') }}
                     </template>
-
                     <Column class="kn-truncated" field="calendar" :header="$t('common.name')" :sortable="true"></Column>
                     <Column class="kn-truncated" field="calStartDay" :header="$t('cron.startDate')" :sortable="true">
                         <template #body="slotProps">

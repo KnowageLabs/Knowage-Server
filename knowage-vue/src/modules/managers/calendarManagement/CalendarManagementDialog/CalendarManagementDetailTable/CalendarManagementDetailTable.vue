@@ -70,7 +70,6 @@ export default defineComponent({
     methods: {
         loadCalendarInfo() {
             this.calendarSplitData = this.propCalendarInfo as any[]
-            console.log('>>> CALENDAR SPLIT DATA LOADED: ', this.calendarSplitData)
         },
         getFormattedDate(date: number) {
             const tempDate = moment(date).format('DD/MM/YYYY')
@@ -85,7 +84,6 @@ export default defineComponent({
             })
         },
         deleteItem(item: any) {
-            console.log('ITEM: ', item)
             const index = this.calendarSplitData.findIndex((tempItem: any) => item.idCalComposition === tempItem.idCalComposition)
             if (index !== -1) this.calendarSplitData.splice(index, 1)
         }

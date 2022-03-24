@@ -1,5 +1,5 @@
 <template>
-    <Dialog id="calendar-management-dialog" class="p-fluid kn-dialog--toolbar--primary" :visible="visible" :modal="true" :closable="false" :style="calendarManagementDialogDescriptor.dialog.style" :contentStyle="calendarManagementDialogDescriptor.dialog.contentStyle">
+    <Dialog id="calendar-management-dialog" class="p-fluid kn-dialog--toolbar--primary" :visible="visible" :modal="true" :closable="false" :style="calendarManagementDialogDescriptor.dialog.style">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -16,7 +16,7 @@
 
         <div>
             <CalendarManagementDetailForm :propCalendar="calendar" :generateButtonVisible="generateButtonVisible" :generateButtonDisabled="generateButtonDisabled" @generateCalendarClicked="generateCalendarConfirm"></CalendarManagementDetailForm>
-            <CalendarManagementDetailTable v-if="calendarDetailTableVisible" class="p-m-4" :propCalendarInfo="calendar.splittedCalendar" :domains="domains"></CalendarManagementDetailTable>
+            <CalendarManagementDetailTable v-if="calendarDetailTableVisible" class="p-m-4" :propCalendarInfo="calendar?.splittedCalendar" :domains="domains"></CalendarManagementDetailTable>
         </div>
     </Dialog>
 </template>
