@@ -120,8 +120,7 @@ public class UserUtilities {
 	 * Gets the user profile.
 	 *
 	 * @return the user profile
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public static IEngUserProfile getUserProfile() throws Exception {
 		RequestContainer aRequestContainer = RequestContainer.getRequestContainer();
@@ -212,6 +211,9 @@ public class UserUtilities {
 				if (UserProfile.isSchedulerUser(userId)) {
 					logger.debug("User [" + userId + "] has been recognized as a scheduler user.");
 					profile = UserProfile.createSchedulerUserProfile(userId);
+				} else if (UserProfile.isDataPreparationUser(userId)) {
+					logger.debug("User [" + userId + "] has been recognized as a data preparation user.");
+					profile = UserProfile.createDataPreparationUserProfile(userId);
 				} else if (PublicProfile.isPublicUser(userId)) {
 					logger.debug("User [" + userId + "] has been recognized as a public user.");
 					String decodedUserId = JWTSsoService.jwtToken2userId(userId);
@@ -428,11 +430,9 @@ public class UserUtilities {
 	/**
 	 * User functionality root exists.
 	 *
-	 * @param username
-	 *            the username
+	 * @param username the username
 	 * @return true, if successful
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public static boolean userFunctionalityRootExists(String username) throws Exception {
 		boolean exists = false;
@@ -450,11 +450,9 @@ public class UserUtilities {
 	/**
 	 * User functionality root exists.
 	 *
-	 * @param userProfile
-	 *            the user profile
+	 * @param userProfile the user profile
 	 * @return true, if successful
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public static boolean userFunctionalityRootExists(UserProfile userProfile) {
 		Assert.assertNotNull(userProfile, "User profile in input is null");
@@ -472,10 +470,8 @@ public class UserUtilities {
 	 * Load the user personal folder as a LowFunctionality object. If the personal folder exists, it is returned; if it does not exist and create is false, null
 	 * is returned, otherwise the personal folder is created and then returned.
 	 *
-	 * @param userProfile
-	 *            UserProfile the user profile object
-	 * @param createIfNotExisting
-	 *            Boolean that specifies if the personal folder must be created if it doesn't exist
+	 * @param userProfile         UserProfile the user profile object
+	 * @param createIfNotExisting Boolean that specifies if the personal folder must be created if it doesn't exist
 	 * @return the personal folder as a LowFunctionality object, or null in case the personal folder does not exist and create is false
 	 */
 	public static LowFunctionality loadUserFunctionalityRoot(UserProfile userProfile, boolean createIfNotExisting) {
@@ -532,10 +528,8 @@ public class UserUtilities {
 	/**
 	 * Creates the user functionality root.
 	 *
-	 * @param userProfile
-	 *            the user profile
-	 * @throws Exception
-	 *             the exception
+	 * @param userProfile the user profile
+	 * @throws Exception the exception
 	 */
 	public static void createUserFunctionalityRoot(IEngUserProfile userProfile) throws Exception {
 		logger.debug("IN");
@@ -1073,8 +1067,7 @@ public class UserUtilities {
 	 * Clones the input profile object. We don't implement the SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by Axis tools, and
 	 * therefore, when generating the class we may lost that method.
 	 *
-	 * @param profile
-	 *            The input SpagoBIUserProfile object
+	 * @param profile The input SpagoBIUserProfile object
 	 * @return a clone of the input SpagoBIUserProfile object
 	 */
 	public static SpagoBIUserProfile clone(SpagoBIUserProfile profile) {
@@ -1152,6 +1145,39 @@ public class UserUtilities {
 			}
 			logger.debug("OUT");
 			return categories;
+		} catch (Exception e) {
+			logger.error("Impossible to get role dataset categories for user [" + profile + "]", e);
+			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]", e);
+		}
+	}
+
+	public static Set<Domain> getBusinessModelsCategoriesByUser(IEngUserProfile profile) {
+		logger.debug("IN");
+		IRoleDAO rolesDao = null;
+		Set<Domain> toReturn = new HashSet<>();
+		try {
+			// to get Roles Names check first if a default role is set, otherwise get all
+			List<String> roleNames = getCurrentRoleNames(profile);
+
+			if (!roleNames.isEmpty()) {
+				rolesDao = DAOFactory.getRoleDAO();
+				rolesDao.setUserProfile(profile);
+				List<Domain> allCategories = DAOFactory.getDomainDAO().loadListDomainsByType("BM_CATEGORY");
+				for (String roleName : roleNames) {
+					Role role = rolesDao.loadByName(roleName);
+					List<RoleMetaModelCategory> roles = rolesDao.getMetaModelCategoriesForRole(role.getId());
+					for (RoleMetaModelCategory r : roles) {
+						for (Domain cat : allCategories) {
+							if (r.getCategoryId().equals(cat.getValueId())) {
+								toReturn.add(cat);
+							}
+						}
+
+					}
+				}
+			}
+			logger.debug("OUT");
+			return toReturn;
 		} catch (Exception e) {
 			logger.error("Impossible to get role dataset categories for user [" + profile + "]", e);
 			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]", e);

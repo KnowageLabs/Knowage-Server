@@ -385,7 +385,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 	public IDataSetTableDescriptor persistDataSet(IDataSet dataset) {
 
-		if (dataset.isPersisted() || dataset.isFlatDataset()) {
+		if (dataset.isPersisted() || dataset.isFlatDataset() || dataset.isPreparedDataSet()) {
 			return getDescriptorFromDatasetMeta(dataset);
 		} else {
 			// String tableName = engineInstance.getTemporaryTableName();
@@ -420,7 +420,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 		IDataStore dataStore = null;
 
-		if (dataset.isFlatDataset() || dataset.isPersisted()) {
+		if (dataset.isFlatDataset() || dataset.isPreparedDataSet() || dataset.isPersisted()) {
 			dataStore = useDataSetStrategy(crosstabQuery, dataset, start, limit);
 		} else {
 			logger.debug("Using temporary table strategy....");

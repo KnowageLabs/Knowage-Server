@@ -20,6 +20,7 @@
                         <span>{{ $t('documentExecution.documentDetails.info.infoTitle') }}</span>
                     </template>
                     <InformationsTab
+                        v-if="!loading"
                         :selectedDocument="selectedDocument"
                         :availableFolders="availableFolders"
                         :selectedFolder="selectedFolder"

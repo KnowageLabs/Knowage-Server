@@ -49,6 +49,11 @@ module.exports = {
             '^/knowagewhatifengine/': {
                 target: process.env.VUE_APP_HOST_URL,
                 changeOrigin: true
+            },
+            '^/knowage-data-preparation/': {
+                target: process.env.VUE_APP_HOST_URL,
+                changeOrigin: true,
+                ws: true
             }
         }
     },

@@ -1,4 +1,4 @@
-<Context   path="/knowagetalendengine" >
+<Context path="/knowagetalendengine" reloadable="false">
 	<CookieProcessor sameSiteCookies="strict" />
 	
 	<ResourceLink global="jdbc/foodmart_oracle" name="jdbc/foodmart_oracle" type="javax.sql.DataSource" />

@@ -39,6 +39,8 @@ import Dialog from 'primevue/dialog'
 import knParameterTreeDialogDescriptor from './KnParameterTreeDialogDescriptor.json'
 import Tree from 'primevue/tree'
 
+const deepcopy = require('deepcopy')
+
 export default defineComponent({
     name: 'kn-parameter-tree-dialog',
     components: { Dialog, Tree },
@@ -77,6 +79,18 @@ export default defineComponent({
         loadParameter() {
             this.parameter = this.selectedParameter as iParameter
             this.multivalue = this.selectedParameter?.multivalue
+            if (this.multivalue) {
+                this.setMultipleSelectedRows()
+            } else {
+                this.selectedValue = this.selectedParameter?.parameterValue[0]
+                if (this.selectedValue) {
+                    this.selectedValuesKeys[this.selectedValue.description] = true
+                }
+            }
+        },
+        setMultipleSelectedRows() {
+            if (!this.selectedParameter) return
+            this.multipleSelectedValues = deepcopy(this.selectedParameter.parameterValue)
         },
         async loadLeaf(parent: any) {
             this.loading = true
@@ -128,17 +142,22 @@ export default defineComponent({
         },
         createNode(el: iNode, parent: iNode) {
             return {
-                key: el.id,
+                key: el.label,
                 id: el.id,
                 label: el.label,
                 children: [] as iNode[],
                 data: { value: el.data, description: el.label },
                 style: this.knParameterTreeDialogDescriptor.node.style,
                 leaf: el.leaf,
-                selectable: el.leaf,
+                selectable: this.isNodeSelectable(el),
                 parent: parent,
                 icon: el.leaf ? 'pi pi-file' : 'pi pi-folder'
             }
+        },
+        isNodeSelectable(el) {
+            if (!this.multivalue) return true
+
+            return el.leaf
         },
         setOpenFolderIcon(node: iNode) {
             node.icon = 'pi pi-folder-open'
