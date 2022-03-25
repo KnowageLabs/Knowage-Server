@@ -18,6 +18,7 @@
         "clone": "Clone",
         "close": "close",
         "cockpit": "Cockpit",
+        "code": "Code",
         "codingLanguages": {
             "css": "css",
             "html": "html",
@@ -1295,7 +1296,11 @@
         },
         "hierarchyManagement": {
             "backup": "Backup",
+            "createHierarchyMaster": "Create Hierarchy Master",
+            "createHierarchyMasterErrorMessage": "You can select only two items",
+            "dimensions": "Dimensions",
             "master": "Master",
+            "synchronize": "Synchronize",
             "technical": "Technical"
         },
         "internationalizationManagement": {

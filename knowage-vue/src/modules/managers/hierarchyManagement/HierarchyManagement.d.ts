@@ -3,3 +3,72 @@ export interface iDimension {
     DIMENSION_PREFIX: string,
     DIMENSION_DS: string
 }
+
+export interface iDimensionMetadata {
+    DIM_FIELDS: iDimensionField[],
+    MATCH_LEAF_FIELDS: any
+}
+
+export interface iDimensionField {
+    ID: string,
+    NAME: string,
+    VISIBLE: boolean,
+    EDITABLE: boolean,
+    PARENT: boolean,
+    TYPE: string
+}
+
+export interface iNodeMetadata {
+    CONFIGS: iNodeMetadataConfigurations
+    GENERAL_FIELDS: iNodeMetadataField[],
+    NODE_FIELDS: iNodeMetadataField[],
+    LEAF_FIELDS: iNodeMetadataField[],
+}
+
+export interface iNodeMetadataConfigurations {
+    NUM_LEVELS: string,
+    ALLOW_DUPLICATE: string,
+    TREE_LEAF_CD: string,
+    NODE: string,
+    FILL_EMPTY: string,
+    ORIG_NODE: string,
+    TREE_NODE_CD: string,
+    DIMENSION_ID: string,
+    TREE_NODE_NM: string,
+    FILL_VALUE: string,
+    DIMENSION_NM: string,
+    TREE_LEAF_NM: string,
+    DIMENSION_CD: string,
+    LEAF: string,
+    TREE_LEAF_ID: string
+}
+
+export interface iNodeMetadataField {
+    ID: string,
+    NAME: string,
+    VISIBLE: boolean,
+    EDITABLE: boolean,
+    PARENT: boolean,
+    TYPE: string,
+    SINGLE_VALUE: boolean,
+    REQUIRED: boolean,
+    ORDER_FIELD: boolean,
+    value?: string | number
+}
+
+export interface iDimensionFilter {
+    NAME: string,
+    TYPE: string,
+    DEFAULT: string,
+    CONDITION1: string
+}
+
+export interface iHierarchy {
+    HIER_CD: string
+    HIER_DS: string
+    HIER_NM: string
+    dimension: string
+    levels: { CD: string, NM: string }[]
+    optionalFilters: any[]
+    validityDate: string
+}

@@ -8,6 +8,8 @@
                     <template #header>
                         <span>{{ $t('managers.hierarchyManagement.master') }}</span>
                     </template>
+
+                    <HierarchyManagementMasterTab :dimensions="dimensions" @loading="setLoading"></HierarchyManagementMasterTab>
                 </TabPanel>
                 <TabPanel>
                     <template #header>
@@ -29,12 +31,13 @@ import { defineComponent } from 'vue'
 import { iDimension } from './HierarchyManagement.d'
 import { AxiosResponse } from 'axios'
 import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
+import HierarchyManagementMasterTab from './HierarchyManagementMasterTab/HierarchyManagementMasterTab.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'hierarchy-management',
-    components: { KnOverlaySpinnerPanel, TabView, TabPanel },
+    components: { KnOverlaySpinnerPanel, HierarchyManagementMasterTab, TabView, TabPanel },
     data() {
         return {
             dimensions: [] as iDimension[],
@@ -50,6 +53,9 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dimensions/getDimensions`).then((response: AxiosResponse<any>) => (this.dimensions = response.data))
             this.loading = false
             console.log('LOADED DIMENSIONS: ', this.dimensions)
+        },
+        setLoading(value: boolean) {
+            this.loading = value
         }
     }
 })
