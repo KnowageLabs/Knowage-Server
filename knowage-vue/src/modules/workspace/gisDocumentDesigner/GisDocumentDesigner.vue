@@ -5,9 +5,9 @@
                 {{ $t('workspace.gis.title') }}
             </template>
             <template #end>
-                <Button class="p-button-text p-button-rounded p-button-plain" :label="$t('workspace.gis.editMap')" @click="logGis" />
+                <Button class="p-button-text p-button-rounded p-button-plain" :label="$t('workspace.gis.editMap')" @click="openIframe" />
                 <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDialogDisabled" @click="saveOrUpdateGis" />
-                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" />
+                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="logGis" />
             </template>
         </Toolbar>
         <div class="gis-tabview-container p-d-flex p-flex-column kn-flex">
@@ -77,6 +77,8 @@
             </template>
         </Dialog>
 
+        <iframe v-if="iframeVisible" id="qbeIframe" ref="qbeIframe" style="width:500px;height:500px" :src="iframeUrl"></iframe>
+
         <!-- <div class="p-d-flex p-flex-row p-jc-end p-mt-auto p-mb-2 p-mr-2">
             <Button class="kn-button kn-button--secondary"> {{ $t('common.back') }}</Button>
             <Button class="kn-button kn-button--primary p-ml-2"> {{ $t('common.next') }}</Button>
@@ -132,7 +134,9 @@ export default defineComponent({
                 joinsInvalid: false,
                 indicatorsInvalid: false,
                 filtersInvalid: false
-            }
+            },
+            iframeVisible: false,
+            iframeUrl: ''
         }
     },
     created() {
@@ -333,6 +337,11 @@ export default defineComponent({
                         console.log(response)
                 })
             }
+        },
+        openIframe() {
+            let initialUrl = `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${this.selectedDocument.id}&OBJECT_LABEL=${this.selectedDocument.label}&MENU_PARAMETERS=%7B%7D&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=null&OBJECT_NAME=${this.selectedDocument.name}&EDIT_MODE=edit_map&TOOLBAR_VISIBLE=null&CAN_RESET_PARAMETERS=null&EXEC_FROM=null&CROSS_PARAMETER=null`
+            this.iframeUrl = process.env.VUE_APP_HOST_URL + initialUrl
+            this.iframeVisible = true
         }
     }
 })
