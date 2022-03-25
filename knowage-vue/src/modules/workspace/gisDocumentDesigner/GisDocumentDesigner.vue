@@ -6,38 +6,46 @@
             </template>
             <template #end>
                 <Button class="p-button-text p-button-rounded p-button-plain" :label="$t('workspace.gis.editMap')" @click="logGis" />
-                <!-- <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="saveDialogVisible = true" /> -->
-                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="buildGisTemplate" />
+                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDialogDisabled" @click="saveDialogVisible = true" />
                 <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" />
             </template>
         </Toolbar>
         <div class="gis-tabview-container p-d-flex p-flex-column kn-flex">
+            <KnOverlaySpinnerPanel :visibility="loading" />
             <TabView v-if="!loading" class="p-d-flex p-flex-column kn-flex">
                 <TabPanel>
                     <template #header>
-                        <span>{{ $t('workspace.gis.datasetLayerTitle') }}</span>
+                        <span v-if="$route.path.includes('new')">{{ $t('workspace.gis.datasetLayerTitle') }}</span>
+                        <span v-else>{{ $t('managers.layersManagement.layerTitle') }}</span>
                     </template>
                     <DatasetLayerTab :documentDataProp="documentData" :isDatasetChosen="isDatasetChosen" @datasetChanged="onDatasetChange($event)" @layerChanged="onLayerChange($event)" @datasetDeleted="onDatasetDelete" />
                 </TabPanel>
-                <TabPanel>
+
+                <TabPanel :disabled="!documentData.selectedDataset.length > 0 || !documentData.selectedLayer.length > 0">
                     <template #header>
                         <span>{{ $t('workspace.gis.datasetJoinTitle') }}</span>
-                    </template>
-                    <DatasetJoinTab :documentDataProp="documentData" @joinsValidationChanged="onJoinValidationChange" />
-                </TabPanel>
-                <TabPanel>
-                    <template #header>
-                        <span>{{ $t('workspace.gis.indicators') }}</span>
+                        <Badge v-if="validations.joinsInvalid" value="" class="p-ml-2" severity="danger" />
                     </template>
 
-                    <IndicatorsTab :documentDataProp="documentData" @indicatorsValidationChanged="onIndicatorsValidationChanged" />
+                    <DatasetJoinTab :documentDataProp="documentData" @joinsValidationChanged="validationChanged" />
                 </TabPanel>
+
+                <TabPanel :disabled="!documentData.selectedDataset.length > 0">
+                    <template #header>
+                        <span>{{ $t('workspace.gis.indicators') }}</span>
+                        <Badge v-if="validations.indicatorsInvalid" value="" class="p-ml-2" severity="danger" />
+                    </template>
+
+                    <IndicatorsTab :documentDataProp="documentData" @indicatorsValidationChanged="validationChanged" />
+                </TabPanel>
+
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('workspace.gis.filtersMenu') }}</span>
+                        <Badge v-if="validations.filtersInvalid" value="" class="p-ml-2" severity="danger" />
                     </template>
 
-                    <MenuTab :documentDataProp="documentData" />
+                    <MenuTab :documentDataProp="documentData" @filtersValidationChanged="validationChanged" />
                 </TabPanel>
             </TabView>
         </div>
@@ -64,14 +72,14 @@
             <template #footer>
                 <div class="p-d-flex p-flex-row p-jc-end">
                     <Button class="kn-button kn-button--secondary" @click="saveDialogVisible = false"> {{ $t('common.cancel') }}</Button>
-                    <Button class="kn-button kn-button--primary" @click="buildGisTemplate"> {{ $t('common.save') }}</Button>
+                    <Button class="kn-button kn-button--primary" :disabled="saveButtonDisabled" @click="buildGisTemplate"> {{ $t('common.save') }}</Button>
                 </div>
             </template>
         </Dialog>
 
         <div class="p-d-flex p-flex-row p-jc-end p-mt-auto p-mb-2 p-mr-2">
-            <Button class="kn-button kn-button--secondary"> {{ $t('common.cancel') }}</Button>
-            <Button class="kn-button kn-button--primary p-ml-2"> {{ $t('common.save') }}</Button>
+            <Button class="kn-button kn-button--secondary"> {{ $t('common.back') }}</Button>
+            <Button class="kn-button kn-button--primary p-ml-2"> {{ $t('common.next') }}</Button>
         </div>
     </div>
 </template>
@@ -80,6 +88,7 @@
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import descriptor from '@/modules/workspace/gisDocumentDesigner/GisDocumentDesignerDescriptor.json'
+import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import DatasetLayerTab from './tabs/dataset&Layer/GisDocumentDesignerDataset&Layer.vue'
@@ -87,15 +96,26 @@ import DatasetJoinTab from './tabs/datasetJoin/GisDocumentDesignerDatasetJoin.vu
 import IndicatorsTab from './tabs/indicator/GisDocumentDesignerIndicator.vue'
 import MenuTab from './tabs/menu/GisDocumentDesignerMenu.vue'
 import Dialog from 'primevue/dialog'
+import Badge from 'primevue/badge'
+
+const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'gis-document-designer',
-    components: { Dialog, TabView, TabPanel, DatasetLayerTab, DatasetJoinTab, IndicatorsTab, MenuTab },
+    components: { Dialog, TabView, TabPanel, DatasetLayerTab, DatasetJoinTab, IndicatorsTab, MenuTab, KnOverlaySpinnerPanel, Badge },
     emits: [],
     props: {},
     computed: {
         isDatasetChosen(): boolean {
             return this.documentData.datasetLabel != ''
+        },
+        saveDialogDisabled(): boolean {
+            if (this.documentData.selectedDataset.length <= 0 || this.documentData.selectedLayer <= 0 || this.validations.joinsInvalid || this.validations.indicatorsInvalid || this.validations.filtersInvalid) {
+                return true
+            } else return false
+        },
+        saveButtonDisabled(): boolean {
+            return this.documentData.documentLabel == null || this.documentData.documentLabel == ''
         }
     },
     data() {
@@ -108,8 +128,11 @@ export default defineComponent({
             documentTemplate: {} as any,
             documentData: {} as any,
             selectedDocument: {} as any,
-            joinsInvalid: false,
-            indicatorsInvalid: false
+            validations: {
+                joinsInvalid: false,
+                indicatorsInvalid: false,
+                filtersInvalid: false
+            }
         }
     },
     created() {
@@ -123,44 +146,44 @@ export default defineComponent({
         async loadPage() {
             this.loading = true
             await this.createDocumentData()
-            // await Promise.all([await this.getAllLayers(), await this.initializeDataset(), await this.getTemplate()])
             this.loading = false
         },
+
+        async createDocumentData() {
+            // http://localhost:3000/knowage-vue/gis/edit?documentId=3290&templateId=8068
+
+            this.documentData = deepcopy(descriptor.newGisTemplate)
+            await this.getAllLayers()
+
+            if (this.$route.path.includes('edit')) {
+                this.extractParametersFromUrl()
+                await this.getSelectedDocument()
+                await this.getTemplate() //ako je edit, ucitavamo template, potrebni parametri iz rute: documentId, templateId
+                await this.initializeDataset()
+                await this.initializeSelectedLayer()
+            }
+        },
+
         async getAllLayers() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `layers`).then((response: AxiosResponse<any>) => (this.documentData.allLayers = response.data.root))
         },
-        async getSelectedDocument() {
-            if (this.$route.query.documentId) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$route.query.documentId}`).then((response: AxiosResponse<any>) => {
-                    this.selectedDocument = response.data
-                    this.documentData.documentLabel = response.data.label
-                    this.documentData.documentDesc = response.data.description
-                })
-            }
-        },
-        async createDocumentData() {
-            // http://localhost:3000/knowage-vue/gis/edit?documentId=3290&templateId=8068&datasetLabel=BIG_TEST_GIS&documentLabel=Hope-GIS
-            console.log('ROUTE PARAMETERS: ', this.$route)
-            await this.getSelectedDocument()
-            await this.getAllLayers() // uvek se ucitavaju layeri
-            if (this.$route.path.includes('edit')) {
-                this.assignParameterValues()
-                await this.getTemplate() //ako je edit, ucitavamo template, potrebni parametri iz rute: documentId, templateId
-                await this.initializeDataset() //ucitaj sve podatke koje dataset nosi, dropdown etc
-            } else {
-                //TODO: Proveriti dal je uopste moguca kreacija samo sa layerima bez dataseta?????
-            }
-        },
 
-        assignParameterValues() {
+        extractParametersFromUrl() {
             this.documentId = this.$route.query.documentId
             this.templateId = this.$route.query.templateId
-            this.documentData.datasetLabel = this.$route.query.datasetLabel
-            this.documentData.documentLabel = this.$route.query.documentLabel
+        },
+
+        async getSelectedDocument() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.documentId}`).then((response: AxiosResponse<any>) => {
+                this.selectedDocument = response.data
+                this.documentData.documentLabel = response.data.label
+                this.documentData.documentDesc = response.data.description
+                this.documentData.dataSetId = response.data.dataSetId
+            })
         },
 
         async getTemplate() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.documentId}/templates/selected/${this.templateId}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.documentId}/templates/selected/${this.templateId}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then(async (response: AxiosResponse<any>) => {
                 this.documentTemplate = response.data
                 this.documentData.indicators = response.data.indicators
                 this.documentData.filters = response.data.filters
@@ -169,7 +192,6 @@ export default defineComponent({
                     crossNavigationMultiselect: response.data.crossNavigationMultiselect,
                     visibilityControls: response.data.visibilityControls
                 }
-                this.initializeSelectedLayer()
             })
         },
         initializeSelectedLayer() {
@@ -182,7 +204,7 @@ export default defineComponent({
                     })
                 })
             }
-            this.isDatasetChosen ? this.initializeSelectedJoinColumns() : ''
+            this.initializeSelectedJoinColumns()
         },
         async initializeSelectedJoinColumns() {
             if (this.documentTemplate.datasetJoinColumns && this.documentTemplate.layerJoinColumns) {
@@ -203,12 +225,11 @@ export default defineComponent({
             })
         },
         async initializeDataset() {
-            if (this.isDatasetChosen) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.documentData.datasetLabel}`).then((response: AxiosResponse<any>) => {
-                    this.documentData.selectedDataset = [response.data[0]]
-                    this.loadDatasetColumns()
-                })
-            }
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.documentData.dataSetId}`).then((response: AxiosResponse<any>) => {
+                this.documentData.selectedDataset = [response.data[0]]
+                this.documentData.datasetLabel = response.data[0].label
+                this.loadDatasetColumns()
+            })
         },
         async loadDatasetColumns() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.documentData.datasetLabel}/fields`).then((response: AxiosResponse<any>) => {
@@ -220,13 +241,9 @@ export default defineComponent({
                 })
             })
         },
-        onJoinValidationChange(event) {
-            console.log('JOIN VALIDAITON CHANGED: ', event)
-            this.joinsInvalid = event
-        },
-        onIndicatorsValidationChanged(event) {
-            console.log('INDICATOR VALIDAITON CHANGED: ', event)
-            this.indicatorsInvalid = event
+        validationChanged(property, value) {
+            console.log('PROPERTY : ', property, 'VALUE: ', value)
+            this.validations[property] = value
         },
         resetAllFields() {
             this.documentData.datasetJoinColumns = []
@@ -238,12 +255,13 @@ export default defineComponent({
             this.documentData.layerJoinColumns = []
         },
         onDatasetChange(dataset) {
-            this.documentData.datasetLabel = dataset.label
+            this.documentData.dataSetId = dataset.id
             this.resetAllFields()
             this.initializeDataset()
         },
         onDatasetDelete() {
             this.documentData.datasetLabel = ''
+            this.documentData.dataSetId = null
             this.resetAllFields()
         },
         onLayerChange(layer) {
@@ -274,6 +292,29 @@ export default defineComponent({
             template.visibilityControls = this.documentData.visibilityData.visibilityControls
 
             console.log(template)
+            this.saveGisDocument(template)
+        },
+        async saveGisDocument(template) {
+            if (this.$route.path.includes('new')) {
+                let postData = {} as any
+                let d = new Date()
+                let docLabel = 'geomap_' + (d.getTime() % 10000000)
+                postData.action = 'DOC_SAVE'
+                postData.customData = { templateContent: template }
+                postData.document = { name: this.documentData.documentLabel, description: this.documentData.documentDesc, label: docLabel, type: 'MAP' }
+                postData.sourceData = { label: this.documentData.datasetLabel }
+                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/saveDocument/`, postData).then((response: AxiosResponse<any>) => {
+                    this.saveDialogVisible = false
+                    this.documentData.documentLabel = docLabel
+                    this.$store.commit('setInfo', {
+                        title: 'Saved',
+                        msg: 'SAVED OK'
+                    }),
+                        console.log(response)
+                })
+            } else {
+                //TODO: Edit Logic
+            }
         }
     }
 })

@@ -50,7 +50,7 @@
         <template #start>{{ $t('common.filters') }}</template>
         <template #end> <Button class="p-button-link" :label="$t('workspace.gis.dsj.addButton')" @click="addFilterRow" /> </template>
     </Toolbar>
-    <div id="informations-content" class="kn-flex kn-relative kn-height-full">
+    <div id="informations-content" class="kn-flex kn-relative kn-height-full" :v-if="!documentData.selectedDataset.length > 0">
         <div :style="styleDescriptor.style.absoluteScroll">
             <Card>
                 <template #content>
@@ -92,7 +92,7 @@ import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
     components: { Checkbox, Column, DataTable, Dropdown },
-    emits: ['deleteSelectedDataset', 'datasetSelected'],
+    emits: ['filtersValidationChanged'],
     props: {
         documentDataProp: { type: Object as any, required: false }
     },
@@ -101,7 +101,7 @@ export default defineComponent({
             return !this.visibilityControls.showRightConfigMenu || !this.documentDataProp.visibilityData.crossNavigation
         },
         filtersInvalid() {
-            if ((this.documentDataProp.filters.length == 0 && this.documentDataProp.datasetLabel != '') || this.filtersContainEmptyFields) {
+            if (this.filtersContainEmptyFields) {
                 return true
             } else return false
         },
@@ -131,6 +131,9 @@ export default defineComponent({
     watch: {
         documentDataProp() {
             this.documentData = this.documentDataProp
+        },
+        filtersInvalid() {
+            this.$emit('filtersValidationChanged', 'filtersInvalid', this.filtersInvalid)
         }
     },
     methods: {

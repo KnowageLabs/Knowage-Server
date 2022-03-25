@@ -43,5 +43,34 @@
             "showRightConfigMenu": true,
             "showSelectMode": true
         }
+    },
+    "newGisTemplate": {
+        "allLayers": [],
+        "documentLabel": "",
+        "documentDesc": "",
+        "dataSetId": null,
+        "indicators": [],
+        "filters": [],
+        "visibilityData": {
+            "crossNavigation": false,
+            "crossNavigationMultiselect": true,
+            "visibilityControls": {
+                "showRightConfigMenu": true,
+                "showLegendButton": true,
+                "showDistanceCalculator": true,
+                "showDownloadButton": true,
+                "showSelectMode": true,
+                "showLayer": true,
+                "showBaseLayer": true,
+                "showMapConfig": true
+            }
+        },
+        "selectedLayer": [],
+        "dsJoins": [],
+        "layerJoinColumns": [],
+        "selectedDataset": [],
+        "datasetLabel": "",
+        "datasetJoinColumns": [],
+        "datasetMeasures": []
     }
 }

@@ -76,7 +76,7 @@ export default defineComponent({
             this.documentData = this.documentDataProp
         },
         joinsInvalid() {
-            this.$emit('joinsValidationChanged', this.joinsInvalid)
+            this.$emit('joinsValidationChanged', 'joinsInvalid', this.joinsInvalid)
         }
     },
     methods: {

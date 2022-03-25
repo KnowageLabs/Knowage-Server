@@ -1,5 +1,5 @@
 <template>
-    <DatasetCard :documentDataProp="documentDataProp" :isDatasetChosen="isDatasetChosen" @datasetChanged="$emit('datasetChanged', $event)" @datasetDeleted="$emit('datasetDeleted')" />
+    <DatasetCard v-if="$route.path.includes('new')" :documentDataProp="documentDataProp" :isDatasetChosen="isDatasetChosen" @datasetChanged="$emit('datasetChanged', $event)" @datasetDeleted="$emit('datasetDeleted')" />
     <LayersCard :documentDataProp="documentDataProp" :isDatasetChosen="isDatasetChosen" @layerChanged="$emit('layerChanged', $event)" />
 </template>
 

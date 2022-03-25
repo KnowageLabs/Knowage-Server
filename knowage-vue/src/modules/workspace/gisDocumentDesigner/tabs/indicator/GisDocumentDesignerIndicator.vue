@@ -76,7 +76,7 @@ export default defineComponent({
             this.documentData = this.documentDataProp
         },
         indicatorsInvalid() {
-            this.$emit('indicatorsValidationChanged', this.indicatorsInvalid)
+            this.$emit('indicatorsValidationChanged', 'indicatorsInvalid', this.indicatorsInvalid)
         }
     },
     methods: {
