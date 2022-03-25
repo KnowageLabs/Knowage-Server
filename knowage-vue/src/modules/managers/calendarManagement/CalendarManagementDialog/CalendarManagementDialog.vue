@@ -99,6 +99,8 @@ export default defineComponent({
                 tempDate.isHoliday = tempDate.isHoliday == 1
                 tempDate.pubHoliday = tempDate.pubHoliday == 'true'
 
+                tempDate.listOfAttributes = tempDate.listOfAttributes?.map((attribute: any) => attribute.calendarAttributeDomain.attributeDomainDescr)
+
                 this.calendar.splittedCalendar.push(tempDate)
             }
         },
