@@ -89,6 +89,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
+import { iDocument } from '@/modules/workspace/gisDocumentDesigner/GisDocumentDesigner'
 import descriptor from '@/modules/workspace/gisDocumentDesigner/GisDocumentDesignerDescriptor.json'
 import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import TabView from 'primevue/tabview'
@@ -125,11 +126,11 @@ export default defineComponent({
             descriptor,
             loading: false,
             saveDialogVisible: false,
-            documentId: 3290 as any,
-            templateId: 8067 as any,
+            documentId: null as any,
+            templateId: null as any,
+            selectedDocument: {} as iDocument,
             documentTemplate: {} as any,
             documentData: {} as any,
-            selectedDocument: {} as any,
             validations: {
                 joinsInvalid: false,
                 indicatorsInvalid: false,

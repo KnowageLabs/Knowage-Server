@@ -84,6 +84,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { iLayer } from '@/modules/workspace/gisDocumentDesigner/GisDocumentDesigner'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import descriptor from './GisDocumentDesignerDataset&LayerDescriptor.json'
 import styleDescriptor from '@/modules/workspace/gisDocumentDesigner/GisDocumentDesignerDescriptor.json'
@@ -112,8 +113,8 @@ export default defineComponent({
             singleFilters: { global: [filterDefault] } as Object,
             multipleFilters: { global: [filterDefault] } as Object,
             layerDialogVisible: false,
-            selectedLayer: {} as any,
-            selectedLayersList: [] as any,
+            selectedLayer: {} as iLayer,
+            selectedLayersList: [] as iLayer[],
             documentData: {} as any
         }
     },
@@ -141,8 +142,8 @@ export default defineComponent({
             this.layerDialogVisible = true
         },
         closeDialog() {
-            this.selectedLayer = {}
-            this.selectedLayersList = []
+            this.selectedLayer = {} as iLayer
+            this.selectedLayersList = [] as iLayer[]
             this.layerDialogVisible = false
         },
         saveLayerSelection() {
