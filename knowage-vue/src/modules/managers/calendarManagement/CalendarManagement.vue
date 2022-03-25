@@ -5,7 +5,7 @@
                 {{ $t('managers.calendarManagement.title') }}
             </template>
             <template #end>
-                <KnFabButton v-show="canManageCalendar" icon="fas fa-plus" @click="showForm(null)"></KnFabButton>
+                <KnFabButton v-show="canManageCalendar" icon="fas fa-plus" @click="showForm()"></KnFabButton>
             </template>
         </Toolbar>
         <KnOverlaySpinnerPanel :visibility="loading" data-test="spinner" />
@@ -112,7 +112,7 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/getDomains`).then((response: AxiosResponse<any>) => (this.domains = response.data))
             this.loading = false
         },
-        showForm(event: any) {
+        showForm(event: any = null) {
             this.selectedCalendar = event ? event.data : this.createNewCalendar()
             this.calendarDialogVisible = true
         },
