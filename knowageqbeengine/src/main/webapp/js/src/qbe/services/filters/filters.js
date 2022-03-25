@@ -229,6 +229,31 @@ filters.service('filters_service',function(sbiModule_action,sbiModule_translate,
 
 	}
 
+	// Fix consistency of the tree
+	this.fix = function(expression, filters) {
+		
+		if (expression
+				&& typeof expression != "undefined"
+				&& !angular.equals(expression, {})) {
+
+			if (expression.type == "NODE_CONST") {
+				var newRoot = {
+					type: "NODE_OP",
+					childNodes: [ angular.copy(expression) ],
+					value: "AND"
+				};
+				this.treeService.replace(expression, newRoot, expression);
+			}
+
+			for (filter of filters) {
+				if (this.treeService.findByName(expression, "$F{" + filter.filterId + "}") == null) {
+					this.push(expression, filter);
+				}
+			}
+		}
+
+	}
+
 });
 
 

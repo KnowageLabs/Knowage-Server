@@ -82,10 +82,10 @@ export default defineComponent({
                     page: 1,
                     GLOSSARY_ID: this.glossaryId
                 },
-                document: { selected: this.selectedDocuments, search: '', item_number: 9223372036854775807, page: 1 },
-                dataset: { selected: this.selectedDatasets, search: '', item_number: 9223372036854775807, page: 1 },
-                table: { selected: this.selectedTables, search: '', item_number: 9223372036854775807, page: 1 },
-                bness_cls: { selected: this.selectedBusinessClasses, search: '', item_number: 9223372036854775807, page: 1 }
+                document: { selected: this.selectedDocuments, search: '', item_number: 9223372036854775807, page: 1, GLOSSARY_ID: this.glossaryId },
+                dataset: { selected: this.selectedDatasets, search: '', item_number: 9223372036854775807, page: 1, GLOSSARY_ID: this.glossaryId },
+                table: { selected: this.selectedTables, search: '', item_number: 9223372036854775807, page: 1, GLOSSARY_ID: this.glossaryId },
+                bness_cls: { selected: this.selectedBusinessClasses, search: '', item_number: 9223372036854775807, page: 1, GLOSSARY_ID: this.glossaryId }
             }
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/loadNavigationItem', postData)

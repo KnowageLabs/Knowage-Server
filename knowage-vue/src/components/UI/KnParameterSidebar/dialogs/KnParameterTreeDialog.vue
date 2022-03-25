@@ -2,7 +2,7 @@
     <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="knParameterTreeDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('common.parameter') + ': ' + parameter?.urlName }}
                 </template>
             </Toolbar>
@@ -39,10 +39,12 @@ import Dialog from 'primevue/dialog'
 import knParameterTreeDialogDescriptor from './KnParameterTreeDialogDescriptor.json'
 import Tree from 'primevue/tree'
 
+const deepcopy = require('deepcopy')
+
 export default defineComponent({
     name: 'kn-parameter-tree-dialog',
     components: { Dialog, Tree },
-    props: { visible: { type: Boolean }, selectedParameter: { type: Object }, formatedParameterValues: { type: Object }, document: { type: Object } },
+    props: { visible: { type: Boolean }, selectedParameter: { type: Object }, formatedParameterValues: { type: Object }, document: { type: Object }, mode: { type: String } },
     emits: ['close', 'save'],
     data() {
         return {
@@ -77,19 +79,38 @@ export default defineComponent({
         loadParameter() {
             this.parameter = this.selectedParameter as iParameter
             this.multivalue = this.selectedParameter?.multivalue
+            if (this.multivalue) {
+                this.setMultipleSelectedRows()
+            } else {
+                this.selectedValue = this.selectedParameter?.parameterValue[0]
+                if (this.selectedValue) {
+                    this.selectedValuesKeys[this.selectedValue.description] = true
+                }
+            }
+        },
+        setMultipleSelectedRows() {
+            if (!this.selectedParameter) return
+            this.multipleSelectedValues = deepcopy(this.selectedParameter.parameterValue)
         },
         async loadLeaf(parent: any) {
             this.loading = true
+
+            if (!this.document) return
 
             if (parent && parent.leaf) {
                 this.loading = false
                 return
             }
-            const postData = { label: this.document?.label, role: (this.$store.state as any).user.sessionRole, parameterId: this.parameter?.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
 
+            let url = '2.0/documentexecution/admissibleValuesTree'
+            if (this.mode !== 'execution') {
+                url = this.document.type === 'businessModel' ? `1.0/businessmodel/${this.document.name}/admissibleValuesTree` : `/3.0/datasets/${this.document.label}/admissibleValuesTree`
+            }
+
+            const postData = { label: this.document.label ?? this.document.name, role: (this.$store.state as any).user.sessionRole, parameterId: this.parameter?.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
             let content = [] as any[]
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/admissibleValuesTree`, postData)
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
                 .then((response: AxiosResponse<any>) =>
                     response.data.rows.forEach((el: any) => {
                         content.push(this.createNode(el, parent))
@@ -97,7 +118,6 @@ export default defineComponent({
                 )
                 .catch((error: any) => console.log('ERROR: ', error))
             content.forEach((el: any) => this.checkIfNodeIsSelected(el))
-
             this.attachContentToTree(parent, content)
             this.loading = false
             if (parent) this.setOpenFolderIcon(parent)
@@ -122,17 +142,22 @@ export default defineComponent({
         },
         createNode(el: iNode, parent: iNode) {
             return {
-                key: el.id,
+                key: el.label,
                 id: el.id,
                 label: el.label,
                 children: [] as iNode[],
-                data: { value: el.data, description: '' },
+                data: { value: el.data, description: el.label },
                 style: this.knParameterTreeDialogDescriptor.node.style,
                 leaf: el.leaf,
-                selectable: el.leaf,
+                selectable: this.isNodeSelectable(el),
                 parent: parent,
                 icon: el.leaf ? 'pi pi-file' : 'pi pi-folder'
             }
+        },
+        isNodeSelectable(el) {
+            if (!this.multivalue) return true
+
+            return el.leaf
         },
         setOpenFolderIcon(node: iNode) {
             node.icon = 'pi pi-folder-open'
@@ -164,7 +189,6 @@ export default defineComponent({
         },
         save() {
             if (!this.parameter) return
-
             if (!this.multivalue) {
                 this.parameter.parameterValue = this.selectedValue ? [{ value: this.selectedValue.value, description: this.selectedValue.description ?? '' }] : []
                 this.selectedValuesKeys = {}
@@ -174,14 +198,12 @@ export default defineComponent({
                 this.multipleSelectedValues?.forEach((el: any) => this.parameter?.parameterValue.push({ value: el.value, description: el.description ?? '' }))
                 this.multipleSelectedValues = []
             }
-
             this.nodes = []
             this.$emit('save', this.parameter)
         }
     }
 })
 </script>
-
 <style lang="scss" scoped>
 #kn-parameter-tree {
     border: none;

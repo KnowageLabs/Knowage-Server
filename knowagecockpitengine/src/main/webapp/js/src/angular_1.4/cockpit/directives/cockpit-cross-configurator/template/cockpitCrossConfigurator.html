@@ -186,7 +186,7 @@
                   {{::translate.load('kn.crossconfigurator.interactiontype.choose')}}
                </div>
             </div>
-            <dataset-selector ng-show="ngModel.preview.previewType || crossChart || crossHtml || crossPython || crossR" flex ng-model="ngModel.preview.dataset" no-parameters="true" on-change="changePreviewDataset(dsId);" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]" is-disabled="!ngModel.preview.enable"></dataset-selector>
+            <dataset-selector ng-show="ngModel.preview.previewType || crossChart || crossCustom || crossHtml || crossPython || crossR" flex ng-model="ngModel.preview.dataset" no-parameters="true" on-change="changePreviewDataset(dsId);" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]" is-disabled="!ngModel.preview.enable"></dataset-selector>
             <md-input-container ng-if="ngModel.preview.previewType && ngModel.preview.previewType !='allRow' && ngModel.preview.previewType !='icon'" ng-show="crossTable" class="md-block" flex>
                <label>{{translate.load("sbi.cockpit.cross.column")}}</label>
                <md-select ng-model="ngModel.preview.column" ng-disabled="!ngModel.preview.enable">

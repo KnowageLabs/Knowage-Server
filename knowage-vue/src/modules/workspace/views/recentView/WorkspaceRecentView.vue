@@ -1,10 +1,10 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-        <template #left>
+        <template #start>
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.menuLabels.recentDocuments') }}
         </template>
-        <template #right>
+        <template #end>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="toggleDisplayView" />
         </template>
@@ -43,70 +43,70 @@
     <DetailSidebar :visible="showDetailSidebar" :viewType="'recent'" :document="selectedDocument" @executeRecent="executeRecent" @close="showDetailSidebar = false" data-test="detail-sidebar" />
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { IDocument } from '@/modules/workspace/Workspace'
-import { AxiosResponse } from 'axios'
-import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
-import Message from 'primevue/message'
-import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
-import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+    import { defineComponent } from 'vue'
+    import { IDocument } from '@/modules/workspace/Workspace'
+    import { AxiosResponse } from 'axios'
+    import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
+    import Message from 'primevue/message'
+    import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
+    import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
+    import DataTable from 'primevue/datatable'
+    import Column from 'primevue/column'
+    import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 
-export default defineComponent({
-    components: { DataTable, Column, DetailSidebar, WorkspaceCard, Message },
-    emits: ['showMenu', 'toggleDisplayView', 'execute'],
-    props: { toggleCardDisplay: { type: Boolean } },
-    data() {
-        return {
-            mainDescriptor,
-            loading: false,
-            showDetailSidebar: false,
-            recentDocumentsList: [] as IDocument[],
-            filteredDocuments: [] as IDocument[],
-            selectedDocument: {} as IDocument,
-            searchWord: '' as string
-        }
-    },
-    created() {
-        this.getRecentDocuments()
-    },
-    methods: {
-        getRecentDocuments() {
-            this.loading = true
-            return this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/recents`)
-                .then((response: AxiosResponse<any>) => {
-                    this.recentDocumentsList = [...response.data]
-                    this.filteredDocuments = [...this.recentDocumentsList]
-                })
-                .finally(() => (this.loading = false))
+    export default defineComponent({
+        components: { DataTable, Column, DetailSidebar, WorkspaceCard, Message },
+        emits: ['showMenu', 'toggleDisplayView', 'execute'],
+        props: { toggleCardDisplay: { type: Boolean } },
+        data() {
+            return {
+                mainDescriptor,
+                loading: false,
+                showDetailSidebar: false,
+                recentDocumentsList: [] as IDocument[],
+                filteredDocuments: [] as IDocument[],
+                selectedDocument: {} as IDocument,
+                searchWord: '' as string
+            }
         },
-        formatDate(date) {
-            return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
+        created() {
+            this.getRecentDocuments()
         },
-        executeRecent(document: any) {
-            this.$emit('execute', document)
-        },
-        toggleDisplayView() {
-            this.$emit('toggleDisplayView')
-        },
-        showSidebar(clickedDocument) {
-            this.selectedDocument = clickedDocument
-            this.showDetailSidebar = true
-        },
-        searchItems() {
-            setTimeout(() => {
-                if (!this.searchWord.trim().length) {
-                    this.filteredDocuments = [...this.recentDocumentsList] as any[]
-                } else {
-                    this.filteredDocuments = this.recentDocumentsList.filter((el: any) => {
-                        return el.documentType?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.documentName?.toLowerCase().includes(this.searchWord.toLowerCase())
+        methods: {
+            getRecentDocuments() {
+                this.loading = true
+                return this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/recents`)
+                    .then((response: AxiosResponse<any>) => {
+                        this.recentDocumentsList = [...response.data]
+                        this.filteredDocuments = [...this.recentDocumentsList]
                     })
-                }
-            }, 250)
+                    .finally(() => (this.loading = false))
+            },
+            formatDate(date) {
+                return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
+            },
+            executeRecent(document: any) {
+                this.$emit('execute', document)
+            },
+            toggleDisplayView() {
+                this.$emit('toggleDisplayView')
+            },
+            showSidebar(clickedDocument) {
+                this.selectedDocument = clickedDocument
+                this.showDetailSidebar = true
+            },
+            searchItems() {
+                setTimeout(() => {
+                    if (!this.searchWord.trim().length) {
+                        this.filteredDocuments = [...this.recentDocumentsList] as any[]
+                    } else {
+                        this.filteredDocuments = this.recentDocumentsList.filter((el: any) => {
+                            return el.documentType?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.documentName?.toLowerCase().includes(this.searchWord.toLowerCase())
+                        })
+                    }
+                }, 250)
+            }
         }
-    }
-})
+    })
 </script>

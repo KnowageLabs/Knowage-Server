@@ -352,7 +352,7 @@ export default defineComponent({
         cursor: pointer;
     }
     .p-datatable .p-datatable-tbody > tr:hover {
-        background-color: $color-selected;
+        background-color: var(--kn-color-selected);
     }
 }
 </style>

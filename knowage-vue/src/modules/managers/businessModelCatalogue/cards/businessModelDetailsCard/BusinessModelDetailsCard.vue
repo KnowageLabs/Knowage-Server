@@ -2,8 +2,8 @@
     <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
-                    {{ $t('managers.businessModelManager.driversDetails') }}
+                <template #start>
+                    {{ $t('managers.businessModelManager.details') }}
                 </template>
             </Toolbar>
         </template>
@@ -166,10 +166,10 @@
 
                 <div class="p-mt-5" v-if="metaWebVisible">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                        <template #left>
+                        <template #start>
                             {{ $t('managers.businessModelManager.configurationTablePrefixTitle') }}
                         </template>
-                        <template #right>
+                        <template #end>
                             <i class="fa fa-info-circle" v-tooltip.bottom="$t('managers.businessModelManager.prefixTooltip')"></i>
                         </template>
                     </Toolbar>
@@ -386,7 +386,7 @@ export default defineComponent({
         },
         async loadModelFromSession() {
             await this.$http
-                .get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/loadModelFromSession`)
+                .get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/model`)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = response.data
                     this.metawebDialogVisible = true

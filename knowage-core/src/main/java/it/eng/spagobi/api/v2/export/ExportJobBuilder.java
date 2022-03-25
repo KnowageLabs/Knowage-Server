@@ -24,6 +24,7 @@ import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_LOCALE;
 import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_PARAMETERS;
 import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_RESOURCE_PATH;
 import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_USER_PROFILE;
+import static org.quartz.JobBuilder.newJob;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -31,6 +32,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
+import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 
@@ -47,7 +49,7 @@ public class ExportJobBuilder {
 	private static final Logger logger = Logger.getLogger(ExportJobBuilder.class);
 
 	private static final String EXPORT_TYPE_XLSX = "xlsx";
-
+	private static final String EXPORT_TYPE_AVRO = "avro";
 	private static final String EXPORT_TYPE_CSV = "csv";
 
 	/**
@@ -149,13 +151,17 @@ public class ExportJobBuilder {
 		logger.debug("\t- Resource path: " + String.valueOf(resoursePath));
 		logger.debug("\t- Type: " + String.valueOf(type));
 
-		JobDetail job = null;
+		JobBuilder newJob = newJob().withIdentity(jobName, EXPORT_GROUP).withDescription(jobDescription).usingJobData(jobDataMap).storeDurably(true);
+
 		switch (type) {
 		case EXPORT_TYPE_CSV:
-			job = new JobDetail(jobName, EXPORT_GROUP, CSVExportJob.class);
+			newJob = newJob.ofType(CSVExportJob.class);
 			break;
 		case EXPORT_TYPE_XLSX:
-			job = new JobDetail(jobName, EXPORT_GROUP, ExcelExportJob.class);
+			newJob = newJob.ofType(ExcelExportJob.class);
+			break;
+		case EXPORT_TYPE_AVRO:
+			newJob = newJob.ofType(AvroExportJob.class);
 			break;
 
 		default:
@@ -163,9 +169,7 @@ public class ExportJobBuilder {
 			throw new IllegalArgumentException(msg);
 		}
 
-		job.setDescription(jobDescription);
-		job.setJobDataMap(jobDataMap);
-		job.setDurability(false);
+		JobDetail job = newJob.build();
 
 		logger.debug("Export job built!");
 
@@ -205,6 +209,16 @@ public class ExportJobBuilder {
 	 */
 	public ExportJobBuilder withTypeOfCsv() {
 		type = EXPORT_TYPE_CSV;
+		return this;
+	}
+
+	/**
+	 * Specify Avro output.
+	 *
+	 * @return Current builder
+	 */
+	public ExportJobBuilder withTypeOfAvro() {
+		type = EXPORT_TYPE_AVRO;
 		return this;
 	}
 

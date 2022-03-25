@@ -1,5 +1,16 @@
 <template>
-    <DataTable :value="values" class="p-datatable-sm kn-table p-m-5" editMode="cell" v-model:filters="filters" :globalFilterFields="lovsManagementFixedLovsTableDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="960px" @rowReorder="setPositionOnReorder" data-test="values-list">
+    <DataTable
+        :value="values"
+        class="p-datatable-sm kn-table p-m-5"
+        editMode="cell"
+        v-model:filters="filters"
+        :globalFilterFields="lovsManagementFixedLovsTableDescriptor.globalFilterFields"
+        responsiveLayout="stack"
+        breakpoint="960px"
+        @rowReorder="setPositionOnReorder"
+        @cell-edit-complete="onCellEditComplete"
+        data-test="values-list"
+    >
         <template #empty>
             {{ $t('common.info.noDataFound') }}
         </template>
@@ -99,6 +110,9 @@ export default defineComponent({
         },
         deleteValue(index: number) {
             this.values.splice(index, 1)
+        },
+        onCellEditComplete(event: any) {
+            this.values[event.index] = event.newData
         }
     }
 })

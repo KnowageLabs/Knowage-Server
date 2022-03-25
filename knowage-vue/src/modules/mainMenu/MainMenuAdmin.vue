@@ -96,12 +96,12 @@ export default defineComponent({
 <style lang="scss" scoped>
 .p-megamenu-panel {
     padding: 16px;
-    box-shadow: $mainmenu-box-shadow;
+    box-shadow: var(--kn-mainmenu-box-shadow);
     position: absolute;
     z-index: 9;
     top: 0;
     left: 100%;
-    background-color: $mainmenu-panel-color;
+    background-color: var(--kn-mainmenu-panel-color);
     transform: translateY(-14px);
     ul {
         list-style: none;
@@ -117,14 +117,14 @@ export default defineComponent({
         transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
         a {
             text-decoration: none;
-            color: $mainmenu-panel-text-color;
+            color: var(--kn-mainmenu-panel-text-color);
             display: inline-block;
             height: 100%;
             width: 100%;
             cursor: pointer;
         }
         &:hover {
-            background-color: darken($mainmenu-panel-color, 10%);
+            background-color: var(--kn-adminmenu-hover-background-color);
         }
         &.searched {
             background-color: yellow;
@@ -136,6 +136,7 @@ export default defineComponent({
     .p-inputtext {
         width: 100%;
         border-radius: 0;
+        background-color: white;
     }
     .p-megamenu-data {
         overflow: hidden;

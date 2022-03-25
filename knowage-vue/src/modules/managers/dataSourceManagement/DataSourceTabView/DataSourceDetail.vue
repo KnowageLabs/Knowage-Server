@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-        <template #left>{{ datasource.label }}</template>
-        <template #right>
+        <template #start>{{ datasource.label }}</template>
+        <template #end>
             <Button icon="pi pi-info" class="p-button-text p-button-rounded p-button-plain" :disabled="readOnly" @click="testDataSource" />
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="readOnly || buttonDisabled" @click="handleSubmit" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
@@ -92,17 +92,21 @@
                     <label class="kn-material-input-label">{{ $t('managers.dataSourceManagement.form.readOnly') }}</label>
                     <div class="p-field p-formgroup-inline p-mb-3 p-mt-2" :style="dataSourceDescriptor.pField.style">
                         <div class="p-field-radiobutton">
-                            <RadioButton id="readOnly" :value="true" v-model="datasource.readOnly" :disabled="datasource.writeDefault || readOnly" />
+                            <RadioButton id="readOnly" :value="true" v-model="datasource.readOnly" :disabled="datasource.writeDefault || readOnly || datasource.useForDataprep" />
                             <label for="readOnly">{{ $t('managers.dataSourceManagement.form.readOnly') }}</label>
                         </div>
                         <div class="p-field-radiobutton">
                             <RadioButton id="readAndWrite" :value="false" v-model="datasource.readOnly" :disabled="readOnly || !selectedDatabase.cacheSupported" />
                             <label for="readAndWrite">{{ $t('managers.dataSourceManagement.form.readAndWrite') }}</label>
                         </div>
-                        <span class="p-float-label" v-if="currentUser.isSuperadmin">
+                        <div class="p-field-checkbox" :style="dataSourceDescriptor.pField.style" v-if="currentUser.isSuperadmin">
                             <Checkbox id="writeDefault" v-model="datasource.writeDefault" :binary="true" :disabled="readOnly || !selectedDatabase.cacheSupported || datasource.readOnly || !currentUser.isSuperadmin" />
                             <label for="writeDefault" :style="dataSourceDescriptor.checkboxLabel.style"> {{ $t('managers.dataSourceManagement.form.writeDefault') }} </label>
-                        </span>
+                        </div>
+                        <div class="p-field-checkbox" v-if="currentUser.isSuperadmin">
+                            <Checkbox id="useForDataprep" v-model="datasource.useForDataprep" :binary="true" :disabled="readOnly || !selectedDatabase.cacheSupported || datasource.readOnly || !currentUser.isSuperadmin" />
+                            <label for="useForDataprep"> {{ $t('managers.dataSourceManagement.form.useForDataprep') }} </label>
+                        </div>
                     </div>
 
                     <label class="kn-material-input-label">{{ $t('common.type') }}</label>

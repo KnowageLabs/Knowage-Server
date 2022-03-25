@@ -2,10 +2,10 @@
     <Card class="p-col-12 kn-card kn-card-layout kn-tab-card">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     <span>{{ $t('managers.driversManagement.useModes.title') }}</span>
                 </template>
-                <template #right>
+                <template #end>
                     <Button :label="$t('managers.driversManagement.add')" class="kn-button p-button-text" :disabled="disableActionButton" @click="showForm" data-test="add-action-button" />
                 </template>
             </Toolbar>

@@ -1,10 +1,10 @@
 <template>
     <div>
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #left>
+            <template #start>
                 {{ $t('common.documents') }}
             </template>
-            <template #right>
+            <template #end>
                 <Button class="kn-button p-button-text p-button-rounded" @click="openDocumentsSelectionDialog">{{ $t('common.add') }}</Button>
             </template>
         </Toolbar>
@@ -154,7 +154,7 @@ export default defineComponent({
             tempDocument.condensedParameters = this.updateCondensedParameters(tempParams)
 
             this.selectedDocument = { name: label, nameTitle: tempDocument.label, condensedParameters: tempDocument.condensedParameters, parameters: document.parameters }
-            this.selectedDocument.parameters?.forEach((el: any) => (el.role = this.roles[0].role))
+            this.selectedDocument.parameters?.forEach((el: any) => (el.role = this.roles[0]?.role))
             if (pushToTable) this.documents.push(this.selectedDocument)
             this.$emit('loading', false)
         },

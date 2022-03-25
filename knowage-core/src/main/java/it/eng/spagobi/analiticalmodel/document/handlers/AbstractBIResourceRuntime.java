@@ -1,6 +1,7 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -78,7 +79,7 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 		return lovProvDet;
 	}
 
-	public abstract List<? extends AbstractParuse> getDependencies(T driver, String role);
+	public abstract List<? extends AbstractParuse> getDependencies(AbstractDriver driver, String role);
 
 	public ILovDetail getLovDetailForDefault(AbstractDriver driver) {
 		Parameter par = driver.getParameter();
@@ -173,13 +174,18 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 	 *   </pre>
 	 * @param transientMode
 	 * @param object
+	 * @deprecated Where possible, prefer {@link #refreshParametersValues(JSONArray, boolean, Collection)}
 	 */
+	@Deprecated
 	public void refreshParametersValues(JSONArray jsonObject, boolean transientMode, IDrivableBIResource object) {
+		refreshParametersValues(jsonObject, transientMode, object.getDrivers());
+	}
+
+	public void refreshParametersValues(JSONArray jsonObject, boolean transientMode, Collection<? extends AbstractDriver> biparams) {
 		logger.debug("IN");
 		Monitor refreshParametersValuesMonitor = MonitorFactory.start("Knowage.DocumentRuntime.refreshParametersValues");
 
 		Assert.assertNotNull(jsonObject, "JSONObject in input is null!!");
-		List biparams = object.getDrivers();
 		Iterator iterParams = biparams.iterator();
 		while (iterParams.hasNext()) {
 			AbstractDriver biparam = (AbstractDriver) iterParams.next();
@@ -237,16 +243,22 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 	 *   </pre>
 	 * @param transientMode
 	 * @param object
+	 * @deprecated Where possible prefer {@link #refreshParametersMetamodelValues(JSONArray, boolean, Collection)}
 	 */
+	@Deprecated
 	public void refreshParametersMetamodelValues(JSONArray jsonArray, boolean transientMode, IDrivableBIResource object) {
+		List biparams = object.getMetamodelDrivers();
+		refreshParametersMetamodelValues(jsonArray, transientMode, biparams);
+	}
+
+	public void refreshParametersMetamodelValues(JSONArray jsonArray, boolean transientMode, Collection<? extends AbstractDriver> biparams) {
 		logger.debug("IN");
 		Monitor refreshParametersValuesMonitor = MonitorFactory.start("Knowage.DocumentRuntime.refreshParametersValues");
 
 		Assert.assertNotNull(jsonArray, "JSONObject in input is null!!");
-		List biparams = object.getMetamodelDrivers();
-		Iterator iterParams = biparams.iterator();
+		Iterator<? extends AbstractDriver> iterParams = biparams.iterator();
 		while (iterParams.hasNext()) {
-			AbstractDriver biparam = (AbstractDriver) iterParams.next();
+			AbstractDriver biparam = iterParams.next();
 			refreshParameter(biparam, jsonArray, transientMode);
 		}
 		logger.debug("OUT");

@@ -190,6 +190,7 @@ function cockpitChartWidgetControllerFunction(
 		$scope.refreshWidget(undefined,'init', true);
 	});
 	$scope.refresh=function(element,width,height,data,nature, undefined, changedChartType,dataAndChartConf){
+		$scope.tempChartConf = dataAndChartConf.chartConf;
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			var aggregations = cockpitModule_widgetSelection.getAggregation($scope.ngModel,dataset);
@@ -1247,12 +1248,21 @@ function cockpitChartWidgetControllerFunction(
 
 
 			// if destination document is specified don't ask
+			var hasVueParent = false
+			if(window.parent.document.getElementById('_KNOWAGE_VUE')){
+				hasVueParent = window.parent
+			}else if(window.parent.parent.document.getElementById('_KNOWAGE_VUE')){
+				hasVueParent = window.parent.parent
+			}
+			
 			if(model.cross.crossName != undefined){
-				parent.execExternalCrossNavigation(outputParameter,{},model.cross.crossName,null,otherOutputParameters);
+				if(hasVueParent) hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":crossSettings,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
+				else parent.execExternalCrossNavigation(outputParameter,{},model.cross.crossName,null,otherOutputParameters);
 				return;
 			}
 			else{
-				parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
+				if(hasVueParent) hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":crossSettings,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
+				else parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
 				return;
 			}
 		}
@@ -1446,6 +1456,11 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 		wconf.chartTemplate = {"CHART":wconf.chartTemplate};
 	}
 	var chartTemplate = wconf.chartTemplate;
+	
+	if(chartTemplate.CHART.type.toUpperCase() === "WORDCLOUD" && !chartTemplate.CHART.sizeCriteria){
+		chartTemplate.CHART.sizeCriteria = "serie";
+	}
+	
 	if(chartTemplate && chartTemplate.CHART && chartTemplate.CHART.VALUES) {
 
 		if(chartTemplate.CHART.VALUES.SERIE) {

@@ -151,6 +151,6 @@ export default defineComponent({
     }
 }
 .toolbar-height {
-    padding-bottom: $toolbar-height;
+    padding-bottom: var(--kn-toolbar-height);
 }
 </style>

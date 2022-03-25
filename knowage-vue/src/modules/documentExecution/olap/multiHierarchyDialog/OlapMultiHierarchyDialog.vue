@@ -2,7 +2,7 @@
     <Dialog id="olap-sorting-dialog" class="p-fluid kn-dialog--toolbar--primary" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left> {{ member.caption }} </template>
+                <template #start> {{ member.caption }} </template>
             </Toolbar>
         </template>
         <span class="p-m-3">
@@ -24,34 +24,34 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iOlapFilter } from '@/modules/documentExecution/olap/Olap'
-import Dropdown from 'primevue/dropdown'
-import Dialog from 'primevue/dialog'
+    import { defineComponent } from 'vue'
+    import { iOlapFilter } from '@/modules/documentExecution/olap/Olap'
+    import Dropdown from 'primevue/dropdown'
+    import Dialog from 'primevue/dialog'
 
-export default defineComponent({
-    components: { Dialog, Dropdown },
-    props: { selectedFilter: { type: Object, required: true }, multiHierUN: { type: String, required: true } },
-    emits: ['save', 'updateHierarchy', 'setMultiHierUN'],
-    data() {
-        return {
-            member: {} as iOlapFilter,
-            selecetedMultiHierUN: '' as any
-        }
-    },
-    watch: {
-        selectedFilter() {
+    export default defineComponent({
+        components: { Dialog, Dropdown },
+        props: { selectedFilter: { type: Object, required: true }, multiHierUN: { type: String, required: true } },
+        emits: ['save', 'updateHierarchy', 'setMultiHierUN'],
+        data() {
+            return {
+                member: {} as iOlapFilter,
+                selecetedMultiHierUN: '' as any
+            }
+        },
+        watch: {
+            selectedFilter() {
+                this.loadData()
+            }
+        },
+        created() {
             this.loadData()
+        },
+        methods: {
+            loadData() {
+                this.member = this.selectedFilter as iOlapFilter
+                this.selecetedMultiHierUN = this.multiHierUN
+            }
         }
-    },
-    created() {
-        this.loadData()
-    },
-    methods: {
-        loadData() {
-            this.member = this.selectedFilter as iOlapFilter
-            this.selecetedMultiHierUN = this.multiHierUN
-        }
-    }
-})
+    })
 </script>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <DataTable v-if="businessModel" class="p-datatable-sm kn-table p-m-2" :value="businessModel.columns" :loading="loading" editMode="cell" responsiveLayout="stack" breakpoint="960px" @rowReorder="onRowReorder">
+        <DataTable v-if="businessModel" class="p-datatable-sm kn-table p-m-2" :value="businessModel.columns" :loading="loading" editMode="cell" responsiveLayout="stack" breakpoint="960px" @rowReorder="onRowReorder" @cell-edit-complete="onCellEditComplete">
             <Column :rowReorder="true" :headerStyle="metawebAttributesTabDescriptor.reorderColumnStyle" :reorderableColumn="false" />
             <Column class="kn-truncated" v-for="(column, index) in metawebAttributesTabDescriptor.columns" :key="index" :field="column.field" :header="$t(column.header)">
                 <template #editor="slotProps">
@@ -211,6 +211,9 @@ export default defineComponent({
                 .catch(() => {})
                 .finally(() => generate(this.observer))
             this.loading = false
+        },
+        onCellEditComplete(event: any) {
+            if (this.businessModel) this.businessModel.columns[event.index] = event.newData
         }
     }
 })

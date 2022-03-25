@@ -10,5 +10,13 @@
             "height": "260px"
         }
     },
-    "objectMaxLength": 160
+    "objectMaxLength": 160,
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    }
 }

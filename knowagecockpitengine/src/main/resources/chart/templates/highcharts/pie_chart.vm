@@ -22,6 +22,11 @@
 		#set($workAroundNoPrint = $seriesMap.put($serie.name , $serie))
 	#end
 #end
+
+#set($range = $datasettransformer.getRange($rows, $dataColumnsMapper, $seriesMap))
+
+#set($categoriesCardinality = $datasettransformer.getCategoriesCardinality($rows, $chart.VALUES.CATEGORY, $dataColumnsMapper))
+
 #set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
 #set($crossNavigation = '')
 #set($crossNavigation = $chart.DRILL)
@@ -72,6 +77,9 @@
 			categoryName: '$categorieColumns.name',
 			categoryOrderColumn: '$categorieColumns.orderColumn',
 			categoryOrderType: '$categorieColumns.orderType',
+						
+			categoriesCardinality: $categoriesCardinality,
+			range: $range
 		},
 
    		#if($chart.style.backgroundColor != '')

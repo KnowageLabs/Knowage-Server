@@ -18,6 +18,8 @@
 package it.eng.spagobi.api;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +37,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -64,6 +67,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -285,6 +289,23 @@ public class DataSetResource extends AbstractDataSetResource {
 		return dataset.getLabel();
 	}
 
+	@PUT
+	@Path("/clone-file")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public Response cloneFile(@QueryParam("fileName") String fileName) {
+		try {
+			String resourcePath = SpagoBIUtilities.getResourcePath();
+			java.nio.file.Path toClone = java.nio.file.Paths.get(resourcePath, "dataset", "files", fileName);
+			java.nio.file.Path tempDir = java.nio.file.Paths.get(resourcePath, "dataset", "files", "temp");
+			java.nio.file.Path cloned = tempDir.resolve(toClone.getFileName());
+			Files.copy(toClone, cloned, StandardCopyOption.REPLACE_EXISTING);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot clone file {" + fileName + "} into temp dir", e);
+		}
+		return Response.ok().build();
+	}
+
 	/**
 	 * Return the entire dataset according to its ID.
 	 *
@@ -347,6 +368,22 @@ public class DataSetResource extends AbstractDataSetResource {
 		}
 
 		return serializeDataSet(datasetToReturn, null);
+	}
+
+	@GET
+	@Path("/dataset/{dsLabel}/category")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public String getDataSetCategoryByDsLabel(@PathParam("dsLabel") String dsLabel) {
+		try {
+			IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+			datasetDao.setUserProfile(getUserProfile());
+			IDataSet dataset = datasetDao.loadDataSetByLabel(dsLabel);
+			String category = dataset.getCategoryCd();
+			return category;
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+		}
 	}
 
 	/**
@@ -1065,6 +1102,8 @@ public class DataSetResource extends AbstractDataSetResource {
 				if (dataSet.isPersisted() && dataSet.getDataSourceForWriting().getDsId() == cache.getDataSource().getDsId()) {
 					tableName = dataSet.getTableNameForReading();
 				} else if (dataSet.isFlatDataset() && dataSet.getDataSource().getDsId() == cache.getDataSource().getDsId()) {
+					tableName = dataSet.getTableNameForReading();
+				} else if (dataSet.isPreparedDataSet() && dataSet.getDataSource().getDsId() == cache.getDataSource().getDsId()) {
 					tableName = dataSet.getTableNameForReading();
 				} else {
 					DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();

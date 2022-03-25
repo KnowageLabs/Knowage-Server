@@ -57,10 +57,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author FMilosavljevic
- *
+ * @deprecated Replaced by {@link it.eng.spagobi.api.v3.DataSetResource#filters(String)}
  */
 @Path("/dataset")
-
+@Deprecated
 public class DataSetDriversResource extends AbstractDataSetResource {
 
 	static protected Logger logger = Logger.getLogger(DataSetResource.class);

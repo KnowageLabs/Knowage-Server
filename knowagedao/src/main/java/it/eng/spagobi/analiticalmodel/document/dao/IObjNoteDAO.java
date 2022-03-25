@@ -27,98 +27,82 @@ public interface IObjNoteDAO extends ISpagoBIDao {
 	/**
 	 * Save Notes for a specific execution of the biobject.
 	 *
-	 * @param biobjId
-	 *            id of the biobject executed
-	 * @param objNote
-	 *            notes to save
+	 * @param biobjId id of the biobject executed
+	 * @param objNote notes to save
+	 * @return
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
-	public void saveExecutionNotes(Integer biobjId, ObjNote objNote) throws Exception;
+	public ObjNote saveExecutionNotes(Integer biobjId, ObjNote objNote) throws Exception;
 
 	public void saveNote(Integer biobjId, ObjNote objNote, boolean flag) throws Exception;
 
 	/**
 	 * Get Notes for a specific execution of the biobject.
 	 *
-	 * @param biobjId
-	 *            id of the biobject executed
-	 * @param execIdentif
-	 *            the exec identif
+	 * @param biobjId     id of the biobject executed
+	 * @param execIdentif the exec identif
 	 *
 	 * @return ObjNote notes saved
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public ObjNote getExecutionNotes(Integer biobjId, String execIdentif) throws Exception;
 
 	/**
 	 * Get Notes for a specific execution of the biobject by owner.
 	 *
-	 * @param biobjId
-	 *            id of the biobject executed
-	 * @param execIdentif
-	 *            the exec identif
-	 * @param owner
-	 *            the note's owner
+	 * @param biobjId     id of the biobject executed
+	 * @param execIdentif the exec identif
+	 * @param owner       the note's owner
 	 *
 	 * @return ObjNote notes saved
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public ObjNote getExecutionNotesByOwner(Integer biobjId, String execIdentif, String owner) throws Exception;
 
 	/**
 	 * Get Notes for a specific execution of the biobject.
 	 *
-	 * @param biobjId
-	 *            id of the biobject executed
-	 * @param execIdentif
-	 *            the exec identif
+	 * @param biobjId     id of the biobject executed
+	 * @param execIdentif the exec identif
 	 *
 	 * @return ObjNote notes saved
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public List getListExecutionNotes(Integer biobjId, String execIdentif) throws Exception;
 
 	/**
 	 * Modify execution notes.
 	 *
-	 * @param objNote
-	 *            the obj note
+	 * @param objNote the obj note
+	 * @return
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
-	public void modifyExecutionNotes(ObjNote objNote) throws Exception;
+	public ObjNote modifyExecutionNotes(ObjNote objNote) throws Exception;
 
 	/**
 	 * Deletes all notes associated to the BIObject with the id specified in input.
 	 *
-	 * @param biobjId
-	 *            the biobj id
+	 * @param biobjId the biobj id
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
 	public void eraseNotes(Integer biobjId) throws Exception;
 
 	/**
 	 * Deletes all notes associated to the BIObject with the id and the owner specified in input.
 	 *
-	 * @param biobjId
-	 *            the biobj id
-	 * @param owner
-	 *            the user owner the note
+	 * @param biobjId the biobj id
+	 * @param owner   the user owner the note
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
-	public void eraseNotesByOwner(Integer biobjId, String execIdentif, String owner) throws Exception;
+	public void eraseNotesByIdAndOwner(Integer biobjId, Integer noteId, String owner) throws Exception;
+
+	ObjNote getNoteById(Integer documentId, Integer noteId, String owner) throws Exception;
 
 }

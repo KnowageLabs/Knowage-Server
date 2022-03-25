@@ -30,6 +30,7 @@ import 'primeicons/primeicons.css'
 import '@fortawesome/fontawesome-free/css/all.css'
 import 'primeflex/primeflex.css'
 import '@/assets/css/dialects-icons.css'
+import 'material-icons/iconfont/material-icons.css'
 
 import ToastService from 'primevue/toastservice'
 import Button from 'primevue/button'
@@ -44,6 +45,8 @@ import ConfirmationService from 'primevue/confirmationservice'
 import internationalizationPlugin from './plugins/internationalization.js'
 
 import i18n from '@/App.i18n'
+
+import QBEOperator from './modules/qbe/qbeDialogs/qbeAdvancedFilterDialog/QBEOperator.vue'
 
 
 createApp(App)
@@ -64,5 +67,6 @@ createApp(App)
     .component('InputText', InputText)
     .component('ProgressBar', ProgressBar)
     .component('Toolbar', Toolbar)
+    .component('QBEOperator', QBEOperator)
 
     .mount('#app')

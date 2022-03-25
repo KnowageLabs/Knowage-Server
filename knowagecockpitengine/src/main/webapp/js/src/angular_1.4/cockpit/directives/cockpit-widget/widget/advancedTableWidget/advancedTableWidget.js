@@ -149,6 +149,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}else{
 							tempCol.headerTooltip = $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias;
 						}
+						if(tempCol.measure === 'MEASURE') tempCol.aggregationSelected = $scope.ngModel.content.columnSelectedOfDataset[c].aggregationSelected;
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
 
 						if ($scope.ngModel.content.columnSelectedOfDataset[c].isCalculated){
@@ -245,8 +246,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							tempCol.valueFormatter = dateTimeFormatter;
 							tempCol.comparator = dateComparator;
 						}
-						if(tempCol.fieldType == 'float' || tempCol.fieldType == 'integer' ) {
+						if(tempCol.fieldType == 'float' || tempCol.fieldType == 'integer' || (tempCol.fieldType == 'string' && tempCol.measure == 'MEASURE' && ["COUNT","COUNT_DISTINCT"].indexOf(tempCol.aggregationSelected) != -1) ) {
 							tempCol.valueFormatter = numberFormatter;
+							if (typeof fields[f].scale !== 'undefined') {
+								tempCol.scale = fields[f].scale;
+							}
 							// When server-side pagination is disabled
 							tempCol.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
 								return valueA - valueB;
@@ -457,8 +461,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 * In case of a returning empty string that one will be displayed.
 		 */
 		function numberFormatter(params){
+			var tempScale = typeof params.colDef.scale !== 'undefined' ? params.colDef.scale : 2;
 			if(params.value != "" && (!params.colDef.style || (params.colDef.style && !params.colDef.style.asString))) {
-				var defaultPrecision = (params.colDef.fieldType == 'float') ? 2 : 0;
+				var defaultPrecision = (params.colDef.fieldType == 'float') ? tempScale : 0;
 				return $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
 			}else return params.value;
 		}
@@ -564,7 +569,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		function crossIconRenderer(params){
-			return '<md-button class="md-icon-button" ng-click=""><md-icon md-font-icon="'+params.colDef.crossIcon+'"></md-icon></md-button>';
+			if(params.node.rowPinned === 'bottom') return '';
+			else return '<md-button class="md-icon-button" ng-click=""><md-icon md-font-icon="'+params.colDef.crossIcon+'"></md-icon></md-button>';
 		}
 
 		function cellMultiRenderer () {}

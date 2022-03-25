@@ -1,5 +1,5 @@
 <template>
-    <Card>
+    <Card class="p-m-2">
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-mt-1 p-col-6">
@@ -101,13 +101,13 @@
             </form>
         </template>
     </Card>
-    <Card class="p-mt-3">
+    <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.datasetManagement.oldVersions') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button icon="fas fa-eraser" class="p-button-text p-button-rounded p-button-plain" :disabled="noDatasetVersions" @click="deleteConfirm('deleteAll')" />
                 </template>
             </Toolbar>

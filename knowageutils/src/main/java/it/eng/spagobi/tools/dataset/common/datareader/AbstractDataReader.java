@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
+import java.math.BigDecimal;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
@@ -104,7 +106,7 @@ public abstract class AbstractDataReader implements IDataReader {
 		if (oldType == String.class)
 			return String.class;
 		if (newType == Integer.class) {
-			if (oldType == Double.class || oldType == Long.class)
+			if (oldType == Double.class || oldType == Long.class || oldType == BigDecimal.class)
 				return oldType;
 			else
 				return newType;

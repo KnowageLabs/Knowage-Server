@@ -1,6 +1,5 @@
 <template>
     <Dialog class="kn-dialog--toolbar--primary importExportDialog" :style="dataViewDescriptor.style.dialog" v-bind:visible="visible" footer="footer" :header="$t('workspace.myData.wizardTitle')" :closable="false" modal>
-        {{ newFileUploaded }}
         <span v-if="wizardStep === 1">
             <StepOne :selectedDataset="dataset" @fileUploaded="onFileUpload" />
         </span>

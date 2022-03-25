@@ -35,9 +35,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
+import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTag;
-import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.resource.dto.Code;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
 
@@ -81,6 +81,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		sbiWidgetGalleryFound.setAuthor(sbiWidgetGallery.getAuthor());
 		sbiWidgetGalleryFound.setDescription(sbiWidgetGallery.getDescription());
 		sbiWidgetGalleryFound.setName(sbiWidgetGallery.getName());
+		sbiWidgetGalleryFound.setLabel(sbiWidgetGallery.getLabel());
 		sbiWidgetGalleryFound.getId().setOrganization(sbiWidgetGallery.getId().getOrganization());
 		sbiWidgetGalleryFound.setPreviewImage(sbiWidgetGallery.getPreviewImage());
 		sbiWidgetGalleryFound.setSbiVersionIn(sbiWidgetGallery.getSbiVersionIn());
@@ -231,6 +232,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		toRet.setAuthor(sbiWidgetGallery.getAuthor());
 		toRet.setId(sbiWidgetGallery.getId().getUuid());
 		toRet.setName(sbiWidgetGallery.getName());
+		toRet.setLabel(sbiWidgetGallery.getLabel());
 		toRet.setDescription(sbiWidgetGallery.getDescription());
 		toRet.setType(sbiWidgetGallery.getType());
 		if (sbiWidgetGallery.getPreviewImage() != null) {
@@ -276,6 +278,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		toRet.setDescription(sbiWidgetGallery.getDescription());
 		toRet.setId(sbiWidgetGallery.getId().getUuid());
 		toRet.setName(sbiWidgetGallery.getName());
+		toRet.setLabel(sbiWidgetGallery.getLabel());
 		toRet.setType(sbiWidgetGallery.getType());
 
 		List<SbiWidgetGalleryTag> tagList = sbiWidgetGallery.getSbiWidgetGalleryTags();

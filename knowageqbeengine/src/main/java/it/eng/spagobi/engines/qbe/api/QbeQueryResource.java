@@ -368,8 +368,8 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		IDataSet dataSet = getActiveQueryAsDataSet(filteredQuery);
 		dataSet.setUserProfileAttributes(getUserProfile().getUserAttributes());
 
-		Map<String, Object> envs = getEnv();
-		String stringDrivers = envs.get(DRIVERS).toString();
+		Map<String, String> envs = getEnv();
+		String stringDrivers = envs.get(DRIVERS);
 		Map<String, Object> drivers = null;
 		try {
 			drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);

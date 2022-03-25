@@ -2,7 +2,7 @@
     <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('kpi.kpiScheduler.executionType') }}
                 </template>
             </Toolbar>
@@ -21,7 +21,7 @@
     <Card class="p-mt-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('kpi.kpiScheduler.logExecution') }}
                 </template>
             </Toolbar>

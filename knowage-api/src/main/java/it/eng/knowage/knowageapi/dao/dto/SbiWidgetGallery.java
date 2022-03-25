@@ -55,6 +55,8 @@ public class SbiWidgetGallery implements Serializable {
 
 	private String name;
 
+	private String label;
+
 //	private String organization;
 	@EmbeddedId
 	private SbiWidgetGalleryId id;
@@ -136,6 +138,14 @@ public class SbiWidgetGallery implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getLabel() {
+		return this.label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public byte[] getPreviewImage() {

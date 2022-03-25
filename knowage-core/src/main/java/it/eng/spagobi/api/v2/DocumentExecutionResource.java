@@ -551,7 +551,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		applyRequestParameters(biObject, jsonCrossParameters, sessionParametersMap, role, locale, parsFromCross);
 
-		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
+		final ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 		DocumentRuntime dum = new DocumentRuntime(this.getUserProfile(), locale);
 		List<DocumentDriverRuntime> parameters = DocumentExecutionUtils.getParameters(biObject, role, req.getLocale(), null, parsFromCross, true, dum);
 
@@ -559,7 +559,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		datasetParametersArrayList = getQbeDrivers(biObject);
 
 		if (!datasetParametersArrayList.isEmpty()) {
-			parametersArrayList = datasetParametersArrayList;
+			parametersArrayList.addAll(datasetParametersArrayList);
 		} else {
 			for (DocumentDriverRuntime objParameter : parameters) {
 				Integer paruseId = objParameter.getParameterUseId();
@@ -667,17 +667,17 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 					ArrayList<HashMap<String, Object>> admissibleValues = objParameter.getAdmissibleValues();
 
-					if (!objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_LOOKUP)) {
-						parameterAsMap.put(PROPERTY_DATA, admissibleValues);
-					} else {
-						parameterAsMap.put(PROPERTY_DATA, new ArrayList<>());
-					}
-
 					metadata.put("colsMap", colPlaceholder2ColName);
 					metadata.put("descriptionColumn", lovDescriptionColumnName);
 					metadata.put("invisibleColumns", objParameter.getLovInvisibleColumnsNames());
 					metadata.put("valueColumn", lovValueColumnName);
 					metadata.put("visibleColumns", objParameter.getLovVisibleColumnsNames());
+
+					if (!objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_LOOKUP)) {
+						parameterAsMap.put(PROPERTY_DATA, admissibleValues);
+					} else {
+						parameterAsMap.put(PROPERTY_DATA, new ArrayList<>());
+					}
 
 					// hide the parameter if is mandatory and have one value in lov (no error parameter)
 					if (admissibleValues != null && admissibleValues.size() == 1 && objParameter.isMandatory() && !admissibleValues.get(0).containsKey("error")
@@ -1175,10 +1175,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		if (result != null && result.size() > 0) {
 			resultAsMap.put("rows", result);
-			resultAsMap.put("errors", new ArrayList<>());
 		} else {
-			resultAsMap.put("rows", new ArrayList<>());
-
 			List errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), biObject, req,
 					this.getAttributeAsString("SBI_ENVIRONMENT"), role, biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, locale);
 

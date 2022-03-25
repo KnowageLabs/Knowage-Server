@@ -25,7 +25,9 @@ const store = createStore({
                 licenses: {},
                 cpuNumber: -1
             },
-            documentExecution: {}
+            documentExecution: {},
+            theme: {},
+            defaultTheme: {}
         }
     },
     actions: {
@@ -51,7 +53,7 @@ const store = createStore({
         }
     },
     mutations: {
-        setConfigurations(state, configs){
+        setConfigurations(state, configs) {
             state.configurations = configs
         },
         setUser(state, user) {
@@ -95,6 +97,12 @@ const store = createStore({
         },
         setDocumentExecutionEmbed(state) {
             state.documentExecution.embed = true
+        },
+        setTheme(state, theme) {
+            state.theme = theme
+        },
+        setDefaultTheme(state, defaultTheme) {
+            state.defaultTheme = defaultTheme
         }
     }
 })

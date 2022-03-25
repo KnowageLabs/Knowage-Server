@@ -17,115 +17,118 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import Dialog from 'primevue/dialog'
-    import Listbox from 'primevue/listbox'
-    import { mapState } from 'vuex'
-    import store from '@/App.store'
-    import { usePrimeVue } from 'primevue/config'
+import { defineComponent } from 'vue'
+import Dialog from 'primevue/dialog'
+import Listbox from 'primevue/listbox'
+import { mapState } from 'vuex'
+import store from '@/App.store'
+import { usePrimeVue } from 'primevue/config'
 
-    import { AxiosResponse } from 'axios'
+import { AxiosResponse } from 'axios'
 
-    interface Language {
-        locale: string
-        disabled: boolean | false
-    }
+interface Language {
+    locale: string
+    disabled: boolean | false
+}
 
-    export default defineComponent({
-        name: 'language-dialog',
-        components: {
-            Dialog,
-            Listbox
-        },
-        data() {
-            return {
-                languages: Array<Language>()
-            }
-        },
-        created() {
-            const primevue = usePrimeVue() as any
+export default defineComponent({
+    name: 'language-dialog',
+    components: {
+        Dialog,
+        Listbox
+    },
+    data() {
+        return {
+            languages: Array<Language>()
+        }
+    },
+    created() {
+        const primevue = usePrimeVue() as any
+        // @ts-ignore
+        if (this.$i18n.messages[this.$i18n.locale.replaceAll('-', '_')]) {
             // @ts-ignore
             primevue.config.locale = { ...primevue.config.locale, ...this.$i18n.messages[this.$i18n.locale.replaceAll('-', '_')].locale }
+        }
+    },
+    props: {
+        visibility: Boolean
+    },
+    emits: ['update:visibility', 'update:loading'],
+    methods: {
+        changeLanguage(language) {
+            let splittedLanguage = language.locale.split('_')
+
+            let url = '/knowage/servlet/AdapterHTTP?'
+            url += 'ACTION_NAME=CHANGE_LANGUAGE'
+            url += '&LANGUAGE_ID=' + splittedLanguage[0]
+            url += '&COUNTRY_ID=' + splittedLanguage[1].toUpperCase()
+            url += '&SCRIPT_ID=' + (splittedLanguage.length > 2 ? splittedLanguage[2].replaceAll('#', '') : '')
+            url += '&THEME_NAME=sbi_default'
+
+            this.$emit('update:loading', true)
+            this.$http.get(url).then(
+                () => {
+                    store.commit('setLocale', language.locale)
+                    localStorage.setItem('locale', language.locale)
+                    this.$i18n.locale = language.locale
+
+                    this.closeDialog()
+                    this.$router.go(0)
+                    this.$forceUpdate()
+                },
+                (error) => console.error(error)
+            )
+            this.$emit('update:loading', false)
         },
-        props: {
-            visibility: Boolean
-        },
-        emits: ['update:visibility', 'update:loading'],
-        methods: {
-            changeLanguage(language) {
-                let splittedLanguage = language.locale.split('_')
+        closeDialog() {
+            this.$emit('update:visibility', false)
+        }
+    },
+    computed: {
+        ...mapState({
+            locale: 'locale'
+        })
+    },
+    watch: {
+        visibility(newVisibility) {
+            if (newVisibility && this.languages.length == 0) {
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages').then(
+                    (response: AxiosResponse<any>) => {
+                        let languagesArray = response.data.sort()
 
-                let url = '/knowage/servlet/AdapterHTTP?'
-                url += 'ACTION_NAME=CHANGE_LANGUAGE'
-                url += '&LANGUAGE_ID=' + splittedLanguage[0]
-                url += '&COUNTRY_ID=' + splittedLanguage[1].toUpperCase()
-                url += '&SCRIPT_ID=' + (splittedLanguage.length > 2 ? splittedLanguage[2].replaceAll('#', '') : '')
-                url += '&THEME_NAME=sbi_default'
-
-                this.$emit('update:loading', true)
-                this.$http.get(url).then(
-                    () => {
-                        store.commit('setLocale', language.locale)
-                        localStorage.setItem('locale', language.locale)
-                        this.$i18n.locale = language.locale
-
-                        this.closeDialog()
-                        this.$router.go(0)
-                        this.$forceUpdate()
+                        for (var idx in languagesArray) {
+                            var disabled = false
+                            if (languagesArray[idx] === this.$i18n.locale) {
+                                disabled = true
+                            }
+                            this.languages.push({ locale: languagesArray[idx], disabled: disabled })
+                        }
                     },
                     (error) => console.error(error)
                 )
-                this.$emit('update:loading', false)
-            },
-            closeDialog() {
-                this.$emit('update:visibility', false)
-            }
-        },
-        computed: {
-            ...mapState({
-                locale: 'locale'
-            })
-        },
-        watch: {
-            visibility(newVisibility) {
-                if (newVisibility && this.languages.length == 0) {
-                    this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages').then(
-                        (response: AxiosResponse<any>) => {
-                            let languagesArray = response.data.sort()
-
-                            for (var idx in languagesArray) {
-                                var disabled = false
-                                if (languagesArray[idx] === this.$i18n.locale) {
-                                    disabled = true
-                                }
-                                this.languages.push({ locale: languagesArray[idx], disabled: disabled })
-                            }
-                        },
-                        (error) => console.error(error)
-                    )
-                }
-            }
-        }
-    })
-</script>
-
-<style scoped lang="scss">
-    .countryList {
-        border: none;
-        border-radius: 0;
-        min-width: 250px;
-        max-height: 100%;
-
-        &:deep(li.p-listbox-item) {
-            padding: 0rem 0rem;
-        }
-
-        .countryItem {
-            padding: 0.25rem 0.25rem;
-
-            .countryLabel {
-                margin: 0 0 0 15px;
             }
         }
     }
+})
+</script>
+
+<style scoped lang="scss">
+.countryList {
+    border: none;
+    border-radius: 0;
+    min-width: 250px;
+    max-height: 100%;
+
+    &:deep(li.p-listbox-item) {
+        padding: 0rem 0rem;
+    }
+
+    .countryItem {
+        padding: 0.25rem 0.25rem;
+
+        .countryLabel {
+            margin: 0 0 0 15px;
+        }
+    }
+}
 </style>

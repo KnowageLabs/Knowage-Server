@@ -62,7 +62,7 @@ function prepareChartConfForSunburst(chartConf, handleCockpitSelection, handleCr
 	} else {
 		colors = chartConf.colors;
 	}
-	while(chartConf.colors.length < Object.keys(chartConf.data[0]).length) {
+	while(colors.length < Object.keys(chartConf.data[0]).length) {
 		colors = colors.concat(defaultColors)
 	}
 

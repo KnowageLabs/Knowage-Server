@@ -4,10 +4,10 @@
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
             <div class="p-d-flex p-flex-column kn-flex">
                 <Toolbar class="kn-toolbar kn-toolbar--default">
-                    <template #left>
+                    <template #start>
                         <span>{{ $t('metaweb.businessModel.businessClass') }}</span>
                     </template>
-                    <template #right>
+                    <template #end>
                         <KnFabButton icon="fas fa-plus" @click="showMenu" />
                     </template>
                 </Toolbar>
@@ -33,7 +33,7 @@
             </div>
             <div v-if="meta.businessViews.length > 0" class="p-d-flex p-flex-column kn-flex">
                 <Toolbar class="kn-toolbar kn-toolbar--default">
-                    <template #left>
+                    <template #start>
                         <span>{{ $t('metaweb.businessModel.businessView') }}</span>
                     </template>
                 </Toolbar>
@@ -60,7 +60,7 @@
         </div>
         <div id="CONTAINER ELEMENT DETAILS" class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 p-d-flex p-flex-column" :style="mainDescriptor.style.flex3">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     <span v-if="selectedBusinessModel">{{ selectedBusinessModel.name }}</span>
                 </template>
             </Toolbar>
@@ -145,123 +145,123 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iBusinessModel } from '../Metaweb'
-import { AxiosResponse } from 'axios'
-import mainDescriptor from '../MetawebDescriptor.json'
-import KnFabButton from '@/components/UI/KnFabButton.vue'
-import TabView from 'primevue/tabview'
-import TabPanel from 'primevue/tabpanel'
-import bmDescriptor from './MetawebBusinessModelDescriptor.json'
-import Menu from 'primevue/contextmenu'
-import MetawebBusinessPropertyListTab from './tabs/propertyListTab/MetawebBusinessPropertyListTab.vue'
-import BusinessClassDialog from './dialogs/MetawebBusinessClassDialog.vue'
-import BusinessViewDialog from './dialogs/MetawebBusinessViewDialog.vue'
-import MetawebAttributesTab from './tabs/metawebAttributesTab/MetawebAttributesTab.vue'
-import InboundRelationships from './tabs/inboundRelationships/MetawebInboundRelationships.vue'
-import OutboundRelationships from './tabs/outboundRelationships/MetawebOutboundRelationships.vue'
-import MetawebPhysicalTableTab from './tabs/physicalTable/MetawebPhysicalTableTab.vue'
-import MetawebJoinRelationships from './tabs/joinRelationships/MetawebJoinRelationships.vue'
-import MetawebFilterTab from './tabs/filterTab/MetawebFilterTab.vue'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import Chip from 'primevue/chip'
+    import { defineComponent } from 'vue'
+    import { iBusinessModel } from '../Metaweb'
+    import { AxiosResponse } from 'axios'
+    import mainDescriptor from '../MetawebDescriptor.json'
+    import KnFabButton from '@/components/UI/KnFabButton.vue'
+    import TabView from 'primevue/tabview'
+    import TabPanel from 'primevue/tabpanel'
+    import bmDescriptor from './MetawebBusinessModelDescriptor.json'
+    import Menu from 'primevue/contextmenu'
+    import MetawebBusinessPropertyListTab from './tabs/propertyListTab/MetawebBusinessPropertyListTab.vue'
+    import BusinessClassDialog from './dialogs/MetawebBusinessClassDialog.vue'
+    import BusinessViewDialog from './dialogs/MetawebBusinessViewDialog.vue'
+    import MetawebAttributesTab from './tabs/metawebAttributesTab/MetawebAttributesTab.vue'
+    import InboundRelationships from './tabs/inboundRelationships/MetawebInboundRelationships.vue'
+    import OutboundRelationships from './tabs/outboundRelationships/MetawebOutboundRelationships.vue'
+    import MetawebPhysicalTableTab from './tabs/physicalTable/MetawebPhysicalTableTab.vue'
+    import MetawebJoinRelationships from './tabs/joinRelationships/MetawebJoinRelationships.vue'
+    import MetawebFilterTab from './tabs/filterTab/MetawebFilterTab.vue'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import Chip from 'primevue/chip'
 
-const { generate, applyPatch } = require('fast-json-patch')
+    const { generate, applyPatch } = require('fast-json-patch')
 
-export default defineComponent({
-    name: 'metaweb-business-model',
-    components: { Chip, Column, DataTable, MetawebJoinRelationships, OutboundRelationships, BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships, MetawebPhysicalTableTab, MetawebFilterTab },
-    props: { propMeta: { type: Object }, observer: { type: Object }, metaUpdated: { type: Boolean } },
-    emits: ['loading', 'metaUpdated'],
-    computed: {},
-    data() {
-        return {
-            bmDescriptor,
-            mainDescriptor,
-            meta: null as any,
-            menuButtons: [] as any,
-            showBusinessClassDialog: false,
-            showBusinessViewDialog: false,
-            selectedBusinessModel: {} as iBusinessModel,
-            roles: [] as any[],
-            loading: false
-        }
-    },
-    watch: {
-        propMeta() {
+    export default defineComponent({
+        name: 'metaweb-business-model',
+        components: { Chip, Column, DataTable, MetawebJoinRelationships, OutboundRelationships, BusinessClassDialog, BusinessViewDialog, KnFabButton, TabView, TabPanel, Menu, MetawebBusinessPropertyListTab, MetawebAttributesTab, InboundRelationships, MetawebPhysicalTableTab, MetawebFilterTab },
+        props: { propMeta: { type: Object }, observer: { type: Object }, metaUpdated: { type: Boolean } },
+        emits: ['loading', 'metaUpdated'],
+        computed: {},
+        data() {
+            return {
+                bmDescriptor,
+                mainDescriptor,
+                meta: null as any,
+                menuButtons: [] as any,
+                showBusinessClassDialog: false,
+                showBusinessViewDialog: false,
+                selectedBusinessModel: {} as iBusinessModel,
+                roles: [] as any[],
+                loading: false
+            }
+        },
+        watch: {
+            propMeta() {
+                this.loadMeta()
+            },
+            metaUpdated() {
+                this.loadMeta()
+            }
+        },
+        created() {
             this.loadMeta()
+            this.createMenuItems()
+            this.loadRoles()
         },
-        metaUpdated() {
-            this.loadMeta()
-        }
-    },
-    created() {
-        this.loadMeta()
-        this.createMenuItems()
-        this.loadRoles()
-    },
-    methods: {
-        showMenu(event) {
-            // eslint-disable-next-line
-            // @ts-ignore
-            this.$refs.optionsMenu.toggle(event)
-        },
-        createMenuItems() {
-            this.menuButtons = []
-            this.menuButtons.push({ key: '0', label: this.$t('metaweb.businessModel.newBusiness'), command: () => this.showBusinessClass() }, { key: '1', label: this.$t('metaweb.businessModel.newView'), command: () => this.showBusinessView() })
-        },
-        loadMeta() {
-            this.meta = this.propMeta
-        },
-        selectBusinessModel(event) {
-            this.selectedBusinessModel = event.data as iBusinessModel
-        },
-        showBusinessClass() {
-            this.showBusinessClassDialog = true
-        },
-        showBusinessView() {
-            this.showBusinessViewDialog = true
-        },
-        async deleteFromList(itemForDeletion) {
-            const postData = { data: { name: itemForDeletion.uniqueName }, diff: generate(this.observer) }
-            let url = ''
-            itemForDeletion.joinRelationships ? (url = process.env.VUE_APP_META_API_URL + '/1.0/metaWeb/deleteBusinessView') : (url = process.env.VUE_APP_META_API_URL + '/1.0/metaWeb/deleteBusinessClass')
-            await this.$http
-                .post(url, postData)
-                .then((response: AxiosResponse<any>) => {
-                    this.meta = applyPatch(this.meta, response.data).newDocument
+        methods: {
+            showMenu(event) {
+                // eslint-disable-next-line
+                // @ts-ignore
+                this.$refs.optionsMenu.toggle(event)
+            },
+            createMenuItems() {
+                this.menuButtons = []
+                this.menuButtons.push({ key: '0', label: this.$t('metaweb.businessModel.newBusiness'), command: () => this.showBusinessClass() }, { key: '1', label: this.$t('metaweb.businessModel.newView'), command: () => this.showBusinessView() })
+            },
+            loadMeta() {
+                this.meta = this.propMeta
+            },
+            selectBusinessModel(event) {
+                this.selectedBusinessModel = event.data as iBusinessModel
+            },
+            showBusinessClass() {
+                this.showBusinessClassDialog = true
+            },
+            showBusinessView() {
+                this.showBusinessViewDialog = true
+            },
+            async deleteFromList(itemForDeletion) {
+                const postData = { data: { name: itemForDeletion.uniqueName }, diff: generate(this.observer) }
+                let url = ''
+                itemForDeletion.joinRelationships ? (url = process.env.VUE_APP_META_API_URL + '/1.0/metaWeb/deleteBusinessView') : (url = process.env.VUE_APP_META_API_URL + '/1.0/metaWeb/deleteBusinessClass')
+                await this.$http
+                    .post(url, postData)
+                    .then((response: AxiosResponse<any>) => {
+                        this.meta = applyPatch(this.meta, response.data).newDocument
 
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.deleteTitle'),
-                        msg: this.$t('common.toast.deleteSuccess')
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.deleteTitle'),
+                            msg: this.$t('common.toast.deleteSuccess')
+                        })
+                        generate(this.observer)
                     })
-                    generate(this.observer)
-                })
-                .catch(() => {})
-        },
-        async loadRoles() {
-            this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles').then((response: AxiosResponse<any>) => (this.roles = response.data))
-            this.loading = false
-        },
-        async onRowReorder(event: any) {
-            this.loading = true
-            const postData = { data: { index: event.dragIndex, direction: event.dropIndex - event.dragIndex }, diff: generate(this.observer) }
-            await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/moveBusinessClass`, postData)
-                .then((response: AxiosResponse<any>) => {
-                    this.meta = applyPatch(this.meta, response.data).newDocument
-                })
-                .catch(() => {})
-                .finally(() => generate(this.observer))
-            this.loading = false
+                    .catch(() => {})
+            },
+            async loadRoles() {
+                this.loading = true
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles').then((response: AxiosResponse<any>) => (this.roles = response.data))
+                this.loading = false
+            },
+            async onRowReorder(event: any) {
+                this.loading = true
+                const postData = { data: { index: event.dragIndex, direction: event.dropIndex - event.dragIndex }, diff: generate(this.observer) }
+                await this.$http
+                    .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/moveBusinessClass`, postData)
+                    .then((response: AxiosResponse<any>) => {
+                        this.meta = applyPatch(this.meta, response.data).newDocument
+                    })
+                    .catch(() => {})
+                    .finally(() => generate(this.observer))
+                this.loading = false
+            }
         }
-    }
-})
+    })
 </script>
 <style lang="scss">
-.metaweb-table .p-datatable-thead {
-    display: none !important;
-}
+    .metaweb-table .p-datatable-thead {
+        display: none !important;
+    }
 </style>

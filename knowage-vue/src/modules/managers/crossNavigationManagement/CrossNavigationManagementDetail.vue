@@ -1,6 +1,6 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0">
-        <template #right>
+        <template #end>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="hadleSave" />
             <Button class="p-button-text p-button-rounded p-button-plain" icon="pi pi-times" @click="closeTemplate" />
         </template>
@@ -93,213 +93,213 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { createValidations } from '@/helpers/commons/validationHelper'
-import { AxiosResponse } from 'axios'
-import Dropdown from 'primevue/dropdown'
-import InputNumber from 'primevue/inputnumber'
-import useValidate from '@vuelidate/core'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import DocDialog from './dialogs/CrossNavigationManagementDocDialog.vue'
-import HintDialog from './dialogs/CrossNavigationManagementHintDialog.vue'
-import DocParameters from './dialogs/CrossNavigationManagementDocParameters.vue'
-import crossNavigationManagementValidator from './CrossNavigationManagementValidator.json'
-import crossNavigationDescriptor from './CrossNavigationManagementDescriptor.json'
-export default defineComponent({
-    name: 'cross-navigation-detail',
-    components: { Dropdown, DocDialog, DocParameters, HintDialog, KnValidationMessages, InputNumber },
-    props: {
-        id: {
-            type: String
-        }
-    },
-    data() {
-        return {
-            navigation: {} as any,
-            simpleNavigation: {} as any,
-            loading: false,
-            dialogVisible: false,
-            hintDialogVisiable: false,
-            hintDialogTitle: '',
-            hintDialogMessage: '',
-            docType: 'origin',
-            docId: null,
-            operation: 'insert',
-            originParams: [] as any[],
-            crossNavigationDescriptor,
-            crossModes: [
-                { name: this.$t('managers.crossNavigationManagement.normal'), value: 3 },
-                { name: this.$t('managers.crossNavigationManagement.popUp'), value: 1 },
-                { name: this.$t('managers.crossNavigationManagement.popUpWindow'), value: 2 }
-            ],
-            v$: useValidate() as any
-        }
-    },
-    computed: {
-        buttonDisabled(): any {
-            return this.v$.$invalid
-        }
-    },
-    created() {
-        if (this.id) {
-            this.loadNavigation()
-        } else this.initNew()
-    },
-    watch: {
-        async id() {
+    import { defineComponent } from 'vue'
+    import { createValidations } from '@/helpers/commons/validationHelper'
+    import { AxiosResponse } from 'axios'
+    import Dropdown from 'primevue/dropdown'
+    import InputNumber from 'primevue/inputnumber'
+    import useValidate from '@vuelidate/core'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import DocDialog from './dialogs/CrossNavigationManagementDocDialog.vue'
+    import HintDialog from './dialogs/CrossNavigationManagementHintDialog.vue'
+    import DocParameters from './dialogs/CrossNavigationManagementDocParameters.vue'
+    import crossNavigationManagementValidator from './CrossNavigationManagementValidator.json'
+    import crossNavigationDescriptor from './CrossNavigationManagementDescriptor.json'
+    export default defineComponent({
+        name: 'cross-navigation-detail',
+        components: { Dropdown, DocDialog, DocParameters, HintDialog, KnValidationMessages, InputNumber },
+        props: {
+            id: {
+                type: String
+            }
+        },
+        data() {
+            return {
+                navigation: {} as any,
+                simpleNavigation: {} as any,
+                loading: false,
+                dialogVisible: false,
+                hintDialogVisiable: false,
+                hintDialogTitle: '',
+                hintDialogMessage: '',
+                docType: 'origin',
+                docId: null,
+                operation: 'insert',
+                originParams: [] as any[],
+                crossNavigationDescriptor,
+                crossModes: [
+                    { name: this.$t('managers.crossNavigationManagement.normal'), value: 3 },
+                    { name: this.$t('managers.crossNavigationManagement.popUp'), value: 1 },
+                    { name: this.$t('managers.crossNavigationManagement.popUpWindow'), value: 2 }
+                ],
+                v$: useValidate() as any
+            }
+        },
+        computed: {
+            buttonDisabled(): any {
+                return this.v$.$invalid
+            }
+        },
+        created() {
             if (this.id) {
-                await this.loadNavigation()
-                if (this.originParams.length > 0) {
-                    this.navigation.fromPars = this.originParams
+                this.loadNavigation()
+            } else this.initNew()
+        },
+        watch: {
+            async id() {
+                if (this.id) {
+                    await this.loadNavigation()
+                    if (this.originParams.length > 0) {
+                        this.navigation.fromPars = this.originParams
+                        this.originParams = []
+                    }
+                } else this.initNew()
+            }
+        },
+        validations() {
+            const validationObject = {
+                simpleNavigation: createValidations('simpleNavigation', crossNavigationManagementValidator.validations.simpleNavigation)
+            }
+            return validationObject
+        },
+        methods: {
+            closeTemplate() {
+                this.$emit('close')
+            },
+            setDirty(): void {
+                this.$emit('touched')
+            },
+            initNew() {
+                this.navigation = {}
+                this.simpleNavigation = { type: 3 }
+            },
+            async loadNavigation() {
+                this.loading = true
+                await this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/' + this.id + '/load/')
+                    .then((response: AxiosResponse<any>) => {
+                        this.navigation = response.data
+                        if (this.navigation.simpleNavigation.type === 0) this.navigation.simpleNavigation.type = 3
+                        this.simpleNavigation = this.navigation.simpleNavigation
+                        if (this.simpleNavigation.popupOptions) {
+                            this.simpleNavigation.popupOptions = JSON.parse(this.simpleNavigation.popupOptions)
+                        }
+                    })
+                    .finally(() => (this.loading = false))
+            },
+            hadleSave() {
+                this.navigation.simpleNavigation = this.simpleNavigation
+                if (this.navigation.simpleNavigation.id === undefined) {
+                    this.operation = 'insert'
+                    this.navigation.newRecord = true
+                    this.originParams = this.navigation.fromPars
+                } else {
+                    this.operation = 'update'
                     this.originParams = []
                 }
-            } else this.initNew()
-        }
-    },
-    validations() {
-        const validationObject = {
-            simpleNavigation: createValidations('simpleNavigation', crossNavigationManagementValidator.validations.simpleNavigation)
-        }
-        return validationObject
-    },
-    methods: {
-        closeTemplate() {
-            this.$emit('close')
-        },
-        setDirty(): void {
-            this.$emit('touched')
-        },
-        initNew() {
-            this.navigation = {}
-            this.simpleNavigation = { type: 3 }
-        },
-        async loadNavigation() {
-            this.loading = true
-            await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/' + this.id + '/load/')
-                .then((response: AxiosResponse<any>) => {
-                    this.navigation = response.data
-                    if (this.navigation.simpleNavigation.type === 0) this.navigation.simpleNavigation.type = 3
-                    this.simpleNavigation = this.navigation.simpleNavigation
-                    if (this.simpleNavigation.popupOptions) {
-                        this.simpleNavigation.popupOptions = JSON.parse(this.simpleNavigation.popupOptions)
-                    }
-                })
-                .finally(() => (this.loading = false))
-        },
-        hadleSave() {
-            this.navigation.simpleNavigation = this.simpleNavigation
-            if (this.navigation.simpleNavigation.id === undefined) {
-                this.operation = 'insert'
-                this.navigation.newRecord = true
-                this.originParams = this.navigation.fromPars
-            } else {
-                this.operation = 'update'
-                this.originParams = []
-            }
-            if (this.navigation.simpleNavigation.type === 2) {
-                this.navigation.simpleNavigation.popupOptions = JSON.stringify(this.navigation.simpleNavigation.popupOptions)
-            } else delete this.navigation.simpleNavigation.popupOptions
+                if (this.navigation.simpleNavigation.type === 2) {
+                    this.navigation.simpleNavigation.popupOptions = JSON.stringify(this.navigation.simpleNavigation.popupOptions)
+                } else delete this.navigation.simpleNavigation.popupOptions
 
-            if (this.navigation.simpleNavigation.type === 3) {
-                this.navigation.simpleNavigation.type = 0
-            }
-            this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/save/', this.navigation, { headers: { 'X-Disable-Errors': 'true' } })
-                .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t(this.crossNavigationDescriptor.operation[this.operation].toastTitle),
-                        msg: this.$t(this.crossNavigationDescriptor.operation.success)
+                if (this.navigation.simpleNavigation.type === 3) {
+                    this.navigation.simpleNavigation.type = 0
+                }
+                this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/save/', this.navigation, { headers: { 'X-Disable-Errors': 'true' } })
+                    .then(() => {
+                        this.$store.commit('setInfo', {
+                            title: this.$t(this.crossNavigationDescriptor.operation[this.operation].toastTitle),
+                            msg: this.$t(this.crossNavigationDescriptor.operation.success)
+                        })
+                        this.$emit('saved', this.operation, this.navigation.simpleNavigation.name)
                     })
-                    this.$emit('saved', this.operation, this.navigation.simpleNavigation.name)
-                })
-                .catch((error) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.error.saving'),
-                        msg: error.message
+                    .catch((error) => {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.error.saving'),
+                            msg: error.message
+                        })
                     })
+                    .finally(() => {
+                        if (this.navigation.simpleNavigation.type === 2) {
+                            this.navigation.simpleNavigation.popupOptions = JSON.parse(this.navigation.simpleNavigation.popupOptions)
+                        }
+                        if (this.navigation.simpleNavigation.type === 0) {
+                            this.navigation.simpleNavigation.type = 3
+                        }
+                    })
+            },
+            handleDropdown() {
+                if (!this.simpleNavigation.popupOptions) this.simpleNavigation.popupOptions = {}
+            },
+            selectDoc(type) {
+                this.docType = type
+                switch (type) {
+                    case 'origin':
+                        this.docId = this.simpleNavigation.fromDocId
+                        break
+                    case 'target':
+                        this.docId = this.simpleNavigation.toDocId
+                        break
+                }
+                this.dialogVisible = true
+            },
+            async hadleDoc(doc) {
+                this.dialogVisible = false
+                switch (this.docType) {
+                    case 'origin':
+                        this.simpleNavigation.fromDocId = doc.DOCUMENT_ID
+                        this.simpleNavigation.fromDoc = doc.DOCUMENT_LABEL
+                        this.navigation.simpleNavigation = this.simpleNavigation
+                        await this.loadInputParams(doc.DOCUMENT_LABEL).then((response) => (this.navigation.fromPars = response))
+                        await this.loadOutputParams(doc.DOCUMENT_ID).then((response) => (this.navigation.fromPars = this.navigation.fromPars.concat(response)))
+                        this.removeAllLink()
+                        break
+                    case 'target':
+                        this.simpleNavigation.toDocId = doc.DOCUMENT_ID
+                        this.simpleNavigation.toDoc = doc.DOCUMENT_LABEL
+                        this.navigation.simpleNavigation = this.simpleNavigation
+                        await this.loadInputParams(doc.DOCUMENT_LABEL).then((response) => (this.navigation.toPars = response))
+                        break
+                }
+                this.setDirty()
+            },
+            async loadInputParams(label) {
+                let params = []
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/documents/' + label + '/parameters').then(
+                    (response: AxiosResponse<any>) =>
+                        (params = response.data.results.map((param: any) => {
+                            return { id: param.id, name: param.label, type: 1, parType: param.parType }
+                        }))
+                )
+                return params
+            },
+            async loadOutputParams(id) {
+                let params = []
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/' + id + '/listOutParams').then(
+                    (response: AxiosResponse<any>) =>
+                        (params = response.data.map((param: any) => {
+                            return { id: param.id, name: param.name, type: 0, parType: param.type.valueCd }
+                        }))
+                )
+                return params
+            },
+            removeAllLink() {
+                this.navigation.toPars?.forEach((param) => {
+                    param.links = []
                 })
-                .finally(() => {
-                    if (this.navigation.simpleNavigation.type === 2) {
-                        this.navigation.simpleNavigation.popupOptions = JSON.parse(this.navigation.simpleNavigation.popupOptions)
-                    }
-                    if (this.navigation.simpleNavigation.type === 0) {
-                        this.navigation.simpleNavigation.type = 3
-                    }
-                })
-        },
-        handleDropdown() {
-            if (!this.simpleNavigation.popupOptions) this.simpleNavigation.popupOptions = {}
-        },
-        selectDoc(type) {
-            this.docType = type
-            switch (type) {
-                case 'origin':
-                    this.docId = this.simpleNavigation.fromDocId
-                    break
-                case 'target':
-                    this.docId = this.simpleNavigation.toDocId
-                    break
+            },
+            hintDialog(type: string) {
+                switch (type) {
+                    case 'desc':
+                        this.hintDialogTitle = this.$t('managers.crossNavigationManagement.hindDesc')
+                        this.hintDialogMessage = this.$t('managers.crossNavigationManagement.hindDescMessage')
+                        break
+                    case 'bread':
+                        this.hintDialogTitle = this.$t('managers.crossNavigationManagement.hindBread')
+                        this.hintDialogMessage = this.$t('managers.crossNavigationManagement.hindBreadMessage')
+                }
+                this.hintDialogVisiable = true
             }
-            this.dialogVisible = true
-        },
-        async hadleDoc(doc) {
-            this.dialogVisible = false
-            switch (this.docType) {
-                case 'origin':
-                    this.simpleNavigation.fromDocId = doc.DOCUMENT_ID
-                    this.simpleNavigation.fromDoc = doc.DOCUMENT_LABEL
-                    this.navigation.simpleNavigation = this.simpleNavigation
-                    await this.loadInputParams(doc.DOCUMENT_LABEL).then((response) => (this.navigation.fromPars = response))
-                    await this.loadOutputParams(doc.DOCUMENT_ID).then((response) => (this.navigation.fromPars = this.navigation.fromPars.concat(response)))
-                    this.removeAllLink()
-                    break
-                case 'target':
-                    this.simpleNavigation.toDocId = doc.DOCUMENT_ID
-                    this.simpleNavigation.toDoc = doc.DOCUMENT_LABEL
-                    this.navigation.simpleNavigation = this.simpleNavigation
-                    await this.loadInputParams(doc.DOCUMENT_LABEL).then((response) => (this.navigation.toPars = response))
-                    break
-            }
-            this.setDirty()
-        },
-        async loadInputParams(label) {
-            let params = []
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/documents/' + label + '/parameters').then(
-                (response: AxiosResponse<any>) =>
-                    (params = response.data.results.map((param: any) => {
-                        return { id: param.id, name: param.label, type: 1, parType: param.parType }
-                    }))
-            )
-            return params
-        },
-        async loadOutputParams(id) {
-            let params = []
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/' + id + '/listOutParams').then(
-                (response: AxiosResponse<any>) =>
-                    (params = response.data.map((param: any) => {
-                        return { id: param.id, name: param.name, type: 0, parType: param.type.valueCd }
-                    }))
-            )
-            return params
-        },
-        removeAllLink() {
-            this.navigation.toPars?.forEach((param) => {
-                param.links = []
-            })
-        },
-        hintDialog(type: string) {
-            switch (type) {
-                case 'desc':
-                    this.hintDialogTitle = this.$t('managers.crossNavigationManagement.hindDesc')
-                    this.hintDialogMessage = this.$t('managers.crossNavigationManagement.hindDescMessage')
-                    break
-                case 'bread':
-                    this.hintDialogTitle = this.$t('managers.crossNavigationManagement.hindBread')
-                    this.hintDialogMessage = this.$t('managers.crossNavigationManagement.hindBreadMessage')
-            }
-            this.hintDialogVisiable = true
         }
-    }
-})
+    })
 </script>
