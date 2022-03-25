@@ -6,7 +6,7 @@
             </template>
             <template #end>
                 <Button class="p-button-text p-button-rounded p-button-plain" :label="$t('workspace.gis.editMap')" @click="logGis" />
-                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDialogDisabled" @click="saveDialogVisible = true" />
+                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDialogDisabled" @click="saveOrUpdateGis" />
                 <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" />
             </template>
         </Toolbar>
@@ -77,10 +77,10 @@
             </template>
         </Dialog>
 
-        <div class="p-d-flex p-flex-row p-jc-end p-mt-auto p-mb-2 p-mr-2">
+        <!-- <div class="p-d-flex p-flex-row p-jc-end p-mt-auto p-mb-2 p-mr-2">
             <Button class="kn-button kn-button--secondary"> {{ $t('common.back') }}</Button>
             <Button class="kn-button kn-button--primary p-ml-2"> {{ $t('common.next') }}</Button>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -268,6 +268,13 @@ export default defineComponent({
             this.documentData.selectedLayer = layer
             this.isDatasetChosen ? this.loadLayerColumns(layer[0].layerId) : ''
         },
+        saveOrUpdateGis() {
+            if (this.$route.path.includes('edit')) {
+                this.buildGisTemplate()
+            } else {
+                this.saveDialogVisible = true
+            }
+        },
         buildGisTemplate() {
             console.log(this.documentData)
             let template = {} as any
@@ -295,7 +302,20 @@ export default defineComponent({
             this.saveGisDocument(template)
         },
         async saveGisDocument(template) {
-            if (this.$route.path.includes('new')) {
+            if (this.$route.path.includes('edit')) {
+                let postData = {} as any
+                postData.DATASET_LABEL = this.documentData.datasetLabel
+                postData.DOCUMENT_LABEL = this.documentData.documentLabel
+                postData.TEMPLATE = template
+                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/saveGeoReportTemplate`, postData).then((response: AxiosResponse<any>) => {
+                    this.saveDialogVisible = false
+                    this.$store.commit('setInfo', {
+                        title: 'Saved',
+                        msg: 'SAVED OK'
+                    }),
+                        console.log(response)
+                })
+            } else {
                 let postData = {} as any
                 let d = new Date()
                 let docLabel = 'geomap_' + (d.getTime() % 10000000)
@@ -312,8 +332,6 @@ export default defineComponent({
                     }),
                         console.log(response)
                 })
-            } else {
-                //TODO: Edit Logic
             }
         }
     }
