@@ -24,7 +24,7 @@
 import { defineComponent, PropType } from 'vue'
 import { iNodeMetadata, iNodeMetadataField, iDimensionMetadata } from '../../../HierarchyManagement'
 import Dialog from 'primevue/dialog'
-import hierarchyManagementHierarchyMasterDialogDescriptor from './HierarchyManagementHierarchyDescriptor.json'
+import hierarchyManagementHierarchyMasterDialogDescriptor from './HierarchyManagementMasterDescriptor.json'
 import HierarchyManagementHierarchyMasterForm from './HierarchyManagementHierarchyMasterForm.vue'
 import HierarchyManagementHierarchyMasterSelectList from './HierarchyManagementHierarchyMasterSelectList.vue'
 
