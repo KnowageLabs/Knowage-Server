@@ -22,145 +22,145 @@
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
-import descriptor from './DetailSidebarDescriptor.json'
-import cardDescriptor from './WorkspaceCardDescriptor.json'
-import Menu from 'primevue/contextmenu'
+    import { defineComponent } from 'vue'
+    import descriptor from './DetailSidebarDescriptor.json'
+    import cardDescriptor from './WorkspaceCardDescriptor.json'
+    import Menu from 'primevue/contextmenu'
 
-export default defineComponent({
-    name: 'workspace-sidebar',
-    components: { Menu },
-    //prettier-ignore
-    emits: ['executeRecent','executeDocumentFromOrganizer','moveDocumentToFolder','deleteDocumentFromOrganizer','executeAnalysisDocument','editAnalysisDocument','shareAnalysisDocument','cloneAnalysisDocument','deleteAnalysisDocument','uploadAnalysisPreviewFile','openDatasetInQBE','editDataset','deleteDataset','previewDataset','deleteDataset','editFileDataset','exportToXlsx','exportToCsv','getHelp','downloadDatasetFile','shareDataset','openSidebar', 'cloneDataset', 'prepareData', 'openDataPreparation'],
-    props: { visible: Boolean, viewType: String, document: Object as any, isPrepared: Boolean },
-    computed: {
-        isOwner(): any {
-            return (this.$store.state as any).user.fullName === this.document.creationUser
-        },
+    export default defineComponent({
+        name: 'workspace-sidebar',
+        components: { Menu },
+        //prettier-ignore
+        emits: ['executeRecent','executeDocumentFromOrganizer','moveDocumentToFolder','deleteDocumentFromOrganizer','executeAnalysisDocument','editAnalysisDocument','shareAnalysisDocument','cloneAnalysisDocument','deleteAnalysisDocument','uploadAnalysisPreviewFile','openDatasetInQBE','editDataset','deleteDataset','previewDataset','deleteDataset','editFileDataset','exportToXlsx','exportToCsv','getHelp','downloadDatasetFile','shareDataset','openSidebar', 'cloneDataset', 'prepareData', 'openDataPreparation'],
+        props: { visible: Boolean, viewType: String, document: Object as any, isPrepared: Boolean },
+        computed: {
+            isOwner(): any {
+                return (this.$store.state as any).user.fullName === this.document.creationUser
+            },
 
-        isAnalysisShared(): any {
-            return this.document.functionalities.length > 1
-        },
-        isDatasetOwner(): any {
-            return (this.$store.state as any).user.fullName === this.document.owner
-        },
-        showQbeEditButton(): any {
-            return (this.$store.state as any).user.fullName === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
-        },
-        datasetHasDrivers(): any {
-            return this.document.drivers && this.document.length > 0
-        },
-        datasetHasParams(): any {
-            return this.document.pars && this.document.pars > 0
-        },
-        datasetIsIterable(): any {
-            // in order to export to XLSX, dataset must implement an iterator (BE side)
-            let notIterableDataSets = ['Federated']
-            if (notIterableDataSets.includes(this.document.dsTypeCd)) return false
-            else return true
-        },
-        canLoadData(): any {
-            if (this.document.actions) {
-                for (var i = 0; i < this.document.actions.length; i++) {
-                    var action = this.document.actions[i]
-                    if (action.name == 'loaddata') {
-                        return true
+            isAnalysisShared(): any {
+                return this.document.functionalities.length > 1
+            },
+            isDatasetOwner(): any {
+                return (this.$store.state as any).user.fullName === this.document.owner
+            },
+            showQbeEditButton(): any {
+                return (this.$store.state as any).user.fullName === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
+            },
+            datasetHasDrivers(): any {
+                return this.document.drivers && this.document.length > 0
+            },
+            datasetHasParams(): any {
+                return this.document.pars && this.document.pars > 0
+            },
+            datasetIsIterable(): any {
+                // in order to export to XLSX, dataset must implement an iterator (BE side)
+                let notIterableDataSets = ['Federated']
+                if (notIterableDataSets.includes(this.document.dsTypeCd)) return false
+                else return true
+            },
+            canLoadData(): any {
+                if (this.document.actions) {
+                    for (var i = 0; i < this.document.actions.length; i++) {
+                        var action = this.document.actions[i]
+                        if (action.name == 'loaddata') {
+                            return true
+                        }
                     }
                 }
-            }
-            return false
-        },
-        documentImageSource(): any {
-            if (this.document[this.documentFields.image]) {
+                return false
+            },
+            documentImageSource(): any {
+                if (this.document[this.documentFields.image]) {
+                    return {
+                        //TODO: 2nd image is the fallback in case there is an error iwth source image --- url(imgSource)url(fallbackImg), Change default image to your liking
+                        'background-image': `url(${process.env.VUE_APP_HOST_URL}${descriptor.imgPath}${this.document[this.documentFields.image]}),url(https://i.imgur.com/9N1aRkx.png)`
+                    }
+                }
                 return {
-                    //TODO: 2nd image is the fallback in case there is an error iwth source image --- url(imgSource)url(fallbackImg), Change default image to your liking
-                    'background-image': `url(${process.env.VUE_APP_HOST_URL}${descriptor.imgPath}${this.document[this.documentFields.image]}),url(https://i.imgur.com/9N1aRkx.png)`
+                    //TODO: Change default image to your liking
+                    'background-image': `url(https://i.imgur.com/9N1aRkx.png)`
+                }
+            },
+            documentFields(): any {
+                switch (this.viewType) {
+                    case 'recent':
+                        return cardDescriptor.defaultViewFields
+                    case 'repository':
+                        return cardDescriptor.defaultViewFields
+                    case 'dataset':
+                        return cardDescriptor.datasetViewFields
+                    case 'analysis':
+                        return cardDescriptor.analysisViewFields
+                    case 'businessModel':
+                        return cardDescriptor.businessModelViewFields
+                    case 'federationDataset':
+                        return cardDescriptor.federationDatasetViewFields
+                    default:
+                        return []
+                }
+            },
+            documentButtons(): any {
+                switch (this.viewType) {
+                    case 'recent':
+                        return [
+                            { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
+                            { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeRecent') }
+                        ]
+                    case 'repository':
+                        return [
+                            { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
+                            { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
+                            { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeDocumentFromOrganizer') }
+                        ]
+                    case 'dataset':
+                        return [
+                            { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
+                            { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
+                            { icon: 'fas fa-eye', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('previewDataset') }
+                        ]
+                    case 'analysis':
+                        return [
+                            { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
+                            { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
+                            { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeAnalysisDocument') }
+                        ]
+                    case 'businessModel':
+                        return [
+                            { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
+                            { icon: 'fa fa-search', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('openDatasetInQBE') }
+                        ]
+                    case 'federationDataset':
+                        return [
+                            { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
+                            { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
+                            { icon: 'fa fa-search', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('openDatasetInQBE') }
+                        ]
+                    default:
+                        return []
                 }
             }
-            return {
-                //TODO: Change default image to your liking
-                'background-image': `url(https://i.imgur.com/9N1aRkx.png)`
-            }
         },
-        documentFields(): any {
-            switch (this.viewType) {
-                case 'recent':
-                    return cardDescriptor.defaultViewFields
-                case 'repository':
-                    return cardDescriptor.defaultViewFields
-                case 'dataset':
-                    return cardDescriptor.datasetViewFields
-                case 'analysis':
-                    return cardDescriptor.analysisViewFields
-                case 'businessModel':
-                    return cardDescriptor.businessModelViewFields
-                case 'federationDataset':
-                    return cardDescriptor.federationDatasetViewFields
-                default:
-                    return []
-            }
-        },
-        documentButtons(): any {
-            switch (this.viewType) {
-                case 'recent':
-                    return [
-                        { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeRecent') }
-                    ]
-                case 'repository':
-                    return [
-                        { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
-                        { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeDocumentFromOrganizer') }
-                    ]
-                case 'dataset':
-                    return [
-                        { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
-                        { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
-                        { icon: 'fas fa-eye', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('previewDataset') }
-                    ]
-                case 'analysis':
-                    return [
-                        { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
-                        { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
-                        { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeAnalysisDocument') }
-                    ]
-                case 'businessModel':
-                    return [
-                        { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
-                        { icon: 'fa fa-search', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('openDatasetInQBE') }
-                    ]
-                case 'federationDataset':
-                    return [
-                        { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
-                        { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
-                        { icon: 'fa fa-search', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('openDatasetInQBE') }
-                    ]
-                default:
-                    return []
-            }
-        }
-    },
 
-    data() {
-        return {
-            cardDescriptor,
-            sidebarVisible: false,
-            menuButtons: [] as any
-        }
-    },
-    methods: {
-        showMenu(event) {
-            this.createMenuItems()
-            // eslint-disable-next-line
-            // @ts-ignore
-            this.$refs.optionsMenu.toggle(event)
+        data() {
+            return {
+                cardDescriptor,
+                sidebarVisible: false,
+                menuButtons: [] as any
+            }
         },
-        emitEvent(event) {
-            return () => this.$emit(event, this.document)
-        },
-        // prettier-ignore
-        createMenuItems() {
+        methods: {
+            showMenu(event) {
+                this.createMenuItems()
+                // eslint-disable-next-line
+                // @ts-ignore
+                this.$refs.optionsMenu.toggle(event)
+            },
+            emitEvent(event) {
+                return () => this.$emit(event, this.document)
+            },
+            // prettier-ignore
+            createMenuItems() {
             this.menuButtons = []
             if (this.viewType == 'analysis') {
                 this.menuButtons.push(
@@ -181,7 +181,8 @@ export default defineComponent({
                     { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: this.emitEvent('shareDataset'), visible: this.canLoadData && this.isDatasetOwner },
                     { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: this.emitEvent('cloneDataset'), visible: this.canLoadData && this.document.dsTypeCd == 'Qbe' },
                     { key: '7', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: this.emitEvent('openDataPreparation'), visible: this.canLoadData && this.document.dsTypeCd != 'Qbe' && (this.document.pars && this.document.pars.length == 0) },
-                    { key: '8', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: this.emitEvent('deleteDataset'), visible: this.isDatasetOwner }
+                    { key: '8', label: this.$t('workspace.myData.monitoring'), icon: 'pi pi-chart-line', command: this.emitEvent('monitoring'), visible: this.canLoadData && this.document.dsTypeCd != 'Qbe' && (this.document.pars && this.document.pars.length == 0) },
+                    { key: '9', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: this.emitEvent('deleteDataset'), visible: this.isDatasetOwner }
                 )
             } else if (this.viewType === 'federationDataset') {
                 this.menuButtons.push( 
@@ -194,19 +195,19 @@ export default defineComponent({
             )
             }
         }
-    }
-})
+        }
+    })
 </script>
 <style lang="scss" scoped>
-@media screen and (max-width: 576px) {
-    .card-image {
-        display: none;
+    @media screen and (max-width: 576px) {
+        .card-image {
+            display: none;
+        }
+        .details-container {
+            border-radius: 10px;
+        }
+        #list-button {
+            display: none;
+        }
     }
-    .details-container {
-        border-radius: 10px;
-    }
-    #list-button {
-        display: none;
-    }
-}
 </style>

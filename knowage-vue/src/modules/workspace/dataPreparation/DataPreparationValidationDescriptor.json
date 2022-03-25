@@ -1,4 +1,5 @@
 {
+    "hint": "managers.workspaceManagement.dataPreparation.dataset.hint",
     "validations": {
         "configuration": [
             {

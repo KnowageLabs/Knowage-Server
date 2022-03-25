@@ -1855,6 +1855,8 @@
             "dataPreparation": {
                 "dataset": {
                     "description": "Description",
+                    "enableSchedulation": "Enable schedulation",
+                    "hint": "No scheduling applied to this dataset. It will only run once. If you want to enable schedulation, use the enable schedulation switch.",
                     "label": "Label",
                     "name": "Name",
                     "refreshRate": {
@@ -1869,6 +1871,9 @@
                         "label": "Refresh rate"
                     },
                     "visibility": "Visibility"
+                },
+                "errors": {
+                    "updatingSchedulation": "An error occurred while updating schedulation"
                 },
                 "label": "Data preparation",
                 "monitoring": {

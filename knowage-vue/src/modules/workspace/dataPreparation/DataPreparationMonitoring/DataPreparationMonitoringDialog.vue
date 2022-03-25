@@ -1,9 +1,9 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary schedulerDialog" v-bind:visible="visibility" footer="footer" :header="$t('common.import')" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary schedulerDialog" v-bind:visible="visibility" footer="footer" :header="$t('workspace.myData.monitoring')" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }" :closable="false">
         <div class="p-grid p-d-flex p-m-1 p-fluid">
             <div class="p-col-5">
                 <Card class="kn-card full-height">
-                    <template #content><KnScheduler class="p-m-1" :formula="currentCronExpression" :descriptor="schedulerDescriptor" @touched="touched = true" :readOnly="true" /> </template
+                    <template #content><KnScheduler class="p-m-1" :cronExpression="currentCronExpression" :descriptor="schedulerDescriptor" @touched="touched = true" :readOnly="false" /> </template
                 ></Card>
             </div>
             <div class="p-col-7">
@@ -61,9 +61,9 @@
             </div>
         </div>
         <template #footer>
-            <Button v-bind:visible="visibility" class="p-button-text kn-button--secondary" :label="$t('common.cancel')" @click="resetAndClose" />
+            <Button v-bind:visible="visibility" class="kn-button--secondary" :label="$t('common.cancel')" @click="cancel" />
 
-            <Button v-bind:visible="visibility" class="kn-button kn-button--primary" v-t="'common.save'" @click="sendSchedulation" />
+            <Button v-bind:visible="visibility" class="kn-button--primary" v-t="'common.save'" @click="sendSchedulation" :disabled="!touched" />
         </template>
     </Dialog>
 </template>
@@ -87,10 +87,10 @@
     import { filterDefault } from '@/helpers/commons/filterHelper'
 
     export default defineComponent({
-        name: 'data-preparation-scheduler-dialog',
+        name: 'data-preparation-monitoring-dialog',
         components: { Card, Column, DataTable, Dialog, KnScheduler },
         props: { visibility: Boolean, dataset: Object },
-        emits: ['close'],
+        emits: ['close', 'save', 'update:loading'],
         data() {
             return {
                 schedulerDescriptor: dataPreparationMonitoringDescriptor,
@@ -99,14 +99,17 @@
                 filters: { global: [filterDefault] } as Object,
                 validSchedulation: Boolean,
 
-                currentCronExpression: ''
+                currentCronExpression: '',
+                touched: false
             }
         },
 
         watch: {
             visibility(newVisibility) {
                 if (newVisibility) {
+                    this.$emit('update:loading', true)
                     this.loadLogs()
+                    this.$emit('update:loading', false)
                 } else {
                     this.logs = []
                 }
@@ -136,8 +139,21 @@
                     })
                 }
             },
+            cancel() {
+                if (this.touched) {
+                    this.$confirm.require({
+                        message: this.$t('common.toast.unsavedChangesHeader'),
+                        header: this.$t('common.toast.unsavedChangesMessage'),
+                        icon: 'pi pi-exclamation-triangle',
+                        accept: () => this.resetAndClose()
+                    })
+                } else {
+                    this.resetAndClose()
+                }
+            },
             resetAndClose() {
                 this.currentCronExpression = ''
+                this.touched = false
                 this.$emit('close')
             },
             sendSchedulation() {
@@ -145,6 +161,9 @@
             },
             setCronValid(event) {
                 this.validSchedulation = event.item
+            },
+            saveSchedulation() {
+                this.$emit('save', this.currentCronExpression)
             }
         }
     })
