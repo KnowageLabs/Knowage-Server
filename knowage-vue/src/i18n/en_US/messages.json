@@ -1633,7 +1633,9 @@
                 "TEST_ROLE": "Test User",
                 "USER": "User"
             },
-            "title": "Roles Management"
+            "title": "Roles Management",
+            "publicRoleWarning1": "If you continue saving the public role will be removed from ",
+            "publicRoleWarning2": " to the selected one. Are you sure?"
         },
         "schedulationAgendaManagement": {
             "detail": {
