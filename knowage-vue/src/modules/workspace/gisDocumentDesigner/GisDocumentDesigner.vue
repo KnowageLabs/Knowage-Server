@@ -11,34 +11,36 @@
                 <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" />
             </template>
         </Toolbar>
-        <TabView v-if="!loading">
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('workspace.gis.datasetLayerTitle') }}</span>
-                </template>
-                <DatasetLayerTab :documentDataProp="documentData" :isDatasetChosen="isDatasetChosen" @datasetChanged="onDatasetChange($event)" @layerChanged="onLayerChange($event)" @datasetDeleted="onDatasetDelete" />
-            </TabPanel>
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('workspace.gis.datasetJoinTitle') }}</span>
-                </template>
-                <DatasetJoinTab :documentDataProp="documentData" @joinsValidationChanged="onJoinValidationChange" />
-            </TabPanel>
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('workspace.gis.indicators') }}</span>
-                </template>
+        <div class="gis-tabview-container p-d-flex p-flex-column kn-flex">
+            <TabView v-if="!loading" class="p-d-flex p-flex-column kn-flex">
+                <TabPanel>
+                    <template #header>
+                        <span>{{ $t('workspace.gis.datasetLayerTitle') }}</span>
+                    </template>
+                    <DatasetLayerTab :documentDataProp="documentData" :isDatasetChosen="isDatasetChosen" @datasetChanged="onDatasetChange($event)" @layerChanged="onLayerChange($event)" @datasetDeleted="onDatasetDelete" />
+                </TabPanel>
+                <TabPanel>
+                    <template #header>
+                        <span>{{ $t('workspace.gis.datasetJoinTitle') }}</span>
+                    </template>
+                    <DatasetJoinTab :documentDataProp="documentData" @joinsValidationChanged="onJoinValidationChange" />
+                </TabPanel>
+                <TabPanel>
+                    <template #header>
+                        <span>{{ $t('workspace.gis.indicators') }}</span>
+                    </template>
 
-                <IndicatorsTab :documentDataProp="documentData" @indicatorsValidationChanged="onIndicatorsValidationChanged" />
-            </TabPanel>
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('workspace.gis.filtersMenu') }}</span>
-                </template>
+                    <IndicatorsTab :documentDataProp="documentData" @indicatorsValidationChanged="onIndicatorsValidationChanged" />
+                </TabPanel>
+                <TabPanel>
+                    <template #header>
+                        <span>{{ $t('workspace.gis.filtersMenu') }}</span>
+                    </template>
 
-                <MenuTab :documentDataProp="documentData" />
-            </TabPanel>
-        </TabView>
+                    <MenuTab :documentDataProp="documentData" />
+                </TabPanel>
+            </TabView>
+        </div>
 
         <Dialog class="p-fluid kn-dialog--toolbar--primary" :style="descriptor.style.dialogSize" v-if="saveDialogVisible" :visible="saveDialogVisible" :modal="true" :closable="false">
             <template #header>
@@ -66,6 +68,11 @@
                 </div>
             </template>
         </Dialog>
+
+        <div class="p-d-flex p-flex-row p-jc-end p-mt-auto p-mb-2 p-mr-2">
+            <Button class="kn-button kn-button--secondary"> {{ $t('common.cancel') }}</Button>
+            <Button class="kn-button kn-button--primary p-ml-2"> {{ $t('common.save') }}</Button>
+        </div>
     </div>
 </template>
 
@@ -271,3 +278,11 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss">
+.gis-tabview-container .p-tabview .p-tabview-panel,
+.gis-tabview-container .p-tabview .p-tabview-panels {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+</style>

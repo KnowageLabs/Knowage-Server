@@ -1,39 +1,38 @@
 <template>
-    <Card>
-        <template #header>
-            <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0 p-col-12">
-                <template #start>{{ $t('workspace.gis.indicators') }}</template>
-                <template #end> <Button class="p-button-link" :label="$t('workspace.gis.dsj.addButton')" @click="addIndicatorRow" /> </template>
-            </Toolbar>
-        </template>
-        <template #content>
-            <DataTable class="p-datatable-sm kn-table georef-step1-table" :value="documentDataProp.indicators" responsiveLayout="scroll" breakpoint="600px">
-                <template #empty>
-                    {{ $t('workspace.gis.dnl.emptyInfo') }}
+    <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0 p-col-12">
+        <template #start>{{ $t('workspace.gis.indicators') }}</template>
+        <template #end> <Button class="p-button-link" :label="$t('workspace.gis.dsj.addButton')" @click="addIndicatorRow" /> </template>
+    </Toolbar>
+    <div id="informations-content" class="kn-flex kn-relative kn-height-full">
+        <div :style="styleDescriptor.style.absoluteScroll">
+            <Card>
+                <template #content>
+                    <DataTable class="p-datatable-sm kn-table georef-step1-table" :value="documentDataProp.indicators" responsiveLayout="scroll" breakpoint="600px">
+                        <template #empty>
+                            {{ $t('workspace.gis.dnl.emptyInfo') }}
+                        </template>
+                        <Column field="name" :header="$t('qbe.entities.types.measure')" :sortable="true">
+                            <template #body="slotProps">
+                                <Dropdown id="measure" class="kn-material-input kn-width-full" v-model="slotProps.data.name" :options="documentDataProp.datasetMeasures" optionLabel="id" optionValue="id" :class="{ 'p-invalid': slotProps.data.name == null }" />
+                                <small for="measure" v-if="slotProps.data.name == null" class="p-error">Field required *</small>
+                            </template>
+                        </Column>
+                        <Column field="label" :header="$t('common.label')" :sortable="true">
+                            <template #body="slotProps">
+                                <InputText id="label" class="kn-material-input kn-width-full" v-model="slotProps.data.label" :class="{ 'p-invalid': slotProps.data.label == null || slotProps.data.label == '' }" />
+                                <small for="label" v-if="slotProps.data.label == null || slotProps.data.label == ''" class="p-error">Field required *</small>
+                            </template>
+                        </Column>
+                        <Column :style="styleDescriptor.style.trashColumn">
+                            <template #body="slotProps">
+                                <Button icon="pi pi-trash" class="p-button-link" @click="deleteIndicatorRow(slotProps)" />
+                            </template>
+                        </Column>
+                    </DataTable>
                 </template>
-                <Column field="name" :header="$t('qbe.entities.types.measure')" :sortable="true">
-                    <template #body="slotProps">
-                        <Dropdown id="measure" class="kn-material-input kn-width-full" v-model="slotProps.data.name" :options="documentDataProp.datasetMeasures" optionLabel="id" optionValue="id" :class="{ 'p-invalid': slotProps.data.name == null }" />
-                        <small for="measure" v-if="slotProps.data.name == null" class="p-error">Field required *</small>
-                    </template>
-                </Column>
-                <Column field="label" :header="$t('common.label')" :sortable="true">
-                    <template #body="slotProps">
-                        <InputText id="label" class="kn-material-input kn-width-full" v-model="slotProps.data.label" :class="{ 'p-invalid': slotProps.data.label == null || slotProps.data.label == '' }" />
-                        <small for="label" v-if="slotProps.data.label == null || slotProps.data.label == ''" class="p-error">Field required *</small>
-                    </template>
-                </Column>
-                <Column :style="styleDescriptor.style.trashColumn">
-                    <template #body="slotProps">
-                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteIndicatorRow(slotProps)" />
-                    </template>
-                </Column>
-            </DataTable>
-        </template>
-    </Card>
-    Indicators have error? : <b>{{ indicatorsInvalid }}</b>
-    <br />
-    Indicators have empty field? : <b>{{ indicatorsContainEmptyFields }}</b>
+            </Card>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
