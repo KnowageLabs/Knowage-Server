@@ -18,8 +18,12 @@
     width: 100%;
 }
 
+.kn-clickable {
+    cursor: pointer;
+}
+
 .kn-width-full-with-menu {
-    width: calc(100vw - var(kn-mainmenu-width));
+    width: calc(100vw - var(--kn-mainmenu-width));
 }
 
 .kn-detail {
@@ -163,6 +167,13 @@
     & > div {
         &:nth-child(even) {
             background-color: var(--kn-list-item-alternated-background-color);
+        }
+    }
+    .p-scrollpanel-content {
+        .p-field {
+            &:nth-child(even) {
+                background-color: var(--kn-list-item-alternated-background-color);
+            }
         }
     }
 }

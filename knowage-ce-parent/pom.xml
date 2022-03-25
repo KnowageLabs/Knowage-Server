@@ -84,6 +84,8 @@
 		<spring.boot>2.5.8</spring.boot>
 		<apache.poi>4.1.2</apache.poi>
 		<resteasy.version>3.6.2.Final</resteasy.version>
+		<quartz.version>2.3.2</quartz.version>
+		<quartz-oracle.version>2.1.7</quartz-oracle.version>
 	</properties>
 
 	<modules>
@@ -120,6 +122,7 @@
 		<module>../knowagedatabasescripts</module>
 		<module>../knowage-api</module>
 		<module>../knowage-vue</module>
+		<module>../knowage-spring-boot-api-common</module>
 	</modules>
 
 	<build>
@@ -357,6 +360,18 @@
 				<groupId>com.sun.xml.ws</groupId>
 				<artifactId>jaxws-rt</artifactId>
 				<version>2.3.3</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz</artifactId>
+				<version>${quartz.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz-oracle</artifactId>
+				<version>${quartz-oracle.version}</version>
 			</dependency>
 
 		</dependencies>

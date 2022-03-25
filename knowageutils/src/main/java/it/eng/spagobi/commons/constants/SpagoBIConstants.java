@@ -611,4 +611,8 @@ public class SpagoBIConstants {
 
 	public static final String THEME_MANAGEMENT = "ThemeManagement";
 
+	// Data Preparation
+
+	public static final String DATA_PREPARATION = "DataPreparation";
+
 }

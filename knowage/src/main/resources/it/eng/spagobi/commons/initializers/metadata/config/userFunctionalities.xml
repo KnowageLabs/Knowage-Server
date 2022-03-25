@@ -320,6 +320,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="PythonWidget" description="CreatePythonWidget" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="PythonDataset" description="CreatePythonDataset" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ProfileAttributeListManagement" description="ProfileAttributeListManagement" />
-	<USER_FUNCTIONALITY productType="KnowagePA" name="LicenseReadOnly" description="LicenseReadOnly" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="LicenseReadOnly" description="LicenseReadOnly" /> 
 	
 </USER_FUNCTIONALITIES>

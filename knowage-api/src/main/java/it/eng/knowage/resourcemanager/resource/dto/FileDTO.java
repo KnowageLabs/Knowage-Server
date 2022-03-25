@@ -21,8 +21,8 @@ import java.io.File;
 
 import javax.validation.constraints.NotNull;
 
-import it.eng.spagobi.services.validation.NotInvalidCharacters;
-import it.eng.spagobi.services.validation.Xss;
+import it.eng.knowage.boot.validation.NotInvalidCharacters;
+import it.eng.knowage.boot.validation.Xss;
 
 public class FileDTO {
 
