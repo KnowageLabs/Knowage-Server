@@ -36,6 +36,7 @@
         "delete": "delete",
         "deleteAll": "delete all",
         "description": "description",
+        "detail": "Detail",
         "details": "Details",
         "development": "Development",
         "documentDetails": "Document Details",
@@ -1302,6 +1303,7 @@
             "lev": "Lev.",
             "master": "Master",
             "recursive": "Recursive",
+            "showMissingElements": "Show missing elements",
             "synchronize": "Synchronize",
             "technical": "Technical"
         },

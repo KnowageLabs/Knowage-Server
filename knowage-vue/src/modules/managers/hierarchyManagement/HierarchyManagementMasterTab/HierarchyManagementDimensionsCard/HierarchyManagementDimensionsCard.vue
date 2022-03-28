@@ -25,12 +25,13 @@
                     </div>
                 </div>
 
-                <HierarchyManagementDimensionsTable :dimensionData="dimensionData"></HierarchyManagementDimensionsTable>
-
                 <div class="p-d-flex p-flex-row p-jc-around p-mt-2">
                     <Button class="kn-button kn-button--primary hierarchy-management-dimension-card-button" :label="$t('managers.hierarchyManagement.createHierarchyMaster')" :disabled="!selectedDimension" @click="openHierarchyMasterDialog" />
                     <Button class="kn-button kn-button--primary hierarchy-management-dimension-card-button" :label="$t('managers.hierarchyManagement.synchronize')" @click="synchronize" />
                 </div>
+
+                <HierarchyManagementDimensionsFilterCard :dimensionFilters="dimensionFilters"></HierarchyManagementDimensionsFilterCard>
+                <HierarchyManagementDimensionsTable v-show="dimensionData" :dimensionData="dimensionData"></HierarchyManagementDimensionsTable>
             </div>
             <HierarchyManagementHierarchyMasterDialog :visible="hierarchyMasterDialogVisible" :nodeMetadata="nodeMetadata" :dimensionMetadata="dimensionMetadata" @close="hierarchyMasterDialogVisible = false"></HierarchyManagementHierarchyMasterDialog>
         </template>
@@ -39,7 +40,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iDimension, iDimensionMetadata, iNodeMetadata } from '../../HierarchyManagement'
+import { iDimension, iDimensionMetadata, iNodeMetadata, iDimensionFilter } from '../../HierarchyManagement'
 import { AxiosResponse } from 'axios'
 import moment from 'moment'
 import Card from 'primevue/card'
@@ -47,10 +48,11 @@ import Calendar from 'primevue/calendar'
 import Dropdown from 'primevue/dropdown'
 import HierarchyManagementDimensionsTable from './HierarchyManagementDimensionsTable/HierarchyManagementDimensionsTable.vue'
 import HierarchyManagementHierarchyMasterDialog from './HierarchyManagementHierarchyMasterDialog/HierarchyManagementHierarchyMasterDialog.vue'
+import HierarchyManagementDimensionsFilterCard from './HierarchyManagementDimensionsFilterCard/HierarchyManagementDimensionsFilterCard.vue'
 
 export default defineComponent({
     name: 'hierarchy-management-dimensions-card',
-    components: { Card, Calendar, Dropdown, HierarchyManagementDimensionsTable, HierarchyManagementHierarchyMasterDialog },
+    components: { Card, Calendar, Dropdown, HierarchyManagementDimensionsTable, HierarchyManagementHierarchyMasterDialog, HierarchyManagementDimensionsFilterCard },
     props: { dimensions: { type: Array as PropType<iDimension[]> } },
     emits: ['loading'],
     data() {
@@ -60,7 +62,8 @@ export default defineComponent({
             hierarchyMasterDialogVisible: false,
             dimensionData: null as any,
             dimensionMetadata: null as iDimensionMetadata | null,
-            nodeMetadata: null as iNodeMetadata | null
+            nodeMetadata: null as iNodeMetadata | null,
+            dimensionFilters: [] as iDimensionFilter[]
         }
     },
     async created() {},
@@ -69,10 +72,11 @@ export default defineComponent({
             await this.loadDimensionData()
             await this.loadDimensionMetadata()
             await this.loadNodeMetadata()
+            await this.loadDimensionFilters()
         },
         async loadDimensionData() {
             this.$emit('loading', true)
-            this.dimensionData = []
+            this.dimensionData = null
             const date = moment(this.validityDate).format('YYYY-MM-DD')
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dimensions/dimensionData?dimension=${this.selectedDimension?.DIMENSION_NM}&validityDate=${date}`).then((response: AxiosResponse<any>) => (this.dimensionData = response.data))
             this.$emit('loading', false)
@@ -85,6 +89,11 @@ export default defineComponent({
         async loadNodeMetadata() {
             this.$emit('loading', true)
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/nodeMetadata?dimension=${this.selectedDimension?.DIMENSION_NM}&excludeLeaf=false`).then((response: AxiosResponse<any>) => (this.nodeMetadata = response.data))
+            this.$emit('loading', false)
+        },
+        async loadDimensionFilters() {
+            this.$emit('loading', true)
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dimensions/dimensionFilterMetadata?dimension=CDC`).then((response: AxiosResponse<any>) => (this.dimensionFilters = response.data?.DIM_FILTERS))
             this.$emit('loading', false)
         },
         openHierarchyMasterDialog() {

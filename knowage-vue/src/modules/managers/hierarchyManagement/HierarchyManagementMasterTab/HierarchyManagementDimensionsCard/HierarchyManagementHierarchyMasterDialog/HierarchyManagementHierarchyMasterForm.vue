@@ -43,7 +43,6 @@ export default defineComponent({
     methods: {
         loadFields() {
             this.fields = this.nodeGeneralFields as iNodeMetadataField[]
-            console.log('LOADED FIELDS: ', this.fields)
         }
     }
 })
