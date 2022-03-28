@@ -11,9 +11,14 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <div class="p-d-flex p-flex-row p-ai-center">
+
+    <div class="p-d-flex p-flex-row p-ai-center p-flex-wrap">
         <InputText id="model-search" class="kn-material-input p-m-3" v-model="searchWord" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
-        <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="onTableModeChange" />
+        <span class="p-float-label p-mr-auto">
+            <MultiSelect class="kn-material-input" :style="mainDescriptor.style.multiselect" v-model="selectedCategories" :options="modelCategories" optionLabel="VALUE_CD" @change="searchItems" :filter="true" />
+            <label class="kn-material-input-label"> {{ $t('common.type') }} </label>
+        </span>
+        <SelectButton class="p-mx-2" v-model="tableMode" :options="selectButtonOptions" @click="onTableModeChange" />
     </div>
 
     <div class="p-m-2 kn-overflow">
@@ -65,15 +70,18 @@ import SelectButton from 'primevue/selectbutton'
 import WorkspaceModelsTable from './tables/WorkspaceModelsTable.vue'
 import { AxiosResponse } from 'axios'
 import QBE from '@/modules/qbe/QBE.vue'
+import MultiSelect from 'primevue/multiselect'
 
 export default defineComponent({
     name: 'workspace-models-view',
-    components: { DetailSidebar, KnFabButton, Message, SelectButton, WorkspaceModelsTable, WorkspaceCard, QBE },
+    components: { MultiSelect, DetailSidebar, KnFabButton, Message, SelectButton, WorkspaceModelsTable, WorkspaceCard, QBE },
     emits: ['showMenu', 'toggleDisplayView', 'showQbeDialog'],
     props: { toggleCardDisplay: { type: Boolean } },
     data() {
         return {
             mainDescriptor,
+            selectedCategories: [] as any,
+            selectedCategoryIds: [] as any,
             businessModels: [] as IBusinessModel[],
             federatedDatasets: [] as IFederatedDataset[],
             allItems: [] as (IBusinessModel | IFederatedDataset)[],
@@ -88,7 +96,8 @@ export default defineComponent({
             datasetDrivers: null as any,
             datasetName: '',
             qbeVisible: false,
-            selectedQbeDataset: null
+            selectedQbeDataset: null,
+            modelCategories: [] as any
         }
     },
     computed: {
@@ -104,6 +113,7 @@ export default defineComponent({
     },
     async created() {
         this.user = (this.$store.state as any).user
+        await this.getModelCategories()
         await this.loadBusinessModels()
         if (this.hasEnableFederatedDatasetFunctionality) {
             await this.loadFederatedDatasets()
@@ -137,9 +147,21 @@ export default defineComponent({
             })
             this.loading = false
         },
-        searchItems() {
+        async getModelCategories() {
+            this.loading = true
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domainsforfinaluser/bm-categories`).then((response: AxiosResponse<any>) => {
+                this.modelCategories = [...response.data]
+            })
+        },
+        searchItems(event?) {
             setTimeout(() => {
-                if (!this.searchWord.trim().length) {
+                if (event.value) {
+                    this.selectedCategoryIds = [] as any
+                    event.value.forEach((el) => {
+                        this.selectedCategoryIds.push(el.VALUE_ID)
+                    })
+                }
+                if (!this.searchWord.trim().length && this.selectedCategoryIds.length == 0) {
                     this.filteredItems = [...this.allItems] as (IBusinessModel | IFederatedDataset)[]
                 } else {
                     let items = [] as (IBusinessModel | IFederatedDataset)[]
@@ -150,9 +172,16 @@ export default defineComponent({
                     } else {
                         items = this.allItems
                     }
-                    this.filteredItems = items.filter((el: any) => {
-                        return el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.description?.toLowerCase().includes(this.searchWord.toLowerCase())
-                    })
+
+                    if (this.selectedCategoryIds.length > 0) {
+                        this.filteredItems = items.filter((el: any) => {
+                            return this.selectedCategoryIds.includes(el.category) && (el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.description?.toLowerCase().includes(this.searchWord.toLowerCase()))
+                        })
+                    } else {
+                        this.filteredItems = items.filter((el: any) => {
+                            return el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.description?.toLowerCase().includes(this.searchWord.toLowerCase())
+                        })
+                    }
                 }
             }, 250)
         },
@@ -209,6 +238,8 @@ export default defineComponent({
             this.$emit('toggleDisplayView')
         },
         onTableModeChange() {
+            this.selectedCategoryIds = [] as any
+            this.selectedCategories = [] as any
             switch (this.tableMode) {
                 case 'Business':
                     this.filteredItems = [...this.businessModels]
@@ -229,10 +260,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-#model-select-buttons {
-    margin: 2rem 2rem 2rem auto;
-}
-
 #model-search {
     flex: 0.3;
 }

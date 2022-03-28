@@ -12,9 +12,13 @@
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
-    <div class="p-d-flex p-flex-row p-ai-center">
+    <div class="p-d-flex p-flex-row p-ai-center p-flex-wrap">
         <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
-        <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" data-test="dataset-select" />
+        <span class="p-float-label p-mr-auto">
+            <MultiSelect class="kn-material-input" :style="mainDescriptor.style.multiselect" v-model="selectedCategories" :options="datasetCategories" optionLabel="VALUE_CD" @change="searchItems" :filter="true" />
+            <label class="kn-material-input-label"> {{ $t('common.type') }} </label>
+        </span>
+        <SelectButton class="p-mx-2" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" data-test="dataset-select" />
     </div>
 
     <div class="p-mx-2 kn-overflow">
@@ -132,9 +136,10 @@ import SelectButton from 'primevue/selectbutton'
 import QBE from '@/modules/qbe/QBE.vue'
 import { Client } from '@stomp/stompjs'
 import DataPreparationMonitoringDialog from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDialog.vue'
+import MultiSelect from 'primevue/multiselect'
 
 export default defineComponent({
-    components: { QBE, DataTable, Column, Chip, DataPreparationMonitoringDialog, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, SelectButton, Message },
+    components: { QBE, MultiSelect, DataTable, Column, Chip, DataPreparationMonitoringDialog, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, SelectButton, Message },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -178,6 +183,8 @@ export default defineComponent({
             showDetailSidebar: false,
             showDatasetDialog: false,
             datasetList: [] as any,
+            selectedCategories: [] as any,
+            selectedCategoryIds: [] as any,
             filteredDatasets: [] as any,
             avroDatasets: [] as any,
             loadingAvros: [] as any,
@@ -557,6 +564,8 @@ export default defineComponent({
         },
         async getDatasetsByFilter() {
             this.searchWord = ''
+            this.selectedCategoryIds = [] as any
+            this.selectedCategories = [] as any
             switch (this.tableMode) {
                 case 'My Datasets':
                     this.datasetList = this.getDatasets('owned')
@@ -591,10 +600,23 @@ export default defineComponent({
                         .finally(() => (this.loading = false))
             }
         },
-        searchItems() {
+        searchItems(event?) {
             setTimeout(() => {
-                if (!this.searchWord.trim().length) {
+                if (event.value) {
+                    this.selectedCategoryIds = [] as any
+                    event.value.forEach((el) => {
+                        this.selectedCategoryIds.push(el.VALUE_ID)
+                    })
+                }
+                if (!this.searchWord.trim().length && this.selectedCategoryIds.length == 0) {
                     this.filteredDatasets = [...this.datasetList] as any[]
+                } else if (this.selectedCategoryIds.length > 0) {
+                    this.filteredDatasets = this.datasetList.filter((el: any) => {
+                        return (
+                            this.selectedCategoryIds.includes(el.catTypeId) &&
+                            (el.label?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.dsTypeCd?.toLowerCase().includes(this.searchWord.toLowerCase()) || this.datasetTagFound(el))
+                        )
+                    })
                 } else {
                     this.filteredDatasets = this.datasetList.filter((el: any) => {
                         return el.label?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.dsTypeCd?.toLowerCase().includes(this.searchWord.toLowerCase()) || this.datasetTagFound(el)
@@ -636,9 +658,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style lang="scss" scoped>
-#model-select-buttons {
-    margin: 2rem 2rem 2rem auto;
-}
-</style>
