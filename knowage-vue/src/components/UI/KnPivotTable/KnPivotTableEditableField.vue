@@ -1,43 +1,45 @@
 <template>
-    <InputText
-        :style="knPivotTableDescriptor.pivotStyles.inputFields"
-        v-if="column.editorType !== 'COMBO' && column.columnInfo.type !== 'date'"
-        class="kn-material-input"
-        :type="setDataType(column.columnInfo.type)"
-        :step="getStep(column.columnInfo.type)"
-        v-model="row[column.field].data"
-        @input="$emit('rowChanged', row)"
-    />
-    <Calendar
-        :style="knPivotTableDescriptor.pivotStyles.inputFields"
-        class="pivot-calendar"
-        v-else-if="column.columnInfo.type === 'date' || column.columnInfo.type === 'timestamp'"
-        v-model="row[column.field].data"
-        :showTime="column.columnInfo.type === 'timestamp'"
-        :showSeconds="column.columnInfo.type === 'timestamp'"
-        :showButtonBar="true"
-        @date-select="$emit('rowChanged', row)"
-    />
-    <Dropdown
-        class="kn-material-input"
-        v-else-if="column.editorType === 'COMBO'"
-        v-model="row[column.field].data"
-        :options="columnOptions[column.field] ? columnOptions[column.field][row[column.dependences]?.data] : []"
-        :placeholder="$t('documentExecution.registry.select')"
-        @change="$emit('dropdownChanged', { row: row, column: column })"
-        @before-show="$emit('dropdownOpened', { row: row, column: column })"
-    >
-        <template #value="slotProps">
-            <div v-if="slotProps.value">
-                <span>{{ slotProps.value }}</span>
-            </div>
-        </template>
-        <template #option="slotProps">
-            <div>
-                <span>{{ slotProps.option['column_1'] }}</span>
-            </div>
-        </template>
-    </Dropdown>
+    <div v-if="column">
+        <InputText
+            :style="knPivotTableDescriptor.pivotStyles.inputFields"
+            v-if="column.editorType !== 'COMBO' && column.columnInfo.type !== 'date' && column.columnInfo.type !== 'timestamp'"
+            class="kn-material-input"
+            :type="setDataType(column.columnInfo.type)"
+            :step="getStep(column.columnInfo.type)"
+            v-model="row[column.field].data"
+            @input="$emit('rowChanged', row)"
+        />
+        <Calendar
+            :style="knPivotTableDescriptor.pivotStyles.inputFields"
+            class="pivot-calendar"
+            v-else-if="column.columnInfo.type === 'date' || column.columnInfo.type === 'timestamp'"
+            v-model="row[column.field].data"
+            :showTime="column.columnInfo.type === 'timestamp'"
+            :showSeconds="column.columnInfo.type === 'timestamp'"
+            :showButtonBar="true"
+            @date-select="$emit('rowChanged', row)"
+        />
+        <Dropdown
+            class="kn-material-input"
+            v-else-if="column.editorType === 'COMBO'"
+            v-model="row[column.field].data"
+            :options="columnOptions[column.field] ? columnOptions[column.field][row[column.dependences]?.data] : []"
+            :placeholder="$t('documentExecution.registry.select')"
+            @change="$emit('dropdownChanged', { row: row, column: column })"
+            @before-show="$emit('dropdownOpened', { row: row, column: column })"
+        >
+            <template #value="slotProps">
+                <div v-if="slotProps.value">
+                    <span>{{ slotProps.value }}</span>
+                </div>
+            </template>
+            <template #option="slotProps">
+                <div>
+                    <span>{{ slotProps.option['column_1'] }}</span>
+                </div>
+            </template>
+        </Dropdown>
+    </div>
 </template>
 
 <script lang="ts">
@@ -78,7 +80,7 @@ export default defineComponent({
     methods: {
         loadRow() {
             this.row = this.propRow
-            if (this.column?.columnInfo.type === 'date' && this.row[this.column.field].data) {
+            if ((this.column?.columnInfo.type === 'date' || this.column?.columnInfo.type === 'timestamp') && this.row[this.column.field].data) {
                 this.row[this.column.field].data = this.getFormattedDate(this.row[this.column.field].data, 'MM/DD/YYYY HH:mm:ss')
             }
         },

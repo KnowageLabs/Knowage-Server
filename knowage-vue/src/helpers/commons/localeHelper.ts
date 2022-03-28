@@ -10,8 +10,8 @@ function getLocale(js?: boolean): string {
     return js ? locale.replace('_', '-') : locale
 }
 
-export function formatDate(dateString?: string, format?: string) {
-    return moment(dateString || new Date())
+export function formatDate(dateString?: string, format?: string, incomingFormat?: string) {
+    return moment(dateString || new Date(), incomingFormat)
         .locale(getLocale())
         .format(format || 'L')
 }

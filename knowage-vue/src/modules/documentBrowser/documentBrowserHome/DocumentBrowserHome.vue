@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <DocumentDetails v-if="showDocumentDetails" :docId="documentId" :selectedDocument="selectedDocument" :selectedFolder="selectedFolder" :visible="showDocumentDetails" @closeDetails="showDocumentDetails = false" @reloadDocument="getSelectedDocument" />
+    <DocumentDetails v-if="showDocumentDetails" :docId="documentId" :selectedDocument="selectedDocument" :selectedFolder="selectedFolder" :visible="showDocumentDetails" @closeDetails="onCloseDetails" @reloadDocument="getSelectedDocument" />
 </template>
 
 <script lang="ts">
@@ -180,7 +180,7 @@ export default defineComponent({
             this.showDocumentDetails = true
         },
         createNewCockpit() {
-            this.$emit('itemSelected', { item: null, mode: 'createCockpit' })
+            this.$emit('itemSelected', { item: null, mode: 'createCockpit', functionalityId: this.selectedFolder.id })
         },
         toggleSidebarView() {
             this.sidebarVisible = !this.sidebarVisible
@@ -191,6 +191,10 @@ export default defineComponent({
                 // @ts-ignore
                 this.$refs.searchBar.$el.focus()
             }, 0)
+        },
+        onCloseDetails() {
+            this.showDocumentDetails = false
+            this.loadDocuments()
         }
     }
 })
@@ -263,6 +267,8 @@ export default defineComponent({
 }
 
 #detail-container {
+    overflow: auto;
+    max-height: calc(100vh - 71px);
     flex: 3;
 }
 </style>

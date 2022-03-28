@@ -154,6 +154,11 @@ export default defineComponent({
     display: flex;
     flex-direction: row;
     align-items: center;
+    font-size: 0.9rem;
+    small {
+        color: var(--kn-color-default);
+        border-top: 1px solid var(--kn-color-borders);
+    }
 }
 
 .dropdown-icon-container {

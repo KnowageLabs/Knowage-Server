@@ -35,6 +35,7 @@
 import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iField, iQuery, iFilter } from '../../QBE'
+import { removeInPlace } from '../qbeAdvancedFilterDialog/treeService'
 import Dialog from 'primevue/dialog'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Message from 'primevue/message'
@@ -105,21 +106,23 @@ export default defineComponent({
         removeFilter(filter: iFilter) {
             const index = this.filters.findIndex((el: iFilter) => el.filterId === filter.filterId)
             if (index !== -1) this.filters.splice(index, 1)
+            removeInPlace(this.expression, '$F{' + filter.filterId + '}')
         },
         addNewFilter() {
             const field = this.filterDialogData ? this.filterDialogData.field : ({} as any)
+
             const filter = {
                 filterId: 'Filter' + this.nextFilterIndex,
                 filterDescripion: 'Filter' + this.nextFilterIndex,
                 filterInd: this.nextFilterIndex,
                 promptable: false,
                 leftOperandValue: field.id,
-                leftOperandDescription: field.longDescription,
-                leftOperandLongDescription: field.longDescription,
+                leftOperandDescription: field.longDescription ?? field.attributes.longDescription,
+                leftOperandLongDescription: field.longDescription ?? field.attributes.longDescription,
                 leftOperandType: 'Field Content',
                 leftOperandDefaultValue: null,
                 leftOperandLastValue: null,
-                leftOperandAlias: field.alias,
+                leftOperandAlias: field.alias ?? field.attributes.field,
                 leftOperandDataType: '',
                 operator: 'EQUALS TO',
                 rightOperandDescription: '',
@@ -234,9 +237,16 @@ export default defineComponent({
             this.parameters = []
             this.updatedParameters = []
             this.parameterTableVisible = false
+            this.removeFiltersOnCancel()
+        },
+        removeFiltersOnCancel() {
+            this.filters.forEach((filter: iFilter) => {
+                const index = this.filterDialogData?.query.filters.findIndex((tempFilter: iFilter) => filter.filterId === tempFilter.filterId)
+                if (index === -1) removeInPlace(this.expression, '$F{' + filter.filterId + '}')
+            })
         },
         save() {
-            if (this.propParameters.length > 0 && !this.parameterTableVisible) {
+            if (this.propParameters.length > 0 && !this.parameterTableVisible && this.filterUsesParameters()) {
                 this.parameterTableVisible = true
             } else {
                 this.$emit('save', this.filters, this.filterDialogData?.field, this.updatedParameters, this.expression)
@@ -245,6 +255,17 @@ export default defineComponent({
         },
         onParametersUpdated(updatedParameters: any[]) {
             this.updatedParameters = updatedParameters
+        },
+        filterUsesParameters() {
+            let usesParameters = false
+            for (let i = 0; i < this.filters.length; i++) {
+                if (this.filters[i].rightType === 'parameter') {
+                    usesParameters = true
+                    break
+                }
+            }
+
+            return usesParameters
         }
     }
 })

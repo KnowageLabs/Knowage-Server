@@ -21,12 +21,14 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -207,34 +209,13 @@ public class PageResource extends AbstractCockpitEngineResource {
 			if ("execute".equals(pageName)) {
 				String outputType = request.getParameter(OUTPUT_TYPE);
 				if ("xls".equalsIgnoreCase(outputType) || "xlsx".equalsIgnoreCase(outputType)) {
-					StringBuilder sb = new StringBuilder(request.getRequestURL().toString());
-					sb.append("/spreadsheet");
-					sb.append("?");
-					sb.append(request.getQueryString());
-
-					URI newLocation = new URI(sb.toString());
-
-					return Response.temporaryRedirect(newLocation).build();
+					return createRedirect("/spreadsheet");
 				} else if ("pdf".equalsIgnoreCase(outputType)) {
-					StringBuilder sb = new StringBuilder(request.getRequestURL().toString());
-					sb.append("/pdf");
-					sb.append("?");
-					sb.append(request.getQueryString());
-
-					URI newLocation = new URI(sb.toString());
-
-					return Response.temporaryRedirect(newLocation).build();
+					return createRedirect("/pdf");
 				} else if ("JPG".equalsIgnoreCase(outputType)) {
 					throw new UnsupportedOperationException("This method is not implemented anymore");
 				} else if ("PNG".equalsIgnoreCase(outputType)) {
-					StringBuilder sb = new StringBuilder(request.getRequestURL().toString());
-					sb.append("/png");
-					sb.append("?");
-					sb.append(request.getQueryString());
-
-					URI newLocation = new URI(sb.toString());
-
-					return Response.temporaryRedirect(newLocation).build();
+					return createRedirect("/png");
 				} else {
 					engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
 					getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
@@ -277,6 +258,28 @@ public class PageResource extends AbstractCockpitEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private Response createRedirect(String suffix) throws URISyntaxException {
+		URI newLocation = createNewLocation(suffix);
+
+		return Response.status(307).header("Location", newLocation).build();
+	}
+
+	private URI createNewLocation(String suffix) throws URISyntaxException {
+		String requestURL = request.getRequestURI();
+		String queryString = request.getQueryString();
+
+		StringBuilder sb = new StringBuilder(requestURL.toString());
+		sb.append(suffix);
+		if (Objects.nonNull(queryString)) {
+			sb.append("?");
+			sb.append(queryString);
+		}
+
+		URI newLocation = new URI(sb.toString());
+
+		return newLocation;
 	}
 
 	private Response openPagePdfInternal(String pageName) throws EMFUserError, IOException, InterruptedException {

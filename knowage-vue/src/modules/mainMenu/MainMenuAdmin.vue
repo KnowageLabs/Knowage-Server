@@ -136,6 +136,7 @@ export default defineComponent({
     .p-inputtext {
         width: 100%;
         border-radius: 0;
+        background-color: white;
     }
     .p-megamenu-data {
         overflow: hidden;

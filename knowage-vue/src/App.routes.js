@@ -8,6 +8,7 @@ import documentBrowserRoutes from '@/modules/documentBrowser/DocumentBrowser.rou
 import workspaceRoutes from '@/modules/workspace/workspace.routes.js'
 import overlayRoutes from '@/overlay/Overlay.routes.js'
 import authHelper from '@/helpers/commons/authHelper'
+import dataPreparationRoutes from '@/modules/workspace/dataPreparation/DataPreparation.routes.js'
 import { loadLanguageAsync } from '@/App.i18n.js'
 
 const baseRoutes = [
@@ -20,6 +21,12 @@ const baseRoutes = [
         path: '/about',
         name: 'about',
         component: () => import('@/views/About.vue')
+    },
+    {
+        path: '/externalUrl/',
+        name: 'externalUrl',
+        component: IframeRenderer,
+        props: (route) => ({ url: route.params.url, externalLink: true })
     },
     {
         path: '/knowage/servlet/:catchAll(.*)',
@@ -66,6 +73,8 @@ const routes = baseRoutes
     .concat(documentBrowserRoutes)
     .concat(workspaceRoutes)
     .concat(overlayRoutes)
+    .concat(workspaceRoutes)
+    .concat(dataPreparationRoutes)
 
 const router = createRouter({
     base: process.env.VUE_APP_PUBLIC_PATH,

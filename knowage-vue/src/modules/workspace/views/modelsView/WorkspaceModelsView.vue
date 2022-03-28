@@ -32,6 +32,7 @@
                     @openDatasetInQBE="openDatasetInQBE($event)"
                     @editDataset="editDataset"
                     @deleteDataset="deleteDatasetConfirm"
+                    @monitoring="showMonitoring = !showMonitoring"
                 />
             </template>
         </div>
@@ -44,6 +45,7 @@
         @openDatasetInQBE="openDatasetInQBE($event)"
         @editDataset="editDataset"
         @deleteDataset="deleteDatasetConfirm"
+        @monitoring="showMonitoring = !showMonitoring"
         @close="showDetailSidebar = false"
         data-test="detail-sidebar"
     />
@@ -62,10 +64,11 @@ import KnFabButton from '@/components/UI/KnFabButton.vue'
 import SelectButton from 'primevue/selectbutton'
 import WorkspaceModelsTable from './tables/WorkspaceModelsTable.vue'
 import { AxiosResponse } from 'axios'
+import QBE from '@/modules/qbe/QBE.vue'
 
 export default defineComponent({
     name: 'workspace-models-view',
-    components: { DetailSidebar, KnFabButton, Message, SelectButton, WorkspaceModelsTable, WorkspaceCard },
+    components: { DetailSidebar, KnFabButton, Message, SelectButton, WorkspaceModelsTable, WorkspaceCard, QBE },
     emits: ['showMenu', 'toggleDisplayView', 'showQbeDialog'],
     props: { toggleCardDisplay: { type: Boolean } },
     data() {
@@ -85,8 +88,7 @@ export default defineComponent({
             datasetDrivers: null as any,
             datasetName: '',
             qbeVisible: false,
-            selectedQbeDataset: null,
-            qbeType: 'iFrame' //variable used to change if iframe or the new qbe is being shown
+            selectedQbeDataset: null
         }
     },
     computed: {
@@ -158,7 +160,7 @@ export default defineComponent({
             this.searchWord = ''
         },
         openDatasetInQBE(dataset: any) {
-            if (this.qbeType === 'iFrame') {
+            if (process.env.VUE_APP_USE_OLD_QBE_IFRAME == 'true') {
                 this.$emit('showQbeDialog', dataset)
             } else {
                 this.selectedQbeDataset = dataset

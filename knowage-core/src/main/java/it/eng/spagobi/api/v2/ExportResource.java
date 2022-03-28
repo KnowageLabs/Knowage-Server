@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api.v2;
 
+import static org.quartz.JobBuilder.newJob;
+
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -49,6 +51,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
@@ -167,9 +170,10 @@ public class ExportResource {
 					.withParameters(params).withLocale(locale).build();
 
 			scheduler.addJob(exportJob, true);
-			scheduler.triggerJob(exportJob.getName(), exportJob.getGroup());
+			JobKey key = exportJob.getKey();
+			scheduler.triggerJob(key);
 
-			ret = Response.ok().entity(exportJob.getName()).build();
+			ret = Response.ok().entity(key.getName()).build();
 
 			scheduleCleanUp();
 
@@ -233,9 +237,10 @@ public class ExportResource {
 					.withParameters(params).withLocale(locale).build();
 
 			scheduler.addJob(exportJob, true);
-			scheduler.triggerJob(exportJob.getName(), exportJob.getGroup());
+			JobKey key = exportJob.getKey();
+			scheduler.triggerJob(key);
 
-			ret = Response.ok().entity(exportJob.getName()).build();
+			ret = Response.ok().entity(key.getName()).build();
 
 			scheduleCleanUp();
 
@@ -338,10 +343,13 @@ public class ExportResource {
 				.setUserProfile(UserProfileManager.getProfile()).build();
 		logger.debug("Created export job");
 
+		JobKey key = null;
+
 		try {
 			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 			scheduler.addJob(exportJob, true);
-			scheduler.triggerJob(exportJob.getName(), exportJob.getGroup());
+			key = exportJob.getKey();
+			scheduler.triggerJob(key);
 			logger.debug("Export job triggered ");
 		} catch (SchedulerException e) {
 			String msg = String.format("Error during scheduling of export job for cokcpit document %d", documentExportConf.getDocumentLabel());
@@ -349,7 +357,7 @@ public class ExportResource {
 			throw new SpagoBIRuntimeException(msg);
 		}
 		logger.debug("OUT");
-		return Response.ok().entity(exportJob.getName()).build();
+		return Response.ok().entity(key.getName()).build();
 
 	}
 
@@ -372,15 +380,14 @@ public class ExportResource {
 		jobDataMap.put(ExportDeleteOldJob.MAP_KEY_RESOURCE_PATH, resoursePath);
 		jobDataMap.put(ExportDeleteOldJob.MAP_KEY_USER_PROFILE, userProfile);
 
-		JobDetail job = new JobDetail(jobName, jobGroup, ExportDeleteOldJob.class);
-
-		job.setDescription(jobDescription);
-		job.setJobDataMap(jobDataMap);
+		JobDetail job = newJob(ExportDeleteOldJob.class).withIdentity(jobName, jobGroup).withDescription(jobDescription).usingJobData(jobDataMap)
+				.storeDurably(true).build();
+		JobKey key = job.getKey();
 
 		Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
 		scheduler.addJob(job, true);
-		scheduler.triggerJob(job.getName(), job.getGroup());
+		scheduler.triggerJob(key);
 
 	}
 }

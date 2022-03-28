@@ -3,6 +3,7 @@
         "active": "Active",
         "add": "Add",
         "addNew": "Add new",
+        "advanced": "Advanced",
         "alias": "Alias",
         "apply": "Apply",
         "attachments": "Attachments",
@@ -66,6 +67,7 @@
         "file": "File",
         "fileName": "File Name",
         "filters": "Filters",
+        "from": "From",
         "general": "General",
         "group": "Group",
         "home": "Home",
@@ -158,11 +160,12 @@
             "table": "Table"
         },
         "tags": "tags",
+        "temporal": "Temporal",
         "tenant": "tenant",
         "test": "test",
         "time": "Time",
         "title": "Title",
-        "to": "To",
+        "to": "to",
         "toast": {
             "cloneConfirmTitle": "Confirm item clone?",
             "createTitle": "Created",
@@ -200,10 +203,23 @@
         "warning": "Warning",
         "yes": "Yes"
     },
+    "components": {
+        "knCalculatedField": {
+            "columnName": "Column Name",
+            "description": "Calculated field description",
+            "fields": "Fields",
+            "formula": "Formula",
+            "functions": "Functions",
+            "officialDocumentation": "Official documentation ({function})",
+            "title": "Calculated field"
+        }
+    },
     "cron": {
         "advanced": "Advanced",
         "april": "April",
         "august": "August",
+        "custom": "Custom",
+        "daily": "Daily",
         "day": "Day",
         "days": "Days",
         "december": "December",
@@ -215,6 +231,9 @@
         "everyWeekday": "Every Weekday",
         "everyday": "Every Day",
         "february": "February",
+        "fifth": "Fifth",
+        "first": "First",
+        "fourth": "Fourth",
         "friday": "Friday",
         "hour": "Hour",
         "hours": "Hours",
@@ -232,12 +251,14 @@
         "minutes": "Minutes",
         "monday": "Monday",
         "month": "Month",
+        "monthly": "Monthly",
         "months": "Months",
         "nextExecution": "Next execution",
         "november": "November",
         "october": "October",
         "repeatInterval": "Repeat Interval",
         "saturday": "Saturday",
+        "second": "Second",
         "selectDays": "Select day(s)",
         "selectHours": "Select hour(s)",
         "selectMinutes": "Select minute(s)",
@@ -250,11 +271,14 @@
         "sunday": "Sunday",
         "theDay": "The day",
         "theWeek": "The week",
+        "third": "Third",
         "thursday": "Thursday",
         "tuesday": "Tuesday",
         "wednesday": "Wednesday",
         "weekday": "Weekday",
-        "weekdays": "Weekdays"
+        "weekdays": "Weekdays",
+        "weekly": "Weekly",
+        "yearly": "Yearly"
     },
     "documentBrowser": {
         "changeStateMessage": "Are you sure you want to change the state for this document?",
@@ -396,12 +420,14 @@
             "parameterClearTooltip": "Reset to default value",
             "publicUrlExecutionDisabled": "Current document cannot be executed by public user",
             "rankSaveSucces": "Rating Saved.Thanks for your feedback",
+            "replyToHint": "Enter \"reply to\" if you want to set the sender.",
             "resetParametersTooltip": "Reset parameters form to default values",
             "saveParametersFromStateTooltip": "Save parameters form state as viewpoint",
             "savedParameters": "Saved parameters",
             "savedParametersTooltip": "Open saved parameters window",
             "scheduledExecutions": "Scheduled executions",
             "selectFileError": "Select a file to Upload!",
+            "sendEmailMessage": "Enter user / password if you want to send the email with your user, remember that it must exist in the mail server.",
             "showOLAPCustomView": "Show OLAP Custom View",
             "showScheduledExecutions": "Show scheduled executions",
             "userRoleError": "User does not have valid roles for the execution of the selected document",
@@ -570,6 +596,17 @@
         "aboutKnowage": "About Knowage",
         "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
+    },
+    "knScheduler": {
+        "everyDay": "Every {day} day/s ",
+        "everyMonth": "Every {month} month/s ",
+        "everyNotWorkingDays": "Every not working days",
+        "everyWeek": "Every {week} week/s",
+        "everyYear": "Every {year} year/s",
+        "in": "In",
+        "startingIn": "starting in {in}",
+        "the": "The",
+        "theDay": "The day"
     },
     "kpi": {
         "alert": {
@@ -754,6 +791,11 @@
         "weekHeader": "Wk"
     },
     "managers": {
+        "bml": {
+            "drivers": "Analytical Drivers",
+            "lovsTitle": "Lovs",
+            "title": "Behavioural Model Lineage"
+        },
         "businessModelManager": {
             "add": "Add",
             "addCondition": "Add Condition",
@@ -965,6 +1007,7 @@
                 "schemaAttribute": "Multischema Attribute",
                 "testOk": "Tested parameters are correct!",
                 "urlConnection": "URL",
+                "useForDataprep": "Use for data preparation",
                 "user": "User",
                 "writeDefault": "Use as cache"
             },
@@ -1011,7 +1054,7 @@
             "flatTableName": "Table name",
             "formulaParamError": "You cannot persist a dataset that uses profile attributes. Please verify your dataset configuration",
             "helpTitle": "Help",
-            "hint": "Please change the hint to your desire in the i18n files.",
+            "hint": "Dataset management allows you to manage and create datasets to use inside Knowage. You can select the type, the query and all related settings. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "isPersisted": "Persist",
             "isPersistedHDFS": "Exportable on HDFS",
             "isScheduled": "Schedule",
@@ -1026,6 +1069,7 @@
             "oldVersions": "Older Dataset Versions",
             "openQbeButton": "Open Qbe",
             "params": "Parameters",
+            "peristenceWarning": "Dataset with parameters cannot be persisted!",
             "persistTableName": "Persist Table Name",
             "pivotColName": "Category Column to be Pivoted",
             "pivotColValue": "Value Column to be Pivoted",
@@ -1266,6 +1310,37 @@
                 "defaultMessage": "Default Message Code",
                 "messageCode": "Message Code"
             }
+        },
+        "layersManagement": {
+            "baseLayer": "Base Layer",
+            "downloadDialogTitle": "Select type of download",
+            "downloadTypes": {
+                "geojson": "GeoJSON",
+                "kml": "KML",
+                "shp": "SHAPEFILE"
+            },
+            "fileLocation": "File Location",
+            "filterTitle": "Filter",
+            "hint": "Change the hint to your liking inside the messages.json.",
+            "layerFilter": "Layer Filter",
+            "layerFilterAdded": "Layer Filter Added",
+            "layerIdentify": "Layer ID",
+            "layerLabel": "Layer label",
+            "layerName": "Layer name",
+            "layerOptions": "Options",
+            "layerOrder": "Layer Order",
+            "layerParams": "Params",
+            "layerTitle": "Layer",
+            "layerTypes": {
+                "google": "Google",
+                "osm": "OSM",
+                "tms": "TMS",
+                "wfs": "WFS",
+                "wms": "WMS"
+            },
+            "layerURL": "URL",
+            "noFilterSelected": "No filter selected, click on an item from the left list to add them",
+            "title": "Layers Management"
         },
         "lovsManagement": {
             "add": "Add",
@@ -1558,7 +1633,9 @@
                 "TEST_ROLE": "Test User",
                 "USER": "User"
             },
-            "title": "Roles Management"
+            "title": "Roles Management",
+            "publicRoleWarning1": "If you continue saving the public role will be removed from ",
+            "publicRoleWarning2": " to the selected one. Are you sure?"
         },
         "schedulationAgendaManagement": {
             "detail": {
@@ -1709,6 +1786,16 @@
             "hint": "Theme management allows you to create a theme, changing the default  colors/dimensions of different interface elements of Knowage. You can also create more than one theme and switch them as you like. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "title": "Theme Management"
         },
+        "timespan": {
+            "cloneAlreadyDefined": "The next timespan is already defiend",
+            "invalidDatesError": "The dates are not valid",
+            "noIntervalError": "Please define at least one interval",
+            "startDateGreaterError": "Start date greater than end date",
+            "startTimeGreaterError": "Start time greater than end time",
+            "temporalOverlapError": "The date interval overlaps with an existing one",
+            "timeOverlapError": "The time interval overlaps with an existing one",
+            "title": "Timespan"
+        },
         "usersManagement": {
             "attributes": "Attributes",
             "blockedUserInfo": "This user reached the maximum number of failed login attempts and therefore he was locked. Do you want to unlock him?",
@@ -1763,6 +1850,134 @@
             "templateSuccessfullyUploaded": "@:managers.widgetGallery.templateSuccessfully uploaded",
             "title": "Gallery management",
             "uploadTemplate": "Upload template"
+        },
+        "workspaceManagement": {
+            "dataPreparation": {
+                "dataset": {
+                    "description": "Description",
+                    "enableSchedulation": "Enable schedulation",
+                    "hint": "No scheduling applied to this dataset. It will only run once. If you want to enable schedulation, use the enable schedulation switch.",
+                    "label": "Label",
+                    "name": "Name",
+                    "refreshRate": {
+                        "frequency": {
+                            "DAILY": "Every day",
+                            "HOURL": "Every hour",
+                            "MONTHLY": "Every month",
+                            "NEVER": "Never",
+                            "WEEKLY": "Every week",
+                            "YEARLY": "Every year"
+                        },
+                        "label": "Refresh rate"
+                    },
+                    "visibility": "Visibility"
+                },
+                "errors": {
+                    "updatingSchedulation": "An error occurred while updating schedulation"
+                },
+                "label": "Data preparation",
+                "monitoring": {
+                    "executionLogs": "Execution log",
+                    "recordsNumber": "Number of records",
+                    "start": "Start date",
+                    "status": "Status",
+                    "stop": "Stop Date"
+                },
+                "originalDataset": "Original",
+                "parametersConfiguration": "Parameters configuration",
+                "roles": {
+                    "attribute": "ATTRIBUTE",
+                    "measure": "MEASURE"
+                },
+                "savePreparedDataset": "Save prepared dataset",
+                "transformations": {
+                    "calculatedField": {
+                        "label": "Add column"
+                    },
+                    "changeRole": {
+                        "description": "Change role for the fields",
+                        "label": "Change role"
+                    },
+                    "changeType": {
+                        "description": "Change type for the fields",
+                        "label": "Change type"
+                    },
+                    "column": "Column",
+                    "column1": "Column 1",
+                    "column2": "Column 2",
+                    "columnName": "Column Name",
+                    "columns": "Columns",
+                    "condition": "Condition",
+                    "conditions": "Conditions",
+                    "destType": "Destination type",
+                    "drop": {
+                        "description": "TODO",
+                        "label": "Drop column"
+                    },
+                    "endDate": "End Date",
+                    "filter": {
+                        "description": "Filter the dataset using the selected conditions. If more then one AND logical operator will be used",
+                        "label": "Filter"
+                    },
+                    "format": {
+                        "description": "TODO",
+                        "label": "Format"
+                    },
+                    "formula": "Formula",
+                    "label": "Transformations",
+                    "logicOperator": "Logical operator",
+                    "merge": {
+                        "description": "The output type is always String",
+                        "label": "Merge columns"
+                    },
+                    "newChar": "New char",
+                    "number": "Number",
+                    "numberOfChars": "Number of characters",
+                    "oldChar": "Old char",
+                    "outputType": "Output Type",
+                    "padding": {
+                        "description": "TODO",
+                        "label": "Padding"
+                    },
+                    "prefix": "Prefix",
+                    "removeDuplicates": {
+                        "description": "Removes duplicate values from a range of values.",
+                        "label": "Remove duplicates"
+                    },
+                    "removeNull": {
+                        "description": "TODO",
+                        "label": "Remove NULL"
+                    },
+                    "replace": {
+                        "description": "replace(searchvalue, newvalue)",
+                        "label": "Replace"
+                    },
+                    "separator": "Separator",
+                    "split": {
+                        "description": "Split the column content in two different columns. Choose the split type and define the two returning columns.",
+                        "label": "Split column",
+                        "numOfChars": "Number of characters",
+                        "outputColumn": "Output Column",
+                        "outputType": "Output Type",
+                        "separator": "Separator"
+                    },
+                    "splitMethod": "Split column method",
+                    "startDate": "Start Date",
+                    "statistics": {
+                        "description": "TODO",
+                        "label": "Statistics"
+                    },
+                    "suffix": "Suffix",
+                    "text": "Text",
+                    "trim": {
+                        "description": "TODO",
+                        "label": "Trim"
+                    },
+                    "useNumberOfChars": "Use number of characters",
+                    "useSeparator": "Use separator",
+                    "values": "Values"
+                }
+            }
         }
     },
     "menu": {
@@ -1895,9 +2110,13 @@
                     "sum": "Sum",
                     "title": "Aggregation"
                 },
+                "coldel": "Delete column",
+                "colfil": "Column filters",
+                "colset": "Column settings",
                 "group": "Group",
                 "rename": "Rename Alias",
-                "showField": "Show field"
+                "showField": "Show field",
+                "sorting": "Sorting"
             },
             "toolbarMenu": {
                 "exportTo": "Export to",
@@ -1952,6 +2171,17 @@
                 "notIn": "Not in",
                 "notNull": "Not null",
                 "notStartsWith": "Not starts with",
+                "spatialContains": "Contains (spatial)",
+                "spatialCoveredBy": "Covered by (spatial)",
+                "spatialCovers": "Covers (spatial)",
+                "spatialDisjoint": "Disjoint (spatial)",
+                "spatialEqualsTo": "Equals to (spatial)",
+                "spatialFilter": "Filter (spatial)",
+                "spatialInside": "Inside (spatial)",
+                "spatialIntersects": "Intersects (spatial)",
+                "spatialNN": "NN (spatial)",
+                "spatialOverlaps": "Overlaps (spatial)",
+                "spatialTouches": "Touches (spatial)",
                 "startsWith": "Starts with"
             },
             "target": "Target",
@@ -2057,7 +2287,9 @@
             "exportSuccess": "The download has started in background. You will find the result file in your download page.",
             "fileDownload": "Download Dataset file",
             "modified": "Modified",
+            "monitoring": "Monitoring",
             "openData": "Import Open Data",
+            "openDataPreparation": "Open Data Preparation",
             "parametrical": "Parametrical",
             "parseError": "Impossible to parse file. Check its content and upload it again",
             "prepareData": "Prepare Data",

@@ -8,7 +8,7 @@
         </template>
     </Toolbar>
     <div class="datasetDetail">
-        <TabView class="tabview-custom" v-model:activeIndex="activeTab" data-test="tab-view">
+        <TabView class="tabview-custom kn-tab" v-model:activeIndex="activeTab" data-test="tab-view">
             <TabPanel>
                 <template #header>
                     <span>{{ $t('managers.mondrianSchemasManagement.detail.title') }}</span>
@@ -67,7 +67,7 @@
             </TabPanel>
         </TabView>
 
-        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="previewDataset" @close="showPreviewDialog = false" :previewType="'dataset'"></WorkspaceDataPreviewDialog>
+        <WorkspaceDataPreviewDialog :visible="showPreviewDialog" :propDataset="previewDataset" @close="showPreviewDialog = false" :previewType="'dataset'" :loadFromDatasetManagement="true"></WorkspaceDataPreviewDialog>
     </div>
 </template>
 
@@ -182,7 +182,10 @@ export default defineComponent({
             })
         },
         async cloneDataset(datasetId) {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`).then(async (response: AxiosResponse<any>) => {
+                if (response.data[0].dsTypeCd === 'File') {
+                    await this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/clone-file?fileName=${response.data[0].fileName}`)
+                }
                 delete response.data[0].id
                 response.data[0].label = '...'
                 response.data[0].dsVersions = []

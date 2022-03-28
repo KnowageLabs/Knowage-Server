@@ -33,11 +33,11 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.dao.SbiWidgetGalleryDao;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTag;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTagId;
-import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.resource.dto.Code;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
 import it.eng.knowage.knowageapi.service.WidgetGalleryAPI;
