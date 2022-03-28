@@ -1,5 +1,6 @@
 <template>
     <Dialog class="p-fluid kn-dialog--toolbar--primary schedulerDialog" v-bind:visible="visibility" footer="footer" :header="$t('workspace.myData.monitoring')" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }" :closable="false">
+        <Message v-if="showHint" severity="info" :closable="false"> {{ $t('managers.workspaceManagement.dataPreparation.monitoring.hint') }} </Message>
         <div class="p-grid p-d-flex p-m-1 p-fluid">
             <div class="p-col-5">
                 <Card class="kn-card full-height">
@@ -75,6 +76,7 @@
     import DataTable from 'primevue/datatable'
     import Dialog from 'primevue/dialog'
     import Card from 'primevue/card'
+    import Message from 'primevue/message'
 
     import { formatDate } from '@/helpers/commons/localeHelper'
 
@@ -88,7 +90,7 @@
 
     export default defineComponent({
         name: 'data-preparation-monitoring-dialog',
-        components: { Card, Column, DataTable, Dialog, KnScheduler },
+        components: { Card, Column, DataTable, Dialog, KnScheduler, Message },
         props: { visibility: Boolean, dataset: Object },
         emits: ['close', 'save', 'update:loading'],
         data() {
@@ -98,7 +100,7 @@
 
                 filters: { global: [filterDefault] } as Object,
                 validSchedulation: Boolean,
-
+                showHint: false,
                 currentCronExpression: '',
                 touched: false
             }
@@ -131,6 +133,7 @@
                         let instance = response.data.instance
                         if (instance) {
                             this.currentCronExpression = instance.config.cron
+                            if (this.currentCronExpression) this.showHint
 
                             this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/logs/' + instance.id).then((response: AxiosResponse<any>) => {
                                 this.logs = response.data
@@ -154,6 +157,7 @@
             resetAndClose() {
                 this.currentCronExpression = ''
                 this.touched = false
+                this.showHint = false
                 this.$emit('close')
             },
             sendSchedulation() {

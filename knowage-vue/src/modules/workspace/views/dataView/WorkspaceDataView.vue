@@ -330,9 +330,7 @@
             )
 
             if (this.user?.functionalities.includes('DataPreparation')) {
-                tmp.push({ key: '7', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' && this.selectedDataset.dsTypeCd != 'Prepared' && (this.selectedDataset.pars && this.selectedDataset.pars.length == 0) })
-
-                tmp.push({ key: '8', label: this.$t('workspace.myData.monitoring'), icon: 'pi pi-chart-line', command: () => this.handleMonitoring(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' && this.selectedDataset.dsTypeCd != 'Prepared' && (this.selectedDataset.pars && this.selectedDataset.pars.length == 0) })
+                tmp.push({ key: '7', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe'  && (this.selectedDataset.pars && this.selectedDataset.pars.length == 0) })
             }
 
             tmp = tmp.sort((a,b)=>a.key.localeCompare(b.key))

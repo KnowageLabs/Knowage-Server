@@ -1633,9 +1633,7 @@
                 "TEST_ROLE": "Test User",
                 "USER": "User"
             },
-            "title": "Roles Management",
-            "publicRoleWarning1": "If you continue saving the public role will be removed from ",
-            "publicRoleWarning2": " to the selected one. Are you sure?"
+            "title": "Roles Management"
         },
         "schedulationAgendaManagement": {
             "detail": {
@@ -1856,7 +1854,6 @@
                 "dataset": {
                     "description": "Description",
                     "enableSchedulation": "Enable schedulation",
-                    "hint": "No scheduling applied to this dataset. It will only run once. If you want to enable schedulation, use the enable schedulation switch.",
                     "label": "Label",
                     "name": "Name",
                     "refreshRate": {
@@ -1878,6 +1875,7 @@
                 "label": "Data preparation",
                 "monitoring": {
                     "executionLogs": "Execution log",
+                    "hint": "No scheduling applied to this dataset. It will only run once. If you want to enable schedulation, use the enable schedulation switch.",
                     "recordsNumber": "Number of records",
                     "start": "Start date",
                     "status": "Status",
