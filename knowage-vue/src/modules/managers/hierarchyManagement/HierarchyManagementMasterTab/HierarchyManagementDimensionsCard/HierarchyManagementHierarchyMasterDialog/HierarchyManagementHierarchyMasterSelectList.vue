@@ -2,9 +2,9 @@
     <div class="p-grid p-ai-center">
         <div class="p-col-5">
             {{ 'TODO' }}
-            {{ selectedFields }}
+            {{ selectedSourceFields }}
             <span v-if="errorMessageVisible" class="p-error">{{ $t('managers.hierarchyManagement.createHierarchyMasterErrorMessage') }}</span>
-            <Listbox class="kn-list hierarchy-management-list" v-model="selectedFields" :options="dimensionFields" optionLabel="NAME" :multiple="true" @change="onSelectedField">
+            <Listbox class="kn-list hierarchy-management-list" v-model="selectedSourceFields" :options="dimensionSourceFields" optionLabel="NAME" :multiple="true" @change="onSelectedField">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item" @click="selectField(slotProps.option)">
@@ -17,21 +17,35 @@
         </div>
         <div class="p-col-2">
             <div class="p-d-flex p-flex-column">
-                <Button class="kn-button kn-button--primary hierarchy-management-master-selecet-list-button" icon="pi pi-angle-double-right" :disabled="selectedFields.length === 0" @click="moveToTheRight" />
-                <Button class="kn-button kn-button--primary hierarchy-management-master-selecet-list-button p-mt-2" icon="pi pi-angle-double-left" @click="moveToTheLeft" />
+                <Button class="kn-button kn-button--primary hierarchy-management-master-selecet-list-button" icon="pi pi-angle-double-right" :disabled="selectedSourceFields.length === 0" @click="moveToTheRight" />
+                <Button class="kn-button kn-button--primary hierarchy-management-master-selecet-list-button p-mt-2" icon="pi pi-angle-double-left" :disabled="selectedDestinationFields.length === 0" @click="moveToTheLeft" />
             </div>
         </div>
         <div class="p-col-5">
-            <Listbox class="kn-list hierarchy-management-list" v-model="selectedFields" :options="dimensionExportFields" optionLabel="NAME" :multiple="true" @change="onSelectedField">
+            {{ 'TODO' }}
+            {{ selectedDestinationFields }}
+            <Listbox class="kn-list hierarchy-management-list" v-model="selectedDestinationFields" :options="dimensionDestinationFields" optionLabel="NAME" :multiple="true" @change="onSelectedField">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item" @click="selectField(slotProps.option)">
-                        <div class="kn-list-item-text">
-                            <span>{{ slotProps.option.NAME }}</span>
+                        <div class="p-d-flex p-flex-row p-jc-start p-ai-center">
+                            <span
+                                ><b>{{ $t('managers.hierarchyManagement.lev') + ' ' + slotProps.option.code.level + ' ' }}</b
+                                >{{ slotProps.option.code.NAME + ', ' + slotProps.option.name.NAME }}</span
+                            >
+                            <Button v-if="slotProps.index === dimensionDestinationFields.length - 1" icon="fa fa-plus" class="p-button-link p-button-sm p-p-0" @click.stop="moveToRecursive(slotProps.option)" />
+                            <Button v-if="slotProps.index !== 0" icon="fa fa-arrow-up" class="p-button-link p-button-sm p-p-0" @click.stop="move(slotProps.option, slotProps.index, 'up')" />
+                            <Button v-if="slotProps.index !== dimensionDestinationFields.length - 1" icon="fa fa-arrow-down" class="p-button-link p-button-sm p-p-0" @click.stop="move(slotProps.option, slotProps.index, 'down')" />
                         </div>
                     </div>
                 </template>
             </Listbox>
+            <div>
+                <div>
+                    <span>{{ $t('managers.hierarchyManagement.recursive') + ': ' }}</span
+                    ><span v-if="recursive">{{ recursive.code.NAME + ' ' + recursive.name.NAME }}</span>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -47,11 +61,12 @@ export default defineComponent({
     props: { dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> } },
     data() {
         return {
-            dimensionFields: [] as iDimensionField[],
-            selectedFields: [] as iDimensionField[],
-            dimensionExportFields: [] as any[],
-            selectedExportFields: [] as any[],
-            errorMessageVisible: false
+            dimensionSourceFields: [] as iDimensionField[],
+            selectedSourceFields: [] as iDimensionField[],
+            dimensionDestinationFields: [] as any[],
+            selectedDestinationFields: [] as any[],
+            errorMessageVisible: false,
+            recursive: null as any
         }
     },
     watch: {
@@ -64,27 +79,68 @@ export default defineComponent({
     },
     methods: {
         loadDimensionData() {
-            this.dimensionFields = this.dimensionMetadata?.DIM_FIELDS as iDimensionField[]
+            this.dimensionSourceFields = this.dimensionMetadata?.DIM_FIELDS as iDimensionField[]
         },
         selectField(field: iDimensionField) {
             console.log('SELECTED FIELD: ', field)
         },
         onSelectedField() {
-            if (this.selectedFields.length === 3) {
-                this.selectedFields.splice(2, 1)
+            if (this.selectedSourceFields.length === 3) {
+                this.selectedSourceFields.splice(2, 1)
                 this.errorMessageVisible = true
             } else {
                 this.errorMessageVisible = false
             }
         },
         moveToTheRight() {
-            if (this.selectedFields.length === 1 || this.selectedFields.length === 2) {
-                const newLevel = {}
-
-                this.selectedExportFields.push(newLevel)
+            if (this.selectedSourceFields.length === 1 || this.selectedSourceFields.length === 2) {
+                const newLevel = { code: this.selectedSourceFields[0], name: this.selectedSourceFields[1] ?? this.selectedSourceFields[0], hasCopy: this.selectedSourceFields.length === 1, isLast: true } as any
+                newLevel.code.level = this.dimensionDestinationFields.length + 1
+                newLevel.name.level = this.dimensionDestinationFields.length + 1
+                if (this.dimensionDestinationFields.length > 0) this.dimensionDestinationFields[this.dimensionDestinationFields.length - 1].isLast = false
+                for (let i = 0; i < this.selectedSourceFields.length; i++) {
+                    const index = this.dimensionSourceFields.findIndex((el: any) => el.ID === this.selectedSourceFields[i].ID)
+                    if (index !== -1) this.dimensionSourceFields.splice(index, 1)
+                }
+                this.selectedSourceFields = []
+                this.dimensionDestinationFields.push(newLevel)
             }
         },
-        moveToTheLeft() {}
+
+        moveToTheLeft() {
+            if (this.selectedDestinationFields.length === 0) return
+            for (let i = 0; i < this.selectedDestinationFields.length; i++) {
+                delete this.selectedDestinationFields[i].code.level
+                delete this.selectedDestinationFields[i].name.maxLevel
+                this.dimensionSourceFields.push(this.selectedDestinationFields[i].code)
+                if (!this.selectedDestinationFields[i].hasCopy) {
+                    this.dimensionSourceFields.push(this.selectedDestinationFields[i].name)
+                }
+
+                const index = this.dimensionDestinationFields.findIndex((el: any) => el.code.ID === this.selectedDestinationFields[i].code.ID)
+                if (index !== -1) this.dimensionDestinationFields.splice(index, 1)
+            }
+
+            this.selectedDestinationFields = []
+
+            for (let i = 0; i < this.dimensionDestinationFields.length; i++) {
+                this.dimensionDestinationFields[i].code.level = i + 1
+                this.dimensionDestinationFields[i].name.level = i + 1
+            }
+        },
+        move(destinationField: any, index: number, direction: 'up' | 'down') {
+            const tempIndex = direction === 'up' ? index - 1 : index + 1
+            destinationField.code.level = tempIndex
+            destinationField.name.level = tempIndex
+
+            this.dimensionDestinationFields[index] = this.dimensionDestinationFields[tempIndex]
+            this.dimensionDestinationFields[index].code.level = index
+            this.dimensionDestinationFields[index].level = index
+            this.dimensionDestinationFields[tempIndex] = destinationField
+        },
+        moveToRecursive(destinationField: any) {
+            console.log('DEST FIELD: ', destinationField)
+        }
     }
 })
 </script>
@@ -93,6 +149,7 @@ export default defineComponent({
 .hierarchy-management-list {
     border: 1px solid var(--kn-color-borders);
     border-top: none;
+    max-height: 300px;
 }
 
 .hierarchy-management-master-selecet-list-button {

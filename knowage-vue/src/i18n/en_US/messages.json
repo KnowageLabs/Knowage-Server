@@ -1299,7 +1299,9 @@
             "createHierarchyMaster": "Create Hierarchy Master",
             "createHierarchyMasterErrorMessage": "You can select only two items",
             "dimensions": "Dimensions",
+            "lev": "Lev.",
             "master": "Master",
+            "recursive": "Recursive",
             "synchronize": "Synchronize",
             "technical": "Technical"
         },
