@@ -9,7 +9,7 @@
 
                 <div class="p-col-6 p-mt-4" v-for="(filter, index) in filters" :key="index">
                     <span class="p-float-label">
-                        <Calendar v-if="filter.TYPE === 'Date'" class="calendar-management-detail-form-calendar-input " v-model="filter.VALUE" :manualInput="true" data-test="calendar-start-date-input"></Calendar>
+                        <Calendar v-if="filter.TYPE === 'Date'" class="calendar-management-detail-form-calendar-input " v-model="filter.VALUE" :manualInput="true"></Calendar>
                         <InputText v-else class="kn-material-input" :type="filter.TYPE === 'number' ? 'number' : 'text'" v-model.trim="filter.VALUE" />
                         <label class="kn-material-input-label"> {{ filter.NAME + ' *' }}</label>
                     </span>

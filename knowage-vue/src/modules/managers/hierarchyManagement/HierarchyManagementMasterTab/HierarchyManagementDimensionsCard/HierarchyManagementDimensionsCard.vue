@@ -62,7 +62,7 @@ export default defineComponent({
     name: 'hierarchy-management-dimensions-card',
     components: { Card, Calendar, Dropdown, HierarchyManagementDimensionsTable, HierarchyManagementHierarchyMasterDialog, HierarchyManagementDimensionsFilterCard },
     props: { dimensions: { type: Array as PropType<iDimension[]> } },
-    emits: ['loading', 'dimensionSelected'],
+    emits: ['loading', 'dimensionSelected', 'dimensionMetadataChanged'],
     data() {
         return {
             validityDate: new Date(),
@@ -107,6 +107,7 @@ export default defineComponent({
         async loadNodeMetadata() {
             this.$emit('loading', true)
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/nodeMetadata?dimension=${this.selectedDimension?.DIMENSION_NM}&excludeLeaf=false`).then((response: AxiosResponse<any>) => (this.nodeMetadata = response.data))
+            this.$emit('dimensionMetadataChanged', this.nodeMetadata)
             this.$emit('loading', false)
         },
         async loadDimensionFilters() {

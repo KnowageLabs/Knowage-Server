@@ -41,7 +41,7 @@
                     </div>
                 </div>
 
-                <HierarchyManagementHierarchiesTree v-show="tree" :propTree="tree"></HierarchyManagementHierarchiesTree>
+                <HierarchyManagementHierarchiesTree v-show="tree" :propTree="tree" :nodeMetadata="nodeMetadata" @treeUpdated="updateTreeModel"></HierarchyManagementHierarchiesTree>
             </div>
         </template>
     </Card>
@@ -49,7 +49,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iDimension, iHierarchy } from '../../HierarchyManagement'
+import { iDimension, iHierarchy, iNodeMetadata, iNode } from '../../HierarchyManagement'
 import { AxiosResponse } from 'axios'
 import moment from 'moment'
 import Calendar from 'primevue/calendar'
@@ -61,7 +61,7 @@ import HierarchyManagementHierarchiesTree from './HierarchyManagementHierarchies
 export default defineComponent({
     name: 'hierarchy-management-hierarchies-card',
     components: { Calendar, Checkbox, Dropdown, HierarchyManagementHierarchiesTree },
-    props: { selectedDimension: { type: Object as PropType<iDimension | null> } },
+    props: { selectedDimension: { type: Object as PropType<iDimension | null> }, nodeMetadata: { type: Object as PropType<iNodeMetadata | null> } },
     data() {
         return {
             hierarchyManagementHierarchiesCardDescriptor,
@@ -71,7 +71,8 @@ export default defineComponent({
             hierarchyType: '' as string,
             hierarchies: [] as iHierarchy[],
             selectedHierarchy: null as iHierarchy | null,
-            tree: null as any
+            tree: null as any,
+            treeModel: null as any
         }
     },
     computed: {
@@ -107,6 +108,24 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.tree = response.data))
             console.log('LOADED TREE: ', this.tree)
             this.$emit('loading', false)
+        },
+        updateTreeModel(nodes: iNode[]) {
+            console.log('UPDATE TREE MODEL!: ', nodes)
+            const temp = this.formatNodes(nodes)
+
+            console.log('TEEEEEMP: ', temp[0])
+        },
+        formatNodes(nodes: iNode[]) {
+            return nodes.map((node: any) => {
+                node = {
+                    ...node.data,
+                    children: node.children
+                }
+                if (node.children && node.children.length > 0) {
+                    node.children = this.formatNodes(node.children)
+                }
+                return node
+            })
         },
         save() {}
     }

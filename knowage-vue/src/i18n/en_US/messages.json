@@ -1304,6 +1304,7 @@
             "hierarchyType": "Hierarchy Type",
             "lev": "Lev.",
             "master": "Master",
+            "modifyHierarchy": "Modify Hierarchy",
             "recursive": "Recursive",
             "showMissingElements": "Show missing elements",
             "synchronize": "Synchronize",
