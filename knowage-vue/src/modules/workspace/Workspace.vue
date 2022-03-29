@@ -7,7 +7,7 @@
                 </template>
             </Toolbar>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <Listbox v-if="displayMenu && storeFunctionalitiesExist" :options="menuItems" data-test="menu-list">
+            <Listbox v-if="displayMenu && storeFunctionalitiesExist" :options="menuItems" data-test="menu-list" class="kn-list">
                 <template #option="slotProps">
                     <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
                         <i :class="slotProps.option.icon"></i>

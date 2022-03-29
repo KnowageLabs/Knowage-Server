@@ -1,166 +1,166 @@
 <template>
-    <div class="card-container p-col-12 p-md-6 p-lg-4 p-xl-3" :style="cardDescriptor.style.cardContainer">
-        <div v-if="document[documentFields.image]" class="card-image" :style="[documentImageSource, cardDescriptor.style.cardImage]" />
-        <div v-else class="card-image" :style="[documentImageSource, cardDescriptor.style.cardImage]" />
-        <span class="details-container" :style="cardDescriptor.style.detailsContainer">
-            <div class="p-mr-3" :style="cardDescriptor.style.typeContainer">
-                <p>{{ document[documentFields.type] }}</p>
-            </div>
-            <div class="p-ml-3">
-                <h4 class="p-m-0" :style="cardDescriptor.style.nameContainerText" v-tooltip="document[documentFields.label]">
-                    <b>{{ document[documentFields.label] }}</b>
-                </h4>
-                <p class="p-m-0" :style="cardDescriptor.style.nameContainerText" v-tooltip="document[documentFields.name]">{{ document[documentFields.name] }}</p>
-            </div>
-            <span :style="cardDescriptor.style.buttonContainer">
-                <span v-for="(button, index) of documentButtons" :key="index">
-                    <Button :id="button.id" class="p-mx-1" v-if="button.visible" :icon="button.icon" :class="button.class" :style="cardDescriptor.style.icon" @click="button.command" />
-                </span>
+    <div class="p-col-12 p-md-6 p-lg-4 p-xl-3" tabindex="0">
+        <div class="card-container">
+            <span class="details-container">
+                <div class="p-ml-3 detail-type" role="type">
+                    {{ document[documentFields.type] }}
+                </div>
+                <div class="p-ml-3 detail-info">
+                    <h4 class="p-m-0 kn-truncated" role="title" v-tooltip="document[documentFields.label]">
+                        {{ document[documentFields.label] }}
+                    </h4>
+                    <p class="p-m-0 kn-truncated" v-tooltip="document[documentFields.name]">{{ document[documentFields.name] }}</p>
+                </div>
+                <div class="detail-buttons">
+                    <template v-for="(button, index) of documentButtons" :key="index">
+                        <Button :id="button.id" v-if="button.visible" :icon="button.icon" class="p-mx-1 p-button-text p-button-rounded p-button-plain p-button-lg" @click="button.command" v-tooltip="$t(button.label)" :aria-label="$t(button.label)" />
+                    </template>
+                </div>
             </span>
-        </span>
+            <div aria-hidden="true" v-if="document[documentFields.image]" class="card-image" :style="[documentImageSource]" />
+            <div v-else aria-hidden="true" class="card-image" :style="[documentImageSource]" />
+        </div>
     </div>
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
 </template>
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import descriptor from './DetailSidebarDescriptor.json'
-    import cardDescriptor from './WorkspaceCardDescriptor.json'
-    import Menu from 'primevue/contextmenu'
+import { defineComponent } from 'vue'
+import descriptor from './DetailSidebarDescriptor.json'
+import cardDescriptor from './WorkspaceCardDescriptor.json'
+import Menu from 'primevue/contextmenu'
 
-    export default defineComponent({
-        name: 'workspace-sidebar',
-        components: { Menu },
-        //prettier-ignore
-        emits: ['executeRecent','executeDocumentFromOrganizer','moveDocumentToFolder','deleteDocumentFromOrganizer','executeAnalysisDocument','editAnalysisDocument','shareAnalysisDocument','cloneAnalysisDocument','deleteAnalysisDocument','uploadAnalysisPreviewFile','openDatasetInQBE','editDataset','deleteDataset','previewDataset','deleteDataset','editFileDataset','exportToXlsx','exportToCsv','getHelp','downloadDatasetFile','shareDataset','openSidebar', 'cloneDataset', 'prepareData', 'openDataPreparation'],
-        props: { visible: Boolean, viewType: String, document: Object as any, isPrepared: Boolean },
-        computed: {
-            isOwner(): any {
-                return (this.$store.state as any).user.fullName === this.document.creationUser
-            },
+export default defineComponent({
+    name: 'workspace-sidebar',
+    components: { Menu },
+    //prettier-ignore
+    emits: ['executeRecent','executeDocumentFromOrganizer','moveDocumentToFolder','deleteDocumentFromOrganizer','executeAnalysisDocument','editAnalysisDocument','shareAnalysisDocument','cloneAnalysisDocument','deleteAnalysisDocument','uploadAnalysisPreviewFile','openDatasetInQBE','editDataset','deleteDataset','previewDataset','deleteDataset','editFileDataset','exportToXlsx','exportToCsv','getHelp','downloadDatasetFile','shareDataset','openSidebar', 'cloneDataset', 'prepareData', 'openDataPreparation'],
+    props: { visible: Boolean, viewType: String, document: Object as any, isPrepared: Boolean },
+    computed: {
+        isOwner(): any {
+            return (this.$store.state as any).user.fullName === this.document.creationUser
+        },
 
-            isAnalysisShared(): any {
-                return this.document.functionalities.length > 1
-            },
-            isDatasetOwner(): any {
-                return (this.$store.state as any).user.fullName === this.document.owner
-            },
-            showQbeEditButton(): any {
-                return (this.$store.state as any).user.fullName === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
-            },
-            datasetHasDrivers(): any {
-                return this.document.drivers && this.document.length > 0
-            },
-            datasetHasParams(): any {
-                return this.document.pars && this.document.pars > 0
-            },
-            datasetIsIterable(): any {
-                // in order to export to XLSX, dataset must implement an iterator (BE side)
-                let notIterableDataSets = ['Federated']
-                if (notIterableDataSets.includes(this.document.dsTypeCd)) return false
-                else return true
-            },
-            canLoadData(): any {
-                if (this.document.actions) {
-                    for (var i = 0; i < this.document.actions.length; i++) {
-                        var action = this.document.actions[i]
-                        if (action.name == 'loaddata') {
-                            return true
-                        }
+        isAnalysisShared(): any {
+            return this.document.functionalities.length > 1
+        },
+        isDatasetOwner(): any {
+            return (this.$store.state as any).user.fullName === this.document.owner
+        },
+        showQbeEditButton(): any {
+            return (this.$store.state as any).user.fullName === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
+        },
+        datasetHasDrivers(): any {
+            return this.document.drivers && this.document.length > 0
+        },
+        datasetHasParams(): any {
+            return this.document.pars && this.document.pars > 0
+        },
+        datasetIsIterable(): any {
+            // in order to export to XLSX, dataset must implement an iterator (BE side)
+            let notIterableDataSets = ['Federated']
+            if (notIterableDataSets.includes(this.document.dsTypeCd)) return false
+            else return true
+        },
+        canLoadData(): any {
+            if (this.document.actions) {
+                for (var i = 0; i < this.document.actions.length; i++) {
+                    var action = this.document.actions[i]
+                    if (action.name == 'loaddata') {
+                        return true
                     }
                 }
-                return false
-            },
-            documentImageSource(): any {
-                if (this.document[this.documentFields.image]) {
-                    return {
-                        //TODO: 2nd image is the fallback in case there is an error iwth source image --- url(imgSource)url(fallbackImg), Change default image to your liking
-                        'background-image': `url(${process.env.VUE_APP_HOST_URL}${descriptor.imgPath}${this.document[this.documentFields.image]}),url(https://i.imgur.com/9N1aRkx.png)`
-                    }
-                }
+            }
+            return false
+        },
+        documentImageSource(): any {
+            if (this.document[this.documentFields.image]) {
                 return {
-                    //TODO: Change default image to your liking
-                    'background-image': `url(https://i.imgur.com/9N1aRkx.png)`
-                }
-            },
-            documentFields(): any {
-                switch (this.viewType) {
-                    case 'recent':
-                        return cardDescriptor.defaultViewFields
-                    case 'repository':
-                        return cardDescriptor.defaultViewFields
-                    case 'dataset':
-                        return cardDescriptor.datasetViewFields
-                    case 'analysis':
-                        return cardDescriptor.analysisViewFields
-                    case 'businessModel':
-                        return cardDescriptor.businessModelViewFields
-                    case 'federationDataset':
-                        return cardDescriptor.federationDatasetViewFields
-                    default:
-                        return []
-                }
-            },
-            documentButtons(): any {
-                switch (this.viewType) {
-                    case 'recent':
-                        return [
-                            { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
-                            { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeRecent') }
-                        ]
-                    case 'repository':
-                        return [
-                            { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
-                            { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
-                            { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeDocumentFromOrganizer') }
-                        ]
-                    case 'dataset':
-                        return [
-                            { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
-                            { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
-                            { icon: 'fas fa-eye', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('previewDataset') }
-                        ]
-                    case 'analysis':
-                        return [
-                            { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
-                            { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
-                            { icon: 'fas fa-play-circle', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('executeAnalysisDocument') }
-                        ]
-                    case 'businessModel':
-                        return [
-                            { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
-                            { icon: 'fa fa-search', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('openDatasetInQBE') }
-                        ]
-                    case 'federationDataset':
-                        return [
-                            { icon: 'fas fa-ellipsis-v', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.showMenu },
-                            { icon: 'fas fa-info-circle', id: 'list-button', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openSidebar') },
-                            { icon: 'fa fa-search', class: 'p-button-text p-button-rounded', visible: true, command: this.emitEvent('openDatasetInQBE') }
-                        ]
-                    default:
-                        return []
+                    'background-image': `url(${process.env.VUE_APP_HOST_URL}${descriptor.imgPath}${this.document[this.documentFields.image]}),url(${require('@/assets/images/workspace/documentTypes/' + cardDescriptor.defaultImages.missing)})`
                 }
             }
-        },
-
-        data() {
             return {
-                cardDescriptor,
-                sidebarVisible: false,
-                menuButtons: [] as any
+                'background-image': `url(${require('@/assets/images/workspace/documentTypes/' + (cardDescriptor.defaultImages[this.document.type] || cardDescriptor.defaultImages.missing))})`
             }
         },
-        methods: {
-            showMenu(event) {
-                this.createMenuItems()
-                // eslint-disable-next-line
-                // @ts-ignore
-                this.$refs.optionsMenu.toggle(event)
-            },
-            emitEvent(event) {
-                return () => this.$emit(event, this.document)
-            },
-            // prettier-ignore
-            createMenuItems() {
+        documentFields(): any {
+            switch (this.viewType) {
+                case 'recent':
+                    return cardDescriptor.defaultViewFields
+                case 'repository':
+                    return cardDescriptor.defaultViewFields
+                case 'dataset':
+                    return cardDescriptor.datasetViewFields
+                case 'analysis':
+                    return cardDescriptor.analysisViewFields
+                case 'businessModel':
+                    return cardDescriptor.businessModelViewFields
+                case 'federationDataset':
+                    return cardDescriptor.federationDatasetViewFields
+                default:
+                    return []
+            }
+        },
+        documentButtons(): any {
+            switch (this.viewType) {
+                case 'recent':
+                    return [
+                        { icon: 'fas fa-info-circle', id: 'list-button', visible: true, command: this.emitEvent('openSidebar'), label: 'common.details' },
+                        { icon: 'fas fa-play-circle', visible: true, command: this.emitEvent('executeRecent'), label: 'common.execute' }
+                    ]
+                case 'repository':
+                    return [
+                        { icon: 'fas fa-ellipsis-v', id: 'list-button', visible: true, command: this.showMenu, label: 'common.menu' },
+                        { icon: 'fas fa-info-circle', id: 'list-button', visible: true, command: this.emitEvent('openSidebar'), label: 'common.details' },
+                        { icon: 'fas fa-play-circle', visible: true, command: this.emitEvent('executeDocumentFromOrganizer'), label: 'common.execute' }
+                    ]
+                case 'dataset':
+                    return [
+                        { icon: 'fas fa-ellipsis-v', id: 'list-button', visible: true, command: this.showMenu, label: 'common.menu' },
+                        { icon: 'fas fa-info-circle', id: 'list-button', visible: true, command: this.emitEvent('openSidebar'), label: 'common.details' },
+                        { icon: 'fas fa-eye', visible: true, command: this.emitEvent('previewDataset'), label: 'common.details' }
+                    ]
+                case 'analysis':
+                    return [
+                        { icon: 'fas fa-ellipsis-v', id: 'list-button', visible: true, command: this.showMenu, label: 'common.menu' },
+                        { icon: 'fas fa-info-circle', id: 'list-button', visible: true, command: this.emitEvent('openSidebar'), label: 'common.details' },
+                        { icon: 'fas fa-play-circle', visible: true, command: this.emitEvent('executeAnalysisDocument'), label: 'common.execute' }
+                    ]
+                case 'businessModel':
+                    return [
+                        { icon: 'fas fa-info-circle', id: 'list-button', visible: true, command: this.emitEvent('openSidebar'), label: 'common.details' },
+                        { icon: 'fa fa-search', visible: true, command: this.emitEvent('openDatasetInQBE'), label: 'common.execute' }
+                    ]
+                case 'federationDataset':
+                    return [
+                        { icon: 'fas fa-ellipsis-v', id: 'list-button', visible: true, command: this.showMenu, label: 'common.menu' },
+                        { icon: 'fas fa-info-circle', id: 'list-button', visible: true, command: this.emitEvent('openSidebar'), label: 'common.details' },
+                        { icon: 'fa fa-search', visible: true, command: this.emitEvent('openDatasetInQBE'), label: 'common.execute' }
+                    ]
+                default:
+                    return []
+            }
+        }
+    },
+
+    data() {
+        return {
+            cardDescriptor,
+            sidebarVisible: false,
+            menuButtons: [] as any
+        }
+    },
+    methods: {
+        showMenu(event) {
+            this.createMenuItems()
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.optionsMenu.toggle(event)
+        },
+        emitEvent(event) {
+            return () => this.$emit(event, this.document)
+        },
+        // prettier-ignore
+        createMenuItems() {
             this.menuButtons = []
             if (this.viewType == 'analysis') {
                 this.menuButtons.push(
@@ -205,19 +205,75 @@
             )
             }
         }
-        }
-    })
+    }
+})
 </script>
 <style lang="scss" scoped>
-    @media screen and (max-width: 576px) {
+.card-container {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    border-radius: 0;
+    overflow: hidden;
+    height: 120px;
+    padding: 0;
+    border: 1px solid var(--kn-color-borders);
+    .details-container {
+        order: 1;
+        -webkit-clip-path: polygon(0 0, 0 100%, 70% 101%, 90% 0);
+        clip-path: polygon(0 0, 0 100%, 70% 101%, 90% 0);
+        background-color: white;
+        height: 100%;
+        z-index: 2;
+        width: 100%;
+        .detail-type {
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: grey;
+            margin-top: 1rem;
+        }
+        .detail-info {
+            width: 70%;
+        }
+
+        .detail-buttons {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+        }
+    }
+    .card-image {
+        position: absolute;
+        right: 0;
+        top: 0;
+        order: 2;
+        height: 100%;
+        z-index: 1;
+        width: 200px;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .card-container {
+        .details-container {
+            -webkit-clip-path: none;
+            clip-path: none;
+            .detail-info {
+                width: 100%;
+                h4,
+                p {
+                    white-space: normal;
+                }
+            }
+        }
         .card-image {
             display: none;
         }
-        .details-container {
-            border-radius: 10px;
-        }
-        #list-button {
-            display: none;
-        }
     }
+
+    #list-button {
+        display: none;
+    }
+}
 </style>
