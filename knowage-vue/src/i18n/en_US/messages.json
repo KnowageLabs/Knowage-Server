@@ -2292,6 +2292,7 @@
             "driverable": "Drivable",
             "exportSuccess": "The download has started in background. You will find the result file in your download page.",
             "fileDownload": "Download Dataset file",
+            "isPreparing": "Preparing avro file...",
             "modified": "Modified",
             "monitoring": "Monitoring",
             "openData": "Import Open Data",

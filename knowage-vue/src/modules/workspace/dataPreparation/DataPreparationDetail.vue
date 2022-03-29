@@ -52,8 +52,8 @@
                         <i v-else class="transformation-icon" :class="descriptorTransformations.filter((x) => x.name === tr.type)[0].icon"></i>
 
                         <span class="typeAndDescription kn-truncated kn-flex">
-                            <span class="kn-list-item" :title="$t(descriptorTransformations.filter((x) => x.name === tr.type)[0].label)">{{ $t(descriptorTransformations.filter((x) => x.name === tr.type)[0].label) }} </span>
-                            <span class="transformationDescription kn-truncated" :title="getTextForSidebar(tr)">
+                            <span class="kn-list-item">{{ $t(descriptorTransformations.filter((x) => x.name === tr.type)[0].label) }} </span>
+                            <span class="transformationDescription kn-truncated">
                                 {{ getTextForSidebar(tr) }}
                             </span>
                         </span>
