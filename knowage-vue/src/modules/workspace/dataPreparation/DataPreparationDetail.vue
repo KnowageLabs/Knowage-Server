@@ -90,7 +90,8 @@
                 <Column v-for="(col, colIndex) in columns" :field="col.header" :key="colIndex" :style="{ width: '200px' }">
                     <template #header>
                         <Button v-if="col.fieldType" :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'opType-' + colIndex)">
-                            <i :class="descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon"></i>
+                            <span v-if="descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon.class" :class="descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon.class">{{ descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon.name }}</span>
+                            <i v-else :class="descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon"></i>
                         </Button>
                         <OverlayPanel :ref="'opType-' + colIndex" :popup="true">
                             <span class="p-float-label">
@@ -105,10 +106,10 @@
                         <Button icon="pi pi-ellipsis-v" :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'trOpType-' + colIndex)" />
                         <Menu :model="getTransformationsMenu(col)" :ref="'trOpType-' + colIndex" :popup="true">
                             <template #item="{item}">
-                                <span class="p-menuitem-link" @click="callFunction(item, col)">
-                                    <span :class="item.icon.class" v-if="item.icon.class">{{ item.icon.name }}</span>
-                                    <i v-else :class="item.icon"></i> <span class="p-ml-2"> {{ $t(item.label) }}</span></span
-                                >
+                                <span :class="['p-menuitem-link', 'toolbarCustomConfig', descriptor.css.buttonClassHeader]" @click="callFunction(item, col)">
+                                    <span :class="item.icon.class" class="menu-icon" v-if="item.icon.class">{{ item.icon.name }}</span>
+                                    <i v-else :class="item.icon"></i> <span class="p-ml-2"> {{ $t(item.label) }}</span>
+                                </span>
                             </template>
                         </Menu>
                     </template></Column
@@ -565,6 +566,21 @@
             min-width: 0;
 
             span {
+                width: 16px;
+                height: 16px;
+                font-size: 16px;
+            }
+            i {
+                width: 16px;
+                height: 16px;
+                font-size: 16px;
+            }
+        }
+
+        &.kn-datapreparation-button {
+            min-width: 0;
+
+            .menu-icon {
                 width: 16px;
                 height: 16px;
                 font-size: 16px;
