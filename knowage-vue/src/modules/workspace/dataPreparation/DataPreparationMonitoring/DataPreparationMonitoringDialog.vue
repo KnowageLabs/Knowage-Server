@@ -109,9 +109,9 @@
         watch: {
             visibility(newVisibility) {
                 if (newVisibility) {
-                    this.$emit('update:loading', true)
+                    this.$store.commit('setLoading', true)
                     this.loadLogs()
-                    this.$emit('update:loading', false)
+                    this.$store.commit('setLoading', false)
                 } else {
                     this.logs = []
                 }
