@@ -27,7 +27,7 @@
 
         <div class="p-d-flex p-flex-wrap p-col-12 p-mb-1" v-if="selectedRefreshRate">
             <div v-if="selectedRefreshRate === 'daily'" class="p-d-flex p-flex-wrap">
-                <div class="p-d-flex p-ai-center p-flex-wrap">
+                <div class="p-d-flex p-ai-center p-flex-wrap itemClass">
                     <RadioButton :class="descriptor.style.radiobutton" id="dayConf1" name="dayConf" value="everyDay" v-model="dayConf" :disabled="readOnly" @change="$emit('touched')" />
                     <i18n-t keypath="knScheduler.everyDay" tag="div" class="p-d-flex p-ai-center p-mr-2">
                         <template #day>
@@ -125,7 +125,7 @@
                     />
                 </div>
 
-                <div class="p-d-flex p-ai-center p-flex-wrap">
+                <div class="p-d-flex p-ai-center p-flex-wrap itemClass">
                     <RadioButton :class="descriptor.style.radiobutton" id="monthConf1" name="monthConf" v-model="monthConf" value="theDay" :disabled="readOnly" @change="$emit('touched')" /> {{ $t('knScheduler.theDay') }}
 
                     <Dropdown
@@ -147,7 +147,7 @@
                     />
                 </div>
 
-                <div class="p-d-flex p-ai-center p-flex-wrap">
+                <div class="p-d-flex p-ai-center p-flex-wrap itemClass">
                     <RadioButton :class="descriptor.style.radiobutton" id="monthConf2" name="monthConf" v-model="monthConf" value="theOrdinalDay" :disabled="readOnly" /> {{ $t('knScheduler.the') }}
 
                     <Dropdown
@@ -232,7 +232,7 @@
                     />
                 </div>
 
-                <div class="p-d-flex p-ai-center p-flex-wrap">
+                <div class="p-d-flex p-ai-center p-flex-wrap itemClass">
                     <RadioButton :class="descriptor.style.radiobutton" id="monthConf1" name="yearConf" v-model="yearConf" value="theDay" :disabled="readOnly" /> {{ $t('knScheduler.theDay') }}
 
                     <Dropdown
@@ -254,7 +254,7 @@
                     />
                 </div>
 
-                <div class="p-d-flex p-ai-center p-flex-wrap">
+                <div class="p-d-flex p-ai-center p-flex-wrap itemClass">
                     <RadioButton :class="descriptor.style.radiobutton" id="monthConf2" name="yearConf" v-model="yearConf" value="theOrdinalDay" :disabled="readOnly" /> {{ $t('knScheduler.the') }}
 
                     <Dropdown
@@ -641,5 +641,9 @@
 
     .messageClass {
         height: 50px;
+    }
+
+    .itemClass {
+        width: 100%;
     }
 </style>
