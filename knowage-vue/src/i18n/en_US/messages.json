@@ -2230,6 +2230,9 @@
         "roleSelection": "Role Selection"
     },
     "workspace": {
+        "advancedData": {
+            "title": "Data preparation"
+        },
         "buttonsTooltips": {
             "deleteDoc": "Delete Document",
             "editDoc": "Edit Document",

@@ -211,15 +211,24 @@
             },
             // prettier-ignore
             createMenuItems(clickedDocument: any) {
-            this.menuButtons = []
-            this.menuButtons.push(
-                { key: '0', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
-                { key: '1', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
-                { key: '2', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.isDatasetOwner },
-                { key: '3', label: this.$t('workspace.myData.monitoring'), icon: 'pi pi-chart-line', command: () => this.handleMonitoring(clickedDocument), visible: this.isDatasetOwner },
-                { key: '4', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
-                
-            )
+                let tmp = [] as any
+
+                tmp.push(
+                    { key: '0', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
+                    { key: '1', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
+                    { key: '4', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
+                )
+
+                if ((this.$store.state as any).user?.functionalities.includes('DataPreparation')) {
+
+                    tmp.push(
+                        { key: '2', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: true },
+                        { key: '3', label: this.$t('workspace.myData.monitoring'), icon: 'pi pi-chart-line', command: () => this.handleMonitoring(clickedDocument), visible: true }
+                    )
+                }
+
+                tmp = tmp.sort((a,b)=>a.key.localeCompare(b.key))
+                this.menuButtons = tmp
 
         },
             createCreationMenuButtons() {
