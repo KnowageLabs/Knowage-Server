@@ -7,7 +7,7 @@
                 </template>
 
                 <template #end>
-                    <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" @click="save" />
+                    <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" :disabled="saveButtonDisabled" @click="save" />
                     <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="close" />
                 </template>
             </Toolbar>
@@ -15,31 +15,54 @@
 
         <div>
             <HierarchyManagementHierarchyMasterForm :nodeGeneralFields="nodeGeneralFields"></HierarchyManagementHierarchyMasterForm>
-            <HierarchyManagementHierarchyMasterSelectList class="" :dimensionMetadata="dimensionMetadata"></HierarchyManagementHierarchyMasterSelectList>
+            <HierarchyManagementHierarchyMasterSelectList :dimensionMetadata="dimensionMetadata" @recursiveChanged="onRecursiveChanged" @levelsChanged="onLevelsChanged"></HierarchyManagementHierarchyMasterSelectList>
         </div>
+
+        <KnOverlaySpinnerPanel :visibility="loading"></KnOverlaySpinnerPanel>
     </Dialog>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iNodeMetadata, iNodeMetadataField, iDimensionMetadata } from '../../../HierarchyManagement'
+import { iNodeMetadata, iNodeMetadataField, iDimensionMetadata, iDimension, iDimensionFilter } from '../../../HierarchyManagement'
+import moment from 'moment'
 import Dialog from 'primevue/dialog'
+import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import hierarchyManagementHierarchyMasterDialogDescriptor from './HierarchyManagementMasterDescriptor.json'
 import HierarchyManagementHierarchyMasterForm from './HierarchyManagementHierarchyMasterForm.vue'
 import HierarchyManagementHierarchyMasterSelectList from './HierarchyManagementHierarchyMasterSelectList.vue'
+import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchy-master-dialog',
-    components: { Dialog, HierarchyManagementHierarchyMasterForm, HierarchyManagementHierarchyMasterSelectList },
-    props: { visible: { type: Boolean }, nodeMetadata: { type: Object as PropType<iNodeMetadata | null> }, dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> } },
+    components: { Dialog, HierarchyManagementHierarchyMasterForm, HierarchyManagementHierarchyMasterSelectList, KnOverlaySpinnerPanel },
+    props: {
+        visible: { type: Boolean },
+        nodeMetadata: { type: Object as PropType<iNodeMetadata | null> },
+        dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> },
+        validityDate: { type: Date },
+        selectedDimension: { type: Object as PropType<iDimension | null> },
+        dimensionFilters: { type: Array as PropType<iDimensionFilter[]> }
+    },
     emits: ['close'],
     data() {
         return {
             hierarchyManagementHierarchyMasterDialogDescriptor,
-            nodeGeneralFields: [] as iNodeMetadataField[]
+            nodeGeneralFields: [] as iNodeMetadataField[],
+            recursive: null as { NM: string; CD: string; NM_PARENT: string; CD_PARENT: string } | null,
+            levels: [] as { CD: string; NM: string }[],
+            loading: false
+        }
+    },
+    computed: {
+        saveButtonDisabled(): boolean {
+            return this.requiredFieldMissing()
         }
     },
     watch: {
+        visible(value: boolean) {
+            if (value) this.loadNodeData()
+        },
         nodeMetadata() {
             this.loadNodeData()
         }
@@ -55,8 +78,68 @@ export default defineComponent({
                   })
                 : []
         },
-        save() {},
+        requiredFieldMissing() {
+            let requiredMissing = false
+
+            for (let i = 0; i < this.nodeGeneralFields.length; i++) {
+                if (this.nodeGeneralFields[i].VISIBLE && !this.nodeGeneralFields[i].value) {
+                    requiredMissing = true
+                    break
+                }
+            }
+
+            return requiredMissing
+        },
+        onLevelsChanged(selectedLevels: any[]) {
+            console.log('SELECTED LEVELS: ', selectedLevels)
+            this.levels = selectedLevels?.map((level: any) => {
+                return { CD: level.code?.ID, NM: level.name?.ID }
+            })
+            console.log('LEVELS: ', this.levels)
+        },
+        onRecursiveChanged(payload: any) {
+            console.log('ON RECURSIVE CHANGED PAYLOAD: ', payload)
+            if (!payload) {
+                this.recursive = null
+                return
+            }
+
+            this.recursive = { NM: payload.recursive.name?.ID, CD: payload.recursive.code?.ID, NM_PARENT: payload.recursiveParentName?.ID, CD_PARENT: payload.recursiveParentDescription?.ID }
+        },
+        async save() {
+            const postData = {
+                dimension: this.selectedDimension?.DIMENSION_NM,
+                validityDate: moment(this.validityDate).format('YYYY-MM-DD'),
+                optionalFilters: this.dimensionFilters?.filter((filter: iDimensionFilter) => filter.VALUE && filter.VALUE !== ''),
+                levels: this.levels,
+                recursive: this.recursive
+            }
+            for (let i = 0; i < this.nodeGeneralFields.length; i++) {
+                if (this.nodeGeneralFields[i].VISIBLE) {
+                    postData[this.nodeGeneralFields[i].ID] = this.nodeGeneralFields[i].TYPE === 'NUMBER' && this.nodeGeneralFields[i].value ? parseInt(this.nodeGeneralFields[i].value as string) : this.nodeGeneralFields[i].value
+                }
+            }
+            console.log('POST DATA: ', postData)
+
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchiesMaster/createHierarchyMaster`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    if (response.data?.response === 'ok') {
+                        this.$emit('close')
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.createTitle'),
+                            msg: this.$t('common.toast.success')
+                        })
+                    }
+                })
+                .catch(() => {})
+            this.loading = false
+        },
         close() {
+            this.nodeGeneralFields = []
+            this.levels = []
+            this.recursive = null
             this.$emit('close')
         }
     }

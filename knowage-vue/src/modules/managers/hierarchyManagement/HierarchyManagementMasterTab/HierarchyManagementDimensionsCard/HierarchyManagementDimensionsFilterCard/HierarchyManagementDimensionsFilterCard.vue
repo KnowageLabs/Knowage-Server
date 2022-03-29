@@ -73,6 +73,7 @@ export default defineComponent({
         resetFilters() {
             this.showMissingElements = false
             this.filters?.forEach((filter: iDimensionFilter) => (filter.VALUE = ''))
+            this.$emit('applyFilters', { filters: [], showMissingElements: this.showMissingElements })
         }
     }
 })

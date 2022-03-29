@@ -14,7 +14,7 @@
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <div class="kn-flex">
                         <span class="p-float-label">
-                            <Calendar v-model="validityDate" :manualInput="true"></Calendar>
+                            <Calendar v-model="validityDate" :manualInput="true" @dateSelect="loadData"></Calendar>
                         </span>
                     </div>
                     <div id="hierarchy-management-dimension-dropdown-container" class="p-fluid">
@@ -33,7 +33,15 @@
                 <HierarchyManagementDimensionsFilterCard v-show="selectedDimension" :dimensionFilters="dimensionFilters" @applyFilters="onApplyFilters"></HierarchyManagementDimensionsFilterCard>
                 <HierarchyManagementDimensionsTable v-show="dimensionData" :dimensionData="dimensionData"></HierarchyManagementDimensionsTable>
             </div>
-            <HierarchyManagementHierarchyMasterDialog :visible="hierarchyMasterDialogVisible" :nodeMetadata="nodeMetadata" :dimensionMetadata="dimensionMetadata" @close="hierarchyMasterDialogVisible = false"></HierarchyManagementHierarchyMasterDialog>
+            <HierarchyManagementHierarchyMasterDialog
+                :visible="hierarchyMasterDialogVisible"
+                :nodeMetadata="nodeMetadata"
+                :dimensionMetadata="dimensionMetadata"
+                :validityDate="validityDate"
+                :selectedDimension="selectedDimension"
+                :dimensionFilters="dimensionFilters"
+                @close="hierarchyMasterDialogVisible = false"
+            ></HierarchyManagementHierarchyMasterDialog>
         </template>
     </Card>
 </template>
@@ -54,7 +62,7 @@ export default defineComponent({
     name: 'hierarchy-management-dimensions-card',
     components: { Card, Calendar, Dropdown, HierarchyManagementDimensionsTable, HierarchyManagementHierarchyMasterDialog, HierarchyManagementDimensionsFilterCard },
     props: { dimensions: { type: Array as PropType<iDimension[]> } },
-    emits: ['loading'],
+    emits: ['loading', 'dimensionSelected'],
     data() {
         return {
             validityDate: new Date(),
@@ -69,6 +77,10 @@ export default defineComponent({
     async created() {},
     methods: {
         async onSelectedDimensionChange() {
+            this.$emit('dimensionSelected', this.selectedDimension)
+            await this.loadData()
+        },
+        async loadData() {
             await this.loadDimensionData(null)
             await this.loadDimensionMetadata()
             await this.loadNodeMetadata()

@@ -1300,6 +1300,8 @@
             "createHierarchyMaster": "Create Hierarchy Master",
             "createHierarchyMasterErrorMessage": "You can select only two items",
             "dimensions": "Dimensions",
+            "hierarchies": "Hierarchies",
+            "hierarchyType": "Hierarchy Type",
             "lev": "Lev.",
             "master": "Master",
             "recursive": "Recursive",

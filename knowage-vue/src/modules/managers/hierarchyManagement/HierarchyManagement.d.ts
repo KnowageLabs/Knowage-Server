@@ -65,11 +65,8 @@ export interface iDimensionFilter {
 }
 
 export interface iHierarchy {
-    HIER_CD: string
+    HIER_CD: string,
+    HIER_NM: string,
+    HIER_TP: string,
     HIER_DS: string
-    HIER_NM: string
-    dimension: string
-    levels: { CD: string, NM: string }[]
-    optionalFilters: any[]
-    validityDate: string
 }

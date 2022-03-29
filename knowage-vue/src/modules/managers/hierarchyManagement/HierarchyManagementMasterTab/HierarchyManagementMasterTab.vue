@@ -1,7 +1,7 @@
 <template>
     <div class="p-d-flex p-flex-row">
-        <HierarchyManagementDimensionsCard class="kn-flex" :dimensions="dimensions"></HierarchyManagementDimensionsCard>
-        <HierarchyManagementHierarchiesCard class="kn-flex"></HierarchyManagementHierarchiesCard>
+        <HierarchyManagementDimensionsCard class="kn-flex" :dimensions="dimensions" @dimensionSelected="setSelectedDimension" @loading="$emit('loading', $event)"></HierarchyManagementDimensionsCard>
+        <HierarchyManagementHierarchiesCard class="kn-flex" :selectedDimension="selectedDimension" @loading="$emit('loading', $event)"></HierarchyManagementHierarchiesCard>
     </div>
 </template>
 
@@ -16,9 +16,15 @@ export default defineComponent({
     components: { HierarchyManagementDimensionsCard, HierarchyManagementHierarchiesCard },
     props: { dimensions: { type: Array as PropType<iDimension[]> } },
     data() {
-        return {}
+        return {
+            selectedDimension: null as iDimension | null
+        }
     },
     async created() {},
-    methods: {}
+    methods: {
+        setSelectedDimension(dimension: iDimension | null) {
+            this.selectedDimension = dimension
+        }
+    }
 })
 </script>

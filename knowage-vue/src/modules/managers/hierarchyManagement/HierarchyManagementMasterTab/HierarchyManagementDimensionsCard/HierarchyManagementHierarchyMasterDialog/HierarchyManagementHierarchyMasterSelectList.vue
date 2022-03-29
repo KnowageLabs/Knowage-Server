@@ -33,17 +33,50 @@
                                 ><b>{{ $t('managers.hierarchyManagement.lev') + ' ' + slotProps.option.code.level + ' ' }}</b
                                 >{{ slotProps.option.code.NAME + ', ' + slotProps.option.name.NAME }}</span
                             >
-                            <Button v-if="slotProps.index === dimensionDestinationFields.length - 1" icon="fa fa-plus" class="p-button-link p-button-sm p-p-0" @click.stop="moveToRecursive(slotProps.option)" />
+                            <Button v-if="slotProps.index === dimensionDestinationFields.length - 1" icon="fa fa-plus" class="p-button-link p-button-sm p-p-0" @click.stop="moveToRecursive(slotProps.option, slotProps.index)" />
                             <Button v-if="slotProps.index !== 0" icon="fa fa-arrow-up" class="p-button-link p-button-sm p-p-0" @click.stop="move(slotProps.option, slotProps.index, 'up')" />
                             <Button v-if="slotProps.index !== dimensionDestinationFields.length - 1" icon="fa fa-arrow-down" class="p-button-link p-button-sm p-p-0" @click.stop="move(slotProps.option, slotProps.index, 'down')" />
                         </div>
                     </div>
                 </template>
             </Listbox>
-            <div>
-                <div>
-                    <span>{{ $t('managers.hierarchyManagement.recursive') + ': ' }}</span
-                    ><span v-if="recursive">{{ recursive.code.NAME + ' ' + recursive.name.NAME }}</span>
+            <div class="recursive-container">
+                <div class="p-d-flex p-flex-rowbp-ai-center">
+                    <div>
+                        <span>{{ $t('managers.hierarchyManagement.recursive') + ': ' }}</span
+                        ><span v-if="recursive">{{ recursive.code.NAME + ' ' + recursive.name.NAME }}</span>
+                    </div>
+                    <Button v-show="recursive" icon="pi pi-trash" class="p-button-link p-ml-auto" @click="removeRecursive" />
+                </div>
+                <div class="p-d-flex p-flex-row">
+                    <div class="kn-flex">
+                        <span class="p-float-label p-m-2">
+                            <Dropdown
+                                class="kn-material-input"
+                                v-model="recursiveParentName"
+                                :options="parentDimensionSourceFields"
+                                optionLabel="NAME"
+                                :disabled="!recursive"
+                                @change="$emit('recursiveChanged', { recursive: recursive, recursiveParentName: recursiveParentName, recursiveParentDescription: recursiveParentDescription })"
+                            >
+                            </Dropdown>
+                            <label class="kn-material-input-label"> {{ $t('common.name') }} </label>
+                        </span>
+                    </div>
+                    <div class="kn-flex">
+                        <span class="p-float-label p-m-2">
+                            <Dropdown
+                                class="kn-material-input"
+                                v-model="recursiveParentDescription"
+                                :options="parentDimensionSourceFields"
+                                optionLabel="NAME"
+                                :disabled="!recursive"
+                                @change="$emit('recursiveChanged', { recursive: recursive, recursiveParentName: recursiveParentName, recursiveParentDescription: recursiveParentDescription })"
+                            >
+                            </Dropdown>
+                            <label class="kn-material-input-label"> {{ $t('common.description') }} </label>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,12 +86,14 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iDimensionField, iDimensionMetadata } from '../../../HierarchyManagement'
+import Dropdown from 'primevue/dropdown'
 import Listbox from 'primevue/listbox'
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchy-master-select-list',
-    components: { Listbox },
+    components: { Dropdown, Listbox },
     props: { dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> } },
+    emits: ['recursiveChanged', 'levelsChanged'],
     data() {
         return {
             dimensionSourceFields: [] as iDimensionField[],
@@ -66,7 +101,10 @@ export default defineComponent({
             dimensionDestinationFields: [] as any[],
             selectedDestinationFields: [] as any[],
             errorMessageVisible: false,
-            recursive: null as any
+            recursive: null as any,
+            parentDimensionSourceFields: [] as iDimensionField[],
+            recursiveParentName: null as any,
+            recursiveParentDescription: null as any
         }
     },
     watch: {
@@ -79,7 +117,9 @@ export default defineComponent({
     },
     methods: {
         loadDimensionData() {
-            this.dimensionSourceFields = this.dimensionMetadata?.DIM_FIELDS as iDimensionField[]
+            this.dimensionSourceFields = []
+            this.parentDimensionSourceFields = []
+            this.dimensionMetadata?.DIM_FIELDS.forEach((filter: iDimensionField) => (filter.PARENT ? this.parentDimensionSourceFields.push(filter) : this.dimensionSourceFields.push(filter)))
         },
         selectField(field: iDimensionField) {
             console.log('SELECTED FIELD: ', field)
@@ -105,6 +145,7 @@ export default defineComponent({
                 this.selectedSourceFields = []
                 this.dimensionDestinationFields.push(newLevel)
             }
+            this.$emit('levelsChanged', this.dimensionDestinationFields)
         },
 
         moveToTheLeft() {
@@ -127,6 +168,7 @@ export default defineComponent({
                 this.dimensionDestinationFields[i].code.level = i + 1
                 this.dimensionDestinationFields[i].name.level = i + 1
             }
+            this.$emit('levelsChanged', this.dimensionDestinationFields)
         },
         move(destinationField: any, index: number, direction: 'up' | 'down') {
             const tempIndex = direction === 'up' ? index - 1 : index + 1
@@ -137,9 +179,26 @@ export default defineComponent({
             this.dimensionDestinationFields[index].code.level = index
             this.dimensionDestinationFields[index].level = index
             this.dimensionDestinationFields[tempIndex] = destinationField
+            this.$emit('levelsChanged', this.dimensionDestinationFields)
         },
-        moveToRecursive(destinationField: any) {
+        moveToRecursive(destinationField: any, index: number) {
             console.log('DEST FIELD: ', destinationField)
+            destinationField.isLast = false
+            this.dimensionDestinationFields.splice(index, 1)
+            if (this.dimensionDestinationFields.length > 0) {
+                this.dimensionDestinationFields[this.dimensionDestinationFields.length - 1].isLast = true
+            }
+            this.selectedDestinationFields = []
+            this.recursive = destinationField
+            this.$emit('recursiveChanged', { recursive: this.recursive, recursiveParentName: this.recursiveParentName, recursiveParentDescription: this.recursiveParentDescription })
+        },
+        removeRecursive() {
+            this.selectedDestinationFields = [this.recursive]
+            this.moveToTheLeft()
+            this.recursive = false
+            this.recursiveParentName = null
+            this.recursiveParentDescription = null
+            this.$emit('recursiveChanged', null)
         }
     }
 })
@@ -154,5 +213,9 @@ export default defineComponent({
 
 .hierarchy-management-master-selecet-list-button {
     width: 150px;
+}
+
+.recursive-container {
+    border: 1px solid #c2c2c2;
 }
 </style>
