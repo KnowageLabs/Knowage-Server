@@ -20,7 +20,9 @@ package it.eng.spagobi.api.v3;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.curator.shaded.com.google.common.collect.Lists;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -39,10 +41,15 @@ class DataSetMainDTO {
 	protected final SbiDataSet dataset;
 	private final List<DataSetResourceAction> actions = new ArrayList<>();
 	private final int usedByNDocs;
+	private final List<String> tags = Lists.newArrayList();
 
 	public DataSetMainDTO(SbiDataSet dataset) {
 		super();
 		this.dataset = dataset;
+
+		List<String> tags = dataset.getTags().stream().map(e -> e.getName()).collect(Collectors.toList());
+
+		this.tags.addAll(tags);
 
 		Integer dsId = dataset.getId().getDsId();
 
@@ -114,6 +121,10 @@ class DataSetMainDTO {
 
 	public Integer getCatTypeId() {
 		return dataset.getCategoryId();
+	}
+
+	public List<String> getTags() {
+		return tags;
 	}
 
 }
