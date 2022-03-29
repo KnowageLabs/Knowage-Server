@@ -38,37 +38,37 @@
 		</RollingFile>
 	</Appenders>
 	<Loggers>
-		<logger name="audit" additivity="false" level="INFO">
+		<logger name="audit" additivity="false" level="info">
 			<AppenderRef ref="FILE_AUDIT" />
 		</logger>
-		<logger name="edu.yale" additivity="false" level="DEBUG">
+		<logger name="edu.yale" additivity="false" level="warn">
 			<AppenderRef ref="FILE" />
 		</logger>
-		<logger name="it.eng.qbe" additivity="false" level="ERROR">
+		<logger name="it.eng.qbe" additivity="false" level="error">
 			<AppenderRef ref="FILE" />
 			<AppenderRef ref="CONSOLE" />
 		</logger>
-		<logger name="it.eng.qbe.datasource.jpa.audit.JPAPersistenceManagerAuditLogger" additivity="false" level="INFO">
+		<logger name="it.eng.qbe.datasource.jpa.audit.JPAPersistenceManagerAuditLogger" additivity="false" level="info">
 			<AppenderRef ref="FILE_AUDIT" />
 		</logger>
-		<logger name="it.eng.spagobi" additivity="false" level="ERROR">
+		<logger name="it.eng.spagobi" additivity="false" level="error">
 			<AppenderRef ref="FILE" />
 			<AppenderRef ref="CONSOLE" />
 		</logger>
-		<logger name="it.eng.spagobi.commons.utilities.messages" additivity="false" level="ERROR">
+		<logger name="it.eng.spagobi.commons.utilities.messages" additivity="false" level="error">
 			<AppenderRef ref="FILE" />
 		</logger>
-		<logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" additivity="false" level="ERROR">
+		<logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" additivity="false" level="error">
 			<AppenderRef ref="FILE" />
 		</logger>
-		<logger name="it.eng.spagobi.engines.qbe" additivity="false" level="ERROR">
+		<logger name="it.eng.spagobi.engines.qbe" additivity="false" level="error">
 			<AppenderRef ref="FILE" />
 			<AppenderRef ref="CONSOLE" />
 		</logger>
-		<logger name="Spago" additivity="false" level="ERROR">
+		<logger name="Spago" additivity="false" level="error">
 			<AppenderRef ref="FILE" />
 		</logger>
-		<Root level="ERROR">
+		<Root level="error">
 			<AppenderRef ref="FILE" />
 		</Root>
 	</Loggers>

@@ -23,19 +23,19 @@
 		</RollingFile>
 	</Appenders>
 	<Loggers>
-		<logger name="edu.yale" level="ERROR">
+		<logger name="edu.yale" level="error">
 			<AppenderRef ref="SpagoBIProcessEngine" />
 		</logger>
-		<logger name="it.eng.spagobi" level="ERROR">
+		<logger name="it.eng.spagobi" level="error">
 			<AppenderRef ref="SpagoBIProcessEngine" />
 		</logger>
-		<logger name="it.eng.spagobi.commons.utilities.messages" level="ERROR">
+		<logger name="it.eng.spagobi.commons.utilities.messages" level="error">
 			<AppenderRef ref="SpagoBIProcessEngine" />
 		</logger>
-		<logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" level="ERROR">
+		<logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" level="error">
 			<AppenderRef ref="SpagoBIProcessEngine" />
 		</logger>
-		<Root level="DEBUG">
+		<Root level="warn">
 			<AppenderRef ref="SpagoBIProcessEngine" />
 		</Root>
 	</Loggers>

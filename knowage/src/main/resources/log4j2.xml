@@ -124,14 +124,13 @@
 		<logger name="it.eng" additivity="false" level="error">
 			<AppenderRef ref="knowage" />
 		</logger>
-		<logger name="it.eng.knowage.mail.MailSessionBuilder" additivity="false" level="debug">
+		<logger name="it.eng.knowage.mail.MailSessionBuilder" additivity="false" level="warn">
 			<AppenderRef ref="knowage" />
 		</logger>
 		<logger name="it.eng.knowage.tools.servermanager" additivity="false" level="error">
 			<AppenderRef ref="knowage_SM" />
 		</logger>
-		<logger name="it.eng.spagobi.api.v2.export" additivity="false"
-			level="debug">
+		<logger name="it.eng.spagobi.api.v2.export" additivity="false" level="warn">
 			<AppenderRef ref="knowage" />
 		</logger>
 		<logger name="it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail" additivity="false" level="error">
@@ -143,7 +142,7 @@
 		<logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" level="error">
 			<AppenderRef ref="knowage" />
 		</logger>
-		<logger name="it.eng.spagobi.tools.dataset.associativity.strategy.OuterAssociativityManager" level="debug" additivity="false">
+		<logger name="it.eng.spagobi.tools.dataset.associativity.strategy.OuterAssociativityManager" level="warn" additivity="false">
 			<AppenderRef ref="knowage" />
 		</logger>
 		<logger name="it.eng.spagobi.tools.dataset.common.dataproxy.JDBCBigQueryDataProxy" level="info" additivity="false">
@@ -164,7 +163,7 @@
 		<logger name="it.eng.spagobi.tools.dataset.common.dataproxy.SolrDataProxy" level="info" additivity="false">
 			<AppenderRef ref="FILE_AUDIT" />
 		</logger>
-		<logger name="it.eng.spagobi.tools.dataset.graph.associativity.container.InlineViewAssociativeDatasetContainer" level="debug" additivity="false">
+		<logger name="it.eng.spagobi.tools.dataset.graph.associativity.container.InlineViewAssociativeDatasetContainer" level="warn" additivity="false">
 			<AppenderRef ref="knowage" />
 		</logger>
 		<logger name="it.eng.spagobi.tools.hierarchiesmanagement.service.rest" additivity="false" level="error">
