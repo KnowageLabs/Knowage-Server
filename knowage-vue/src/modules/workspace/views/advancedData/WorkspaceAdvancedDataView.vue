@@ -2,7 +2,6 @@
     <DataPreparationMonitoringDialog v-model:visibility="showMonitoring" @close="showMonitoring = false" @save="updateDatasetWithNewCronExpression" :dataset="selectedDataset"></DataPreparationMonitoringDialog>
     <Toolbar class="kn-toolbar kn-toolbar--secondary">
         <template #start>
-            <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.advancedData.title') }}
         </template>
         <template #end>
@@ -12,14 +11,13 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
-    <KnDatasetList v-model:visibility="showDatasetList" :items="availableDatasets" @selected="newDataPrep" @save="goToDataPrep" @cancel="hideDataSetCatalog" />
+    <KnDatasetList :visibility="showDatasetList" :items="availableDatasets" @selected="newDataPrep" @save="goToDataPrep" @cancel="hideDataSetCatalog" />
 
     <div class="p-d-flex p-flex-row p-ai-center">
         <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
-        <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" data-test="dataset-select" />
     </div>
 
-    <div class=" kn-overflow">
+    <div class="kn-overflow">
         <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table p-mx-2" :value="preparedDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
@@ -54,7 +52,6 @@
                     :document="dataset"
                     @previewDataset="previewDataset"
                     @editFileDataset="editFileDataset"
-                    @openDatasetInQBE="openDatasetInQBE"
                     @exportToXlsx="exportDataset($event, 'xls')"
                     @exportToCsv="exportDataset($event, 'csv')"
                     @shareDataset="shareDataset"
@@ -74,7 +71,6 @@
         :document="selectedDataset"
         @previewDataset="previewDataset"
         @editFileDataset="editFileDataset"
-        @openDatasetInQBE="openDatasetInQBE"
         @exportToXlsx="exportDataset($event, 'xls')"
         @exportToCsv="exportDataset($event, 'csv')"
         @shareDataset="shareDataset"
@@ -180,55 +176,37 @@ export default defineComponent({
         newDataPrep(dataset) {
             this.selectedDsForDataPrep = dataset
         },
-
-        methods: {
-            async loadDataset(datasetLabel: string) {
-                this.loading = true
-                await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${datasetLabel}`)
-                    .then((response: AxiosResponse<any>) => {
-                        this.selectedDataset = response.data[0]
-                    })
-                    .catch(() => {})
-                this.loading = false
-            },
-            toggleDisplayView() {
-                this.$emit('toggleDisplayView')
-            },
-            newDataPrep(dataset) {
-                this.selectedDsForDataPrep = dataset
-            },
-            showSidebar(clickedDataset) {
-                this.selectedDataset = clickedDataset
-                this.showDetailSidebar = true
-            },
-            hideDataSetCatalog() {
-                this.showDatasetList = false
-                this.selectedDsForDataPrep = {}
-            },
-            goToDataPrep() {
-                this.$router.push({ name: 'data-preparation', params: { id: this.selectedDsForDataPrep.label } })
-            },
-            showDataSetCatalog() {
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/for-dataprep`).then(
-                    (response: AxiosResponse<any>) => {
-                        this.availableDatasets = [...response.data.root]
-                        this.showDatasetList = true
-                    },
-                    () => {
-                        this.$store.commit('setError', { title: 'Error', msg: 'Cannot load dataset list' })
-                    }
-                )
-            },
-            showMenu(event, clickedDocument) {
-                this.selectedDataset = clickedDocument
-                this.createMenuItems(clickedDocument)
-                // eslint-disable-next-line
-                // @ts-ignore
-                this.$refs.optionsMenu.toggle(event)
-            },
-            // prettier-ignore
-            createMenuItems(clickedDocument: any) {
+        showSidebar(clickedDataset) {
+            this.selectedDataset = clickedDataset
+            this.showDetailSidebar = true
+        },
+        hideDataSetCatalog() {
+            this.showDatasetList = false
+            this.selectedDsForDataPrep = {}
+        },
+        goToDataPrep() {
+            this.$router.push({ name: 'data-preparation', params: { id: this.selectedDsForDataPrep.label } })
+        },
+        showDataSetCatalog() {
+            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/for-dataprep`).then(
+                (response: AxiosResponse<any>) => {
+                    this.availableDatasets = [...response.data.root]
+                    this.showDatasetList = true
+                },
+                () => {
+                    this.$store.commit('setError', { title: 'Error', msg: 'Cannot load dataset list' })
+                }
+            )
+        },
+        showMenu(event, clickedDocument) {
+            this.selectedDataset = clickedDocument
+            this.createMenuItems(clickedDocument)
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.optionsMenu.toggle(event)
+        },
+        // prettier-ignore
+        createMenuItems(clickedDocument: any) {
                 let tmp = [] as any
 
                 tmp.push(
