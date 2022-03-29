@@ -57,7 +57,6 @@ export default defineComponent({
     methods: {
         loadFilters() {
             this.filters = this.dimensionFilters as iDimensionFilter[]
-            console.log('LOADED FILTERS: ', this.filters)
         },
         applyFilters() {
             let tempFilters = deepcopy(this.filters)
@@ -67,7 +66,6 @@ export default defineComponent({
                     filter.VALUE = moment(filter.VALUE).format('YYYY-MM-DD')
                 }
             })
-            console.log('TEMP FILTERS: ', tempFilters)
             this.$emit('applyFilters', { filters: tempFilters, showMissingElements: this.showMissingElements })
         },
         resetFilters() {

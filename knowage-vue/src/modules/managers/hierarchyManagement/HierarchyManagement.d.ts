@@ -70,3 +70,12 @@ export interface iHierarchy {
     HIER_TP: string,
     HIER_DS: string
 }
+
+export interface iNode {
+    key: number | string,
+    icon: string,
+    id: number,
+    label: string,
+    children: iNode[],
+    data: string | any
+}

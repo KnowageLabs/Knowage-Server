@@ -93,7 +93,6 @@ export default defineComponent({
             let url = `dimensions/dimensionData?dimension=${this.selectedDimension?.DIMENSION_NM}&validityDate=${date}`
             if (filtersData && filtersData.filters.length > 0) {
                 const optionalFilters = encodeURI(JSON.stringify(filtersData.filters))
-                console.log('FILTERS: ', optionalFilters)
                 url = url.concat('&optionalFilters=' + optionalFilters)
             }
 
@@ -116,7 +115,6 @@ export default defineComponent({
             this.$emit('loading', false)
         },
         onApplyFilters(filtersData: { filters: iDimensionFilter[]; showMissingElements: boolean }) {
-            console.log('FILTER DATA: ', filtersData)
             this.loadDimensionData(filtersData)
         },
         openHierarchyMasterDialog() {

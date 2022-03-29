@@ -91,14 +91,11 @@ export default defineComponent({
             return requiredMissing
         },
         onLevelsChanged(selectedLevels: any[]) {
-            console.log('SELECTED LEVELS: ', selectedLevels)
             this.levels = selectedLevels?.map((level: any) => {
                 return { CD: level.code?.ID, NM: level.name?.ID }
             })
-            console.log('LEVELS: ', this.levels)
         },
         onRecursiveChanged(payload: any) {
-            console.log('ON RECURSIVE CHANGED PAYLOAD: ', payload)
             if (!payload) {
                 this.recursive = null
                 return
@@ -119,7 +116,6 @@ export default defineComponent({
                     postData[this.nodeGeneralFields[i].ID] = this.nodeGeneralFields[i].TYPE === 'NUMBER' && this.nodeGeneralFields[i].value ? parseInt(this.nodeGeneralFields[i].value as string) : this.nodeGeneralFields[i].value
                 }
             }
-            console.log('POST DATA: ', postData)
 
             this.loading = true
             await this.$http

@@ -61,7 +61,6 @@ export default defineComponent({
     },
     methods: {
         loadData() {
-            console.log('LOADED DIMENSION DATA TABLE: ', this.dimensionData)
             if (!this.dimensionData) return
 
             this.rows = this.dimensionData.root
@@ -71,12 +70,8 @@ export default defineComponent({
                     return { field: column.ID, header: column.NAME }
                 })
             this.globalFilterFields = this.dimensionData.columns_search
-
-            console.log('LOADED ROWS: ', this.rows)
-            console.log('LOADED COLUMNS: ', this.columns)
         },
         showInfo(item: any) {
-            console.log('SHOW INFO CLICKED FOR: ', item)
             this.selectedItem = []
             Object.keys(item).forEach((key: string) => this.selectedItem.push({ label: this.getColumnLabel(key), value: item[key] }))
             this.infoDialogVisible = true
