@@ -1,4 +1,6 @@
 .p-card.kn-card {
+    border-radius: var(--kn-button-border-radius);
+
     &.no-padding {
         .p-card-body {
             padding: 0 0 8px 0;
