@@ -30,7 +30,7 @@
                     <Button class="kn-button kn-button--primary hierarchy-management-dimension-card-button" :label="$t('managers.hierarchyManagement.synchronize')" @click="synchronize" />
                 </div>
 
-                <HierarchyManagementDimensionsFilterCard :dimensionFilters="dimensionFilters"></HierarchyManagementDimensionsFilterCard>
+                <HierarchyManagementDimensionsFilterCard v-show="selectedDimension" :dimensionFilters="dimensionFilters" @applyFilters="onApplyFilters"></HierarchyManagementDimensionsFilterCard>
                 <HierarchyManagementDimensionsTable v-show="dimensionData" :dimensionData="dimensionData"></HierarchyManagementDimensionsTable>
             </div>
             <HierarchyManagementHierarchyMasterDialog :visible="hierarchyMasterDialogVisible" :nodeMetadata="nodeMetadata" :dimensionMetadata="dimensionMetadata" @close="hierarchyMasterDialogVisible = false"></HierarchyManagementHierarchyMasterDialog>
@@ -69,16 +69,23 @@ export default defineComponent({
     async created() {},
     methods: {
         async onSelectedDimensionChange() {
-            await this.loadDimensionData()
+            await this.loadDimensionData(null)
             await this.loadDimensionMetadata()
             await this.loadNodeMetadata()
             await this.loadDimensionFilters()
         },
-        async loadDimensionData() {
+        async loadDimensionData(filtersData: { filters: iDimensionFilter[]; showMissingElements: boolean } | null) {
             this.$emit('loading', true)
             this.dimensionData = null
             const date = moment(this.validityDate).format('YYYY-MM-DD')
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dimensions/dimensionData?dimension=${this.selectedDimension?.DIMENSION_NM}&validityDate=${date}`).then((response: AxiosResponse<any>) => (this.dimensionData = response.data))
+            let url = `dimensions/dimensionData?dimension=${this.selectedDimension?.DIMENSION_NM}&validityDate=${date}`
+            if (filtersData && filtersData.filters.length > 0) {
+                const optionalFilters = encodeURI(JSON.stringify(filtersData.filters))
+                console.log('FILTERS: ', optionalFilters)
+                url = url.concat('&optionalFilters=' + optionalFilters)
+            }
+
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.dimensionData = response.data))
             this.$emit('loading', false)
         },
         async loadDimensionMetadata() {
@@ -95,6 +102,10 @@ export default defineComponent({
             this.$emit('loading', true)
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dimensions/dimensionFilterMetadata?dimension=CDC`).then((response: AxiosResponse<any>) => (this.dimensionFilters = response.data?.DIM_FILTERS))
             this.$emit('loading', false)
+        },
+        onApplyFilters(filtersData: { filters: iDimensionFilter[]; showMissingElements: boolean }) {
+            console.log('FILTER DATA: ', filtersData)
+            this.loadDimensionData(filtersData)
         },
         openHierarchyMasterDialog() {
             this.hierarchyMasterDialogVisible = true

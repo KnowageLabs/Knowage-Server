@@ -1,19 +1,16 @@
 <template>
-    <Card>
-        <template #title>
-            {{ $t('common.filters') }}
-        </template>
-        <template #content>
+    <Accordion class="p-m-3">
+        <AccordionTab :header="$t('common.filters')">
             <div class="p-grid p-fluid p-formgrid">
                 <div class="p-col-12">
-                    <Checkbox v-model="showMissingElements" :binary="true"></Checkbox>
+                    <Checkbox class="p-mr-2" v-model="showMissingElements" :binary="true"></Checkbox>
                     <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.showMissingElements') }}</label>
                 </div>
 
-                <div class="p-col-6" v-for="(filter, index) in filters" :key="index">
+                <div class="p-col-6 p-mt-4" v-for="(filter, index) in filters" :key="index">
                     <span class="p-float-label">
-                        <Calendar v-if="filter.TYPE === 'Date'" class="calendar-management-detail-form-calendar-input " v-model="filter.value" :manualInput="true" data-test="calendar-start-date-input"></Calendar>
-                        <InputText v-else class="kn-material-input" :type="filter.TYPE === 'number' ? 'number' : 'text'" v-model.trim="filter.value" />
+                        <Calendar v-if="filter.TYPE === 'Date'" class="calendar-management-detail-form-calendar-input " v-model="filter.VALUE" :manualInput="true" data-test="calendar-start-date-input"></Calendar>
+                        <InputText v-else class="kn-material-input" :type="filter.TYPE === 'number' ? 'number' : 'text'" v-model.trim="filter.VALUE" />
                         <label class="kn-material-input-label"> {{ filter.NAME + ' *' }}</label>
                     </span>
                 </div>
@@ -23,21 +20,26 @@
                     <Button icon="pi pi-trash" class="p-button-link" @click="resetFilters" />
                 </div>
             </div>
-        </template>
-    </Card>
+        </AccordionTab>
+    </Accordion>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iDimensionFilter } from '../../../HierarchyManagement'
-import Card from 'primevue/card'
+import moment from 'moment'
+import Accordion from 'primevue/accordion'
+import AccordionTab from 'primevue/accordiontab'
 import Calendar from 'primevue/calendar'
 import Checkbox from 'primevue/checkbox'
 
+const deepcopy = require('deepcopy')
+
 export default defineComponent({
     name: 'hierarchy-management-dimensions-filter-card',
-    components: { Card, Calendar, Checkbox },
+    components: { Accordion, AccordionTab, Calendar, Checkbox },
     props: { dimensionFilters: { type: Array as PropType<iDimensionFilter[]> } },
+    emits: ['applyFilters'],
     data() {
         return {
             filters: [] as iDimensionFilter[],
@@ -57,9 +59,20 @@ export default defineComponent({
             this.filters = this.dimensionFilters as iDimensionFilter[]
             console.log('LOADED FILTERS: ', this.filters)
         },
-        applyFilters() {},
+        applyFilters() {
+            let tempFilters = deepcopy(this.filters)
+            tempFilters = tempFilters.filter((filter: iDimensionFilter) => filter.VALUE && filter.VALUE !== '')
+            tempFilters.forEach((filter: iDimensionFilter) => {
+                if (filter.TYPE === 'Date') {
+                    filter.VALUE = moment(filter.VALUE).format('YYYY-MM-DD')
+                }
+            })
+            console.log('TEMP FILTERS: ', tempFilters)
+            this.$emit('applyFilters', { filters: tempFilters, showMissingElements: this.showMissingElements })
+        },
         resetFilters() {
-            this.filters?.forEach((filter: iDimensionFilter) => (filter.value = ''))
+            this.showMissingElements = false
+            this.filters?.forEach((filter: iDimensionFilter) => (filter.VALUE = ''))
         }
     }
 })

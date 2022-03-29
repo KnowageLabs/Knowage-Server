@@ -60,8 +60,8 @@ export interface iDimensionFilter {
     NAME: string,
     TYPE: string,
     DEFAULT: string,
-    CONDITION1: string,
-    value?: string | number | Date
+    CONDITION1?: string,
+    VALUE?: string | number | Date
 }
 
 export interface iHierarchy {
