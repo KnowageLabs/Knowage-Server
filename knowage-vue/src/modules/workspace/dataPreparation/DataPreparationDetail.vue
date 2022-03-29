@@ -24,7 +24,6 @@
                 <div class="arrow-button-container">
                     <Button icon="pi pi-arrow-left" :class="descriptor.css.buttonClassHeader" style="overflow: visible" @click="visibleRight = true" />
                     <Badge class="arrow-badge" v-if="dataset.config && dataset.config.transformations && dataset.config.transformations.length > 0" :value="dataset.config && dataset.config.transformations && dataset.config.transformations.length"></Badge>
-                    <Badge class="arrow-badge" :value="2"></Badge>
                 </div>
             </template>
         </Toolbar>

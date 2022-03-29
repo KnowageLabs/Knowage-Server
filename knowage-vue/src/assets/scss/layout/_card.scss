@@ -18,5 +18,18 @@
                 height: 100%;
             }
         }
+
+        &--with-toolbar {
+            @extend .full-height;
+
+            .p-card-body {
+                height: calc(100% - 35px);
+                padding-bottom: 0px;
+
+                .p-card-content {
+                    padding-bottom: 0px;
+                }
+            }
+        }
     }
 }

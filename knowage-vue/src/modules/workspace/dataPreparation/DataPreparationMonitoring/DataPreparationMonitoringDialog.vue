@@ -8,7 +8,7 @@
                 ></Card>
             </div>
             <div class="p-col-7">
-                <Card class="kn-card full-height">
+                <Card class="kn-card full-height--with-toolbar">
                     <template #header
                         ><Toolbar class="kn-toolbar kn-toolbar--secondary">
                             <template #start>
@@ -133,7 +133,7 @@
                         let instance = response.data.instance
                         if (instance) {
                             this.currentCronExpression = instance.config.cron
-                            if (this.currentCronExpression) this.showHint
+                            if (!this.currentCronExpression) this.showHint
 
                             this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/logs/' + instance.id).then((response: AxiosResponse<any>) => {
                                 this.logs = response.data

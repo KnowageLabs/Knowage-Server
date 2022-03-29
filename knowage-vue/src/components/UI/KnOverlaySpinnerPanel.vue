@@ -1,6 +1,6 @@
 <template>
     <div :class="getVisibility()">
-        <ProgressSpinner :baseZIndex="1000" />
+        <ProgressSpinner :baseZIndex="9999" />
     </div>
 </template>
 
