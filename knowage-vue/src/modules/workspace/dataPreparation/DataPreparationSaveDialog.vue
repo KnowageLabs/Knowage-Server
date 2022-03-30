@@ -7,6 +7,7 @@
                         <InputText
                             class="kn-material-input"
                             type="text"
+                            :disabled="!isFirstSave"
                             v-model.trim="v$.preparedDataset.label.$model"
                             :class="{
                                 'p-invalid': v$.preparedDataset.label.$invalid
@@ -25,6 +26,7 @@
                         <InputText
                             class="kn-material-input"
                             type="text"
+                            :disabled="!isFirstSave"
                             v-model.trim="v$.preparedDataset.name.$model"
                             :class="{
                                 'p-invalid': v$.preparedDataset.name.$invalid
@@ -48,6 +50,7 @@
                     <Textarea
                         class="kn-material-input p-mb-1"
                         type="text"
+                        :disabled="!isFirstSave"
                         v-model.trim="v$.preparedDataset.description.$model"
                         :class="{
                             'p-invalid': v$.preparedDataset.description.$invalid
@@ -80,121 +83,137 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType } from 'vue'
 
-    import { createValidations } from '@/helpers/commons/validationHelper'
-    import { AxiosResponse } from 'axios'
-    import Dialog from 'primevue/dialog'
-    import Textarea from 'primevue/textarea'
-    import DataPreparationDescriptor from './DataPreparationDescriptor.json'
-    import useValidate from '@vuelidate/core'
-    import DataPreparationValidationDescriptor from './DataPreparationValidationDescriptor.json'
-    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-    import { IDataPreparationDataset, IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
+import { createValidations } from '@/helpers/commons/validationHelper'
+import { AxiosResponse } from 'axios'
+import Dialog from 'primevue/dialog'
+import Textarea from 'primevue/textarea'
+import DataPreparationDescriptor from './DataPreparationDescriptor.json'
+import useValidate from '@vuelidate/core'
+import DataPreparationValidationDescriptor from './DataPreparationValidationDescriptor.json'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import { IDataPreparationDataset, IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
 
-    import dataPreparationMonitoringDescriptor from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDescriptor.json'
-    import KnScheduler from '@/components/UI/KnScheduler/KnScheduler.vue'
-    import InputSwitch from 'primevue/inputswitch'
+import dataPreparationMonitoringDescriptor from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDescriptor.json'
+import KnScheduler from '@/components/UI/KnScheduler/KnScheduler.vue'
+import InputSwitch from 'primevue/inputswitch'
 
-    export default defineComponent({
-        name: 'data-preparation-detail-save-dialog',
-        props: {
-            originalDataset: {} as any,
-            config: {} as any,
-            columns: [] as PropType<IDataPreparationColumn[]>,
-            visibility: Boolean
-        },
-        components: { Dialog, KnScheduler, KnValidationMessages, InputSwitch, Textarea },
-        data() {
-            return {
-                descriptor: DataPreparationDescriptor,
-                preparedDataset: {} as IDataPreparationDataset,
-                v$: useValidate() as any,
-                validationDescriptor: DataPreparationValidationDescriptor,
-                schedulerDescriptor: dataPreparationMonitoringDescriptor,
-                currentCronExpression: '',
-                enableSchedulation: false
-            }
-        },
-        emits: ['update:visibility'],
-
-        validations() {
-            return {
-                preparedDataset: createValidations('preparedDataset', this.validationDescriptor.validations.configuration)
-            }
-        },
-        methods: {
-            savePreparedDataset(): void {
-                let processDefinition = this.createProcessDefinition()
-                this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process', processDefinition).then(
-                    (response: AxiosResponse<any>) => {
-                        let processId = response.data.id
-                        let datasetDefinition = this.createDatasetDefinition()
-                        this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/' + processId + '/instance', datasetDefinition).then(
-                            () => {
-                                this.$store.commit('setInfo', { title: 'Saved successfully' })
-                            },
-                            () => {
-                                this.$store.commit('setError', { title: 'Save error', msg: 'Cannot add process instance' })
-                            }
-                        )
-                    },
-                    () => {
-                        this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
-                    }
-                )
-                this.resetAndClose()
-            },
-            createDatasetDefinition() {
-                let toReturn = {}
-                toReturn['config'] = this.enableSchedulation ? { cron: this.currentCronExpression } : {}
-                toReturn['dataSetLabel'] = this.originalDataset.label
-                toReturn['destinationDataSetLabel'] = this.preparedDataset.label
-                toReturn['destinationDataSetName'] = this.preparedDataset.name
-                toReturn['destinationDataSetDescription'] = this.preparedDataset.description
-                toReturn['meta'] = this.createMetaDefinition()
-                return toReturn
-            },
-            createMetaDefinition() {
-                let meta = [] as Array<any>
-                this.columns?.forEach((col) => {
-                    let item = {}
-                    item['displayedName'] = col.fieldAlias
-                    item['name'] = col.header
-                    item['fieldType'] = col.fieldType
-                    item['type'] = col.Type
-                    meta.push(item)
-                })
-                return meta
-            },
-            createProcessDefinition() {
-                let toReturn = {}
-                if (this.config && this.config.transformations) toReturn['definition'] = this.config.transformations
-                return toReturn
-            },
-            resetAndClose(): void {
-                this.closeDialog()
-            },
-            closeDialog(): void {
-                this.$emit('update:visibility', false)
-            },
-            loadTranslations(): void {
-                this.descriptor.dataPreparation.refreshRate.options.forEach((element) => {
-                    element.name = this.$t(element.name)
-                })
-            }
-        },
-
-        created() {
-            this.loadTranslations()
+export default defineComponent({
+    name: 'data-preparation-detail-save-dialog',
+    props: {
+        originalDataset: {} as any,
+        config: {} as any,
+        columns: [] as PropType<IDataPreparationColumn[]>,
+        instanceId: {} as any,
+        processId: {} as any,
+        visibility: Boolean
+    },
+    components: { Dialog, KnScheduler, KnValidationMessages, InputSwitch, Textarea },
+    data() {
+        return {
+            descriptor: DataPreparationDescriptor,
+            preparedDataset: {} as IDataPreparationDataset,
+            v$: useValidate() as any,
+            validationDescriptor: DataPreparationValidationDescriptor,
+            schedulerDescriptor: dataPreparationMonitoringDescriptor,
+            currentCronExpression: '',
+            enableSchedulation: false,
+            isFirstSave: true
         }
-    })
+    },
+    updated() {
+        if (this.processId && this.processId != '') this.isFirstSave = false
+    },
+    emits: ['update:visibility', 'update:instanceId', 'update:processId'],
+
+    validations() {
+        return {
+            preparedDataset: createValidations('preparedDataset', this.validationDescriptor.validations.configuration)
+        }
+    },
+    methods: {
+        savePreparedDataset(): void {
+            let processDefinition = this.createProcessDefinition()
+            this.saveOrUpdateProcess(processDefinition).then(
+                (response: AxiosResponse<any>) => {
+                    let processId = response.data.id
+                    this.$emit('update:processId', processId)
+                    let datasetDefinition = this.createDatasetDefinition()
+                    this.saveOrUpdateInstance(processId, datasetDefinition).then(
+                        (response: AxiosResponse<any>) => {
+                            this.$emit('update:instanceId', response.data.id)
+                            this.$store.commit('setInfo', { title: 'Saved successfully' })
+                        },
+                        () => {
+                            this.$store.commit('setError', { title: 'Save error', msg: 'Cannot add process instance' })
+                        }
+                    )
+                },
+                () => {
+                    this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
+                }
+            )
+            this.resetAndClose()
+        },
+        saveOrUpdateProcess(processDefinition) {
+            if (this.processId && this.processId != '') return this.$http.put(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/${this.processId}`, processDefinition)
+            else return this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process', processDefinition)
+        },
+        saveOrUpdateInstance(processId, datasetDefinition) {
+            if (this.instanceId && this.instanceId != '') return this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/${processId}/instance/${this.instanceId}`, datasetDefinition)
+            else return this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/' + processId + '/instance', datasetDefinition)
+        },
+        createDatasetDefinition() {
+            let toReturn = {}
+            toReturn['config'] = this.enableSchedulation ? { cron: this.currentCronExpression } : {}
+            toReturn['dataSetLabel'] = this.originalDataset.label
+            toReturn['destinationDataSetLabel'] = this.preparedDataset.label
+            toReturn['destinationDataSetName'] = this.preparedDataset.name
+            toReturn['destinationDataSetDescription'] = this.preparedDataset.description
+            toReturn['meta'] = this.createMetaDefinition()
+            return toReturn
+        },
+        createMetaDefinition() {
+            let meta = [] as Array<any>
+            this.columns?.forEach((col) => {
+                let item = {}
+                item['displayedName'] = col.fieldAlias
+                item['name'] = col.header
+                item['fieldType'] = col.fieldType
+                item['type'] = col.Type
+                meta.push(item)
+            })
+            return meta
+        },
+        createProcessDefinition() {
+            let toReturn = {}
+            if (this.config && this.config.transformations) toReturn['definition'] = this.config.transformations
+            return toReturn
+        },
+        resetAndClose(): void {
+            this.closeDialog()
+        },
+        closeDialog(): void {
+            this.$emit('update:visibility', false)
+        },
+        loadTranslations(): void {
+            this.descriptor.dataPreparation.refreshRate.options.forEach((element) => {
+                element.name = this.$t(element.name)
+            })
+        }
+    },
+
+    created() {
+        this.loadTranslations()
+    }
+})
 </script>
 
 <style lang="scss">
-    .dataPreparationSaveDialog {
-        min-width: 600px !important;
-        width: 600px !important;
-        max-width: 600px !important;
-    }
+.dataPreparationSaveDialog {
+    min-width: 600px !important;
+    width: 600px !important;
+    max-width: 600px !important;
+}
 </style>

@@ -2,7 +2,7 @@
     <div class="kn-page kn-data-preparation">
         <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" />
         <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" />
-        <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" />
+        <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" :instanceId="instanceId" @update:instanceId="updateInstanceId" :processId="processId" @update:processId="updateprocessId" />
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
             <template #start> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }})</template>
             <template #end>
@@ -144,36 +144,40 @@
 
     import { Client } from '@stomp/stompjs'
 
-    export default defineComponent({
-        name: 'data-preparation-detail',
-        props: {
-            id: String,
-            transformations: Array as PropType<any[]>
-        },
-        components: { KnCalculatedField, Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
+export default defineComponent({
+    name: 'data-preparation-detail',
+    props: {
+        id: String,
+        transformations: Array as PropType<any[]>,
+        existingProcessId: String,
+        existingInstanceId: String
+    },
+    components: { KnCalculatedField, Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
 
-        data() {
-            return {
-                descriptor: DataPreparationDescriptor,
-                loading: false as boolean,
-                datasetData: Array<any>(),
-                displayDataPreparationDialog: false as boolean,
-                selectedProduct: null,
-                visibleRight: false as boolean,
-                visibility: false as boolean,
-                selectedTransformation: null,
-                showSaveDialog: false as boolean,
-                showCFDialog: false as boolean,
-                columns: [] as IDataPreparationColumn[],
-                col: null,
-                descriptorTransformations: Array<any>(),
-                dataset: {} as any,
-                simpleDescriptor: DataPreparationSimpleDescriptor,
-                splitDescriptor: DataPreparationSplitDescriptor,
-                client: {} as any,
-                cfDescriptor: calculatedFieldDescriptor
-            }
-        },
+    data() {
+        return {
+            descriptor: DataPreparationDescriptor,
+            loading: false as boolean,
+            datasetData: Array<any>(),
+            displayDataPreparationDialog: false as boolean,
+            selectedProduct: null,
+            visibleRight: false as boolean,
+            visibility: false as boolean,
+            selectedTransformation: null,
+            showSaveDialog: false as boolean,
+            showCFDialog: false as boolean,
+            columns: [] as IDataPreparationColumn[],
+            col: null,
+            descriptorTransformations: Array<any>(),
+            dataset: {} as any,
+            simpleDescriptor: DataPreparationSimpleDescriptor,
+            splitDescriptor: DataPreparationSplitDescriptor,
+            client: {} as any,
+            cfDescriptor: calculatedFieldDescriptor,
+            instanceId: '' as string,
+            processId: '' as string
+        }
+    },
 
         async created() {
             this.$emit('update:loading', true)
@@ -449,43 +453,38 @@
             removePrefixFromType(type: String): String {
                 let splitted = type.split('.', -1)
 
-                return splitted.length > 0 ? splitted[splitted.length - 1] : splitted[0]
-            },
-            saveDataset(): void {
-                this.showSaveDialog = true
-            },
-            translateRoles() {
-                let translatedRoles = this.descriptor.roles
-                translatedRoles.forEach((x) => (x.label = this.$t(x.label)))
-                return translatedRoles
-            },
-            switchEditMode(col) {
-                col.edit = !col.edit
-            },
-            updateTable(message) {
-                let response = JSON.parse(message)
-                // set headers
-                let metadata = response.metadata.columns
-                this.columns = []
-                for (let i = 0; i < metadata.length; i++) {
-                    let obj = {} as IDataPreparationColumn
-                    obj.Type = metadata[i].type
-                    obj.disabled = false
-                    obj.fieldAlias = metadata[i].alias
-                    obj.fieldType = metadata[i].fieldType
-                    obj.header = metadata[i].name
-                    this.columns.push(obj)
-                }
-                //set data rows
-                this.datasetData = []
-                response.rows.forEach((row) => {
-                    let obj = {}
-                    for (let i = 0; i < row.length; i++) {
-                        let colHeader = this.getColHeader(metadata, i)
-                        obj[colHeader] = row[i]
-                    }
-                    this.datasetData.push(obj)
-                })
+            return splitted.length > 0 ? splitted[splitted.length - 1] : splitted[0]
+        },
+        saveDataset(): void {
+            this.showSaveDialog = true
+        },
+        translateRoles() {
+            let translatedRoles = this.descriptor.roles
+            translatedRoles.forEach((x) => (x.label = this.$t(x.label)))
+            return translatedRoles
+        },
+        switchEditMode(col) {
+            col.edit = !col.edit
+        },
+        updateInstanceId(iid): void {
+            this.instanceId = iid
+        },
+        updateprocessId(pid): void {
+            this.processId = pid
+        },
+        updateTable(message) {
+            let response = JSON.parse(message)
+            // set headers
+            let metadata = response.metadata.columns
+            this.columns = []
+            for (let i = 0; i < metadata.length; i++) {
+                let obj = {} as IDataPreparationColumn
+                obj.Type = metadata[i].type
+                obj.disabled = false
+                obj.fieldAlias = metadata[i].alias
+                obj.fieldType = metadata[i].fieldType
+                obj.header = metadata[i].name
+                this.columns.push(obj)
             }
         }
     })
