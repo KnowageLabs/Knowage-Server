@@ -15,7 +15,7 @@
     <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
 
     <div class="p-m-2 kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="filteredAnalysisDocuments" :loading="loading" dataKey="id" responsiveLayout="stack" breakpoint="600px" data-test="analysis-table">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredAnalysisDocuments" :loading="loading" dataKey="id" responsiveLayout="stack" breakpoint="600px" data-test="analysis-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>

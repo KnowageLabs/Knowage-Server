@@ -1151,6 +1151,39 @@ public class UserUtilities {
 		}
 	}
 
+	public static Set<Domain> getBusinessModelsCategoriesByUser(IEngUserProfile profile) {
+		logger.debug("IN");
+		IRoleDAO rolesDao = null;
+		Set<Domain> toReturn = new HashSet<>();
+		try {
+			// to get Roles Names check first if a default role is set, otherwise get all
+			List<String> roleNames = getCurrentRoleNames(profile);
+
+			if (!roleNames.isEmpty()) {
+				rolesDao = DAOFactory.getRoleDAO();
+				rolesDao.setUserProfile(profile);
+				List<Domain> allCategories = DAOFactory.getDomainDAO().loadListDomainsByType("BM_CATEGORY");
+				for (String roleName : roleNames) {
+					Role role = rolesDao.loadByName(roleName);
+					List<RoleMetaModelCategory> roles = rolesDao.getMetaModelCategoriesForRole(role.getId());
+					for (RoleMetaModelCategory r : roles) {
+						for (Domain cat : allCategories) {
+							if (r.getCategoryId().equals(cat.getValueId())) {
+								toReturn.add(cat);
+							}
+						}
+
+					}
+				}
+			}
+			logger.debug("OUT");
+			return toReturn;
+		} catch (Exception e) {
+			logger.error("Impossible to get role dataset categories for user [" + profile + "]", e);
+			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]", e);
+		}
+	}
+
 	public static AccessibilityPreferences readAccessibilityPreferencesByUser(IEngUserProfile user) {
 		AccessibilityPreferences preferences = null;
 

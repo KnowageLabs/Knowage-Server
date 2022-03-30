@@ -98,7 +98,7 @@ public class WsEventCleanJobInitializer extends SpagoBIInitializer {
 
 				job = JobBuilder.newJob(WsEventCleaner.class)
 						.withIdentity(JOB_NAME, JOB_GROUP)
-						.storeDurably(false)
+						.storeDurably(true)
 						.build();
 
 				scheduler.addJob(job, true);
