@@ -37,7 +37,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iNode, iNodeMetadata, iNodeMetadataField, iDimension } from '../../../HierarchyManagement'
+import { iNode, iNodeMetadata, iNodeMetadataField, iDimension, iHierarchy, iDimensionMetadata } from '../../../HierarchyManagement'
+import { AxiosResponse } from 'axios'
 import Dropdown from 'primevue/dropdown'
 import hierarchyManagementHierarchiesTreeDescriptor from './HierarchyManagementHierarchiesTreeDescriptor.json'
 import HierarchyManagementNodeDetailDialog from './HierarchyManagementNodeDetailDialog.vue'
@@ -49,7 +50,14 @@ const deepcopy = require('deepcopy')
 export default defineComponent({
     name: 'hierarchy-management-hierarchies-tree',
     components: { Dropdown, HierarchyManagementNodeDetailDialog, Tree },
-    props: { propTree: { type: Object }, nodeMetadata: { type: Object as PropType<iNodeMetadata | null> }, selectedDimension: { type: Object as PropType<iDimension | null> } },
+    props: {
+        propTree: { type: Object },
+        nodeMetadata: { type: Object as PropType<iNodeMetadata | null> },
+        selectedDimension: { type: Object as PropType<iDimension | null> },
+        selectedHierarchy: { type: Object as PropType<iHierarchy | null> },
+        dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> }
+    },
+    emits: ['loading', 'treeUpdated'],
     data() {
         return {
             hierarchyManagementHierarchiesTreeDescriptor,
@@ -61,7 +69,8 @@ export default defineComponent({
             metadata: [] as iNodeMetadataField[],
             mode: '' as string,
             orderBy: '' as string,
-            dropzoneActive: [] as boolean[]
+            dropzoneActive: [] as boolean[],
+            relations: [] as any[]
         }
     },
     watch: {
@@ -257,16 +266,84 @@ export default defineComponent({
         },
         async onDragDrop(event: any, item: any, key: any) {
             console.log('ON DRAG DROP EVENT: ', event)
-            const droppedItem = event.dataTransfer.getData('text/plain')
+            const droppedItem = JSON.parse(event.dataTransfer.getData('text/plain'))
+
             console.log('ON DRAG DROPED ITEM: ', droppedItem)
             console.log('ON DRAG TREE NODE: ', item)
             console.log('ON DRAG DROP KEY: ', key)
-            // const tempItem = item.leaf ? item.parent : item
-            // this.$emit('wordDropped', { event: event, item: tempItem })
+            await this.loadRelations(droppedItem, item.data)
             this.dropzoneActive[key] = false
         },
         setDropzoneClass(value: boolean, node: any) {
             this.dropzoneActive[node.key] = value
+        },
+        async loadRelations(node: any, targetNode: any) {
+            console.log('TARGET NODE: ', targetNode)
+            if (!this.selectedDimension || !this.selectedHierarchy) return
+            this.$emit('loading', true)
+            const nodeSourceCode = targetNode[targetNode.aliasId]
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/getRelationsMasterTechnical?dimension=${this.selectedDimension.DIMENSION_NM}&hierSourceCode=${this.selectedHierarchy.HIER_CD}&hierSourceName=${this.selectedHierarchy.HIER_NM}&nodeSourceCode=${nodeSourceCode}`)
+                .then((response: AxiosResponse<any>) => {
+                    this.relations = response.data?.root
+                    if (this.relations.length === 0) {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.info.info'),
+                            msg: this.$t('managers.hierarchyManagement.noHierarchiesForPropagation')
+                        })
+                        this.copyNodeFromTableToTree(node, targetNode)
+                    } else {
+                        // TODO
+                    }
+                })
+
+            this.$emit('loading', false)
+        },
+        copyNodeFromTableToTree(node: any, targetNode: any) {
+            console.log('NODE TO COPY AFTER: ', node)
+            console.log('TARGET NODE TO COPY TO: ', targetNode)
+            let parentNode = null as any
+            for (let i = 0; i < this.nodes.length; i++) {
+                parentNode = this.findNode(this.nodes[i], targetNode.id)
+                if (parentNode) break
+            }
+
+            if (!parentNode) return
+
+            node.name = node[this.selectedDimension?.DIMENSION_NM + '_NM']
+            node.id = node[this.selectedDimension?.DIMENSION_PREFIX + '_CD']
+            node.LEAF_PARENT_NM = parentNode[parentNode.aliasName]
+            node.LEAF_PARENT_CD = parentNode[parentNode.aliasId]
+            node.LEAF_ORIG_PARENT_CD = parentNode[parentNode.aliasId]
+            node.LEVEL = parentNode.LEVEL ? parentNode.LEVEL + 1 : 1
+            node.leaf = true
+            const fields = this.nodeMetadata
+                ? this.nodeMetadata.LEAF_FIELDS.map((el: iNodeMetadataField) => {
+                      console.log('EL: ', el)
+                      return { key: el.ID, type: el.TYPE }
+                  })
+                : []
+            console.log('FIELDS: ', fields)
+            for (let i = 0; i < fields.length; i++) {
+                if (!node[fields[i].key]) {
+                    console.log('ENTERED!')
+                    let value = '' as string | number | Date
+                    if (fields[i].type === 'Date') value = new Date()
+                    else if (fields[i].type === 'Number') value = -1
+                    node[fields[i].key] = value
+                }
+            }
+
+            const leafFields = this.dimensionMetadata?.MATCH_LEAF_FIELDS
+            console.log('leaf fields: ', leafFields)
+            for (let key in leafFields) {
+                console.log('KEY: ', key)
+                if (node[key]) {
+                    node[leafFields[key]] = node[key]
+                }
+            }
+
+            console.log('NODE TO COPY AFTER: ', node)
         }
     }
 })

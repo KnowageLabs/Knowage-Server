@@ -42,7 +42,16 @@
                 </div>
 
                 <HierarchyManagementHierarchiesFilterCard :selectedHierarchy="selectedHierarchy" @applyFilters="onApplyFilters"></HierarchyManagementHierarchiesFilterCard>
-                <HierarchyManagementHierarchiesTree v-show="tree" :propTree="tree" :nodeMetadata="nodeMetadata" :selectedDimension="dimension" @treeUpdated="updateTreeModel"></HierarchyManagementHierarchiesTree>
+                <HierarchyManagementHierarchiesTree
+                    v-show="tree"
+                    :propTree="tree"
+                    :nodeMetadata="nodeMetadata"
+                    :selectedDimension="dimension"
+                    :selectedHierarchy="selectedHierarchy"
+                    :dimensionMetadata="dimensionMetadata"
+                    @treeUpdated="updateTreeModel"
+                    @loading="$emit('loading', $event)"
+                ></HierarchyManagementHierarchiesTree>
             </div>
         </template>
     </Card>
@@ -50,7 +59,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iDimension, iHierarchy, iNodeMetadata, iNode } from '../../HierarchyManagement'
+import { iDimension, iHierarchy, iNodeMetadata, iNode, iDimensionMetadata } from '../../HierarchyManagement'
 import { AxiosResponse } from 'axios'
 import moment from 'moment'
 import Calendar from 'primevue/calendar'
@@ -63,7 +72,8 @@ import HierarchyManagementHierarchiesFilterCard from './HierarchyManagementHiera
 export default defineComponent({
     name: 'hierarchy-management-hierarchies-card',
     components: { Calendar, Checkbox, Dropdown, HierarchyManagementHierarchiesTree, HierarchyManagementHierarchiesFilterCard },
-    props: { selectedDimension: { type: Object as PropType<iDimension | null> }, nodeMetadata: { type: Object as PropType<iNodeMetadata | null> }, validityDate: { type: Object as PropType<Date | null> } },
+    props: { selectedDimension: { type: Object as PropType<iDimension | null> }, nodeMetadata: { type: Object as PropType<iNodeMetadata | null> }, validityDate: { type: Object as PropType<Date | null> }, dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> } },
+    emits: ['loading'],
     data() {
         return {
             hierarchyManagementHierarchiesCardDescriptor,

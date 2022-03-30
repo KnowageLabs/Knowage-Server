@@ -1,13 +1,21 @@
 <template>
     <div class="p-d-flex p-flex-row">
-        <HierarchyManagementDimensionsCard class="kn-flex" :dimensions="dimensions" @dimensionSelected="setSelectedDimension" @loading="$emit('loading', $event)" @dimensionMetadataChanged="onNodeMetadataChange" @validityDateSelected="setValidityDate"></HierarchyManagementDimensionsCard>
-        <HierarchyManagementHierarchiesCard class="kn-flex" :selectedDimension="selectedDimension" :nodeMetadata="nodeMetadata" :validityDate="validityDate" @loading="$emit('loading', $event)"></HierarchyManagementHierarchiesCard>
+        <HierarchyManagementDimensionsCard
+            class="kn-flex"
+            :dimensions="dimensions"
+            @dimensionSelected="setSelectedDimension"
+            @loading="$emit('loading', $event)"
+            @nodeMetadataChanged="onNodeMetadataChange"
+            @dimensionMetadataChanged="onDimensionMetadataChange"
+            @validityDateSelected="setValidityDate"
+        ></HierarchyManagementDimensionsCard>
+        <HierarchyManagementHierarchiesCard class="kn-flex" :selectedDimension="selectedDimension" :nodeMetadata="nodeMetadata" :validityDate="validityDate" :dimensionMetadata="dimensionMetadata" @loading="$emit('loading', $event)"></HierarchyManagementHierarchiesCard>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iDimension, iNodeMetadata } from '../HierarchyManagement'
+import { iDimension, iNodeMetadata, iDimensionMetadata } from '../HierarchyManagement'
 import HierarchyManagementDimensionsCard from './HierarchyManagementDimensionsCard/HierarchyManagementDimensionsCard.vue'
 import HierarchyManagementHierarchiesCard from './HierarchyManagementHierarchiesCard/HierarchyManagementHierarchiesCard.vue'
 
@@ -19,7 +27,8 @@ export default defineComponent({
         return {
             selectedDimension: null as iDimension | null,
             nodeMetadata: null as iNodeMetadata | null,
-            validityDate: new Date()
+            validityDate: new Date(),
+            dimensionMetadata: null as iDimensionMetadata | null
         }
     },
     async created() {},
@@ -33,6 +42,9 @@ export default defineComponent({
         setValidityDate(date: Date) {
             console.log('SET VALIDITY DATE: ', date)
             this.validityDate = date
+        },
+        onDimensionMetadataChange(metadata: iDimensionMetadata | null) {
+            this.dimensionMetadata = metadata
         }
     }
 })

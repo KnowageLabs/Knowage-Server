@@ -1313,6 +1313,7 @@
             "lev": "Lev.",
             "master": "Master",
             "modifyHierarchy": "Modify Hierarchy",
+            "noHierarchiesForPropagation": "No hierarchies found for propagation",
             "nodeCloneError": "The duplicate leaf can not be equal to the original",
             "recursive": "Recursive",
             "showMissingElements": "Show missing elements",
