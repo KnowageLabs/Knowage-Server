@@ -273,6 +273,13 @@
                         inclusiveRight: false
                     })
                 }
+
+                let lines = document.querySelector('.CodeMirror-lines')
+                if (lines) {
+                    let textEl = lines.querySelector('div span') as any
+
+                    if (textEl) this.cf.formula = textEl.innerText
+                }
             },
             applyValidationResultsToFormula() {
                 const doc = this.$refs.formula as any
