@@ -8,8 +8,8 @@
 		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 		version="3.1" >
 
-	<description>Knowage - Meta Web</description>
 	<display-name>knowagemeta</display-name>
+	<description>Knowage Meta</description>
 
 	<filter>
 		<filter-name>EncodingFilter</filter-name>

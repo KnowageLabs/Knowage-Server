@@ -12,13 +12,17 @@
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
-    <div class="p-d-flex p-flex-row p-ai-center">
+    <div class="p-d-flex p-flex-row p-ai-center p-flex-wrap">
         <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
-        <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" data-test="dataset-select" />
+        <span class="p-float-label p-mr-auto">
+            <MultiSelect class="kn-material-input" :style="mainDescriptor.style.multiselect" v-model="selectedCategories" :options="datasetCategories" optionLabel="VALUE_CD" @change="searchItems" :filter="true" />
+            <label class="kn-material-input-label"> {{ $t('common.type') }} </label>
+        </span>
+        <SelectButton class="p-mx-2" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" data-test="dataset-select" />
     </div>
 
-    <div class="p-mx-2 kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table" :value="filteredDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
+    <div class="kn-overflow">
+        <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table p-mx-2" :value="filteredDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -70,6 +74,7 @@
                     @deleteDataset="deleteDatasetConfirm"
                     @openDataPreparation="openDataPreparation"
                     @openSidebar="showSidebar"
+                    @monitoring="showMonitoring = !showMonitoring"
                 />
             </template>
         </div>
@@ -93,6 +98,7 @@
         @openDataPreparation="openDataPreparation"
         @close="showDetailSidebar = false"
         data-test="detail-sidebar"
+        @monitoring="showMonitoring = !showMonitoring"
     />
 
     <DatasetWizard v-if="showDatasetDialog" :selectedDataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false" @closeDialogAndReload="closeWizardAndRealod" />
@@ -105,6 +111,7 @@
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.myData.title')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 
     <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="selectedQbeDataset" @close="closeQbe" />
+    <DataPreparationMonitoringDialog v-model:visibility="showMonitoring" @close="showMonitoring = false" @save="updateDatasetWithNewCronExpression" :dataset="selectedDataset"></DataPreparationMonitoringDialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -128,9 +135,11 @@ import { downloadDirect } from '@/helpers/commons/fileHelper'
 import SelectButton from 'primevue/selectbutton'
 import QBE from '@/modules/qbe/QBE.vue'
 import { Client } from '@stomp/stompjs'
+import DataPreparationMonitoringDialog from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDialog.vue'
+import MultiSelect from 'primevue/multiselect'
 
 export default defineComponent({
-    components: { QBE, DataTable, Column, Chip, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, SelectButton, Message },
+    components: { QBE, MultiSelect, DataTable, Column, Chip, DataPreparationMonitoringDialog, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, SelectButton, Message },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -174,6 +183,8 @@ export default defineComponent({
             showDetailSidebar: false,
             showDatasetDialog: false,
             datasetList: [] as any,
+            selectedCategories: [] as any,
+            selectedCategoryIds: [] as any,
             filteredDatasets: [] as any,
             avroDatasets: [] as any,
             loadingAvros: [] as any,
@@ -196,7 +207,8 @@ export default defineComponent({
             qbeVisible: false,
             client: {} as any,
             selectedQbeDataset: null,
-            user: null as any
+            user: null as any,
+            showMonitoring: false
         }
     },
     async created() {
@@ -321,11 +333,11 @@ export default defineComponent({
                 { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(), visible: this.canLoadData && this.isDatasetOwner && this.selectedDataset.dsTypeCd != 'Prepared' },
                 { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
                 
-                { key: '8', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
+                { key: '9', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
             )
 
             if (this.user?.functionalities.includes('DataPreparation')) {
-                tmp.push({ key: '7', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe' && (this.selectedDataset.pars && this.selectedDataset.pars.length == 0) })
+                tmp.push({ key: '7', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'Qbe'  && (this.selectedDataset.pars && this.selectedDataset.pars.length == 0) })
             }
 
             tmp = tmp.sort((a,b)=>a.key.localeCompare(b.key))
@@ -550,6 +562,8 @@ export default defineComponent({
         },
         async getDatasetsByFilter() {
             this.searchWord = ''
+            this.selectedCategoryIds = [] as any
+            this.selectedCategories = [] as any
             switch (this.tableMode) {
                 case 'My Datasets':
                     this.datasetList = this.getDatasets('owned')
@@ -584,10 +598,23 @@ export default defineComponent({
                         .finally(() => (this.loading = false))
             }
         },
-        searchItems() {
+        searchItems(event?) {
             setTimeout(() => {
-                if (!this.searchWord.trim().length) {
+                if (event.value) {
+                    this.selectedCategoryIds = [] as any
+                    event.value.forEach((el) => {
+                        this.selectedCategoryIds.push(el.VALUE_ID)
+                    })
+                }
+                if (!this.searchWord.trim().length && this.selectedCategoryIds.length == 0) {
                     this.filteredDatasets = [...this.datasetList] as any[]
+                } else if (this.selectedCategoryIds.length > 0) {
+                    this.filteredDatasets = this.datasetList.filter((el: any) => {
+                        return (
+                            this.selectedCategoryIds.includes(el.catTypeId) &&
+                            (el.label?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.dsTypeCd?.toLowerCase().includes(this.searchWord.toLowerCase()) || this.datasetTagFound(el))
+                        )
+                    })
                 } else {
                     this.filteredDatasets = this.datasetList.filter((el: any) => {
                         return el.label?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.dsTypeCd?.toLowerCase().includes(this.searchWord.toLowerCase()) || this.datasetTagFound(el)
@@ -609,13 +636,23 @@ export default defineComponent({
                 }
             }
             return tagFound
+        },
+        handleMonitoring(selectedDataset) {
+            this.selectedDataset = selectedDataset
+            this.showMonitoring = !this.showMonitoring
+        },
+        async updateDatasetWithNewCronExpression(newCron) {
+            this.showMonitoring = false
+
+            await this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process', newCron).then(
+                () => {
+                    this.loadDataset(this.selectedDataset.label)
+                },
+                () => {
+                    this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })
+                }
+            )
         }
     }
 })
 </script>
-
-<style lang="scss" scoped>
-#model-select-buttons {
-    margin: 2rem 2rem 2rem auto;
-}
-</style>

@@ -3,8 +3,8 @@
         <li>
             <span>{{ $t('managers.glossary.glossaryUsage.associatedWord') }}:</span>
             <ul class="p-my-3">
-                <li v-for="(column, index) in wordsList" :key="index" :class="{ 'selected-word': wordIsSelected(column) }">
-                    {{ column.WORD }}
+                <li v-for="(column, index) in wordsList" :key="index" class="glossary-info-word" :class="{ 'selected-word': wordIsSelected(column) }">
+                    <span>{{ column.WORD }}</span>
                 </li>
             </ul>
         </li>
@@ -14,8 +14,8 @@
                 <li v-for="(column, index) in columnList" :key="index">
                     {{ column[columnField] }}
                     <ul>
-                        <li v-for="(word, index) in column.word" :key="index" :class="{ 'selected-word': wordIsSelected(word) }">
-                            {{ word.WORD }}
+                        <li v-for="(word, index) in column.word" :key="index" class="glossary-info-word" :class="{ 'selected-word': wordIsSelected(word) }">
+                            <span>{{ word.WORD }}</span>
                         </li>
                     </ul>
                 </li>
@@ -60,6 +60,10 @@ p {
     margin: 1rem 0 1rem 1.5rem;
 }
 
+.glossary-info-word {
+    background-color: var(--kn-color-warning);
+    padding: 0 8px;
+}
 .selected-word {
     color: red;
 }

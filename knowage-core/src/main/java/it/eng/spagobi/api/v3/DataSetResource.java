@@ -1259,7 +1259,7 @@ public class DataSetResource {
 		return items;
 	}
 
-	private List<? extends DataSetMainDTO> putActions(List<? extends DataSetMainDTO> ret, String typeDocWizard) throws EMFInternalError {
+	private List<? extends AbstractDataSetDTO> putActions(List<? extends AbstractDataSetDTO> ret, String typeDocWizard) throws EMFInternalError {
 
 		UserProfile userProfile = getUserProfile();
 
@@ -1278,7 +1278,7 @@ public class DataSetResource {
 
 	}
 
-	private void addActions(DataSetMainDTO dataset, String typeDocWizard, UserProfile userProfile, boolean isQBEEnginePresent, boolean isGeoEnginePresent) {
+	private void addActions(AbstractDataSetDTO dataset, String typeDocWizard, UserProfile userProfile, boolean isQBEEnginePresent, boolean isGeoEnginePresent) {
 		try {
 			List<DataSetResourceAction> actions = dataset.getActions();
 			String currDataSetOwner = dataset.getOwner();

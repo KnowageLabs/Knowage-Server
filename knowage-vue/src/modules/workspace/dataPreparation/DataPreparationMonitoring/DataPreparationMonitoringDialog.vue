@@ -1,13 +1,14 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary schedulerDialog" v-bind:visible="visibility" footer="footer" :header="$t('common.import')" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary schedulerDialog" v-bind:visible="visibility" footer="footer" :header="$t('workspace.myData.monitoring')" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }" :closable="false">
+        <Message v-if="showHint" severity="info" :closable="false"> {{ $t('managers.workspaceManagement.dataPreparation.monitoring.hint') }} </Message>
         <div class="p-grid p-d-flex p-m-1 p-fluid">
             <div class="p-col-5">
                 <Card class="kn-card full-height">
-                    <template #content><KnScheduler class="p-m-1" :formula="currentCronExpression" :descriptor="schedulerDescriptor" @touched="touched = true" :readOnly="true" /> </template
+                    <template #content><KnScheduler class="p-m-1" :cronExpression="currentCronExpression" :descriptor="schedulerDescriptor" @touched="touched = true" :readOnly="false" /> </template
                 ></Card>
             </div>
             <div class="p-col-7">
-                <Card class="kn-card full-height">
+                <Card class="kn-card full-height--with-toolbar">
                     <template #header
                         ><Toolbar class="kn-toolbar kn-toolbar--secondary">
                             <template #start>
@@ -61,9 +62,9 @@
             </div>
         </div>
         <template #footer>
-            <Button v-bind:visible="visibility" class="p-button-text kn-button--secondary" :label="$t('common.cancel')" @click="resetAndClose" />
+            <Button v-bind:visible="visibility" class="kn-button--secondary" :label="$t('common.cancel')" @click="cancel" />
 
-            <Button v-bind:visible="visibility" class="kn-button kn-button--primary" v-t="'common.save'" @click="sendSchedulation" />
+            <Button v-bind:visible="visibility" class="kn-button--primary" v-t="'common.save'" @click="sendSchedulation" :disabled="!touched" />
         </template>
     </Dialog>
 </template>
@@ -75,6 +76,7 @@
     import DataTable from 'primevue/datatable'
     import Dialog from 'primevue/dialog'
     import Card from 'primevue/card'
+    import Message from 'primevue/message'
 
     import { formatDate } from '@/helpers/commons/localeHelper'
 
@@ -87,10 +89,10 @@
     import { filterDefault } from '@/helpers/commons/filterHelper'
 
     export default defineComponent({
-        name: 'data-preparation-scheduler-dialog',
-        components: { Card, Column, DataTable, Dialog, KnScheduler },
+        name: 'data-preparation-monitoring-dialog',
+        components: { Card, Column, DataTable, Dialog, KnScheduler, Message },
         props: { visibility: Boolean, dataset: Object },
-        emits: ['close'],
+        emits: ['close', 'save', 'update:loading'],
         data() {
             return {
                 schedulerDescriptor: dataPreparationMonitoringDescriptor,
@@ -98,15 +100,18 @@
 
                 filters: { global: [filterDefault] } as Object,
                 validSchedulation: Boolean,
-
-                currentCronExpression: ''
+                showHint: false,
+                currentCronExpression: '',
+                touched: false
             }
         },
 
         watch: {
             visibility(newVisibility) {
                 if (newVisibility) {
+                    this.$store.commit('setLoading', true)
                     this.loadLogs()
+                    this.$store.commit('setLoading', false)
                 } else {
                     this.logs = []
                 }
@@ -128,6 +133,7 @@
                         let instance = response.data.instance
                         if (instance) {
                             this.currentCronExpression = instance.config.cron
+                            if (!this.currentCronExpression) this.showHint
 
                             this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/logs/' + instance.id).then((response: AxiosResponse<any>) => {
                                 this.logs = response.data
@@ -136,8 +142,22 @@
                     })
                 }
             },
+            cancel() {
+                if (this.touched) {
+                    this.$confirm.require({
+                        message: this.$t('common.toast.unsavedChangesHeader'),
+                        header: this.$t('common.toast.unsavedChangesMessage'),
+                        icon: 'pi pi-exclamation-triangle',
+                        accept: () => this.resetAndClose()
+                    })
+                } else {
+                    this.resetAndClose()
+                }
+            },
             resetAndClose() {
                 this.currentCronExpression = ''
+                this.touched = false
+                this.showHint = false
                 this.$emit('close')
             },
             sendSchedulation() {
@@ -145,6 +165,9 @@
             },
             setCronValid(event) {
                 this.validSchedulation = event.item
+            },
+            saveSchedulation() {
+                this.$emit('save', this.currentCronExpression)
             }
         }
     })

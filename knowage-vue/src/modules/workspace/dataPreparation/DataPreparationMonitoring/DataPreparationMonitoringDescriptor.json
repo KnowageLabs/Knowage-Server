@@ -198,6 +198,7 @@
     },
     "startDateEnabled": false,
     "style": {
-        "dropdown": "kn-material-input p-mr-2 p-mb-2"
+        "dropdown": "kn-material-input p-mr-2",
+        "radiobutton": "p-mr-2"
     }
 }
