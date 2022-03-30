@@ -393,7 +393,7 @@ export default defineComponent({
             }
         },
         openDataPreparation(dataset: any) {
-            if (this.isAvroReady(dataset)) {
+            if (this.isAvroReady(dataset) || dataset.dsTypeCd == 'Prepared') {
                 if (dataset.dsTypeCd == 'Prepared') {
                     this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.label}`).then(
                         (response: AxiosResponse<any>) => {
@@ -401,8 +401,9 @@ export default defineComponent({
                             this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
                                 (response: AxiosResponse<any>) => {
                                     let transformations = response.data.definition
-                                    let datasetLabel = response.data.instances[0].dataSetLabel
-                                    this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations) } })
+                                    let processId = response.data.id
+                                    let datasetLabel = response.data.instance.dataSetLabel
+                                    this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
                                 },
                                 () => {
                                     this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })

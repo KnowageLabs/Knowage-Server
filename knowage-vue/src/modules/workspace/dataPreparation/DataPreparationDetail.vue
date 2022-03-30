@@ -2,7 +2,7 @@
     <div class="kn-page kn-data-preparation">
         <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" />
         <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" />
-        <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" :instanceId="instanceId" @update:instanceId="updateInstanceId" :processId="processId" @update:processId="updateprocessId" />
+        <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" :instanceId="instanceId" @update:instanceId="updateInstanceId" :processId="processId" @update:processId="updateprocessId" :preparedDsMeta="preparedDsMeta" />
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
             <template #start> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }})</template>
             <template #end>
@@ -150,7 +150,8 @@ export default defineComponent({
         id: String,
         transformations: Array as PropType<any[]>,
         existingProcessId: String,
-        existingInstanceId: String
+        existingInstanceId: String,
+        existingDataset: String
     },
     components: { KnCalculatedField, Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
 
@@ -175,7 +176,8 @@ export default defineComponent({
             client: {} as any,
             cfDescriptor: calculatedFieldDescriptor,
             instanceId: '' as string,
-            processId: '' as string
+            processId: '' as string,
+            preparedDsMeta: {}
         }
     },
 
@@ -184,12 +186,13 @@ export default defineComponent({
             this.loading = true
             this.descriptorTransformations = Object.assign([], this.descriptor.transformations)
 
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/' + this.id).then((response: AxiosResponse<any>) => {
-                this.dataset = response.data[0]
-            })
-            if (this.dataset) {
-                this.initTransformations()
-                this.initWebsocket()
+        await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/' + this.id).then((response: AxiosResponse<any>) => {
+            this.dataset = response.data[0]
+        })
+        if (this.dataset) {
+            this.initDsMetadata()
+            this.initTransformations()
+            this.initWebsocket()
 
                 this.client.onConnect = () => {
                     this.client.subscribe(
@@ -356,19 +359,48 @@ export default defineComponent({
                     heartbeatIncoming: 4000,
                     heartbeatOutgoing: 4000
                 })
-            },
-            getColHeader(metadata: Array<any>, idx: Number): string {
-                let columnMapping = 'Column_' + idx
-                let toReturn = metadata.filter((x) => x.mappedTo == columnMapping)[0].alias
-                return toReturn
-            },
-            callFunction(transformation: any, col): void {
-                if (transformation.name === 'changeType' || transformation.name === 'split') {
-                    let parsArray = transformation.name === 'changeType' ? this.simpleDescriptor[transformation.name].parameters : this.splitDescriptor.parameters
-                    for (var i = 0; i < parsArray.length; i++) {
-                        let element = parsArray[i]
-                        if (element.name === 'destType' || element.name === 'destType1' || element.name === 'destType2') {
-                            element.availableOptions = col ? this.getCompatibilityType(col) : this.descriptor.compatibilityMap['all'].values
+        },
+        initTransformations(): void {
+            if (this.transformations) {
+                if (!this.dataset.config) this.dataset.config = {}
+                this.dataset.config.transformations = this.transformations
+                this.loading = true
+            }
+        },
+        initDsMetadata(): void {
+            if (this.existingProcessId) this.processId = this.existingProcessId
+            if (this.existingInstanceId) this.instanceId = this.existingInstanceId
+            if (this.existingDataset) {
+                let dsMeta = JSON.parse(this.existingDataset)
+                this.preparedDsMeta = {}
+                this.preparedDsMeta['label'] = dsMeta.label
+                this.preparedDsMeta['name'] = dsMeta.name
+                this.preparedDsMeta['description'] = dsMeta.description
+            }
+        },
+        initWebsocket(): void {
+            var url = new URL(window.location.origin)
+            url.protocol = url.protocol.replace('http', 'ws')
+            var uri = url + 'knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+            this.client = new Client({
+                brokerURL: uri,
+                connectHeaders: {},
+                heartbeatIncoming: 4000,
+                heartbeatOutgoing: 4000
+            })
+        },
+        getColHeader(metadata: Array<any>, idx: Number): string {
+            let columnMapping = 'Column_' + idx
+            let toReturn = metadata.filter((x) => x.mappedTo == columnMapping)[0].alias
+            return toReturn
+        },
+        callFunction(transformation: any, col): void {
+            if (transformation.name === 'changeType' || transformation.name === 'split') {
+                let parsArray = transformation.name === 'changeType' ? this.simpleDescriptor[transformation.name].parameters : this.splitDescriptor.parameters
+                for (var i = 0; i < parsArray.length; i++) {
+                    let element = parsArray[i]
+                    if (element.name === 'destType' || element.name === 'destType1' || element.name === 'destType2') {
+                        element.availableOptions = col ? this.getCompatibilityType(col) : this.descriptor.compatibilityMap['all'].values
 
                             element.availableOptions.forEach((element) => {
                                 element.label = this.removePrefixFromType(element.label)

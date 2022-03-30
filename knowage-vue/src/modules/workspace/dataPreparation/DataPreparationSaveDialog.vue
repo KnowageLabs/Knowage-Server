@@ -107,6 +107,7 @@ export default defineComponent({
         columns: [] as PropType<IDataPreparationColumn[]>,
         instanceId: {} as any,
         processId: {} as any,
+        preparedDsMeta: {} as any,
         visibility: Boolean
     },
     components: { Dialog, KnScheduler, KnValidationMessages, InputSwitch, Textarea },
@@ -124,6 +125,7 @@ export default defineComponent({
     },
     updated() {
         if (this.processId && this.processId != '') this.isFirstSave = false
+        if (this.preparedDsMeta) this.preparedDataset = this.preparedDsMeta
     },
     emits: ['update:visibility', 'update:instanceId', 'update:processId'],
 
