@@ -6,10 +6,19 @@
                 <label class="kn-material-input-label"> {{ $t('common.orderBy') + ' ... ' }} </label>
             </span>
         </div>
-        <div class="p-col-6"></div>
+        <div class="p-col-6" @drop.stop="onDragDrop($event, null, null)" @dragover.prevent @dragenter.prevent @dragleave.prevent>Test</div>
         <Tree class="hierarchies-tree p-col-12" :value="nodes" :filter="true" filterMode="lenient">
             <template #default="slotProps">
-                <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonVisible[slotProps.node.key] = true" @mouseleave="buttonVisible[slotProps.node.key] = false">
+                <div
+                    class="p-d-flex p-flex-row p-ai-center"
+                    :class="{ dropzone: dropzoneActive[slotProps.node.key] }"
+                    @mouseover="buttonVisible[slotProps.node.key] = true"
+                    @mouseleave="buttonVisible[slotProps.node.key] = false"
+                    @drop.stop="onDragDrop($event, slotProps.node, slotProps.node.key)"
+                    @dragover.prevent
+                    @dragenter.prevent="setDropzoneClass(true, slotProps.node)"
+                    @dragleave.prevent="setDropzoneClass(false, slotProps.node)"
+                >
                     <span class="node-label">{{ slotProps.node.label }}</span>
                     <div v-show="buttonVisible[slotProps.node.key]">
                         <Button v-if="slotProps.node.leaf" icon="pi pi-clone" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.clone')" @click.stop="cloneNode(slotProps.node)" />
@@ -51,7 +60,8 @@ export default defineComponent({
             selectedNode: null as any,
             metadata: [] as iNodeMetadataField[],
             mode: '' as string,
-            orderBy: '' as string
+            orderBy: '' as string,
+            dropzoneActive: [] as boolean[]
         }
     },
     watch: {
@@ -244,6 +254,19 @@ export default defineComponent({
                 return result
             }
             return null
+        },
+        async onDragDrop(event: any, item: any, key: any) {
+            console.log('ON DRAG DROP EVENT: ', event)
+            const droppedItem = event.dataTransfer.getData('text/plain')
+            console.log('ON DRAG DROPED ITEM: ', droppedItem)
+            console.log('ON DRAG TREE NODE: ', item)
+            console.log('ON DRAG DROP KEY: ', key)
+            // const tempItem = item.leaf ? item.parent : item
+            // this.$emit('wordDropped', { event: event, item: tempItem })
+            this.dropzoneActive[key] = false
+        },
+        setDropzoneClass(value: boolean, node: any) {
+            this.dropzoneActive[node.key] = value
         }
     }
 })
@@ -252,5 +275,13 @@ export default defineComponent({
 <style lang="scss" scoped>
 .hierarchies-tree {
     border: none;
+}
+
+.dropzone {
+    background-color: #c2c2c2;
+    color: white;
+    width: 200px;
+    height: 30px;
+    border: 1px dashed;
 }
 </style>

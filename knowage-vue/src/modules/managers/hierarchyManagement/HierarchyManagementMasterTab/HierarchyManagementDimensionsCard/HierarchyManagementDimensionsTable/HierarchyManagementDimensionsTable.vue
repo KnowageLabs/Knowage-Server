@@ -1,5 +1,6 @@
 <template>
     <div>
+        <div :draggable="true" @dragstart="onDragStart($event, { value: 'hmmmm' })">TEEEEEEST</div>
         <DataTable :value="rows" class="p-datatable-sm kn-table" v-model:filters="filters" :globalFilterFields="globalFilterFields" responsiveLayout="scroll" breakpoint="600px" :scrollable="true">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
@@ -13,13 +14,13 @@
                 </div>
             </template>
             <Column :style="hierarchyManagementDimensionsTableDescriptor.iconColumnStyle">
-                <template #body>
-                    <Button icon="pi pi-bars" class="p-button-link" />
+                <template #body="slotProps">
+                    <div class="pi pi-bars p-button-link" :draggable="true" @dragstart.stop="onDragStart($event, slotProps.data)"></div>
                 </template>
             </Column>
             <Column class="kn-truncated" v-for="column in columns" :header="$t(column.header)" :key="column.field" :sortField="column.field" :sortable="true">
                 <template #body="slotProps">
-                    <span v-tooltip.top="slotProps.data[column.field]" class="kn-cursor-pointer"> {{ slotProps.data[column.field] }}</span>
+                    <span v-tooltip.top="slotProps.data[column.field]" class="kn-cursor-pointer" :draggable="true" @dragstart="onDragStart($event, slotProps.data)"> {{ slotProps.data[column.field] }}</span>
                 </template>
             </Column>
             <Column :style="hierarchyManagementDimensionsTableDescriptor.iconColumnStyle">
@@ -28,6 +29,8 @@
                 </template>
             </Column>
         </DataTable>
+
+        <div @drop.stop="onDragDrop($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent>DROOOOOOP</div>
 
         <HierarchyManagementDimensionsInfoDialog :visible="infoDialogVisible" :selectedItem="selectedItem" @close="closeInfoDialog"></HierarchyManagementDimensionsInfoDialog>
     </div>
@@ -86,9 +89,31 @@ export default defineComponent({
             const index = this.dimensionData.columns.findIndex((column: any) => column.ID === key)
             return index !== -1 ? this.dimensionData.columns[index].NAME : ''
         },
+        onDragStart(event: any, item: any) {
+            console.log('ON DRAG START EVENT: ', event)
+            console.log('ON DRAG START ITEM: ', item)
+            // event.dataTransfer.setData('text/plain', JSON.stringify(item))
+            event.dataTransfer.setData(
+                'text/plain',
+                JSON.stringify({
+                    value: 'test'
+                })
+            )
+            console.log(' >>> TEEEEEEEST: ', JSON.parse(event.dataTransfer.getData('text/plain')))
+            event.dataTransfer.dropEffect = 'move'
+            event.dataTransfer.effectAllowed = 'move'
+        },
         closeInfoDialog() {
             this.selectedItem = []
             this.infoDialogVisible = false
+        },
+        onDragDrop(event: any) {
+            console.log('ON DRAG DROP EVENT: ', event)
+            const droppedItem = event.dataTransfer.getData('text/plain')
+            console.log('ON DRAG DROPED ITEM: ', droppedItem)
+            console.log('ON DRAG DROPED ITEM: ', event.dataTransfer.getData('text/plain'))
+            // const tempItem = item.leaf ? item.parent : item
+            // this.$emit('wordDropped', { event: event, item: tempItem })
         }
     }
 })
