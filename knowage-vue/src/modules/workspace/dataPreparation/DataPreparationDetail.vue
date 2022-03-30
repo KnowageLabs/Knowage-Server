@@ -500,6 +500,16 @@ export default defineComponent({
                 obj.header = metadata[i].name
                 this.columns.push(obj)
             }
+            //set data rows
+            this.datasetData = []
+            response.rows.forEach((row) => {
+                let obj = {}
+                for (let i = 0; i < row.length; i++) {
+                    let colHeader = this.getColHeader(metadata, i)
+                    obj[colHeader] = row[i]
+                }
+                this.datasetData.push(obj)
+            })
         }
     }
 })
