@@ -21,15 +21,18 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iNode, iNodeMetadata, iNodeMetadataField } from '../../../HierarchyManagement'
+import { iNode, iNodeMetadata, iNodeMetadataField, iDimension } from '../../../HierarchyManagement'
 import hierarchyManagementHierarchiesTreeDescriptor from './HierarchyManagementHierarchiesTreeDescriptor.json'
 import HierarchyManagementNodeDetailDialog from './HierarchyManagementNodeDetailDialog.vue'
 import Tree from 'primevue/tree'
 
+const deepEqual = require('deep-equal')
+const deepcopy = require('deepcopy')
+
 export default defineComponent({
     name: 'hierarchy-management-hierarchies-tree',
     components: { HierarchyManagementNodeDetailDialog, Tree },
-    props: { propTree: { type: Object }, nodeMetadata: { type: Object as PropType<iNodeMetadata | null> } },
+    props: { propTree: { type: Object }, nodeMetadata: { type: Object as PropType<iNodeMetadata | null> }, selectedDimension: { type: Object as PropType<iDimension | null> } },
     data() {
         return {
             hierarchyManagementHierarchiesTreeDescriptor,
@@ -56,10 +59,9 @@ export default defineComponent({
             if (this.tree) this.createNodeTree()
         },
         createNodeTree() {
-            this.nodes = this.formatNodes([this.tree])
-            console.log('FORMATTED NODES: ', this.nodes)
+            this.nodes = this.formatNodes([this.tree], null)
         },
-        formatNodes(tree: any) {
+        formatNodes(tree: any, parent: any) {
             return tree.map((node: any) => {
                 node = {
                     key: node.name,
@@ -68,19 +70,29 @@ export default defineComponent({
                     children: node.children,
                     data: node,
                     style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style,
-                    leaf: node.leaf
+                    leaf: node.leaf,
+                    parent: parent
                 }
                 if (node.children && node.children.length > 0) {
-                    node.children = this.formatNodes(node.children)
+                    node.children = this.formatNodes(node.children, node)
                 }
                 return node
             })
         },
         addNode(node: iNode) {
             console.log('ADD NODE: ', node)
+            this.mode = 'create'
+            this.selectedNode = { CDC_CD_LEV: '', CDC_OCD_LEV: '', CDC_NM_LEV: '', ORDER_LEV: '', FORM_LIV: '', aliasId: this.selectedDimension?.DIMENSION_NM + '_CD_LEV', aliasName: this.selectedDimension?.DIMENSION_NM + '_NM_LEV', children: [], leaf: false, parent: node }
+            this.setMetadata()
+
+            this.detailDialogVisible = true
         },
         cloneNode(node: iNode) {
             console.log('CLONE NODE: ', node)
+            this.selectedNode = { ...node.data, originalNode: deepcopy(node), parentNode: node.parent }
+            this.setMetadata()
+            this.mode = 'clone'
+            this.detailDialogVisible = true
         },
         editNode(node: iNode) {
             console.log('EDIT NODE: ', node)
@@ -102,19 +114,9 @@ export default defineComponent({
         deleteNode(node: iNode) {
             console.log('DELETE NODE: ', node)
 
-            let tempNode = null as any
-            for (let i = 0; i < this.nodes.length; i++) {
-                tempNode = this.findNode(this.nodes[i], node.data.LEAF_PARENT_CD)
-                if (tempNode) break
-            }
-
-            if (tempNode) {
-                const index = tempNode.children?.findIndex((el: iNode) => el.id === node.id)
-                if (index !== -1) tempNode.children.splice(index, 1)
-                this.$emit('treeUpdated', this.nodes)
-            }
-
-            console.log('TEMP NODE: ', tempNode)
+            const index = node.parent?.children.findIndex((el: iNode) => el.id === node.id)
+            if (index !== -1) node.parent.children.splice(index, 1)
+            console.log('INDEX: ', index)
         },
         showNodeInfo(node: iNode) {
             console.log('SHOW NODE INFO: ', node.data)
@@ -146,6 +148,10 @@ export default defineComponent({
             console.log('ON NODE SAVE: ', payload)
             if (payload.mode === 'edit') {
                 this.updateNode(payload.node)
+            } else if (payload.mode === 'create') {
+                this.createNode(payload.node)
+            } else if (payload.mode === 'clone') {
+                this.copyNode(payload.node)
             }
             this.detailDialogVisible = false
         },
@@ -164,6 +170,38 @@ export default defineComponent({
                 tempNode.label = node.name
             }
             console.log('NODE TO UPDATE: ', tempNode)
+            this.$emit('treeUpdated', this.nodes)
+        },
+        createNode(node: any) {
+            console.log('CREATE NODE: ', node)
+            let tempNode = null as any
+            for (let i = 0; i < this.nodes.length; i++) {
+                tempNode = this.findNode(this.nodes[i], node.parent.id)
+                if (tempNode) break
+            }
+
+            if (tempNode) tempNode.children.push({ key: node.name, id: node.name, label: node.name, children: node.children, data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: node.leaf, parent: tempNode })
+            console.log('TEMP NODE: ', tempNode)
+            this.$emit('treeUpdated', this.nodes)
+        },
+        copyNode(node: any) {
+            const originalNode = node.originalNode
+            const parentNode = node.parentNode
+            delete node.originalNode
+            delete node.parentNode
+            console.log('CLONE NODE: ', node)
+            console.log('ORIGINAL NODE: ', originalNode)
+            console.log('PARENT NODE: ', parentNode)
+
+            if (deepEqual(node, originalNode)) {
+                this.$store.commit('setError', {
+                    title: this.$t('common.error.generic'),
+                    msg: this.$t('managers.hierarchyManagement.nodeCloneError')
+                })
+                return
+            }
+
+            this.createNode({ ...node, parent: parentNode })
             this.$emit('treeUpdated', this.nodes)
         },
         findNode(node: iNode, nodeId: number) {

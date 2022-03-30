@@ -12,8 +12,8 @@
             <template v-for="(item, index) in metadata" :key="index">
                 <div class="p-col-12 p-p-3" v-if="item.VISIBLE">
                     <span class="p-float-label">
-                        <Calendar v-if="item.TYPE === 'Date'" v-model="node[item.ID]" :manualInput="true" :disabled="mode === 'info' || !item.EDITABLE"></Calendar>
-                        <InputText v-else class="kn-material-input" v-model.trim="node[item.ID]" :type="item.TYPE === 'number' ? 'number' : 'text'" :disabled="mode === 'info' || !item.EDITABLE" />
+                        <Calendar v-if="item.TYPE === 'Date'" v-model="node[item.ID]" :manualInput="true" :disabled="mode === 'info' || (!item.EDITABLE && mode !== 'create')"></Calendar>
+                        <InputText v-else class="kn-material-input" v-model.trim="node[item.ID]" :type="item.TYPE === 'number' ? 'number' : 'text'" :disabled="mode === 'info' || (!item.EDITABLE && mode !== 'create')" />
                         <label class="kn-material-input-label"> {{ item.NAME }}</label>
                     </span>
                 </div>
@@ -61,7 +61,7 @@ export default defineComponent({
             this.node = deepcopy(this.selectedNode)
             this.metadata?.forEach((el: iNodeMetadataField) => {
                 if (el.TYPE === 'Date' && this.node[el.ID]) {
-                    this.node[el.ID] = moment(this.node[el.ID], 'YYYY-MM-DD').toDate()
+                    this.node[el.ID] = this.mode === 'clone' ? new Date() : moment(this.node[el.ID], 'YYYY-MM-DD').toDate()
                 }
             })
         },

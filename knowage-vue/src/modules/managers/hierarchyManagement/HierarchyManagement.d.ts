@@ -77,5 +77,6 @@ export interface iNode {
     id: number,
     label: string,
     children: iNode[],
-    data: string | any
+    data: string | any,
+    parent: iNode
 }

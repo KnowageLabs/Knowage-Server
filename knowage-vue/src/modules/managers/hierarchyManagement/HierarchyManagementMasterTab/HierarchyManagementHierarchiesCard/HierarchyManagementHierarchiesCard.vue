@@ -20,7 +20,7 @@
                     <div class="kn-flex p-d-flex p-flex-row p-ai-center p-jc-around">
                         <Button class="kn-button kn-button--primary hierarchy-management-hierarchies-card-button" :label="$t('common.save')" :disabled="saveButtonDisabled" @click="save" />
                         <div>
-                            <Checkbox v-model="backup" :binary="true" :disabled="true"></Checkbox>
+                            <Checkbox v-model="backup" :binary="true" :disabled="!treeModel"></Checkbox>
                             <label class="kn-material-input-label p-ml-2"> {{ $t('managers.hierarchyManagement.backup') }}</label>
                         </div>
                     </div>
@@ -41,7 +41,7 @@
                     </div>
                 </div>
 
-                <HierarchyManagementHierarchiesTree v-show="tree" :propTree="tree" :nodeMetadata="nodeMetadata" @treeUpdated="updateTreeModel"></HierarchyManagementHierarchiesTree>
+                <HierarchyManagementHierarchiesTree v-show="tree" :propTree="tree" :nodeMetadata="nodeMetadata" :selectedDimension="dimension" @treeUpdated="updateTreeModel"></HierarchyManagementHierarchiesTree>
             </div>
         </template>
     </Card>
@@ -98,7 +98,6 @@ export default defineComponent({
             const url = this.hierarchyType === 'MASTER' ? `hierarchiesMaster/getHierarchiesMaster?dimension=${this.selectedDimension?.DIMENSION_NM}` : `hierarchiesTechnical/getHierarchiesTechnical?dimension=${this.selectedDimension?.DIMENSION_NM}`
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.hierarchies = response.data))
             this.$emit('loading', false)
-            console.log('LOADED HIERARCHIES: ', this.hierarchies)
         },
         async loadHierarchyTree() {
             this.$emit('loading', true)
@@ -106,14 +105,10 @@ export default defineComponent({
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/getHierarchyTree?dimension=${this.selectedDimension?.DIMENSION_NM}&filterHierarchy=${this.selectedHierarchy?.HIER_NM}&filterType=${this.hierarchyType}&validityDate=${date}`)
                 .then((response: AxiosResponse<any>) => (this.tree = response.data))
-            console.log('LOADED TREE: ', this.tree)
             this.$emit('loading', false)
         },
         updateTreeModel(nodes: iNode[]) {
-            console.log('UPDATE TREE MODEL!: ', nodes)
-            const temp = this.formatNodes(nodes)
-
-            console.log('TEEEEEMP: ', temp[0])
+            this.treeModel = [this.formatNodes(nodes)]
         },
         formatNodes(nodes: iNode[]) {
             return nodes.map((node: any) => {

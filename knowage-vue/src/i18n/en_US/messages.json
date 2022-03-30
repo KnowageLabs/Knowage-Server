@@ -1305,6 +1305,7 @@
             "lev": "Lev.",
             "master": "Master",
             "modifyHierarchy": "Modify Hierarchy",
+            "nodeCloneError": "The duplicate leaf can not be equal to the original",
             "recursive": "Recursive",
             "showMissingElements": "Show missing elements",
             "synchronize": "Synchronize",
