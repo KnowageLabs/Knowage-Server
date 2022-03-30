@@ -13,8 +13,8 @@
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
     <div class="p-d-flex p-flex-row p-ai-center p-flex-wrap">
-        <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
-        <span class="p-float-label p-mr-auto">
+        <InputText class="kn-material-input p-m-3 model-search" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
+        <span class="p-float-label p-mr-auto model-search">
             <MultiSelect class="kn-material-input" :style="mainDescriptor.style.multiselect" v-model="selectedCategories" :options="datasetCategories" optionLabel="VALUE_CD" @change="searchItems" :filter="true" />
             <label class="kn-material-input-label"> {{ $t('common.type') }} </label>
         </span>
@@ -22,7 +22,7 @@
     </div>
 
     <div class="kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table p-mx-2" :value="filteredDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -657,3 +657,8 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss" scoped>
+.model-search {
+    flex: 0.3;
+}
+</style>

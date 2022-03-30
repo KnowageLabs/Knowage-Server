@@ -18,7 +18,7 @@
     </div>
 
     <div class="kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table p-mx-2" :value="preparedDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="preparedDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
