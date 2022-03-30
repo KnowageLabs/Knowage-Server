@@ -127,6 +127,7 @@ export default defineComponent({
         this.documentData = this.documentDataProp
         this.visibilityControls = this.documentDataProp.visibilityData.visibilityControls
         this.crossNavigationMultiselect = this.documentDataProp.visibilityData.crossNavigationMultiselect
+        this.$emit('filtersValidationChanged', 'filtersInvalid', this.filtersInvalid)
     },
     watch: {
         documentDataProp() {

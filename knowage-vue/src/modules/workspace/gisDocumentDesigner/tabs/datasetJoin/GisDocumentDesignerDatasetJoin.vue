@@ -70,6 +70,7 @@ export default defineComponent({
     },
     created() {
         this.documentData = this.documentDataProp
+        this.$emit('joinsValidationChanged', 'joinsInvalid', this.joinsInvalid)
     },
     watch: {
         documentDataProp() {

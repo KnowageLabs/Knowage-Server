@@ -188,16 +188,18 @@ export default defineComponent({
         },
 
         async getTemplate() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.documentId}/templates/selected/${this.templateId}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then(async (response: AxiosResponse<any>) => {
-                this.documentTemplate = response.data
-                this.documentData.indicators = response.data.indicators
-                this.documentData.filters = response.data.filters
-                this.documentData.visibilityData = {
-                    crossNavigation: response.data.crossNavigation,
-                    crossNavigationMultiselect: response.data.crossNavigationMultiselect,
-                    visibilityControls: response.data.visibilityControls
-                }
-            })
+            if (this.templateId) {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.documentId}/templates/selected/${this.templateId}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then(async (response: AxiosResponse<any>) => {
+                    this.documentTemplate = response.data
+                    this.documentData.indicators = response.data.indicators
+                    this.documentData.filters = response.data.filters
+                    this.documentData.visibilityData = {
+                        crossNavigation: response.data.crossNavigation,
+                        crossNavigationMultiselect: response.data.crossNavigationMultiselect,
+                        visibilityControls: response.data.visibilityControls
+                    }
+                })
+            }
         },
         initializeSelectedLayer() {
             if (this.documentTemplate.targetLayerConf) {
@@ -312,13 +314,18 @@ export default defineComponent({
                 postData.DATASET_LABEL = this.documentData.datasetLabel
                 postData.DOCUMENT_LABEL = this.documentData.documentLabel
                 postData.TEMPLATE = template
-                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/saveGeoReportTemplate`, postData).then((response: AxiosResponse<any>) => {
+                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/saveGeoReportTemplate`, postData).then(async (response: AxiosResponse<any>) => {
                     this.saveDialogVisible = false
                     this.$store.commit('setInfo', {
                         title: 'Saved',
                         msg: 'SAVED OK'
-                    }),
-                        console.log(response)
+                    })
+                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.documentId}/templates`).then((response: AxiosResponse<any>) => {
+                        let activeTemplate = response.data.find((template) => template.active === true)
+                        console.log(activeTemplate)
+                        this.$router.push(`/gis/edit?documentId=${this.documentId}&templateId=${activeTemplate.id}`)
+                    })
+                    console.log(response)
                 })
             } else {
                 let postData = {} as any
