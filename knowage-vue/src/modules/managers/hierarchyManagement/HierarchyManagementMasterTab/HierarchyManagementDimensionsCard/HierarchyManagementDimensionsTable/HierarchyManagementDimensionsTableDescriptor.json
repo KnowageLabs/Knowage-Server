@@ -7,5 +7,9 @@
             "min-width": "60%"
         }
     },
-    "iconColumnStyle": "justify-content: end"
+    "iconColumnStyle": {
+        "flex-basis": "40px",
+        "flex-grow": 0.1,
+        "justify-content": "center"
+    }
 }

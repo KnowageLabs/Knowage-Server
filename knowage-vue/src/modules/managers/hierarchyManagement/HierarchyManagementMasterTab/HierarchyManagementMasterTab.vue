@@ -1,7 +1,7 @@
 <template>
     <div class="p-d-flex p-flex-row">
-        <HierarchyManagementDimensionsCard class="kn-flex" :dimensions="dimensions" @dimensionSelected="setSelectedDimension" @loading="$emit('loading', $event)" @dimensionMetadataChanged="onNodeMetadataChange"></HierarchyManagementDimensionsCard>
-        <HierarchyManagementHierarchiesCard class="kn-flex" :selectedDimension="selectedDimension" :nodeMetadata="nodeMetadata" @loading="$emit('loading', $event)"></HierarchyManagementHierarchiesCard>
+        <HierarchyManagementDimensionsCard class="kn-flex" :dimensions="dimensions" @dimensionSelected="setSelectedDimension" @loading="$emit('loading', $event)" @dimensionMetadataChanged="onNodeMetadataChange" @validityDateSelected="setValidityDate"></HierarchyManagementDimensionsCard>
+        <HierarchyManagementHierarchiesCard class="kn-flex" :selectedDimension="selectedDimension" :nodeMetadata="nodeMetadata" :validityDate="validityDate" @loading="$emit('loading', $event)"></HierarchyManagementHierarchiesCard>
     </div>
 </template>
 
@@ -18,7 +18,8 @@ export default defineComponent({
     data() {
         return {
             selectedDimension: null as iDimension | null,
-            nodeMetadata: null as iNodeMetadata | null
+            nodeMetadata: null as iNodeMetadata | null,
+            validityDate: new Date()
         }
     },
     async created() {},
@@ -28,6 +29,10 @@ export default defineComponent({
         },
         onNodeMetadataChange(metadata: iNodeMetadata | null) {
             this.nodeMetadata = metadata
+        },
+        setValidityDate(date: Date) {
+            console.log('SET VALIDITY DATE: ', date)
+            this.validityDate = date
         }
     }
 })

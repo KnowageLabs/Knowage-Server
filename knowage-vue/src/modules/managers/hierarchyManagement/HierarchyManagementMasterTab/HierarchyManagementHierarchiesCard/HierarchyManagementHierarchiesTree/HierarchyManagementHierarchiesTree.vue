@@ -1,6 +1,13 @@
 <template>
-    <div vlass="p-mt-2">
-        <Tree class="hierarchies-tree" :value="nodes">
+    <div class="p-grid">
+        <div class="p-col-6 p-fluid">
+            <span class="p-float-label p-m-2">
+                <Dropdown class="kn-material-input" v-model="orderBy" :options="hierarchyManagementHierarchiesTreeDescriptor.orderByOptions" @change="sortTree(nodes)"> </Dropdown>
+                <label class="kn-material-input-label"> {{ $t('common.orderBy') + ' ... ' }} </label>
+            </span>
+        </div>
+        <div class="p-col-6"></div>
+        <Tree class="hierarchies-tree p-col-12" :value="nodes" :filter="true" filterMode="lenient">
             <template #default="slotProps">
                 <div class="p-d-flex p-flex-row p-ai-center" @mouseover="buttonVisible[slotProps.node.key] = true" @mouseleave="buttonVisible[slotProps.node.key] = false">
                     <span class="node-label">{{ slotProps.node.label }}</span>
@@ -22,6 +29,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iNode, iNodeMetadata, iNodeMetadataField, iDimension } from '../../../HierarchyManagement'
+import Dropdown from 'primevue/dropdown'
 import hierarchyManagementHierarchiesTreeDescriptor from './HierarchyManagementHierarchiesTreeDescriptor.json'
 import HierarchyManagementNodeDetailDialog from './HierarchyManagementNodeDetailDialog.vue'
 import Tree from 'primevue/tree'
@@ -31,7 +39,7 @@ const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchies-tree',
-    components: { HierarchyManagementNodeDetailDialog, Tree },
+    components: { Dropdown, HierarchyManagementNodeDetailDialog, Tree },
     props: { propTree: { type: Object }, nodeMetadata: { type: Object as PropType<iNodeMetadata | null> }, selectedDimension: { type: Object as PropType<iDimension | null> } },
     data() {
         return {
@@ -42,7 +50,8 @@ export default defineComponent({
             detailDialogVisible: false,
             selectedNode: null as any,
             metadata: [] as iNodeMetadataField[],
-            mode: '' as string
+            mode: '' as string,
+            orderBy: '' as string
         }
     },
     watch: {
@@ -56,6 +65,7 @@ export default defineComponent({
     methods: {
         loadTree() {
             this.tree = this.propTree
+            this.orderBy = ''
             if (this.tree) this.createNodeTree()
         },
         createNodeTree() {
@@ -78,6 +88,25 @@ export default defineComponent({
                 }
                 return node
             })
+        },
+        sortTree(nodes: iNode[]) {
+            console.log('NODES TO SORT: ', nodes)
+            let sortValue = ''
+            if (this.orderBy === 'name' || this.orderBy === '') {
+                sortValue = 'label'
+            } else if (this.orderBy === 'id') {
+                sortValue = 'id'
+            }
+            nodes.sort((a: iNode, b: iNode) => {
+                console.log('A: ', a, ', B: ', b)
+                return a[sortValue] > b[sortValue] ? 1 : -1
+            })
+            nodes.forEach((childNode: iNode) => {
+                if (childNode.children) {
+                    this.sortTree(childNode.children)
+                }
+            })
+            console.log('NODES AFTER SORT: ', nodes)
         },
         addNode(node: iNode) {
             console.log('ADD NODE: ', node)

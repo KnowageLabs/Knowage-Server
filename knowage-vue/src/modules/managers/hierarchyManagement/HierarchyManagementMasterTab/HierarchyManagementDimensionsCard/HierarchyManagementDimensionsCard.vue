@@ -14,7 +14,7 @@
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <div class="kn-flex">
                         <span class="p-float-label">
-                            <Calendar v-model="validityDate" :manualInput="true" @dateSelect="loadData"></Calendar>
+                            <Calendar v-model="validityDate" :manualInput="true" @dateSelect="onValidityDateSelected"></Calendar>
                         </span>
                     </div>
                     <div id="hierarchy-management-dimension-dropdown-container" class="p-fluid">
@@ -62,7 +62,7 @@ export default defineComponent({
     name: 'hierarchy-management-dimensions-card',
     components: { Card, Calendar, Dropdown, HierarchyManagementDimensionsTable, HierarchyManagementHierarchyMasterDialog, HierarchyManagementDimensionsFilterCard },
     props: { dimensions: { type: Array as PropType<iDimension[]> } },
-    emits: ['loading', 'dimensionSelected', 'dimensionMetadataChanged'],
+    emits: ['loading', 'dimensionSelected', 'dimensionMetadataChanged', 'validityDateSelected'],
     data() {
         return {
             validityDate: new Date(),
@@ -76,6 +76,10 @@ export default defineComponent({
     },
     async created() {},
     methods: {
+        async onValidityDateSelected() {
+            this.$emit('validityDateSelected', this.validityDate)
+            await this.loadData()
+        },
         async onSelectedDimensionChange() {
             this.$emit('dimensionSelected', this.selectedDimension)
             await this.loadData()

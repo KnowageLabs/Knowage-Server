@@ -11,5 +11,6 @@
         "style": {
             "padding": "0"
         }
-    }
+    },
+    "orderByOptions": ["", "name", "id"]
 }

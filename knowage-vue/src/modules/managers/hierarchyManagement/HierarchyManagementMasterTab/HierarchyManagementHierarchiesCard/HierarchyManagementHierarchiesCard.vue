@@ -41,6 +41,7 @@
                     </div>
                 </div>
 
+                <HierarchyManagementHierarchiesFilterCard :selectedHierarchy="selectedHierarchy" @applyFilters="onApplyFilters"></HierarchyManagementHierarchiesFilterCard>
                 <HierarchyManagementHierarchiesTree v-show="tree" :propTree="tree" :nodeMetadata="nodeMetadata" :selectedDimension="dimension" @treeUpdated="updateTreeModel"></HierarchyManagementHierarchiesTree>
             </div>
         </template>
@@ -57,11 +58,12 @@ import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import hierarchyManagementHierarchiesCardDescriptor from './HierarchyManagementHierarchiesCardDescriptor.json'
 import HierarchyManagementHierarchiesTree from './HierarchyManagementHierarchiesTree/HierarchyManagementHierarchiesTree.vue'
+import HierarchyManagementHierarchiesFilterCard from './HierarchyManagementHierarchiesFilterCard/HierarchyManagementHierarchiesFilterCard.vue'
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchies-card',
-    components: { Calendar, Checkbox, Dropdown, HierarchyManagementHierarchiesTree },
-    props: { selectedDimension: { type: Object as PropType<iDimension | null> }, nodeMetadata: { type: Object as PropType<iNodeMetadata | null> } },
+    components: { Calendar, Checkbox, Dropdown, HierarchyManagementHierarchiesTree, HierarchyManagementHierarchiesFilterCard },
+    props: { selectedDimension: { type: Object as PropType<iDimension | null> }, nodeMetadata: { type: Object as PropType<iNodeMetadata | null> }, validityDate: { type: Object as PropType<Date | null> } },
     data() {
         return {
             hierarchyManagementHierarchiesCardDescriptor,
@@ -99,13 +101,23 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.hierarchies = response.data))
             this.$emit('loading', false)
         },
-        async loadHierarchyTree() {
+        async loadHierarchyTree(filterData: { showMissingElements: boolean; afterDate: Date | null }) {
+            console.log('FILTER DATA: ', filterData)
+            console.log('VALIDITY DATE: ', this.validityDate)
             this.$emit('loading', true)
             const date = moment(this.date).format('YYYY-MM-DD')
-            await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/getHierarchyTree?dimension=${this.selectedDimension?.DIMENSION_NM}&filterHierarchy=${this.selectedHierarchy?.HIER_NM}&filterType=${this.hierarchyType}&validityDate=${date}`)
-                .then((response: AxiosResponse<any>) => (this.tree = response.data))
+            let url = `hierarchies/getHierarchyTree?dimension=${this.selectedDimension?.DIMENSION_NM}&filterHierarchy=${this.selectedHierarchy?.HIER_NM}&filterType=${this.hierarchyType}&validityDate=${date}`
+            if (filterData) {
+                if (filterData.showMissingElements) url = url.concat('&filterDimension=' + filterData.showMissingElements)
+                if (this.validityDate) url = url.concat('&optionDate=' + moment(this.validityDate).format('YYYY-MM-DD'))
+                if (filterData.afterDate) url = url.concat('&filterDate=' + moment(filterData.afterDate).format('YYYY-MM-DD'))
+            }
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.tree = response.data))
             this.$emit('loading', false)
+        },
+        onApplyFilters(filterData: { showMissingElements: boolean; afterDate: Date | null }) {
+            console.log('PAYLOAD: ', filterData)
+            this.loadHierarchyTree(filterData)
         },
         updateTreeModel(nodes: iNode[]) {
             this.treeModel = [this.formatNodes(nodes)]

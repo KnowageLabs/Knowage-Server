@@ -68,6 +68,7 @@
         "field": "Field",
         "file": "File",
         "fileName": "File Name",
+        "filterBy": "Filter by",
         "filters": "Filters",
         "from": "From",
         "general": "General",
@@ -112,6 +113,7 @@
         "ok": "ok",
         "onlineHelp": "Help Online",
         "order": "Order",
+        "orderBy": "Order by",
         "output": "Output",
         "owner": "Owner",
         "packages": "Packages",
@@ -1296,6 +1298,7 @@
             }
         },
         "hierarchyManagement": {
+            "afterDate": "After Date",
             "backup": "Backup",
             "createHierarchyMaster": "Create Hierarchy Master",
             "createHierarchyMasterErrorMessage": "You can select only two items",

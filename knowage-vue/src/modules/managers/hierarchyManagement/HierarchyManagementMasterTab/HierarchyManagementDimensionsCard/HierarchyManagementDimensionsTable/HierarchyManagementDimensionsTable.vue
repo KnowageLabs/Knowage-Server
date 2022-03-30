@@ -12,6 +12,11 @@
                     </span>
                 </div>
             </template>
+            <Column :style="hierarchyManagementDimensionsTableDescriptor.iconColumnStyle">
+                <template #body>
+                    <Button icon="pi pi-bars" class="p-button-link" />
+                </template>
+            </Column>
             <Column class="kn-truncated" v-for="column in columns" :header="$t(column.header)" :key="column.field" :sortField="column.field" :sortable="true">
                 <template #body="slotProps">
                     <span v-tooltip.top="slotProps.data[column.field]" class="kn-cursor-pointer"> {{ slotProps.data[column.field] }}</span>
