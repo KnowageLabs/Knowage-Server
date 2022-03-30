@@ -79,6 +79,7 @@
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.menuLabels.myAnalysis')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 
     <KnInputFile v-if="!uploading" :changeFunction="uploadAnalysisFile" accept="image/*" :triggerInput="triggerUpload" />
+    <WorkspaceCockpitDialog :visible="cockpitDialogVisible" @close="closeCockpitDialog"></WorkspaceCockpitDialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -96,10 +97,11 @@ import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDial
 import WorkspaceAnalysisViewShareDialog from './dialogs/WorkspaceAnalysisViewShareDialog.vue'
 import { AxiosResponse } from 'axios'
 import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+import WorkspaceCockpitDialog from './dialogs/WorkspaceCockpitDialog.vue'
 
 export default defineComponent({
     name: 'workspace-analysis-view',
-    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, Message, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceWarningDialog, WorkspaceAnalysisViewShareDialog },
+    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, Message, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceWarningDialog, WorkspaceAnalysisViewShareDialog, WorkspaceCockpitDialog },
     emits: ['showMenu', 'toggleDisplayView', 'execute'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -127,7 +129,8 @@ export default defineComponent({
             triggerUpload: false,
             uploading: false,
             shareDialogVisible: false,
-            creationMenuButtons: [] as any
+            creationMenuButtons: [] as any,
+            cockpitDialogVisible: false
         }
     },
     created() {
@@ -160,16 +163,16 @@ export default defineComponent({
         },
         // prettier-ignore
         createMenuItems() {
-            this.menuButtons = []
-            this.menuButtons.push(
-                { key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: () => { this.editAnalysisDocument(this.selectedAnalysis) }, visible: this.isOwner},
-                { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share-alt', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: !this.isShared},
-                { key: '1', label: this.$t('workspace.myAnalysis.menuItems.unshare'), icon: 'fas fa-times-circle', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: this.isShared},
-                { key: '2', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: () => { this.cloneAnalysisDocument(this.selectedAnalysis) }},
-                { key: '3', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => { this.deleteAnalysisDocumentConfirm(this.selectedAnalysis) }},
-                { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: () => { this.uploadAnalysisPreviewFile(this.selectedAnalysis) }}
-            )
-        },
+        this.menuButtons = []
+        this.menuButtons.push(
+            { key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: () => { this.editAnalysisDocument(this.selectedAnalysis) }, visible: this.isOwner},
+            { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share-alt', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: !this.isShared},
+            { key: '1', label: this.$t('workspace.myAnalysis.menuItems.unshare'), icon: 'fas fa-times-circle', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: this.isShared},
+            { key: '2', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: () => { this.cloneAnalysisDocument(this.selectedAnalysis) }},
+            { key: '3', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => { this.deleteAnalysisDocumentConfirm(this.selectedAnalysis) }},
+            { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: () => { this.uploadAnalysisPreviewFile(this.selectedAnalysis) }}
+        )
+    },
         executeAnalysisDocument(document: any) {
             this.$emit('execute', document)
         },
@@ -345,10 +348,17 @@ export default defineComponent({
         createCreationMenuButtons() {
             this.creationMenuButtons = []
             this.creationMenuButtons.push(
-                { key: '0', label: this.$t('common.cockpit'), command: this.todoToast, visible: true },
+                { key: '0', label: this.$t('common.cockpit'), command: this.openCockpitDialog, visible: true },
                 { key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.todoToast, visible: true },
                 { key: '2', label: this.$t('common.kpi'), command: this.todoToast, visible: true }
             )
+        },
+        openCockpitDialog() {
+            this.cockpitDialogVisible = true
+        },
+        closeCockpitDialog() {
+            this.cockpitDialogVisible = false
+            this.getAnalysisDocs()
         },
         todoToast() {
             this.$store.commit('setInfo', {
