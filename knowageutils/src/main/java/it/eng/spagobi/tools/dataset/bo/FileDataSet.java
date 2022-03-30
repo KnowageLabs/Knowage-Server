@@ -17,6 +17,9 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -29,6 +32,9 @@ import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetCsvDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.FileDatasetXlsDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.iterator.CsvIteratorBuilder;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
+import it.eng.spagobi.tools.dataset.common.iterator.ExcelIteratorBuilder;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -44,6 +50,13 @@ public class FileDataSet extends ConfigurableDataSet {
 	public static final String FILE_NAME = "fileName";
 	public static final String FILE_TYPE = "fileType";
 	public static final String RESOURCE_PATH = "resourcePath";
+
+	public static final String CSV_FILE_DELIMITER_CHARACTER = "csvDelimiter";
+	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
+	public static final String CSV_FILE_ENCODING = "csvEncoding";
+
+	public static final String EXCEL_FILE_SKIP_ROWS = "skipRows";
+	public static final String EXCEL_FILE_SHEET_NUMBER = "xslSheetNumber";
 
 	public String fileType;
 
@@ -95,8 +108,7 @@ public class FileDataSet extends ConfigurableDataSet {
 	/**
 	 * try to guess the proper dataReader to use depending on the file extension
 	 *
-	 * @param fileName
-	 *            the target filename
+	 * @param fileName the target filename
 	 */
 	public void setDataReader(String fileName) {
 		JSONObject jsonConf = ObjectUtils.toJSONObject(this.getConfiguration());
@@ -203,8 +215,7 @@ public class FileDataSet extends ConfigurableDataSet {
 	}
 
 	/**
-	 * @param fileType
-	 *            the fileType to set
+	 * @param fileType the fileType to set
 	 */
 	public void setFileType(String fileType) {
 		this.fileType = fileType;
@@ -218,8 +229,7 @@ public class FileDataSet extends ConfigurableDataSet {
 	}
 
 	/**
-	 * @param useTempFile
-	 *            the useTempFile to set
+	 * @param useTempFile the useTempFile to set
 	 */
 	public void setUseTempFile(boolean useTempFile) {
 		this.useTempFile = useTempFile;
@@ -236,6 +246,75 @@ public class FileDataSet extends ConfigurableDataSet {
 	@Override
 	public IDataSource getDataSource() {
 		return null;
+	}
+
+	@Override
+	public DataIterator iterator() {
+		if ("CSV".equalsIgnoreCase(fileType)) {
+			DataIterator iterator = CsvIteratorBuilder.newBuilder().filePath(getFilePath()).quote(this.getCsvQuote()).encoding(getCsvEncoding())
+					.delimiter(this.getCsvDelimiter()).metadata(this.getMetadata()).build();
+			return iterator;
+		} else if ("XLSX".equalsIgnoreCase(fileType) || "XLS".equalsIgnoreCase(fileType)) {
+			DataIterator iterator = ExcelIteratorBuilder.newBuilder().filePath(getFilePath()).fileType(fileType).initialRow(getExcelInitialRow())
+					.sheetNumber(getExcelSheetNumber()).metadata(this.getMetadata()).build();
+			return iterator;
+		} else {
+			throw new UnsupportedOperationException("File DataSet iterator has not been implemented for file type " + fileType);
+		}
+	}
+
+	private int getExcelInitialRow() {
+		try {
+			JSONObject cfg = new JSONObject(this.getConfiguration());
+			return cfg.optInt(EXCEL_FILE_SKIP_ROWS);
+		} catch (Exception e) {
+			logger.error("Cannot retrieve excel file initial row number from dataset config, will start from first row", e);
+			return 0;
+		}
+	}
+
+	private int getExcelSheetNumber() {
+		try {
+			JSONObject cfg = new JSONObject(this.getConfiguration());
+			return cfg.optInt(EXCEL_FILE_SHEET_NUMBER);
+		} catch (Exception e) {
+			logger.error("Cannot retrieve excel file sheet number from dataset config, using first sheet as default", e);
+			return 0;
+		}
+	}
+
+	private String getCsvEncoding() {
+		try {
+			JSONObject cfg = new JSONObject(this.getConfiguration());
+			return cfg.getString(CSV_FILE_ENCODING);
+		} catch (Exception e) {
+			logger.error("Cannot retrieve CSV file encoding from dataset config, using UTF-8 as default", e);
+			return "UTF-8";
+		}
+	}
+
+	private Path getFilePath() {
+		return Paths.get(getResourcePath(), "dataset", "files", this.getFileName());
+	}
+
+	private String getCsvQuote() {
+		try {
+			JSONObject cfg = new JSONObject(this.getConfiguration());
+			return cfg.getString(CSV_FILE_QUOTE_CHARACTER);
+		} catch (Exception e) {
+			logger.error("Cannot retrieve CSV file quote character from dataset config, using \"\" as default", e);
+			return "\"\"";
+		}
+	}
+
+	private String getCsvDelimiter() {
+		try {
+			JSONObject cfg = new JSONObject(this.getConfiguration());
+			return cfg.getString(CSV_FILE_DELIMITER_CHARACTER);
+		} catch (Exception e) {
+			logger.error("Cannot retrieve CSV file delimiter from dataset config, using \",\" as default", e);
+			return ",";
+		}
 	}
 
 }
