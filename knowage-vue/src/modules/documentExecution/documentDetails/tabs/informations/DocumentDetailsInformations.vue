@@ -297,7 +297,6 @@ export default defineComponent({
         selectedDocument: { type: Object as PropType<iDocument> },
         selectedDataset: { type: Object },
         availableStates: { type: Array },
-        selectedFolder: { type: Object as PropType<iFolder>, required: true },
         documentTypes: { type: Array as any, required: true },
         documentEngines: { type: Array as PropType<iEngine[]>, required: true },
         availableDatasources: { type: Array as PropType<iDataSource[]> },

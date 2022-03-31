@@ -1,0 +1,76 @@
+{
+    "style": {
+        "absoluteScroll": {
+            "height": "100%",
+            "left": 0,
+            "overflow-x": "hidden",
+            "overflow-y": "auto",
+            "position": "absolute",
+            "top": 0,
+            "width": "100%"
+        },
+        "dialogSize": {
+            "width": "80%"
+        },
+        "trashColumn": {
+            "text-align": "end",
+            "width": "15%"
+        }
+    },
+    "template": {
+        "crossNavigation": false,
+        "crossNavigationMultiselect": true,
+        "datasetJoinColumns": "REGIONE",
+        "indicators": [
+            {
+                "label": "prov",
+                "name": "PROVINCIE"
+            }
+        ],
+        "layerJoinColumns": "Name",
+        "targetLayerConf": [
+            {
+                "label": "Italia_OK"
+            }
+        ],
+        "visibilityControls": {
+            "showBaseLayer": true,
+            "showDistanceCalculator": true,
+            "showDownloadButton": true,
+            "showLayer": true,
+            "showLegendButton": true,
+            "showMapConfig": true,
+            "showRightConfigMenu": true,
+            "showSelectMode": true
+        }
+    },
+    "newGisTemplate": {
+        "allLayers": [],
+        "documentLabel": "",
+        "documentDesc": "",
+        "dataSetId": null,
+        "indicators": [],
+        "filters": [],
+        "visibilityData": {
+            "crossNavigation": false,
+            "crossNavigationMultiselect": true,
+            "visibilityControls": {
+                "showRightConfigMenu": true,
+                "showLegendButton": true,
+                "showDistanceCalculator": true,
+                "showDownloadButton": true,
+                "showSelectMode": true,
+                "showLayer": true,
+                "showBaseLayer": true,
+                "showMapConfig": true
+            }
+        },
+        "selectedLayer": [],
+        "dsJoins": [],
+        "layerJoinColumns": [],
+        "selectedDataset": [],
+        "datasetLabel": "",
+        "datasetJoinColumns": [],
+        "datasetMeasures": []
+    }
+}

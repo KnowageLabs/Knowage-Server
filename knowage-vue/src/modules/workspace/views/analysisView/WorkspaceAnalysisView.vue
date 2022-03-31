@@ -352,7 +352,7 @@ export default defineComponent({
             this.creationMenuButtons = []
             this.creationMenuButtons.push(
                 { key: '0', label: this.$t('common.cockpit'), command: this.openCockpitDialog, visible: true },
-                { key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.todoToast, visible: true },
+                { key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.openGeoRefCreation, visible: true },
                 { key: '2', label: this.$t('common.kpi'), command: this.openKpiDocumentDesigner, visible: true }
             )
         },
@@ -366,11 +366,8 @@ export default defineComponent({
         openKpiDocumentDesigner() {
             this.$router.push('/kpi-edit/new-kpi?from=Workspace')
         },
-        todoToast() {
-            this.$store.commit('setInfo', {
-                title: 'TODO',
-                msg: 'Functionality not in this sprint'
-            })
+        openGeoRefCreation() {
+            this.$router.push('/geo-ref/new')
         }
     }
 })
