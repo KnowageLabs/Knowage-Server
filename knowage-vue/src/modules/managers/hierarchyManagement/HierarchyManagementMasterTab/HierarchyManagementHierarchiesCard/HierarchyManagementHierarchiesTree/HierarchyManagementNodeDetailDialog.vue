@@ -21,8 +21,8 @@
         </div>
 
         <template #footer>
-            <Button class="kn-button kn-button--primary" @click="save"> {{ $t('common.save') }}</Button>
-            <Button class="kn-button kn-button--primary" @click="close"> {{ $t('common.close') }}</Button>
+            <Button class="kn-button kn-button--secondary" @click="close"> {{ mode === 'info' ? $t('common.ok') : $t('common.cancel') }}</Button>
+            <Button v-if="mode !== 'info'" class="kn-button kn-button--primary" @click="save"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -75,7 +75,6 @@ export default defineComponent({
             this.node = null
         },
         formatNode() {
-            console.log('NODE TO FORMAT: ', this.node)
             this.node.name = this.node[this.node?.aliasName]
             this.metadata?.forEach((el: iNodeMetadataField) => {
                 if (el.TYPE === 'Date' && this.node[el.ID]) {
