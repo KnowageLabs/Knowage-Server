@@ -350,7 +350,7 @@ export default defineComponent({
             this.creationMenuButtons.push(
                 { key: '0', label: this.$t('common.cockpit'), command: this.openCockpitDialog, visible: true },
                 { key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.todoToast, visible: true },
-                { key: '2', label: this.$t('common.kpi'), command: this.todoToast, visible: true }
+                { key: '2', label: this.$t('common.kpi'), command: this.openKpiDocumentDesigner, visible: true }
             )
         },
         openCockpitDialog() {
@@ -359,6 +359,9 @@ export default defineComponent({
         closeCockpitDialog() {
             this.cockpitDialogVisible = false
             this.getAnalysisDocs()
+        },
+        openKpiDocumentDesigner() {
+            this.$router.push('/kpi-edit/new-kpi?from=Workspace')
         },
         todoToast() {
             this.$store.commit('setInfo', {

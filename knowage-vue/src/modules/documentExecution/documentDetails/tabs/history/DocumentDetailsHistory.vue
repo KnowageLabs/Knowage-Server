@@ -252,11 +252,14 @@ export default defineComponent({
                 header: this.$t('common.toast.warning'),
                 message: this.$t('documentExecution.olap.openDesignerMsg'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => this.openDesigner()
+                accept: () => (this.selectedDocument.typeCode === 'KPI' ? this.openKpiDocumentDesigner() : this.openDesigner())
             })
         },
         openDesigner() {
             this.$router.push(`/olap-designer/${this.selectedDocument.id}`)
+        },
+        openKpiDocumentDesigner() {
+            this.$router.push(`/kpi-edit/${this.selectedDocument.id}?from=documentDetail`)
         }
     }
 })
