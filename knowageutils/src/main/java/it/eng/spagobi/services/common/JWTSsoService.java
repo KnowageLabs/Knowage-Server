@@ -37,9 +37,6 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.security.hmacfilter.HMACUtils;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -48,40 +45,14 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class JWTSsoService implements SsoServiceInterface {
 
-	static private Logger logger = Logger.getLogger(JWTSsoService.class);
+	private static Logger logger = Logger.getLogger(JWTSsoService.class);
 
-	static private Algorithm algorithm;
-
-	static {
-		try {
-			String key = getHMACKey();
-			algorithm = Algorithm.HMAC256(key);
-		} catch (Exception e) {
-			logger.error("Cannot initialize JWT algorithm", e);
-			throw new SpagoBIRuntimeException("Cannot initialize JWT algorithm", e);
-		}
-	}
-
-	/**
-	 * Gets the HMAC key from configuration
-	 *
-	 * @return the HMAC key
-	 */
-	protected static String getHMACKey() {
-		try {
-			String key = EnginConf.getInstance().getHmacKey();
-			if (key == null || key.isEmpty()) {
-				key = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(HMACUtils.HMAC_JNDI_LOOKUP));
-			}
-			return key;
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Cannot retrieve the HMAC key", e);
-		}
-	}
+	private static final JWTSsoServiceAlgorithmFactory ALGORITHM_FACTORY = JWTSsoServiceAlgorithmFactory.getInstance();
 
 	@Override
 	public String readUserIdentifier(HttpServletRequest request) {
 		try {
+			Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 			String jwtToken = request.getParameter(SsoServiceInterface.USER_ID);
 			if (jwtToken == null) {
 				logger.debug("JWT token not found in request");
@@ -108,6 +79,7 @@ public class JWTSsoService implements SsoServiceInterface {
 
 	@Override
 	public String readTicket(HttpSession session) throws IOException {
+		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.MINUTE, 5); // token for services will expire in 5 minutes
 		Date expiresAt = calendar.getTime();
@@ -125,6 +97,7 @@ public class JWTSsoService implements SsoServiceInterface {
 	@Override
 	public void validateTicket(String ticket, String userId) throws SecurityException {
 		try {
+			Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 			String jwtToken = ticket;
 			logger.debug("JWT token in input : [" + jwtToken + "]");
 			JWTVerifier verifier = JWT.require(algorithm).withIssuer("knowage").build();
@@ -141,6 +114,7 @@ public class JWTSsoService implements SsoServiceInterface {
 	}
 
 	public static String userId2jwtToken(String userId, Date expiresAt) {
+		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 		LogMF.debug(logger, "User id in input is [{0}]", userId);
 		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
 		// @formatter:off
@@ -154,6 +128,7 @@ public class JWTSsoService implements SsoServiceInterface {
 	}
 
 	public static String ldapUser2jwtToken(String userId, String distinguishName, String psw, Date expiresAt) {
+		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 		LogMF.debug(logger, "User id in input is [{0}]", userId);
 		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
 		// @formatter:off
@@ -169,6 +144,7 @@ public class JWTSsoService implements SsoServiceInterface {
 	}
 
 	public static String pythonDataset2jwtToken(String script, Date expiresAt) {
+		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 		LogMF.debug(logger, "Python script in input is [{0}]", script);
 		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
 		// @formatter:off
@@ -182,6 +158,7 @@ public class JWTSsoService implements SsoServiceInterface {
 	}
 
 	public static String catalogFunction2jwtToken(String script, Date expiresAt) {
+		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 		LogMF.debug(logger, "Python script in input is [{0}]", script);
 		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
 		// @formatter:off
@@ -195,6 +172,7 @@ public class JWTSsoService implements SsoServiceInterface {
 	}
 
 	public static String jwtToken2userId(String jwtToken) throws JWTVerificationException {
+		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
 		JWTVerifier verifier = JWT.require(algorithm).build();
 		DecodedJWT decodedJWT = verifier.verify(jwtToken);
@@ -208,6 +186,7 @@ public class JWTSsoService implements SsoServiceInterface {
 	}
 
 	public static Map<String, String> jwtToken2ldapUser(String jwtToken) throws JWTVerificationException {
+		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
 		JWTVerifier verifier = JWT.require(algorithm).build();
 		DecodedJWT decodedJWT = verifier.verify(jwtToken);
