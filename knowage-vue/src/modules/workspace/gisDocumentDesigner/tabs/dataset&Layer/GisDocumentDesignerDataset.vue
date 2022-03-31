@@ -113,18 +113,14 @@ export default defineComponent({
     },
     methods: {
         showDatasetDialog() {
-            if (this.documentData.selectedDataset.length === 0) {
-                this.openDatasetDialog()
-            } else {
-                this.$confirm.require({
-                    header: this.$t('common.toast.warning'),
-                    message: this.$t('workspace.gis.dnl.changeLayerMessage'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        this.openDatasetDialog()
-                    }
-                })
-            }
+            this.$confirm.require({
+                header: this.$t('common.toast.warning'),
+                message: this.$t('workspace.gis.dnl.changeDsMessage'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.openDatasetDialog()
+                }
+            })
         },
         openDatasetDialog() {
             this.selectedDataset = deepcopy(this.documentData.selectedDataset[0])

@@ -127,7 +127,7 @@ export default defineComponent({
             if (this.isDatasetChosen && this.documentData.dsJoins.length > 0) {
                 this.$confirm.require({
                     header: this.$t('common.toast.warning'),
-                    message: this.$t('workspace.gis.dnl.changeDsMessage'),
+                    message: this.$t('workspace.gis.dnl.changeLayerMessage'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.showLayerDialog()

@@ -5,7 +5,7 @@
                 {{ $t('workspace.gis.title') }}
             </template>
             <template #end>
-                <Button class="p-button-text p-button-rounded p-button-plain" :label="$t('workspace.gis.editMap')" @click="openIframe" />
+                <Button class="p-button-text p-button-rounded p-button-plain" :label="$t('workspace.gis.editMap')" @click="openMapConfirm" />
                 <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDialogDisabled" @click="saveOrUpdateGis" />
                 <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="logGis" />
             </template>
@@ -113,7 +113,7 @@ export default defineComponent({
             return this.documentData.datasetLabel != ''
         },
         saveDialogDisabled(): boolean {
-            if (this.documentData.selectedDataset.length <= 0 || this.documentData.selectedLayer <= 0 || this.validations.joinsInvalid || this.validations.indicatorsInvalid || this.validations.filtersInvalid) {
+            if (this.documentData.selectedLayer <= 0 || this.validations.joinsInvalid || this.validations.indicatorsInvalid || this.validations.filtersInvalid) {
                 return true
             } else return false
         },
@@ -126,7 +126,6 @@ export default defineComponent({
             descriptor,
             loading: false,
             saveDialogVisible: false,
-            documentId: null as any,
             templateId: null as any,
             selectedDocument: {} as iDocument,
             documentTemplate: {} as any,
@@ -161,9 +160,8 @@ export default defineComponent({
             await this.getAllLayers()
 
             if (this.$route.path.includes('edit')) {
-                this.extractParametersFromUrl()
                 await this.getSelectedDocument()
-                await this.getTemplate() //ako je edit, ucitavamo template, potrebni parametri iz rute: documentId, templateId
+                await this.findActiveTemplate()
                 await this.initializeDataset()
                 await this.initializeSelectedLayer()
             }
@@ -173,13 +171,8 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `layers`).then((response: AxiosResponse<any>) => (this.documentData.allLayers = response.data.root))
         },
 
-        extractParametersFromUrl() {
-            this.documentId = this.$route.query.documentId
-            this.templateId = this.$route.query.templateId
-        },
-
         async getSelectedDocument() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.documentId}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$route.query.documentId}`).then((response: AxiosResponse<any>) => {
                 this.selectedDocument = response.data
                 this.documentData.documentLabel = response.data.label
                 this.documentData.documentDesc = response.data.description
@@ -187,9 +180,18 @@ export default defineComponent({
             })
         },
 
-        async getTemplate() {
-            if (this.templateId) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.documentId}/templates/selected/${this.templateId}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then(async (response: AxiosResponse<any>) => {
+        async findActiveTemplate() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.$route.query.documentId}/templates`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then(async (response: AxiosResponse<any>) => {
+                if (response.data.length > 0) {
+                    response.data.find((template) => (template.active === true ? this.getActiveTemplateData(template.id) : ''))
+                }
+            })
+        },
+
+        async getActiveTemplateData(templateId) {
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.$route.query.documentId}/templates/selected/${templateId}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                .then(async (response: AxiosResponse<any>) => {
                     this.documentTemplate = response.data
                     this.documentData.indicators = response.data.indicators
                     this.documentData.filters = response.data.filters
@@ -199,7 +201,6 @@ export default defineComponent({
                         visibilityControls: response.data.visibilityControls
                     }
                 })
-            }
         },
         initializeSelectedLayer() {
             if (this.documentTemplate.targetLayerConf) {
@@ -232,11 +233,13 @@ export default defineComponent({
             })
         },
         async initializeDataset() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.documentData.dataSetId}`).then((response: AxiosResponse<any>) => {
-                this.documentData.selectedDataset = [response.data[0]]
-                this.documentData.datasetLabel = response.data[0].label
-                this.loadDatasetColumns()
-            })
+            if (this.documentData.dataSetId) {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.documentData.dataSetId}`).then((response: AxiosResponse<any>) => {
+                    this.documentData.selectedDataset = [response.data[0]]
+                    this.documentData.datasetLabel = response.data[0].label
+                    this.loadDatasetColumns()
+                })
+            }
         },
         async loadDatasetColumns() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.documentData.datasetLabel}/fields`).then((response: AxiosResponse<any>) => {
@@ -314,18 +317,13 @@ export default defineComponent({
                 postData.DATASET_LABEL = this.documentData.datasetLabel
                 postData.DOCUMENT_LABEL = this.documentData.documentLabel
                 postData.TEMPLATE = template
-                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/saveGeoReportTemplate`, postData).then(async (response: AxiosResponse<any>) => {
+                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/saveGeoReportTemplate`, postData).then(async () => {
                     this.saveDialogVisible = false
                     this.$store.commit('setInfo', {
                         title: 'Saved',
                         msg: 'SAVED OK'
                     })
-                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.documentId}/templates`).then((response: AxiosResponse<any>) => {
-                        let activeTemplate = response.data.find((template) => template.active === true)
-                        console.log(activeTemplate)
-                        this.$router.push(`/gis/edit?documentId=${this.documentId}&templateId=${activeTemplate.id}`)
-                    })
-                    console.log(response)
+                    this.routeToDocument()
                 })
             } else {
                 let postData = {} as any
@@ -335,21 +333,33 @@ export default defineComponent({
                 postData.customData = { templateContent: template }
                 postData.document = { name: this.documentData.documentLabel, description: this.documentData.documentDesc, label: docLabel, type: 'MAP' }
                 postData.sourceData = { label: this.documentData.datasetLabel }
-                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/saveDocument/`, postData).then((response: AxiosResponse<any>) => {
+                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/saveDocument/`, postData).then(async () => {
                     this.saveDialogVisible = false
                     this.documentData.documentLabel = docLabel
                     this.$store.commit('setInfo', {
                         title: 'Saved',
                         msg: 'SAVED OK'
-                    }),
-                        console.log(response)
+                    })
                 })
             }
         },
-        openIframe() {
-            let initialUrl = `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${this.selectedDocument.id}&OBJECT_LABEL=${this.selectedDocument.label}&MENU_PARAMETERS=%7B%7D&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=null&OBJECT_NAME=${this.selectedDocument.name}&EDIT_MODE=edit_map&TOOLBAR_VISIBLE=null&CAN_RESET_PARAMETERS=null&EXEC_FROM=null&CROSS_PARAMETER=null`
-            this.iframeUrl = process.env.VUE_APP_HOST_URL + initialUrl
-            this.iframeVisible = true
+        async routeToDocument() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.$route.query.documentId}/templates`).then((response: AxiosResponse<any>) => {
+                response.data.find((template) => (template.active === true ? this.$router.push(`/gis/edit?documentId=${this.$route.query.documentId}`) : ''))
+            })
+        },
+        openMapConfirm() {
+            this.$confirm.require({
+                header: this.$t('common.toast.warning'),
+                message: this.$t('workspace.gis.dnl.openMapWarning'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.openMap()
+                }
+            })
+        },
+        openMap() {
+            this.$router.push(`/document-browser/map/${this.documentData.documentLabel}`)
         }
     }
 })

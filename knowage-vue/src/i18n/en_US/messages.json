@@ -2302,7 +2302,8 @@
                 "emptyInfo": "Add a dataset",
                 "layerList": "Layer List",
                 "layersDialogEmpty": "No available layers",
-                "layersTableEmpty": "Add a layer"
+                "layersTableEmpty": "Add a layer",
+                "openMapWarning": "Opening the map will undo all unsaved modifications, are you sure you want to continue?"
             },
             "dsj": {
                 "addButton": "Add join column",
@@ -2311,7 +2312,6 @@
             },
             "editMap": "Edit Map",
             "filtersMenu": "Filters & Menu",
-            "ind": {},
             "indicators": "Indicators",
             "menu": {
                 "crossNavigationMultiselect": "Enable cross with multiselection",

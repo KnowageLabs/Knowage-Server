@@ -12,7 +12,7 @@ let routes = [
             {
                 path: 'edit',
                 name: 'edit-gis',
-                props: (route) => ({ documentId: route.query.id, templateId: route.query.clone }),
+                props: (route) => ({ documentId: route.query.id }),
                 component: () => import('@/modules/workspace/gisDocumentDesigner/GisDocumentDesigner.vue')
             }
         ]
