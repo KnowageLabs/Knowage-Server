@@ -33,7 +33,7 @@ export default defineComponent({
     name: 'workspace-sidebar',
     components: { Menu },
     //prettier-ignore
-    emits: ['executeRecent','executeDocumentFromOrganizer','moveDocumentToFolder','deleteDocumentFromOrganizer','executeAnalysisDocument','editAnalysisDocument','shareAnalysisDocument','cloneAnalysisDocument','deleteAnalysisDocument','uploadAnalysisPreviewFile','openDatasetInQBE','editDataset','deleteDataset','previewDataset','deleteDataset','editFileDataset','exportToXlsx','exportToCsv','getHelp','downloadDatasetFile','shareDataset','openSidebar', 'cloneDataset', 'prepareData', 'openDataPreparation'],
+    emits: ['executeRecent','executeDocumentFromOrganizer','moveDocumentToFolder','deleteDocumentFromOrganizer','executeAnalysisDocument','editAnalysisDocument','shareAnalysisDocument','cloneAnalysisDocument','deleteAnalysisDocument','uploadAnalysisPreviewFile','openDatasetInQBE','editDataset','deleteDataset','previewDataset','deleteDataset','editDataset','exportToXlsx','exportToCsv','getHelp','downloadDatasetFile','shareDataset','openSidebar', 'cloneDataset', 'prepareData', 'openDataPreparation'],
     props: { visible: Boolean, viewType: String, document: Object as any, isPrepared: Boolean },
     computed: {
         isOwner(): any {
@@ -174,7 +174,7 @@ export default defineComponent({
             } else if (this.viewType == 'dataset') {
                 let tmp = [] as any
                 tmp.push(
-                    { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.emitEvent('editFileDataset'), visible: this.isDatasetOwner && this.document.dsTypeCd == 'File' },
+                    { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.emitEvent('editDataset'), visible: this.isDatasetOwner && (this.document.dsTypeCd == 'File' || this.document.dsTypeCd == 'Prepared')},
                     { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: this.emitEvent('openDatasetInQBE'), visible: this.showQbeEditButton },
                     { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: this.emitEvent('exportToXlsx'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.document.dsTypeCd != 'File' && this.datasetIsIterable },
                     { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: this.emitEvent('exportToCsv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.document.dsTypeCd != 'File' },

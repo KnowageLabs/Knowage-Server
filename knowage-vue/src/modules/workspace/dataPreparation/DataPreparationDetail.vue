@@ -511,6 +511,9 @@ export default defineComponent({
                 this.datasetData.push(obj)
             })
         }
+    },
+    unmounted() {
+        if (this.client) this.client.deactivate()
     }
 })
 </script>
