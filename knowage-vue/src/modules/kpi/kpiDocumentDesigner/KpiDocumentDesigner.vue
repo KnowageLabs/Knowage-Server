@@ -191,6 +191,7 @@ export default defineComponent({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
+                    console.log('RESPONSE DATA ID: ', response.data.id)
                     this.$router.push(`/kpi-edit/${response.data.id}?from=${this.$route.query.from}`)
                 })
                 .catch(() => {})

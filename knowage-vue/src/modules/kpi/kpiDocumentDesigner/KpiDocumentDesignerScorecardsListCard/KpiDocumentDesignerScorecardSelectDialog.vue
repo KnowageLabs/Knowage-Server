@@ -5,10 +5,6 @@
                 <template #start>
                     {{ $t('kpi.kpiDocumentDesigner.scorecardList') }}
                 </template>
-                <template #end>
-                    <Button class="kn-button p-button-text" :label="$t('common.close')" @click="closeScorecardAssociations"></Button>
-                    <Button class="kn-button p-button-text" :label="$t('common.save')" @click="addScorecardAssociations"></Button>
-                </template>
             </Toolbar>
         </template>
 
@@ -43,6 +39,11 @@
                 </template>
             </Column>
         </DataTable>
+
+        <template #footer>
+            <Button class="kn-button kn-button--primary" :label="$t('common.close')" @click="closeScorecardAssociations"></Button>
+            <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="addScorecardAssociations"></Button>
+        </template>
     </Dialog>
 </template>
 

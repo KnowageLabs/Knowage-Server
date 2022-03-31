@@ -5,11 +5,6 @@
                 <template #start>
                     {{ $t('kpi.kpiDocumentDesigner.saveDialogTitle') }}
                 </template>
-
-                <template #end>
-                    <Button class="kn-button p-button-text" :label="$t('common.close')" @click="close"></Button>
-                    <Button class="kn-button p-button-text" :label="$t('common.save')" :disabled="saveButtonDisabled" @click="saveKpi"></Button>
-                </template>
             </Toolbar>
         </template>
 
@@ -29,6 +24,11 @@
                 </span>
             </div>
         </div>
+
+        <template #footer>
+            <Button class="kn-button kn-button--primary" :label="$t('common.close')" @click="close"></Button>
+            <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="saveButtonDisabled" @click="saveKpi"></Button>
+        </template>
     </Dialog>
 </template>
 

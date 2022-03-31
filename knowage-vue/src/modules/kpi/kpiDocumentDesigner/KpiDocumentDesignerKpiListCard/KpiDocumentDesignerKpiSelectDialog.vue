@@ -5,10 +5,6 @@
                 <template #start>
                     {{ $t('kpi.kpiDocumentDesigner.kpiList') }}
                 </template>
-                <template #end>
-                    <Button class="kn-button p-button-text" :label="$t('common.close')" @click="closeKpiAssociations"></Button>
-                    <Button class="kn-button p-button-text" :label="$t('common.save')" @click="addKpiAssociations"></Button>
-                </template>
             </Toolbar>
         </template>
 
@@ -45,6 +41,11 @@
             </Column>
             <Column class="kn-truncated" field="author" :header="$t('common.author')" key="author" :sortable="true"> </Column>
         </DataTable>
+
+        <template #footer>
+            <Button class="kn-button kn-button--primary" :label="$t('common.close')" @click="closeKpiAssociations"></Button>
+            <Button class="kn-button kn-button--primary" :label="$t('common.save')" @click="addKpiAssociations"></Button>
+        </template>
     </Dialog>
 </template>
 
