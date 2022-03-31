@@ -8,25 +8,6 @@
                             class="kn-material-input"
                             type="text"
                             :disabled="!isFirstSave"
-                            v-model.trim="v$.preparedDataset.label.$model"
-                            :class="{
-                                'p-invalid': v$.preparedDataset.label.$invalid
-                            }"
-                            maxLength="100"
-                        />
-                        <label class="kn-material-input-label" for="label">{{ $t('managers.workspaceManagement.dataPreparation.dataset.label') }}</label>
-                        <KnValidationMessages
-                            :vComp="v$.preparedDataset.label"
-                            :additionalTranslateParams="{
-                                fieldName: $t('managers.configurationManagement.headers.label')
-                            }"
-                        ></KnValidationMessages>
-                    </span>
-                    <span class="p-float-label kn-flex p-mr-2">
-                        <InputText
-                            class="kn-material-input"
-                            type="text"
-                            :disabled="!isFirstSave"
                             v-model.trim="v$.preparedDataset.name.$model"
                             :class="{
                                 'p-invalid': v$.preparedDataset.name.$invalid
@@ -170,7 +151,8 @@ export default defineComponent({
             let toReturn = {}
             toReturn['config'] = this.enableSchedulation ? { cron: this.currentCronExpression } : {}
             toReturn['dataSetLabel'] = this.originalDataset.label
-            toReturn['destinationDataSetLabel'] = this.preparedDataset.label
+            var d = new Date()
+            toReturn['destinationDataSetLabel'] = 'ds__' + (d.getTime() % 10000000)
             toReturn['destinationDataSetName'] = this.preparedDataset.name
             toReturn['destinationDataSetDescription'] = this.preparedDataset.description
             toReturn['meta'] = this.createMetaDefinition()
