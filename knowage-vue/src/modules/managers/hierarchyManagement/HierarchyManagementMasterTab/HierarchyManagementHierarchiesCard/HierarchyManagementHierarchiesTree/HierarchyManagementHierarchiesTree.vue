@@ -6,7 +6,7 @@
                 <label class="kn-material-input-label"> {{ $t('common.orderBy') + ' ... ' }} </label>
             </span>
         </div>
-        <div class="p-col-6" @drop.stop="onDragDrop($event, null, null)" @dragover.prevent @dragenter.prevent @dragleave.prevent>Test</div>
+        <div class="p-col-6"></div>
         <Tree class="hierarchies-tree p-col-12" :value="nodes" :filter="true" filterMode="lenient">
             <template #default="slotProps">
                 <div
@@ -271,7 +271,8 @@ export default defineComponent({
             console.log('ON DRAG DROPED ITEM: ', droppedItem)
             console.log('ON DRAG TREE NODE: ', item)
             console.log('ON DRAG DROP KEY: ', key)
-            await this.loadRelations(droppedItem, item.data)
+            const parentNode = item.data.leaf ? item.parent.data : item.data
+            await this.loadRelations(droppedItem, parentNode)
             this.dropzoneActive[key] = false
         },
         setDropzoneClass(value: boolean, node: any) {
@@ -312,10 +313,12 @@ export default defineComponent({
 
             node.name = node[this.selectedDimension?.DIMENSION_NM + '_NM']
             node.id = node[this.selectedDimension?.DIMENSION_PREFIX + '_CD']
-            node.LEAF_PARENT_NM = parentNode[parentNode.aliasName]
-            node.LEAF_PARENT_CD = parentNode[parentNode.aliasId]
-            node.LEAF_ORIG_PARENT_CD = parentNode[parentNode.aliasId]
-            node.LEVEL = parentNode.LEVEL ? parentNode.LEVEL + 1 : 1
+            console.log('PARENT NODE: ', parentNode)
+            console.log('PARENT NODE ALIAS NAME: ', parentNode.data.aliasName)
+            node.LEAF_PARENT_NM = parentNode.data[parentNode.data.aliasName]
+            node.LEAF_PARENT_CD = parentNode.data[parentNode.data.aliasId]
+            node.LEAF_ORIG_PARENT_CD = parentNode.data[parentNode.data.aliasId]
+            node.LEVEL = parentNode.LEVEL ? parentNode.data.LEVEL + 1 : 1
             node.leaf = true
             const fields = this.nodeMetadata
                 ? this.nodeMetadata.LEAF_FIELDS.map((el: iNodeMetadataField) => {
@@ -323,10 +326,9 @@ export default defineComponent({
                       return { key: el.ID, type: el.TYPE }
                   })
                 : []
-            console.log('FIELDS: ', fields)
+
             for (let i = 0; i < fields.length; i++) {
                 if (!node[fields[i].key]) {
-                    console.log('ENTERED!')
                     let value = '' as string | number | Date
                     if (fields[i].type === 'Date') value = new Date()
                     else if (fields[i].type === 'Number') value = -1
@@ -342,6 +344,12 @@ export default defineComponent({
                     node[leafFields[key]] = node[key]
                 }
             }
+
+            if (this.relations.length > 0) {
+                // TODO
+            }
+
+            parentNode.children.push({ key: node.name, id: node.name, label: node.name, children: [], data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: true, parent: parentNode })
 
             console.log('NODE TO COPY AFTER: ', node)
         }
