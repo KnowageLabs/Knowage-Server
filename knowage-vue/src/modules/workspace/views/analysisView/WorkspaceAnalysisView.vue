@@ -367,7 +367,7 @@ export default defineComponent({
             this.$router.push('/kpi-edit/new-kpi?from=Workspace')
         },
         openGeoRefCreation() {
-            this.$router.push('/geo-ref/new')
+            this.$router.push('/gis/new')
         }
     }
 })
