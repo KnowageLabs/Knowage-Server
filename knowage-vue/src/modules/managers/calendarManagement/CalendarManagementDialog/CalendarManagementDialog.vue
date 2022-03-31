@@ -5,10 +5,6 @@
                 <template #start>
                     {{ calendar?.calendar }}
                 </template>
-                <template #end>
-                    <Button v-if="canManageCalendar" icon="pi pi-save" class="kn-button p-button-text p-button-rounded" :disabled="buttonDisabled" @click="save" />
-                    <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="close" />
-                </template>
             </Toolbar>
         </template>
 
@@ -18,6 +14,11 @@
             <CalendarManagementDetailForm :propCalendar="calendar" :generateButtonVisible="generateButtonVisible" :generateButtonDisabled="generateButtonDisabled" @generateCalendarClicked="generateCalendarConfirm"></CalendarManagementDetailForm>
             <CalendarManagementDetailTable v-if="calendarDetailTableVisible" class="p-m-4" :propCalendarInfo="calendar?.splittedCalendar" :domains="domains"></CalendarManagementDetailTable>
         </div>
+
+        <template #footer>
+            <Button class="kn-button kn-button--primary" @click="close"> {{ $t('common.cancel') }}</Button>
+            <Button v-if="canManageCalendar" class="kn-button kn-button--primary" :disabled="buttonDisabled" @click="save"> {{ $t('common.save') }}</Button>
+        </template>
     </Dialog>
 </template>
 
