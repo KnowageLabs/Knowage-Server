@@ -231,7 +231,7 @@ export default defineComponent({
             return tempDesigner
         },
         closeKpi() {
-            const url = this.$route.query.from === 'documentDetail' ? '/document-browser' : '/workspace/analysis'
+            const url = this.$route.query.from === 'documentDetail' ? `/document-details/${this.id}` : '/workspace/analysis'
             this.$router.push(url)
         }
     }
