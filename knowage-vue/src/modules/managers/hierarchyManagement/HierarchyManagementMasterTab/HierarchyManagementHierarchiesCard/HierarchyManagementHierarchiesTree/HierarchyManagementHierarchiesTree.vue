@@ -46,6 +46,7 @@ import Tree from 'primevue/tree'
 
 const deepEqual = require('deep-equal')
 const deepcopy = require('deepcopy')
+const crypto = require('crypto')
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchies-tree',
@@ -55,7 +56,8 @@ export default defineComponent({
         nodeMetadata: { type: Object as PropType<iNodeMetadata | null> },
         selectedDimension: { type: Object as PropType<iDimension | null> },
         selectedHierarchy: { type: Object as PropType<iHierarchy | null> },
-        dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> }
+        dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> },
+        propRelationsMasterTree: { type: Array as PropType<any[]> }
     },
     emits: ['loading', 'treeUpdated'],
     data() {
@@ -70,16 +72,21 @@ export default defineComponent({
             mode: '' as string,
             orderBy: '' as string,
             dropzoneActive: [] as boolean[],
-            relations: [] as any[]
+            relations: [] as any[],
+            relationsMasterTree: [] as any[]
         }
     },
     watch: {
         propTree() {
             this.loadTree()
+        },
+        propRelationsMasterTree() {
+            this.loadMasterTreeRelations()
         }
     },
     created() {
         this.loadTree()
+        this.loadMasterTreeRelations()
     },
     methods: {
         loadTree() {
@@ -87,13 +94,16 @@ export default defineComponent({
             this.orderBy = ''
             if (this.tree) this.createNodeTree()
         },
+        loadMasterTreeRelations() {
+            this.relationsMasterTree = this.propRelationsMasterTree as any[]
+        },
         createNodeTree() {
             this.nodes = this.formatNodes([this.tree], null)
         },
         formatNodes(tree: any, parent: any) {
             return tree.map((node: any) => {
                 node = {
-                    key: node.name,
+                    key: crypto.randomBytes(16).toString('hex'),
                     id: node.id,
                     label: node.name,
                     children: node.children,
@@ -165,6 +175,11 @@ export default defineComponent({
             const index = node.parent?.children.findIndex((el: iNode) => el.id === node.id)
             if (index !== -1) node.parent.children.splice(index, 1)
             console.log('INDEX: ', index)
+
+            const relationsIndex = this.relationsMasterTree.findIndex((el: any) => el.leafData.CDC_NM === node.data.CDC_NM && el.leafData.CDC_CD === node.data.CDC_CD)
+            if (relationsIndex !== -1) this.relationsMasterTree.splice(relationsIndex, 1)
+            console.log('DELTE TREE HIER: ', this.relationsMasterTree)
+            this.$emit('treeUpdated', this.nodes)
         },
         showNodeInfo(node: iNode) {
             console.log('SHOW NODE INFO: ', node.data)
@@ -214,7 +229,7 @@ export default defineComponent({
 
             if (tempNode) {
                 tempNode.data = node
-                tempNode.key = node.name
+                tempNode.key = crypto.randomBytes(16).toString('hex')
                 tempNode.label = node.name
             }
             console.log('NODE TO UPDATE: ', tempNode)
@@ -228,7 +243,7 @@ export default defineComponent({
                 if (tempNode) break
             }
 
-            if (tempNode) tempNode.children.push({ key: node.name, id: node.name, label: node.name, children: node.children, data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: node.leaf, parent: tempNode })
+            if (tempNode) tempNode.children.push({ key: crypto.randomBytes(16).toString('hex'), id: node.name, label: node.name, children: node.children, data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: node.leaf, parent: tempNode })
             console.log('TEMP NODE: ', tempNode)
             this.$emit('treeUpdated', this.nodes)
         },
@@ -311,8 +326,13 @@ export default defineComponent({
 
             if (!parentNode) return
 
-            node.name = node[this.selectedDimension?.DIMENSION_NM + '_NM']
-            node.id = node[this.selectedDimension?.DIMENSION_PREFIX + '_CD']
+            const dimensionName = this.selectedDimension ? this.selectedDimension.DIMENSION_NM : ''
+            const dimensionPrefix = this.selectedDimension ? this.selectedDimension.DIMENSION_PREFIX : ''
+
+            const keyName = dimensionName + '_NM'
+            const keyId = dimensionPrefix + '_CD'
+            node.name = node[keyName]
+            node.id = node[keyId]
             console.log('PARENT NODE: ', parentNode)
             console.log('PARENT NODE ALIAS NAME: ', parentNode.data.aliasName)
             node.LEAF_PARENT_NM = parentNode.data[parentNode.data.aliasName]
@@ -345,13 +365,21 @@ export default defineComponent({
                 }
             }
 
-            if (this.relations.length > 0) {
-                // TODO
+            if (this.relations) {
+                const newElement = { leafData: { [keyName]: node[keyName], [keyId]: node[keyId], BEGIN_DT: node.BEGIN_DT, END_DT: node.END_DT }, relationsArray: [] as any[] }
+                newElement.leafData[dimensionName + '_ID'] = node[dimensionName + '_ID']
+
+                for (let i = 0; i < this.relations.length; i++) {
+                    newElement.relationsArray.push(deepcopy(this.relations[i]))
+                }
+
+                this.relationsMasterTree.push(newElement)
             }
 
-            parentNode.children.push({ key: node.name, id: node.name, label: node.name, children: [], data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: true, parent: parentNode })
-
+            parentNode.children.push({ key: crypto.randomBytes(16).toString('hex'), id: node.name, label: node.name, children: [], data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: true, parent: parentNode })
+            console.log('>>> relationsMasterTree: ', this.relationsMasterTree)
             console.log('NODE TO COPY AFTER: ', node)
+            this.$emit('treeUpdated', this.nodes)
         }
     }
 })

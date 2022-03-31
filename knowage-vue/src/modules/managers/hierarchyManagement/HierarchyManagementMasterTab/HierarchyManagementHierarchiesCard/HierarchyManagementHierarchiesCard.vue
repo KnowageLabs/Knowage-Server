@@ -18,7 +18,7 @@
                         </span>
                     </div>
                     <div class="kn-flex p-d-flex p-flex-row p-ai-center p-jc-around">
-                        <Button class="kn-button kn-button--primary hierarchy-management-hierarchies-card-button" :label="$t('common.save')" :disabled="saveButtonDisabled" @click="save" />
+                        <Button class="kn-button kn-button--primary hierarchy-management-hierarchies-card-button" :label="$t('common.save')" :disabled="!treeModel" @click="saveHierarchy" />
                         <div>
                             <Checkbox v-model="backup" :binary="true" :disabled="!treeModel"></Checkbox>
                             <label class="kn-material-input-label p-ml-2"> {{ $t('managers.hierarchyManagement.backup') }}</label>
@@ -49,6 +49,7 @@
                     :selectedDimension="dimension"
                     :selectedHierarchy="selectedHierarchy"
                     :dimensionMetadata="dimensionMetadata"
+                    :propRelationsMasterTree="relationsMasterTree"
                     @treeUpdated="updateTreeModel"
                     @loading="$emit('loading', $event)"
                 ></HierarchyManagementHierarchiesTree>
@@ -91,14 +92,11 @@ export default defineComponent({
             selectedHierarchy: null as iHierarchy | null,
             tree: null as any,
             treeModel: null as any,
-            filterData: null as { showMissingElements: boolean; afterDate: Date | null } | null
+            filterData: null as { showMissingElements: boolean; afterDate: Date | null } | null,
+            relationsMasterTree: [] as any[]
         }
     },
-    computed: {
-        saveButtonDisabled(): boolean {
-            return false
-        }
-    },
+    computed: {},
     watch: {
         selectedDimension() {
             this.loadDimension()
@@ -119,6 +117,7 @@ export default defineComponent({
             this.$emit('loading', true)
             const url = this.hierarchyType === 'MASTER' ? `hierarchiesMaster/getHierarchiesMaster?dimension=${this.selectedDimension?.DIMENSION_NM}` : `hierarchiesTechnical/getHierarchiesTechnical?dimension=${this.selectedDimension?.DIMENSION_NM}`
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.hierarchies = response.data))
+            this.relationsMasterTree = []
             this.$emit('loading', false)
         },
         async loadHierarchyTree() {
@@ -133,6 +132,7 @@ export default defineComponent({
                 if (this.filterData.afterDate) url = url.concat('&filterDate=' + moment(this.filterData.afterDate).format('YYYY-MM-DD'))
             }
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.tree = response.data))
+            this.relationsMasterTree = []
             this.$emit('loading', false)
         },
         async onHierarchyTypeSelected() {
@@ -155,7 +155,8 @@ export default defineComponent({
             this.loadHierarchyTree()
         },
         updateTreeModel(nodes: iNode[]) {
-            this.treeModel = [this.formatNodes(nodes)]
+            this.treeModel = this.formatNodes(nodes)[0]
+            console.log('UPDATED TREE MODEL: ', this.treeModel)
         },
         formatNodes(nodes: iNode[]) {
             return nodes.map((node: any) => {
@@ -169,7 +170,29 @@ export default defineComponent({
                 return node
             })
         },
-        save() {}
+        async saveHierarchy() {
+            if (!this.dimension || !this.selectedHierarchy) return
+            this.$emit('loading', true)
+            // TODO see relations MT
+            const postData = {
+                dimension: this.dimension.DIMENSION_NM,
+                code: this.selectedHierarchy.HIER_CD,
+                description: this.selectedHierarchy.HIER_DS,
+                name: this.selectedHierarchy.HIER_NM,
+                type: this.selectedHierarchy.HIER_TP,
+                dateValidity: moment(this.date).format('YYYY-MM-DD'),
+                isInsert: false,
+                doBackup: this.backup,
+                relationsMT: this.relationsMasterTree,
+                root: this.treeModel
+            }
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/saveHierarchy`, postData).then((response: AxiosResponse<any>) => {
+                if (response.data.response === 'ok') {
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
+                }
+            })
+            this.$emit('loading', false)
+        }
     }
 })
 </script>
