@@ -1317,6 +1317,7 @@
             "nodeCloneError": "The duplicate leaf can not be equal to the original",
             "recursive": "Recursive",
             "showMissingElements": "Show missing elements",
+            "synchronizationSuccess": "Successful synchronization",
             "synchronize": "Synchronize",
             "technical": "Technical"
         },

@@ -14,7 +14,7 @@
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <div class="kn-flex">
                         <span class="p-float-label">
-                            <Calendar v-model="date" :manualInput="true" @dateSelect="loadHierarchyTree"></Calendar>
+                            <Calendar v-model="date" :manualInput="true" @dateSelect="onTreeDateChanged"></Calendar>
                         </span>
                     </div>
                     <div class="kn-flex p-d-flex p-flex-row p-ai-center p-jc-around">
@@ -29,13 +29,13 @@
                 <div class="p-d-flex p-flex-row p-mt-3">
                     <div class="p-fluid kn-flex">
                         <span class="p-float-label p-m-2">
-                            <Dropdown class="kn-material-input" v-model="hierarchyType" :options="hierarchyManagementHierarchiesCardDescriptor.hierarchyTypes" :disabled="!dimension" @change="loadHierarchies"> </Dropdown>
+                            <Dropdown class="kn-material-input" v-model="hierarchyType" :options="hierarchyManagementHierarchiesCardDescriptor.hierarchyTypes" :disabled="!dimension" @change="onHierarchyTypeSelected"> </Dropdown>
                             <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.hierarchyType') }} </label>
                         </span>
                     </div>
                     <div class="p-fluid kn-flex">
                         <span class="p-float-label p-m-2">
-                            <Dropdown class="kn-material-input" v-model="selectedHierarchy" :options="hierarchies" optionLabel="HIER_NM" :disabled="!dimension" @change="loadHierarchyTree"> </Dropdown>
+                            <Dropdown class="kn-material-input" v-model="selectedHierarchy" :options="hierarchies" optionLabel="HIER_NM" :disabled="!dimension" @change="onHierarchySelected"> </Dropdown>
                             <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.hierarchies') }} </label>
                         </span>
                     </div>
@@ -73,7 +73,7 @@ export default defineComponent({
     name: 'hierarchy-management-hierarchies-card',
     components: { Calendar, Checkbox, Dropdown, HierarchyManagementHierarchiesTree, HierarchyManagementHierarchiesFilterCard },
     props: { selectedDimension: { type: Object as PropType<iDimension | null> }, nodeMetadata: { type: Object as PropType<iNodeMetadata | null> }, validityDate: { type: Object as PropType<Date | null> }, dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> } },
-    emits: ['loading'],
+    emits: ['loading', 'hierarchySelected', 'dateSelected', 'hierarchyTypeSelected'],
     data() {
         return {
             hierarchyManagementHierarchiesCardDescriptor,
@@ -84,7 +84,8 @@ export default defineComponent({
             hierarchies: [] as iHierarchy[],
             selectedHierarchy: null as iHierarchy | null,
             tree: null as any,
-            treeModel: null as any
+            treeModel: null as any,
+            filterData: null as { showMissingElements: boolean; afterDate: Date | null } | null
         }
     },
     computed: {
@@ -111,23 +112,36 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.hierarchies = response.data))
             this.$emit('loading', false)
         },
-        async loadHierarchyTree(filterData: { showMissingElements: boolean; afterDate: Date | null }) {
-            console.log('FILTER DATA: ', filterData)
+        async loadHierarchyTree() {
+            console.log('FILTER DATA: ', this.filterData)
             console.log('VALIDITY DATE: ', this.validityDate)
             this.$emit('loading', true)
             const date = moment(this.date).format('YYYY-MM-DD')
             let url = `hierarchies/getHierarchyTree?dimension=${this.selectedDimension?.DIMENSION_NM}&filterHierarchy=${this.selectedHierarchy?.HIER_NM}&filterType=${this.hierarchyType}&validityDate=${date}`
-            if (filterData) {
-                if (filterData.showMissingElements) url = url.concat('&filterDimension=' + filterData.showMissingElements)
+            if (this.filterData) {
+                if (this.filterData.showMissingElements) url = url.concat('&filterDimension=' + this.filterData.showMissingElements)
                 if (this.validityDate) url = url.concat('&optionDate=' + moment(this.validityDate).format('YYYY-MM-DD'))
-                if (filterData.afterDate) url = url.concat('&filterDate=' + moment(filterData.afterDate).format('YYYY-MM-DD'))
+                if (this.filterData.afterDate) url = url.concat('&filterDate=' + moment(this.filterData.afterDate).format('YYYY-MM-DD'))
             }
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.tree = response.data))
             this.$emit('loading', false)
         },
+        async onHierarchyTypeSelected() {
+            this.$emit('hierarchyTypeSelected', this.hierarchyType)
+            await this.loadHierarchies()
+        },
+        async onHierarchySelected() {
+            this.$emit('hierarchySelected', this.selectedHierarchy)
+            await this.loadHierarchyTree()
+        },
+        async onTreeDateChanged() {
+            this.$emit('dateSelected', this.date)
+            await this.loadHierarchyTree()
+        },
         onApplyFilters(filterData: { showMissingElements: boolean; afterDate: Date | null }) {
             console.log('PAYLOAD: ', filterData)
-            this.loadHierarchyTree(filterData)
+            this.filterData = filterData
+            this.loadHierarchyTree()
         },
         updateTreeModel(nodes: iNode[]) {
             this.treeModel = [this.formatNodes(nodes)]
