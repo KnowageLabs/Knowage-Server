@@ -380,11 +380,8 @@ public class ExportResource {
 		jobDataMap.put(ExportDeleteOldJob.MAP_KEY_RESOURCE_PATH, resoursePath);
 		jobDataMap.put(ExportDeleteOldJob.MAP_KEY_USER_PROFILE, userProfile);
 
-		JobDetail job = newJob(ExportDeleteOldJob.class)
-				.withIdentity(jobName, jobGroup)
-				.withDescription(jobDescription)
-				.usingJobData(jobDataMap)
-				.build();
+		JobDetail job = newJob(ExportDeleteOldJob.class).withIdentity(jobName, jobGroup).withDescription(jobDescription).usingJobData(jobDataMap)
+				.storeDurably(true).build();
 		JobKey key = job.getKey();
 
 		Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();

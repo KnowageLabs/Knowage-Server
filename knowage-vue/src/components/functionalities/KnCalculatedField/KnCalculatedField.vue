@@ -203,7 +203,6 @@
                     })
                     .map((x) => ({ name: x.category, code: x.category.toUpperCase() }))
                     .forEach((element) => {
-                        console.log(element)
                         if (tmp.filter((y) => y.code === element.code).length == 0) tmp.push({ name: element.name, code: element.code })
                     })
 
@@ -273,6 +272,13 @@
                         inclusiveLeft: false,
                         inclusiveRight: false
                     })
+                }
+
+                let lines = document.querySelector('.CodeMirror-lines')
+                if (lines) {
+                    let textEl = lines.querySelector('div span') as any
+
+                    if (textEl) this.cf.formula = textEl.innerText
                 }
             },
             applyValidationResultsToFormula() {

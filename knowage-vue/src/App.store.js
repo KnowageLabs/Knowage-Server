@@ -16,7 +16,7 @@ const store = createStore({
             downloads: { count: { total: 0, unRead: 0 } },
             locale: {},
             news: { count: { total: 0, unRead: 0 } },
-            loading: false,
+            loading: 0,
             homePage: {},
             internationalization: [],
             isEnterprise: false,
@@ -66,7 +66,8 @@ const store = createStore({
             state.info = info
         },
         setLoading(state, loading) {
-            state.loading = loading
+            if (loading) state.loading++
+            else state.loading--
         },
         setWarning(state, warning) {
             state.warning = warning

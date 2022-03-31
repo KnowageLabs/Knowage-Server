@@ -2,7 +2,7 @@
     <div class="kn-page kn-data-preparation">
         <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" />
         <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" />
-        <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" />
+        <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" :instanceId="instanceId" @update:instanceId="updateInstanceId" :processId="processId" @update:processId="updateprocessId" :preparedDsMeta="preparedDsMeta" />
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
             <template #start> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }})</template>
             <template #end>
@@ -12,13 +12,13 @@
         ></Toolbar>
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0 toolbarCustomConfig">
             <template #start>
-                <span v-for="(menu, index) in getMenuForToolbar()" v-bind:key="index">
+                <template v-for="(menu, index) in getMenuForToolbar()" v-bind:key="index">
                     <Button v-if="menu !== 'divider'" :class="descriptor.css.buttonClassHeader" v-tooltip.bottom="$t(menu.label)" @click="callFunction(menu)" :disabled="calculateDisabledProperty(menu)">
                         <span v-if="menu.icon.class" :class="menu.icon.class">{{ menu.icon.name }}</span>
                         <i v-else :class="menu.icon"></i>
                     </Button>
                     <Divider v-else layout="vertical" />
-                </span>
+                </template>
             </template>
             <template #end>
                 <div class="arrow-button-container">
@@ -52,8 +52,8 @@
                         <i v-else class="transformation-icon" :class="descriptorTransformations.filter((x) => x.name === tr.type)[0].icon"></i>
 
                         <span class="typeAndDescription kn-truncated kn-flex">
-                            <span class="kn-list-item" :title="$t(descriptorTransformations.filter((x) => x.name === tr.type)[0].label)">{{ $t(descriptorTransformations.filter((x) => x.name === tr.type)[0].label) }} </span>
-                            <span class="transformationDescription kn-truncated" :title="getTextForSidebar(tr)">
+                            <span class="kn-list-item">{{ $t(descriptorTransformations.filter((x) => x.name === tr.type)[0].label) }} </span>
+                            <span class="transformationDescription kn-truncated">
                                 {{ getTextForSidebar(tr) }}
                             </span>
                         </span>
@@ -90,7 +90,8 @@
                 <Column v-for="(col, colIndex) in columns" :field="col.header" :key="colIndex" :style="{ width: '200px' }">
                     <template #header>
                         <Button v-if="col.fieldType" :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'opType-' + colIndex)">
-                            <i :class="descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon"></i>
+                            <span v-if="descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon.class" :class="descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon.class">{{ descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon.name }}</span>
+                            <i v-else :class="descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon"></i>
                         </Button>
                         <OverlayPanel :ref="'opType-' + colIndex" :popup="true">
                             <span class="p-float-label">
@@ -105,10 +106,10 @@
                         <Button icon="pi pi-ellipsis-v" :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'trOpType-' + colIndex)" />
                         <Menu :model="getTransformationsMenu(col)" :ref="'trOpType-' + colIndex" :popup="true">
                             <template #item="{item}">
-                                <span class="p-menuitem-link" @click="callFunction(item, col)">
-                                    <span :class="item.icon.class" v-if="item.icon.class">{{ item.icon.name }}</span>
-                                    <i v-else :class="item.icon"></i> <span class="p-ml-2"> {{ $t(item.label) }}</span></span
-                                >
+                                <span :class="['p-menuitem-link', 'toolbarCustomConfig', descriptor.css.buttonClassHeader]" @click="callFunction(item, col)">
+                                    <span :class="item.icon.class" class="menu-icon" v-if="item.icon.class">{{ item.icon.name }}</span>
+                                    <i v-else :class="item.icon"></i> <span class="p-ml-2"> {{ $t(item.label) }}</span>
+                                </span>
                             </template>
                         </Menu>
                     </template></Column
@@ -147,7 +148,10 @@ export default defineComponent({
     name: 'data-preparation-detail',
     props: {
         id: String,
-        transformations: Array as PropType<any[]>
+        transformations: Array as PropType<any[]>,
+        existingProcessId: String,
+        existingInstanceId: String,
+        existingDataset: String
     },
     components: { KnCalculatedField, Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
 
@@ -170,7 +174,10 @@ export default defineComponent({
             simpleDescriptor: DataPreparationSimpleDescriptor,
             splitDescriptor: DataPreparationSplitDescriptor,
             client: {} as any,
-            cfDescriptor: calculatedFieldDescriptor
+            cfDescriptor: calculatedFieldDescriptor,
+            instanceId: '' as string,
+            processId: '' as string,
+            preparedDsMeta: {}
         }
     },
 
@@ -183,6 +190,7 @@ export default defineComponent({
             this.dataset = response.data[0]
         })
         if (this.dataset) {
+            this.initDsMetadata()
             this.initTransformations()
             this.initWebsocket()
 
@@ -342,13 +350,26 @@ export default defineComponent({
             }
         },
         initWebsocket(): void {
-            let url = process.env.VUE_APP_HOST_URL.replace('http', 'ws') + '/knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+            var url = new URL(window.location.origin)
+            url.protocol = url.protocol.replace('http', 'ws')
+            var uri = url + 'knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
             this.client = new Client({
-                brokerURL: url,
+                brokerURL: uri,
                 connectHeaders: {},
                 heartbeatIncoming: 4000,
                 heartbeatOutgoing: 4000
             })
+        },
+        initDsMetadata(): void {
+            if (this.existingProcessId) this.processId = this.existingProcessId
+            if (this.existingInstanceId) this.instanceId = this.existingInstanceId
+            if (this.existingDataset) {
+                let dsMeta = JSON.parse(this.existingDataset)
+                this.preparedDsMeta = {}
+                this.preparedDsMeta['label'] = dsMeta.label
+                this.preparedDsMeta['name'] = dsMeta.name
+                this.preparedDsMeta['description'] = dsMeta.description
+            }
         },
         getColHeader(metadata: Array<any>, idx: Number): string {
             let columnMapping = 'Column_' + idx
@@ -459,6 +480,12 @@ export default defineComponent({
         switchEditMode(col) {
             col.edit = !col.edit
         },
+        updateInstanceId(iid): void {
+            this.instanceId = iid
+        },
+        updateprocessId(pid): void {
+            this.processId = pid
+        },
         updateTable(message) {
             let response = JSON.parse(message)
             // set headers
@@ -493,6 +520,9 @@ export default defineComponent({
     .arrow-button-container {
         position: relative;
         left: -10px;
+        .p-button {
+            padding-left: 20px;
+        }
         .arrow-badge {
             position: absolute;
             top: 0;
@@ -555,6 +585,36 @@ export default defineComponent({
 }
 .toolbarCustomConfig {
     background-color: white !important;
+
+    .kn-datapreparation-button {
+        min-width: 0;
+
+        span {
+            width: 16px;
+            height: 16px;
+            font-size: 16px;
+        }
+        i {
+            width: 16px;
+            height: 16px;
+            font-size: 16px;
+        }
+    }
+
+    &.kn-datapreparation-button {
+        min-width: 0;
+
+        .menu-icon {
+            width: 16px;
+            height: 16px;
+            font-size: 16px;
+        }
+        i {
+            width: 16px;
+            height: 16px;
+            font-size: 16px;
+        }
+    }
 }
 .dividerCustomConfig {
     border: 1px solid;

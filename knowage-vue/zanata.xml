@@ -6,7 +6,7 @@
     <project-type>file</project-type>
     <src-dir>src/i18n/en_US</src-dir>
     <trans-dir>src/i18n</trans-dir>
-    <includes>messages*.json</includes>
+    <includes>*messages.json</includes>
     <rules>
         <rule>{locale_with_underscore}/{filename}.json</rule>
     </rules>

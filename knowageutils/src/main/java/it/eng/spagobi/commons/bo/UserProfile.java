@@ -500,7 +500,7 @@ public class UserProfile implements IEngUserProfile {
 		UserProfile toReturn = new UserProfile(userUniqueIdentifier, DATA_PREP_USER_NAME, DATA_PREP_USER_NAME, organization);
 		toReturn.setRoles(new ArrayList());
 		toReturn.setAttributes(new HashMap());
-//		toReturn.setFunctionalities(getSchedulerUserFunctionalities());  // TODO : check which functionalities we should add
+		toReturn.setFunctionalities(getDataPreparationUserFunctionalities());
 		logger.debug("OUT");
 		return toReturn;
 	}
@@ -518,6 +518,11 @@ public class UserProfile implements IEngUserProfile {
 				"ParameterManagement", "ParameterView", "ProfileAttributeManagement", "ProfileManagement", "ReadEnginesManagement", "RegistryDataEntry",
 				"SelfServiceDatasetManagement", "SelfServiceMetaModelManagement", "SharedDevelopment", "StaticWidget", "SyncronizeRolesManagement",
 				"UserSaveDocumentFunctionality", "ViewMyFolderAdmin", "WorklistManagement", "WorkspaceManagement", "ReadRoles" };
+		return Arrays.asList(functionalities);
+	}
+
+	private static Collection getDataPreparationUserFunctionalities() {
+		String[] functionalities = { "DataPreparation" };
 		return Arrays.asList(functionalities);
 	}
 

@@ -10,6 +10,7 @@
         "attributes": "Attributes",
         "author": "Author",
         "back": "back",
+        "bottom": "bottom",
         "cancel": "cancel",
         "category": "Category",
         "cc": "CC",
@@ -90,6 +91,7 @@
         "label": "label",
         "language": "Language",
         "lastChangeDate": "Last change date",
+        "left": "left",
         "library": "Library",
         "load": "Load",
         "locked": "Locked",
@@ -130,6 +132,7 @@
         "replyTo": "Reply To",
         "required": "Required",
         "reused": "Reused",
+        "right": "right",
         "role": "Role",
         "roles": "Roles",
         "run": "Run",
@@ -184,6 +187,7 @@
             "uploadSuccess": "Item was uploaded successfully",
             "warning": "Warning"
         },
+        "top": "top",
         "type": "type",
         "upload": "upload",
         "uploadFile": "Upload File",
@@ -362,6 +366,7 @@
                 "imageError": "Error deleting image",
                 "imageUploadError": "Error uploading image",
                 "infoTitle": "Informations",
+                "parametersPanelPosition": "Parameters panel position",
                 "positionTitle": "Position",
                 "previewImage": "Preview Image",
                 "profiledVisibility": "Defined Restrictions",
@@ -1865,6 +1870,7 @@
             "dataPreparation": {
                 "dataset": {
                     "description": "Description",
+                    "enableSchedulation": "Enable schedulation",
                     "label": "Label",
                     "name": "Name",
                     "refreshRate": {
@@ -1880,7 +1886,18 @@
                     },
                     "visibility": "Visibility"
                 },
+                "errors": {
+                    "updatingSchedulation": "An error occurred while updating schedulation"
+                },
                 "label": "Data preparation",
+                "monitoring": {
+                    "executionLogs": "Execution log",
+                    "hint": "No scheduling applied to this dataset. It will only run once. If you want to enable schedulation, use the enable schedulation switch.",
+                    "recordsNumber": "Number of records",
+                    "start": "Start date",
+                    "status": "Status",
+                    "stop": "Stop Date"
+                },
                 "originalDataset": "Original",
                 "parametersConfiguration": "Parameters configuration",
                 "roles": {
@@ -2225,6 +2242,9 @@
         "roleSelection": "Role Selection"
     },
     "workspace": {
+        "advancedData": {
+            "title": "Data preparation"
+        },
         "buttonsTooltips": {
             "deleteDoc": "Delete Document",
             "editDoc": "Edit Document",
@@ -2284,7 +2304,9 @@
             "driverable": "Drivable",
             "exportSuccess": "The download has started in background. You will find the result file in your download page.",
             "fileDownload": "Download Dataset file",
+            "isPreparing": "Preparing avro file...",
             "modified": "Modified",
+            "monitoring": "Monitoring",
             "openData": "Import Open Data",
             "openDataPreparation": "Open Data Preparation",
             "parametrical": "Parametrical",

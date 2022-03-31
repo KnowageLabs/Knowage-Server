@@ -8,8 +8,9 @@
 		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 		version="3.1" >
 
-	<description>Knowage Kpi Engine</description>
 	<display-name>knowagekpiengine</display-name>
+	<description>Knowage Kpi Engine</description>
+	
 	<filter>
 		<filter-name>EncodingFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>

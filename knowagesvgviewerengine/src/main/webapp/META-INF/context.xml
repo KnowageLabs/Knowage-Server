@@ -1,4 +1,4 @@
-<Context path="/knowagesvgviewerengine" >
+<Context path="/knowagesvgviewerengine" reloadable="false">
 	<CookieProcessor sameSiteCookies="strict" />
 	
 	<!-- <Loader delegate="true"/> -->
