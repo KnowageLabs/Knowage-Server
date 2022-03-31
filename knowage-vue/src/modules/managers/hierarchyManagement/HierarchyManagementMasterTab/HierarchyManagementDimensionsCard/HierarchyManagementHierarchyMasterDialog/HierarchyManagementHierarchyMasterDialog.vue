@@ -101,9 +101,12 @@ export default defineComponent({
                 return
             }
 
+            if (payload.levels) this.onLevelsChanged(payload.levels)
+
             this.recursive = { NM: payload.recursive.name?.ID, CD: payload.recursive.code?.ID, NM_PARENT: payload.recursiveParentName?.ID, CD_PARENT: payload.recursiveParentDescription?.ID }
         },
         async save() {
+            console.log('LEVELS: ', this.levels)
             const postData = {
                 dimension: this.selectedDimension?.DIMENSION_NM,
                 validityDate: moment(this.validityDate).format('YYYY-MM-DD'),

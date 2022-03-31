@@ -106,7 +106,7 @@ export default defineComponent({
             this.loadHierarchyTree()
         },
         reloadHierarchiesTrigger() {
-            this.loadHierarchies()
+            if (this.hierarchyType === 'MASTER') this.loadHierarchies()
         }
     },
     created() {
