@@ -15,7 +15,7 @@
     <div class="p-d-flex p-flex-row p-ai-center p-flex-wrap">
         <InputText class="kn-material-input p-m-3 model-search" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
         <span class="p-float-label p-mr-auto model-search">
-            <MultiSelect class="kn-material-input" :style="mainDescriptor.style.multiselect" v-model="selectedCategories" :options="datasetCategories" optionLabel="VALUE_CD" @change="searchItems" :filter="true" />
+            <MultiSelect class="kn-material-input kn-width-full" :style="mainDescriptor.style.multiselect" v-model="selectedCategories" :options="datasetCategories" optionLabel="VALUE_CD" @change="searchItems" :filter="true" />
             <label class="kn-material-input-label"> {{ $t('common.type') }} </label>
         </span>
         <SelectButton class="p-mx-2" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" data-test="dataset-select" />
