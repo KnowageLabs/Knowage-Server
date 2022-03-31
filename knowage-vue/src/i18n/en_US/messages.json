@@ -173,6 +173,7 @@
         "to": "to",
         "toast": {
             "cloneConfirmTitle": "Confirm item clone?",
+            "createSuccess": "Item was created successfully",
             "createTitle": "Created",
             "deleteConfirmTitle": "Confirm Delete?",
             "deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
