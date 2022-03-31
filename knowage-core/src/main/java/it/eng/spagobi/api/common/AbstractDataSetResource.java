@@ -1068,13 +1068,15 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				URL serviceUrlAsURL = new URL(serviceUrl);
 				serviceUrlAsURL = new URL(serviceUrlAsURL.getProtocol(), serviceUrlAsURL.getHost(), serviceUrlAsURL.getPort(), "", null);
 				String token = getUserProfile().getUserUniqueIdentifier().toString();
-				// delete data preparation process instance
-				restClient.target(serviceUrlAsURL + "/knowage-data-preparation/api/1.0/instance/" + instanceId).request().header("X-Kn-Authorization", token)
-						.delete();
 				// delete Avro resources
 				Response response = restClient.target(serviceUrlAsURL + "/knowage-data-preparation/api/1.0/instance/" + instanceId).request()
 						.header("X-Kn-Authorization", token).get();
-				deleteAvroFolder(label);
+				JSONObject instance = new JSONObject(response.readEntity(String.class));
+				String sourceDsLabel = instance.getString("dataSetLabel");
+				deleteAvroFolder(sourceDsLabel);
+				// delete data preparation process instance
+				restClient.target(serviceUrlAsURL + "/knowage-data-preparation/api/1.0/instance/" + instanceId).request().header("X-Kn-Authorization", token)
+						.delete();
 			}
 		} catch (Exception e) {
 			logger.error("Cannot delete PreparedDataSet related resources (process instance, avro file) for dataset " + label, e);
