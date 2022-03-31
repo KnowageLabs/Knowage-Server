@@ -10,6 +10,7 @@
                     <KnInputFile label="" v-if="!uploading" :changeFunction="startTemplateUpload" :triggerInput="triggerUpload" />
                 </template>
             </Toolbar>
+            {{ listOfTemplates }}
             <div id="drivers-list-container" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
@@ -248,15 +249,31 @@ export default defineComponent({
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         openDesignerConfirm() {
+            console.log(this.selectedDocument.typeCode)
             this.$confirm.require({
                 header: this.$t('common.toast.warning'),
                 message: this.$t('documentExecution.olap.openDesignerMsg'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => (this.selectedDocument.typeCode === 'KPI' ? this.openKpiDocumentDesigner() : this.openDesigner())
+                accept: () => {
+                    switch (this.selectedDocument.typeCode) {
+                        case 'KPI':
+                            this.openKpiDocumentDesigner()
+                            break
+                        case 'MAP': {
+                            this.openGis()
+                            break
+                        }
+                        default:
+                            this.openDesigner()
+                    }
+                }
             })
         },
         openDesigner() {
             this.$router.push(`/olap-designer/${this.selectedDocument.id}`)
+        },
+        openGis() {
+            this.$router.push(`/gis/edit?documentId=${this.selectedDocument.id}`)
         },
         openKpiDocumentDesigner() {
             this.$router.push(`/kpi-edit/${this.selectedDocument.id}?from=documentDetail`)

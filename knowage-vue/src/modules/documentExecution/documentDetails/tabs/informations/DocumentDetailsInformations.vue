@@ -442,7 +442,19 @@ export default defineComponent({
                 header: this.$t('common.toast.warning'),
                 message: this.$t('documentExecution.olap.openDesignerMsg'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => (this.document.typeCode === 'KPI' ? this.openKpiDocumentDesigner() : this.openDesigner())
+                accept: () => {
+                    switch (this.document.typeCode) {
+                        case 'KPI':
+                            this.openKpiDocumentDesigner()
+                            break
+                        case 'MAP': {
+                            this.openGis()
+                            break
+                        }
+                        default:
+                            this.openDesigner()
+                    }
+                }
             })
         },
         openDesigner() {
@@ -453,6 +465,9 @@ export default defineComponent({
         },
         openKpiDocumentDesigner() {
             this.$router.push(`/kpi-edit/${this.document.id}?from=documentDetail`)
+        },
+        openGis() {
+            this.$router.push(`/gis/edit?documentId=${this.document.id}`)
         }
     }
 })
