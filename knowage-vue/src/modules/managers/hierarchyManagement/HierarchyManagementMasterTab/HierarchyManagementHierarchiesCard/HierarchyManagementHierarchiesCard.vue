@@ -78,7 +78,8 @@ export default defineComponent({
         nodeMetadata: { type: Object as PropType<iNodeMetadata | null> },
         validityDate: { type: Object as PropType<Date | null> },
         dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> },
-        synchronizationTrigger: { type: Boolean }
+        synchronizationTrigger: { type: Boolean },
+        reloadHierarchiesTrigger: { type: Boolean }
     },
     emits: ['loading', 'hierarchySelected', 'dateSelected', 'hierarchyTypeSelected'],
     data() {
@@ -103,6 +104,9 @@ export default defineComponent({
         },
         synchronizationTrigger() {
             this.loadHierarchyTree()
+        },
+        reloadHierarchiesTrigger() {
+            this.loadHierarchies()
         }
     },
     created() {

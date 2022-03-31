@@ -1,9 +1,7 @@
 <template>
     <div class="p-grid p-ai-center">
         <div class="p-col-5">
-            {{ 'TODO' }}
-            {{ selectedSourceFields }}
-            <span v-if="errorMessageVisible" class="p-error">{{ $t('managers.hierarchyManagement.createHierarchyMasterErrorMessage') }}</span>
+            <span v-if="errorMessageVisible" class="p-error p-m-4">{{ $t('managers.hierarchyManagement.createHierarchyMasterErrorMessage') }}</span>
             <Listbox class="kn-list hierarchy-management-list" v-model="selectedSourceFields" :options="dimensionSourceFields" optionLabel="NAME" :multiple="true" @change="onSelectedField">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
@@ -22,8 +20,6 @@
             </div>
         </div>
         <div class="p-col-5">
-            {{ 'TODO' }}
-            {{ selectedDestinationFields }}
             <Listbox class="kn-list hierarchy-management-list" v-model="selectedDestinationFields" :options="dimensionDestinationFields" optionLabel="NAME" :multiple="true" @change="onSelectedField">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
