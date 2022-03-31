@@ -126,7 +126,6 @@ export default defineComponent({
             descriptor,
             loading: false,
             saveDialogVisible: false,
-            templateId: null as any,
             selectedDocument: {} as iDocument,
             documentTemplate: {} as any,
             documentData: {} as any,
@@ -146,6 +145,8 @@ export default defineComponent({
         logGis() {
             console.log(this.documentTemplate)
             console.log(this.documentData)
+            console.log(this.$router.options.history.state.back)
+            this.$router.push(`${this.$router.options.history.state.back}`)
         },
         async loadPage() {
             this.loading = true
@@ -154,11 +155,8 @@ export default defineComponent({
         },
 
         async createDocumentData() {
-            // http://localhost:3000/knowage-vue/gis/edit?documentId=3290&templateId=8068
-
             this.documentData = deepcopy(descriptor.newGisTemplate)
             await this.getAllLayers()
-
             if (this.$route.path.includes('edit')) {
                 await this.getSelectedDocument()
                 await this.findActiveTemplate()
