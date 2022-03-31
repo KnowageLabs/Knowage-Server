@@ -36,7 +36,7 @@ import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.tag.SbiTag;
 
-class DataSetForWorkspaceDTO extends DataSetMainDTO {
+class DataSetForWorkspaceDTO extends AbstractDataSetDTO {
 
 	private static final DataSetMetadataJSONSerializer metaSerializer = new DataSetMetadataJSONSerializer();
 	private final List<DataSetParameterDTO> params = new ArrayList<>();

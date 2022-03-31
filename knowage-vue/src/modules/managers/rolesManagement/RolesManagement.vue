@@ -22,99 +22,99 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { iRole } from './RolesManagement'
-    import { AxiosResponse } from 'axios'
-    import rolesDecriptor from './RolesManagementDescriptor.json'
-    import FabButton from '@/components/UI/KnFabButton.vue'
-    import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+import { defineComponent } from 'vue'
+import { iRole } from './RolesManagement'
+import { AxiosResponse } from 'axios'
+import rolesDecriptor from './RolesManagementDescriptor.json'
+import FabButton from '@/components/UI/KnFabButton.vue'
+import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 
-    export default defineComponent({
-        name: 'roles-management',
-        components: { FabButton, KnListBox },
-        data() {
-            return {
-                roles: [] as iRole[],
-                loading: false,
-                touched: false,
-                rolesDecriptor: rolesDecriptor,
-                hiddenForm: false,
-                dirty: false,
-                publicRole: null as any
-            }
+export default defineComponent({
+    name: 'roles-management',
+    components: { FabButton, KnListBox },
+    data() {
+        return {
+            roles: [] as iRole[],
+            loading: false,
+            touched: false,
+            rolesDecriptor: rolesDecriptor,
+            hiddenForm: false,
+            dirty: false,
+            publicRole: null as any
+        }
+    },
+    async created() {
+        await this.loadAllRoles()
+    },
+    methods: {
+        async loadAllRoles() {
+            this.loading = true
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles')
+                .then((response: AxiosResponse<any>) => {
+                    this.roles = response.data
+                    this.checkAllRolesForPublicRole()
+                })
+                .finally(() => (this.loading = false))
         },
-        async created() {
-            await this.loadAllRoles()
+        checkAllRolesForPublicRole() {
+            this.publicRole = null
+            this.roles.forEach((role) => {
+                if (role.isPublic) {
+                    this.publicRole = role
+                }
+            })
         },
-        methods: {
-            async loadAllRoles() {
-                this.loading = true
-                await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles')
-                    .then((response: AxiosResponse<any>) => {
-                        this.roles = response.data
-                        this.checkAllRolesForPublicRole()
-                    })
-                    .finally(() => (this.loading = false))
-            },
-            checkAllRolesForPublicRole() {
-                this.publicRole = null
-                this.roles.forEach((role) => {
-                    if (role.isPublic) {
-                        this.publicRole = role
+        showForm(event: any) {
+            console.log(event)
+            const path = event.item ? `/roles-management/${event.item.id}` : '/roles-management/new-role'
+
+            if (!this.touched) {
+                this.$router.push(path)
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.$router.push(path)
                     }
                 })
-            },
-            showForm(event: any) {
-                console.log(event)
-                const path = event.item ? `/roles-management/${event.item.id}` : '/roles-management/new-role'
-
-                if (!this.touched) {
-                    this.$router.push(path)
-                } else {
-                    this.$confirm.require({
-                        message: this.$t('common.toast.unsavedChangesMessage'),
-                        header: this.$t('common.toast.unsavedChangesHeader'),
-                        icon: 'pi pi-exclamation-triangle',
-                        accept: () => {
-                            this.touched = false
-                            this.$router.push(path)
-                        }
-                    })
-                }
-            },
-            deleteRoleConfirm(roleId: number) {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.deleteRole(roleId)
-                })
-            },
-            async deleteRole(roleId: number) {
-                await this.$http
-                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId, { headers: { 'X-Disable-Errors': 'true' } })
-                    .then(() => {
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.deleteTitle'),
-                            msg: this.$t('common.toast.deleteSuccess')
-                        })
-                        this.$router.push('/roles-management')
-                        this.loadAllRoles()
-                    })
-                    .catch((error) => {
-                        if (error) {
-                            this.$store.commit('setError', {
-                                title: this.$t('common.toast.deleteTitle'),
-                                msg: this.$t('common.error.deleting')
-                            })
-                        }
-                    })
-            },
-            pageReload() {
-                this.touched = false
-                this.loadAllRoles()
             }
+        },
+        deleteRoleConfirm(roleId: number) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteRole(roleId)
+            })
+        },
+        async deleteRole(roleId: number) {
+            await this.$http
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId, { headers: { 'X-Disable-Errors': 'true' } })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.$router.push('/roles-management')
+                    this.loadAllRoles()
+                })
+                .catch((error) => {
+                    if (error) {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.toast.deleteTitle'),
+                            msg: this.$t('common.error.deleting')
+                        })
+                    }
+                })
+        },
+        pageReload() {
+            this.touched = false
+            this.loadAllRoles()
         }
-    })
+    }
+})
 </script>
