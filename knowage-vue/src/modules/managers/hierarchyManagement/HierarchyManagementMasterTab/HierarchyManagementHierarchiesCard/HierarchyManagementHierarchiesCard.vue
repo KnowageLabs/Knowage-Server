@@ -72,7 +72,13 @@ import HierarchyManagementHierarchiesFilterCard from './HierarchyManagementHiera
 export default defineComponent({
     name: 'hierarchy-management-hierarchies-card',
     components: { Calendar, Checkbox, Dropdown, HierarchyManagementHierarchiesTree, HierarchyManagementHierarchiesFilterCard },
-    props: { selectedDimension: { type: Object as PropType<iDimension | null> }, nodeMetadata: { type: Object as PropType<iNodeMetadata | null> }, validityDate: { type: Object as PropType<Date | null> }, dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> } },
+    props: {
+        selectedDimension: { type: Object as PropType<iDimension | null> },
+        nodeMetadata: { type: Object as PropType<iNodeMetadata | null> },
+        validityDate: { type: Object as PropType<Date | null> },
+        dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> },
+        synchronizationTrigger: { type: Boolean }
+    },
     emits: ['loading', 'hierarchySelected', 'dateSelected', 'hierarchyTypeSelected'],
     data() {
         return {
@@ -96,6 +102,9 @@ export default defineComponent({
     watch: {
         selectedDimension() {
             this.loadDimension()
+        },
+        synchronizationTrigger() {
+            this.loadHierarchyTree()
         }
     },
     created() {
@@ -127,7 +136,9 @@ export default defineComponent({
             this.$emit('loading', false)
         },
         async onHierarchyTypeSelected() {
+            this.selectedHierarchy = null
             this.$emit('hierarchyTypeSelected', this.hierarchyType)
+            this.$emit('hierarchySelected', this.selectedHierarchy)
             await this.loadHierarchies()
         },
         async onHierarchySelected() {

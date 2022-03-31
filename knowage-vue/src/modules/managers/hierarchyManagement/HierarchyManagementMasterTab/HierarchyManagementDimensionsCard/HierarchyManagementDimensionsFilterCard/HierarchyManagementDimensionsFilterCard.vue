@@ -3,7 +3,7 @@
         <AccordionTab :header="$t('common.filters')">
             <div class="p-grid p-fluid p-formgrid">
                 <div class="p-col-12">
-                    <Checkbox class="p-mr-2" v-model="showMissingElements" :binary="true"></Checkbox>
+                    <Checkbox class="p-mr-2" v-model="showMissingElements" :binary="true" :disabled="!selectedHierarchy"></Checkbox>
                     <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.showMissingElements') }}</label>
                 </div>
 
@@ -38,7 +38,7 @@ const deepcopy = require('deepcopy')
 export default defineComponent({
     name: 'hierarchy-management-dimensions-filter-card',
     components: { Accordion, AccordionTab, Calendar, Checkbox },
-    props: { dimensionFilters: { type: Array as PropType<iDimensionFilter[]> } },
+    props: { dimensionFilters: { type: Array as PropType<iDimensionFilter[]> }, selectedHierarchy: { type: Object as PropType<iHierarchy | null> } },
     emits: ['applyFilters'],
     data() {
         return {

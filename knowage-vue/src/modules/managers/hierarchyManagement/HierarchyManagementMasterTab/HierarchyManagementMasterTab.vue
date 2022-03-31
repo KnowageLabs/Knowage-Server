@@ -5,6 +5,8 @@
             :dimensions="dimensions"
             :selectedHierarchy="selectedHierarchy"
             :validityTreeDate="validityTreeDate"
+            :hierarchyType="hierarchyType"
+            @synchronized="onSynchronized"
             @dimensionSelected="setSelectedDimension"
             @loading="$emit('loading', $event)"
             @nodeMetadataChanged="onNodeMetadataChange"
@@ -17,6 +19,7 @@
             :nodeMetadata="nodeMetadata"
             :validityDate="validityDate"
             :dimensionMetadata="dimensionMetadata"
+            :synchronizationTrigger="synchronizationTrigger"
             @loading="$emit('loading', $event)"
             @hierarchyTypeSelected="onHierarchyTypeSelected"
             @hierarchySelected="onHierarchySelected"
@@ -43,7 +46,8 @@ export default defineComponent({
             dimensionMetadata: null as iDimensionMetadata | null,
             hierarchyType: '' as string,
             selectedHierarchy: null as iHierarchy | null,
-            validityTreeDate: null as Date | null
+            validityTreeDate: new Date() as Date | null,
+            synchronizationTrigger: false
         }
     },
     async created() {},
@@ -72,6 +76,9 @@ export default defineComponent({
         onValidityTreeDateSelected(date: Date | null) {
             this.validityTreeDate = date
             console.log('ON DATE SELECT: ', this.validityTreeDate)
+        },
+        onSynchronized() {
+            this.synchronizationTrigger = !this.synchronizationTrigger
         }
     }
 })

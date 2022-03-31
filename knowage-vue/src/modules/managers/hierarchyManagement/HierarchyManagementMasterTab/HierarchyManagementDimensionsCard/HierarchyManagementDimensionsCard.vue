@@ -30,7 +30,7 @@
                     <Button class="kn-button kn-button--primary hierarchy-management-dimension-card-button" :label="$t('managers.hierarchyManagement.synchronize')" :disabled="synchronizeButtonDisabled" @click="synchronize" />
                 </div>
 
-                <HierarchyManagementDimensionsFilterCard v-show="selectedDimension" :dimensionFilters="dimensionFilters" @applyFilters="onApplyFilters"></HierarchyManagementDimensionsFilterCard>
+                <HierarchyManagementDimensionsFilterCard v-show="selectedDimension" :dimensionFilters="dimensionFilters" :selectedHierarchy="selectedHierarchy" @applyFilters="onApplyFilters"></HierarchyManagementDimensionsFilterCard>
                 <HierarchyManagementDimensionsTable v-show="dimensionData" :dimensionData="dimensionData"></HierarchyManagementDimensionsTable>
             </div>
             <HierarchyManagementHierarchyMasterDialog
@@ -61,8 +61,8 @@ import HierarchyManagementDimensionsFilterCard from './HierarchyManagementDimens
 export default defineComponent({
     name: 'hierarchy-management-dimensions-card',
     components: { Card, Calendar, Dropdown, HierarchyManagementDimensionsTable, HierarchyManagementHierarchyMasterDialog, HierarchyManagementDimensionsFilterCard },
-    props: { dimensions: { type: Array as PropType<iDimension[]> }, selectedHierarchy: { type: Object as PropType<iHierarchy | null> }, validityTreeDate: { type: Object as PropType<Date | null> } },
-    emits: ['loading', 'dimensionSelected', 'nodeMetadataChanged', 'validityDateSelected', 'dimensionMetadataChanged'],
+    props: { dimensions: { type: Array as PropType<iDimension[]> }, hierarchyType: { type: String }, selectedHierarchy: { type: Object as PropType<iHierarchy | null> }, validityTreeDate: { type: Object as PropType<Date | null> } },
+    emits: ['loading', 'dimensionSelected', 'nodeMetadataChanged', 'validityDateSelected', 'dimensionMetadataChanged', 'synchronized'],
     data() {
         return {
             validityDate: new Date(),
@@ -71,12 +71,13 @@ export default defineComponent({
             dimensionData: null as any,
             dimensionMetadata: null as iDimensionMetadata | null,
             nodeMetadata: null as iNodeMetadata | null,
-            dimensionFilters: [] as iDimensionFilter[]
+            dimensionFilters: [] as iDimensionFilter[],
+            filterData: null as { filters: iDimensionFilter[]; showMissingElements: boolean } | null
         }
     },
     computed: {
         synchronizeButtonDisabled(): boolean {
-            return !this.dimensionData || this.dimensionData.root.length === 0 || !this.selectedHierarchy || this.selectedHierarchy.HIER_TP.toUpperCase() !== 'MASTER'
+            return !this.dimensionData || this.dimensionData.root.length === 0 || this.hierarchyType?.toUpperCase() !== 'MASTER' || !this.selectedHierarchy
         }
     },
     async created() {},
@@ -90,19 +91,23 @@ export default defineComponent({
             await this.loadData()
         },
         async loadData() {
-            await this.loadDimensionData(null)
+            await this.loadDimensionData()
             await this.loadDimensionMetadata()
             await this.loadNodeMetadata()
             await this.loadDimensionFilters()
         },
-        async loadDimensionData(filtersData: { filters: iDimensionFilter[]; showMissingElements: boolean } | null) {
+        async loadDimensionData() {
             this.$emit('loading', true)
             this.dimensionData = null
             const date = moment(this.validityDate).format('YYYY-MM-DD')
             let url = `dimensions/dimensionData?dimension=${this.selectedDimension?.DIMENSION_NM}&validityDate=${date}`
-            if (filtersData && filtersData.filters.length > 0) {
-                const optionalFilters = encodeURI(JSON.stringify(filtersData.filters))
-                url = url.concat('&optionalFilters=' + optionalFilters)
+            if (this.filterData) {
+                if (this.filterData.showMissingElements) {
+                    url = url.concat('&filterDate=' + this.validityTreeDate ? moment(this.validityDate).format('YYYY-MM-DD') : '')
+                    url = url.concat('&filterHierType=' + this.hierarchyType)
+                    url = url.concat('&filterHierarchy=' + this.selectedHierarchy?.HIER_NM)
+                }
+                if (this.filterData.filters.length > 0) url = url.concat('&optionalFilters=' + encodeURI(JSON.stringify(this.filterData.filters)))
             }
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.dimensionData = response.data))
             this.$emit('loading', false)
@@ -125,7 +130,8 @@ export default defineComponent({
             this.$emit('loading', false)
         },
         onApplyFilters(filtersData: { filters: iDimensionFilter[]; showMissingElements: boolean }) {
-            this.loadDimensionData(filtersData)
+            this.filterData = filtersData
+            this.loadDimensionData()
         },
         openHierarchyMasterDialog() {
             this.hierarchyMasterDialogVisible = true
@@ -133,13 +139,14 @@ export default defineComponent({
         async synchronize() {
             this.$emit('loading', true)
             console.log('SELECTED HIERARCHY: ', this.selectedHierarchy)
+            console.log('validityTreeDate: ', this.validityTreeDate)
             const postData = {
                 dimension: this.selectedDimension?.DIMENSION_NM,
                 validityDate: moment(this.validityDate).format('YYYY-MM-DD'),
                 validityTreeDate: this.validityTreeDate ? moment(this.validityDate).format('YYYY-MM-DD') : null,
-                filterHierarchy: 'TEST_TECHNICAL',
-                filterHierType: 'TECHNICAL',
-                optionalFilters: []
+                filterHierarchy: this.selectedHierarchy?.HIER_NM,
+                filterHierType: this.hierarchyType,
+                optionalFilters: this.filterData ? this.filterData.filters : []
             }
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchiesMaster/syncronizeHierarchyMaster`, postData)
@@ -149,6 +156,7 @@ export default defineComponent({
                             title: this.$t('common.info.info'),
                             msg: this.$t('managers.hierarchyManagement.synchronizationSuccess')
                         })
+                        this.$emit('synchronized')
                     }
                 })
                 .catch(() => {})
