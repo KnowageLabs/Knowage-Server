@@ -87,8 +87,6 @@ export default defineComponent({
             return index !== -1 ? this.dimensionData.columns[index].NAME : ''
         },
         onDragStart(event: any, item: any) {
-            console.log('ON DRAG START EVENT: ', event)
-            console.log('ON DRAG START ITEM: ', item)
             event.dataTransfer.setData('text/plain', JSON.stringify(item))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'

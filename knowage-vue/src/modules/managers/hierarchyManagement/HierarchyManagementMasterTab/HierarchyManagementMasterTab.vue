@@ -59,7 +59,6 @@ export default defineComponent({
             this.nodeMetadata = metadata
         },
         setValidityDate(date: Date) {
-            console.log('SET VALIDITY DATE: ', date)
             this.validityDate = date
         },
         onDimensionMetadataChange(metadata: iDimensionMetadata | null) {
@@ -67,15 +66,12 @@ export default defineComponent({
         },
         onHierarchyTypeSelected(hierarchyType: string) {
             this.hierarchyType = hierarchyType
-            console.log('ON HIER TYPE SELECT: ', this.hierarchyType)
         },
         onHierarchySelected(hierarchy: iHierarchy | null) {
             this.selectedHierarchy = hierarchy
-            console.log('ON HIER SELECT: ', this.selectedHierarchy)
         },
         onValidityTreeDateSelected(date: Date | null) {
             this.validityTreeDate = date
-            console.log('ON DATE SELECT: ', this.validityTreeDate)
         },
         onSynchronized() {
             this.synchronizationTrigger = !this.synchronizationTrigger

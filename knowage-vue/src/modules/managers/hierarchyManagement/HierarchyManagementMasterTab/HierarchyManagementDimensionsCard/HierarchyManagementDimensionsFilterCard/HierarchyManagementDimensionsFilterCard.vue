@@ -11,7 +11,7 @@
                     <span class="p-float-label">
                         <Calendar v-if="filter.TYPE === 'Date'" class="calendar-management-detail-form-calendar-input " v-model="filter.VALUE" :manualInput="true"></Calendar>
                         <InputText v-else class="kn-material-input" :type="filter.TYPE === 'number' ? 'number' : 'text'" v-model.trim="filter.VALUE" />
-                        <label class="kn-material-input-label"> {{ filter.NAME + ' *' }}</label>
+                        <label class="kn-material-input-label"> {{ filter.NAME }}</label>
                     </span>
                 </div>
 
@@ -26,7 +26,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iDimensionFilter } from '../../../HierarchyManagement'
+import { iDimensionFilter, iHierarchy } from '../../../HierarchyManagement'
 import moment from 'moment'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'

@@ -5,10 +5,6 @@
                 <template #start>
                     {{ $t('common.details') }}
                 </template>
-
-                <template #end>
-                    <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="close" />
-                </template>
             </Toolbar>
         </template>
         <div v-if="selectedItem" class="p-fluid p-formgrid p-grid p-m-4">
@@ -19,6 +15,10 @@
                 </span>
             </div>
         </div>
+
+        <template #footer>
+            <Button class="kn-button kn-button--primary" :label="$t('common.ok')" @click="close" />
+        </template>
     </Dialog>
 </template>
 

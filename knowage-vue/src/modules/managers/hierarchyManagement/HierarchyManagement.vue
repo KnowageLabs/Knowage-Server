@@ -41,7 +41,6 @@ export default defineComponent({
     data() {
         return {
             dimensions: [] as iDimension[],
-
             loading: false
         }
     },

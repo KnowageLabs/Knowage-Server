@@ -103,7 +103,8 @@ export default defineComponent({
             let url = `dimensions/dimensionData?dimension=${this.selectedDimension?.DIMENSION_NM}&validityDate=${date}`
             if (this.filterData) {
                 if (this.filterData.showMissingElements) {
-                    url = url.concat('&filterDate=' + this.validityTreeDate ? moment(this.validityDate).format('YYYY-MM-DD') : '')
+                    const filterDate = this.validityTreeDate ? moment(this.validityTreeDate).format('YYYY-MM-DD') : ''
+                    url = url.concat('&filterDate=' + filterDate)
                     url = url.concat('&filterHierType=' + this.hierarchyType)
                     url = url.concat('&filterHierarchy=' + this.selectedHierarchy?.HIER_NM)
                 }
@@ -138,12 +139,10 @@ export default defineComponent({
         },
         async synchronize() {
             this.$emit('loading', true)
-            console.log('SELECTED HIERARCHY: ', this.selectedHierarchy)
-            console.log('validityTreeDate: ', this.validityTreeDate)
             const postData = {
                 dimension: this.selectedDimension?.DIMENSION_NM,
                 validityDate: moment(this.validityDate).format('YYYY-MM-DD'),
-                validityTreeDate: this.validityTreeDate ? moment(this.validityDate).format('YYYY-MM-DD') : null,
+                validityTreeDate: this.validityTreeDate ? moment(this.validityTreeDate).format('YYYY-MM-DD') : null,
                 filterHierarchy: this.selectedHierarchy?.HIER_NM,
                 filterHierType: this.hierarchyType,
                 optionalFilters: this.filterData ? this.filterData.filters : []

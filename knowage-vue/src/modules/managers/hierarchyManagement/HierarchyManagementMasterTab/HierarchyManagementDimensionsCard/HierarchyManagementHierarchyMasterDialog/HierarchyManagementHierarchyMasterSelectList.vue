@@ -7,7 +7,7 @@
             <Listbox class="kn-list hierarchy-management-list" v-model="selectedSourceFields" :options="dimensionSourceFields" optionLabel="NAME" :multiple="true" @change="onSelectedField">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
-                    <div class="kn-list-item" @click="selectField(slotProps.option)">
+                    <div class="kn-list-item">
                         <div class="kn-list-item-text">
                             <span>{{ slotProps.option.NAME }}</span>
                         </div>
@@ -27,7 +27,7 @@
             <Listbox class="kn-list hierarchy-management-list" v-model="selectedDestinationFields" :options="dimensionDestinationFields" optionLabel="NAME" :multiple="true" @change="onSelectedField">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
-                    <div class="kn-list-item" @click="selectField(slotProps.option)">
+                    <div class="kn-list-item">
                         <div class="p-d-flex p-flex-row p-jc-start p-ai-center">
                             <span
                                 ><b>{{ $t('managers.hierarchyManagement.lev') + ' ' + slotProps.option.code.level + ' ' }}</b
@@ -121,9 +121,6 @@ export default defineComponent({
             this.parentDimensionSourceFields = []
             this.dimensionMetadata?.DIM_FIELDS.forEach((filter: iDimensionField) => (filter.PARENT ? this.parentDimensionSourceFields.push(filter) : this.dimensionSourceFields.push(filter)))
         },
-        selectField(field: iDimensionField) {
-            console.log('SELECTED FIELD: ', field)
-        },
         onSelectedField() {
             if (this.selectedSourceFields.length === 3) {
                 this.selectedSourceFields.splice(2, 1)
@@ -182,7 +179,6 @@ export default defineComponent({
             this.$emit('levelsChanged', this.dimensionDestinationFields)
         },
         moveToRecursive(destinationField: any, index: number) {
-            console.log('DEST FIELD: ', destinationField)
             destinationField.isLast = false
             this.dimensionDestinationFields.splice(index, 1)
             if (this.dimensionDestinationFields.length > 0) {
