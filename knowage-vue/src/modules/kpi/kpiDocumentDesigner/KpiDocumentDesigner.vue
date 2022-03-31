@@ -92,9 +92,14 @@ export default defineComponent({
         async loadKpi() {
             this.loading = true
             if (this.id) {
-                await this.$http.post(process.env.VUE_APP_KPI_ENGINE_API_URL + `1.0/kpisTemplate/getKpiTemplate`, { id: this.id }).then((response: AxiosResponse<any>) => {
-                    this.kpiDesigner = response.data.templateContent ? JSON.parse(response.data.templateContent) : response.data
-                })
+                await this.$http
+                    .post(process.env.VUE_APP_KPI_ENGINE_API_URL + `1.0/kpisTemplate/getKpiTemplate`, { id: this.id })
+                    .then((response: AxiosResponse<any>) => {
+                        this.kpiDesigner = response.data.templateContent ? JSON.parse(response.data.templateContent) : response.data
+
+                        if (this.kpiDesigner && !this.kpiDesigner.chart) this.kpiDesigner = this.initializeKpiDesigner()
+                    })
+                    .catch(() => {})
             } else {
                 this.kpiDesigner = this.initializeKpiDesigner()
             }
@@ -191,7 +196,6 @@ export default defineComponent({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
-                    console.log('RESPONSE DATA ID: ', response.data.id)
                     this.$router.push(`/kpi-edit/${response.data.id}?from=${this.$route.query.from}`)
                 })
                 .catch(() => {})
