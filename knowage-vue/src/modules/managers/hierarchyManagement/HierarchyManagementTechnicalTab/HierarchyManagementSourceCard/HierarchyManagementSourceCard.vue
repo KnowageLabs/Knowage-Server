@@ -34,8 +34,9 @@
                 </div>
             </form>
 
+            <HierarchyManagementHierarchiesFilterCard :selectedHierarchy="selectedHierarchy" @applyFilters="onApplyFilters"></HierarchyManagementHierarchiesFilterCard>
             <HierarchyManagementHierarchiesTree
-                v-show="tree"
+                v-if="tree"
                 :propTree="tree"
                 :nodeMetadata="nodeMetadata"
                 :selectedDimension="selectedDimension"
@@ -52,16 +53,17 @@
 import { defineComponent, PropType } from 'vue'
 import { iDimension, iHierarchy, iDimensionMetadata, iNodeMetadata } from '../../HierarchyManagement'
 import { AxiosResponse } from 'axios'
+import moment from 'moment'
 import Card from 'primevue/card'
 import Calendar from 'primevue/calendar'
 import Dropdown from 'primevue/dropdown'
 import hierarchyManagementSourceCardDescriptor from './HierarchyManagementSourceCardDescriptor.json'
 import HierarchyManagementHierarchiesTree from '../../HierarchyManagementMasterTab/HierarchyManagementHierarchiesCard/HierarchyManagementHierarchiesTree/HierarchyManagementHierarchiesTree.vue'
-import moment from 'moment'
+import HierarchyManagementHierarchiesFilterCard from '../../HierarchyManagementMasterTab/HierarchyManagementHierarchiesCard/HierarchyManagementHierarchiesFilterCard/HierarchyManagementHierarchiesFilterCard.vue'
 
 export default defineComponent({
     name: 'hierarchy-management-source-card',
-    components: { Card, Calendar, Dropdown, HierarchyManagementHierarchiesTree },
+    components: { Card, Calendar, Dropdown, HierarchyManagementHierarchiesTree, HierarchyManagementHierarchiesFilterCard },
     props: { dimensions: { type: Array as PropType<iDimension[]> } },
     emits: ['loading', 'validityDateSelected', 'dimensionSelected', 'nodeMetadataChanged', 'hierarchyTypeSelected', 'hierarchySelected', 'dimensionMetadataChanged'],
     data() {
@@ -69,7 +71,6 @@ export default defineComponent({
             hierarchyManagementSourceCardDescriptor,
             validityDate: new Date(),
             selectedDimension: null as iDimension | null,
-
             dimensionMetadata: null as iDimensionMetadata | null,
             nodeMetadata: null as iNodeMetadata | null,
             hierarchyType: '' as string,
@@ -123,11 +124,19 @@ export default defineComponent({
             let url = `hierarchies/getHierarchyTree?dimension=${this.selectedDimension?.DIMENSION_NM}&filterHierarchy=${this.selectedHierarchy?.HIER_NM}&filterType=${this.hierarchyType}&validityDate=${date}`
             if (this.filterData) {
                 if (this.filterData.showMissingElements) url = url.concat('&filterDimension=' + this.filterData.showMissingElements)
-                if (this.validityDate) url = url.concat('&optionDate=' + moment(this.validityDate).format('YYYY-MM-DD'))
+                // TODO Option date - it i snot the same as validityDate
+                // if (this.validityDate) url = url.concat('&optionDate=' + moment(this.validityDate).format('YYYY-MM-DD'))
                 if (this.filterData.afterDate) url = url.concat('&filterDate=' + moment(this.filterData.afterDate).format('YYYY-MM-DD'))
             }
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.tree = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => {
+                this.tree = response.status === 200 ? response.data : null
+                console.log('LOADED TREE: ', this.tree)
+            })
             this.$emit('loading', false)
+        },
+        onApplyFilters(filterData: { showMissingElements: boolean; afterDate: Date | null }) {
+            this.filterData = filterData
+            this.loadHierarchyTree()
         }
     }
 })
