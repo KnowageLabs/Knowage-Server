@@ -23,10 +23,12 @@
             >
                 <span class="node-label">{{ slotProps.node.label }}</span>
                 <div v-show="buttonVisible[slotProps.node.key]">
-                    <Button v-if="slotProps.node.leaf" icon="pi pi-clone" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.clone')" @click.stop="cloneNode(slotProps.node)" />
-                    <Button v-else icon="pi pi-plus" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.add')" @click.stop="addNode(slotProps.node)" />
-                    <Button v-if="!slotProps.node.data.root" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.edit')" @click.stop="editNode(slotProps.node)" />
-                    <Button v-if="!slotProps.node.data.root" icon="pi pi-trash" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.delete')" @click.stop="deleteNodeConfirm(slotProps.node)" />
+                    <template v-if="treeMode !== 'info'">
+                        <Button v-if="slotProps.node.leaf" icon="pi pi-clone" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.clone')" @click.stop="cloneNode(slotProps.node)" />
+                        <Button v-else icon="pi pi-plus" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.add')" @click.stop="addNode(slotProps.node)" />
+                        <Button v-if="!slotProps.node.data.root" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.edit')" @click.stop="editNode(slotProps.node)" />
+                        <Button v-if="!slotProps.node.data.root" icon="pi pi-trash" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.delete')" @click.stop="deleteNodeConfirm(slotProps.node)" />
+                    </template>
                     <Button icon="pi pi-info" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.detail')" @click.stop="showNodeInfo(slotProps.node)" />
                 </div>
             </div>
@@ -60,7 +62,8 @@ export default defineComponent({
         selectedDimension: { type: Object as PropType<iDimension | null> },
         selectedHierarchy: { type: Object as PropType<iHierarchy | null> },
         dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> },
-        propRelationsMasterTree: { type: Array as PropType<any[]> }
+        propRelationsMasterTree: { type: Array as PropType<any[]> },
+        treeMode: { type: String }
     },
     emits: ['loading', 'treeUpdated'],
     data() {
@@ -272,6 +275,8 @@ export default defineComponent({
             return null
         },
         async onDragDrop(event: any, item: any, key: any) {
+            this.dropzoneActive[key] = false
+            if (this.treeMode === 'info') return
             const droppedItem = JSON.parse(event.dataTransfer.getData('text/plain'))
             const parentNode = item.data.leaf ? item.parent : item
             if (droppedItem.movedFrom === 'tree') {
@@ -279,7 +284,6 @@ export default defineComponent({
             } else {
                 await this.loadRelations(droppedItem, parentNode)
             }
-            this.dropzoneActive[key] = false
         },
         setDropzoneClass(value: boolean, node: any) {
             this.dropzoneActive[node.key] = value
@@ -363,6 +367,8 @@ export default defineComponent({
             this.$emit('treeUpdated', this.nodes)
         },
         onDragStart(event: any, item: any) {
+            if (this.treeMode === 'info') return
+
             item.movedFrom = 'tree'
             item.parentKey = item.parent.key
             delete item.parent
