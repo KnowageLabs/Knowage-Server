@@ -41,7 +41,8 @@
         :selectedDimension="selectedDimension"
         :dimensionFilters="dimensionFilters"
         @close="hierarchyMasterDialogVisible = false"
-    ></HierarchyManagementHierarchyMasterDialog>
+        @masterHierarchyCreated="onMasterHierarchyCreated"
+    />
 </template>
 
 <script lang="ts">
@@ -60,7 +61,7 @@ export default defineComponent({
     name: 'hierarchy-management-dimensions-card',
     components: { Card, Calendar, Dropdown, HierarchyManagementDimensionsTable, HierarchyManagementHierarchyMasterDialog, HierarchyManagementDimensionsFilterCard },
     props: { dimensions: { type: Array as PropType<iDimension[]> }, hierarchyType: { type: String }, selectedHierarchy: { type: Object as PropType<iHierarchy | null> }, validityTreeDate: { type: Object as PropType<Date | null> } },
-    emits: ['loading', 'dimensionSelected', 'nodeMetadataChanged', 'validityDateSelected', 'dimensionMetadataChanged', 'synchronized'],
+    emits: ['loading', 'dimensionSelected', 'nodeMetadataChanged', 'validityDateSelected', 'dimensionMetadataChanged', 'synchronized', 'masterHierarchyCreated'],
     data() {
         return {
             validityDate: new Date(),
@@ -158,6 +159,10 @@ export default defineComponent({
                 })
                 .catch(() => {})
             this.$emit('loading', false)
+        },
+        onMasterHierarchyCreated() {
+            this.hierarchyMasterDialogVisible = false
+            this.$emit('masterHierarchyCreated')
         }
     }
 })

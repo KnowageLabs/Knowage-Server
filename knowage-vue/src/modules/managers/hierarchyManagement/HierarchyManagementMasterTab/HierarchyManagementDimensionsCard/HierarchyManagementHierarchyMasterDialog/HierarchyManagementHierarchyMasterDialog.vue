@@ -5,11 +5,6 @@
                 <template #start>
                     {{ $t('managers.hierarchyManagement.createHierarchyMaster') }}
                 </template>
-
-                <template #end>
-                    <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" :disabled="saveButtonDisabled" @click="save" />
-                    <Button icon="pi pi-times" class="kn-button p-button-text p-button-rounded" @click="close" />
-                </template>
             </Toolbar>
         </template>
 
@@ -18,6 +13,11 @@
             <HierarchyManagementHierarchyMasterSelectList :dimensionMetadata="dimensionMetadata" @recursiveChanged="onRecursiveChanged" @levelsChanged="onLevelsChanged"></HierarchyManagementHierarchyMasterSelectList>
         </div>
 
+        <template #footer>
+            <Button class="kn-button kn-button--secondary" @click="close">{{ $t('common.close') }}</Button>
+            <Button class="kn-button kn-button--primary" :disabled="saveButtonDisabled" @click="save">{{ $t('common.save') }}</Button>
+        </template>
+
         <KnOverlaySpinnerPanel :visibility="loading"></KnOverlaySpinnerPanel>
     </Dialog>
 </template>
@@ -25,13 +25,13 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iNodeMetadata, iNodeMetadataField, iDimensionMetadata, iDimension, iDimensionFilter } from '../../../HierarchyManagement'
+import { AxiosResponse } from 'axios'
 import moment from 'moment'
 import Dialog from 'primevue/dialog'
 import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import hierarchyManagementHierarchyMasterDialogDescriptor from './HierarchyManagementMasterDescriptor.json'
 import HierarchyManagementHierarchyMasterForm from './HierarchyManagementHierarchyMasterForm.vue'
 import HierarchyManagementHierarchyMasterSelectList from './HierarchyManagementHierarchyMasterSelectList.vue'
-import { AxiosResponse } from 'axios'
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchy-master-dialog',
@@ -44,7 +44,7 @@ export default defineComponent({
         selectedDimension: { type: Object as PropType<iDimension | null> },
         dimensionFilters: { type: Array as PropType<iDimensionFilter[]> }
     },
-    emits: ['close'],
+    emits: ['close', 'masterHierarchyCreated'],
     data() {
         return {
             hierarchyManagementHierarchyMasterDialogDescriptor,
@@ -101,6 +101,8 @@ export default defineComponent({
                 return
             }
 
+            if (payload.levels) this.onLevelsChanged(payload.levels)
+
             this.recursive = { NM: payload.recursive.name?.ID, CD: payload.recursive.code?.ID, NM_PARENT: payload.recursiveParentName?.ID, CD_PARENT: payload.recursiveParentDescription?.ID }
         },
         async save() {
@@ -122,7 +124,7 @@ export default defineComponent({
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchiesMaster/createHierarchyMaster`, postData)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data?.response === 'ok') {
-                        this.$emit('close')
+                        this.$emit('masterHierarchyCreated')
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.createTitle'),
                             msg: this.$t('common.toast.success')

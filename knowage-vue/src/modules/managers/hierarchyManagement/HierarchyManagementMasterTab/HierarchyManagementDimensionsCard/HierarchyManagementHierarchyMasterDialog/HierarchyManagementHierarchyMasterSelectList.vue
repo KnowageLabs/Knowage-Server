@@ -1,9 +1,7 @@
 <template>
     <div class="p-grid p-ai-center">
         <div class="p-col-5">
-            {{ 'TODO' }}
-            {{ selectedSourceFields }}
-            <span v-if="errorMessageVisible" class="p-error">{{ $t('managers.hierarchyManagement.createHierarchyMasterErrorMessage') }}</span>
+            <span v-if="errorMessageVisible" class="p-error p-m-4">{{ $t('managers.hierarchyManagement.createHierarchyMasterErrorMessage') }}</span>
             <Listbox class="kn-list hierarchy-management-list" v-model="selectedSourceFields" :options="dimensionSourceFields" optionLabel="NAME" :multiple="true" @change="onSelectedField">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
@@ -21,9 +19,8 @@
                 <Button class="kn-button kn-button--primary hierarchy-management-master-selecet-list-button p-mt-2" icon="pi pi-angle-double-left" :disabled="selectedDestinationFields.length === 0" @click="moveToTheLeft" />
             </div>
         </div>
+
         <div class="p-col-5">
-            {{ 'TODO' }}
-            {{ selectedDestinationFields }}
             <Listbox class="kn-list hierarchy-management-list" v-model="selectedDestinationFields" :options="dimensionDestinationFields" optionLabel="NAME" :multiple="true" @change="onSelectedField">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
@@ -169,12 +166,15 @@ export default defineComponent({
         },
         move(destinationField: any, index: number, direction: 'up' | 'down') {
             const tempIndex = direction === 'up' ? index - 1 : index + 1
-            destinationField.code.level = tempIndex
-            destinationField.name.level = tempIndex
+            console.log('TEMP INDEX: ', tempIndex)
+            console.log('INDEX: ', index)
+
+            destinationField.code.level = tempIndex + 1
+            destinationField.name.level = tempIndex + 1
 
             this.dimensionDestinationFields[index] = this.dimensionDestinationFields[tempIndex]
-            this.dimensionDestinationFields[index].code.level = index
-            this.dimensionDestinationFields[index].level = index
+            this.dimensionDestinationFields[index].code.level = index + 1
+            this.dimensionDestinationFields[index].level = index + 1
             this.dimensionDestinationFields[tempIndex] = destinationField
             this.$emit('levelsChanged', this.dimensionDestinationFields)
         },
@@ -186,7 +186,7 @@ export default defineComponent({
             }
             this.selectedDestinationFields = []
             this.recursive = destinationField
-            this.$emit('recursiveChanged', { recursive: this.recursive, recursiveParentName: this.recursiveParentName, recursiveParentDescription: this.recursiveParentDescription })
+            this.$emit('recursiveChanged', { recursive: this.recursive, recursiveParentName: this.recursiveParentName, recursiveParentDescription: this.recursiveParentDescription, levels: this.dimensionDestinationFields })
         },
         removeRecursive() {
             this.selectedDestinationFields = [this.recursive]

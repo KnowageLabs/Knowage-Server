@@ -118,7 +118,6 @@ export default defineComponent({
             })
         },
         sortTree(nodes: iNode[]) {
-            console.log('NODES TO SORT: ', nodes)
             let sortValue = ''
             if (this.orderBy === 'name' || this.orderBy === '') {
                 sortValue = 'label'

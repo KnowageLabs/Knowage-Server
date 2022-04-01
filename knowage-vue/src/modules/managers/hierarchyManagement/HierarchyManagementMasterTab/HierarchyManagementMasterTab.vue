@@ -11,6 +11,7 @@
             @nodeMetadataChanged="onNodeMetadataChange"
             @dimensionMetadataChanged="onDimensionMetadataChange"
             @validityDateSelected="setValidityDate"
+            @masterHierarchyCreated="onMasterHierarchyCreated"
         />
         <HierarchyManagementHierarchiesCard
             :selectedDimension="selectedDimension"
@@ -18,6 +19,7 @@
             :validityDate="validityDate"
             :dimensionMetadata="dimensionMetadata"
             :synchronizationTrigger="synchronizationTrigger"
+            :reloadHierarchiesTrigger="reloadHierarchiesTrigger"
             @loading="$emit('loading', $event)"
             @hierarchyTypeSelected="onHierarchyTypeSelected"
             @hierarchySelected="onHierarchySelected"
@@ -45,7 +47,8 @@ export default defineComponent({
             hierarchyType: '' as string,
             selectedHierarchy: null as iHierarchy | null,
             validityTreeDate: new Date() as Date | null,
-            synchronizationTrigger: false
+            synchronizationTrigger: false,
+            reloadHierarchiesTrigger: false
         }
     },
     async created() {},
@@ -73,6 +76,9 @@ export default defineComponent({
         },
         onSynchronized() {
             this.synchronizationTrigger = !this.synchronizationTrigger
+        },
+        onMasterHierarchyCreated() {
+            this.reloadHierarchiesTrigger = !this.reloadHierarchiesTrigger
         }
     }
 })
