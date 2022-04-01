@@ -31,8 +31,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.platform.commons.util.StringUtils;
 import org.springframework.stereotype.Component;
+
+import it.eng.knowage.boot.error.KnowageBusinessException;
 
 /**
  *
@@ -71,7 +72,7 @@ public class KnowageBusinessExceptionMapper implements ExceptionMapper<KnowageBu
 
 	private JSONObject serializeException(KnowageBusinessException t) {
 		String localizedMessage = t.getLocalizedMessage();
-		String errorMessage = StringUtils.isNotBlank(localizedMessage) ? localizedMessage : t.getDescription();
+		String errorMessage = isBlankString(localizedMessage) ? localizedMessage : t.getDescription();
 		String errorCode = t.getCode();
 		List<String> hints = t.getHints();
 		JSONObject error = new JSONObject();
@@ -92,4 +93,7 @@ public class KnowageBusinessExceptionMapper implements ExceptionMapper<KnowageBu
 		return serializedMessages;
 	}
 
+	boolean isBlankString(String string) {
+		return string == null || string.trim().isEmpty();
+	}
 }

@@ -27,12 +27,15 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.constraints.Pattern;
 
-@Pattern(regexp = "^([a-zA-Z0-9\\-\\_])*$", message = "it is not alphanumeric or it contains spaces")
+@Pattern(regexp = "^([0-9])*$", message = "it is not alphanumeric or it contains spaces")
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 @Retention(value = RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = UUIDAlphanumericNoSpacesValidator.class)
+/*
+ * It seems a workaround but it's the legal way: see @Pattern
+ */
+@Constraint(validatedBy = {})
 @Documented
-public @interface UUIDAlphanumericNoSpaces {
+public @interface NumericNoSpaces {
 	String message() default "";
 
 	Class<?>[] groups() default {};
