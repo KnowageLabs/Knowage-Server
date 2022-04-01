@@ -2,8 +2,7 @@ package it.eng.spagobi.services.common;
 
 import static java.util.Objects.isNull;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 
 import com.auth0.jwt.algorithms.Algorithm;
 
@@ -14,7 +13,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class JWTSsoServiceAlgorithmFactory {
 
-	private static final Logger logger = LogManager.getLogger(JWTSsoServiceAlgorithmFactory.class);
+	private static final Logger logger = Logger.getLogger(JWTSsoServiceAlgorithmFactory.class);
 	private static final JWTSsoServiceAlgorithmFactory INSTANCE = new JWTSsoServiceAlgorithmFactory();
 
 	private static Algorithm algorithm = null;
