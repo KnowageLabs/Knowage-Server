@@ -167,14 +167,3 @@ export default defineComponent({
     }
 })
 </script>
-
-<style lang="scss">
-.hierarchy-scrollable-card {
-    height: calc(100vh - 55px);
-    flex: 1 1 auto;
-    .p-card-body {
-        flex: 1;
-        overflow: auto;
-    }
-}
-</style>

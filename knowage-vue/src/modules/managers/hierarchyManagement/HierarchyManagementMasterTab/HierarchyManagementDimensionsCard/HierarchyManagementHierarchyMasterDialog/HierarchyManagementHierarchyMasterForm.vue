@@ -1,7 +1,7 @@
 <template>
-    <div class="p-fluid p-formgrid p-grid p-m-4">
+    <form class="marginated-form p-fluid p-formgrid p-grid kn-flex p-m-2">
         <template v-for="(field, index) in fields" :key="index">
-            <div class="p-col-6 p-mt-4" v-if="field.VISIBLE">
+            <div class="p-field p-col-6" v-if="field.VISIBLE">
                 <span class="p-float-label">
                     <InputText
                         class="kn-material-input"
@@ -16,7 +16,7 @@
                 </span>
             </div>
         </template>
-    </div>
+    </form>
 </template>
 
 <script lang="ts">

@@ -1,5 +1,5 @@
 <template>
-    <Dialog id="hierarchy-management-hierarchy-master-dialog" class="p-fluid kn-dialog--toolbar--primary" :visible="visible" :modal="true" :closable="false" :style="hierarchyManagementHierarchyMasterDialogDescriptor.dialog.style">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary hierarchy-dialog " style="width:70%" :visible="visible" :modal="true" :closable="false" :draggable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -7,18 +7,15 @@
                 </template>
             </Toolbar>
         </template>
+        <!-- <KnOverlaySpinnerPanel :visibility="loading"></KnOverlaySpinnerPanel> -->
 
-        <div>
-            <HierarchyManagementHierarchyMasterForm :nodeGeneralFields="nodeGeneralFields"></HierarchyManagementHierarchyMasterForm>
-            <HierarchyManagementHierarchyMasterSelectList :dimensionMetadata="dimensionMetadata" @recursiveChanged="onRecursiveChanged" @levelsChanged="onLevelsChanged"></HierarchyManagementHierarchyMasterSelectList>
-        </div>
+        <HierarchyManagementHierarchyMasterForm :nodeGeneralFields="nodeGeneralFields"></HierarchyManagementHierarchyMasterForm>
+        <HierarchyManagementHierarchyMasterSelectList :dimensionMetadata="dimensionMetadata" @recursiveChanged="onRecursiveChanged" @levelsChanged="onLevelsChanged"></HierarchyManagementHierarchyMasterSelectList>
 
         <template #footer>
             <Button class="kn-button kn-button--secondary" @click="close">{{ $t('common.close') }}</Button>
             <Button class="kn-button kn-button--primary" :disabled="saveButtonDisabled" @click="save">{{ $t('common.save') }}</Button>
         </template>
-
-        <KnOverlaySpinnerPanel :visibility="loading"></KnOverlaySpinnerPanel>
     </Dialog>
 </template>
 
@@ -28,14 +25,14 @@ import { iNodeMetadata, iNodeMetadataField, iDimensionMetadata, iDimension, iDim
 import { AxiosResponse } from 'axios'
 import moment from 'moment'
 import Dialog from 'primevue/dialog'
-import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
+// import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import hierarchyManagementHierarchyMasterDialogDescriptor from './HierarchyManagementMasterDescriptor.json'
 import HierarchyManagementHierarchyMasterForm from './HierarchyManagementHierarchyMasterForm.vue'
 import HierarchyManagementHierarchyMasterSelectList from './HierarchyManagementHierarchyMasterSelectList.vue'
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchy-master-dialog',
-    components: { Dialog, HierarchyManagementHierarchyMasterForm, HierarchyManagementHierarchyMasterSelectList, KnOverlaySpinnerPanel },
+    components: { Dialog, HierarchyManagementHierarchyMasterForm, HierarchyManagementHierarchyMasterSelectList },
     props: {
         visible: { type: Boolean },
         nodeMetadata: { type: Object as PropType<iNodeMetadata | null> },
@@ -143,13 +140,12 @@ export default defineComponent({
     }
 })
 </script>
-
 <style lang="scss">
-#hierarchy-management-hierarchy-master-dialog .p-dialog-header,
-#hierarchy-management-hierarchy-master-dialog .p-dialog-content {
+.hierarchy-dialog .p-dialog-header,
+.hierarchy-dialog .p-dialog-content {
     padding: 0;
 }
-#hierarchy-management-hierarchy-master-dialog .p-dialog-content {
+.hierarchy-dialog .p-dialog-content {
     display: flex;
     flex-direction: column;
     flex: 1;
