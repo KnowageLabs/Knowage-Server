@@ -168,6 +168,8 @@ export default defineComponent({
                     ...node.data,
                     children: node.children
                 }
+                if (node.parent) delete node.parent
+                if (node.leaf && node.children) delete node.children
                 if (node.children && node.children.length > 0) {
                     node.children = this.formatNodes(node.children)
                 }
@@ -178,6 +180,7 @@ export default defineComponent({
             if (!this.dimension || !this.selectedHierarchy) return
             this.$emit('loading', true)
             // TODO see relations MT
+            this.updateLevelRecursive(this.treeModel, 0)
             const postData = {
                 dimension: this.dimension.DIMENSION_NM,
                 code: this.selectedHierarchy.HIER_CD,
@@ -190,12 +193,35 @@ export default defineComponent({
                 relationsMT: this.relationsMasterTree,
                 root: this.treeModel
             }
+            console.log(' >>> TREE MODEL TO SAVE: ', this.treeModel)
+            console.log(' >>> NODES WITHOUT CHILDREN EXIST: ', this.checkIfNodesWithoutChildren(this.treeModel))
             await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/saveHierarchy`, postData).then((response: AxiosResponse<any>) => {
                 if (response.data.response === 'ok') {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                 }
             })
             this.$emit('loading', false)
+        },
+        updateLevelRecursive(node, level) {
+            console.log(' !!! FORMAT TREE LEVELS: ', this.treeModel)
+            if (level !== 0) node.LEVEL = level
+            if (node.children && node.children.length > 0) {
+                for (let i = 0; i < node.children.length; i++) {
+                    this.updateLevelRecursive(node.children[i], level + 1)
+                }
+            }
+        },
+        checkIfNodesWithoutChildren(node: iNode) {
+            if (!node.data.root && !node.data.leaf && node.children?.length === 0) {
+                return true
+            } else if (node.children != null) {
+                let result = false as any
+                for (let i = 0; result === false && i < node.children.length; i++) {
+                    result = this.checkIfNodesWithoutChildren(node.children[i])
+                }
+                return result
+            }
+            return false
         }
     }
 })

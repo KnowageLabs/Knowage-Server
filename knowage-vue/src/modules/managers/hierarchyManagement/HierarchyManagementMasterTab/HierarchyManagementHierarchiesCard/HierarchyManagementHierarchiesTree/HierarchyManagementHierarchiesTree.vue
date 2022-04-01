@@ -12,6 +12,8 @@
                 <div
                     class="p-d-flex p-flex-row p-ai-center"
                     :class="{ dropzone: dropzoneActive[slotProps.node.key] }"
+                    :draggable="!slotProps.node.data.root"
+                    @dragstart.stop="onDragStart($event, slotProps.node)"
                     @mouseover="buttonVisible[slotProps.node.key] = true"
                     @mouseleave="buttonVisible[slotProps.node.key] = false"
                     @drop.stop="onDragDrop($event, slotProps.node, slotProps.node.key)"
@@ -23,8 +25,8 @@
                     <div v-show="buttonVisible[slotProps.node.key]">
                         <Button v-if="slotProps.node.leaf" icon="pi pi-clone" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.clone')" @click.stop="cloneNode(slotProps.node)" />
                         <Button v-else icon="pi pi-plus" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.add')" @click.stop="addNode(slotProps.node)" />
-                        <Button icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.edit')" @click.stop="editNode(slotProps.node)" />
-                        <Button icon="pi pi-trash" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.delete')" @click.stop="deleteNodeConfirm(slotProps.node)" />
+                        <Button v-if="!slotProps.node.data.root" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.edit')" @click.stop="editNode(slotProps.node)" />
+                        <Button v-if="!slotProps.node.data.root" icon="pi pi-trash" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.delete')" @click.stop="deleteNodeConfirm(slotProps.node)" />
                         <Button icon="pi pi-info" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.detail')" @click.stop="showNodeInfo(slotProps.node)" />
                     </div>
                 </div>
@@ -106,7 +108,7 @@ export default defineComponent({
                     key: crypto.randomBytes(16).toString('hex'),
                     id: node.id,
                     label: node.name,
-                    children: node.children,
+                    children: node.children ?? [],
                     data: node,
                     style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style,
                     leaf: node.leaf,
@@ -171,7 +173,7 @@ export default defineComponent({
         deleteNode(node: iNode) {
             console.log('DELETE NODE: ', node)
 
-            const index = node.parent?.children.findIndex((el: iNode) => el.id === node.id)
+            const index = node.parent?.children.findIndex((el: iNode) => el.key === node.key)
             if (index !== -1) node.parent.children.splice(index, 1)
             console.log('INDEX: ', index)
 
@@ -222,7 +224,7 @@ export default defineComponent({
 
             let tempNode = null as any
             for (let i = 0; i < this.nodes.length; i++) {
-                tempNode = this.findNode(this.nodes[i], node.id)
+                tempNode = this.findNode(this.nodes[i], node.key)
                 if (tempNode) break
             }
 
@@ -236,12 +238,16 @@ export default defineComponent({
         },
         createNode(node: any) {
             console.log('CREATE NODE: ', node)
-            let tempNode = null as any
-            for (let i = 0; i < this.nodes.length; i++) {
-                tempNode = this.findNode(this.nodes[i], node.parent.id)
-                if (tempNode) break
-            }
+            node.id = node.name
 
+            let tempNode = this.findNodeInTree(node.parent.key) as any
+
+            // for (let i = 0; i < this.nodes.length; i++) {
+            //     tempNode = this.findNode(this.nodes[i], node.parent.key)
+            //     if (tempNode) break
+            // }
+
+            node.LEVEL = tempNode.data.LEVEL + 1
             if (tempNode) tempNode.children.push({ key: crypto.randomBytes(16).toString('hex'), id: node.name, label: node.name, children: node.children, data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: node.leaf, parent: tempNode })
             console.log('TEMP NODE: ', tempNode)
             this.$emit('treeUpdated', this.nodes)
@@ -266,27 +272,40 @@ export default defineComponent({
             this.createNode({ ...node, parent: parentNode })
             this.$emit('treeUpdated', this.nodes)
         },
-        findNode(node: iNode, nodeId: number) {
-            if (node.id === nodeId) {
+        findNodeInTree(key: any) {
+            let node = null as any
+            for (let i = 0; i < this.nodes.length; i++) {
+                node = this.findNode(this.nodes[i], key)
+                if (node) break
+            }
+
+            return node
+        },
+        findNode(node: iNode, nodeKey: string) {
+            if (node.key === nodeKey) {
                 return node
             } else if (node.children != null) {
                 let result = null as any
                 for (let i = 0; result == null && i < node.children.length; i++) {
-                    result = this.findNode(node.children[i], nodeId)
+                    result = this.findNode(node.children[i], nodeKey)
                 }
                 return result
             }
             return null
         },
         async onDragDrop(event: any, item: any, key: any) {
-            console.log('ON DRAG DROP EVENT: ', event)
+            console.log(' >>> ON DRAG DROP EVENT: ', event)
             const droppedItem = JSON.parse(event.dataTransfer.getData('text/plain'))
 
-            console.log('ON DRAG DROPED ITEM: ', droppedItem)
-            console.log('ON DRAG TREE NODE: ', item)
-            console.log('ON DRAG DROP KEY: ', key)
-            const parentNode = item.data.leaf ? item.parent.data : item.data
-            await this.loadRelations(droppedItem, parentNode)
+            console.log(' >>> ON DRAG DROPED ITEM: ', droppedItem)
+            console.log(' >>> ON DRAG TREE NODE: ', item)
+            console.log(' >>> ON DRAG DROP KEY: ', key)
+            const parentNode = item.data.leaf ? item.parent : item
+            if (droppedItem.movedFrom === 'tree') {
+                this.moveNodeInsideTree(droppedItem, item)
+            } else {
+                await this.loadRelations(droppedItem, parentNode)
+            }
             this.dropzoneActive[key] = false
         },
         setDropzoneClass(value: boolean, node: any) {
@@ -317,12 +336,14 @@ export default defineComponent({
         copyNodeFromTableToTree(node: any, targetNode: any) {
             console.log('NODE TO COPY AFTER: ', node)
             console.log('TARGET NODE TO COPY TO: ', targetNode)
-            let parentNode = null as any
-            for (let i = 0; i < this.nodes.length; i++) {
-                parentNode = this.findNode(this.nodes[i], targetNode.id)
-                if (parentNode) break
-            }
+            let parentNode = this.findNodeInTree(targetNode.key) as any
 
+            // for (let i = 0; i < this.nodes.length; i++) {
+            //     parentNode = this.findNode(this.nodes[i], targetNode.key)
+            //     if (parentNode) break
+            // }
+
+            console.log('PARENT NODE: ', parentNode)
             if (!parentNode) return
 
             const dimensionName = this.selectedDimension ? this.selectedDimension.DIMENSION_NM : ''
@@ -332,8 +353,6 @@ export default defineComponent({
             const keyId = dimensionPrefix + '_CD'
             node.name = node[keyName]
             node.id = node[keyId]
-            console.log('PARENT NODE: ', parentNode)
-            console.log('PARENT NODE ALIAS NAME: ', parentNode.data.aliasName)
             node.LEAF_PARENT_NM = parentNode.data[parentNode.data.aliasName]
             node.LEAF_PARENT_CD = parentNode.data[parentNode.data.aliasId]
             node.LEAF_ORIG_PARENT_CD = parentNode.data[parentNode.data.aliasId]
@@ -375,9 +394,39 @@ export default defineComponent({
                 this.relationsMasterTree.push(newElement)
             }
 
+            console.log(' --- Parent Node: ', parentNode)
             parentNode.children.push({ key: crypto.randomBytes(16).toString('hex'), id: node.name, label: node.name, children: [], data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: true, parent: parentNode })
-            console.log('>>> relationsMasterTree: ', this.relationsMasterTree)
-            console.log('NODE TO COPY AFTER: ', node)
+            this.$emit('treeUpdated', this.nodes)
+        },
+        onDragStart(event: any, item: any) {
+            item.movedFrom = 'tree'
+            item.parentKey = item.parent.key
+            delete item.parent
+            console.log('ITEM : ', item)
+            event.dataTransfer.setData('text/plain', JSON.stringify(item))
+            console.log(' >>> GET ITEM: ', JSON.parse(event.dataTransfer.getData('text/plain')))
+            event.dataTransfer.dropEffect = 'move'
+            event.dataTransfer.effectAllowed = 'move'
+        },
+        moveNodeInsideTree(node: any, parent: any) {
+            console.log(' >>> MOVE INSIDE TREE, NODE: ', node)
+            console.log(' >>> MOVE INSIDE TREE, PARENT: ', parent)
+            delete node.movedFrom
+
+            let parentToAdd = this.findNodeInTree(parent.key)
+            let parentToRemoveFrom = this.findNodeInTree(node.parentKey)
+
+            if (!parentToAdd || !parentToRemoveFrom) return
+
+            const index = parentToRemoveFrom.children?.findIndex((el: any) => el.key === node.key)
+            if (index !== -1) parentToRemoveFrom.children.splice(index, 1)
+            console.log(' >>> INDEX: ', index)
+            delete node.parentKey
+
+            parentToAdd.children ? parentToAdd.children.push(node) : (parentToAdd.children = [node])
+
+            console.log(' >>> PARENT TO ADD: ', parentToAdd)
+            console.log(' >>> PARENT TO REMOVE: ', parentToRemoveFrom)
             this.$emit('treeUpdated', this.nodes)
         }
     }
