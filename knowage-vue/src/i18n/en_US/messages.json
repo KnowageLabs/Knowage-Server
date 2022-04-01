@@ -7,6 +7,7 @@
         "alias": "Alias",
         "apply": "Apply",
         "attachments": "Attachments",
+        "attributes": "Attributes",
         "author": "Author",
         "back": "back",
         "bottom": "bottom",
@@ -70,6 +71,7 @@
         "filters": "Filters",
         "from": "From",
         "general": "General",
+        "generate": "Generate",
         "group": "Group",
         "home": "Home",
         "image": "image",
@@ -171,6 +173,7 @@
         "to": "to",
         "toast": {
             "cloneConfirmTitle": "Confirm item clone?",
+            "createSuccess": "Item was created successfully",
             "createTitle": "Created",
             "deleteConfirmTitle": "Confirm Delete?",
             "deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
@@ -224,6 +227,7 @@
         "august": "August",
         "custom": "Custom",
         "daily": "Daily",
+        "date": "Date",
         "day": "Day",
         "days": "Days",
         "december": "December",
@@ -908,6 +912,15 @@
             "usedMemory": "Used Memory",
             "weekly": "WEEKLY",
             "yearly": "YEARLY"
+        },
+        "calendarManagement": {
+            "endValidityDate": "End Validity Date",
+            "generateConfirmMessage": "Because it will create a calendar with {numberOfDays} days. Continue?",
+            "generateConfirmTitle": "Warning! This action could require some time",
+            "holiday": "Holiday",
+            "publicHoliday": "Public Holiday",
+            "startValidityDate": "Start Validity Date",
+            "title": "Calendar"
         },
         "catalogFunction": {
             "hint": "The import/export functionality allows you to bulk insert/extract data from your tenant. \n Select the category to view the items present. \n Click on @:common.import if you want to import a package. \n Select the items and click  @:common.export if you want to download them in a zip archive.",

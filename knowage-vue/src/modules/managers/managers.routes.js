@@ -30,6 +30,7 @@ import themeManagementRoutes from '@/modules/managers/themeManagement/ThemeManag
 import behaviouralModelLineage from '@/modules/managers/behaviouralModelLineage/BehaviouralModelLineage.routes.js'
 import layersManagementRoutes from '@/modules/managers/layersManagement/LayersManagement.routes.js'
 import timespanRoutes from '@/modules/managers/timespan/Timespan.routes.js'
+import calendarManagementRoutes from '@/modules/managers/calendarManagement/CalendarManagement.routes.js'
 
 const baseRoutes = []
 
@@ -66,5 +67,6 @@ const routes = baseRoutes
     .concat(behaviouralModelLineage)
     .concat(layersManagementRoutes)
     .concat(timespanRoutes)
+    .concat(calendarManagementRoutes)
 
 export default routes
