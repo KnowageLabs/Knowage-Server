@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-m-2">
+    <Card class="p-m-2 p-d-flex p-flex-column hierarchy-scrollable-card">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #start>
@@ -10,50 +10,43 @@
         </template>
 
         <template #content>
-            <div>
-                <div class="p-d-flex p-flex-row p-ai-center">
-                    <div class="kn-flex">
-                        <span class="p-float-label">
-                            <Calendar v-model="date" :manualInput="true" @dateSelect="onTreeDateChanged"></Calendar>
-                        </span>
-                    </div>
-                    <div class="kn-flex p-d-flex p-flex-row p-ai-center p-jc-around">
-                        <Button class="kn-button kn-button--primary hierarchy-management-hierarchies-card-button" :label="$t('common.save')" :disabled="!treeModel" @click="saveHierarchy" />
-                        <div>
-                            <Checkbox v-model="backup" :binary="true" :disabled="!treeModel"></Checkbox>
-                            <label class="kn-material-input-label p-ml-2"> {{ $t('managers.hierarchyManagement.backup') }}</label>
-                        </div>
-                    </div>
+            <form class="p-fluid p-formgrid p-grid">
+                <div class="p-field p-col-12 p-lg-6">
+                    <Calendar class="kn-material-input" v-model="date" :manualInput="true" :showIcon="true" @dateSelect="onTreeDateChanged" />
                 </div>
-
-                <div class="p-d-flex p-flex-row p-mt-3">
-                    <div class="p-fluid kn-flex">
-                        <span class="p-float-label p-m-2">
-                            <Dropdown class="kn-material-input" v-model="hierarchyType" :options="hierarchyManagementHierarchiesCardDescriptor.hierarchyTypes" :disabled="!dimension" @change="onHierarchyTypeSelected"> </Dropdown>
-                            <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.hierarchyType') }} </label>
-                        </span>
-                    </div>
-                    <div class="p-fluid kn-flex">
-                        <span class="p-float-label p-m-2">
-                            <Dropdown class="kn-material-input" v-model="selectedHierarchy" :options="hierarchies" optionLabel="HIER_NM" :disabled="!dimension" @change="onHierarchySelected"> </Dropdown>
-                            <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.hierarchies') }} </label>
-                        </span>
-                    </div>
+                <div class="p-field p-col-8 p-lg-4">
+                    <Button class="kn-button kn-button--primary hierarchy-management-hierarchies-card-button" :label="$t('common.save')" :disabled="!treeModel" @click="saveHierarchy" />
                 </div>
+                <div class="p-field-checkbox p-col-4 p-lg-2">
+                    <Checkbox v-model="backup" :binary="true" :disabled="!treeModel" />
+                    <label class="kn-material-input-label p-ml-2"> {{ $t('managers.hierarchyManagement.backup') }}</label>
+                </div>
+                <div class="p-field p-col-6">
+                    <span class="p-float-label">
+                        <Dropdown class="kn-material-input" v-model="hierarchyType" :options="hierarchyManagementHierarchiesCardDescriptor.hierarchyTypes" :disabled="!dimension" @change="onHierarchyTypeSelected" />
+                        <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.hierarchyType') }} </label>
+                    </span>
+                </div>
+                <div class="p-field p-col-6">
+                    <span class="p-float-label">
+                        <Dropdown class="kn-material-input" v-model="selectedHierarchy" :options="hierarchies" optionLabel="HIER_NM" :disabled="!dimension" @change="onHierarchySelected" />
+                        <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.hierarchies') }} </label>
+                    </span>
+                </div>
+            </form>
 
-                <HierarchyManagementHierarchiesFilterCard :selectedHierarchy="selectedHierarchy" @applyFilters="onApplyFilters"></HierarchyManagementHierarchiesFilterCard>
-                <HierarchyManagementHierarchiesTree
-                    v-show="tree"
-                    :propTree="tree"
-                    :nodeMetadata="nodeMetadata"
-                    :selectedDimension="dimension"
-                    :selectedHierarchy="selectedHierarchy"
-                    :dimensionMetadata="dimensionMetadata"
-                    :propRelationsMasterTree="relationsMasterTree"
-                    @treeUpdated="updateTreeModel"
-                    @loading="$emit('loading', $event)"
-                ></HierarchyManagementHierarchiesTree>
-            </div>
+            <HierarchyManagementHierarchiesFilterCard :selectedHierarchy="selectedHierarchy" @applyFilters="onApplyFilters" />
+            <HierarchyManagementHierarchiesTree
+                v-show="tree"
+                :propTree="tree"
+                :nodeMetadata="nodeMetadata"
+                :selectedDimension="dimension"
+                :selectedHierarchy="selectedHierarchy"
+                :dimensionMetadata="dimensionMetadata"
+                :propRelationsMasterTree="relationsMasterTree"
+                @treeUpdated="updateTreeModel"
+                @loading="$emit('loading', $event)"
+            />
         </template>
     </Card>
 </template>
@@ -197,9 +190,4 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
-.hierarchy-management-hierarchies-card-button {
-    min-width: 150px;
-    max-width: 150px;
-}
-</style>
+<style lang="scss" scoped></style>

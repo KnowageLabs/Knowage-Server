@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-m-2">
+    <Card class="p-m-2 p-d-flex p-flex-column hierarchy-scrollable-card">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #start>
@@ -10,40 +10,38 @@
         </template>
 
         <template #content>
-            <div>
-                <div class="p-d-flex p-flex-row p-ai-center">
-                    <div class="kn-flex">
-                        <span class="p-float-label">
-                            <Calendar v-model="validityDate" :manualInput="true" @dateSelect="onValidityDateSelected"></Calendar>
-                        </span>
-                    </div>
-                    <div id="hierarchy-management-dimension-dropdown-container" class="p-fluid">
-                        <span class="p-float-label p-m-2">
-                            <Dropdown class="kn-material-input" v-model="selectedDimension" :options="dimensions" optionLabel="DIMENSION_NM" @change="onSelectedDimensionChange"> </Dropdown>
-                            <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.dimensions') }} </label>
-                        </span>
-                    </div>
+            <form class="p-fluid p-formgrid p-grid">
+                <div class="p-field p-col-12 p-lg-6">
+                    <Calendar class="kn-material-input" v-model="validityDate" :manualInput="true" :showIcon="true" @dateSelect="onValidityDateSelected" />
                 </div>
-
-                <div class="p-d-flex p-flex-row p-jc-around p-mt-2">
-                    <Button class="kn-button kn-button--primary hierarchy-management-dimension-card-button" :label="$t('managers.hierarchyManagement.createHierarchyMaster')" :disabled="!selectedDimension" @click="openHierarchyMasterDialog" />
-                    <Button class="kn-button kn-button--primary hierarchy-management-dimension-card-button" :label="$t('managers.hierarchyManagement.synchronize')" :disabled="synchronizeButtonDisabled" @click="synchronize" />
+                <div class="p-field p-col-12 p-lg-6">
+                    <span class="p-float-label">
+                        <Dropdown class="kn-material-input" v-model="selectedDimension" :options="dimensions" optionLabel="DIMENSION_NM" @change="onSelectedDimensionChange" />
+                        <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.dimensions') }} </label>
+                    </span>
                 </div>
+                <div class="p-field p-col-6">
+                    <Button class="kn-button kn-button--primary kn-truncated" :label="$t('managers.hierarchyManagement.createHierarchyMaster')" :disabled="!selectedDimension" @click="openHierarchyMasterDialog" />
+                </div>
+                <div class="p-field p-col-6">
+                    <Button class="kn-button kn-button--primary" :label="$t('managers.hierarchyManagement.synchronize')" :disabled="synchronizeButtonDisabled" @click="synchronize" />
+                </div>
+            </form>
 
-                <HierarchyManagementDimensionsFilterCard v-show="selectedDimension" :dimensionFilters="dimensionFilters" :selectedHierarchy="selectedHierarchy" @applyFilters="onApplyFilters"></HierarchyManagementDimensionsFilterCard>
-                <HierarchyManagementDimensionsTable v-show="dimensionData" :dimensionData="dimensionData"></HierarchyManagementDimensionsTable>
-            </div>
-            <HierarchyManagementHierarchyMasterDialog
-                :visible="hierarchyMasterDialogVisible"
-                :nodeMetadata="nodeMetadata"
-                :dimensionMetadata="dimensionMetadata"
-                :validityDate="validityDate"
-                :selectedDimension="selectedDimension"
-                :dimensionFilters="dimensionFilters"
-                @close="hierarchyMasterDialogVisible = false"
-            ></HierarchyManagementHierarchyMasterDialog>
+            <HierarchyManagementDimensionsFilterCard v-show="selectedDimension" :dimensionFilters="dimensionFilters" :selectedHierarchy="selectedHierarchy" @applyFilters="onApplyFilters" />
+            <HierarchyManagementDimensionsTable v-show="dimensionData" :dimensionData="dimensionData" />
         </template>
     </Card>
+
+    <HierarchyManagementHierarchyMasterDialog
+        :visible="hierarchyMasterDialogVisible"
+        :nodeMetadata="nodeMetadata"
+        :dimensionMetadata="dimensionMetadata"
+        :validityDate="validityDate"
+        :selectedDimension="selectedDimension"
+        :dimensionFilters="dimensionFilters"
+        @close="hierarchyMasterDialogVisible = false"
+    ></HierarchyManagementHierarchyMasterDialog>
 </template>
 
 <script lang="ts">
@@ -165,13 +163,13 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
-#hierarchy-management-dimension-dropdown-container {
-    flex: 3;
-}
-
-.hierarchy-management-dimension-card-button {
-    min-width: 250px;
-    max-width: 250px;
+<style lang="scss">
+.hierarchy-scrollable-card {
+    height: calc(100vh - 55px);
+    flex: 1 1 auto;
+    .p-card-body {
+        flex: 1;
+        overflow: auto;
+    }
 }
 </style>

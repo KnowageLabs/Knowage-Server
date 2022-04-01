@@ -1,38 +1,37 @@
 <template>
-    <div class="p-grid">
-        <div class="p-col-6 p-fluid">
-            <span class="p-float-label p-m-2">
-                <Dropdown class="kn-material-input" v-model="orderBy" :options="hierarchyManagementHierarchiesTreeDescriptor.orderByOptions" @change="sortTree(nodes)"> </Dropdown>
+    <form class="p-mt-2 p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+            <span class="p-float-label">
+                <Dropdown class="kn-material-input" v-model="orderBy" :options="hierarchyManagementHierarchiesTreeDescriptor.orderByOptions" @change="sortTree(nodes)" />
                 <label class="kn-material-input-label"> {{ $t('common.orderBy') + ' ... ' }} </label>
             </span>
         </div>
-        <div class="p-col-6"></div>
-        <Tree class="hierarchies-tree p-col-12" :value="nodes" :filter="true" filterMode="lenient">
-            <template #default="slotProps">
-                <div
-                    class="p-d-flex p-flex-row p-ai-center"
-                    :class="{ dropzone: dropzoneActive[slotProps.node.key] }"
-                    @mouseover="buttonVisible[slotProps.node.key] = true"
-                    @mouseleave="buttonVisible[slotProps.node.key] = false"
-                    @drop.stop="onDragDrop($event, slotProps.node, slotProps.node.key)"
-                    @dragover.prevent
-                    @dragenter.prevent="setDropzoneClass(true, slotProps.node)"
-                    @dragleave.prevent="setDropzoneClass(false, slotProps.node)"
-                >
-                    <span class="node-label">{{ slotProps.node.label }}</span>
-                    <div v-show="buttonVisible[slotProps.node.key]">
-                        <Button v-if="slotProps.node.leaf" icon="pi pi-clone" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.clone')" @click.stop="cloneNode(slotProps.node)" />
-                        <Button v-else icon="pi pi-plus" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.add')" @click.stop="addNode(slotProps.node)" />
-                        <Button icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.edit')" @click.stop="editNode(slotProps.node)" />
-                        <Button icon="pi pi-trash" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.delete')" @click.stop="deleteNodeConfirm(slotProps.node)" />
-                        <Button icon="pi pi-info" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.detail')" @click.stop="showNodeInfo(slotProps.node)" />
-                    </div>
+    </form>
+    <Tree class="hierarchies-tree p-col-12" :value="nodes" :filter="true" filterMode="lenient">
+        <template #default="slotProps">
+            <div
+                class="p-d-flex p-flex-row p-ai-center"
+                :class="{ dropzone: dropzoneActive[slotProps.node.key] }"
+                @mouseover="buttonVisible[slotProps.node.key] = true"
+                @mouseleave="buttonVisible[slotProps.node.key] = false"
+                @drop.stop="onDragDrop($event, slotProps.node, slotProps.node.key)"
+                @dragover.prevent
+                @dragenter.prevent="setDropzoneClass(true, slotProps.node)"
+                @dragleave.prevent="setDropzoneClass(false, slotProps.node)"
+            >
+                <span class="node-label">{{ slotProps.node.label }}</span>
+                <div v-show="buttonVisible[slotProps.node.key]">
+                    <Button v-if="slotProps.node.leaf" icon="pi pi-clone" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.clone')" @click.stop="cloneNode(slotProps.node)" />
+                    <Button v-else icon="pi pi-plus" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.add')" @click.stop="addNode(slotProps.node)" />
+                    <Button icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.edit')" @click.stop="editNode(slotProps.node)" />
+                    <Button icon="pi pi-trash" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.delete')" @click.stop="deleteNodeConfirm(slotProps.node)" />
+                    <Button icon="pi pi-info" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.detail')" @click.stop="showNodeInfo(slotProps.node)" />
                 </div>
-            </template>
-        </Tree>
+            </div>
+        </template>
+    </Tree>
 
-        <HierarchyManagementNodeDetailDialog :visible="detailDialogVisible" :selectedNode="selectedNode" :metadata="metadata" :mode="mode" @save="onNodeSave" @close="closeNodeDialog"></HierarchyManagementNodeDetailDialog>
-    </div>
+    <HierarchyManagementNodeDetailDialog :visible="detailDialogVisible" :selectedNode="selectedNode" :metadata="metadata" :mode="mode" @save="onNodeSave" @close="closeNodeDialog" />
 </template>
 
 <script lang="ts">
@@ -396,5 +395,13 @@ export default defineComponent({
     width: 200px;
     height: 30px;
     border: 1px dashed;
+}
+</style>
+<style>
+.hierarchies-tree .p-tree-filter-container .p-tree-filter {
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0 !important;
 }
 </style>
