@@ -28,7 +28,7 @@
             </template>
         </Toolbar>
         <Divider class="kn-divider" />
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading > 0" />
         <div class="kn-page-content p-grid p-m-0 managerDetail">
             <Sidebar v-model:visible="visibleRight" position="right" class="kn-data-preparation-sidenav">
                 <div class="info-container">
@@ -72,7 +72,7 @@
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 breakpoint="960px"
                 :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
-                :loading="loading"
+                :loading="loading > 0"
                 :resizableColumns="true"
                 columnResizeMode="expand"
                 showGridlines
@@ -158,7 +158,7 @@ export default defineComponent({
     data() {
         return {
             descriptor: DataPreparationDescriptor,
-            loading: false as boolean,
+            loading: 0,
             datasetData: Array<any>(),
             displayDataPreparationDialog: false as boolean,
             selectedProduct: null,
@@ -182,8 +182,8 @@ export default defineComponent({
     },
 
     async created() {
-        this.$emit('update:loading', true)
-        this.loading = true
+        this.$emit('update:loading', 1)
+        this.loading++
         this.descriptorTransformations = Object.assign([], this.descriptor.transformations)
 
         await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/' + this.id).then((response: AxiosResponse<any>) => {
@@ -204,8 +204,8 @@ export default defineComponent({
                         } else {
                             console.log('got empty message')
                         }
-                        this.loading = false
-                        this.$emit('update:loading', false)
+                        this.loading--
+                        this.$emit('update:loading', -1)
                     },
                     {
                         dsLabel: this.dataset.label
@@ -221,8 +221,8 @@ export default defineComponent({
                         this.$store.commit('setError', { title: 'Error' })
                     }
                     this.dataset.config.transformations.splice(-1)
-                    this.loading = false
-                    this.$emit('update:loading', false)
+                    this.loading--
+                    this.$emit('update:loading', -1)
                 })
 
                 this.client.subscribe(
@@ -244,8 +244,8 @@ export default defineComponent({
                 )
 
                 if (this.transformations) {
-                    this.loading = true
-                    this.$emit('update:loading', true)
+                    this.loading++
+                    this.$emit('update:loading', 1)
                     this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
                 }
             }
@@ -346,7 +346,7 @@ export default defineComponent({
             if (this.transformations) {
                 if (!this.dataset.config) this.dataset.config = {}
                 this.dataset.config.transformations = this.transformations
-                this.loading = true
+                this.loading++
             }
         },
         initWebsocket(): void {
@@ -422,14 +422,14 @@ export default defineComponent({
             if (!this.dataset.config) this.dataset.config = {}
             if (!this.dataset.config.transformations) this.dataset.config.transformations = []
             this.dataset.config.transformations.push(t)
-            this.loading = true
-            this.$emit('update:loading', true)
+            this.loading++
+            this.$emit('update:loading', 1)
             this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
         },
         deleteTransformation(index: number): void {
             this.dataset.config.transformations.splice(index, 1)
-            this.loading = true
-            this.$emit('update:loading', true)
+            this.loading++
+            this.$emit('update:loading', 1)
             this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
         },
         getCompatibilityType(col: IDataPreparationColumn): void {
