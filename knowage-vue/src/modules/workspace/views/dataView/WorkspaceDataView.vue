@@ -288,16 +288,10 @@ export default defineComponent({
             this.selectedDataset.description = newDataset.description
             this.selectedDataset.type = 'PreparedDataset'
 
-            var params = {} as any
-            params.showDerivedDataset = false
-            params.SBI_EXECUTION_ID = -1
-            params.isTech = false
-            params.showOnlyOwner = true
             await this.$http({
                 method: 'POST',
-                url: process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'selfservicedataset/save',
+                url: process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'selfservicedataset/update',
                 data: this.selectedDataset,
-                params: params,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Disable-Errors': 'true' },
 
                 transformRequest: function(obj) {
