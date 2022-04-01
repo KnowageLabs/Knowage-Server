@@ -34,7 +34,7 @@
     </Tree>
 
     <HierarchyManagementNodeDetailDialog :visible="detailDialogVisible" :selectedNode="selectedNode" :metadata="metadata" :mode="mode" @save="onNodeSave" @close="closeNodeDialog" />
-    <HierarchyManagementHierarchiesTargetDialog :visible="targetDialogVisible" :hierarchiesTargets="relations" @save="onTargetsSave"></HierarchyManagementHierarchiesTargetDialog>
+    <HierarchyManagementHierarchiesTargetDialog :visible="targetDialogVisible" :hierarchiesTargets="relations" @close="targetDialogVisible = false" @save="onTargetsSave"></HierarchyManagementHierarchiesTargetDialog>
 </template>
 
 <script lang="ts">

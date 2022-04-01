@@ -4,5 +4,6 @@
             "padding": "0"
         }
     },
-    "orderByOptions": ["", "name", "id"]
+    "orderByOptions": ["", "name", "id"],
+    "selectColumnStyle": "width: 5%"
 }

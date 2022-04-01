@@ -8,9 +8,23 @@
             </Toolbar>
         </template>
 
-        <div>
-            {{ targets }}
-        </div>
+        <DataTable class="p-datatable-sm kn-table" :value="targets" v-model:selection="selectedTargets" dataKey="label">
+            <template #empty>
+                {{ $t('common.info.noDataFound') }}
+            </template>
+
+            <Column selectionMode="multiple" :style="hierarchyManagementHierarchiesTreeDescriptor.selectColumnStyle" />
+            <Column field="label" :header="$t('common.label')" :sortable="true">
+                <template #body="slotProps">
+                    <div>
+                        <span
+                            ><b> {{ slotProps.data.label }}</b></span
+                        ><br />
+                        <span>{{ slotProps.data.PATH_NM_T }}</span>
+                    </div>
+                </template>
+            </Column>
+        </DataTable>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="close"> {{ $t('common.cancel') }}</Button>
@@ -22,22 +36,26 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iHierarchyTarget } from '../../../HierarchyManagement'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
+import hierarchyManagementHierarchiesTreeDescriptor from './HierarchyManagementHierarchiesTreeDescriptor.json'
 
 export default defineComponent({
     name: 'hierarchy-management-node-detail-dialog',
-    components: { Dialog },
+    components: { Column, DataTable, Dialog },
     props: { visible: { type: Boolean }, hierarchiesTargets: { type: Array as PropType<iHierarchyTarget[]> } },
     emits: ['save', 'close'],
     data() {
         return {
+            hierarchyManagementHierarchiesTreeDescriptor,
             targets: [] as iHierarchyTarget[],
             selectedTargets: [] as iHierarchyTarget[]
         }
     },
     watch: {
         hierarchiesTargets() {
-            this.loadTargets()
+            if (this.visible) this.loadTargets()
         }
     },
     created() {
@@ -45,19 +63,24 @@ export default defineComponent({
     },
     methods: {
         loadTargets() {
-            this.targets = this.hierarchiesTargets as iHierarchyTarget[]
+            this.targets = []
+            this.targets = this.hierarchiesTargets?.map((target: iHierarchyTarget) => {
+                return { ...target, label: this.$t('managers.hierarchyManagement.hierarchies').toUpperCase() + ': ' + target.HIER_CD_T + ' - ' + target.HIER_NM_T + ' - LEVEL node: ' + target.NODE_LEV_T }
+            }) as iHierarchyTarget[]
         },
         close() {
+            this.selectedTargets = []
             this.$emit('close')
         },
         save() {
-            this.$emit('save')
+            this.$emit('save', [...this.selectedTargets])
+            this.selectedTargets = []
         }
     }
 })
 </script>
 <style lang="scss">
 .hierarchies-target-dialog {
-    width: 60%;
+    width: 40%;
 }
 </style>
