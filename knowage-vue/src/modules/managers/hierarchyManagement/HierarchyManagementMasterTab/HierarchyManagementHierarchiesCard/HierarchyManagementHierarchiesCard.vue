@@ -18,7 +18,7 @@
                         </span>
                     </div>
                     <div class="kn-flex p-d-flex p-flex-row p-ai-center p-jc-around">
-                        <Button class="kn-button kn-button--primary hierarchy-management-hierarchies-card-button" :label="$t('common.save')" :disabled="!treeModel" @click="saveHierarchy" />
+                        <Button class="kn-button kn-button--primary hierarchy-management-hierarchies-card-button" :label="$t('common.save')" :disabled="!treeModel" @click="handleSaveHiararchy" />
                         <div>
                             <Checkbox v-model="backup" :binary="true" :disabled="!treeModel"></Checkbox>
                             <label class="kn-material-input-label p-ml-2"> {{ $t('managers.hierarchyManagement.backup') }}</label>
@@ -125,8 +125,6 @@ export default defineComponent({
             this.$emit('loading', false)
         },
         async loadHierarchyTree() {
-            console.log('FILTER DATA: ', this.filterData)
-            console.log('VALIDITY DATE: ', this.validityDate)
             this.$emit('loading', true)
             const date = moment(this.date).format('YYYY-MM-DD')
             let url = `hierarchies/getHierarchyTree?dimension=${this.selectedDimension?.DIMENSION_NM}&filterHierarchy=${this.selectedHierarchy?.HIER_NM}&filterType=${this.hierarchyType}&validityDate=${date}`
@@ -154,7 +152,6 @@ export default defineComponent({
             await this.loadHierarchyTree()
         },
         onApplyFilters(filterData: { showMissingElements: boolean; afterDate: Date | null }) {
-            console.log('PAYLOAD: ', filterData)
             this.filterData = filterData
             this.loadHierarchyTree()
         },
@@ -176,10 +173,23 @@ export default defineComponent({
                 return node
             })
         },
-        async saveHierarchy() {
-            if (!this.dimension || !this.selectedHierarchy) return
+        async handleSaveHiararchy() {
             this.$emit('loading', true)
             // TODO see relations MT
+
+            if (this.checkIfNodesWithoutChildren(this.treeModel)) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteConfirmTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: async () => await this.saveHierarchy()
+                })
+            }
+            this.$emit('loading', false)
+        },
+        async saveHierarchy() {
+            if (!this.dimension || !this.selectedHierarchy) return
+
             this.updateLevelRecursive(this.treeModel, 0)
             const postData = {
                 dimension: this.dimension.DIMENSION_NM,
@@ -193,17 +203,14 @@ export default defineComponent({
                 relationsMT: this.relationsMasterTree,
                 root: this.treeModel
             }
-            console.log(' >>> TREE MODEL TO SAVE: ', this.treeModel)
-            console.log(' >>> NODES WITHOUT CHILDREN EXIST: ', this.checkIfNodesWithoutChildren(this.treeModel))
             await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/saveHierarchy`, postData).then((response: AxiosResponse<any>) => {
                 if (response.data.response === 'ok') {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
+                    this.loadHierarchyTree()
                 }
             })
-            this.$emit('loading', false)
         },
         updateLevelRecursive(node, level) {
-            console.log(' !!! FORMAT TREE LEVELS: ', this.treeModel)
             if (level !== 0) node.LEVEL = level
             if (node.children && node.children.length > 0) {
                 for (let i = 0; i < node.children.length; i++) {
@@ -211,8 +218,8 @@ export default defineComponent({
                 }
             }
         },
-        checkIfNodesWithoutChildren(node: iNode) {
-            if (!node.data.root && !node.data.leaf && node.children?.length === 0) {
+        checkIfNodesWithoutChildren(node: any) {
+            if (!node.root && !node.leaf && node.children?.length === 0) {
                 return true
             } else if (node.children != null) {
                 let result = false as any

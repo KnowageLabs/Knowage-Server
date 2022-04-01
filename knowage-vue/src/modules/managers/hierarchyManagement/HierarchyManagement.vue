@@ -54,7 +54,6 @@ export default defineComponent({
             this.loading = false
         },
         setLoading(value: boolean) {
-            console.log('SET LOADING CALLED WITH: ', value)
             this.loading = value
         }
     }
