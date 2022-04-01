@@ -64,7 +64,7 @@ import HierarchyManagementHierarchiesFilterCard from '../../HierarchyManagementM
 export default defineComponent({
     name: 'hierarchy-management-source-card',
     components: { Card, Calendar, Dropdown, HierarchyManagementHierarchiesTree, HierarchyManagementHierarchiesFilterCard },
-    props: { dimensions: { type: Array as PropType<iDimension[]> } },
+    props: { dimensions: { type: Array as PropType<iDimension[]> }, optionsDate: { type: Date } },
     emits: ['loading', 'validityDateSelected', 'dimensionSelected', 'nodeMetadataChanged', 'hierarchyTypeSelected', 'hierarchySelected', 'dimensionMetadataChanged'],
     data() {
         return {
@@ -123,14 +123,14 @@ export default defineComponent({
             const date = moment(this.validityDate).format('YYYY-MM-DD')
             let url = `hierarchies/getHierarchyTree?dimension=${this.selectedDimension?.DIMENSION_NM}&filterHierarchy=${this.selectedHierarchy?.HIER_NM}&filterType=${this.hierarchyType}&validityDate=${date}`
             if (this.filterData) {
-                if (this.filterData.showMissingElements) url = url.concat('&filterDimension=' + this.filterData.showMissingElements)
-                // TODO Option date - it i snot the same as validityDate
-                // if (this.validityDate) url = url.concat('&optionDate=' + moment(this.validityDate).format('YYYY-MM-DD'))
+                if (this.filterData.showMissingElements) {
+                    url = url.concat('&filterDimension=' + this.filterData.showMissingElements)
+                    url = url.concat('&optionDate=' + moment(this.optionsDate).format('YYYY-MM-DD'))
+                }
                 if (this.filterData.afterDate) url = url.concat('&filterDate=' + moment(this.filterData.afterDate).format('YYYY-MM-DD'))
             }
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => {
                 this.tree = response.status === 200 ? response.data : null
-                console.log('LOADED TREE: ', this.tree)
             })
             this.$emit('loading', false)
         },

@@ -3,6 +3,7 @@
         <HierarchyManagementSourceCard
             class="kn-flex"
             :dimensions="dimensions"
+            :optionsDate="optionsDate"
             @loading="$emit('loading', $event)"
             @validityDateSelected="setValidityDate"
             @dimensionSelected="setSelectedDimension"
@@ -11,7 +12,7 @@
             @hierarchyTypeSelected="onHierarchyTypeSelected"
             @hierarchySelected="onHierarchySelected"
         ></HierarchyManagementSourceCard>
-        <HierarchyManagementTargetCard class="kn-flex" @loading="$emit('loading', $event)"></HierarchyManagementTargetCard>
+        <HierarchyManagementTargetCard class="kn-flex" @loading="$emit('loading', $event)" @optionsDateSelected="setOptionsDate"></HierarchyManagementTargetCard>
     </div>
 </template>
 
@@ -32,7 +33,8 @@ export default defineComponent({
             dimensionMetadata: null as iDimensionMetadata | null,
             nodeMetadata: null as iNodeMetadata | null,
             hierarchyType: '' as string,
-            selectedHierarchy: null as iHierarchy | null
+            selectedHierarchy: null as iHierarchy | null,
+            optionsDate: new Date()
         }
     },
     created() {},
@@ -54,6 +56,9 @@ export default defineComponent({
         },
         onHierarchySelected(hierarchy: iHierarchy | null) {
             this.selectedHierarchy = hierarchy
+        },
+        setOptionsDate(date: Date) {
+            this.optionsDate = date
         }
     }
 })
