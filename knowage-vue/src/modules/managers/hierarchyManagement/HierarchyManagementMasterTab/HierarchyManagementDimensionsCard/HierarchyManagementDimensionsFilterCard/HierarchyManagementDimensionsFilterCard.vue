@@ -1,49 +1,55 @@
 <template>
-    <Accordion class="p-m-3">
-        <AccordionTab :header="$t('common.filters')">
+    <Toolbar class="kn-toolbar kn-toolbar--default">
+        <template #start>
+            <Button v-if="!expandFilterCard" icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="expandFilterCard = true" />
+            <Button v-else icon="fas fa-chevron-up" class="p-button-text p-button-rounded p-button-plain" @click="expandFilterCard = false" />
+            <span>{{ $t('common.filters') }}</span>
+        </template>
+        <template #end>
+            <Button v-if="expandFilterCard" icon="pi pi-check" class="p-button-text p-button-rounded p-button-plain" @click="applyFilters" />
+            <Button v-if="expandFilterCard" icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" @click="resetFilters" />
+        </template>
+    </Toolbar>
+    <Card v-show="expandFilterCard">
+        <template #content>
             <div class="p-grid p-fluid p-formgrid">
-                <div class="p-col-12">
-                    <Checkbox class="p-mr-2" v-model="showMissingElements" :binary="true" :disabled="!selectedHierarchy"></Checkbox>
-                    <label class="kn-material-input-label"> {{ $t('managers.hierarchyManagement.showMissingElements') }}</label>
+                <div class="p-field-checkbox p-col-12">
+                    <Checkbox class="p-mr-2" v-model="showMissingElements" :binary="true" :disabled="!selectedHierarchy" />
+                    <label class="kn-material-input-label p-as-center"> {{ $t('managers.hierarchyManagement.showMissingElements') }}</label>
                 </div>
 
-                <div class="p-col-6 p-mt-4" v-for="(filter, index) in filters" :key="index">
+                <div class="p-field p-col-12 p-lg-6" v-for="(filter, index) in filters" :key="index">
                     <span class="p-float-label">
-                        <Calendar v-if="filter.TYPE === 'Date'" class="calendar-management-detail-form-calendar-input " v-model="filter.VALUE" :manualInput="true"></Calendar>
+                        <Calendar v-if="filter.TYPE === 'Date'" class="kn-material-input" v-model="filter.VALUE" :manualInput="true" :showIcon="true" />
                         <InputText v-else class="kn-material-input" :type="filter.TYPE === 'number' ? 'number' : 'text'" v-model.trim="filter.VALUE" />
                         <label class="kn-material-input-label"> {{ filter.NAME }}</label>
                     </span>
                 </div>
-
-                <div class="p-col-12 p-d-flex p-flex-row p-jc-end">
-                    <Button icon="pi pi-check" class="p-button-link" @click="applyFilters" />
-                    <Button icon="pi pi-trash" class="p-button-link" @click="resetFilters" />
-                </div>
             </div>
-        </AccordionTab>
-    </Accordion>
+        </template>
+    </Card>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iDimensionFilter, iHierarchy } from '../../../HierarchyManagement'
 import moment from 'moment'
-import Accordion from 'primevue/accordion'
-import AccordionTab from 'primevue/accordiontab'
 import Calendar from 'primevue/calendar'
 import Checkbox from 'primevue/checkbox'
+import Card from 'primevue/card'
 
 const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'hierarchy-management-dimensions-filter-card',
-    components: { Accordion, AccordionTab, Calendar, Checkbox },
+    components: { Calendar, Checkbox, Card },
     props: { dimensionFilters: { type: Array as PropType<iDimensionFilter[]> }, selectedHierarchy: { type: Object as PropType<iHierarchy | null> } },
     emits: ['applyFilters'],
     data() {
         return {
             filters: [] as iDimensionFilter[],
-            showMissingElements: false
+            showMissingElements: false,
+            expandFilterCard: false
         }
     },
     watch: {

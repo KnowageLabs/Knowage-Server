@@ -1,20 +1,20 @@
 <template>
     <Dialog id="hierarchy-management-dimension-info-dialog" class="p-fluid kn-dialog--toolbar--primary" :visible="visible" :modal="true" :closable="false" :style="hierarchyManagementDimensionsTableDescriptor.dialog.style">
         <template #header>
-            <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
+            <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #start>
                     {{ $t('common.details') }}
                 </template>
             </Toolbar>
         </template>
-        <div v-if="selectedItem" class="p-fluid p-formgrid p-grid p-m-4">
-            <div class="p-col-4 p-p-3" v-for="(item, index) in selectedItem" :key="index">
+        <form v-if="selectedItem" class="marginated-form p-fluid p-formgrid p-grid kn-flex p-m-2">
+            <div class="p-field p-col-12 p-md-6 p-lg-4" v-for="(item, index) in selectedItem" :key="index">
                 <span class="p-float-label">
                     <InputText class="kn-material-input" v-model.trim="item.value" :disabled="true" />
                     <label class="kn-material-input-label"> {{ item.label }}</label>
                 </span>
             </div>
-        </div>
+        </form>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" :label="$t('common.ok')" @click="close" />
@@ -64,5 +64,8 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     flex: 1;
+}
+.marginated-form {
+    margin-top: 15px !important;
 }
 </style>

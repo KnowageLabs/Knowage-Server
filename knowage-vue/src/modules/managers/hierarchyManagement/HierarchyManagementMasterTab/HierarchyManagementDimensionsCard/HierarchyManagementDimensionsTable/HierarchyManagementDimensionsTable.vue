@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <DataTable :value="rows" class="p-datatable-sm kn-table" v-model:filters="filters" :globalFilterFields="globalFilterFields" responsiveLayout="scroll" breakpoint="600px" :scrollable="true">
+    <div class="p-mt-2">
+        <DataTable :value="rows" class="p-datatable-sm kn-table" v-model:filters="filters" :globalFilterFields="globalFilterFields" :scrollable="true" scroll-height="flex">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -14,7 +14,7 @@
             </template>
             <Column :style="hierarchyManagementDimensionsTableDescriptor.iconColumnStyle">
                 <template #body="slotProps">
-                    <div class="pi pi-bars p-button-link" :draggable="true" @dragstart.stop="onDragStart($event, slotProps.data)"></div>
+                    <div class="pi pi-bars p-button-link" :draggable="true" @dragstart.stop="onDragStart($event, slotProps.data)" />
                 </template>
             </Column>
             <Column class="kn-truncated" v-for="column in columns" :header="$t(column.header)" :key="column.field" :sortField="column.field" :sortable="true">
@@ -29,7 +29,7 @@
             </Column>
         </DataTable>
 
-        <HierarchyManagementDimensionsInfoDialog :visible="infoDialogVisible" :selectedItem="selectedItem" @close="closeInfoDialog"></HierarchyManagementDimensionsInfoDialog>
+        <HierarchyManagementDimensionsInfoDialog :visible="infoDialogVisible" :selectedItem="selectedItem" @close="closeInfoDialog" />
     </div>
 </template>
 

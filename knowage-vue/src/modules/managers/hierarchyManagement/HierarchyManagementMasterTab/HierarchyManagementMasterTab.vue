@@ -1,7 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-row">
         <HierarchyManagementDimensionsCard
-            class="kn-flex"
             :dimensions="dimensions"
             :selectedHierarchy="selectedHierarchy"
             :validityTreeDate="validityTreeDate"
@@ -13,9 +12,8 @@
             @dimensionMetadataChanged="onDimensionMetadataChange"
             @validityDateSelected="setValidityDate"
             @masterHierarchyCreated="onMasterHierarchyCreated"
-        ></HierarchyManagementDimensionsCard>
+        />
         <HierarchyManagementHierarchiesCard
-            class="kn-flex"
             :selectedDimension="selectedDimension"
             :nodeMetadata="nodeMetadata"
             :validityDate="validityDate"
@@ -26,7 +24,7 @@
             @hierarchyTypeSelected="onHierarchyTypeSelected"
             @hierarchySelected="onHierarchySelected"
             @dateSelected="onValidityTreeDateSelected"
-        ></HierarchyManagementHierarchiesCard>
+        />
     </div>
 </template>
 

@@ -3,13 +3,13 @@
         <div class="kn-page-content">
             <KnOverlaySpinnerPanel :visibility="loading" />
 
-            <TabView class="p-d-flex p-flex-column kn-flex kn-tab">
+            <TabView class="hierarchy-tabview kn-height-full">
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('managers.hierarchyManagement.master') }}</span>
                     </template>
 
-                    <HierarchyManagementMasterTab :dimensions="dimensions" @loading="setLoading"></HierarchyManagementMasterTab>
+                    <HierarchyManagementMasterTab :dimensions="dimensions" @loading="setLoading" />
                 </TabPanel>
                 <TabPanel>
                     <template #header>
@@ -59,3 +59,16 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss">
+.hierarchy-tabview,
+.hierarchy-tabview .p-tabview-panels,
+.hierarchy-tabview .p-tabview-panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.hierarchy-tabview .p-tabview-panels {
+    padding: 0 !important;
+}
+</style>

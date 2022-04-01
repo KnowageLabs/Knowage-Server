@@ -1,5 +1,5 @@
 <template>
-    <Dialog id="hierarchy-management-node-detail-dialog" class="p-fluid kn-dialog--toolbar--primary" :visible="visible" :modal="true" :closable="false" :style="hierarchyManagementHierarchiesTreeDescriptor.dialog.style">
+    <Dialog class="kn-dialog--toolbar--primary node-detail-dialog" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -8,11 +8,11 @@
             </Toolbar>
         </template>
 
-        <div v-if="node" class="p-fluid p-formgrid p-grid p-m-4">
+        <div v-if="node" class="p-fluid p-formgrid p-grid p-mt-3">
             <template v-for="(item, index) in metadata" :key="index">
-                <div class="p-col-12 p-p-3" v-if="item.VISIBLE">
+                <div class="p-field p-col-12 p-lg-6" v-if="item.VISIBLE">
                     <span class="p-float-label">
-                        <Calendar v-if="item.TYPE === 'Date'" v-model="node[item.ID]" :manualInput="true" :disabled="mode === 'info' || (!item.EDITABLE && mode !== 'create')"></Calendar>
+                        <Calendar v-if="item.TYPE === 'Date'" v-model="node[item.ID]" :manualInput="true" :disabled="mode === 'info' || (!item.EDITABLE && mode !== 'create')" />
                         <InputText v-else class="kn-material-input" v-model.trim="node[item.ID]" :type="item.TYPE === 'Number' ? 'number' : 'text'" :disabled="mode === 'info' || (!item.EDITABLE && mode !== 'create')" />
                         <label class="kn-material-input-label"> {{ item.NAME }}</label>
                     </span>
@@ -85,15 +85,8 @@ export default defineComponent({
     }
 })
 </script>
-
 <style lang="scss">
-#hierarchy-management-node-detail-dialog .p-dialog-header,
-#hierarchy-management-node-detail-dialog .p-dialog-content {
-    padding: 0;
-}
-#hierarchy-management-node-detail-dialog .p-dialog-content {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+.node-detail-dialog {
+    width: 60%;
 }
 </style>
