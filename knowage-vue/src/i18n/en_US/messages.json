@@ -1309,6 +1309,7 @@
             "createHierarchyMasterErrorMessage": "You can select only two items",
             "dimensions": "Dimensions",
             "hierarchies": "Hierarchies",
+            "hierarchiesTarget": "Hierarchies Target",
             "hierarchyType": "Hierarchy Type",
             "lev": "Lev.",
             "master": "Master",

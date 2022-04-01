@@ -34,6 +34,7 @@
     </Tree>
 
     <HierarchyManagementNodeDetailDialog :visible="detailDialogVisible" :selectedNode="selectedNode" :metadata="metadata" :mode="mode" @save="onNodeSave" @close="closeNodeDialog" />
+    <HierarchyManagementHierarchiesTargetDialog :visible="targetDialogVisible" :hierarchiesTargets="relations" @save="onTargetsSave"></HierarchyManagementHierarchiesTargetDialog>
 </template>
 
 <script lang="ts">
@@ -43,6 +44,7 @@ import { AxiosResponse } from 'axios'
 import Dropdown from 'primevue/dropdown'
 import hierarchyManagementHierarchiesTreeDescriptor from './HierarchyManagementHierarchiesTreeDescriptor.json'
 import HierarchyManagementNodeDetailDialog from './HierarchyManagementNodeDetailDialog.vue'
+import HierarchyManagementHierarchiesTargetDialog from './HierarchyManagementHierarchiesTargetDialog.vue'
 import Tree from 'primevue/tree'
 
 const deepEqual = require('deep-equal')
@@ -51,7 +53,7 @@ const crypto = require('crypto')
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchies-tree',
-    components: { Dropdown, HierarchyManagementNodeDetailDialog, Tree },
+    components: { Dropdown, HierarchyManagementNodeDetailDialog, HierarchyManagementHierarchiesTargetDialog, Tree },
     props: {
         propTree: { type: Object },
         nodeMetadata: { type: Object as PropType<iNodeMetadata | null> },
@@ -74,7 +76,8 @@ export default defineComponent({
             orderBy: '' as string,
             dropzoneActive: [] as boolean[],
             relations: [] as any[],
-            relationsMasterTree: [] as any[]
+            relationsMasterTree: [] as any[],
+            targetDialogVisible: false
         }
     },
     watch: {
@@ -127,7 +130,6 @@ export default defineComponent({
                 sortValue = 'id'
             }
             nodes.sort((a: iNode, b: iNode) => {
-                console.log('A: ', a, ', B: ', b)
                 return a[sortValue] > b[sortValue] ? 1 : -1
             })
             nodes.forEach((childNode: iNode) => {
@@ -135,10 +137,8 @@ export default defineComponent({
                     this.sortTree(childNode.children)
                 }
             })
-            console.log('NODES AFTER SORT: ', nodes)
         },
         addNode(node: iNode) {
-            console.log('ADD NODE: ', node)
             this.mode = 'create'
             this.selectedNode = { CDC_CD_LEV: '', CDC_OCD_LEV: '', CDC_NM_LEV: '', ORDER_LEV: '', FORM_LIV: '', aliasId: this.selectedDimension?.DIMENSION_NM + '_CD_LEV', aliasName: this.selectedDimension?.DIMENSION_NM + '_NM_LEV', children: [], leaf: false, parent: node }
             this.setMetadata()
@@ -146,22 +146,18 @@ export default defineComponent({
             this.detailDialogVisible = true
         },
         cloneNode(node: iNode) {
-            console.log('CLONE NODE: ', node)
             this.selectedNode = { ...node.data, originalNode: deepcopy(node), parentNode: node.parent }
             this.setMetadata()
             this.mode = 'clone'
             this.detailDialogVisible = true
         },
         editNode(node: iNode) {
-            console.log('EDIT NODE: ', node)
-
             this.selectedNode = node.data
             this.setMetadata()
             this.mode = 'edit'
             this.detailDialogVisible = true
         },
         deleteNodeConfirm(node: iNode) {
-            console.log('DELETE NODE: ', node)
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteConfirmTitle'),
@@ -170,20 +166,15 @@ export default defineComponent({
             })
         },
         deleteNode(node: iNode) {
-            console.log('DELETE NODE: ', node)
-
             const index = node.parent?.children.findIndex((el: iNode) => el.key === node.key)
             if (index !== -1) node.parent.children.splice(index, 1)
-            console.log('INDEX: ', index)
 
             const relationsIndex = this.relationsMasterTree.findIndex((el: any) => el.leafData.CDC_NM === node.data.CDC_NM && el.leafData.CDC_CD === node.data.CDC_CD)
             if (relationsIndex !== -1) this.relationsMasterTree.splice(relationsIndex, 1)
-            console.log('DELTE TREE HIER: ', this.relationsMasterTree)
+
             this.$emit('treeUpdated', this.nodes)
         },
         showNodeInfo(node: iNode) {
-            console.log('SHOW NODE INFO: ', node.data)
-            console.log('METADATA: ', this.nodeMetadata)
             this.selectedNode = node.data
 
             this.setMetadata()
@@ -208,7 +199,6 @@ export default defineComponent({
             this.detailDialogVisible = false
         },
         onNodeSave(payload: any) {
-            console.log('ON NODE SAVE: ', payload)
             if (payload.mode === 'edit') {
                 this.updateNode(payload.node)
             } else if (payload.mode === 'create') {
@@ -219,8 +209,6 @@ export default defineComponent({
             this.detailDialogVisible = false
         },
         updateNode(node: any) {
-            console.log('NODE FOR UPDATE: ', node)
-
             let tempNode = null as any
             for (let i = 0; i < this.nodes.length; i++) {
                 tempNode = this.findNode(this.nodes[i], node.key)
@@ -232,23 +220,14 @@ export default defineComponent({
                 tempNode.key = crypto.randomBytes(16).toString('hex')
                 tempNode.label = node.name
             }
-            console.log('NODE TO UPDATE: ', tempNode)
             this.$emit('treeUpdated', this.nodes)
         },
         createNode(node: any) {
-            console.log('CREATE NODE: ', node)
             node.id = node.name
 
             let tempNode = this.findNodeInTree(node.parent.key) as any
-
-            // for (let i = 0; i < this.nodes.length; i++) {
-            //     tempNode = this.findNode(this.nodes[i], node.parent.key)
-            //     if (tempNode) break
-            // }
-
             node.LEVEL = tempNode.data.LEVEL + 1
             if (tempNode) tempNode.children.push({ key: crypto.randomBytes(16).toString('hex'), id: node.name, label: node.name, children: node.children, data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: node.leaf, parent: tempNode })
-            console.log('TEMP NODE: ', tempNode)
             this.$emit('treeUpdated', this.nodes)
         },
         copyNode(node: any) {
@@ -256,9 +235,6 @@ export default defineComponent({
             const parentNode = node.parentNode
             delete node.originalNode
             delete node.parentNode
-            console.log('CLONE NODE: ', node)
-            console.log('ORIGINAL NODE: ', originalNode)
-            console.log('PARENT NODE: ', parentNode)
 
             if (deepEqual(node, originalNode)) {
                 this.$store.commit('setError', {
@@ -293,12 +269,7 @@ export default defineComponent({
             return null
         },
         async onDragDrop(event: any, item: any, key: any) {
-            console.log(' >>> ON DRAG DROP EVENT: ', event)
             const droppedItem = JSON.parse(event.dataTransfer.getData('text/plain'))
-
-            console.log(' >>> ON DRAG DROPED ITEM: ', droppedItem)
-            console.log(' >>> ON DRAG TREE NODE: ', item)
-            console.log(' >>> ON DRAG DROP KEY: ', key)
             const parentNode = item.data.leaf ? item.parent : item
             if (droppedItem.movedFrom === 'tree') {
                 this.moveNodeInsideTree(droppedItem, item)
@@ -311,10 +282,10 @@ export default defineComponent({
             this.dropzoneActive[node.key] = value
         },
         async loadRelations(node: any, targetNode: any) {
-            console.log('TARGET NODE: ', targetNode)
             if (!this.selectedDimension || !this.selectedHierarchy) return
             this.$emit('loading', true)
-            const nodeSourceCode = targetNode[targetNode.aliasId]
+            console.log('TARGET NODE: ', targetNode)
+            const nodeSourceCode = targetNode.data[targetNode.data.aliasId]
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/getRelationsMasterTechnical?dimension=${this.selectedDimension.DIMENSION_NM}&hierSourceCode=${this.selectedHierarchy.HIER_CD}&hierSourceName=${this.selectedHierarchy.HIER_NM}&nodeSourceCode=${nodeSourceCode}`)
                 .then((response: AxiosResponse<any>) => {
@@ -326,23 +297,15 @@ export default defineComponent({
                         })
                         this.copyNodeFromTableToTree(node, targetNode)
                     } else {
-                        // TODO
+                        this.targetDialogVisible = true
                     }
                 })
 
             this.$emit('loading', false)
         },
         copyNodeFromTableToTree(node: any, targetNode: any) {
-            console.log('NODE TO COPY AFTER: ', node)
-            console.log('TARGET NODE TO COPY TO: ', targetNode)
             let parentNode = this.findNodeInTree(targetNode.key) as any
 
-            // for (let i = 0; i < this.nodes.length; i++) {
-            //     parentNode = this.findNode(this.nodes[i], targetNode.key)
-            //     if (parentNode) break
-            // }
-
-            console.log('PARENT NODE: ', parentNode)
             if (!parentNode) return
 
             const dimensionName = this.selectedDimension ? this.selectedDimension.DIMENSION_NM : ''
@@ -359,7 +322,6 @@ export default defineComponent({
             node.leaf = true
             const fields = this.nodeMetadata
                 ? this.nodeMetadata.LEAF_FIELDS.map((el: iNodeMetadataField) => {
-                      console.log('EL: ', el)
                       return { key: el.ID, type: el.TYPE }
                   })
                 : []
@@ -374,9 +336,7 @@ export default defineComponent({
             }
 
             const leafFields = this.dimensionMetadata?.MATCH_LEAF_FIELDS
-            console.log('leaf fields: ', leafFields)
             for (let key in leafFields) {
-                console.log('KEY: ', key)
                 if (node[key]) {
                     node[leafFields[key]] = node[key]
                 }
@@ -393,7 +353,6 @@ export default defineComponent({
                 this.relationsMasterTree.push(newElement)
             }
 
-            console.log(' --- Parent Node: ', parentNode)
             parentNode.children.push({ key: crypto.randomBytes(16).toString('hex'), id: node.name, label: node.name, children: [], data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: true, parent: parentNode })
             this.$emit('treeUpdated', this.nodes)
         },
@@ -401,15 +360,11 @@ export default defineComponent({
             item.movedFrom = 'tree'
             item.parentKey = item.parent.key
             delete item.parent
-            console.log('ITEM : ', item)
             event.dataTransfer.setData('text/plain', JSON.stringify(item))
-            console.log(' >>> GET ITEM: ', JSON.parse(event.dataTransfer.getData('text/plain')))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
         },
         moveNodeInsideTree(node: any, parent: any) {
-            console.log(' >>> MOVE INSIDE TREE, NODE: ', node)
-            console.log(' >>> MOVE INSIDE TREE, PARENT: ', parent)
             delete node.movedFrom
 
             let parentToAdd = this.findNodeInTree(parent.key)
@@ -419,14 +374,14 @@ export default defineComponent({
 
             const index = parentToRemoveFrom.children?.findIndex((el: any) => el.key === node.key)
             if (index !== -1) parentToRemoveFrom.children.splice(index, 1)
-            console.log(' >>> INDEX: ', index)
             delete node.parentKey
 
             parentToAdd.children ? parentToAdd.children.push(node) : (parentToAdd.children = [node])
 
-            console.log(' >>> PARENT TO ADD: ', parentToAdd)
-            console.log(' >>> PARENT TO REMOVE: ', parentToRemoveFrom)
             this.$emit('treeUpdated', this.nodes)
+        },
+        onTargetsSave() {
+            this.targetDialogVisible = false
         }
     }
 })

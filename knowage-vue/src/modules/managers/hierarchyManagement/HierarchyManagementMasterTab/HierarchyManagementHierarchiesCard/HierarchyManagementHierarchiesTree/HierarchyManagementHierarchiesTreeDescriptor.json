@@ -1,12 +1,4 @@
 {
-    "dialog": {
-        "style": {
-            "height": "60%",
-            "max-height": "60%",
-            "max-width": "60%",
-            "min-width": "60%"
-        }
-    },
     "node": {
         "style": {
             "padding": "0"
