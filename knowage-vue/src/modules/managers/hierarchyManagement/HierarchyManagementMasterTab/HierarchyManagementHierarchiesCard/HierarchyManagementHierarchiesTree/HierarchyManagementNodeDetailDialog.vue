@@ -13,7 +13,7 @@
                 <div class="p-field p-col-12 p-lg-6" v-if="item.VISIBLE">
                     <span class="p-float-label">
                         <Calendar v-if="item.TYPE === 'Date'" v-model="node[item.ID]" :manualInput="true" :disabled="mode === 'info' || (!item.EDITABLE && mode !== 'create')" />
-                        <InputText v-else class="kn-material-input" v-model.trim="node[item.ID]" :type="item.TYPE === 'number' ? 'number' : 'text'" :disabled="mode === 'info' || (!item.EDITABLE && mode !== 'create')" />
+                        <InputText v-else class="kn-material-input" v-model.trim="node[item.ID]" :type="item.TYPE === 'Number' ? 'number' : 'text'" :disabled="mode === 'info' || (!item.EDITABLE && mode !== 'create')" />
                         <label class="kn-material-input-label"> {{ item.NAME }}</label>
                     </span>
                 </div>
