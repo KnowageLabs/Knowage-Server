@@ -18,7 +18,6 @@ public class JWTSsoServiceAlgorithmFactory {
 	private static final JWTSsoServiceAlgorithmFactory INSTANCE = new JWTSsoServiceAlgorithmFactory();
 	private static final String KNOWAGE_HMAC_KEY = "knowage.hmacKey";
 
-
 	private static Algorithm algorithm = null;
 
 	public static final JWTSsoServiceAlgorithmFactory getInstance() {
