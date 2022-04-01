@@ -34,6 +34,7 @@
     </Tree>
 
     <HierarchyManagementNodeDetailDialog :visible="detailDialogVisible" :selectedNode="selectedNode" :metadata="metadata" :mode="mode" @save="onNodeSave" @close="closeNodeDialog" />
+    <HierarchyManagementHierarchiesTargetDialog :visible="targetDialogVisible" :hierarchiesTargets="relations" @save="onTargetsSave"></HierarchyManagementHierarchiesTargetDialog>
 </template>
 
 <script lang="ts">
@@ -43,6 +44,7 @@ import { AxiosResponse } from 'axios'
 import Dropdown from 'primevue/dropdown'
 import hierarchyManagementHierarchiesTreeDescriptor from './HierarchyManagementHierarchiesTreeDescriptor.json'
 import HierarchyManagementNodeDetailDialog from './HierarchyManagementNodeDetailDialog.vue'
+import HierarchyManagementHierarchiesTargetDialog from './HierarchyManagementHierarchiesTargetDialog.vue'
 import Tree from 'primevue/tree'
 
 const deepEqual = require('deep-equal')
@@ -51,7 +53,7 @@ const crypto = require('crypto')
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchies-tree',
-    components: { Dropdown, HierarchyManagementNodeDetailDialog, Tree },
+    components: { Dropdown, HierarchyManagementNodeDetailDialog, HierarchyManagementHierarchiesTargetDialog, Tree },
     props: {
         propTree: { type: Object },
         nodeMetadata: { type: Object as PropType<iNodeMetadata | null> },
@@ -74,7 +76,8 @@ export default defineComponent({
             orderBy: '' as string,
             dropzoneActive: [] as boolean[],
             relations: [] as any[],
-            relationsMasterTree: [] as any[]
+            relationsMasterTree: [] as any[],
+            targetDialogVisible: false
         }
     },
     watch: {
@@ -223,12 +226,6 @@ export default defineComponent({
             node.id = node.name
 
             let tempNode = this.findNodeInTree(node.parent.key) as any
-
-            // for (let i = 0; i < this.nodes.length; i++) {
-            //     tempNode = this.findNode(this.nodes[i], node.parent.key)
-            //     if (tempNode) break
-            // }
-
             node.LEVEL = tempNode.data.LEVEL + 1
             if (tempNode) tempNode.children.push({ key: crypto.randomBytes(16).toString('hex'), id: node.name, label: node.name, children: node.children, data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: node.leaf, parent: tempNode })
             this.$emit('treeUpdated', this.nodes)
@@ -287,7 +284,8 @@ export default defineComponent({
         async loadRelations(node: any, targetNode: any) {
             if (!this.selectedDimension || !this.selectedHierarchy) return
             this.$emit('loading', true)
-            const nodeSourceCode = targetNode[targetNode.aliasId]
+            console.log('TARGET NODE: ', targetNode)
+            const nodeSourceCode = targetNode.data[targetNode.data.aliasId]
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/getRelationsMasterTechnical?dimension=${this.selectedDimension.DIMENSION_NM}&hierSourceCode=${this.selectedHierarchy.HIER_CD}&hierSourceName=${this.selectedHierarchy.HIER_NM}&nodeSourceCode=${nodeSourceCode}`)
                 .then((response: AxiosResponse<any>) => {
@@ -299,7 +297,7 @@ export default defineComponent({
                         })
                         this.copyNodeFromTableToTree(node, targetNode)
                     } else {
-                        // TODO
+                        this.targetDialogVisible = true
                     }
                 })
 
@@ -381,6 +379,9 @@ export default defineComponent({
             parentToAdd.children ? parentToAdd.children.push(node) : (parentToAdd.children = [node])
 
             this.$emit('treeUpdated', this.nodes)
+        },
+        onTargetsSave() {
+            this.targetDialogVisible = false
         }
     }
 })

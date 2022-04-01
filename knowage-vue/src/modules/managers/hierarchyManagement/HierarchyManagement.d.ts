@@ -80,3 +80,21 @@ export interface iNode {
     data: string | any,
     parent: iNode
 }
+
+export interface iHierarchyTarget {
+    DIMENSION: string,
+    GENERAL_INFO_T: string,
+    HIER_CD_M: string,
+    HIER_CD_T: string,
+    HIER_NM_M: string,
+    HIER_NM_T: string,
+    MT_ID: number,
+    NODE_CD_M: string,
+    NODE_CD_T: string,
+    NODE_LEV_M: number,
+    NODE_LEV_T: number,
+    NODE_NM_M: string,
+    NODE_NM_T: string,
+    PATH_CD_T: string,
+    PATH_NM_T: string,
+}

@@ -1,6 +1,6 @@
 <template>
     <div class="p-mt-2">
-        <DataTable :value="rows" class="p-datatable-sm kn-table" v-model:filters="filters" :globalFilterFields="globalFilterFields" :scrollable="true" scroll-height="flex">
+        <DataTable :value="rows" class="p-datatable-sm kn-table" v-model:filters="filters" :globalFilterFields="globalFilterFields">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
