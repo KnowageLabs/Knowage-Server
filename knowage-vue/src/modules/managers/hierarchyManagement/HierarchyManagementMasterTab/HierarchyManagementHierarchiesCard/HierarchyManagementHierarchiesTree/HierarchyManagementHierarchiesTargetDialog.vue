@@ -18,7 +18,7 @@
                 <template #body="slotProps">
                     <div>
                         <span
-                            ><b> {{ slotProps.data.label }}</b></span
+                            ><b> {{ getLabel(slotProps.data) }}</b></span
                         ><br />
                         <span>{{ slotProps.data.PATH_NM_T }}</span>
                     </div>
@@ -63,10 +63,10 @@ export default defineComponent({
     },
     methods: {
         loadTargets() {
-            this.targets = []
-            this.targets = this.hierarchiesTargets?.map((target: iHierarchyTarget) => {
-                return { ...target, label: this.$t('managers.hierarchyManagement.hierarchies').toUpperCase() + ': ' + target.HIER_CD_T + ' - ' + target.HIER_NM_T + ' - LEVEL node: ' + target.NODE_LEV_T }
-            }) as iHierarchyTarget[]
+            this.targets = this.hierarchiesTargets as iHierarchyTarget[]
+        },
+        getLabel(target: iHierarchyTarget) {
+            return this.$t('managers.hierarchyManagement.hierarchy').toUpperCase() + ': ' + target.HIER_CD_T + ' - ' + target.HIER_NM_T + ' - ' + this.$t('managers.hierarchyManagement.levelNode') + ': ' + target.NODE_LEV_T
         },
         close() {
             this.selectedTargets = []
