@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iNode, iNodeMetadata, iNodeMetadataField, iDimension, iHierarchy, iDimensionMetadata } from '../../../HierarchyManagement'
+import { iNode, iNodeMetadata, iNodeMetadataField, iDimension, iHierarchy, iDimensionMetadata, iHierarchyTarget } from '../../../HierarchyManagement'
 import { AxiosResponse } from 'axios'
 import Dropdown from 'primevue/dropdown'
 import hierarchyManagementHierarchiesTreeDescriptor from './HierarchyManagementHierarchiesTreeDescriptor.json'
@@ -380,7 +380,8 @@ export default defineComponent({
 
             this.$emit('treeUpdated', this.nodes)
         },
-        onTargetsSave() {
+        onTargetsSave(targets: iHierarchyTarget[]) {
+            console.log('ON TARGETS SAVE: ', targets)
             this.targetDialogVisible = false
         }
     }

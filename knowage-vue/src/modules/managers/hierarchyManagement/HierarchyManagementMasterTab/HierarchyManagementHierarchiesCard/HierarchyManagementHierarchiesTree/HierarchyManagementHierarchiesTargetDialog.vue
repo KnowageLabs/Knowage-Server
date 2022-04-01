@@ -8,7 +8,7 @@
             </Toolbar>
         </template>
 
-        <DataTable class="p-datatable-sm kn-table" :value="targets" v-model:selection="selectedTargets" dataKey="label">
+        <DataTable class="p-datatable-sm kn-table" :value="targets" v-model:selection="selectedTargets" dataKey="MT_ID">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
