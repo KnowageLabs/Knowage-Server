@@ -16,6 +16,8 @@ public class JWTSsoServiceAlgorithmFactory {
 
 	private static final Logger logger = LogManager.getLogger(JWTSsoServiceAlgorithmFactory.class);
 	private static final JWTSsoServiceAlgorithmFactory INSTANCE = new JWTSsoServiceAlgorithmFactory();
+	private static final String KNOWAGE_HMAC_KEY = "knowage.hmacKey";
+
 
 	private static Algorithm algorithm = null;
 
@@ -51,6 +53,9 @@ public class JWTSsoServiceAlgorithmFactory {
 			String key = EnginConf.getInstance().getHmacKey();
 			if (key == null || key.isEmpty()) {
 				key = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(HMACUtils.HMAC_JNDI_LOOKUP));
+			}
+			if (key == null || key.isEmpty()) {
+				key = System.getenv(KNOWAGE_HMAC_KEY);
 			}
 			return key;
 		} catch (Exception e) {
