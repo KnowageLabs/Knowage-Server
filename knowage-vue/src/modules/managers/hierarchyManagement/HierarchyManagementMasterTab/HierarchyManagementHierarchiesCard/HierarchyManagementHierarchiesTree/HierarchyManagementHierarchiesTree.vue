@@ -34,7 +34,7 @@
     </Tree>
 
     <HierarchyManagementNodeDetailDialog :visible="detailDialogVisible" :selectedNode="selectedNode" :metadata="metadata" :mode="mode" @save="onNodeSave" @close="closeNodeDialog" />
-    <HierarchyManagementHierarchiesTargetDialog :visible="targetDialogVisible" :hierarchiesTargets="relations" @close="targetDialogVisible = false" @save="onTargetsSave"></HierarchyManagementHierarchiesTargetDialog>
+    <HierarchyManagementHierarchiesTargetDialog :visible="targetDialogVisible" :hierarchiesTargets="relations" @close="closeTargetDialog" @save="onTargetsSave"></HierarchyManagementHierarchiesTargetDialog>
 </template>
 
 <script lang="ts">
@@ -75,9 +75,12 @@ export default defineComponent({
             mode: '' as string,
             orderBy: '' as string,
             dropzoneActive: [] as boolean[],
-            relations: [] as any[],
+            relations: [] as iHierarchyTarget[],
+            selectedRelations: [] as iHierarchyTarget[],
             relationsMasterTree: [] as any[],
-            targetDialogVisible: false
+            targetDialogVisible: false,
+            nodeToMove: null as any,
+            targetForMove: null as any
         }
     },
     watch: {
@@ -284,7 +287,6 @@ export default defineComponent({
         async loadRelations(node: any, targetNode: any) {
             if (!this.selectedDimension || !this.selectedHierarchy) return
             this.$emit('loading', true)
-            console.log('TARGET NODE: ', targetNode)
             const nodeSourceCode = targetNode.data[targetNode.data.aliasId]
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/getRelationsMasterTechnical?dimension=${this.selectedDimension.DIMENSION_NM}&hierSourceCode=${this.selectedHierarchy.HIER_CD}&hierSourceName=${this.selectedHierarchy.HIER_NM}&nodeSourceCode=${nodeSourceCode}`)
@@ -297,6 +299,8 @@ export default defineComponent({
                         })
                         this.copyNodeFromTableToTree(node, targetNode)
                     } else {
+                        this.nodeToMove = node
+                        this.targetForMove = targetNode
                         this.targetDialogVisible = true
                     }
                 })
@@ -342,18 +346,20 @@ export default defineComponent({
                 }
             }
 
-            if (this.relations) {
+            if (this.selectedRelations) {
                 const newElement = { leafData: { [keyName]: node[keyName], [keyId]: node[keyId], BEGIN_DT: node.BEGIN_DT, END_DT: node.END_DT }, relationsArray: [] as any[] }
                 newElement.leafData[dimensionName + '_ID'] = node[dimensionName + '_ID']
 
-                for (let i = 0; i < this.relations.length; i++) {
-                    newElement.relationsArray.push(deepcopy(this.relations[i]))
+                for (let i = 0; i < this.selectedRelations.length; i++) {
+                    newElement.relationsArray.push(deepcopy(this.selectedRelations[i]))
                 }
 
                 this.relationsMasterTree.push(newElement)
             }
 
             parentNode.children.push({ key: crypto.randomBytes(16).toString('hex'), id: node.name, label: node.name, children: [], data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: true, parent: parentNode })
+            this.nodeToMove = null
+            this.targetForMove = null
             this.$emit('treeUpdated', this.nodes)
         },
         onDragStart(event: any, item: any) {
@@ -380,9 +386,14 @@ export default defineComponent({
 
             this.$emit('treeUpdated', this.nodes)
         },
-        onTargetsSave(targets: iHierarchyTarget[]) {
-            console.log('ON TARGETS SAVE: ', targets)
+        closeTargetDialog() {
+            this.selectedRelations = []
             this.targetDialogVisible = false
+        },
+        onTargetsSave(targets: iHierarchyTarget[]) {
+            this.selectedRelations = targets
+            this.targetDialogVisible = false
+            this.copyNodeFromTableToTree(this.nodeToMove, this.targetForMove)
         }
     }
 })
