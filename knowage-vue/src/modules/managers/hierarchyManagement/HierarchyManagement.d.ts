@@ -80,6 +80,7 @@ export interface iNode {
     children: iNode[],
     data: string | any,
     parentKey?: string
+    parent?: iNode
 }
 
 export interface iHierarchyTarget {

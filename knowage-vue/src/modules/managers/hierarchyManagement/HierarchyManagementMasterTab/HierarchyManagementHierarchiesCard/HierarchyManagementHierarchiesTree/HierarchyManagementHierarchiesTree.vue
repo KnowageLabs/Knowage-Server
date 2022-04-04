@@ -289,8 +289,10 @@ export default defineComponent({
         },
         formatNodeAfterDrop(nodes: iNode[], parent: iNode) {
             return nodes.map((node: any) => {
+                console.log('NODE: ', deepcopy(node))
+                console.log('NODE: ', parent)
                 node = {
-                    ...node.data,
+                    ...node,
                     children: node.children,
                     parent: parent
                 }
@@ -397,7 +399,7 @@ export default defineComponent({
         formatNodeForDrag(nodes: iNode[]) {
             return nodes.map((node: any) => {
                 node = {
-                    ...node.data,
+                    ...node,
                     children: node.children
                 }
                 if (node.parent) delete node.parent
