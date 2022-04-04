@@ -21,7 +21,7 @@
                     <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="!treeModel" @click="handleSaveHiararchy" />
                 </div>
                 <div class="p-field-checkbox p-col-6 p-lg-2">
-                    <Checkbox v-model="backup" :binary="true" :disabled="true" />
+                    <Checkbox v-model="backup" :binary="true" :disabled="!treeModel" />
                     <label class="kn-material-input-label p-ml-2"> {{ $t('managers.hierarchyManagement.backup') }}</label>
                 </div>
                 <div class="p-field p-col-12">
