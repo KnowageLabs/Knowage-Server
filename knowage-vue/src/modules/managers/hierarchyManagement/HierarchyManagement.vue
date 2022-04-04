@@ -77,4 +77,13 @@ export default defineComponent({
 .hierarchy-tabview .p-tabview-panels {
     padding: 0 !important;
 }
+
+.hierarchy-scrollable-card {
+    height: calc(100vh - 55px);
+    flex: 1 1 0;
+    .p-card-body {
+        flex: 1;
+        overflow: auto;
+    }
+}
 </style>

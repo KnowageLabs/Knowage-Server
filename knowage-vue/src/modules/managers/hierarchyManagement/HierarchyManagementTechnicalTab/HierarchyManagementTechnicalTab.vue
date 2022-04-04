@@ -1,7 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-row">
         <HierarchyManagementSourceCard
-            class="kn-flex"
             :dimensions="dimensions"
             :optionsDate="optionsDate"
             @loading="$emit('loading', $event)"
@@ -12,7 +11,7 @@
             @hierarchyTypeSelected="onHierarchyTypeSelected"
             @hierarchySelected="onHierarchySelected"
         ></HierarchyManagementSourceCard>
-        <HierarchyManagementTargetCard class="kn-flex" :selectedDimension="selectedDimension" :validityDate="validityDate" :nodeMetadata="nodeMetadata" @loading="$emit('loading', $event)" @optionsDateSelected="setOptionsDate"></HierarchyManagementTargetCard>
+        <HierarchyManagementTargetCard :selectedDimension="selectedDimension" :validityDate="validityDate" :nodeMetadata="nodeMetadata" :selectedSourceHierarchy="selectedHierarchy" @loading="$emit('loading', $event)" @optionsDateSelected="setOptionsDate"></HierarchyManagementTargetCard>
     </div>
 </template>
 
@@ -63,13 +62,3 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss">
-.hierarchy-scrollable-card {
-    height: calc(100vh - 55px);
-    flex: 1 1 0;
-    .p-card-body {
-        flex: 1;
-        overflow: auto;
-    }
-}
-</style>
