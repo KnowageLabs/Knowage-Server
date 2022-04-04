@@ -7,8 +7,10 @@
     "alias": "Alias",
     "apply": "Apply",
     "attachments": "Attachments",
+    "attributes": "Attributes",
     "author": "Author",
     "back": "back",
+    "bottom": "bottom",
     "cancel": "cancel",
     "category": "Category",
     "cc": "CC",
@@ -69,6 +71,7 @@
     "filters": "Filters",
     "from": "From",
     "general": "General",
+    "generate": "Generate",
     "group": "Group",
     "home": "Home",
     "image": "image",
@@ -88,6 +91,7 @@
     "label": "label",
     "language": "Language",
     "lastChangeDate": "Last change date",
+    "left": "left",
     "library": "Library",
     "load": "Load",
     "locked": "Locked",
@@ -128,6 +132,7 @@
     "replyTo": "Reply To",
     "required": "Required",
     "reused": "Reused",
+    "right": "right",
     "role": "Role",
     "roles": "Roles",
     "run": "Run",
@@ -168,6 +173,7 @@
     "to": "to",
     "toast": {
       "cloneConfirmTitle": "Confirm item clone?",
+      "createSuccess": "Item was created successfully",
       "createTitle": "Created",
       "deleteConfirmTitle": "Confirm Delete?",
       "deleteMessage": "This item will be deleted. Are you sure you want to continue with this operation?",
@@ -182,6 +188,7 @@
       "uploadSuccess": "Item was uploaded successfully",
       "warning": "Warning"
     },
+    "top": "top",
     "type": "type",
     "upload": "upload",
     "uploadFile": "Upload File",
@@ -220,6 +227,7 @@
     "august": "August",
     "custom": "Custom",
     "daily": "Daily",
+    "date": "Date",
     "day": "Day",
     "days": "Days",
     "december": "December",
@@ -359,6 +367,7 @@
         "imageError": "Error deleting image",
         "imageUploadError": "Error uploading image",
         "infoTitle": "Informations",
+        "parametersPanelPosition": "Parameters panel position",
         "positionTitle": "Position",
         "previewImage": "Preview Image",
         "profiledVisibility": "Defined Restrictions",
@@ -953,6 +962,15 @@
       "usedMemory": "Used Memory",
       "weekly": "WEEKLY",
       "yearly": "YEARLY"
+    },
+    "calendarManagement": {
+      "endValidityDate": "End Validity Date",
+      "generateConfirmMessage": "Because it will create a calendar with {numberOfDays} days. Continue?",
+      "generateConfirmTitle": "Warning! This action could require some time",
+      "holiday": "Holiday",
+      "publicHoliday": "Public Holiday",
+      "startValidityDate": "Start Validity Date",
+      "title": "Calendar"
     },
     "catalogFunction": {
       "hint": "The import/export functionality allows you to bulk insert/extract data from your tenant. \n Select the category to view the items present. \n Click on @:common.import if you want to import a package. \n Select the items and click  @:common.export if you want to download them in a zip archive.",
@@ -1904,7 +1922,6 @@
         "dataset": {
           "description": "Description",
           "enableSchedulation": "Enable schedulation",
-          "hint": "No scheduling applied to this dataset. It will only run once. If you want to enable schedulation, use the enable schedulation switch.",
           "label": "Label",
           "name": "Name",
           "refreshRate": {
@@ -1926,6 +1943,7 @@
         "label": "Data preparation",
         "monitoring": {
           "executionLogs": "Execution log",
+          "hint": "No scheduling applied to this dataset. It will only run once. If you want to enable schedulation, use the enable schedulation switch.",
           "recordsNumber": "Number of records",
           "start": "Start date",
           "status": "Status",
@@ -2275,6 +2293,9 @@
     "roleSelection": "Role Selection"
   },
   "workspace": {
+    "advancedData": {
+      "title": "Data preparation"
+    },
     "buttonsTooltips": {
       "deleteDoc": "Delete Document",
       "editDoc": "Edit Document",
@@ -2334,6 +2355,7 @@
       "driverable": "Drivable",
       "exportSuccess": "The download has started in background. You will find the result file in your download page.",
       "fileDownload": "Download Dataset file",
+      "isPreparing": "Preparing avro file...",
       "modified": "Modified",
       "monitoring": "Monitoring",
       "openData": "Import Open Data",
