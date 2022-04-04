@@ -187,6 +187,10 @@ export default defineComponent({
             this.$emit('levelsChanged', this.dimensionDestinationFields)
         },
         moveToRecursive(destinationField: any, index: number) {
+            if (this.recursive) {
+                this.selectedDestinationFields = [this.recursive]
+                this.moveToTheLeft()
+            }
             destinationField.isLast = false
             this.dimensionDestinationFields.splice(index, 1)
             if (this.dimensionDestinationFields.length > 0) {
