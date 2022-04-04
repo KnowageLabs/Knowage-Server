@@ -150,7 +150,6 @@ export default defineComponent({
         },
         updateTreeModel(nodes: iNode[]) {
             this.treeModel = this.formatNodes(nodes)[0]
-            console.log('UPDATED TREE MODEL: ', this.treeModel)
         },
         formatNodes(nodes: iNode[]) {
             return nodes.map((node: any) => {

@@ -63,9 +63,6 @@ import HierarchyManagementHierarchiesTree from '../../HierarchyManagementMasterT
 import HierarchyManagementNodeDetailDialog from '../../HierarchyManagementMasterTab/HierarchyManagementHierarchiesCard/HierarchyManagementHierarchiesTree/HierarchyManagementNodeDetailDialog.vue'
 import hierarchyManagementTargetCardDescriptor from './HierarchyManagementTargetCardDescriptor.json'
 
-// const crypto = require('crypto')
-const deepcopy = require('deepcopy')
-
 export default defineComponent({
     name: 'hierarchy-management-target-card',
     components: { Card, Calendar, Checkbox, Dropdown, HierarchyManagementHierarchiesFilterCard, HierarchyManagementHierarchiesTree, HierarchyManagementNodeDetailDialog },
@@ -125,7 +122,6 @@ export default defineComponent({
             }
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => {
                 this.tree = response.status === 200 ? response.data : null
-                console.log('LOADED TREE: ', this.tree)
             })
             this.$emit('loading', false)
         },
@@ -137,7 +133,6 @@ export default defineComponent({
             this.selectedNode = { HIER_TP: 'TECHNICAL', aliasId: 'HIER_CD', aliasName: 'HIER_NM', leaf: false, root: true, children: [] }
             this.metadata = this.nodeMetadata ? this.nodeMetadata.GENERAL_FIELDS : []
             for (let i = 0; i < this.metadata.length; i++) {
-                console.log('METADATA FIELD: ', this.metadata[i])
                 const temp = this.metadata[i] as any
                 this.selectedNode[temp.ID] = ''
                 if (temp.TYPE === 'Number') {
@@ -158,29 +153,23 @@ export default defineComponent({
             this.detailDialogVisible = false
         },
         onNodeSave(payload: any) {
-            console.log('PAYLOAD ON SAVE ROOT: ', payload)
             const node = payload.node
             if (payload.mode === 'createRoot') {
                 this.selectedHierarchy = null
                 this.tree = { ...node, id: node.name, HIER_TP: 'TECHNICAL' }
-                console.log('THIS TREE: ', this.tree)
             }
             this.detailDialogVisible = false
         },
         updateTreeModel(nodes: iNode[]) {
             this.treeModel = this.formatNodes(nodes)[0]
             if (this.treeModel.data) this.treeModel = this.treeModel.data
-            console.log('UPDATED TREE MODEL: ', this.treeModel)
         },
         formatNodes(nodes: iNode[]) {
-            console.log(' ______ NODES: ', nodes)
             return nodes.map((node: any) => {
-                console.log('ORIGINAL NODE: ', deepcopy(node))
                 node = {
                     ...node.data,
                     children: node.children
                 }
-                console.log('___NODE: ', node)
                 if (node.parent) delete node.parent
                 if (node.leaf && node.children) delete node.children
                 if (node.children && node.children.length > 0) {
@@ -205,7 +194,6 @@ export default defineComponent({
             this.$emit('loading', false)
         },
         async saveHierarchy() {
-            console.log('SAVE HIER CALLEEEEEEEEEEEEEEEEEEEEEEEEEEEED!')
             if (!this.selectedDimension) return
             this.updateLevelRecursive(this.treeModel, 0)
             const isInsert = this.selectedHierarchy ? false : true
@@ -223,10 +211,18 @@ export default defineComponent({
                 doBackup: this.backup,
                 root: this.treeModel
             }
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/saveHierarchy`, postData).then((response: AxiosResponse<any>) => {
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/saveHierarchy`, postData).then(async (response: AxiosResponse<any>) => {
                 if (response.data.response === 'ok') {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
-                    this.selectedHierarchy ? this.loadHierarchyTree() : this.loadTechnicalHierarchies()
+                    if (this.selectedHierarchy) {
+                        this.loadHierarchyTree()
+                    } else {
+                        await this.loadTechnicalHierarchies()
+                        const index = this.hierarchies?.findIndex((hierarchy: iHierarchy) => {
+                            return hierarchy.HIER_CD === this.treeModel.HIER_CD
+                        })
+                        if (index !== -1) this.selectedHierarchy = this.hierarchies[index]
+                    }
                 }
             })
         },

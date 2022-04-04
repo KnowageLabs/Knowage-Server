@@ -280,7 +280,6 @@ export default defineComponent({
             if (this.treeMode === 'info') return
             const droppedItem = JSON.parse(event.dataTransfer.getData('text/plain'))
             droppedItem.children = this.formatNodeAfterDrop(droppedItem.children, droppedItem)
-            console.log(' >>> onDragDrop() - dropped item: ', droppedItem)
             const parentNode = item.data.leaf ? item.parent : item
             if (droppedItem.movedFrom === 'tree') {
                 this.moveNodeInsideTree(droppedItem, item)
@@ -440,8 +439,6 @@ export default defineComponent({
             let parentToAdd = this.findNodeInTree(parent.key)
             parentToAdd.children ? parentToAdd.children.push(node) : (parentToAdd.children = [node])
             this.$emit('treeUpdated', this.nodes)
-            console.log(' --- NODE: ', node)
-            console.log(' --- PARENT: ', parent)
         }
     }
 })
