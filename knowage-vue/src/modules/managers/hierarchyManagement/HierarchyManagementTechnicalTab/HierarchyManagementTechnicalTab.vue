@@ -12,7 +12,7 @@
             @hierarchyTypeSelected="onHierarchyTypeSelected"
             @hierarchySelected="onHierarchySelected"
         ></HierarchyManagementSourceCard>
-        <HierarchyManagementTargetCard class="kn-flex" @loading="$emit('loading', $event)" @optionsDateSelected="setOptionsDate"></HierarchyManagementTargetCard>
+        <HierarchyManagementTargetCard class="kn-flex" :selectedDimension="selectedDimension" :validityDate="validityDate" :nodeMetadata="nodeMetadata" @loading="$emit('loading', $event)" @optionsDateSelected="setOptionsDate"></HierarchyManagementTargetCard>
     </div>
 </template>
 
