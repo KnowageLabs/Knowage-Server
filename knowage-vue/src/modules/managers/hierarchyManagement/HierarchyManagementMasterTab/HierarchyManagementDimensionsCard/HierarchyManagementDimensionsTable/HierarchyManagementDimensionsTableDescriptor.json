@@ -8,8 +8,10 @@
         }
     },
     "iconColumnStyle": {
-        "flex-basis": "40px",
-        "flex-grow": 0.1,
-        "justify-content": "center"
+        "text-align": "end",
+        "width": "15%"
+    },
+    "smallIconColumn": {
+        "width": "5%"
     }
 }

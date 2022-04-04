@@ -133,6 +133,7 @@
         "released": "Released",
         "replyTo": "Reply To",
         "required": "Required",
+        "restore": "restore",
         "reused": "Reused",
         "right": "right",
         "role": "Role",
@@ -1305,8 +1306,10 @@
         "hierarchyManagement": {
             "afterDate": "After Date",
             "backup": "Backup",
+            "backupDeleted": "Backup deleted successfully.",
             "createHierarchyMaster": "Create Hierarchy Master",
             "createHierarchyMasterErrorMessage": "You can select only two items",
+            "deleteBackupConfirm": "Are you sure you want to delete the backup?",
             "dimensions": "Dimensions",
             "hierarchies": "Hierarchies",
             "hierarchiesSource": "Hierarchies Source",

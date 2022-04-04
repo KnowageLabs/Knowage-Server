@@ -12,7 +12,7 @@
                     </span>
                 </div>
             </template>
-            <Column :style="hierarchyManagementDimensionsTableDescriptor.iconColumnStyle">
+            <Column :style="hierarchyManagementDimensionsTableDescriptor.smallIconColumn">
                 <template #body="slotProps">
                     <div class="pi pi-bars p-button-link" :draggable="true" @dragstart.stop="onDragStart($event, slotProps.data)" />
                 </template>
@@ -22,7 +22,7 @@
                     <span v-tooltip.top="slotProps.data[column.field]" class="kn-cursor-pointer" :draggable="true" @dragstart="onDragStart($event, slotProps.data)"> {{ slotProps.data[column.field] }}</span>
                 </template>
             </Column>
-            <Column :style="hierarchyManagementDimensionsTableDescriptor.iconColumnStyle">
+            <Column :style="hierarchyManagementDimensionsTableDescriptor.smallIconColumn">
                 <template #body="slotProps">
                     <Button icon="pi pi-info" class="p-button-link" v-tooltip.top="$t('common.detail')" @click.stop="showInfo(slotProps.data)" />
                 </template>

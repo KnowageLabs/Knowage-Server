@@ -172,6 +172,7 @@ export default defineComponent({
             })
         },
         deleteNode(node: iNode) {
+            if (!node.parent) return
             const index = node.parent?.children.findIndex((el: iNode) => el.key === node.key)
             if (index !== -1) node.parent.children.splice(index, 1)
 

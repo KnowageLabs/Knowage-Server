@@ -22,6 +22,8 @@
                     <template #header>
                         <span>{{ $t('managers.hierarchyManagement.backup') }}</span>
                     </template>
+
+                    <HierarchyManagementBackupTab :dimensions="dimensions" />
                 </TabPanel>
             </TabView>
         </div>
@@ -35,12 +37,13 @@ import { AxiosResponse } from 'axios'
 import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import HierarchyManagementMasterTab from './HierarchyManagementMasterTab/HierarchyManagementMasterTab.vue'
 import HierarchyManagementTechnicalTab from './HierarchyManagementTechnicalTab/HierarchyManagementTechnicalTab.vue'
+import HierarchyManagementBackupTab from './HierarchyManagementBackupTab/HierarchyManagementBackupTab.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default defineComponent({
     name: 'hierarchy-management',
-    components: { KnOverlaySpinnerPanel, HierarchyManagementMasterTab, HierarchyManagementTechnicalTab, TabView, TabPanel },
+    components: { KnOverlaySpinnerPanel, HierarchyManagementMasterTab, HierarchyManagementTechnicalTab, HierarchyManagementBackupTab, TabView, TabPanel },
     data() {
         return {
             dimensions: [] as iDimension[],
