@@ -15,7 +15,7 @@
                     <Calendar class="kn-material-input" v-model="optionsDate" :manualInput="true" :showIcon="true" @dateSelect="onOptionsDateSelected" />
                 </div>
                 <div class="p-field p-col-6 p-lg-3">
-                    <Button class="kn-button kn-button--primary" :label="$t('common.create')" :disabled="true" @click="createHierarchy" />
+                    <Button class="kn-button kn-button--primary" :label="$t('common.create')" :disabled="!selectedDimension" @click="createHierarchy" />
                 </div>
                 <div class="p-field p-col-6 p-lg-3">
                     <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="true" @click="saveHierarchy" />
@@ -43,13 +43,14 @@
                 :propRelationsMasterTree="[]"
                 @loading="$emit('loading', $event)"
             ></HierarchyManagementHierarchiesTree>
+            <HierarchyManagementNodeDetailDialog :visible="detailDialogVisible" :selectedNode="selectedNode" :metadata="metadata" :mode="mode" @save="onNodeSave" @close="closeNodeDialog"></HierarchyManagementNodeDetailDialog>
         </template>
     </Card>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iDimension, iHierarchy, iNodeMetadata, iDimensionMetadata } from '../../HierarchyManagement'
+import { iDimension, iHierarchy, iNodeMetadata, iDimensionMetadata, iNodeMetadataField } from '../../HierarchyManagement'
 import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import Calendar from 'primevue/calendar'
@@ -58,20 +59,29 @@ import Dropdown from 'primevue/dropdown'
 import moment from 'moment'
 import HierarchyManagementHierarchiesFilterCard from '../../HierarchyManagementMasterTab/HierarchyManagementHierarchiesCard/HierarchyManagementHierarchiesFilterCard/HierarchyManagementHierarchiesFilterCard.vue'
 import HierarchyManagementHierarchiesTree from '../../HierarchyManagementMasterTab/HierarchyManagementHierarchiesCard/HierarchyManagementHierarchiesTree/HierarchyManagementHierarchiesTree.vue'
+import HierarchyManagementNodeDetailDialog from '../../HierarchyManagementMasterTab/HierarchyManagementHierarchiesCard/HierarchyManagementHierarchiesTree/HierarchyManagementNodeDetailDialog.vue'
+import hierarchyManagementTargetCardDescriptor from './HierarchyManagementTargetCardDescriptor.json'
+
+const crypto = require('crypto')
 
 export default defineComponent({
     name: 'hierarchy-management-target-card',
-    components: { Card, Calendar, Checkbox, Dropdown, HierarchyManagementHierarchiesFilterCard, HierarchyManagementHierarchiesTree },
+    components: { Card, Calendar, Checkbox, Dropdown, HierarchyManagementHierarchiesFilterCard, HierarchyManagementHierarchiesTree, HierarchyManagementNodeDetailDialog },
     props: { selectedDimension: { type: Object as PropType<iDimension | null> }, validityDate: { type: Date }, dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> }, nodeMetadata: { type: Object as PropType<iNodeMetadata | null> } },
     emits: ['loading', 'optionsDateSelected'],
     data() {
         return {
+            hierarchyManagementTargetCardDescriptor,
             optionsDate: new Date(),
             backup: true,
             hierarchies: [] as iHierarchy[],
             selectedHierarchy: null as iHierarchy | null,
             filterData: null as { showMissingElements: boolean; afterDate: Date | null } | null,
-            tree: null as any
+            tree: null as any,
+            detailDialogVisible: false,
+            selectedNode: null as any,
+            mode: 'createRoot',
+            metadata: [] as iNodeMetadataField[]
         }
     },
     watch: {
@@ -81,9 +91,9 @@ export default defineComponent({
     },
     async created() {},
     methods: {
-        onOptionsDateSelected() {
+        async onOptionsDateSelected() {
             this.$emit('optionsDateSelected', this.optionsDate)
-            // await this.loadNodeMetadata()
+            await this.loadHierarchyTree()
         },
         async loadTechnicalHierarchies() {
             this.$emit('loading', true)
@@ -113,7 +123,39 @@ export default defineComponent({
             this.filterData = filterData
             this.loadHierarchyTree()
         },
-        createHierarchy() {},
+        createHierarchy() {
+            this.selectedNode = { HIER_TP: 'TECHNICAL', aliasId: 'HIER_CD', aliasName: 'HIER_NM', leaf: false, root: true, children: [] }
+            this.metadata = this.nodeMetadata ? this.nodeMetadata.GENERAL_FIELDS : []
+            for (let i = 0; i < this.metadata.length; i++) {
+                console.log('METADATA FIELD: ', this.metadata[i])
+                const temp = this.metadata[i] as any
+                this.selectedNode[temp.ID] = ''
+                if (temp.TYPE === 'Number') {
+                    this.selectedNode[temp.ID] = -1
+                } else if (temp.TYPE === 'Date') {
+                    this.selectedNode[temp.ID] = new Date()
+                } else if (temp.FIX_VALUE) {
+                    this.selectedNode[temp.ID] = temp.FIX_VALUE
+                }
+            }
+
+            this.detailDialogVisible = true
+        },
+        closeNodeDialog() {
+            this.selectedNode = null
+            this.metadata = []
+            this.mode = ''
+            this.detailDialogVisible = false
+        },
+        onNodeSave(payload: any) {
+            console.log('PAYLOAD ON SAVE ROOT: ', payload)
+            const node = payload.node
+            if (payload.mode === 'createRoot') {
+                this.selectedHierarchy = null
+                this.tree = { ...payload.node, key: crypto.randomBytes(16).toString('hex'), id: node.name, label: node.name, children: node.children, data: node, style: this.hierarchyManagementTargetCardDescriptor.node.style, leaf: false, parent: null }
+            }
+            this.detailDialogVisible = false
+        },
         saveHierarchy() {}
     }
 })

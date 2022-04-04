@@ -53,6 +53,7 @@ export interface iNodeMetadataField {
     SINGLE_VALUE: boolean,
     REQUIRED: boolean,
     ORDER_FIELD: boolean,
+    FIX_VALUE: string,
     value?: string | number
 }
 

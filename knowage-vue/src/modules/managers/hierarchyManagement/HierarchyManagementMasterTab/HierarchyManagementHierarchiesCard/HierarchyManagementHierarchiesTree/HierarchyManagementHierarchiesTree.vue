@@ -367,12 +367,13 @@ export default defineComponent({
             this.$emit('treeUpdated', this.nodes)
         },
         onDragStart(event: any, item: any) {
-            if (this.treeMode === 'info') return
-
-            item.movedFrom = 'tree'
-            item.parentKey = item.parent.key
-            delete item.parent
-            event.dataTransfer.setData('text/plain', JSON.stringify(item))
+            const tempItem = deepcopy(item)
+            tempItem.movedFrom = 'tree'
+            console.log('>>> onDragStart() - ITEM: ', tempItem)
+            tempItem.parentKey = item.parent.key
+            delete tempItem.parent
+            event.dataTransfer.setData('text/plain', JSON.stringify(tempItem))
+            console.log(' >>> onDragStart() - getData: ', event.dataTransfer.getData('text/plain', JSON.stringify(tempItem)))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
         },
