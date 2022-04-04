@@ -278,12 +278,28 @@ export default defineComponent({
             this.dropzoneActive[key] = false
             if (this.treeMode === 'info') return
             const droppedItem = JSON.parse(event.dataTransfer.getData('text/plain'))
+            droppedItem.children = this.formatNodeAfterDrop(droppedItem.children, droppedItem)
+            console.log(' >>> onDragDrop() - dropped item: ', droppedItem)
             const parentNode = item.data.leaf ? item.parent : item
             if (droppedItem.movedFrom === 'tree') {
                 this.moveNodeInsideTree(droppedItem, item)
             } else {
                 await this.loadRelations(droppedItem, parentNode)
             }
+        },
+        formatNodeAfterDrop(nodes: iNode[], parent: iNode) {
+            return nodes.map((node: any) => {
+                node = {
+                    ...node.data,
+                    children: node.children,
+                    parent: parent
+                }
+                if (node.parentKey) delete node.parentKey
+                if (node.children && node.children.length > 0) {
+                    node.children = this.formatNodeForDrag(node.children.node)
+                }
+                return node
+            })
         },
         setDropzoneClass(value: boolean, node: any) {
             this.dropzoneActive[node.key] = value
@@ -368,6 +384,7 @@ export default defineComponent({
         },
         onDragStart(event: any, item: any) {
             const tempItem = deepcopy(item)
+            tempItem.children = this.formatNodeForDrag(tempItem.children)
             tempItem.movedFrom = 'tree'
             console.log('>>> onDragStart() - ITEM: ', tempItem)
             tempItem.parentKey = item.parent.key
@@ -376,6 +393,19 @@ export default defineComponent({
             console.log(' >>> onDragStart() - getData: ', event.dataTransfer.getData('text/plain', JSON.stringify(tempItem)))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
+        },
+        formatNodeForDrag(nodes: iNode[]) {
+            return nodes.map((node: any) => {
+                node = {
+                    ...node.data,
+                    children: node.children
+                }
+                if (node.parent) delete node.parent
+                if (node.children && node.children.length > 0) {
+                    node.children = this.formatNodeForDrag(node.children)
+                }
+                return node
+            })
         },
         moveNodeInsideTree(node: any, parent: any) {
             delete node.movedFrom

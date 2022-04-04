@@ -79,7 +79,7 @@ export interface iNode {
     label: string,
     children: iNode[],
     data: string | any,
-    parent: iNode
+    parentKey?: string
 }
 
 export interface iHierarchyTarget {
