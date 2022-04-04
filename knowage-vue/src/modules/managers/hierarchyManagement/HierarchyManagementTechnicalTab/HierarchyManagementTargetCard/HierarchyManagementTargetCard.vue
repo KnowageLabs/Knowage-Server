@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-m-2 p-d-flex p-flex-column">
+    <Card class="p-m-2 p-d-flex p-flex-column hierarchy-scrollable-card">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #start>
@@ -18,7 +18,7 @@
                     <Button class="kn-button kn-button--primary" :label="$t('common.create')" :disabled="!selectedDimension" @click="createHierarchy" />
                 </div>
                 <div class="p-field p-col-6 p-lg-3">
-                    <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="true" @click="saveHierarchy" />
+                    <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="!treeModel" @click="handleSaveHiararchy" />
                 </div>
                 <div class="p-field-checkbox p-col-6 p-lg-2">
                     <Checkbox v-model="backup" :binary="true" :disabled="true" />
@@ -41,6 +41,7 @@
                 :selectedHierarchy="selectedHierarchy"
                 :dimensionMetadata="dimensionMetadata"
                 :propRelationsMasterTree="[]"
+                @treeUpdated="updateTreeModel"
                 @loading="$emit('loading', $event)"
             ></HierarchyManagementHierarchiesTree>
             <HierarchyManagementNodeDetailDialog :visible="detailDialogVisible" :selectedNode="selectedNode" :metadata="metadata" :mode="mode" @save="onNodeSave" @close="closeNodeDialog"></HierarchyManagementNodeDetailDialog>
@@ -50,7 +51,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iDimension, iHierarchy, iNodeMetadata, iDimensionMetadata, iNodeMetadataField } from '../../HierarchyManagement'
+import { iDimension, iHierarchy, iNodeMetadata, iDimensionMetadata, iNodeMetadataField, iNode } from '../../HierarchyManagement'
 import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import Calendar from 'primevue/calendar'
@@ -62,12 +63,19 @@ import HierarchyManagementHierarchiesTree from '../../HierarchyManagementMasterT
 import HierarchyManagementNodeDetailDialog from '../../HierarchyManagementMasterTab/HierarchyManagementHierarchiesCard/HierarchyManagementHierarchiesTree/HierarchyManagementNodeDetailDialog.vue'
 import hierarchyManagementTargetCardDescriptor from './HierarchyManagementTargetCardDescriptor.json'
 
-const crypto = require('crypto')
+// const crypto = require('crypto')
+const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'hierarchy-management-target-card',
     components: { Card, Calendar, Checkbox, Dropdown, HierarchyManagementHierarchiesFilterCard, HierarchyManagementHierarchiesTree, HierarchyManagementNodeDetailDialog },
-    props: { selectedDimension: { type: Object as PropType<iDimension | null> }, validityDate: { type: Date }, dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> }, nodeMetadata: { type: Object as PropType<iNodeMetadata | null> } },
+    props: {
+        selectedDimension: { type: Object as PropType<iDimension | null> },
+        validityDate: { type: Date },
+        dimensionMetadata: { type: Object as PropType<iDimensionMetadata | null> },
+        nodeMetadata: { type: Object as PropType<iNodeMetadata | null> },
+        selectedSourceHierarchy: { type: Object as PropType<iHierarchy | null> }
+    },
     emits: ['loading', 'optionsDateSelected'],
     data() {
         return {
@@ -81,7 +89,8 @@ export default defineComponent({
             detailDialogVisible: false,
             selectedNode: null as any,
             mode: 'createRoot',
-            metadata: [] as iNodeMetadataField[]
+            metadata: [] as iNodeMetadataField[],
+            treeModel: null as any
         }
     },
     watch: {
@@ -116,6 +125,7 @@ export default defineComponent({
             }
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => {
                 this.tree = response.status === 200 ? response.data : null
+                console.log('LOADED TREE: ', this.tree)
             })
             this.$emit('loading', false)
         },
@@ -152,11 +162,94 @@ export default defineComponent({
             const node = payload.node
             if (payload.mode === 'createRoot') {
                 this.selectedHierarchy = null
-                this.tree = { ...payload.node, key: crypto.randomBytes(16).toString('hex'), id: node.name, label: node.name, children: node.children, data: node, style: this.hierarchyManagementTargetCardDescriptor.node.style, leaf: false, parent: null }
+                this.tree = { ...node, id: node.name, HIER_TP: 'TECHNICAL' }
+                console.log('THIS TREE: ', this.tree)
             }
             this.detailDialogVisible = false
         },
-        saveHierarchy() {}
+        updateTreeModel(nodes: iNode[]) {
+            this.treeModel = this.formatNodes(nodes)[0]
+            if (this.treeModel.data) this.treeModel = this.treeModel.data
+            console.log('UPDATED TREE MODEL: ', this.treeModel)
+        },
+        formatNodes(nodes: iNode[]) {
+            console.log(' ______ NODES: ', nodes)
+            return nodes.map((node: any) => {
+                console.log('ORIGINAL NODE: ', deepcopy(node))
+                node = {
+                    ...node.data,
+                    children: node.children
+                }
+                console.log('___NODE: ', node)
+                if (node.parent) delete node.parent
+                if (node.leaf && node.children) delete node.children
+                if (node.children && node.children.length > 0) {
+                    node.children = this.formatNodes(node.children)
+                }
+                return node
+            })
+        },
+        async handleSaveHiararchy() {
+            this.$emit('loading', true)
+
+            if (this.checkIfNodesWithoutChildren(this.treeModel)) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteConfirmTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: async () => await this.saveHierarchy()
+                })
+            } else {
+                await this.saveHierarchy()
+            }
+            this.$emit('loading', false)
+        },
+        async saveHierarchy() {
+            console.log('SAVE HIER CALLEEEEEEEEEEEEEEEEEEEEEEEEEEEED!')
+            if (!this.selectedDimension) return
+            this.updateLevelRecursive(this.treeModel, 0)
+            const isInsert = this.selectedHierarchy ? false : true
+            const postData = {
+                dimension: this.selectedDimension.DIMENSION_NM,
+                code: this.selectedHierarchy?.HIER_CD,
+                description: this.selectedHierarchy?.HIER_DS,
+                name: this.selectedHierarchy?.HIER_NM,
+                type: this.selectedHierarchy?.HIER_TP,
+                hierSourceCode: this.selectedSourceHierarchy?.HIER_CD,
+                hierSourceName: this.selectedSourceHierarchy?.HIER_NM,
+                hierSourceType: this.selectedSourceHierarchy?.HIER_TP,
+                dateValidity: moment(this.optionsDate).format('YYYY-MM-DD'),
+                isInsert: isInsert,
+                doBackup: this.backup,
+                root: this.treeModel
+            }
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/saveHierarchy`, postData).then((response: AxiosResponse<any>) => {
+                if (response.data.response === 'ok') {
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
+                    this.selectedHierarchy ? this.loadHierarchyTree() : this.loadTechnicalHierarchies()
+                }
+            })
+        },
+        updateLevelRecursive(node, level) {
+            if (level !== 0) node.LEVEL = level
+            if (node.children && node.children.length > 0) {
+                for (let i = 0; i < node.children.length; i++) {
+                    this.updateLevelRecursive(node.children[i], level + 1)
+                }
+            }
+        },
+        checkIfNodesWithoutChildren(node: any) {
+            if (!node.root && !node.leaf && node.children?.length === 0) {
+                return true
+            } else if (node.children != null) {
+                let result = false as any
+                for (let i = 0; result === false && i < node.children.length; i++) {
+                    result = this.checkIfNodesWithoutChildren(node.children[i])
+                }
+                return result
+            }
+            return false
+        }
     }
 })
 </script>

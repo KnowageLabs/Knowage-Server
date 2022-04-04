@@ -15,7 +15,7 @@
                     <Calendar class="kn-material-input" v-model="date" :manualInput="true" :showIcon="true" @dateSelect="onTreeDateChanged" />
                 </div>
                 <div class="p-field p-col-8 p-lg-4">
-                    <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="!treeModel" @click="saveHierarchy" />
+                    <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="!treeModel" @click="handleSaveHiararchy" />
                 </div>
                 <div class="p-field-checkbox p-col-4 p-lg-2">
                     <Checkbox v-model="backup" :binary="true" :disabled="!treeModel" />
@@ -177,6 +177,8 @@ export default defineComponent({
                     icon: 'pi pi-exclamation-triangle',
                     accept: async () => await this.saveHierarchy()
                 })
+            } else {
+                await this.saveHierarchy()
             }
             this.$emit('loading', false)
         },

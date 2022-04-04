@@ -10,7 +10,7 @@
 
         <div v-if="node" class="p-fluid p-formgrid p-grid p-mt-3">
             <template v-for="(item, index) in metadata" :key="index">
-                <div class="p-field p-col-12 p-lg-6" v-if="item.VISIBLE">
+                <div class="p-field p-col-12 p-lg-6" v-if="mode=== 'createRoot' || item.VISIBLE">
                     <span class="p-float-label">
                         <Calendar v-if="item.TYPE === 'Date'" v-model="node[item.ID]" :manualInput="true" :disabled="mode === 'info' || (!item.EDITABLE && mode !== 'create')" />
                         <InputText v-else class="kn-material-input" v-model.trim="node[item.ID]" :type="item.TYPE === 'Number' ? 'number' : 'text'" :disabled="mode === 'info' || (!item.EDITABLE && mode !== 'create') || item.FIX_VALUE" />

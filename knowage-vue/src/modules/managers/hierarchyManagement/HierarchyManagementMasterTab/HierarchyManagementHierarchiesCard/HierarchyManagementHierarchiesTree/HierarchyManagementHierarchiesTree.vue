@@ -172,7 +172,8 @@ export default defineComponent({
             })
         },
         deleteNode(node: iNode) {
-            const index = node.parent?.children.findIndex((el: iNode) => el.key === node.key)
+            if (!node.parent) return
+            const index = node.parent.children.findIndex((el: iNode) => el.key === node.key)
             if (index !== -1) node.parent.children.splice(index, 1)
 
             const relationsIndex = this.relationsMasterTree.findIndex((el: any) => el.leafData.CDC_NM === node.data.CDC_NM && el.leafData.CDC_CD === node.data.CDC_CD)
@@ -283,14 +284,14 @@ export default defineComponent({
             const parentNode = item.data.leaf ? item.parent : item
             if (droppedItem.movedFrom === 'tree') {
                 this.moveNodeInsideTree(droppedItem, item)
+            } else if (droppedItem.movedFrom === 'sourceTree') {
+                this.addNodeFromSourceTree(droppedItem, item)
             } else {
                 await this.loadRelations(droppedItem, parentNode)
             }
         },
         formatNodeAfterDrop(nodes: iNode[], parent: iNode) {
             return nodes.map((node: any) => {
-                console.log('NODE: ', deepcopy(node))
-                console.log('NODE: ', parent)
                 node = {
                     ...node,
                     children: node.children,
@@ -387,12 +388,10 @@ export default defineComponent({
         onDragStart(event: any, item: any) {
             const tempItem = deepcopy(item)
             tempItem.children = this.formatNodeForDrag(tempItem.children)
-            tempItem.movedFrom = 'tree'
-            console.log('>>> onDragStart() - ITEM: ', tempItem)
+            tempItem.movedFrom = 'sourceTree'
             tempItem.parentKey = item.parent.key
             delete tempItem.parent
             event.dataTransfer.setData('text/plain', JSON.stringify(tempItem))
-            console.log(' >>> onDragStart() - getData: ', event.dataTransfer.getData('text/plain', JSON.stringify(tempItem)))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
         },
@@ -433,6 +432,16 @@ export default defineComponent({
             this.selectedRelations = targets
             this.targetDialogVisible = false
             this.copyNodeFromTableToTree(this.nodeToMove, this.targetForMove)
+        },
+        addNodeFromSourceTree(node: any, parent: any) {
+            delete node.movedFrom
+            node.parent = parent
+
+            let parentToAdd = this.findNodeInTree(parent.key)
+            parentToAdd.children ? parentToAdd.children.push(node) : (parentToAdd.children = [node])
+            this.$emit('treeUpdated', this.nodes)
+            console.log(' --- NODE: ', node)
+            console.log(' --- PARENT: ', parent)
         }
     }
 })

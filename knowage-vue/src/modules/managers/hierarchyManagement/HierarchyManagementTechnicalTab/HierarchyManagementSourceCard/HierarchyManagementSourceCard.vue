@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-m-2 p-d-flex p-flex-column">
+    <Card class="p-m-2 p-d-flex p-flex-column hierarchy-scrollable-card">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #start>
