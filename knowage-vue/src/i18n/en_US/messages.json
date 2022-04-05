@@ -607,12 +607,16 @@
         "sourceCode": "Source code available on "
     },
     "knScheduler": {
+        "enableSchedulation": "Enable schedulation",
         "everyDay": "Every {day} day/s ",
         "everyMonth": "Every {month} month/s ",
         "everyNotWorkingDays": "Every not working days",
         "everyWeek": "Every {week} week/s",
         "everyYear": "Every {year} year/s",
         "in": "In",
+        "pauseSchedulation": "Pause schedulation",
+        "resumeSchedulation": "Resume schedulation",
+        "schedulationPaused": "Schedulation paused",
         "startingIn": "starting in {in}",
         "the": "The",
         "theDay": "The day"
@@ -1871,7 +1875,6 @@
             "dataPreparation": {
                 "dataset": {
                     "description": "Description",
-                    "enableSchedulation": "Enable schedulation",
                     "label": "Label",
                     "name": "Name",
                     "refreshRate": {

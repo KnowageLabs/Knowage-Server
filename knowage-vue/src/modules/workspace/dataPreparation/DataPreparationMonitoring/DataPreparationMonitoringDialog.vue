@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary schedulerDialog" v-bind:visible="visibility" footer="footer" :header="$t('workspace.myData.monitoring')" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }" :closable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary schedulerDialog" v-bind:visible="visibility" footer="footer" :header="$t('workspace.myData.monitoring')" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }" :closable="false" :baseZIndex="1" :autoZIndex="true">
         <KnScheduler
             class="p-m-1"
             :cronExpression="currentCronExpression"
@@ -50,16 +50,16 @@
                 currentCronExpression: '',
                 touched: false,
                 schedulationPaused: false,
-                schedulationEnabled: false
+                schedulationEnabled: false,
+                instanceId: ''
             }
         },
 
         watch: {
-            visibility(newVisibility) {
+            async visibility(newVisibility) {
                 this.$store.commit('setLoading', true)
                 this.logs = []
-                if (newVisibility) this.loadLogs()
-
+                if (newVisibility) await this.loadLogs()
                 this.$store.commit('setLoading', false)
             }
         },
@@ -76,6 +76,7 @@
                     await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + this.dataset.label).then((response: AxiosResponse<any>) => {
                         let instance = response.data.instance
                         if (instance) {
+                            this.instanceId = instance.id
                             this.currentCronExpression = instance.config.cron
                             if (!this.currentCronExpression) this.showHint
 
@@ -112,10 +113,12 @@
                 this.validSchedulation = event.item
             },
             saveSchedulation() {
-                let obj = { config: {} }
-                obj['config']['paused'] = this.schedulationPaused
+                let obj = { instanceId: this.instanceId, config: {} }
 
-                if (this.schedulationEnabled) obj['config']['cron'] = this.currentCronExpression
+                if (this.schedulationEnabled) {
+                    obj['config']['cron'] = this.currentCronExpression
+                    obj['config']['paused'] = this.schedulationPaused
+                }
                 this.$emit('save', obj)
                 this.resetAndClose()
             },

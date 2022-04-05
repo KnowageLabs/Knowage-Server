@@ -7,13 +7,18 @@
                     <div class="p-grid knScheduler p-jc-between p-flex-column">
                         <div class="p-col-12 p-mb-1 p-d-flex p-ai-center p-jc-between">
                             <div>
-                                <span> {{ $t('managers.workspaceManagement.dataPreparation.dataset.enableSchedulation') }}</span> <InputSwitch v-model="enableSchedulation" @change="toggleSchedulationEnabled" />
+                                <span> {{ $t('knScheduler.enableSchedulation') }}</span> <InputSwitch v-model="enableSchedulation" @change="toggleSchedulationEnabled" />
                             </div>
 
-                            <template v-if="enableSchedulation">
-                                <Button v-if="paused" icon="pi pi-play" class="p-button-text p-button-rounded p-button-plain" @click="togglePause" v-tooltip.bottom="$t('common.sort')"/>
-                                <Button v-else icon="pi pi-pause" class="p-button-text p-button-rounded p-button-plain" @click="togglePause" v-tooltip.bottom="$t('common.sort')"
-                            /></template>
+                            <div v-if="enableSchedulation" class="p-d-flex p-ai-center">
+                                <template v-if="paused">
+                                    {{ $t('knScheduler.resumeSchedulation') }}
+                                    <Button icon="pi pi-play" class="p-button-text p-button-rounded p-button-plain" @click="togglePause" /> </template
+                                ><template v-else>
+                                    {{ $t('knScheduler.pauseSchedulation') }}
+                                    <Button icon="pi pi-pause" class="p-button-text p-button-rounded p-button-plain" @click="togglePause" />
+                                </template>
+                            </div>
                         </div>
                         <div class="p-float-label p-col-12 p-mb-1" v-if="descriptor.config.startDateEnabled">
                             <Calendar id="startDate" v-model="startDate" :showIcon="true" @change="$emit('touched')" /><label for="startDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.startDate') }} </label>
@@ -318,7 +323,10 @@
                             <Calendar id="icon" v-model="endDate" :showIcon="true" />
                             <label for="endDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.endDate') }} </label>
                         </div>
-                        <Message v-if="!readOnly" :class="['p-col-12 messageClass', readOnly ? 'p-message-disabled' : '']" severity="info" :closable="false"> {{ getCronstrueFormula }} </Message>
+
+                        <Message v-if="!readOnly" :class="['p-col-12 messageClass', readOnly ? 'p-message-disabled' : '']" severity="info" :closable="false">
+                            <template v-if="paused">{{ $t('knScheduler.schedulationPaused') }} </template><template v-else>{{ getCronstrueFormula }} </template></Message
+                        >
                     </div></template
                 ></Card
             >
@@ -447,7 +455,8 @@
                 allValues: '*',
                 noSpecificValue: '?',
                 enableSchedulation: true,
-                paused: false
+                paused: false,
+                loading: false
             }
         },
         computed: {
@@ -660,6 +669,8 @@
 
                     cronExpressionArr[5] = t
 
+                    cronExpressionArr[3] = '?'
+
                     cronExpressionArr[4] = this.allValues
                 } else if (this.selectedRefreshRate === 'monthly') {
                     if (this.selectedMonthExtended && this.selectedMonth) {
@@ -749,9 +760,11 @@
             cronExpression(newFormula) {
                 if (newFormula) {
                     this.$emit('update:loading', true)
+                    this.loading = true
                     this.localCronExpression = newFormula
                     this.parseFormula(this.localCronExpression)
                     this.$emit('update:loading', false)
+                    this.loading = false
                 }
             },
             localCronExpression() {
