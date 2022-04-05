@@ -81,7 +81,7 @@
 		<!-- Minimized version: ixed because in jspf are not dynamic as in pom -->
 		<js.version>${project.version}</js.version>
 
-		<spring.boot>2.5.8</spring.boot>
+		<spring.boot>2.5.12</spring.boot>
 		<apache.poi>4.1.2</apache.poi>
 		<resteasy.version>3.6.2.Final</resteasy.version>
 		<quartz.version>2.3.2</quartz.version>
