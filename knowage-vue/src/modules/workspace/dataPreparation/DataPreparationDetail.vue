@@ -22,7 +22,7 @@
             </template>
             <template #end>
                 <div class="arrow-button-container">
-                    <Button icon="pi pi-arrow-left" :class="descriptor.css.buttonClassHeader" style="overflow: visible" @click="visibleRight = true" />
+                    <Button icon="pi pi-arrow-left" :class="descriptor.css.buttonClassHeader" style="overflow: visible" @click="toggleSidebarVisibility()" />
                     <Badge class="arrow-badge" v-if="dataset.config && dataset.config.transformations && dataset.config.transformations.length > 0" :value="dataset.config && dataset.config.transformations && dataset.config.transformations.length"></Badge>
                 </div>
             </template>
@@ -281,7 +281,7 @@ export default defineComponent({
             else col.editing = true
         },
         closeTemplate(): void {
-            this.$router.push('/workspace/data')
+            this.$router.go(-1)
         },
         refreshOriginalDataset(): void {
             // launch avro export job
@@ -355,7 +355,7 @@ export default defineComponent({
                 heartbeatOutgoing: 4000
             })
         },
-        initDsMetadata(): void {
+        async initDsMetadata() {
             if (this.existingProcessId) this.processId = this.existingProcessId
             if (this.existingInstanceId) this.instanceId = this.existingInstanceId
             if (this.existingDataset) {
@@ -364,6 +364,12 @@ export default defineComponent({
                 this.preparedDsMeta['label'] = dsMeta.label
                 this.preparedDsMeta['name'] = dsMeta.name
                 this.preparedDsMeta['description'] = dsMeta.description
+                await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.label).then((response: AxiosResponse<any>) => {
+                    let instance = response.data.instance
+                    if (instance.config) {
+                        this.preparedDsMeta['config'] = instance.config
+                    }
+                })
             }
         },
         getColHeader(metadata: Array<any>, idx: Number): string {
@@ -419,6 +425,9 @@ export default defineComponent({
             this.dataset.config.transformations.push(t)
             this.loading++
             this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
+        },
+        toggleSidebarVisibility() {
+            this.visibleRight = true
         },
         deleteTransformation(index: number): void {
             this.dataset.config.transformations.splice(index, 1)
