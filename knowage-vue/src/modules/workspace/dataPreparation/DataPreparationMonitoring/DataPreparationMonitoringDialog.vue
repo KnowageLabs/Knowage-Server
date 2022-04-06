@@ -12,6 +12,7 @@
             @update:schedulationPaused="updateSchedulationPaused"
             @update:schedulationEnabled="updateSchedulationEnabled"
             @update:currentCronExpression="updateCurrentCronExpression"
+            :loadingLogs="loadingLogs"
         />
         <template #footer>
             <Button v-bind:visible="visibility" class="kn-button--secondary" :label="$t('common.cancel')" @click="cancel" />
@@ -51,7 +52,8 @@
                 touched: false,
                 schedulationPaused: false,
                 schedulationEnabled: false,
-                instanceId: ''
+                instanceId: '',
+                loadingLogs: false
             }
         },
 
@@ -59,8 +61,10 @@
             async visibility(newVisibility) {
                 this.$store.commit('setLoading', true)
                 this.logs = []
+                this.loadingLogs = true
                 if (newVisibility) await this.loadLogs()
                 this.$store.commit('setLoading', false)
+                this.loadingLogs = false
             }
         },
 
@@ -140,5 +144,9 @@
         min-width: 600px;
         width: 1200px;
         max-width: 1400px;
+
+        .p-datatable.p-datatable-sm.data-prep-table {
+            min-height: 300px;
+        }
     }
 </style>

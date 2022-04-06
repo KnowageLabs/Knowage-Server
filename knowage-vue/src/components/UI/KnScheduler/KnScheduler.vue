@@ -40,7 +40,7 @@
                                         $emit('touched')
                                     }
                                 "
-                                :disabled="readOnly || !enableSchedulation"
+                                :disabled="isDisabled"
                             />
                             <label for="refreshRate" class="kn-material-input-label"> {{ $t(descriptor.refreshRate.placeholder) }}</label>
                         </div>
@@ -48,7 +48,7 @@
                         <div class="p-d-flex p-flex-wrap p-col-12 p-mb-1" v-if="selectedRefreshRate">
                             <div v-if="selectedRefreshRate === 'daily'" class="p-d-flex p-flex-wrap">
                                 <div class="p-d-flex p-ai-center p-flex-wrap itemClass">
-                                    <RadioButton :class="descriptor.style.radiobutton" id="dayConf1" name="dayConf" value="everyDay" v-model="dayConf" :disabled="readOnly || !enableSchedulation" @change="$emit('touched')" />
+                                    <RadioButton :class="descriptor.style.radiobutton" id="dayConf1" name="dayConf" value="everyDay" v-model="dayConf" :disabled="isDisabled" @change="$emit('touched')" />
                                     <i18n-t keypath="knScheduler.everyDay" tag="div" class="p-d-flex p-ai-center p-mr-2">
                                         <template #day>
                                             <Dropdown
@@ -65,7 +65,7 @@
                                                         $emit('touched')
                                                     }
                                                 "
-                                                :disabled="readOnly || !enableSchedulation"
+                                                :disabled="isDisabled"
                                             />
                                         </template>
                                     </i18n-t>
@@ -88,12 +88,12 @@
                                                 $emit('touched')
                                             }
                                         "
-                                        :disabled="readOnly || !enableSchedulation"
+                                        :disabled="isDisabled"
                                     />
                                 </div>
 
                                 <div class="p-d-flex p-ai-center">
-                                    <RadioButton :class="descriptor.style.radiobutton" id="dayConf2" name="dayConf" value="everyNotWorkingDays" v-model="dayConf" :disabled="readOnly || !enableSchedulation" @change="$emit('touched')" />
+                                    <RadioButton :class="descriptor.style.radiobutton" id="dayConf2" name="dayConf" value="everyNotWorkingDays" v-model="dayConf" :disabled="isDisabled" @change="$emit('touched')" />
                                     {{ $t('knScheduler.everyNotWorkingDays') }}
                                 </div>
                             </div>
@@ -119,7 +119,7 @@
                                                     $emit('touched')
                                                 }
                                             "
-                                            :disabled="readOnly || !enableSchedulation"
+                                            :disabled="isDisabled"
                                         />
                                     </template>
                                 </i18n-t>
@@ -141,12 +141,12 @@
                                                 $emit('touched')
                                             }
                                         "
-                                        :disabled="readOnly || !enableSchedulation"
+                                        :disabled="isDisabled"
                                     />
                                 </div>
 
                                 <div class="p-d-flex p-ai-center p-flex-wrap itemClass">
-                                    <RadioButton :class="descriptor.style.radiobutton" id="monthConf1" name="monthConf" v-model="monthConf" value="theDay" :disabled="readOnly || !enableSchedulation" @change="$emit('touched')" /> {{ $t('knScheduler.theDay') }}
+                                    <RadioButton :class="descriptor.style.radiobutton" id="monthConf1" name="monthConf" v-model="monthConf" value="theDay" :disabled="isDisabled" @change="$emit('touched')" /> {{ $t('knScheduler.theDay') }}
 
                                     <Dropdown
                                         id="selectedDayNumber"
@@ -163,12 +163,12 @@
                                                 $emit('touched')
                                             }
                                         "
-                                        :disabled="readOnly || !enableSchedulation"
+                                        :disabled="isDisabled"
                                     />
                                 </div>
 
                                 <div class="p-d-flex p-ai-center p-flex-wrap itemClass">
-                                    <RadioButton :class="descriptor.style.radiobutton" id="monthConf2" name="monthConf" v-model="monthConf" value="theOrdinalDay" :disabled="readOnly || !enableSchedulation" /> {{ $t('knScheduler.the') }}
+                                    <RadioButton :class="descriptor.style.radiobutton" id="monthConf2" name="monthConf" v-model="monthConf" value="theOrdinalDay" :disabled="isDisabled" /> {{ $t('knScheduler.the') }}
 
                                     <Dropdown
                                         id="selectedDayOrdinal"
@@ -185,7 +185,7 @@
                                                 $emit('touched')
                                             }
                                         "
-                                        :disabled="readOnly || !enableSchedulation"
+                                        :disabled="isDisabled"
                                     />
 
                                     <Dropdown
@@ -203,7 +203,7 @@
                                                 $emit('touched')
                                             }
                                         "
-                                        :disabled="readOnly || !enableSchedulation"
+                                        :disabled="isDisabled"
                                     />
                                 </div>
                             </div>
@@ -225,7 +225,7 @@
                                                     $emit('touched')
                                                 }
                                             "
-                                            :disabled="readOnly || !enableSchedulation"
+                                            :disabled="isDisabled"
                                         />
                                     </template>
                                 </i18n-t>
@@ -248,12 +248,12 @@
                                                 $emit('touched')
                                             }
                                         "
-                                        :disabled="readOnly || !enableSchedulation"
+                                        :disabled="isDisabled"
                                     />
                                 </div>
 
                                 <div class="p-d-flex p-ai-center p-flex-wrap itemClass">
-                                    <RadioButton :class="descriptor.style.radiobutton" id="monthConf1" name="yearConf" v-model="yearConf" value="theDay" :disabled="readOnly || !enableSchedulation" /> {{ $t('knScheduler.theDay') }}
+                                    <RadioButton :class="descriptor.style.radiobutton" id="monthConf1" name="yearConf" v-model="yearConf" value="theDay" :disabled="isDisabled" /> {{ $t('knScheduler.theDay') }}
 
                                     <Dropdown
                                         id="type"
@@ -270,12 +270,12 @@
                                                 $emit('touched')
                                             }
                                         "
-                                        :disabled="readOnly || !enableSchedulation"
+                                        :disabled="isDisabled"
                                     />
                                 </div>
 
                                 <div class="p-d-flex p-ai-center p-flex-wrap itemClass">
-                                    <RadioButton :class="descriptor.style.radiobutton" id="monthConf2" name="yearConf" v-model="yearConf" value="theOrdinalDay" :disabled="readOnly || !enableSchedulation" /> {{ $t('knScheduler.the') }}
+                                    <RadioButton :class="descriptor.style.radiobutton" id="monthConf2" name="yearConf" v-model="yearConf" value="theOrdinalDay" :disabled="isDisabled" /> {{ $t('knScheduler.the') }}
 
                                     <Dropdown
                                         id="selectedDayOrdinal"
@@ -292,7 +292,7 @@
                                                 $emit('touched')
                                             }
                                         "
-                                        :disabled="readOnly || !enableSchedulation"
+                                        :disabled="isDisabled"
                                     />
 
                                     <Dropdown
@@ -310,7 +310,7 @@
                                                 $emit('touched')
                                             }
                                         "
-                                        :disabled="readOnly || !enableSchedulation"
+                                        :disabled="isDisabled"
                                     />
                                 </div>
                             </div>
@@ -353,7 +353,7 @@
                         breakpoint="960px"
                         :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
                         :globalFilterFields="descriptor.globalFilterFields"
-                        :loading="loading"
+                        :loading="loadingLogs"
                     >
                         <template #empty>
                             {{ $t('common.info.noDataFound') }}
@@ -424,9 +424,10 @@
             schedulerVisible: { type: Boolean, default: true },
             logsVisible: { type: Boolean, default: true },
             schedulationEnabled: Boolean,
-            schedulationPaused: Boolean
+            schedulationPaused: Boolean,
+            loadingLogs: { type: Boolean, default: false }
         },
-        emits: ['touched', 'update:loading', 'update:schedulationPaused', 'update:schedulationEnabled', 'update:currentCronExpression'],
+        emits: ['touched', 'update:schedulationPaused', 'update:schedulationEnabled', 'update:currentCronExpression'],
         data() {
             return {
                 startDate: null as Date | null,
@@ -455,8 +456,7 @@
                 allValues: '*',
                 noSpecificValue: '?',
                 enableSchedulation: true,
-                paused: false,
-                loading: false
+                paused: false
             }
         },
         computed: {
@@ -491,6 +491,9 @@
                 } else {
                     return 'p-col-12'
                 }
+            },
+            isDisabled(): Boolean {
+                return this.readOnly || !this.enableSchedulation || this.loadingLogs
             }
         },
         async created() {
@@ -759,17 +762,11 @@
             },
             cronExpression(newFormula) {
                 if (newFormula) {
-                    this.$emit('update:loading', true)
-                    this.loading = true
                     this.localCronExpression = newFormula
                     this.parseFormula(this.localCronExpression)
-                    this.$emit('update:loading', false)
-                    this.loading = false
                 }
             },
             localCronExpression() {
-                this.$emit('update:loading', true)
-
                 this.parseFormula(this.localCronExpression)
             },
             schedulationPaused(newSchedulationPaused) {
