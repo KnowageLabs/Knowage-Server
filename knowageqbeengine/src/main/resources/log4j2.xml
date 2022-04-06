@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="info">
 	<Appenders>
-		<Console name="CONSOLE" target="SYSTEM_OUT">
-			<PatternLayout>
-				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%mdc{correlationId}] [%mdc{tenant}]%n%message%n%xThrowable</Pattern>
-			</PatternLayout>
-		</Console>
 		<RollingFile
 				name="KNOWAGE_QBE_ENGINE"
 				fileName="${sys:catalina.base}/logs/knowageQbeEngine.log"
@@ -22,7 +17,7 @@
 			<DefaultRolloverStrategy max="3" />
 		</RollingFile>
 		<RollingFile
-				name="FILE_AUDIT"
+				name="KNOWAGE_QBE_ENGINE_AUDIT"
 				fileName="${sys:catalina.base}/logs/knowageQbeEngineAudit.log"
 				append="true"
 				filePattern="${sys:catalina.base}/logs/knowageQbeEngineAudit-%i.log"
@@ -39,7 +34,7 @@
 	</Appenders>
 	<Loggers>
 		<logger name="audit" additivity="false" level="info">
-			<AppenderRef ref="FILE_AUDIT" />
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE_AUDIT" />
 		</logger>
 		<logger name="edu.yale" additivity="false" level="warn">
 			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
@@ -49,7 +44,7 @@
 			<!-- <AppenderRef ref="CONSOLE" /> -->
 		</logger>
 		<logger name="it.eng.qbe.datasource.jpa.audit.JPAPersistenceManagerAuditLogger" additivity="false" level="info">
-			<AppenderRef ref="FILE_AUDIT" />
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE_AUDIT" />
 		</logger>
 		<logger name="it.eng.spagobi" additivity="false" level="error">
 			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
