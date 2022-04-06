@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="info">
 	<Appenders>
+		<Console name="CONSOLE" target="SYSTEM_OUT">
+			<PatternLayout>
+				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%mdc{correlationId}] [%mdc{tenant}]%n%message%n%xThrowable</Pattern>
+			</PatternLayout>
+		</Console>
 		<RollingFile
 				name="KNOWAGE_QBE_ENGINE"
 				fileName="${sys:catalina.base}/logs/knowageQbeEngine.log"
