@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.knowageapi.error;
+package it.eng.knowage.boot.error;
 
 import java.util.List;
 import java.util.Locale;
@@ -23,8 +23,7 @@ import java.util.Locale;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import it.eng.knowage.boot.error.KnowageException;
-import it.eng.knowage.knowageapi.utils.messages.EngineMessageBundle;
+import it.eng.knowage.boot.utils.EngineMessageBundle;
 
 /**
  * @author Marco Libanori

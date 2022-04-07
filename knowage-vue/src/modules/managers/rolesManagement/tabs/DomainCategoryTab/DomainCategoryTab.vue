@@ -28,7 +28,7 @@
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
                 </template>
-                <Column selectionMode="multiple" :style="domainCategoryTabDescriptor.column.style" dataKey="categoryId"></Column>
+                <Column class="kn-column-checkbox" selectionMode="multiple" dataKey="categoryId"></Column>
                 <Column field="categoryName" :header="$t('common.name')" :style="domainCategoryTabDescriptor.column.header.style"></Column>
             </DataTable>
         </template>

@@ -8,7 +8,7 @@
 		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 		version="3.1" >
 
-	<display-name>WhatIf</display-name>
+	<display-name>knowagewhatifengine</display-name>
 	<description>Knowage What-If engine</description>
 
 	<filter>

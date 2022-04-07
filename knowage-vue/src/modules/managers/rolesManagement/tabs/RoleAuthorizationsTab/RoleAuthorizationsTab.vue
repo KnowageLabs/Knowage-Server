@@ -10,10 +10,12 @@
                                     {{ $t(category.name) }}
                                 </template>
                             </Toolbar>
-                            <div v-for="(authCBInfo, ind) of authorizationCBs[category.categoryName]" :key="ind">
-                                <div class="p-field-checkbox p-m-3">
-                                    <InputSwitch :id="'cb-' + index + '-' + ind" v-model="role[authCBInfo.fieldName]" :disabled="authCBInfo.enableForRole && role.roleTypeCD === 'ADMIN'" @change="authChanged(authCBInfo.fieldName, role[authCBInfo.fieldName])" />
-                                    <label :for="'cb-' + index + '-' + ind">{{ $t(authCBInfo.label) }}</label>
+                            <div class="p-grid">
+                                <div v-for="(authCBInfo, ind) of authorizationCBs[category.categoryName]" :key="ind" class="p-xl-3 p-lg-4 p-md-6 p-sm-12">
+                                    <div class="p-field-checkbox p-m-3">
+                                        <InputSwitch :id="'cb-' + index + '-' + ind" v-model="role[authCBInfo.fieldName]" :disabled="authCBInfo.enableForRole && role.roleTypeCD === 'ADMIN'" @change="authChanged(authCBInfo.fieldName, role[authCBInfo.fieldName])" />
+                                        <label :for="'cb-' + index + '-' + ind">{{ $t(authCBInfo.label) }}</label>
+                                    </div>
                                 </div>
                             </div>
                         </template>

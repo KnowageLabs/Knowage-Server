@@ -2,7 +2,7 @@
     <div class="kn-page kn-data-preparation">
         <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" />
         <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" />
-        <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" />
+        <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" :instanceId="instanceId" @update:instanceId="updateInstanceId" :processId="processId" @update:processId="updateprocessId" :preparedDsMeta="preparedDsMeta" />
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
             <template #start> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }})</template>
             <template #end>
@@ -12,23 +12,23 @@
         ></Toolbar>
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0 toolbarCustomConfig">
             <template #start>
-                <span v-for="(menu, index) in getMenuForToolbar()" v-bind:key="index">
+                <template v-for="(menu, index) in getMenuForToolbar()" v-bind:key="index">
                     <Button v-if="menu !== 'divider'" :class="descriptor.css.buttonClassHeader" v-tooltip.bottom="$t(menu.label)" @click="callFunction(menu)" :disabled="calculateDisabledProperty(menu)">
                         <span v-if="menu.icon.class" :class="menu.icon.class">{{ menu.icon.name }}</span>
                         <i v-else :class="menu.icon"></i>
                     </Button>
                     <Divider v-else layout="vertical" />
-                </span>
+                </template>
             </template>
             <template #end>
                 <div class="arrow-button-container">
-                    <Button icon="pi pi-arrow-left" :class="descriptor.css.buttonClassHeader" style="overflow: visible" @click="visibleRight = true" />
+                    <Button icon="pi pi-arrow-left" :class="descriptor.css.buttonClassHeader" style="overflow: visible" @click="toggleSidebarVisibility()" />
                     <Badge class="arrow-badge" v-if="dataset.config && dataset.config.transformations && dataset.config.transformations.length > 0" :value="dataset.config && dataset.config.transformations && dataset.config.transformations.length"></Badge>
                 </div>
             </template>
         </Toolbar>
         <Divider class="kn-divider" />
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading > 0" />
         <div class="kn-page-content p-grid p-m-0 managerDetail">
             <Sidebar v-model:visible="visibleRight" position="right" class="kn-data-preparation-sidenav">
                 <div class="info-container">
@@ -52,8 +52,8 @@
                         <i v-else class="transformation-icon" :class="descriptorTransformations.filter((x) => x.name === tr.type)[0].icon"></i>
 
                         <span class="typeAndDescription kn-truncated kn-flex">
-                            <span class="kn-list-item" :title="$t(descriptorTransformations.filter((x) => x.name === tr.type)[0].label)">{{ $t(descriptorTransformations.filter((x) => x.name === tr.type)[0].label) }} </span>
-                            <span class="transformationDescription kn-truncated" :title="getTextForSidebar(tr)">
+                            <span class="kn-list-item">{{ $t(descriptorTransformations.filter((x) => x.name === tr.type)[0].label) }} </span>
+                            <span class="transformationDescription kn-truncated">
                                 {{ getTextForSidebar(tr) }}
                             </span>
                         </span>
@@ -72,7 +72,7 @@
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 breakpoint="960px"
                 :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
-                :loading="loading"
+                :loading="loading > 0"
                 :resizableColumns="true"
                 columnResizeMode="expand"
                 showGridlines
@@ -90,7 +90,8 @@
                 <Column v-for="(col, colIndex) in columns" :field="col.header" :key="colIndex" :style="{ width: '200px' }">
                     <template #header>
                         <Button v-if="col.fieldType" :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'opType-' + colIndex)">
-                            <i :class="descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon"></i>
+                            <span v-if="descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon.class" :class="descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon.class">{{ descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon.name }}</span>
+                            <i v-else :class="descriptor.roles.filter((x) => x.code === col.fieldType)[0].icon"></i>
                         </Button>
                         <OverlayPanel :ref="'opType-' + colIndex" :popup="true">
                             <span class="p-float-label">
@@ -105,10 +106,10 @@
                         <Button icon="pi pi-ellipsis-v" :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'trOpType-' + colIndex)" />
                         <Menu :model="getTransformationsMenu(col)" :ref="'trOpType-' + colIndex" :popup="true">
                             <template #item="{item}">
-                                <span class="p-menuitem-link" @click="callFunction(item, col)">
-                                    <span :class="item.icon.class" v-if="item.icon.class">{{ item.icon.name }}</span>
-                                    <i v-else :class="item.icon"></i> <span class="p-ml-2"> {{ $t(item.label) }}</span></span
-                                >
+                                <span :class="['p-menuitem-link', 'toolbarCustomConfig', descriptor.css.buttonClassHeader]" @click="callFunction(item, col)">
+                                    <span :class="item.icon.class" class="menu-icon" v-if="item.icon.class">{{ item.icon.name }}</span>
+                                    <i v-else :class="item.icon"></i> <span class="p-ml-2"> {{ $t(item.label) }}</span>
+                                </span>
                             </template>
                         </Menu>
                     </template></Column
@@ -147,14 +148,17 @@ export default defineComponent({
     name: 'data-preparation-detail',
     props: {
         id: String,
-        transformations: Array as PropType<any[]>
+        transformations: Array as PropType<any[]>,
+        existingProcessId: String,
+        existingInstanceId: String,
+        existingDataset: String
     },
     components: { KnCalculatedField, Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
 
     data() {
         return {
             descriptor: DataPreparationDescriptor,
-            loading: false as boolean,
+            loading: 0,
             datasetData: Array<any>(),
             displayDataPreparationDialog: false as boolean,
             selectedProduct: null,
@@ -170,19 +174,22 @@ export default defineComponent({
             simpleDescriptor: DataPreparationSimpleDescriptor,
             splitDescriptor: DataPreparationSplitDescriptor,
             client: {} as any,
-            cfDescriptor: calculatedFieldDescriptor
+            cfDescriptor: calculatedFieldDescriptor,
+            instanceId: '' as string,
+            processId: '' as string,
+            preparedDsMeta: {}
         }
     },
 
     async created() {
-        this.$emit('update:loading', true)
-        this.loading = true
+        this.loading++
         this.descriptorTransformations = Object.assign([], this.descriptor.transformations)
 
         await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/' + this.id).then((response: AxiosResponse<any>) => {
             this.dataset = response.data[0]
         })
         if (this.dataset) {
+            this.initDsMetadata()
             this.initTransformations()
             this.initWebsocket()
 
@@ -196,8 +203,7 @@ export default defineComponent({
                         } else {
                             console.log('got empty message')
                         }
-                        this.loading = false
-                        this.$emit('update:loading', false)
+                        this.loading--
                     },
                     {
                         dsLabel: this.dataset.label
@@ -213,8 +219,7 @@ export default defineComponent({
                         this.$store.commit('setError', { title: 'Error' })
                     }
                     this.dataset.config.transformations.splice(-1)
-                    this.loading = false
-                    this.$emit('update:loading', false)
+                    this.loading--
                 })
 
                 this.client.subscribe(
@@ -236,8 +241,6 @@ export default defineComponent({
                 )
 
                 if (this.transformations) {
-                    this.loading = true
-                    this.$emit('update:loading', true)
                     this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
                 }
             }
@@ -278,7 +281,7 @@ export default defineComponent({
             else col.editing = true
         },
         closeTemplate(): void {
-            this.$router.push('/workspace/data')
+            this.$router.go(-1)
         },
         refreshOriginalDataset(): void {
             // launch avro export job
@@ -338,7 +341,7 @@ export default defineComponent({
             if (this.transformations) {
                 if (!this.dataset.config) this.dataset.config = {}
                 this.dataset.config.transformations = this.transformations
-                this.loading = true
+                this.loading++
             }
         },
         initWebsocket(): void {
@@ -351,6 +354,23 @@ export default defineComponent({
                 heartbeatIncoming: 4000,
                 heartbeatOutgoing: 4000
             })
+        },
+        async initDsMetadata() {
+            if (this.existingProcessId) this.processId = this.existingProcessId
+            if (this.existingInstanceId) this.instanceId = this.existingInstanceId
+            if (this.existingDataset) {
+                let dsMeta = JSON.parse(this.existingDataset)
+                this.preparedDsMeta = {}
+                this.preparedDsMeta['label'] = dsMeta.label
+                this.preparedDsMeta['name'] = dsMeta.name
+                this.preparedDsMeta['description'] = dsMeta.description
+                await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.label).then((response: AxiosResponse<any>) => {
+                    let instance = response.data.instance
+                    if (instance.config) {
+                        this.preparedDsMeta['config'] = instance.config
+                    }
+                })
+            }
         },
         getColHeader(metadata: Array<any>, idx: Number): string {
             let columnMapping = 'Column_' + idx
@@ -403,14 +423,15 @@ export default defineComponent({
             if (!this.dataset.config) this.dataset.config = {}
             if (!this.dataset.config.transformations) this.dataset.config.transformations = []
             this.dataset.config.transformations.push(t)
-            this.loading = true
-            this.$emit('update:loading', true)
+            this.loading++
             this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
+        },
+        toggleSidebarVisibility() {
+            this.visibleRight = true
         },
         deleteTransformation(index: number): void {
             this.dataset.config.transformations.splice(index, 1)
-            this.loading = true
-            this.$emit('update:loading', true)
+            this.loading++
             this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
         },
         getCompatibilityType(col: IDataPreparationColumn): void {
@@ -461,6 +482,12 @@ export default defineComponent({
         switchEditMode(col) {
             col.edit = !col.edit
         },
+        updateInstanceId(iid): void {
+            this.instanceId = iid
+        },
+        updateprocessId(pid): void {
+            this.processId = pid
+        },
         updateTable(message) {
             let response = JSON.parse(message)
             // set headers
@@ -486,6 +513,9 @@ export default defineComponent({
                 this.datasetData.push(obj)
             })
         }
+    },
+    unmounted() {
+        if (this.client) this.client.deactivate()
     }
 })
 </script>
@@ -495,6 +525,9 @@ export default defineComponent({
     .arrow-button-container {
         position: relative;
         left: -10px;
+        .p-button {
+            padding-left: 20px;
+        }
         .arrow-badge {
             position: absolute;
             top: 0;
@@ -557,6 +590,36 @@ export default defineComponent({
 }
 .toolbarCustomConfig {
     background-color: white !important;
+
+    .kn-datapreparation-button {
+        min-width: 0;
+
+        span {
+            width: 16px;
+            height: 16px;
+            font-size: 16px;
+        }
+        i {
+            width: 16px;
+            height: 16px;
+            font-size: 16px;
+        }
+    }
+
+    &.kn-datapreparation-button {
+        min-width: 0;
+
+        .menu-icon {
+            width: 16px;
+            height: 16px;
+            font-size: 16px;
+        }
+        i {
+            width: 16px;
+            height: 16px;
+            font-size: 16px;
+        }
+    }
 }
 .dividerCustomConfig {
     border: 1px solid;

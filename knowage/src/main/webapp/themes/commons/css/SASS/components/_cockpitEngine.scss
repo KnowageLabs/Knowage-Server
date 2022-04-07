@@ -1495,6 +1495,7 @@
 			.pivotTableDesigner{
 				padding:0px;
 				min-height: calc(100% - 56px);
+				max-height: 0px;
 				.contentElementBox {
 					padding: 8px 4px;
 					&:first-child {

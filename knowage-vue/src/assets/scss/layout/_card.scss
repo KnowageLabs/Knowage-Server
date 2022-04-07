@@ -1,4 +1,6 @@
 .p-card.kn-card {
+    border-radius: var(--kn-button-border-radius);
+
     &.no-padding {
         .p-card-body {
             padding: 0 0 8px 0;
@@ -14,6 +16,19 @@
             height: 100%;
             .p-card-content {
                 height: 100%;
+            }
+        }
+
+        &--with-toolbar {
+            @extend .full-height;
+
+            .p-card-body {
+                height: calc(100% - 35px);
+                padding-bottom: 0px;
+
+                .p-card-content {
+                    padding-bottom: 0px;
+                }
             }
         }
     }
