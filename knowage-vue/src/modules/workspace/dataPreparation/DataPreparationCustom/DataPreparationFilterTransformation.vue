@@ -2,40 +2,40 @@
     <div class="data-prep-custom-transformation">
         <div class="p-d-flex" v-for="(filter, index) in localTransformation" v-bind:key="index">
             <span class="p-float-label p-field p-ml-2 kn-flex">
-                <Dropdown v-model="filter.column" :options="columns" class="kn-material-input" optionLabel="fieldAlias" :filter="true" :disabled="col" />
+                <Dropdown v-model="filter.column" :options="columns" class="kn-material-input" optionLabel="fieldAlias" :filter="true" :disabled="col || readOnly" />
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.column') }}</label>
             </span>
             <span v-if="filter.column" class="p-float-label p-field p-ml-2 kn-flex">
-                <Dropdown v-model="filter.condition" :options="getAvailableConditions(index)" optionLabel="label" optionValue="code" class="kn-material-input" />
+                <Dropdown v-model="filter.condition" :disabled="readOnly" :options="getAvailableConditions(index)" optionLabel="label" optionValue="code" class="kn-material-input" />
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.conditions') }}</label>
             </span>
             <span v-if="showStartDate(index)" class="p-float-label p-field p-ml-2 kn-flex">
-                <Calendar v-model="filter.startDate" class="kn-material-input" />
+                <Calendar v-model="filter.startDate" :disabled="readOnly" class="kn-material-input" />
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.startDate') }}</label>
             </span>
             <span v-if="showEndDate(index)" class="p-float-label p-field p-ml-2 kn-flex">
-                <Calendar v-model="filter.endDate" class="kn-material-input" />
+                <Calendar v-model="filter.endDate" :disabled="readOnly" class="kn-material-input" />
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.endDate') }}</label>
             </span>
             <span v-if="showInputText(index)" class="p-float-label p-field p-ml-2 kn-flex">
-                <InputText type="text" v-model="filter.text" class="kn-material-input" />
+                <InputText type="text" v-model="filter.text" :disabled="readOnly" class="kn-material-input" />
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.text') }}</label>
             </span>
             <span v-if="showInputNumber(index)" class="p-float-label p-field p-ml-2 kn-flex">
-                <InputText type="number" v-model="filter.number" class="kn-material-input" />
+                <InputText type="number" v-model="filter.number" :disabled="readOnly" class="kn-material-input" />
                 <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.number') }}</label>
             </span>
             <span v-if="showValuesList(index)" class="p-field p-ml-2 kn-flex">
                 <span class="p-float-label kn-material-input">
-                    <Chips class="p-inputtext-sm"  :multiple="true" v-model="filter.valuesList" />
+                    <Chips class="p-inputtext-sm" :multiple="true" v-model="filter.valuesList" />
                     <label class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.values') }}</label>
                     <small id="username1-help">{{ $t('managers.workspaceManagement.dataPreparation.transformations.valuesHint') }}</small>
                 </span>
             </span>
-            <span> <Button icon="pi pi-trash" :class="'p-button-text p-button-rounded p-button-plain'" @click="deleteRow(index)" v-if="localTransformation.length > 1"/></span>
+            <span> <Button icon="pi pi-trash" :class="'p-button-text p-button-rounded p-button-plain'" @click="deleteRow(index)" v-if="!readOnly && localTransformation.length > 1"/></span>
         </div>
         <span class="p-d-flex p-jc-center p-ai-center">
-            <Button icon="pi pi-plus" class="p-button-text p-button-rounded p-button-plain" @click="addNewRow()" />
+            <Button v-if="!readOnly" icon="pi pi-plus" class="p-button-text p-button-rounded p-button-plain" @click="addNewRow()" />
         </span>
     </div>
 </template>
@@ -52,7 +52,7 @@ import Chips from 'primevue/chips'
 export default defineComponent({
     name: 'data-preparation-filter-transformation',
 
-    props: { columns: { type: Array as PropType<Array<IDataPreparationColumn>> }, col: String },
+    props: { columns: { type: Array as PropType<Array<IDataPreparationColumn>> }, col: String, readOnly: Boolean, transformation: {} as any },
 
     components: { Dropdown, Calendar, Chips },
     emits: ['update:transformation'],
@@ -65,6 +65,14 @@ export default defineComponent({
     },
     mounted() {
         this.localTransformation = [{}] as Array<IFilterTransformationParameter>
+        if (this.transformation && this.transformation.parameters) {
+            for (let i = 0; i < this.transformation.parameters.length; i++) {
+                if (this.transformation.parameters[i]['name'] == 'condition') this.localTransformation[0].condition = this.transformation.parameters[i]['value']
+                else if (this.transformation.parameters[i]['name'] == 'text') this.localTransformation[0].text = this.transformation.parameters[i]['value']
+                else if (this.transformation.parameters[i]['name'] == 'startDate') this.localTransformation[0].startDate = this.transformation.parameters[i]['value']
+                else if (this.transformation.parameters[i]['name'] == 'endDate') this.localTransformation[0].endDate = this.transformation.parameters[i]['value']
+            }
+        }
         if (this.col && this.columns) this.localTransformation[0].column = this.columns.filter((item) => item.header === this.col)[0]
     },
     methods: {

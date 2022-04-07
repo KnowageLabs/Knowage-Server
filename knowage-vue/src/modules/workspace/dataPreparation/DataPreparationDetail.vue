@@ -1,7 +1,7 @@
 <template>
     <div class="kn-page kn-data-preparation">
         <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" />
-        <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" />
+        <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" :readOnly="readOnly" @update:readOnly="updateReadOnly" />
         <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" :instanceId="instanceId" @update:instanceId="updateInstanceId" :processId="processId" @update:processId="updateprocessId" :preparedDsMeta="preparedDsMeta" />
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
             <template #start> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }})</template>
@@ -44,23 +44,14 @@
                 <Divider class="p-m-0 p-p-0 dividerCustomConfig" />
                 <div class="kn-truncated">{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</div>
 
-                <div v-if="dataset.config && dataset.config.transformations && dataset.config.transformations.length > 0" class="sidebarClass">
-                    <div v-for="(tr, index) in dataset.config.transformations.reverse()" v-bind:key="index" :class="getSidebarElementClass(index)" class="sidenav-transformation">
-                        <span class="transformation-icon" :class="descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.class" v-if="descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.class">{{
-                            descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.name
-                        }}</span>
-                        <i v-else class="transformation-icon" :class="descriptorTransformations.filter((x) => x.name === tr.type)[0].icon"></i>
-
-                        <span class="typeAndDescription kn-truncated kn-flex">
-                            <span class="kn-list-item">{{ $t(descriptorTransformations.filter((x) => x.name === tr.type)[0].label) }} </span>
-                            <span class="transformationDescription kn-truncated">
-                                {{ getTextForSidebar(tr) }}
-                            </span>
-                        </span>
-
-                        <Button v-if="index == 0" icon="p-jc-end pi pi-trash" :class="descriptor.css.buttonClassHeader" @click="deleteTransformation(index)" v-tooltip="$t('common.delete')" />
-                    </div>
-                </div>
+                <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="dataset.config.transformations" optionLabel="type" listStyle="max-height:200px"
+                    ><template #option="slotProps">
+                        <div class="p-text-uppercase kn-list-item fieldType">
+                            <div class="p-ml-2">{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].columns[0] }}</div>
+                            <Button v-if="slotProps.option.type != 'trim' && slotProps.option.type != 'drop'" icon="pi pi-pencil" :class="descriptor.css.buttonClassHeader" @click="openTransformationDetail(slotProps.option)" v-tooltip="$t('common.edit')" />
+                            <Button v-if="slotProps.index == dataset.config.transformations.length - 1" icon="p-jc-end pi pi-trash" :class="descriptor.css.buttonClassHeader" @click="deleteTransformation()" v-tooltip="$t('common.delete')" />
+                        </div> </template
+                ></Listbox>
             </Sidebar>
             <DataTable
                 ref="dt"
@@ -131,6 +122,7 @@ import Divider from 'primevue/divider'
 import Dropdown from 'primevue/dropdown'
 import Sidebar from 'primevue/sidebar'
 import OverlayPanel from 'primevue/overlaypanel'
+import Listbox from 'primevue/listbox'
 
 import Menu from 'primevue/menu'
 
@@ -153,7 +145,7 @@ export default defineComponent({
         existingInstanceId: String,
         existingDataset: String
     },
-    components: { KnCalculatedField, Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
+    components: { Listbox, KnCalculatedField, Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
 
     data() {
         return {
@@ -177,6 +169,7 @@ export default defineComponent({
             cfDescriptor: calculatedFieldDescriptor,
             instanceId: '' as string,
             processId: '' as string,
+            readOnly: false as boolean,
             preparedDsMeta: {}
         }
     },
@@ -328,7 +321,31 @@ export default defineComponent({
 
             return '(' + text + ')'
         },
-
+        openTransformationDetail(t) {
+            this.readOnly = true
+            let selectedTransformation = this.descriptorTransformations.filter((x) => x.name == t.type)[0]
+            selectedTransformation['parameters'] = []
+            let param = t.parameters[0]
+            Object.keys(param).forEach((key) => {
+                let obj = {}
+                obj['name'] = key
+                if (key == 'columns') {
+                    let value = [] as Array<any>
+                    for (let i = 0; i < param[key].length; i++) {
+                        let col = this.columns.filter((x) => x.fieldAlias.toUpperCase() === param[key][i].toUpperCase())[0]
+                        value.push(col)
+                    }
+                    obj['value'] = value
+                } else {
+                    obj['value'] = param[key]
+                }
+                selectedTransformation['parameters'].push(obj)
+            })
+            if (t.type == 'filter') {
+                let col = this.columns.filter((x) => x.fieldAlias.toUpperCase() === t.parameters[0].columns[0].toUpperCase())[0]
+                this.callFunction(selectedTransformation, col)
+            } else this.callFunction(selectedTransformation, undefined)
+        },
         getTransformationsMenu(col: IDataPreparationColumn): Array<any> {
             return this.descriptorTransformations
                 .filter((x) => x.editColumn && !x.hidden)
@@ -430,7 +447,8 @@ export default defineComponent({
             this.visibleRight = true
         },
         deleteTransformation(index: number): void {
-            this.dataset.config.transformations.splice(index, 1)
+            if (index) this.dataset.config.transformations.splice(index, 1)
+            else this.dataset.config.transformations.splice(-1) // remove last element
             this.loading++
             this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
         },
@@ -481,6 +499,9 @@ export default defineComponent({
         },
         switchEditMode(col) {
             col.edit = !col.edit
+        },
+        updateReadOnly(state): void {
+            this.readOnly = state
         },
         updateInstanceId(iid): void {
             this.instanceId = iid

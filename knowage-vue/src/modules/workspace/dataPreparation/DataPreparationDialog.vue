@@ -9,13 +9,13 @@
     >
         <Message severity="info" :closable="false" v-if="localCopy && localCopy.description">{{ $t(localCopy.description) }}</Message>
 
-        <DataPreparationSimple v-if="localCopy.type === 'simple'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
-        <DataPreparationFilter v-if="localCopy.type === 'filter'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
+        <DataPreparationSimple v-if="localCopy.type === 'simple'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" :readOnly="readOnly" />
+        <DataPreparationFilter v-if="localCopy.type === 'filter'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" :readOnly="readOnly" />
         <DataPreparationSplit v-if="localCopy.type === 'split'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
 
         <template #footer>
             <Button class="p-button-text kn-button thirdButton" :label="$t('common.cancel')" @click="resetAndClose" />
-            <Button class="kn-button kn-button--primary" v-t="'common.apply'" @click="handleTransformation" />
+            <Button v-if="!readOnly" class="kn-button kn-button--primary" v-t="'common.apply'" @click="handleTransformation" />
         </template>
     </Dialog>
 </template>
@@ -38,7 +38,8 @@ export default defineComponent({
     props: {
         transformation: {} as PropType<ITransformation<ITransformationParameter>>,
         columns: { type: Array as PropType<Array<IDataPreparationColumn>> },
-        col: String
+        col: String,
+        readOnly: Boolean
     },
     components: { DataPreparationSimple, Dialog, Message, DataPreparationFilter, DataPreparationSplit },
     data() {
@@ -49,7 +50,7 @@ export default defineComponent({
             vTransformation: createValidations('localCopy', this.validationDescriptor.validations.configuration)
         }
     },
-    emits: ['update:transformation', 'update:col', 'send-transformation'],
+    emits: ['update:transformation', 'update:col', 'update:readOnly', 'send-transformation'],
 
     created() {
         this.simpleDescriptor = { ...DataPreparationSimpleDescriptor } as any
@@ -107,6 +108,7 @@ export default defineComponent({
         },
 
         closeDialog(): void {
+            this.$emit('update:readOnly', false)
             this.$emit('update:col', false)
             this.$emit('update:transformation', false)
         },
