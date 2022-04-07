@@ -7,8 +7,10 @@
     "alias": "alias",
     "apply": "applica",
     "attachments": "allegati",
+    "attributes": "Attributes",
     "author": "autore",
     "back": "indietro",
+    "bottom": "bottom",
     "cancel": "cancella",
     "category": "categoria",
     "cc": "CC",
@@ -69,6 +71,7 @@
     "filters": "filtri",
     "from": "da",
     "general": "generale",
+    "generate": "Generate",
     "group": "gruppo",
     "home": "home",
     "image": "immagine",
@@ -88,6 +91,7 @@
     "label": "etichetta",
     "language": "linguaggio",
     "lastChangeDate": "data ultimo cambiamento",
+    "left": "left",
     "library": "libreria",
     "load": "carica",
     "locked": "bloccato",
@@ -128,6 +132,7 @@
     "replyTo": "rispondi a",
     "required": "obbligatorio",
     "reused": "riutilizzato",
+    "right": "right",
     "role": "ruolo",
     "roles": "ruoli",
     "run": "esegui",
@@ -168,6 +173,7 @@
     "to": "a",
     "toast": {
       "cloneConfirmTitle": "confermi clonazione elemento?",
+      "createSuccess": "Item was created successfully",
       "createTitle": "creato",
       "deleteConfirmTitle": "confermi eliminazione?",
       "deleteMessage": "questo elemento sarà eliminato. Sei sicuro di voler continuare con questa operazione?",
@@ -182,6 +188,7 @@
       "uploadSuccess": "elemento caricato correttamente",
       "warning": "attenzione"
     },
+    "top": "top",
     "type": "tipologia",
     "upload": "carica",
     "uploadFile": "carica file",
@@ -220,6 +227,7 @@
     "august": "agosto",
     "custom": "Custom",
     "daily": "Daily",
+    "date": "Date",
     "day": "giorno",
     "days": "giorni",
     "december": "dicembre",
@@ -359,6 +367,7 @@
         "imageError": "errore durante la cancellazione dell'immagine",
         "imageUploadError": "errore durante il caricamento dell'immagine",
         "infoTitle": "informazioni",
+        "parametersPanelPosition": "Parameters panel position",
         "positionTitle": "posizione",
         "previewImage": "anteprima immagine",
         "profiledVisibility": "condizioni definite",
@@ -953,6 +962,15 @@
       "usedMemory": "Used Memory",
       "weekly": "WEEKLY",
       "yearly": "YEARLY"
+    },
+    "calendarManagement": {
+      "endValidityDate": "End Validity Date",
+      "generateConfirmMessage": "Because it will create a calendar with {numberOfDays} days. Continue?",
+      "generateConfirmTitle": "Warning! This action could require some time",
+      "holiday": "Holiday",
+      "publicHoliday": "Public Holiday",
+      "startValidityDate": "Start Validity Date",
+      "title": "Calendar"
     },
     "catalogFunction": {
       "hint": "The import/export functionality allows you to bulk insert/extract data from your tenant. \n Select the category to view the items present. \n Click on @:common.import if you want to import a package. \n Select the items and click  @:common.export if you want to download them in a zip archive.",
@@ -1903,6 +1921,7 @@
       "dataPreparation": {
         "dataset": {
           "description": "Description",
+          "enableSchedulation": "Enable schedulation",
           "label": "Label",
           "name": "Name",
           "refreshRate": {
@@ -1918,9 +1937,13 @@
           },
           "visibility": "Visibility"
         },
+        "errors": {
+          "updatingSchedulation": "An error occurred while updating schedulation"
+        },
         "label": "Data preparation",
         "monitoring": {
           "executionLogs": "Execution log",
+          "hint": "No scheduling applied to this dataset. It will only run once. If you want to enable schedulation, use the enable schedulation switch.",
           "recordsNumber": "Number of records",
           "start": "Start date",
           "status": "Status",
@@ -2270,6 +2293,9 @@
     "roleSelection": "Role Selection"
   },
   "workspace": {
+    "advancedData": {
+      "title": "Data preparation"
+    },
     "buttonsTooltips": {
       "deleteDoc": "Delete Document",
       "editDoc": "Edit Document",
@@ -2329,6 +2355,7 @@
       "driverable": "Drivable",
       "exportSuccess": "The download has started in background. You will find the result file in your download page.",
       "fileDownload": "Download Dataset file",
+      "isPreparing": "Preparing avro file...",
       "modified": "Modified",
       "monitoring": "Monitoring",
       "openData": "Import Open Data",

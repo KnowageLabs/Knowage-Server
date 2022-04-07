@@ -183,7 +183,7 @@ import ScrollPanel from 'primevue/scrollpanel'
 export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton, ScrollPanel },
-    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String }, position: { type: String } },
+    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String } },
     emits: ['execute', 'exportCSV', 'roleChanged'],
     data() {
         return {
@@ -239,7 +239,7 @@ export default defineComponent({
             return this.requiredFiledMissing()
         },
         positionClass(): string {
-            return this.position ? 'kn-parameter-sidebar-' + this.position : 'kn-parameter-sidebar'
+            return this.document?.parametersRegion ? 'kn-parameter-sidebar-' + this.document.parametersRegion : 'kn-parameter-sidebar'
         }
     },
     created() {
@@ -625,12 +625,12 @@ export default defineComponent({
             }
         }
     }
-    &.kn-parameter-sidebar-left {
+    &.kn-parameter-sidebar-west {
         right: unset;
         border-left: unset;
         border-right: 1px solid var(--kn-color-borders);
     }
-    &.kn-parameter-sidebar-top {
+    &.kn-parameter-sidebar-north {
         right: unset;
         border-left: unset;
         border-bottom: 1px solid var(--kn-color-borders);
@@ -664,7 +664,7 @@ export default defineComponent({
             }
         }
     }
-    &.kn-parameter-sidebar-bottom {
+    &.kn-parameter-sidebar-south {
         right: unset;
         top: unset;
         bottom: 0;

@@ -143,7 +143,7 @@
         }
     },
     "css": {
-        "buttonClassHeader": "p-button-text p-button-rounded p-button-plain"
+        "buttonClassHeader": "p-button-text p-button-rounded p-button-plain kn-datapreparation-button"
     },
     "dataPreparation": {
         "refreshRate": {

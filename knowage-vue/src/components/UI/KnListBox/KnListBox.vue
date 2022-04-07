@@ -98,6 +98,7 @@ export default defineComponent({
     emits: ['click'],
     created() {
         this.selectedSort = this.settings.defaultSortField || 'label'
+        this.sort(null, this.selectedSort, true)
     },
     updated() {
         this.sort(null, this.selectedSort, true)

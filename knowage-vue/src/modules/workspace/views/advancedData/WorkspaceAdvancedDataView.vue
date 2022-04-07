@@ -1,8 +1,7 @@
 <template>
-    <DataPreparationMonitoringDialog v-model:visibility="showMonitoring" @close="showMonitoring = false" :dataset="selectedDataset"></DataPreparationMonitoringDialog>
+    <DataPreparationMonitoringDialog v-model:visibility="showMonitoring" @close="showMonitoring = false" @save="updateDatasetAndSave" :dataset="selectedDataset"></DataPreparationMonitoringDialog>
     <Toolbar class="kn-toolbar kn-toolbar--secondary">
         <template #start>
-            <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.advancedData.title') }}
         </template>
         <template #end>
@@ -12,15 +11,14 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
-    <KnDatasetList v-model:visibility="showDatasetList" :items="availableDatasets" @selected="newDataPrep" @save="goToDataPrep" @cancel="hideDataSetCatalog" />
+    <KnDatasetList :visibility="showDatasetList" :items="availableDatasets" @selected="newDataPrep" @save="goToDataPrep" @cancel="hideDataSetCatalog" />
 
     <div class="p-d-flex p-flex-row p-ai-center">
         <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
-        <SelectButton id="model-select-buttons" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" data-test="dataset-select" />
     </div>
 
-    <div class="p-mx-2 kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table" :value="preparedDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
+    <div class="kn-overflow">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="preparedDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -54,7 +52,6 @@
                     :document="dataset"
                     @previewDataset="previewDataset"
                     @editFileDataset="editFileDataset"
-                    @openDatasetInQBE="openDatasetInQBE"
                     @exportToXlsx="exportDataset($event, 'xls')"
                     @exportToCsv="exportDataset($event, 'csv')"
                     @shareDataset="shareDataset"
@@ -62,6 +59,7 @@
                     @deleteDataset="deleteDatasetConfirm"
                     @openDataPreparation="openDataPreparation"
                     @openSidebar="showSidebar"
+                    @monitoring="showMonitoring = !showMonitoring"
                 />
             </template>
         </div>
@@ -73,7 +71,6 @@
         :document="selectedDataset"
         @previewDataset="previewDataset"
         @editFileDataset="editFileDataset"
-        @openDatasetInQBE="openDatasetInQBE"
         @exportToXlsx="exportDataset($event, 'xls')"
         @exportToCsv="exportDataset($event, 'csv')"
         @shareDataset="shareDataset"
@@ -81,6 +78,7 @@
         @deleteDataset="deleteDatasetConfirm"
         @openDataPreparation="openDataPreparation"
         @close="showDetailSidebar = false"
+        @monitoring="showMonitoring = !showMonitoring"
         data-test="detail-sidebar"
     />
 
@@ -209,14 +207,24 @@
             },
             // prettier-ignore
             createMenuItems(clickedDocument: any) {
-            this.menuButtons = []
-            this.menuButtons.push(
-                { key: '0', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
-                { key: '1', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
-                { key: '2', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.isDatasetOwner },
-                { key: '3', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner },
-                { key: '4', label: this.$t('workspace.myData.monitoring'), icon: 'pi pi-chart-line', command: () => this.handleMonitoring(clickedDocument), visible: this.isDatasetOwner }
-            )
+                let tmp = [] as any
+
+                tmp.push(
+                    { key: '0', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
+                    { key: '1', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && this.selectedDataset.dsTypeCd != 'File' },
+                    { key: '4', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
+                )
+
+                if ((this.$store.state as any).user?.functionalities.includes('DataPreparation')) {
+
+                    tmp.push(
+                        { key: '2', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: true },
+                        { key: '3', label: this.$t('workspace.myData.monitoring'), icon: 'pi pi-chart-line', command: () => this.handleMonitoring(clickedDocument), visible: true }
+                    )
+                }
+
+                tmp = tmp.sort((a,b)=>a.key.localeCompare(b.key))
+                this.menuButtons = tmp
 
         },
             createCreationMenuButtons() {
@@ -246,8 +254,9 @@
                             this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
                                 (response: AxiosResponse<any>) => {
                                     let transformations = response.data.definition
-                                    let datasetLabel = response.data.instances[0].dataSetLabel
-                                    this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations) } })
+                                    let processId = response.data.id
+                                    let datasetLabel = response.data.instance.dataSetLabel
+                                    this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
                                 },
                                 () => {
                                     this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
@@ -392,6 +401,18 @@
                         })
                     }
                 }, 250)
+            },
+            async updateDatasetAndSave(newConfig) {
+                this.showMonitoring = false
+
+                await this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config }).then(
+                    () => {
+                        this.loadDataset(this.selectedDataset.label)
+                    },
+                    () => {
+                        this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })
+                    }
+                )
             }
         }
     })

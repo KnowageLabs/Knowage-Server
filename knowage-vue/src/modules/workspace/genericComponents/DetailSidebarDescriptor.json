@@ -141,5 +141,6 @@
             "display": "flex",
             "justify-content": "space-evenly"
         }
-    }
+    },
+    "typesWithoutImages": ["businessModel", "analysis", "dataset"]
 }

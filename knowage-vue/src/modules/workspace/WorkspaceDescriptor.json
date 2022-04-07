@@ -20,6 +20,9 @@
             "display": "flex",
             "justify-content": "center",
             "text-align": "center"
+        },
+        "multiselect": {
+            "max-width": "300px"
         }
     }
 }

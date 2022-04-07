@@ -39,6 +39,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogMF;
@@ -368,6 +369,30 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 			}
 		}
 
+	}
+
+	@POST
+	@Path("/update")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public Response updateDataSet(@Valid @BeanParam SelfServiceDataSetDTO selfServiceDataSetDTO) {
+		try {
+			IEngUserProfile profile = UserProfileManager.getProfile();
+			IDataSetDAO dao = DAOFactory.getDataSetDAO();
+			dao.setUserProfile(profile);
+			String label = selfServiceDataSetDTO.getLabel();
+			String newName = selfServiceDataSetDTO.getName();
+			String newDescription = selfServiceDataSetDTO.getDescription();
+			IDataSet ds = dao.loadDataSetByLabel(label);
+			ds.setName(newName);
+			ds.setDescription(newDescription);
+			dao.modifyDataSet(ds);
+		} catch (Exception e) {
+			logger.error("Cannot update dataset info", e);
+			throw new SpagoBIRuntimeException("Cannot update dataset info", e);
+		}
+		return Response.ok().build();
 	}
 
 	@POST
