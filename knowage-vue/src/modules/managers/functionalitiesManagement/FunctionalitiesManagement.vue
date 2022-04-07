@@ -102,18 +102,20 @@ export default defineComponent({
             this.nodes = []
             const foldersWithMissingParent = [] as iNode[]
             this.functionalities.forEach((functionality: iFunctionality) => {
-                const node = {
-                    key: functionality.id,
-                    id: functionality.id,
-                    parentId: functionality.parentId,
-                    label: functionality.name,
-                    children: [] as iNode[],
-                    data: functionality,
-                    style: this.functionalitiesManagementDescriptor.node.style
-                }
-                node.children = foldersWithMissingParent.filter((folder: iNode) => node.id === folder.parentId)
+                if (functionality.codType !== 'USER_FUNCT') {
+                    const node = {
+                        key: functionality.id,
+                        id: functionality.id,
+                        parentId: functionality.parentId,
+                        label: functionality.name,
+                        children: [] as iNode[],
+                        data: functionality,
+                        style: this.functionalitiesManagementDescriptor.node.style
+                    }
+                    node.children = foldersWithMissingParent.filter((folder: iNode) => node.id === folder.parentId)
 
-                this.attachFolderToTree(node, foldersWithMissingParent)
+                    this.attachFolderToTree(node, foldersWithMissingParent)
+                }
             })
         },
         attachFolderToTree(folder: iNode, foldersWithMissingParent: iNode[]) {
