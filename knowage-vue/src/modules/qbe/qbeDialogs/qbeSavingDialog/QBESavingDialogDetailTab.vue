@@ -39,6 +39,7 @@
                             id="scope"
                             class="kn-material-input"
                             :options="scopeTypes"
+                            :disabled="!isUserAdmin"
                             optionLabel="VALUE_CD"
                             optionValue="VALUE_CD"
                             v-model="v$.dataset.scopeCd.$model"
@@ -64,6 +65,7 @@
                             id="category"
                             class="kn-material-input"
                             :options="categoryTypes"
+                            :disabled="!isUserAdmin"
                             optionLabel="VALUE_CD"
                             optionValue="VALUE_CD"
                             v-model="v$.dataset.catTypeVn.$model"
@@ -102,6 +104,11 @@ export default defineComponent({
     name: 'olap-custom-view-save-dialog',
     components: { Card, Dropdown, KnValidationMessages },
     props: { propDataset: Object, scopeTypes: Array, categoryTypes: Array },
+    computed: {
+        isUserAdmin(): any {
+            return (this.$store.state as any).user.isSuperadmin
+        }
+    },
     data() {
         return {
             v$: useValidate() as any,
