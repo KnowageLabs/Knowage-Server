@@ -182,7 +182,6 @@ export default defineComponent({
         return {
             qbe: null as iQBE | null,
             customizedDatasetFunctions: {} as any,
-            exportLimit: null as number | null,
             entities: {} as any,
             queryPreviewData: {} as iQueryResult,
             selectedQuery: {} as any,
@@ -263,7 +262,6 @@ export default defineComponent({
         async loadQBE() {
             await this.initializeQBE()
             await this.loadCustomizedDatasetFunctions()
-            await this.loadExportLimit()
             await this.loadEntities()
 
             if (!this.dataset?.dataSourceLabel) {
@@ -345,9 +343,6 @@ export default defineComponent({
         async loadCustomizedDatasetFunctions() {
             const id = this.dataset?.dataSourceId ? this.dataset.dataSourceId : this.qbe?.qbeDataSourceId
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${id}`).then((response: AxiosResponse<any>) => (this.customizedDatasetFunctions = response.data))
-        },
-        async loadExportLimit() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/EXPORT.LIMITATION`).then((response: AxiosResponse<any>) => (this.exportLimit = response.data))
         },
         async loadEntities() {
             const datamartName = this.dataset?.dataSourceId ? this.dataset.name : this.qbe?.qbeDatamarts
