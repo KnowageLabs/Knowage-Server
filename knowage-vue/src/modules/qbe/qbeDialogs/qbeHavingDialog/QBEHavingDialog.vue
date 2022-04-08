@@ -84,7 +84,7 @@ export default defineComponent({
                     leftOperandDefaultValue: null,
                     leftOperandLastValue: null,
                     operator: 'EQUALS TO',
-                    rightOperandAggregator: '',
+                    rightOperandAggregator: field.funct,
                     rightOperandValue: [],
                     rightOperandDescription: '',
                     rightOperandLongDescription: '',
