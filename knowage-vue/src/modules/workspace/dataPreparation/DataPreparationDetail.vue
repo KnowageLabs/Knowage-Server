@@ -341,7 +341,7 @@ export default defineComponent({
                 }
                 selectedTransformation['parameters'].push(obj)
             })
-            if (t.type == 'filter') {
+            if (t.type == 'filter' || t.type == 'split') {
                 let col = this.columns.filter((x) => x.fieldAlias.toUpperCase() === t.parameters[0].columns[0].toUpperCase())[0]
                 this.callFunction(selectedTransformation, col)
             } else this.callFunction(selectedTransformation, undefined)

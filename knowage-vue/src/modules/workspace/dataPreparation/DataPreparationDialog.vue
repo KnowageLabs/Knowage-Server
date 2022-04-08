@@ -11,7 +11,7 @@
 
         <DataPreparationSimple v-if="localCopy.type === 'simple'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" :readOnly="readOnly" />
         <DataPreparationFilter v-if="localCopy.type === 'filter'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" :readOnly="readOnly" />
-        <DataPreparationSplit v-if="localCopy.type === 'split'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" />
+        <DataPreparationSplit v-if="localCopy.type === 'split'" :transformation="localCopy" @update:transformation="updateLocalCopy" :columns="columns" :col="col" :readOnly="readOnly" />
 
         <template #footer>
             <Button class="p-button-text kn-button thirdButton" :label="$t('common.cancel')" @click="resetAndClose" />
