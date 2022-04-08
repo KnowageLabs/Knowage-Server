@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <Card v-if="!readOnly" class="card-0-padding">
+        <Card class="card-0-padding">
             <template #content>
                 <div class="p-fluid p-grid">
                     <div class="p-col-4">
@@ -79,18 +79,7 @@
             </template>
         </Card>
 
-        <VCodeMirror
-            class="p-mt-2 codeMirrorClass"
-            ref="formula"
-            v-model:value="cf.formula"
-            :options="scriptOptions"
-            @drop="drop($event)"
-            @dragover="handleDragover($event)"
-            v-model="v$.cf.formula.$model"
-            :class="{
-                'p-invalid': v$.cf.formula.$invalid
-            }"
-        />
+        <VCodeMirror :class="['p-mt-2 codeMirrorClass', this.readOnly ? 'readOnly' : '', v$.cf.formula.$invalid ? 'p-invalid' : '']" ref="formula" v-model:value="cf.formula" :options="scriptOptions" @drop="drop($event)" @dragover="handleDragover($event)" v-model="v$.cf.formula.$model" />
 
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.cancel')" @click="cancel" />
@@ -140,7 +129,8 @@ export default defineComponent({
                 matchBrackets: true,
                 autofocus: true,
                 theme: 'eclipse',
-                lineNumbers: true
+                lineNumbers: true,
+                readOnly: this.readOnly
             },
             v$: useValidate() as any,
             formulaValidationInterval: {} as any,
@@ -233,6 +223,7 @@ export default defineComponent({
             }
         },
         handleDragover(ev) {
+            if (this.readOnly) return
             const doc = this.$refs.formula as any
             var cursor = doc.editor.getCursor()
             if (ev.target.className.includes('field-')) {
@@ -240,6 +231,7 @@ export default defineComponent({
             }
         },
         dragElement(ev, item, elementType: String) {
+            if (this.readOnly) return
             if (elementType === 'function') {
                 ev.dataTransfer.setData('text/plain', JSON.stringify({ item: item.formula, elementType: elementType }))
             } else if (elementType === 'field') {
@@ -249,6 +241,7 @@ export default defineComponent({
         },
 
         drop(ev) {
+            if (this.readOnly) return
             ev.stopPropagation()
             ev.preventDefault()
 
@@ -307,6 +300,9 @@ export default defineComponent({
         }
     },
     watch: {
+        readOnly(value) {
+            this.scriptOptions.readOnly = value
+        },
         visibility(newV, oldV) {
             if (newV && newV !== oldV) {
                 if (!this.selectedCategory) {
@@ -358,6 +354,10 @@ export default defineComponent({
         overflow-x: hidden !important;
         overflow-y: auto !important;
     }
+}
+
+.readOnly {
+    background-color: #cccccc;
 }
 
 .field-header {
