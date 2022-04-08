@@ -812,7 +812,7 @@ export default defineComponent({
             if (index !== -1) this.schedulations.splice(index, 1)
         },
         getFormattedDate(date: any, useDefaultFormat?: boolean) {
-            return luxonFormatDate(date, this.dateFormat, useDefaultFormat ? undefined : this.dateFormat)
+            return luxonFormatDate(date, undefined, useDefaultFormat ? undefined : this.dateFormat)
         },
         onBreadcrumbClick(item: any) {
             this.document = item.document
