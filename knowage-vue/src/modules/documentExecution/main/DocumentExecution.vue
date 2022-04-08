@@ -13,7 +13,7 @@
                     <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
                     <Button icon="fa fa-filter" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="isParameterSidebarVisible" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></Button>
                     <Button icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
-                    <Menu ref="menu" :model="toolbarMenuItems" :popup="true" />
+                    <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
                     <Button icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.close')" @click="closeDocument"></Button>
                 </div>
             </template>
@@ -90,7 +90,7 @@ import DocumentExecutionSchedulationsTable from './tables/documentExecutionSched
 import DocumentExecutionLinkDialog from './dialogs/documentExecutionLinkDialog/DocumentExecutionLinkDialog.vue'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import { luxonFormatDate } from '@/helpers/commons/localeHelper'
-import Menu from 'primevue/menu'
+import TieredMenu from 'primevue/tieredmenu'
 import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
 import Olap from '../olap/Olap.vue'
@@ -110,7 +110,7 @@ export default defineComponent({
         DocumentExecutionSchedulationsTable,
         DocumentExecutionLinkDialog,
         KnParameterSidebar,
-        Menu,
+        TieredMenu,
         Registry,
         Dossier,
         Olap
@@ -257,15 +257,18 @@ export default defineComponent({
         },
         createMenuItems() {
             this.toolbarMenuItems = []
-            this.toolbarMenuItems.push(
-                {
-                    label: this.$t('common.file'),
-                    items: [{ icon: 'pi pi-print', label: this.$t('common.print'), command: () => this.print() }]
-                },
-                {
+            this.toolbarMenuItems.push({
+                label: this.$t('common.file'),
+                items: [{ icon: 'pi pi-print', label: this.$t('common.print'), command: () => this.print() }]
+            })
+
+            if (this.exporters?.length !== 0)
+                this.toolbarMenuItems.push({
                     label: this.$t('common.export'),
                     items: []
-                },
+                })
+
+            this.toolbarMenuItems.push(
                 {
                     label: this.$t('common.info.info'),
                     items: [{ icon: 'pi pi-star', label: this.$t('common.rank'), command: () => this.openRank() }]
@@ -1033,5 +1036,13 @@ export default defineComponent({
         left: 0;
         margin: 0;
     }
+}
+
+.p-tieredmenu .p-menuitem-active > .p-submenu-list {
+    left: unset !important;
+}
+
+.p-submenu-list {
+    right: 100% !important;
 }
 </style>
