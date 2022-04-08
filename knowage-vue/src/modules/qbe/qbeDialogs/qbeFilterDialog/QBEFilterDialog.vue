@@ -234,7 +234,6 @@ export default defineComponent({
         closeDialog() {
             this.$emit('close')
             this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
-            this.parameters = []
             this.updatedParameters = []
             this.parameterTableVisible = false
             this.removeFiltersOnCancel()
