@@ -117,12 +117,6 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 		Array.prototype.push.apply($scope.formulas, $scope.customTransformedFormulas);
 	});
 
-	exportService.getExportLimitation().then(function(response) {
-		if(response.data){
-			exportService.setExportLimit(response.data);
-		};
-	});
-
 	var queryHandler = function(newCatalogue,oldCatalogue){
 		$scope.meta.length = 0;
 		exportService.setQuery(newCatalogue);
@@ -702,7 +696,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 
 					$scope.filteredRelations = $scope.selectedRelationsService.getRelationships(selectedEntities,$scope.entityModel.entities)
 					$scope.previousVersionRelations = angular.copy($scope.filteredRelations);
-					
+
 					// Reset values from a previous selection
 					var currentGraph = $scope.query.graph;
 					if (currentGraph.length > 0) {
@@ -714,7 +708,7 @@ function qbeFunction($scope,$rootScope,$filter,entity_service,query_service,filt
 							}
 						}
 					}
-					
+
 					$scope.ok= function(){
 						$scope.editQueryObj.graph = angular.copy($scope.filteredRelations);
 
