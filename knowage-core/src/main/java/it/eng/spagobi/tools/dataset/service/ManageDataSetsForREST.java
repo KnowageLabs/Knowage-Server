@@ -1031,11 +1031,16 @@ public class ManageDataSetsForREST {
 		SQLDBCache cache = (SQLDBCache) CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 		dataSet.setDataSourceForReading(cache.getDataSource());
 		dataSet.setDataSourceForWriting(cache.getDataSource());
-		jsonDsConfig = new JSONObject(dataSet.getConfiguration());
 
 		// update the json query getting the one passed from the qbe editor
+		String jsonDatamarts = dataSet.getDatasetFederation().getName();
+		String jsonDataSource = json.optString(DataSetConstants.QBE_DATA_SOURCE);
 		String jsonQuery = json.optString(DataSetConstants.QBE_JSON_QUERY);
+
+		jsonDsConfig.put(DataSetConstants.QBE_DATAMARTS, jsonDatamarts);
+		jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, jsonDataSource);
 		jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
+
 		((FederatedDataSet) (((VersionedDataSet) dataSet).getWrappedDataset())).setJsonQuery(jsonQuery);
 		return dataSet;
 	}
