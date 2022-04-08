@@ -1,6 +1,6 @@
 <template>
     <div class="kn-page kn-data-preparation">
-        <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" />
+        <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" :readOnly="readOnly" @update:readOnly="updateReadOnly" v-model:template="selectedTransformation" />
         <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" :readOnly="readOnly" @update:readOnly="updateReadOnly" />
         <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" :instanceId="instanceId" @update:instanceId="updateInstanceId" :processId="processId" @update:processId="updateprocessId" :preparedDsMeta="preparedDsMeta" />
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
@@ -47,7 +47,8 @@
                 <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="dataset.config.transformations" optionLabel="type" listStyle="max-height:200px"
                     ><template #option="slotProps">
                         <div class="p-text-uppercase kn-list-item fieldType">
-                            <div class="p-ml-2">{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].columns[0] }}</div>
+                            <div class="p-ml-2" v-if="slotProps.option.type != 'calculatedField'">{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].columns[0] }}</div>
+                            <div class="p-ml-2" v-if="slotProps.option.type == 'calculatedField'">{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].colName }}</div>
                             <Button v-if="slotProps.option.type != 'trim' && slotProps.option.type != 'drop'" icon="pi pi-pencil" :class="descriptor.css.buttonClassHeader" @click="openTransformationDetail(slotProps.option)" v-tooltip="$t('common.edit')" />
                             <Button v-if="slotProps.index == dataset.config.transformations.length - 1" icon="p-jc-end pi pi-trash" :class="descriptor.css.buttonClassHeader" @click="deleteTransformation()" v-tooltip="$t('common.delete')" />
                         </div> </template
