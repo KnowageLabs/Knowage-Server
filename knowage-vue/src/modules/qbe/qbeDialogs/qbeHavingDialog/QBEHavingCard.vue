@@ -1,5 +1,4 @@
 <template>
-    {{ having }}
     <div v-if="having">
         <div class="p-grid p-m-2">
             <div class="p-col-3">
