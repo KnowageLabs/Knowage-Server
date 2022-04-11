@@ -85,7 +85,7 @@
 				to="/timespan" />
 			<ITEM id="4010" label="menu.calendar"
 				requiredFunctionality="Calendar"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=calendarTemplate" />
+				to="/calendar-management" />
 			<ITEM id="4011" label="menu.FunctionsCatalog"
 				toBeLicensed="KnowagePA"
 				requiredFunctionality="FunctionsCatalogManagement"

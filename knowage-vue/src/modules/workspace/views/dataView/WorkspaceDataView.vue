@@ -13,16 +13,16 @@
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
 
     <div class="p-d-flex p-flex-row p-ai-center p-flex-wrap">
-        <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
-        <span class="p-float-label p-mr-auto">
-            <MultiSelect class="kn-material-input" :style="mainDescriptor.style.multiselect" v-model="selectedCategories" :options="datasetCategories" optionLabel="VALUE_CD" @change="searchItems" :filter="true" />
+        <InputText class="kn-material-input p-m-3 model-search" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
+        <span class="p-float-label p-mr-auto model-search">
+            <MultiSelect class="kn-material-input kn-width-full" :style="mainDescriptor.style.multiselect" v-model="selectedCategories" :options="datasetCategories" optionLabel="VALUE_CD" @change="searchItems" :filter="true" />
             <label class="kn-material-input-label"> {{ $t('common.type') }} </label>
         </span>
         <SelectButton class="p-mx-2" v-model="tableMode" :options="selectButtonOptions" @click="getDatasetsByFilter" data-test="dataset-select" />
     </div>
 
     <div class="kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" style="width:100%" class="p-datatable-sm kn-table p-mx-2" :value="filteredDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredDatasets" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="datasets-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -64,7 +64,7 @@
                     :document="dataset"
                     :isAvroReady="isAvroReady(dataset)"
                     @previewDataset="previewDataset"
-                    @editFileDataset="editFileDataset"
+                    @editDataset="editDataset"
                     @openDatasetInQBE="openDatasetInQBE($event)"
                     @exportToXlsx="exportDataset($event, 'xls')"
                     @exportToCsv="exportDataset($event, 'csv')"
@@ -87,7 +87,7 @@
         :isAvroReady="isAvroReady(selectedDataset)"
         :datasetCategories="datasetCategories"
         @previewDataset="previewDataset"
-        @editFileDataset="editFileDataset"
+        @editDataset="editDataset"
         @openDatasetInQBE="openDatasetInQBE($event)"
         @exportToXlsx="exportDataset($event, 'xls')"
         @exportToCsv="exportDataset($event, 'csv')"
@@ -102,6 +102,7 @@
     />
 
     <DatasetWizard v-if="showDatasetDialog" :selectedDataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false" @closeDialogAndReload="closeWizardAndRealod" />
+    <EditPreparedDatasetDialog :dataset="selectedDataset" :visible="showEditPreparedDatasetDialog" @save="updatePreparedDataset" @cancel="showEditPreparedDatasetDialog = false" />
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
 
@@ -118,6 +119,7 @@ import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import DatasetWizard from './datasetWizard/WorkspaceDatasetWizardContainer.vue'
+import EditPreparedDatasetDialog from './dialogs/EditPreparedDatasetDialog.vue'
 import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
@@ -139,7 +141,26 @@ import DataPreparationMonitoringDialog from '@/modules/workspace/dataPreparation
 import MultiSelect from 'primevue/multiselect'
 
 export default defineComponent({
-    components: { QBE, MultiSelect, DataTable, Column, Chip, DataPreparationMonitoringDialog, DetailSidebar, WorkspaceCard, Menu, KnFabButton, DatasetWizard, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataShareDialog, WorkspaceDataPreviewDialog, SelectButton, Message },
+    components: {
+        QBE,
+        MultiSelect,
+        DataTable,
+        Column,
+        Chip,
+        DataPreparationMonitoringDialog,
+        EditPreparedDatasetDialog,
+        DetailSidebar,
+        WorkspaceCard,
+        Menu,
+        KnFabButton,
+        DatasetWizard,
+        WorkspaceDataCloneDialog,
+        WorkspaceWarningDialog,
+        WorkspaceDataShareDialog,
+        WorkspaceDataPreviewDialog,
+        SelectButton,
+        Message
+    },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -182,6 +203,7 @@ export default defineComponent({
             loading: false,
             showDetailSidebar: false,
             showDatasetDialog: false,
+            showEditPreparedDatasetDialog: false,
             datasetList: [] as any,
             selectedCategories: [] as any,
             selectedCategoryIds: [] as any,
@@ -213,7 +235,6 @@ export default defineComponent({
     },
     async created() {
         await this.getAllData()
-        await this.getAllAvroDataSets()
         this.user = (this.$store.state as any).user
         var url = new URL(window.location.origin)
         url.protocol = url.protocol.replace('http', 'ws')
@@ -261,6 +282,32 @@ export default defineComponent({
     },
 
     methods: {
+        async updatePreparedDataset(newDataset) {
+            this.showEditPreparedDatasetDialog = false
+            this.selectedDataset.name = newDataset.name
+            this.selectedDataset.description = newDataset.description
+            this.selectedDataset.type = 'PreparedDataset'
+
+            await this.$http({
+                method: 'POST',
+                url: process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'selfservicedataset/update',
+                data: this.selectedDataset,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Disable-Errors': 'true' },
+
+                transformRequest: function(obj) {
+                    var str = [] as any
+                    for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+                    return str.join('&')
+                }
+            })
+                .then(() => {
+                    this.$store.commit('setInfo', { title: 'Updated successfully' })
+                })
+                .catch(() => {
+                    this.$store.commit('setError', { title: 'Save error', msg: 'Cannot update Prepared Dataset' })
+                })
+            await this.getAllData()
+        },
         isAvroLoaded(dataset) {
             return this.loadedAvros.indexOf(dataset.label) >= 0
         },
@@ -282,6 +329,7 @@ export default defineComponent({
         async getAllData() {
             await this.getDatasetsByFilter()
             await this.getDatasetCategories()
+            await this.getAllAvroDataSets()
             // this.loading = false
         },
         async getDatasetCategories() {
@@ -325,14 +373,14 @@ export default defineComponent({
 
             let tmp = [] as any
             tmp.push(
-                { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.editFileDataset, visible: this.isDatasetOwner && this.selectedDataset.dsTypeCd == 'File' },
-                { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: () => this.openDatasetInQBE(), visible: this.showQbeEditButton },
+                { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.editDataset, visible: this.isDatasetOwner && (this.selectedDataset.dsTypeCd == 'File' || this.selectedDataset.dsTypeCd == 'Prepared') },
+                { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: () => this.openDatasetInQBE(clickedDocument), visible: this.showQbeEditButton },
                 { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
                 { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
                 { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' },
                 { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(), visible: this.canLoadData && this.isDatasetOwner && this.selectedDataset.dsTypeCd != 'Prepared' },
                 { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
-                
+
                 { key: '9', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
             )
 
@@ -357,8 +405,9 @@ export default defineComponent({
             await this.loadDataset(dataset.label)
             this.previewDialogVisible = true
         },
-        editFileDataset() {
-            this.showDatasetDialog = true
+        editDataset() {
+            if (this.selectedDataset.dsTypeCd == 'File') this.showDatasetDialog = true
+            else if (this.selectedDataset.dsTypeCd == 'Prepared') this.showEditPreparedDatasetDialog = true
         },
         isAvroReady(dataset: any) {
             if (dataset && this.avroDatasets.indexOf(dataset.label) >= 0) return true
@@ -423,11 +472,9 @@ export default defineComponent({
                 this.generateAvro(dataset)
             }
         },
-        openDatasetInQBE() {
-            this.$store.commit('setInfo', {
-                title: 'Todo',
-                msg: 'Functionality not in this sprint'
-            })
+        openDatasetInQBE(dataset: any) {
+            this.selectedQbeDataset = dataset
+            this.qbeVisible = true
         },
         async exportDataset(dataset: any, format: string) {
             this.loading = true
@@ -654,6 +701,14 @@ export default defineComponent({
                 }
             )
         }
+    },
+    unmounted() {
+        if (this.client) this.client.deactivate()
     }
 })
 </script>
+<style lang="scss" scoped>
+.model-search {
+    flex: 0.3;
+}
+</style>

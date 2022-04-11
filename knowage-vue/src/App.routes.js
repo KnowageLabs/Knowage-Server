@@ -73,7 +73,6 @@ const routes = baseRoutes
     .concat(documentBrowserRoutes)
     .concat(workspaceRoutes)
     .concat(overlayRoutes)
-    .concat(workspaceRoutes)
     .concat(dataPreparationRoutes)
 
 const router = createRouter({

@@ -28,10 +28,10 @@ import javax.validation.Payload;
 import javax.validation.constraints.Pattern;
 
 @Pattern(regexp = "^([\\p{L}\\w\\s\\-\\_\\(\\)\\[\\]\\;\\:\\!\\?\\,\\.\\'\\\"\\x2F\\x5F%])*$", message = "contains invalid characters")
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
-@Retention(value = RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = GenericValidator.class)
+@Constraint(validatedBy = {})
 @Documented
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER })
+@Retention(RetentionPolicy.RUNTIME)
 public @interface ExtendedAlphanumeric {
 	String message() default "";
 

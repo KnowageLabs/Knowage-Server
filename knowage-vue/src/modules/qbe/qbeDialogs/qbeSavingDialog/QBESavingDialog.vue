@@ -102,6 +102,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
+                    this.$emit('datasetSaved')
                     this.$emit('close')
                 })
                 .catch()

@@ -31,6 +31,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
+import it.eng.knowage.boot.error.KnowageServiceException;
+
 /**
  *
  * @author Alberto Ghedin (alberto.ghedin@eng.it)

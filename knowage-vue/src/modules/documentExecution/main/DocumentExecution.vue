@@ -13,7 +13,7 @@
                     <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
                     <Button icon="fa fa-filter" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="isParameterSidebarVisible" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></Button>
                     <Button icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
-                    <Menu ref="menu" :model="toolbarMenuItems" :popup="true" />
+                    <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
                     <Button icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.close')" @click="closeDocument"></Button>
                 </div>
             </template>
@@ -89,7 +89,8 @@ import DocumentExecutionMailDialog from './dialogs/documentExecutionMailDialog/D
 import DocumentExecutionSchedulationsTable from './tables/documentExecutionSchedulationsTable/DocumentExecutionSchedulationsTable.vue'
 import DocumentExecutionLinkDialog from './dialogs/documentExecutionLinkDialog/DocumentExecutionLinkDialog.vue'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
-import Menu from 'primevue/menu'
+import { luxonFormatDate } from '@/helpers/commons/localeHelper'
+import TieredMenu from 'primevue/tieredmenu'
 import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
 import Olap from '../olap/Olap.vue'
@@ -109,7 +110,7 @@ export default defineComponent({
         DocumentExecutionSchedulationsTable,
         DocumentExecutionLinkDialog,
         KnParameterSidebar,
-        Menu,
+        TieredMenu,
         Registry,
         Dossier,
         Olap
@@ -256,15 +257,19 @@ export default defineComponent({
         },
         createMenuItems() {
             this.toolbarMenuItems = []
-            this.toolbarMenuItems.push(
-                {
-                    label: this.$t('common.file'),
-                    items: [{ icon: 'pi pi-print', label: this.$t('common.print'), command: () => this.print() }]
-                },
-                {
+            this.toolbarMenuItems.push({
+                label: this.$t('common.file'),
+                items: [{ icon: 'pi pi-print', label: this.$t('common.print'), command: () => this.print() }]
+            })
+
+            if (this.exporters && this.exporters.length !== 0) {
+                this.toolbarMenuItems.push({
                     label: this.$t('common.export'),
                     items: []
-                },
+                })
+            }
+
+            this.toolbarMenuItems.push(
                 {
                     label: this.$t('common.info.info'),
                     items: [{ icon: 'pi pi-star', label: this.$t('common.rank'), command: () => this.openRank() }]
@@ -278,32 +283,48 @@ export default defineComponent({
             this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[1].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
 
             if (this.user.functionalities.includes('SendMailFunctionality') && this.document.typeCode === 'REPORT') {
-                this.toolbarMenuItems[1].items.push({ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() })
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
+                if (index !== -1) {
+                    this.toolbarMenuItems[index].items.push({ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() })
+                } else {
+                    this.toolbarMenuItems.push({
+                        label: this.$t('common.export'),
+                        items: [{ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() }]
+                    })
+                }
             }
 
             if (this.user.functionalities.includes('SeeMetadataFunctionality')) {
-                this.toolbarMenuItems[2].items.unshift({ icon: 'pi pi-info-circle', label: this.$t('common.metadata'), command: () => this.openMetadata() })
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
+                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: 'pi pi-info-circle', label: this.$t('common.metadata'), command: () => this.openMetadata() })
             }
 
             if (this.user.functionalities.includes('SeeNotesFunctionality')) {
-                this.toolbarMenuItems[2].items.push({ icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() })
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
+                if (index !== -1) this.toolbarMenuItems[index].items.push({ icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() })
             }
 
             if (this.user.functionalities.includes('SeeSnapshotsFunctionality')) {
-                this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
+                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
             }
 
             if (this.isOrganizerEnabled()) {
-                this.toolbarMenuItems[3].items.unshift({ icon: 'fa fa-suitcase ', label: this.$t('documentExecution.main.addToWorkspace'), command: () => this.addToWorkspace() })
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
+                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: 'fa fa-suitcase ', label: this.$t('documentExecution.main.addToWorkspace'), command: () => this.addToWorkspace() })
             }
 
             if (this.mode === 'olap') {
-                this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showOLAPCustomView'), command: () => this.showOLAPCustomView() })
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
+                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: '', label: this.$t('documentExecution.main.showOLAPCustomView'), command: () => this.showOLAPCustomView() })
             }
 
             if (this.user.functionalities.includes('EnableToCopyAndEmbed')) {
-                this.toolbarMenuItems[3].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.copyLink'), command: () => this.copyLink(false) })
-                this.toolbarMenuItems[3].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.embedInHtml'), command: () => this.copyLink(true) })
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
+                if (index !== -1) {
+                    this.toolbarMenuItems[index].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.copyLink'), command: () => this.copyLink(false) })
+                    this.toolbarMenuItems[index].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.embedInHtml'), command: () => this.copyLink(true) })
+                }
             }
         },
         print() {
@@ -626,6 +647,19 @@ export default defineComponent({
             this.parameterSidebarVisible = false
             this.reloadTrigger = !this.reloadTrigger
 
+            if (!this.exporters || this.exporters.length === 0) {
+                await this.loadExporters()
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.export'))
+                if (index === -1) {
+                    this.toolbarMenuItems.splice(1, 0, {
+                        label: this.$t('common.export'),
+                        items: []
+                    })
+                } else {
+                    this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[index].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
+                }
+            }
+
             if (this.sessionEnabled) {
                 this.saveParametersInSession()
             }
@@ -658,7 +692,7 @@ export default defineComponent({
                 if (parameter.parameterValue) {
                     if (parameter.type === 'DATE') {
                         parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value)
-                        parameters[parameter.urlName + '_field_visible_description'] = this.getFormattedDate(parameter.parameterValue[0].value)
+                        parameters[parameter.urlName + '_field_visible_description'] = this.getFormattedDate(parameter.parameterValue[0].value, true)
                     } else if (parameter.valueSelection === 'man_in') {
                         parameters[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
                         parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
@@ -810,8 +844,8 @@ export default defineComponent({
             const index = this.schedulations.findIndex((el: any) => el.id === schedulation.id)
             if (index !== -1) this.schedulations.splice(index, 1)
         },
-        getFormattedDate(date: any) {
-            return moment(date).format(this.dateFormat)
+        getFormattedDate(date: any, useDefaultFormat?: boolean) {
+            return luxonFormatDate(date, undefined, useDefaultFormat ? undefined : this.dateFormat)
         },
         onBreadcrumbClick(item: any) {
             this.document = item.document
@@ -940,7 +974,8 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
                 if (response.data) {
                     this.sessionEnabled = response.data['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
-                    this.dateFormat = response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === 'dd/MM/yyyy' ? 'DD/MM/YYYY' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
+                    //this.dateFormat = response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === 'dd/MM/yyyy' ? 'DD/MM/YYYY' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
+                    this.dateFormat = response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
                 }
             })
         },
@@ -995,6 +1030,8 @@ export default defineComponent({
 #document-execution-schedulations-table {
     position: relative;
     z-index: 100;
+    width: 100%;
+    height: 90%;
 }
 
 .document-execution-iframe {
@@ -1029,5 +1066,13 @@ export default defineComponent({
         left: 0;
         margin: 0;
     }
+}
+
+.p-tieredmenu .p-menuitem-active > .p-submenu-list {
+    left: unset !important;
+}
+
+.p-submenu-list {
+    right: 100% !important;
 }
 </style>

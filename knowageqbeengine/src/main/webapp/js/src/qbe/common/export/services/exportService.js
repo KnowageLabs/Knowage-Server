@@ -42,7 +42,7 @@
 				} else {
 					throw "Unsupported mime type: " + mimeType;
 				}
-				
+
 				var config = {"responseType": "arraybuffer"};
 				var q="?SBI_EXECUTION_ID=" + sbiModule_config.sbiExecutionID
 					+ "&currentQueryId=" + query.id
@@ -71,11 +71,7 @@
 			},
 			setExportLimit : function (el) {
 				exportLimit = el;
-			},
-			getExportLimitation: function(){
-				sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath);
-	   			return sbiModule_restServices.promiseGet("2.0/configs","EXPORT.LIMITATION");
-	   		}
+			}
 		}
 
 	})
