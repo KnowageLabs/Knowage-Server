@@ -1,4 +1,5 @@
 <template>
+    {{ having }}
     <div v-if="having">
         <div class="p-grid p-m-2">
             <div class="p-col-3">
@@ -89,6 +90,7 @@ export default defineComponent({
             if (this.having) {
                 this.having.rightOperandDescription = ''
                 this.having.rightOperandLongDescription = ''
+                this.having.rightOperandAggregator = ''
                 this.having.rightOperandType = this.having.rightType === 'anotherEntity' ? 'Field Content' : 'Static Content'
             }
         },
@@ -99,6 +101,13 @@ export default defineComponent({
         },
         onEntityTypeChanged() {
             if (this.having) {
+                if (this.having.rightOperandType === 'Field Content' && this.entities) {
+                    let rightOperand = null as any
+                    const index = this.entities.findIndex((entity: any) => this.having?.rightOperandDescription === entity.id)
+                    if (index !== -1) rightOperand = this.entities[index]
+                    this.having.rightOperandAggregator = rightOperand.funct
+                }
+
                 this.having.rightOperandValue = [this.having.rightOperandDescription]
                 this.having.rightOperandLongDescription = this.having.rightOperandDescription
             }
