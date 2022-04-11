@@ -46,11 +46,13 @@
 
                 <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="dataset.config.transformations" optionLabel="type" listStyle="max-height:200px"
                     ><template #option="slotProps">
-                        <div class="p-text-uppercase kn-list-item fieldType">
-                            <div class="p-ml-2" v-if="slotProps.option.type != 'calculatedField'">{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].columns[0] }}</div>
-                            <div class="p-ml-2" v-if="slotProps.option.type == 'calculatedField'">{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].colName }}</div>
-                            <Button v-if="slotProps.option.type != 'trim' && slotProps.option.type != 'drop'" icon="pi pi-pencil" :class="descriptor.css.buttonClassHeader" @click="openTransformationDetail(slotProps.option)" v-tooltip="$t('common.edit')" />
-                            <Button v-if="slotProps.index == dataset.config.transformations.length - 1" icon="p-jc-end pi pi-trash" :class="descriptor.css.buttonClassHeader" @click="deleteTransformation()" v-tooltip="$t('common.delete')" />
+                        <div class="p-text-uppercase kn-list-item transformationSidebarElement">
+                            <div v-if="slotProps.option.type != 'calculatedField'">{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].columns[0] }}</div>
+                            <div v-else>{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].colName }}</div>
+                            <div>
+                                <Button v-if="slotProps.option.type != 'trim' && slotProps.option.type != 'drop'" icon="fas fa-eye" :class="descriptor.css.buttonClassHeader" @click="openTransformationDetail(slotProps.option)" v-tooltip="$t('common.preview')" />
+                                <Button v-if="slotProps.index == dataset.config.transformations.length - 1" icon="p-jc-end pi pi-trash" :class="descriptor.css.buttonClassHeader" @click="deleteTransformation()" v-tooltip="$t('common.delete')" />
+                            </div>
                         </div> </template
                 ></Listbox>
             </Sidebar>
@@ -299,28 +301,6 @@ export default defineComponent({
 
             // listen on websocket for avro export job to be finished
             this.client.publish({ destination: '/app/prepare', body: this.dataset.label })
-        },
-        getSidebarElementClass(index: number): string {
-            let cssClass = 'p-grid p-m-0 p-p-0 p-d-flex kn-flex transformationSidebarElement p-menuitem-link'
-            if (index > 0) cssClass += ' kn-disabled-text'
-
-            return cssClass
-        },
-        getTextForSidebar(tr): string {
-            let text = ''
-
-            tr.parameters.forEach((element) => {
-                if (text !== '') text += '\n'
-                const keys = Object.keys(element)
-                let first = true
-                keys.forEach((key) => {
-                    if (!first) text += '; '
-                    text += key + ':' + element[key]
-                    first = false
-                })
-            })
-
-            return '(' + text + ')'
         },
         openTransformationDetail(t) {
             this.readOnly = true
@@ -610,6 +590,7 @@ export default defineComponent({
         }
     }
 }
+
 .toolbarCustomConfig {
     background-color: white !important;
 
@@ -666,7 +647,9 @@ export default defineComponent({
 }
 
 .transformationSidebarElement {
-    align-items: center;
+    font-size: 0.75em;
+    justify-content: space-between !important;
+    padding: 0 !important;
 }
 
 .customSidebarMenu {
