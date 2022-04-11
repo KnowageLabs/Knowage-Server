@@ -30,6 +30,7 @@ import 'primeicons/primeicons.css'
 import '@fortawesome/fontawesome-free/css/all.css'
 import 'primeflex/primeflex.css'
 import '@/assets/css/dialects-icons.css'
+import 'material-icons/iconfont/material-icons.css'
 
 import ToastService from 'primevue/toastservice'
 import Button from 'primevue/button'

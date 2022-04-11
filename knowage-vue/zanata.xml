@@ -4,10 +4,10 @@
     <project>knowage-json</project>
     <project-version>master</project-version>
     <project-type>file</project-type>
-    <src-dir>.</src-dir>
-    <trans-dir>.</trans-dir>
-    <includes>src/i18n/en-US/messages.json</includes>
+    <src-dir>src/i18n/en_US</src-dir>
+    <trans-dir>src/i18n</trans-dir>
+    <includes>*messages.json</includes>
     <rules>
-        <rule pattern="src/i18n/en-US/messages.json">src/i18n/{locale}/{filename}.json</rule>
+        <rule>{locale_with_underscore}/{filename}.json</rule>
     </rules>
 </config>

@@ -108,6 +108,7 @@ public class DataSourceInitializer extends SpagoBIInitializer {
 			aDataSource.setSchemaAttribute((String) dataSourceSB.getAttribute("attrSchema"));
 			aDataSource.setReadOnly(((String) dataSourceSB.getAttribute("readOnly")).equals("false") ? false : true);
 			aDataSource.setWriteDefault(((String) dataSourceSB.getAttribute("writeDefault")).equals("false") ? false : true);
+			aDataSource.setUseForDataprep(((String) dataSourceSB.getAttribute("useForDataprep")).equals("false") ? false : true);
 			aDataSource.setJdbcPoolConfiguration((String) dataSourceSB.getAttribute("jdbcAdvancedConfiguration"));
 
 			String organization = (String) dataSourceSB.getAttribute("organization");

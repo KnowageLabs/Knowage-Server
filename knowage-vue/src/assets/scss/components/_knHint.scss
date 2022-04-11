@@ -14,4 +14,18 @@
     .kn-hintIcon {
         font-size: 3rem;
     }
+
+    &-sm {
+        .kn-hintIcon {
+            font-size: 2rem;
+        }
+
+        .kn-hintContent {
+            font-size: 0.75rem;
+        }
+
+        .p-card-title {
+            font-size: 1.2rem;
+        }
+    }
 }

@@ -15,12 +15,13 @@
             <span v-if="!searchMode" class="p-mx-4">
                 <i class="pi pi-search search-pointer" @click="openSearchBar()" />
             </span>
-            <KnFabButton v-if="(isSuperAdmin || canAddNewDocument) && selectedFolder && selectedFolder.parentId" icon="fas fa-plus" @click="toggle($event)" aria-haspopup="true" aria-controls="overlay_menu"></KnFabButton>
+            <KnFabButton v-if="(isSuperAdmin || canAddNewDocument) && selectedFolder && selectedFolder.parentId && selectedFolder.codType !== 'USER_FUNCT'" icon="fas fa-plus" @click="toggle($event)" aria-haspopup="true" aria-controls="overlay_menu"></KnFabButton>
             <Menu ref="menu" :model="items" :popup="true" />
         </template>
     </Toolbar>
 
     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
+
     <div id="document-browser-detail" class="p-d-flex p-flex-row kn-flex p-m-0">
         <div v-if="sidebarVisible && windowWidth < 1024" id="document-browser-sidebar-backdrop" @click="sidebarVisible = false"></div>
 

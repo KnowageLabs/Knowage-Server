@@ -11,9 +11,6 @@
             "style": {
                 "text-transform": "capitalize"
             }
-        },
-        "style": {
-            "width": "50%"
         }
     }
 }

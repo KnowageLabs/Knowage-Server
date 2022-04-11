@@ -390,7 +390,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 	// TODO merge with AbstractDataSet.getDomainValues
 	@Override
 	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
-		if (isPersisted() || isFlatDataset()) {
+		if (isPersisted() || isFlatDataset() || isPreparedDataSet()) {
 			int index = this.getStatement().getQuery().getSelectFieldIndex(fieldName);
 			String alias = (this.getStatement().getQuery().getSelectFieldByIndex(index)).getAlias();
 			return getDomainValuesFromPersistenceTable(alias, start, limit, filter);
