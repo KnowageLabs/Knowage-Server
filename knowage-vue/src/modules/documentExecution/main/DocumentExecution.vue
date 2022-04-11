@@ -262,11 +262,12 @@ export default defineComponent({
                 items: [{ icon: 'pi pi-print', label: this.$t('common.print'), command: () => this.print() }]
             })
 
-            if (this.exporters?.length !== 0)
+            if (this.exporters && this.exporters.length !== 0) {
                 this.toolbarMenuItems.push({
                     label: this.$t('common.export'),
                     items: []
                 })
+            }
 
             this.toolbarMenuItems.push(
                 {
@@ -282,32 +283,48 @@ export default defineComponent({
             this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[1].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
 
             if (this.user.functionalities.includes('SendMailFunctionality') && this.document.typeCode === 'REPORT') {
-                this.toolbarMenuItems[1].items.push({ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() })
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
+                if (index !== -1) {
+                    this.toolbarMenuItems[index].items.push({ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() })
+                } else {
+                    this.toolbarMenuItems.push({
+                        label: this.$t('common.export'),
+                        items: [{ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() }]
+                    })
+                }
             }
 
             if (this.user.functionalities.includes('SeeMetadataFunctionality')) {
-                this.toolbarMenuItems[2].items.unshift({ icon: 'pi pi-info-circle', label: this.$t('common.metadata'), command: () => this.openMetadata() })
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
+                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: 'pi pi-info-circle', label: this.$t('common.metadata'), command: () => this.openMetadata() })
             }
 
             if (this.user.functionalities.includes('SeeNotesFunctionality')) {
-                this.toolbarMenuItems[2].items.push({ icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() })
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
+                if (index !== -1) this.toolbarMenuItems[index].items.push({ icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() })
             }
 
             if (this.user.functionalities.includes('SeeSnapshotsFunctionality')) {
-                this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
+                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
             }
 
             if (this.isOrganizerEnabled()) {
-                this.toolbarMenuItems[3].items.unshift({ icon: 'fa fa-suitcase ', label: this.$t('documentExecution.main.addToWorkspace'), command: () => this.addToWorkspace() })
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
+                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: 'fa fa-suitcase ', label: this.$t('documentExecution.main.addToWorkspace'), command: () => this.addToWorkspace() })
             }
 
             if (this.mode === 'olap') {
-                this.toolbarMenuItems[3].items.unshift({ icon: '', label: this.$t('documentExecution.main.showOLAPCustomView'), command: () => this.showOLAPCustomView() })
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
+                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: '', label: this.$t('documentExecution.main.showOLAPCustomView'), command: () => this.showOLAPCustomView() })
             }
 
             if (this.user.functionalities.includes('EnableToCopyAndEmbed')) {
-                this.toolbarMenuItems[3].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.copyLink'), command: () => this.copyLink(false) })
-                this.toolbarMenuItems[3].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.embedInHtml'), command: () => this.copyLink(true) })
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
+                if (index !== -1) {
+                    this.toolbarMenuItems[index].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.copyLink'), command: () => this.copyLink(false) })
+                    this.toolbarMenuItems[index].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.embedInHtml'), command: () => this.copyLink(true) })
+                }
             }
         },
         print() {
@@ -629,6 +646,19 @@ export default defineComponent({
             await this.loadURL(null)
             this.parameterSidebarVisible = false
             this.reloadTrigger = !this.reloadTrigger
+
+            if (!this.exporters || this.exporters.length === 0) {
+                await this.loadExporters()
+                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.export'))
+                if (index === -1) {
+                    this.toolbarMenuItems.splice(1, 0, {
+                        label: this.$t('common.export'),
+                        items: []
+                    })
+                } else {
+                    this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[index].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
+                }
+            }
 
             if (this.sessionEnabled) {
                 this.saveParametersInSession()
