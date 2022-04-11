@@ -111,6 +111,7 @@ export default defineComponent({
             }
         },
         findParentFolder(folderToAdd: iNode, folderToSearch: iNode) {
+            if (folderToAdd.data.codType === 'USER_FUNCT') return null
             if (folderToAdd.parentId === folderToSearch.id) {
                 return folderToSearch
             } else {
