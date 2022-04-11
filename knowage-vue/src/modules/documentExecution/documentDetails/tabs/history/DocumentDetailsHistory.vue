@@ -60,7 +60,6 @@ import historyDescriptor from './DocumentDetailsHistory.json'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import InlineMessage from 'primevue/inlinemessage'
-
 export default defineComponent({
     name: 'document-drivers',
     components: { KnListBox, KnInputFile, VCodeMirror, InlineMessage },
