@@ -81,7 +81,7 @@
                             />
                         </div>
                         <div class="p-col-4">
-                            <Button icon="fas fa-save" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.showCustomizedView')" :disabled="!isButtonVisible('BUTTON_SAVE_SUBOBJECT')" @click="$emit('openCustomViewDialog')" />
+                            <Button icon="fas fa-save" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.saveCustomizedView')" :disabled="!isButtonVisible('BUTTON_SAVE_SUBOBJECT')" @click="$emit('openCustomViewDialog')" />
                         </div>
                     </div>
                 </div>
@@ -117,122 +117,122 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import olapSidebarDescriptor from './OlapSidebarDescriptor.json'
-    import SelectButton from 'primevue/selectbutton'
+import { defineComponent } from 'vue'
+import olapSidebarDescriptor from './OlapSidebarDescriptor.json'
+import SelectButton from 'primevue/selectbutton'
 
-    export default defineComponent({
-        name: 'olap-sidebar',
-        components: { SelectButton },
-        props: { olap: { type: Object }, olapDesignerMode: { type: Boolean }, propButtons: { type: Array } },
-        emits: [
-            'openCustomViewDialog',
-            'drillTypeChanged',
-            'showParentMemberChanged',
-            'hideSpansChanged',
-            'suppressEmptyChanged',
-            'showPropertiesChanged',
-            'openSortingDialog',
-            'openMdxQueryDialog',
-            'reloadSchema',
-            'enableCrossNavigation',
-            'openCrossNavigationDefinitionDialog',
-            'openButtonWizardDialog',
-            'drillThroughChanged',
-            'saveOlapDesigner'
-        ],
-        data() {
-            return {
-                olapSidebarDescriptor,
-                buttons: [] as any[],
-                drillOn: 'position',
-                enableDrillThrough: false,
-                showParentMembers: false,
-                hideSpans: false,
-                suppressEmpty: false,
-                showProperties: false,
-                crossNavigation: false,
-                mode: 'designer'
-            }
-        },
-        watch: {
-            propButtons() {
-                this.loadButtons()
-            },
-            olap() {
-                this.loadOlapModelConfigValues()
-            }
-        },
-        created() {
-            this.loadButtons()
-            this.loadOlapModelConfigValues()
-        },
-        methods: {
-            loadButtons() {
-                this.buttons = this.propButtons as any[]
-            },
-            isButtonVisible(buttonName: string) {
-                let isVisible = false
-                const index = this.olap?.modelConfig.toolbarVisibleButtons.findIndex((el: any) => el === buttonName)
-                if (index !== -1) isVisible = true
-
-                return isVisible
-            },
-            loadOlapModelConfigValues() {
-                if (this.olap) {
-                    this.drillOn = this.olap.modelConfig.drillType
-                    this.enableDrillThrough = this.olap.modelConfig.enableDrillThrough
-                    this.showParentMembers = this.olap.modelConfig.showParentMembers
-                    this.hideSpans = this.olap.modelConfig.hideSpans
-                    this.suppressEmpty = this.olap.modelConfig.suppressEmpty
-                    this.showProperties = this.olap.modelConfig.showProperties
-                    this.crossNavigation = this.olap.modelConfig?.crossNavigation?.buttonClicked
-                }
-            },
-            onDrillThroughClick() {
-                this.enableDrillThrough = !this.enableDrillThrough
-                this.$emit('drillThroughChanged', this.enableDrillThrough)
-            },
-            onShowParentMemberClick() {
-                this.showParentMembers = !this.showParentMembers
-                this.$emit('showParentMemberChanged', this.showParentMembers)
-            },
-            onHideSpansClick() {
-                this.hideSpans = !this.hideSpans
-                this.$emit('hideSpansChanged', this.hideSpans)
-            },
-            onSuppressRowsColumnsClick() {
-                this.suppressEmpty = !this.suppressEmpty
-                this.$emit('suppressEmptyChanged', this.suppressEmpty)
-            },
-            onShowPropertiesClick() {
-                this.showProperties = !this.showProperties
-                this.$emit('showPropertiesChanged', this.showProperties)
-            },
-            onEnableCrossNavigationClick() {
-                this.crossNavigation = !this.crossNavigation
-                this.$emit('enableCrossNavigation', this.crossNavigation)
-            },
-            closeOlapDesigner() {
-                this.$router.push('/document-browser')
-            }
+export default defineComponent({
+    name: 'olap-sidebar',
+    components: { SelectButton },
+    props: { olap: { type: Object }, olapDesignerMode: { type: Boolean }, propButtons: { type: Array } },
+    emits: [
+        'openCustomViewDialog',
+        'drillTypeChanged',
+        'showParentMemberChanged',
+        'hideSpansChanged',
+        'suppressEmptyChanged',
+        'showPropertiesChanged',
+        'openSortingDialog',
+        'openMdxQueryDialog',
+        'reloadSchema',
+        'enableCrossNavigation',
+        'openCrossNavigationDefinitionDialog',
+        'openButtonWizardDialog',
+        'drillThroughChanged',
+        'saveOlapDesigner'
+    ],
+    data() {
+        return {
+            olapSidebarDescriptor,
+            buttons: [] as any[],
+            drillOn: 'position',
+            enableDrillThrough: false,
+            showParentMembers: false,
+            hideSpans: false,
+            suppressEmpty: false,
+            showProperties: false,
+            crossNavigation: false,
+            mode: 'designer'
         }
-    })
+    },
+    watch: {
+        propButtons() {
+            this.loadButtons()
+        },
+        olap() {
+            this.loadOlapModelConfigValues()
+        }
+    },
+    created() {
+        this.loadButtons()
+        this.loadOlapModelConfigValues()
+    },
+    methods: {
+        loadButtons() {
+            this.buttons = this.propButtons as any[]
+        },
+        isButtonVisible(buttonName: string) {
+            let isVisible = false
+            const index = this.olap?.modelConfig.toolbarVisibleButtons.findIndex((el: any) => el === buttonName)
+            if (index !== -1) isVisible = true
+
+            return isVisible
+        },
+        loadOlapModelConfigValues() {
+            if (this.olap) {
+                this.drillOn = this.olap.modelConfig.drillType
+                this.enableDrillThrough = this.olap.modelConfig.enableDrillThrough
+                this.showParentMembers = this.olap.modelConfig.showParentMembers
+                this.hideSpans = this.olap.modelConfig.hideSpans
+                this.suppressEmpty = this.olap.modelConfig.suppressEmpty
+                this.showProperties = this.olap.modelConfig.showProperties
+                this.crossNavigation = this.olap.modelConfig?.crossNavigation?.buttonClicked
+            }
+        },
+        onDrillThroughClick() {
+            this.enableDrillThrough = !this.enableDrillThrough
+            this.$emit('drillThroughChanged', this.enableDrillThrough)
+        },
+        onShowParentMemberClick() {
+            this.showParentMembers = !this.showParentMembers
+            this.$emit('showParentMemberChanged', this.showParentMembers)
+        },
+        onHideSpansClick() {
+            this.hideSpans = !this.hideSpans
+            this.$emit('hideSpansChanged', this.hideSpans)
+        },
+        onSuppressRowsColumnsClick() {
+            this.suppressEmpty = !this.suppressEmpty
+            this.$emit('suppressEmptyChanged', this.suppressEmpty)
+        },
+        onShowPropertiesClick() {
+            this.showProperties = !this.showProperties
+            this.$emit('showPropertiesChanged', this.showProperties)
+        },
+        onEnableCrossNavigationClick() {
+            this.crossNavigation = !this.crossNavigation
+            this.$emit('enableCrossNavigation', this.crossNavigation)
+        },
+        closeOlapDesigner() {
+            this.$router.push('/document-browser')
+        }
+    }
+})
 </script>
 
 <style lang="scss">
-    #olap-sidebar {
-        z-index: 100;
-        background-color: white;
-        height: 100%;
-        width: 250px;
-        position: absolute;
-        top: 0;
-        right: 0;
-        display: flex;
-        flex-direction: column;
-    }
-    .olap-sidebar-button-active {
-        background-color: #43749e !important;
-    }
+#olap-sidebar {
+    z-index: 100;
+    background-color: white;
+    height: 100%;
+    width: 250px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+}
+.olap-sidebar-button-active {
+    background-color: #43749e !important;
+}
 </style>
