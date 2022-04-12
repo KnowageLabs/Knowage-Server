@@ -1,7 +1,7 @@
 <template>
     <div class="kn-page">
         <div class="kn-page-content">
-            <ProgressSpinner class="hier-spinner" v-if="loading" :style="descriptor.style.spinner" />
+            <ProgressSpinner class="hier-spinner" v-if="loading" :style="descriptor.style.spinner" data-test="spinner" />
 
             <TabView class="hierarchy-tabview kn-height-full">
                 <TabPanel>
