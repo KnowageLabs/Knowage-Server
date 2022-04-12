@@ -57,12 +57,12 @@ export default defineComponent({
             const personalFolder = {
                 key: 'Personal_Folders',
                 icon: 'pi pi-folder',
-                id: 1,
+                id: -1,
                 parentId: null,
                 label: 'Personal_Folders',
                 children: [] as iNode[],
                 data: {
-                    id: 1,
+                    id: -1,
                     codType: 'LOW_FUNCT',
                     code: 'Personal_Folders',
                     createRoles: [],
@@ -77,7 +77,7 @@ export default defineComponent({
             const foldersWithMissingParent = [] as iNode[]
             this.folders.forEach((folder: any) => {
                 const node = { key: folder.name, icon: 'pi pi-folder', id: folder.id, parentId: folder.parentId, label: folder.name, children: [] as iNode[], data: folder }
-                node.children = foldersWithMissingParent.filter((folder: iNode) => node.id === folder.parentId)
+                node.children = foldersWithMissingParent.filter((folder: iNode) => node.id === folder.parentId && folder.data.codType !== 'LOW_FUNCT')
                 this.attachFolderToTree(node, foldersWithMissingParent, personalFolder)
             })
         },
@@ -85,7 +85,7 @@ export default defineComponent({
             if (folder.parentId) {
                 let parentFolder = null as iNode | null
                 for (let i = 0; i < foldersWithMissingParent.length; i++) {
-                    if (folder.parentId === foldersWithMissingParent[i].id) {
+                    if (folder.parentId === foldersWithMissingParent[i].id && foldersWithMissingParent[i].data.codType !== 'USER_FUNCT') {
                         folder.data.parentFolder = foldersWithMissingParent[i]
                         foldersWithMissingParent[i].children?.push(folder)
                         break
@@ -93,13 +93,14 @@ export default defineComponent({
                 }
                 for (let i = 0; i < this.nodes.length; i++) {
                     parentFolder = this.findParentFolder(folder, this.nodes[i])
-                    if (parentFolder) {
+
+                    if (parentFolder && parentFolder.data.codType !== 'USER_FUNCT') {
                         folder.data.parentFolder = parentFolder
                         parentFolder.children?.push(folder)
                         break
                     }
                 }
-                if (!parentFolder) {
+                if (!parentFolder && folder.data.codType !== 'USER_FUNCT') {
                     foldersWithMissingParent.push(folder)
                 }
             } else if (folder.data.codType === 'USER_FUNCT') {
@@ -111,6 +112,9 @@ export default defineComponent({
             }
         },
         findParentFolder(folderToAdd: iNode, folderToSearch: iNode) {
+            if (folderToAdd.data.codType === 'USER_FUNCT') {
+                return null
+            }
             if (folderToAdd.parentId === folderToSearch.id) {
                 return folderToSearch
             } else {

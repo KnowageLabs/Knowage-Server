@@ -42,6 +42,7 @@
                     :rEnvironments="rEnvironments"
                     @fileUploaded="selectedDataset.fileUploaded = true"
                     @touched="$emit('touched')"
+                    @qbeSaved="getSelectedDataset"
                 />
             </TabPanel>
 

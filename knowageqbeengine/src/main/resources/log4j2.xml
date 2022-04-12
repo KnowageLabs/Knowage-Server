@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO">
+<Configuration status="info">
 	<Appenders>
 		<Console name="CONSOLE" target="SYSTEM_OUT">
 			<PatternLayout>
@@ -7,7 +7,7 @@
 			</PatternLayout>
 		</Console>
 		<RollingFile
-				name="FILE"
+				name="KNOWAGE_QBE_ENGINE"
 				fileName="${sys:catalina.base}/logs/knowageQbeEngine.log"
 				append="true"
 				filePattern="${sys:catalina.base}/logs/knowageQbeEngine-%i.log"
@@ -22,7 +22,7 @@
 			<DefaultRolloverStrategy max="3" />
 		</RollingFile>
 		<RollingFile
-				name="FILE_AUDIT"
+				name="KNOWAGE_QBE_ENGINE_AUDIT"
 				fileName="${sys:catalina.base}/logs/knowageQbeEngineAudit.log"
 				append="true"
 				filePattern="${sys:catalina.base}/logs/knowageQbeEngineAudit-%i.log"
@@ -39,37 +39,37 @@
 	</Appenders>
 	<Loggers>
 		<logger name="audit" additivity="false" level="info">
-			<AppenderRef ref="FILE_AUDIT" />
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE_AUDIT" />
 		</logger>
 		<logger name="edu.yale" additivity="false" level="warn">
-			<AppenderRef ref="FILE" />
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
 		</logger>
 		<logger name="it.eng.qbe" additivity="false" level="error">
-			<AppenderRef ref="FILE" />
-			<AppenderRef ref="CONSOLE" />
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
+			<!-- <AppenderRef ref="CONSOLE" /> -->
 		</logger>
 		<logger name="it.eng.qbe.datasource.jpa.audit.JPAPersistenceManagerAuditLogger" additivity="false" level="info">
-			<AppenderRef ref="FILE_AUDIT" />
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE_AUDIT" />
 		</logger>
 		<logger name="it.eng.spagobi" additivity="false" level="error">
-			<AppenderRef ref="FILE" />
-			<AppenderRef ref="CONSOLE" />
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
+			<!-- <AppenderRef ref="CONSOLE" /> -->
 		</logger>
 		<logger name="it.eng.spagobi.commons.utilities.messages" additivity="false" level="error">
-			<AppenderRef ref="FILE" />
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
 		</logger>
 		<logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" additivity="false" level="error">
-			<AppenderRef ref="FILE" />
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
 		</logger>
 		<logger name="it.eng.spagobi.engines.qbe" additivity="false" level="error">
-			<AppenderRef ref="FILE" />
-			<AppenderRef ref="CONSOLE" />
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
+			<!-- <AppenderRef ref="CONSOLE" /> -->
 		</logger>
 		<logger name="Spago" additivity="false" level="error">
-			<AppenderRef ref="FILE" />
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
 		</logger>
 		<Root level="error">
-			<AppenderRef ref="FILE" />
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
 		</Root>
 	</Loggers>
 </Configuration>

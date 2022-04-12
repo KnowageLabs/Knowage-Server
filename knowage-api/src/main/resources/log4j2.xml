@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO">
+<Configuration status="info">
 	<Appenders>
 		<Console name="CONSOLE" target="SYSTEM_OUT">
 			<PatternLayout>
@@ -7,7 +7,7 @@
 			</PatternLayout>
 		</Console>
 		<RollingFile
-				name="FILE"
+				name="KNOWAGE_API"
 				fileName="${sys:catalina.base}/logs/knowageApi.log"
 				append="true"
 				filePattern="${sys:catalina.base}/logs/knowageApi-%i.log"
@@ -24,23 +24,22 @@
 	</Appenders>
 	<Loggers>
 		<logger name="edu.yale" level="error" additivity="false">
-			<AppenderRef ref="FILE" />
+			<AppenderRef ref="KNOWAGE_API" />
 		</logger>
-		<logger name="it.eng.knowage.engine.cockpit.api.export"
-			level="error" additivity="false">
-			<AppenderRef ref="FILE" />
+		<logger name="it.eng.knowage.engine.cockpit.api.export" level="error" additivity="false">
+			<AppenderRef ref="KNOWAGE_API" />
 		</logger>
 		<logger name="it.eng.spagobi" level="error" additivity="false">
-			<AppenderRef ref="FILE" />
+			<AppenderRef ref="KNOWAGE_API" />
 		</logger>
 		<logger name="it.eng.spagobi.commons.utilities.messages" level="error" additivity="false">
-			<AppenderRef ref="FILE" />
+			<AppenderRef ref="KNOWAGE_API" />
 		</logger>
 		<logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" level="error" additivity="false">
-			<AppenderRef ref="FILE" />
+			<AppenderRef ref="KNOWAGE_API" />
 		</logger>
 		<Root level="error">
-			<AppenderRef ref="FILE" />
+			<AppenderRef ref="KNOWAGE_API" />
 		</Root>
 	</Loggers>
 </Configuration>

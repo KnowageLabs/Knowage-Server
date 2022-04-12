@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="INFO">
+<Configuration status="info">
 	<Appenders>
 		<Console name="CONSOLE" target="SYSTEM_OUT">
 			<PatternLayout>
@@ -7,7 +7,7 @@
 			</PatternLayout>
 		</Console>
 		<RollingFile
-				name="SpagoBIProcessEngine"
+				name="KNOWAGE_SVG_VIEWER_ENGINE"
 				fileName="${sys:catalina.base}/logs/knowageSVGViewerEngine.log"
 				append="true"
 				filePattern="${sys:catalina.base}/logs/knowageSVGViewerEngine-%i.log"
@@ -24,19 +24,19 @@
 	</Appenders>
 	<Loggers>
 		<logger name="edu.yale" level="error">
-			<AppenderRef ref="SpagoBIProcessEngine" />
+			<AppenderRef ref="KNOWAGE_SVG_VIEWER_ENGINE" />
 		</logger>
 		<logger name="it.eng.spagobi" level="error">
-			<AppenderRef ref="SpagoBIProcessEngine" />
+			<AppenderRef ref="KNOWAGE_SVG_VIEWER_ENGINE" />
 		</logger>
 		<logger name="it.eng.spagobi.commons.utilities.messages" level="error">
-			<AppenderRef ref="SpagoBIProcessEngine" />
+			<AppenderRef ref="KNOWAGE_SVG_VIEWER_ENGINE" />
 		</logger>
 		<logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" level="error">
-			<AppenderRef ref="SpagoBIProcessEngine" />
+			<AppenderRef ref="KNOWAGE_SVG_VIEWER_ENGINE" />
 		</logger>
 		<Root level="warn">
-			<AppenderRef ref="SpagoBIProcessEngine" />
+			<AppenderRef ref="KNOWAGE_SVG_VIEWER_ENGINE" />
 		</Root>
 	</Loggers>
 </Configuration>
