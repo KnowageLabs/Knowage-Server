@@ -53,12 +53,13 @@ import descriptor from './QBESavingDialogDescriptor.json'
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
     components: { TabView, TabPanel, Dialog, DetailTab, PersistenceTab, MetadataCard },
-    props: { propDataset: Object, visible: Boolean },
+    props: { propDataset: { type: Object, required: true }, visible: Boolean },
     data() {
         return {
             descriptor,
             scopeTypes: [] as any,
             selectedDataset: {} as any,
+            selectedDatasetId: null as any,
             categoryTypes: [] as any,
             scheduling: {
                 repeatInterval: null as String | null
@@ -84,6 +85,8 @@ export default defineComponent({
         },
 
         async saveDataset() {
+            console.log('dataset', this.selectedDataset)
+
             let dsToSave = { ...this.selectedDataset } as any
             dsToSave.pars ? '' : (dsToSave.pars = [])
             dsToSave.pythonEnvironment ? (dsToSave.pythonEnvironment = JSON.stringify(dsToSave.pythonEnvironment)) : ''
@@ -101,7 +104,11 @@ export default defineComponent({
                 })
                 .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
-                    this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
+                    if (!this.selectedDataset.id) {
+                        this.selectedDataset.id = response.data.id
+                        this.selectedDataset.meta = response.data.meta
+                        this.$emit('created', response)
+                    } else this.$emit('updated')
                     this.$emit('datasetSaved')
                     this.$emit('close')
                 })

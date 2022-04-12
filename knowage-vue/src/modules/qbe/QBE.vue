@@ -12,7 +12,7 @@
                 </template>
             </Toolbar>
         </template>
-        <KnOverlaySpinnerPanel :visibility="loading" />
+        <ProgressSpinner class="qbe-overlay-spinner" v-if="loading" :style="qbeDescriptor.style.spinner" />
         <div v-if="!qbePreviewDialogVisible" class="kn-relative p-d-flex p-flex-row kn-height-full kn-width-full">
             <div v-if="parameterSidebarVisible" :style="qbeDescriptor.style.backdrop" @click="parameterSidebarVisible = false"></div>
             <div v-show="showEntitiesLists && qbeLoaded" :style="qbeDescriptor.style.entitiesLists">
@@ -149,7 +149,7 @@ import QBEJoinDefinitionDialog from './qbeDialogs/qbeJoinDefinitionDialog/QBEJoi
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import QBEPreviewDialog from './qbeDialogs/qbePreviewDialog/QBEPreviewDialog.vue'
 import qbeDescriptor from './QBEDescriptor.json'
-import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
+import ProgressSpinner from 'primevue/progressspinner'
 const crypto = require('crypto')
 
 export default defineComponent({
@@ -174,7 +174,7 @@ export default defineComponent({
         KnParameterSidebar,
         QBEPreviewDialog,
         QBESmartTable,
-        KnOverlaySpinnerPanel
+        ProgressSpinner
     },
     props: { visible: { type: Boolean }, dataset: { type: Object } },
     emits: ['close'],
@@ -756,22 +756,22 @@ export default defineComponent({
         margin: 0;
     }
 }
-
 .qbe-detail-view {
     display: flex;
     flex-direction: column;
     flex: 3;
 }
-
 .derived-entities-toggle {
     height: 25%;
 }
-
 .qbe-scroll-panel .p-scrollpanel-content {
     padding: 0 !important;
 }
 .qbe-scroll-panel .p-scrollpanel-bar {
     background-color: #43749eb6;
     width: 5px;
+}
+.qbe-overlay-spinner .p-progress-spinner-svg {
+    width: 125px;
 }
 </style>
