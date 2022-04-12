@@ -167,7 +167,6 @@ export default defineComponent({
         },
         async handleSaveHiararchy() {
             this.$emit('loading', true)
-            // TODO see relations MT
 
             if (this.checkIfNodesWithoutChildren(this.treeModel)) {
                 this.$confirm.require({
