@@ -136,8 +136,18 @@ public class QuartzNativeObjectsConverter {
 
 				if (spagobiTrigger.isSimpleTrigger()) {
 					quartzTrigger = new org.quartz.SimpleTrigger();
+
 				} else {
 					org.quartz.CronTrigger quartzCronTrigger = new org.quartz.CronTrigger();
+
+					/*
+					 * Very important during update!
+					 *
+					 * The update keep the previous start time: if we rewrite the same trigger a missfire happens; we don't
+					 * want that!
+					 */
+					quartzCronTrigger.setMisfireInstruction(org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
+
 					String quartzCronExpression = null;
 					if (org.quartz.CronExpression.isValidExpression(spagobiTrigger.getChronExpression().getExpression())) {
 						quartzCronExpression = spagobiTrigger.getChronExpression().getExpression();
