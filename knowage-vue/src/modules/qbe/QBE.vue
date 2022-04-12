@@ -472,22 +472,13 @@ export default defineComponent({
         },
         async exportQueryResults(mimeType) {
             var fileName = ''
-            var fileType = ''
+            mimeType == 'csv' ? (fileName = 'report.csv') : (fileName = 'report.xlsx')
 
-            if (mimeType == 'csv') {
-                fileName = 'report.csv'
-                fileType = 'text/csv'
-            } else if (mimeType == 'xlsx') {
-                fileName = 'report.xlsx'
-                fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            } else {
-                console.log('Unsupported mime type: ', mimeType, fileName, fileType)
-            }
             const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
-                .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
                 .then((response: AxiosResponse<any>) => {
-                    downloadDirect(response.data, fileName, fileType)
+                    downloadDirect(response.data, fileName, response.headers['content-type'])
                 })
                 .catch(() => {})
         },

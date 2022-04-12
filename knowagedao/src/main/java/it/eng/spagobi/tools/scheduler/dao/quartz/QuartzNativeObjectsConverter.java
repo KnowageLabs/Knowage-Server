@@ -185,7 +185,16 @@ public class QuartzNativeObjectsConverter {
 						quartzCronExpression = convertCronExpressionToNativeObject(spagobiTrigger.getChronExpression(), spagobiTrigger.getStartTime());
 					}
 
-					triggerBuilder = triggerBuilder.withSchedule(cronSchedule(quartzCronExpression));
+					/*
+					 * Very important during update!
+					 *
+					 * The update keep the previous start time: if we rewrite the same trigger a missfire happens; we don't
+					 * want that!
+					 */
+					triggerBuilder = triggerBuilder.withSchedule(
+							cronSchedule(quartzCronExpression)
+							.withMisfireHandlingInstructionDoNothing()
+						);
 
 					// dirty trick
 					spagobiTrigger.getJob().addParameter(SPAGOBI_CRON_EXPRESSION, spagobiTrigger.getChronExpression().getExpression());
