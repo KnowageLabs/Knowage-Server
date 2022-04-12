@@ -1,7 +1,7 @@
 <template>
     <div class="kn-page">
         <div class="kn-page-content">
-            <KnOverlaySpinnerPanel :visibility="loading" />
+            <ProgressSpinner class="hier-spinner" v-if="loading" :style="descriptor.style.spinner" />
 
             <TabView class="hierarchy-tabview kn-height-full">
                 <TabPanel>
@@ -34,20 +34,22 @@
 import { defineComponent } from 'vue'
 import { iDimension } from './HierarchyManagement.d'
 import { AxiosResponse } from 'axios'
-import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import HierarchyManagementMasterTab from './HierarchyManagementMasterTab/HierarchyManagementMasterTab.vue'
 import HierarchyManagementTechnicalTab from './HierarchyManagementTechnicalTab/HierarchyManagementTechnicalTab.vue'
 import HierarchyManagementBackupTab from './HierarchyManagementBackupTab/HierarchyManagementBackupTab.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import ProgressSpinner from 'primevue/progressspinner'
+import descriptor from './HierarchyManagementDescriptor.json'
 
 export default defineComponent({
     name: 'hierarchy-management',
-    components: { KnOverlaySpinnerPanel, HierarchyManagementMasterTab, HierarchyManagementTechnicalTab, HierarchyManagementBackupTab, TabView, TabPanel },
+    components: { ProgressSpinner, HierarchyManagementMasterTab, HierarchyManagementTechnicalTab, HierarchyManagementBackupTab, TabView, TabPanel },
     data() {
         return {
             dimensions: [] as iDimension[],
-            loading: false
+            loading: false,
+            descriptor
         }
     },
     async created() {
@@ -85,5 +87,9 @@ export default defineComponent({
         flex: 1;
         overflow: auto;
     }
+}
+
+.hier-spinner .p-progress-spinner-svg {
+    width: 125px;
 }
 </style>
