@@ -32,7 +32,7 @@
                     </div>
                 </form>
 
-                <DataTable :value="rows" class="p-datatable-sm kn-table" v-model:filters="filters" :globalFilterFields="globalFilterFields" :loading="loading" responsiveLayout="stack" breakpoint="700px">
+                <DataTable :value="rows" class="p-datatable-sm kn-table" edit-mode="row" v-model:editing-rows="editingRows" @row-edit-save="onRowSave" v-model:filters="filters" :globalFilterFields="globalFilterFields" :loading="loading" responsiveLayout="stack" breakpoint="700px">
                     <template #empty>
                         {{ $t('common.info.noDataFound') }}
                     </template>
@@ -46,13 +46,17 @@
                     </template>
                     <Column class="kn-truncated" v-for="column in columns" :header="$t(column.header)" :key="column.field" :sortField="column.field" :sortable="true">
                         <template #body="slotProps">
-                            <InputText v-if="column.header == 'Name' || column.header == 'Description'" class="kn-material-input" v-model="slotProps.data[column.field]" v-tooltip.top="slotProps.data[column.field]" style="border-bottom:none;height:25px" />
+                            <span v-tooltip.top="slotProps.data[column.field]" class="kn-cursor-pointer"> {{ slotProps.data[column.field] }}</span>
+                        </template>
+                        <template #editor="slotProps">
+                            <InputText v-if="column.header == 'Name' || column.header == 'Description'" class="kn-material-input" v-model="slotProps.data[column.field]" v-tooltip.top="slotProps.data[column.field]" />
                             <span v-else v-tooltip.top="slotProps.data[column.field]" class="kn-cursor-pointer"> {{ slotProps.data[column.field] }}</span>
                         </template>
                     </Column>
+                    <Column :rowEditor="true" :style="hierarchyManagementDimensionsTableDescriptor.iconColumnStyle"></Column>
                     <Column :style="hierarchyManagementDimensionsTableDescriptor.iconColumnStyle">
                         <template #body="slotProps">
-                            <Button icon="pi pi-save" class="p-button-link" v-tooltip.top="$t('common.save')" @click="updateBackupInfo(slotProps.data)" />
+                            <!-- <Button icon="pi pi-save" class="p-button-link" v-tooltip.top="$t('common.save')" @click="updateBackupInfo(slotProps.data)" /> -->
                             <Button icon="pi pi-history" class="p-button-link" v-tooltip.top="$t('common.restore')" />
                             <Button icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click="deleteBackupConfirm(slotProps.data)" />
                         </template>
@@ -89,6 +93,7 @@ export default defineComponent({
             hierarchies: [] as iHierarchy[],
             backupData: [] as any,
             rows: [] as any[],
+            editingRows: [] as any[],
             columns: [] as { field: string; header: string }[],
             globalFilterFields: [] as string[],
             filters: { global: [filterDefault] },
@@ -153,6 +158,30 @@ export default defineComponent({
         },
         async updateBackupInfo(backup) {
             console.log(backup)
+        },
+        logMe(event) {
+            console.log(event)
+        },
+        onRowSave(event) {
+            this.$confirm.require({
+                header: this.$t('common.update'),
+                message: this.$t('managers.hierarchyManagement.saveBackupMessage'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.updateBackup(event)
+            })
+        },
+        async updateBackup(eventData) {
+            const url = `hierarchiesBackup/modifyHierarchyBkps`
+            let postData = { HIER_DS: eventData.newData.HIER_DS, HIER_NM: eventData.newData.HIER_NM, HIER_NM_ORIG: eventData.data.HIER_NM, dimension: this.selectedDimension?.DIMENSION_NM }
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData).then((response: AxiosResponse<any>) => {
+                if (response.data.response === 'ok') {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.loadBackupData()
+                }
+            })
         }
     }
 })

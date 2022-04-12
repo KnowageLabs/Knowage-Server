@@ -9,7 +9,7 @@
     },
     "iconColumnStyle": {
         "text-align": "end",
-        "width": "15%"
+        "width": "70px"
     },
     "smallIconColumn": {
         "width": "5%"
