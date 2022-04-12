@@ -14,7 +14,7 @@
             </template>
             <Column :style="hierarchyManagementDimensionsTableDescriptor.smallIconColumn">
                 <template #body="slotProps">
-                    <div class="pi pi-bars p-button-link" :draggable="true" @dragstart.stop="onDragStart($event, slotProps.data)" />
+                    <div class="pi pi-bars p-button-link" :draggable="true" @dragstart.stop="onDragStart($event, slotProps.data)" data-test="bla" />
                 </template>
             </Column>
             <Column class="kn-truncated" v-for="column in columns" :header="$t(column.header)" :key="column.field" :sortField="column.field" :sortable="true">

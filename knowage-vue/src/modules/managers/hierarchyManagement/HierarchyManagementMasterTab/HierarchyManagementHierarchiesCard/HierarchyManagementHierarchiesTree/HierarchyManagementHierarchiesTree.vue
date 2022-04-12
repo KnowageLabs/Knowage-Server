@@ -103,7 +103,16 @@ export default defineComponent({
             this.tree = this.propTree
             this.orderBy = ''
             if (this.tree) this.createNodeTree()
+
+                   console.log("propTree", this.propTree)
+        console.log("nodeMetadata", this.nodeMetadata)
+        console.log("selectedDimension", this.selectedDimension)
+        console.log("selectedHierarchy", this.selectedHierarchy)
+        console.log("dimensionMetadata", this.dimensionMetadata)
+        console.log("propRelationsMasterTree", this.propRelationsMasterTree)
+        console.log("treeMode", this.treeMode)
         },
+
         loadMasterTreeRelations() {
             this.relationsMasterTree = this.propRelationsMasterTree as any[]
         },
@@ -276,6 +285,9 @@ export default defineComponent({
             return null
         },
         async onDragDrop(event: any, item: any, key: any) {
+            console.log("ON DRAG DROP EVENT: ", event)
+            console.log("ON DRAG DROP ITEM: ", item)
+            console.log("ON DRAG DROP KEY: ", key)
             this.dropzoneActive[key] = false
             if (this.treeMode === 'info') return
             const droppedItem = JSON.parse(event.dataTransfer.getData('text/plain'))
