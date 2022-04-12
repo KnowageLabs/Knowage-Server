@@ -1,5 +1,5 @@
 <template>
-    <small v-if="errorMessageVisible" class="p-error p-ml-2">{{ $t('managers.hierarchyManagement.createHierarchyMasterErrorMessage') }}</small>
+    <small v-if="errorMessageVisible" class="p-error p-ml-2" data-test="error-message">{{ $t('managers.hierarchyManagement.createHierarchyMasterErrorMessage') }}</small>
     <div class="p-d-flex kn-flex kn-overflow">
         <div id="list-container" class="p-d-flex p-ml-2" style="flex: 1 1 0;">
             <Listbox class="kn-list kn-list-border-all kn-flex hierarchy-management-list" listStyle="max-height:calc(100% - 62px)" v-model="selectedSourceFields" :options="dimensionSourceFields" optionLabel="NAME" :multiple="true" :filter="true" @change="onSelectedField">
@@ -7,7 +7,7 @@
                 <template #option="slotProps">
                     <div class="kn-list-item">
                         <div class="kn-list-item-text">
-                            <span>{{ slotProps.option.NAME }}</span>
+                            <span :data-test="'list-item-' + slotProps.option.NAME">{{ slotProps.option.NAME }}</span>
                         </div>
                     </div>
                 </template>
@@ -16,13 +16,13 @@
 
         <div id="button-container" class="p-as-center p-mx-2">
             <div class="p-d-flex p-flex-column">
-                <Button class="kn-button kn-button--primary hierarchy-management-master-selecet-list-button" icon="pi pi-angle-double-right" :disabled="selectedSourceFields.length === 0" @click="moveToTheRight" />
+                <Button class="kn-button kn-button--primary hierarchy-management-master-selecet-list-button" icon="pi pi-angle-double-right" :disabled="selectedSourceFields.length === 0" @click="moveToTheRight" data-test="move-right-button" />
                 <Button class="kn-button kn-button--primary hierarchy-management-master-selecet-list-button p-mt-2" icon="pi pi-angle-double-left" :disabled="selectedDestinationFields.length === 0" @click="moveToTheLeft" />
             </div>
         </div>
 
         <div id="identifier-container" class="p-d-flex p-mr-2" style="flex: 1 1 0;">
-            <Listbox class="kn-list kn-list-border-all kn-flex hierarchy-management-list" listStyle="max-height:100%" v-model="selectedDestinationFields" :options="dimensionDestinationFields" optionLabel="NAME" :multiple="true" @change="onSelectedField">
+            <Listbox class="kn-list kn-list-border-all kn-flex hierarchy-management-list" listStyle="max-height:100%" v-model="selectedDestinationFields" :options="dimensionDestinationFields" optionLabel="NAME" :multiple="true" @change="onSelectedField" data-test="selected-destinations-list">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item">
@@ -32,7 +32,7 @@
                                 {{ slotProps.option.code.NAME + ', ' + slotProps.option.name.NAME }}
                             </span>
                             <div class="p-ml-auto">
-                                <Button v-if="slotProps.index === dimensionDestinationFields.length - 1" icon="fa fa-plus" class="p-button-text p-button-plain p-button-sm p-p-0" @click.stop="moveToRecursive(slotProps.option, slotProps.index)" />
+                                <Button v-if="slotProps.index === dimensionDestinationFields.length - 1" icon="fa fa-plus" class="p-button-text p-button-plain p-button-sm p-p-0" @click.stop="moveToRecursive(slotProps.option, slotProps.index)" :data-test="'recursive-button-' + slotProps.option.code.NAME" />
                                 <Button v-if="slotProps.index !== 0" icon="fa fa-arrow-up" class="p-button-text p-button-plain p-button-sm p-p-0" @click.stop="move(slotProps.option, slotProps.index, 'up')" />
                                 <Button v-if="slotProps.index !== dimensionDestinationFields.length - 1" icon="fa fa-arrow-down" class="p-button-text p-button-plain p-button-sm p-p-0" @click.stop="move(slotProps.option, slotProps.index, 'down')" />
                             </div>
