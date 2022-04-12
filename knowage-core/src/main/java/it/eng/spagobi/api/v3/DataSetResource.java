@@ -449,7 +449,8 @@ public class DataSetResource {
 
 		String dsType = ds.getType();
 
-		getParametersFromDataSet(ret, ds);
+		if (ds.getParametersList() != null)
+			getParametersFromDataSet(ret, ds);
 
 		if ("SbiQbeDataSet".equals(dsType)) {
 			String qbeDatamart = getDatamartFromDataSet(ds);
