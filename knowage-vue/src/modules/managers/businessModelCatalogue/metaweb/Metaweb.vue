@@ -23,7 +23,7 @@
                         <span>{{ $t('metaweb.physicalModel.title') }}</span>
                     </template>
 
-                    <MetawebPhysicalModel :propMeta="meta" :observer="observer" :businessModel="businessModel" @loading="setLoading"></MetawebPhysicalModel>
+                    <MetawebPhysicalModel :propMeta="meta" :observer="observer" @loading="setLoading"></MetawebPhysicalModel>
                 </TabPanel>
             </TabView>
         </div>

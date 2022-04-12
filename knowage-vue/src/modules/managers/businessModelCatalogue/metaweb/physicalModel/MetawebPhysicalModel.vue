@@ -62,7 +62,7 @@ const { applyPatch, generate } = require('fast-json-patch')
 export default defineComponent({
     name: 'metaweb-physical-model',
     components: { MetawebForeignKeyTab, MetawebPhysicalModelList, MetawebPropertyListTab, MetawebPhysicalModelUpdateDialog, TabView, TabPanel },
-    props: { propMeta: { type: Object }, observer: { type: Object }, businessModel: { type: Object } },
+    props: { propMeta: { type: Object }, observer: { type: Object } },
     emits: ['loading'],
     data() {
         return {
@@ -90,13 +90,7 @@ export default defineComponent({
         },
         async openUpdateDialog() {
             this.$emit('loading', true)
-            if (!this.businessModel) return
-
-            let url = '1.0/metaWeb/updatePhysicalModel?'
-            let params = {} as any
-            if (this.businessModel.tablePrefixLike) params.tablePrefixLike = this.businessModel.tablePrefixLike
-            if (this.businessModel.tablePrefixNotLike) params.tablePrefixNotLike = this.businessModel.tablePrefixNotLike
-            await this.$http.get(process.env.VUE_APP_META_API_URL + url, { params: params }).then((response: AxiosResponse<any>) => (this.changedItem = response.data))
+            await this.$http.get(process.env.VUE_APP_META_API_URL + '1.0/metaWeb/updatePhysicalModel').then((response: AxiosResponse<any>) => (this.changedItem = response.data))
             this.updateDialogVisible = true
             this.$emit('loading', false)
         },

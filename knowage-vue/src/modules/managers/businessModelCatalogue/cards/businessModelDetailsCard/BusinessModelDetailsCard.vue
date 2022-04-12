@@ -238,6 +238,13 @@
 
             <Metaweb :visible="metawebDialogVisible" :propMeta="meta" :businessModel="businessModel" @closeMetaweb="metawebDialogVisible = false" @modelGenerated="$emit('modelGenerated')" />
             <KnOverlaySpinnerPanel id="metaweb-spinner" :visibility="loading" />
+
+            <Dialog :visible="saveConfirmVisible" :modal="true" :closable="false">
+                {{ $t('managers.businessModelManager.saveRequired') }}
+                <template #footer>
+                    <Button class="kn-button kn-button--primary" @click="saveConfirmVisible = false"> {{ $t('common.ok') }}</Button>
+                </template>
+            </Dialog>
         </template>
     </Card>
 </template>
@@ -250,6 +257,7 @@ import { AxiosResponse } from 'axios'
 import businessModelDetailsCardDescriptor from './BusinessModelDetailsCardDescriptor.json'
 import businessModelDetailsCardValidation from './BusinessModelDetailsCardValidation.json'
 import Card from 'primevue/card'
+import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import GenerateDatamartCard from './GenerateDatamartCard.vue'
 import InputSwitch from 'primevue/inputswitch'
@@ -264,6 +272,7 @@ export default defineComponent({
     name: 'business-model-details-card',
     components: {
         Card,
+        Dialog,
         Dropdown,
         GenerateDatamartCard,
         InputSwitch,
@@ -336,7 +345,9 @@ export default defineComponent({
             meta: null as any,
             touched: false,
             v$: useValidate() as any,
-            loading: false
+            loading: false,
+            prefixesTouched: false,
+            saveConfirmVisible: false
         }
     },
     validations() {
@@ -358,6 +369,7 @@ export default defineComponent({
             this.$emit('fileUploaded', event.target.files[0])
         },
         onFieldChange(fieldName: string, value: any) {
+            if (fieldName === 'tablePrefixLike' || fieldName === 'tablePrefixNotLike') this.prefixesTouched = true
             this.$emit('fieldChanged', { fieldName, value })
         },
         onLockedChange() {
@@ -367,14 +379,18 @@ export default defineComponent({
             this.$emit('fieldChanged', { fieldName: 'smartView', value: this.businessModel.smartView })
         },
         async goToMetaWeb() {
-            this.loading = true
-            await this.createSession()
-            if (this.businessModelVersions?.length === 0) {
-                this.metawebSelectDialogVisible = true
+            if (this.prefixesTouched) {
+                this.saveConfirmVisible = true
             } else {
-                await this.loadModelFromSession()
+                this.loading = true
+                await this.createSession()
+                if (this.businessModelVersions?.length === 0) {
+                    this.metawebSelectDialogVisible = true
+                } else {
+                    await this.loadModelFromSession()
+                }
+                this.loading = false
             }
-            this.loading = false
         },
         onDatamartGenerated() {
             this.$emit('datamartGenerated')
