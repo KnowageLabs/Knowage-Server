@@ -738,6 +738,7 @@ export default defineComponent({
     z-index: 300;
     background-color: white;
     height: 100%;
+    width: 100%;
 }
 .olap-page-container {
     display: flex;
