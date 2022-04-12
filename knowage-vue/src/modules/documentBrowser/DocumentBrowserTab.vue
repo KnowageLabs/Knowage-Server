@@ -1,5 +1,5 @@
 <template>
-    <router-view v-if="item" v-slot="{ Component }" :functionalityId="functionalityId" :item="item" @close="$emit('close', item)" @iframeCreated="onIframeCreated" @closeIframe="$emit('closeIframe')">
+    <router-view v-if="item" v-slot="{ Component }" :functionalityId="functionalityId" :item="item" :parameterValuesMap="parameterValuesMap" :tabKey="key" @close="$emit('close', item)" @parametersChanged="onParametersChange" @iframeCreated="onIframeCreated" @closeIframe="$emit('closeIframe')">
         <keep-alive>
             <component :is="Component" :key="key"></component>
         </keep-alive>
@@ -15,7 +15,9 @@ export default defineComponent({
     emits: ['close', 'iframeCreated', 'closeIframe'],
     props: { item: { type: Object }, mode: { type: String }, functionalityId: { type: String } },
     data() {
-        return {}
+        return {
+            parameterValuesMap: {} as any
+        }
     },
     computed: {
         key(): string {
@@ -27,6 +29,9 @@ export default defineComponent({
     methods: {
         onIframeCreated(payload: any) {
             this.$emit('iframeCreated', payload)
+        },
+        onParametersChange(payload: any) {
+            this.parameterValuesMap[payload.document.label + '-' + this.key] = payload.parameters
         }
     }
 })

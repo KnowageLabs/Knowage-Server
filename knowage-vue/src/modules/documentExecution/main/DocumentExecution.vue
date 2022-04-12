@@ -62,6 +62,7 @@
                 @execute="onExecute"
                 @exportCSV="onExportCSV"
                 @roleChanged="onRoleChange"
+                @parametersChanged="$emit('parametersChanged', $event)"
                 data-test="parameter-sidebar"
             ></KnParameterSidebar>
 
@@ -115,8 +116,8 @@ export default defineComponent({
         Dossier,
         Olap
     },
-    props: { id: { type: String } },
-    emits: ['close', 'updateDocumentName'],
+    props: { id: { type: String }, parameterValuesMap: { type: Object }, tabKey: { type: String } },
+    emits: ['close', 'updateDocumentName', 'parametersChanged'],
     data() {
         return {
             document: null as any,
@@ -158,7 +159,7 @@ export default defineComponent({
     async activated() {
         if (this.mode === 'iframe' && this.$route.name !== 'new-dashboard') {
             if (this.userRole) {
-                await this.loadPage()
+                await this.loadPage(true)
             } else {
                 this.parameterSidebarVisible = true
             }
@@ -217,7 +218,7 @@ export default defineComponent({
         await this.loadDocument()
 
         if (this.userRole) {
-            await this.loadPage()
+            await this.loadPage(true)
         } else {
             this.parameterSidebarVisible = true
         }
@@ -397,10 +398,10 @@ export default defineComponent({
                 this.mode = 'iframe'
             }
         },
-        async loadPage() {
+        async loadPage(initialLoading: boolean = false) {
             this.loading = true
 
-            await this.loadFilters()
+            await this.loadFilters(initialLoading)
             if (this.filtersData?.isReadyForExecution) {
                 await this.loadURL(null)
                 await this.loadExporters()
@@ -433,7 +434,12 @@ export default defineComponent({
                 this.breadcrumbs.push({ label: this.document.label, document: this.document })
             }
         },
-        async loadFilters() {
+        async loadFilters(initialLoading: boolean = false) {
+            if (this.parameterValuesMap && this.parameterValuesMap[this.document.label + '-' + this.tabKey] && initialLoading) {
+                this.filtersData = this.parameterValuesMap[this.document.label + '-' + this.tabKey]
+                return
+            }
+
             if (this.sessionEnabled) {
                 const tempFilters = sessionStorage.getItem(this.document.label)
                 if (tempFilters) {

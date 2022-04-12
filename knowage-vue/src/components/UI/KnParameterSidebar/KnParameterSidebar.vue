@@ -184,7 +184,7 @@ export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton, ScrollPanel },
     props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String } },
-    emits: ['execute', 'exportCSV', 'roleChanged'],
+    emits: ['execute', 'exportCSV', 'roleChanged', 'parametersChanged'],
     data() {
         return {
             document: null as iDocument | null,
@@ -477,6 +477,7 @@ export default defineComponent({
             this.updateVisualDependency(parameter)
             updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode)
             updateLovDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode)
+            this.$emit('parametersChanged', { parameters: this.parameters, document: this.propDocument })
         },
         openSaveParameterDialog() {
             this.parameterSaveDialogVisible = true
