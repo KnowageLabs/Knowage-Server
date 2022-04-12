@@ -46,59 +46,65 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { AxiosResponse } from 'axios'
-    import { iChangedData, iColumn, iPhysicalModel } from '../Metaweb'
-    import MetawebForeignKeyTab from './tabs/MetawebForeignKeyTab.vue'
-    import MetawebPhysicalModelList from './metawebPhysicalModelList/MetawebPhysicalModelList.vue'
-    import MetawebPropertyListTab from './tabs/MetawebPropertyListTab.vue'
-    import MetawebPhysicalModelUpdateDialog from './metawebPhysicalModelUpdateDialog/MetawebPhysicalModelUpdateDialog.vue'
-    import TabView from 'primevue/tabview'
-    import TabPanel from 'primevue/tabpanel'
-    import physDescriptor from './PhysicalModelDescriptor.json'
+import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
+import { iChangedData, iColumn, iPhysicalModel } from '../Metaweb'
+import MetawebForeignKeyTab from './tabs/MetawebForeignKeyTab.vue'
+import MetawebPhysicalModelList from './metawebPhysicalModelList/MetawebPhysicalModelList.vue'
+import MetawebPropertyListTab from './tabs/MetawebPropertyListTab.vue'
+import MetawebPhysicalModelUpdateDialog from './metawebPhysicalModelUpdateDialog/MetawebPhysicalModelUpdateDialog.vue'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
+import physDescriptor from './PhysicalModelDescriptor.json'
 
-    const { applyPatch, generate } = require('fast-json-patch')
+const { applyPatch, generate } = require('fast-json-patch')
 
-    export default defineComponent({
-        name: 'metaweb-physical-model',
-        components: { MetawebForeignKeyTab, MetawebPhysicalModelList, MetawebPropertyListTab, MetawebPhysicalModelUpdateDialog, TabView, TabPanel },
-        props: { propMeta: { type: Object }, observer: { type: Object } },
-        emits: ['loading'],
-        data() {
-            return {
-                physDescriptor,
-                meta: null as any,
-                selectedPhysicalModel: null as iColumn | iPhysicalModel | null,
-                updateDialogVisible: false,
-                changedItem: null as iChangedData | null
-            }
-        },
-        watch: {
-            propMeta() {
-                this.loadMeta()
-            }
-        },
-        created() {
-            this.loadMeta()
-        },
-        methods: {
-            loadMeta() {
-                this.meta = this.propMeta
-            },
-            onSelectedItem(selectedPhysicalModel: iColumn | iPhysicalModel) {
-                this.selectedPhysicalModel = selectedPhysicalModel
-            },
-            async openUpdateDialog() {
-                this.$emit('loading', true)
-                await this.$http.get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/updatePhysicalModel`).then((response: AxiosResponse<any>) => (this.changedItem = response.data))
-                this.updateDialogVisible = true
-                this.$emit('loading', false)
-            },
-            onPhysicalModelUpdate(changes: any) {
-                this.meta = applyPatch(this.meta, changes).newDocument
-                generate(this.observer)
-                this.updateDialogVisible = false
-            }
+export default defineComponent({
+    name: 'metaweb-physical-model',
+    components: { MetawebForeignKeyTab, MetawebPhysicalModelList, MetawebPropertyListTab, MetawebPhysicalModelUpdateDialog, TabView, TabPanel },
+    props: { propMeta: { type: Object }, observer: { type: Object }, businessModel: { type: Object } },
+    emits: ['loading'],
+    data() {
+        return {
+            physDescriptor,
+            meta: null as any,
+            selectedPhysicalModel: null as iColumn | iPhysicalModel | null,
+            updateDialogVisible: false,
+            changedItem: null as iChangedData | null
         }
-    })
+    },
+    watch: {
+        propMeta() {
+            this.loadMeta()
+        }
+    },
+    created() {
+        this.loadMeta()
+    },
+    methods: {
+        loadMeta() {
+            this.meta = this.propMeta
+        },
+        onSelectedItem(selectedPhysicalModel: iColumn | iPhysicalModel) {
+            this.selectedPhysicalModel = selectedPhysicalModel
+        },
+        async openUpdateDialog() {
+            this.$emit('loading', true)
+            if (!this.businessModel) return
+
+            let url = '1.0/metaWeb/updatePhysicalModel?'
+            let params = {} as any
+            if (this.businessModel.tablePrefixLike) params.tablePrefixLike = this.businessModel.tablePrefixLike
+            if (this.businessModel.tablePrefixNotLike) params.tablePrefixNotLike = this.businessModel.tablePrefixNotLike
+            await this.$http.get(process.env.VUE_APP_META_API_URL + url, { params: params }).then((response: AxiosResponse<any>) => (this.changedItem = response.data))
+            this.updateDialogVisible = true
+            this.$emit('loading', false)
+        },
+        onPhysicalModelUpdate(changes: any) {
+            this.meta = applyPatch(this.meta, changes).newDocument
+            generate(this.observer)
+            this.updateDialogVisible = false
+        }
+    }
+})
 </script>
