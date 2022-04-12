@@ -33,7 +33,12 @@
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
 		<filter-class>it.eng.spagobi.commons.filters.SpagoBICoreCheckSessionFilter</filter-class>
 	</filter>
-
+	
+	<filter>
+		<filter-name>LogTenantFilter</filter-name>
+		<filter-class>it.eng.knowage.utils.filters.LogTenantFilter</filter-class>
+	</filter>
+	
 	<!--
 	<servlet>
 		<servlet-name>jersey-serlvet</servlet-name>
@@ -109,6 +114,13 @@
 		<filter-class>it.eng.spagobi.utilities.filters.AntiInjectionFilter</filter-class>
 	</filter>
 
+	
+	<filter-mapping>
+		<filter-name>LogTenantFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
 	<filter-mapping>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
 		<dispatcher>REQUEST</dispatcher>
@@ -183,6 +195,8 @@
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 
+	
+	
 	<!-- If you want to enable HMAC filter:
 		Add the hmac key into server.xml :
 			<Environment description="HMAC key" name="hmacKey" type="java.lang.String" value="abc123"/>
