@@ -96,7 +96,6 @@ import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
 import Olap from '../olap/Olap.vue'
 import moment from 'moment'
-import { DateTime } from 'luxon'
 
 const deepcopy = require('deepcopy')
 
@@ -853,7 +852,7 @@ export default defineComponent({
         },
         getFormattedDate(date: any, useDefaultFormat?: boolean) {
             const format = date instanceof Date ? undefined : process.env.VUE_APP_CROSS_NAVIGATION_DATE_FORMAT
-            return luxonFormatDate(DateTime.fromFormat(date, format).toJSDate(), undefined, useDefaultFormat ? undefined : this.dateFormat)
+            return luxonFormatDate(date, format, useDefaultFormat ? undefined : this.dateFormat)
         },
         onBreadcrumbClick(item: any) {
             this.document = item.document
