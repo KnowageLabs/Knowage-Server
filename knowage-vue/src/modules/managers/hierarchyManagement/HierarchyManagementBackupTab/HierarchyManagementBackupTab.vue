@@ -32,7 +32,7 @@
                     </div>
                 </form>
 
-                <DataTable :value="rows" class="p-datatable-sm kn-table" edit-mode="row" v-model:editing-rows="editingRows" @row-edit-save="onRowSave" v-model:filters="filters" :globalFilterFields="globalFilterFields" :loading="loading" responsiveLayout="stack" breakpoint="700px">
+                <DataTable :value="rows" class="p-datatable-sm kn-table" edit-mode="row" v-model:editing-rows="editingRows" @row-edit-save="updateBackupConfirm" v-model:filters="filters" :globalFilterFields="globalFilterFields" :loading="loading" responsiveLayout="stack" breakpoint="700px">
                     <template #empty>
                         {{ $t('common.info.noDataFound') }}
                     </template>
@@ -56,8 +56,7 @@
                     <Column :rowEditor="true" :style="hierarchyManagementDimensionsTableDescriptor.iconColumnStyle"></Column>
                     <Column :style="hierarchyManagementDimensionsTableDescriptor.iconColumnStyle">
                         <template #body="slotProps">
-                            <!-- <Button icon="pi pi-save" class="p-button-link" v-tooltip.top="$t('common.save')" @click="updateBackupInfo(slotProps.data)" /> -->
-                            <Button icon="pi pi-history" class="p-button-link" v-tooltip.top="$t('common.restore')" />
+                            <Button icon="pi pi-history" class="p-button-link" v-tooltip.top="$t('common.restore')" @click="restoreBackupConfirm(slotProps.data)" />
                             <Button icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click="deleteBackupConfirm(slotProps.data)" />
                         </template>
                     </Column>
@@ -130,12 +129,10 @@ export default defineComponent({
                         return { field: column.ID, header: column.NAME }
                     })
                 this.globalFilterFields = response.data.columns_search
-                console.log(this.columns)
             })
             this.loading = false
         },
         deleteBackupConfirm(hierarchy) {
-            console.log(hierarchy)
             this.$confirm.require({
                 header: this.$t('common.delete'),
                 message: this.$t('managers.hierarchyManagement.deleteBackupConfirm'),
@@ -156,13 +153,7 @@ export default defineComponent({
                 }
             })
         },
-        async updateBackupInfo(backup) {
-            console.log(backup)
-        },
-        logMe(event) {
-            console.log(event)
-        },
-        onRowSave(event) {
+        updateBackupConfirm(event) {
             this.$confirm.require({
                 header: this.$t('common.update'),
                 message: this.$t('managers.hierarchyManagement.saveBackupMessage'),
@@ -177,6 +168,27 @@ export default defineComponent({
                 if (response.data.response === 'ok') {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.loadBackupData()
+                }
+            })
+        },
+        restoreBackupConfirm(backup) {
+            this.$confirm.require({
+                header: this.$t('managers.hierarchyManagement.restoreTitle'),
+                message: this.$t('managers.hierarchyManagement.restoreMsg'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.restoreBackup(backup)
+            })
+        },
+        async restoreBackup(backup) {
+            const url = `hierarchiesBackup/restoreHierarchyBkps`
+            let postData = { code: backup.HIER_CD, name: backup.HIER_NM, dimension: this.selectedDimension?.DIMENSION_NM }
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData).then((response: AxiosResponse<any>) => {
+                if (response.data.response === 'ok') {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.restore'),
                         msg: this.$t('common.toast.success')
                     })
                     this.loadBackupData()
