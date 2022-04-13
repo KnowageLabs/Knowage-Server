@@ -15,7 +15,7 @@
             <Badge v-if="badge > 0" :value="badge" severity="danger"></Badge>
             <span v-if="item.iconCls && item.command != 'languageSelection'" :class="['p-menuitem-icon', item.iconCls]"></span>
             <img v-if="item.custIcon" :src="item.custIcon" />
-            <img v-if="locale && item.iconCls && item.command === 'languageSelection'" :src="require('@/assets/images/flags/' + locale.toLowerCase().substring(3, 5) + '.svg')" />
+            <img v-if="item.iconCls && item.command === 'languageSelection'" :src="require('@/assets/images/flags/' + locale.toLowerCase().substring(3, 5) + '.svg')" />
             <span v-if="!item.iconCls && !item.custIcon" class="p-menuitem-icon fas fa-file"></span>
             <span v-if="item.descr" class="p-menuitem-text">{{ $internationalization($t(item.descr)) }}</span>
             <span v-else class="p-menuitem-text">{{ $internationalization($t(item.label)) }}</span>
