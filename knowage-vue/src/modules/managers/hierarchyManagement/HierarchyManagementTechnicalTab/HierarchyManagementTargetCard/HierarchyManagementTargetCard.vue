@@ -211,20 +211,23 @@ export default defineComponent({
                 doBackup: this.backup,
                 root: this.treeModel
             }
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/saveHierarchy`, postData).then(async (response: AxiosResponse<any>) => {
-                if (response.data.response === 'ok') {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
-                    if (this.selectedHierarchy) {
-                        this.loadHierarchyTree()
-                    } else {
-                        await this.loadTechnicalHierarchies()
-                        const index = this.hierarchies?.findIndex((hierarchy: iHierarchy) => {
-                            return hierarchy.HIER_CD === this.treeModel.HIER_CD
-                        })
-                        if (index !== -1) this.selectedHierarchy = this.hierarchies[index]
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/saveHierarchy`, postData)
+                .then(async (response: AxiosResponse<any>) => {
+                    if (response.data.response === 'ok') {
+                        this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
+                        if (this.selectedHierarchy) {
+                            this.loadHierarchyTree()
+                        } else {
+                            await this.loadTechnicalHierarchies()
+                            const index = this.hierarchies?.findIndex((hierarchy: iHierarchy) => {
+                                return hierarchy.HIER_CD === this.treeModel.HIER_CD
+                            })
+                            if (index !== -1) this.selectedHierarchy = this.hierarchies[index]
+                        }
                     }
-                }
-            })
+                })
+                .catch(() => {})
         },
         updateLevelRecursive(node, level) {
             if (level !== 0) node.LEVEL = level

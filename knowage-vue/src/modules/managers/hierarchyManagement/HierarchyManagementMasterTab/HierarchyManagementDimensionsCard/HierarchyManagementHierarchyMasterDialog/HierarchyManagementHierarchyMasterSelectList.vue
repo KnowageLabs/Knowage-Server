@@ -32,7 +32,13 @@
                                 {{ slotProps.option.code.NAME + ', ' + slotProps.option.name.NAME }}
                             </span>
                             <div class="p-ml-auto">
-                                <Button v-if="slotProps.index === dimensionDestinationFields.length - 1" icon="fa fa-plus" class="p-button-text p-button-plain p-button-sm p-p-0" @click.stop="moveToRecursive(slotProps.option, slotProps.index)" :data-test="'recursive-button-' + slotProps.option.code.NAME" />
+                                <Button
+                                    v-if="slotProps.index === dimensionDestinationFields.length - 1"
+                                    icon="fa fa-plus"
+                                    class="p-button-text p-button-plain p-button-sm p-p-0"
+                                    @click.stop="moveToRecursive(slotProps.option, slotProps.index)"
+                                    :data-test="'recursive-button-' + slotProps.option.code.NAME"
+                                />
                                 <Button v-if="slotProps.index !== 0" icon="fa fa-arrow-up" class="p-button-text p-button-plain p-button-sm p-p-0" @click.stop="move(slotProps.option, slotProps.index, 'up')" />
                                 <Button v-if="slotProps.index !== dimensionDestinationFields.length - 1" icon="fa fa-arrow-down" class="p-button-text p-button-plain p-button-sm p-p-0" @click.stop="move(slotProps.option, slotProps.index, 'down')" />
                             </div>
@@ -174,8 +180,6 @@ export default defineComponent({
         },
         move(destinationField: any, index: number, direction: 'up' | 'down') {
             const tempIndex = direction === 'up' ? index - 1 : index + 1
-            console.log('TEMP INDEX: ', tempIndex)
-            console.log('INDEX: ', index)
 
             destinationField.code.level = tempIndex + 1
             destinationField.name.level = tempIndex + 1

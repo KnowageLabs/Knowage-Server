@@ -159,7 +159,7 @@ export default defineComponent({
             this.detailDialogVisible = true
         },
         editNode(node: iNode) {
-            this.selectedNode = node.data
+            this.selectedNode = { ...node.data, key: node.key }
             this.setMetadata()
             this.mode = 'edit'
             this.detailDialogVisible = true
@@ -285,6 +285,7 @@ export default defineComponent({
         async handleItemDrop(droppedItem: any, item: any) {
             droppedItem.children = this.formatNodeAfterDrop(droppedItem.children, droppedItem)
             const parentNode = item.data.leaf ? item.parent : item
+            console.log('DROPPED ITEM: ', droppedItem)
             if (droppedItem.movedFrom === 'tree') {
                 this.moveNodeInsideTree(droppedItem, item)
             } else if (droppedItem.movedFrom === 'sourceTree') {
@@ -391,8 +392,10 @@ export default defineComponent({
         onDragStart(event: any, item: any) {
             const tempItem = deepcopy(item)
             tempItem.children = this.formatNodeForDrag(tempItem.children)
-            tempItem.movedFrom = 'sourceTree'
-            tempItem.parentKey = item.parent.key
+            console.log('THIS MODE: ', this.mode)
+            console.log('ITEM: ', item)
+            tempItem.movedFrom = this.mode === 'info' ? 'sourceTree' : 'tree'
+            tempItem.parentKey = item.parent ? item.parent.key : item.parentKey
             delete tempItem.parent
             event.dataTransfer.setData('text/plain', JSON.stringify(tempItem))
             event.dataTransfer.dropEffect = 'move'
@@ -412,18 +415,22 @@ export default defineComponent({
             })
         },
         moveNodeInsideTree(node: any, parent: any) {
+            console.log('NODE: ', node)
+            console.log('PARENT: ', parent)
             delete node.movedFrom
 
             let parentToAdd = this.findNodeInTree(parent.key)
             let parentToRemoveFrom = this.findNodeInTree(node.parentKey)
 
+            console.log('PARENT TO ADD: ', parentToAdd)
+            console.log('PARENT TO REMOVE FROM: ', parentToRemoveFrom)
+
             if (!parentToAdd || !parentToRemoveFrom) return
 
             const index = parentToRemoveFrom.children?.findIndex((el: any) => el.key === node.key)
             if (index !== -1) parentToRemoveFrom.children.splice(index, 1)
-            delete node.parentKey
 
-            parentToAdd.children ? parentToAdd.children.push(node) : (parentToAdd.children = [node])
+            parentToAdd.children ? parentToAdd.children.push({ ...node, parentKey: parentToAdd.key }) : (parentToAdd.children = [{ ...node, parentKey: parentToAdd.key }])
 
             this.$emit('treeUpdated', this.nodes)
         },
@@ -441,7 +448,7 @@ export default defineComponent({
             node.parent = parent
 
             let parentToAdd = this.findNodeInTree(parent.key)
-            parentToAdd.children ? parentToAdd.children.push(node) : (parentToAdd.children = [node])
+            parentToAdd.children ? parentToAdd.children.push({ ...node, parentKey: parentToAdd.key }) : (parentToAdd.children = [{ ...node, parentKey: parentToAdd.key }])
             this.$emit('treeUpdated', this.nodes)
         }
     }

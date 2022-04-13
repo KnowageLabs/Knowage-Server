@@ -149,7 +149,6 @@ export default defineComponent({
             this.loadHierarchyTree()
         },
         updateTreeModel(nodes: iNode[]) {
-            console.log('NODES: ', nodes)
             this.treeModel = this.formatNodes(nodes)[0]
         },
         formatNodes(nodes: iNode[]) {
@@ -197,12 +196,15 @@ export default defineComponent({
                 relationsMT: this.relationsMasterTree,
                 root: this.treeModel
             }
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/saveHierarchy`, postData).then((response: AxiosResponse<any>) => {
-                if (response.data.response === 'ok') {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
-                    this.loadHierarchyTree()
-                }
-            })
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/saveHierarchy`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    if (response.data.response === 'ok') {
+                        this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
+                        this.loadHierarchyTree()
+                    }
+                })
+                .catch(() => {})
         },
         updateLevelRecursive(node, level) {
             if (level !== 0) node.LEVEL = level
