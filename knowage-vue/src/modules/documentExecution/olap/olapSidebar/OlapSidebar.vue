@@ -102,9 +102,18 @@
                     <div class="p-col-4">
                         <Button icon="far fa-check-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureButtonsVisiblity')" @click="$emit('openButtonWizardDialog')" />
                     </div>
-                    <!-- <div class="p-col-4">
+                    <div class="p-col-4">
                         <Button icon="fas fa-calculator" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.calculatedField')" />
-                    </div> -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="whatif-container" class="kn-flex">
+                <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.whatIfTitle') }}</label>
+                <div class="p-grid p-mt-1">
+                    <div class="p-col-4">
+                        <Button icon="fa-solid fa-share-from-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.outputWizard')" @click="$emit('showOutputWizard')" />
+                    </div>
                 </div>
             </div>
 

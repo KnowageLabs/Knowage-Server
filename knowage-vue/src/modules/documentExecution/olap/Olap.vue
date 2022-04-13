@@ -62,6 +62,7 @@
             @openCrossNavigationDefinitionDialog="crossNavigationDefinitionDialogVisible = true"
             @openButtonWizardDialog="buttonsWizardDialogVisible = true"
             @saveOlapDesigner="saveOlapDesigner"
+            @showOutputWizard="outputWizardVisible = true"
         />
     </div>
 
@@ -73,6 +74,7 @@
     <OlapButtonWizardDialog :visible="buttonsWizardDialogVisible" :propButtons="buttons" :propOlapDesigner="olapDesigner" @close="buttonsWizardDialogVisible = false"></OlapButtonWizardDialog>
     <MultiHierarchyDialog :selectedFilter="multiHierFilter" :multiHierUN="selecetedMultiHierUN" :visible="multiHierarchyDialogVisible" @setMultiHierUN="setMultiHierUN" @updateHierarchy="updateHierarchy" @close="multiHierarchyDialogVisible = false" />
     <KnOverlaySpinnerPanel :visibility="loading" />
+    <OutputWizard :visible="outputWizardVisible" :olapVersionsProp="olapVersions" @close="outputWizardVisible = false" />
 </template>
 
 <script lang="ts">
@@ -93,10 +95,26 @@ import OlapCrossNavigationDefinitionDialog from './crossNavigationDefinition/Ola
 import OlapButtonWizardDialog from './buttonWizard/OlapButtonWizardDialog.vue'
 import MultiHierarchyDialog from './multiHierarchyDialog/OlapMultiHierarchyDialog.vue'
 import DrillTruDialog from './drillThroughDialog/OlapDrillThroughDialog.vue'
+import OutputWizard from './outputWizard/OlapOutputWizard.vue'
 
 export default defineComponent({
     name: 'olap',
-    components: { OlapSidebar, DrillTruDialog, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog, OlapButtonWizardDialog, MultiHierarchyDialog },
+    components: {
+        OutputWizard,
+        OlapSidebar,
+        DrillTruDialog,
+        OlapCustomViewTable,
+        OlapCustomViewSaveDialog,
+        KnOverlaySpinnerPanel,
+        OlapSortingDialog,
+        FilterPanel,
+        FilterTopToolbar,
+        FilterLeftToolbar,
+        OlapMDXQueryDialog,
+        OlapCrossNavigationDefinitionDialog,
+        OlapButtonWizardDialog,
+        MultiHierarchyDialog
+    },
     props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
     data() {
@@ -113,6 +131,7 @@ export default defineComponent({
             buttonsWizardDialogVisible: false,
             multiHierarchyDialogVisible: false,
             drillTruDialogVisible: false,
+            outputWizardVisible: false,
             multiHierFilter: {} as iOlapFilter,
             selecetedMultiHierUN: '',
             sort: null as any,
@@ -127,6 +146,7 @@ export default defineComponent({
             formattedColumns: [] as any,
             dtAssociatedLevels: [] as any,
             dtTree: [] as any,
+            olapVersions: [] as any,
             dtMaxRows: 0,
             usedOrdinal: 0 as Number
         }
@@ -195,6 +215,7 @@ export default defineComponent({
                     await this.loadOlapButtons()
                     this.setClickedButtons()
                     await this.loadModelConfig()
+                    await this.loadVersions()
                 })
                 .catch(() => {})
             this.loading = false
@@ -237,6 +258,16 @@ export default defineComponent({
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/modelconfig?SBI_EXECUTION_ID=${this.id}&NOLOADING=undefined`, this.olap.modelConfig, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .catch(() => {})
+
+            this.formatOlapTable()
+            this.loading = false
+        },
+        async loadVersions() {
+            this.loading = true
+            await this.$http
+                .get(process.env.VUE_APP_OLAP_PATH + `1.0/version?SBI_EXECUTION_ID=${this.id}`)
+                .then((response: AxiosResponse<any>) => (this.olapVersions = response.data))
                 .catch(() => {})
 
             this.formatOlapTable()

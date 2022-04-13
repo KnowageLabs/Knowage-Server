@@ -444,6 +444,11 @@
             "yourRating": "Your rating"
         },
         "olap": {
+            "outputWizard": {
+                "title": "Output wizard",
+                "infoMsg": "Select the output type for the analysis. This operation will take some minutes. In the meanwhile you can continue to work on your cube",
+                "version": "Verson to export"
+            },
             "buttonsWizard": {
                 "title": "Buttons Wizard"
             },
@@ -527,7 +532,9 @@
                 "suppressEmptyRowsColumns": "Suppress empty rows/columns",
                 "tableFunctions": "Table functions",
                 "templateEditing": "Template editing",
-                "undo": "Undo"
+                "undo": "Undo",
+                "whatIfTitle": "What If",
+                "outputWizard": "Output wizard"
             },
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",
