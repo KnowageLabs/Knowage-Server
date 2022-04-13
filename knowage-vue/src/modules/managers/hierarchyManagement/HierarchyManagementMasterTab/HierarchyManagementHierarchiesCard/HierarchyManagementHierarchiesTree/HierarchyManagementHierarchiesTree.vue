@@ -123,7 +123,8 @@ export default defineComponent({
                     data: node,
                     style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style,
                     leaf: node.leaf,
-                    parent: parent
+                    parent: parent,
+                    icon: node.root ? '' : 'pi pi-bars'
                 }
                 if (node.children && node.children.length > 0) {
                     node.children = this.formatNodes(node.children, node)

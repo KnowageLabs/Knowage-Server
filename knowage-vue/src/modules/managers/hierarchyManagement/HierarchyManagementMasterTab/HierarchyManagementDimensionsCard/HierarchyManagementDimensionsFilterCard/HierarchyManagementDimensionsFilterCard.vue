@@ -7,7 +7,7 @@
         </template>
         <template #end>
             <Button v-if="expandFilterCard" icon="pi pi-check" class="p-button-text p-button-rounded p-button-plain" @click="applyFilters" />
-            <Button v-if="expandFilterCard" icon="pi pi-trash" class="p-button-text p-button-rounded p-button-plain" @click="resetFilters" />
+            <Button v-if="expandFilterCard" icon="fas fa-eraser" class="p-button-text p-button-rounded p-button-plain" @click="resetFilters" />
         </template>
     </Toolbar>
     <Card v-show="expandFilterCard">
