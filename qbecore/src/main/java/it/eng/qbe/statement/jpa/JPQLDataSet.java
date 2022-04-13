@@ -30,7 +30,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Filter;
@@ -243,19 +242,11 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		try {
 			String sqlQueryString = filteredStatement.getSqlQueryString();
 			EntityManager em = getEntityMananger();
-			EntityTransaction t = em.getTransaction();
+			em = em.getEntityManagerFactory().createEntityManager();
 			logger.error("KNOWAGE-6753 - em status: " + em.isOpen());
-			logger.error("KNOWAGE-6753 - t status: " + t.isActive());
-			try {
-				t.begin();
 
-				Number singleResult = (Number) em.createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") COUNT_INLINE_VIEW").getSingleResult();
-				resultNumber = singleResult.intValue();
-			} finally {
-				logger.error("KNOWAGE-6753 - Rolling back...");
-				t.rollback();
-				logger.error("KNOWAGE-6753 - Ok!");
-			}
+			Number singleResult = (Number) em.createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") COUNT_INLINE_VIEW").getSingleResult();
+			resultNumber = singleResult.intValue();
 		} catch (Exception e) {
 			throw new RuntimeException("Impossible to get result number", e);
 		}
