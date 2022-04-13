@@ -90,7 +90,7 @@ export default defineComponent({
         },
         async openUpdateDialog() {
             this.$emit('loading', true)
-            await this.$http.get(process.env.VUE_APP_META_API_URL + '1.0/metaWeb/updatePhysicalModel').then((response: AxiosResponse<any>) => (this.changedItem = response.data))
+            await this.$http.get(process.env.VUE_APP_META_API_URL + '/1.0/metaWeb/updatePhysicalModel').then((response: AxiosResponse<any>) => (this.changedItem = response.data))
             this.updateDialogVisible = true
             this.$emit('loading', false)
         },
