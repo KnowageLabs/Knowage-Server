@@ -590,6 +590,7 @@ export default defineComponent({
                 postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
                 postForm.method = 'post'
                 postForm.target = 'documentFrame' + tempIndex
+                postForm.acceptCharset = "UTF-8";
                 document.body.appendChild(postForm)
             }
 
