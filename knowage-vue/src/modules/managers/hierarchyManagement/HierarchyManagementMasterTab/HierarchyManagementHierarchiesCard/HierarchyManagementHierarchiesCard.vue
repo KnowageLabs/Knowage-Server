@@ -149,10 +149,11 @@ export default defineComponent({
             this.loadHierarchyTree()
         },
         updateTreeModel(nodes: iNode[]) {
+            console.log('NODES: ', nodes)
             this.treeModel = this.formatNodes(nodes)[0]
         },
         formatNodes(nodes: iNode[]) {
-            return nodes.map((node: any) => {
+            return nodes?.map((node: any) => {
                 node = {
                     ...node.data,
                     children: node.children
@@ -170,8 +171,8 @@ export default defineComponent({
 
             if (this.checkIfNodesWithoutChildren(this.treeModel)) {
                 this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteConfirmTitle'),
+                    message: this.$t('managers.hierarchyManagement.parentWithoutChildrenConfirm'),
+                    header: this.$t('managers.hierarchyManagement.saveChanges'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: async () => await this.saveHierarchy()
                 })

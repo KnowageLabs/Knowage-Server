@@ -1,4 +1,5 @@
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
+import axios from 'axios'
 import Button from 'primevue/button'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
@@ -548,6 +549,16 @@ const mockedDimensionMetadata = {
     }
 }
 
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation(() => Promise.resolve({ data: { root: [] } }))
+}
+
+const $store = {
+    commit: jest.fn()
+}
+
 const factory = (treeMode) => {
     return mount(HierarchyManagementHierarchiesTree, {
         props: {
@@ -556,7 +567,8 @@ const factory = (treeMode) => {
             selectedDimension: mockedSelectedDimension,
             selectedHierarchy: mockedSelectedHierarchy,
             dimensionMetadata: mockedDimensionMetadata,
-            treeMode: treeMode
+            treeMode: treeMode,
+            propRelationsMasterTree: []
         },
         global: {
             directives: {
@@ -565,7 +577,9 @@ const factory = (treeMode) => {
             plugins: [PrimeVue],
             stubs: { Button, Dropdown, InputText, HierarchyManagementNodeDetailDialog: true, HierarchyManagementHierarchiesTargetDialog: true, Toolbar, Tree },
             mocks: {
-                $t: (msg) => msg
+                $t: (msg) => msg,
+                $http,
+                $store
             }
         }
     })
@@ -576,9 +590,80 @@ afterEach(() => {
 })
 
 describe('Hierarchy Management Hierarchies Tree', () => {
-    it('On MASTER tab, it should allow to drag and drop a leaf from dimensions table to hierarchies tree', async () => {
+    it('On MASTER tab, it should allow to drag and drop a leaf from dimensions tajble to hierarchies tree', async () => {
         const wrapper = factory(undefined)
+        const mockedTableItem = {
+            CDC_ID: 3,
+            CDC_CD: 'C001',
+            CDC_NM: 'COO',
+            DEN_MANAGER_CD: 'E2684',
+            DEN_MANAGER_FN: 'COONAME COOSURNAME',
+            CDC_CD_TYPE: 'PRODUCTION',
+            TYPE_CDC: '',
+            DEN_COMPANY_NM: 'ENGINEERING',
+            FL_PATR: null,
+            BEGIN_DT: '2009-01-01',
+            END_DT: '2999-12-31',
+            CONS_SEG_ENG: '',
+            SEGMENTS_CD_ENG: '',
+            BUSINESS_UNIT_CD_ENG: '',
+            BUSINESS_AREA_ENG: '',
+            DEPARTMENT_1_ENG: '',
+            DEPARTMENT_2_ENG: '',
+            DEPARTMENT_3_ENG: '',
+            DEPARTMENT_4_ENG: '',
+            CDC_PARENT_CD: 'EXENGISUD',
+            CDC_PARENT_NM: 'ENGISUD',
+            BEGIN_HIER_DT: '2009-01-01',
+            END_HIER_DT: '2015-12-31'
+        }
 
-        console.log(wrapper.html())
+        expect(wrapper.vm.nodes[0].children[0].children[1]).toBeFalsy()
+
+        wrapper.vm.copyNodeFromTableToTree(mockedTableItem, wrapper.vm.nodes[0].children[0])
+
+        expect(wrapper.vm.nodes[0].children[0].children[1].id).toBe(mockedTableItem.CDC_NM)
+        expect(wrapper.vm.nodes[0].children[0].children[1].label).toBe(mockedTableItem.CDC_NM)
+    })
+
+    it('On TECHNICAL tab, it should be possible to drag and drop a leaf or a subtree from hierarchies soruce to hierarchies target tree', async () => {
+        const wrapper = factory(undefined)
+        const mockedTreeItem = {
+            children: [],
+            data: {
+                name: 'AD000',
+                id: '1',
+                LEAF_ID: '1',
+                LEAF_PARENT_CD: 'E2684',
+                LEAF_PARENT_NM: 'CEONAME CEOSURNAME',
+                aliasId: 'CDC_CD_LEAF',
+                aliasName: 'CDC_NM_LEAF',
+                leaf: true,
+                HIER_TP_M: 'MASTER',
+                HIER_NM_M: 'Name',
+                NODE_CD_M: 'E2684',
+                NODE_NM_M: 'CEONAME CEOSURNAME',
+                NODE_LEV_M: 2,
+                BEGIN_DT: '2009-01-01',
+                END_DT: '2999-12-31',
+                CDC_CD_LEAF: '1',
+                MAX_DEPTH: 3,
+                LEVEL: 3,
+                CDC_LEAF_ID: 1,
+                CDC_NM_LEAF: 'AD000'
+            },
+            id: '1',
+            key: '3469b257bec832262da865819d9db446',
+            label: 'AD000',
+            leaf: true,
+            parentKey: 'a016c84f0c1ece9f910c396624912452'
+        }
+
+        expect(wrapper.vm.nodes[0].children[0].children[1]).toBeFalsy()
+
+        wrapper.vm.addNodeFromSourceTree(mockedTreeItem, wrapper.vm.nodes[0].children[0])
+
+        expect(wrapper.vm.nodes[0].children[0].children[1].id).toBe(mockedTreeItem.id)
+        expect(wrapper.vm.nodes[0].children[0].children[1].label).toBe(mockedTreeItem.label)
     })
 })

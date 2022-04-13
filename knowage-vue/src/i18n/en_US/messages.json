@@ -1340,14 +1340,16 @@
             "modifyHierarchy": "Modify Hierarchy",
             "noHierarchiesForPropagation": "No hierarchies found for propagation",
             "nodeCloneError": "The duplicate leaf can not be equal to the original",
+            "parentWithoutChildrenConfirm": "The tree contains nodes with no children, they will be lost. Proceed to save?",
             "recursive": "Recursive",
+            "restoreMsg": "Are you sure you want to restore the backup?",
+            "restoreTitle": "Restore",
             "saveBackupMessage": "Are you sure to save the modification?",
+            "saveChanges": "Save Changes",
             "showMissingElements": "Show missing elements",
             "synchronizationSuccess": "Successful synchronization",
             "synchronize": "Synchronize",
-            "technical": "Technical",
-            "restoreTitle": "Restore",
-            "restoreMsg": "Are you sure you want to restore the backup?"
+            "technical": "Technical"
         },
         "internationalizationManagement": {
             "defaultLanguage": "(Default)",

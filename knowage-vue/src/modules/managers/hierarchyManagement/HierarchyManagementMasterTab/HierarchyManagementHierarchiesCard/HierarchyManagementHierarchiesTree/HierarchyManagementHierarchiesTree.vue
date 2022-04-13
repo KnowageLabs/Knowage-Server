@@ -103,14 +103,6 @@ export default defineComponent({
             this.tree = this.propTree
             this.orderBy = ''
             if (this.tree) this.createNodeTree()
-
-                   console.log("propTree", this.propTree)
-        console.log("nodeMetadata", this.nodeMetadata)
-        console.log("selectedDimension", this.selectedDimension)
-        console.log("selectedHierarchy", this.selectedHierarchy)
-        console.log("dimensionMetadata", this.dimensionMetadata)
-        console.log("propRelationsMasterTree", this.propRelationsMasterTree)
-        console.log("treeMode", this.treeMode)
         },
 
         loadMasterTreeRelations() {
@@ -285,12 +277,12 @@ export default defineComponent({
             return null
         },
         async onDragDrop(event: any, item: any, key: any) {
-            console.log("ON DRAG DROP EVENT: ", event)
-            console.log("ON DRAG DROP ITEM: ", item)
-            console.log("ON DRAG DROP KEY: ", key)
             this.dropzoneActive[key] = false
             if (this.treeMode === 'info') return
             const droppedItem = JSON.parse(event.dataTransfer.getData('text/plain'))
+            this.handleItemDrop(droppedItem, item)
+        },
+        async handleItemDrop(droppedItem: any, item: any) {
             droppedItem.children = this.formatNodeAfterDrop(droppedItem.children, droppedItem)
             const parentNode = item.data.leaf ? item.parent : item
             if (droppedItem.movedFrom === 'tree') {
@@ -302,7 +294,7 @@ export default defineComponent({
             }
         },
         formatNodeAfterDrop(nodes: iNode[], parent: iNode) {
-            return nodes.map((node: any) => {
+            return nodes?.map((node: any) => {
                 node = {
                     ...node,
                     children: node.children,
@@ -326,7 +318,7 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/getRelationsMasterTechnical?dimension=${this.selectedDimension.DIMENSION_NM}&hierSourceCode=${this.selectedHierarchy.HIER_CD}&hierSourceName=${this.selectedHierarchy.HIER_NM}&nodeSourceCode=${nodeSourceCode}`)
                 .then((response: AxiosResponse<any>) => {
                     this.relations = response.data?.root
-                    if (this.relations.length === 0) {
+                    if (this.relations && this.relations.length === 0) {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.info.info'),
                             msg: this.$t('managers.hierarchyManagement.noHierarchiesForPropagation')
