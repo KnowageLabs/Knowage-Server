@@ -8,17 +8,31 @@
             </Toolbar>
         </template>
 
-        {{ olapVersionsProp }}
-
         <form class="p-fluid p-formgrid p-grid p-m-1">
-            <span class="p-field p-float-label p-col-12 p-lg-6" v-bind:class="{ 'p-lg-12': !isDataSetVisible }">
+            <InlineMessage class="p-m-1" severity="info" closable="false">{{ $t('documentExecution.olap.outputWizard.infoMsg') }}</InlineMessage>
+            <div id="type-container" class="p-field p-d-flex p-ai-center p-m-2">
+                <span>{{ $t('managers.workspaceManagement.dataPreparation.transformations.outputType') }}: </span>
+                <div class="p-mx-2">
+                    <RadioButton id="fileType" name="file" value="file" v-model="selectedType" />
+                    <label for="fileType" class="p-ml-1">{{ $t('common.file') }}</label>
+                </div>
+                <div>
+                    <RadioButton id="tableType" name="table" value="table" v-model="selectedType" />
+                    <label for="tableType" class="p-ml-1">{{ $t('common.table.table') }}</label>
+                </div>
+            </div>
+
+            <div class="p-field p-float-label p-col-12 p-mt-2">
                 <Dropdown id="version" class="kn-material-input" v-model="selectedVersion" :options="olapVersionsProp" optionLabel="name" optionValue="name" />
                 <label for="version" class="kn-material-input-label"> {{ $t('documentExecution.olap.outputWizard.version') }} </label>
-            </span>
+            </div>
         </form>
 
         <template #footer>
-            <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
+            <Button class="kn-button kn-button--secondary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
+            <Button class="kn-button kn-button--secondary"> {{ $t('common.back') }}</Button>
+            <Button class="kn-button kn-button--secondary"> {{ $t('common.next') }}</Button>
+            <Button class="kn-button kn-button--primary"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -28,16 +42,19 @@ import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
 import descriptor from './OlapOutputWizardDescriptor.json'
 import Dropdown from 'primevue/dropdown'
+import InlineMessage from 'primevue/inlinemessage'
+import RadioButton from 'primevue/radiobutton'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
-    components: { Dialog, Dropdown },
+    components: { Dialog, Dropdown, InlineMessage, RadioButton },
     props: { olapVersionsProp: { type: Boolean, required: true } },
     emits: ['close'],
     data() {
         return {
             descriptor,
-            selectedVersion: {} as any
+            selectedVersion: null as any,
+            selectedType: 'file' as any
         }
     },
     watch: {},
