@@ -251,13 +251,9 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 				Number singleResult = (Number) em.createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") COUNT_INLINE_VIEW").getSingleResult();
 				resultNumber = singleResult.intValue();
-			} catch(Exception e) {
+			} finally {
 				logger.error("KNOWAGE-6753 - Rolling back...");
 				t.rollback();
-				logger.error("KNOWAGE-6753 - Ok!");
-			} finally {
-				logger.error("KNOWAGE-6753 - Committing...");
-				t.commit();
 				logger.error("KNOWAGE-6753 - Ok!");
 			}
 		} catch (Exception e) {
