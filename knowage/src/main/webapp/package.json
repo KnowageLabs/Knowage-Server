@@ -1,6 +1,6 @@
 {
   "name": "knowage",
-  "version": "7.4.22",
+  "version": "7.4.23-SNAPSHOT",
   "description": "Knowage is the professional open source suite for modern business analytics over traditional sources and big data systems.",
   "main": "index.js",
   "scripts": {
