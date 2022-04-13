@@ -6,7 +6,6 @@
             @loading="$emit('loading', $event)"
             @validityDateSelected="setValidityDate"
             @dimensionSelected="setSelectedDimension"
-            @dimensionMetadataChanged="onDimensionMetadataChange"
             @nodeMetadataChanged="onNodeMetadataChange"
             @hierarchyTypeSelected="onHierarchyTypeSelected"
             @hierarchySelected="onHierarchySelected"
@@ -43,9 +42,6 @@ export default defineComponent({
         },
         setSelectedDimension(dimension: iDimension | null) {
             this.selectedDimension = dimension
-        },
-        onDimensionMetadataChange(metadata: iDimensionMetadata | null) {
-            this.dimensionMetadata = metadata
         },
         onNodeMetadataChange(metadata: iNodeMetadata | null) {
             this.nodeMetadata = metadata

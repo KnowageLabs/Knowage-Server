@@ -1,42 +1,44 @@
 <template>
-    <form class="p-mt-2 p-fluid p-formgrid p-grid">
-        <div class="p-field p-col-12">
-            <span class="p-float-label">
-                <Dropdown class="kn-material-input" v-model="orderBy" :options="hierarchyManagementHierarchiesTreeDescriptor.orderByOptions" @change="sortTree(nodes)" />
-                <label class="kn-material-input-label"> {{ $t('common.orderBy') + ' ... ' }} </label>
-            </span>
-        </div>
-    </form>
-    <Tree class="hierarchies-tree p-col-12" :value="nodes" :filter="true" filterMode="lenient">
-        <template #default="slotProps">
-            <div
-                class="p-d-flex p-flex-row p-ai-center"
-                :class="{ dropzone: dropzoneActive[slotProps.node.key] }"
-                :draggable="!slotProps.node.data.root"
-                @dragstart.stop="onDragStart($event, slotProps.node)"
-                @mouseover="buttonVisible[slotProps.node.key] = true"
-                @mouseleave="buttonVisible[slotProps.node.key] = false"
-                @drop.stop="onDragDrop($event, slotProps.node, slotProps.node.key)"
-                @dragover.prevent
-                @dragenter.prevent="setDropzoneClass(true, slotProps.node)"
-                @dragleave.prevent="setDropzoneClass(false, slotProps.node)"
-            >
-                <span class="node-label">{{ slotProps.node.label }}</span>
-                <div v-show="buttonVisible[slotProps.node.key]">
-                    <template v-if="treeMode !== 'info'">
-                        <Button v-if="slotProps.node.leaf" icon="pi pi-clone" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.clone')" @click.stop="cloneNode(slotProps.node)" />
-                        <Button v-else icon="pi pi-plus" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.add')" @click.stop="addNode(slotProps.node)" />
-                        <Button v-if="!slotProps.node.data.root" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.edit')" @click.stop="editNode(slotProps.node)" />
-                        <Button v-if="!slotProps.node.data.root" icon="pi pi-trash" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.delete')" @click.stop="deleteNodeConfirm(slotProps.node)" />
-                    </template>
-                    <Button icon="pi pi-info" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.detail')" @click.stop="showNodeInfo(slotProps.node)" />
-                </div>
+    <div>
+        <form class="p-mt-2 p-fluid p-formgrid p-grid">
+            <div class="p-field p-col-12">
+                <span class="p-float-label">
+                    <Dropdown class="kn-material-input" v-model="orderBy" :options="hierarchyManagementHierarchiesTreeDescriptor.orderByOptions" @change="sortTree(nodes)" />
+                    <label class="kn-material-input-label"> {{ $t('common.orderBy') + ' ... ' }} </label>
+                </span>
             </div>
-        </template>
-    </Tree>
+        </form>
+        <Tree class="hierarchies-tree p-col-12" :value="nodes" :filter="true" filterMode="lenient">
+            <template #default="slotProps">
+                <div
+                    class="p-d-flex p-flex-row p-ai-center"
+                    :class="{ dropzone: dropzoneActive[slotProps.node.key] }"
+                    :draggable="!slotProps.node.data.root"
+                    @dragstart.stop="onDragStart($event, slotProps.node)"
+                    @mouseover="buttonVisible[slotProps.node.key] = true"
+                    @mouseleave="buttonVisible[slotProps.node.key] = false"
+                    @drop.stop="onDragDrop($event, slotProps.node, slotProps.node.key)"
+                    @dragover.prevent
+                    @dragenter.prevent="setDropzoneClass(true, slotProps.node)"
+                    @dragleave.prevent="setDropzoneClass(false, slotProps.node)"
+                >
+                    <span class="node-label">{{ slotProps.node.label }}</span>
+                    <div v-show="buttonVisible[slotProps.node.key]">
+                        <template v-if="treeMode !== 'info'">
+                            <Button v-if="slotProps.node.leaf" icon="pi pi-clone" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.clone')" @click.stop="cloneNode(slotProps.node)" />
+                            <Button v-else icon="pi pi-plus" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.add')" @click.stop="addNode(slotProps.node)" />
+                            <Button v-if="!slotProps.node.data.root" icon="pi pi-pencil" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.edit')" @click.stop="editNode(slotProps.node)" />
+                            <Button v-if="!slotProps.node.data.root" icon="pi pi-trash" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.delete')" @click.stop="deleteNodeConfirm(slotProps.node)" />
+                        </template>
+                        <Button icon="pi pi-info" class="p-button-link p-button-sm p-p-0" v-tooltip.top="$t('common.detail')" @click.stop="showNodeInfo(slotProps.node)" />
+                    </div>
+                </div>
+            </template>
+        </Tree>
 
-    <HierarchyManagementNodeDetailDialog :visible="detailDialogVisible" :selectedNode="selectedNode" :metadata="metadata" :mode="mode" @save="onNodeSave" @close="closeNodeDialog" />
-    <HierarchyManagementHierarchiesTargetDialog :visible="targetDialogVisible" :hierarchiesTargets="relations" @close="closeTargetDialog" @save="onTargetsSave"></HierarchyManagementHierarchiesTargetDialog>
+        <HierarchyManagementNodeDetailDialog :visible="detailDialogVisible" :selectedNode="selectedNode" :metadata="metadata" :mode="mode" @save="onNodeSave" @close="closeNodeDialog" />
+        <HierarchyManagementHierarchiesTargetDialog :visible="targetDialogVisible" :hierarchiesTargets="relations" @close="closeTargetDialog" @save="onTargetsSave"></HierarchyManagementHierarchiesTargetDialog>
+    </div>
 </template>
 
 <script lang="ts">
@@ -285,7 +287,6 @@ export default defineComponent({
         async handleItemDrop(droppedItem: any, item: any) {
             droppedItem.children = this.formatNodeAfterDrop(droppedItem.children, droppedItem)
             const parentNode = item.data.leaf ? item.parent : item
-            console.log('DROPPED ITEM: ', droppedItem)
             if (droppedItem.movedFrom === 'tree') {
                 this.moveNodeInsideTree(droppedItem, item)
             } else if (droppedItem.movedFrom === 'sourceTree') {
@@ -392,9 +393,7 @@ export default defineComponent({
         onDragStart(event: any, item: any) {
             const tempItem = deepcopy(item)
             tempItem.children = this.formatNodeForDrag(tempItem.children)
-            console.log('THIS MODE: ', this.mode)
-            console.log('ITEM: ', item)
-            tempItem.movedFrom = this.mode === 'info' ? 'sourceTree' : 'tree'
+            tempItem.movedFrom = this.treeMode === 'info' ? 'sourceTree' : 'tree'
             tempItem.parentKey = item.parent ? item.parent.key : item.parentKey
             delete tempItem.parent
             event.dataTransfer.setData('text/plain', JSON.stringify(tempItem))
@@ -415,15 +414,10 @@ export default defineComponent({
             })
         },
         moveNodeInsideTree(node: any, parent: any) {
-            console.log('NODE: ', node)
-            console.log('PARENT: ', parent)
             delete node.movedFrom
 
             let parentToAdd = this.findNodeInTree(parent.key)
             let parentToRemoveFrom = this.findNodeInTree(node.parentKey)
-
-            console.log('PARENT TO ADD: ', parentToAdd)
-            console.log('PARENT TO REMOVE FROM: ', parentToRemoveFrom)
 
             if (!parentToAdd || !parentToRemoveFrom) return
 
@@ -448,7 +442,7 @@ export default defineComponent({
             node.parent = parent
 
             let parentToAdd = this.findNodeInTree(parent.key)
-            parentToAdd.children ? parentToAdd.children.push({ ...node, parentKey: parentToAdd.key }) : (parentToAdd.children = [{ ...node, parentKey: parentToAdd.key }])
+            parentToAdd.children ? parentToAdd.children.push({ ...node, parentKey: parentToAdd.key, key: crypto.randomBytes(16).toString('hex') }) : (parentToAdd.children = [{ ...node, parentKey: parentToAdd.key, key: crypto.randomBytes(16).toString('hex') }])
             this.$emit('treeUpdated', this.nodes)
         }
     }

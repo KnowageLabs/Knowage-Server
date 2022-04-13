@@ -7,10 +7,6 @@
             "min-width": "60%"
         }
     },
-    "iconColumnStyle": {
-        "text-align": "end",
-        "width": "70px"
-    },
     "smallIconColumn": {
         "width": "5%"
     }

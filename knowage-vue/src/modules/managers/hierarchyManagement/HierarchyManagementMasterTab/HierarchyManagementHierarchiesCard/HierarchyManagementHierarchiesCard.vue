@@ -56,6 +56,7 @@ import { defineComponent, PropType } from 'vue'
 import { iDimension, iHierarchy, iNodeMetadata, iNode, iDimensionMetadata } from '../../HierarchyManagement'
 import { AxiosResponse } from 'axios'
 import moment from 'moment'
+import Card from 'primevue/card'
 import Calendar from 'primevue/calendar'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
@@ -65,7 +66,7 @@ import HierarchyManagementHierarchiesFilterCard from './HierarchyManagementHiera
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchies-card',
-    components: { Calendar, Checkbox, Dropdown, HierarchyManagementHierarchiesTree, HierarchyManagementHierarchiesFilterCard },
+    components: { Card, Calendar, Checkbox, Dropdown, HierarchyManagementHierarchiesTree, HierarchyManagementHierarchiesFilterCard },
     props: {
         selectedDimension: { type: Object as PropType<iDimension | null> },
         nodeMetadata: { type: Object as PropType<iNodeMetadata | null> },
@@ -126,7 +127,10 @@ export default defineComponent({
                 if (this.validityDate) url = url.concat('&optionDate=' + moment(this.validityDate).format('YYYY-MM-DD'))
                 if (this.filterData.afterDate) url = url.concat('&filterDate=' + moment(this.filterData.afterDate).format('YYYY-MM-DD'))
             }
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.tree = response.data))
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
+                .then((response: AxiosResponse<any>) => (this.tree = response.data))
+                .catch(() => {})
             this.relationsMasterTree = []
             this.$emit('loading', false)
         },

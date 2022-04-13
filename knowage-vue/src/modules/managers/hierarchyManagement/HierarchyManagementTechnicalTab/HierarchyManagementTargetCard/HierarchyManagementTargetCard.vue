@@ -120,9 +120,12 @@ export default defineComponent({
                 }
                 if (this.filterData.afterDate) url = url.concat('&filterDate=' + moment(this.filterData.afterDate).format('YYYY-MM-DD'))
             }
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => {
-                this.tree = response.status === 200 ? response.data : null
-            })
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
+                .then((response: AxiosResponse<any>) => {
+                    this.tree = response.status === 200 ? response.data : null
+                })
+                .catch(() => {})
             this.$emit('loading', false)
         },
         onApplyFilters(filterData: { showMissingElements: boolean; afterDate: Date | null }) {

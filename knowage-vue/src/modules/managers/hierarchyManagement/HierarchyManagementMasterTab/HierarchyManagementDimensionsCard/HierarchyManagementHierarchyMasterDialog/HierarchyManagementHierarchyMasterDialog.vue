@@ -7,7 +7,6 @@
                 </template>
             </Toolbar>
         </template>
-        <!-- <KnOverlaySpinnerPanel :visibility="loading"></KnOverlaySpinnerPanel> -->
 
         <HierarchyManagementHierarchyMasterForm :nodeGeneralFields="nodeGeneralFields"></HierarchyManagementHierarchyMasterForm>
         <HierarchyManagementHierarchyMasterSelectList :dimensionMetadata="dimensionMetadata" @recursiveChanged="onRecursiveChanged" @levelsChanged="onLevelsChanged"></HierarchyManagementHierarchyMasterSelectList>
@@ -25,7 +24,6 @@ import { iNodeMetadata, iNodeMetadataField, iDimensionMetadata, iDimension, iDim
 import { AxiosResponse } from 'axios'
 import moment from 'moment'
 import Dialog from 'primevue/dialog'
-// import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import hierarchyManagementHierarchyMasterDialogDescriptor from './HierarchyManagementMasterDescriptor.json'
 import HierarchyManagementHierarchyMasterForm from './HierarchyManagementHierarchyMasterForm.vue'
 import HierarchyManagementHierarchyMasterSelectList from './HierarchyManagementHierarchyMasterSelectList.vue'

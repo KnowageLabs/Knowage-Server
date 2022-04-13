@@ -1,9 +1,11 @@
 import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import Button from 'primevue/button'
+import Card from 'primevue/card'
 import Calendar from 'primevue/calendar'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
+import InputText from 'primevue/inputtext'
 import HierarchyManagementHierarchiesCard from './HierarchyManagementHierarchiesCard.vue'
 import ProgressSpinner from 'primevue/progressspinner'
 import PrimeVue from 'primevue/config'
@@ -37,8 +39,11 @@ const $confirm = {
 const factory = () => {
     return mount(HierarchyManagementHierarchiesCard, {
         global: {
+            directives: {
+                tooltip() {}
+            },
             plugins: [PrimeVue],
-            stubs: { Button, Calendar, Checkbox, Dropdown, ProgressSpinner, Toolbar },
+            stubs: { Button, Card, Calendar, Checkbox, Dropdown, InputText, ProgressSpinner, Toolbar },
             mocks: {
                 $t: (msg) => msg,
                 $http,
