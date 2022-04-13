@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 
 public class LogTenantFilter implements Filter {
-	private static final String TENANT = "tenant";
+	private static final String ENVIRONMENT = "environment";
 	private static transient Logger logger = Logger.getLogger(LogTenantFilter.class);
 
 	@Override
@@ -27,23 +27,23 @@ public class LogTenantFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		if (request instanceof HttpServletRequest) {
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
-			String tenantUrlName = httpRequest.getHeader("X-Forwarded-Host");
-			if (tenantUrlName != null) {
-				if (tenantUrlName.contains(",")) {
-					int iend = tenantUrlName.indexOf(".");
-					tenantUrlName = tenantUrlName.substring(0, iend);
+			String envUrlName = httpRequest.getHeader("X-Forwarded-Host");
+			if (envUrlName != null) {
+				if (envUrlName.contains(",")) {
+					int iend = envUrlName.indexOf(".");
+					envUrlName = envUrlName.substring(0, iend);
 				}
-				if (tenantUrlName.contains(":"))
-					tenantUrlName = tenantUrlName.substring(0, tenantUrlName.indexOf(":"));
-				if (tenantUrlName.contains("."))
-					tenantUrlName = tenantUrlName.substring(0, tenantUrlName.indexOf("."));
-				ThreadContext.put(TENANT, tenantUrlName);
+				if (envUrlName.contains(":"))
+					envUrlName = envUrlName.substring(0, envUrlName.indexOf(":"));
+				if (envUrlName.contains("."))
+					envUrlName = envUrlName.substring(0, envUrlName.indexOf("."));
+				ThreadContext.put(ENVIRONMENT, envUrlName);
 
 			}
 			try {
 				chain.doFilter(request, response);
 			} finally {
-				ThreadContext.remove(TENANT);
+				ThreadContext.remove(ENVIRONMENT);
 			}
 		}
 	}
