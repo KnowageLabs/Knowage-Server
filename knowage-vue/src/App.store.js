@@ -13,7 +13,7 @@ const store = createStore({
             info: {},
             warning: {},
             downloads: { count: { total: 0, unRead: 0 } },
-            locale: {},
+            locale: 'en_US',
             news: { count: { total: 0, unRead: 0 } },
             loading: false,
             homePage: {},
