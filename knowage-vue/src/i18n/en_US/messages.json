@@ -858,6 +858,7 @@
             "noSavedVersions": "No saved versions",
             "operationInfo": "Filter operator is used for comparing a column value of the AD {driver} and the value of the AD on which it depends",
             "prefixTooltip": "Prefixes considered ONLY at meta tool table list retrieval",
+            "saveRequired": "Save operation required",
             "savedVersions": "Saved versions",
             "schemaName": "Schema Name",
             "setActiveVersion": "Set active version",

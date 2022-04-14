@@ -115,7 +115,13 @@ export default defineComponent({
         },
         async loadFolders() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response: AxiosResponse<any>) => (this.folders = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response: AxiosResponse<any>) => {
+                this.folders = response.data
+                this.folders?.sort((a: any, b: any) => {
+                    return !a.parentId || a.parentId < b.parentId ? -1 : 1
+                })
+            })
+
             this.loading = false
         },
         async loadDocuments() {
@@ -135,9 +141,11 @@ export default defineComponent({
             await this.loadDocumentsWithBreadcrumbs()
         },
         async loadDocumentsWithBreadcrumbs() {
-            if (this.selectedFolder) {
+            if (this.selectedFolder && this.selectedFolder.id !== -1) {
                 await this.loadDocuments()
                 this.createBreadcrumbs()
+            } else {
+                this.documents = []
             }
         },
         createBreadcrumbs() {

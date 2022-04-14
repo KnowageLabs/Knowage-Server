@@ -434,7 +434,7 @@ export default defineComponent({
                     if (this.selectedModes[i] === +modalityKeys[j]) {
                         const conditionForPost = {
                             ...this.condition,
-                            parFatherId: this.condition.parFatherId,
+                            parFatherId: '' + this.condition.parFatherId,
                             parFatherUrlName: this.getDriverProperty(this.condition.parFatherId, 'parameterUrlName'),
                             parId: (this.selectedDriver as iBusinessModelDriver).id,
                             useModeId: +modalityKeys[j],

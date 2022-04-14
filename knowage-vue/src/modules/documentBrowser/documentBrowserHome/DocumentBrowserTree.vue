@@ -57,12 +57,12 @@ export default defineComponent({
             const personalFolder = {
                 key: 'Personal_Folders',
                 icon: 'pi pi-folder',
-                id: 1,
+                id: -1,
                 parentId: null,
                 label: 'Personal_Folders',
                 children: [] as iNode[],
                 data: {
-                    id: 1,
+                    id: -1,
                     codType: 'LOW_FUNCT',
                     code: 'Personal_Folders',
                     createRoles: [],
