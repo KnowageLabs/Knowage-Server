@@ -33,13 +33,12 @@
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.description" :additionalTranslateParams="{ fieldName: $t('common.description') }" />
                 </div>
-                <div class="p-field p-mt-1 p-col-6">
+                <div v-if="qbeAdvancedSaving" class="p-field p-mt-1 p-col-6">
                     <span class="p-float-label">
                         <Dropdown
                             id="scope"
                             class="kn-material-input"
                             :options="scopeTypes"
-                            :disabled="!isUserAdmin"
                             optionLabel="VALUE_CD"
                             optionValue="VALUE_CD"
                             v-model="v$.dataset.scopeCd.$model"
@@ -59,13 +58,12 @@
                         }"
                     />
                 </div>
-                <div class="p-field p-mt-1 p-col-6">
+                <div v-if="qbeAdvancedSaving" class="p-field p-mt-1 p-col-6">
                     <span class="p-float-label">
                         <Dropdown
                             id="category"
                             class="kn-material-input"
                             :options="categoryTypes"
-                            :disabled="!isUserAdmin"
                             optionLabel="VALUE_CD"
                             optionValue="VALUE_CD"
                             v-model="v$.dataset.catTypeVn.$model"
@@ -105,8 +103,8 @@ export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages },
     props: { propDataset: Object, scopeTypes: Array, categoryTypes: Array },
     computed: {
-        isUserAdmin(): any {
-            return (this.$store.state as any).user.isSuperadmin
+        qbeAdvancedSaving(): any {
+            return (this.$store.state as any).user.functionalities.includes('QbeAdvancedSaving')
         }
     },
     data() {
