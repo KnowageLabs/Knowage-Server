@@ -90,3 +90,28 @@ export interface iOlapModelConfig {
     whatIfScenario: boolean,
     writeBackConf: any
 }
+
+export interface iNode {
+    key: number,
+    id: number,
+    label: string,
+    children: iNode[],
+    data: iFilterNode,
+    style: any,
+    leaf: boolean,
+    selectable: boolean,
+    parent?: iNode,
+    icon?: string
+}
+
+export interface iFilterNode {
+    id: string,
+    name: string,
+    uniqueName: string,
+    collapsed?: boolean,
+    visible: boolean,
+    leaf: boolean,
+    children: iFilterNode[],
+    text?: string,
+    qtip?: string
+}

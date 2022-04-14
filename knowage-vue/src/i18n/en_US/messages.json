@@ -16,6 +16,7 @@
         "cc": "CC",
         "choose": "choose",
         "clean": "Clean",
+        "clear": "Clear",
         "clicked": "Clicked",
         "clone": "Clone",
         "close": "close",
@@ -470,6 +471,9 @@
                 "title": "Drill Through"
             },
             "editModeConfirm": "You are leaving edit mode. Continue?",
+            "filterDialog": {
+                "infoMessage": "Selected items will be used as filters in the main table."
+            },
             "filterPanel": {
                 "drop": "Drop here to use as a slicer",
                 "filterPanelEmpty": "Drag the member here if you want to use it as a slicer"
