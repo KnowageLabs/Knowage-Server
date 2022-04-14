@@ -1,9 +1,17 @@
 <template>
-    <div>
+    <div class="p-p-4">
+        {{ expandedKeys }}
+        <Message v-if="searchWarningMessageVisible" class="p-m-4" severity="warn" :closable="false" :style="olapFilterDialogDescriptor.styles.message">
+            {{ $t('documentExecution.olap.filterDialog.searchWarningMessage') }}
+        </Message>
+        <Message v-if="selectedAncestorsWarningVisible" class="p-m-4" severity="warn" :closable="false" :style="olapFilterDialogDescriptor.styles.message">
+            {{ $t('documentExecution.olap.filterDialog.ancestorDescendantWarning') }}
+        </Message>
+        <InputText v-if="!treeLocked" class="kn-material-input" v-model.trim="searchWord" type="text" :placeholder="$t('common.search')" @input="searchTree" />
         <Tree id="kn-parameter-tree" :class="{ 'olap-filter-tree-locked': treeLocked }" :value="nodes" :metaKeySelection="false" :expandedKeys="expandedKeys" @nodeExpand="loadNodes($event)">
             <template #default="slotProps">
                 <i :class="slotProps.node.customIcon"></i>
-                <Checkbox class="p-ml-2" name="folders" v-model="selectedFilters" :value="slotProps.node.id" @change="onFiltersSelected" />
+                <Checkbox class="p-ml-2" v-model="selectedFilters" :value="filterType === 'slicer' ? slotProps.node.id : slotProps.node.data" @change="onFiltersSelected" />
                 <span>{{ slotProps.node.label }}</span>
             </template>
         </Tree>
@@ -15,6 +23,7 @@ import { defineComponent } from 'vue'
 import { iNode, iFilterNode } from '../Olap'
 import { AxiosResponse } from 'axios'
 import Checkbox from 'primevue/checkbox'
+import Message from 'primevue/message'
 import olapFilterDialogDescriptor from './OlapFilterDialogDescriptor.json'
 import Tree from 'primevue/tree'
 
@@ -22,7 +31,7 @@ const crypto = require('crypto')
 
 export default defineComponent({
     name: 'olap-filter-tree',
-    components: { Checkbox, Tree },
+    components: { Checkbox, Message, Tree },
     props: { olapVersionsProp: { type: Boolean, required: true }, propFilter: { type: Object }, id: { type: String }, clearTrigger: { type: Boolean }, treeLocked: { type: Boolean } },
     emits: ['close', 'loading', 'filtersChanged', 'lockTree'],
     data() {
@@ -32,7 +41,11 @@ export default defineComponent({
             filter: null as any,
             filterType: '' as string,
             selectedFilters: [] as any,
-            expandedKeys: {}
+            expandedKeys: {},
+            searchWord: '',
+            searchTimeout: null as any,
+            searchWarningMessageVisible: false,
+            selectedAncestorsWarningVisible: false
         }
     },
     watch: {
@@ -42,8 +55,8 @@ export default defineComponent({
         clearTrigger() {
             this.selectedFilters = []
         },
-        treeLocked() {
-            this.unlockTree()
+        treeLocked(value: boolean) {
+            if (!value) this.unlockTree()
         }
     },
     created() {
@@ -54,11 +67,14 @@ export default defineComponent({
             this.filter = this.propFilter ? this.propFilter.filter : {}
             this.filterType = this.propFilter?.type
 
-            this.filter.hierarchies?.forEach((hierarchy: any) => {
-                hierarchy.slicers?.forEach((slicer: any) => {
-                    this.selectedFilters.push(slicer.uniqueName)
+            this.selectedFilters = []
+            if (this.filterType === 'slicer') {
+                this.filter.hierarchies?.forEach((hierarchy: any) => {
+                    hierarchy.slicers?.forEach((slicer: any) => {
+                        this.selectedFilters.push(slicer.uniqueName)
+                    })
                 })
-            })
+            }
             if (this.selectedFilters.length > 0) this.$emit('lockTree')
             this.$emit('filtersChanged', this.selectedFilters)
             this.loadNodes(null)
@@ -76,22 +92,31 @@ export default defineComponent({
             if (!parent) type = this.filterType === 'slicer' ? 'slicerTree' : 'visibleMembers'
             const content = [] as any[]
 
-            const postData = parent ? { axis: this.filter.axis, hierarchy: this.filter.selectedHierarchyUniqueName, node: parent.id } : { hierarchyUniqueName: this.filter.selectedHierarchyUniqueName }
+            let postData = {}
+            if (parent) {
+                postData = { axis: this.filter.axis, hierarchy: this.filter.selectedHierarchyUniqueName, node: parent.id }
+            } else if (this.filterType === 'slicer') {
+                postData = { hierarchyUniqueName: this.filter.selectedHierarchyUniqueName }
+            } else {
+                postData = { hierarchy: this.filter.selectedHierarchyUniqueName }
+            }
+
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/hierarchy/${type}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) =>
                     response.data.forEach((el: any) => {
-                        content.push(this.createNode(el, parent))
+                        content.push(this.createNode(el))
                     })
                 )
                 .catch(() => {})
 
             this.attachContentToTree(parent, content)
+            if (this.filterType === 'visible' && !parent) this.setSelectedFiltersForVisibleType()
             this.$emit('loading', false)
         },
 
-        createNode(el: iFilterNode, parent: iNode) {
-            console.log(' >>> ELEMENT: ', el)
+        createNode(el: iFilterNode) {
+            // console.log(' >>> ELEMENT: ', el)
 
             const tempNode = {
                 key: crypto.randomBytes(16).toString('hex'),
@@ -101,20 +126,19 @@ export default defineComponent({
                 data: el,
                 style: this.olapFilterDialogDescriptor.node.style,
                 leaf: this.treeLocked ? true : el.leaf,
-                parent: parent,
                 customIcon: el.leaf ? 'fa fa-list-alt' : ''
             } as iNode
             tempNode.children = el.children?.map((child: iFilterNode) => {
-                return this.createNode(child, tempNode)
+                return this.createNode(child)
             })
 
-            if (el.collapsed) {
+            if (el.collapsed || this.searchWord.length > 2) {
                 this.expandedKeys[tempNode.key] = true
             }
 
             return tempNode
         },
-        attachContentToTree(parent: iNode, content: iNode[]) {
+        attachContentToTree(parent: iNode | null, content: iNode[]) {
             if (parent) {
                 parent.children = []
                 parent.children = content
@@ -124,11 +148,30 @@ export default defineComponent({
             }
         },
         onFiltersSelected() {
+            this.selectedAncestorsWarningVisible = this.filterType === 'slicer' && this.hasSelectedAncestorsAndDescendant(this.nodes[0], false)
             this.$emit('filtersChanged', this.selectedFilters)
+        },
+        hasSelectedAncestorsAndDescendant(node: iNode, ancestorIsSelected: boolean) {
+            const nodeIsSelected = this.nodeIsSelected(node)
+            // console.log(' --- NODE: ', node)
+            // console.log(' --- NODE IS SELECTED: ', nodeIsSelected)
+            // console.log(' --- ANCESTOR IS SELECTED: ', ancestorIsSelected)
+            if (nodeIsSelected && ancestorIsSelected) {
+                return true
+            } else if (node.children) {
+                for (let i = 0; i < node.children.length; i++) {
+                    if (this.hasSelectedAncestorsAndDescendant(node.children[i], nodeIsSelected || ancestorIsSelected)) return true
+                }
+            }
+            return false
+        },
+        nodeIsSelected(node: iNode) {
+            const index = this.selectedFilters.findIndex((el: any) => el === node.id)
+            return index !== -1
         },
         unlockTree() {
             console.log('UNLOCK TREE!')
-            console.log('NODES: ', this.nodes)
+            // console.log('NODES: ', this.nodes)
             this.expandedKeys = {}
             for (let i = 0; i < this.nodes.length; i++) {
                 this.setNodeExpandable(this.nodes[i])
@@ -139,6 +182,48 @@ export default defineComponent({
             if (node.children) {
                 for (let i = 0; i < node.children.length; i++) {
                     this.setNodeExpandable(node.children[i])
+                }
+            }
+        },
+        searchTree() {
+            clearTimeout(this.searchTimeout)
+            this.searchTimeout = setTimeout(async () => {
+                console.log('SEEEEEEEARCH: ', this.searchWord)
+
+                this.searchWarningMessageVisible = this.searchWord.length > 0 && this.searchWord.length < 3
+                if (this.searchWord.length > 2) {
+                    const content = [] as any[]
+                    await this.$http
+                        .post(process.env.VUE_APP_OLAP_PATH + `1.0/hierarchy/search?SBI_EXECUTION_ID=${this.id}`, { axis: this.filter.axis, hierarchy: this.filter.selectedHierarchyUniqueName, name: this.searchWord, showS: false }, { headers: { Accept: 'application/json, text/plain, */*' } })
+                        .then((response: AxiosResponse<any>) =>
+                            response.data.forEach((el: any) => {
+                                content.push(this.createNode(el))
+                            })
+                        )
+                        .catch(() => {})
+                    this.attachContentToTree(null, content)
+                } else {
+                    console.log('ENTERED ELSE!: ')
+                    this.loadNodes(null)
+                }
+            }, 500)
+        },
+        setSelectedFiltersForVisibleType() {
+            if (!this.nodes[0].children || this.nodes[0].children.length === 0) return
+            this.$emit('lockTree')
+
+            this.setSelectedVisibleMembers(this.nodes[0])
+
+            console.log(' >>>> NODES VISIBLE: ', this.nodes)
+        },
+        setSelectedVisibleMembers(node: iNode) {
+            console.log('>>>>S>DA>DS>AD> NODE: ', node)
+            this.expandedKeys[node.key] = true
+            console.log('EXANDED KEYS: ', this.expandedKeys)
+            if (node.data.visible) this.selectedFilters.push(node.data)
+            else if (node.children) {
+                for (let i = 0; i < node.children.length; i++) {
+                    this.setSelectedVisibleMembers(node.children[i])
                 }
             }
         }

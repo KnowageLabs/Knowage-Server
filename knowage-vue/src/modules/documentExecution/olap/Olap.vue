@@ -777,17 +777,31 @@ export default defineComponent({
             this.filterDialogVisible = false
             this.selectedFilter = null
         },
-        async applyFilters(payload: { hierarchy: string; members: string[]; multi: boolean }) {
+        async applyFilters(payload: any) {
             console.log(' >>> APPLY FILTERS PAYLOAD: ', payload)
             this.filterDialogVisible = false
             this.loading = true
+            if (payload.type === 'slicer') {
+                delete payload.type
+                await this.sliceOLAP(payload)
+            } else {
+                await this.placeMembersOnAxis(payload)
+            }
+
+            this.formatOlapTable()
+            this.loading = false
+        },
+        async sliceOLAP(payload) {
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/hierarchy/slice?SBI_EXECUTION_ID=${this.id}`, payload, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => {})
-
-            this.formatOlapTable()
-            this.loading = false
+        },
+        async placeMembersOnAxis(payload) {
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/${payload.axis}/placeMembersOnAxis?SBI_EXECUTION_ID=${this.id}`, payload.members, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .catch(() => {})
         }
     }
 })

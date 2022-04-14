@@ -12,7 +12,12 @@
         {{ selectedFilters }}
 
         <Message class="p-m-4" severity="info" :closable="false" :style="olapFilterDialogDescriptor.styles.message">
-            {{ $t('documentExecution.olap.filterDialog.infoMessage') }}
+            <div v-if="treeLocked">
+                <span>{{ $t('documentExecution.olap.filterDialog.treeLockedInfoMessage.partOne') }}</span>
+                <b>{{ $t('documentExecution.olap.filterDialog.treeLockedInfoMessage.partTwo') }}</b>
+                <span>{{ $t('documentExecution.olap.filterDialog.treeLockedInfoMessage.partThree') }}</span>
+            </div>
+            <span v-else>{{ $t('documentExecution.olap.filterDialog.infoMessage') }}</span>
         </Message>
 
         <OlapFilterTree :propFilter="propFilter" :id="id" :clearTrigger="clearTrigger" :treeLocked="treeLocked" @loading="loading = $event" @filtersChanged="onFiltersChange" @lockTree="treeLocked = true"></OlapFilterTree>
@@ -73,7 +78,14 @@ export default defineComponent({
         },
         apply() {
             // TODO: Hardcoded multi
-            this.$emit('applyFilters', { hierarchy: this.propFilter?.filter.selectedHierarchyUniqueName, members: this.selectedFilters, multi: false })
+            console.log(' AAAAAAAAAAAA - FILTER: ', this.propFilter)
+            let payload = {}
+            if (this.propFilter?.type === 'slicer') {
+                payload = { hierarchy: this.propFilter?.filter.selectedHierarchyUniqueName, members: this.selectedFilters, multi: false, type: 'slicer' }
+            } else {
+                payload = { members: this.selectedFilters, type: 'visible', axis: this.propFilter?.filter.axis }
+            }
+            this.$emit('applyFilters', payload)
         },
         onFiltersChange(values: string[]) {
             this.selectedFilters = values
