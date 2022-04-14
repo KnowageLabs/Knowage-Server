@@ -472,7 +472,14 @@
             },
             "editModeConfirm": "You are leaving edit mode. Continue?",
             "filterDialog": {
-                "infoMessage": "Selected items will be used as filters in the main table."
+                "ancestorDescendantWarning": "Warning: You selected some members that are in ancestor-descendant relationship: measures will be aggregated over both of them. Are you sure this is what you want?",
+                "infoMessage": "Selected items will be used as filters in the main table.",
+                "searchWarningMessage": "You need at least 3 letters to start search!",
+                "treeLockedInfoMessage": {
+                    "partOne": "Selected items are used as filters in the main table. You can remove some or clicking on ",
+                    "partThree": " the whole tree will be unlocked",
+                    "partTwo": "add selection"
+                }
             },
             "filterPanel": {
                 "drop": "Drop here to use as a slicer",

@@ -9,7 +9,7 @@
                         <Button v-if="column.hierarchies.length > 1" icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" @click="$emit('showMultiHierarchy', column)" />
                         <span class="kn-flex kn-truncated" :class="{ 'p-ml-2': column.hierarchies.length == 1 }" v-tooltip.top="column.caption">{{ cutName(column.caption, 0, column.hierarchies.length > 1) }} </span>
                         <div id="whitespace" :style="toolbarDescriptor.style.whitespace" />
-                        <Button icon="fas fa-filter" :class="{ 'olap-active-filter-icon': filterIsActive(column) }" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" @click="openFilterDialog(column)" />
+                        <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" @click="openFilterDialog(column)" />
                     </div>
                     <i v-if="column.positionInAxis < columns.length - 1" class="fas fa-arrows-alt-h p-as-center p-mx-2" style="cursor:pointer" @click="$emit('switchPosition', column)" />
                 </div>
@@ -123,16 +123,6 @@ export default defineComponent({
         },
         openFilterDialog(filter: any) {
             this.$emit('openFilterDialog', { filter: filter, type: 'visible' })
-        },
-        filterIsActive(filter: any) {
-            let isActive = false
-            for (let i = 0; i < filter.hierarchies.length; i++) {
-                if (filter.hierarchies[i].slicers && filter.hierarchies[i].slicers.length > 0) {
-                    isActive = true
-                    break
-                }
-            }
-            return isActive
         }
     }
 })
@@ -150,9 +140,5 @@ export default defineComponent({
 }
 .display-axis-dropzone {
     display: flex !important;
-}
-
-.olap-active-filter-icon {
-    color: red !important;
 }
 </style>
