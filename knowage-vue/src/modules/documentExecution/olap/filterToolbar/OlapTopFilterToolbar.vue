@@ -122,7 +122,7 @@ export default defineComponent({
             this.scrollContentWidth = this.$refs?.filterItemsContainer?.scrollWidth
         },
         openFilterDialog(filter: any) {
-            this.$emit('openFilterDialog', filter)
+            this.$emit('openFilterDialog', { filter: filter, type: 'visible' })
         }
     }
 })
