@@ -63,6 +63,7 @@
             @openButtonWizardDialog="buttonsWizardDialogVisible = true"
             @saveOlapDesigner="saveOlapDesigner"
             @showOutputWizard="outputWizardVisible = true"
+            @showScenarioWizard="scenarioWizardVisible = true"
         />
     </div>
 
@@ -135,6 +136,7 @@ export default defineComponent({
             multiHierarchyDialogVisible: false,
             drillTruDialogVisible: false,
             outputWizardVisible: false,
+            scenarioWizardVisible: false,
             multiHierFilter: {} as iOlapFilter,
             selecetedMultiHierUN: '',
             sort: null as any,
