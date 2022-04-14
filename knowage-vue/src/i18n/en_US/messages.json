@@ -514,7 +514,9 @@
             "savingCustomizedView": "Saving customized view",
             "scenarioWizard": {
                 "clearData": "Clear data",
-                "title": "Scenario Wizard"
+                "title": "Scenario Wizard",
+                "shortInfo": "Selecting an edit cube and an editable measure is mandatory.",
+                "longInfo": "Selecting an edit cube and an editable measure is mandatory. In order to perform what if analysis your database as well as OLAP schema should have a specific structure. Please check in the documentation of the WhatIF functionality. The edited cube should be the cube that you want to save with the new version of data."
             },
             "showMdxQuery": "Show MDX Query",
             "showScheduledExecutions": "Show scheduled executions",

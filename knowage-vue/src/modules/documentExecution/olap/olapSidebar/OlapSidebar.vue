@@ -115,7 +115,7 @@
                         <Button icon="fa-solid fa-share-from-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.outputWizard')" @click="$emit('showOutputWizard')" />
                     </div>
                     <div class="p-col-4">
-                        <Button icon="fas fa-page" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" @click="$emit('showScenarioWizard')" />
+                        <Button icon="fa-solid fa-note-sticky" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" @click="$emit('showScenarioWizard')" />
                     </div>
                 </div>
             </div>
