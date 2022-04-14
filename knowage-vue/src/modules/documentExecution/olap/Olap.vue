@@ -63,6 +63,7 @@
             @openButtonWizardDialog="buttonsWizardDialogVisible = true"
             @saveOlapDesigner="saveOlapDesigner"
             @showOutputWizard="outputWizardVisible = true"
+            @showScenarioWizard="scenarioWizardVisible = true"
         />
     </div>
 
@@ -75,6 +76,7 @@
     <MultiHierarchyDialog :selectedFilter="multiHierFilter" :multiHierUN="selecetedMultiHierUN" :visible="multiHierarchyDialogVisible" @setMultiHierUN="setMultiHierUN" @updateHierarchy="updateHierarchy" @close="multiHierarchyDialogVisible = false" />
     <KnOverlaySpinnerPanel :visibility="loading" />
     <OutputWizard :visible="outputWizardVisible" :olapVersionsProp="olapVersions" :sbiExecutionId="id" @close="outputWizardVisible = false" />
+    <ScenarioWizard :visible="scenarioWizardVisible" :olapVersionsProp="olapVersions" :sbiExecutionId="id" @close="scenarioWizardVisible = false" />
     <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" @close="closeFilterDialog"></OlapFilterDialog>
 </template>
 
@@ -97,12 +99,14 @@ import OlapButtonWizardDialog from './buttonWizard/OlapButtonWizardDialog.vue'
 import MultiHierarchyDialog from './multiHierarchyDialog/OlapMultiHierarchyDialog.vue'
 import DrillTruDialog from './drillThroughDialog/OlapDrillThroughDialog.vue'
 import OutputWizard from './outputWizard/OlapOutputWizard.vue'
+import ScenarioWizard from './scenarioWizard/OlapScenarioWizard.vue'
 import OlapFilterDialog from './filterDialog/OlapFilterDialog.vue'
 
 export default defineComponent({
     name: 'olap',
     components: {
         OutputWizard,
+        ScenarioWizard,
         OlapSidebar,
         DrillTruDialog,
         OlapCustomViewTable,
@@ -135,6 +139,7 @@ export default defineComponent({
             multiHierarchyDialogVisible: false,
             drillTruDialogVisible: false,
             outputWizardVisible: false,
+            scenarioWizardVisible: false,
             multiHierFilter: {} as iOlapFilter,
             selecetedMultiHierUN: '',
             sort: null as any,

@@ -444,15 +444,6 @@
             "yourRating": "Your rating"
         },
         "olap": {
-            "outputWizard": {
-                "title": "Output wizard",
-                "infoMsg": "Select the output type for the analysis. This operation will take some minutes. In the meanwhile you can continue to work on your cube",
-                "version": "Verson to export",
-                "fieldDelimiter": "Field delimiter",
-                "tableMsg": "Analysis exported",
-                "tableInfo": "What is the name of the table for the output process?",
-                "fileInfo": "Please fill the CSV options."
-            },
             "buttonsWizard": {
                 "title": "Buttons Wizard"
             },
@@ -500,7 +491,20 @@
             },
             "openDesigner": "Open Designer",
             "openDesignerMsg": "By opening designer you will lose all unsaved changes, are you sure?",
+            "outputWizard": {
+                "fieldDelimiter": "Field delimiter",
+                "fileInfo": "Please fill the CSV options.",
+                "infoMsg": "Select the output type for the analysis. This operation will take some minutes. In the meanwhile you can continue to work on your cube",
+                "tableInfo": "What is the name of the table for the output process?",
+                "tableMsg": "Analysis exported",
+                "title": "Output wizard",
+                "version": "Verson to export"
+            },
             "savingCustomizedView": "Saving customized view",
+            "scenarioWizard": {
+                "clearData": "Clear data",
+                "title": "Scenario Wizard"
+            },
             "showMdxQuery": "Show MDX Query",
             "showScheduledExecutions": "Show scheduled executions",
             "sidebar": {
@@ -522,12 +526,14 @@
                 "mdxQuery": "Mdx Query",
                 "member": "Member",
                 "olapFunctions": "OLAP functions",
+                "outputWizard": "Output wizard",
                 "position": "Position",
                 "reloadSchema": "Reload schema",
                 "replace": "Replace",
                 "saveCustomizedView": "Save customized view",
                 "saveNewVersion": "Save new version",
                 "saveTemplate": "Save template",
+                "scenario": "Configure scenario",
                 "selectAlgorithm": "Select algorithm",
                 "showCustomizedView": "Show customized view",
                 "showParentMembers": "Show parent members",
@@ -537,8 +543,7 @@
                 "tableFunctions": "Table functions",
                 "templateEditing": "Template editing",
                 "undo": "Undo",
-                "whatIfTitle": "What If",
-                "outputWizard": "Output wizard"
+                "whatIfTitle": "What If"
             },
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",
