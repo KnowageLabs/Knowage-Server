@@ -115,3 +115,21 @@ export interface iFilterNode {
     text?: string,
     qtip?: string
 }
+
+export interface iParameter {
+    id: number,
+    label: string
+    parType: string
+    url: string
+}
+
+export interface iProfileAttribute {
+    allowUser: boolean
+    attributeDescription: string
+    attributeId: number
+    attributeName: string
+    lovId: any
+    multivalue: boolean
+    syntax: any
+    value: { name: string, type: string } | null
+}

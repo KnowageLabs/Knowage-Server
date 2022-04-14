@@ -43,7 +43,7 @@ import OlapFilterTree from './OlapFilterTree.vue'
 export default defineComponent({
     name: 'olap-filter-dialog',
     components: { Dialog, Message, OlapFilterTree },
-    props: { visible: { type: Boolean }, olapVersionsProp: { type: Boolean, required: true }, propFilter: { type: Object }, id: { type: String } },
+    props: { visible: { type: Boolean }, olapVersionsProp: { type: Boolean, required: true }, propFilter: { type: Object }, id: { type: String }, olapDesignerMode: { type: Boolean } },
     emits: ['close', 'applyFilters'],
     data() {
         return {

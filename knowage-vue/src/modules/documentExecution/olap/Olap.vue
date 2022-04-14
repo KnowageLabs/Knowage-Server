@@ -77,13 +77,13 @@
     <KnOverlaySpinnerPanel :visibility="loading" />
     <OutputWizard :visible="outputWizardVisible" :olapVersionsProp="olapVersions" :sbiExecutionId="id" @close="outputWizardVisible = false" />
     <ScenarioWizard :visible="scenarioWizardVisible" :hiddenFormDataProp="hiddenFormDataProp" :sbiExecutionId="id" @close="scenarioWizardVisible = false" />
-    <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
+    <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" :olapDesignerMode="olapDesignerMode" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
 </template>
 
 <script lang="ts">
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
-import { iOlapCustomView, iButton, iOlapFilter, iOlap } from './Olap'
+import { iOlapCustomView, iButton, iOlapFilter, iOlap, iParameter, iProfileAttribute } from './Olap'
 import olapDescriptor from './OlapDescriptor.json'
 import OlapSidebar from './olapSidebar/OlapSidebar.vue'
 import OlapSortingDialog from './sortingDialog/OlapSortingDialog.vue'
@@ -158,7 +158,9 @@ export default defineComponent({
             dtMaxRows: 0,
             usedOrdinal: 0 as Number,
             selectedFilter: null as any,
-            filterDialogVisible: false
+            filterDialogVisible: false,
+            parameters: [] as iParameter[],
+            profileAttributes: [] as iProfileAttribute[]
         }
     },
     async created() {
@@ -222,6 +224,10 @@ export default defineComponent({
                 .then(async (response: AxiosResponse<any>) => {
                     this.olap = response.data
                     await this.loadOlapDesigner()
+                    if (this.olapDesigner) {
+                        await this.loadParameters()
+                        await this.loadProfileAttributes()
+                    }
                     await this.loadOlapButtons()
                     this.setClickedButtons()
                     await this.loadModelConfig()
@@ -229,6 +235,7 @@ export default defineComponent({
                 })
                 .catch(() => {})
             this.loading = false
+            console.log('LOADED OLAP DESIGNER: ', this.olapDesigner)
         },
         setClickedButtons() {
             if (this.olapDesigner.template?.wrappedObject?.olap?.TOOLBAR) {
@@ -801,6 +808,18 @@ export default defineComponent({
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/${payload.axis}/placeMembersOnAxis?SBI_EXECUTION_ID=${this.id}`, payload.members, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .catch(() => {})
+        },
+        async loadParameters() {
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.olapDesigner.DOCUMENT_LABEL}/parameters`)
+                .then((response: AxiosResponse<any>) => (this.parameters = response.data ? response.data.results : []))
+                .catch(() => {})
+        },
+        async loadProfileAttributes() {
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/attributes`)
+                .then((response: AxiosResponse<any>) => (this.profileAttributes = response.data))
                 .catch(() => {})
         }
     }
