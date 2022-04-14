@@ -1,8 +1,21 @@
 {
+    "node": {
+        "style": {
+            "padding": 0
+        }
+    },
     "style": {
         "dialog": {
             "height": "80%",
             "width": "80%"
+        }
+    },
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
         }
     }
 }

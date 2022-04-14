@@ -16,6 +16,7 @@
         "cc": "CC",
         "choose": "choose",
         "clean": "Clean",
+        "clear": "Clear",
         "clicked": "Clicked",
         "clone": "Clone",
         "close": "close",
@@ -444,11 +445,6 @@
             "yourRating": "Your rating"
         },
         "olap": {
-            "outputWizard": {
-                "title": "Output wizard",
-                "infoMsg": "Select the output type for the analysis. This operation will take some minutes. In the meanwhile you can continue to work on your cube",
-                "version": "Verson to export"
-            },
             "buttonsWizard": {
                 "title": "Buttons Wizard"
             },
@@ -475,6 +471,9 @@
                 "title": "Drill Through"
             },
             "editModeConfirm": "You are leaving edit mode. Continue?",
+            "filterDialog": {
+                "infoMessage": "Selected items will be used as filters in the main table."
+            },
             "filterPanel": {
                 "drop": "Drop here to use as a slicer",
                 "filterPanelEmpty": "Drag the member here if you want to use it as a slicer"
@@ -496,6 +495,11 @@
             },
             "openDesigner": "Open Designer",
             "openDesignerMsg": "By opening designer you will lose all unsaved changes, are you sure?",
+            "outputWizard": {
+                "infoMsg": "Select the output type for the analysis. This operation will take some minutes. In the meanwhile you can continue to work on your cube",
+                "title": "Output wizard",
+                "version": "Verson to export"
+            },
             "savingCustomizedView": "Saving customized view",
             "showMdxQuery": "Show MDX Query",
             "showScheduledExecutions": "Show scheduled executions",
@@ -518,6 +522,7 @@
                 "mdxQuery": "Mdx Query",
                 "member": "Member",
                 "olapFunctions": "OLAP functions",
+                "outputWizard": "Output wizard",
                 "position": "Position",
                 "reloadSchema": "Reload schema",
                 "replace": "Replace",
@@ -533,8 +538,7 @@
                 "tableFunctions": "Table functions",
                 "templateEditing": "Template editing",
                 "undo": "Undo",
-                "whatIfTitle": "What If",
-                "outputWizard": "Output wizard"
+                "whatIfTitle": "What If"
             },
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",
