@@ -1,7 +1,18 @@
 {
+    "newVariable": {
+        "name": "",
+        "value": ""
+    },
     "style": {
+        "columnStyle": {
+            "height": "25px"
+        },
         "dialog": {
             "width": "60%"
+        },
+        "iconColumn": {
+            "flex-basis": "15px",
+            "flex-grow": "0"
         },
         "spinner": {
             "background": "rgb(0 0 0 / 25%)",

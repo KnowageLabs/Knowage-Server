@@ -506,6 +506,10 @@
             },
             "savingCustomizedView": "Saving customized view",
             "scenarioWizard": {
+                "parameterName": "Parameter name",
+                "parameterValue": "Parameter value",
+                "editableMeasures": "Editable measures",
+                "selectedCube": "Selected cube",
                 "clearData": "Clear data",
                 "title": "Scenario Wizard",
                 "shortInfo": "Selecting an edit cube and an editable measure is mandatory.",
