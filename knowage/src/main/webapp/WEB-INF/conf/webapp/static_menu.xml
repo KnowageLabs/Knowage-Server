@@ -107,7 +107,7 @@
 				to="/schedulation-agenda" />
 			<ITEM id="5003" label="menu.HierarchiesEditor"
 				requiredFunctionality="HierarchiesManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=hierarchiesEditor" />
+				to="/hierarchy-management" />
 			<ITEM id="5004" label="menu.CacheManagement"
 				requiredFunctionality="CacheManagement"
 				to="/cache-management" />
@@ -267,7 +267,7 @@
 		
 		<ITEM id="11005" label="menu.HierarchiesEditor"
 			requiredFunctionality="HierarchiesManagement"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=hierarchiesEditor"
+			to="/hierarchy-management"
 			iconCls="fas fa-sitemap" />
 		<ITEM id="11006" label="menu.FunctionsCatalog"
 			requiredFunctionality="FunctionsCatalogUsage"
