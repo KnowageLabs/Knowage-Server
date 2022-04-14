@@ -15,13 +15,14 @@
             {{ $t('documentExecution.olap.filterDialog.infoMessage') }}
         </Message>
 
-        <OlapFilterTree :propFilter="propFilter" :id="id" :clearTrigger="clearTrigger" @loading="loading = $event" @filtersChanged="onFiltersChange"></OlapFilterTree>
+        <OlapFilterTree :propFilter="propFilter" :id="id" :clearTrigger="clearTrigger" :treeLocked="treeLocked" @loading="loading = $event" @filtersChanged="onFiltersChange" @lockTree="treeLocked = true"></OlapFilterTree>
 
         <template #footer>
             <div class="p-d-flex p-flex-row">
                 <Button v-show="selectedFilters.length > 0" class="kn-button kn-button--primary" @click="clear"> {{ $t('common.clear') }}</Button>
+                <Button v-show="treeLocked" class="kn-button kn-button--primary" @click="treeLocked = false"> {{ $t('common.add') }}</Button>
                 <Button class="kn-button kn-button--primary p-ml-auto" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-                <Button class="kn-button kn-button--primary" @click="save"> {{ $t('common.save') }}</Button>
+                <Button class="kn-button kn-button--primary" @click="apply"> {{ $t('common.apply') }}</Button>
             </div>
         </template>
     </Dialog>
@@ -38,27 +39,41 @@ export default defineComponent({
     name: 'olap-filter-dialog',
     components: { Dialog, Message, OlapFilterTree },
     props: { visible: { type: Boolean }, olapVersionsProp: { type: Boolean, required: true }, propFilter: { type: Object }, id: { type: String } },
-    emits: ['close'],
+    emits: ['close', 'applyFilters'],
     data() {
         return {
             olapFilterDialogDescriptor,
+            filter: null as any,
             selectedFilters: [] as string[],
             clearTrigger: false,
+            treeLocked: false,
             loading: false
         }
     },
-    watch: {},
-    created() {},
+    watch: {
+        propFilter() {
+            if (this.visible) this.loadFilter()
+        }
+    },
+    created() {
+        this.loadFilter()
+    },
     methods: {
+        loadFilter() {
+            this.filter = this.propFilter ? this.propFilter.filter : {}
+            console.log('LOADED FILTER: ', this.filter)
+        },
         clear() {
             this.selectedFilters = []
+            this.treeLocked = false
             this.clearTrigger = !this.clearTrigger
         },
         closeDialog() {
             this.$emit('close')
         },
-        save() {
-            console.log('SAVE: ')
+        apply() {
+            // TODO: Hardcoded multi
+            this.$emit('applyFilters', { hierarchy: this.propFilter?.filter.selectedHierarchyUniqueName, members: this.selectedFilters, multi: false })
         },
         onFiltersChange(values: string[]) {
             this.selectedFilters = values

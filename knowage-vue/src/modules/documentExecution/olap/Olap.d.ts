@@ -93,7 +93,7 @@ export interface iOlapModelConfig {
 
 export interface iNode {
     key: number,
-    id: number,
+    id: string,
     label: string,
     children: iNode[],
     data: iFilterNode,
@@ -101,7 +101,7 @@ export interface iNode {
     leaf: boolean,
     selectable: boolean,
     parent?: iNode,
-    icon?: string
+    customIcon?: string
 }
 
 export interface iFilterNode {
