@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Tree id="kn-parameter-tree" :value="nodes" :metaKeySelection="false" @nodeExpand="loadNodes($event)">
+        <Tree id="kn-parameter-tree" :class="{ 'olap-filter-tree-locked': treeLocked }" :value="nodes" :metaKeySelection="false" :expandedKeys="expandedKeys" @nodeExpand="loadNodes($event)">
             <template #default="slotProps">
                 <i :class="slotProps.node.customIcon"></i>
                 <Checkbox class="p-ml-2" name="folders" v-model="selectedFilters" :value="slotProps.node.id" @change="onFiltersSelected" />
@@ -23,15 +23,16 @@ const crypto = require('crypto')
 export default defineComponent({
     name: 'olap-filter-tree',
     components: { Checkbox, Tree },
-    props: { olapVersionsProp: { type: Boolean, required: true }, propFilter: { type: Object }, id: { type: String }, clearTrigger: { type: Boolean } },
-    emits: ['close', 'loading', 'filtersChanged'],
+    props: { olapVersionsProp: { type: Boolean, required: true }, propFilter: { type: Object }, id: { type: String }, clearTrigger: { type: Boolean }, treeLocked: { type: Boolean } },
+    emits: ['close', 'loading', 'filtersChanged', 'lockTree'],
     data() {
         return {
             olapFilterDialogDescriptor,
             nodes: [] as iNode[],
             filter: null as any,
             filterType: '' as string,
-            selectedFilters: [] as any
+            selectedFilters: [] as any,
+            expandedKeys: {}
         }
     },
     watch: {
@@ -40,6 +41,9 @@ export default defineComponent({
         },
         clearTrigger() {
             this.selectedFilters = []
+        },
+        treeLocked() {
+            this.unlockTree()
         }
     },
     created() {
@@ -49,13 +53,21 @@ export default defineComponent({
         loadFilter() {
             this.filter = this.propFilter ? this.propFilter.filter : {}
             this.filterType = this.propFilter?.type
+
+            this.filter.hierarchies?.forEach((hierarchy: any) => {
+                hierarchy.slicers?.forEach((slicer: any) => {
+                    this.selectedFilters.push(slicer.uniqueName)
+                })
+            })
+            if (this.selectedFilters.length > 0) this.$emit('lockTree')
+            this.$emit('filtersChanged', this.selectedFilters)
             this.loadNodes(null)
         },
         async loadNodes(parent: any) {
             console.log('>>> PARENT: ', parent)
             this.$emit('loading', true)
 
-            if (!this.filter || (parent && parent.leaf)) {
+            if (this.treeLocked || !this.filter || (parent && parent.leaf)) {
                 this.$emit('loading', false)
                 return
             }
@@ -64,8 +76,7 @@ export default defineComponent({
             if (!parent) type = this.filterType === 'slicer' ? 'slicerTree' : 'visibleMembers'
             const content = [] as any[]
 
-            // TODO: Hardcoded axis
-            const postData = parent ? { axis: -1, hierarchy: this.filter.selectedHierarchyUniqueName, node: parent.id } : { hierarchyUniqueName: this.filter.selectedHierarchyUniqueName }
+            const postData = parent ? { axis: this.filter.axis, hierarchy: this.filter.selectedHierarchyUniqueName, node: parent.id } : { hierarchyUniqueName: this.filter.selectedHierarchyUniqueName }
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/hierarchy/${type}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) =>
@@ -80,19 +91,28 @@ export default defineComponent({
         },
 
         createNode(el: iFilterNode, parent: iNode) {
-            console.log('ELEMENT: ', el)
-            return {
+            console.log(' >>> ELEMENT: ', el)
+
+            const tempNode = {
                 key: crypto.randomBytes(16).toString('hex'),
-                id: el.id,
+                id: '' + el.id,
                 label: el.name,
                 children: [] as iNode[],
                 data: el,
                 style: this.olapFilterDialogDescriptor.node.style,
-                leaf: el.leaf,
-                selectable: true,
+                leaf: this.treeLocked ? true : el.leaf,
                 parent: parent,
                 customIcon: el.leaf ? 'fa fa-list-alt' : ''
+            } as iNode
+            tempNode.children = el.children?.map((child: iFilterNode) => {
+                return this.createNode(child, tempNode)
+            })
+
+            if (el.collapsed) {
+                this.expandedKeys[tempNode.key] = true
             }
+
+            return tempNode
         },
         attachContentToTree(parent: iNode, content: iNode[]) {
             if (parent) {
@@ -105,13 +125,37 @@ export default defineComponent({
         },
         onFiltersSelected() {
             this.$emit('filtersChanged', this.selectedFilters)
+        },
+        unlockTree() {
+            console.log('UNLOCK TREE!')
+            console.log('NODES: ', this.nodes)
+            this.expandedKeys = {}
+            for (let i = 0; i < this.nodes.length; i++) {
+                this.setNodeExpandable(this.nodes[i])
+            }
+        },
+        setNodeExpandable(node: iNode) {
+            node.leaf = node.data.leaf
+            if (node.children) {
+                for (let i = 0; i < node.children.length; i++) {
+                    this.setNodeExpandable(node.children[i])
+                }
+            }
         }
     }
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #kn-parameter-tree {
     border: none;
+}
+.olap-filter-tree-locked .p-tree-toggler {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.olap-filter-tree-locked .p-tree-toggler-icon {
+    display: none;
+    pointer-events: none;
 }
 </style>

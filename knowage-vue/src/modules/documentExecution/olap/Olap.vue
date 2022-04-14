@@ -75,7 +75,7 @@
     <MultiHierarchyDialog :selectedFilter="multiHierFilter" :multiHierUN="selecetedMultiHierUN" :visible="multiHierarchyDialogVisible" @setMultiHierUN="setMultiHierUN" @updateHierarchy="updateHierarchy" @close="multiHierarchyDialogVisible = false" />
     <KnOverlaySpinnerPanel :visibility="loading" />
     <OutputWizard :visible="outputWizardVisible" :olapVersionsProp="olapVersions" :sbiExecutionId="id" @close="outputWizardVisible = false" />
-    <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" @close="closeFilterDialog"></OlapFilterDialog>
+    <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
 </template>
 
 <script lang="ts">
@@ -771,6 +771,18 @@ export default defineComponent({
         closeFilterDialog() {
             this.filterDialogVisible = false
             this.selectedFilter = null
+        },
+        async applyFilters(payload: { hierarchy: string; members: string[]; multi: boolean }) {
+            console.log(' >>> APPLY FILTERS PAYLOAD: ', payload)
+            this.filterDialogVisible = false
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/hierarchy/slice?SBI_EXECUTION_ID=${this.id}`, payload, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .catch(() => {})
+
+            this.formatOlapTable()
+            this.loading = false
         }
     }
 })
