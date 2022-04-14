@@ -10,7 +10,7 @@
 
         <ProgressSpinner class="wizard-overlay-spinner" v-if="loading" :style="descriptor.style.spinner" />
 
-        <form v-if="wizardStepOne" class="p-fluid p-formgrid p-grid p-m-1">
+        <form class="p-fluid p-formgrid p-grid p-m-1">
             <InlineMessage class="p-m-1" severity="info" closable="false">{{ $t('documentExecution.olap.outputWizard.infoMsg') }}</InlineMessage>
             <div id="type-container" class="p-field p-d-flex p-ai-center p-m-2">
                 <span>{{ $t('managers.workspaceManagement.dataPreparation.transformations.outputType') }}: </span>
@@ -28,17 +28,15 @@
                 <Dropdown id="version" class="kn-material-input" v-model="selectedVersion" :options="olapVersionsProp" optionLabel="name" />
                 <label for="version" class="kn-material-input-label"> {{ $t('documentExecution.olap.outputWizard.version') }} </label>
             </div>
-        </form>
 
-        <form v-else class="p-fluid p-formgrid p-grid p-mt-3 p-mx-2">
-            <div v-if="selectedType === 'file'" class="p-field p-col-12">
+            <div v-if="selectedType === 'file' && selectedVersion" class="p-field p-col-12">
                 <span class="p-float-label">
                     <InputText id="fieldDelimiter" class="kn-material-input" v-model="fieldDelimiter" />
                     <label for="fieldDelimiter" class="kn-material-input-label"> {{ $t('documentExecution.olap.outputWizard.fieldDelimiter') }} </label>
                 </span>
                 <small>{{ $t('documentExecution.olap.outputWizard.fileInfo') }}</small>
             </div>
-            <div v-else class="p-field p-col-12">
+            <div v-if="selectedType === 'table' && selectedVersion" class="p-field p-col-12">
                 <span class="p-float-label">
                     <InputText id="tableName" class="kn-material-input" v-model="tableName" />
                     <label for="tableName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.flatTableName') }} </label>
@@ -49,8 +47,6 @@
 
         <template #footer>
             <Button class="kn-button kn-button--secondary" @click="$emit('close')"> {{ $t('common.close') }}</Button>
-            <Button v-if="!wizardStepOne" class="kn-button" @click="previousStep"> {{ $t('common.back') }}</Button>
-            <Button v-if="selectedVersion && wizardStepOne" class="kn-button" @click="nextStep"> {{ $t('common.next') }}</Button>
             <Button class="kn-button kn-button--primary" :disabled="saveDisabled" @click="saveRequest"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
@@ -72,7 +68,7 @@ export default defineComponent({
     emits: ['close'],
     computed: {
         saveDisabled(): any {
-            if ((this.selectedType === 'file' && this.fieldDelimiter.length > 0 && !this.wizardStepOne) || (this.selectedType === 'table' && this.tableName.length > 0 && !this.wizardStepOne)) {
+            if ((this.selectedType === 'file' && this.fieldDelimiter.length > 0) || (this.selectedType === 'table' && this.tableName.length > 0)) {
                 return false
             } else return true
         }
@@ -83,7 +79,6 @@ export default defineComponent({
             loading: false,
             selectedVersion: null as any,
             selectedType: 'file' as any,
-            wizardStepOne: true,
             tableName: 'WHATIFOUTPUTTABLE',
             fieldDelimiter: '|'
         }
@@ -91,12 +86,6 @@ export default defineComponent({
     watch: {},
     created() {},
     methods: {
-        nextStep() {
-            this.wizardStepOne = false
-        },
-        previousStep() {
-            this.wizardStepOne = true
-        },
         saveRequest() {
             console.log(this.olapVersionsProp)
             if (this.selectedType === 'file') {
@@ -120,7 +109,6 @@ export default defineComponent({
             this.tableName = 'WHATIFOUTPUTTABLE'
             this.fieldDelimiter = '|'
             this.selectedVersion = null
-            this.wizardStepOne = true
         }
     }
 })
