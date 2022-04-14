@@ -3,7 +3,7 @@
         <div :id="'filter-' + filter.name" :ref="'filter-' + filter.name" :style="panelDescriptor.style.filterCard" draggable="true" @dragstart="onDragStart($event, filter, 'filter-' + filter.name)" @dragend="removeDragClass('filter-' + filter.name)">
             <Button v-if="filter.hierarchies.length > 1" icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMultiHierarchy', filter)" />
             <span class="p-ml-1"> {{ filter.caption }} </span>
-            <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click="openFilterDialog()" />
+            <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click="openFilterDialog(filter)" />
             <!-- TODO Change Request for next sprint: Tooltip for selected filters when hovering on icon and knowage magenta button color if filter is selected -->
         </div>
     </div>
@@ -38,7 +38,7 @@ export default defineComponent({
             this.$emit('dragend')
         },
         openFilterDialog(filter: any) {
-            this.$emit('openFilterDialog', filter)
+            this.$emit('openFilterDialog', { filter: filter, type: 'slicer' })
         }
     }
 })

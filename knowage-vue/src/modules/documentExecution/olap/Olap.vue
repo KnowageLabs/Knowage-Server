@@ -17,11 +17,11 @@
             @drill="drillThrough"
         />
 
-        <FilterPanel :olapProp="olap" @putFilterOnAxis="putFilterOnAxis" @showMultiHierarchy="showMultiHierarchy" />
-        <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" />
+        <FilterPanel :olapProp="olap" @putFilterOnAxis="putFilterOnAxis" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
+        <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
 
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
-            <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" />
+            <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
             <div id="table-container" class="kn-flex" :style="olapDescriptor.style.tableContainer">
                 <div id="olap-table" class="kn-flex kn-olap-table" ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
             </div>
@@ -75,6 +75,7 @@
     <MultiHierarchyDialog :selectedFilter="multiHierFilter" :multiHierUN="selecetedMultiHierUN" :visible="multiHierarchyDialogVisible" @setMultiHierUN="setMultiHierUN" @updateHierarchy="updateHierarchy" @close="multiHierarchyDialogVisible = false" />
     <KnOverlaySpinnerPanel :visibility="loading" />
     <OutputWizard :visible="outputWizardVisible" :olapVersionsProp="olapVersions" :sbiExecutionId="id" @close="outputWizardVisible = false" />
+    <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" @close="closeFilterDialog"></OlapFilterDialog>
 </template>
 
 <script lang="ts">
@@ -96,6 +97,7 @@ import OlapButtonWizardDialog from './buttonWizard/OlapButtonWizardDialog.vue'
 import MultiHierarchyDialog from './multiHierarchyDialog/OlapMultiHierarchyDialog.vue'
 import DrillTruDialog from './drillThroughDialog/OlapDrillThroughDialog.vue'
 import OutputWizard from './outputWizard/OlapOutputWizard.vue'
+import OlapFilterDialog from './filterDialog/OlapFilterDialog.vue'
 
 export default defineComponent({
     name: 'olap',
@@ -113,7 +115,8 @@ export default defineComponent({
         OlapMDXQueryDialog,
         OlapCrossNavigationDefinitionDialog,
         OlapButtonWizardDialog,
-        MultiHierarchyDialog
+        MultiHierarchyDialog,
+        OlapFilterDialog
     },
     props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
@@ -148,7 +151,9 @@ export default defineComponent({
             dtTree: [] as any,
             olapVersions: [] as any,
             dtMaxRows: 0,
-            usedOrdinal: 0 as Number
+            usedOrdinal: 0 as Number,
+            selectedFilter: null as any,
+            filterDialogVisible: false
         }
     },
     async created() {
@@ -758,6 +763,14 @@ export default defineComponent({
                         break
                 }
             }
+        },
+        openFilterDialog(filter: any) {
+            this.selectedFilter = filter
+            this.filterDialogVisible = true
+        },
+        closeFilterDialog() {
+            this.filterDialogVisible = false
+            this.selectedFilter = null
         }
     }
 })
