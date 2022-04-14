@@ -38,7 +38,7 @@ import InlineMessage from 'primevue/inlinemessage'
 export default defineComponent({
     name: 'olap-scenario-wizard',
     components: { Dialog, InlineMessage },
-    props: { olapVersionsProp: { type: Boolean, required: true }, sbiExecutionId: { type: String } },
+    props: { hiddenFormDataProp: { type: Boolean, required: true }, sbiExecutionId: { type: String } },
     emits: ['close'],
     computed: {},
     data() {

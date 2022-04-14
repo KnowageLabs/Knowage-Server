@@ -34,6 +34,7 @@
                     :olapName="document.name"
                     :reloadTrigger="reloadTrigger"
                     :olapCustomViewVisible="olapCustomViewVisible"
+                    :hiddenFormDataProp="hiddenFormData"
                     @closeOlapCustomView="olapCustomViewVisible = false"
                     @applyCustomView="executeOlapCustomView"
                     @executeCrossNavigation="executeOLAPCrossNavigation"

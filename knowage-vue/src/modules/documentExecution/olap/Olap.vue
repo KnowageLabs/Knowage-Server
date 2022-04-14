@@ -76,6 +76,7 @@
     <MultiHierarchyDialog :selectedFilter="multiHierFilter" :multiHierUN="selecetedMultiHierUN" :visible="multiHierarchyDialogVisible" @setMultiHierUN="setMultiHierUN" @updateHierarchy="updateHierarchy" @close="multiHierarchyDialogVisible = false" />
     <KnOverlaySpinnerPanel :visibility="loading" />
     <OutputWizard :visible="outputWizardVisible" :olapVersionsProp="olapVersions" :sbiExecutionId="id" @close="outputWizardVisible = false" />
+    <ScenarioWizard :visible="scenarioWizardVisible" :hiddenFormDataProp="hiddenFormDataProp" :sbiExecutionId="id" @close="scenarioWizardVisible = false" />
     <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
 </template>
 
@@ -98,6 +99,7 @@ import OlapButtonWizardDialog from './buttonWizard/OlapButtonWizardDialog.vue'
 import MultiHierarchyDialog from './multiHierarchyDialog/OlapMultiHierarchyDialog.vue'
 import DrillTruDialog from './drillThroughDialog/OlapDrillThroughDialog.vue'
 import OutputWizard from './outputWizard/OlapOutputWizard.vue'
+import ScenarioWizard from './scenarioWizard/OlapScenarioWizard.vue'
 import OlapFilterDialog from './filterDialog/OlapFilterDialog.vue'
 
 export default defineComponent({
@@ -117,9 +119,10 @@ export default defineComponent({
         OlapCrossNavigationDefinitionDialog,
         OlapButtonWizardDialog,
         MultiHierarchyDialog,
-        OlapFilterDialog
+        OlapFilterDialog,
+        ScenarioWizard
     },
-    props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
+    props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean }, hiddenFormDataProp: { type: Object, required: true } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
     data() {
         return {
