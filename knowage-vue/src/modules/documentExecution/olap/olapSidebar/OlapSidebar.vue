@@ -111,7 +111,7 @@
                 </div>
             </div>
 
-            <div v-if="whatIfMode" id="whatif-container" class="kn-flex">
+            <div v-if="whatIfMode && !olapDesignerMode" id="whatif-container" class="kn-flex">
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.whatIfTitle') }}</label>
                 <div class="p-grid p-mt-1">
                     <div v-if="olapLocked" class="p-col-4">
