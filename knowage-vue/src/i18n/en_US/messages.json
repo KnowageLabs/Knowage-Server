@@ -445,6 +445,11 @@
             "yourRating": "Your rating"
         },
         "olap": {
+            "alDialog": {
+                "title": "Change algorithm",
+                "infoMsg": "You can change algorithm acting on the form below.",
+                "availableAlg": "Available algorithms"
+            },
             "buttonsWizard": {
                 "title": "Buttons Wizard"
             },
