@@ -1,7 +1,7 @@
 <template>
     <div class="kn-page">
         <div class="kn-page-content">
-            <ProgressSpinner class="hier-spinner" v-if="loading" :style="descriptor.style.spinner" data-test="spinner" />
+            <ProgressSpinner class="kn-progress-spinner" v-if="loading" data-test="spinner" />
 
             <TabView class="hierarchy-tabview kn-height-full">
                 <TabPanel>
@@ -90,9 +90,5 @@ export default defineComponent({
         flex: 1;
         overflow: auto;
     }
-}
-
-.hier-spinner .p-progress-spinner-svg {
-    width: 125px;
 }
 </style>
