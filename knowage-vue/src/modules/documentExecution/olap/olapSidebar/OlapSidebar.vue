@@ -124,6 +124,9 @@
                         <Button icon="fa-solid fa-rotate-left" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.undo')" @click="$emit('undo')" />
                     </div>
                     <div class="p-col-4">
+                        <Button icon="fa-solid fa-floppy-disk-circle-xmark" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.deleteVersions')" @click="$emit('showDeleteVersions')" />
+                    </div>
+                    <div class="p-col-4">
                         <Button icon="fa-solid fa-network-wired" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" @click="$emit('showAlgorithmDialog')" />
                     </div>
                 </div>
@@ -165,7 +168,8 @@ export default defineComponent({
         'showScenarioWizard',
         'showSaveAsNewVersion',
         'undo',
-        'showAlgorithmDialog'
+        'showAlgorithmDialog',
+        'showDeleteVersions'
     ],
     data() {
         return {

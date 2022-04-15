@@ -67,6 +67,7 @@
             @showSaveAsNewVersion="saveVersionDialogVisible = true"
             @showAlgorithmDialog="algorithmDialogVisible = true"
             @undo="undo"
+            @showDeleteVersions="deleteVersionDialogVisible = true"
         />
     </div>
 
@@ -83,6 +84,7 @@
     <AlgorithmDialog v-if="algorithmDialogVisible" :visible="algorithmDialogVisible" :sbiExecutionId="id" @close="algorithmDialogVisible = false" />
     <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" :olapDesignerMode="olapDesignerMode" :parameters="parameters" :profileAttributes="profileAttributes" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
     <OlapSaveNewVersionDialog :visible="saveVersionDialogVisible" :id="id" @close="saveVersionDialogVisible = false"></OlapSaveNewVersionDialog>
+    <OlapDeleteVersionsDialog :visible="deleteVersionDialogVisible" :propOlapVersions="olapVersions" @close="deleteVersionDialogVisible = false"></OlapDeleteVersionsDialog>
 </template>
 
 <script lang="ts">
@@ -108,6 +110,7 @@ import ScenarioWizard from './scenarioWizard/OlapScenarioWizard.vue'
 import OlapFilterDialog from './filterDialog/OlapFilterDialog.vue'
 import OlapSaveNewVersionDialog from './newVersionDialog/OlapSaveNewVersionDialog.vue'
 import AlgorithmDialog from './algorithmDialog/OlapAlgorithmDialog.vue'
+import OlapDeleteVersionsDialog from './deleteVersionsDialog/OlapDeleteVersionsDialog.vue'
 
 export default defineComponent({
     name: 'olap',
@@ -129,7 +132,8 @@ export default defineComponent({
         OlapFilterDialog,
         ScenarioWizard,
         OlapSaveNewVersionDialog,
-        AlgorithmDialog
+        AlgorithmDialog,
+        OlapDeleteVersionsDialog
     },
     props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean }, hiddenFormDataProp: { type: Object, required: true } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
@@ -171,7 +175,8 @@ export default defineComponent({
             filterDialogVisible: false,
             parameters: [] as iParameter[],
             profileAttributes: [] as iProfileAttribute[],
-            saveVersionDialogVisible: false
+            saveVersionDialogVisible: false,
+            deleteVersionDialogVisible: false
         }
     },
     async created() {

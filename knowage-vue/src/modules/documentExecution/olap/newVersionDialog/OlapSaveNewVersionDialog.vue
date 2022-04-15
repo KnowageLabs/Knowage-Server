@@ -44,7 +44,7 @@ import olapSaveNewVersionDialogDescriptor from './OlapSaveNewVersionDialogDescri
 import Textarea from 'primevue/textarea'
 
 export default defineComponent({
-    name: 'olap-custom-view-save-dialog',
+    name: 'olap-save-new-version-dialog',
     components: { Dialog, Message, Textarea },
     props: { visible: { type: Boolean }, id: { type: String } },
     emits: ['close', 'save'],

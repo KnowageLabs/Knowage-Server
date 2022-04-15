@@ -446,9 +446,9 @@
         },
         "olap": {
             "alDialog": {
-                "title": "Change algorithm",
+                "availableAlg": "Available algorithms",
                 "infoMsg": "You can change algorithm acting on the form below.",
-                "availableAlg": "Available algorithms"
+                "title": "Change algorithm"
             },
             "buttonsWizard": {
                 "title": "Buttons Wizard"
@@ -463,6 +463,10 @@
             },
             "customView": {
                 "title": "Olap custom view List"
+            },
+            "deleteVersion": {
+                "id": "id",
+                "title": "Select the version to delete"
             },
             "drillTru": {
                 "clearAll": "Clear All",
@@ -545,6 +549,7 @@
                 "configureScenario": "Configure scenario",
                 "configureTablePagination": "Configure table pagination",
                 "defineCrossNavigation": "Define cross navigation",
+                "deleteVersions": "Delete versions",
                 "drillOnData": "Drill on data",
                 "drillOnDimension": "Drill on dimension",
                 "drillThrough": "Drill Through",
