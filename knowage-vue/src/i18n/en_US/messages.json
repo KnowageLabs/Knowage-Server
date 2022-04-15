@@ -482,8 +482,10 @@
             "editModeConfirm": "You are leaving edit mode. Continue?",
             "filterDialog": {
                 "ancestorDescendantWarning": "Warning: You selected some members that are in ancestor-descendant relationship: measures will be aggregated over both of them. Are you sure this is what you want?",
+                "driverProfileAttribute": "Driver/ProfileAttribute",
                 "filterUsingDrivers": "Filter using drivers",
                 "infoMessage": "Selected items will be used as filters in the main table.",
+                "level": "Level",
                 "searchWarningMessage": "You need at least 3 letters to start search!",
                 "selectFields": "Select Fields",
                 "treeLockedInfoMessage": {

@@ -1,6 +1,22 @@
 <template>
-    <DataTable :value="[]" class="p-datatable-sm kn-table" responsiveLayout="stack" breakpoint="960px">
+    <DataTable :value="levels" class="p-datatable-sm kn-table p-m-4" responsiveLayout="stack" breakpoint="960px">
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
+
+        <Column class="kn-truncated" :header="$t('documentExecution.olap.filterDialog.level')" :style="olapFilterDialogDescriptor.iconColumnStyle">
+            <template #body="slotProps">
+                <span> {{ slotProps.index + 1 }} </span>
+            </template>
+        </Column>
+        <Column class="kn-truncated" :field="'name'" :header="$t('common.name')" :key="'name'"> </Column>
+        <Column field="value" :header="$t('documentExecution.olap.filterDialog.driverProfileAttribute')" key="value">
+            <template #body="slotProps">
+                <Dropdown class="olap-filter-table-dropdown" v-model="slotProps.data[slotProps.column.props.field]" :options="options" optionValue="value" optionLabel="label" optionGroupValue="value" optionGroupLabel="label" optionGroupChildren="items">
+                    <template #option="slotProps">
+                        <span> {{ slotProps.option.label }} </span>
+                    </template>
+                </Dropdown>
+            </template>
+        </Column>
 
         <Column :style="olapFilterDialogDescriptor.iconColumnStyle">
             <template #body="slotProps">
@@ -11,29 +27,70 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { iParameter, iProfileAttribute } from '../Olap'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import Dropdown from 'primevue/dropdown'
 import olapFilterDialogDescriptor from './OlapFilterDialogDescriptor.json'
 
 export default defineComponent({
     name: 'olap-filter-table',
-    components: { Column, DataTable },
-    props: {},
+    components: { Column, DataTable, Dropdown },
+    props: { propLevels: { type: Object }, parameters: { type: Array as PropType<iParameter[]> }, profileAttributes: { type: Array as PropType<iProfileAttribute[]> } },
     data() {
         return {
             olapFilterDialogDescriptor,
-            levels: [] as any[]
+            levels: [] as any[],
+            options: [
+                { label: 'Drivers', items: [] },
+                { label: 'Profile Attributes', items: [] }
+            ] as any[]
         }
     },
-    watch: {},
-    created() {},
+    watch: {
+        propLevels() {
+            this.loadLevels()
+        },
+        parameters() {
+            this.loadParameters()
+        },
+        profileAttributes() {
+            this.loadProfileAttributes()
+        }
+    },
+    created() {
+        this.loadLevels()
+        this.loadParameters()
+        this.loadProfileAttributes()
+    },
     methods: {
+        loadLevels() {
+            this.levels = this.propLevels as any[]
+        },
+        loadParameters() {
+            this.options[0].items = this.parameters?.map((parameter: iParameter) => {
+                return { ...parameter, value: parameter.label, label: parameter.label }
+            })
+        },
+        loadProfileAttributes() {
+            this.options[1].items = this.profileAttributes?.map((profileAttribute: iProfileAttribute) => {
+                {
+                    return { ...profileAttribute, value: profileAttribute.attributeName, label: profileAttribute.attributeName }
+                }
+            })
+        },
         remove(level: any) {
             console.log('LEVEL: ', level)
+            console.log('OPTIONS: ', this.options)
+            level.value = ''
         }
     }
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.olap-filter-table-dropdown {
+    max-width: 500px;
+}
+</style>

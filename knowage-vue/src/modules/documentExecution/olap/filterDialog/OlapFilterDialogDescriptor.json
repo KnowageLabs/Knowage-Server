@@ -1,5 +1,6 @@
 {
     "iconColumnStyle": {
+        "text-align": "center",
         "width": "5%"
     },
     "node": {

@@ -66,8 +66,6 @@ export default defineComponent({
             this.filter = this.propFilter ? this.propFilter.filter : {}
             this.filterType = this.propFilter?.type
 
-            console.log(' >>> LOADED FILTER INNER: ', this.filter)
-
             this.selectedFilters = []
             if (this.filterType === 'slicer') {
                 this.filter.hierarchies?.forEach((hierarchy: any) => {
@@ -81,13 +79,10 @@ export default defineComponent({
             this.loadNodes(null)
         },
         async loadNodes(parent: any) {
-            console.log('>>> PARENT: ', parent)
             this.$emit('loading', true)
 
             if (!this.filter || (parent && parent.leaf)) {
                 this.$emit('loading', false)
-                console.log('ENTERED 1!!!', this.treeLocked)
-                console.log('ENTERED 1!!!', this.filter)
                 return
             }
 
@@ -104,8 +99,6 @@ export default defineComponent({
                 postData = { hierarchy: this.filter.selectedHierarchyUniqueName }
             }
 
-            console.log('ENTERED 2!!!')
-
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/hierarchy/${type}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) =>
@@ -119,10 +112,7 @@ export default defineComponent({
             if (this.filterType === 'visible' && !parent) this.setSelectedFiltersForVisibleType()
             this.$emit('loading', false)
         },
-
         createNode(el: iFilterNode) {
-            // console.log(' >>> ELEMENT: ', el)
-
             const tempNode = {
                 key: crypto.randomBytes(16).toString('hex'),
                 id: '' + el.id,
@@ -158,9 +148,6 @@ export default defineComponent({
         },
         hasSelectedAncestorsAndDescendant(node: iNode, ancestorIsSelected: boolean) {
             const nodeIsSelected = this.nodeIsSelected(node)
-            // console.log(' --- NODE: ', node)
-            // console.log(' --- NODE IS SELECTED: ', nodeIsSelected)
-            // console.log(' --- ANCESTOR IS SELECTED: ', ancestorIsSelected)
             if (nodeIsSelected && ancestorIsSelected) {
                 return true
             } else if (node.children) {
@@ -175,8 +162,6 @@ export default defineComponent({
             return index !== -1
         },
         unlockTree() {
-            console.log('UNLOCK TREE!')
-            // console.log('NODES: ', this.nodes)
             this.expandedKeys = {}
             for (let i = 0; i < this.nodes.length; i++) {
                 this.setNodeExpandable(this.nodes[i])
@@ -193,8 +178,6 @@ export default defineComponent({
         searchTree() {
             clearTimeout(this.searchTimeout)
             this.searchTimeout = setTimeout(async () => {
-                console.log('SEEEEEEEARCH: ', this.searchWord)
-
                 this.searchWarningMessageVisible = this.searchWord.length > 0 && this.searchWord.length < 3
                 if (this.searchWord.length > 2) {
                     const content = [] as any[]
@@ -208,7 +191,6 @@ export default defineComponent({
                         .catch(() => {})
                     this.attachContentToTree(null, content)
                 } else {
-                    console.log('ENTERED ELSE!: ')
                     this.loadNodes(null)
                 }
             }, 500)
@@ -218,13 +200,9 @@ export default defineComponent({
             this.$emit('lockTree')
 
             this.setSelectedVisibleMembers(this.nodes[0])
-
-            console.log(' >>>> NODES VISIBLE: ', this.nodes)
         },
         setSelectedVisibleMembers(node: iNode) {
-            console.log('>>>>S>DA>DS>AD> NODE: ', node)
             this.expandedKeys[node.key] = true
-            console.log('EXANDED KEYS: ', this.expandedKeys)
             if (node.data.visible) this.selectedFilters.push(node.data)
             else if (node.children) {
                 for (let i = 0; i < node.children.length; i++) {

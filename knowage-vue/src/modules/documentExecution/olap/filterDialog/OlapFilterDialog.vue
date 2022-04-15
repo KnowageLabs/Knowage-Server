@@ -26,7 +26,7 @@
 
         <div v-show="!loading">
             <OlapFilterTree v-if="mode === 'selectFields'" :propFilter="filter" :id="id" :clearTrigger="clearTrigger" :treeLocked="treeLocked" @loading="loading = $event" @filtersChanged="onFiltersChange" @lockTree="treeLocked = true"></OlapFilterTree>
-            <OlapFilterTable v-else></OlapFilterTable>
+            <OlapFilterTable v-else :propLevels="levels" :parameters="parameters" :profileAttributes="profileAttributes"></OlapFilterTable>
         </div>
 
         <template #footer>
@@ -70,6 +70,7 @@ export default defineComponent({
             clearTrigger: false,
             treeLocked: false,
             mode: 'selectFields',
+            levels: [] as any[],
             loading: false
         }
     },
@@ -84,7 +85,17 @@ export default defineComponent({
     methods: {
         loadFilter() {
             this.filter = this.propFilter
-            console.log('LOADED FILTER: ', this.filter)
+            this.loadLevels()
+        },
+        loadLevels() {
+            console.log('FILTER: ', this.propFilter)
+            this.levels = []
+            if (this.propFilter) {
+                this.propFilter.filter.hierarchies?.forEach((hierarchy: any) => {
+                    hierarchy.levelNames?.forEach((level: string) => this.levels.push({ name: level, value: '' }))
+                })
+            }
+            console.log('LOADED LEVELS: ', this.levels)
         },
         clear() {
             this.selectedFilters = []
@@ -94,12 +105,13 @@ export default defineComponent({
         closeDialog() {
             this.$emit('close')
             this.filter = null
+            this.levels = []
             this.treeLocked = false
             this.mode = 'selectFields'
         },
         apply() {
             // TODO: Hardcoded multi
-            console.log(' AAAAAAAAAAAA - FILTER: ', this.propFilter)
+            console.log('LEVELS ON APPLY: ', this.levels)
             let payload = {}
             if (this.propFilter?.type === 'slicer') {
                 payload = { hierarchy: this.propFilter?.filter.selectedHierarchyUniqueName, members: this.selectedFilters, multi: false, type: 'slicer' }
