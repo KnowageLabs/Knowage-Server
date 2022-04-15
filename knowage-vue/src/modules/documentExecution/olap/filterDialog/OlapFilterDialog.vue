@@ -9,8 +9,6 @@
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-        {{ selectedFilters }}
-
         <Message class="p-m-4" severity="info" :closable="false" :style="olapFilterDialogDescriptor.styles.message">
             <div v-if="treeLocked">
                 <span>{{ $t('documentExecution.olap.filterDialog.treeLockedInfoMessage.partOne') }}</span>
@@ -20,7 +18,13 @@
             <span v-else>{{ $t('documentExecution.olap.filterDialog.infoMessage') }}</span>
         </Message>
 
-        <OlapFilterTree :propFilter="propFilter" :id="id" :clearTrigger="clearTrigger" :treeLocked="treeLocked" @loading="loading = $event" @filtersChanged="onFiltersChange" @lockTree="treeLocked = true"></OlapFilterTree>
+        <SelectButton v-if="olapDesignerMode" id="olap-filter-select-buttons" class="p-ml-auto p-mr-4" v-model="mode" :options="olapFilterDialogDescriptor.selectButtonOptions" optionValue="value">
+            <template #option="slotProps">
+                <span>{{ $t(slotProps.option.label) }}</span>
+            </template>
+        </SelectButton>
+
+        <OlapFilterTree v-if="mode === 'selectFields'" :propFilter="propFilter" :id="id" :clearTrigger="clearTrigger" :treeLocked="treeLocked" @loading="loading = $event" @filtersChanged="onFiltersChange" @lockTree="treeLocked = true"></OlapFilterTree>
 
         <template #footer>
             <div class="p-d-flex p-flex-row">
@@ -40,13 +44,13 @@ import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
 import olapFilterDialogDescriptor from './OlapFilterDialogDescriptor.json'
 import OlapFilterTree from './OlapFilterTree.vue'
+import SelectButton from 'primevue/selectbutton'
 
 export default defineComponent({
     name: 'olap-filter-dialog',
-    components: { Dialog, Message, OlapFilterTree },
+    components: { Dialog, Message, OlapFilterTree, SelectButton },
     props: {
         visible: { type: Boolean },
-        olapVersionsProp: { type: Boolean, required: true },
         propFilter: { type: Object },
         id: { type: String },
         olapDesignerMode: { type: Boolean },
@@ -61,6 +65,7 @@ export default defineComponent({
             selectedFilters: [] as string[],
             clearTrigger: false,
             treeLocked: false,
+            mode: 'selectFields',
             loading: false
         }
     },
@@ -112,5 +117,13 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     flex: 1;
+}
+
+#olap-filter-select-buttons {
+    min-width: 300px;
+}
+
+#olap-filter-select-buttons .p-button {
+    justify-content: center;
 }
 </style>

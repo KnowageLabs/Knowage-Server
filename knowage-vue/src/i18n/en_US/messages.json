@@ -473,8 +473,10 @@
             "editModeConfirm": "You are leaving edit mode. Continue?",
             "filterDialog": {
                 "ancestorDescendantWarning": "Warning: You selected some members that are in ancestor-descendant relationship: measures will be aggregated over both of them. Are you sure this is what you want?",
+                "filterUsingDrivers": "Filter using drivers",
                 "infoMessage": "Selected items will be used as filters in the main table.",
                 "searchWarningMessage": "You need at least 3 letters to start search!",
+                "selectFields": "Select Fields",
                 "treeLockedInfoMessage": {
                     "partOne": "Selected items are used as filters in the main table. You can remove some or clicking on ",
                     "partThree": " the whole tree will be unlocked",
@@ -513,14 +515,14 @@
             },
             "savingCustomizedView": "Saving customized view",
             "scenarioWizard": {
+                "clearData": "Clear data",
+                "editableMeasures": "Editable measures",
+                "longInfo": "Selecting an edit cube and an editable measure is mandatory. In order to perform what if analysis your database as well as OLAP schema should have a specific structure. Please check in the documentation of the WhatIF functionality. The edited cube should be the cube that you want to save with the new version of data.",
                 "parameterName": "Parameter name",
                 "parameterValue": "Parameter value",
-                "editableMeasures": "Editable measures",
                 "selectedCube": "Selected cube",
-                "clearData": "Clear data",
-                "title": "Scenario Wizard",
                 "shortInfo": "Selecting an edit cube and an editable measure is mandatory.",
-                "longInfo": "Selecting an edit cube and an editable measure is mandatory. In order to perform what if analysis your database as well as OLAP schema should have a specific structure. Please check in the documentation of the WhatIF functionality. The edited cube should be the cube that you want to save with the new version of data."
+                "title": "Scenario Wizard"
             },
             "showMdxQuery": "Show MDX Query",
             "showScheduledExecutions": "Show scheduled executions",

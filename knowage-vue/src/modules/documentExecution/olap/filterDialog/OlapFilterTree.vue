@@ -32,7 +32,7 @@ const crypto = require('crypto')
 export default defineComponent({
     name: 'olap-filter-tree',
     components: { Checkbox, Message, Tree },
-    props: { olapVersionsProp: { type: Boolean, required: true }, propFilter: { type: Object }, id: { type: String }, clearTrigger: { type: Boolean }, treeLocked: { type: Boolean } },
+    props: { propFilter: { type: Object }, id: { type: String }, clearTrigger: { type: Boolean }, treeLocked: { type: Boolean } },
     emits: ['close', 'loading', 'filtersChanged', 'lockTree'],
     data() {
         return {
