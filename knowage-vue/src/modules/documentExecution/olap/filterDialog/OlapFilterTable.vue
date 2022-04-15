@@ -29,7 +29,9 @@ export default defineComponent({
     watch: {},
     created() {},
     methods: {
-        remove(level: any) {}
+        remove(level: any) {
+            console.log('LEVEL: ', level)
+        }
     }
 })
 </script>

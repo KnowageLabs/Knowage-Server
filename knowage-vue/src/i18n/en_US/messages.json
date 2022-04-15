@@ -513,6 +513,12 @@
                 "title": "Output wizard",
                 "version": "Verson to export"
             },
+            "saveVersion": {
+                "infoMessage": "Type the name of the version. If you leave it blank the name and the description assume the version number",
+                "title": "Save new version",
+                "versionDescription": "Version description",
+                "versionName": "Version name"
+            },
             "savingCustomizedView": "Saving customized view",
             "scenarioWizard": {
                 "clearData": "Clear data",
@@ -549,6 +555,7 @@
                 "position": "Position",
                 "reloadSchema": "Reload schema",
                 "replace": "Replace",
+                "saveAsNewVersion": "Save as new version",
                 "saveCustomizedView": "Save customized view",
                 "saveNewVersion": "Save new version",
                 "saveTemplate": "Save template",

@@ -64,6 +64,7 @@
             @saveOlapDesigner="saveOlapDesigner"
             @showOutputWizard="outputWizardVisible = true"
             @showScenarioWizard="scenarioWizardVisible = true"
+            @showSaveAsNewVersion="saveVersionDialogVisible = true"
         />
     </div>
 
@@ -78,6 +79,7 @@
     <OutputWizard v-if="outputWizardVisible" :visible="outputWizardVisible" :olapVersionsProp="olapVersions" :sbiExecutionId="id" @close="outputWizardVisible = false" />
     <ScenarioWizard v-if="scenarioWizardVisible" :visible="scenarioWizardVisible" :hiddenFormDataProp="hiddenFormDataProp" :sbiExecutionId="id" @close="scenarioWizardVisible = false" />
     <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" :olapDesignerMode="olapDesignerMode" :parameters="parameters" :profileAttributes="profileAttributes" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
+    <OlapSaveNewVersionDialog :visible="saveVersionDialogVisible" :id="id" @close="saveVersionDialogVisible = false"></OlapSaveNewVersionDialog>
 </template>
 
 <script lang="ts">
@@ -101,6 +103,7 @@ import DrillTruDialog from './drillThroughDialog/OlapDrillThroughDialog.vue'
 import OutputWizard from './outputWizard/OlapOutputWizard.vue'
 import ScenarioWizard from './scenarioWizard/OlapScenarioWizard.vue'
 import OlapFilterDialog from './filterDialog/OlapFilterDialog.vue'
+import OlapSaveNewVersionDialog from './newVersionDialog/OlapSaveNewVersionDialog.vue'
 
 export default defineComponent({
     name: 'olap',
@@ -120,7 +123,8 @@ export default defineComponent({
         OlapButtonWizardDialog,
         MultiHierarchyDialog,
         OlapFilterDialog,
-        ScenarioWizard
+        ScenarioWizard,
+        OlapSaveNewVersionDialog
     },
     props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean }, hiddenFormDataProp: { type: Object, required: true } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
@@ -160,7 +164,8 @@ export default defineComponent({
             selectedFilter: null as any,
             filterDialogVisible: false,
             parameters: [] as iParameter[],
-            profileAttributes: [] as iProfileAttribute[]
+            profileAttributes: [] as iProfileAttribute[],
+            saveVersionDialogVisible: false
         }
     },
     async created() {

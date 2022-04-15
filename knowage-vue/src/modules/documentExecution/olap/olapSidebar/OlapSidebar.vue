@@ -117,6 +117,9 @@
                     <div class="p-col-4">
                         <Button icon="fa-solid fa-note-sticky" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" @click="$emit('showScenarioWizard')" />
                     </div>
+                    <div class="p-col-4">
+                        <Button icon="fa-solid fa-floppy-disk" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.saveAsNewVersion')" @click="$emit('showSaveAsNewVersion')" />
+                    </div>
                 </div>
             </div>
 
@@ -151,7 +154,8 @@ export default defineComponent({
         'openCrossNavigationDefinitionDialog',
         'openButtonWizardDialog',
         'drillThroughChanged',
-        'saveOlapDesigner'
+        'saveOlapDesigner',
+        'showSaveAsNewVersion'
     ],
     data() {
         return {

@@ -1,0 +1,103 @@
+<template>
+    <Dialog id="olap-save-new-version-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="olapSaveNewVersionDialogDescriptor.style.dialog" :visible="visible" :modal="true" :closable="false">
+        <template #header>
+            <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
+                <template #start>
+                    {{ $t('documentExecution.olap.saveVersion.title') }}
+                </template>
+            </Toolbar>
+        </template>
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+
+        <Message v-if="!loading" class="p-m-4" severity="info" :closable="false" :style="olapSaveNewVersionDialogDescriptor.styles.message">
+            {{ $t('documentExecution.olap.saveVersion.infoMessage') }}
+        </Message>
+
+        <form v-if="!loading" class="p-fluid p-formgrid p-grid p-p-5 p-m-0">
+            <div class="p-field p-col-12">
+                <span class="p-float-label">
+                    <InputText class="kn-material-input" v-model.trim="version.name" />
+                    <label class="kn-material-input-label"> {{ $t('documentExecution.olap.saveVersion.versionName') }}</label>
+                </span>
+            </div>
+
+            <div class="p-field p-mt-2 p-col-12">
+                <span class="p-float-label">
+                    <Textarea class="kn-material-input" v-model.trim="version.descr" rows="5" :autoResize="true" />
+                    <label class="kn-material-input-label"> {{ $t('documentExecution.olap.saveVersion.versionDescription') }}</label>
+                </span>
+            </div>
+        </form>
+
+        <template #footer>
+            <Button class="kn-button kn-button--secondary" @click="close"> {{ $t('common.close') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="save"> {{ $t('common.save') }}</Button>
+        </template>
+    </Dialog>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue'
+import Dialog from 'primevue/dialog'
+import Message from 'primevue/message'
+import olapSaveNewVersionDialogDescriptor from './OlapSaveNewVersionDialogDescriptor.json'
+import Textarea from 'primevue/textarea'
+
+export default defineComponent({
+    name: 'olap-custom-view-save-dialog',
+    components: { Dialog, Message, Textarea },
+    props: { visible: { type: Boolean }, id: { type: String } },
+    emits: ['close', 'save'],
+    computed: {},
+    data() {
+        return {
+            olapSaveNewVersionDialogDescriptor,
+            version: { name: '', descr: '' } as { name: string; descr: string },
+            loading: false
+        }
+    },
+    watch: {},
+    created() {},
+    methods: {
+        close() {
+            this.$emit('close')
+            this.version = { name: '', descr: '' }
+        },
+        async save() {
+            this.loading = true
+            await this.$http
+                .post(
+                    process.env.VUE_APP_OLAP_PATH + `1.0/model/saveAs?SBI_EXECUTION_ID=${this.id}`,
+                    { name: this.version.name ?? 'sbiNoDescription', descr: this.version.descr ?? 'sbiNoDescription' },
+                    { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } }
+                )
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.close()
+                })
+                .catch((error: any) =>
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: error?.localizedMessage
+                    })
+                )
+            this.loading = false
+        }
+    }
+})
+</script>
+
+<style lang="scss">
+#olap-save-new-version-dialog .p-dialog-header,
+#olap-save-new-version-dialog .p-dialog-content {
+    padding: 0;
+}
+#olap-save-new-version-dialog .p-dialog-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+</style>
