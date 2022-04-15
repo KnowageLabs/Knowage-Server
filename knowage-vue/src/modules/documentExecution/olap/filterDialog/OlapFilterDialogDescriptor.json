@@ -1,9 +1,22 @@
 {
+    "iconColumnStyle": {
+        "width": "5%"
+    },
     "node": {
         "style": {
             "padding": 0
         }
     },
+    "selectButtonOptions": [
+        {
+            "label": "documentExecution.olap.filterDialog.selectFields",
+            "value": "selectFields"
+        },
+        {
+            "label": "documentExecution.olap.filterDialog.filterUsingDrivers",
+            "value": "filterUsingDrivers"
+        }
+    ],
     "style": {
         "dialog": {
             "height": "80%",

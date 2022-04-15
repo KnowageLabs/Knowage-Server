@@ -240,7 +240,6 @@ export default defineComponent({
                 })
                 .catch(() => {})
             this.loading = false
-            console.log('LOADED OLAP DESIGNER: ', this.olapDesigner)
         },
         setClickedButtons() {
             if (this.olapDesigner.template?.wrappedObject?.olap?.TOOLBAR) {
@@ -790,7 +789,6 @@ export default defineComponent({
             this.selectedFilter = null
         },
         async applyFilters(payload: any) {
-            console.log(' >>> APPLY FILTERS PAYLOAD: ', payload)
             this.filterDialogVisible = false
             this.loading = true
             if (payload.type === 'slicer') {
