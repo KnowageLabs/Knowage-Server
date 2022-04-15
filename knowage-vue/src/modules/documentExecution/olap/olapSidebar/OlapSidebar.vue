@@ -97,6 +97,9 @@
                         <Button icon="fas fa-book-open" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureTablePagination')" />
                     </div> -->
                     <div class="p-col-4">
+                        <Button icon="fa-solid fa-note-sticky" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" @click="$emit('showScenarioWizard')" />
+                    </div>
+                    <div class="p-col-4">
                         <Button icon="fas fa-arrow-right" class="p-button-plain kn-button--secondary" :class="{ 'olap-sidebar-button-active': crossNavigation }" v-tooltip.top="$t('documentExecution.olap.sidebar.defineCrossNavigation')" @click="$emit('openCrossNavigationDefinitionDialog')" />
                     </div>
                     <div class="p-col-4">
@@ -112,22 +115,20 @@
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.whatIfTitle') }}</label>
                 <div class="p-grid p-mt-1">
                     <div class="p-col-4">
-                        <Button icon="fa-solid fa-share-from-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.outputWizard')" @click="$emit('showOutputWizard')" />
+                        <Button icon="fa-solid fa-share-from-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.outputWizard')" :disabled="!isButtonVisible('BUTTON_EXPORT_OUTPUT')" @click="$emit('showOutputWizard')" />
+                    </div>
+
+                    <div class="p-col-4">
+                        <Button icon="fa-solid fa-archive" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.saveAsNewVersion')" :disabled="!isButtonVisible('BUTTON_SAVE_SUBOBJECT')" @click="$emit('showSaveAsNewVersion')" />
                     </div>
                     <div class="p-col-4">
-                        <Button icon="fa-solid fa-note-sticky" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" @click="$emit('showScenarioWizard')" />
+                        <Button icon="fa-solid fa-rotate-left" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.undo')" :disabled="!isButtonVisible('BUTTON_UNDO')" @click="$emit('undo')" />
                     </div>
                     <div class="p-col-4">
-                        <Button icon="fa-solid fa-archive" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.saveAsNewVersion')" @click="$emit('showSaveAsNewVersion')" />
+                        <Button icon="fa-solid fa-trash" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.deleteVersions')" :disabled="!isButtonVisible('BUTTON_VERSION_MANAGER')" @click="$emit('showDeleteVersions')" />
                     </div>
                     <div class="p-col-4">
-                        <Button icon="fa-solid fa-rotate-left" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.undo')" @click="$emit('undo')" />
-                    </div>
-                    <div class="p-col-4">
-                        <Button icon="fa-solid fa-trash" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.deleteVersions')" @click="$emit('showDeleteVersions')" />
-                    </div>
-                    <div class="p-col-4">
-                        <Button icon="fa-solid fa-network-wired" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" @click="$emit('showAlgorithmDialog')" />
+                        <Button icon="fa-solid fa-network-wired" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" :disabled="!isButtonVisible('BUTTON_ALGORITHMS')" @click="$emit('showAlgorithmDialog')" />
                     </div>
                 </div>
             </div>
@@ -217,6 +218,8 @@ export default defineComponent({
                 this.suppressEmpty = this.olap.modelConfig.suppressEmpty
                 this.showProperties = this.olap.modelConfig.showProperties
                 this.crossNavigation = this.olap.modelConfig?.crossNavigation?.buttonClicked
+
+                console.log('this.olap?.modelConfig.toolbarVisibleButtons', this.olap?.modelConfig.toolbarVisibleButtons)
             }
         },
         onDrillThroughClick() {
