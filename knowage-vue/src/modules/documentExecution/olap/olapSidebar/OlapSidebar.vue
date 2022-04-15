@@ -113,25 +113,28 @@
 
             <div id="whatif-container" class="kn-flex">
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.whatIfTitle') }}</label>
+                {{ olapLocked }}
                 <div class="p-grid p-mt-1">
-                    <div class="p-col-4">
-                        <Button icon="fa-solid fa-share-from-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.outputWizard')" :disabled="!isButtonVisible('BUTTON_EXPORT_OUTPUT')" @click="$emit('showOutputWizard')" />
+                    <div v-if="olapLocked" class="p-col-4">
+                        <Button :icon="olapLocked ? 'fas fa-lock-open' : 'fas fa-lock'" class="p-button-plain kn-button--secondary" v-tooltip.top="olapLocked ? $t('documentExecution.olap.sidebar.unlockSchema') : $t('documentExecution.olap.sidebar.lockSchema')" @click="changeLock" />
                     </div>
-
-                    <div class="p-col-4">
+                    <div v-if="olapLocked" class="p-col-4">
                         <Button icon="fa-solid fa-archive" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.saveAsNewVersion')" :disabled="!isButtonVisible('BUTTON_SAVE_SUBOBJECT')" @click="$emit('showSaveAsNewVersion')" />
                     </div>
-                    <div class="p-col-4">
+                    <div v-if="olapLocked" class="p-col-4">
                         <Button icon="fa-solid fa-rotate-left" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.undo')" :disabled="!isButtonVisible('BUTTON_UNDO')" @click="$emit('undo')" />
                     </div>
-                    <div class="p-col-4">
+                    <div v-if="olapLocked" class="p-col-4">
                         <Button icon="fa-solid fa-trash" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.deleteVersions')" :disabled="!isButtonVisible('BUTTON_VERSION_MANAGER')" @click="$emit('showDeleteVersions')" />
                     </div>
                     <div class="p-col-4">
+                        <Button icon="fa-solid fa-share-from-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.outputWizard')" :disabled="!isButtonVisible('BUTTON_EXPORT_OUTPUT')" @click="$emit('showOutputWizard')" />
+                    </div>
+                    <div v-if="olapLocked" class="p-col-4">
                         <Button icon="fa-solid fa-network-wired" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" :disabled="!isButtonVisible('BUTTON_ALGORITHMS')" @click="$emit('showAlgorithmDialog')" />
                     </div>
                     <div class="p-col-4">
-                        <Button icon="fa-solid fa-file-excel" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" />
+                        <Button icon="fa-solid fa-file-excel" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" :disabled="!isButtonVisible('BUTTON_EDITABLE_EXCEL_EXPORT')" />
                     </div>
                 </div>
             </div>
@@ -146,6 +149,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
 import olapSidebarDescriptor from './OlapSidebarDescriptor.json'
 import SelectButton from 'primevue/selectbutton'
 
@@ -173,7 +177,8 @@ export default defineComponent({
         'showSaveAsNewVersion',
         'undo',
         'showAlgorithmDialog',
-        'showDeleteVersions'
+        'showDeleteVersions',
+        'loading'
     ],
     data() {
         return {
@@ -186,7 +191,8 @@ export default defineComponent({
             suppressEmpty: false,
             showProperties: false,
             crossNavigation: false,
-            mode: 'designer'
+            mode: 'designer',
+            olapLocked: false
         }
     },
     watch: {
@@ -221,8 +227,7 @@ export default defineComponent({
                 this.suppressEmpty = this.olap.modelConfig.suppressEmpty
                 this.showProperties = this.olap.modelConfig.showProperties
                 this.crossNavigation = this.olap.modelConfig?.crossNavigation?.buttonClicked
-
-                console.log('this.olap?.modelConfig.toolbarVisibleButtons', this.olap?.modelConfig.toolbarVisibleButtons)
+                this.olapLocked = this.olap.modelConfig?.status === 'locked_by_user'
             }
         },
         onDrillThroughClick() {
@@ -251,6 +256,22 @@ export default defineComponent({
         },
         closeOlapDesigner() {
             this.$router.push('/document-browser')
+        },
+        async changeLock() {
+            if (!this.olap) return
+            this.$emit('loading', true)
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/locker/${this.olap.modelConfig.artifactId}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
+                .then((response: AxiosResponse<any>) => {
+                    if ((response.data.status === 'unlocked' || response.data.status === 'locked_by_user') && this.olap) {
+                        this.$store.commit('setInfo', {
+                            msg: this.$t('common.toast.success')
+                        })
+                        this.olapLocked = response.data.status === 'locked_by_user'
+                    }
+                })
+                .catch(() => {})
+            this.$emit('loading', false)
         }
     }
 })

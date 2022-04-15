@@ -68,6 +68,7 @@
             @showAlgorithmDialog="algorithmDialogVisible = true"
             @undo="undo"
             @showDeleteVersions="deleteVersionDialogVisible = true"
+            @loading="loading = $event"
         />
     </div>
 

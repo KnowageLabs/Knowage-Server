@@ -557,6 +557,7 @@
                 "exportExcel": "Export excel for edit",
                 "exportOutput": "Export output",
                 "hideSpans": "Hide spans",
+                "lockSchema": "Lock schema",
                 "manageVersions": "Manage versions",
                 "mdxQuery": "Mdx Query",
                 "member": "Member",
@@ -579,6 +580,7 @@
                 "tableFunctions": "Table functions",
                 "templateEditing": "Template editing",
                 "undo": "Undo",
+                "unlockSchema": "Unlock schema",
                 "whatIfTitle": "What If"
             },
             "userRoleError": "User does not have valid roles for the execution of the selected document",
