@@ -9,7 +9,7 @@
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-        <DataTable class="p-datatable-sm kn-table p-m-4" v-model:selection="selectedVersions" :value="versions" dataKey="id">
+        <DataTable v-if="!loading" class="p-datatable-sm kn-table p-m-4" v-model:selection="selectedVersions" :value="versions" dataKey="id">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -56,14 +56,31 @@ export default defineComponent({
     methods: {
         loadVersions() {
             this.versions = this.propOlapVersions ? [...this.propOlapVersions] : []
-            console.log('LOADED VERSIONS: ', this.versions)
         },
         close() {
             this.$emit('close')
             this.selectedVersions = []
         },
         async deleteVersions() {
-            console.log('SELECTED VERSIONS: ', this.selectedVersions)
+            this.loading = true
+            const versionsToDelete = this.selectedVersions?.map((version: { id: number; name: string; description: string }) => version.id).join(',')
+            if (!versionsToDelete || versionsToDelete.length === 0) return
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/version/delete/${versionsToDelete}?SBI_EXECUTION_ID=${this.id}`, {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.close()
+                })
+                .catch((error: any) =>
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: error?.localizedMessage
+                    })
+                )
+            this.loading = false
         }
     }
 })

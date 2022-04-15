@@ -118,13 +118,13 @@
                         <Button icon="fa-solid fa-note-sticky" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" @click="$emit('showScenarioWizard')" />
                     </div>
                     <div class="p-col-4">
-                        <Button icon="fa-solid fa-floppy-disk" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.saveAsNewVersion')" @click="$emit('showSaveAsNewVersion')" />
+                        <Button icon="fa-solid fa-archive" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.saveAsNewVersion')" @click="$emit('showSaveAsNewVersion')" />
                     </div>
                     <div class="p-col-4">
                         <Button icon="fa-solid fa-rotate-left" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.undo')" @click="$emit('undo')" />
                     </div>
                     <div class="p-col-4">
-                        <Button icon="fa-solid fa-floppy-disk-circle-xmark" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.deleteVersions')" @click="$emit('showDeleteVersions')" />
+                        <Button icon="fa-solid fa-trash" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.deleteVersions')" @click="$emit('showDeleteVersions')" />
                     </div>
                     <div class="p-col-4">
                         <Button icon="fa-solid fa-network-wired" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" @click="$emit('showAlgorithmDialog')" />
