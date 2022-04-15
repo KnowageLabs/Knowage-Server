@@ -66,6 +66,7 @@
             @showScenarioWizard="scenarioWizardVisible = true"
             @showSaveAsNewVersion="saveVersionDialogVisible = true"
             @showAlgorithmDialog="algorithmDialogVisible = true"
+            @undo="undo"
         />
     </div>
 
@@ -829,6 +830,24 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/attributes`)
                 .then((response: AxiosResponse<any>) => (this.profileAttributes = response.data))
                 .catch(() => {})
+        },
+        async undo() {
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/undo/?SBI_EXECUTION_ID=${this.id}`, {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                })
+                .catch((error: any) =>
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: error?.localizedMessage
+                    })
+                )
+            this.loading = false
         }
     }
 })

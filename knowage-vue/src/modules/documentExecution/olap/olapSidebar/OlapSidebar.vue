@@ -121,6 +121,9 @@
                         <Button icon="fa-solid fa-floppy-disk" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.saveAsNewVersion')" @click="$emit('showSaveAsNewVersion')" />
                     </div>
                     <div class="p-col-4">
+                        <Button icon="fa-solid fa-rotate-left" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.undo')" @click="$emit('undo')" />
+                    </div>
+                    <div class="p-col-4">
                         <Button icon="fa-solid fa-network-wired" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" @click="$emit('showAlgorithmDialog')" />
                     </div>
                 </div>
@@ -158,7 +161,11 @@ export default defineComponent({
         'openButtonWizardDialog',
         'drillThroughChanged',
         'saveOlapDesigner',
-        'showSaveAsNewVersion'
+        'showOutputWizard',
+        'showScenarioWizard',
+        'showSaveAsNewVersion',
+        'undo',
+        'showAlgorithmDialog'
     ],
     data() {
         return {
