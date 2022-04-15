@@ -96,7 +96,7 @@
                     <!-- <div class="p-col-4">
                         <Button icon="fas fa-book-open" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureTablePagination')" />
                     </div> -->
-                    <div class="p-col-4">
+                    <div v-if="whatIfMode" class="p-col-4">
                         <Button icon="fa-solid fa-note-sticky" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" @click="$emit('showScenarioWizard')" />
                     </div>
                     <div class="p-col-4">
@@ -111,9 +111,8 @@
                 </div>
             </div>
 
-            <div id="whatif-container" class="kn-flex">
+            <div v-if="whatIfMode" id="whatif-container" class="kn-flex">
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.whatIfTitle') }}</label>
-                {{ olapLocked }}
                 <div class="p-grid p-mt-1">
                     <div v-if="olapLocked" class="p-col-4">
                         <Button :icon="olapLocked ? 'fas fa-lock-open' : 'fas fa-lock'" class="p-button-plain kn-button--secondary" v-tooltip.top="olapLocked ? $t('documentExecution.olap.sidebar.unlockSchema') : $t('documentExecution.olap.sidebar.lockSchema')" @click="changeLock" />
@@ -156,7 +155,7 @@ import SelectButton from 'primevue/selectbutton'
 export default defineComponent({
     name: 'olap-sidebar',
     components: { SelectButton },
-    props: { olap: { type: Object }, olapDesignerMode: { type: Boolean }, propButtons: { type: Array } },
+    props: { olap: { type: Object }, olapDesignerMode: { type: Boolean }, propButtons: { type: Array }, whatIfMode: { type: Boolean } },
     emits: [
         'openCustomViewDialog',
         'drillTypeChanged',

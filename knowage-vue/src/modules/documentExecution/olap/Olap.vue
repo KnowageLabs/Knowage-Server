@@ -48,6 +48,7 @@
             :olap="olap"
             :olapDesignerMode="olapDesignerMode"
             :propButtons="buttons"
+            :whatIfMode="whatIfMode"
             @openCustomViewDialog="customViewSaveDialogVisible = true"
             @drillTypeChanged="onDrillTypeChanged"
             @showParentMemberChanged="onShowParentMemberChanged"
@@ -177,7 +178,8 @@ export default defineComponent({
             parameters: [] as iParameter[],
             profileAttributes: [] as iProfileAttribute[],
             saveVersionDialogVisible: false,
-            deleteVersionDialogVisible: false
+            deleteVersionDialogVisible: false,
+            whatIfMode: false
         }
     },
     async created() {
@@ -208,7 +210,10 @@ export default defineComponent({
         async loadOlapDesigner() {
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `olap/designer/${this.olapId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
-                .then(async (response: AxiosResponse<any>) => (this.olapDesigner = response.data))
+                .then(async (response: AxiosResponse<any>) => {
+                    this.olapDesigner = response.data
+                    this.whatIfMode = this.olapDesigner?.ENGINE === 'knowagewhatifengine'
+                })
                 .catch(() => {})
         },
         async loadCustomView() {
