@@ -1,6 +1,5 @@
 <template>
     <div class="p-p-4">
-        {{ expandedKeys }}
         <Message v-if="searchWarningMessageVisible" class="p-m-4" severity="warn" :closable="false" :style="olapFilterDialogDescriptor.styles.message">
             {{ $t('documentExecution.olap.filterDialog.searchWarningMessage') }}
         </Message>
@@ -67,6 +66,8 @@ export default defineComponent({
             this.filter = this.propFilter ? this.propFilter.filter : {}
             this.filterType = this.propFilter?.type
 
+            console.log(' >>> LOADED FILTER INNER: ', this.filter)
+
             this.selectedFilters = []
             if (this.filterType === 'slicer') {
                 this.filter.hierarchies?.forEach((hierarchy: any) => {
@@ -83,8 +84,10 @@ export default defineComponent({
             console.log('>>> PARENT: ', parent)
             this.$emit('loading', true)
 
-            if (this.treeLocked || !this.filter || (parent && parent.leaf)) {
+            if (!this.filter || (parent && parent.leaf)) {
                 this.$emit('loading', false)
+                console.log('ENTERED 1!!!', this.treeLocked)
+                console.log('ENTERED 1!!!', this.filter)
                 return
             }
 
@@ -100,6 +103,8 @@ export default defineComponent({
             } else {
                 postData = { hierarchy: this.filter.selectedHierarchyUniqueName }
             }
+
+            console.log('ENTERED 2!!!')
 
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/hierarchy/${type}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })

@@ -18,13 +18,16 @@
             <span v-else>{{ $t('documentExecution.olap.filterDialog.infoMessage') }}</span>
         </Message>
 
-        <SelectButton v-if="olapDesignerMode" id="olap-filter-select-buttons" class="p-ml-auto p-mr-4" v-model="mode" :options="olapFilterDialogDescriptor.selectButtonOptions" optionValue="value">
+        <SelectButton v-if="olapDesignerMode && !loading" id="olap-filter-select-buttons" class="p-ml-auto p-mr-4" v-model="mode" :options="olapFilterDialogDescriptor.selectButtonOptions" optionValue="value">
             <template #option="slotProps">
                 <span>{{ $t(slotProps.option.label) }}</span>
             </template>
         </SelectButton>
 
-        <OlapFilterTree v-if="mode === 'selectFields'" :propFilter="propFilter" :id="id" :clearTrigger="clearTrigger" :treeLocked="treeLocked" @loading="loading = $event" @filtersChanged="onFiltersChange" @lockTree="treeLocked = true"></OlapFilterTree>
+        <div v-show="!loading">
+            <OlapFilterTree v-if="mode === 'selectFields'" :propFilter="filter" :id="id" :clearTrigger="clearTrigger" :treeLocked="treeLocked" @loading="loading = $event" @filtersChanged="onFiltersChange" @lockTree="treeLocked = true"></OlapFilterTree>
+            <OlapFilterTable v-else></OlapFilterTable>
+        </div>
 
         <template #footer>
             <div class="p-d-flex p-flex-row">
@@ -44,11 +47,12 @@ import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
 import olapFilterDialogDescriptor from './OlapFilterDialogDescriptor.json'
 import OlapFilterTree from './OlapFilterTree.vue'
+import OlapFilterTable from './OlapFilterTable.vue'
 import SelectButton from 'primevue/selectbutton'
 
 export default defineComponent({
     name: 'olap-filter-dialog',
-    components: { Dialog, Message, OlapFilterTree, SelectButton },
+    components: { Dialog, Message, OlapFilterTree, OlapFilterTable, SelectButton },
     props: {
         visible: { type: Boolean },
         propFilter: { type: Object },
@@ -71,7 +75,7 @@ export default defineComponent({
     },
     watch: {
         propFilter() {
-            if (this.visible) this.loadFilter()
+            this.loadFilter()
         }
     },
     created() {
@@ -79,7 +83,7 @@ export default defineComponent({
     },
     methods: {
         loadFilter() {
-            this.filter = this.propFilter ? this.propFilter.filter : {}
+            this.filter = this.propFilter
             console.log('LOADED FILTER: ', this.filter)
         },
         clear() {
@@ -89,6 +93,9 @@ export default defineComponent({
         },
         closeDialog() {
             this.$emit('close')
+            this.filter = null
+            this.treeLocked = false
+            this.mode = 'selectFields'
         },
         apply() {
             // TODO: Hardcoded multi
