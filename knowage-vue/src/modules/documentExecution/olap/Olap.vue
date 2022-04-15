@@ -64,6 +64,7 @@
             @saveOlapDesigner="saveOlapDesigner"
             @showOutputWizard="outputWizardVisible = true"
             @showScenarioWizard="scenarioWizardVisible = true"
+            @showAlgorithmDialog="algorithmDialogVisible = true"
         />
     </div>
 
@@ -77,6 +78,7 @@
     <KnOverlaySpinnerPanel :visibility="loading" />
     <OutputWizard v-if="outputWizardVisible" :visible="outputWizardVisible" :olapVersionsProp="olapVersions" :sbiExecutionId="id" @close="outputWizardVisible = false" />
     <ScenarioWizard v-if="scenarioWizardVisible" :visible="scenarioWizardVisible" :hiddenFormDataProp="hiddenFormDataProp" :sbiExecutionId="id" @close="scenarioWizardVisible = false" />
+    <AlgorithmDialog v-if="algorithmDialogVisible" :visible="algorithmDialogVisible" :sbiExecutionId="id" @close="algorithmDialogVisible = false" />
     <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" :olapDesignerMode="olapDesignerMode" :parameters="parameters" :profileAttributes="profileAttributes" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
 </template>
 
@@ -101,6 +103,7 @@ import DrillTruDialog from './drillThroughDialog/OlapDrillThroughDialog.vue'
 import OutputWizard from './outputWizard/OlapOutputWizard.vue'
 import ScenarioWizard from './scenarioWizard/OlapScenarioWizard.vue'
 import OlapFilterDialog from './filterDialog/OlapFilterDialog.vue'
+import AlgorithmDialog from './algorithmDialog/OlapAlgorithmDialog.vue'
 
 export default defineComponent({
     name: 'olap',
@@ -120,7 +123,8 @@ export default defineComponent({
         OlapButtonWizardDialog,
         MultiHierarchyDialog,
         OlapFilterDialog,
-        ScenarioWizard
+        ScenarioWizard,
+        AlgorithmDialog
     },
     props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean }, hiddenFormDataProp: { type: Object, required: true } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
@@ -140,6 +144,7 @@ export default defineComponent({
             drillTruDialogVisible: false,
             outputWizardVisible: false,
             scenarioWizardVisible: false,
+            algorithmDialogVisible: false,
             multiHierFilter: {} as iOlapFilter,
             selecetedMultiHierUN: '',
             sort: null as any,
