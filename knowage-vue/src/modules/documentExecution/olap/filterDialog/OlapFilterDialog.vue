@@ -34,7 +34,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { iParameter, iProfileAttribute } from '../Olap'
 import Dialog from 'primevue/dialog'
 import Message from 'primevue/message'
 import olapFilterDialogDescriptor from './OlapFilterDialogDescriptor.json'
@@ -43,7 +44,15 @@ import OlapFilterTree from './OlapFilterTree.vue'
 export default defineComponent({
     name: 'olap-filter-dialog',
     components: { Dialog, Message, OlapFilterTree },
-    props: { visible: { type: Boolean }, olapVersionsProp: { type: Boolean, required: true }, propFilter: { type: Object }, id: { type: String }, olapDesignerMode: { type: Boolean } },
+    props: {
+        visible: { type: Boolean },
+        olapVersionsProp: { type: Boolean, required: true },
+        propFilter: { type: Object },
+        id: { type: String },
+        olapDesignerMode: { type: Boolean },
+        parameters: { type: Array as PropType<iParameter[]> },
+        profileAttributes: { type: Array as PropType<iProfileAttribute[]> }
+    },
     emits: ['close', 'applyFilters'],
     data() {
         return {

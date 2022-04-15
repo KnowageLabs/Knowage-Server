@@ -77,7 +77,7 @@
     <KnOverlaySpinnerPanel :visibility="loading" />
     <OutputWizard v-if="outputWizardVisible" :visible="outputWizardVisible" :olapVersionsProp="olapVersions" :sbiExecutionId="id" @close="outputWizardVisible = false" />
     <ScenarioWizard v-if="scenarioWizardVisible" :visible="scenarioWizardVisible" :hiddenFormDataProp="hiddenFormDataProp" :sbiExecutionId="id" @close="scenarioWizardVisible = false" />
-    <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" :olapDesignerMode="olapDesignerMode" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
+    <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" :olapDesignerMode="olapDesignerMode" :parameters="parameters" :profileAttributes="profileAttributes" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
 </template>
 
 <script lang="ts">
