@@ -11,7 +11,7 @@
                 </template>
             </Toolbar>
         </template>
-        <KnOverlaySpinnerPanel :visibility="loading" :style="mainDescriptor.style.spinnerStyle" />
+        <ProgressSpinner v-if="loading" class="doc-details-spinner" :style="mainDescriptor.style.spinnerStyle" />
 
         <div class="document-details-tab-container p-d-flex p-flex-column kn-flex">
             <TabView class="document-details-tabview p-d-flex p-flex-column kn-flex">
@@ -20,6 +20,7 @@
                         <span>{{ $t('documentExecution.documentDetails.info.infoTitle') }}</span>
                     </template>
                     <InformationsTab
+                        v-if="!loading"
                         :selectedDocument="selectedDocument"
                         :availableFolders="availableFolders"
                         :selectedFolder="selectedFolder"
@@ -75,7 +76,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
-import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import useValidate from '@vuelidate/core'
 import mainDescriptor from './DocumentDetailsDescriptor.json'
 import InformationsTab from './tabs/informations/DocumentDetailsInformations.vue'
@@ -87,11 +87,12 @@ import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import Badge from 'primevue/badge'
 import TabPanel from 'primevue/tabpanel'
+import ProgressSpinner from 'primevue/progressspinner'
 import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam, iDocumentType } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 
 export default defineComponent({
     name: 'document-details',
-    components: { KnOverlaySpinnerPanel, InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, TabView, TabPanel, Dialog, Badge },
+    components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, TabView, TabPanel, Dialog, Badge, ProgressSpinner },
     props: { docId: { type: Number, required: true }, selectedFolder: { type: Object, required: true }, visible: { type: Boolean, required: false } },
     emits: ['closeDetails'],
     data() {
@@ -362,5 +363,9 @@ export default defineComponent({
 
 .details-warning-color {
     color: red;
+}
+
+.doc-details-spinner .p-progress-spinner-svg {
+    width: 125px;
 }
 </style>

@@ -49,7 +49,7 @@ export default defineComponent({
         loadParameters() {
             this.parameters = []
             this.propParameters?.forEach((parameter: any) => {
-                parameter.value = parameter.defaultValue
+                parameter.value = parameter.value ?? parameter.defaultValue
                 this.parameters.push(parameter)
             })
         },

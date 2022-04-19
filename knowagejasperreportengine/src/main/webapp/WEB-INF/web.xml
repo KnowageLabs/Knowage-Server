@@ -8,13 +8,18 @@
 		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 		version="3.1" >
 
-	<display-name>Knowage Jasperreport Engine</display-name>
+	<display-name>knowagejasperreportengine</display-name>
 	<description>Knowage Jasperreport Engine</description>
 
 	<!--  ============================================================================ -->
 	<!--  FILTERS                                                                      -->
 	<!--  ============================================================================ -->
 
+	<filter>
+		<filter-name>LogTenantFilter</filter-name>
+		<filter-class>it.eng.knowage.utils.filters.LogTenantFilter</filter-class>
+	</filter>
+	
 	<filter>
 		<filter-name>EncodingFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
@@ -24,6 +29,12 @@
 		</init-param>
 	</filter>
 
+	<filter-mapping>
+		<filter-name>LogTenantFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
 		<url-pattern>/JasperReportServlet</url-pattern>

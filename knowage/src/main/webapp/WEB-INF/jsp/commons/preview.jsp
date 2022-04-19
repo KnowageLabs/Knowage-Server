@@ -76,7 +76,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<script type="text/javascript" charset="utf-8">
 			//GLOBAL VARIABLES 
 			const 	MAX_ROWS_CLIENT_PAGINATION = <%= SingletonConfig.getInstance().getConfigValue("dataset.preview.clientpagination.maxrows") %>;
-			const 	MAX_ROWS_EXCEL_EXPORT = <%= SingletonConfig.getInstance().getConfigValue("dataset.export.xls.resultsLimit")  %>;
 			const 	SEARCH_WAIT_TIMEOUT = 500;
 			const 	DEFAULT_MAX_ITEMS_PER_PAGE = 15;
 			const 	KNOWAGE_BASEURL = '<%= KnowageSystemConfiguration.getKnowageContext() %>';
@@ -372,9 +371,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						gridOptions.api.showNoRowsOverlay();
 					}else{
 						backEndPagination.totalRows = data.results;
-						if(data.results > (MAX_ROWS_EXCEL_EXPORT || 20000)){
-							if(document.getElementById('export-XLSX')) document.getElementById('export-XLSX').remove();
-						}
 						gridOptions.api.setColumnDefs(getColumns(data.metaData.fields));
 						if(options.backEndPagination){
 							gridOptions.api.setRowData(data.rows);

@@ -1,4 +1,4 @@
-<Context path="/knowagekpiengine">
+<Context path="/knowagekpiengine" reloadable="false">
 	<CookieProcessor sameSiteCookies="strict" />
 	
 	<!-- <Loader delegate="true"/> -->

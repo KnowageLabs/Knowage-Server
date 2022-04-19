@@ -1,5 +1,7 @@
 <template>
     <div class="p-d-flex p-flex-column kn-flex">
+        <ProgressSpinner class="kn-progress-spinner" v-if="loading" />
+
         <OlapCustomViewTable v-if="customViewVisible" class="olap-overlay-dialog" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)" />
 
         <DrillTruDialog
@@ -72,7 +74,6 @@
     <OlapCrossNavigationDefinitionDialog :visible="crossNavigationDefinitionDialogVisible" :propOlapDesigner="olapDesigner" :selectedCell="selectedCell" @close="crossNavigationDefinitionDialogVisible = false" @selectFromTable="enterSelectMode($event)"></OlapCrossNavigationDefinitionDialog>
     <OlapButtonWizardDialog :visible="buttonsWizardDialogVisible" :propButtons="buttons" :propOlapDesigner="olapDesigner" @close="buttonsWizardDialogVisible = false"></OlapButtonWizardDialog>
     <MultiHierarchyDialog :selectedFilter="multiHierFilter" :multiHierUN="selecetedMultiHierUN" :visible="multiHierarchyDialogVisible" @setMultiHierUN="setMultiHierUN" @updateHierarchy="updateHierarchy" @close="multiHierarchyDialogVisible = false" />
-    <KnOverlaySpinnerPanel :visibility="loading" />
 </template>
 
 <script lang="ts">
@@ -85,7 +86,6 @@ import OlapSortingDialog from './sortingDialog/OlapSortingDialog.vue'
 import OlapCustomViewTable from './customView/OlapCustomViewTable.vue'
 import OlapCustomViewSaveDialog from './customViewSaveDialog/OlapCustomViewSaveDialog.vue'
 import OlapMDXQueryDialog from './mdxQueryDialog/OlapMDXQueryDialog.vue'
-import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import FilterPanel from './filterPanel/OlapFilterPanel.vue'
 import FilterTopToolbar from './filterToolbar/OlapTopFilterToolbar.vue'
 import FilterLeftToolbar from './filterToolbar/OlapLeftFilterToolbar.vue'
@@ -93,10 +93,11 @@ import OlapCrossNavigationDefinitionDialog from './crossNavigationDefinition/Ola
 import OlapButtonWizardDialog from './buttonWizard/OlapButtonWizardDialog.vue'
 import MultiHierarchyDialog from './multiHierarchyDialog/OlapMultiHierarchyDialog.vue'
 import DrillTruDialog from './drillThroughDialog/OlapDrillThroughDialog.vue'
+import ProgressSpinner from 'primevue/progressspinner'
 
 export default defineComponent({
     name: 'olap',
-    components: { OlapSidebar, DrillTruDialog, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog, OlapButtonWizardDialog, MultiHierarchyDialog },
+    components: { ProgressSpinner, OlapSidebar, DrillTruDialog, OlapCustomViewTable, OlapCustomViewSaveDialog, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog, OlapButtonWizardDialog, MultiHierarchyDialog },
     props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
     data() {
@@ -738,6 +739,7 @@ export default defineComponent({
     z-index: 300;
     background-color: white;
     height: 100%;
+    width: 100%;
 }
 .olap-page-container {
     display: flex;

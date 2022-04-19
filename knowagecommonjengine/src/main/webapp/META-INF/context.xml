@@ -1,4 +1,4 @@
-<Context   path="/knowagecommonjengine">
+<Context path="/knowagecommonjengine" reloadable="false">
 	<CookieProcessor sameSiteCookies="strict" />
 	
 	<!-- <Loader delegate="true"/> -->

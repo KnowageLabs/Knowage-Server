@@ -35,8 +35,10 @@ import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.JobKey;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
@@ -103,87 +105,89 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
         }
     }
 
-    private boolean eventChecked(JobExecutionContext jobExecutionContext) throws SchedulerException, JSONException {
-        Boolean eventSolved = true;
+	private boolean eventChecked(JobExecutionContext jobExecutionContext) throws SchedulerException, JSONException {
+		Boolean eventSolved = true;
 
-        if (jobExecutionContext.getMergedJobDataMap().containsKey("event_info")) {
-            eventSolved = false;
+		if (jobExecutionContext.getMergedJobDataMap().containsKey("event_info")) {
+			eventSolved = false;
 
-            String triggerName = jobExecutionContext.getTrigger().getName();
-            if (jobExecutionContext.getMergedJobDataMap().containsKey("originalTriggerName")) {
-                triggerName = jobExecutionContext.getMergedJobDataMap().getString("originalTriggerName");
+			Trigger trigger = jobExecutionContext.getTrigger();
+			TriggerKey triggerKey = trigger.getKey();
+			String triggerName = triggerKey.getName();
+			if (jobExecutionContext.getMergedJobDataMap().containsKey("originalTriggerName")) {
+				triggerName = jobExecutionContext.getMergedJobDataMap().getString("originalTriggerName");
 
-            }
+			}
 
-            JSONObject jo = new JSONObject(jobExecutionContext.getMergedJobDataMap().getString("event_info"));
-            String typeEvent = jo.getString("type");
-            if (typeEvent.equals("rest")) {
-                SbiWsEventsDao wsEventsDao = DAOFactory.getWsEventsDao();
+			JSONObject jo = new JSONObject(jobExecutionContext.getMergedJobDataMap().getString("event_info"));
+			String typeEvent = jo.getString("type");
+			if (typeEvent.equals("rest")) {
+				SbiWsEventsDao wsEventsDao = DAOFactory.getWsEventsDao();
 
-                List<SbiWsEvent> sbiWsEvents = wsEventsDao.loadSbiWsEvents(triggerName);
-                if (sbiWsEvents.size() != 0) {
-                    Date attDate = new Date();
-                    for (SbiWsEvent sb : sbiWsEvents) {
-                        if (sb.getTakeChargeDate() == null) {
-                            sb.setTakeChargeDate(attDate);
-                            wsEventsDao.updateEvent(sb);
-                        }
-                    }
-                    eventSolved = true;
-                }
-            } else if (typeEvent.equals("dataset")) {
+				List<SbiWsEvent> sbiWsEvents = wsEventsDao.loadSbiWsEvents(triggerName);
+				if (sbiWsEvents.size() != 0) {
+					Date attDate = new Date();
+					for (SbiWsEvent sb : sbiWsEvents) {
+						if (sb.getTakeChargeDate() == null) {
+							sb.setTakeChargeDate(attDate);
+							wsEventsDao.updateEvent(sb);
+						}
+					}
+					eventSolved = true;
+				}
+			} else if (typeEvent.equals("dataset")) {
 
-                IDataSetDAO d = DAOFactory.getDataSetDAO();
-                d.setUserProfile(UserProfile.createSchedulerUserProfile());
-                IDataSet dataSet = d.loadDataSetById(jo.getInt("dataset"));
-                if (dataSet != null) {
-                    dataSet.loadData();
-                    IDataStore dataStore = dataSet.getDataStore();
-                    if (dataStore != null && dataStore.getRecordsCount() > 0) {
-                        IRecord returnVal = dataStore.getRecordAt(0);
-                        if (returnVal != null) {
-                            Object value = returnVal.getFieldAt(0).getValue();
+				IDataSetDAO d = DAOFactory.getDataSetDAO();
+				d.setUserProfile(UserProfile.createSchedulerUserProfile());
+				IDataSet dataSet = d.loadDataSetById(jo.getInt("dataset"));
+				if (dataSet != null) {
+					dataSet.loadData();
+					IDataStore dataStore = dataSet.getDataStore();
+					if (dataStore != null && dataStore.getRecordsCount() > 0) {
+						IRecord returnVal = dataStore.getRecordAt(0);
+						if (returnVal != null) {
+							Object value = returnVal.getFieldAt(0).getValue();
 
-                            String execFlag = jobExecutionContext.getTrigger().getJobDataMap().getString("execFlag");
-                            Boolean exf = execFlag == null ? false : Boolean.parseBoolean(execFlag);
-                            boolean validDS = (value.toString().equals("1") || value.toString().equals("true")) ? true : false;
+							String execFlag = trigger.getJobDataMap().getString("execFlag");
+							Boolean exf = execFlag == null ? false : Boolean.parseBoolean(execFlag);
+							boolean validDS = (value.toString().equals("1") || value.toString().equals("true")) ? true : false;
 
-                            if (validDS && !exf) {
-                                jobExecutionContext.getTrigger().getJobDataMap().put("execFlag", "true");
-                                StdSchedulerFactory.getDefaultScheduler().rescheduleJob(jobExecutionContext.getTrigger().getName(),
-                                        jobExecutionContext.getTrigger().getGroup(), jobExecutionContext.getTrigger());
-                                eventSolved = true;
-                            } else if (!validDS && exf) {
-                                jobExecutionContext.getTrigger().getJobDataMap().put("execFlag", "false");
-                                StdSchedulerFactory.getDefaultScheduler().rescheduleJob(jobExecutionContext.getTrigger().getName(),
-                                        jobExecutionContext.getTrigger().getGroup(), jobExecutionContext.getTrigger());
-                            }
-                        }
-                    }
-                }
+							if (validDS && !exf) {
+								trigger.getJobDataMap().put("execFlag", "true");
+								StdSchedulerFactory.getDefaultScheduler().rescheduleJob(triggerKey, trigger);
+								eventSolved = true;
+							} else if (!validDS && exf) {
+								trigger.getJobDataMap().put("execFlag", "false");
+								StdSchedulerFactory.getDefaultScheduler().rescheduleJob(triggerKey, trigger);
+							}
+						}
+					}
+				}
 
-            }
-        }
+			}
+		}
 
-        return eventSolved;
-    }
+		return eventSolved;
+	}
 
-    private boolean isTriggerPaused(JobExecutionContext jobExecutionContext) {
-        Trigger trigger = jobExecutionContext.getTrigger();
-        String triggerGroup = trigger.getGroup();
-        String triggerName = trigger.getName();
-        String jobName = trigger.getJobName();
-        String jobGroupOriginal = jobExecutionContext.getJobDetail().getGroup();
-        String[] bits = jobGroupOriginal.split("/");
-        String jobGroup = bits[bits.length - 1];
-        boolean result = false;
+	private boolean isTriggerPaused(JobExecutionContext jobExecutionContext) {
+		Trigger trigger = jobExecutionContext.getTrigger();
+		TriggerKey triggerKey = trigger.getKey();
+		JobKey jobKey = trigger.getJobKey();
+		String triggerGroup = triggerKey.getGroup();
+		String triggerName = triggerKey.getName();
+		String jobName = jobKey.getName();
+		String jobGroupOriginal = jobExecutionContext.getJobDetail().getKey().getGroup();
+		String[] bits = jobGroupOriginal.split("/");
+		String jobGroup = bits[bits.length - 1];
+		boolean result = false;
 
-        ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
-        result = schedulerDAO.isTriggerPaused(triggerGroup, triggerName, jobGroup, jobName);
+		ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+		result = schedulerDAO.isTriggerPaused(triggerGroup, triggerName, jobGroup, jobName);
 
-        return result;
+		return result;
 
-    }
+	}
 
     private void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 

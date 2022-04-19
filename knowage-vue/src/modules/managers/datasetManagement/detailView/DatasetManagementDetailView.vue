@@ -42,6 +42,7 @@
                     :rEnvironments="rEnvironments"
                     @fileUploaded="selectedDataset.fileUploaded = true"
                     @touched="$emit('touched')"
+                    @qbeSaved="getSelectedDataset"
                 />
             </TabPanel>
 
@@ -182,7 +183,10 @@ export default defineComponent({
             })
         },
         async cloneDataset(datasetId) {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`).then(async (response: AxiosResponse<any>) => {
+                if (response.data[0].dsTypeCd === 'File') {
+                    await this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/clone-file?fileName=${response.data[0].fileName}`)
+                }
                 delete response.data[0].id
                 response.data[0].label = '...'
                 response.data[0].dsVersions = []

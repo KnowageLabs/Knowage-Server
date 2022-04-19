@@ -117,8 +117,8 @@ export default defineComponent({
                     })
                 )
                 .catch((error: any) => console.log('ERROR: ', error))
-            content.forEach((el: any) => this.checkIfNodeIsSelected(el))
             this.attachContentToTree(parent, content)
+            content.forEach((el: any) => this.checkIfNodeIsSelected(el))
             this.loading = false
             if (parent) this.setOpenFolderIcon(parent)
         },
@@ -127,9 +127,20 @@ export default defineComponent({
                 const index = this.parameter?.parameterValue.findIndex((el: any) => el.value === node.data.value)
                 if (index !== -1) {
                     this.selectedValuesKeys[node.key] = { checked: true, partialyChecked: false }
-                    this.multipleSelectedValues.push(node.data)
+                    if (this.checkIfAllChildrensAreSelected(node.parent)) this.selectedValuesKeys[node.parent.key] = { checked: true, partialyChecked: false }
                 }
             }
+        },
+        checkIfAllChildrensAreSelected(node: iNode) {
+            let allChecked = true
+            for (let i = 0; i < node.children.length; i++) {
+                if (!this.selectedValuesKeys[node.children[i].key] || !this.selectedValuesKeys[node.children[i].key].checked) {
+                    allChecked = false
+                    break
+                }
+            }
+
+            return allChecked
         },
         attachContentToTree(parent: iNode, content: iNode[]) {
             if (parent) {
@@ -168,17 +179,29 @@ export default defineComponent({
         setSelectedValue(node: iNode) {
             if (!this.multivalue) {
                 this.selectedValue = node.data
-            } else {
+            } else if (node.leaf) {
                 this.multipleSelectedValues.push(node.data)
+            } else {
+                node?.children.forEach((child: iNode) => {
+                    const index = this.multipleSelectedValues.findIndex((el: { value: string; description: string }) => el.value === child.data.value && el.description === child.data.description)
+                    if (index === -1) this.multipleSelectedValues.push(child.data)
+                })
             }
         },
         removeSelectedValue(node: iNode) {
             if (!this.multivalue) {
                 this.selectedValue = null
+            } else if (node.leaf) {
+                this.removeSelectedNode(node)
             } else {
-                const index = this.multipleSelectedValues.findIndex((el: any) => el.value === node.data.value)
-                if (index !== -1) this.multipleSelectedValues.splice(index, 1)
+                node?.children.forEach((child: iNode) => {
+                    this.removeSelectedNode(child)
+                })
             }
+        },
+        removeSelectedNode(node: iNode) {
+            const index = this.multipleSelectedValues.findIndex((el: any) => el.value === node.data.value)
+            if (index !== -1) this.multipleSelectedValues.splice(index, 1)
         },
         closeDialog() {
             this.$emit('close')
