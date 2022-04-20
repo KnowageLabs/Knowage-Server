@@ -1,5 +1,7 @@
 <template>
     <div class="p-d-flex p-flex-column kn-flex">
+        <ProgressSpinner class="kn-progress-spinner" v-if="loading" />
+
         <OlapCustomViewTable v-if="customViewVisible" class="olap-overlay-dialog" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)" />
 
         <DrillTruDialog
@@ -101,7 +103,6 @@ import OlapSortingDialog from './sortingDialog/OlapSortingDialog.vue'
 import OlapCustomViewTable from './customView/OlapCustomViewTable.vue'
 import OlapCustomViewSaveDialog from './customViewSaveDialog/OlapCustomViewSaveDialog.vue'
 import OlapMDXQueryDialog from './mdxQueryDialog/OlapMDXQueryDialog.vue'
-import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import FilterPanel from './filterPanel/OlapFilterPanel.vue'
 import FilterTopToolbar from './filterToolbar/OlapTopFilterToolbar.vue'
 import FilterLeftToolbar from './filterToolbar/OlapLeftFilterToolbar.vue'

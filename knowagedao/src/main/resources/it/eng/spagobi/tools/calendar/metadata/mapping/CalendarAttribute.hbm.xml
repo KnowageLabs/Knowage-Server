@@ -29,7 +29,7 @@
 
  		 <many-to-one name="calendarAttributeDomain" class="it.eng.spagobi.tools.calendar.metadata.CalendarAttributeDomain" column="DOMAIN_ID"  lazy="false" fetch="join" insert="false" update="false"/>
  		 <many-to-one name="calendar" class="it.eng.spagobi.tools.calendar.metadata.Calendar" column="CALENDAR_ID"  lazy="false" fetch="join" insert="false" update="false"/>
-		<set name="listOfConfiguration" table="A_T_ASS_CAL_CFG_ATTRIB"  cascade="none" lazy="true">
+		<set name="listOfConfiguration" table="A_T_ASS_CAL_CFG_ATTRIB"  cascade="delete" lazy="true">
 			<key >
 				<column name="ATTRIBUTE_ID"/>
 			</key>
