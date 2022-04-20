@@ -88,7 +88,7 @@ export default defineComponent({
         async loadNodes(parent: any) {
             this.$emit('loading', true)
 
-            if (!this.filter || (parent && parent.leaf)) {
+            if (!this.filter || (parent && parent.leaf) || this.searchWord.length > 2) {
                 this.$emit('loading', false)
                 return
             }
@@ -108,11 +108,11 @@ export default defineComponent({
 
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/hierarchy/${type}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
-                .then((response: AxiosResponse<any>) =>
+                .then((response: AxiosResponse<any>) => {
                     response.data.forEach((el: any) => {
                         content.push(this.createNode(el))
                     })
-                )
+                })
                 .catch(() => {})
 
             this.attachContentToTree(parent, content)
@@ -190,11 +190,12 @@ export default defineComponent({
                     const content = [] as any[]
                     await this.$http
                         .post(process.env.VUE_APP_OLAP_PATH + `1.0/hierarchy/search?SBI_EXECUTION_ID=${this.id}`, { axis: this.filter.axis, hierarchy: this.filter.selectedHierarchyUniqueName, name: this.searchWord, showS: false }, { headers: { Accept: 'application/json, text/plain, */*' } })
-                        .then((response: AxiosResponse<any>) =>
+                        .then((response: AxiosResponse<any>) => {
+                            this.expandedKeys = {}
                             response.data.forEach((el: any) => {
                                 content.push(this.createNode(el))
                             })
-                        )
+                        })
                         .catch(() => {})
                     this.attachContentToTree(null, content)
                 } else {

@@ -52,7 +52,7 @@ export default defineComponent({
         },
         getNumberOfActiveLevels(filter: any) {
             const dynamicSlicers = this.olapDesigner?.template.wrappedObject.olap.DYNAMIC_SLICER
-            if (!dynamicSlicers) return
+            if (!dynamicSlicers) return 0
             let numberOfActiveLevels = 0
             for (let i = 0; i < dynamicSlicers.length; i++) {
                 if (dynamicSlicers[i].HIERARCHY === filter.uniqueName) numberOfActiveLevels++
