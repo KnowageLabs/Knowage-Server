@@ -13,9 +13,9 @@
 
         <div class="p-d-flex p-flex-column">
             <InlineMessage v-if="showInfo" class="p-m-2" severity="info">{{ $t('documentExecution.olap.scenarioWizard.longInfo') }}</InlineMessage>
-
+            {{ selectedCube }}
             <div class="p-float-label p-col-12 p-mt-2">
-                <Dropdown id="selectedCube" class="kn-material-input" v-model="selectedCube" :options="cubes" optionLabel="name" @change="getAllMeasures" />
+                <Dropdown id="selectedCube" class="kn-material-input" v-model="selectedCube" :options="cubes" optionLabel="name" @change="onCubeChange" />
                 <label for="selectedCube" class="kn-material-input-label"> {{ $t('documentExecution.olap.scenarioWizard.selectedCube') }} </label>
             </div>
 
@@ -28,12 +28,13 @@
                     </Toolbar>
                 </template>
                 <template #content>
-                    <DataTable :value="measures" v-model:selection="selectedMeasures" class="p-datatable-sm kn-table" dataKey="name" responsiveLayout="stack" breakpoint="960px" :scrollable="true" scrollHeight="flex">
+                    {{ scenario.MEASURE }}
+                    <DataTable :value="measures" v-model:selection="scenario.MEASURE" class="p-datatable-sm kn-table" dataKey="XML_TAG_TEXT_CONTENT" responsiveLayout="stack" breakpoint="960px" :scrollable="true" scrollHeight="flex">
                         <template #empty>
                             {{ $t('common.info.noDataFound') }}
                         </template>
-                        <Column class="kn-column-checkbox" selectionMode="multiple" dataKey="name"></Column>
-                        <Column field="name" :header="$t('common.name')"></Column>
+                        <Column class="kn-column-checkbox" selectionMode="multiple" dataKey="XML_TAG_TEXT_CONTENT"></Column>
+                        <Column field="XML_TAG_TEXT_CONTENT" :header="$t('common.name')"></Column>
                     </DataTable>
                 </template>
             </Card>
@@ -51,7 +52,8 @@
             </Toolbar>
             <Card v-show="expandParamsCard" class="p-mx-2 p-mb-2">
                 <template #content>
-                    <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="variables" :scrollable="true" scrollHeight="250px" responsiveLayout="stack" breakpoint="960px">
+                    {{ scenario.VARIABLE }}
+                    <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="scenario.VARIABLE" :scrollable="true" scrollHeight="250px" responsiveLayout="stack" breakpoint="960px">
                         <template #empty>
                             {{ $t('managers.datasetManagement.tableEmpty') }}
                         </template>
@@ -76,9 +78,9 @@
         </div>
 
         <template #footer>
-            <Button class="kn-button"> {{ $t('documentExecution.olap.scenarioWizard.clearData') }}</Button>
+            <Button class="kn-button" @click="resetScenarioData"> {{ $t('documentExecution.olap.scenarioWizard.clearData') }}</Button>
             <Button class="kn-button kn-button--secondary" @click="$emit('close')"> {{ $t('common.cancel') }}</Button>
-            <Button class="kn-button kn-button--primary"> {{ $t('common.save') }}</Button>
+            <Button class="kn-button kn-button--primary" @click="saveScenario" :disabled="saveButtonDisabled"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -94,34 +96,59 @@ import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 
+const deepcopy = require('deepcopy')
+
 export default defineComponent({
     name: 'olap-scenario-wizard',
     components: { Dialog, InlineMessage, Dropdown, Card, Column, DataTable },
-    props: { hiddenFormDataProp: { type: Object, required: true }, sbiExecutionId: { type: String } },
-    emits: ['close'],
-    computed: {},
+    props: { hiddenFormDataProp: { type: Object, required: true }, sbiExecutionId: { type: String }, olapDesignerProp: { type: Object, required: true } },
+    emits: ['close', 'saveScenario'],
+    computed: {
+        saveButtonDisabled() {
+            let validation = false
+            if (this.scenario.VARIABLE) {
+                for (let i = 0; i < this.scenario.VARIABLE.length; ++i) {
+                    if (Object.keys(this.scenario.VARIABLE[i].name).length === 0 || Object.keys(this.scenario.VARIABLE[i].value).length === 0 || this.scenario.MEASURE.length === 0) {
+                        validation = true
+                        break
+                    }
+                }
+            }
+            return validation
+        }
+    },
     data() {
         return {
             descriptor,
             showInfo: false,
             loading: false,
             expandParamsCard: true,
-            selectedCube: null as any,
+            scenario: {} as any,
+            selectedCube: { name: '' } as any,
             cubes: [] as any,
-            measures: [] as any,
-            selectedMeasures: [] as any,
-            variables: [] as any
+            measures: [] as any
         }
     },
     watch: {
         async visible() {
             await this.getAllCubes()
+            this.createScenario()
         }
     },
     created() {
         this.getAllCubes()
+        this.createScenario()
     },
     methods: {
+        createScenario() {
+            if (this.olapDesignerProp.template.wrappedObject.olap.SCENARIO) {
+                this.scenario = deepcopy(this.olapDesignerProp.template.wrappedObject.olap.SCENARIO)
+                this.selectedCube = { name: this.olapDesignerProp.template.wrappedObject.olap.SCENARIO.editCube }
+                this.getAllMeasures()
+            } else {
+                this.scenario = deepcopy(this.descriptor.scenarioTemplate)
+            }
+        },
         async getAllCubes() {
             const currentContentId = this.hiddenFormDataProp.get('SBI_ARTIFACT_VERSION_ID')
             await this.$http
@@ -137,25 +164,38 @@ export default defineComponent({
             await this.$http
                 .get(process.env.VUE_APP_OLAP_PATH + `1.0/designer/measures/${currentContentId}/${this.selectedCube.name}?SBI_EXECUTION_ID=${this.sbiExecutionId}`)
                 .then((response: AxiosResponse<any>) => {
-                    this.measures = response.data.map((cube) => ({ name: cube }))
+                    this.measures = response.data.map((cube) => ({ XML_TAG_TEXT_CONTENT: cube }))
                 })
                 .catch(() => {})
                 .finally(() => (this.loading = false))
         },
+        onCubeChange() {
+            this.scenario.MEASURE = []
+            this.getAllMeasures()
+        },
+
         addNewParam() {
             const newParam = { ...descriptor.newVariable }
-            this.variables.push(newParam)
+            this.scenario.VARIABLE.push(newParam)
         },
         removeAllParams() {
             this.$confirm.require({
-                message: this.$t('managers.datasetManagement.deleteAllRequestHeaderMsg'),
-                header: this.$t('managers.datasetManagement.deleteAllRequestHeaderTitle'),
+                message: this.$t('documentExecution.olap.scenarioWizard.deleteAllMsg'),
+                header: this.$t('documentExecution.olap.scenarioWizard.deleteAllTitle'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => (this.variables = [])
+                accept: () => (this.scenario.VARIABLE = [])
             })
         },
         removeParam(slotProps) {
-            this.variables.splice(slotProps.index, 1)
+            this.scenario.VARIABLE.splice(slotProps.index, 1)
+        },
+        resetScenarioData() {
+            this.scenario = deepcopy(this.descriptor.scenarioTemplate)
+            this.selectedCube = {}
+        },
+        saveScenario() {
+            this.scenario.editCube = this.selectedCube.name
+            this.$emit('saveScenario', this.scenario, this.selectedCube)
         }
     }
 })

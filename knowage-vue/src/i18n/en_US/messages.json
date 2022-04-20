@@ -533,10 +533,13 @@
             "savingCustomizedView": "Saving customized view",
             "scenarioWizard": {
                 "clearData": "Clear data",
+                "deleteAllMsg": "Are you sure you want to delete all variables?",
+                "deleteAllTitle": "Delete All",
                 "editableMeasures": "Editable measures",
                 "longInfo": "Selecting an edit cube and an editable measure is mandatory. In order to perform what if analysis your database as well as OLAP schema should have a specific structure. Please check in the documentation of the WhatIF functionality. The edited cube should be the cube that you want to save with the new version of data.",
                 "parameterName": "Parameter name",
                 "parameterValue": "Parameter value",
+                "scenarioUpdated": "Successfully added scenario to template",
                 "selectedCube": "Selected cube",
                 "shortInfo": "Selecting an edit cube and an editable measure is mandatory.",
                 "title": "Scenario Wizard"

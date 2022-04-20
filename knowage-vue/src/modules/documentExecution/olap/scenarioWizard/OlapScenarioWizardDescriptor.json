@@ -3,6 +3,12 @@
         "name": "",
         "value": ""
     },
+    "scenarioTemplate": {
+        "MEASURE": [],
+        "VARIABLE": [],
+        "editCube": "",
+        "name": "scenario"
+    },
     "style": {
         "columnStyle": {
             "height": "25px"
