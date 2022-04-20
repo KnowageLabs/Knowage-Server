@@ -16,7 +16,7 @@
                     :value="filterType === 'slicer' ? slotProps.node.id : slotProps.node.data"
                     :disabled="treeLocked && !slotProps.node.data.visible"
                     v-tooltip="{ value: $t('documentExecution.olap.filterDialog.parentDisabledTooltip'), disabled: !treeLocked || slotProps.node.data.visible }"
-                    @change="onFiltersSelected"
+                    @change="onFiltersSelected(slotProps.node)"
                 />
                 <span>{{ slotProps.node.label }}</span>
             </template>
@@ -136,6 +136,11 @@ export default defineComponent({
 
             if (el.collapsed || this.searchWord.length > 2) {
                 this.expandedKeys[tempNode.key] = true
+            }
+
+            if (this.filterType !== 'slicer') {
+                const index = this.selectedFilters.findIndex((filter: any) => tempNode.id === filter.id && tempNode.data.uniqueName === filter.uniqueName)
+                if (index !== -1) this.selectedFilters[index] = { ...tempNode.data }
             }
 
             return tempNode
