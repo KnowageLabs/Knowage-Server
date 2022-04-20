@@ -17,7 +17,7 @@
             @drill="drillThrough"
         />
 
-        <FilterPanel :olapProp="olap" @putFilterOnAxis="putFilterOnAxis" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
+        <FilterPanel :olapProp="olap" :olapDesigner="olapDesigner" @putFilterOnAxis="putFilterOnAxis" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
         <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
 
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
@@ -85,7 +85,7 @@
     <OutputWizard v-if="outputWizardVisible" :visible="outputWizardVisible" :olapVersionsProp="olapVersions" :sbiExecutionId="id" @close="outputWizardVisible = false" />
     <ScenarioWizard v-if="scenarioWizardVisible" :visible="scenarioWizardVisible" :hiddenFormDataProp="hiddenFormDataProp" :sbiExecutionId="id" :olapDesignerProp="olapDesigner" @saveScenario="saveScenario" @close="scenarioWizardVisible = false" />
     <AlgorithmDialog v-if="algorithmDialogVisible" :visible="algorithmDialogVisible" :sbiExecutionId="id" @close="algorithmDialogVisible = false" />
-    <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" :olapDesignerMode="olapDesignerMode" :parameters="parameters" :profileAttributes="profileAttributes" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
+    <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" :olapDesignerMode="olapDesignerMode" :parameters="parameters" :profileAttributes="profileAttributes" :olapDesigner="olapDesigner" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
     <OlapSaveNewVersionDialog :visible="saveVersionDialogVisible" :id="id" @close="saveVersionDialogVisible = false"></OlapSaveNewVersionDialog>
     <OlapDeleteVersionsDialog :visible="deleteVersionDialogVisible" :id="id" :propOlapVersions="olapVersions" @close="deleteVersionDialogVisible = false"></OlapDeleteVersionsDialog>
 </template>
@@ -869,9 +869,7 @@ export default defineComponent({
             this.$store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('documentExecution.olap.scenarioWizard.scenarioUpdated') })
         },
         updateDynamicSlicer(payload: any) {
-            console.log(' >>> PAYLOAD: ', payload)
-            console.log(' >>> OLAD DESINGER: ', this.olapDesigner)
-            this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER = payload.DYNAMIC_SLICER?.map((level: any) => {
+            this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER = payload.DYNAMIC_SLICER?.filter((level: any) => level.DRIVER || level.PROFILE_ATTRIBUTE).map((level: any) => {
                 return {
                     HIERARCHY: level.HIERARCHY,
                     LEVEL: level.LEVEL,

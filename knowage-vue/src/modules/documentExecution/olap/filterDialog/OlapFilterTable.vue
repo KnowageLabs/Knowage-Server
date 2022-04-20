@@ -81,8 +81,6 @@ export default defineComponent({
             })
         },
         remove(level: any) {
-            console.log('LEVEL: ', level)
-            console.log('OPTIONS: ', this.options)
             level.value = ''
             level.DRIVER = null
             level.PROFILE_ATTRIBUTE = null
@@ -96,7 +94,6 @@ export default defineComponent({
                 level.DRIVER = null
                 level.PROFILE_ATTRIBUTE = level.value
             }
-            console.log('ON LEVEL UPDATE: ', level)
         }
     }
 })
