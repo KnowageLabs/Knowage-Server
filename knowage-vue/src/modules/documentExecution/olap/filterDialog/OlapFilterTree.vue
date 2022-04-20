@@ -217,7 +217,7 @@ export default defineComponent({
         setSelectedVisibleMembers(node: iNode) {
             this.expandedKeys[node.key] = true
             if (node.data.visible) this.selectedFilters.push(node.data)
-            else if (node.children) {
+            if (node.children) {
                 for (let i = 0; i < node.children.length; i++) {
                     this.setSelectedVisibleMembers(node.children[i])
                 }

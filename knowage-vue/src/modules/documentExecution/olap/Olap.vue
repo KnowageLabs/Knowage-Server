@@ -838,8 +838,11 @@ export default defineComponent({
                 .catch(() => {})
         },
         async placeMembersOnAxis(payload) {
+            const members = payload.members?.map((member: any) => {
+                return { id: member.id, leaf: member.leaf, name: member.name, uniqueName: member.uniqueName, visible: member.visible }
+            })
             await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/${payload.axis}/placeMembersOnAxis?SBI_EXECUTION_ID=${this.id}`, payload.members, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/${payload.axis}/placeMembersOnAxis?SBI_EXECUTION_ID=${this.id}`, members, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => {})
         },
