@@ -36,7 +36,6 @@
                     </DataTable>
                 </template>
             </Card>
-
             <Toolbar class="kn-toolbar kn-toolbar--secondary p-mx-2">
                 <template #start>
                     <Button v-if="!expandParamsCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandParamsCard = true" />
@@ -99,18 +98,19 @@ export default defineComponent({
     name: 'olap-scenario-wizard',
     components: { Dialog, InlineMessage, Dropdown, Card, Column, DataTable },
     props: { hiddenFormDataProp: { type: Object, required: true }, sbiExecutionId: { type: String }, olapDesignerProp: { type: Object, required: true } },
-    emits: ['close', 'saveScenario'],
+    emits: ['close', 'saveScenario', 'deleteScenario'],
     computed: {
         saveButtonDisabled() {
             let validation = false
             if (this.scenario.VARIABLE) {
                 for (let i = 0; i < this.scenario.VARIABLE.length; ++i) {
-                    if (Object.keys(this.scenario.VARIABLE[i].name).length === 0 || Object.keys(this.scenario.VARIABLE[i].value).length === 0 || this.scenario.MEASURE.length === 0) {
+                    if (Object.keys(this.scenario.VARIABLE[i].name).length === 0 || Object.keys(this.scenario.VARIABLE[i].value).length === 0) {
                         validation = true
                         break
                     }
                 }
             }
+            this.scenario.MEASURE.length === 0 ? (validation = true) : ''
             return validation
         }
     },
@@ -189,6 +189,7 @@ export default defineComponent({
         resetScenarioData() {
             this.scenario = deepcopy(this.descriptor.scenarioTemplate)
             this.selectedCube = {}
+            this.$emit('deleteScenario')
         },
         saveScenario() {
             this.scenario.editCube = this.selectedCube.name
