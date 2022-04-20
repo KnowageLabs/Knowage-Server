@@ -69,6 +69,7 @@
             @showAlgorithmDialog="algorithmDialogVisible = true"
             @undo="undo"
             @showDeleteVersions="deleteVersionDialogVisible = true"
+            @exportExcel="exportExcel"
             @loading="loading = $event"
         />
     </div>
@@ -93,6 +94,7 @@
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { iOlapCustomView, iButton, iOlapFilter, iOlap, iParameter, iProfileAttribute } from './Olap'
+import { downloadDirect } from '@/helpers/commons/fileHelper'
 import olapDescriptor from './OlapDescriptor.json'
 import OlapSidebar from './olapSidebar/OlapSidebar.vue'
 import OlapSortingDialog from './sortingDialog/OlapSortingDialog.vue'
@@ -877,6 +879,16 @@ export default defineComponent({
                     PROFILE_ATTRIBUTE: level.PROFILE_ATTRIBUTE
                 }
             })
+        },
+        exportExcel() {
+            this.$http
+                .get(process.env.VUE_APP_OLAP_PATH + `1.0/model/exceledit?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
+                .then((response: AxiosResponse<any>) => {
+                    let fileName = response.headers['content-disposition'].split('filename="')[1].split('"')[0]
+                    downloadDirect(response.data, fileName, response.headers['content-type'])
+                })
+                .catch(() => {})
+                .finally(() => (this.loading = false))
         }
     }
 })

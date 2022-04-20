@@ -118,7 +118,7 @@
                         <Button :icon="olapLocked ? 'fas fa-lock-open' : 'fas fa-lock'" class="p-button-plain kn-button--secondary" v-tooltip.top="olapLocked ? $t('documentExecution.olap.sidebar.unlockSchema') : $t('documentExecution.olap.sidebar.lockSchema')" @click="changeLock" />
                     </div>
                     <div v-if="olapLocked" class="p-col-4">
-                        <Button icon="fa-solid fa-archive" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.saveAsNewVersion')" :disabled="!isButtonVisible('BUTTON_SAVE_SUBOBJECT')" @click="$emit('showSaveAsNewVersion')" />
+                        <Button icon="fa-solid fa-floppy-disk" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.saveAsNewVersion')" :disabled="!isButtonVisible('BUTTON_SAVE_SUBOBJECT')" @click="$emit('showSaveAsNewVersion')" />
                     </div>
                     <div v-if="olapLocked" class="p-col-4">
                         <Button icon="fa-solid fa-rotate-left" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.undo')" :disabled="!isButtonVisible('BUTTON_UNDO')" @click="$emit('undo')" />
@@ -129,11 +129,11 @@
                     <div class="p-col-4">
                         <Button icon="fa-solid fa-share-from-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.outputWizard')" :disabled="!isButtonVisible('BUTTON_EXPORT_OUTPUT')" @click="$emit('showOutputWizard')" />
                     </div>
-                    <div v-if="olapLocked" class="p-col-4">
-                        <Button icon="fa-solid fa-network-wired" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" :disabled="!isButtonVisible('BUTTON_ALGORITHMS')" @click="$emit('showAlgorithmDialog')" />
-                    </div>
                     <div class="p-col-4">
-                        <Button icon="fa-solid fa-file-excel" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" :disabled="!isButtonVisible('BUTTON_EDITABLE_EXCEL_EXPORT')" />
+                        <Button icon="fa-solid fa-file-excel" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.excel')" :disabled="!isButtonVisible('BUTTON_EDITABLE_EXCEL_EXPORT')" @click="$emit('exportExcel')" />
+                    </div>
+                    <div v-if="olapLocked" class="p-col-4">
+                        <Button icon="fa-solid fa-network-wired" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.alg')" :disabled="!isButtonVisible('BUTTON_ALGORITHMS')" @click="$emit('showAlgorithmDialog')" />
                     </div>
                 </div>
             </div>
@@ -177,7 +177,8 @@ export default defineComponent({
         'undo',
         'showAlgorithmDialog',
         'showDeleteVersions',
-        'loading'
+        'loading',
+        'exportExcel'
     ],
     data() {
         return {
