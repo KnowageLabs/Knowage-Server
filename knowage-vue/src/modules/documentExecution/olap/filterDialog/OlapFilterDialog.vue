@@ -26,7 +26,7 @@
 
         <div v-show="!loading">
             <OlapFilterTree v-if="mode === 'selectFields'" :propFilter="filter" :id="id" :clearTrigger="clearTrigger" :treeLocked="treeLocked" @loading="loading = $event" @filtersChanged="onFiltersChange" @lockTree="treeLocked = true"></OlapFilterTree>
-            <OlapFilterTable v-else :propLevels="levels" :parameters="parameters" :profileAttributes="profileAttributes"></OlapFilterTable>
+            <OlapFilterTable v-else :propFilter="filter" :propLevels="levels" :parameters="parameters" :profileAttributes="profileAttributes"></OlapFilterTable>
         </div>
 
         <template #footer>
@@ -114,9 +114,9 @@ export default defineComponent({
             console.log('LEVELS ON APPLY: ', this.levels)
             let payload = {}
             if (this.propFilter?.type === 'slicer') {
-                payload = { hierarchy: this.propFilter?.filter.selectedHierarchyUniqueName, members: this.selectedFilters, multi: false, type: 'slicer' }
+                payload = { hierarchy: this.propFilter?.filter.selectedHierarchyUniqueName, members: this.selectedFilters, multi: false, type: 'slicer', levels: this.levels }
             } else {
-                payload = { members: this.selectedFilters, type: 'visible', axis: this.propFilter?.filter.axis }
+                payload = { members: this.selectedFilters, type: 'visible', axis: this.propFilter?.filter.axis, levels: this.levels }
             }
             this.$emit('applyFilters', payload)
         },

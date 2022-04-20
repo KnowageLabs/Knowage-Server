@@ -816,6 +816,8 @@ export default defineComponent({
             }
 
             this.formatOlapTable()
+
+            if (this.olapDesignerMode) this.updateMDXQuery(payload)
             this.loading = false
         },
         async sliceOLAP(payload) {
@@ -864,6 +866,11 @@ export default defineComponent({
             this.olapDesigner.template.wrappedObject.olap.SCENARIO = scenario
             this.scenarioWizardVisible = false
             this.$store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('documentExecution.olap.scenarioWizard.scenarioUpdated') })
+        },
+        updateMDXQuery(payload: any) {
+            console.log('PAYLOAD: ', payload)
+            const mdxQuery = this.olap.MDXWITHOUTCF
+            console.log('MDX QUERY: ', mdxQuery)
         }
     }
 })

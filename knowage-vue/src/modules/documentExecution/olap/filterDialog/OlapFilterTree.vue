@@ -10,7 +10,14 @@
         <Tree id="kn-parameter-tree" :class="{ 'olap-filter-tree-locked': treeLocked }" :value="nodes" :metaKeySelection="false" :expandedKeys="expandedKeys" @nodeExpand="loadNodes($event)">
             <template #default="slotProps">
                 <i :class="slotProps.node.customIcon"></i>
-                <Checkbox class="p-ml-2" v-model="selectedFilters" :value="filterType === 'slicer' ? slotProps.node.id : slotProps.node.data" @change="onFiltersSelected" />
+                <Checkbox
+                    class="p-ml-2"
+                    v-model="selectedFilters"
+                    :value="filterType === 'slicer' ? slotProps.node.id : slotProps.node.data"
+                    :disabled="treeLocked && !slotProps.node.data.visible"
+                    v-tooltip="{ value: $t('documentExecution.olap.filterDialog.parentDisabledTooltip'), disabled: !treeLocked || slotProps.node.data.visible }"
+                    @change="onFiltersSelected"
+                />
                 <span>{{ slotProps.node.label }}</span>
             </template>
         </Tree>
@@ -111,6 +118,7 @@ export default defineComponent({
             this.attachContentToTree(parent, content)
             if (this.filterType === 'visible' && !parent) this.setSelectedFiltersForVisibleType()
             this.$emit('loading', false)
+            console.log('NODES: ', this.nodes)
         },
         createNode(el: iFilterNode) {
             const tempNode = {
