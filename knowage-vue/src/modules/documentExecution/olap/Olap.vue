@@ -614,7 +614,7 @@ export default defineComponent({
             await this.$http
                 .post(
                     process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.olapName}/saveOlapTemplate`,
-                    { ...this.olapDesigner.template.wrappedObject, JSONTEMPLATE: { XML_TAG_TEXT_CONTENT: JSON.stringify(this.olapDesigner.template.wrappedObject) } },
+                    { olap: { ...this.olapDesigner.template.wrappedObject.olap, JSONTEMPLATE: { XML_TAG_TEXT_CONTENT: JSON.stringify(this.olapDesigner.template.wrappedObject) } } },
                     { headers: { Accept: 'application/json, text/plain, */*' } }
                 )
                 .then(async () => {
@@ -881,6 +881,7 @@ export default defineComponent({
                     PROFILE_ATTRIBUTE: level.PROFILE_ATTRIBUTE
                 }
             })
+            if (!this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER || this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.length === 0) delete this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER
         },
         exportExcel() {
             this.$http
