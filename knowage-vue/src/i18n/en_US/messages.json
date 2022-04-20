@@ -496,6 +496,7 @@
                 }
             },
             "filterPanel": {
+                "activeLevels": "Active levels",
                 "drop": "Drop here to use as a slicer",
                 "filterPanelEmpty": "Drag the member here if you want to use it as a slicer"
             },
@@ -548,6 +549,7 @@
             "showMdxQuery": "Show MDX Query",
             "showScheduledExecutions": "Show scheduled executions",
             "sidebar": {
+                "alg": "Select an algorithm",
                 "calculatedField": "Calculated field",
                 "calculatedFieldWizard": "Calculated field wizard",
                 "closeDesigner": "Close Designer",
@@ -560,6 +562,7 @@
                 "drillOnDimension": "Drill on dimension",
                 "drillThrough": "Drill Through",
                 "enableCrossNavigation": "Enable crossnavigation",
+                "excel": "Export excel for edit",
                 "exportExcel": "Export excel for edit",
                 "exportOutput": "Export output",
                 "hideSpans": "Hide spans",
@@ -587,9 +590,7 @@
                 "templateEditing": "Template editing",
                 "undo": "Undo",
                 "unlockSchema": "Unlock schema",
-                "whatIfTitle": "What If",
-                "alg": "Select an algorithm",
-                "excel": "Export excel for edit"
+                "whatIfTitle": "What If"
             },
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",

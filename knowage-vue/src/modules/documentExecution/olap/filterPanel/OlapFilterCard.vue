@@ -1,5 +1,5 @@
 <template>
-    <div id="filterCard" class="p-d-flex p-flex-row" v-for="(filter, index) in filterCardList" :key="index">
+    <div id="filterCard" class="p-d-flex p-flex-row" v-for="(filter, index) in filterCardList" :key="index" v-tooltip="{ value: $t('documentExecution.olap.filterPanel.activeLevels') + ': ' + getNumberOfActiveLevels(filter), disabled: getNumberOfActiveLevels(filter) === 0 }">
         <div :id="'filter-' + filter.name" :ref="'filter-' + filter.name" :style="panelDescriptor.style.filterCard" draggable="true" @dragstart="onDragStart($event, filter, 'filter-' + filter.name)" @dragend="removeDragClass('filter-' + filter.name)">
             <Button v-if="filter.hierarchies.length > 1" icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMultiHierarchy', filter)" />
             <span class="p-ml-1"> {{ filter.caption }} </span>
@@ -15,7 +15,7 @@ import panelDescriptor from './OlapFilterPanelDescriptor.json'
 
 export default defineComponent({
     components: {},
-    props: { filterCardList: { type: Array, required: true } },
+    props: { filterCardList: { type: Array, required: true }, olapDesigner: { type: Object } },
     emits: ['dragging', 'dragend', 'showMultiHierarchy', 'openFilterDialog'],
     data() {
         return {
@@ -49,6 +49,15 @@ export default defineComponent({
                 }
             }
             return isActive
+        },
+        getNumberOfActiveLevels(filter: any) {
+            const dynamicSlicers = this.olapDesigner?.template.wrappedObject.olap.DYNAMIC_SLICER
+            if (!dynamicSlicers) return
+            let numberOfActiveLevels = 0
+            for (let i = 0; i < dynamicSlicers.length; i++) {
+                if (dynamicSlicers[i].HIERARCHY === filter.uniqueName) numberOfActiveLevels++
+            }
+            return numberOfActiveLevels
         }
     }
 })

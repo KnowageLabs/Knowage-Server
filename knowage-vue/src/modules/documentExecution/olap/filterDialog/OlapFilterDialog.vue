@@ -59,7 +59,8 @@ export default defineComponent({
         id: { type: String },
         olapDesignerMode: { type: Boolean },
         parameters: { type: Array as PropType<iParameter[]> },
-        profileAttributes: { type: Array as PropType<iProfileAttribute[]> }
+        profileAttributes: { type: Array as PropType<iProfileAttribute[]> },
+        olapDesigner: { type: Object }
     },
     emits: ['close', 'applyFilters'],
     data() {
@@ -88,16 +89,33 @@ export default defineComponent({
             this.loadLevels()
         },
         loadLevels() {
-            console.log('FILTER: ', this.propFilter)
             this.levels = []
             if (this.propFilter) {
                 this.propFilter.filter.hierarchies?.forEach((hierarchy: any) => {
                     hierarchy.levelNames?.forEach((level: string) => {
-                        if (level !== '(All)') this.levels.push({ HIERARCHY: this.propFilter?.filter.uniqueName, LEVEL: level, DRIVER: null, PROFILE_ATTRIBUTE: null, value: null })
+                        if (level !== '(All)') {
+                            this.levels.push({ HIERARCHY: this.propFilter?.filter.uniqueName, LEVEL: level, DRIVER: null, PROFILE_ATTRIBUTE: null, value: null })
+                        }
                     })
                 })
             }
-            console.log('LOADED LEVELS: ', this.levels)
+            this.loadLevelValues()
+        },
+        loadLevelValues() {
+            const dynamicSlicers = this.olapDesigner?.template.wrappedObject.olap.DYNAMIC_SLICER
+
+            dynamicSlicers?.forEach((slicer: any) => {
+                const index = this.levels.findIndex((level: any) => level.LEVEL === slicer.LEVEL && level.HIERARCHY === slicer.HIERARCHY)
+                if (index !== -1) {
+                    if (slicer.DRIVER) {
+                        this.levels[index].value = slicer.DRIVER
+                        this.levels[index].DRIVER = slicer.DRIVER
+                    } else if (slicer.PROFILE_ATTRIBUTE) {
+                        this.levels[index].value = slicer.PROFILE_ATTRIBUTE
+                        this.levels[index].PROFILE_ATTRIBUTE = slicer.PROFILE_ATTRIBUTE
+                    }
+                }
+            })
         },
         clear() {
             this.selectedFilters = []
@@ -112,9 +130,6 @@ export default defineComponent({
             this.mode = 'selectFields'
         },
         apply() {
-            // TODO: Hardcoded multi
-            console.log('LEVELS ON APPLY: ', this.levels)
-
             let payload = {}
             if (this.propFilter?.type === 'slicer') {
                 payload = { hierarchy: this.propFilter?.filter.selectedHierarchyUniqueName, members: this.selectedFilters, multi: false, type: 'slicer', DYNAMIC_SLICER: this.levels }

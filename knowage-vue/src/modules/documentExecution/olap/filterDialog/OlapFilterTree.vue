@@ -118,7 +118,6 @@ export default defineComponent({
             this.attachContentToTree(parent, content)
             if (this.filterType === 'visible' && !parent) this.setSelectedFiltersForVisibleType()
             this.$emit('loading', false)
-            console.log('NODES: ', this.nodes)
         },
         createNode(el: iFilterNode) {
             const tempNode = {
