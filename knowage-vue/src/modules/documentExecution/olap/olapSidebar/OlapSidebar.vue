@@ -111,7 +111,7 @@
                 </div>
             </div>
 
-            <div v-if="whatIfMode && !olapDesignerMode" id="whatif-container" class="kn-flex">
+            <div v-if="olapHasScenario && !olapDesignerMode" id="whatif-container" class="kn-flex">
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.whatIfTitle') }}</label>
                 <div class="p-grid p-mt-1">
                     <div v-if="olapLocked" class="p-col-4">
@@ -155,7 +155,7 @@ import SelectButton from 'primevue/selectbutton'
 export default defineComponent({
     name: 'olap-sidebar',
     components: { SelectButton },
-    props: { olap: { type: Object }, olapDesignerMode: { type: Boolean }, propButtons: { type: Array }, whatIfMode: { type: Boolean } },
+    props: { olap: { type: Object }, olapDesignerMode: { type: Boolean }, propButtons: { type: Array }, whatIfMode: { type: Boolean }, olapHasScenario: { type: Boolean } },
     emits: [
         'openCustomViewDialog',
         'drillTypeChanged',

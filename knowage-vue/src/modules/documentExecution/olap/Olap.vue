@@ -51,6 +51,7 @@
             :olapDesignerMode="olapDesignerMode"
             :propButtons="buttons"
             :whatIfMode="whatIfMode"
+            :olapHasScenario="olapHasScenario"
             @openCustomViewDialog="customViewSaveDialogVisible = true"
             @drillTypeChanged="onDrillTypeChanged"
             @showParentMemberChanged="onShowParentMemberChanged"
@@ -191,7 +192,13 @@ export default defineComponent({
         }
         await this.loadPage()
     },
-    computed: {},
+    computed: {
+        olapHasScenario() {
+            if (this.olapDesigner.template.wrappedObject.olap.SCENARIO) {
+                return true
+            } else return false
+        }
+    },
     watch: {
         async id() {
             await this.loadPage()
@@ -306,12 +313,13 @@ export default defineComponent({
         },
         async loadVersions() {
             this.loading = true
-            await this.$http
-                .get(process.env.VUE_APP_OLAP_PATH + `1.0/version?SBI_EXECUTION_ID=${this.id}`)
-                .then((response: AxiosResponse<any>) => (this.olapVersions = response.data))
-                .catch(() => {})
+            if (this.olapHasScenario) {
+                await this.$http
+                    .get(process.env.VUE_APP_OLAP_PATH + `1.0/version?SBI_EXECUTION_ID=${this.id}`)
+                    .then((response: AxiosResponse<any>) => (this.olapVersions = response.data))
+                    .catch(() => {})
+            }
 
-            this.formatOlapTable()
             this.loading = false
         },
         formatOlapTable() {
