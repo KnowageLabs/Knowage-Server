@@ -587,7 +587,9 @@
                 "templateEditing": "Template editing",
                 "undo": "Undo",
                 "unlockSchema": "Unlock schema",
-                "whatIfTitle": "What If"
+                "whatIfTitle": "What If",
+                "alg": "Select an algorithm",
+                "excel": "Export excel for edit"
             },
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",
