@@ -10,7 +10,7 @@
         <Column class="kn-truncated" :field="'name'" :header="$t('common.name')" :key="'name'"> </Column>
         <Column field="value" :header="$t('documentExecution.olap.filterDialog.driverProfileAttribute')" key="value">
             <template #body="slotProps">
-                <Dropdown class="olap-filter-table-dropdown" v-model="slotProps.data[slotProps.column.props.field]" :options="options" optionValue="value" optionLabel="label" optionGroupValue="value" optionGroupLabel="label" optionGroupChildren="items">
+                <Dropdown class="olap-filter-table-dropdown" v-model="slotProps.data[slotProps.column.props.field]" :options="options" optionValue="value" optionLabel="label" optionGroupValue="value" optionGroupLabel="label" optionGroupChildren="items" @change="onLevelUpdate(slotProps.data)">
                     <template #option="slotProps">
                         <span> {{ slotProps.option.label }} </span>
                     </template>
@@ -37,7 +37,7 @@ import olapFilterDialogDescriptor from './OlapFilterDialogDescriptor.json'
 export default defineComponent({
     name: 'olap-filter-table',
     components: { Column, DataTable, Dropdown },
-    props: { propLevels: { type: Object }, parameters: { type: Array as PropType<iParameter[]> }, profileAttributes: { type: Array as PropType<iProfileAttribute[]> } },
+    props: { propFilter: { type: Object }, propLevels: { type: Object }, parameters: { type: Array as PropType<iParameter[]> }, profileAttributes: { type: Array as PropType<iProfileAttribute[]> } },
     data() {
         return {
             olapFilterDialogDescriptor,
@@ -84,6 +84,11 @@ export default defineComponent({
             console.log('LEVEL: ', level)
             console.log('OPTIONS: ', this.options)
             level.value = ''
+        },
+        onLevelUpdate(level: any) {
+            console.log('ON LEVEL UPDATE: ', level)
+            console.log('ON LEVEL UPDAT FILTER: ', this.propFilter)
+            level.memberUniqueName = this.propFilter?.filter.uniqueName
         }
     }
 })

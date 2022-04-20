@@ -816,6 +816,8 @@ export default defineComponent({
             }
 
             this.formatOlapTable()
+
+            if (this.olapDesignerMode) this.updateMDXQuery(payload)
             this.loading = false
         },
         async sliceOLAP(payload) {
@@ -859,6 +861,11 @@ export default defineComponent({
                     })
                 )
             this.loading = false
+        },
+        updateMDXQuery(payload: any) {
+            console.log('PAYLOAD: ', payload)
+            const mdxQuery = this.olap.MDXWITHOUTCF
+            console.log('MDX QUERY: ', mdxQuery)
         }
     }
 })
