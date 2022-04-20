@@ -13,7 +13,6 @@
 
         <div class="p-d-flex p-flex-column">
             <InlineMessage v-if="showInfo" class="p-m-2" severity="info">{{ $t('documentExecution.olap.scenarioWizard.longInfo') }}</InlineMessage>
-            {{ selectedCube }}
             <div class="p-float-label p-col-12 p-mt-2">
                 <Dropdown id="selectedCube" class="kn-material-input" v-model="selectedCube" :options="cubes" optionLabel="name" @change="onCubeChange" />
                 <label for="selectedCube" class="kn-material-input-label"> {{ $t('documentExecution.olap.scenarioWizard.selectedCube') }} </label>
@@ -28,7 +27,6 @@
                     </Toolbar>
                 </template>
                 <template #content>
-                    {{ scenario.MEASURE }}
                     <DataTable :value="measures" v-model:selection="scenario.MEASURE" class="p-datatable-sm kn-table" dataKey="XML_TAG_TEXT_CONTENT" responsiveLayout="stack" breakpoint="960px" :scrollable="true" scrollHeight="flex">
                         <template #empty>
                             {{ $t('common.info.noDataFound') }}
@@ -52,7 +50,6 @@
             </Toolbar>
             <Card v-show="expandParamsCard" class="p-mx-2 p-mb-2">
                 <template #content>
-                    {{ scenario.VARIABLE }}
                     <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="scenario.VARIABLE" :scrollable="true" scrollHeight="250px" responsiveLayout="stack" breakpoint="960px">
                         <template #empty>
                             {{ $t('managers.datasetManagement.tableEmpty') }}
