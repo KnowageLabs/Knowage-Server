@@ -7,7 +7,7 @@
                 <span> {{ slotProps.index + 1 }} </span>
             </template>
         </Column>
-        <Column class="kn-truncated" :field="'name'" :header="$t('common.name')" :key="'name'"> </Column>
+        <Column class="kn-truncated" :field="'LEVEL'" :header="$t('common.name')" :key="'name'"> </Column>
         <Column field="value" :header="$t('documentExecution.olap.filterDialog.driverProfileAttribute')" key="value">
             <template #body="slotProps">
                 <Dropdown class="olap-filter-table-dropdown" v-model="slotProps.data[slotProps.column.props.field]" :options="options" optionValue="value" optionLabel="label" optionGroupValue="value" optionGroupLabel="label" optionGroupChildren="items" @change="onLevelUpdate(slotProps.data)">
@@ -70,13 +70,13 @@ export default defineComponent({
         },
         loadParameters() {
             this.options[0].items = this.parameters?.map((parameter: iParameter) => {
-                return { ...parameter, value: parameter.label, label: parameter.label }
+                return { ...parameter, value: parameter.label, label: parameter.label, type: 'driver' }
             })
         },
         loadProfileAttributes() {
             this.options[1].items = this.profileAttributes?.map((profileAttribute: iProfileAttribute) => {
                 {
-                    return { ...profileAttribute, value: profileAttribute.attributeName, label: profileAttribute.attributeName }
+                    return { ...profileAttribute, value: profileAttribute.attributeName, label: profileAttribute.attributeName, type: 'profileAttribute' }
                 }
             })
         },
@@ -84,11 +84,19 @@ export default defineComponent({
             console.log('LEVEL: ', level)
             console.log('OPTIONS: ', this.options)
             level.value = ''
+            level.DRIVER = null
+            level.PROFILE_ATTRIBUTE = null
         },
         onLevelUpdate(level: any) {
+            const index = this.parameters?.findIndex((parameter: iParameter) => parameter.label === level.value)
+            if (index !== -1) {
+                level.DRIVER = level.value
+                level.PROFILE_ATTRIBUTE = null
+            } else {
+                level.DRIVER = null
+                level.PROFILE_ATTRIBUTE = level.value
+            }
             console.log('ON LEVEL UPDATE: ', level)
-            console.log('ON LEVEL UPDAT FILTER: ', this.propFilter)
-            level.memberUniqueName = this.propFilter?.filter.uniqueName
         }
     }
 })

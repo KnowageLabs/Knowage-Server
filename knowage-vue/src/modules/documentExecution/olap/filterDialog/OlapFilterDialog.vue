@@ -92,7 +92,9 @@ export default defineComponent({
             this.levels = []
             if (this.propFilter) {
                 this.propFilter.filter.hierarchies?.forEach((hierarchy: any) => {
-                    hierarchy.levelNames?.forEach((level: string) => this.levels.push({ name: level, value: '' }))
+                    hierarchy.levelNames?.forEach((level: string) => {
+                        if (level !== '(All)') this.levels.push({ HIERARCHY: this.propFilter?.filter.uniqueName, LEVEL: level, DRIVER: null, PROFILE_ATTRIBUTE: null, value: null })
+                    })
                 })
             }
             console.log('LOADED LEVELS: ', this.levels)
@@ -112,9 +114,10 @@ export default defineComponent({
         apply() {
             // TODO: Hardcoded multi
             console.log('LEVELS ON APPLY: ', this.levels)
+
             let payload = {}
             if (this.propFilter?.type === 'slicer') {
-                payload = { hierarchy: this.propFilter?.filter.selectedHierarchyUniqueName, members: this.selectedFilters, multi: false, type: 'slicer', levels: this.levels }
+                payload = { hierarchy: this.propFilter?.filter.selectedHierarchyUniqueName, members: this.selectedFilters, multi: false, type: 'slicer', DYNAMIC_SLICER: this.levels }
             } else {
                 payload = { members: this.selectedFilters, type: 'visible', axis: this.propFilter?.filter.axis, levels: this.levels }
             }

@@ -810,14 +810,13 @@ export default defineComponent({
             this.loading = true
             if (payload.type === 'slicer') {
                 delete payload.type
+                if (this.olapDesignerMode) this.updateDynamicSlicer(payload)
                 await this.sliceOLAP(payload)
             } else {
                 await this.placeMembersOnAxis(payload)
             }
 
             this.formatOlapTable()
-
-            if (this.olapDesignerMode) this.updateMDXQuery(payload)
             this.loading = false
         },
         async sliceOLAP(payload) {
@@ -867,10 +866,17 @@ export default defineComponent({
             this.scenarioWizardVisible = false
             this.$store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('documentExecution.olap.scenarioWizard.scenarioUpdated') })
         },
-        updateMDXQuery(payload: any) {
-            console.log('PAYLOAD: ', payload)
-            const mdxQuery = this.olap.MDXWITHOUTCF
-            console.log('MDX QUERY: ', mdxQuery)
+        updateDynamicSlicer(payload: any) {
+            console.log(' >>> PAYLOAD: ', payload)
+            console.log(' >>> OLAD DESINGER: ', this.olapDesigner)
+            this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER = payload.DYNAMIC_SLICER?.map((level: any) => {
+                return {
+                    HIERARCHY: level.HIERARCHY,
+                    LEVEL: level.LEVEL,
+                    DRIVER: level.DRIVER,
+                    PROFILE_ATTRIBUTE: level.PROFILE_ATTRIBUTE
+                }
+            })
         }
     }
 })
