@@ -1,4 +1,5 @@
 <template>
+    {{ selectedValues }}
     <DataTable
         class="p-datatable-sm kn-table p-m-2"
         :paginator="true"
@@ -7,7 +8,7 @@
         :loading="loading"
         v-model:filters="filters"
         v-model:selection="selectedValues"
-        :selectionMode="['IN', 'NOT IN'].includes(filterOperator) ? false : 'single'"
+        :selectionMode="['CONTAINS', 'NOT CONTAINS', 'IN', 'NOT IN'].includes(filterOperator) ? false : 'single'"
         filterDisplay="menu"
         responsiveLayout="stack"
         breakpoint="960px"
@@ -21,7 +22,7 @@
                 {{ $t('common.info.noDataFound') }}
             </div>
         </template>
-        <Column :selectionMode="['IN', 'NOT IN'].includes(filterOperator) ? 'multiple' : 'single'" :headerStyle="QBEFilterDialogDescriptor.selectionColumnHeaderStyle"></Column>
+        <Column :selectionMode="['CONTAINS', 'NOT CONTAINS', 'IN', 'NOT IN'].includes(filterOperator) ? 'multiple' : 'single'" :headerStyle="QBEFilterDialogDescriptor.selectionColumnHeaderStyle"></Column>
         <Column v-for="column in columns" :key="column.header" :field="column.dataIndex" :header="column.header" :sortable="true">
             <template #filter="{filterModel}">
                 <InputText v-model="filterModel.value" class="p-column-filter"></InputText>
@@ -77,7 +78,7 @@ export default defineComponent({
         },
         onSelect() {
             let tempSelectedValues = [] as string[]
-            if (['IN', 'NOT IN'].includes(this.filterOperator)) {
+            if (['CONTAINS', 'NOT CONTAINS', 'IN', 'NOT IN'].includes(this.filterOperator)) {
                 tempSelectedValues = this.selectedValues.map((value: any) => '' + value.column_1)
             } else {
                 tempSelectedValues = []
