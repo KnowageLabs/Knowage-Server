@@ -918,9 +918,10 @@ export default defineComponent({
         },
         handleTableDoubleClick(event: any) {
             console.log('DOUBLE CLICK EVENT: ', event)
-            if (!this.olapDesignerMode || !event.target.attributes.cell) return
+            if (!this.olapDesignerMode || !event.target.attributes.cell || this.checkIfVersionIsSet()) return
             console.log('EVENT CELL: ', event.target.attributes.cell)
-        }
+        },
+        checkIfVersionIsSet() {}
     }
 })
 </script>
