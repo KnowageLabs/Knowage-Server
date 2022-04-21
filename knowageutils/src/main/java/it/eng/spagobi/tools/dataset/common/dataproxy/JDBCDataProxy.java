@@ -377,8 +377,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				timeToExecuteStatement.stop();
 			}
 			long stop = System.currentTimeMillis();
-			UserProfile userP = UserProfileManager.getProfile();
-			LogMF.info(logger, "Executed query:\n{0} - Executed time: [" + (stop - start) + " ms] , user: [" + userP.getUserId() + "]", sqlQuery);
+			LogMF.info(logger, "Executed query:\n{0} - Executed time: [" + (stop - start) + " ms]", sqlQuery);
 			LogMF.debug(logger, "Executed query:\n{0}", sqlQuery);
 			return resultSet;
 		} catch (SQLException e) {
