@@ -25,7 +25,7 @@
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
             <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
             <div id="table-container" class="kn-flex" :style="olapDescriptor.style.tableContainer">
-                <div id="olap-table" class="kn-flex kn-olap-table" ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
+                <div id="olap-table" class="kn-flex kn-olap-table" ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick" @dblclick="handleTableDoubleClick"></div>
             </div>
         </div>
 
@@ -915,6 +915,11 @@ export default defineComponent({
                     }
                 }
             }
+        },
+        handleTableDoubleClick(event: any) {
+            console.log('DOUBLE CLICK EVENT: ', event)
+            if (!this.olapDesignerMode || !event.target.attributes.cell) return
+            console.log('EVENT CELL: ', event.target.attributes.cell)
         }
     }
 })
