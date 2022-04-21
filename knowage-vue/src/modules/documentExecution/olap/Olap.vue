@@ -21,12 +21,7 @@
 
         <FilterPanel :olapProp="olap" :olapDesigner="olapDesigner" @putFilterOnAxis="putFilterOnAxis" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
         <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
-        <div id="whatif-input" ref="whatifInput" class="p-inputgroup">
-            <Button label="f(x)" class="kn-button " />
-            <InputText v-model="whatifInputNewValue" @keyup.enter="onWhatifInput" />
-            <InputText v-model="whatifInputOldValue" :disabled="true" />
-            <Button icon="pi pi-times" class="kn-button--secondary" @click="closeWhatifInput" />
-        </div>
+
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
             <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
             <div id="table-container" class="kn-flex" :style="olapDescriptor.style.tableContainer">
@@ -80,6 +75,12 @@
             @exportExcel="exportExcel"
             @loading="loading = $event"
         />
+    </div>
+
+    <div id="whatif-input" ref="whatifInput" class="p-inputgroup">
+        <InputText v-model="whatifInputNewValue" @keyup.enter="onWhatifInput" />
+        <InputText v-model="whatifInputOldValue" :disabled="true" />
+        <Button icon="pi pi-times" class="kn-button--secondary" @click="closeWhatifInput" />
     </div>
 
     <!-- DIALOGS ------------------------------------------->
@@ -953,8 +954,8 @@ export default defineComponent({
             // @ts-ignore
             this.$refs.whatifInput.style.display = 'none'
         },
-        async onWhatifInput(event) {
-            let postData = { expression: event.target.value }
+        async onWhatifInput() {
+            let postData = { expression: this.whatifInputNewValue }
 
             this.loading = true
             await this.$http
