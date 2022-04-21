@@ -923,23 +923,37 @@ export default defineComponent({
             }
         },
         handleTableDoubleClick(event: any) {
-            console.log('DOUBLE CLICK EVENT: ', event)
-            if (!event.target.attributes.cell || this.checkIfVersionIsSet()) return
-            console.log('EVENT CELL: ', event.target.attributes, event.target.attributes.value)
-            console.log('x', event.pageX, 'y', event.pageY)
-            console.log('ref', this.$refs.whatifInput)
-            // @ts-ignore
-            this.$refs.whatifInput.style.top = `${event.pageY - 5}px`
-            // this.$refs.whatifInput.style.top = `${event.pageY - 80}px`
-            // @ts-ignore
-            this.$refs.whatifInput.style.left = `${event.pageX - 20}px`
+            // console.log('DOUBLE CLICK EVENT: ', event)
+            // if (!event.target.attributes.cell || this.checkIfVersionIsSet()) return
+            // console.log('EVENT CELL: ', event.target.attributes, event.target.attributes.value)
+            // console.log('x', event.pageX, 'y', event.pageY)
+            // console.log('ref', this.$refs.whatifInput)
 
-            if (event.target.attributes.cell) {
+            if (!event.target.attributes.cell) return
+
+            if (!this.checkIfVersionIsSet()) {
+                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
+            } else {
+                // @ts-ignore
+                this.$refs.whatifInput.style.top = `${event.pageY - 5}px`
+                // @ts-ignore
+                this.$refs.whatifInput.style.left = `${event.pageX - 20}px`
+
                 this.whatifInputNewValue = event.target.attributes.value.value
                 this.whatifInputOldValue = event.target.attributes.value.value
             }
+            console.log('EVENT CELL: ', event.target.attributes.cell)
         },
-        checkIfVersionIsSet() {}
+        checkIfVersionIsSet() {
+            console.log('THIS OLAP: ', this.olap)
+            let versionIsSet = false
+            for (let i = 0; i < this.olap.filters.length; i++) {
+                if (this.olap.filters[i].uniqueName === '[Version]') {
+                    versionIsSet = this.olap.filters[i].hierarchies[0].slicers.length > 0
+                }
+            }
+            return versionIsSet
+        }
     }
 })
 </script>
