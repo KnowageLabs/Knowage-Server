@@ -470,6 +470,7 @@ export default defineComponent({
             this.loading = false
         },
         async putFilterOnAxis(fromAxis, filter) {
+            if (fromAxis === -1) this.removeFilterLevels(filter)
             var toSend = { fromAxis: fromAxis, hierarchy: filter.selectedHierarchyUniqueName, toAxis: filter.axis }
             this.loading = true
             await this.$http
@@ -905,6 +906,15 @@ export default defineComponent({
                 })
                 .catch(() => {})
                 .finally(() => (this.loading = false))
+        },
+        removeFilterLevels(filter: any) {
+            if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER) {
+                for (let i = this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.length - 1; i >= 0; i--) {
+                    if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER[i].HIERARCHY === filter.uniqueName) {
+                        this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.splice(i, 1)
+                    }
+                }
+            }
         }
     }
 })

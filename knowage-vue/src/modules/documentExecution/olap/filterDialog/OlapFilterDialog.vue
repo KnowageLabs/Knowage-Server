@@ -18,7 +18,7 @@
             <span v-else>{{ $t('documentExecution.olap.filterDialog.infoMessage') }}</span>
         </Message>
 
-        <SelectButton v-if="olapDesignerMode && !loading" id="olap-filter-select-buttons" class="p-ml-auto p-mr-4" v-model="mode" :options="olapFilterDialogDescriptor.selectButtonOptions" optionValue="value">
+        <SelectButton v-if="olapDesignerMode && !loading && propFilter?.type === 'slicer'" id="olap-filter-select-buttons" class="p-ml-auto p-mr-4" v-model="mode" :options="olapFilterDialogDescriptor.selectButtonOptions" optionValue="value">
             <template #option="slotProps">
                 <span>{{ $t(slotProps.option.label) }}</span>
             </template>
@@ -137,6 +137,7 @@ export default defineComponent({
                 payload = { members: this.selectedFilters, type: 'visible', axis: this.propFilter?.filter.axis, levels: this.levels }
             }
             this.$emit('applyFilters', payload)
+            this.mode = 'selectFields'
         },
         onFiltersChange(values: string[]) {
             this.selectedFilters = values
