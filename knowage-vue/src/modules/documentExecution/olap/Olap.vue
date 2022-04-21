@@ -21,12 +21,7 @@
 
         <FilterPanel :olapProp="olap" :olapDesigner="olapDesigner" @putFilterOnAxis="putFilterOnAxis" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
         <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
-        <div id="whatif-input" ref="whatifInput" class="p-inputgroup">
-            <Button label="f(x)" class="kn-button " />
-            <InputText v-model="whatifInputNewValue" @keyup.enter="onWhatifInput" />
-            <InputText v-model="whatifInputOldValue" :disabled="true" />
-            <Button icon="pi pi-times" class="kn-button--secondary" @click="closeWhatifInput" />
-        </div>
+
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
             <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
             <div id="table-container" class="kn-flex" :style="olapDescriptor.style.tableContainer">
@@ -80,6 +75,12 @@
             @exportExcel="exportExcel"
             @loading="loading = $event"
         />
+    </div>
+
+    <div id="whatif-input" ref="whatifInput" class="p-inputgroup">
+        <InputText v-model="whatifInputNewValue" @keyup.enter="onWhatifInput" />
+        <InputText v-model="whatifInputOldValue" :disabled="true" />
+        <Button icon="pi pi-times" class="kn-button--secondary" @click="closeWhatifInput" />
     </div>
 
     <!-- DIALOGS ------------------------------------------->
@@ -912,14 +913,18 @@ export default defineComponent({
             if (!this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER || this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.length === 0) delete this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER
         },
         exportExcel() {
-            this.$http
-                .get(process.env.VUE_APP_OLAP_PATH + `1.0/model/exceledit?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
-                .then((response: AxiosResponse<any>) => {
-                    let fileName = response.headers['content-disposition'].split('filename="')[1].split('"')[0]
-                    downloadDirect(response.data, fileName, response.headers['content-type'])
-                })
-                .catch(() => {})
-                .finally(() => (this.loading = false))
+            if (this.checkIfVersionIsSet()) {
+                this.$http
+                    .get(process.env.VUE_APP_OLAP_PATH + `1.0/model/exceledit?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
+                    .then((response: AxiosResponse<any>) => {
+                        let fileName = response.headers['content-disposition'].split('filename="')[1].split('"')[0]
+                        downloadDirect(response.data, fileName, response.headers['content-type'])
+                    })
+                    .catch(() => {})
+                    .finally(() => (this.loading = false))
+            } else {
+                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
+            }
         },
         removeFilterLevels(filter: any) {
             if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER) {
@@ -931,7 +936,7 @@ export default defineComponent({
             }
         },
         handleTableDoubleClick(event: any) {
-            // console.log('DOUBLE CLICK EVENT: ', event)
+            console.log('DOUBLE CLICK EVENT: ', event)
             // if (!event.target.attributes.cell || this.checkIfVersionIsSet()) return
             // console.log('EVENT CELL: ', event.target.attributes, event.target.attributes.value)
             // console.log('x', event.pageX, 'y', event.pageY)
@@ -942,10 +947,11 @@ export default defineComponent({
             if (!this.checkIfVersionIsSet()) {
                 return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
             } else {
+                console.log(this.$route)
                 // @ts-ignore
-                this.$refs.whatifInput.style.top = `${event.pageY - 5}px`
+                this.$refs.whatifInput.style.top = `${event.clientY - 5}px`
                 // @ts-ignore
-                this.$refs.whatifInput.style.left = `${event.pageX - 20}px`
+                this.$refs.whatifInput.style.left = `${event.clientX - 20}px`
                 // @ts-ignore
                 this.$refs.whatifInput.style.display = 'flex'
 
@@ -959,8 +965,8 @@ export default defineComponent({
             // @ts-ignore
             this.$refs.whatifInput.style.display = 'none'
         },
-        async onWhatifInput(event) {
-            let postData = { expression: event.target.value }
+        async onWhatifInput() {
+            let postData = { expression: this.whatifInputNewValue }
 
             this.loading = true
             await this.$http
