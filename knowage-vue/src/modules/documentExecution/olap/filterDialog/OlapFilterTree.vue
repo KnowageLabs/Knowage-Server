@@ -6,10 +6,9 @@
         <Message v-if="selectedAncestorsWarningVisible" class="p-m-4" severity="warn" :closable="false" :style="olapFilterDialogDescriptor.styles.message">
             {{ $t('documentExecution.olap.filterDialog.ancestorDescendantWarning') }}
         </Message>
-        <InputText v-if="!treeLocked" class="kn-material-input" v-model.trim="searchWord" type="text" :placeholder="$t('common.search')" @input="searchTree" />
+        <InputText v-if="!treeLocked" id="olap-filter-tree-search" class="kn-material-input" v-model.trim="searchWord" type="text" :placeholder="$t('common.search')" @input="searchTree" />
         <Tree id="kn-parameter-tree" :class="{ 'olap-filter-tree-locked': treeLocked }" :value="nodes" :metaKeySelection="false" :expandedKeys="expandedKeys" @nodeExpand="loadNodes($event)">
             <template #default="slotProps">
-                <i :class="slotProps.node.customIcon"></i>
                 <Checkbox
                     class="p-ml-2"
                     v-model="selectedFilters"
@@ -127,8 +126,7 @@ export default defineComponent({
                 children: [] as iNode[],
                 data: el,
                 style: this.olapFilterDialogDescriptor.node.style,
-                leaf: this.treeLocked ? true : el.leaf,
-                customIcon: el.leaf ? 'fa fa-list-alt' : ''
+                leaf: this.treeLocked ? true : el.leaf
             } as iNode
             tempNode.children = el.children?.map((child: iFilterNode) => {
                 return this.createNode(child)
@@ -238,5 +236,9 @@ export default defineComponent({
 .olap-filter-tree-locked .p-tree-toggler-icon {
     display: none;
     pointer-events: none;
+}
+
+#olap-filter-tree-search {
+    width: 30%;
 }
 </style>

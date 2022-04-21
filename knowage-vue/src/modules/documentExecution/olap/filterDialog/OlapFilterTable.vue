@@ -63,6 +63,7 @@ export default defineComponent({
         this.loadLevels()
         this.loadParameters()
         this.loadProfileAttributes()
+        this.removeEmptyOptions()
     },
     methods: {
         loadLevels() {
@@ -79,6 +80,10 @@ export default defineComponent({
                     return { ...profileAttribute, value: profileAttribute.attributeName, label: profileAttribute.attributeName, type: 'profileAttribute' }
                 }
             })
+        },
+        removeEmptyOptions() {
+            if (this.options[1].items.length === 0) this.options.splice(1, 1)
+            if (this.options[0].items.length === 0) this.options.splice(0, 1)
         },
         remove(level: any) {
             level.value = ''
