@@ -1,5 +1,4 @@
 <template>
-    {{ selectedValues }}
     <DataTable
         class="p-datatable-sm kn-table p-m-2"
         :paginator="true"
