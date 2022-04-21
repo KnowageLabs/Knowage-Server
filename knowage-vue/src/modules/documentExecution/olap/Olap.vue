@@ -23,7 +23,7 @@
         <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
         <div id="whatif-input" ref="whatifInput" class="p-inputgroup">
             <Button label="f(x)" class="kn-button " />
-            <InputText v-model="whatifInputNewValue" />
+            <InputText v-model="whatifInputNewValue" @keyup.enter="onWhatifInput" />
             <InputText v-model="whatifInputOldValue" :disabled="true" />
             <Button icon="pi pi-times" class="kn-button--secondary" @click="closeWhatifInput" />
         </div>
@@ -191,7 +191,8 @@ export default defineComponent({
             deleteVersionDialogVisible: false,
             whatIfMode: false,
             whatifInputNewValue: 0 as Number,
-            whatifInputOldValue: 0 as Number
+            whatifInputOldValue: 0 as Number,
+            whatifInputOrdinal: 0 as Number
         }
     },
     async created() {
@@ -944,12 +945,28 @@ export default defineComponent({
 
                 this.whatifInputNewValue = event.target.attributes.value.value
                 this.whatifInputOldValue = event.target.attributes.value.value
+                this.whatifInputOrdinal = event.target.attributes.ordinal.value
             }
-            console.log('EVENT CELL: ', event.target.attributes.cell)
+            console.log('EVENT CELL: ', event.target.attributes)
         },
         closeWhatifInput() {
             // @ts-ignore
             this.$refs.whatifInput.style.display = 'none'
+        },
+        async onWhatifInput(event) {
+            let postData = { expression: event.target.value }
+
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/setValue/${this.whatifInputOrdinal}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .then((response: AxiosResponse<any>) => {
+                    this.olap = response.data
+                    this.closeWhatifInput()
+                })
+                .catch(() => {})
+                .finally(() => (this.loading = false))
+
+            this.formatOlapTable()
         },
         checkIfVersionIsSet() {
             console.log('THIS OLAP: ', this.olap)
