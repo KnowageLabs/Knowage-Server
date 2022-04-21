@@ -63,130 +63,132 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import bussinessModelDescriptor from '@/modules/managers/businessModelCatalogue/metaweb/businessModel/MetawebBusinessModelDescriptor.json'
-    import Listbox from 'primevue/listbox'
+import { defineComponent } from 'vue'
+import bussinessModelDescriptor from '@/modules/managers/businessModelCatalogue/metaweb/businessModel/MetawebBusinessModelDescriptor.json'
+import Listbox from 'primevue/listbox'
 
-    export default defineComponent({
-        components: { Listbox },
-        props: { sourceArray: { type: Array, required: true }, targetArray: { type: Array, required: true }, useMultipleTablesFromSameSource: Boolean },
-        emits: ['dropEnd', 'relationshipDeleted'],
-        data() {
-            return {
-                bussinessModelDescriptor,
-                sourceModel: [] as any,
-                targetModel: [] as any,
-                associatedItem: '',
-                expandSummary: true
-            }
-        },
-        created() {
-            this.setAssociatedItem()
-            this.targetModel = this.targetArray
-            this.sourceModel = this.sourceArray
-        },
-        watch: {
-            targetArray() {
-                this.targetModel = this.targetArray
-            },
-            sourceArray() {
-                this.sourceModel = this.sourceArray
-            }
-        },
-        methods: {
-            setAssociatedItem() {
-                if (!this.associatedItem) {
-                    this.associatedItem = 'links'
-                }
-            },
-            onDragStart(event, elementId) {
-                event.dataTransfer.setData('text', elementId.split('-')[1])
-                event.dataTransfer.dropEffect = 'move'
-                event.dataTransfer.effectAllowed = 'move'
-                // @ts-ignore
-                this.$refs[`${elementId}`].classList.add('associator-dragging')
-            },
-            removeDragClass(elementId) {
-                // @ts-ignore
-                this.$refs[`${elementId}`].classList.remove('associator-dragging')
-            },
-            setDropzoneClass(addClass, elementId) {
-                // @ts-ignore
-                addClass ? this.$refs[`${elementId}`].classList.add('associator-hover') : this.$refs[`${elementId}`].classList.remove('associator-hover')
-            },
-            setDropErrorClass(elementId) {
-                // @ts-ignore
-                this.$refs[`${elementId}`].classList.add('associator-drop-error')
-                setTimeout(() => {
-                    // @ts-ignore
-                    this.$refs[`${elementId}`].classList.remove('associator-drop-error')
-                }, 500)
-            },
-            beforeDrop(source, target) {
-                if (target.links) {
-                    for (var i = 0; i < target.links.length; i++) {
-                        if (source.tableName === target.links[i].tableName) {
-                            return false
-                        }
-                    }
-                }
-                return true
-            },
-            onDrop(event, elementId, targetElement) {
-                // @ts-ignore
-                this.$refs[`${elementId}`].classList.remove('associator-hover')
-                var data = event.dataTransfer.getData('text')
-                var executeDrop = true
-                this.useMultipleTablesFromSameSource ? (executeDrop = this.beforeDrop(this.sourceModel[data], targetElement)) : ''
-                if (executeDrop != false) {
-                    if (targetElement[this.associatedItem] == undefined) {
-                        targetElement[this.associatedItem] = []
-                    }
-                    if (targetElement[this.associatedItem].indexOf(this.sourceModel[data]) != -1) {
-                        this.setDropErrorClass(elementId)
-                    } else {
-                        targetElement[this.associatedItem].push(this.sourceModel[data])
-                        this.$emit('dropEnd', event, this.sourceModel[data], targetElement)
-                    }
-                } else {
-                    this.setDropErrorClass(elementId)
-                }
-            },
-            deleteRelationship(item, rel?) {
-                rel == undefined ? (item[this.associatedItem] = []) : item[this.associatedItem].splice(rel, 1)
-                this.$emit('relationshipDeleted')
-            }
+export default defineComponent({
+    components: { Listbox },
+    props: { sourceArray: { type: Array, required: true }, targetArray: { type: Array, required: true }, useMultipleTablesFromSameSource: Boolean },
+    emits: ['dropEnd', 'relationshipDeleted'],
+    data() {
+        return {
+            bussinessModelDescriptor,
+            sourceModel: [] as any,
+            targetModel: [] as any,
+            associatedItem: '',
+            expandSummary: true
         }
-    })
+    },
+    created() {
+        this.setAssociatedItem()
+        this.targetModel = this.targetArray
+        this.sourceModel = this.sourceArray
+    },
+    watch: {
+        targetArray() {
+            this.targetModel = this.targetArray
+        },
+        sourceArray() {
+            this.sourceModel = this.sourceArray
+        }
+    },
+    methods: {
+        setAssociatedItem() {
+            if (!this.associatedItem) {
+                this.associatedItem = 'links'
+            }
+        },
+        onDragStart(event, elementId) {
+            event.dataTransfer.setData('text', elementId.split('-')[1])
+            event.dataTransfer.dropEffect = 'move'
+            event.dataTransfer.effectAllowed = 'move'
+            // @ts-ignore
+            this.$refs[`${elementId}`].classList.add('associator-dragging')
+        },
+        removeDragClass(elementId) {
+            // @ts-ignore
+            this.$refs[`${elementId}`].classList.remove('associator-dragging')
+        },
+        setDropzoneClass(addClass, elementId) {
+            // @ts-ignore
+            addClass ? this.$refs[`${elementId}`].classList.add('associator-hover') : this.$refs[`${elementId}`].classList.remove('associator-hover')
+        },
+        setDropErrorClass(elementId) {
+            // @ts-ignore
+            this.$refs[`${elementId}`].classList.add('associator-drop-error')
+            setTimeout(() => {
+                // @ts-ignore
+                this.$refs[`${elementId}`].classList.remove('associator-drop-error')
+            }, 500)
+        },
+        beforeDrop(source, target) {
+            if (target.links) {
+                for (var i = 0; i < target.links.length; i++) {
+                    if (source.tableName === target.links[i].tableName) {
+                        return false
+                    }
+                }
+            }
+            return true
+        },
+        onDrop(event, elementId, targetElement) {
+            event.preventDefault()
+            event.stopPropagation()
+            // @ts-ignore
+            this.$refs[`${elementId}`].classList.remove('associator-hover')
+            var data = event.dataTransfer.getData('text')
+            var executeDrop = true
+            this.useMultipleTablesFromSameSource ? (executeDrop = this.beforeDrop(this.sourceModel[data], targetElement)) : ''
+            if (executeDrop != false) {
+                if (targetElement[this.associatedItem] == undefined) {
+                    targetElement[this.associatedItem] = []
+                }
+                if (targetElement[this.associatedItem].indexOf(this.sourceModel[data]) != -1) {
+                    this.setDropErrorClass(elementId)
+                } else {
+                    targetElement[this.associatedItem].push(this.sourceModel[data])
+                    this.$emit('dropEnd', event, this.sourceModel[data], targetElement)
+                }
+            } else {
+                this.setDropErrorClass(elementId)
+            }
+        },
+        deleteRelationship(item, rel?) {
+            rel == undefined ? (item[this.associatedItem] = []) : item[this.associatedItem].splice(rel, 1)
+            this.$emit('relationshipDeleted')
+        }
+    }
+})
 </script>
 <style lang="scss">
-    .associator-dragging {
-        background-color: #bbd6ed;
-        border: 1px dashed;
-    }
-    .associator-hover {
-        background-color: rgba(128, 128, 128, 0.32);
-        border: 1px dashed;
-    }
-    .associator-drop-error {
-        background-color: rgba(255, 0, 0, 0.29);
-        border: 1px dashed red;
-    }
-    .associator-block-hover {
-        pointer-events: none !important;
-    }
-    .associator-enable-hover {
-        pointer-events: auto !important;
-    }
-    .associator-target-list-item {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
-        padding: 0.75rem 0.75rem;
-        border-bottom: 1px solid #f2f2f2;
-    }
-    .associator-list .p-listbox-list-wrapper {
-        height: 100%;
-    }
+.associator-dragging {
+    background-color: #bbd6ed;
+    border: 1px dashed;
+}
+.associator-hover {
+    background-color: rgba(128, 128, 128, 0.32);
+    border: 1px dashed;
+}
+.associator-drop-error {
+    background-color: rgba(255, 0, 0, 0.29);
+    border: 1px dashed red;
+}
+.associator-block-hover {
+    pointer-events: none !important;
+}
+.associator-enable-hover {
+    pointer-events: auto !important;
+}
+.associator-target-list-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0.75rem 0.75rem;
+    border-bottom: 1px solid #f2f2f2;
+}
+.associator-list .p-listbox-list-wrapper {
+    height: 100%;
+}
 </style>
