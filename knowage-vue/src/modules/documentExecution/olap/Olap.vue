@@ -913,14 +913,18 @@ export default defineComponent({
             if (!this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER || this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.length === 0) delete this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER
         },
         exportExcel() {
-            this.$http
-                .get(process.env.VUE_APP_OLAP_PATH + `1.0/model/exceledit?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
-                .then((response: AxiosResponse<any>) => {
-                    let fileName = response.headers['content-disposition'].split('filename="')[1].split('"')[0]
-                    downloadDirect(response.data, fileName, response.headers['content-type'])
-                })
-                .catch(() => {})
-                .finally(() => (this.loading = false))
+            if (this.checkIfVersionIsSet()) {
+                this.$http
+                    .get(process.env.VUE_APP_OLAP_PATH + `1.0/model/exceledit?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
+                    .then((response: AxiosResponse<any>) => {
+                        let fileName = response.headers['content-disposition'].split('filename="')[1].split('"')[0]
+                        downloadDirect(response.data, fileName, response.headers['content-type'])
+                    })
+                    .catch(() => {})
+                    .finally(() => (this.loading = false))
+            } else {
+                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
+            }
         },
         removeFilterLevels(filter: any) {
             if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER) {
@@ -932,7 +936,7 @@ export default defineComponent({
             }
         },
         handleTableDoubleClick(event: any) {
-            // console.log('DOUBLE CLICK EVENT: ', event)
+            console.log('DOUBLE CLICK EVENT: ', event)
             // if (!event.target.attributes.cell || this.checkIfVersionIsSet()) return
             // console.log('EVENT CELL: ', event.target.attributes, event.target.attributes.value)
             // console.log('x', event.pageX, 'y', event.pageY)
@@ -943,10 +947,11 @@ export default defineComponent({
             if (!this.checkIfVersionIsSet()) {
                 return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
             } else {
+                console.log(this.$route)
                 // @ts-ignore
-                this.$refs.whatifInput.style.top = `${event.pageY - 5}px`
+                this.$refs.whatifInput.style.top = `${event.clientY - 5}px`
                 // @ts-ignore
-                this.$refs.whatifInput.style.left = `${event.pageX - 20}px`
+                this.$refs.whatifInput.style.left = `${event.clientX - 20}px`
                 // @ts-ignore
                 this.$refs.whatifInput.style.display = 'flex'
 
