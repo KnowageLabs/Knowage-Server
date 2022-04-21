@@ -21,7 +21,11 @@
 
         <FilterPanel :olapProp="olap" :olapDesigner="olapDesigner" @putFilterOnAxis="putFilterOnAxis" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
         <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
-
+        <div id="whatif-input" ref="whatifInput" class="p-inputgroup">
+            <Button label="f(x)" class="kn-button " />
+            <InputText v-model="whatifInputNewValue" />
+            <InputText v-model="whatifInputOldValue" :disabled="true" />
+        </div>
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
             <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
             <div id="table-container" class="kn-flex" :style="olapDescriptor.style.tableContainer">
@@ -184,7 +188,9 @@ export default defineComponent({
             profileAttributes: [] as iProfileAttribute[],
             saveVersionDialogVisible: false,
             deleteVersionDialogVisible: false,
-            whatIfMode: false
+            whatIfMode: false,
+            whatifInputNewValue: 0 as Number,
+            whatifInputOldValue: 0 as Number
         }
     },
     async created() {
@@ -918,8 +924,20 @@ export default defineComponent({
         },
         handleTableDoubleClick(event: any) {
             console.log('DOUBLE CLICK EVENT: ', event)
-            if (!this.olapDesignerMode || !event.target.attributes.cell || this.checkIfVersionIsSet()) return
-            console.log('EVENT CELL: ', event.target.attributes.cell)
+            if (!event.target.attributes.cell || this.checkIfVersionIsSet()) return
+            console.log('EVENT CELL: ', event.target.attributes, event.target.attributes.value)
+            console.log('x', event.pageX, 'y', event.pageY)
+            console.log('ref', this.$refs.whatifInput)
+            // @ts-ignore
+            this.$refs.whatifInput.style.top = `${event.pageY - 5}px`
+            // this.$refs.whatifInput.style.top = `${event.pageY - 80}px`
+            // @ts-ignore
+            this.$refs.whatifInput.style.left = `${event.pageX - 20}px`
+
+            if (event.target.attributes.cell) {
+                this.whatifInputNewValue = event.target.attributes.value.value
+                this.whatifInputOldValue = event.target.attributes.value.value
+            }
         },
         checkIfVersionIsSet() {}
     }
@@ -1077,5 +1095,12 @@ export default defineComponent({
             background-color: white;
         }
     }
+}
+
+#whatif-input {
+    width: 358px;
+    height: 22px;
+    position: absolute;
+    z-index: 99999;
 }
 </style>
