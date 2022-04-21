@@ -25,6 +25,7 @@
             <Button label="f(x)" class="kn-button " />
             <InputText v-model="whatifInputNewValue" />
             <InputText v-model="whatifInputOldValue" :disabled="true" />
+            <Button icon="pi pi-times" class="kn-button--secondary" @click="closeWhatifInput" />
         </div>
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
             <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
@@ -938,11 +939,17 @@ export default defineComponent({
                 this.$refs.whatifInput.style.top = `${event.pageY - 5}px`
                 // @ts-ignore
                 this.$refs.whatifInput.style.left = `${event.pageX - 20}px`
+                // @ts-ignore
+                this.$refs.whatifInput.style.display = 'flex'
 
                 this.whatifInputNewValue = event.target.attributes.value.value
                 this.whatifInputOldValue = event.target.attributes.value.value
             }
             console.log('EVENT CELL: ', event.target.attributes.cell)
+        },
+        closeWhatifInput() {
+            // @ts-ignore
+            this.$refs.whatifInput.style.display = 'none'
         },
         checkIfVersionIsSet() {
             console.log('THIS OLAP: ', this.olap)
@@ -1115,6 +1122,7 @@ export default defineComponent({
     width: 358px;
     height: 22px;
     position: absolute;
+    display: none;
     z-index: 99999;
 }
 </style>
