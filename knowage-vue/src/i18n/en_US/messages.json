@@ -598,6 +598,7 @@
                 "unlockSchema": "Unlock schema",
                 "whatIfTitle": "What If"
             },
+            "sliceVersionError": "You must slice on Version first",
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",
             "yourRating": "Your rating"

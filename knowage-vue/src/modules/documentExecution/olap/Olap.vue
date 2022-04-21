@@ -918,10 +918,23 @@ export default defineComponent({
         },
         handleTableDoubleClick(event: any) {
             console.log('DOUBLE CLICK EVENT: ', event)
-            if (!this.olapDesignerMode || !event.target.attributes.cell || this.checkIfVersionIsSet()) return
+            if (!event.target.attributes.cell) return
+
+            if (!this.checkIfVersionIsSet()) {
+                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
+            }
             console.log('EVENT CELL: ', event.target.attributes.cell)
         },
-        checkIfVersionIsSet() {}
+        checkIfVersionIsSet() {
+            console.log('THIS OLAP: ', this.olap)
+            let versionIsSet = false
+            for (let i = 0; i < this.olap.filters.length; i++) {
+                if (this.olap.filters[i].uniqueName === '[Version]') {
+                    versionIsSet = this.olap.filters[i].hierarchies[0].slicers.length > 0
+                }
+            }
+            return versionIsSet
+        }
     }
 })
 </script>
