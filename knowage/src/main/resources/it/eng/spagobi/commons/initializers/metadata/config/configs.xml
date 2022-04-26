@@ -617,6 +617,16 @@
 		description="The URL where Apache Livy is listening"
 		isActive="true" valueCheck="http://localhost:8998" valueType="STRING"
 		category="DATA_PREPARATION" />
+		
+	<CONFIG label="KNOWAGE.AUDIT_ENABLED" name="KNOWAGE.AUDIT_ENABLED"
+		description="Enables audit table updating"
+		isActive="true" valueCheck="true" valueType="STRING"
+		category="GENERIC_CONFIGURATION" />
+		
+	<CONFIG label="KNOWAGE.AUDIT_DATA_RETENTION" name="KNOWAGE.AUDIT_DATA_RETENTION"
+		description="Set retention period for audit table cleaning"
+		isActive="true" valueCheck="180" valueType="NUM"
+		category="GENERIC_CONFIGURATION" />
 
 </CONFIGS>
 
