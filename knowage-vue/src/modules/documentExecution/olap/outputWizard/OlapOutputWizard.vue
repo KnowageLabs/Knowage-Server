@@ -12,7 +12,7 @@
 
         <form class="p-fluid p-formgrid p-grid p-m-1">
             <InlineMessage class="p-m-1" severity="info" closable="false">{{ $t('documentExecution.olap.outputWizard.infoMsg') }}</InlineMessage>
-            <div id="type-container" class="p-field p-d-flex p-ai-center p-m-2">
+            <div id="type-container" class="p-field p-d-flex p-ai-center p-m-2  p-col-11">
                 <span>{{ $t('managers.workspaceManagement.dataPreparation.transformations.outputType') }}: </span>
                 <div class="p-mx-2">
                     <RadioButton id="fileType" name="file" value="file" v-model="selectedType" />
@@ -24,19 +24,19 @@
                 </div>
             </div>
 
-            <div class="p-field p-float-label p-col-12 p-mt-2">
+            <div class="p-field p-float-label p-col-6 p-mt-2">
                 <Dropdown id="version" class="kn-material-input" v-model="selectedVersion" :options="olapVersionsProp" optionLabel="name" />
                 <label for="version" class="kn-material-input-label"> {{ $t('documentExecution.olap.outputWizard.version') }} </label>
             </div>
 
-            <div v-if="selectedType === 'file' && selectedVersion" class="p-field p-col-12">
+            <div v-if="selectedType === 'file' && selectedVersion" class="p-field p-col-6 p-mt-2">
                 <span class="p-float-label">
                     <InputText id="fieldDelimiter" class="kn-material-input" v-model="fieldDelimiter" />
                     <label for="fieldDelimiter" class="kn-material-input-label"> {{ $t('documentExecution.olap.outputWizard.fieldDelimiter') }} </label>
                 </span>
                 <small>{{ $t('documentExecution.olap.outputWizard.fileInfo') }}</small>
             </div>
-            <div v-if="selectedType === 'table' && selectedVersion" class="p-field p-col-12">
+            <div v-if="selectedType === 'table' && selectedVersion" class="p-field p-col-6 p-mt-2">
                 <span class="p-float-label">
                     <InputText id="tableName" class="kn-material-input" v-model="tableName" />
                     <label for="tableName" class="kn-material-input-label"> {{ $t('managers.datasetManagement.flatTableName') }} </label>

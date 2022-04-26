@@ -9,21 +9,17 @@
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-        <Message v-if="!loading" class="p-m-4" severity="info" :closable="false" :style="olapSaveNewVersionDialogDescriptor.styles.message">
-            {{ $t('documentExecution.olap.saveVersion.infoMessage') }}
-        </Message>
+        <form v-if="!loading" class="p-fluid p-formgrid p-grid p-m-1">
+            <InlineMessage v-if="!loading" class="p-m-1 kn-width-full" severity="info" closable="false"> {{ $t('documentExecution.olap.saveVersion.infoMessage') }}</InlineMessage>
 
-        <form v-if="!loading" class="p-fluid p-formgrid p-grid p-p-5 p-m-0">
-            <div class="p-field p-col-12">
-                <span class="p-float-label">
-                    <InputText class="kn-material-input" v-model.trim="version.name" />
-                    <label class="kn-material-input-label"> {{ $t('documentExecution.olap.saveVersion.versionName') }}</label>
-                </span>
+            <div class="p-field p-float-label p-col-12 p-mt-2">
+                <InputText class="kn-material-input" v-model.trim="version.name" />
+                <label class="kn-material-input-label"> {{ $t('documentExecution.olap.saveVersion.versionName') }}</label>
             </div>
 
-            <div class="p-field p-mt-2 p-col-12">
+            <div class="p-field p-col-12 p-mt-2">
                 <span class="p-float-label">
-                    <Textarea class="kn-material-input" v-model.trim="version.descr" rows="5" :autoResize="true" />
+                    <Textarea class="kn-material-input" v-model.trim="version.descr" rows="3" :autoResize="true" />
                     <label class="kn-material-input-label"> {{ $t('documentExecution.olap.saveVersion.versionDescription') }}</label>
                 </span>
             </div>
@@ -39,13 +35,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
-import Message from 'primevue/message'
+import InlineMessage from 'primevue/inlinemessage'
 import olapSaveNewVersionDialogDescriptor from './OlapSaveNewVersionDialogDescriptor.json'
 import Textarea from 'primevue/textarea'
 
 export default defineComponent({
     name: 'olap-save-new-version-dialog',
-    components: { Dialog, Message, Textarea },
+    components: { Dialog, InlineMessage, Textarea },
     props: { visible: { type: Boolean }, id: { type: String } },
     emits: ['close', 'save'],
     computed: {},

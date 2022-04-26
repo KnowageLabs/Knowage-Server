@@ -914,6 +914,7 @@ export default defineComponent({
         },
         exportExcel() {
             if (this.checkIfVersionIsSet()) {
+                this.loading = true
                 this.$http
                     .get(process.env.VUE_APP_OLAP_PATH + `1.0/model/exceledit?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
                     .then((response: AxiosResponse<any>) => {
@@ -936,22 +937,16 @@ export default defineComponent({
             }
         },
         handleTableDoubleClick(event: any) {
-            console.log('DOUBLE CLICK EVENT: ', event)
-            // if (!event.target.attributes.cell || this.checkIfVersionIsSet()) return
-            // console.log('EVENT CELL: ', event.target.attributes, event.target.attributes.value)
-            // console.log('x', event.pageX, 'y', event.pageY)
-            // console.log('ref', this.$refs.whatifInput)
-
             if (!event.target.attributes.cell) return
+            let clickLocation = event.target.getBoundingClientRect()
 
             if (!this.checkIfVersionIsSet()) {
                 return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
             } else {
-                console.log(this.$route)
                 // @ts-ignore
-                this.$refs.whatifInput.style.top = `${event.clientY - 5}px`
+                this.$refs.whatifInput.style.top = `${clickLocation.top}px`
                 // @ts-ignore
-                this.$refs.whatifInput.style.left = `${event.clientX - 20}px`
+                this.$refs.whatifInput.style.left = `${clickLocation.left}px`
                 // @ts-ignore
                 this.$refs.whatifInput.style.display = 'flex'
 
@@ -959,7 +954,6 @@ export default defineComponent({
                 this.whatifInputOldValue = event.target.attributes.value.value
                 this.whatifInputOrdinal = event.target.attributes.ordinal.value
             }
-            console.log('EVENT CELL: ', event.target.attributes)
         },
         closeWhatifInput() {
             // @ts-ignore
@@ -981,7 +975,6 @@ export default defineComponent({
             this.formatOlapTable()
         },
         checkIfVersionIsSet() {
-            console.log('THIS OLAP: ', this.olap)
             let versionIsSet = false
             for (let i = 0; i < this.olap.filters.length; i++) {
                 if (this.olap.filters[i].uniqueName === '[Version]') {
