@@ -18,6 +18,16 @@
         }
     ],
     "datasetFilterFields": ["name"],
+    "driverColumns": [
+        {
+            "field": "label",
+            "header": "workspace.gis.dnl.driverParameter"
+        },
+        {
+            "field": "url",
+            "header": "managers.layersManagement.layerURL"
+        }
+    ],
     "layerColumns": [
         {
             "field": "layerId",

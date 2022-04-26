@@ -52,3 +52,10 @@ export interface iLayer {
     properties: Array
     filebody: any
 }
+
+export interface iDriver {
+    id: number
+    label: string
+    parType: string
+    url: string
+}

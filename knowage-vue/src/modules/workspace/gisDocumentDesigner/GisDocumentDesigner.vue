@@ -5,9 +5,10 @@
                 {{ $t('workspace.gis.title') }}
             </template>
             <template #end>
+                <Button class="p-button-text p-button-rounded p-button-plain" label="logme" @click="logGis" />
                 <Button class="p-button-text p-button-rounded p-button-plain" :label="$t('workspace.gis.editMap')" @click="openMapConfirm" />
                 <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDialogDisabled" @click="saveOrUpdateGis" />
-                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="logGis" />
+                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeGis" />
             </template>
         </Toolbar>
         <div class="gis-tabview-container p-d-flex p-flex-column kn-flex">
@@ -18,7 +19,7 @@
                         <span v-if="$route.path.includes('new')">{{ $t('workspace.gis.datasetLayerTitle') }}</span>
                         <span v-else>{{ $t('managers.layersManagement.layerTitle') }}</span>
                     </template>
-                    <DatasetLayerTab :documentDataProp="documentData" :isDatasetChosen="isDatasetChosen" @datasetChanged="onDatasetChange($event)" @layerChanged="onLayerChange($event)" @datasetDeleted="onDatasetDelete" />
+                    <DatasetLayerTab :documentDataProp="documentData" :isDatasetChosen="isDatasetChosen" @datasetChanged="onDatasetChange($event)" @layerChanged="onLayerChange($event)" @driverChanged="onDriverChange($event)" @datasetDeleted="onDatasetDelete" />
                 </TabPanel>
 
                 <TabPanel :disabled="!documentData.selectedDataset.length > 0 || !documentData.selectedLayer.length > 0">
@@ -76,13 +77,6 @@
                 </div>
             </template>
         </Dialog>
-
-        <iframe v-if="iframeVisible" id="qbeIframe" ref="qbeIframe" style="width:500px;height:500px" :src="iframeUrl"></iframe>
-
-        <!-- <div class="p-d-flex p-flex-row p-jc-end p-mt-auto p-mb-2 p-mr-2">
-            <Button class="kn-button kn-button--secondary"> {{ $t('common.back') }}</Button>
-            <Button class="kn-button kn-button--primary p-ml-2"> {{ $t('common.next') }}</Button>
-        </div> -->
     </div>
 </template>
 
@@ -134,7 +128,6 @@ export default defineComponent({
                 indicatorsInvalid: false,
                 filtersInvalid: false
             },
-            iframeVisible: false,
             iframeUrl: ''
         }
     },
@@ -145,7 +138,8 @@ export default defineComponent({
         logGis() {
             console.log(this.documentTemplate)
             console.log(this.documentData)
-            console.log(this.$router.options.history.state.back)
+        },
+        closeGis() {
             this.$router.push(`${this.$router.options.history.state.back}`)
         },
         async loadPage() {
@@ -159,9 +153,11 @@ export default defineComponent({
             await this.getAllLayers()
             if (this.$route.path.includes('edit')) {
                 await this.getSelectedDocument()
+                await this.getDocumentDrivers()
                 await this.findActiveTemplate()
                 await this.initializeDataset()
-                await this.initializeSelectedLayer()
+                this.initializeSelectedDrivers()
+                this.initializeSelectedLayer()
             }
         },
 
@@ -170,7 +166,7 @@ export default defineComponent({
         },
 
         async getSelectedDocument() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$route.query.documentId}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$route.query.documentId}`).then(async (response: AxiosResponse<any>) => {
                 this.selectedDocument = response.data
                 this.documentData.documentLabel = response.data.label
                 this.documentData.documentDesc = response.data.description
@@ -181,9 +177,31 @@ export default defineComponent({
         async findActiveTemplate() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.$route.query.documentId}/templates`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then(async (response: AxiosResponse<any>) => {
                 if (response.data.length > 0) {
-                    response.data.find((template) => (template.active === true ? this.getActiveTemplateData(template.id) : ''))
+                    let activeTemplateId = null
+                    response.data.find((template) => (template.active === true ? (activeTemplateId = template.id) : ''))
+                    await this.getActiveTemplateData(activeTemplateId)
                 }
             })
+        },
+
+        async getDocumentDrivers() {
+            if (this.selectedDocument.drivers.length > 0) {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.documentData.documentLabel}/parameters`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then(async (response: AxiosResponse<any>) => {
+                    this.documentData.allDrivers = response.data.results
+                })
+            }
+        },
+
+        initializeSelectedDrivers() {
+            if (this.selectedDocument.drivers.length > 0 && this.documentTemplate.analitycalFilter) {
+                this.documentData.allDrivers.forEach((driverFromResponse) => {
+                    this.documentTemplate.analitycalFilter.forEach((driverFromTemplate) => {
+                        if (driverFromResponse.url === driverFromTemplate) {
+                            this.documentData.selectedDriver.push(driverFromResponse)
+                        }
+                    })
+                })
+            }
         },
 
         async getActiveTemplateData(templateId) {
@@ -205,7 +223,7 @@ export default defineComponent({
                 this.documentData.allLayers.forEach((layerFromResponse) => {
                     this.documentTemplate.targetLayerConf.forEach((layerFromTemplate) => {
                         if (layerFromResponse.name === layerFromTemplate.label) {
-                            this.documentData.selectedLayer = [layerFromResponse]
+                            this.documentData.selectedLayer.push(layerFromResponse)
                         }
                     })
                 })
@@ -276,6 +294,10 @@ export default defineComponent({
             this.documentData.selectedLayer = layer
             this.isDatasetChosen ? this.loadLayerColumns(layer[0].layerId) : ''
         },
+        onDriverChange(driver) {
+            console.log('DRIVERS CHANGED')
+            this.documentData.selectedDriver = driver
+        },
         saveOrUpdateGis() {
             if (this.$route.path.includes('edit')) {
                 this.buildGisTemplate()
@@ -287,7 +309,21 @@ export default defineComponent({
             console.log(this.documentData)
             let template = {} as any
 
-            template.targetLayerConf = [{ label: this.documentData.selectedLayer[0].name }]
+            template.targetLayerConf = []
+
+            this.documentData.selectedLayer.forEach((layer) => {
+                template.targetLayerConf.push({ label: layer.name })
+            })
+
+            if (!this.documentData.datasetLabel && this.documentData.selectedDriver) {
+                template.analitycalFilter = []
+
+                if (this.documentData.selectedDriver.length > 0) {
+                    this.documentData.selectedDriver.forEach((driver) => {
+                        template.analitycalFilter.push(driver.url)
+                    })
+                }
+            }
 
             template.datasetJoinColumns = ''
             template.layerJoinColumns = ''
@@ -315,6 +351,8 @@ export default defineComponent({
                 postData.DATASET_LABEL = this.documentData.datasetLabel
                 postData.DOCUMENT_LABEL = this.documentData.documentLabel
                 postData.TEMPLATE = template
+                console.log('EDIT POST DATA', postData)
+
                 await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/saveGeoReportTemplate`, postData).then(async () => {
                     this.saveDialogVisible = false
                     this.$store.commit('setInfo', {
@@ -330,15 +368,19 @@ export default defineComponent({
                 postData.action = 'DOC_SAVE'
                 postData.customData = { templateContent: template }
                 postData.document = { name: this.documentData.documentLabel, description: this.documentData.documentDesc, label: docLabel, type: 'MAP' }
-                postData.sourceData = { label: this.documentData.datasetLabel }
-                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/saveDocument/`, postData).then(async () => {
-                    this.saveDialogVisible = false
-                    this.documentData.documentLabel = docLabel
-                    this.$store.commit('setInfo', {
-                        title: 'Saved',
-                        msg: 'SAVED OK'
+                this.documentData.datasetLabel ? (postData.sourceData = { label: this.documentData.datasetLabel }) : (postData.sourceData = null)
+                console.log('SAVE POST DATA', postData)
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/saveDocument/`, postData)
+                    .then(async () => {
+                        this.saveDialogVisible = false
+                        this.documentData.documentLabel = docLabel
+                        this.$store.commit('setInfo', {
+                            title: 'Saved',
+                            msg: 'SAVED OK'
+                        })
                     })
-                })
+                    .then(() => {})
             }
         },
         async routeToDocument() {

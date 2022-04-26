@@ -2292,6 +2292,7 @@
             "datasetLayerTitle": "Dataset & Layer",
             "dnl": {
                 "addDataset": "add dataset",
+                "addFilters": "add filters",
                 "addLayer": "add layer",
                 "changeDataset": "change dataset",
                 "changeDsMessage": "Do you want to confirm the dataset modification? This operation will undo all previous configuration.",
@@ -2299,9 +2300,13 @@
                 "changeLayerMessage": "Do you want to confirm the layer modification? This operation will undo all dataset join configuration.",
                 "datasetList": "Dataset List",
                 "dialogEmptyInfo": "No available datasets",
+                "driverParameter": "Driver parameter",
+                "driversTableEmpty": "Add a filter driver",
                 "emptyInfo": "Add a dataset",
+                "layerFilters": "Layer Filters",
                 "layerList": "Layer List",
                 "layersDialogEmpty": "No available layers",
+                "driversDialogEmpty": "No available drivers",
                 "layersTableEmpty": "Add a layer",
                 "openMapWarning": "Opening the map will undo all unsaved modifications, are you sure you want to continue?"
             },

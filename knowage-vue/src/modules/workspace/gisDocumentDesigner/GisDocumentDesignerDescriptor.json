@@ -1,4 +1,35 @@
 {
+    "newGisTemplate": {
+        "allLayers": [],
+        "analitycalFilter": [],
+        "dataSetId": null,
+        "datasetJoinColumns": [],
+        "datasetLabel": "",
+        "datasetMeasures": [],
+        "documentDesc": "",
+        "documentLabel": "",
+        "dsJoins": [],
+        "filters": [],
+        "indicators": [],
+        "layerJoinColumns": [],
+        "selectedDataset": [],
+        "selectedDriver": [],
+        "selectedLayer": [],
+        "visibilityData": {
+            "crossNavigation": false,
+            "crossNavigationMultiselect": true,
+            "visibilityControls": {
+                "showBaseLayer": true,
+                "showDistanceCalculator": true,
+                "showDownloadButton": true,
+                "showLayer": true,
+                "showLegendButton": true,
+                "showMapConfig": true,
+                "showRightConfigMenu": true,
+                "showSelectMode": true
+            }
+        }
+    },
     "style": {
         "absoluteScroll": {
             "height": "100%",
@@ -43,34 +74,5 @@
             "showRightConfigMenu": true,
             "showSelectMode": true
         }
-    },
-    "newGisTemplate": {
-        "allLayers": [],
-        "documentLabel": "",
-        "documentDesc": "",
-        "dataSetId": null,
-        "indicators": [],
-        "filters": [],
-        "visibilityData": {
-            "crossNavigation": false,
-            "crossNavigationMultiselect": true,
-            "visibilityControls": {
-                "showRightConfigMenu": true,
-                "showLegendButton": true,
-                "showDistanceCalculator": true,
-                "showDownloadButton": true,
-                "showSelectMode": true,
-                "showLayer": true,
-                "showBaseLayer": true,
-                "showMapConfig": true
-            }
-        },
-        "selectedLayer": [],
-        "dsJoins": [],
-        "layerJoinColumns": [],
-        "selectedDataset": [],
-        "datasetLabel": "",
-        "datasetJoinColumns": [],
-        "datasetMeasures": []
     }
 }
