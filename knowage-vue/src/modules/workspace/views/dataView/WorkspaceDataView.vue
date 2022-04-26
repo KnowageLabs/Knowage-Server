@@ -62,7 +62,7 @@
                     :key="index"
                     :viewType="'dataset'"
                     :document="dataset"
-                    :isAvroReady="isAvroReady(dataset)"
+                    :isAvroReady="isAvroReady(dataset.label)"
                     @previewDataset="previewDataset"
                     @editDataset="editDataset"
                     @openDatasetInQBE="openDatasetInQBE($event)"
@@ -84,7 +84,7 @@
         :visible="showDetailSidebar"
         :viewType="'dataset'"
         :document="selectedDataset"
-        :isAvroReady="isAvroReady(selectedDataset)"
+        :isAvroReady="isAvroReady(selectedDataset.label)"
         :datasetCategories="datasetCategories"
         @previewDataset="previewDataset"
         @editDataset="editDataset"
@@ -409,8 +409,8 @@ export default defineComponent({
             if (this.selectedDataset.dsTypeCd == 'File') this.showDatasetDialog = true
             else if (this.selectedDataset.dsTypeCd == 'Prepared') this.showEditPreparedDatasetDialog = true
         },
-        isAvroReady(dataset: any) {
-            if (dataset && this.avroDatasets.indexOf(dataset.label) >= 0) return true
+        isAvroReady(dsLabel: String) {
+            if (this.avroDatasets.indexOf(dsLabel) >= 0) return true
             else return false
         },
         async generateAvro(dataset: any) {
@@ -442,32 +442,46 @@ export default defineComponent({
             }
         },
         openDataPreparation(dataset: any) {
-            if (this.isAvroReady(dataset) || dataset.dsTypeCd == 'Prepared') {
-                if (dataset.dsTypeCd == 'Prepared') {
-                    this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.label}`).then(
-                        (response: AxiosResponse<any>) => {
-                            let instanceId = response.data.configuration.dataPrepInstanceId
-                            this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
-                                (response: AxiosResponse<any>) => {
-                                    let transformations = response.data.definition
-                                    let processId = response.data.id
-                                    let datasetLabel = response.data.instance.dataSetLabel
+            if (dataset.dsTypeCd == 'Prepared') {
+                //edit existing data prep
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.label}`).then(
+                    (response: AxiosResponse<any>) => {
+                        let instanceId = response.data.configuration.dataPrepInstanceId
+                        this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
+                            (response: AxiosResponse<any>) => {
+                                let transformations = response.data.definition
+                                let processId = response.data.id
+                                let datasetLabel = response.data.instance.dataSetLabel
+                                if (this.isAvroReady(datasetLabel))
+                                    // check if Avro file has been deleted or not
                                     this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
-                                },
-                                () => {
-                                    this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
+                                else {
+                                    this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${datasetLabel}`).then(
+                                        (response: AxiosResponse<any>) => {
+                                            this.generateAvro(response.data[0])
+                                        },
+                                        () => {
+                                            this.$store.commit('setError', {
+                                                title: 'Cannot open data preparation'
+                                            })
+                                        }
+                                    )
                                 }
-                            )
-                        },
-                        () => {
-                            this.$store.commit('setError', {
-                                title: 'Cannot open data preparation'
-                            })
-                        }
-                    )
-                } else {
-                    this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
-                }
+                            },
+                            () => {
+                                this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
+                            }
+                        )
+                    },
+                    () => {
+                        this.$store.commit('setError', {
+                            title: 'Cannot open data preparation'
+                        })
+                    }
+                )
+            } else if (this.isAvroReady(dataset.label)) {
+                // original dataset already exported in Avro
+                this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
             } else {
                 this.generateAvro(dataset)
             }
