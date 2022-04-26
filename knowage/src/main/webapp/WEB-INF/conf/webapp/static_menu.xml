@@ -253,6 +253,7 @@
 			iconCls="far fa-folder-open" />
 
 		<ITEM id="11002" label="menu.workspace"
+			requiredFunctionality="SeeMyWorkspace"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=workspaceManagement"
 			iconCls="fas fa-briefcase" />
 
