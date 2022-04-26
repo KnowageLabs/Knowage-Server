@@ -61,7 +61,6 @@ import historyDescriptor from './DocumentDetailsHistory.json'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import InlineMessage from 'primevue/inlinemessage'
-
 export default defineComponent({
     name: 'document-drivers',
     components: { KnListBox, KnInputFile, VCodeMirror, InlineMessage },
@@ -77,9 +76,10 @@ export default defineComponent({
                     return true
                 case 'sbicockpit':
                     return true
-                case 'json': {
+                case 'json':
                     return true
-                }
+                case 'sbigeoreport':
+                    return true
                 default:
                     return false
             }
@@ -126,7 +126,7 @@ export default defineComponent({
         },
         async getSelectedTemplate(templateId) {
             this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/selected/${templateId}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then((response: AxiosResponse<any>) => {
-                this.selectedTemplateFileType == 'sbicockpit' || this.selectedTemplateFileType == 'json' ? (this.selectedTemplateContent = JSON.stringify(response.data, null, 4)) : (this.selectedTemplateContent = response.data)
+                this.selectedTemplateFileType == 'sbicockpit' || this.selectedTemplateFileType == 'json' || this.selectedTemplateFileType == 'sbigeoreport' ? (this.selectedTemplateContent = JSON.stringify(response.data, null, 4)) : (this.selectedTemplateContent = response.data)
             })
         },
         setupCodeMirror() {
@@ -151,9 +151,11 @@ export default defineComponent({
                 case 'sbicockpit':
                     mode = 'text/javascript'
                     break
-                case 'json': {
+                case 'json':
                     mode = 'text/javascript'
-                }
+                    break
+                case 'sbigeoreport':
+                    mode = 'text/javascript'
             }
             setTimeout(() => {
                 this.setupCodeMirror()

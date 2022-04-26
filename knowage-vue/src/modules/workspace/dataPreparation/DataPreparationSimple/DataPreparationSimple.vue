@@ -2,16 +2,16 @@
     <div class="simple">
         <span v-for="(field, index) in localTransformation.parameters" v-bind:key="index" class="p-field p-ml-2 kn-flex data-prep-simple-transformation">
             <span v-if="field.type == 'string'" class="p-float-label">
-                <InputText :id="field.id" type="text" v-model="field.value" :class="['kn-material-input', field.validationRules && field.validationRules.includes('required') && !field.value ? 'p-invalid' : '']" />
+                <InputText :id="field.id" type="text" v-model="field.value" :disabled="readOnly" :class="['kn-material-input', field.validationRules && field.validationRules.includes('required') && !field.value ? 'p-invalid' : '']" />
                 <label :for="'input_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>
             </span>
             <span v-if="field.type === 'date'" class="p-float-label">
-                <Calendar :id="field.id" v-model="field.value" class="kn-material-input" :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }" />
+                <Calendar :id="field.id" v-model="field.value" :disabled="readOnly" class="kn-material-input" :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }" />
                 <label :for="field.type + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>
             </span>
 
             <span v-if="field.type === 'boolean'" class="p-float-label">
-                <InputSwitch :id="field.id" v-model="field.value" />
+                <InputSwitch :id="field.id" v-model="field.value" :disabled="readOnly" />
                 <label :for="'inputSwitch_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>
             </span>
             <span v-if="field.type === 'dropdown'" class="p-float-label">
@@ -22,7 +22,7 @@
                     :showClear="!field.validationRules || (field.validationRules && !field.validationRules.includes('required'))"
                     :optionLabel="field.optionLabel ? field.optionLabel : 'label'"
                     :optionValue="field.optionValue ? field.optionValue : 'code'"
-                    :disabled="col && field.name === 'columns'"
+                    :disabled="(col && field.name === 'columns') || readOnly"
                     class="kn-material-input"
                     :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }"
                 />
@@ -39,7 +39,7 @@
                     optionDisabled="disabled"
                     @change="handleMultiSelectChange($event)"
                     :allow-empty="false"
-                    :disabled="col"
+                    :disabled="col || readOnly"
                     class="kn-material-input"
                     :filter="true"
                     :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }"
@@ -47,7 +47,7 @@
             >
 
             <span v-if="field.type == 'textarea'" class="p-float-label">
-                <Textarea :id="field.id" v-model="field.value" rows="5" cols="30" class="kn-material-input" :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }" :autoResize="false" />
+                <Textarea :id="field.id" v-model="field.value" :disabled="readOnly" rows="5" cols="30" class="kn-material-input" :class="{ 'p-invalid': field.validationRules && field.validationRules.includes('required') && !field.value }" :autoResize="false" />
                 <label :for="field.type + '_index_' + index" class="kn-material-input-label">{{ $t('managers.workspaceManagement.dataPreparation.transformations.' + field.name) }}</label>
             </span>
         </span>
@@ -71,7 +71,7 @@ import useValidate from '@vuelidate/core'
 export default defineComponent({
     name: 'data-preparation-simple',
 
-    props: { col: String, columns: { type: Array as PropType<Array<IDataPreparationColumn>> }, transformation: {} as PropType<ITransformation<ITransformationParameter>> },
+    props: { readOnly: Boolean, col: String, columns: { type: Array as PropType<Array<IDataPreparationColumn>> }, transformation: {} as PropType<ITransformation<ITransformationParameter>> },
     components: { Calendar, Dropdown, InputSwitch, MultiSelect, Textarea },
     emits: ['update:transformation'],
     data() {
@@ -125,9 +125,16 @@ export default defineComponent({
 
                 let name = this.transformation && this.transformation.name ? this.transformation.name : ''
                 if (name && this.transformation?.type === 'simple') {
-                    let pars = this.descriptor[name].parameters
-
-                    this.localTransformation.parameters = JSON.parse(JSON.stringify(pars))
+                    let pars = JSON.parse(JSON.stringify(this.descriptor[name].parameters))
+                    if (this.readOnly) {
+                        for (var i = 0; i < pars.length; i++) {
+                            let parName = pars[i]['name']
+                            for (var j = 0; j < this.localTransformation.parameters.length; j++) {
+                                if (this.localTransformation.parameters[j]['name'] == parName) pars[i]['value'] = this.localTransformation.parameters[j]['value']
+                            }
+                        }
+                    }
+                    this.localTransformation.parameters = pars
                 }
 
                 this.refreshTransfrormation()

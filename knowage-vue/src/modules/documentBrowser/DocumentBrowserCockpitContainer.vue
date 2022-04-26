@@ -1,5 +1,5 @@
 <template>
-    <DocumentExecution :id="name" v-if="mode === 'document-execution'"></DocumentExecution>
+    <DocumentExecution :id="name" v-if="mode === 'document-execution'" :parameterValuesMap="parameterValuesMap" :tabKey="tabKey" @parametersChanged="$emit('parametersChanged', $event)"></DocumentExecution>
 </template>
 
 <script lang="ts">
@@ -11,8 +11,8 @@ export default defineComponent({
     components: {
         DocumentExecution
     },
-    props: { id: { type: String }, functionalityId: { type: String }, item: { type: Object } },
-    emits: ['iframeCreated', 'closeIframe'],
+    props: { id: { type: String }, functionalityId: { type: String }, item: { type: Object }, parameterValuesMap: { type: Object }, tabKey: { type: String } },
+    emits: ['iframeCreated', 'closeIframe', 'parametersChanged'],
     data() {
         return {
             url: '',

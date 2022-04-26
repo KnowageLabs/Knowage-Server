@@ -212,7 +212,7 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 		Pattern scriptPattern = Pattern.compile("<img[^>]+(src\\s*=\\s*['\"]([^'\"]+)['\"])[^>]*>",
 				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-		Pattern dataPattern = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|png|svg\\+xml|tiff|vnd\\.microsoft\\.icon);(utf-8;|utf8;)?base64",
+		Pattern dataPattern = Pattern.compile("data:image\\/(gif|jpeg|pjpeg|webp|png|wmf|svg\\+xml|tiff|vnd\\.microsoft\\.icon);(utf-8;|utf8;)?base64",
 				Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 		Matcher scriptMatcher = scriptPattern.matcher(value);
 

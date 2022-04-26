@@ -1,7 +1,7 @@
 <template>
     <div class="kn-page kn-data-preparation">
-        <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" />
-        <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" />
+        <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" :readOnly="readOnly" @update:readOnly="updateReadOnly" v-model:template="selectedTransformation" />
+        <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" :readOnly="readOnly" @update:readOnly="updateReadOnly" />
         <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" :instanceId="instanceId" @update:instanceId="updateInstanceId" :processId="processId" @update:processId="updateprocessId" :preparedDsMeta="preparedDsMeta" />
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
             <template #start> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }})</template>
@@ -22,13 +22,13 @@
             </template>
             <template #end>
                 <div class="arrow-button-container">
-                    <Button icon="pi pi-arrow-left" :class="descriptor.css.buttonClassHeader" style="overflow: visible" @click="visibleRight = true" />
+                    <Button icon="pi pi-arrow-left" :class="descriptor.css.buttonClassHeader" style="overflow: visible" @click="toggleSidebarVisibility()" />
                     <Badge class="arrow-badge" v-if="dataset.config && dataset.config.transformations && dataset.config.transformations.length > 0" :value="dataset.config && dataset.config.transformations && dataset.config.transformations.length"></Badge>
                 </div>
             </template>
         </Toolbar>
         <Divider class="kn-divider" />
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading > 0" />
         <div class="kn-page-content p-grid p-m-0 managerDetail">
             <Sidebar v-model:visible="visibleRight" position="right" class="kn-data-preparation-sidenav">
                 <div class="info-container">
@@ -44,23 +44,17 @@
                 <Divider class="p-m-0 p-p-0 dividerCustomConfig" />
                 <div class="kn-truncated">{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</div>
 
-                <div v-if="dataset.config && dataset.config.transformations && dataset.config.transformations.length > 0" class="sidebarClass">
-                    <div v-for="(tr, index) in dataset.config.transformations.reverse()" v-bind:key="index" :class="getSidebarElementClass(index)" class="sidenav-transformation">
-                        <span class="transformation-icon" :class="descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.class" v-if="descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.class">{{
-                            descriptorTransformations.filter((x) => x.name === tr.type)[0].icon.name
-                        }}</span>
-                        <i v-else class="transformation-icon" :class="descriptorTransformations.filter((x) => x.name === tr.type)[0].icon"></i>
-
-                        <span class="typeAndDescription kn-truncated kn-flex">
-                            <span class="kn-list-item">{{ $t(descriptorTransformations.filter((x) => x.name === tr.type)[0].label) }} </span>
-                            <span class="transformationDescription kn-truncated">
-                                {{ getTextForSidebar(tr) }}
-                            </span>
-                        </span>
-
-                        <Button v-if="index == 0" icon="p-jc-end pi pi-trash" :class="descriptor.css.buttonClassHeader" @click="deleteTransformation(index)" v-tooltip="$t('common.delete')" />
-                    </div>
-                </div>
+                <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="dataset.config.transformations" optionLabel="type" listStyle="max-height:200px"
+                    ><template #option="slotProps">
+                        <div class="p-text-uppercase kn-list-item transformationSidebarElement">
+                            <div v-if="slotProps.option.type != 'calculatedField'">{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].columns[0] }}</div>
+                            <div v-else>{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].colName }}</div>
+                            <div>
+                                <Button v-if="slotProps.option.type != 'trim' && slotProps.option.type != 'drop'" icon="fas fa-eye" :class="descriptor.css.buttonClassHeader" @click="openTransformationDetail(slotProps.option)" v-tooltip="$t('common.preview')" />
+                                <Button v-if="slotProps.index == dataset.config.transformations.length - 1" icon="p-jc-end pi pi-trash" :class="descriptor.css.buttonClassHeader" @click="deleteTransformation()" v-tooltip="$t('common.delete')" />
+                            </div>
+                        </div> </template
+                ></Listbox>
             </Sidebar>
             <DataTable
                 ref="dt"
@@ -72,7 +66,7 @@
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 breakpoint="960px"
                 :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
-                :loading="loading"
+                :loading="loading > 0"
                 :resizableColumns="true"
                 columnResizeMode="expand"
                 showGridlines
@@ -131,6 +125,7 @@ import Divider from 'primevue/divider'
 import Dropdown from 'primevue/dropdown'
 import Sidebar from 'primevue/sidebar'
 import OverlayPanel from 'primevue/overlaypanel'
+import Listbox from 'primevue/listbox'
 
 import Menu from 'primevue/menu'
 
@@ -153,12 +148,12 @@ export default defineComponent({
         existingInstanceId: String,
         existingDataset: String
     },
-    components: { KnCalculatedField, Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
+    components: { Listbox, KnCalculatedField, Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
 
     data() {
         return {
             descriptor: DataPreparationDescriptor,
-            loading: false as boolean,
+            loading: 0,
             datasetData: Array<any>(),
             displayDataPreparationDialog: false as boolean,
             selectedProduct: null,
@@ -177,13 +172,13 @@ export default defineComponent({
             cfDescriptor: calculatedFieldDescriptor,
             instanceId: '' as string,
             processId: '' as string,
+            readOnly: false as boolean,
             preparedDsMeta: {}
         }
     },
 
     async created() {
-        this.$emit('update:loading', true)
-        this.loading = true
+        this.loading++
         this.descriptorTransformations = Object.assign([], this.descriptor.transformations)
 
         await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/' + this.id).then((response: AxiosResponse<any>) => {
@@ -204,8 +199,7 @@ export default defineComponent({
                         } else {
                             console.log('got empty message')
                         }
-                        this.loading = false
-                        this.$emit('update:loading', false)
+                        this.loading--
                     },
                     {
                         dsLabel: this.dataset.label
@@ -221,8 +215,7 @@ export default defineComponent({
                         this.$store.commit('setError', { title: 'Error' })
                     }
                     this.dataset.config.transformations.splice(-1)
-                    this.loading = false
-                    this.$emit('update:loading', false)
+                    this.loading--
                 })
 
                 this.client.subscribe(
@@ -244,8 +237,6 @@ export default defineComponent({
                 )
 
                 if (this.transformations) {
-                    this.loading = true
-                    this.$emit('update:loading', true)
                     this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
                 }
             }
@@ -286,7 +277,7 @@ export default defineComponent({
             else col.editing = true
         },
         closeTemplate(): void {
-            this.$router.push('/workspace/data')
+            this.$router.go(-1)
         },
         refreshOriginalDataset(): void {
             // launch avro export job
@@ -311,29 +302,31 @@ export default defineComponent({
             // listen on websocket for avro export job to be finished
             this.client.publish({ destination: '/app/prepare', body: this.dataset.label })
         },
-        getSidebarElementClass(index: number): string {
-            let cssClass = 'p-grid p-m-0 p-p-0 p-d-flex kn-flex transformationSidebarElement p-menuitem-link'
-            if (index > 0) cssClass += ' kn-disabled-text'
-
-            return cssClass
-        },
-        getTextForSidebar(tr): string {
-            let text = ''
-
-            tr.parameters.forEach((element) => {
-                if (text !== '') text += '\n'
-                const keys = Object.keys(element)
-                let first = true
-                keys.forEach((key) => {
-                    if (!first) text += '; '
-                    text += key + ':' + element[key]
-                    first = false
-                })
+        openTransformationDetail(t) {
+            this.readOnly = true
+            let selectedTransformation = this.descriptorTransformations.filter((x) => x.name == t.type)[0]
+            selectedTransformation['parameters'] = []
+            let param = t.parameters[0]
+            Object.keys(param).forEach((key) => {
+                let obj = {}
+                obj['name'] = key
+                if (key == 'columns') {
+                    let value = [] as Array<any>
+                    for (let i = 0; i < param[key].length; i++) {
+                        let col = this.columns.filter((x) => x.fieldAlias.toUpperCase() === param[key][i].toUpperCase())[0]
+                        value.push(col)
+                    }
+                    obj['value'] = value
+                } else {
+                    obj['value'] = param[key]
+                }
+                selectedTransformation['parameters'].push(obj)
             })
-
-            return '(' + text + ')'
+            if (t.type == 'filter' || t.type == 'split') {
+                let col = this.columns.filter((x) => x.fieldAlias.toUpperCase() === t.parameters[0].columns[0].toUpperCase())[0]
+                this.callFunction(selectedTransformation, col)
+            } else this.callFunction(selectedTransformation, undefined)
         },
-
         getTransformationsMenu(col: IDataPreparationColumn): Array<any> {
             return this.descriptorTransformations
                 .filter((x) => x.editColumn && !x.hidden)
@@ -346,7 +339,7 @@ export default defineComponent({
             if (this.transformations) {
                 if (!this.dataset.config) this.dataset.config = {}
                 this.dataset.config.transformations = this.transformations
-                this.loading = true
+                this.loading++
             }
         },
         initWebsocket(): void {
@@ -360,7 +353,7 @@ export default defineComponent({
                 heartbeatOutgoing: 4000
             })
         },
-        initDsMetadata(): void {
+        async initDsMetadata() {
             if (this.existingProcessId) this.processId = this.existingProcessId
             if (this.existingInstanceId) this.instanceId = this.existingInstanceId
             if (this.existingDataset) {
@@ -369,6 +362,12 @@ export default defineComponent({
                 this.preparedDsMeta['label'] = dsMeta.label
                 this.preparedDsMeta['name'] = dsMeta.name
                 this.preparedDsMeta['description'] = dsMeta.description
+                await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.label).then((response: AxiosResponse<any>) => {
+                    let instance = response.data.instance
+                    if (instance.config) {
+                        this.preparedDsMeta['config'] = instance.config
+                    }
+                })
             }
         },
         getColHeader(metadata: Array<any>, idx: Number): string {
@@ -422,14 +421,16 @@ export default defineComponent({
             if (!this.dataset.config) this.dataset.config = {}
             if (!this.dataset.config.transformations) this.dataset.config.transformations = []
             this.dataset.config.transformations.push(t)
-            this.loading = true
-            this.$emit('update:loading', true)
+            this.loading++
             this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
         },
+        toggleSidebarVisibility() {
+            this.visibleRight = true
+        },
         deleteTransformation(index: number): void {
-            this.dataset.config.transformations.splice(index, 1)
-            this.loading = true
-            this.$emit('update:loading', true)
+            if (index) this.dataset.config.transformations.splice(index, 1)
+            else this.dataset.config.transformations.splice(-1) // remove last element
+            this.loading++
             this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
         },
         getCompatibilityType(col: IDataPreparationColumn): void {
@@ -480,6 +481,9 @@ export default defineComponent({
         switchEditMode(col) {
             col.edit = !col.edit
         },
+        updateReadOnly(state): void {
+            this.readOnly = state
+        },
         updateInstanceId(iid): void {
             this.instanceId = iid
         },
@@ -511,6 +515,9 @@ export default defineComponent({
                 this.datasetData.push(obj)
             })
         }
+    },
+    unmounted() {
+        if (this.client) this.client.deactivate()
     }
 })
 </script>
@@ -583,6 +590,7 @@ export default defineComponent({
         }
     }
 }
+
 .toolbarCustomConfig {
     background-color: white !important;
 
@@ -639,7 +647,9 @@ export default defineComponent({
 }
 
 .transformationSidebarElement {
-    align-items: center;
+    font-size: 0.75em;
+    justify-content: space-between !important;
+    padding: 0 !important;
 }
 
 .customSidebarMenu {

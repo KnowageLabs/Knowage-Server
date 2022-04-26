@@ -20,7 +20,7 @@ package it.eng.knowage.knowageapi.service;
 import java.util.List;
 import java.util.UUID;
 
-import it.eng.knowage.knowageapi.error.KnowageBusinessException;
+import it.eng.knowage.boot.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.resource.dto.FunctionCompleteDTO;
 import it.eng.knowage.knowageapi.resource.dto.FunctionDTO;
 

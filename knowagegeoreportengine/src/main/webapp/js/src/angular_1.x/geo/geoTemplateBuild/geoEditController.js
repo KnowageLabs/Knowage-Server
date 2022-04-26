@@ -1018,8 +1018,16 @@
 			formData.document.description = descr;
 			formData.document.type = "MAP";
 			formData.customData.templateContent = template;
-			formData.sourceData.label = datasetLabel;
+			formData.sourceData = null;
 			formData.action = "DOC_SAVE";
+
+			if (typeof datasetLabel == 'undefined'
+					|| datasetLabel != "") {
+
+				formData.sourceData = {};
+				formData.sourceData.label = datasetLabel;
+
+			}
 
 			 sbiModule_restServices.restToRootProject();
 				sbiModule_restServices.promisePost("/2.0/saveDocument", "", formData)

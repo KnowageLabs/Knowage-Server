@@ -14,9 +14,10 @@
         "entitiesLists": {
             "border-right": "1px solid #ccc",
             "display": "flex",
-            "flex": 1,
+            "flex-basis": "25%",
             "flex-direction": "column",
-            "height": "100%"
+            "height": "100%",
+            "margin-left": "5px"
         }
     }
 }

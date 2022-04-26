@@ -281,7 +281,9 @@ export default defineComponent({
                     value: 'schedulation'
                 })
             }
-            this.menuItems.push({ icon: 'fas fa-cogs', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced' })
+            if (this.user.functionalities.includes('DataPreparation')) {
+                this.menuItems.push({ icon: 'fas fa-cogs', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced' })
+            }
         },
         executeDocument(document: any) {
             const routeType = this.getRouteDocumentType(document)
