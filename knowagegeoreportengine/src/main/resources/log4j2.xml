@@ -27,7 +27,6 @@
 			<AppenderRef ref="KNOWAGE_GEO_REPORT_ENGINE" />
 		</logger>
 		<logger name="it.eng.spagobi" additivity="false" level="error">
-			<AppenderRef ref="CONSOLE" />
 			<AppenderRef ref="KNOWAGE_GEO_REPORT_ENGINE" />
 		</logger>
 		<logger name="it.eng.spagobi.commons.utilities.messages" additivity="false" level="error">

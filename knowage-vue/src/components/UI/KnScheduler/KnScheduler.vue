@@ -402,6 +402,9 @@
     import moment from 'moment'
     import { formatDate } from '@/helpers/commons/localeHelper'
     import cronstrue from 'cronstrue/i18n'
+    import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
+    import { IDataPrepLog } from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoring'
+    import { AxiosResponse } from 'axios'
 
     export default defineComponent({
         name: 'kn-scheduler',
@@ -530,6 +533,11 @@
             this.paused = this.schedulationPaused
         },
         methods: {
+            async downloadLog(item: IDataPrepLog) {
+                await this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/' + item.id + '/log/download').then((response: AxiosResponse<any>) => {
+                    downloadDirectFromResponse(response)
+                })
+            },
             getFormattedDate(date: any, format: any): String {
                 return formatDate(date, format)
             },

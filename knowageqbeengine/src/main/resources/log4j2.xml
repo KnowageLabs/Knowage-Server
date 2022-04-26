@@ -46,14 +46,12 @@
 		</logger>
 		<logger name="it.eng.qbe" additivity="false" level="error">
 			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
-			<!-- <AppenderRef ref="CONSOLE" /> -->
 		</logger>
 		<logger name="it.eng.qbe.datasource.jpa.audit.JPAPersistenceManagerAuditLogger" additivity="false" level="info">
 			<AppenderRef ref="KNOWAGE_QBE_ENGINE_AUDIT" />
 		</logger>
 		<logger name="it.eng.spagobi" additivity="false" level="error">
 			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
-			<!-- <AppenderRef ref="CONSOLE" /> -->
 		</logger>
 		<logger name="it.eng.spagobi.commons.utilities.messages" additivity="false" level="error">
 			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
@@ -63,7 +61,6 @@
 		</logger>
 		<logger name="it.eng.spagobi.engines.qbe" additivity="false" level="error">
 			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
-			<!-- <AppenderRef ref="CONSOLE" /> -->
 		</logger>
 		<logger name="Spago" additivity="false" level="error">
 			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />

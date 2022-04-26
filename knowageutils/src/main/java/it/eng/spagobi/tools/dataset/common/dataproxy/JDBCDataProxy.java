@@ -29,12 +29,10 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.sql.SqlUtils;
@@ -144,8 +142,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 					timeToExecuteStatement.stop();
 				}
 				long stop = System.currentTimeMillis();
-				UserProfile userP = UserProfileManager.getProfile();
-				LogMF.info(logger, "Executed query:\n{0} - Executed time: [" + (stop - start) + " ms] , user: [" + userP.getUserId() + "]", sqlQuery);
+				LogMF.info(logger, "Executed query:\n{0} - Executed time: [" + (stop - start) + " ms]", sqlQuery);
 				LogMF.debug(logger, "Query has been executed:\n{0}", sqlQuery);
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement: " + sqlQuery, t);
@@ -249,8 +246,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			}
 			LogMF.debug(logger, "Executed count statement, SQL query:\n{0}", sqlQuery);
 			long stop = System.currentTimeMillis();
-			UserProfile userP = UserProfileManager.getProfile();
-			LogMF.info(logger, "Executed count statement:\n{0} - Executed time: [" + (stop - start) + " ms] , user: [" + userP.getUserId() + "]", sqlQuery);
+			LogMF.info(logger, "Executed count statement:\n{0} - Executed time: [" + (stop - start) + " ms]", sqlQuery);
 			rs.next();
 			resultNumber = rs.getInt(1);
 		} catch (Throwable t) {
@@ -377,8 +373,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				timeToExecuteStatement.stop();
 			}
 			long stop = System.currentTimeMillis();
-			UserProfile userP = UserProfileManager.getProfile();
-			LogMF.info(logger, "Executed query:\n{0} - Executed time: [" + (stop - start) + " ms] , user: [" + userP.getUserId() + "]", sqlQuery);
+			LogMF.info(logger, "Executed query:\n{0} - Executed time: [" + (stop - start) + " ms]", sqlQuery);
 			LogMF.debug(logger, "Executed query:\n{0}", sqlQuery);
 			return resultSet;
 		} catch (SQLException e) {
