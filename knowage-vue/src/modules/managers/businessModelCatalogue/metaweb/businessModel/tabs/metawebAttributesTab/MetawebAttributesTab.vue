@@ -1,16 +1,8 @@
 <template>
     <div>
-        <DataTable v-if="businessModel" class="p-datatable-sm kn-table p-m-2" :value="businessModel.columns" :loading="loading" editMode="cell" responsiveLayout="stack" breakpoint="960px" @rowReorder="onRowReorder" @cell-edit-complete="onCellEditComplete">
+        <DataTable v-if="businessModel" class="p-datatable-sm kn-table p-m-2" :value="businessModel.columns" :loading="loading" responsiveLayout="stack" breakpoint="960px" @rowReorder="onRowReorder">
             <Column :rowReorder="true" :headerStyle="metawebAttributesTabDescriptor.reorderColumnStyle" :reorderableColumn="false" />
             <Column class="kn-truncated" v-for="(column, index) in metawebAttributesTabDescriptor.columns" :key="index" :field="column.field" :header="$t(column.header)">
-                <template #editor="slotProps">
-                    <div class="p-d-flex p-flex-row">
-                        <Checkbox v-if="column.field === 'identifier'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('metaUpdated')"></Checkbox>
-                        <Checkbox v-else-if="column.field === 'visible'" v-model="columnsVisibility[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'visibility')"></Checkbox>
-                        <span v-else-if="column.field === 'type'">{{ columnsType[slotProps.data.uniqueName] }}</span>
-                        <span v-else>{{ slotProps.data[slotProps.column.props.field] }}</span>
-                    </div>
-                </template>
                 <template #body="slotProps">
                     <div class="p-d-flex p-flex-row">
                         <Checkbox v-if="column.field === 'identifier'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('metaUpdated')"></Checkbox>
@@ -211,9 +203,6 @@ export default defineComponent({
                 .catch(() => {})
                 .finally(() => generate(this.observer))
             this.loading = false
-        },
-        onCellEditComplete(event: any) {
-            if (this.businessModel) this.businessModel.columns[event.index] = event.newData
         }
     }
 })

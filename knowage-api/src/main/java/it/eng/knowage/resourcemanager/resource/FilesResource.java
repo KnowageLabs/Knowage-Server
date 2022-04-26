@@ -50,11 +50,12 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
-import it.eng.knowage.knowageapi.context.BusinessRequestContext;
+import it.eng.knowage.boot.context.BusinessRequestContext;
+import it.eng.knowage.boot.error.KnowageBusinessException;
+import it.eng.knowage.boot.error.KnowageRuntimeException;
+import it.eng.knowage.boot.validation.FilesValidator;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadFilesListException;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
-import it.eng.knowage.knowageapi.error.KnowageBusinessException;
-import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.utils.PathTraversalChecker;
 import it.eng.knowage.resourcemanager.resource.dto.DownloadFilesDTO;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
@@ -62,7 +63,6 @@ import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
 import it.eng.knowage.resourcemanager.service.ResourceManagerAPI;
 import it.eng.spagobi.services.security.SecurityServiceService;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
-import it.eng.spagobi.services.validation.FilesValidator;
 
 @Path("/2.0/resources/files")
 @Component

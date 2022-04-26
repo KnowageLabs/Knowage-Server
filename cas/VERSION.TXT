@@ -1,1 +1,0 @@
-We Are using CAS Server 3.3.3 and CAS Client 3.1.6

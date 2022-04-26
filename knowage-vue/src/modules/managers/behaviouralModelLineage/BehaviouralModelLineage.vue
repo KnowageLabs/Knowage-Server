@@ -1,6 +1,6 @@
 <template>
     <div class="kn-page">
-        <KnOverlaySpinnerPanel :visibility="loading" />
+        <ProgressSpinner class="kn-progress-spinner" v-if="loading" />
         <Toolbar class="kn-toolbar kn-toolbar--primary">
             <template #start>
                 {{ $t('managers.bml.title') }}
@@ -23,13 +23,13 @@ import { AxiosResponse } from 'axios'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { iLov, iAnalyticalDriver, iDocument } from './BehaviouralModelLineage'
 import descriptor from './BehaviouralModelLineageDescriptor.json'
-import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
+import ProgressSpinner from 'primevue/progressspinner'
 import BMLTable from './BehaviouralModelLineageTable.vue'
 
 export default defineComponent({
     name: 'behavioural-model-lineage',
     components: {
-        KnOverlaySpinnerPanel,
+        ProgressSpinner,
         BMLTable
     },
     data() {

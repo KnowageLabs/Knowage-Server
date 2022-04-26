@@ -6,7 +6,7 @@
                     {{ $t('documentExecution.documentDetails.info.infoTitle') }}
                 </template>
                 <template #end>
-                    <Button :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-plain" @click="openDesignerConfirm" />
+                    <Button v-if="designerButtonVisible" :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-plain" @click="openDesignerConfirm" />
                 </template>
             </Toolbar>
             <div id="informations-content" class="kn-flex kn-relative">
@@ -204,6 +204,27 @@
             </Toolbar>
             <div id="position-content" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
+                    <div id="driver-position-container" class="p-m-2" v-if="document.drivers && document.drivers.length > 0">
+                        <Toolbar class="kn-toolbar kn-toolbar--default">
+                            <template #start>
+                                {{ $t('documentExecution.documentDetails.info.parametersPanelPosition') }}
+                            </template>
+                        </Toolbar>
+                        <Card>
+                            <template #content>
+                                <span class="p-field p-float-label p-col-12">
+                                    <Dropdown id="attributes" class="kn-material-input" v-model="document.parametersRegion" :options="driversPositions" :optionLabel="translatedLabel" optionValue="value">
+                                        <template #option="slotProps">
+                                            <div class="p-dropdown-option">
+                                                <span class="kn-capitalize">{{ $t(slotProps.option.label) }}</span>
+                                            </div>
+                                        </template>
+                                    </Dropdown>
+                                    <label for="attributes" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.positionTitle') }} </label>
+                                </span>
+                            </template>
+                        </Card>
+                    </div>
                     <div id="restriction-container" class="p-m-2">
                         <Toolbar class="kn-toolbar kn-toolbar--default">
                             <template #start>
@@ -320,6 +341,9 @@ export default defineComponent({
         },
         getImageUrl(): string {
             return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
+        },
+        designerButtonVisible(): boolean {
+            return this.document.typeCode == 'OLAP' || this.document.typeCode == 'KPI' || this.document.engine == 'knowagegisengine'
         }
     },
     data() {
@@ -339,7 +363,8 @@ export default defineComponent({
             templateToUpload: { name: '' } as any,
             imageToUpload: { name: '' } as any,
             visibilityAttribute: '',
-            restrictionValue: ''
+            restrictionValue: '',
+            driversPositions: infoDescriptor.driversPositions
         }
     },
     created() {
@@ -423,11 +448,17 @@ export default defineComponent({
         },
         openDesigner() {
             this.$router.push(`/olap-designer/${this.document.id}`)
+        },
+        translatedLabel(a) {
+            return this.$t(a.label)
         }
     }
 })
 </script>
 <style lang="scss">
+.p-dropdown-label {
+    text-transform: capitalize;
+}
 .card-0-padding .p-card-body,
 .card-0-padding .p-card-content {
     padding: 0px;

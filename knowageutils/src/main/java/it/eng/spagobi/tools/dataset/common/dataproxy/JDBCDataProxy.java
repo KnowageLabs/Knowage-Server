@@ -134,13 +134,15 @@ public class JDBCDataProxy extends AbstractDataProxy {
 					stmt.setMaxRows(getMaxResults());
 				}
 				sqlQuery = getStatement();
-				LogMF.info(logger, "Executing query:\n{0}", sqlQuery);
 				Monitor timeToExecuteStatement = MonitorFactory.start("Knowage.JDBCDataProxy.executeStatement:" + sqlQuery);
+				long start = System.currentTimeMillis();
 				try {
 					resultSet = stmt.executeQuery(sqlQuery);
 				} finally {
 					timeToExecuteStatement.stop();
 				}
+				long stop = System.currentTimeMillis();
+				LogMF.info(logger, "Executed query:\n{0} - Executed time: [" + (stop - start) + " ms]", sqlQuery);
 				LogMF.debug(logger, "Query has been executed:\n{0}", sqlQuery);
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement: " + sqlQuery, t);
@@ -235,14 +237,16 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			}
 			String sqlQuery = "SELECT COUNT(*) FROM (" + statement + ") " + tableAlias;
 			stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			LogMF.info(logger, "Executing count statement, SQL query:\n{0}", sqlQuery);
 			Monitor timeToExecuteStatement = MonitorFactory.start("Knowage.JDBCDataProxy.executeCountStatement:" + sqlQuery);
+			long start = System.currentTimeMillis();
 			try {
 				rs = stmt.executeQuery(sqlQuery);
 			} finally {
 				timeToExecuteStatement.stop();
 			}
 			LogMF.debug(logger, "Executed count statement, SQL query:\n{0}", sqlQuery);
+			long stop = System.currentTimeMillis();
+			LogMF.info(logger, "Executed count statement:\n{0} - Executed time: [" + (stop - start) + " ms]", sqlQuery);
 			rs.next();
 			resultNumber = rs.getInt(1);
 		} catch (Throwable t) {
@@ -361,13 +365,15 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				stmt.setMaxRows(getMaxResults());
 			}
 			String sqlQuery = getStatement();
-			LogMF.info(logger, "Executing query:\n{0}", sqlQuery);
 			Monitor timeToExecuteStatement = MonitorFactory.start("Knowage.JDBCDataProxy.executeStatement:" + sqlQuery);
+			long start = System.currentTimeMillis();
 			try {
 				resultSet = stmt.executeQuery(sqlQuery);
 			} finally {
 				timeToExecuteStatement.stop();
 			}
+			long stop = System.currentTimeMillis();
+			LogMF.info(logger, "Executed query:\n{0} - Executed time: [" + (stop - start) + " ms]", sqlQuery);
 			LogMF.debug(logger, "Executed query:\n{0}", sqlQuery);
 			return resultSet;
 		} catch (SQLException e) {

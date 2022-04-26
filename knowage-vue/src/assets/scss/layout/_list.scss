@@ -13,6 +13,10 @@
         border-right: none;
     }
 
+    &.kn-list-border-all {
+        border: 1px solid var(--kn-list-border-color);
+    }
+
     &--column {
         @extend .kn-list;
         height: 100vh;

@@ -1,7 +1,7 @@
 <template>
     <Toast></Toast>
     <ConfirmDialog></ConfirmDialog>
-    <KnOverlaySpinnerPanel :visibility="loading" />
+    <KnOverlaySpinnerPanel />
     <div class="layout-wrapper-content" :class="{ 'layout-wrapper-content-embed': documentExecution.embed }">
         <MainMenu></MainMenu>
 
@@ -62,7 +62,7 @@
                     url += '&SCRIPT_ID=' + (splittedLanguage.length > 2 ? splittedLanguage[2].replaceAll('#', '') : '')
                     url += '&THEME_NAME=sbi_default'
 
-                    this.$emit('update:loading', true)
+                    this.$store.commit('setLoading', true)
                     this.$http.get(url).then(
                         () => {
                             store.commit('setLocale', language.locale)
@@ -71,7 +71,7 @@
                         },
                         (error) => console.error(error)
                     )
-                    this.$emit('update:loading', false)
+                    this.$store.commit('setLoading', false)
                 })
                 .catch(function(error) {
                     if (error.response) {
@@ -212,9 +212,6 @@
                     baseZIndex: typeof newInfo.baseZIndex == 'undefined' ? 0 : newInfo.baseZIndex,
                     life: typeof newInfo.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newInfo.duration
                 })
-            },
-            loading(newLoading) {
-                this.loading = newLoading
             },
             user() {
                 /* if (!oldUser.userId && oldUser != newUser)  */

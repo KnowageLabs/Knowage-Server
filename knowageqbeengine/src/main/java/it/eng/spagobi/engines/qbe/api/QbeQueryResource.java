@@ -1,6 +1,7 @@
 package it.eng.spagobi.engines.qbe.api;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,9 +17,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.log4j.Logger;
@@ -308,7 +309,6 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	@POST
 	@Path("/export")
-	@Produces(MediaType.TEXT_PLAIN)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response export(@javax.ws.rs.core.Context HttpServletRequest req, @QueryParam("outputType") @DefaultValue("csv") String outputType,
 			@QueryParam("currentQueryId") String id) {
@@ -386,21 +386,26 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			iterator = dataSet.iterator();
 
 			StreamingOutput stream = null;
+			MediaType mediaType = null;
 
 			switch (outputType) {
 			case "csv":
 				stream = new CsvStreamingOutput(iterator);
+				mediaType = new MediaType("text", "csv");
 				break;
 			case "xlsx":
 				stream = new XlsxStreamingOutput(getLocale(), iterator, fields);
+				mediaType = new MediaType("application", "vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+						.withCharset(Charset.defaultCharset().displayName());
 				break;
 			default:
 				throw new RuntimeException("Output type not supported: " + outputType);
 			}
 
-			ResponseBuilder response = Response.ok(stream);
-			response.header("Content-Disposition", "attachment;filename=" + "report" + "." + outputType + "\";");
-			return response.build();
+			return Response.ok(stream, mediaType)
+				.cacheControl(CacheControl.valueOf("no-cache"))
+				.header("Content-Disposition", "attachment;filename=" + "report" + "." + outputType + "\";")
+				.build();
 		} catch (Exception e) {
 			if (iterator != null) {
 				iterator.close();

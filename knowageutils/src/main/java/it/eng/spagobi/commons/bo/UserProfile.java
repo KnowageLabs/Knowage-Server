@@ -65,6 +65,8 @@ public class UserProfile implements IEngUserProfile {
 
 	private static String SCHEDULER_USER_NAME = "scheduler";
 	private static String SCHEDULER_USER_ID_PREFIX = "scheduler - ";
+	private static String DATA_PREP_USER_ID_PREFIX = "data-preparation -";
+	private static String DATA_PREP_USER_NAME = "data-preparation";
 
 	private static int SCHEDULER_JWT_TOKEN_EXPIRE_HOURS = 2; // JWT token for scheduler will expire in 2 HOURS
 
@@ -212,6 +214,25 @@ public class UserProfile implements IEngUserProfile {
 		try {
 			String userId = JWTSsoService.jwtToken2userId(jwtToken);
 			return userId.startsWith(SCHEDULER_USER_ID_PREFIX);
+		} catch (Exception e) {
+			logger.debug("Error reading jwttoken for schedulatio. Are you using a sso?", e);
+			return false;
+		}
+
+	}
+
+	/**
+	 * Checks if is data preparation user.
+	 *
+	 * @return true, if checks if is preparation user
+	 */
+	public static boolean isDataPreparationUser(String jwtToken) {
+		if (jwtToken == null) {
+			return false;
+		}
+		try {
+			String userId = JWTSsoService.jwtToken2userId(jwtToken);
+			return userId.startsWith(DATA_PREP_USER_ID_PREFIX);
 		} catch (Exception e) {
 			logger.debug("Error reading jwttoken for schedulatio. Are you using a sso?", e);
 			return false;
@@ -467,6 +488,23 @@ public class UserProfile implements IEngUserProfile {
 		return toReturn;
 	}
 
+	public static UserProfile createDataPreparationUserProfile(String userUniqueIdentifier) {
+		logger.debug("IN: userUniqueIdentifier = " + userUniqueIdentifier);
+		if (!isDataPreparationUser(userUniqueIdentifier)) {
+			throw new SpagoBIRuntimeException("User unique identifier [" + userUniqueIdentifier + "] is not a data preparation user id");
+		}
+		String userId = JWTSsoService.jwtToken2userId(userUniqueIdentifier);
+		logger.debug("IN: user id = " + userId);
+		String organization = userId.substring(DATA_PREP_USER_ID_PREFIX.length());
+		logger.debug("Organization : " + organization);
+		UserProfile toReturn = new UserProfile(userUniqueIdentifier, DATA_PREP_USER_NAME, DATA_PREP_USER_NAME, organization);
+		toReturn.setRoles(new ArrayList());
+		toReturn.setAttributes(new HashMap());
+		toReturn.setFunctionalities(getDataPreparationUserFunctionalities());
+		logger.debug("OUT");
+		return toReturn;
+	}
+
 	private static Collection getSchedulerUserFunctionalities() {
 		String[] functionalities = { "AlertManagement", "AnalyticalWidget", "ArtifactCatalogueManagement", "ChartWidget", "CkanIntegrationFunctionality",
 				"ConstraintManagement", "ConstraintView", "CreateChartFunctionality", "CreateCockpitFunctionality", "CreateDatasetsAsFinalUser",
@@ -480,6 +518,11 @@ public class UserProfile implements IEngUserProfile {
 				"ParameterManagement", "ParameterView", "ProfileAttributeManagement", "ProfileManagement", "ReadEnginesManagement", "RegistryDataEntry",
 				"SelfServiceDatasetManagement", "SelfServiceMetaModelManagement", "SharedDevelopment", "StaticWidget", "SyncronizeRolesManagement",
 				"UserSaveDocumentFunctionality", "ViewMyFolderAdmin", "WorklistManagement", "WorkspaceManagement", "ReadRoles" };
+		return Arrays.asList(functionalities);
+	}
+
+	private static Collection getDataPreparationUserFunctionalities() {
+		String[] functionalities = { "DataPreparation" };
 		return Arrays.asList(functionalities);
 	}
 

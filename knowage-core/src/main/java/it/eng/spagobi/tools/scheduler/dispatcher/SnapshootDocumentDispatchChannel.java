@@ -20,6 +20,8 @@ package it.eng.spagobi.tools.scheduler.dispatcher;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.quartz.JobKey;
+import org.quartz.Trigger;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -115,9 +117,12 @@ public class SnapshootDocumentDispatchChannel implements IDocumentDispatchChanne
 				}
 			}
 
+			Trigger trigger = dispatchContext.getJobExecutionContext().getTrigger();
+			
+			JobKey jobKey = trigger.getJobKey();
 			snapDao.saveSnapshot(executionOutput, document.getId(), snapName, snapDesc, dispatchContext.getContentType(),
-					dispatchContext.getSchedulationStartDate(), dispatchContext.getJobExecutionContext().getTrigger().getJobName(),
-					dispatchContext.getJobExecutionContext().getTrigger().getName(), dispatchContext.getSequence());
+					dispatchContext.getSchedulationStartDate(), jobKey.getName(),
+					trigger.getKey().getName(), dispatchContext.getSequence());
 
 		} catch (Exception e) {
 			logger.error("Error while saving schedule result as new snapshot", e);
