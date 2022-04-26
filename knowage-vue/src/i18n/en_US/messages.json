@@ -2345,6 +2345,7 @@
             "title": "Federation definition"
         },
         "gis": {
+            "fieldRequired": "Field required",
             "datasetJoinTitle": "Dataset Join",
             "datasetLayerTitle": "Dataset & Layer",
             "dnl": {

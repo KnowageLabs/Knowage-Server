@@ -10,7 +10,6 @@
                     <KnInputFile label="" v-if="!uploading" :changeFunction="startTemplateUpload" :triggerInput="triggerUpload" />
                 </template>
             </Toolbar>
-            {{ listOfTemplates }}
             <div id="drivers-list-container" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />

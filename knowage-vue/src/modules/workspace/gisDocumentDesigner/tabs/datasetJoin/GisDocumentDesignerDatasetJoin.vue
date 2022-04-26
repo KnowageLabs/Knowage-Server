@@ -14,13 +14,13 @@
                         <Column field="datasetColumn" :header="$t('workspace.gis.dsj.dsJoinCol')" :sortable="true">
                             <template #body="slotProps">
                                 <Dropdown id="dsJoinCol" class="kn-material-input kn-width-full" v-model="slotProps.data.datasetColumn" :options="documentDataProp.datasetJoinColumns" optionLabel="id" optionValue="id" :class="{ 'p-invalid': slotProps.data.datasetColumn == null }" />
-                                <small for="dsJoinCol" v-if="slotProps.data.datasetColumn == null" class="p-error">Field required *</small>
+                                <small for="dsJoinCol" v-if="slotProps.data.datasetColumn == null" class="p-error">{{ $t('workspace.gis.fieldRequired') }} *</small>
                             </template>
                         </Column>
                         <Column field="layerColumn" :header="$t('workspace.gis.dsj.lyrJoinCol')" :sortable="true">
                             <template #body="slotProps">
                                 <Dropdown class="kn-material-input kn-width-full" v-model="slotProps.data.layerColumn" :options="documentDataProp.layerJoinColumns" optionLabel="property" optionValue="property" :class="{ 'p-invalid': slotProps.data.layerColumn == null }" />
-                                <small for="dsJoinCol" v-if="slotProps.data.layerColumn == null" class="p-error">Field required *</small>
+                                <small for="dsJoinCol" v-if="slotProps.data.layerColumn == null" class="p-error">{{ $t('workspace.gis.fieldRequired') }} *</small>
                             </template>
                         </Column>
                         <Column :style="styleDescriptor.style.trashColumn">

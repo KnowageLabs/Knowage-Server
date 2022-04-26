@@ -5,7 +5,6 @@
                 {{ $t('workspace.gis.title') }}
             </template>
             <template #end>
-                <Button class="p-button-text p-button-rounded p-button-plain" label="logme" @click="logGis" />
                 <Button class="p-button-text p-button-rounded p-button-plain" :label="$t('workspace.gis.editMap')" @click="openMapConfirm" />
                 <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDialogDisabled" @click="saveOrUpdateGis" />
                 <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeGis" />
@@ -135,10 +134,6 @@ export default defineComponent({
         this.loadPage()
     },
     methods: {
-        logGis() {
-            console.log(this.documentTemplate)
-            console.log(this.documentData)
-        },
         closeGis() {
             this.$router.push(`${this.$router.options.history.state.back}`)
         },
@@ -268,7 +263,6 @@ export default defineComponent({
             })
         },
         validationChanged(property, value) {
-            console.log('PROPERTY : ', property, 'VALUE: ', value)
             this.validations[property] = value
         },
         resetAllFields() {
@@ -295,7 +289,6 @@ export default defineComponent({
             this.isDatasetChosen ? this.loadLayerColumns(layer[0].layerId) : ''
         },
         onDriverChange(driver) {
-            console.log('DRIVERS CHANGED')
             this.documentData.selectedDriver = driver
         },
         saveOrUpdateGis() {
@@ -306,7 +299,6 @@ export default defineComponent({
             }
         },
         buildGisTemplate() {
-            console.log(this.documentData)
             let template = {} as any
 
             template.targetLayerConf = []
@@ -342,7 +334,6 @@ export default defineComponent({
             template.crossNavigationMultiselect = this.documentData.visibilityData.crossNavigationMultiselect
             template.visibilityControls = this.documentData.visibilityData.visibilityControls
 
-            console.log(template)
             this.saveGisDocument(template)
         },
         async saveGisDocument(template) {
@@ -351,13 +342,12 @@ export default defineComponent({
                 postData.DATASET_LABEL = this.documentData.datasetLabel
                 postData.DOCUMENT_LABEL = this.documentData.documentLabel
                 postData.TEMPLATE = template
-                console.log('EDIT POST DATA', postData)
 
                 await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/saveGeoReportTemplate`, postData).then(async () => {
                     this.saveDialogVisible = false
                     this.$store.commit('setInfo', {
-                        title: 'Saved',
-                        msg: 'SAVED OK'
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.updateSuccess')
                     })
                     this.routeToDocument()
                 })
@@ -369,18 +359,15 @@ export default defineComponent({
                 postData.customData = { templateContent: template }
                 postData.document = { name: this.documentData.documentLabel, description: this.documentData.documentDesc, label: docLabel, type: 'MAP' }
                 this.documentData.datasetLabel ? (postData.sourceData = { label: this.documentData.datasetLabel }) : (postData.sourceData = null)
-                console.log('SAVE POST DATA', postData)
-                await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/saveDocument/`, postData)
-                    .then(async () => {
-                        this.saveDialogVisible = false
-                        this.documentData.documentLabel = docLabel
-                        this.$store.commit('setInfo', {
-                            title: 'Saved',
-                            msg: 'SAVED OK'
-                        })
+
+                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/saveDocument/`, postData).then(async () => {
+                    this.saveDialogVisible = false
+                    this.documentData.documentLabel = docLabel
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.toast.success')
                     })
-                    .then(() => {})
+                })
             }
         },
         async routeToDocument() {

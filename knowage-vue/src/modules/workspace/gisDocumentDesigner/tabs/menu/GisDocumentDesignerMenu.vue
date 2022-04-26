@@ -61,13 +61,13 @@
                         <Column field="name" :header="$t('workspace.gis.dsj.dsJoinCol')" :sortable="true">
                             <template #body="slotProps">
                                 <Dropdown id="dsJoinCol" class="kn-material-input kn-width-full" v-model="slotProps.data.name" :options="documentDataProp.datasetJoinColumns" optionLabel="id" optionValue="id" :class="{ 'p-invalid': slotProps.data.name == null }" />
-                                <small for="dsJoinCol" v-if="slotProps.data.name == null" class="p-error">Field required *</small>
+                                <small for="dsJoinCol" v-if="slotProps.data.name == null" class="p-error">{{ $t('workspace.gis.fieldRequired') }} *</small>
                             </template>
                         </Column>
                         <Column field="label" :header="$t('workspace.gis.dsj.lyrJoinCol')" :sortable="true">
                             <template #body="slotProps">
                                 <InputText id="label" class="kn-material-input kn-width-full" v-model="slotProps.data.label" :class="{ 'p-invalid': slotProps.data.label == null || slotProps.data.label == '' }" />
-                                <small for="label" v-if="slotProps.data.label == null || slotProps.data.label == ''" class="p-error">Field required *</small>
+                                <small for="label" v-if="slotProps.data.label == null || slotProps.data.label == ''" class="p-error">{{ $t('workspace.gis.fieldRequired') }} *</small>
                             </template>
                         </Column>
                         <Column :style="styleDescriptor.style.trashColumn">
