@@ -224,6 +224,7 @@
             "formula": "Formula",
             "functions": "Functions",
             "officialDocumentation": "Official documentation ({function})",
+            "outputType": "Output type",
             "title": "Calculated field"
         }
     },
