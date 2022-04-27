@@ -127,8 +127,8 @@
                 </Column>
                 <Column @rowClick="false">
                     <template #body="slotProps">
-                        <Button icon="fas fa-retweet" class="p-button-link" @click="restoreVersionConfirm(slotProps.data)" />
-                        <Button icon="pi pi-trash" class="p-button-link" @click="deleteConfirm('deleteOne', slotProps.data)" />
+                        <Button v-if="slotProps.data.versNum !== 0" icon="fas fa-retweet" class="p-button-link" @click="restoreVersionConfirm(slotProps.data)" />
+                        <Button v-if="slotProps.data.versNum !== 0" icon="pi pi-trash" class="p-button-link" @click="deleteConfirm('deleteOne', slotProps.data)" />
                     </template>
                 </Column>
             </DataTable>
@@ -200,6 +200,7 @@ export default defineComponent({
     methods: {
         //#region ===================== Delete Versions Functionality ====================================================
         deleteConfirm(deletetype, event) {
+            console.log(event)
             let msgDesc = ''
             deletetype === 'deleteOne' ? (msgDesc = 'managers.datasetManagement.deleteOneVersionMsg') : (msgDesc = 'managers.datasetManagement.deleteAllVersionsMsg')
             this.$confirm.require({
