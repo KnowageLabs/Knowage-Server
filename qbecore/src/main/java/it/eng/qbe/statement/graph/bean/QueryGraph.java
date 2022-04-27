@@ -58,16 +58,18 @@ public class QueryGraph extends DirectedMultigraph<IModelEntity, Relationship> {
 
 	public boolean hasJoinPaths() {
 
-		if (connections.size() == 0)
+		if (connections.size() == 0) {
 			return false;
+		}
 
 		for (Relationship relationship : connections) {
 
 			String sourceJoinPath = relationship.getSourceJoinPath();
 			String targetJoinPath = relationship.getTargetJoinPath();
 
-			if (sourceJoinPath.isEmpty() || sourceJoinPath == null || targetJoinPath.isEmpty() || targetJoinPath == null)
+			if (sourceJoinPath == null || sourceJoinPath.isEmpty() || targetJoinPath == null || targetJoinPath.isEmpty()) {
 				return false;
+			}
 		}
 		return true;
 	}
