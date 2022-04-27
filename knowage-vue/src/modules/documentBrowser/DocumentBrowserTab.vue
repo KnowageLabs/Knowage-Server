@@ -1,7 +1,7 @@
 <template>
-    <router-view v-if="item" v-slot="{ Component }" @close="$emit('close', item)">
+    <router-view v-if="item" v-slot="{ Component }" :functionalityId="functionalityId" :item="item" :parameterValuesMap="parameterValuesMap" :tabKey="key" @close="$emit('close', item)" @parametersChanged="onParametersChange" @iframeCreated="onIframeCreated" @closeIframe="$emit('closeIframe')">
         <keep-alive>
-            <component :is="Component" :key="item.routerId"></component>
+            <component :is="Component" :key="key"></component>
         </keep-alive>
     </router-view>
 </template>
@@ -12,15 +12,27 @@ import { defineComponent } from 'vue'
 export default defineComponent({
     name: 'document-browser-tab',
     components: {},
-    emits: ['close'],
-    props: { item: { type: Object }, mode: { type: String } },
+    emits: ['close', 'iframeCreated', 'closeIframe'],
+    props: { item: { type: Object }, mode: { type: String }, functionalityId: { type: String } },
     data() {
         return {
-            selectedItem: {}
+            parameterValuesMap: {} as any
+        }
+    },
+    computed: {
+        key(): string {
+            return this.item?.routerId
         }
     },
     watch: {},
     created() {},
-    methods: {}
+    methods: {
+        onIframeCreated(payload: any) {
+            this.$emit('iframeCreated', payload)
+        },
+        onParametersChange(payload: any) {
+            this.parameterValuesMap[payload.document.label + '-' + this.key] = payload.parameters
+        }
+    }
 })
 </script>

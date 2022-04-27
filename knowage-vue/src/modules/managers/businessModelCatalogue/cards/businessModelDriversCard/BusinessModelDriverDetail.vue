@@ -148,14 +148,15 @@
             <div id="operationInfo">
                 <p>{{ $t('managers.businessModelManager.operationInfo', { driver: driver.label }) }}</p>
             </div>
+
             <form class="p-fluid p-m-5">
                 <div class="p-field p-d-flex">
                     <div :style="businessModelDriverDetailDescriptor.input.parFather.style">
                         <span class="p-float-label">
-                            <Dropdown id="parFather" class="kn-material-input" v-model="condition.parFather" :options="drivers" placeholder=" " :disabled="readonly">
+                            <Dropdown id="parFather" class="kn-material-input" v-model="condition.parFatherId" :options="drivers" placeholder=" " optionValue="id" :disabled="readonly">
                                 <template #value="slotProps">
                                     <div v-if="slotProps.value">
-                                        <span>{{ slotProps.value.label }}</span>
+                                        <span>{{ getDriverProperty(slotProps.value, 'label') }}</span>
                                     </div>
                                 </template>
                                 <template #option="slotProps">
@@ -433,8 +434,8 @@ export default defineComponent({
                     if (this.selectedModes[i] === +modalityKeys[j]) {
                         const conditionForPost = {
                             ...this.condition,
-                            parFatherId: this.condition.parFather.id,
-                            parFatherUrlName: (this.selectedDriver as iBusinessModelDriver).parameterUrlName,
+                            parFatherId: '' + this.condition.parFatherId,
+                            parFatherUrlName: this.getDriverProperty(this.condition.parFatherId, 'parameterUrlName'),
                             parId: (this.selectedDriver as iBusinessModelDriver).id,
                             useModeId: +modalityKeys[j],
                             filterColumn: this.modalities[this.selectedModes[i]]
@@ -557,6 +558,10 @@ export default defineComponent({
             this.condition = {}
             this.operation = 'insert'
             this.conditionFormVisible = false
+        },
+        getDriverProperty(driverId: number, property: string) {
+            const index = this.drivers.findIndex((driver: any) => driver.id === driverId)
+            return index !== -1 ? this.drivers[index][property] : ''
         }
     }
 })

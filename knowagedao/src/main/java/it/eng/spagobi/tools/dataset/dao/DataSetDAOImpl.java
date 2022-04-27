@@ -2358,7 +2358,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibDataSet.setPivotRowName(dataSet.getPivotRowName());
 				hibDataSet.setPivotColumnValue(dataSet.getPivotColumnValue());
 				hibDataSet.setNumRows(dataSet.isNumRows());
-
 				hibDataSet.setCategory(category);
 				hibDataSet.setParameters(dataSet.getParameters());
 				hibDataSet.setDsMetadata(dataSet.getDsMetadata());

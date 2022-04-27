@@ -33,7 +33,7 @@
                     </span>
                     <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.description" :additionalTranslateParams="{ fieldName: $t('common.description') }" />
                 </div>
-                <div class="p-field p-mt-1 p-col-6">
+                <div v-if="qbeAdvancedSaving" class="p-field p-mt-1 p-col-6">
                     <span class="p-float-label">
                         <Dropdown
                             id="scope"
@@ -58,7 +58,7 @@
                         }"
                     />
                 </div>
-                <div class="p-field p-mt-1 p-col-6">
+                <div v-if="qbeAdvancedSaving" class="p-field p-mt-1 p-col-6">
                     <span class="p-float-label">
                         <Dropdown
                             id="category"
@@ -102,6 +102,11 @@ export default defineComponent({
     name: 'olap-custom-view-save-dialog',
     components: { Card, Dropdown, KnValidationMessages },
     props: { propDataset: Object, scopeTypes: Array, categoryTypes: Array },
+    computed: {
+        qbeAdvancedSaving(): any {
+            return (this.$store.state as any).user.functionalities.includes('QbeAdvancedSaving')
+        }
+    },
     data() {
         return {
             v$: useValidate() as any,

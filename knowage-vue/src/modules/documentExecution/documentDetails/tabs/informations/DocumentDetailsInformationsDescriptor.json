@@ -1,4 +1,22 @@
 {
+    "driversPositions": [
+        {
+            "label": "common.right",
+            "value": "east"
+        },
+        {
+            "label": "common.top",
+            "value": "north"
+        },
+        {
+            "label": "common.bottom",
+            "value": "south"
+        },
+        {
+            "label": "common.left",
+            "value": "west"
+        }
+    ],
     "globalFilterFields": ["name", "label", "description", "author", "scope"],
     "style": {
         "center": {

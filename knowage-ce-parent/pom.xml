@@ -81,9 +81,13 @@
 		<!-- Minimized version: ixed because in jspf are not dynamic as in pom -->
 		<js.version>${project.version}</js.version>
 
-		<spring.boot>2.5.8</spring.boot>
+		<spring.boot>2.5.12</spring.boot>
 		<apache.poi>4.1.2</apache.poi>
 		<resteasy.version>3.6.2.Final</resteasy.version>
+		<quartz.version>2.3.2</quartz.version>
+		<quartz-oracle.version>2.1.7</quartz-oracle.version>
+		<logstash-gelf.version>1.15.0</logstash-gelf.version>
+		<log4j.version>2.17.1</log4j.version>
 	</properties>
 
 	<modules>
@@ -120,6 +124,7 @@
 		<module>../knowagedatabasescripts</module>
 		<module>../knowage-api</module>
 		<module>../knowage-vue</module>
+		<module>../knowage-spring-boot-api-common</module>
 	</modules>
 
 	<build>
@@ -357,6 +362,54 @@
 				<groupId>com.sun.xml.ws</groupId>
 				<artifactId>jaxws-rt</artifactId>
 				<version>2.3.3</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz</artifactId>
+				<version>${quartz.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz-oracle</artifactId>
+				<version>${quartz-oracle.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-1.2-api</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-core</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-api</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-web</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-jcl</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>biz.paluch.logging</groupId>
+				<artifactId>logstash-gelf</artifactId>
+				<version>${logstash-gelf.version}</version>
 			</dependency>
 
 		</dependencies>

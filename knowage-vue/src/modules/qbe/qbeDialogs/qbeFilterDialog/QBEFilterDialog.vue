@@ -110,18 +110,19 @@ export default defineComponent({
         },
         addNewFilter() {
             const field = this.filterDialogData ? this.filterDialogData.field : ({} as any)
+
             const filter = {
                 filterId: 'Filter' + this.nextFilterIndex,
                 filterDescripion: 'Filter' + this.nextFilterIndex,
                 filterInd: this.nextFilterIndex,
                 promptable: false,
                 leftOperandValue: field.id,
-                leftOperandDescription: field.longDescription,
-                leftOperandLongDescription: field.longDescription,
+                leftOperandDescription: field.longDescription ?? field.attributes.longDescription,
+                leftOperandLongDescription: field.longDescription ?? field.attributes.longDescription,
                 leftOperandType: 'Field Content',
                 leftOperandDefaultValue: null,
                 leftOperandLastValue: null,
-                leftOperandAlias: field.alias,
+                leftOperandAlias: field.alias ?? field.attributes.field,
                 leftOperandDataType: '',
                 operator: 'EQUALS TO',
                 rightOperandDescription: '',
@@ -233,7 +234,6 @@ export default defineComponent({
         closeDialog() {
             this.$emit('close')
             this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
-            this.parameters = []
             this.updatedParameters = []
             this.parameterTableVisible = false
             this.removeFiltersOnCancel()
@@ -245,7 +245,7 @@ export default defineComponent({
             })
         },
         save() {
-            if (this.propParameters.length > 0 && !this.parameterTableVisible) {
+            if (this.propParameters.length > 0 && !this.parameterTableVisible && this.filterUsesParameters()) {
                 this.parameterTableVisible = true
             } else {
                 this.$emit('save', this.filters, this.filterDialogData?.field, this.updatedParameters, this.expression)
@@ -254,6 +254,17 @@ export default defineComponent({
         },
         onParametersUpdated(updatedParameters: any[]) {
             this.updatedParameters = updatedParameters
+        },
+        filterUsesParameters() {
+            let usesParameters = false
+            for (let i = 0; i < this.filters.length; i++) {
+                if (this.filters[i].rightType === 'parameter') {
+                    usesParameters = true
+                    break
+                }
+            }
+
+            return usesParameters
         }
     }
 })

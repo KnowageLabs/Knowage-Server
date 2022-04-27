@@ -17,10 +17,10 @@
  */
 package it.eng.spagobi.rest.interceptors;
 
+import java.util.Optional;
 import java.util.StringTokenizer;
 
 import javax.annotation.Priority;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
@@ -48,7 +48,17 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Priority(Priorities.AUTHENTICATION)
 public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor {
 
-	static private Logger logger = Logger.getLogger(SecurityServerInterceptor.class);
+	/**
+	 * TODO : Move from here into a generic configuration class
+	 */
+	private static final String KNOWAGE_AUTHORIZATION_HEADER_NAME = "KNOWAGE_AUTHORIZATION_HEADER_NAME";
+
+	private static Logger logger = Logger.getLogger(SecurityServerInterceptor.class);
+
+	/**
+	 * TODO : Move from here into a generic configuration class
+	 */
+	private String authorizationHeaderName;
 
 	@Override
 	protected void notAuthenticated(ContainerRequestContext requestContext) {
@@ -66,10 +76,21 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 		logger.trace("IN");
 
 		try {
-			/*
-			 * author radmila.selakovic@mht.net checking if request header is "X-Auth-Token"
-			 */
-			if (servletRequest.getHeader("X-Auth-Token") == null) {
+			String authorizationHeaderName = getAuthorizationHeaderName();
+
+			if (servletRequest.getHeader(authorizationHeaderName) != null) {
+				String token = servletRequest.getHeader(authorizationHeaderName);
+				token = token.replaceFirst("Bearer ", "");
+				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
+
+				SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthenticationToken(token);
+				if (spagoBIUserProfile != null) {
+					profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
+				}
+			} else if (servletRequest.getHeader("X-Auth-Token") == null) {
+				/*
+				 * author radmila.selakovic@mht.net checking if request header is "X-Auth-Token"
+				 */
 				String auto = servletRequest.getHeader("Authorization");
 				int position = auto.indexOf("Direct");
 				if (position > -1 && position < 5) {// Direct stay at the beginning of the header
@@ -104,9 +125,6 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 				if (spagoBIUserProfile != null) {
 					profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
 				}
-
-				servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
-
 			}
 		} catch (Throwable t) {
 			logger.trace("Problem during authentication, returning null", t);
@@ -169,4 +187,15 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 		int position = auto.indexOf("Direct");
 		return (position > -1 && position < 5);
 	}
+
+	/**
+	 * TODO : Move from here into a generic configuration class
+	 */
+	public String getAuthorizationHeaderName() {
+		if (authorizationHeaderName == null) {
+			authorizationHeaderName = Optional.ofNullable(System.getenv(KNOWAGE_AUTHORIZATION_HEADER_NAME)).orElse("X-Kn-Authorization");
+		}
+		return authorizationHeaderName;
+	}
+
 }

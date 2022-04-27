@@ -1,4 +1,5 @@
 import moment from 'moment'
+import { DateTime } from 'luxon'
 import store from '@/App.store.js'
 
 let fallbackLocale = 'en_US'
@@ -24,4 +25,10 @@ export function formatDateWithLocale(dateString?: string, format?: any) {
 
 export function formatNumberWithLocale(number: number, precision?: number, format?: any) {
     return Intl.NumberFormat(getLocale(true), { ...format, minimumFractionDigits: precision || 2, maximumFractionDigits: precision || 2 }).format(number)
+}
+
+export function luxonFormatDate(dateString: any | Date, inputFormat?: string, outputFormat?: string) {
+    const tempDate = inputFormat ? DateTime.fromFormat(dateString, inputFormat) : DateTime.fromJSDate(dateString).setLocale(getLocale(true))
+    if (outputFormat) return tempDate.toFormat(outputFormat)
+    else return tempDate.toLocaleString(DateTime.DATE_SHORT)
 }

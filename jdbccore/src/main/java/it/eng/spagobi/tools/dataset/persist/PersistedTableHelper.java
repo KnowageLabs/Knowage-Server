@@ -35,7 +35,7 @@ import org.joda.time.DateTimeZone;
 public class PersistedTableHelper {
 
 	private static transient Logger logger = Logger.getLogger(PersistedTableHelper.class);
-	
+
 	public static void addField(PreparedStatement insertStatement, int fieldIndex, Object fieldValue, String fieldMetaName, String fieldMetaTypeName,
 			boolean isfieldMetaFieldTypeMeasure, Map<String, Integer> columnSizes) {
 		try {
@@ -186,8 +186,10 @@ public class PersistedTableHelper {
 			} else if (fieldMetaTypeName.contains("BigDecimal")) {
 				if (fieldValue == null || fieldValue.toString().isEmpty()) {
 					insertStatement.setNull(fieldIndex + 1, java.sql.Types.DECIMAL);
-				} else {
+				} else if (fieldValue instanceof BigDecimal) {
 					insertStatement.setBigDecimal(fieldIndex + 1, (BigDecimal) fieldValue);
+				} else {
+					insertStatement.setBigDecimal(fieldIndex + 1, BigDecimal.valueOf(((Number) fieldValue).longValue()));
 				}
 			} else if (fieldMetaTypeName.contains("[B")) { // BLOB
 				insertStatement.setBytes(fieldIndex + 1, (byte[]) fieldValue);

@@ -1,18 +1,16 @@
-.p-field-checkbox {
-    .p-inputswitch {
-        &.p-inputswitch-checked {
-            &:not(.p-disabled) {
-                &:hover {
-                    .p-inputswitch-slider {
-                        background: var(--kn-input-checkbox-selected-background);
-                    }
+.p-inputswitch {
+    &.p-inputswitch-checked {
+        &:not(.p-disabled) {
+            &:hover {
+                .p-inputswitch-slider {
+                    background: var(--kn-input-checkbox-selected-background);
                 }
             }
-            .p-inputswitch-slider {
-                background: var(--kn-input-checkbox-selected-background);
-                &:before {
-                    background: var(--kn-input-checkbox-selected-color);
-                }
+        }
+        .p-inputswitch-slider {
+            background: var(--kn-input-checkbox-selected-background);
+            &:before {
+                background: var(--kn-input-checkbox-selected-color);
             }
         }
     }

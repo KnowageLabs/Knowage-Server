@@ -7,7 +7,7 @@
                 </template>
             </Toolbar>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <Listbox v-if="displayMenu && storeFunctionalitiesExist" :options="menuItems" data-test="menu-list">
+            <Listbox v-if="displayMenu && storeFunctionalitiesExist" :options="menuItems" data-test="menu-list" class="kn-list">
                 <template #option="slotProps">
                     <div v-if="slotProps.option.value !== 'repository'" class="kn-list-item" @click="setActiveView(`/workspace/${slotProps.option.value}`)">
                         <i :class="slotProps.option.icon"></i>
@@ -118,6 +118,7 @@ import WorkspaceNewFolderDialog from './views/repositoryView/dialogs/WorkspaceNe
 import Dialog from 'primevue/dialog'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import moment from 'moment'
+import { mapState } from 'vuex'
 
 const crypto = require('crypto')
 
@@ -125,15 +126,18 @@ export default defineComponent({
     name: 'dataset-management',
     components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree, WorkspaceNewFolderDialog, Dialog, KnParameterSidebar },
     computed: {
+        ...mapState({
+            user: 'user'
+        }),
         showRepository(): any {
-            return (this.$store.state as any).user.functionalities.includes('SaveIntoFolderFunctionality')
+            return this.user.functionalities.includes('SaveIntoFolderFunctionality')
         },
         storeFunctionalitiesExist(): any {
             this.createMenuItems()
-            return (this.$store.state as any).user.functionalities.length > 0
+            return this.user.functionalities.length > 0
         },
         userRole(): any {
-            return (this.$store.state as any).user.sessionRole !== 'No default role selected' ? (this.$store.state as any).user.sessionRole : null
+            return this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
         }
     },
     data() {
@@ -260,14 +264,16 @@ export default defineComponent({
         createMenuItems() {
             this.menuItems = []
             this.menuItems.push({ icon: 'fas fa-history', key: '0', label: 'workspace.menuLabels.recent', value: 'recent' }, { icon: 'fas fa-folder', key: '1', label: 'workspace.menuLabels.myRepository', value: 'repository' })
-            if ((this.$store.state as any).user.functionalities.includes('SeeMyData')) {
+            if (this.user.functionalities.includes('SeeMyData')) {
                 this.menuItems.push({ icon: 'fas fa-database', key: '2', label: 'workspace.menuLabels.myData', value: 'data' })
             }
-            this.menuItems.push({ icon: 'fas fa-table', key: '3', label: 'workspace.menuLabels.myModels', value: 'models' })
-            if ((this.$store.state as any).user.functionalities.includes('CreateDocument')) {
+            if (this.user.isSuperadmin || this.user.functionalities.includes('BuildQbeQueriesFunctionality')) {
+                this.menuItems.push({ icon: 'fas fa-table', key: '3', label: 'workspace.menuLabels.myModels', value: 'models' })
+            }
+            if (this.user.functionalities.includes('CreateDocument')) {
                 this.menuItems.push({ icon: 'fas fa-th-large', key: '4', label: 'workspace.menuLabels.myAnalysis', value: 'analysis' })
             }
-            if ((this.$store.state as any).user.functionalities.includes('SeeSnapshotsFunctionality') && (this.$store.state as any).user.functionalities.includes('ViewScheduledWorkspace')) {
+            if (this.user.functionalities.includes('SeeSnapshotsFunctionality') && this.user.functionalities.includes('ViewScheduledWorkspace')) {
                 this.menuItems.push({
                     icon: 'fas fa-stopwatch',
                     key: '5',
@@ -275,7 +281,9 @@ export default defineComponent({
                     value: 'schedulation'
                 })
             }
-            this.menuItems.push({ icon: 'fas fa-cogs', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced' })
+            if (this.user.functionalities.includes('DataPreparation')) {
+                this.menuItems.push({ icon: 'fas fa-cogs', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced' })
+            }
         },
         executeDocument(document: any) {
             const routeType = this.getRouteDocumentType(document)
@@ -393,12 +401,10 @@ export default defineComponent({
         },
         async buildQbeUrl(dataset) {
             let initialUrl = ''
-            let language = (this.$store.state as any).user.locale.split('_')[0]
-            let country = (this.$store.state as any).user.locale.split('_')[1]
+            let language = this.user.locale.split('_')[0]
+            let country = this.user.locale.split('_')[1]
             let drivers = encodeURI(JSON.stringify(this.datasetDrivers))
-            initialUrl = `/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&SBI_SCRIPT=&user_id=${(this.$store.state as any).user.userUniqueIdentifier}&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=${country}&SBI_EXECUTION_ID=${
-                this.uniqueID
-            }&ACTION_NAME=QBE_ENGINE_START_ACTION_FROM_BM&MODEL_NAME=${dataset.name}&DATA_SOURCE_LABEL=${dataset.dataSourceLabel}&DATA_SOURCE_ID=${dataset.dataSourceId}&isTechnicalUser=true&DRIVERS=${drivers}`
+            initialUrl = `/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&SBI_SCRIPT=&user_id=${this.user.userUniqueIdentifier}&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=${country}&SBI_EXECUTION_ID=${this.uniqueID}&ACTION_NAME=QBE_ENGINE_START_ACTION_FROM_BM&MODEL_NAME=${dataset.name}&DATA_SOURCE_LABEL=${dataset.dataSourceLabel}&DATA_SOURCE_ID=${dataset.dataSourceId}&isTechnicalUser=true&DRIVERS=${drivers}`
             this.qbeUrl = process.env.VUE_APP_HOST_URL + initialUrl
         },
         getFormattedParameters(loadedParameters: { filterStatus: any[]; isReadyForExecution: boolean }) {

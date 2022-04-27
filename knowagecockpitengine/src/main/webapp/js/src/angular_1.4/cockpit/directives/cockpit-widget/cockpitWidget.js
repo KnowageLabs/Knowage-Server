@@ -770,7 +770,11 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		for(var p in previewSettings.parameters){
 			if(previewSettings.parameters[p].bindType != 'static' && previewSettings.parameters[p].defaultValue) previewSettings.parameters[p].value = previewSettings.parameters[p].defaultValue
 			if(previewSettings.parameters[p].bindType == 'driver'){
-				previewSettings.parameters[p].value = getFormattedParameterValue(previewSettings.parameters[p]);
+				var value = cockpitModule_analyticalDrivers[previewSettings.parameters[p].driver];
+				if (typeof value !== 'undefined') {
+					// cockpitModule_utilstServices.getMultiValueParameterArray returns 1 value in case of single value driver
+					previewSettings.parameters[p].value = cockpitModule_utilstServices.getMultiValueParameterArray(value);
+				}
 			}
 			if(previewSettings.parameters[p].bindType == 'dynamic'){
 				if($scope.ngModel.type == 'chart') previewSettings.parameters[p].value = clickedValue;
@@ -881,7 +885,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						}
 					}
 
-	
+
 		if(!directInteraction || directInteraction == 'cross'){
 			if (previewSettings && previewSettings.enable) {
 				if(!previewSettings.previewType || previewSettings.previewType == 'allRow' ||
@@ -1080,9 +1084,9 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 					
 					// temporary section needed as a workaround to get vue instance
 					var hasVueParent = false
-					if(window.parent.__VUE__ || window.parent.document.getElementById('_KNOWAGE_VUE')){
+					if(window.parent.document.getElementById('_KNOWAGE_VUE')){
 						hasVueParent = window.parent
-					}else if(window.parent.parent.__VUE__ || window.parent.parent.document.getElementById('_KNOWAGE_VUE')){
+					}else if(window.parent.parent.document.getElementById('_KNOWAGE_VUE')){
 						hasVueParent = window.parent.parent
 					}
 					
