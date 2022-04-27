@@ -17,16 +17,15 @@
  */
 package it.eng.spagobi.api.v3;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.apache.curator.shaded.com.google.common.collect.Lists;
 
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
 class DataSetMainDTO extends AbstractDataSetDTO {
 
-	private final List<String> tags = Lists.newArrayList();
+	private final List<String> tags = new ArrayList<>();
 
 	public DataSetMainDTO(SbiDataSet dataset) {
 		super(dataset);
