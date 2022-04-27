@@ -44,7 +44,7 @@
                 <Divider class="p-m-0 p-p-0 dividerCustomConfig" />
                 <div class="kn-truncated">{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</div>
 
-                <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="dataset.config.transformations" optionLabel="type" listStyle="max-height:200px"
+                <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="dataset.config.transformations.reverse()" optionLabel="type" listStyle="max-height:200px"
                     ><template #option="slotProps">
                         <div class="p-text-uppercase kn-list-item transformationSidebarElement">
                             <div v-if="slotProps.option.type != 'calculatedField'">{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].columns[0] }}</div>
