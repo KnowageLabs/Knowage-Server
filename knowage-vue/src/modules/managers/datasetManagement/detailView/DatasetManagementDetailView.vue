@@ -144,7 +144,7 @@ export default defineComponent({
     methods: {
         //#region ===================== Get All Data ====================================================
         async getSelectedDataset() {
-            this.$http
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`)
                 .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0] ? { ...response.data[0] } : {}
@@ -153,7 +153,7 @@ export default defineComponent({
                 .catch()
         },
         async getSelectedDatasetVersions() {
-            this.$http
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/olderversions/${this.id}`)
                 .then((response: AxiosResponse<any>) => {
                     response.data.root ? (this.selectedDatasetVersions = response.data.root) : (this.selectedDatasetVersions = [])
@@ -166,9 +166,16 @@ export default defineComponent({
                 this.loading = true
                 await this.getSelectedDataset()
                 await this.getSelectedDatasetVersions()
+                this.insertCurrentVersion()
             } else {
                 this.selectedDataset = { ...detailViewDescriptor.newDataset }
                 this.selectedDatasetVersions = []
+            }
+        },
+        insertCurrentVersion() {
+            if (this.selectedDatasetVersions.length === 0) {
+                const selectedType = this.datasetTypes.find((type) => type.VALUE_CD === this.selectedDataset.dsTypeCd)
+                this.selectedDatasetVersions.push({ type: selectedType.VALUE_DS, userIn: this.selectedDataset.owner, versNum: 0, dateIn: this.selectedDataset.dateIn, dsId: this.selectedDataset.id })
             }
         },
         //#endregion ===============================================================================================

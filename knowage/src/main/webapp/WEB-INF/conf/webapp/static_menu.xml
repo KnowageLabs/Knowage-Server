@@ -253,6 +253,7 @@
 			iconCls="far fa-folder-open" />
 
 		<ITEM id="11002" label="menu.workspace"
+			requiredFunctionality="SeeMyWorkspace"
 			to="/workspace"
 			iconCls="fas fa-briefcase" />
 
@@ -285,7 +286,8 @@
 		<ITEM id="11009" label="menu.cross.definition"
 			requiredFunctionality="ManageCrossNavigation"
 			to="/cross-navigation-management" />
-		<ITEM id="11010" label="menu.calendar" requiredFunctionality="ManageCalendar"
+		<ITEM id="11010" label="menu.calendar"
+			requiredFunctionality="ManageCalendar"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=calendarTemplate"
 			iconCls="fas fa-calendar" />
 		<ITEM id="11011" label="menu.lovs.management"

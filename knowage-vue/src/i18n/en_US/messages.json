@@ -221,6 +221,18 @@
         "widget": "Widget",
         "yes": "Yes"
     },
+    "components": {
+        "knCalculatedField": {
+            "columnName": "Column Name",
+            "description": "Calculated field description",
+            "fields": "Fields",
+            "formula": "Formula",
+            "functions": "Functions",
+            "officialDocumentation": "Official documentation ({function})",
+            "outputType": "Output type",
+            "title": "Calculated field"
+        }
+    },
     "cron": {
         "advanced": "Advanced",
         "april": "April",
@@ -1136,7 +1148,7 @@
             "noSourceTables": "There are no source tables for selected dataset.",
             "noTablesToLink": "There are no tables to link in this source.",
             "noVersions": "There are no previous versions of this dataset, save it with changes to create an older version.",
-            "oldVersions": "Older Dataset Versions",
+            "oldVersions": "Dataset Versions",
             "openQbeButton": "Open Qbe",
             "params": "Parameters",
             "peristenceWarning": "Dataset with parameters cannot be persisted!",
@@ -2345,7 +2357,6 @@
             "title": "Federation definition"
         },
         "gis": {
-            "fieldRequired": "Field required",
             "datasetJoinTitle": "Dataset Join",
             "datasetLayerTitle": "Dataset & Layer",
             "dnl": {
@@ -2374,6 +2385,7 @@
                 "lyrJoinCol": "Layer join column"
             },
             "editMap": "Edit Map",
+            "fieldRequired": "Field required",
             "filtersMenu": "Filters & Menu",
             "indicators": "Indicators",
             "menu": {
