@@ -55,7 +55,7 @@ export default defineComponent({
     },
     async created() {
         window.addEventListener('message', (event) => {
-            if (event.data.type === 'saveCockpit') {
+            if (event.data.type === 'saveCockpit' && this.$route.name === 'new-dashboard') {
                 this.loadSavedCockpit(event.data.model)
             }
         })

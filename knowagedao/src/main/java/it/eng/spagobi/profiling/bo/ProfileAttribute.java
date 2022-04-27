@@ -31,7 +31,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BooleanJsonSerializer;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BooleanToShortJSONDeserializer;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
-import it.eng.spagobi.services.validation.Alphanumeric;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 
 public class ProfileAttribute implements Serializable {
@@ -39,7 +38,7 @@ public class ProfileAttribute implements Serializable {
 	private Integer attributeId;
 
 	@NotEmpty
-	@Alphanumeric
+	@ExtendedAlphanumeric
 	@Size(max = 255)
 	private String attributeName = "";
 

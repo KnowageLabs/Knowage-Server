@@ -370,6 +370,22 @@ public class DataSetResource extends AbstractDataSetResource {
 		return serializeDataSet(datasetToReturn, null);
 	}
 
+	@GET
+	@Path("/dataset/{dsLabel}/category")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public String getDataSetCategoryByDsLabel(@PathParam("dsLabel") String dsLabel) {
+		try {
+			IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+			datasetDao.setUserProfile(getUserProfile());
+			IDataSet dataset = datasetDao.loadDataSetByLabel(dsLabel);
+			String category = dataset.getCategoryCd();
+			return category;
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+		}
+	}
+
 	/**
 	 * Acquire required version of the dataset
 	 *
@@ -1086,6 +1102,8 @@ public class DataSetResource extends AbstractDataSetResource {
 				if (dataSet.isPersisted() && dataSet.getDataSourceForWriting().getDsId() == cache.getDataSource().getDsId()) {
 					tableName = dataSet.getTableNameForReading();
 				} else if (dataSet.isFlatDataset() && dataSet.getDataSource().getDsId() == cache.getDataSource().getDsId()) {
+					tableName = dataSet.getTableNameForReading();
+				} else if (dataSet.isPreparedDataSet() && dataSet.getDataSource().getDsId() == cache.getDataSource().getDsId()) {
 					tableName = dataSet.getTableNameForReading();
 				} else {
 					DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();

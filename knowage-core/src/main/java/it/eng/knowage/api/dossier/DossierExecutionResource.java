@@ -218,13 +218,11 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 			for (Parameter parameter : parameters) {
 				if (parameter.getUrlName().equals(parameterUrl)) {
 					String value = parameter.getValue();
-
-					value = decoder.decodeParameter(value);
-
-					if (decoder.isMultiValues(value) && value.contains("STRING"))
-						value.replaceAll("'", "");
-
 					if (value != null) {
+						value = decoder.decodeParameter(value);
+
+						if (decoder.isMultiValues(value) && value.contains("STRING"))
+							value.replaceAll("'", "");
 						documentParameterValues.add(value);
 						logger.debug("value is " + value);
 

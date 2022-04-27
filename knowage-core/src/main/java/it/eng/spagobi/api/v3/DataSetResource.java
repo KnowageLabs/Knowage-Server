@@ -21,9 +21,11 @@ package it.eng.spagobi.api.v3;
 import static it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils.createParameterValuesMap;
 import static java.util.stream.Collectors.toList;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -95,6 +97,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.services.DelegatedBasicListService;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -103,6 +106,7 @@ import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
@@ -330,6 +334,102 @@ public class DataSetResource {
 
 	}
 
+	/**
+	 * Gets the list of all datasets of type SbiPreparedDataSet
+	 *
+	 */
+	@GET
+	@Path("/advanced")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getAdvancedDataSets(@DefaultValue("-1") @QueryParam("offset") int offset,
+			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
+
+		try {
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadMyDataSets(offset, fetchSize, getUserProfile()).stream()
+					.filter(e -> e.getType().equals(DataSetConstants.DS_PREPARED)).map(DataSetForWorkspaceDTO::new).collect(toList());
+
+			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
+
+			return new DataSetResourceResponseRoot<>(dataSets);
+
+		} catch (Exception t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+
+	}
+
+	/**
+	 * Gets the detail of a dataset of type SbiPreparedDataSet
+	 *
+	 */
+	@GET
+	@Path("/advanced/{label}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public SbiDataSet getAdvancedDataSet(@PathParam("label") String label) {
+
+		try {
+			SbiDataSet dataSet = DAOFactory.getSbiDataSetDAO().loadSbiDataSetByLabel(label);
+			return dataSet;
+
+		} catch (Exception t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+
+	}
+
+	/**
+	 * Gets the datasets that have already been exported to Avro
+	 *
+	 */
+	@GET
+	@Path("/avro")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public List<String> getPreparedDataSets() {
+		List<String> preparedDataSets = new ArrayList<String>();
+		try {
+			final UserProfile userProfile = getUserProfile();
+			java.nio.file.Path avroExportFolder = Paths.get(SpagoBIUtilities.getRootResourcePath(), userProfile.getOrganization(), "dataPreparation",
+					(String) userProfile.getUserId());
+			File[] datasets = avroExportFolder.toFile().listFiles(File::isDirectory);
+			for (int i = 0; i < datasets.length; i++) {
+				boolean avroReady = new File(datasets[i], "ready").exists();
+				if (avroReady) {
+					preparedDataSets.add(datasets[i].getName());
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Cannot get list of prepared datasets", e);
+			return new ArrayList<String>();
+		}
+		return preparedDataSets;
+	}
+
+	/**
+	 * Gets the list of all datasets that can be used for data preparation
+	 *
+	 */
+	@GET
+	@Path("/for-dataprep")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getDataSetsForDataPrep(@DefaultValue("-1") @QueryParam("offset") int offset,
+			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize) {
+		try {
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadMyDataSets(offset, fetchSize, getUserProfile()).stream()
+					.filter(e -> (e.getParametersList() != null && e.getParametersList().size() == 0 && !e.getType().equals(DataSetConstants.DS_PREPARED)
+							&& !e.getType().equals(DataSetConstants.DS_QBE)))
+					.map(DataSetForWorkspaceDTO::new).collect(toList());
+
+			return new DataSetResourceResponseRoot<>(dataSets);
+
+		} catch (Exception t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+	}
+
 	@POST
 	@Path("/{dsLabel}/filters")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -349,7 +449,8 @@ public class DataSetResource {
 
 		String dsType = ds.getType();
 
-		getParametersFromDataSet(ret, ds);
+		if (ds.getParametersList() != null)
+			getParametersFromDataSet(ret, ds);
 
 		if ("SbiQbeDataSet".equals(dsType)) {
 			String qbeDatamart = getDatamartFromDataSet(ds);
@@ -722,44 +823,42 @@ public class DataSetResource {
 
 	private void getParametersFromDataSet(Map<String, Object> ret, SbiDataSet ds) {
 		final List<HashMap<String, Object>> parametersArrayList = (List<HashMap<String, Object>>) ret.get("filterStatus");
-		if (ds.getParametersList() != null) {
-			for (DataSetParameterItem e : ds.getParametersList()) {
-				final Map<String, Object> metadata = new LinkedHashMap<>();
+		for (DataSetParameterItem e : ds.getParametersList()) {
+			final Map<String, Object> metadata = new LinkedHashMap<>();
 
-				String name = e.getName();
-				String type = e.getType();
-				String defaultValue = e.getDefaultValue();
-				boolean multivalue = e.isMultivalue();
+			String name = e.getName();
+			String type = e.getType();
+			String defaultValue = e.getDefaultValue();
+			boolean multivalue = e.isMultivalue();
 
-				Map<String, Object> parameterAsMap = new LinkedHashMap<String, Object>();
-				parameterAsMap.put("id", null);
-				parameterAsMap.put("label", name);
-				parameterAsMap.put("urlName", name);
-				parameterAsMap.put("type", type);
-				parameterAsMap.put("selectionType", null);
-				parameterAsMap.put("valueSelection", "MANUAL");
-				parameterAsMap.put("visible", true);
-				parameterAsMap.put("mandatory", true);
-				parameterAsMap.put("multivalue", multivalue);
-				parameterAsMap.put("driverLabel", name);
-				parameterAsMap.put("driverUseLabel", name);
-				parameterAsMap.put(PROPERTY_METADATA, metadata);
+			Map<String, Object> parameterAsMap = new LinkedHashMap<String, Object>();
+			parameterAsMap.put("id", null);
+			parameterAsMap.put("label", name);
+			parameterAsMap.put("urlName", name);
+			parameterAsMap.put("type", type);
+			parameterAsMap.put("selectionType", null);
+			parameterAsMap.put("valueSelection", "MANUAL");
+			parameterAsMap.put("visible", true);
+			parameterAsMap.put("mandatory", true);
+			parameterAsMap.put("multivalue", multivalue);
+			parameterAsMap.put("driverLabel", name);
+			parameterAsMap.put("driverUseLabel", name);
+			parameterAsMap.put(PROPERTY_METADATA, metadata);
 
-				Map<String, String> colPlaceholder2ColName = new HashMap<>();
+			Map<String, String> colPlaceholder2ColName = new HashMap<>();
 
-				/*
-				 * Here "data" is a dummy column just to simulate that a parameter is driver.
-				 */
-				colPlaceholder2ColName.put("_col0", "data");
+			/*
+			 * Here "data" is a dummy column just to simulate that a parameter is driver.
+			 */
+			colPlaceholder2ColName.put("_col0", "data");
 
-				metadata.put("colsMap", colPlaceholder2ColName);
-				metadata.put("descriptionColumn", "data");
-				metadata.put("invisibleColumns", Collections.EMPTY_LIST);
-				metadata.put("valueColumn", "data");
-				metadata.put("visibleColumns", Arrays.asList("data"));
+			metadata.put("colsMap", colPlaceholder2ColName);
+			metadata.put("descriptionColumn", "data");
+			metadata.put("invisibleColumns", Collections.EMPTY_LIST);
+			metadata.put("valueColumn", "data");
+			metadata.put("visibleColumns", Arrays.asList("data"));
 
-				parametersArrayList.add((HashMap<String, Object>) parameterAsMap);
-			}
+			parametersArrayList.add((HashMap<String, Object>) parameterAsMap);
 		}
 	}
 
@@ -1161,7 +1260,7 @@ public class DataSetResource {
 		return items;
 	}
 
-	private List<? extends DataSetMainDTO> putActions(List<? extends DataSetMainDTO> ret, String typeDocWizard) throws EMFInternalError {
+	private List<? extends AbstractDataSetDTO> putActions(List<? extends AbstractDataSetDTO> ret, String typeDocWizard) throws EMFInternalError {
 
 		UserProfile userProfile = getUserProfile();
 
@@ -1180,7 +1279,7 @@ public class DataSetResource {
 
 	}
 
-	private void addActions(DataSetMainDTO dataset, String typeDocWizard, UserProfile userProfile, boolean isQBEEnginePresent, boolean isGeoEnginePresent) {
+	private void addActions(AbstractDataSetDTO dataset, String typeDocWizard, UserProfile userProfile, boolean isQBEEnginePresent, boolean isGeoEnginePresent) {
 		try {
 			List<DataSetResourceAction> actions = dataset.getActions();
 			String currDataSetOwner = dataset.getOwner();

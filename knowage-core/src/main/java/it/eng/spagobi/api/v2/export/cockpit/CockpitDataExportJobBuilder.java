@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api.v2.export.cockpit;
 
+import static org.quartz.JobBuilder.newJob;
+
 import java.util.Locale;
 import java.util.UUID;
 
@@ -104,10 +106,11 @@ public class CockpitDataExportJobBuilder {
 		jobDataMap.put(CockpitDataExportConstans.RESOURCE_PATH, resoursePath);
 		jobDataMap.put(CockpitDataExportConstans.JOB_ID, randomUUID);
 
-		JobDetail job = new JobDetail("export_" + randomUUID, "export", CockpitDataExportJob.class);
-		job.setDescription(jobDescription);
-		job.setJobDataMap(jobDataMap);
-		job.setDurability(false);
+		JobDetail job = newJob().withIdentity("export_" + randomUUID, "export")
+			.withDescription(jobDescription)
+			.usingJobData(jobDataMap)
+			.storeDurably(false)
+			.build();
 
 		return job;
 	}

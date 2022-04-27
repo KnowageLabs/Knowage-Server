@@ -1,4 +1,4 @@
-<Context  path="/knowagegeoreportengine">
+<Context  path="/knowagegeoreportengine" reloadable="false">
 	<CookieProcessor sameSiteCookies="strict" />
 	
 	<!-- <Loader delegate="true"/> -->

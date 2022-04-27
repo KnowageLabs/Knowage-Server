@@ -674,7 +674,7 @@ public class DAOFactory {
 		return (IGlossaryDAO) createDAOInstance("GlossaryDAO");
 	}
 
-	public static ICalendarDAO geCalendarDAO() {
+	public static ICalendarDAO getCalendarDAO() {
 		return (ICalendarDAO) createDAOInstance("CalendarDAO");
 	}
 

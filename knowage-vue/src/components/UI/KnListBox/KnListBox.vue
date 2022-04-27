@@ -1,7 +1,7 @@
 <template>
     <Listbox
         class="kn-list knListBox"
-        :options="options"
+        :options="sortedOptions"
         :class="{ noSorting: !settings.sortFields }"
         listStyle="max-height:calc(100% - 62px)"
         :filter="true"
@@ -26,13 +26,7 @@
         <template #option="slotProps">
             <router-link class="kn-decoration-none" :to="{ name: settings.interaction.path, params: { id: slotProps.option.id } }" exact v-if="settings.interaction.type === 'router'">
                 <div class="kn-list-item" v-tooltip="slotProps.option[settings.tooltipField || 'description']" :class="getBorderClass(slotProps.option)" data-test="list-item">
-                    <Avatar
-                        v-if="settings.avatar && settings.avatar.values[slotProps.option[settings.avatar.property]]"
-                        :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon"
-                        shape="circle"
-                        size="medium"
-                        :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style"
-                    />
+                    <Avatar v-if="settings.avatar && settings.avatar.values[slotProps.option[settings.avatar.property]]" :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon" shape="circle" :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style" />
                     <div class="kn-list-item-text">
                         <span v-if="settings.titleField !== false">{{ slotProps.option[settings.titleField || 'label'] }}</span>
                         <span class="kn-list-item-text-secondary kn-truncated" v-if="settings.textField !== false">{{ slotProps.option[settings.textField || 'name'] }}</span>
@@ -52,13 +46,7 @@
                 :class="[{ 'router-link-active': isItemSelected(slotProps.option) }, getBorderClass(slotProps.option)]"
                 data-test="list-item"
             >
-                <Avatar
-                    v-if="settings.avatar && settings.avatar.values[slotProps.option[settings.avatar.property]]"
-                    :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon"
-                    shape="circle"
-                    size="medium"
-                    :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style"
-                />
+                <Avatar v-if="settings.avatar && settings.avatar.values[slotProps.option[settings.avatar.property]]" :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon" shape="circle" :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style" />
                 <div class="kn-list-item-text">
                     <span v-if="settings.titleField !== false">{{ slotProps.option[settings.titleField || 'label'] }}</span>
                     <span v-if="settings.textField !== false && !settings.textFieldType" class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option[settings.textField || 'name'] }}</span>
@@ -103,12 +91,14 @@ export default defineComponent({
     data() {
         return {
             selectedSort: 'label',
-            selectedDirection: 'desc'
+            selectedDirection: '',
+            sortedOptions: [] as Array<any>
         }
     },
     emits: ['click'],
     created() {
         this.selectedSort = this.settings.defaultSortField || 'label'
+        this.sort(null, this.selectedSort, true)
     },
     updated() {
         this.sort(null, this.selectedSort, true)
@@ -140,14 +130,18 @@ export default defineComponent({
             this.$refs.sortMenu.toggle(e)
         },
         sort(e, item, desc?) {
+            this.sortedOptions = this.options ? this.options : []
             if (this.selectedSort === item) this.selectedDirection = this.selectedDirection === 'desc' ? 'asc' : 'desc'
             else {
                 this.selectedSort = item
                 this.selectedDirection = 'desc'
             }
 
-            if (desc || this.selectedDirection === 'desc') this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? 1 : -1))
-            else this.options?.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? -1 : 1))
+            if (e || (!e && this.selectedDirection === '')) {
+                if (this.selectedDirection === '') this.selectedDirection = 'desc'
+                if (desc || this.selectedDirection === 'desc') this.sortedOptions.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? 1 : -1))
+                else this.sortedOptions.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? -1 : 1))
+            }
         },
         getTime(ms) {
             return formatDateWithLocale(ms)
