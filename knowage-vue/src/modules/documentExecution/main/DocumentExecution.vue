@@ -270,16 +270,17 @@ export default defineComponent({
                 })
             }
 
-            this.toolbarMenuItems.push(
-                {
+            if (this.user.enterprise) {
+                this.toolbarMenuItems.push({
                     label: this.$t('common.info.info'),
                     items: [{ icon: 'pi pi-star', label: this.$t('common.rank'), command: () => this.openRank() }]
-                },
-                {
-                    label: this.$t('common.shortcuts'),
-                    items: []
-                }
-            )
+                })
+            }
+
+            this.toolbarMenuItems.push({
+                label: this.$t('common.shortcuts'),
+                items: []
+            })
 
             this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[1].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
 
@@ -305,7 +306,7 @@ export default defineComponent({
                 if (index !== -1) this.toolbarMenuItems[index].items.push({ icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() })
             }
 
-            if (this.user.functionalities.includes('SeeSnapshotsFunctionality')) {
+            if (this.user.functionalities.includes('SeeSnapshotsFunctionality') && this.user.enterprise) {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
                 if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
             }
