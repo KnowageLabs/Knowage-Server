@@ -665,6 +665,24 @@
             "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#year"
         }
     ],
+    "availableOutputTypes": [
+        {
+            "code": "string",
+            "label": "string"
+        },
+        {
+            "code": "numeric",
+            "label": "numeric"
+        },
+        {
+            "code": "timestamp",
+            "label": "timestamp"
+        },
+        {
+            "code": "date",
+            "label": "date"
+        }
+    ],
     "category": {
         "label": "category"
     },

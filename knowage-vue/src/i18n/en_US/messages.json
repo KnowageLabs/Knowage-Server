@@ -224,6 +224,7 @@
             "formula": "Formula",
             "functions": "Functions",
             "officialDocumentation": "Official documentation ({function})",
+            "outputType": "Output type",
             "title": "Calculated field"
         }
     },
@@ -1095,7 +1096,7 @@
             "noSourceTables": "There are no source tables for selected dataset.",
             "noTablesToLink": "There are no tables to link in this source.",
             "noVersions": "There are no previous versions of this dataset, save it with changes to create an older version.",
-            "oldVersions": "Older Dataset Versions",
+            "oldVersions": "Dataset Versions",
             "openQbeButton": "Open Qbe",
             "params": "Parameters",
             "peristenceWarning": "Dataset with parameters cannot be persisted!",
