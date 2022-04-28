@@ -87,7 +87,7 @@ public class LoggerSetupFilter implements Filter {
 
 		header = uuid.toString();
 
-		ThreadContext.put(THREAD_CONTEXT_KEY_ENVIRONMENT, header);
+		ThreadContext.put(THREAD_CONTEXT_KEY_CORRELATION_ID, header);
 
 		httpResponse.setHeader(HTTP_HEADER_X_KN_CORRELATION_ID, header);
 	}
