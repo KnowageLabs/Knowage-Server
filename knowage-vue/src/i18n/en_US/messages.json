@@ -16,6 +16,7 @@
         "cc": "CC",
         "choose": "choose",
         "clean": "Clean",
+        "clear": "Clear",
         "clicked": "Clicked",
         "clone": "Clone",
         "close": "close",
@@ -451,6 +452,11 @@
             "yourRating": "Your rating"
         },
         "olap": {
+            "alDialog": {
+                "availableAlg": "Available algorithms",
+                "infoMsg": "You can change algorithm acting on the form below.",
+                "title": "Change algorithm"
+            },
             "buttonsWizard": {
                 "title": "Buttons Wizard"
             },
@@ -465,6 +471,10 @@
             "customView": {
                 "title": "Olap custom view List"
             },
+            "deleteVersion": {
+                "id": "id",
+                "title": "Select the version to delete"
+            },
             "drillTru": {
                 "clearAll": "Clear All",
                 "drillLevelsError": "An error occurred while getting drill through levels",
@@ -477,7 +487,23 @@
                 "title": "Drill Through"
             },
             "editModeConfirm": "You are leaving edit mode. Continue?",
+            "filterDialog": {
+                "ancestorDescendantWarning": "Warning: You selected some members that are in ancestor-descendant relationship: measures will be aggregated over both of them. Are you sure this is what you want?",
+                "driverProfileAttribute": "Driver/ProfileAttribute",
+                "filterUsingDrivers": "Filter using drivers",
+                "infoMessage": "Selected items will be used as filters in the main table.",
+                "level": "Level",
+                "parentDisabledTooltip": "It is not possible to choose a parent. Unlock the tree to change the selection.",
+                "searchWarningMessage": "You need at least 3 letters to start search!",
+                "selectFields": "Select Fields",
+                "treeLockedInfoMessage": {
+                    "partOne": "Selected items are used as filters in the main table. You can remove some or clicking on ",
+                    "partThree": " the whole tree will be unlocked",
+                    "partTwo": "add selection"
+                }
+            },
             "filterPanel": {
+                "activeLevels": "Active levels",
                 "drop": "Drop here to use as a slicer",
                 "filterPanelEmpty": "Drag the member here if you want to use it as a slicer"
             },
@@ -498,10 +524,39 @@
             },
             "openDesigner": "Open Designer",
             "openDesignerMsg": "By opening designer you will lose all unsaved changes, are you sure?",
+            "outputWizard": {
+                "fieldDelimiter": "Field delimiter",
+                "fileInfo": "Please fill the CSV options.",
+                "infoMsg": "Select the output type for the analysis. This operation will take some minutes. In the meanwhile you can continue to work on your cube",
+                "tableInfo": "What is the name of the table for the output process?",
+                "tableMsg": "Analysis exported",
+                "title": "Output wizard",
+                "version": "Verson to export"
+            },
+            "saveVersion": {
+                "infoMessage": "Type the name of the version. If you leave it blank the name and the description assume the version number",
+                "title": "Save new version",
+                "versionDescription": "Version description",
+                "versionName": "Version name"
+            },
             "savingCustomizedView": "Saving customized view",
+            "scenarioWizard": {
+                "clearData": "Clear data",
+                "deleteAllMsg": "Are you sure you want to delete all variables?",
+                "deleteAllTitle": "Delete All",
+                "editableMeasures": "Editable measures",
+                "longInfo": "Selecting an edit cube and an editable measure is mandatory. In order to perform what if analysis your database as well as OLAP schema should have a specific structure. Please check in the documentation of the WhatIF functionality. The edited cube should be the cube that you want to save with the new version of data.",
+                "parameterName": "Parameter name",
+                "parameterValue": "Parameter value",
+                "scenarioUpdated": "Successfully added scenario to template",
+                "selectedCube": "Selected cube",
+                "shortInfo": "Selecting an edit cube and an editable measure is mandatory.",
+                "title": "Scenario Wizard"
+            },
             "showMdxQuery": "Show MDX Query",
             "showScheduledExecutions": "Show scheduled executions",
             "sidebar": {
+                "alg": "Select an algorithm",
                 "calculatedField": "Calculated field",
                 "calculatedFieldWizard": "Calculated field wizard",
                 "closeDesigner": "Close Designer",
@@ -509,23 +564,29 @@
                 "configureScenario": "Configure scenario",
                 "configureTablePagination": "Configure table pagination",
                 "defineCrossNavigation": "Define cross navigation",
+                "deleteVersions": "Delete versions",
                 "drillOnData": "Drill on data",
                 "drillOnDimension": "Drill on dimension",
                 "drillThrough": "Drill Through",
                 "enableCrossNavigation": "Enable crossnavigation",
+                "excel": "Export excel for edit",
                 "exportExcel": "Export excel for edit",
                 "exportOutput": "Export output",
                 "hideSpans": "Hide spans",
+                "lockSchema": "Lock schema",
                 "manageVersions": "Manage versions",
                 "mdxQuery": "Mdx Query",
                 "member": "Member",
                 "olapFunctions": "OLAP functions",
+                "outputWizard": "Output wizard",
                 "position": "Position",
                 "reloadSchema": "Reload schema",
                 "replace": "Replace",
+                "saveAsNewVersion": "Save as new version",
                 "saveCustomizedView": "Save customized view",
                 "saveNewVersion": "Save new version",
                 "saveTemplate": "Save template",
+                "scenario": "Configure scenario",
                 "selectAlgorithm": "Select algorithm",
                 "showCustomizedView": "Show customized view",
                 "showParentMembers": "Show parent members",
@@ -534,8 +595,11 @@
                 "suppressEmptyRowsColumns": "Suppress empty rows/columns",
                 "tableFunctions": "Table functions",
                 "templateEditing": "Template editing",
-                "undo": "Undo"
+                "undo": "Undo",
+                "unlockSchema": "Unlock schema",
+                "whatIfTitle": "What If"
             },
+            "sliceVersionError": "You must slice on Version first",
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",
             "yourRating": "Your rating"
