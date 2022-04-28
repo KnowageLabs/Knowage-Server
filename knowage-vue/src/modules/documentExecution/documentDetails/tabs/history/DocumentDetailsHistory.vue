@@ -250,15 +250,34 @@ export default defineComponent({
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         openDesignerConfirm() {
+            console.log(this.selectedDocument.typeCode)
             this.$confirm.require({
                 header: this.$t('common.toast.warning'),
                 message: this.$t('documentExecution.olap.openDesignerMsg'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => this.openDesigner()
+                accept: () => {
+                    switch (this.selectedDocument.typeCode) {
+                        case 'KPI':
+                            this.openKpiDocumentDesigner()
+                            break
+                        case 'MAP': {
+                            this.openGis()
+                            break
+                        }
+                        default:
+                            this.openDesigner()
+                    }
+                }
             })
         },
         openDesigner() {
             this.$router.push(`/olap-designer/${this.selectedDocument.id}`)
+        },
+        openGis() {
+            this.$router.push(`/gis/edit?documentId=${this.selectedDocument.id}`)
+        },
+        openKpiDocumentDesigner() {
+            this.$router.push(`/kpi-edit/${this.selectedDocument.id}?from=documentDetail`)
         }
     }
 })

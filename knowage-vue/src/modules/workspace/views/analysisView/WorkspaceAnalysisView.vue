@@ -48,7 +48,7 @@
                     :viewType="'analysis'"
                     :document="document"
                     @executeAnalysisDocument="executeAnalysisDocument"
-                    @editAnalysisDocument="editAnalysisDocument"
+                    @editAnalysisDocument="openKpiDesigner"
                     @shareAnalysisDocument="shareAnalysisDocument"
                     @cloneAnalysisDocument="cloneAnalysisDocument"
                     @deleteAnalysisDocument="deleteAnalysisDocumentConfirm"
@@ -175,6 +175,9 @@ export default defineComponent({
     },
         executeAnalysisDocument(document: any) {
             this.$emit('execute', document)
+        },
+        openKpiDesigner(analysis: any) {
+            this.$router.push(`/kpi-edit/${analysis?.id}?from=Workspace`)
         },
         editAnalysisDocument(analysis: any) {
             this.selectedAnalysis = analysis
@@ -349,8 +352,8 @@ export default defineComponent({
             this.creationMenuButtons = []
             this.creationMenuButtons.push(
                 { key: '0', label: this.$t('common.cockpit'), command: this.openCockpitDialog, visible: true },
-                { key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.todoToast, visible: true },
-                { key: '2', label: this.$t('common.kpi'), command: this.todoToast, visible: true }
+                { key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.openGeoRefCreation, visible: true },
+                { key: '2', label: this.$t('common.kpi'), command: this.openKpiDocumentDesigner, visible: true }
             )
         },
         openCockpitDialog() {
@@ -360,11 +363,11 @@ export default defineComponent({
             this.cockpitDialogVisible = false
             this.getAnalysisDocs()
         },
-        todoToast() {
-            this.$store.commit('setInfo', {
-                title: 'TODO',
-                msg: 'Functionality not in this sprint'
-            })
+        openKpiDocumentDesigner() {
+            this.$router.push('/kpi-edit/new-kpi?from=Workspace')
+        },
+        openGeoRefCreation() {
+            this.$router.push('/gis/new')
         }
     }
 })
