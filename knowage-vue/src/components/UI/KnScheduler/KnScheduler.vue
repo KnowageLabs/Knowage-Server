@@ -316,6 +316,7 @@
                             </div>
                             <div v-else-if="selectedRefreshRate === 'custom'">
                                 <span class="p-float-label p-col-12"> <InputText :id="name" type="text" v-model="localCronExpression" v-bind="$attrs" :class="[cssClass ? cssClass + ' kn-truncated' : 'kn-material-input kn-truncated', required && !modelValue ? 'p-invalid' : '']"/></span>
+                                <small id="custom-cron-hint" v-html="$t('knScheduler.customCronHint')"></small>
                             </div>
                         </div>
 

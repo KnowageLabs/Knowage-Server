@@ -678,6 +678,7 @@
         "sourceCode": "Source code available on "
     },
     "knScheduler": {
+        "customCronHint": "Writing your own custom schedulation expression make sure the format is compliant to Quartz (more info <a target=\"_blank\" href=\"http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html#format\">here</a>)",
         "enableSchedulation": "Enable schedulation",
         "everyDay": "Every {day} day/s ",
         "everyMonth": "Every {month} month/s ",
