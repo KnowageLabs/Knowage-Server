@@ -105,6 +105,7 @@
                 this.touched = false
                 this.showHint = false
                 this.$emit('close')
+                this.$store.commit('setLoading', false)
             },
             setCronValid(event) {
                 this.validSchedulation = event.item
