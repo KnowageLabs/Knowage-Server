@@ -230,8 +230,8 @@
             "formula": "Formula",
             "functions": "Functions",
             "officialDocumentation": "Official documentation ({function})",
-            "outputType": "Output type",
-            "title": "Calculated field"
+            "title": "Calculated field",
+            "type": "Type"
         }
     },
     "cron": {

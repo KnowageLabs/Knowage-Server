@@ -140,7 +140,7 @@
     import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
     import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
     import DataPreparationSplitDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationSplitDescriptor.json'
-    import calculatedFieldDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCalculatedField.json'
+    import calculatedFieldDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCalculatedFieldDescriptor.json'
 
     import { Client } from '@stomp/stompjs'
 

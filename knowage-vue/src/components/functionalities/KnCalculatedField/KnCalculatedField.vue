@@ -3,7 +3,7 @@
         <Message severity="info" :closable="false"> {{ $t('components.knCalculatedField.description') }} </Message>
 
         <div class="p-fluid p-grid">
-            <div class="p-col-8">
+            <div class="p-col">
                 <span class="p-float-label p-field kn-flex">
                     <InputText
                         ref="colName"
@@ -20,12 +20,14 @@
                     <label class="kn-material-input-label"> {{ $t('components.knCalculatedField.columnName') }} </label>
                 </span>
             </div>
-            <div class="p-col-4">
-                <span v-if="descriptor.availableOutputTypes" class="p-float-label p-field p-ml-2 kn-flex">
-                    <Dropdown v-model="cf.outputType" :options="descriptor.availableOutputTypes" :disabled="readOnly" class="kn-material-input" optionLabel="label" optionValue="code" />
-                    <label class="kn-material-input-label"> {{ $t('components.knCalculatedField.outputType') }} </label>
-                </span>
-            </div>
+            <slot name="additionalInputs">
+                <div class="p-col-4">
+                    <span v-if="descriptor.availableTypes" class="p-float-label p-field p-ml-2 kn-flex">
+                        <Dropdown v-model="cf.type" :options="descriptor.availableTypes" :disabled="readOnly" class="kn-material-input" optionLabel="label" optionValue="code" />
+                        <label class="kn-material-input-label"> {{ $t('components.knCalculatedField.type') }} </label>
+                    </span>
+                </div>
+            </slot>
         </div>
 
         <Card class="card-0-padding">

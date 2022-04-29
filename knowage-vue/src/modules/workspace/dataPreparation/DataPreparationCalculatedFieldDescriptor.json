@@ -665,7 +665,7 @@
             "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#year"
         }
     ],
-    "availableOutputTypes": [
+    "availableTypes": [
         {
             "code": "string",
             "label": "string"
