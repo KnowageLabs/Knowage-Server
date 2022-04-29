@@ -116,6 +116,7 @@
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false" @save="onAdvancedFiltersSave"></QBEAdvancedFilterDialog>
         <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" @datasetSaved="$emit('datasetSaved')" />
         <QBEJoinDefinitionDialog v-if="joinDefinitionDialogVisible" :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="uniqueID" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
+        <KnCalculatedField v-model:visibility="calcFieldsVisible" @save="onCalcFieldSave" @cancel="closeCalcField" :fields="calcFieldColumns" :descriptor="calcFieldDescriptor" :readOnly="readOnly" @update:readOnly="updateReadOnly" v-model:template="selectedTransformation" />
 
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
@@ -129,6 +130,7 @@ import { iQBE, iQuery, iField, iQueryResult, iFilter } from './QBE'
 import { onFiltersSaveCallback } from './QBEFilterService'
 import { formatDrivers } from './QBEDriversService'
 import { onHavingsSaveCallback } from './QBEHavingsService'
+import { buildCalculatedField } from '@/helpers/commons/buildQbeCalculatedField'
 import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
@@ -150,6 +152,9 @@ import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSi
 import QBEPreviewDialog from './qbeDialogs/qbePreviewDialog/QBEPreviewDialog.vue'
 import qbeDescriptor from './QBEDescriptor.json'
 import ProgressSpinner from 'primevue/progressspinner'
+import calcFieldDescriptor from './QBECalcFieldDescriptor.json'
+import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
+
 const crypto = require('crypto')
 
 export default defineComponent({
@@ -174,12 +179,14 @@ export default defineComponent({
         KnParameterSidebar,
         QBEPreviewDialog,
         QBESmartTable,
-        ProgressSpinner
+        ProgressSpinner,
+        KnCalculatedField
     },
     props: { visible: { type: Boolean }, dataset: { type: Object } },
     emits: ['close'],
     data() {
         return {
+            calcFieldDescriptor,
             qbe: null as iQBE | null,
             customizedDatasetFunctions: {} as any,
             entities: {} as any,
@@ -213,6 +220,9 @@ export default defineComponent({
             uniqueID: null,
             filtersData: {} as any,
             qbeLoaded: false,
+            calcFieldsVisible: false,
+            calcFieldColumns: [] as any,
+            selectedTransformation: null as any,
             qbeDescriptor,
             colors: ['#D7263D', '#F46036', '#2E294E', '#1B998B', '#C5D86D', '#3F51B5', '#8BC34A', '#009688', '#F44336']
         }
@@ -338,7 +348,6 @@ export default defineComponent({
                     parameters[parameter.urlName] = [{ value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription }]
                 }
             })
-            console.log('END PARAMS', parameters)
             return parameters
         },
         async loadCustomizedDatasetFunctions() {
@@ -459,10 +468,12 @@ export default defineComponent({
                 { key: '1', label: this.$t('qbe.detailView.toolbarMenu.sql'), command: () => this.showSQLQuery() },
                 { key: '2', icon: repetitionIcon, label: this.$t('qbe.detailView.toolbarMenu.repetitions'), command: () => this.toggleDiscardRepetitions() },
                 { key: '3', label: this.$t('common.parameters'), command: () => this.showParamDialog() },
-                { key: '4', label: this.$t('qbe.advancedFilters.advancedFilterVisualisation'), command: () => this.showAdvancedFilters() },
-                { key: '5', label: this.$t('qbe.joinDefinitions.title'), command: () => this.showJoinDefinitions() },
+                // { key: '4', label: this.$t('components.knCalculatedField.title'), command: () => this.showCalcField() },
+                { key: '4', label: this.$t('components.knCalculatedField.title'), command: () => this.onCalcFieldSave() },
+                { key: '5', label: this.$t('qbe.advancedFilters.advancedFilterVisualisation'), command: () => this.showAdvancedFilters() },
+                { key: '6', label: this.$t('qbe.joinDefinitions.title'), command: () => this.showJoinDefinitions() },
                 {
-                    key: '6',
+                    key: '7',
                     label: this.$t('qbe.detailView.toolbarMenu.exportTo'),
                     items: [
                         { label: 'CSV', command: () => this.exportQueryResults('csv') },
@@ -502,6 +513,7 @@ export default defineComponent({
         showAdvancedFilters() {
             this.advancedFilterDialogVisible = true
         },
+
         showJoinDefinitions() {
             this.joinDefinitionDialogVisible = true
         },
@@ -579,6 +591,7 @@ export default defineComponent({
             this.updateSmartView()
         },
         addEntityToMainQuery(field, isCalcField?) {
+            console.log('addEntityToMainQuery', field, isCalcField)
             let queryModel = this.selectedQuery.fields
             let editQueryObj = this.selectedQuery
             for (var i = 0; i < queryModel.length; i++) {
@@ -727,6 +740,33 @@ export default defineComponent({
             })
             this.selectedQuery.fields.splice(indexOfFieldToDelete, 1)
             this.updateSmartView()
+        },
+        showCalcField() {
+            this.createCalcFieldColumns()
+            this.calcFieldsVisible = true
+        },
+        createCalcFieldColumns() {
+            this.calcFieldColumns = []
+            this.selectedQuery.fields.forEach((field) => {
+                this.calcFieldColumns.push({ fieldAlias: field.alias })
+            })
+        },
+        closeCalcField() {
+            this.calcFieldsVisible = false
+        },
+        onCalcFieldSave() {
+            let calcFieldOutput = {
+                alias: 'CALC FIELD NAME', //iz input fielda
+                expression: '$F{Employee id} + $F{Distance} + 9', //codemirror formula
+                format: undefined, // koristi se samo ako je izabran datum, datum formata iz dropdowna
+                nature: 'MEASURE', //nature dropdown
+                type: 'STRING' // type dropdown
+            }
+
+            let calculatedField = buildCalculatedField(calcFieldOutput, this.selectedQuery.fields)
+            console.log(calculatedField)
+            this.selectedQuery.fields.push(calculatedField)
+            this.addEntityToMainQuery(calculatedField, true)
         }
     }
 })
