@@ -11,7 +11,7 @@
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar p-ml-2" v-if="loading" data-test="progress-bar" />
-    <KnDatasetList :visibility="showDatasetList" :items="availableDatasets" @selected="newDataPrep" @save="goToDataPrep" @cancel="hideDataSetCatalog" />
+    <KnDatasetList :visibility="showDatasetList" :items="availableDatasets" @selected="newDataPrep" @save="openDataPreparation(selectedDsForDataPrep)" @cancel="hideDataSetCatalog" />
 
     <div class="p-d-flex p-flex-row p-ai-center">
         <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
@@ -186,9 +186,6 @@ export default defineComponent({
             this.showDatasetList = false
             this.selectedDsForDataPrep = {}
         },
-        goToDataPrep() {
-            this.$router.push({ name: 'data-preparation', params: { id: this.selectedDsForDataPrep.label } })
-        },
         showDataSetCatalog() {
             this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/for-dataprep`).then(
                 (response: AxiosResponse<any>) => {
@@ -249,36 +246,46 @@ export default defineComponent({
             this.showMonitoring = !this.showMonitoring
         },
         openDataPreparation(dataset: any) {
-            //edit existing data prep
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.label}`).then(
-                (response: AxiosResponse<any>) => {
-                    let instanceId = response.data.configuration.dataPrepInstanceId
-                    this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
-                        (response: AxiosResponse<any>) => {
-                            let transformations = response.data.definition
-                            let processId = response.data.id
-                            let datasetLabel = response.data.instance.dataSetLabel
-                            if (this.isAvroReady(datasetLabel))
-                                // check if Avro file has been deleted or not
-                                this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
-                            else {
-                                this.$store.commit('setInfo', {
-                                    title: 'Avro file has been deleted',
-                                    msg: 'Generate it again and then retry'
-                                })
+            if (dataset.dsTypeCd == 'Prepared') {
+                //edit existing data prep
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.label}`).then(
+                    (response: AxiosResponse<any>) => {
+                        let instanceId = response.data.configuration.dataPrepInstanceId
+                        this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
+                            (response: AxiosResponse<any>) => {
+                                let transformations = response.data.definition
+                                let processId = response.data.id
+                                let datasetLabel = response.data.instance.dataSetLabel
+                                if (this.isAvroReady(datasetLabel))
+                                    // check if Avro file has been deleted or not
+                                    this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
+                                else {
+                                    this.$store.commit('setInfo', {
+                                        title: 'Avro file is missing',
+                                        msg: 'Generate it again and then retry'
+                                    })
+                                }
+                            },
+                            () => {
+                                this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
                             }
-                        },
-                        () => {
-                            this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
-                        }
-                    )
-                },
-                () => {
-                    this.$store.commit('setError', {
-                        title: 'Cannot open data preparation'
-                    })
-                }
-            )
+                        )
+                    },
+                    () => {
+                        this.$store.commit('setError', {
+                            title: 'Cannot open data preparation'
+                        })
+                    }
+                )
+            } else if (this.isAvroReady(dataset.label)) {
+                // original dataset already exported in Avro
+                this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+            } else {
+                this.$store.commit('setInfo', {
+                    title: 'Avro file is missing',
+                    msg: 'Generate it again and then retry'
+                })
+            }
         },
         isAvroReady(dsLabel: String) {
             if (this.avroDatasets.indexOf(dsLabel) >= 0) return true

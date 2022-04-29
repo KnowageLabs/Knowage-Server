@@ -11,15 +11,23 @@
 	<display-name>knowagejasperreportengine</display-name>
 	<description>Knowage Jasperreport Engine</description>
 
-	<!--  ============================================================================ -->
-	<!--  FILTERS                                                                      -->
-	<!--  ============================================================================ -->
-
+	<!-- 
+		Logger Setup Filter.
+		
+		Set the logger according the HTTP request data.
+	 -->
 	<filter>
-		<filter-name>LogTenantFilter</filter-name>
-		<filter-class>it.eng.knowage.utils.filters.LogTenantFilter</filter-class>
+		<filter-name>LoggerSetupFilter</filter-name>
+		<filter-class>it.eng.knowage.utils.filters.LoggerSetupFilter</filter-class>
 	</filter>
-	
+	<filter-mapping>
+		<filter-name>LoggerSetupFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+
 	<filter>
 		<filter-name>EncodingFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
@@ -29,12 +37,6 @@
 		</init-param>
 	</filter>
 
-	<filter-mapping>
-		<filter-name>LogTenantFilter</filter-name>
-		<dispatcher>REQUEST</dispatcher>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
 		<url-pattern>/JasperReportServlet</url-pattern>

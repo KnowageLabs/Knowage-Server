@@ -11,6 +11,23 @@
 	<display-name>knowage</display-name>
 	<description>Main app of the Knowage Suite</description>
 
+	<!-- 
+		Logger Setup Filter.
+		
+		Set the logger according the HTTP request data.
+	 -->
+	<filter>
+		<filter-name>LoggerSetupFilter</filter-name>
+		<filter-class>it.eng.knowage.utils.filters.LoggerSetupFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>LoggerSetupFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+
 	<filter>
 		<filter-name>EncodingFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
@@ -32,11 +49,6 @@
 	<filter>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
 		<filter-class>it.eng.spagobi.commons.filters.SpagoBICoreCheckSessionFilter</filter-class>
-	</filter>
-	
-	<filter>
-		<filter-name>LogTenantFilter</filter-name>
-		<filter-class>it.eng.knowage.utils.filters.LogTenantFilter</filter-class>
 	</filter>
 	
 	<!--
@@ -114,13 +126,6 @@
 		<filter-class>it.eng.spagobi.utilities.filters.AntiInjectionFilter</filter-class>
 	</filter>
 
-	
-	<filter-mapping>
-		<filter-name>LogTenantFilter</filter-name>
-		<dispatcher>REQUEST</dispatcher>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
 	<filter-mapping>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
 		<dispatcher>REQUEST</dispatcher>
