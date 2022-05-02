@@ -35,6 +35,7 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.qbe.logger.QueryAuditLogger;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
@@ -94,8 +95,8 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @ManageAuthorization
 public class QbeQueryResource extends AbstractQbeEngineResource {
 
-	public static transient Logger logger = Logger.getLogger(QbeQueryResource.class);
-	public static transient Logger auditlogger = Logger.getLogger("audit.query");
+	private static final Logger auditlogger = QueryAuditLogger.LOGGER;
+	private static final Logger logger = Logger.getLogger(QbeQueryResource.class);
 	private static final String PARAM_VALUE_NAME = "value";
 	public static final String DEFAULT_VALUE_PARAM = "defaultValue";
 	public static final String MULTI_PARAM = "multiValue";
