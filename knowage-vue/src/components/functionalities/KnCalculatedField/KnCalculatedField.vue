@@ -180,7 +180,7 @@
                 this.clearForm()
             },
             clearForm(): void {
-                this.cf = {} as IKnCalculatedField
+                this.cf = { formula: '' } as IKnCalculatedField
                 this.selectedFunction = {}
                 this.selectedCategory = ''
             },
