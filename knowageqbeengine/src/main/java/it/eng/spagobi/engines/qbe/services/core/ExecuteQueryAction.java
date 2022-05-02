@@ -78,8 +78,8 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 	public static final String AMBIGUOUS_FIELDS_PATHS = "ambiguousFieldsPaths";
 
 	/** Logger component. */
-	private static final Logger logger = Logger.getLogger(ExecuteQueryAction.class);
-	private static final Logger auditlogger = QueryAuditLogger.LOGGER;
+	protected static final Logger logger = Logger.getLogger(ExecuteQueryAction.class);
+	protected static final Logger auditlogger = QueryAuditLogger.LOGGER;
 
 	@Override
 	public void service(SourceBean request, SourceBean response) {
