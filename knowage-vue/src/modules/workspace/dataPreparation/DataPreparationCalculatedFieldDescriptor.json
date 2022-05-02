@@ -130,30 +130,6 @@
         },
         {
             "category": "math",
-            "formula": "max(expr)",
-            "help": "dataPreparation.max",
-            "label": "max",
-            "name": "max",
-            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#max"
-        },
-        {
-            "category": "math",
-            "formula": "min(expr)",
-            "help": "dataPreparation.min",
-            "label": "min",
-            "name": "min",
-            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#min"
-        },
-        {
-            "category": "math",
-            "formula": "expr1 mod expr2",
-            "help": "dataPreparation.mod",
-            "label": "mod",
-            "name": "mod",
-            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#mod"
-        },
-        {
-            "category": "math",
             "formula": "pow(expr1, expr2)",
             "help": "dataPreparation.pow",
             "label": "pow",
