@@ -122,7 +122,7 @@
         },
         computed: {
             saveButtonDisabled(): any {
-                return this.v$.$invalid || !this.touched
+                return this.v$.$invalid || !this.preparedDataset.name
             }
         },
         methods: {
