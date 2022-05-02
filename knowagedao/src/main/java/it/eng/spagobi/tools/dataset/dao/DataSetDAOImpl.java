@@ -279,13 +279,22 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			// Search Datasets only by Search Box value
 			if (search != null && tagIds.isEmpty()) {
 				if (isDev) {
-					sb.append("and (ds.category.valueId in (:idsCat) or ds.owner = :owner) ").append("and upper(ds.label) like :search");
-					Query query = session.createQuery(sb.toString());
-					query.setBoolean(0, true);
-					query.setParameterList("idsCat", idsCat);
-					query.setString("owner", owner);
-					query.setString("search", "%" + search.toUpperCase() + "%");
-					resultNumber = (Long) query.uniqueResult();
+					if (idsCat != null && !idsCat.isEmpty()) {
+						sb.append("and (ds.category.valueId in (:idsCat) or ds.owner = :owner) ").append("and upper(ds.label) like :search");
+						Query query = session.createQuery(sb.toString());
+						query.setBoolean(0, true);
+						query.setParameterList("idsCat", idsCat);
+						query.setString("owner", owner);
+						query.setString("search", "%" + search.toUpperCase() + "%");
+						resultNumber = (Long) query.uniqueResult();
+					} else {
+						sb.append("and ds.owner = :owner and upper(ds.label) like :search");
+						Query query = session.createQuery(sb.toString());
+						query.setBoolean(0, true);
+						query.setString("owner", owner);
+						query.setString("search", "%" + search.toUpperCase() + "%");
+						resultNumber = (Long) query.uniqueResult();
+					}
 				} else {
 					sb.append("and upper(ds.label) like :search");
 					Query hqlQuery = session.createQuery(sb.toString());
