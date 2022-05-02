@@ -7,7 +7,7 @@
             <template #start> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }})</template>
             <template #end>
                 <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.refresh')" @click="refreshOriginalDataset" />
-                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDataset" />
+                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDataset" :disabled="loading > 0" />
                 <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeTemplate()" /> </template
         ></Toolbar>
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0 toolbarCustomConfig">
