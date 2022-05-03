@@ -166,10 +166,16 @@
 
                 toReturn['dataSetLabel'] = this.originalDataset.label
                 var d = new Date()
-                toReturn['destinationDataSetLabel'] = 'ds__' + (d.getTime() % 10000000)
+                if (this.preparedDataset.label) {
+                    toReturn['destinationDataSetLabel'] = this.preparedDataset.label 
+                }
+                else {
+                    toReturn['destinationDataSetLabel'] = 'ds__' + (d.getTime() % 10000000)
+                } 
                 toReturn['destinationDataSetName'] = this.preparedDataset.name
                 toReturn['destinationDataSetDescription'] = this.preparedDataset.description
                 toReturn['meta'] = this.createMetaDefinition()
+                toReturn['dsId'] = this.preparedDataset.id
                 return toReturn
             },
             createMetaDefinition() {

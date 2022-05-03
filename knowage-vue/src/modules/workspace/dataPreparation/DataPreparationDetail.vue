@@ -390,6 +390,7 @@
                     this.preparedDsMeta['label'] = dsMeta.label
                     this.preparedDsMeta['name'] = dsMeta.name
                     this.preparedDsMeta['description'] = dsMeta.description
+                    this.preparedDsMeta['id'] = dsMeta.id
                     await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.label).then((response: AxiosResponse<any>) => {
                         let instance = response.data.instance
                         if (instance.config) {
