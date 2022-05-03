@@ -20,7 +20,14 @@
                     <label class="kn-material-input-label"> {{ $t('components.knCalculatedField.columnName') }} </label>
                 </span>
             </div>
-            <slot name="additionalInputs"> </slot>
+            <slot name="additionalInputs">
+                <div class="p-col-4">
+                    <span v-if="descriptor.availableTypes" class="p-float-label p-field p-ml-2 kn-flex">
+                        <Dropdown v-model="cf.type" :options="descriptor.availableTypes" :disabled="readOnly" class="kn-material-input" optionLabel="label" optionValue="code" />
+                        <label class="kn-material-input-label"> {{ $t('components.knCalculatedField.type') }} </label>
+                    </span>
+                </div>
+            </slot>
         </div>
 
         <Card class="card-0-padding">
@@ -77,7 +84,7 @@
         <VCodeMirror :class="['p-mt-2 codeMirrorClass', this.readOnly ? 'readOnly' : '', v$.cf.formula.$invalid ? 'p-invalid' : '']" ref="formula" v-model:value="cf.formula" :options="scriptOptions" @drop="drop($event)" @dragover="handleDragover($event)" v-model="v$.cf.formula.$model" />
 
         <template #footer>
-            <Button :class="readOnly ? 'kn-button kn-button--primary' : 'kn-button kn-button--secondary'" :label="$t('common.cancel')" @click="cancel" />
+            <Button class="kn-button kn-button--secondary" :label="$t('common.cancel')" @click="cancel" />
             <Button v-if="!readOnly" class="kn-button kn-button--primary" v-t="'common.apply'" @click="apply" :disabled="saveButtonDisabled" />
         </template>
     </Dialog>
@@ -106,8 +113,7 @@
             visibility: Boolean,
             readOnly: Boolean,
             descriptor: Object,
-            template: {} as any,
-            valid: Boolean
+            template: {} as any
         },
         data() {
             return {
@@ -147,7 +153,6 @@
 
         updated() {
             if (!this.cf.formula) this.cf.formula = ''
-
             if (this.readOnly && this.template && this.template.parameters) {
                 this.cf = {} as IKnCalculatedField
                 for (var i = 0; i < this.template.parameters.length; i++) {
@@ -330,8 +335,7 @@
         },
         computed: {
             saveButtonDisabled(): any {
-                if (typeof this.valid === 'undefined') return this.v$.$invalid || !this.isValidFormula
-                else return this.v$.$invalid || !this.isValidFormula || !this.valid
+                return this.v$.$invalid || !this.isValidFormula
             }
         }
     })
@@ -355,13 +359,7 @@
     }
 
     .readOnly {
-        .CodeMirror-scroll {
-            background-color: var(--kn-color-disabled);
-            cursor: default;
-            .CodeMirror-lines {
-                cursor: default !important;
-            }
-        }
+        background-color: #cccccc;
     }
 
     .field-header {

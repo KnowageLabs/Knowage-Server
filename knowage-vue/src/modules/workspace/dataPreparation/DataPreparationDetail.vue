@@ -1,25 +1,6 @@
 <template>
     <div class="kn-page kn-data-preparation">
-        <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" :readOnly="readOnly" @update:readOnly="updateReadOnly" v-model:template="selectedTransformation" :valid="cfType !== ''">
-            <template #additionalInputs>
-                <div class="p-col-4">
-                    <span v-if="cfDescriptor.availableTypes" class="p-float-label p-field p-ml-2 kn-flex">
-                        <Dropdown
-                            v-model="cfType"
-                            :options="cfDescriptor.availableTypes"
-                            :disabled="readOnly"
-                            class="kn-material-input"
-                            optionLabel="label"
-                            optionValue="code"
-                            :class="{
-                                'p-invalid': !cfType
-                            }"
-                        />
-                        <label class="kn-material-input-label"> {{ $t('components.knCalculatedField.type') }} </label>
-                    </span>
-                </div>
-            </template>
-        </KnCalculatedField>
+        <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" :readOnly="readOnly" @update:readOnly="updateReadOnly" v-model:template="selectedTransformation" />
         <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" :readOnly="readOnly" @update:readOnly="updateReadOnly" />
         <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" :instanceId="instanceId" @update:instanceId="updateInstanceId" :processId="processId" @update:processId="updateprocessId" :preparedDsMeta="preparedDsMeta" />
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
@@ -198,8 +179,7 @@
                 processId: '' as string,
                 readOnly: false as boolean,
                 preparedDsMeta: {},
-                progressMode: 'indeterminate',
-                cfType: ''
+                progressMode: 'indeterminate'
             }
         },
 
@@ -295,7 +275,6 @@
             cancelCFDialog(): void {
                 this.selectedTransformation = null
                 this.showCFDialog = false
-                this.cfType = ''
             },
             saveCFDialog(t): void {
                 let convertedTransformation = this.convertCFTransformation(t)
@@ -309,9 +288,6 @@
                     if (key === 'column') par.columns.push(t[key].header)
                     else par[key] = t[key]
                 })
-                if (this.cfDescriptor.availableTypes) {
-                    par['type'] = this.cfType
-                }
                 transformation.parameters.push(par)
                 return transformation
             },
@@ -372,14 +348,8 @@
                     } else {
                         obj['value'] = param[key]
                     }
-
-                    if (t.type === 'calculatedField' && this.cfDescriptor.availableTypes) {
-                        this.cfType = t.parameters[0].type
-                    }
-
                     selectedTransformation['parameters'].push(obj)
                 })
-
                 if (t.type == 'filter' || t.type == 'split') {
                     let col = this.columns.filter((x) => x.fieldAlias.toUpperCase() === t.parameters[0].columns[0].toUpperCase())[0]
                     this.callFunction(selectedTransformation, col)
