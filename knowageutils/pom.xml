@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.0.10</version>
+		<version>8.0.11-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 
@@ -89,14 +89,14 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-jdbc-core</artifactId>
-			<version>8.0.10</version>
+			<version>8.0.11-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils-json</artifactId>
-			<version>8.0.10</version>
+			<version>8.0.11-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
