@@ -770,11 +770,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					valueList = objParameter.getDefaultValues();
 
 					if (!valueList.isEmpty()) {
-						defValue = valueList.stream()
-							.map(e -> {
+						defValue = valueList.stream().map(e -> {
 
-								BiMap<String, String> inverse = colPlaceholder2ColName.inverse();
-								String valColName = inverse.get(lovValueColumnName);
+							BiMap<String, String> inverse = colPlaceholder2ColName.inverse();
+							String valColName = inverse.get(lovValueColumnName);
 							String descColName = inverse.get(lovDescriptionColumnName);
 
 							// TODO : workaround
@@ -787,11 +786,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 							if (!valColName.equals(descColName)) {
 								ret.put(descColName, e.getDescription());
-								}
+							}
 
-								return ret;
-							})
-							.collect(Collectors.toList());
+							return ret;
+						}).collect(Collectors.toList());
 					}
 
 					if (jsonCrossParameters.isNull(objParameter.getId())
@@ -881,13 +879,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return Response.ok(resultAsMap).build();
 	}
 
-	private ArrayList<HashMap<String, Object>> filterNullValues(ArrayList<HashMap<String, Object>> arrayList) {
+	private ArrayList<HashMap<String, Object>> filterNullValues(ArrayList<HashMap<String, Object>> admissibleValues) {
 		ArrayList<HashMap<String, Object>> filteredValues = new ArrayList<HashMap<String, Object>>();
-		for (Map<String, Object> v : arrayList) {
-			if (isNull(v)) {
-				logger.debug("Skipping null value " + v.get("label"));
-			} else {
-				filteredValues.add((HashMap<String, Object>) v);
+		if (admissibleValues != null && !admissibleValues.isEmpty()) {
+			for (Map<String, Object> v : admissibleValues) {
+				if (isNull(v)) {
+					logger.debug("Skipping null value " + v.get("label"));
+				} else {
+					filteredValues.add((HashMap<String, Object>) v);
+				}
 			}
 		}
 		return filteredValues;
