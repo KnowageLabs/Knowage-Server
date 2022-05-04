@@ -145,15 +145,11 @@
 				description="Custom DB function to apply to column"
 				category="Structural" defaultValue="" />  
 
-			<type id="structural.sensible" name="Sensible data"
-				description="The access to this value will be tracked"
+			<type id="structural.personal" name="Personal data"
+				description="This value is related to a person"
 				category="Structural" defaultValue="false" />  
 
-			<type id="structural.masked" name="Masked data"
-				description="The real value is obfuscated"
-				category="Structural" defaultValue="false" />  
-
-			<type id="structural.encrypted" name="Encrypted data"
+			<type id="structural.decrypt" name="Encrypted data"
 				description="The value is encrypted"
 				category="Structural" defaultValue="false" />  
 
