@@ -105,11 +105,11 @@
 <style lang="scss">
     .glossaryDefinitionDetail {
         div {
-            display: flex;
-            flex-direction: column;
             ul {
                 list-style: none;
                 padding: 0;
+                display: flex;
+                flex-direction:column;
                 li {
                     display: inline-flex;
                     justify-content: flex-start;
