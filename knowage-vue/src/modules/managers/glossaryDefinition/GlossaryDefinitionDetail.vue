@@ -83,7 +83,7 @@
                                 @dragenter.prevent="setDropzoneClass(true, slotProps.node)"
                                 @dragleave.prevent="setDropzoneClass(false, slotProps.node)"
                             >
-                                <span class="node-label">{{ slotProps.node.label }}</span>
+                                <span class="node-label p-mr-2">{{ slotProps.node.label }}</span>
                                 <div v-show="buttonVisible[slotProps.node.key]">
                                     <Button
                                         v-if="!slotProps.node.data.HAVE_WORD_CHILD && slotProps.node.data.CONTENT_NM"
@@ -613,6 +613,5 @@ export default defineComponent({
 
 .node-label {
     word-wrap: break-word;
-    width: 300px;
 }
 </style>
