@@ -170,14 +170,6 @@
         },
         {
             "category": "statistic",
-            "formula": "avg(expr)",
-            "help": "dataPreparation.avg",
-            "label": "avg",
-            "name": "avg",
-            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#avg"
-        },
-        {
-            "category": "statistic",
             "formula": "dense_rank()",
             "help": "dataPreparation.dense_rank",
             "label": "dense_rank",
