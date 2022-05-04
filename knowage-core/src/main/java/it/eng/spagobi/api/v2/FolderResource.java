@@ -27,6 +27,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.monitor.IKnowageMonitor;
+import it.eng.knowage.monitor.KnowageMonitorFactory;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 
@@ -45,11 +47,22 @@ public class FolderResource extends AbstractSpagoBIResource {
 	public Response getFolders(@DefaultValue("false") @QueryParam("includeDocs") Boolean recoverBIObjects, @QueryParam("perm") String permissionOnFolder,
 			@QueryParam("dateFilter") String dateFilter, @QueryParam("status") String status) {
 		logger.debug("IN");
-		FolderManagementAPI folderManagementUtilities = new FolderManagementAPI();
 
-		String jsonObjects = folderManagementUtilities.getFoldersAsString(recoverBIObjects, permissionOnFolder, dateFilter, status);
+		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.folders.list");
 
-		return Response.ok(jsonObjects).build();
+		try {
+			FolderManagementAPI folderManagementUtilities = new FolderManagementAPI();
+			String jsonObjects = folderManagementUtilities.getFoldersAsString(recoverBIObjects, permissionOnFolder, dateFilter, status);
+			Response response = Response.ok(jsonObjects).build();
+
+			monitor.stop();
+
+			return response;
+		} catch (Exception e) {
+			monitor.stop(e);
+			throw e;
+		}
+
 	}
 
 }
