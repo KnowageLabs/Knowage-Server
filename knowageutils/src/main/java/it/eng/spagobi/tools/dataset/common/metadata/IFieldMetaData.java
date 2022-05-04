@@ -76,4 +76,21 @@ public interface IFieldMetaData {
 	int getPrecision();
 
 	int getScale();
+
+	boolean isPersonal();
+
+//	boolean isMasked();
+
+	boolean isDecript();
+
+	boolean isSubjectId();
+
+	void setPersonal(boolean personal);
+
+//	void setMasked(boolean masked);
+
+	void setDecript(boolean decript);
+
+	void setSubjectId(boolean subjectId);
+
 }
