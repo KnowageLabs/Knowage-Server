@@ -7,7 +7,6 @@
                 <RadioButton name="R" class="p-ml-3" value="r" v-model="dataset.pythonDatasetType" @click="resetPythonEnv" />
                 <label for="R">R</label>
             </div>
-            {{ this.dataset.pythonEnvironment }}
             <form class="p-fluid p-formgrid p-grid p-mt-2">
                 <div class="p-field p-col-6">
                     <span class="p-float-label">
