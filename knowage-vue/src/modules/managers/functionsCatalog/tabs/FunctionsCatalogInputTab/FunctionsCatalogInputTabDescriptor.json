@@ -1,0 +1,24 @@
+{
+    "columnTypes": [
+        {
+            "value": "STRING"
+        },
+        {
+            "value": "DATE"
+        },
+        {
+            "value": "NUMBER"
+        }
+    ],
+    "variableTypes": [
+        {
+            "value": "STRING"
+        },
+        {
+            "value": "DATE"
+        },
+        {
+            "value": "NUMBER"
+        }
+    ]
+}

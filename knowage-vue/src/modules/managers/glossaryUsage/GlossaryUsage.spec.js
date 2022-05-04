@@ -40,16 +40,18 @@ const mockedWords = [
 
 jest.mock('axios')
 
-axios.get.mockImplementation((url) => {
-    switch (url) {
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/listGlossary':
-            return Promise.resolve({ data: mockedGlossaryList })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/listContents?GLOSSARY_ID=45&PARENT_ID=null':
-            return Promise.resolve({ data: mockedContent })
-        default:
-            return Promise.resolve({ data: [] })
-    }
-})
+const $http = {
+    get: axios.get.mockImplementation((url) => {
+        switch (url) {
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/listGlossary':
+                return Promise.resolve({ data: mockedGlossaryList })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/listContents?GLOSSARY_ID=45&PARENT_ID=null':
+                return Promise.resolve({ data: mockedContent })
+            default:
+                return Promise.resolve({ data: [] })
+        }
+    })
+}
 
 afterEach(() => {
     jest.clearAllMocks()
@@ -60,7 +62,8 @@ const factory = () => {
         global: {
             stubs: { Button, Card, Dropdown, InputText, GlossaryUsageDetail: true, GlossaryUsageHint, ProgressBar, Toolbar, Tree },
             mocks: {
-                $t: (msg) => msg
+                $t: (msg) => msg,
+                $http
             }
         }
     })

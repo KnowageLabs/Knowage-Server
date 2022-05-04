@@ -29,17 +29,34 @@ public class WSNewsCountBO extends WSCountBO {
 
 	private int unread;
 
-	public WSNewsCountBO(int total, int unread) {
-		super(total);
-		this.unread = unread;
-	}
-
 	public int getUnread() {
 		return unread;
 	}
 
 	public void setUnread(int unread) {
 		this.unread = unread;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + unread;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WSNewsCountBO other = (WSNewsCountBO) obj;
+		if (unread != other.unread)
+			return false;
+		return true;
 	}
 
 }

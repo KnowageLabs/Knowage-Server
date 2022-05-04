@@ -217,7 +217,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 
 					StringBuilder serviceUrlBuilder = new StringBuilder();
 					serviceUrlBuilder.append(hostUrl);
-					serviceUrlBuilder.append("/knowagecockpitengine/api/1.0/pages/execute?");
+					serviceUrlBuilder.append("/knowagecockpitengine/api/1.0/pages/execute/png?");
 					serviceUrlBuilder.append("user_id=");
 					serviceUrlBuilder.append(userUniqueIdentifier);
 					serviceUrlBuilder.append("&DOCUMENT_LABEL=");
@@ -398,7 +398,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 					}
 				}
 				paramMap.put(paramName, value);
-				if (!found) {
+				if (!found && biObjectParameter.isRequired()) {
 					throw new SpagoBIRuntimeException("There is no match between document parameters and template parameters.");
 				}
 			}

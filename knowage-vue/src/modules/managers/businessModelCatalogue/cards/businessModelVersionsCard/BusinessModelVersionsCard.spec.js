@@ -70,7 +70,7 @@ describe('Business Model Management Saved versions', () => {
         const wrapper = factory()
 
         expect(wrapper.vm.businessModelVersions.length).toBe(0)
-        expect(wrapper.find('[data-test="versions-list"]').html()).toContain('managers.buisnessModelCatalogue.noSavedVersions')
+        expect(wrapper.find('[data-test="versions-list"]').html()).toContain('managers.businessModelManager.noSavedVersions')
     })
     it('shows a selected radio button if a version is selected', async () => {
         const wrapper = factory()

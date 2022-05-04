@@ -1,0 +1,17 @@
+{
+    "globalFilterFields": ["name", "dateCreation"],
+    "iconColumn": {
+        "style": {
+            "text-align": "end",
+            "width": "5%"
+        }
+    },
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    }
+}

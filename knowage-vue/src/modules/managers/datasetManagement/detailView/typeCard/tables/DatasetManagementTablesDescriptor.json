@@ -1,0 +1,44 @@
+{
+    "datasetParamTypes": [
+        {
+            "name": "String",
+            "value": "String"
+        },
+        {
+            "name": "Number",
+            "value": "Number"
+        },
+        {
+            "name": "Raw",
+            "value": "Raw"
+        },
+        {
+            "name": "Generic",
+            "value": "Generic"
+        }
+    ],
+    "jsonPathTypes": ["string", "int", "double", "date yyy-MM-dd", "timestamp yyyy-MM-dd HH:mm:ss", "ISO8601 yyyy-MM-ddTHH:mm:ss.SSSZ", "time HH:mm:ss", "boolean"],
+    "newJsonPathAttr": {
+        "jsonPathValue": "",
+        "name": "",
+        "typeOrJsonPathValue": ""
+    },
+    "newParam": {
+        "defaultValue": "",
+        "multiValue": false,
+        "name": "",
+        "type": ""
+    },
+    "newRequestHeader": {
+        "name": "",
+        "value": ""
+    },
+    "style": {
+        "columnStyle": {
+            "height": "25px"
+        },
+        "maxWidth": {
+            "width": "100%"
+        }
+    }
+}

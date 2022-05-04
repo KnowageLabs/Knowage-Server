@@ -11,7 +11,7 @@
         @node-select="onNodeSelect"
         @nodeUnselect="onNodeUnselect"
         data-test="menu-nodes-tree"
-        class="kn-tree kn-flex"
+        class="kn-tree kn-flex toolbar-height"
         scrollHeight="flex"
     >
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
@@ -59,7 +59,7 @@ export default defineComponent({
                     return item
                 })
 
-                this.menuElements = arrayToTree(element, { dataField: null, style: this.menuNodesTreeDescriptor['node-style'] })
+                this.menuElements = [{ label: this.$t('common.home'), name: this.$t('common.home'), menuId: null, children: arrayToTree(element, { dataField: null, style: this.menuNodesTreeDescriptor['node-style'] }) }]
                 this.expandAll()
             }
         },
@@ -96,16 +96,29 @@ export default defineComponent({
             }
         },
         canBeMovedUp(node: iMenuNode) {
-            return node.prog !== 1
+            return node.prog !== 1 && node.menuId
         },
         canBeMovedDown(node: iMenuNode) {
-            let canBeMoved = false
-            this.menuElements.forEach((currentNode) => {
-                if (node.parentId === currentNode.parentId && node.prog < currentNode.prog) {
-                    canBeMoved = true
+            if (node.menuId === null) {
+                return false
+            }
+            let parentNode: iMenuNode | null = null
+            if (node.parentId) {
+                parentNode = this.findNode(node.parentId, this.menuElements)
+            } else {
+                parentNode = this.menuElements[0]
+            }
+            return parentNode && parentNode.children && parentNode.children.length !== node.prog
+        },
+        findNode(menuId: any, nodes: iMenuNode[]): iMenuNode | null {
+            for (let node of nodes) {
+                if (node.menuId === menuId) {
+                    return node
                 }
-            })
-            return canBeMoved
+                const foundNode = this.findNode(menuId, node.children)
+                if (foundNode) return foundNode
+            }
+            return null
         },
         canBeDeleted(node: iMenuNode) {
             return !(node.children?.length > 0)
@@ -139,5 +152,8 @@ export default defineComponent({
     &:deep(.p-treenode-content) {
         padding: 0 !important;
     }
+}
+.toolbar-height {
+    padding-bottom: var(--kn-toolbar-height);
 }
 </style>

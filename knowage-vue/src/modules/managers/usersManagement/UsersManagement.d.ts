@@ -37,3 +37,8 @@ export interface iValue {
     name: string
     type: string
 }
+
+export interface iStaticPage {
+    id: number
+    name: string
+}

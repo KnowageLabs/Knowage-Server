@@ -1,0 +1,44 @@
+{
+    "cardinality": [
+        {
+            "name": "1..N to 1",
+            "value": "many-to-one"
+        },
+        {
+            "name": "0..N to 1",
+            "value": "optional-many-to-one"
+        }
+    ],
+    "filterFields": ["name"],
+    "style": {
+        "iconColumnStyle": {
+            "width": "10%"
+        }
+    },
+    "validations": {
+        "dataSend": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "outbound-dialog-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "cardinality",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "outbound-dialog-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

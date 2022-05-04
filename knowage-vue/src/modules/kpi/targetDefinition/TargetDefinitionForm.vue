@@ -21,6 +21,12 @@
                     </span>
                     <KnValidationMessages :vComp="vcomp.name" :additionalTranslateParams="{ fieldName: $t('kpi.targetDefinition.name') }"></KnValidationMessages>
                 </div>
+                <div class="p-my-4">
+                    <span class="p-float-label">
+                        <AutoComplete id="category" v-model="target.category" :suggestions="filteredCategory" @complete="searchCategory($event)" field="valueName" @input="valueChanged('category', $event.target.value)" @item-select="valueChanged('category', $event.value)" />
+                        <label for="category" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.kpiCategory') }}</label>
+                    </span>
+                </div>
                 <div class="kn-flex">
                     <div class="p-d-flex p-jc-between">
                         <div>
@@ -69,13 +75,15 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
+import { iCategory, iTargetDefinition } from './TargetDefinition'
+import AutoComplete from 'primevue/autocomplete'
 import Calendar from 'primevue/calendar'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import { iTargetDefinition } from './TargetDefinition'
 
 export default defineComponent({
     name: 'target-definition-form',
     components: {
+        AutoComplete,
         Calendar,
         KnValidationMessages
     },
@@ -83,22 +91,46 @@ export default defineComponent({
         selectedTarget: {
             type: Object as PropType<iTargetDefinition>
         },
+        categories: {
+            type: Array
+        },
         vcomp: Object
     },
     emits: ['touched', 'valueChanged'],
     watch: {
         selectedTarget() {
             this.target = { ...this.selectedTarget }
+        },
+        categories() {
+            this.loadCategories()
         }
     },
     data() {
         return {
-            target: {} as iTargetDefinition
+            target: {} as iTargetDefinition,
+            filteredCategory: [] as iCategory[]
         }
     },
+    created() {
+        this.loadCategories()
+    },
     methods: {
+        loadCategories() {
+            this.filteredCategory = [...(this.categories as iCategory[])]
+        },
         valueChanged(fieldName: string, value: any) {
             this.$emit('valueChanged', { fieldName, value })
+        },
+        searchCategory(event) {
+            setTimeout(() => {
+                if (!event.query.trim().length) {
+                    this.filteredCategory = [...(this.categories as iCategory[])]
+                } else {
+                    this.filteredCategory = this.categories?.filter((category: any) => {
+                        return category.valueName && category.valueName.toLowerCase().startsWith(event.query.toLowerCase())
+                    }) as iCategory[]
+                }
+            }, 250)
         }
     }
 })

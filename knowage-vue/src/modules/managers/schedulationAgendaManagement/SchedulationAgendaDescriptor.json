@@ -1,0 +1,87 @@
+{
+    "breakpoint": "560px",
+    "buttonGroup": {
+        "style": {
+            "margin": "5px"
+        }
+    },
+    "card": {
+        "style": {
+            "margin-bottom": "2em",
+            "width": "100%"
+        }
+    },
+    "columns": [
+        {
+            "field": "name",
+            "header": "managers.schedulationAgendaManagement.headers.name",
+            "position": 1,
+            "style": {
+                "width": "50%"
+            }
+        },
+        {
+            "field": "description",
+            "header": "managers.configurationManagement.headers.description",
+            "position": 2,
+            "style": {
+                "width": "50%"
+            }
+        }
+    ],
+    "form": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+    "globalFilterFields": ["name", "description"],
+    "hCard": {
+        "style": {
+            "height ": "205",
+            "justify-content": "flex-end",
+            "overflow ": "visible",
+            "overflow-x": "hidden",
+            "overflow-y": "auto"
+        }
+    },
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    },
+    "span": {
+        "style": {
+            "justify-content": "flex-end"
+        }
+    },
+    "table": {
+        "badgeColumn": {
+            "style": {
+                "width": "10%"
+            }
+        },
+        "dateColumn": {
+            "style": {
+                "line-height": "2rem",
+                "text-align": "left",
+                "width": "15%"
+            }
+        },
+        "iconColumn": {
+            "style": {
+                "text-align": "end",
+                "width": "5%"
+            }
+        },
+        "rowExpanderColumn": {
+            "style": {
+                "text-align": "end",
+                "width": "5%"
+            }
+        }
+    }
+}

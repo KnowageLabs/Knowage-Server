@@ -308,7 +308,6 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			FieldMetadata fieldMeta = new FieldMetadata();
 			String fieldName = StringUtils.escapeForSQLColumnName(valueField.toString());
 			fieldMeta.setName(fieldName);
-			fieldMeta.setType(String.class);
 
 			dataStoreMeta.addFiedMeta(fieldMeta);
 		}
@@ -336,22 +335,24 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				throw new RuntimeException("Impossible to parse cell [" + c + "]", t);
 			}
 
+			FieldMetadata fieldMeta = ((FieldMetadata) dataStore.getMetaData().getFieldMeta(c));
+			Class oldType = fieldMeta.getType();
 			if (valueField != null && valueField instanceof Double) {
-				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Double.class);
+				fieldMeta.setType(getNewMetaType(oldType, Double.class));
 			} else if (valueField != null && valueField instanceof BigDecimal) {
-				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(BigDecimal.class);
+				fieldMeta.setType(getNewMetaType(oldType, BigDecimal.class));
 			} else if (valueField != null && valueField instanceof Integer) {
-				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Integer.class);
+				fieldMeta.setType(getNewMetaType(oldType, Integer.class));
 			} else if (valueField != null && valueField instanceof Long) {
-				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Long.class);
+				fieldMeta.setType(getNewMetaType(oldType, Long.class));
 			} else if (valueField != null && valueField instanceof Date) {
 				if (valueField instanceof Timestamp) {
-					((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Timestamp.class);
+					fieldMeta.setType(getNewMetaType(oldType, Timestamp.class));
 				} else {
-					((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(Date.class);
+					fieldMeta.setType(getNewMetaType(oldType, Date.class));
 				}
 			} else {
-				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(String.class);
+				fieldMeta.setType(getNewMetaType(oldType, String.class));
 			}
 
 			IField field = new Field(valueField);

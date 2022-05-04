@@ -1,0 +1,36 @@
+{
+    "columns": [
+        {
+            "field": "vpName",
+            "header": "common.name"
+        },
+        {
+            "field": "vpDesc",
+            "header": "common.description"
+        },
+        {
+            "field": "vpScope",
+            "header": "common.visibility"
+        }
+    ],
+    "dialog": {
+        "style": {
+            "width": "80vw"
+        }
+    },
+    "globalFilterFields": ["vpName", "vpDesc", "vpScope"],
+    "iconColumn": {
+        "style": {
+            "text-align": "end",
+            "width": "5%"
+        }
+    },
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    }
+}

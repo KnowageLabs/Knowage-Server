@@ -31,11 +31,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -44,8 +47,13 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 import org.safehaus.uuid.UUIDGenerator;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -58,6 +66,8 @@ import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
 import it.eng.spagobi.commons.metadata.SbiOrganizationProductTypeId;
+import it.eng.spagobi.commons.metadata.SbiOrganizationTheme;
+import it.eng.spagobi.commons.metadata.SbiOrganizationThemeId;
 import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
@@ -66,6 +76,8 @@ import it.eng.spagobi.profiling.bean.SbiExtUserRolesId;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.security.Password;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.scheduler.bo.CronExpression;
 import it.eng.spagobi.tools.scheduler.bo.Job;
@@ -98,7 +110,8 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			Criteria criteria = tmpSession.createCriteria(SbiTenant.class);
 			criteria.add(labelCriterrion);
 			tenant = (SbiTenant) criteria.uniqueResult();
-
+			if (tenant != null)
+				Hibernate.initialize(tenant.getSbiOrganizationThemes());
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("Error while loading the tenant with name " + name, he);
@@ -252,6 +265,40 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 	}
 
 	@Override
+	public Set loadThemesByTenantName(String name) throws EMFUserError {
+		logger.debug("IN");
+		SbiTenant tenant = null;
+		Session tmpSession = null;
+		Transaction tx = null;
+		Set themes = null;
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+			Criterion labelCriterrion = Expression.eq("name", name);
+			Criteria criteria = tmpSession.createCriteria(SbiTenant.class);
+			criteria.add(labelCriterrion);
+			tenant = (SbiTenant) criteria.uniqueResult();
+
+			tx.commit();
+
+			if (tenant != null)
+				themes = tenant.getSbiOrganizationThemes();
+		} catch (HibernateException he) {
+			logger.error("Error while loading the tenant with name " + name, he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return themes;
+	}
+
+	@Override
 	public void insertTenant(SbiTenant aTenant) throws EMFUserError {
 		logger.debug("insertTenant IN");
 		Session aSession = null;
@@ -298,6 +345,19 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				sbiOrganizationProductType.setCommonInfo(sbiCommoInfo);
 				updateSbiCommonInfo4Insert(sbiOrganizationProductType);
 				aSession.save(sbiOrganizationProductType);
+				aSession.flush();
+			}
+
+			Set<SbiOrganizationTheme> themes = aTenant.getSbiOrganizationThemes();
+			for (SbiOrganizationTheme theme : themes) {
+				SbiOrganizationTheme sbiOrganizationTheme = new SbiOrganizationTheme();
+				sbiOrganizationTheme.setId(theme.getId());
+				sbiOrganizationTheme.setThemeName(theme.getThemeName());
+				sbiOrganizationTheme.setConfig(theme.getConfig());
+				sbiOrganizationTheme.setActive(theme.isActive());
+				sbiOrganizationTheme.setCommonInfo(sbiCommoInfo);
+				updateSbiCommonInfo4Insert(sbiOrganizationTheme);
+				aSession.save(sbiOrganizationTheme);
 				aSession.flush();
 			}
 			tx.commit();
@@ -523,10 +583,9 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 	@Override
 	public void modifyTenant(SbiTenant aTenant) throws EMFUserError, Exception {
 		logger.debug("modifyTenant IN");
-		Session aSession = null;
+		final Session aSession = getSession();
 		Transaction tx = null;
 		try {
-			aSession = getSession();
 			tx = aSession.beginTransaction();
 
 			// load tenant by id
@@ -684,6 +743,95 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				logger.debug("modifyTenant OUT");
 			}
 		}
+	}
+
+	/**
+	 * @param aTenant
+	 * @param aSession
+	 * @param sbiCommoInfo
+	 */
+	protected String handleThemes(SbiTenant aTenant) {
+
+		Transaction tx = null;
+		final Session aSession = getSession();
+		String newUuid = null;
+		try {
+			tx = aSession.beginTransaction();
+			SbiCommonInfo sbiCommoInfo = new SbiCommonInfo();
+			sbiCommoInfo.setOrganization(aTenant.getName());
+			Query hibQuery = aSession.createQuery("from SbiOrganizationTheme p where p.id.organizationId = :idTenant");
+			hibQuery.setInteger("idTenant", aTenant.getId());
+
+			ArrayList<SbiOrganizationTheme> existingSbiOrganizationThemes = (ArrayList<SbiOrganizationTheme>) hibQuery.list();
+
+			existingSbiOrganizationThemes.stream().filter(x -> x.getId().getUuid() != null).forEach(x -> {
+
+				Optional s = aTenant.getSbiOrganizationThemes().stream().filter(y -> x.getId().getUuid().equals(((SbiOrganizationTheme) y).getId().getUuid()))
+						.findFirst();
+
+				Query q = aSession.createQuery("from SbiOrganizationTheme p where p.id.organizationId = :idTenant and p.id.uuid = :uuid");
+				q.setInteger("idTenant", x.getId().getOrganizationId());
+				q.setString("uuid", x.getId().getUuid());
+				SbiOrganizationTheme sbiOrganizationTheme = (SbiOrganizationTheme) q.uniqueResult();
+
+				if (s.isPresent()) {
+					SbiOrganizationTheme newSbiOrganizationTheme = new SbiOrganizationTheme();
+					newSbiOrganizationTheme.setId(((SbiOrganizationTheme) s.get()).getId());
+					newSbiOrganizationTheme.setThemeName(((SbiOrganizationTheme) s.get()).getThemeName());
+
+					newSbiOrganizationTheme.setConfig(((SbiOrganizationTheme) s.get()).getConfig());
+
+					newSbiOrganizationTheme.setActive(((SbiOrganizationTheme) s.get()).isActive());
+
+					aSession.delete(sbiOrganizationTheme);
+					aSession.flush();
+
+					newSbiOrganizationTheme.setCommonInfo(sbiCommoInfo);
+					updateSbiCommonInfo4Insert(newSbiOrganizationTheme);
+
+					aSession.save(newSbiOrganizationTheme);
+
+				} else {
+					aSession.delete(sbiOrganizationTheme);
+
+				}
+				aSession.flush();
+
+			});
+
+			newUuid = UUID.randomUUID().toString();
+
+			String uuidForLambda = newUuid;
+			// newThemes
+			aTenant.getSbiOrganizationThemes().stream().filter(y -> ((SbiOrganizationTheme) y).getId().getUuid() == null).forEach(x -> {
+
+				SbiOrganizationTheme newSbiOrganizationTheme = (SbiOrganizationTheme) x;
+				newSbiOrganizationTheme.getId().setUuid(uuidForLambda);
+				newSbiOrganizationTheme.setCommonInfo(sbiCommoInfo);
+				updateSbiCommonInfo4Insert(newSbiOrganizationTheme);
+
+				aSession.save(newSbiOrganizationTheme);
+				aSession.flush();
+
+			});
+			tx.commit();
+		} catch (HibernateException he) {
+			String message = "Error while updating themes for the tenant " + aTenant.getName();
+			logger.error(message, he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new SpagoBIRuntimeException(message);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("modifyTenant OUT");
+			}
+		}
+		return newUuid;
 	}
 
 	/**
@@ -963,6 +1111,81 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			}
 		}
 		logger.debug("OUT");
+	}
+
+	@Override
+	public String updateThemes(IEngUserProfile profile, String uuid, String themeName, ObjectNode newThemeConfig, boolean isActive) throws EMFUserError {
+		ITenantsDAO tenantDao = DAOFactory.getTenantsDAO();
+		tenantDao.setUserProfile(profile);
+		Tenant tenantManager = TenantManager.getTenant();
+		String tenantName = tenantManager.getName();
+		SbiTenant tenant = tenantDao.loadTenantByName(tenantName);
+
+		ObjectMapper mapper = new ObjectMapper();
+		String newThemeConfigStr = null;
+
+		if (!newThemeConfig.isEmpty(null)) {
+			try {
+				newThemeConfigStr = mapper.writeValueAsString(newThemeConfig);
+			} catch (JsonProcessingException e1) {
+				// TODO Auto-generated catch block
+				throw new SpagoBIRuntimeException("Error during theme config conversion", e1);
+			}
+		}
+
+		if (uuid == null) {
+			if (isActive) {
+				tenant.getSbiOrganizationThemes().stream().forEach(x -> ((SbiOrganizationTheme) x).setActive(false));
+			}
+
+			SbiOrganizationThemeId id = new SbiOrganizationThemeId();
+			id.setOrganizationId(tenant.getId());
+
+			SbiOrganizationTheme newTheme = new SbiOrganizationTheme(themeName, newThemeConfigStr, isActive);
+			newTheme.setId(id);
+			updateSbiCommonInfo4Update(newTheme);
+			tenant.getSbiOrganizationThemes().add(newTheme);
+
+		} else {
+			if (isActive) {
+				tenant.getSbiOrganizationThemes().stream().forEach(x -> ((SbiOrganizationTheme) x).setActive(false));
+			}
+
+			String tmpNewThemeConfigStr = newThemeConfigStr;
+			tenant.getSbiOrganizationThemes().stream().filter(x -> ((SbiOrganizationTheme) x).getId().getUuid().equals(uuid)).forEach(x -> {
+				SbiOrganizationTheme sbiOrganizationTheme = (SbiOrganizationTheme) x;
+				sbiOrganizationTheme.setConfig(tmpNewThemeConfigStr);
+				sbiOrganizationTheme.setActive(isActive);
+				sbiOrganizationTheme.setThemeName(themeName);
+				updateSbiCommonInfo4Update(sbiOrganizationTheme);
+			});
+		}
+
+		String newId = handleThemes(tenant);
+
+		return newId;
+	}
+
+	@Override
+	public void deleteTheme(IEngUserProfile profile, String themeId) throws EMFUserError {
+		ITenantsDAO tenantDao = DAOFactory.getTenantsDAO();
+		tenantDao.setUserProfile(profile);
+		Tenant tenantManager = TenantManager.getTenant();
+		String tenantName = tenantManager.getName();
+		SbiTenant tenant = tenantDao.loadTenantByName(tenantName);
+		Set<SbiOrganizationTheme> newSbiOrganizationThemes = new HashSet<>();
+
+		tenant.getSbiOrganizationThemes().stream().forEach(x -> {
+
+			SbiOrganizationTheme sbiOrganizationTheme = (SbiOrganizationTheme) x;
+
+			if (sbiOrganizationTheme.getId().getUuid().equals(themeId))
+				newSbiOrganizationThemes.add(sbiOrganizationTheme);
+		});
+
+		tenant.setSbiOrganizationThemes(newSbiOrganizationThemes);
+		handleThemes(tenant);
+
 	}
 
 }

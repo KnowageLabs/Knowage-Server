@@ -30,7 +30,7 @@
                 ]
             },
             {
-                "fieldName": "typeId",
+                "fieldName": "type",
                 "validators": [
                     {
                         "key": "required"

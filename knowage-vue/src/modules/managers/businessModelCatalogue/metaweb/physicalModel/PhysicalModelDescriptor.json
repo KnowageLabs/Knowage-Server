@@ -1,0 +1,14 @@
+{
+    "style": {
+        "mainList": {
+            "height": "100%"
+        },
+        "mainListContainer": {
+            "height": "100%",
+            "overflow-x": "hidden",
+            "overflow-y": "auto",
+            "position": "absolute",
+            "width": "100%"
+        }
+    }
+}

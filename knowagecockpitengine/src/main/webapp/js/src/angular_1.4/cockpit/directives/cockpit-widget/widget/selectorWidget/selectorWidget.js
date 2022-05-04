@@ -103,6 +103,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.selectElement = function(e,isBulk){
 			if(isBulk && e.pointerId === -1) return;
+			if(isBulk && e.originalTarget && e.originalTarget.tagName.toLowerCase() === "input") return;
 
 			if(e.target.attributes.disabled || e.target.parentNode.attributes.disabled) return;
 
@@ -169,11 +170,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.gridWidth = function() {
-			var tempStyle = $scope.ngModel.style ? $scope.ngModel.style : {};
+			var tempStyle = {};
 			if($scope.ngModel.settings.modalityView == 'grid' && $scope.ngModel.settings.gridColumnsWidth){
 				tempStyle.width = $scope.ngModel.settings.gridColumnsWidth;
-			}else{
-				if(tempStyle.width) delete tempStyle.width;
 			}
 			return tempStyle;
 		}

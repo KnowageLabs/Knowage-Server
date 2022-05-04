@@ -95,32 +95,24 @@
 		
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<version>3.1.2.Final</version>
+			<artifactId>resteasy-servlet-initializer</artifactId>
+			<version>${resteasy.version}</version>
 			<scope>runtime</scope>
-        </dependency>
-        
-        <dependency>
-		    <groupId>com.fasterxml.jackson.jaxrs</groupId>
-		    <artifactId>jackson-jaxrs-json-provider</artifactId>
-		    <version>2.9.2</version>
-		    <scope>runtime</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-html</artifactId>
+			<version>${resteasy.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.fasterxml.jackson.jaxrs</groupId>
+			<artifactId>jackson-jaxrs-json-provider</artifactId>
+			<version>2.9.2</version>
+			<scope>runtime</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-legacy</artifactId>
-			<version>3.1.2.Final</version>
-			<scope>runtime</scope>
-        </dependency>
-		
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-servlet-initializer</artifactId>
-			<version>3.1.2.Final</version>
-			<scope>runtime</scope>
-		</dependency>
-		
 		<dependency>
 			<groupId>org.olap4j</groupId>
 			<artifactId>olap4j</artifactId>
@@ -141,11 +133,23 @@
 			</exclusions>
 		</dependency>
 
-		<!-- pivot4j-0.9 is not compatible with managed poi (from knowage-ce-parent/pom.xml), therefore we override dependency towards poi-3.10-beta2 -->
+		<!-- pivot4j-0.9 is not compatible with managed poi (from knowage-ce-parent/pom.xml), 
+			therefore we override dependency towards poi-3.10-beta2 -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>3.10-beta2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-web</artifactId>
+		</dependency>
+
+		<!-- Provides support for Graylog in log4j2 -->
+		<dependency>
+			<groupId>biz.paluch.logging</groupId>
+			<artifactId>logstash-gelf</artifactId>
 		</dependency>
 
 		<dependency>
@@ -186,6 +190,10 @@
 					<groupId>xalan</groupId>
 					<artifactId>xalan</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		
@@ -195,7 +203,21 @@
 			<version>3.6.2.Final</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-1.2-api</artifactId>
+			<version>2.17.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.17.1</version>
+			<scope>runtime</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
@@ -204,6 +226,6 @@
 		</dependency>
 
 	</dependencies>
-	
+
 	<name>knowagewhatifengine</name>
 </project>

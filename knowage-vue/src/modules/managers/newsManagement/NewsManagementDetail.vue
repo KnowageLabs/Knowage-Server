@@ -1,7 +1,7 @@
 <template>
 	<Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-		<template #left>{{ $t('managers.newsManagement.detailTitle') }}</template>
-		<template #right>
+		<template #start>{{ $t('managers.newsManagement.detailTitle') }}</template>
+		<template #end>
 			<Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" :disabled="invalid" />
 			<Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" data-test="close-button" />
 		</template>
@@ -18,7 +18,7 @@
 <script lang="ts">
 	import { defineComponent } from 'vue'
 	import { iNews, iRole } from './NewsManagement'
-	import axios from 'axios'
+	import { AxiosResponse } from 'axios'
 	import NewsDetailCard from './cards/NewsDetailCard/NewsDetailCard.vue'
 	import newsManagementDetailDescriptor from './NewsManagementDetailDescriptor.json'
 	import RolesCard from './cards/RolesCard/RolesCard.vue'
@@ -67,7 +67,7 @@
 			async loadSelectedNews() {
 				this.loading = true
 				if (this.id) {
-					await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/news/${this.id}?isTechnical=true`).then((response) => (this.selectedNews = { ...response.data, expirationDate: new Date(response.data.expirationDate) }))
+					await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/news/${this.id}?isTechnical=true`).then((response: AxiosResponse<any>) => (this.selectedNews = { ...response.data, expirationDate: new Date(response.data.expirationDate) }))
 				} else {
 					this.selectedNews = {
 						type: 1,
@@ -78,9 +78,9 @@
 			},
 			async loadRoles() {
 				this.loading = true
-				await axios
+				await this.$http
 					.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles')
-					.then((response) => {
+					.then((response: AxiosResponse<any>) => {
 						this.roleList = response.data
 					})
 					.finally(() => (this.loading = false))
@@ -94,7 +94,7 @@
 					this.operation = 'update'
 				}
 
-				await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...this.selectedNews, expirationDate: new Date(this.selectedNews.expirationDate as string).valueOf() }).then(() => {
+				await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...this.selectedNews, expirationDate: new Date(this.selectedNews.expirationDate as string).valueOf() }).then(() => {
 					this.$store.commit('setInfo', {
 						title: this.$t(this.newsManagementDetailDescriptor.operation[this.operation].toastTitle),
 						msg: this.$t(this.newsManagementDetailDescriptor.operation.success)
@@ -103,6 +103,7 @@
 					WEB_SOCKET.send(JSON.stringify(this.selectedNews))
 					this.$router.replace('/news-management')
 				})
+				.catch(() => {})
 			},
 			setDirty() {
 				this.touched = true

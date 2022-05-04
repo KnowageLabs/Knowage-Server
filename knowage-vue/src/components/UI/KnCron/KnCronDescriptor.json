@@ -111,6 +111,14 @@
             "height": "40px"
         }
     },
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    },
     "weeklyOptions": [
         {
             "name": "SUN",

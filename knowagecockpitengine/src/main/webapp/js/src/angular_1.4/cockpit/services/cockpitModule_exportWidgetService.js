@@ -23,6 +23,34 @@
 	function exportWidgetService ($q, $httpParamSerializer, $mdToast, sbiModule_config, cockpitModule_analyticalDrivers, sbiModule_user, sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_cockpitDocument, cockpitModule_datasetServices, cockpitModule_widgetSelection, cockpitModule_properties) {
 		var objToReturn = {};
 
+		objToReturn.exportWidgetToPdf = function (widget, options) {
+
+
+			/**
+			 * Last parameter is set to TRUE for exporting only one widget, rather than whole document (all table and chart widgets in cockpit)
+			 */
+			createRequestForPdf(widget, options)
+				.then(function(requestConfig){
+					var config = {"responseType": "arraybuffer"};
+					var exportingToast = sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.cockpit.widgets.exporting"), 'Success!', 0);
+					var documentLabel = requestConfig.DOCUMENT_LABEL;
+
+					sbiModule_restServices.promisePost('1.0/cockpit/export', 'pdf', requestConfig, config)
+						.then(function(response){
+							var mimeType = response.headers("Content-type");
+							var fileName = 'exported_widget';
+							if (documentLabel != undefined) {
+								fileName = documentLabel;
+							}
+							$mdToast.hide(exportingToast);
+							sbiModule_download.getBlob(response.data, fileName,"application/pdf", "pdf");
+						}, function(error){
+							$mdToast.cancel(exportingToast);
+							sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.cockpit.widgets.exporting.error"), 'Error');
+						});
+				});
+		}
+
 		objToReturn.exportWidgetToExcel = function (type, widget, options) {
 
 
@@ -136,6 +164,61 @@
 				requestUrl.COCKPIT_VARIABLES = cockpitModule_properties.VARIABLES;
 				requestUrl.options = options;
 			}
+
+			deferred.resolve(requestUrl);
+			return deferred.promise;
+		}
+
+		var createRequestForPdf = function (widget, options) {
+			var deferred = $q.defer();
+			var requestUrl = {
+					user_id: sbiModule_user.userUniqueIdentifier,
+					document: sbiModule_cockpitDocument.docId,
+					widget: widget.id,
+					DOCUMENT_LABEL: sbiModule_cockpitDocument.docLabel,
+					SBI_COUNTRY: sbiModule_config.curr_country,
+					SBI_LANGUAGE: sbiModule_config.curr_language,
+					SBI_SCRIPT: sbiModule_config.curr_script,
+					options : options
+			}
+
+			if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
+				for (var k in widget.content.columnSelectedOfDataset) {
+					if(Array.isArray(widget.content.columnSelectedOfDataset[k].variables) && widget.content.columnSelectedOfDataset[k].variables.length) {
+						if (widget.type == "table" && widget.content.columnSelectedOfDataset[k].variables[0].action == 'header') {
+							for (var j in cockpitModule_properties.VARIABLES) {
+								if (j == widget.content.columnSelectedOfDataset[k].variables[0].variable){
+									widget.content.columnSelectedOfDataset[k].aliasToShow = cockpitModule_properties.VARIABLES[j];
+								}
+							}
+						}
+
+					}
+				}
+			}
+
+			var drivers = formatDrivers(cockpitModule_analyticalDrivers);
+
+			var dsId = widget.dataset.dsId;
+			var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
+			var aggregation;
+			if (widget.settings) {
+			 aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset, widget.settings.sortingColumn,widget.settings.sortingOrder);
+			}
+			else {
+				aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset)
+			}
+			var selections = cockpitModule_datasetServices.getWidgetSelectionsAndFilters(widget, dataset, false);
+			var parameters = cockpitModule_datasetServices.getDatasetParameters(dsId);
+			var parametersString = cockpitModule_datasetServices.getParametersAsString(parameters);
+			var paramsToSend = angular.fromJson(parametersString);
+			requestUrl.COCKPIT_SELECTIONS = {};
+			requestUrl.COCKPIT_SELECTIONS.aggregations = aggregation;
+			requestUrl.COCKPIT_SELECTIONS.parameters = paramsToSend;
+			requestUrl.COCKPIT_SELECTIONS.drivers = drivers;
+			requestUrl.COCKPIT_SELECTIONS.selections = selections;
+			requestUrl.COCKPIT_VARIABLES = cockpitModule_properties.VARIABLES;
+			requestUrl.options = options;
 
 			deferred.resolve(requestUrl);
 			return deferred.promise;

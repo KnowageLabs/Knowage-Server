@@ -6,8 +6,8 @@ import Card from 'primevue/card'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import LovesManagementHint from './LovesManagementHint.vue'
 import flushPromises from 'flush-promises'
-import Listbox from 'primevue/listbox'
 import LovsManagement from './LovsManagement.vue'
+import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 
@@ -37,8 +37,14 @@ const mockedLovs = [
 
 jest.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: mockedLovs }))
-axios.delete.mockImplementation(() => Promise.resolve())
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: mockedLovs
+        })
+    ),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 const $confirm = {
     require: jest.fn()
@@ -81,12 +87,12 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [router],
+            plugins: [router, PrimeVue],
             stubs: {
                 Button,
                 Card,
                 FabButton,
-                Listbox,
+                KnListBox: true,
                 ProgressBar,
                 Toolbar
             },
@@ -94,7 +100,8 @@ const factory = () => {
                 $t: (msg) => msg,
                 $store,
                 $confirm,
-                $router
+                $router,
+                $http
             }
         }
     })
@@ -127,7 +134,6 @@ describe('Lovs Management loading', () => {
         await flushPromises()
 
         expect(wrapper.vm.lovsList.length).toBe(0)
-        expect(wrapper.find('[data-test="lovs-list"]').html()).toContain('common.info.noDataFound')
     })
     it('shows an hint when no item is selected', async () => {
         await flushPromises()
@@ -142,10 +148,6 @@ describe('Lovs Management', () => {
     it('shows a prompt when user click on a lov delete button to delete it and deletes it when deleteLov is called', async () => {
         const wrapper = factory()
         await flushPromises()
-
-        await wrapper.find('[data-test="delete-button-1"]').trigger('click')
-
-        expect($confirm.require).toHaveBeenCalledTimes(1)
 
         await wrapper.vm.deleteLov(1)
         expect(axios.delete).toHaveBeenCalledTimes(1)
@@ -165,8 +167,8 @@ describe('Lovs Management', () => {
         const wrapper = factory()
 
         await flushPromises()
-        await wrapper.find('[data-test="list-item-1"]').trigger('click')
+        await wrapper.vm.showForm(mockedLovs[0])
 
-        expect($router.push).toHaveBeenCalledWith('/lovs-management/1')
+        expect($router.push).toHaveBeenCalledWith('/lovs-management/2')
     })
 })

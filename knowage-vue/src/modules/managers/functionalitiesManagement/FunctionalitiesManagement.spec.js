@@ -40,8 +40,14 @@ const mockedFunctionalities = [
 
 jest.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: mockedFunctionalities }))
-axios.delete.mockImplementation(() => Promise.resolve({ data: [] }))
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: mockedFunctionalities
+        })
+    ),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 afterEach(() => {
     jest.clearAllMocks()
@@ -65,7 +71,8 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $store,
-                $confirm
+                $confirm,
+                $http
             }
         }
     })

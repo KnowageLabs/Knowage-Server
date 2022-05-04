@@ -68,10 +68,17 @@ const mockedTarget = [
         }
     }
 ]
-jest.mock('axios', () => ({
-    get: jest.fn(() => Promise.resolve({ data: mockedTarget })),
-    delete: jest.fn(() => Promise.resolve())
-}))
+
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: mockedTarget
+        })
+    ),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 const $confirm = {
     require: jest.fn()
@@ -127,7 +134,8 @@ const factory = () => {
                 $store,
                 $confirm,
                 $route,
-                $router
+                $router,
+                $http
             }
         }
     })

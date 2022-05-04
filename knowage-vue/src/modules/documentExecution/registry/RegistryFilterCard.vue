@@ -5,7 +5,7 @@
     <div v-else-if="!filter.static" class="p-mx-2">
         <span class="p-float-label">
             <InputText v-if="filter.presentation === 'MANUAL'" class="kn-material-input" v-model="filter.filterValue" @blur="filterChanged" />
-            <Dropdown v-else-if="filter.presentation === 'COMBO'" class="kn-material-input" v-model="filter.filterValue" :options="options" optionValue="column_1" optionLabel="column_1" @change="filterChanged"> </Dropdown>
+            <Dropdown v-else-if="filter.presentation === 'COMBO'" class="kn-material-input" v-model="filter.filterValue" :options="options" optionValue="column_1" optionLabel="column_1" @change="filterChanged" :filter="true"> </Dropdown>
             <label v-if="filter.presentation !== 'DRIVER'" class="kn-material-input-label"> {{ filter.title }}</label>
         </span>
     </div>
@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
@@ -52,7 +52,7 @@ export default defineComponent({
             const entityOrder = this.entity + subEntity + ':' + (this.filter.column.orderBy ?? this.filter.field)
 
             const postData = new URLSearchParams({ ENTITY_ID: entityId, QUERY_TYPE: 'standard', ORDER_ENTITY: entityOrder, ORDER_TYPE: 'asc', QUERY_ROOT_ENTITY: 'true' })
-            await axios.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then((response) => (this.options = response.data.rows))
+            await this.$http.post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).then((response: AxiosResponse<any>) => (this.options = response.data.rows))
         },
         filterChanged() {
             this.$emit('changed', this.filter.filterValue)

@@ -52,6 +52,8 @@ import org.hibernate.HibernateException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.knowage.monitor.IKnowageMonitor;
+import it.eng.knowage.monitor.KnowageMonitorFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.error.EMFInternalError;
@@ -521,6 +523,8 @@ public class DocumentResource extends AbstractDocumentResource {
 		List<BIObject> allObjects = null;
 		List<BIObject> objects = null;
 
+		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.documents.list");
+
 		Integer functionalityId = getNumberOrNull(folderIdStr);
 
 		boolean isTypeFilterValid = !StringUtilities.isEmpty(type);
@@ -567,12 +571,14 @@ public class DocumentResource extends AbstractDocumentResource {
 
 			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
 
-			// if (callback != null && !callback.isEmpty()) {
-			// toBeReturned = callback + "(" + toBeReturned + ")";
-			// }
-			return Response.ok(toBeReturned).build();
+			Response response = Response.ok(toBeReturned).build();
+
+			monitor.stop();
+
+			return response;
 		} catch (Exception e) {
 			logger.error("Error while getting the list of documents", e);
+			monitor.stop(e);
 			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
 		} finally {
 			logger.debug("OUT");

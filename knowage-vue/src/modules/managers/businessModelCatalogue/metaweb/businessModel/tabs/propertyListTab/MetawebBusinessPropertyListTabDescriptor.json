@@ -1,0 +1,12 @@
+{
+    "businessModelInfo": [
+        {
+            "label": "common.name",
+            "name": "name"
+        },
+        {
+            "label": "common.description",
+            "name": "description"
+        }
+    ]
+}

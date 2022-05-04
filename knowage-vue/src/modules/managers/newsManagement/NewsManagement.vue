@@ -3,10 +3,10 @@
 		<div class="kn-page-content p-grid p-m-0">
 			<div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
 				<Toolbar class="kn-toolbar kn-toolbar--primary">
-					<template #left>
+					<template #start>
 						{{ $t('managers.newsManagement.title') }}
 					</template>
-					<template #right>
+					<template #end>
 						<FabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button" />
 					</template>
 				</Toolbar>
@@ -50,7 +50,7 @@
 	import { defineComponent } from 'vue'
 	import { iNews } from './NewsManagement'
 	import Avatar from 'primevue/avatar'
-	import axios from 'axios'
+	import { AxiosResponse } from 'axios'
 	import FabButton from '@/components/UI/KnFabButton.vue'
 	import Listbox from 'primevue/listbox'
 	import newsManagementDescriptor from './NewsManagementDescriptor.json'
@@ -78,9 +78,9 @@
 			async loadAllNews() {
 				this.loading = true
 				this.newsList = []
-				await axios
+				await this.$http
 					.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news')
-					.then((response) => {
+					.then((response: AxiosResponse<any>) => {
 						response.data.map((news: iNews) => {
 							this.newsList.push({ ...news, newsType: this.setNewsType(news.type) })
 						})
@@ -115,7 +115,7 @@
 				})
 			},
 			async deleteNews(news) {
-				await axios.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/' + news.id).then(() => {
+				await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/' + news.id).then(() => {
 					this.$store.commit('setInfo', {
 						title: this.$t('common.toast.deleteTitle'),
 						msg: this.$t('common.toast.deleteSuccess')

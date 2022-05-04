@@ -11,11 +11,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
@@ -100,7 +104,9 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	String lovValueColumnName;
 	String lovDescriptionColumnName;
-	List<String> lovColumnsNames;
+	List<String> lovVisibleColumnsNames;
+	List<String> lovInvisibleColumnsNames;
+	private BiMap<String, String> colPlaceholder2ColName = HashBiMap.create();
 
 	int valuesCount;
 	// used to comunicate to the client the unique
@@ -291,9 +297,24 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 			if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())) {
 				// get LOV metadata
 				ILovDetail lovProvDet = dum.getLovDetail(driver);
-				lovColumnsNames = lovProvDet.getVisibleColumnNames();
+
+				lovVisibleColumnsNames = lovProvDet.getVisibleColumnNames();
+				lovInvisibleColumnsNames = lovProvDet.getInvisibleColumnNames();
 				lovDescriptionColumnName = lovProvDet.getDescriptionColumnName();
 				lovValueColumnName = lovProvDet.getValueColumnName();
+
+//				colName2colPlaceholder.put("_col0", lovValueColumnName);
+//				colName2colPlaceholder.put("_col1", lovDescriptionColumnName);
+
+				AtomicInteger colCount = new AtomicInteger(0);
+
+				lovVisibleColumnsNames.forEach(e -> {
+					colPlaceholder2ColName.put("_col" + colCount.getAndIncrement(), e);
+				});
+
+				lovInvisibleColumnsNames.forEach(e -> {
+					colPlaceholder2ColName.put("_col" + colCount.getAndIncrement(), e);
+				});
 			}
 
 			boolean retrieveAdmissibleValue = false;
@@ -440,11 +461,27 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	private HashMap<String, Object> fromJSONtoMap(JSONObject item) throws JSONException {
 		HashMap<String, Object> itemAsMap = new HashMap<String, Object>();
 
-		for (int j = 0; j < lovColumnsNames.size(); j++) {
-			String key = lovColumnsNames.get(j).toUpperCase();
+		for (int j = 0; j < lovVisibleColumnsNames.size(); j++) {
+			String colKey = lovVisibleColumnsNames.get(j);
+			String colKeyUp = colKey.toUpperCase();
 
-			if (item.has(key)) {
-				itemAsMap.put(key, item.get(key));
+			if (item.has(colKeyUp)) {
+				Object value = item.get(colKeyUp);
+				itemAsMap.put(colKeyUp, value);
+
+				itemAsMap.put(colPlaceholder2ColName.inverse().get(colKey), value);
+			}
+		}
+
+		for (int j = 0; j < lovInvisibleColumnsNames.size(); j++) {
+			String colKey = lovInvisibleColumnsNames.get(j);
+			String colKeyUp = colKey.toUpperCase();
+
+			if (item.has(colKeyUp)) {
+				Object value = item.get(colKeyUp);
+				itemAsMap.put(colKeyUp, value);
+
+				itemAsMap.put(colPlaceholder2ColName.inverse().get(colKey), value);
 			}
 		}
 
@@ -966,12 +1003,12 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		this.lovDescriptionColumnName = lovDescriptionColumnName;
 	}
 
-	public List<String> getLovColumnsNames() {
-		return lovColumnsNames;
+	public List<String> getLovVisibleColumnsNames() {
+		return lovVisibleColumnsNames;
 	}
 
-	public void setLovColumnsNames(List<String> lovColumnsNames) {
-		this.lovColumnsNames = lovColumnsNames;
+	public void setLovVisibleColumnsNames(List<String> lovColumnsNames) {
+		this.lovVisibleColumnsNames = lovColumnsNames;
 	}
 
 	public ArrayList<HashMap<String, Object>> getAdmissibleValues() {
@@ -980,6 +1017,14 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	public void setAdmissibleValues(ArrayList<HashMap<String, Object>> admissibleValues) {
 		this.admissibleValues = admissibleValues;
+	}
+
+	public List<String> getLovInvisibleColumnsNames() {
+		return lovInvisibleColumnsNames;
+	}
+
+	public BiMap<String, String> getColPlaceholder2ColName() {
+		return colPlaceholder2ColName;
 	}
 
 }

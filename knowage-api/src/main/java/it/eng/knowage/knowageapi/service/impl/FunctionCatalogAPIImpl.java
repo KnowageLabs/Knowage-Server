@@ -25,9 +25,9 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import it.eng.knowage.boot.error.KnowageBusinessException;
+import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.dao.dto.SbiCatalogFunction;
-import it.eng.knowage.knowageapi.error.KnowageBusinessException;
-import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.mapper.FunctionCompleteDTO2SbiCatalogFunction;
 import it.eng.knowage.knowageapi.mapper.SbiFunctionCatalog2FunctionCompleteDTO;
 import it.eng.knowage.knowageapi.mapper.SbiFunctionCatalog2FunctionDTO;

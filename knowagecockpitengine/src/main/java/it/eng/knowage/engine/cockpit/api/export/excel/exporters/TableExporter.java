@@ -24,7 +24,7 @@ import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-public class TableExporter extends GenericExporter implements IWidgetExporter {
+public class TableExporter extends GenericWidgetExporter implements IWidgetExporter {
 
 	public static transient Logger logger = Logger.getLogger(TableExporter.class);
 

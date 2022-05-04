@@ -20,10 +20,10 @@ package it.eng.spagobi.tools.calendar.dao;
 import java.util.List;
 
 import org.hibernate.Session;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.calendar.dto.SaveCalendarRequestDTO;
+import it.eng.spagobi.calendar.dto.UpdateDaysRequestDTO;
 import it.eng.spagobi.tools.calendar.metadata.Calendar;
 import it.eng.spagobi.tools.calendar.metadata.CalendarAttribute;
 import it.eng.spagobi.tools.calendar.metadata.CalendarAttributeDomain;
@@ -37,25 +37,27 @@ import it.eng.spagobi.tools.calendar.metadata.TimeByDay;
  *
  */
 public interface ICalendarDAO {
-	public Calendar loadCalendarById(Integer id, Session aidaSession) throws EMFUserError;
+
+	public Integer saveCalendar(SaveCalendarRequestDTO requestDTO, Session session);
+
+	public Calendar loadCalendarById(Session aidaSession, Integer id) throws EMFUserError;
 
 	public List<Calendar> loadCalendarList(Session aidaSession);
 
-	public TimeByDay loadCalendarConfigurationByDate(java.util.Calendar date, Session session) throws EMFUserError;
+	public TimeByDay loadCalendarConfigurationByDate(Session session, java.util.Calendar date) throws EMFUserError;
 
-	public List generateCalendarDays(Integer id, Session session) throws EMFUserError;
+	public List generateCalendarDays(Session session, Integer id) throws EMFUserError;
 
-	public List<CalendarConfiguration> loadCalendarDays(Integer calId, Session session);
-
-	public Integer saveCalendar(JSONObject requestBodyJSON, Session session);
-
-	public void updateDaysGenerated(JSONArray requestBodyJSON, Session session, Integer idCalendar);
+	public List<CalendarConfiguration> loadCalendarDays(Session session, Integer calId);
 
 	public List<CalendarAttributeDomain> loadCalendarDomains(Session session);
 
-	public CalendarAttribute loadAttribute(Integer id, Session session);
+	public CalendarAttribute loadAttribute(Session session, Integer id);
 
-	public void deleteCalendar(Integer id, Session session) throws EMFUserError;
+	public void deleteCalendar(Session session, Integer id) throws EMFUserError;
 
-	public void deleteDayofCalendar(Integer id, Session session) throws EMFUserError;
+	public void deleteDayofCalendar(Session session, Integer id) throws EMFUserError;
+
+	public void updateDaysGenerated(Session session, Integer idCalendar, List<UpdateDaysRequestDTO> days);
+
 }

@@ -140,6 +140,10 @@
                      </md-optgroup>
                   </md-select>
                </md-input-container>
+               <!-- HTML -->
+               <div ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'dynamic' && crossHtml == true" flex layout="row" layout-align="center center">
+             		<div class="kn-info" flex>{{::translate.load('sbi.cockpit.cross.outputParameter.htmldynamicoutput')}}</div>
+               </div>
                <!-- dataset and column if selection -->
                <md-input-container class="md-block" flex=25
                   ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'selection' && ngModel.cross.outputParametersList[outputParameter.name].enabled==true">
@@ -182,7 +186,7 @@
                   {{::translate.load('kn.crossconfigurator.interactiontype.choose')}}
                </div>
             </div>
-            <dataset-selector ng-show="ngModel.preview.previewType || crossChart || crossHtml || crossPython || crossR" flex ng-model="ngModel.preview.dataset" no-parameters="true" on-change="changePreviewDataset(dsId);" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]" is-disabled="!ngModel.preview.enable"></dataset-selector>
+            <dataset-selector ng-show="ngModel.preview.previewType || crossChart || crossCustom || crossHtml || crossPython || crossR" flex ng-model="ngModel.preview.dataset" no-parameters="true" on-change="changePreviewDataset(dsId);" dataset-type-exclusion="[{type:'SbiSolrDataSet'}]" is-disabled="!ngModel.preview.enable"></dataset-selector>
             <md-input-container ng-if="ngModel.preview.previewType && ngModel.preview.previewType !='allRow' && ngModel.preview.previewType !='icon'" ng-show="crossTable" class="md-block" flex>
                <label>{{translate.load("sbi.cockpit.cross.column")}}</label>
                <md-select ng-model="ngModel.preview.column" ng-disabled="!ngModel.preview.enable">

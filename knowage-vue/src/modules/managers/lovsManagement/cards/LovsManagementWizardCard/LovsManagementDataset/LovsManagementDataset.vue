@@ -16,8 +16,8 @@
     <Dialog contentStyle="height:100vh;width:100vw" :visible="showDatasetsDialog" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0 p-col">
-                <template #left>Select Dataset</template>
-                <template #right>
+                <template #start>Select Dataset</template>
+                <template #end>
                     <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="onSave" data-test="submit-button" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="showDatasetsDialog = false" data-test="close-button" />
                 </template>
@@ -70,81 +70,81 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
-import { defineComponent } from 'vue'
-import { FilterOperator } from 'primevue/api'
-import { filterDefault } from '@/helpers/commons/filterHelper'
-import lovsManagementDatasetDescriptor from './LovsManagementDatasetDescriptor.json'
-import Dialog from 'primevue/dialog'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
+    import { AxiosResponse } from 'axios'
+    import { defineComponent } from 'vue'
+    import { FilterOperator } from 'primevue/api'
+    import { filterDefault } from '@/helpers/commons/filterHelper'
+    import lovsManagementDatasetDescriptor from './LovsManagementDatasetDescriptor.json'
+    import Dialog from 'primevue/dialog'
+    import DataTable from 'primevue/datatable'
+    import Column from 'primevue/column'
 
-export default defineComponent({
-    name: 'lovs-management-dataset',
-    components: { Dialog, DataTable, Column },
-    props: { dataset: Object },
-    data() {
-        return {
-            lovsManagementDatasetDescriptor,
-            dirty: false,
-            showDatasetsDialog: false,
-            datasets: [] as any,
-            selectedDataset: {} as any,
-            columns: lovsManagementDatasetDescriptor.columns,
-            filters: {
-                global: [filterDefault],
-                label: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                name: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                description: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                owner: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                },
-                scope: {
-                    operator: FilterOperator.AND,
-                    constraints: [filterDefault]
-                }
-            } as Object
-        }
-    },
-    async created() {
-        this.loadDataset()
-        await this.loadDatasets()
-    },
-    watch: {
-        dataset() {
+    export default defineComponent({
+        name: 'lovs-management-dataset',
+        components: { Dialog, DataTable, Column },
+        props: { dataset: Object },
+        data() {
+            return {
+                lovsManagementDatasetDescriptor,
+                dirty: false,
+                showDatasetsDialog: false,
+                datasets: [] as any,
+                selectedDataset: {} as any,
+                columns: lovsManagementDatasetDescriptor.columns,
+                filters: {
+                    global: [filterDefault],
+                    label: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    name: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    description: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    owner: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    },
+                    scope: {
+                        operator: FilterOperator.AND,
+                        constraints: [filterDefault]
+                    }
+                } as Object
+            }
+        },
+        async created() {
             this.loadDataset()
-        }
-    },
-    methods: {
-        async loadDatasets() {
-            await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/datasetsforlov/').then((response) => (this.datasets = response.data))
+            await this.loadDatasets()
         },
-        loadDataset() {
-            this.selectedDataset = { ...this.dataset }
+        watch: {
+            dataset() {
+                this.loadDataset()
+            }
         },
-        onSave() {
-            this.showDatasetsDialog = false
-            this.$emit('selected', this.selectedDataset)
+        methods: {
+            async loadDatasets() {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/datasetsforlov/').then((response: AxiosResponse<any>) => (this.datasets = response.data))
+            },
+            loadDataset() {
+                this.selectedDataset = { ...this.dataset }
+            },
+            onSave() {
+                this.showDatasetsDialog = false
+                this.$emit('selected', this.selectedDataset)
+            }
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss">
-.full-screen-dialog.p-dialog {
-    max-height: 100%;
-}
-.full-screen-dialog.p-dialog .p-dialog-content {
-    padding: 0;
-}
+    .full-screen-dialog.p-dialog {
+        max-height: 100%;
+    }
+    .full-screen-dialog.p-dialog .p-dialog-content {
+        padding: 0;
+    }
 </style>

@@ -16,15 +16,19 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
+
+<%@page import="java.util.HashMap"%>
+<%@page import="it.eng.spago.security.IEngUserProfile"%>    
 <%@page import="it.eng.spagobi.commons.SingletonConfig"%>
+<%@page import="it.eng.spagobi.commons.utilities.AuditLogUtilities"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="it.eng.knowage.commons.security.KnowageSystemConfiguration"%>
 <%@page import="it.eng.spagobi.security.google.config.GoogleSignInConfig"%>
+<%@page import="it.eng.spago.base.SessionContainer"%>
+<%@page import="it.eng.spago.base.RequestContainer"%>
 
 <iframe id='invalidSessionJasper'
                  name='invalidSessionJasper'
@@ -127,7 +131,19 @@ if(session.getAttribute(SpagoBIConstants.BACK_URL)!=null){
 	backUrlB=true;
 }
 
+RequestContainer reqCont = RequestContainer.getRequestContainer();
+SessionContainer sessCont = reqCont.getSessionContainer();
+SessionContainer permSess = sessCont.getPermanentContainer();
+IEngUserProfile profile = (IEngUserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+if (profile != null) {
+	// removing user profile object from permanent container
+	permSess.setAttribute(IEngUserProfile.ENG_USER_PROFILE, null);
+	HashMap<String, String> logParam = new HashMap<String, String>();
+	logParam.put("USER", profile.toString());
+	AuditLogUtilities.updateAudit(request, profile, "SPAGOBI.Logout", logParam, "OK");
+}
 
+// invalidate http session
 session.invalidate();
 
 

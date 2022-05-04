@@ -23,7 +23,9 @@ const mockedDriver = {
 
 jest.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
+const $http = {
+    get: axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
+}
 
 const factory = () => {
     return mount(BusinessModelDriverDetail, {
@@ -47,7 +49,8 @@ const factory = () => {
                 Toolbar
             },
             mocks: {
-                $t: (msg) => msg
+                $t: (msg) => msg,
+                $http
             }
         }
     })

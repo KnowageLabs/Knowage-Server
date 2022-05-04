@@ -37,6 +37,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -274,11 +275,12 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Forward the request to the jsp
+	 * @return
 	 */
 	@GET
 	@Path("/getdataset")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public void loadData() {
+	public View loadData() {
 
 		try {
 
@@ -292,7 +294,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 			String url = "/themes/" + theme_name + "/jsp/";
 			url = url + DATASET_VALUE_SUCCESS_REQUEST_DISPATCHER_URL;
 
-			getServletRequest().getRequestDispatcher(url).forward(getServletRequest(), getServletResponse());
+			return new View(url);
 
 		} catch (Exception e) {
 			logger.error("Error loading the dataset values ", e);

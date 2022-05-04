@@ -27,11 +27,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import it.eng.spagobi.services.validation.AlphanumericNoSpaces;
+import it.eng.knowage.boot.validation.AlphanumericNoSpaces;
+import it.eng.knowage.boot.validation.ListStringConstraint;
+import it.eng.knowage.boot.validation.UUIDAlphanumericNoSpaces;
+import it.eng.knowage.boot.validation.Xss;
 import it.eng.spagobi.services.validation.CodeConstraint;
-import it.eng.spagobi.services.validation.ListStringConstraint;
-import it.eng.spagobi.services.validation.UUIDAlphanumericNoSpaces;
-import it.eng.spagobi.services.validation.Xss;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_NULL)
@@ -46,6 +46,11 @@ public class WidgetGalleryDTO {
 	@NotNull
 	@Xss
 	private String name;
+
+	@AlphanumericNoSpaces
+	@NotNull
+	@Xss
+	private String label;
 
 	@Xss
 	private String description;
@@ -93,6 +98,14 @@ public class WidgetGalleryDTO {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public String getType() {

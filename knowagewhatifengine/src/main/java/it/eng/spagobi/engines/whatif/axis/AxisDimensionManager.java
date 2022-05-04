@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.whatif.axis;
-
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +27,15 @@ import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 import org.pivot4j.PivotModel;
+import org.pivot4j.impl.PivotModelImpl;
 import org.pivot4j.transform.ChangeSlicer;
 import org.pivot4j.transform.PlaceHierarchiesOnAxes;
 import org.pivot4j.transform.PlaceMembersOnAxes;
+import org.pivot4j.util.MemberHierarchyCache;
+import org.pivot4j.util.MemberSelection;
+
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 public class AxisDimensionManager {
 
@@ -48,13 +51,9 @@ public class AxisDimensionManager {
 	/**
 	 * Service to move an hierarchy from an axis to another
 	 *
-	 * @param fromAxisPos
-	 *            the source axis(0 for rows, 1 for columns, -1 for filters)
-	 * @param toAxisPos
-	 *            the destination axis(0 for rows, 1 for columns, -1 for
-	 *            filters)
-	 * @param hierarchyName
-	 *            the unique name of the hierarchy to move
+	 * @param fromAxisPos   the source axis(0 for rows, 1 for columns, -1 for filters)
+	 * @param toAxisPos     the destination axis(0 for rows, 1 for columns, -1 for filters)
+	 * @param hierarchyName the unique name of the hierarchy to move
 	 * @return the moved hierarchy
 	 */
 	public Hierarchy moveDimensionToOtherAxis(int fromAxisPos, int toAxisPos, String hierarchyName) {
@@ -150,15 +149,10 @@ public class AxisDimensionManager {
 	/**
 	 * method to move a hierarchy in the axis
 	 *
-	 * @param axisPos
-	 *            the destination axis(0 for rows, 1 for columns, -1 for
-	 *            filters)
-	 * @param hierarchyName
-	 *            the unique name of the hierarchy to move
-	 * @param position
-	 *            the new position of the hierarchy
-	 * @param direction
-	 *            the direction of the movement (-1 up, +1 down)
+	 * @param axisPos       the destination axis(0 for rows, 1 for columns, -1 for filters)
+	 * @param hierarchyName the unique name of the hierarchy to move
+	 * @param position      the new position of the hierarchy
+	 * @param direction     the direction of the movement (-1 up, +1 down)
 	 */
 	public void moveHierarchy(int axisPos, String hierarchyName, int position, int direction) {
 		logger.debug("IN");
@@ -190,52 +184,34 @@ public class AxisDimensionManager {
 	}
 
 	/**
-	 * Changes the visibility of the members of a hierarchy. It takes a
-	 * hierarchy, removes all the members and shows only the ones passed in the
-	 * body of the request
+	 * Changes the visibility of the members of a hierarchy. It takes a hierarchy, removes all the members and shows only the ones passed in the body of the
+	 * request
 	 *
-	 * @param hierarchy
-	 *            hierarchy to update
-	 * @param members
-	 *            list of members to show
+	 * @param hierarchy hierarchy to update
+	 * @param members   list of members to show
 	 */
 	public void updateAxisHierarchyMembers(Hierarchy hierarchy, List<Member> members) {
 
-		PlaceMembersOnAxes pm = getModel().getTransform(PlaceMembersOnAxes.class);
+		PlaceMembersOnAxes transform = getModel().getTransform(PlaceMembersOnAxes.class);
 
-		List<Member> visibleMembers = pm.findVisibleMembers(hierarchy);
+		MemberSelection selection = new MemberSelection(members, getModel().getCube());
 
-		// add the first member..
-		if (visibleMembers.contains(members.get(0))) {
-			// if it's already visible dont remove it from the hierarchy
-			visibleMembers.remove(members.get(0));
-			members.remove(0);
-		} else {
-			// if it's not visible add the first member to the hierarchy
-			List<Member> firtsMember = new ArrayList<Member>();
-			firtsMember.add(members.remove(0));
-			pm.addMembers(hierarchy, firtsMember);
+		if (getModel() instanceof PivotModelImpl) {
+			MemberHierarchyCache cache = ((PivotModelImpl) getModel()).getMemberHierarchyCache();
+			selection.setMemberHierarchyCache(cache);
 		}
-		// we've to do this because if we remove all the members from the
-		// hierarchy, the hierarchy will be removed from the axis
 
-		pm.removeMembers(hierarchy, visibleMembers);
-		pm.addMembers(hierarchy, members);
+		transform.placeMembers(hierarchy, selection.getMembers());
 
 	}
 
 	/**
-	 * Removes the oldHierarchy from the axis and adds the new newHierarchy in
-	 * the same position
+	 * Removes the oldHierarchy from the axis and adds the new newHierarchy in the same position
 	 *
-	 * @param axisPos
-	 *            the axis that contains the old hierarchy
-	 * @param newHierarchyUniqueName
-	 *            the unique name of the new hierarchy
-	 * @param oldHierarchyUniqueName
-	 *            the unique name of the old hierarchy
-	 * @param hierarchyPosition
-	 *            the position of the old hierarchy
+	 * @param axisPos                the axis that contains the old hierarchy
+	 * @param newHierarchyUniqueName the unique name of the new hierarchy
+	 * @param oldHierarchyUniqueName the unique name of the old hierarchy
+	 * @param hierarchyPosition      the position of the old hierarchy
 	 * @return the new hierarchy
 	 */
 	public Hierarchy updateHierarchyOnAxis(int axisPos, String newHierarchyUniqueName, String oldHierarchyUniqueName, int hierarchyPosition) {

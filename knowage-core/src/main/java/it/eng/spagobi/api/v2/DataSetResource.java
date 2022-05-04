@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.sql.SQLSyntaxErrorException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,6 +54,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.geotools.data.DataSourceException;
+import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -93,6 +95,7 @@ import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.PreparedDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
@@ -657,12 +660,11 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	@GET
 	@Path("/preview")
-	public void openPreview() {
+	public View openPreview() {
 		logger.debug("IN");
 		try {
 			response.setContentType(MediaType.TEXT_HTML);
-			request.getRequestDispatcher("/WEB-INF/jsp/commons/preview.jsp").forward(request, response);
-			response.flushBuffer();
+			return new View("/WEB-INF/jsp/commons/preview.jsp");
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} finally {
@@ -752,6 +754,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataStorePreview(@PathParam("label") String label, String body) {
+		IDataSet dataSet = null;
 		try {
 			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePreview:parseInputs");
 
@@ -762,7 +765,6 @@ public class DataSetResource extends AbstractDataSetResource {
 			int start = -1;
 			int limit = -1;
 			Set<String> columns = null;
-
 			if (StringUtilities.isNotEmpty(body)) {
 				JSONObject jsonBody = new JSONObject(body);
 
@@ -796,7 +798,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				JSONArray jsonMeasures = new JSONArray();
 				JSONArray jsonCategories = new JSONArray();
-				IDataSet dataSet = getDatasetManagementAPI().getDataSet(label);
+				dataSet = getDatasetManagementAPI().getDataSet(label);
 
 				Set<String> qbeHiddenColumns = getQbeDataSetHiddenColumns(dataSet);
 
@@ -853,9 +855,24 @@ public class DataSetResource extends AbstractDataSetResource {
 		} catch (JSONException e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} catch (Exception e) {
+			if (isPreparedDAtaset(dataSet)) {
+				if (e.getCause() != null && e.getCause().getCause() instanceof SQLSyntaxErrorException) {
+					logger.error("Error while previewing prepared dataset " + label, e);
+					throw new SpagoBIRestServiceException("sbi.dataprep.preview.loading.error", buildLocaleFromSession(), e, "MessageFiles.messages");
+				} else {
+					throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(), e);
+				}
+			}
 			logger.error("Error while previewing dataset " + label, e);
 			throw new SpagoBIRuntimeException("Error while previewing dataset " + label + ". " + e.getMessage(), e);
 		}
+	}
+
+	private boolean isPreparedDAtaset(IDataSet dataSet) {
+		if (dataSet instanceof VersionedDataSet) {
+			dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
+		}
+		return dataSet instanceof PreparedDataSet;
 	}
 
 	private Set<String> getQbeDataSetHiddenColumns(IDataSet dataSet) {
@@ -1092,7 +1109,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				} else {
 					parameterAsMap.put("defaultValues", new ArrayList<>());
 				}
-				parameterAsMap.put("defaultValuesMeta", objParameter.getLovColumnsNames());
+				parameterAsMap.put("defaultValuesMeta", objParameter.getLovVisibleColumnsNames());
 				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, objParameter.getLovValueColumnName());
 				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA, objParameter.getLovDescriptionColumnName());
 

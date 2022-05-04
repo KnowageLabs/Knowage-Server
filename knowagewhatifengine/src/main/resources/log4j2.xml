@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info">
+	<Appenders>
+		<Console name="CONSOLE" target="SYSTEM_OUT">
+			<PatternLayout>
+				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+			</PatternLayout>
+		</Console>
+		<RollingFile
+				name="KNOWAGE_WHAT_IF_ENGINE"
+				fileName="${sys:catalina.base}/logs/knowageWhatIfEngine.log"
+				append="true"
+				filePattern="${sys:catalina.base}/logs/knowageWhatIfEngine-%i.log"
+				ignoreExceptions="false"
+				createOnDemand="true">
+			<PatternLayout>
+				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+			</PatternLayout>
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5000KB" />
+			</Policies>
+			<DefaultRolloverStrategy max="3" />
+		</RollingFile>
+		<RollingFile
+				name="KNOWAGE_WHAT_IF_ENGINE_STACK_AUDIT"
+				fileName="${sys:catalina.base}/logs/knowageWhatIfEngineStackAudit.log"
+				append="true"
+				filePattern="${sys:catalina.base}/logs/knowageWhatIfEngineStackAudit-%i.log"
+				ignoreExceptions="false"
+				createOnDemand="true">
+			<PatternLayout>
+				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+			</PatternLayout>
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5000KB" />
+			</Policies>
+			<DefaultRolloverStrategy max="3" />
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<logger name="audit" additivity="false" level="INFO">
+			<AppenderRef ref="KNOWAGE_WHAT_IF_ENGINE_STACK_AUDIT" />
+		</logger>
+		<logger name="edu.yale" additivity="false" level="error">
+			<AppenderRef ref="KNOWAGE_WHAT_IF_ENGINE" />
+		</logger>
+		<logger name="it.eng.spagobi" additivity="false" level="error">
+			<AppenderRef ref="KNOWAGE_WHAT_IF_ENGINE" />
+		</logger>
+		<logger name="it.eng.spagobi.engines.whatif" additivity="false" level="error">
+			<AppenderRef ref="KNOWAGE_WHAT_IF_ENGINE" />
+		</logger>
+		<logger name="mondrian.sql" additivity="false" level="error">
+			<AppenderRef ref="KNOWAGE_WHAT_IF_ENGINE" />
+		</logger>
+		<logger name="Spago" additivity="false" level="error">
+			<AppenderRef ref="KNOWAGE_WHAT_IF_ENGINE" />
+		</logger>
+		<Root level="error">
+			<AppenderRef ref="KNOWAGE_WHAT_IF_ENGINE" />
+		</Root>
+	</Loggers>
+</Configuration>

@@ -1,0 +1,51 @@
+{
+    "style": {
+        "containerScroll": {
+            "display": "flex",
+            "flex": "1",
+            "overflow": "hidden"
+        },
+        "filterAxisDropzone": {
+            "align-items": "center",
+            "border": "2px dashed #43749e",
+            "color": "#43749e",
+            "display": "none",
+            "font-size": "0.8rem",
+            "height": "32px",
+            "justify-content": "center",
+            "pointer-events": "none",
+            "text-transform": "uppercase"
+        },
+        "filterCard": {
+            "align-items": "center",
+            "background-color": "#fff",
+            "border": "1px solid #3b678c",
+            "border-radius": "2px",
+            "color": "#3b678c",
+            "cursor": "grab",
+            "display": "flex",
+            "font-size": "0.8rem",
+            "height": "27px",
+            "line-height": "27px",
+            "margin": "5px",
+            "max-width": "240px",
+            "min-width": "160px"
+        },
+        "filterPanel": {
+            "height": "100%",
+            "left": 0,
+            "position": "absolute",
+            "top": 0,
+            "width": "100%"
+        },
+        "filterPanelContainer": {
+            "flex-grow": 0,
+            "flex-shrink": 0,
+            "height": "45px",
+            "position": "relative"
+        },
+        "noFilters": {
+            "max-width": "60%"
+        }
+    }
+}

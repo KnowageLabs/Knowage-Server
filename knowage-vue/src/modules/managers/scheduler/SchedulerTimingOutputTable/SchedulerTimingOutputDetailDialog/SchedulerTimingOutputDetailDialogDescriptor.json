@@ -1,0 +1,13 @@
+{
+    "dialog": {
+        "style": {
+            "padding": 0,
+            "width": "80vw"
+        }
+    },
+    "warningDialog": {
+        "style": {
+            "width": "60vw"
+        }
+    }
+}

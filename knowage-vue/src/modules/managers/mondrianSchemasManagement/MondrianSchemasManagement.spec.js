@@ -6,6 +6,7 @@ import InputText from 'primevue/inputtext'
 import MondrianSchemasManagement from './MondrianSchemasManagement.vue'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
+import Card from 'primevue/card'
 
 const mockedSchemas = [
     {
@@ -30,8 +31,18 @@ const mockedSchemas = [
 
 jest.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: mockedSchemas }))
-axios.delete.mockImplementation(() => Promise.resolve())
+const $route = {
+    fullPath: '/mondrian-schemas-management'
+}
+
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: mockedSchemas
+        })
+    ),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 const $confirm = {
     require: jest.fn()
@@ -53,13 +64,16 @@ const factory = () => {
                 InputText,
                 ProgressBar,
                 Toolbar,
+                Card,
                 routerView: true
             },
             mocks: {
                 $t: (msg) => msg,
                 $store,
                 $confirm,
-                $router
+                $router,
+                $http,
+                $route
             }
         }
     })
@@ -109,14 +123,14 @@ describe('Mondrian Schema Management', () => {
 
         await openButton.trigger('click')
 
-        expect($router.push).toHaveBeenCalledWith('/schemas/new-schema')
+        expect($router.push).toHaveBeenCalledWith('/mondrian-schemas-management/new-schema')
     })
     it('open filled detail when a row is clicked', async () => {
         const wrapper = factory()
         await flushPromises()
         await wrapper.find('[data-test="list-item"]').trigger('click')
 
-        expect($router.push).toHaveBeenCalledWith('/schemas/' + 1)
+        expect($router.push).toHaveBeenCalledWith('/mondrian-schemas-management/' + 1)
     })
 })
 

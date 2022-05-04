@@ -186,12 +186,12 @@
 			<version>2.3.1</version>
 			<scope>provided</scope>
 		</dependency>
-        
+
 		<dependency>
-		    <groupId>net.trajano.caliper</groupId>
-		    <artifactId>caliper</artifactId>
-		    <version>1.2.1</version>
-		    <scope>test</scope>
+			<groupId>net.trajano.caliper</groupId>
+			<artifactId>caliper</artifactId>
+			<version>1.2.1</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -221,6 +221,24 @@
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.10</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-html</artifactId>
+			<version>${resteasy.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.livy</groupId>
+			<artifactId>livy-client-http</artifactId>
+			<version>0.7.1-incubating</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.avro</groupId>
+			<artifactId>avro</artifactId>
+			<version>1.8.2</version>
 		</dependency>
 
 	</dependencies>

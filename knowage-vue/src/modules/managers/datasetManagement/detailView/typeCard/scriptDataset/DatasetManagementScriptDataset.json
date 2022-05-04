@@ -1,0 +1,22 @@
+{
+    "style": {
+        "maxWidth": {
+            "width": "100%"
+        }
+    },
+    "validations": {
+        "dataset": [
+            {
+                "fieldName": "scriptLanguage",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "script-fields-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

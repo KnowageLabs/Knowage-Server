@@ -54,7 +54,7 @@ import ProgressBar from 'primevue/progressbar'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import MenuConfigurationRelatedDocumentsDescriptor from './MenuManagementRelatedDocumentsDescriptor.json'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import { iDocument } from '../MenuManagement'
 
 export default defineComponent({
@@ -102,9 +102,9 @@ export default defineComponent({
     methods: {
         async loadRelatedDocuments() {
             this.load = true
-            await axios
+            await this.$http
                 .get(this.apiUrl + 'documents/listDocument')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.relatedDocumentsList = response.data.item
                 })
                 .finally(() => (this.load = false))

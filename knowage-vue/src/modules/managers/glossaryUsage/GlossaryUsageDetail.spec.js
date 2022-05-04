@@ -93,30 +93,32 @@ const mockedFilteredResponse = {
 
 jest.mock('axios')
 
-axios.get.mockImplementation((url) => {
-    switch (url) {
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/documents/mockedDocument':
-            return Promise.resolve({ data: mockedDocumentInfo })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/1/roles':
-            return Promise.resolve({ data: mockedRoles })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/getDataSetInfo?DATASET_ID=1&ORGANIZATION=DEMO':
-            return Promise.resolve({ data: mockedDatasetInfo })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/getMetaBcInfo?META_BC_ID=1':
-            return Promise.resolve({ data: mockedBusinessClassInfo })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/getMetaTableInfo?META_TABLE_ID=1':
-            return Promise.resolve({ data: mockedTableInfo })
-        default:
-            return Promise.resolve({ data: [] })
-    }
-})
-axios.post.mockImplementation((url) => {
-    switch (url) {
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/loadNavigationItem':
-            return Promise.resolve({ data: mockedFilteredResponse })
-        default:
-            return Promise.resolve({ data: [] })
-    }
-})
+const $http = {
+    get: axios.get.mockImplementation((url) => {
+        switch (url) {
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/documents/mockedDocument':
+                return Promise.resolve({ data: mockedDocumentInfo })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/1/roles':
+                return Promise.resolve({ data: mockedRoles })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/getDataSetInfo?DATASET_ID=1&ORGANIZATION=DEMO':
+                return Promise.resolve({ data: mockedDatasetInfo })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/getMetaBcInfo?META_BC_ID=1':
+                return Promise.resolve({ data: mockedBusinessClassInfo })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/getMetaTableInfo?META_TABLE_ID=1':
+                return Promise.resolve({ data: mockedTableInfo })
+            default:
+                return Promise.resolve({ data: [] })
+        }
+    }),
+    post: axios.post.mockImplementation((url) => {
+        switch (url) {
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/loadNavigationItem':
+                return Promise.resolve({ data: mockedFilteredResponse })
+            default:
+                return Promise.resolve({ data: [] })
+        }
+    })
+}
 
 afterEach(() => {
     jest.clearAllMocks()
@@ -127,7 +129,8 @@ const factory = () => {
         global: {
             stubs: { GlossaryUsageNavigationCard: true, GlossaryUsageLinkCard: true, ProgressBar },
             mocks: {
-                $t: (msg) => msg
+                $t: (msg) => msg,
+                $http
             }
         }
     })

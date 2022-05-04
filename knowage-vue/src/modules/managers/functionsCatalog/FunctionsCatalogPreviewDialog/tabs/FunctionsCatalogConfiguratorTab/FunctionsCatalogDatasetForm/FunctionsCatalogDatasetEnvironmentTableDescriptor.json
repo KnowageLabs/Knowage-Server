@@ -1,0 +1,18 @@
+{
+    "breakpoint": "960px",
+    "columns": [
+        {
+            "field": "name",
+            "header": "common.library",
+            "style": {}
+        },
+        {
+            "field": "version",
+            "header": "common.version",
+            "style": {}
+        }
+    ],
+    "globalFilterFields": ["name"],
+    "responsiveLayout": "stack",
+    "rows": 15
+}

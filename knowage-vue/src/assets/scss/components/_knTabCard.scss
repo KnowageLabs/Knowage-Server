@@ -20,7 +20,7 @@
     }
     .subheading {
         font-size: 0.8rem;
-        color: $color-default;
+        color: var(--kn-color-default);
     }
     &--icon {
         @extend .kn-tab-card;
@@ -30,7 +30,7 @@
             top: 0;
             right: -0.5rem;
             font-size: 3rem;
-            color: $color-primary;
+            color: var(--kn-color-primary);
         }
     }
     &.selectable {
@@ -38,9 +38,9 @@
         transition: background-color 0.3s ease-in;
         &:hover,
         &.selected {
-            background-color: $color-secondary;
+            background-color: var(--kn-color-secondary);
             .subheading {
-                color: $color-primary;
+                color: var(--kn-color-primary);
             }
         }
     }

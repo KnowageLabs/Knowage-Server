@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info">
+	<Appenders>
+		<Console name="CONSOLE" target="SYSTEM_OUT">
+			<PatternLayout>
+				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+			</PatternLayout>
+		</Console>
+		<RollingFile
+				name="KNOWAGE_QBE_ENGINE"
+				fileName="${sys:catalina.base}/logs/knowageQbeEngine.log"
+				append="true"
+				filePattern="${sys:catalina.base}/logs/knowageQbeEngine-%i.log"
+				ignoreExceptions="false"
+				createOnDemand="true">
+			<PatternLayout>
+				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+			</PatternLayout>
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5000KB" />
+			</Policies>
+			<DefaultRolloverStrategy max="3" />
+		</RollingFile>
+		<RollingFile
+				name="KNOWAGE_QBE_ENGINE_AUDIT"
+				fileName="${sys:catalina.base}/logs/knowageQbeEngineAudit.log"
+				append="true"
+				filePattern="${sys:catalina.base}/logs/knowageQbeEngineAudit-%i.log"
+				ignoreExceptions="false"
+				createOnDemand="true">
+			<PatternLayout>
+				<Pattern>%d{ISO8601_OFFSET_DATE_TIME_HHCMM} [%u{RANDOM}] %5p [%t] [%c.%M:%L] [%X{correlationId}] [%X{environment}] [%X{tenant}]%n%message%n%xThrowable</Pattern>
+			</PatternLayout>
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5000KB" />
+			</Policies>
+			<DefaultRolloverStrategy max="3" />
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<logger name="audit" additivity="false" level="info">
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE_AUDIT" />
+		</logger>
+		<logger name="edu.yale" additivity="false" level="warn">
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
+		</logger>
+		<logger name="it.eng.qbe" additivity="false" level="error">
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
+		</logger>
+		<logger name="it.eng.qbe.datasource.jpa.audit.JPAPersistenceManagerAuditLogger" additivity="false" level="info">
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE_AUDIT" />
+		</logger>
+		<logger name="it.eng.spagobi" additivity="false" level="error">
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
+		</logger>
+		<logger name="it.eng.spagobi.commons.utilities.messages" additivity="false" level="error">
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
+		</logger>
+		<logger name="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder" additivity="false" level="error">
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
+		</logger>
+		<logger name="it.eng.spagobi.engines.qbe" additivity="false" level="error">
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
+		</logger>
+		<logger name="Spago" additivity="false" level="error">
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
+		</logger>
+		<Root level="error">
+			<AppenderRef ref="KNOWAGE_QBE_ENGINE" />
+		</Root>
+	</Loggers>
+</Configuration>

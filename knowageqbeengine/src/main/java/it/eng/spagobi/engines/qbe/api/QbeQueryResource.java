@@ -1,6 +1,7 @@
 package it.eng.spagobi.engines.qbe.api;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,9 +17,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.log4j.Logger;
@@ -34,6 +35,7 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.qbe.logger.QueryAuditLogger;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
@@ -93,8 +95,8 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @ManageAuthorization
 public class QbeQueryResource extends AbstractQbeEngineResource {
 
-	public static transient Logger logger = Logger.getLogger(QbeQueryResource.class);
-	public static transient Logger auditlogger = Logger.getLogger("audit.query");
+	private static final Logger auditlogger = QueryAuditLogger.LOGGER;
+	private static final Logger logger = Logger.getLogger(QbeQueryResource.class);
 	private static final String PARAM_VALUE_NAME = "value";
 	public static final String DEFAULT_VALUE_PARAM = "defaultValue";
 	public static final String MULTI_PARAM = "multiValue";
@@ -308,7 +310,6 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	@POST
 	@Path("/export")
-	@Produces(MediaType.TEXT_PLAIN)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response export(@javax.ws.rs.core.Context HttpServletRequest req, @QueryParam("outputType") @DefaultValue("csv") String outputType,
 			@QueryParam("currentQueryId") String id) {
@@ -368,8 +369,8 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		IDataSet dataSet = getActiveQueryAsDataSet(filteredQuery);
 		dataSet.setUserProfileAttributes(getUserProfile().getUserAttributes());
 
-		Map<String, Object> envs = getEnv();
-		String stringDrivers = envs.get(DRIVERS).toString();
+		Map<String, String> envs = getEnv();
+		String stringDrivers = envs.get(DRIVERS);
 		Map<String, Object> drivers = null;
 		try {
 			drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
@@ -386,21 +387,26 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			iterator = dataSet.iterator();
 
 			StreamingOutput stream = null;
+			MediaType mediaType = null;
 
 			switch (outputType) {
 			case "csv":
 				stream = new CsvStreamingOutput(iterator);
+				mediaType = new MediaType("text", "csv");
 				break;
 			case "xlsx":
 				stream = new XlsxStreamingOutput(getLocale(), iterator, fields);
+				mediaType = new MediaType("application", "vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+						.withCharset(Charset.defaultCharset().displayName());
 				break;
 			default:
 				throw new RuntimeException("Output type not supported: " + outputType);
 			}
 
-			ResponseBuilder response = Response.ok(stream);
-			response.header("Content-Disposition", "attachment;filename=" + "report" + "." + outputType + "\";");
-			return response.build();
+			return Response.ok(stream, mediaType)
+				.cacheControl(CacheControl.valueOf("no-cache"))
+				.header("Content-Disposition", "attachment;filename=" + "report" + "." + outputType + "\";")
+				.build();
 		} catch (Exception e) {
 			if (iterator != null) {
 				iterator.close();

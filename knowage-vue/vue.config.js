@@ -4,6 +4,7 @@ module.exports = {
     publicPath: process.env.VUE_APP_PUBLIC_PATH,
     outputDir: './src/main/webapp',
     devServer: {
+        https: process.env.VUE_APP_HOST_HTTPS === 'true',
         proxy: {
             '^/knowagedossierengine/api': {
                 target: process.env.VUE_APP_HOST_URL,
@@ -34,6 +35,27 @@ module.exports = {
                 changeOrigin: true
             },
             '^/knowage/servlet': {
+                target: process.env.VUE_APP_HOST_URL,
+                changeOrigin: true
+            },
+            '^/knowagemeta': {
+                target: process.env.VUE_APP_HOST_URL,
+                changeOrigin: true
+            },
+            '^/knowagecockpitengine/': {
+                target: process.env.VUE_APP_HOST_URL,
+                changeOrigin: true
+            },
+            '^/knowagewhatifengine/': {
+                target: process.env.VUE_APP_HOST_URL,
+                changeOrigin: true
+            },
+            '^/knowage-data-preparation/': {
+                target: process.env.VUE_APP_HOST_URL,
+                changeOrigin: true,
+                ws: true
+            },
+            '^/knowagekpiengine/': {
                 target: process.env.VUE_APP_HOST_URL,
                 changeOrigin: true
             }

@@ -236,6 +236,7 @@ function cockpitWidgetControllerFunction(
 		$window,
 		cockpitModule_widgetServices,
 		cockpitModule_generalServices,
+		cockpitModule_generalOptions,
 		cockpitModule_properties,
 		cockpitModule_template,
 		cockpitModule_analyticalDrivers,
@@ -258,7 +259,8 @@ function cockpitWidgetControllerFunction(
 		$httpParamSerializer,
 		cockpitModule_defaultTheme,
 		cockpitModule_templateServices,
-		cockpitModule_utilstServices)
+		cockpitModule_utilstServices,
+		knModule_chartOptions)
 
 {
 
@@ -488,7 +490,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 			break;
 		case "RESIZE" :
-			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map" || $scope.ngModel.type=="static-pivot-table") {
+			if($scope.ngModel.type=="chart" || $scope.ngModel.type=="map" || $scope.ngModel.type=="static-pivot-table" || $scope.ngModel.type=="customchart") {
 				$scope.refreshWidget(undefined, 'resize');
 			}
 			break;
@@ -768,7 +770,11 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		for(var p in previewSettings.parameters){
 			if(previewSettings.parameters[p].bindType != 'static' && previewSettings.parameters[p].defaultValue) previewSettings.parameters[p].value = previewSettings.parameters[p].defaultValue
 			if(previewSettings.parameters[p].bindType == 'driver'){
-				previewSettings.parameters[p].value = getFormattedParameterValue(previewSettings.parameters[p]);
+				var value = cockpitModule_analyticalDrivers[previewSettings.parameters[p].driver];
+				if (typeof value !== 'undefined') {
+					// cockpitModule_utilstServices.getMultiValueParameterArray returns 1 value in case of single value driver
+					previewSettings.parameters[p].value = cockpitModule_utilstServices.getMultiValueParameterArray(value);
+				}
 			}
 			if(previewSettings.parameters[p].bindType == 'dynamic'){
 				if($scope.ngModel.type == 'chart') previewSettings.parameters[p].value = clickedValue;
@@ -860,11 +866,30 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		var linkSettings;
 		if($scope.ngModel.cross != undefined  && $scope.ngModel.cross.link != undefined) linkSettings = angular.copy($scope.ngModel.cross.link);
 		if($scope.ngModel.content && $scope.ngModel.content.link) linkSettings = angular.copy($scope.ngModel.content.link);
+		var originalColumnName = "";
+					if ($scope.ngModel.content.columnSelectedOfDataset){
+				        for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
+				        	if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow && columnName && $scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow.toUpperCase() === columnName.toUpperCase()){
+				        		originalColumnName = $scope.ngModel.content.columnSelectedOfDataset[i].alias;
+								break;
+				        	}
+				        }
+
+						if(originalColumnName==undefined || originalColumnName==""){
+							for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
+								if($scope.ngModel.content.columnSelectedOfDataset[i].alias && columnName && $scope.ngModel.content.columnSelectedOfDataset[i].alias.toUpperCase() === columnName.toUpperCase()){
+									originalColumnName = columnName;
+									break;
+								}
+							}
+						}
+					}
+
 
 		if(!directInteraction || directInteraction == 'cross'){
 			if (previewSettings && previewSettings.enable) {
 				if(!previewSettings.previewType || previewSettings.previewType == 'allRow' ||
-				(previewSettings.previewType == 'singleColumn' && previewSettings.column == columnName) ||
+				(previewSettings.previewType == 'singleColumn' && previewSettings.column == originalColumnName) ||
 				(previewSettings.previewType == 'icon' && (!columnName || columnName == ""))){
 					$scope.iframeSrcUrl = sbiModule_config.externalBasePath + SERVICE;
 
@@ -1056,14 +1081,27 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						}
 					}
 
-					// if destination document is specified don't ask
-					if(crossSettings.crossName != undefined){
-						parent.execExternalCrossNavigation(outputParameter,{},crossSettings.crossName,null,otherOutputParameters);
+					
+					// temporary section needed as a workaround to get vue instance
+					var hasVueParent = false
+					if(window.parent.document.getElementById('_KNOWAGE_VUE')){
+						hasVueParent = window.parent
+					}else if(window.parent.parent.document.getElementById('_KNOWAGE_VUE')){
+						hasVueParent = window.parent.parent
 					}
-					else{
-						parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
+					
+					if(hasVueParent){
+						hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":crossSettings,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
+					}else{
+						// if destination document is specified don't ask
+						if(crossSettings.crossName != undefined){
+							parent.execExternalCrossNavigation(outputParameter,{},crossSettings.crossName,null,otherOutputParameters);
+						}
+						else{
+							parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
+						}
+						return;
 					}
-					return;
 				}
 			}
 		}
@@ -1149,7 +1187,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 					originalColumnName = "";
 					if ($scope.ngModel.content.columnSelectedOfDataset){
 				        for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
-				        	if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow && $scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow.toUpperCase() === columnName.toUpperCase()){
+				        	if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow && columnName && $scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow.toUpperCase() === columnName.toUpperCase()){
 				        		originalColumnName = $scope.ngModel.content.columnSelectedOfDataset[i].alias;
 								break;
 				        	}
@@ -1157,7 +1195,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 						if(originalColumnName==undefined || originalColumnName==""){
 							for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
-								if($scope.ngModel.content.columnSelectedOfDataset[i].alias && $scope.ngModel.content.columnSelectedOfDataset[i].alias.toUpperCase() === columnName.toUpperCase()){
+								if($scope.ngModel.content.columnSelectedOfDataset[i].alias &&  columnName && $scope.ngModel.content.columnSelectedOfDataset[i].alias.toUpperCase() === columnName.toUpperCase()){
 									originalColumnName = columnName;
 									break;
 								}
@@ -1651,70 +1689,91 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 	}
 
 	$scope.chartTypes = [];
+	function isCategoryNumerical(category){
+		var selectedCategory = $scope.ngModel.content.columnSelectedOfDatasetAggregations.filter(x=>x.name === category.name);
+		return selectedCategory.type === 'java.lang.Integer' || selectedCategory.type === 'java.lang.Double'
+	}
 	$scope.showChartTypes = function(ev,widgetName){
+		var lintConfig = $scope.tempChartConf.replaceAll('\r','').replaceAll('\t','').replaceAll('\n','').replaceAll(/\s/g,'');
+		var matchedProperties = lintConfig.match(/categoriesCardinality:(?<categoriesCardinality>\[.*?\]){1},range:(?<range>\[.*?\]){1}/);
+		var range = JSON.parse(matchedProperties.groups.range);
+		var categoriesCardinality = JSON.parse(matchedProperties.groups.categoriesCardinality);
+		
+		var tempObject = {
+				type: $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase(),
+				categoriesNumber: cockpitModule_widgetServices.checkNumOfCategory($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY),
+				seriesNumber: $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE.length,
+				seriesStacking: $scope.ngModel.content.chartTemplate.CHART.seriesStacking || false,
+				groupedSeries: $scope.ngModel.content.chartTemplate.CHART.groupSeries || false,
+				numericalCategory: isCategoryNumerical($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY),
+				range:range,
+				categoriesCardinality:categoriesCardinality
+		};
+		
+		if(cockpitModule_widgetServices.checkNumOfCategory($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY) === 1){
+			if(Array.isArray($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY)){
+				var javaType = $scope.ngModel.content.columnSelectedOfDatasetAggregations.filter(x=>x.name === $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY[0].column)[0].type;
+			}else {
+				var javaType = $scope.ngModel.content.columnSelectedOfDatasetAggregations.filter(x=>x.name === $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.column)[0].type;
+			}
+			tempObject.typeOfCategory = cockpitModule_generalOptions.fieldsTypes.filter(x=>x.value === javaType)[0].label;
+		}
+		
+		$scope.chartTypes = knModule_chartOptions.getAvailableCharts(tempObject);
+		$scope.suggestedChartType = knModule_chartOptions.getSuggestedChart(tempObject)
+		
 		if(!$scope.ngModel.content.chartTemplateOriginal){
 			$scope.ngModel.content.chartTemplateOriginal = angular.copy($scope.ngModel.content.chartTemplate);
 		}
-		$scope.chartTypes.length = 0;
-		var serie = $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE;
-		var numOfCateg = cockpitModule_widgetServices.checkNumOfCategory($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY);
-		var minMaxCategoriesSeries = cockpitModule_widgetServices.createCompatibleCharts();
-		
-		
-		if($scope.ngModel.content.chartTemplateOriginal.CHART.type.toLowerCase() != $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase()) {
-			$scope.chartTypes.push($scope.ngModel.content.chartTemplateOriginal.CHART.type.toLowerCase());
-		}
-		for (var attrname in minMaxCategoriesSeries.serie.min) {
-			if((minMaxCategoriesSeries.serie.min[attrname] <= serie.length) && (minMaxCategoriesSeries.categ.min[attrname] <= numOfCateg) ){
-				if(minMaxCategoriesSeries.charts[$scope.ngModel.content.chartTemplateOriginal.CHART.type.toLowerCase()] && minMaxCategoriesSeries.charts[$scope.ngModel.content.chartTemplateOriginal.CHART.type.toLowerCase()].indexOf(attrname) != -1){
-					if(attrname != $scope.ngModel.content.chartTemplate.CHART.type) $scope.chartTypes.push(attrname);
-				}
-			}
-		}
-		
-		
+
 		if(!tempOriginalChartType){
 			var tempOriginalChartType = $scope.ngModel.content.chartTemplateOriginal.CHART.type.toLowerCase();
 		}
 
 		$mdDialog.show({
-			controller: function ($scope,$mdDialog,ngModel) {
-				$scope.widgetName = widgetName;
+			controller: function (scope,sbiModule_translate, $mdDialog,ngModel,chartTypes,isOriginal,suggestedChartType) {
+				scope.widgetName = widgetName;
+				scope.translate	= sbiModule_translate;
+				scope.chartTypes = chartTypes;
+				scope.isOriginal = isOriginal;
+				scope.ngModel = angular.copy(ngModel);
+				scope.suggestedChartType = suggestedChartType;
+				
 
-				$scope.changeChartType = function(type, isOriginal){
+				scope.changeChartType = function(type, isOriginal){
 
-					var chartType = $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase();
+					var chartType = scope.ngModel.content.chartTemplate.CHART.type.toLowerCase();
 
 					if(tempOriginalChartType == type){
 
-						$scope.isOriginal = true;
-						$scope.ngModel.content.chartTemplate.CHART = angular.copy($scope.ngModel.content.chartTemplateOriginal.CHART);
+						var isOriginal = true;
+						scope.ngModel.content.chartTemplate.CHART = angular.copy(scope.ngModel.content.chartTemplateOriginal.CHART);
 
 					}else {
 
-						$scope.isOriginal = false;
-						var categories = cockpitModule_widgetServices.checkCategories($scope.ngModel.content.chartTemplate);
-						delete $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
-						var maxcateg = minMaxCategoriesSeries.categ.max[type] ? minMaxCategoriesSeries.categ.max[type] : undefined;
-						$scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY = cockpitModule_widgetServices.compatibleCategories(type, categories, maxcateg);
-						if(minMaxCategoriesSeries.serie.max[type]) $scope.ngModel.content.chartTemplate.CHART.VALUES.SERIE.length = minMaxCategoriesSeries.serie.max[type];
-						$scope.ngModel.content.chartTemplate.CHART.type = type.toUpperCase();
+						var isOriginal = false;
+						var categories = cockpitModule_widgetServices.checkCategories(scope.ngModel.content.chartTemplate);
+						delete scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
+						scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY = cockpitModule_widgetServices.compatibleCategories(type, categories);
+						scope.ngModel.content.chartTemplate.CHART.type = type.toUpperCase();
 
 					}
-					$scope.$broadcast("changeChart",{ "type": type, "isOriginal":$scope.isOriginal});
-					$mdDialog.hide();
+					
+					$mdDialog.hide({model:scope.ngModel,isOriginal:scope.isOriginal,type:type});
 
 				}
-				$scope.cancel = function(){
+				scope.cancel = function(){
 					$mdDialog.cancel();
 				}
 			},
-			scope: $scope,
-			preserveScope:true,
 	      templateUrl: sbiModule_config.dynamicResourcesEnginePath+ cockpitToolbarPath+'/templates/chartTypes.tpl.html',
 	      targetEvent: ev,
-	      clickOutsideToClose:true,
-	      locals: {ngModel:$scope.ngModel}
+	      locals:{ngModel:$scope.ngModel,chartTypes:$scope.chartTypes,isOriginal:$scope.isOriginal,suggestedChartType:$scope.suggestedChartType},
+	      clickOutsideToClose:true
+	    }).then((response)=>{
+	    	$scope.ngModel = angular.copy(response.model);
+	    	$scope.isOriginal = response.isOriginal;
+	    	$scope.$broadcast("changeChart",{ "type": response.type, "isOriginal":$scope.isOriginal});
 	    })
 	}
 
@@ -1755,6 +1814,10 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 	$scope.exportToExcel = function(event, ngModel, options) {
 		cockpitModule_exportWidgetService.exportWidgetToExcel('xlsx', angular.copy(ngModel), options);
+	}
+
+	$scope.exportToPdf = function(event, ngModel, options) {
+		cockpitModule_exportWidgetService.exportWidgetToPdf(angular.copy(ngModel), options);
 	}
 
 	$scope.getPerWidgetDatasetIds = function() {

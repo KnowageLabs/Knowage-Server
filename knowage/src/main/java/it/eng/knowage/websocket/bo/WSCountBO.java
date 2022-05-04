@@ -29,9 +29,8 @@ public class WSCountBO {
 
 	private int total;
 
-	public WSCountBO(int total) {
+	public WSCountBO() {
 		super();
-		this.total = total;
 	}
 
 	public int getTotal() {
@@ -40,6 +39,28 @@ public class WSCountBO {
 
 	public void setTotal(int total) {
 		this.total = total;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + total;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WSCountBO other = (WSCountBO) obj;
+		if (total != other.total)
+			return false;
+		return true;
 	}
 
 }

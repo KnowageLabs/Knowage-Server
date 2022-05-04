@@ -83,7 +83,9 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 		} finally {
 			logger.debug("OUT");
 		}
-
+		if (statement.endsWith(";")) {
+			statement = statement.substring(0, statement.length() - 1);
+		}
 		return statement;
 	}
 

@@ -220,7 +220,7 @@ export default defineComponent({
         },
         isDate: {
             type: Boolean,
-            requierd: true
+            required: true
         },
         showMapDriver: {
             type: Boolean,

@@ -55,7 +55,19 @@
                 </div>
             </form>
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <DataTable v-if="!loading" :value="kpi.threshold.thresholdValues" :loading="loading" editMode="cell" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" @rowReorder="setPositionOnReorder" data-test="messages-table">
+            <DataTable
+                v-if="!loading"
+                :value="kpi.threshold.thresholdValues"
+                :loading="loading"
+                editMode="cell"
+                class="p-datatable-sm kn-table"
+                dataKey="id"
+                responsiveLayout="stack"
+                breakpoint="960px"
+                @rowReorder="setPositionOnReorder"
+                data-test="messages-table"
+                @cell-edit-complete="onCellEditComplete"
+            >
                 <Column :rowReorder="true" headerStyle="width: 3rem" :reorderableColumn="false" />
 
                 <Column field="label" :header="$t('common.label')">
@@ -90,7 +102,7 @@
 
                 <Column field="severityId" header="Severity">
                     <template #editor="slotProps">
-                        <Dropdown v-model="slotProps.data['severityId']" :options="severityOptions" optionLabel="valueCd" optionValue="valueId" @change="setSeverityCd($event, slotProps.data)">
+                        <Dropdown v-model="slotProps.data['severityId']" :style="tresholdTabDescriptor.styles.input" :options="severityOptions" optionLabel="valueCd" optionValue="valueId" @change="setSeverityCd($event, slotProps.data)">
                             <template #option="slotProps">
                                 <span>{{ slotProps.option.valueCd }}</span>
                             </template>
@@ -102,11 +114,7 @@
                 <Column field="color" :header="$t('kpi.kpiDefinition.color')">
                     <template #body="slotProps">
                         <ColorPicker v-model="slotProps.data['color']" format="hex" @change="$emit('touched')" />
-                        <span>{{ slotProps.data['color'] }}</span>
-                    </template>
-                    <template #editor="slotProps">
-                        <ColorPicker v-model="slotProps.data['color']" format="hex" @change="$emit('touched')" />
-                        <InputText :style="tresholdTabDescriptor.styles.input" v-model="slotProps.data['color']" @change="$emit('touched')" />
+                        <InputText class="kn-material-input" v-tooltip.top="slotProps.data['color']" :style="tresholdTabDescriptor.styles.colorInput" v-model="slotProps.data['color']" @change="$emit('touched')" />
                     </template>
                 </Column>
 
@@ -128,7 +136,7 @@
 
     <Sidebar class="mySidebar" v-model:visible="thresholdListVisible" :showCloseIcon="false" position="right">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #left>{{ $t('kpi.kpiDefinition.thresholdsListTitle') }}</template>
+            <template #start>{{ $t('kpi.kpiDefinition.thresholdsListTitle') }}</template>
         </Toolbar>
         <Listbox class="kn-list--column" :options="thresholdsList" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="tabViewDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')" @change="confirmToLoadThreshold">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
@@ -156,7 +164,7 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import useValidate from '@vuelidate/core'
@@ -258,7 +266,7 @@ export default defineComponent({
             let url = ''
             this.kpi.id ? (url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold?kpiId=${this.selectedKpi.id}`) : (url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${event.value.id}/loadThreshold`)
 
-            return axios.get(url).then((response) => {
+            return this.$http.get(url).then((response: AxiosResponse<any>) => {
                 this.thresholdToClone = { ...response.data }
                 this.thresholdToClone.usedByKpi ? (this.overrideDialogVisible = true) : this.cloneSelectedThreshold()
             })
@@ -282,6 +290,10 @@ export default defineComponent({
             this.kpi.threshold.name += ' (' + this.$t('kpi.kpiDefinition.clone') + ')'
             this.kpi.threshold.id = undefined
             this.kpi.threshold.usedByKpi = false
+        },
+
+        onCellEditComplete(event) {
+            this.kpi.threshold.thresholdValues[event.index] = event.newData
         }
     }
 })

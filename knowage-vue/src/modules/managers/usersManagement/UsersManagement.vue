@@ -1,12 +1,12 @@
 <template>
-    <div class="kn-page">
+    <div class="kn-page kn-width-full-with-menu">
         <div class="kn-page-content p-grid p-m-0">
             <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.usersManagement.title') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <KnFabButton icon="fas fa-plus" @click="showForm()" data-test="open-form-button"></KnFabButton>
                     </template>
                 </Toolbar>
@@ -17,12 +17,12 @@
             </div>
 
             <KnHint :title="'managers.usersManagement.title'" :hint="'managers.usersManagement.hint'" v-if="hiddenForm"></KnHint>
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page" v-show="!hiddenForm">
+            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                    <template #left>
+                    <template #start>
                         {{ userDetailsForm.userId }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="v$.userDetailsForm.$invalid" @click="saveUser" />
                         <Button class="p-button-text p-button-rounded p-button-plain" icon="pi pi-times" @click="closeForm" />
                     </template>
@@ -34,7 +34,7 @@
                             <template #header>
                                 <span>{{ $t('managers.usersManagement.detail') }}</span>
                             </template>
-                            <DetailFormTab :formInsert="formInsert" :formValues="userDetailsForm" :vobj="v$" :disabledUID="disableUsername" @dataChanged="dirty = true" @unlock="unlockUser($event)"></DetailFormTab>
+                            <DetailFormTab :formInsert="formInsert" :formValues="userDetailsForm" :vobj="v$" :disabledUID="disableUsername" @dataChanged="onDataChange" @unlock="unlockUser($event)"></DetailFormTab>
                         </TabPanel>
 
                         <TabPanel>
@@ -62,7 +62,7 @@ import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
 import { iUser, iRole, iAttribute } from './UsersManagement'
 import useValidate from '@vuelidate/core'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
@@ -118,36 +118,38 @@ export default defineComponent({
     methods: {
         async loadAllUsers() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(this.apiUrl + 'users')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.users = response.data
                 })
                 .finally(() => (this.loading = false))
         },
         async loadAllRoles() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(this.apiUrl + 'roles')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.roles = response.data
                 })
                 .finally(() => (this.loading = false))
         },
         async loadAllAttributes() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(this.apiUrl + 'attributes')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.attributes = response.data
                 })
                 .finally(() => (this.loading = false))
         },
         setDefaultRoleValue(defaultRole: any) {
+            console.log('setDefaultRoleValue -----------------------')
             this.defaultRole = defaultRole
             this.dirty = true
         },
         setSelectedRoles(roles: iRole[]) {
+            console.log('setSelectedRoles -----------------------')
             this.selectedRoles = roles
             this.dirty = true
         },
@@ -179,11 +181,12 @@ export default defineComponent({
             return userToSave
         },
         onFormDirty() {
+            console.log('onFormDirty -----------------------')
             this.dirty = true
         },
         saveOrUpdateUser(user: iUser) {
-            const endpointPath = `${process.env.VUE_APP_RESTFUL_SERVICES_PATH}/2.0/users`
-            return this.userDetailsForm.id ? axios.put<any>(`${endpointPath}/${user.id}`, user) : axios.post<any>(endpointPath, user)
+            const endpointPath = `${process.env.VUE_APP_RESTFUL_SERVICES_PATH}2.0/users`
+            return this.userDetailsForm.id ? this.$http.put<any>(`${endpointPath}/${user.id}`, user) : this.$http.post<any>(endpointPath, user)
         },
         async saveUser() {
             this.loading = true
@@ -193,16 +196,10 @@ export default defineComponent({
                     msg: this.$t('managers.usersManagement.error.noRolesSelected')
                 })
                 this.loading = false
-            } else if (this.selectedRoles?.length > 1 && !this.defaultRole) {
-                this.$store.commit('setError', {
-                    title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
-                    msg: this.$t('managers.usersManagement.error.missingDefaultRole')
-                })
-                this.loading = false
             } else {
                 const userToSave = this.formatUserObject()
                 this.saveOrUpdateUser(userToSave)
-                    .then((response) => {
+                    .then((response: AxiosResponse<any>) => {
                         this.afterSaveOrUpdate(response)
                     })
                     .catch((error) => {
@@ -216,7 +213,7 @@ export default defineComponent({
                     })
             }
         },
-        async afterSaveOrUpdate(response) {
+        async afterSaveOrUpdate(response: AxiosResponse<any>) {
             this.dirty = false
             await this.loadAllUsers()
             this.formInsert = false
@@ -234,8 +231,8 @@ export default defineComponent({
         },
         onUserDelete(id: number) {
             this.loading = true
-            axios
-                .delete(`${process.env.VUE_APP_RESTFUL_SERVICES_PATH}/2.0/users/${id}`)
+            this.$http
+                .delete(`${process.env.VUE_APP_RESTFUL_SERVICES_PATH}2.0/users/${id}`)
                 .then(() => {
                     this.loadAllUsers()
                     this.$store.commit('setInfo', {
@@ -312,6 +309,10 @@ export default defineComponent({
             } else {
                 this.hiddenForm = true
             }
+        },
+        onDataChange() {
+            console.log('onDataChange ---------------------')
+            this.dirty = true
         }
     }
 })

@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.activation.MimetypesFileTypeMap;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -44,17 +45,18 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.junit.platform.commons.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
-import it.eng.knowage.knowageapi.context.BusinessRequestContext;
+import it.eng.knowage.boot.context.BusinessRequestContext;
+import it.eng.knowage.boot.error.KnowageBusinessException;
+import it.eng.knowage.boot.error.KnowageRuntimeException;
+import it.eng.knowage.boot.validation.FilesValidator;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadFilesListException;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
-import it.eng.knowage.knowageapi.error.KnowageBusinessException;
-import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
-import it.eng.knowage.knowageapi.error.TenantRepositoryMissingException;
+import it.eng.knowage.knowageapi.utils.PathTraversalChecker;
 import it.eng.knowage.resourcemanager.resource.dto.DownloadFilesDTO;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
 import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
@@ -64,6 +66,7 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 @Path("/2.0/resources/files")
 @Component
+@Validated
 public class FilesResource {
 
 	private static final Logger LOGGER = Logger.getLogger(FilesResource.class);
@@ -106,12 +109,13 @@ public class FilesResource {
 	@POST
 	@Path("/download")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response downloadFiles(DownloadFilesDTO dto) throws KnowageBusinessException {
+	public Response downloadFiles(@Valid DownloadFilesDTO dto) throws KnowageBusinessException {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		java.nio.file.Path zipFile = null;
 		List<String> listOfPaths = new ArrayList<String>();
 		String folderPath = resourceManagerAPIservice.getFolderByKey(dto.getKey(), profile);
 		for (String name : dto.getSelectedFilesNames()) {
+			PathTraversalChecker.preventPathTraversalAttack(Paths.get(folderPath).resolve(name), Paths.get(folderPath), profile);
 			listOfPaths.add(Paths.get(folderPath).resolve(name).toString());
 		}
 		try {
@@ -126,10 +130,14 @@ public class FilesResource {
 
 			} else {
 				zipFile = resourceManagerAPIservice.getDownloadFilePath(listOfPaths, profile, true);
-				String filename = zipFile.getFileName() + ".zip";
-				return Response.ok(zipFile.toFile()).header("Content-length", "" + Files.size(zipFile))
-						.header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename)).header("Content-Type", "application/zip")
-						.build();
+				if (FilesValidator.validateStringFilenameUsingContains(zipFile.getFileName().toString())) {
+					String filename = zipFile.getFileName() + ".zip";
+					return Response.ok(zipFile.toFile()).header("Content-length", "" + Files.size(zipFile))
+							.header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename)).header("Content-Type", "application/zip")
+							.build();
+				} else {
+					throw new KnowageRuntimeException("Invalid file name");
+				}
 			}
 		} catch (KnowageBusinessException e) {
 			throw new KnowageBusinessException(e, businessContext.getLocale());
@@ -147,7 +155,6 @@ public class FilesResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response uploadFile(MultipartFormDataInput multipartFormDataInput) throws KnowageBusinessException {
 
-		Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		Map<String, List<InputPart>> formDataMap = multipartFormDataInput.getFormDataMap();
 
@@ -179,7 +186,7 @@ public class FilesResource {
 				fileName = m.group(2);
 			}
 
-			if (StringUtils.isNotBlank(fileName)) {
+			if (FilesValidator.validateStringFilenameUsingContains(fileName)) {
 
 				String path = Paths.get(resourceManagerAPIservice.getFolderByKey(key, profile)).resolve(fileName).toString();
 
@@ -190,7 +197,7 @@ public class FilesResource {
 						return Response.status(Response.Status.OK).build();
 
 					} catch (IOException e) {
-						throw new KnowageRuntimeException(e.getMessage());
+						throw new KnowageRuntimeException("Error while importing file", e);
 					}
 				} else {
 					try (InputStream is = inputPart.getBody(InputStream.class, null)) {
@@ -203,12 +210,14 @@ public class FilesResource {
 
 						return Response.status(Response.Status.OK).build();
 					} catch (IOException e) {
-						throw new KnowageRuntimeException(e.getMessage());
+						throw new KnowageRuntimeException("Error while importing zip file", e);
 					}
 				}
 
+			} else {
+				throw new KnowageRuntimeException("Invalid file content");
 			}
-			return response;
+
 		} catch (KnowageBusinessException e) {
 			throw new KnowageBusinessException(e, businessContext.getLocale());
 		} catch (IOException e) {

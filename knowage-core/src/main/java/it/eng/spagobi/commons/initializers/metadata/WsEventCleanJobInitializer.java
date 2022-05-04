@@ -26,9 +26,11 @@ import java.util.Optional;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.quartz.Job;
+import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
@@ -89,15 +91,18 @@ public class WsEventCleanJobInitializer extends SpagoBIInitializer {
 		try {
 			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
-			JobDetail job = scheduler.getJobDetail(JOB_NAME, JOB_GROUP);
+			JobKey jobKey = JobKey.jobKey(JOB_NAME, JOB_GROUP);
+			JobDetail job = scheduler.getJobDetail(jobKey);
 
 			if (job == null) {
 
-				job = new JobDetail(JOB_NAME, JOB_GROUP, WsEventCleaner.class);
-				job.setDurability(false);
+				job = JobBuilder.newJob(WsEventCleaner.class)
+						.withIdentity(JOB_NAME, JOB_GROUP)
+						.storeDurably(true)
+						.build();
 
 				scheduler.addJob(job, true);
-				scheduler.triggerJob(JOB_NAME, JOB_GROUP);
+				scheduler.triggerJob(jobKey);
 
 			}
 		} catch (SchedulerException e) {
