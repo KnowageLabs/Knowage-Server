@@ -1,0 +1,50 @@
+{
+    "datasetColumns": [
+        {
+            "field": "label",
+            "header": "common.id"
+        },
+        {
+            "field": "name",
+            "header": "common.name"
+        },
+        {
+            "field": "descr",
+            "header": "common.description"
+        },
+        {
+            "field": "dsTypeCd",
+            "header": "common.type"
+        }
+    ],
+    "datasetFilterFields": ["name"],
+    "driverColumns": [
+        {
+            "field": "label",
+            "header": "workspace.gis.dnl.driverParameter"
+        },
+        {
+            "field": "url",
+            "header": "managers.layersManagement.layerURL"
+        }
+    ],
+    "layerColumns": [
+        {
+            "field": "layerId",
+            "header": "common.id"
+        },
+        {
+            "field": "layerName",
+            "header": "common.name"
+        },
+        {
+            "field": "descr",
+            "header": "common.description"
+        },
+        {
+            "field": "type",
+            "header": "common.type"
+        }
+    ],
+    "layerFilterFields": ["layerName"]
+}

@@ -329,7 +329,6 @@ export default defineComponent({
         async getAllData() {
             await this.getDatasetsByFilter()
             await this.getDatasetCategories()
-            await this.getAllAvroDataSets()
             // this.loading = false
         },
         async getDatasetCategories() {
@@ -623,6 +622,7 @@ export default defineComponent({
             this.getDatasetsByFilter()
         },
         async getDatasetsByFilter() {
+            await this.getAllAvroDataSets()
             this.searchWord = ''
             this.selectedCategoryIds = [] as any
             this.selectedCategories = [] as any

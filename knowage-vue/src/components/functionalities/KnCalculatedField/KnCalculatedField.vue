@@ -3,7 +3,7 @@
         <Message severity="info" :closable="false"> {{ $t('components.knCalculatedField.description') }} </Message>
 
         <div class="p-fluid p-grid">
-            <div class="p-col-8">
+            <div class="p-col">
                 <span class="p-float-label p-field kn-flex">
                     <InputText
                         ref="colName"
@@ -20,12 +20,7 @@
                     <label class="kn-material-input-label"> {{ $t('components.knCalculatedField.columnName') }} </label>
                 </span>
             </div>
-            <div class="p-col-4">
-                <span v-if="descriptor.availableOutputTypes" class="p-float-label p-field p-ml-2 kn-flex">
-                    <Dropdown v-model="cf.outputType" :options="descriptor.availableOutputTypes" :disabled="readOnly" class="kn-material-input" optionLabel="label" optionValue="code" />
-                    <label class="kn-material-input-label"> {{ $t('components.knCalculatedField.type') }} </label>
-                </span>
-            </div>
+            <slot name="additionalInputs"> </slot>
         </div>
 
         <Card class="card-0-padding">
@@ -82,350 +77,359 @@
         <VCodeMirror :class="['p-mt-2 codeMirrorClass', this.readOnly ? 'readOnly' : '', v$.cf.formula.$invalid ? 'p-invalid' : '']" ref="formula" v-model:value="cf.formula" :options="scriptOptions" @drop="drop($event)" @dragover="handleDragover($event)" v-model="v$.cf.formula.$model" />
 
         <template #footer>
-            <Button class="kn-button kn-button--secondary" :label="$t('common.cancel')" @click="cancel" />
+            <Button :class="readOnly ? 'kn-button kn-button--primary' : 'kn-button kn-button--secondary'" :label="$t('common.cancel')" @click="cancel" />
             <Button v-if="!readOnly" class="kn-button kn-button--primary" v-t="'common.apply'" @click="apply" :disabled="saveButtonDisabled" />
         </template>
     </Dialog>
 </template>
 
 <script lang="ts">
-import { AxiosResponse } from 'axios'
-import { createValidations } from '@/helpers/commons/validationHelper'
-import { defineComponent } from 'vue'
-import { IKnCalculatedField } from '@/components/functionalities/KnCalculatedField/KnCalculatedField'
-import { VCodeMirror } from 'vue3-code-mirror'
+    import { AxiosResponse } from 'axios'
+    import { createValidations } from '@/helpers/commons/validationHelper'
+    import { defineComponent } from 'vue'
+    import { IKnCalculatedField } from '@/components/functionalities/KnCalculatedField/KnCalculatedField'
+    import { VCodeMirror } from 'vue3-code-mirror'
 
-import Dropdown from 'primevue/dropdown'
-import Dialog from 'primevue/dialog'
-import KnHint from '@/components/UI/KnHint.vue'
-import Listbox from 'primevue/listbox'
-import Message from 'primevue/message'
-import ScrollPanel from 'primevue/scrollpanel'
-import useValidate from '@vuelidate/core'
+    import Dropdown from 'primevue/dropdown'
+    import Dialog from 'primevue/dialog'
+    import KnHint from '@/components/UI/KnHint.vue'
+    import Listbox from 'primevue/listbox'
+    import Message from 'primevue/message'
+    import ScrollPanel from 'primevue/scrollpanel'
+    import useValidate from '@vuelidate/core'
 
-export default defineComponent({
-    name: 'calculated-field',
-    components: { Dialog, Dropdown, KnHint, Listbox, Message, ScrollPanel, VCodeMirror },
-    props: {
-        fields: Array,
-        visibility: Boolean,
-        readOnly: Boolean,
-        descriptor: Object,
-        template: {} as any
-    },
-    data() {
-        return {
-            cf: { formula: '' } as IKnCalculatedField,
-            allCategories: { name: 'ALL', code: 'ALL' },
-            selectedFunction: {},
-            selectedCategory: '',
+    export default defineComponent({
+        name: 'calculated-field',
+        components: { Dialog, Dropdown, KnHint, Listbox, Message, ScrollPanel, VCodeMirror },
+        props: {
+            fields: Array,
+            visibility: Boolean,
+            readOnly: Boolean,
+            descriptor: Object,
+            template: {} as any,
+            valid: Boolean
+        },
+        data() {
+            return {
+                cf: { formula: '' } as IKnCalculatedField,
+                allCategories: { name: 'ALL', code: 'ALL' },
+                selectedFunction: {},
+                selectedCategory: '',
 
-            availableFunctions: [] as any,
-            scriptOptions: {
-                mode: 'text/x-mathematica',
-                indentWithTabs: true,
-                smartIndent: true,
-                lineWrapping: true,
-                matchBrackets: true,
-                autofocus: true,
-                theme: 'eclipse',
-                lineNumbers: true,
-                readOnly: this.readOnly
-            },
-            v$: useValidate() as any,
-            formulaValidationInterval: {} as any,
-            isValidFormula: false
-        }
-    },
-    emits: ['save', 'cancel', 'update:readOnly'],
-    created() {
-        this.availableFunctions = [...this.descriptor?.availableFunctions].sort((a, b) => {
-            return a.name.localeCompare(b.name)
-        })
-        this.availableFunctions.forEach((x) => {
-            x.category = x.category.toUpperCase()
-        })
-
-        this.cf = { formula: '' } as IKnCalculatedField
-    },
-
-    updated() {
-        if (!this.cf.formula) this.cf.formula = ''
-        if (this.readOnly && this.template && this.template.parameters) {
-            this.cf = {} as IKnCalculatedField
-            for (var i = 0; i < this.template.parameters.length; i++) {
-                if (this.template.parameters[i]['name'] == 'formula') this.cf.formula = this.template.parameters[i]['value']
-                else if (this.template.parameters[i]['name'] == 'colName') this.cf.colName = this.template.parameters[i]['value']
+                availableFunctions: [] as any,
+                scriptOptions: {
+                    mode: 'text/x-mathematica',
+                    indentWithTabs: true,
+                    smartIndent: true,
+                    lineWrapping: true,
+                    matchBrackets: true,
+                    autofocus: true,
+                    theme: 'eclipse',
+                    lineNumbers: true,
+                    readOnly: this.readOnly
+                },
+                v$: useValidate() as any,
+                formulaValidationInterval: {} as any,
+                isValidFormula: false
             }
-        }
-    },
-
-    validations() {
-        if (this.descriptor) {
-            return { cf: createValidations('cf', this.descriptor.validations) }
-        }
-        return {}
-    },
-
-    methods: {
-        apply(): void {
-            this.$emit('save', this.cf)
-            this.clearForm()
         },
-        cancel(): void {
-            this.$emit('update:readOnly', false)
-            this.$emit('cancel', this.cf)
-            this.clearForm()
-        },
-        clearForm(): void {
-            this.cf = {} as IKnCalculatedField
-            this.selectedFunction = {}
-            this.selectedCategory = ''
-        },
-        filterFunctions() {
-            let tmp = [...this.descriptor?.availableFunctions].sort((a, b) => {
+        emits: ['save', 'cancel', 'update:readOnly'],
+        created() {
+            this.availableFunctions = [...this.descriptor?.availableFunctions].sort((a, b) => {
                 return a.name.localeCompare(b.name)
             })
-            tmp.forEach((x) => {
+            this.availableFunctions.forEach((x) => {
                 x.category = x.category.toUpperCase()
             })
-            this.availableFunctions = tmp
-            if (this.selectedCategory && this.selectedCategory !== this.allCategories.name) {
-                let cat = this.selectedCategory as any
-                this.availableFunctions = tmp.filter((x) => x.category.toUpperCase() === cat.toUpperCase())
+
+            this.cf = { formula: '' } as IKnCalculatedField
+        },
+
+        updated() {
+            if (!this.cf.formula) this.cf.formula = ''
+
+            if (this.readOnly && this.template && this.template.parameters) {
+                this.cf = {} as IKnCalculatedField
+                for (var i = 0; i < this.template.parameters.length; i++) {
+                    if (this.template.parameters[i]['name'] == 'formula') this.cf.formula = this.template.parameters[i]['value']
+                    else if (this.template.parameters[i]['name'] == 'colName') this.cf.colName = this.template.parameters[i]['value']
+                }
             }
         },
-        handleOptions() {
-            let tmp = [] as any
 
-            this.descriptor?.availableFunctions
-                .sort((a, b) => {
+        validations() {
+            if (this.descriptor) {
+                return { cf: createValidations('cf', this.descriptor.validations) }
+            }
+            return {}
+        },
+
+        methods: {
+            apply(): void {
+                this.$emit('save', this.cf)
+                this.clearForm()
+            },
+            cancel(): void {
+                this.$emit('update:readOnly', false)
+                this.$emit('cancel', this.cf)
+                this.clearForm()
+            },
+            clearForm(): void {
+                this.cf = { formula: '' } as IKnCalculatedField
+                this.selectedFunction = {}
+                this.selectedCategory = ''
+            },
+            filterFunctions() {
+                let tmp = [...this.descriptor?.availableFunctions].sort((a, b) => {
                     return a.name.localeCompare(b.name)
                 })
-                .map((x) => ({ name: x.category, code: x.category.toUpperCase() }))
-                .forEach((element) => {
-                    if (tmp.filter((y) => y.code === element.code).length == 0) tmp.push({ name: element.name, code: element.code })
+                tmp.forEach((x) => {
+                    x.category = x.category.toUpperCase()
                 })
-
-            if (tmp.filter((x) => x.name === this.allCategories.name).length == 0) tmp = [this.allCategories, ...tmp]
-
-            return tmp
-        },
-        allowDrop(ev) {
-            ev.preventDefault()
-        },
-        clearCodemirror(editor, cursor, data) {
-            if (editor.somethingSelected()) {
-                let selections = editor.getSelections()
-                for (var sel of selections) {
-                    editor.replaceRange('', { line: cursor.line, ch: cursor.ch - JSON.stringify(data).length }, { line: cursor.line, ch: cursor.ch - JSON.stringify(data).length + sel.length })
+                this.availableFunctions = tmp
+                if (this.selectedCategory && this.selectedCategory !== this.allCategories.name) {
+                    let cat = this.selectedCategory as any
+                    this.availableFunctions = tmp.filter((x) => x.category.toUpperCase() === cat.toUpperCase())
                 }
-            }
-        },
-        handleDragover(ev) {
-            if (this.readOnly) return
-            const doc = this.$refs.formula as any
-            var cursor = doc.editor.getCursor()
-            if (ev.target.className.includes('field-')) {
-                doc.editor.markText(0, cursor)
-            }
-        },
-        dragElement(ev, item, elementType: String) {
-            if (this.readOnly) return
-            if (elementType === 'function') {
-                ev.dataTransfer.setData('text/plain', JSON.stringify({ item: item.formula, elementType: elementType }))
-            } else if (elementType === 'field') {
-                ev.dataTransfer.setData('text/plain', JSON.stringify({ item: item, elementType: elementType }))
-            }
-            ev.dataTransfer.effectAllowed = 'copy'
-        },
+            },
+            handleOptions() {
+                let tmp = [] as any
 
-        drop(ev) {
-            if (this.readOnly) return
-            ev.stopPropagation()
-            ev.preventDefault()
+                this.descriptor?.availableFunctions
+                    .sort((a, b) => {
+                        return a.name.localeCompare(b.name)
+                    })
+                    .map((x) => ({ name: x.category, code: x.category.toUpperCase() }))
+                    .forEach((element) => {
+                        if (tmp.filter((y) => y.code === element.code).length == 0) tmp.push({ name: element.name, code: element.code })
+                    })
 
-            var data = JSON.parse(ev.dataTransfer.getData('text/plain'))
+                if (tmp.filter((x) => x.name === this.allCategories.name).length == 0) tmp = [this.allCategories, ...tmp]
 
-            const doc = this.$refs.formula as any
-            let editor = doc.editor
-            var cursor = editor.getCursor()
-
-            this.clearCodemirror(editor, cursor, data)
-
-            editor.clearHistory()
-
-            cursor = editor.getCursor()
-
-            let start = editor.findWordAt(cursor).anchor.ch
-            let end = editor.findWordAt(cursor).head.ch
-
-            let from = { line: cursor.line, ch: start }
-            let to = { line: cursor.line, ch: end }
-
-            let range = editor.getRange(from, to)
-            let spContent = data.elementType === 'function' ? data.item : data.item.fieldAlias
-
-            if (range === '' || range.match(/\(|\)|,|\./g)) {
-                editor.replaceSelection(spContent, cursor)
-            } else {
-                const sp = document.createElement('span')
-                sp.textContent = spContent
-                editor.doc.markText(from, to, {
-                    replacedWith: sp,
-                    inclusiveLeft: false,
-                    inclusiveRight: false
-                })
-            }
-
-            let lines = document.querySelector('.CodeMirror-lines')
-            if (lines) {
-                let textEl = lines.querySelector('div span') as any
-
-                if (textEl) this.cf.formula = textEl.innerText
-            }
-        },
-        applyValidationResultsToFormula() {
-            const doc = this.$refs.formula as any
-            let editor = doc.editor
-
-            let from = { line: editor.firstLine(), ch: 0 }
-            let to = { line: editor.lastLine(), ch: editor.getLine(editor.lastLine()).length }
-
-            if (!this.isValidFormula) {
-                editor.markText(from, to, { className: 'syntax-error' })
-            } else {
-                editor.markText(from, to, { className: 'no-syntax-error' })
-            }
-        }
-    },
-    watch: {
-        readOnly(value) {
-            this.scriptOptions.readOnly = value
-        },
-        visibility(newV, oldV) {
-            if (newV && newV !== oldV) {
-                if (!this.selectedCategory) {
-                    if (this.descriptor?.defaultSelectedCategory) this.selectedCategory = this.descriptor?.defaultSelectedCategory
-                    else this.selectedCategory = this.allCategories.name
-                }
-            }
-        },
-        cf: {
-            handler() {
-                if (this.cf.formula) {
-                    if (this.descriptor?.validationServiceUrl) {
-                        this.formulaValidationInterval = setInterval(() => {
-                            this.$http.get(this.descriptor?.validationServiceUrl).then((response: AxiosResponse<any>) => {
-                                this.isValidFormula = response.data[0]
-                                this.applyValidationResultsToFormula()
-                            })
-                            clearInterval(this.formulaValidationInterval)
-                            this.formulaValidationInterval = null
-                        }, 2500)
-                    } else {
-                        this.isValidFormula = true
+                return tmp
+            },
+            allowDrop(ev) {
+                ev.preventDefault()
+            },
+            clearCodemirror(editor, cursor, data) {
+                if (editor.somethingSelected()) {
+                    let selections = editor.getSelections()
+                    for (var sel of selections) {
+                        editor.replaceRange('', { line: cursor.line, ch: cursor.ch - JSON.stringify(data).length }, { line: cursor.line, ch: cursor.ch - JSON.stringify(data).length + sel.length })
                     }
                 }
             },
-            deep: true
+            handleDragover(ev) {
+                if (this.readOnly) return
+                const doc = this.$refs.formula as any
+                var cursor = doc.editor.getCursor()
+                if (ev.target.className.includes('field-')) {
+                    doc.editor.markText(0, cursor)
+                }
+            },
+            dragElement(ev, item, elementType: String) {
+                if (this.readOnly) return
+                if (elementType === 'function') {
+                    ev.dataTransfer.setData('text/plain', JSON.stringify({ item: item.formula, elementType: elementType }))
+                } else if (elementType === 'field') {
+                    ev.dataTransfer.setData('text/plain', JSON.stringify({ item: item, elementType: elementType }))
+                }
+                ev.dataTransfer.effectAllowed = 'copy'
+            },
+
+            drop(ev) {
+                if (this.readOnly) return
+                ev.stopPropagation()
+                ev.preventDefault()
+
+                var data = JSON.parse(ev.dataTransfer.getData('text/plain'))
+
+                const doc = this.$refs.formula as any
+                let editor = doc.editor
+                var cursor = editor.getCursor()
+
+                this.clearCodemirror(editor, cursor, data)
+
+                editor.clearHistory()
+
+                cursor = editor.getCursor()
+
+                let start = editor.findWordAt(cursor).anchor.ch
+                let end = editor.findWordAt(cursor).head.ch
+
+                let from = { line: cursor.line, ch: start }
+                let to = { line: cursor.line, ch: end }
+
+                let range = editor.getRange(from, to)
+                let spContent = data.elementType === 'function' ? data.item : data.item.fieldAlias
+
+                if (range === '' || range.match(/\(|\)|,|\./g)) {
+                    editor.replaceSelection(spContent, cursor)
+                } else {
+                    const sp = document.createElement('span')
+                    sp.textContent = spContent
+                    editor.doc.markText(from, to, {
+                        replacedWith: sp,
+                        inclusiveLeft: false,
+                        inclusiveRight: false
+                    })
+                }
+
+                let lines = document.querySelector('.CodeMirror-lines')
+                if (lines) {
+                    let textEl = lines.querySelector('div span') as any
+
+                    if (textEl) this.cf.formula = textEl.innerText
+                }
+            },
+            applyValidationResultsToFormula() {
+                const doc = this.$refs.formula as any
+                let editor = doc.editor
+
+                let from = { line: editor.firstLine(), ch: 0 }
+                let to = { line: editor.lastLine(), ch: editor.getLine(editor.lastLine()).length }
+
+                if (!this.isValidFormula) {
+                    editor.markText(from, to, { className: 'syntax-error' })
+                } else {
+                    editor.markText(from, to, { className: 'no-syntax-error' })
+                }
+            }
+        },
+        watch: {
+            readOnly(value) {
+                this.scriptOptions.readOnly = value
+            },
+            visibility(newV, oldV) {
+                if (newV && newV !== oldV) {
+                    if (!this.selectedCategory) {
+                        if (this.descriptor?.defaultSelectedCategory) this.selectedCategory = this.descriptor?.defaultSelectedCategory
+                        else this.selectedCategory = this.allCategories.name
+                    }
+                }
+            },
+            cf: {
+                handler() {
+                    if (this.cf.formula) {
+                        if (this.descriptor?.validationServiceUrl) {
+                            this.formulaValidationInterval = setInterval(() => {
+                                this.$http.get(this.descriptor?.validationServiceUrl).then((response: AxiosResponse<any>) => {
+                                    this.isValidFormula = response.data[0]
+                                    this.applyValidationResultsToFormula()
+                                })
+                                clearInterval(this.formulaValidationInterval)
+                                this.formulaValidationInterval = null
+                            }, 2500)
+                        } else {
+                            this.isValidFormula = true
+                        }
+                    }
+                },
+                deep: true
+            }
+        },
+        computed: {
+            saveButtonDisabled(): any {
+                if (typeof this.valid === 'undefined') return this.v$.$invalid || !this.isValidFormula
+                else return this.v$.$invalid || !this.isValidFormula || !this.valid
+            }
         }
-    },
-    computed: {
-        saveButtonDisabled(): any {
-            return this.v$.$invalid || !this.isValidFormula
-        }
-    }
-})
+    })
 </script>
 <style lang="scss">
-.calculatedFieldDialogClass {
-    min-width: 600px;
-    width: 60%;
-    max-width: 1200px;
-}
-
-.codeMirrorClass {
-    height: 80px;
-    max-height: 80px;
-    border: 1px solid var(--kn-color-borders);
-
-    .CodeMirror-scroll {
-        overflow-x: hidden !important;
-        overflow-y: auto !important;
+    .calculatedFieldDialogClass {
+        min-width: 600px;
+        width: 60%;
+        max-width: 1200px;
     }
-}
 
-.readOnly {
-    background-color: #cccccc;
-}
+    .codeMirrorClass {
+        height: 80px;
+        max-height: 80px;
+        border: 1px solid var(--kn-color-borders);
 
-.field-header {
-    font-weight: bold;
-}
-
-.kn-remove-card-padding .data-condition-list {
-    border: 1px solid var(--kn-color-borders);
-    border-top: none;
-}
-
-.p-listbox-item {
-    height: 24px;
-    .kn-list-item {
-        height: 24px;
-    }
-}
-
-.card-0-padding .p-card-body,
-.card-0-padding .p-card-content {
-    padding: 0.25rem;
-}
-
-.helpCol {
-    height: 100%;
-    width: 100%;
-
-    .helpScrollPanel {
-        height: 140px;
-    }
-}
-
-::v-deep(.p-scrollpanel) {
-    p {
-        padding: 0.5rem;
-        line-height: 1.5;
-        margin: 0;
-    }
-    &.custombar1 {
-        .p-scrollpanel-wrapper {
-            border-right: 9px solid var(--surface-ground);
+        .CodeMirror-scroll {
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
         }
-        .p-scrollpanel-bar {
-            background-color: var(--primary-color);
-            opacity: 1;
-            transition: background-color 0.2s;
-            &:hover {
-                background-color: #007ad9;
+    }
+
+    .readOnly {
+        .CodeMirror-scroll {
+            background-color: var(--kn-color-disabled);
+            cursor: default;
+            .CodeMirror-lines {
+                cursor: default !important;
             }
         }
     }
-}
 
-.syntax-error {
-    text-decoration: underline;
-    text-decoration-style: wavy;
-    text-decoration-color: red;
-}
+    .field-header {
+        font-weight: bold;
+    }
 
-.no-syntax-error {
-    text-decoration: none;
-}
+    .kn-remove-card-padding .data-condition-list {
+        border: 1px solid var(--kn-color-borders);
+        border-top: none;
+    }
 
-.fieldType {
-    font-size: 0.75em;
-}
+    .p-listbox-item {
+        height: 24px;
+        .kn-list-item {
+            height: 24px;
+        }
+    }
 
-.formulaType {
-    font-size: 0.75em;
-}
+    .card-0-padding .p-card-body,
+    .card-0-padding .p-card-content {
+        padding: 0.25rem;
+    }
+
+    .helpCol {
+        height: 100%;
+        width: 100%;
+
+        .helpScrollPanel {
+            height: 140px;
+        }
+    }
+
+    ::v-deep(.p-scrollpanel) {
+        p {
+            padding: 0.5rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+        &.custombar1 {
+            .p-scrollpanel-wrapper {
+                border-right: 9px solid var(--surface-ground);
+            }
+            .p-scrollpanel-bar {
+                background-color: var(--primary-color);
+                opacity: 1;
+                transition: background-color 0.2s;
+                &:hover {
+                    background-color: #007ad9;
+                }
+            }
+        }
+    }
+
+    .syntax-error {
+        text-decoration: underline;
+        text-decoration-style: wavy;
+        text-decoration-color: red;
+    }
+
+    .no-syntax-error {
+        text-decoration: none;
+    }
+
+    .fieldType {
+        font-size: 0.75em;
+    }
+
+    .formulaType {
+        font-size: 0.75em;
+    }
 </style>

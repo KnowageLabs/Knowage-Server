@@ -297,7 +297,6 @@ export default defineComponent({
         selectedDocument: { type: Object as PropType<iDocument> },
         selectedDataset: { type: Object },
         availableStates: { type: Array },
-        selectedFolder: { type: Object as PropType<iFolder>, required: true },
         documentTypes: { type: Array as any, required: true },
         documentEngines: { type: Array as PropType<iEngine[]>, required: true },
         availableDatasources: { type: Array as PropType<iDataSource[]> },
@@ -443,7 +442,19 @@ export default defineComponent({
                 header: this.$t('common.toast.warning'),
                 message: this.$t('documentExecution.olap.openDesignerMsg'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => this.openDesigner()
+                accept: () => {
+                    switch (this.document.typeCode) {
+                        case 'KPI':
+                            this.openKpiDocumentDesigner()
+                            break
+                        case 'MAP': {
+                            this.openGis()
+                            break
+                        }
+                        default:
+                            this.openDesigner()
+                    }
+                }
             })
         },
         openDesigner() {
@@ -451,6 +462,12 @@ export default defineComponent({
         },
         translatedLabel(a) {
             return this.$t(a.label)
+        },
+        openKpiDocumentDesigner() {
+            this.$router.push(`/kpi-edit/${this.document.id}?from=documentDetail`)
+        },
+        openGis() {
+            this.$router.push(`/gis/edit?documentId=${this.document.id}`)
         }
     }
 })
