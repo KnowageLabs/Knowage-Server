@@ -129,7 +129,11 @@
                                     <i v-else :class="item.icon"></i> <span class="p-ml-2"> {{ $t(item.label) }}</span>
                                 </span>
                             </template>
-                        </Menu>
+                        </Menu> </template
+                    ><template #body="{data}">
+                        <span v-if="col.Type.toLowerCase().includes('time')"> {{ getFormattedDate(data[col.header], { dateStyle: 'short', timeStyle: 'short' }) }}</span>
+                        <span v-else-if="col.Type.toLowerCase().includes('date')"> {{ getFormattedDate(data[col.header], { dateStyle: 'short' }) }}</span>
+                        <span v-else> {{ data[col.header] }}</span>
                     </template></Column
                 >
             </DataTable>
@@ -162,6 +166,7 @@
     import calculatedFieldDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCalculatedFieldDescriptor.json'
 
     import { Client } from '@stomp/stompjs'
+    import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 
     export default defineComponent({
         name: 'data-preparation-detail',
@@ -272,8 +277,11 @@
         },
 
         methods: {
+            getFormattedDate(date: any, format: any) {
+                return formatDateWithLocale(date, format)
+            },
             getProgressValue() {
-                if (this.dataset.config && this.dataset.config.transformations && this.dataset.config.transformations.length) {
+                if (this.dataset.config && this.dataset.config.transformations && this.dataset.config.transformations.length && this.dataset.config.transformations.length > 1) {
                     this.progressMode = ''
                     let tot = this.dataset.config.transformations.length
 
