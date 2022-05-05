@@ -60,7 +60,6 @@ export function removeDeletedFilters(filters: iFilter[], field: iField, expressi
             const index = filters.findIndex((el: iFilter) => el.filterId === tempFilter.filterId)
             if (index === -1) {
                 selectedQuery.filters.splice(i, 1)
-                // removeInPlace(expression, '$F{' + tempFilter.filterId + '}')
             }
         }
     }
