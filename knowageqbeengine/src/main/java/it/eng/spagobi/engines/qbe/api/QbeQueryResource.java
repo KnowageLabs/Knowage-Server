@@ -1,6 +1,7 @@
 package it.eng.spagobi.engines.qbe.api;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,8 +42,11 @@ import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.HavingField;
+import it.eng.qbe.query.HavingField.Operand;
 import it.eng.qbe.query.IQueryField;
+import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.TimeAggregationHandler;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.filters.SqlFilterModelAccessModality;
@@ -195,6 +199,8 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			addParameters(pars);
 
 			query = getQueryFromJson(id, query, jsonEncodedReq);
+
+			validateQuery(query);
 
 			SqlFilterModelAccessModality sqlModality = new SqlFilterModelAccessModality();
 			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
@@ -595,6 +601,52 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		JSONDataWriter dataSetWriter = new JSONDataWriter();
 		JSONObject gridDataFeed = (JSONObject) dataSetWriter.write(dataStore);
 		return gridDataFeed;
+	}
+
+	private void validateQuery(Query query) {
+		validateHavingClauses(query);
+	}
+
+	private void validateHavingClauses(Query query) {
+		List<HavingField> havingFields = query.getHavingFields();
+
+		for (HavingField havingField : havingFields) {
+
+			Operand leftOperand = havingField.getLeftOperand();
+			Operand rightOperand = havingField.getRightOperand();
+
+			String fieldName = leftOperand.values[0];
+
+			int selectFieldIndex = query.getSelectFieldIndex(fieldName);
+			ISelectField selectedField = query.getSelectFieldByIndex(selectFieldIndex);
+
+			boolean simpleField = selectedField.isSimpleField();
+
+			if (simpleField) {
+				SimpleSelectField ssf = (SimpleSelectField) selectedField;
+
+				Class<?> javaClass = ssf.getJavaClass();
+
+				if (rightOperand.isStaticContent() && BigDecimal.class.equals(javaClass)) {
+
+					String[] values = rightOperand.values;
+
+					for (String value : values) {
+						try {
+							checkValueForBigDecimal(value);
+						} catch (Exception e) {
+							throw new SpagoBIRuntimeException("The value " + value + " for the having clause is not valid");
+						}
+					}
+
+				}
+			}
+
+		}
+	}
+
+	private void checkValueForBigDecimal(String value) {
+		BigDecimal bg = new BigDecimal(value);
 	}
 
 	private void addParameters(JSONArray parsListJSON) {
