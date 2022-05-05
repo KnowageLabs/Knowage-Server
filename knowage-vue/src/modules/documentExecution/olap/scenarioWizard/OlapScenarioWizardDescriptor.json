@@ -1,0 +1,31 @@
+{
+    "newVariable": {
+        "name": "",
+        "value": ""
+    },
+    "scenarioTemplate": {
+        "MEASURE": [],
+        "VARIABLE": [],
+        "editCube": "",
+        "name": "scenario"
+    },
+    "style": {
+        "columnStyle": {
+            "height": "25px"
+        },
+        "dialog": {
+            "width": "60%"
+        },
+        "iconColumn": {
+            "flex-basis": "15px",
+            "flex-grow": "0"
+        },
+        "spinner": {
+            "background": "rgb(0 0 0 / 25%)",
+            "height": "100%",
+            "position": "absolute",
+            "width": "100%",
+            "z-index": "9999"
+        }
+    }
+}

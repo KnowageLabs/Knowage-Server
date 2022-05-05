@@ -35,6 +35,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.qbe.logger.QueryAuditLogger;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.HavingField;
@@ -77,8 +78,8 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 	public static final String AMBIGUOUS_FIELDS_PATHS = "ambiguousFieldsPaths";
 
 	/** Logger component. */
-	public static transient Logger logger = Logger.getLogger(ExecuteQueryAction.class);
-	public static transient Logger auditlogger = Logger.getLogger("audit.query");
+	protected static final Logger logger = Logger.getLogger(ExecuteQueryAction.class);
+	protected static final Logger auditlogger = QueryAuditLogger.LOGGER;
 
 	@Override
 	public void service(SourceBean request, SourceBean response) {

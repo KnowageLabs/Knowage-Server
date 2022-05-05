@@ -115,9 +115,11 @@ class PerUserBe2BeRequestCustomizer implements RestTemplateRequestCustomizer<Cli
 	public void customize(ClientHttpRequest request) {
 		String authorizationHeaderName = ConfigSingleton.getInstance().getAuthorizationHeaderName();
 		String userToken = brc.getUserToken();
+		String correlationId = brc.getCorrelationId().toString();
 		HttpHeaders headers = request.getHeaders();
 
 		headers.add(authorizationHeaderName, userToken);
+		headers.add("X-Kn-Correlation-Id", correlationId);
 
 		// TODO : Add kn.lang cookie
 	}

@@ -82,7 +82,7 @@ public class KnowageApiConfiguration {
 		FilterRegistrationBean<JWTSecurityFilter> filter = new FilterRegistrationBean<>();
 
 		filter.setFilter(new JWTSecurityFilter(securityServiceService, businessRequestContext, ctx));
-		filter.setOrder(2);
+		filter.setOrder(10);
 
 		/*
 		 * Add all filter's patterns here.

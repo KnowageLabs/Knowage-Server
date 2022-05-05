@@ -4,28 +4,28 @@
             "field": "start",
             "header": "managers.workspaceManagement.dataPreparation.monitoring.start",
             "style": {
-                "width": "30%"
+                "width": "35%"
             }
         },
         {
             "field": "stop",
             "header": "managers.workspaceManagement.dataPreparation.monitoring.stop",
             "style": {
-                "width": "30%"
+                "width": "35%"
             }
         },
         {
             "field": "status",
             "header": "managers.workspaceManagement.dataPreparation.monitoring.status",
             "style": {
-                "width": "15%"
+                "width": "10%"
             }
         },
         {
             "field": "recordsNumber",
             "header": "managers.workspaceManagement.dataPreparation.monitoring.recordsNumber",
             "style": {
-                "width": "15%"
+                "width": "10%"
             }
         }
     ],

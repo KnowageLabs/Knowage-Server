@@ -11,6 +11,23 @@
 	<display-name>knowagebirtreportengine</display-name>
 	<description>Knowage BIRT Report Engine</description>
 
+	<!-- 
+		Logger Setup Filter.
+		
+		Set the logger according the HTTP request data.
+	 -->
+	<filter>
+		<filter-name>LoggerSetupFilter</filter-name>
+		<filter-class>it.eng.knowage.utils.filters.LoggerSetupFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>LoggerSetupFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+
 	<!-- Default locale setting. -->
 	<context-param>
 		<param-name>BIRT_VIEWER_LOCALE</param-name>
@@ -166,11 +183,6 @@
 	</context-param>
 
 	<filter>
-		<filter-name>LogTenantFilter</filter-name>
-		<filter-class>it.eng.knowage.utils.filters.LogTenantFilter</filter-class>
-	</filter>
-	
-	<filter>
 		<filter-name>EncodingFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
 		<init-param>
@@ -179,12 +191,6 @@
 		</init-param>
 	</filter>
 
-	<filter-mapping>
-		<filter-name>LogTenantFilter</filter-name>
-		<dispatcher>REQUEST</dispatcher>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
 		<url-pattern>/BirtReportServlet</url-pattern>

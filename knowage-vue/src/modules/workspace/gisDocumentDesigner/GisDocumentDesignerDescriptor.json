@@ -1,0 +1,51 @@
+{
+    "newGisTemplate": {
+        "allLayers": [],
+        "analitycalFilter": [],
+        "dataSetId": null,
+        "datasetJoinColumns": [],
+        "datasetLabel": "",
+        "datasetMeasures": [],
+        "documentDesc": "",
+        "documentLabel": "",
+        "dsJoins": [],
+        "filters": [],
+        "indicators": [],
+        "layerJoinColumns": [],
+        "selectedDataset": [],
+        "selectedDriver": [],
+        "selectedLayer": [],
+        "visibilityData": {
+            "crossNavigation": false,
+            "crossNavigationMultiselect": true,
+            "visibilityControls": {
+                "showBaseLayer": true,
+                "showDistanceCalculator": true,
+                "showDownloadButton": true,
+                "showLayer": true,
+                "showLegendButton": true,
+                "showMapConfig": true,
+                "showRightConfigMenu": true,
+                "showSelectMode": true
+            }
+        }
+    },
+    "style": {
+        "absoluteScroll": {
+            "height": "100%",
+            "left": 0,
+            "overflow-x": "hidden",
+            "overflow-y": "auto",
+            "position": "absolute",
+            "top": 0,
+            "width": "100%"
+        },
+        "dialogSize": {
+            "width": "80%"
+        },
+        "trashColumn": {
+            "text-align": "end",
+            "width": "15%"
+        }
+    }
+}

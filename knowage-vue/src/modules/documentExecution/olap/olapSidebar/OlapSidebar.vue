@@ -11,7 +11,7 @@
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.drillOnDimension') }}</label>
                 <SelectButton class="p-mt-2" v-model="drillOn" :options="olapSidebarDescriptor.drillOnOptions" @click="$emit('drillTypeChanged', drillOn)"></SelectButton>
             </div>
-            <div v-if="!olapDesignerMode" class="kn-flex">
+            <div v-if="!olapDesignerMode" class="kn-flex-0">
                 <div class="p-d-flex p-flex-column p-my-3">
                     <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.drillOnData') }}</label>
                     <Button
@@ -87,6 +87,33 @@
                 </div>
             </div>
 
+            <div v-if="olapHasScenario && !olapDesignerMode" id="whatif-container" class="kn-flex">
+                <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.whatIfTitle') }}</label>
+                <div class="p-grid p-mt-1">
+                    <div v-if="olapLocked" class="p-col-4">
+                        <Button :icon="olapLocked ? 'fas fa-lock-open' : 'fas fa-lock'" class="p-button-plain kn-button--secondary" v-tooltip.top="olapLocked ? $t('documentExecution.olap.sidebar.unlockSchema') : $t('documentExecution.olap.sidebar.lockSchema')" @click="changeLock" />
+                    </div>
+                    <div v-if="olapLocked" class="p-col-4">
+                        <Button icon="fa-solid fa-floppy-disk" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.saveAsNewVersion')" :disabled="!isButtonVisible('BUTTON_SAVE_SUBOBJECT')" @click="$emit('showSaveAsNewVersion')" />
+                    </div>
+                    <div v-if="olapLocked" class="p-col-4">
+                        <Button icon="fa-solid fa-rotate-left" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.undo')" :disabled="!isButtonVisible('BUTTON_UNDO')" @click="$emit('undo')" />
+                    </div>
+                    <div v-if="olapLocked" class="p-col-4">
+                        <Button icon="fa-solid fa-trash" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.deleteVersions')" :disabled="!isButtonVisible('BUTTON_VERSION_MANAGER')" @click="$emit('showDeleteVersions')" />
+                    </div>
+                    <div class="p-col-4">
+                        <Button icon="fa-solid fa-share-from-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.outputWizard')" :disabled="!isButtonVisible('BUTTON_EXPORT_OUTPUT')" @click="$emit('showOutputWizard')" />
+                    </div>
+                    <div class="p-col-4">
+                        <Button icon="fa-solid fa-file-excel" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.excel')" :disabled="!isButtonVisible('BUTTON_EDITABLE_EXCEL_EXPORT')" @click="$emit('exportExcel')" />
+                    </div>
+                    <div v-if="olapLocked" class="p-col-4">
+                        <Button icon="fa-solid fa-network-wired" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.alg')" :disabled="!isButtonVisible('BUTTON_ALGORITHMS')" @click="$emit('showAlgorithmDialog')" />
+                    </div>
+                </div>
+            </div>
+
             <div v-if="olapDesignerMode" class="kn-flex p-mt-3">
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.templateEditing') }}</label>
                 <div class="p-grid p-mt-1">
@@ -96,15 +123,18 @@
                     <!-- <div class="p-col-4">
                         <Button icon="fas fa-book-open" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureTablePagination')" />
                     </div> -->
+                    <div v-if="whatIfMode" class="p-col-4">
+                        <Button icon="fa-solid fa-note-sticky" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" @click="$emit('showScenarioWizard')" />
+                    </div>
                     <div class="p-col-4">
                         <Button icon="fas fa-arrow-right" class="p-button-plain kn-button--secondary" :class="{ 'olap-sidebar-button-active': crossNavigation }" v-tooltip.top="$t('documentExecution.olap.sidebar.defineCrossNavigation')" @click="$emit('openCrossNavigationDefinitionDialog')" />
                     </div>
                     <div class="p-col-4">
                         <Button icon="far fa-check-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureButtonsVisiblity')" @click="$emit('openButtonWizardDialog')" />
                     </div>
-                    <!-- <div class="p-col-4">
+                    <div class="p-col-4">
                         <Button icon="fas fa-calculator" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.calculatedField')" />
-                    </div> -->
+                    </div>
                 </div>
             </div>
 
@@ -118,13 +148,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
 import olapSidebarDescriptor from './OlapSidebarDescriptor.json'
 import SelectButton from 'primevue/selectbutton'
 
 export default defineComponent({
     name: 'olap-sidebar',
     components: { SelectButton },
-    props: { olap: { type: Object }, olapDesignerMode: { type: Boolean }, propButtons: { type: Array } },
+    props: { olap: { type: Object }, olapDesignerMode: { type: Boolean }, propButtons: { type: Array }, whatIfMode: { type: Boolean }, olapHasScenario: { type: Boolean } },
     emits: [
         'openCustomViewDialog',
         'drillTypeChanged',
@@ -139,7 +170,15 @@ export default defineComponent({
         'openCrossNavigationDefinitionDialog',
         'openButtonWizardDialog',
         'drillThroughChanged',
-        'saveOlapDesigner'
+        'saveOlapDesigner',
+        'showOutputWizard',
+        'showScenarioWizard',
+        'showSaveAsNewVersion',
+        'undo',
+        'showAlgorithmDialog',
+        'showDeleteVersions',
+        'loading',
+        'exportExcel'
     ],
     data() {
         return {
@@ -152,7 +191,8 @@ export default defineComponent({
             suppressEmpty: false,
             showProperties: false,
             crossNavigation: false,
-            mode: 'designer'
+            mode: 'designer',
+            olapLocked: false
         }
     },
     watch: {
@@ -187,6 +227,7 @@ export default defineComponent({
                 this.suppressEmpty = this.olap.modelConfig.suppressEmpty
                 this.showProperties = this.olap.modelConfig.showProperties
                 this.crossNavigation = this.olap.modelConfig?.crossNavigation?.buttonClicked
+                this.olapLocked = this.olap.modelConfig?.status === 'locked_by_user'
             }
         },
         onDrillThroughClick() {
@@ -215,6 +256,22 @@ export default defineComponent({
         },
         closeOlapDesigner() {
             this.$router.push('/document-browser')
+        },
+        async changeLock() {
+            if (!this.olap) return
+            this.$emit('loading', true)
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/locker/${this.olap.modelConfig.artifactId}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
+                .then((response: AxiosResponse<any>) => {
+                    if ((response.data.status === 'unlocked' || response.data.status === 'locked_by_user') && this.olap) {
+                        this.$store.commit('setInfo', {
+                            msg: this.$t('common.toast.success')
+                        })
+                        this.olapLocked = response.data.status === 'locked_by_user'
+                    }
+                })
+                .catch(() => {})
+            this.$emit('loading', false)
         }
     }
 })

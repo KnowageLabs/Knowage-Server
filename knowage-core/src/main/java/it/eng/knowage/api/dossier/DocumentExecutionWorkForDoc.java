@@ -398,7 +398,7 @@ public class DocumentExecutionWorkForDoc extends DossierExecutionClient implemen
 					}
 				}
 				paramMap.put(paramName, value);
-				if (!found) {
+				if (!found && biObjectParameter.isRequired()) {
 					throw new SpagoBIRuntimeException("There is no match between document parameters and template parameters.");
 				}
 			}

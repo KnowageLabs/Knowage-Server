@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="document-details-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+    <Dialog class="document-details-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="true" :modal="false" :closable="false" :draggable="false" position="right" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -7,7 +7,7 @@
                 </template>
                 <template #end>
                     <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || v$.$invalid" />
-                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('closeDetails')" />
+                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDocument" />
                 </template>
             </Toolbar>
         </template>
@@ -23,7 +23,6 @@
                         v-if="!loading"
                         :selectedDocument="selectedDocument"
                         :availableFolders="availableFolders"
-                        :selectedFolder="selectedFolder"
                         :documentTypes="types"
                         :documentEngines="engines"
                         :availableDatasources="dataSources"
@@ -93,13 +92,15 @@ import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute
 export default defineComponent({
     name: 'document-details',
     components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, TabView, TabPanel, Dialog, Badge, ProgressSpinner },
-    props: { docId: { type: Number, required: true }, selectedFolder: { type: Object, required: true }, visible: { type: Boolean, required: false } },
+    props: {},
     emits: ['closeDetails'],
     data() {
         return {
             v$: useValidate() as any,
             mainDescriptor,
             loading: false,
+            docId: null as any,
+            folderId: null as any,
             templateToUpload: null as any,
             imageToUpload: null as any,
             selectedDataset: {} as any,
@@ -134,16 +135,20 @@ export default defineComponent({
         }
     },
     async created() {
+        this.isForEdit()
         await this.loadPage(this.docId)
     },
     methods: {
+        isForEdit() {
+            this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
+        },
         //#region ===================== Get Persistent Data ====================================================
         async loadPage(id) {
             this.loading = true
             await Promise.all([
                 await this.getSelectedDocumentById(id),
-                this.getAnalyticalDrivers(),
                 this.getFunctionalities(),
+                this.getAnalyticalDrivers(),
                 this.getDatasources(),
                 this.getDocumentDrivers(),
                 this.getTemplates(),
@@ -164,11 +169,16 @@ export default defineComponent({
             } else {
                 this.selectedDocument = { ...this.mainDescriptor.newDocument }
                 this.selectedDocument.functionalities = []
-                this.selectedDocument.functionalities.push(this.selectedFolder.path)
             }
         },
         async getFunctionalities() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders?includeDocs=false`).then((response: AxiosResponse<any>) => (this.availableFolders = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders?includeDocs=false`).then((response: AxiosResponse<any>) => {
+                this.availableFolders = response.data
+                if (this.$route.params.folderId) {
+                    let sourceFolder = this.availableFolders.find((folder) => folder.id == parseInt(this.folderId)) as iFolder
+                    this.selectedDocument.functionalities.push(sourceFolder.path)
+                }
+            })
         },
         async getAnalyticalDrivers() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers`).then((response: AxiosResponse<any>) => (this.analyticalDrivers = response.data))
@@ -325,10 +335,16 @@ export default defineComponent({
                     await this.uploadImage(this.imageToUpload, response.data.id)
                     this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
                     setTimeout(() => {
+                        const path = `/document-details/${response.data.id}`
+                        !this.selectedDocument.id ? this.$router.push(path) : ''
                         this.loadPage(response.data.id)
                     }, 200)
                 })
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
+        },
+        closeDocument() {
+            const path = `/document-browser`
+            this.$router.push(path)
         }
     }
 })

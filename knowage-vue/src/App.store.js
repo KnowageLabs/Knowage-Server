@@ -68,6 +68,8 @@ const store = createStore({
         setLoading(state, loading) {
             if (loading) state.loading++
             else state.loading--
+
+            if (state.loading < 0) state.loading = 0
         },
         setWarning(state, warning) {
             state.warning = warning
