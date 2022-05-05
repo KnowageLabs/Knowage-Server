@@ -1923,6 +1923,7 @@
             "zipMailDocument": "Send zipped file?"
         },
         "scorecards": {
+            "scorecardDesigner": "Scorecard Designer",
             "title": "Scorecard List"
         },
         "templatePruning": {

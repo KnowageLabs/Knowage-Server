@@ -1,1 +1,6 @@
-{}
+{
+    "globalFilterFields": ["name", "author"],
+    "iconColumnStyle": {
+        "text-align": "end"
+    }
+}
