@@ -32,6 +32,7 @@ import layersManagementRoutes from '@/modules/managers/layersManagement/LayersMa
 import timespanRoutes from '@/modules/managers/timespan/Timespan.routes.js'
 import calendarManagementRoutes from '@/modules/managers/calendarManagement/CalendarManagement.routes.js'
 import hierarchyManagementRoutes from '@/modules/managers/hierarchyManagement/HierarchyManagement.routes.js'
+import scorecardsRoutes from '@/modules/managers/scorecards/Scorecards.routes.js'
 
 const baseRoutes = []
 
@@ -70,5 +71,6 @@ const routes = baseRoutes
     .concat(timespanRoutes)
     .concat(calendarManagementRoutes)
     .concat(hierarchyManagementRoutes)
+    .concat(scorecardsRoutes)
 
 export default routes

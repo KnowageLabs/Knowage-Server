@@ -1922,6 +1922,9 @@
             "zipFileName": "Zip file name",
             "zipMailDocument": "Send zipped file?"
         },
+        "scorecards": {
+            "title": "Scorecard List"
+        },
         "templatePruning": {
             "documentSelection": "Document Selection",
             "documentSelectionMessage": "Select the documents you want to delete whose template is older than the date entered above",
