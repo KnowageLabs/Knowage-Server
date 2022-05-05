@@ -29,7 +29,7 @@
             </Column>
             <Column field="defaultValue" :header="$t('managers.driversManagement.useModes.defaultValue')" :sortable="true">
                 <template #body="{data}">
-                    <InputText class="kn-material-input" v-model="data.defaultValue" />
+                    <InputText class="kn-material-input" v-model="data.defaultValue" @change="onDefaultValueChange(data)" />
                 </template>
             </Column>
             <Column field="multiValue" :header="$t('managers.profileAttributesManagement.form.multiValue')" :sortable="true">
@@ -49,7 +49,7 @@
 
         <template #footer>
             <Button class="kn-button kn-button--secondary" @click="cancelChanges"> {{ $t('common.cancel') }}</Button>
-            <Button class="kn-button kn-button--primary" :disabled="hasDuplicates" @click="$emit('close')"> {{ $t('common.save') }}</Button>
+            <Button class="kn-button kn-button--primary" :disabled="hasDuplicates" @click="saveParameters"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -69,7 +69,7 @@ export default defineComponent({
     name: 'olap-custom-view-save-dialog',
     components: { KnFabButton, Dialog, Message, Dropdown, DataTable, Column, Checkbox },
     props: { propDataset: { type: Object, required: true }, visible: Boolean },
-    emits: ['close'],
+    emits: ['close', 'save'],
     computed: {
         hasDuplicates(): any {
             var hasDuplicate = false
@@ -142,6 +142,18 @@ export default defineComponent({
         cancelChanges() {
             this.dataset.pars = JSON.parse(JSON.stringify(this.initialParsState))
             this.$emit('close')
+        },
+        onDefaultValueChange(parameter: any) {
+            parameter.defaultValueChanged = true
+        },
+        saveParameters() {
+            this.dataset.pars?.forEach((parameter: any) => {
+                if (parameter.defaultValueChanged) {
+                    delete parameter.value
+                    delete parameter.defaultValueChanged
+                }
+            })
+            this.$emit('save')
         }
     }
 })

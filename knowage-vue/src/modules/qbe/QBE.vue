@@ -111,7 +111,7 @@
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="uniqueID" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery?.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
-        <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
+        <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" @save="onParametersSave" />
         <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" :entities="selectedQuery?.fields" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false" @save="onAdvancedFiltersSave"></QBEAdvancedFilterDialog>
         <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" @datasetSaved="$emit('datasetSaved')" />
@@ -129,6 +129,7 @@ import { iQBE, iQuery, iField, iQueryResult, iFilter } from './QBE'
 import { onFiltersSaveCallback } from './QBEFilterService'
 import { formatDrivers } from './QBEDriversService'
 import { onHavingsSaveCallback } from './QBEHavingsService'
+import { removeInPlace } from './qbeDialogs/qbeAdvancedFilterDialog/treeService'
 import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
@@ -150,6 +151,7 @@ import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSi
 import QBEPreviewDialog from './qbeDialogs/qbePreviewDialog/QBEPreviewDialog.vue'
 import qbeDescriptor from './QBEDescriptor.json'
 import ProgressSpinner from 'primevue/progressspinner'
+
 const crypto = require('crypto')
 
 export default defineComponent({
@@ -338,7 +340,6 @@ export default defineComponent({
                     parameters[parameter.urlName] = [{ value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription }]
                 }
             })
-            console.log('END PARAMS', parameters)
             return parameters
         },
         async loadCustomizedDatasetFunctions() {
@@ -726,6 +727,22 @@ export default defineComponent({
                 return field.uniqueID === uniqueID
             })
             this.selectedQuery.fields.splice(indexOfFieldToDelete, 1)
+            this.updateSmartView()
+        },
+        onParametersSave() {
+            this.paramDialogVisible = false
+
+            for (let i = this.selectedQuery.filters.length - 1; i >= 0; i--) {
+                if (this.selectedQuery.filters[i].rightType === 'parameter') {
+                    const index = this.qbe?.pars.findIndex((parameter: any) => parameter.name === this.selectedQuery.filters[i].paramName)
+                    if (index === -1) {
+                        removeInPlace(this.selectedQuery.expression, '$F{' + this.selectedQuery.filters[i].filterId + '}')
+                        this.selectedQuery.filters.splice(index, 1)
+                    }
+                }
+            }
+
+            if (this.selectedQuery.expression.childNodes?.length === 0) this.selectedQuery.expression = {}
             this.updateSmartView()
         }
     }
