@@ -1450,7 +1450,7 @@
         "formula": "Formula",
         "glossary": "Glossary",
         "glossaryHint": "Edit the input to change the glossary name",
-        "help": "Select a Glossary from the combo box to show its word hierarchy structure or type a name to create a new one. You can edit it by adding nodes or by dropping words from the right side list",
+        "help": "Select a Glossary from the combo box to show its word hierarchy structure. You can edit it by adding nodes or by dropping words from the right side list",
         "hint": "The Glossary definition page allows you to create glossary to identify a set of words to apply in different documents and datasets. It's also possible to create a word hierarchy for each glossary. Select one existing item from the dropdown, or press the \"+\" button to add one.",
         "newNode": "New node",
         "saveTitle": "New glossary",

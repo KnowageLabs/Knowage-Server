@@ -1,11 +1,10 @@
-package it.eng.knowage.utils.filters;
+package it.eng.knowage.boot.filter;
 
 import java.io.IOException;
 import java.util.UUID;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -15,7 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
+import it.eng.knowage.boot.context.BusinessRequestContext;
+
+@Component
+@Order(3)
 public class LoggerSetupFilter implements Filter {
 
 	private static final Logger LOGGER = LogManager.getLogger(LoggerSetupFilter.class);
@@ -26,10 +32,8 @@ public class LoggerSetupFilter implements Filter {
 	private static final String THREAD_CONTEXT_KEY_CORRELATION_ID = "correlationId";
 	private static final String THREAD_CONTEXT_KEY_ENVIRONMENT = "environment";
 
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-
-	}
+	@Autowired
+	private BusinessRequestContext businessRequestContext;
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -79,8 +83,9 @@ public class LoggerSetupFilter implements Filter {
 
 		try {
 			uuid = UUID.fromString(header);
+			businessRequestContext.setCorrelationId(uuid);
 		} catch (Exception e) {
-			uuid = UUID.randomUUID();
+			uuid = businessRequestContext.getCorrelationId();
 			LOGGER.debug("Invalid correlation id value: " + header + ". We will use: " + uuid);
 		}
 
@@ -97,11 +102,6 @@ public class LoggerSetupFilter implements Filter {
 
 	private void postDoFilterForCorrelationId() {
 		ThreadContext.remove(THREAD_CONTEXT_KEY_CORRELATION_ID);
-	}
-
-	@Override
-	public void destroy() {
-
 	}
 
 }
