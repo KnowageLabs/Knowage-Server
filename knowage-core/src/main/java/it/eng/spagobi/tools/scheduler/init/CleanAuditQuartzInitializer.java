@@ -80,7 +80,7 @@ public class CleanAuditQuartzInitializer implements InitializerIFace {
 				logger.debug("Added job with name " + DEFAULT_JOB_NAME);
 			}
 
-			String cronExpression = PredefinedCronExpression.EVERY_10_MINS.getExpression();
+			String cronExpression = PredefinedCronExpression.DAILY.getExpression();
 			schedulerDAO.deleteTrigger(DEFAULT_TRIGGER_NAME, Scheduler.DEFAULT_GROUP);
 
 			String nameTrig = DEFAULT_TRIGGER_NAME;
