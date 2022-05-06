@@ -45,9 +45,6 @@
                                 @click="onShowParentMemberClick"
                             />
                         </div>
-                        <!-- <div class="p-col-4">
-                            <Button icon="fas fa-calculator" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.calculatedFieldWizard')" v-if="isButtonVisible('BUTTON_CC')" />
-                        </div> -->
                         <div class="p-col-4">
                             <Button icon="fas fa-eye-slash" class="p-button-plain kn-button--secondary" :class="{ 'olap-sidebar-button-active': hideSpans }" v-tooltip.top="$t('documentExecution.olap.sidebar.hideSpans')" v-if="isButtonVisible('BUTTON_HIDE_SPANS')" @click="onHideSpansClick" />
                         </div>
