@@ -8,7 +8,7 @@
                         <Button v-if="row.hierarchies.length > 1" icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" @click="$emit('showMultiHierarchy', row)" />
                         <div class="olap-rotate-text kn-flex kn-truncated" :class="{ 'p-mt-2': row.hierarchies.length == 1 }" v-tooltip.right="row.caption" flex>{{ cutName(row.caption, 0, row.hierarchies.length > 1) }}</div>
                         <div id="whitespace" class="p-mt-auto" :style="toolbarDescriptor.style.whitespaceLeft" />
-                        <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain p-mt-auto p-m-0" :style="toolbarDescriptor.style.whiteColor" :disabled="true" />
+                        <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain p-mt-auto p-m-0" :style="toolbarDescriptor.style.whiteColor" @click="openFilterDialog(row)" />
                     </div>
                     <i v-if="row.positionInAxis < rows.length - 1" class="fas fa-arrows-alt-v p-my-2" style="cursor:pointer" @click="$emit('switchPosition', row)" />
                 </div>
@@ -27,7 +27,7 @@ import toolbarDescriptor from './OlapFilterToolbarDescriptor.json'
 export default defineComponent({
     components: {},
     props: { olapProp: { type: Object, required: true } },
-    emits: ['openSidebar', 'putFilterOnAxis', 'switchPosition', 'showMultiHierarchy'],
+    emits: ['openSidebar', 'putFilterOnAxis', 'switchPosition', 'showMultiHierarchy', 'openFilterDialog'],
     data() {
         return {
             toolbarDescriptor,
@@ -117,6 +117,9 @@ export default defineComponent({
             this.scrollContainerHeight = this.$refs?.filterPanelContainer?.clientHeight
             // @ts-ignore
             this.scrollContentHeight = this.$refs?.filterItemsContainer?.scrollHeight
+        },
+        openFilterDialog(filter: any) {
+            this.$emit('openFilterDialog', { filter: filter, type: 'visible' })
         }
     }
 })

@@ -1,13 +1,32 @@
 <template>
     <div class="kn-page kn-data-preparation">
-        <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" :readOnly="readOnly" @update:readOnly="updateReadOnly" v-model:template="selectedTransformation" />
+        <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" :readOnly="readOnly" @update:readOnly="updateReadOnly" v-model:template="selectedTransformation" :valid="cfType !== ''">
+            <template #additionalInputs>
+                <div class="p-col-4">
+                    <span v-if="cfDescriptor.availableTypes" class="p-float-label p-field p-ml-2 kn-flex">
+                        <Dropdown
+                            v-model="cfType"
+                            :options="cfDescriptor.availableTypes"
+                            :disabled="readOnly"
+                            class="kn-material-input"
+                            optionLabel="label"
+                            optionValue="code"
+                            :class="{
+                                'p-invalid': !cfType
+                            }"
+                        />
+                        <label class="kn-material-input-label"> {{ $t('components.knCalculatedField.type') }} </label>
+                    </span>
+                </div>
+            </template>
+        </KnCalculatedField>
         <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" :readOnly="readOnly" @update:readOnly="updateReadOnly" />
         <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" :instanceId="instanceId" @update:instanceId="updateInstanceId" :processId="processId" @update:processId="updateprocessId" :preparedDsMeta="preparedDsMeta" />
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
             <template #start> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }})</template>
             <template #end>
-                <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.refresh')" @click="refreshOriginalDataset" />
-                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDataset" />
+                <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.refresh')" @click="refreshOriginalDataset" :disabled="loading > 0" />
+                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDataset" :disabled="loading > 0" />
                 <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeTemplate()" /> </template
         ></Toolbar>
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0 toolbarCustomConfig">
@@ -27,8 +46,13 @@
                 </div>
             </template>
         </Toolbar>
-        <Divider class="kn-divider" />
-        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading > 0" />
+        <template v-if="loading > 0">
+            <template v-if="progressMode === 'indeterminate'">
+                <ProgressBar class="kn-progress-bar" :mode="progressMode" :value="getProgressValue()" />
+            </template>
+            <template v-else><ProgressBar class="kn-progress-bar" :value="getProgressValue()" /> </template>
+        </template>
+        <Divider class="kn-divider dividerCustomConfig" />
         <div class="kn-page-content p-grid p-m-0 managerDetail">
             <Sidebar v-model:visible="visibleRight" position="right" class="kn-data-preparation-sidenav">
                 <div class="info-container">
@@ -44,14 +68,14 @@
                 <Divider class="p-m-0 p-p-0 dividerCustomConfig" />
                 <div class="kn-truncated">{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</div>
 
-                <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="dataset.config.transformations" optionLabel="type" listStyle="max-height:200px"
+                <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="reverseTransformations()" optionLabel="type" listStyle="max-height:200px"
                     ><template #option="slotProps">
                         <div class="p-text-uppercase kn-list-item transformationSidebarElement">
                             <div v-if="slotProps.option.type != 'calculatedField'">{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].columns[0] }}</div>
                             <div v-else>{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].colName }}</div>
                             <div>
                                 <Button v-if="slotProps.option.type != 'trim' && slotProps.option.type != 'drop'" icon="fas fa-eye" :class="descriptor.css.buttonClassHeader" @click="openTransformationDetail(slotProps.option)" v-tooltip="$t('common.preview')" />
-                                <Button v-if="slotProps.index == dataset.config.transformations.length - 1" icon="p-jc-end pi pi-trash" :class="descriptor.css.buttonClassHeader" @click="deleteTransformation()" v-tooltip="$t('common.delete')" />
+                                <Button v-if="slotProps.index == 0" icon="p-jc-end pi pi-trash" :class="descriptor.css.buttonClassHeader" @click="deleteTransformation()" v-tooltip="$t('common.delete')" :disabled="loading > 0" />
                             </div>
                         </div> </template
                 ></Listbox>
@@ -105,7 +129,11 @@
                                     <i v-else :class="item.icon"></i> <span class="p-ml-2"> {{ $t(item.label) }}</span>
                                 </span>
                             </template>
-                        </Menu>
+                        </Menu> </template
+                    ><template #body="{data}">
+                        <span v-if="col.Type.toLowerCase().includes('time')"> {{ getFormattedDate(data[col.header], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'} ) }}</span>
+                        <span v-else-if="col.Type.toLowerCase().includes('date')"> {{ getFormattedDate(data[col.header], { year: 'numeric', month: '2-digit', day: '2-digit'}) }}</span>
+                        <span v-else> {{ data[col.header] }}</span>
                     </template></Column
                 >
             </DataTable>
@@ -114,554 +142,593 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+    import { defineComponent, PropType } from 'vue'
 
-import { AxiosResponse } from 'axios'
-import Badge from 'primevue/badge'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import DataPreparationDescriptor from './DataPreparationDescriptor.json'
-import Divider from 'primevue/divider'
-import Dropdown from 'primevue/dropdown'
-import Sidebar from 'primevue/sidebar'
-import OverlayPanel from 'primevue/overlaypanel'
-import Listbox from 'primevue/listbox'
+    import { AxiosResponse } from 'axios'
+    import Badge from 'primevue/badge'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import DataPreparationDescriptor from './DataPreparationDescriptor.json'
+    import Divider from 'primevue/divider'
+    import Dropdown from 'primevue/dropdown'
+    import Sidebar from 'primevue/sidebar'
+    import OverlayPanel from 'primevue/overlaypanel'
+    import Listbox from 'primevue/listbox'
 
-import Menu from 'primevue/menu'
+    import Menu from 'primevue/menu'
 
-import DataPreparationDialog from '@/modules/workspace/dataPreparation/DataPreparationDialog.vue'
-import DataPreparationSaveDialog from '@/modules/workspace/dataPreparation/DataPreparationSaveDialog.vue'
-import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
-import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
-import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
-import DataPreparationSplitDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationSplitDescriptor.json'
-import calculatedFieldDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCalculatedField.json'
+    import DataPreparationDialog from '@/modules/workspace/dataPreparation/DataPreparationDialog.vue'
+    import DataPreparationSaveDialog from '@/modules/workspace/dataPreparation/DataPreparationSaveDialog.vue'
+    import { IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
+    import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
+    import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
+    import DataPreparationSplitDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationSplitDescriptor.json'
+    import calculatedFieldDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCalculatedFieldDescriptor.json'
 
-import { Client } from '@stomp/stompjs'
+    import { Client } from '@stomp/stompjs'
+    import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 
-export default defineComponent({
-    name: 'data-preparation-detail',
-    props: {
-        id: String,
-        transformations: Array as PropType<any[]>,
-        existingProcessId: String,
-        existingInstanceId: String,
-        existingDataset: String
-    },
-    components: { Listbox, KnCalculatedField, Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
+    export default defineComponent({
+        name: 'data-preparation-detail',
+        props: {
+            id: String,
+            transformations: Array as PropType<any[]>,
+            existingProcessId: String,
+            existingInstanceId: String,
+            existingDataset: String
+        },
+        components: { Listbox, KnCalculatedField, Badge, Column, DataPreparationDialog, DataPreparationSaveDialog, DataTable, Divider, Dropdown, OverlayPanel, Sidebar, Menu },
 
-    data() {
-        return {
-            descriptor: DataPreparationDescriptor,
-            loading: 0,
-            datasetData: Array<any>(),
-            displayDataPreparationDialog: false as boolean,
-            selectedProduct: null,
-            visibleRight: false as boolean,
-            visibility: false as boolean,
-            selectedTransformation: null,
-            showSaveDialog: false as boolean,
-            showCFDialog: false as boolean,
-            columns: [] as IDataPreparationColumn[],
-            col: null,
-            descriptorTransformations: Array<any>(),
-            dataset: {} as any,
-            simpleDescriptor: DataPreparationSimpleDescriptor,
-            splitDescriptor: DataPreparationSplitDescriptor,
-            client: {} as any,
-            cfDescriptor: calculatedFieldDescriptor,
-            instanceId: '' as string,
-            processId: '' as string,
-            readOnly: false as boolean,
-            preparedDsMeta: {}
-        }
-    },
+        data() {
+            return {
+                descriptor: DataPreparationDescriptor,
+                loading: 0,
+                datasetData: Array<any>(),
+                displayDataPreparationDialog: false as boolean,
+                selectedProduct: null,
+                visibleRight: false as boolean,
+                visibility: false as boolean,
+                selectedTransformation: null,
+                showSaveDialog: false as boolean,
+                showCFDialog: false as boolean,
+                columns: [] as IDataPreparationColumn[],
+                col: null,
+                descriptorTransformations: Array<any>(),
+                dataset: {} as any,
+                simpleDescriptor: DataPreparationSimpleDescriptor,
+                splitDescriptor: DataPreparationSplitDescriptor,
+                client: {} as any,
+                cfDescriptor: calculatedFieldDescriptor,
+                instanceId: '' as string,
+                processId: '' as string,
+                readOnly: false as boolean,
+                preparedDsMeta: {},
+                progressMode: 'indeterminate',
+                cfType: ''
+            }
+        },
 
-    async created() {
-        this.loading++
-        this.descriptorTransformations = Object.assign([], this.descriptor.transformations)
+        async created() {
+            this.loading++
+            this.descriptorTransformations = Object.assign([], this.descriptor.transformations)
 
-        await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/' + this.id).then((response: AxiosResponse<any>) => {
-            this.dataset = response.data[0]
-        })
-        if (this.dataset) {
-            this.initDsMetadata()
-            this.initTransformations()
-            this.initWebsocket()
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/' + this.id).then((response: AxiosResponse<any>) => {
+                this.dataset = response.data[0]
+            })
+            if (this.dataset) {
+                this.initDsMetadata()
+                this.initTransformations()
+                this.initWebsocket()
 
-            this.client.onConnect = () => {
-                this.client.subscribe(
-                    '/user/queue/preview',
-                    (message) => {
-                        // called when the client receives a STOMP message from the server
-                        if (message.body) {
-                            this.updateTable(message.body)
-                        } else {
-                            console.log('got empty message')
+                this.client.onConnect = () => {
+                    this.client.subscribe(
+                        '/user/queue/preview',
+                        (message) => {
+                            // called when the client receives a STOMP message from the server
+                            if (message.body) {
+                                this.updateTable(message.body)
+                            } else {
+                                console.log('got empty message')
+                            }
+                            this.loading--
+                        },
+                        {
+                            dsLabel: this.dataset.label
                         }
+                    )
+
+                    this.client.subscribe('/user/queue/error', (error) => {
+                        // called when the client receives a STOMP message from the server
+                        if (error.body) {
+                            let message = JSON.parse(error.body)
+                            this.$store.commit('setError', { title: 'Error', msg: message.message })
+                        } else {
+                            this.$store.commit('setError', { title: 'Error' })
+                        }
+                        if (this.dataset.config && this.dataset.config.transformations?.length > 0) this.dataset.config.transformations.splice(-1)
                         this.loading--
-                    },
-                    {
-                        dsLabel: this.dataset.label
-                    }
-                )
-
-                this.client.subscribe('/user/queue/error', (error) => {
-                    // called when the client receives a STOMP message from the server
-                    if (error.body) {
-                        let message = JSON.parse(error.body)
-                        this.$store.commit('setError', { title: 'Error', msg: message.message })
-                    } else {
-                        this.$store.commit('setError', { title: 'Error' })
-                    }
-                    this.dataset.config.transformations.splice(-1)
-                    this.loading--
-                })
-
-                this.client.subscribe(
-                    '/user/queue/prepare',
-                    (message) => {
-                        // called when the client receives a STOMP message from the server
-                        if (message.body) {
-                            let avroJobResponse = JSON.parse(message.body)
-                            if (avroJobResponse.statusOk) this.$store.commit('setInfo', { title: 'Dataset ' + avroJobResponse.dsLabel + ' prepared successfully' })
-                            else this.$store.commit('setError', { title: 'Cannot prepare dataset ' + avroJobResponse.dsLabel, msg: avroJobResponse.errorMessage })
-                            //TODO: refresh data?
-                        } else {
-                            this.$store.commit('setError', { title: 'Websocket error', msg: 'got empty message' })
-                        }
-                    },
-                    {
-                        dsLabel: this.dataset.label
-                    }
-                )
-
-                if (this.transformations) {
-                    this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
-                }
-            }
-
-            this.client.activate()
-        }
-    },
-    methods: {
-        cancelCFDialog(): void {
-            this.selectedTransformation = null
-            this.showCFDialog = false
-        },
-        saveCFDialog(t): void {
-            let convertedTransformation = this.convertCFTransformation(t)
-            this.handleTransformation(convertedTransformation)
-            this.showCFDialog = false
-        },
-        convertCFTransformation(t) {
-            let transformation = { parameters: [] as Array<any>, type: 'calculatedField' }
-            let par = { columns: [] as Array<any> }
-            Object.keys(t).forEach((key) => {
-                if (key === 'column') par.columns.push(t[key].header)
-                else par[key] = t[key]
-            })
-            transformation.parameters.push(par)
-            return transformation
-        },
-        calculateDisabledProperty(menu): Boolean {
-            let disabled = false
-            if (menu.type === 'advancedFilter') {
-                if (!this.dataset.config) disabled = true
-                else disabled = this.dataset.config.transformations.filter((x) => x.type === 'filter').length < 2
-            }
-            return disabled
-        },
-        changeAlias(col): void {
-            if (col.editing) delete col.editing
-            else col.editing = true
-        },
-        closeTemplate(): void {
-            this.$router.go(-1)
-        },
-        refreshOriginalDataset(): void {
-            // launch avro export job
-            this.$http
-                .post(
-                    process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${this.dataset.id}`,
-                    {},
-                    {
-                        headers: {
-                            Accept: 'application/json, text/plain, */*',
-                            'Content-Type': 'application/json;charset=UTF-8'
-                        }
-                    }
-                )
-                .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('workspace.myData.isPreparing')
                     })
-                })
-                .catch(() => {})
 
-            // listen on websocket for avro export job to be finished
-            this.client.publish({ destination: '/app/prepare', body: this.dataset.label })
-        },
-        openTransformationDetail(t) {
-            this.readOnly = true
-            let selectedTransformation = this.descriptorTransformations.filter((x) => x.name == t.type)[0]
-            selectedTransformation['parameters'] = []
-            let param = t.parameters[0]
-            Object.keys(param).forEach((key) => {
-                let obj = {}
-                obj['name'] = key
-                if (key == 'columns') {
-                    let value = [] as Array<any>
-                    for (let i = 0; i < param[key].length; i++) {
-                        let col = this.columns.filter((x) => x.fieldAlias.toUpperCase() === param[key][i].toUpperCase())[0]
-                        value.push(col)
+                    this.client.subscribe(
+                        '/user/queue/prepare',
+                        (message) => {
+                            // called when the client receives a STOMP message from the server
+                            if (message.body) {
+                                let avroJobResponse = JSON.parse(message.body)
+                                if (avroJobResponse.statusOk) this.$store.commit('setInfo', { title: 'Dataset ' + avroJobResponse.dsLabel + ' prepared successfully' })
+                                else this.$store.commit('setError', { title: 'Cannot prepare dataset ' + avroJobResponse.dsLabel, msg: avroJobResponse.errorMessage })
+                                //TODO: refresh data?
+                            } else {
+                                this.$store.commit('setError', { title: 'Websocket error', msg: 'got empty message' })
+                            }
+                        },
+                        {
+                            dsLabel: this.dataset.label
+                        }
+                    )
+
+                    if (this.transformations) {
+                        this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
                     }
-                    obj['value'] = value
-                } else {
-                    obj['value'] = param[key]
                 }
-                selectedTransformation['parameters'].push(obj)
-            })
-            if (t.type == 'filter' || t.type == 'split') {
-                let col = this.columns.filter((x) => x.fieldAlias.toUpperCase() === t.parameters[0].columns[0].toUpperCase())[0]
-                this.callFunction(selectedTransformation, col)
-            } else this.callFunction(selectedTransformation, undefined)
-        },
-        getTransformationsMenu(col: IDataPreparationColumn): Array<any> {
-            return this.descriptorTransformations
-                .filter((x) => x.editColumn && !x.hidden)
-                .filter((x) => {
-                    if (x.incompatibleDataTypes) return !x.incompatibleDataTypes?.includes(col.Type)
-                    return true
-                })
-        },
-        initTransformations(): void {
-            if (this.transformations) {
-                if (!this.dataset.config) this.dataset.config = {}
-                this.dataset.config.transformations = this.transformations
-                this.loading++
-            }
-        },
-        initWebsocket(): void {
-            var url = new URL(window.location.origin)
-            url.protocol = url.protocol.replace('http', 'ws')
-            var uri = url + 'knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
-            this.client = new Client({
-                brokerURL: uri,
-                connectHeaders: {},
-                heartbeatIncoming: 4000,
-                heartbeatOutgoing: 4000
-            })
-        },
-        async initDsMetadata() {
-            if (this.existingProcessId) this.processId = this.existingProcessId
-            if (this.existingInstanceId) this.instanceId = this.existingInstanceId
-            if (this.existingDataset) {
-                let dsMeta = JSON.parse(this.existingDataset)
-                this.preparedDsMeta = {}
-                this.preparedDsMeta['label'] = dsMeta.label
-                this.preparedDsMeta['name'] = dsMeta.name
-                this.preparedDsMeta['description'] = dsMeta.description
-                await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.label).then((response: AxiosResponse<any>) => {
-                    let instance = response.data.instance
-                    if (instance.config) {
-                        this.preparedDsMeta['config'] = instance.config
-                    }
-                })
-            }
-        },
-        getColHeader(metadata: Array<any>, idx: Number): string {
-            let columnMapping = 'Column_' + idx
-            let toReturn = metadata.filter((x) => x.mappedTo == columnMapping)[0].alias
-            return toReturn
-        },
-        callFunction(transformation: any, col): void {
-            if (transformation.name === 'changeType' || transformation.name === 'split') {
-                let parsArray = transformation.name === 'changeType' ? this.simpleDescriptor[transformation.name].parameters : this.splitDescriptor.parameters
-                for (var i = 0; i < parsArray.length; i++) {
-                    let element = parsArray[i]
-                    if (element.name === 'destType' || element.name === 'destType1' || element.name === 'destType2') {
-                        element.availableOptions = col ? this.getCompatibilityType(col) : this.descriptor.compatibilityMap['all'].values
 
-                        element.availableOptions.forEach((element) => {
-                            element.label = this.removePrefixFromType(element.label)
+                this.client.activate()
+            }
+        },
+
+        methods: {
+            getFormattedDate(date: any, format: any) {
+                return formatDateWithLocale(date, format)
+            },
+            getProgressValue() {
+                if (this.dataset.config && this.dataset.config.transformations && this.dataset.config.transformations.length && this.dataset.config.transformations.length > 1) {
+                    this.progressMode = ''
+                    let tot = this.dataset.config.transformations.length
+
+                    return (100 * (tot - this.loading)) / tot
+                }
+
+                this.progressMode = 'indeterminate'
+
+                return 0
+            },
+            reverseTransformations() {
+                if (this.dataset.config && this.dataset.config.transformations) {
+                    let transformations = [...this.dataset.config.transformations]
+                    return transformations.reverse()
+                }
+
+                return []
+            },
+            cancelCFDialog(): void {
+                this.selectedTransformation = null
+                this.showCFDialog = false
+                this.cfType = ''
+            },
+            saveCFDialog(t): void {
+                let convertedTransformation = this.convertCFTransformation(t)
+                this.handleTransformation(convertedTransformation)
+                this.showCFDialog = false
+            },
+            convertCFTransformation(t) {
+                let transformation = { parameters: [] as Array<any>, type: 'calculatedField' }
+                let par = { columns: [] as Array<any> }
+                Object.keys(t).forEach((key) => {
+                    if (key === 'column') par.columns.push(t[key].header)
+                    else par[key] = t[key]
+                })
+                if (this.cfDescriptor.availableTypes) {
+                    par['type'] = this.cfType
+                }
+                transformation.parameters.push(par)
+                return transformation
+            },
+            calculateDisabledProperty(menu): Boolean {
+                if (this.loading > 0) return true
+                let disabled = false
+                if (menu.type === 'advancedFilter') {
+                    if (!this.dataset.config) disabled = true
+                    else disabled = this.dataset.config.transformations.filter((x) => x.type === 'filter').length < 2
+                }
+                return disabled
+            },
+            changeAlias(col): void {
+                if (col.editing) delete col.editing
+                else col.editing = true
+            },
+            closeTemplate(): void {
+                this.$router.go(-1)
+            },
+            refreshOriginalDataset(): void {
+                // launch avro export job
+                this.$http
+                    .post(
+                        process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${this.dataset.id}`,
+                        {},
+                        {
+                            headers: {
+                                Accept: 'application/json, text/plain, */*',
+                                'Content-Type': 'application/json;charset=UTF-8'
+                            }
+                        }
+                    )
+                    .then(() => {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('workspace.myData.isPreparing')
                         })
+                    })
+                    .catch(() => {})
+
+                // listen on websocket for avro export job to be finished
+                this.client.publish({ destination: '/app/prepare', body: this.dataset.label })
+            },
+            openTransformationDetail(t) {
+                this.readOnly = true
+                let selectedTransformation = this.descriptorTransformations.filter((x) => x.name == t.type)[0]
+                selectedTransformation['parameters'] = []
+                let param = t.parameters[0]
+                Object.keys(param).forEach((key) => {
+                    let obj = {}
+                    obj['name'] = key
+                    if (key == 'columns') {
+                        let value = [] as Array<any>
+                        for (let i = 0; i < param[key].length; i++) {
+                            let col = this.columns.filter((x) => x.fieldAlias.toUpperCase() === param[key][i].toUpperCase())[0]
+                            value.push(col)
+                        }
+                        obj['value'] = value
+                    } else {
+                        obj['value'] = param[key]
                     }
-                }
 
-                /* this.handleTransformation(transformation) */
-                this.selectedTransformation = transformation
-                if (col) this.col = col.header
-            } else if (transformation.name === 'drop' && col) {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        let par = this.simpleDescriptor[transformation.name].parameters[0]
-                        par.value = col.header
-                        transformation.parameters = []
-                        transformation.parameters.push(par)
-                        let toReturn = { parameters: [] as Array<any>, type: 'drop' }
-                        let obj = { columns: [] as Array<any> }
-                        obj.columns.push(col.header)
-
-                        toReturn.parameters.push(obj)
-
-                        this.handleTransformation(toReturn)
+                    if (t.type === 'calculatedField' && this.cfDescriptor.availableTypes) {
+                        this.cfType = t.parameters[0].type
                     }
-                })
-            } else {
-                this.selectedTransformation = transformation
-                if (col) this.col = col.header
-                if (transformation.name === 'calculatedField') this.showCFDialog = true
-            }
-        },
-        handleTransformation(t: any): void {
-            if (!this.dataset.config) this.dataset.config = {}
-            if (!this.dataset.config.transformations) this.dataset.config.transformations = []
-            this.dataset.config.transformations.push(t)
-            this.loading++
-            this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
-        },
-        toggleSidebarVisibility() {
-            this.visibleRight = true
-        },
-        deleteTransformation(index: number): void {
-            if (index) this.dataset.config.transformations.splice(index, 1)
-            else this.dataset.config.transformations.splice(-1) // remove last element
-            this.loading++
-            this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
-        },
-        getCompatibilityType(col: IDataPreparationColumn): void {
-            return this.descriptor.compatibilityMap[col.Type].values
-        },
-        toggle(event: Event, trOp: string): void {
-            // eslint-disable-next-line
-            // @ts-ignore
-            this.$refs[trOp].toggle(event)
-        },
-        getMenuForToolbar(): Array<any> {
-            let tmp = this.descriptorTransformations
-                .filter((x) => x.toolbar && !x.hidden)
-                .sort(function(a, b) {
-                    if (a.position > b.position) return 1
-                    if (a.position < b.position) return -1
-                    return 0
+
+                    selectedTransformation['parameters'].push(obj)
                 })
 
-            let menu = [] as Array<any>
-            if (tmp.length > 0) {
-                let type = tmp[0].category
-                menu.push(tmp[0])
+                if (t.type == 'filter' || t.type == 'split') {
+                    let col = this.columns.filter((x) => x.fieldAlias.toUpperCase() === t.parameters[0].columns[0].toUpperCase())[0]
+                    this.callFunction(selectedTransformation, col)
+                } else this.callFunction(selectedTransformation, undefined)
+            },
+            getTransformationsMenu(col: IDataPreparationColumn): Array<any> {
+                return this.descriptorTransformations
+                    .filter((x) => x.editColumn && !x.hidden)
+                    .filter((x) => {
+                        if (x.incompatibleDataTypes) return !x.incompatibleDataTypes?.includes(col.Type)
+                        return true
+                    })
+            },
+            initTransformations(): void {
+                if (this.transformations) {
+                    if (!this.dataset.config) this.dataset.config = {}
+                    this.dataset.config.transformations = this.transformations
+                    this.loading++
+                }
+            },
+            initWebsocket(): void {
+                var url = new URL(window.location.origin)
+                url.protocol = url.protocol.replace('http', 'ws')
+                var uri = url + 'knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+                this.client = new Client({
+                    brokerURL: uri,
+                    connectHeaders: {},
+                    heartbeatIncoming: 4000,
+                    heartbeatOutgoing: 4000
+                })
+            },
+            async initDsMetadata() {
+                if (this.existingProcessId) this.processId = this.existingProcessId
+                if (this.existingInstanceId) this.instanceId = this.existingInstanceId
+                if (this.existingDataset) {
+                    let dsMeta = JSON.parse(this.existingDataset)
+                    this.preparedDsMeta = {}
+                    this.preparedDsMeta['label'] = dsMeta.label
+                    this.preparedDsMeta['name'] = dsMeta.name
+                    this.preparedDsMeta['description'] = dsMeta.description
+                    this.preparedDsMeta['id'] = dsMeta.id
+                    await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.label).then((response: AxiosResponse<any>) => {
+                        let instance = response.data.instance
+                        if (instance.config) {
+                            this.preparedDsMeta['config'] = instance.config
+                        }
+                    })
+                }
+            },
+            getColHeader(metadata: Array<any>, idx: Number): string {
+                let columnMapping = 'Column_' + idx
+                let toReturn = metadata.filter((x) => x.mappedTo == columnMapping)[0].alias
+                return toReturn
+            },
+            callFunction(transformation: any, col): void {
+                if (transformation.name === 'changeType' || transformation.name === 'split') {
+                    let parsArray = transformation.name === 'changeType' ? this.simpleDescriptor[transformation.name].parameters : this.splitDescriptor.parameters
+                    for (var i = 0; i < parsArray.length; i++) {
+                        let element = parsArray[i]
+                        if (element.name === 'destType' || element.name === 'destType1' || element.name === 'destType2') {
+                            element.availableOptions = col ? this.getCompatibilityType(col) : this.descriptor.compatibilityMap['all'].values
 
-                for (let i = 1; i < tmp.length; i++) {
-                    if (type !== tmp[i].category) {
-                        type = tmp[i].category
-                        menu.push('divider')
+                            element.availableOptions.forEach((element) => {
+                                element.label = this.removePrefixFromType(element.label)
+                            })
+                        }
                     }
-                    menu.push(tmp[i])
-                }
-            }
-            return menu
-        },
-        removePrefixFromType(type: String): String {
-            let splitted = type.split('.', -1)
 
-            return splitted.length > 0 ? splitted[splitted.length - 1] : splitted[0]
-        },
-        saveDataset(): void {
-            this.showSaveDialog = true
-        },
-        translateRoles() {
-            let translatedRoles = this.descriptor.roles
-            translatedRoles.forEach((x) => (x.label = this.$t(x.label)))
-            return translatedRoles
-        },
-        switchEditMode(col) {
-            col.edit = !col.edit
-        },
-        updateReadOnly(state): void {
-            this.readOnly = state
-        },
-        updateInstanceId(iid): void {
-            this.instanceId = iid
-        },
-        updateprocessId(pid): void {
-            this.processId = pid
-        },
-        updateTable(message) {
-            let response = JSON.parse(message)
-            // set headers
-            let metadata = response.metadata.columns
-            this.columns = []
-            for (let i = 0; i < metadata.length; i++) {
-                let obj = {} as IDataPreparationColumn
-                obj.Type = metadata[i].type
-                obj.disabled = false
-                obj.fieldAlias = metadata[i].alias
-                obj.fieldType = metadata[i].fieldType
-                obj.header = metadata[i].name
-                this.columns.push(obj)
-            }
-            //set data rows
-            this.datasetData = []
-            response.rows.forEach((row) => {
-                let obj = {}
-                for (let i = 0; i < row.length; i++) {
-                    let colHeader = this.getColHeader(metadata, i)
-                    obj[colHeader] = row[i]
+                    /* this.handleTransformation(transformation) */
+                    this.selectedTransformation = transformation
+                    if (col) this.col = col.header
+                } else if (transformation.name === 'drop' && col) {
+                    this.$confirm.require({
+                        message: this.$t('common.toast.deleteMessage'),
+                        header: this.$t('common.toast.deleteTitle'),
+                        icon: 'pi pi-exclamation-triangle',
+                        accept: () => {
+                            let par = this.simpleDescriptor[transformation.name].parameters[0]
+                            par.value = col.header
+                            transformation.parameters = []
+                            transformation.parameters.push(par)
+                            let toReturn = { parameters: [] as Array<any>, type: 'drop' }
+                            let obj = { columns: [] as Array<any> }
+                            obj.columns.push(col.header)
+
+                            toReturn.parameters.push(obj)
+
+                            this.handleTransformation(toReturn)
+                        }
+                    })
+                } else {
+                    this.selectedTransformation = transformation
+                    if (col) this.col = col.header
+                    if (transformation.name === 'calculatedField') this.showCFDialog = true
                 }
-                this.datasetData.push(obj)
-            })
+            },
+            handleTransformation(t: any): void {
+                if (!this.dataset.config) this.dataset.config = {}
+                if (!this.dataset.config.transformations) this.dataset.config.transformations = []
+                this.dataset.config.transformations.push(t)
+                this.loading++
+                this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
+            },
+            toggleSidebarVisibility() {
+                this.visibleRight = true
+            },
+            deleteTransformation(index: number): void {
+                if (index) this.dataset.config.transformations.splice(index, 1)
+                else this.dataset.config.transformations.splice(-1) // remove last element
+                this.loading++
+                this.client.publish({ destination: '/app/preview', headers: { dsLabel: this.dataset.label }, body: JSON.stringify(this.dataset.config.transformations) })
+            },
+            getCompatibilityType(col: IDataPreparationColumn): void {
+                return this.descriptor.compatibilityMap[col.Type].values
+            },
+            toggle(event: Event, trOp: string): void {
+                // eslint-disable-next-line
+                // @ts-ignore
+                this.$refs[trOp].toggle(event)
+            },
+            getMenuForToolbar(): Array<any> {
+                let tmp = this.descriptorTransformations
+                    .filter((x) => x.toolbar && !x.hidden)
+                    .sort(function(a, b) {
+                        if (a.position > b.position) return 1
+                        if (a.position < b.position) return -1
+                        return 0
+                    })
+
+                let menu = [] as Array<any>
+                if (tmp.length > 0) {
+                    let type = tmp[0].category
+                    menu.push(tmp[0])
+
+                    for (let i = 1; i < tmp.length; i++) {
+                        if (type !== tmp[i].category) {
+                            type = tmp[i].category
+                            menu.push('divider')
+                        }
+                        menu.push(tmp[i])
+                    }
+                }
+                return menu
+            },
+            removePrefixFromType(type: String): String {
+                let splitted = type.split('.', -1)
+
+                return splitted.length > 0 ? splitted[splitted.length - 1] : splitted[0]
+            },
+            saveDataset(): void {
+                this.showSaveDialog = true
+            },
+            translateRoles() {
+                let translatedRoles = this.descriptor.roles
+                translatedRoles.forEach((x) => (x.label = this.$t(x.label)))
+                return translatedRoles
+            },
+            switchEditMode(col) {
+                col.edit = !col.edit
+            },
+            updateReadOnly(state): void {
+                this.readOnly = state
+            },
+            updateInstanceId(iid): void {
+                this.instanceId = iid
+            },
+            updateprocessId(pid): void {
+                this.processId = pid
+            },
+            updateTable(message) {
+                let response = JSON.parse(message)
+                // set headers
+                let metadata = response.metadata.columns
+                this.columns = []
+                for (let i = 0; i < metadata.length; i++) {
+                    let obj = {} as IDataPreparationColumn
+                    obj.Type = metadata[i].type
+                    obj.disabled = false
+                    obj.fieldAlias = metadata[i].alias
+                    obj.fieldType = metadata[i].fieldType
+                    obj.header = metadata[i].name
+                    this.columns.push(obj)
+                }
+                //set data rows
+                this.datasetData = []
+                response.rows.forEach((row) => {
+                    let obj = {}
+                    for (let i = 0; i < row.length; i++) {
+                        let colHeader = this.getColHeader(metadata, i)
+                        obj[colHeader] = row[i]
+                    }
+                    this.datasetData.push(obj)
+                })
+            }
+        },
+        unmounted() {
+            if (this.client) this.client.deactivate()
         }
-    },
-    unmounted() {
-        if (this.client) this.client.deactivate()
-    }
-})
+    })
 </script>
 
 <style lang="scss">
-.kn-data-preparation {
-    .arrow-button-container {
-        position: relative;
-        left: -10px;
-        .p-button {
-            padding-left: 20px;
+    .kn-data-preparation {
+        .arrow-button-container {
+            position: relative;
+            left: -10px;
+            .p-button {
+                padding-left: 20px;
+            }
+            .arrow-badge {
+                position: absolute;
+                top: 0;
+                left: 25px;
+            }
         }
-        .arrow-badge {
-            position: absolute;
-            top: 0;
-            left: 25px;
+
+        .managerDetail {
+            width: calc(100vw - var(--kn-mainmenu-width));
         }
-    }
 
-    .managerDetail {
-        width: calc(100vw - var(--kn-mainmenu-width));
-    }
-
-    .p-datatable.p-datatable-sm.data-prep-table {
-        width: 100%;
-        .p-datatable-thead {
-            tr {
-                th {
-                    background-color: var(--kn-table-header-background-color);
+        .p-datatable.p-datatable-sm.data-prep-table {
+            width: 100%;
+            .p-datatable-thead {
+                tr {
+                    th {
+                        background-color: var(--kn-table-header-background-color);
+                    }
                 }
             }
-        }
-        .p-column-header-content {
-            flex: 1;
-            .p-button.p-button-icon-only.p-button-rounded {
-                min-width: 2.25rem;
+            .p-column-header-content {
+                flex: 1;
+                .p-button.p-button-icon-only.p-button-rounded {
+                    min-width: 2.25rem;
+                }
             }
-        }
-        .p-datatable-tbody > tr > td {
-            padding: 0.1rem;
-            font-size: 0.9rem;
-        }
-    }
-}
-.kn-data-preparation-sidenav {
-    .info-container {
-        border: 1px dashed var(--kn-color-borders);
-        border-radius: 4px;
-        padding: 4px;
-        margin-bottom: 8px;
-        .original-dataset {
-            height: 32px;
-            justify-content: flex-start;
-            align-items: center;
-            display: flex;
-            span {
-                margin-left: 4px;
-                text-transform: uppercase;
+            .p-datatable-tbody > tr > td {
+                padding: 0.1rem;
                 font-size: 0.9rem;
             }
         }
     }
+    .kn-data-preparation-sidenav {
+        .info-container {
+            border: 1px dashed var(--kn-color-borders);
+            border-radius: 4px;
+            padding: 4px;
+            margin-bottom: 8px;
+            .original-dataset {
+                height: 32px;
+                justify-content: flex-start;
+                align-items: center;
+                display: flex;
+                span {
+                    margin-left: 4px;
+                    text-transform: uppercase;
+                    font-size: 0.9rem;
+                }
+            }
+        }
 
-    .sidenav-transformation {
+        .sidenav-transformation {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            .transformation-icon {
+                min-width: 24px;
+            }
+        }
+    }
+
+    .toolbarCustomConfig {
+        background-color: white !important;
+
+        .kn-datapreparation-button {
+            min-width: 0;
+
+            span {
+                width: 16px;
+                height: 16px;
+                font-size: 16px;
+            }
+            i {
+                width: 16px;
+                height: 16px;
+                font-size: 16px;
+            }
+        }
+
+        &.kn-datapreparation-button {
+            min-width: 0;
+
+            .menu-icon {
+                width: 16px;
+                height: 16px;
+                font-size: 16px;
+            }
+            i {
+                width: 16px;
+                height: 16px;
+                font-size: 16px;
+            }
+        }
+    }
+    .dividerCustomConfig {
+        border: 1px solid;
+        border-color: var(--kn-color-borders);
+    }
+    .p-overlaypanel-content {
+        padding: 0px !important;
+    }
+    .transformationDescription {
+        color: var(--kn-list-item-text-secondary-color);
+        font-size: var(--kn-list-item-text-secondary-font-size);
+    }
+
+    .typeAndDescription {
+        flex-direction: column;
         display: flex;
-        width: 100%;
-        align-items: center;
-        .transformation-icon {
-            min-width: 24px;
-        }
-    }
-}
-
-.toolbarCustomConfig {
-    background-color: white !important;
-
-    .kn-datapreparation-button {
-        min-width: 0;
-
-        span {
-            width: 16px;
-            height: 16px;
-            font-size: 16px;
-        }
-        i {
-            width: 16px;
-            height: 16px;
-            font-size: 16px;
-        }
+        align-items: flex-start;
     }
 
-    &.kn-datapreparation-button {
-        min-width: 0;
-
-        .menu-icon {
-            width: 16px;
-            height: 16px;
-            font-size: 16px;
-        }
-        i {
-            width: 16px;
-            height: 16px;
-            font-size: 16px;
-        }
+    .p-sidebar-content {
+        height: 100vw;
     }
-}
-.dividerCustomConfig {
-    border: 1px solid;
-    border-color: var(--kn-color-borders);
-}
-.p-overlaypanel-content {
-    padding: 0px !important;
-}
-.transformationDescription {
-    color: var(--kn-list-item-text-secondary-color);
-    font-size: var(--kn-list-item-text-secondary-font-size);
-}
 
-.typeAndDescription {
-    flex-direction: column;
-    display: flex;
-    align-items: flex-start;
-}
+    .transformationSidebarElement {
+        font-size: 0.75em;
+        justify-content: space-between !important;
+        padding: 0 !important;
+    }
 
-.p-sidebar-content {
-    height: 100vw;
-}
+    .customSidebarMenu {
+        width: 100% !important;
+        border: none !important;
+        padding: 0px !important;
+    }
 
-.transformationSidebarElement {
-    font-size: 0.75em;
-    justify-content: space-between !important;
-    padding: 0 !important;
-}
-
-.customSidebarMenu {
-    width: 100% !important;
-    border: none !important;
-    padding: 0px !important;
-}
-
-.roleType {
-    font-size: 0.67em;
-}
-.sidebarClass {
-    flex-direction: column-reverse;
-}
+    .roleType {
+        font-size: 0.67em;
+    }
+    .sidebarClass {
+        flex-direction: column-reverse;
+    }
 </style>

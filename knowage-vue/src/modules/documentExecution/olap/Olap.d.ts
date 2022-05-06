@@ -90,3 +90,46 @@ export interface iOlapModelConfig {
     whatIfScenario: boolean,
     writeBackConf: any
 }
+
+export interface iNode {
+    key: number,
+    id: string,
+    label: string,
+    children: iNode[],
+    data: iFilterNode,
+    style: any,
+    leaf: boolean,
+    selectable: boolean,
+    parent?: iNode,
+    customIcon?: string
+}
+
+export interface iFilterNode {
+    id: string,
+    name: string,
+    uniqueName: string,
+    collapsed?: boolean,
+    visible: boolean,
+    leaf: boolean,
+    children: iFilterNode[],
+    text?: string,
+    qtip?: string
+}
+
+export interface iParameter {
+    id: number,
+    label: string
+    parType: string
+    url: string
+}
+
+export interface iProfileAttribute {
+    allowUser: boolean
+    attributeDescription: string
+    attributeId: number
+    attributeName: string
+    lovId: any
+    multivalue: boolean
+    syntax: any
+    value: { name: string, type: string } | null
+}

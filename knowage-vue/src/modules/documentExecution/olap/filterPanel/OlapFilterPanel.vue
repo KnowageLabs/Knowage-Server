@@ -6,7 +6,7 @@
                 <div v-if="filterCardList?.length == 0" class="p-d-flex p-flex-row p-jc-center kn-flex">
                     <InlineMessage class="kn-flex p-m-1" :style="panelDescriptor.style.noFilters" severity="info" closable="false">{{ $t('documentExecution.olap.filterPanel.filterPanelEmpty') }}</InlineMessage>
                 </div>
-                <FilterCard v-else :filterCardList="filterCardList" @showMultiHierarchy="emitMultiHierarchy" />
+                <FilterCard v-else :filterCardList="filterCardList" :olapDesigner="olapDesigner" @showMultiHierarchy="emitMultiHierarchy" @openFilterDialog="$emit('openFilterDialog', $event)" />
                 <div ref="axisDropzone" class="kn-flex kn-truncated p-mr-1" :style="panelDescriptor.style.filterAxisDropzone">{{ $t('documentExecution.olap.filterPanel.drop') }}</div>
             </div>
             <Button v-if="scrollContainerWidth < scrollContentWidth" icon="fas fa-arrow-circle-right" class="p-button-text p-button-rounded p-button-plain p-mr-1" @click="scrollRight" />
@@ -23,8 +23,8 @@ import FilterCard from './OlapFilterCard.vue'
 
 export default defineComponent({
     components: { InlineMessage, FilterCard },
-    props: { olapProp: { type: Object as PropType<iOlap | null>, required: true } },
-    emits: ['putFilterOnAxis', 'showMultiHierarchy'],
+    props: { olapProp: { type: Object as PropType<iOlap | null>, required: true }, olapDesigner: { type: Object } },
+    emits: ['putFilterOnAxis', 'showMultiHierarchy', 'openFilterDialog'],
     data() {
         return {
             panelDescriptor,

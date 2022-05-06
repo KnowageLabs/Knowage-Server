@@ -17,9 +17,6 @@
  */
 package it.eng.spagobi.commons.utilities;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-
 import java.io.ByteArrayInputStream;
 import java.net.InetAddress;
 import java.security.DigestInputStream;
@@ -36,9 +33,11 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import nl.bitwalker.useragentutils.UserAgent;
-
 import org.apache.log4j.Logger;
+
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import nl.bitwalker.useragentutils.UserAgent;
 
 /**
  * @author Chiara Chiarelli (chiara.chiarelli@eng.it) , Monia Spinelli (monia.spinelli@eng.it)
@@ -79,7 +78,7 @@ public class AuditLogUtilities {
 
 		try {
 
-			StringBuffer strbuf = new StringBuffer();
+			StringBuilder strbuf = new StringBuilder();
 
 			String userName = "";
 			String userRoles = "";
@@ -226,7 +225,7 @@ public class AuditLogUtilities {
 		return rolesStr;
 	}
 
-	public static String calculateHash(StringBuffer str) throws Exception {
+	public static String calculateHash(StringBuilder str) throws Exception {
 		MessageDigest algorithm = MessageDigest.getInstance("MD5");
 		String is = new String(str);
 		DigestInputStream dis = new DigestInputStream(new ByteArrayInputStream(is.getBytes()), algorithm);

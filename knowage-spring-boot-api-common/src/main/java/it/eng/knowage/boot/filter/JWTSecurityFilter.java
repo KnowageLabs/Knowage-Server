@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
@@ -47,18 +49,15 @@ public class JWTSecurityFilter implements Filter {
 
 	private static final Logger LOGGER = Logger.getLogger(JWTSecurityFilter.class);
 
+	@Lazy
+	@Autowired
 	private SecurityServiceService securityServiceService;
 
+	@Autowired
 	private BusinessRequestContext businessRequestContext;
 
+	@Autowired
 	private Context ctx;
-
-	public JWTSecurityFilter(SecurityServiceService securityServiceService, BusinessRequestContext businessRequestContext, Context ctx) {
-		super();
-		this.securityServiceService = securityServiceService;
-		this.businessRequestContext = businessRequestContext;
-		this.ctx = ctx;
-	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {

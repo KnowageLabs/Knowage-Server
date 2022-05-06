@@ -31,9 +31,10 @@
                     v-else-if="mode === 'olap'"
                     :id="urlData?.sbiExecutionId"
                     :olapId="document.id"
-                    :olapName="document.name"
+                    :olapName="document.label"
                     :reloadTrigger="reloadTrigger"
                     :olapCustomViewVisible="olapCustomViewVisible"
+                    :hiddenFormDataProp="hiddenFormData"
                     @closeOlapCustomView="olapCustomViewVisible = false"
                     @applyCustomView="executeOlapCustomView"
                     @executeCrossNavigation="executeOLAPCrossNavigation"
@@ -62,6 +63,7 @@
                 @execute="onExecute"
                 @exportCSV="onExportCSV"
                 @roleChanged="onRoleChange"
+                @parametersChanged="$emit('parametersChanged', $event)"
                 data-test="parameter-sidebar"
             ></KnParameterSidebar>
 
@@ -115,8 +117,8 @@ export default defineComponent({
         Dossier,
         Olap
     },
-    props: { id: { type: String } },
-    emits: ['close', 'updateDocumentName'],
+    props: { id: { type: String }, parameterValuesMap: { type: Object }, tabKey: { type: String } },
+    emits: ['close', 'updateDocumentName', 'parametersChanged'],
     data() {
         return {
             document: null as any,
@@ -158,7 +160,7 @@ export default defineComponent({
     async activated() {
         if (this.mode === 'iframe' && this.$route.name !== 'new-dashboard') {
             if (this.userRole) {
-                await this.loadPage()
+                await this.loadPage(true)
             } else {
                 this.parameterSidebarVisible = true
             }
@@ -217,7 +219,7 @@ export default defineComponent({
         await this.loadDocument()
 
         if (this.userRole) {
-            await this.loadPage()
+            await this.loadPage(true)
         } else {
             this.parameterSidebarVisible = true
         }
@@ -269,16 +271,17 @@ export default defineComponent({
                 })
             }
 
-            this.toolbarMenuItems.push(
-                {
+            if (this.user.enterprise) {
+                this.toolbarMenuItems.push({
                     label: this.$t('common.info.info'),
                     items: [{ icon: 'pi pi-star', label: this.$t('common.rank'), command: () => this.openRank() }]
-                },
-                {
-                    label: this.$t('common.shortcuts'),
-                    items: []
-                }
-            )
+                })
+            }
+
+            this.toolbarMenuItems.push({
+                label: this.$t('common.shortcuts'),
+                items: []
+            })
 
             this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[1].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
 
@@ -304,7 +307,7 @@ export default defineComponent({
                 if (index !== -1) this.toolbarMenuItems[index].items.push({ icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() })
             }
 
-            if (this.user.functionalities.includes('SeeSnapshotsFunctionality')) {
+            if (this.user.functionalities.includes('SeeSnapshotsFunctionality') && this.user.enterprise) {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
                 if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
             }
@@ -397,10 +400,10 @@ export default defineComponent({
                 this.mode = 'iframe'
             }
         },
-        async loadPage() {
+        async loadPage(initialLoading: boolean = false) {
             this.loading = true
 
-            await this.loadFilters()
+            await this.loadFilters(initialLoading)
             if (this.filtersData?.isReadyForExecution) {
                 await this.loadURL(null)
                 await this.loadExporters()
@@ -433,7 +436,12 @@ export default defineComponent({
                 this.breadcrumbs.push({ label: this.document.label, document: this.document })
             }
         },
-        async loadFilters() {
+        async loadFilters(initialLoading: boolean = false) {
+            if (this.parameterValuesMap && this.parameterValuesMap[this.document.label + '-' + this.tabKey] && initialLoading) {
+                this.filtersData = this.parameterValuesMap[this.document.label + '-' + this.tabKey]
+                return
+            }
+
             if (this.sessionEnabled) {
                 const tempFilters = sessionStorage.getItem(this.document.label)
                 if (tempFilters) {
@@ -584,6 +592,7 @@ export default defineComponent({
                 postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
                 postForm.method = 'post'
                 postForm.target = 'documentFrame' + tempIndex
+                postForm.acceptCharset = 'UTF-8'
                 document.body.appendChild(postForm)
             }
 
@@ -845,7 +854,8 @@ export default defineComponent({
             if (index !== -1) this.schedulations.splice(index, 1)
         },
         getFormattedDate(date: any, useDefaultFormat?: boolean) {
-            return luxonFormatDate(date, undefined, useDefaultFormat ? undefined : this.dateFormat)
+            const format = date instanceof Date ? undefined : process.env.VUE_APP_CROSS_NAVIGATION_DATE_FORMAT
+            return luxonFormatDate(date, format, useDefaultFormat ? undefined : this.dateFormat)
         },
         onBreadcrumbClick(item: any) {
             this.document = item.document
@@ -974,8 +984,7 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
                 if (response.data) {
                     this.sessionEnabled = response.data['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
-                    //this.dateFormat = response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === 'dd/MM/yyyy' ? 'DD/MM/YYYY' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
-                    this.dateFormat = response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
+                    this.dateFormat = response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === '%Y-%m-%d' ? 'dd/MM/yyyy' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
                 }
             })
         },

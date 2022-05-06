@@ -31,6 +31,7 @@ import behaviouralModelLineage from '@/modules/managers/behaviouralModelLineage/
 import layersManagementRoutes from '@/modules/managers/layersManagement/LayersManagement.routes.js'
 import timespanRoutes from '@/modules/managers/timespan/Timespan.routes.js'
 import calendarManagementRoutes from '@/modules/managers/calendarManagement/CalendarManagement.routes.js'
+import hierarchyManagementRoutes from '@/modules/managers/hierarchyManagement/HierarchyManagement.routes.js'
 
 const baseRoutes = []
 
@@ -68,5 +69,6 @@ const routes = baseRoutes
     .concat(layersManagementRoutes)
     .concat(timespanRoutes)
     .concat(calendarManagementRoutes)
+    .concat(hierarchyManagementRoutes)
 
 export default routes

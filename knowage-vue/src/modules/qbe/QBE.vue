@@ -12,7 +12,7 @@
                 </template>
             </Toolbar>
         </template>
-        <KnOverlaySpinnerPanel :visibility="loading" />
+        <ProgressSpinner class="kn-progress-spinner" v-if="loading" />
         <div v-if="!qbePreviewDialogVisible" class="kn-relative p-d-flex p-flex-row kn-height-full kn-width-full">
             <div v-if="parameterSidebarVisible" :style="qbeDescriptor.style.backdrop" @click="parameterSidebarVisible = false"></div>
             <div v-show="showEntitiesLists && qbeLoaded" :style="qbeDescriptor.style.entitiesLists">
@@ -111,7 +111,7 @@
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="uniqueID" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery?.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
-        <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
+        <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" @save="onParametersSave" />
         <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" :entities="selectedQuery?.fields" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false" @save="onAdvancedFiltersSave"></QBEAdvancedFilterDialog>
         <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" @datasetSaved="$emit('datasetSaved')" />
@@ -129,6 +129,7 @@ import { iQBE, iQuery, iField, iQueryResult, iFilter } from './QBE'
 import { onFiltersSaveCallback } from './QBEFilterService'
 import { formatDrivers } from './QBEDriversService'
 import { onHavingsSaveCallback } from './QBEHavingsService'
+import { removeInPlace } from './qbeDialogs/qbeAdvancedFilterDialog/treeService'
 import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
@@ -149,7 +150,8 @@ import QBEJoinDefinitionDialog from './qbeDialogs/qbeJoinDefinitionDialog/QBEJoi
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import QBEPreviewDialog from './qbeDialogs/qbePreviewDialog/QBEPreviewDialog.vue'
 import qbeDescriptor from './QBEDescriptor.json'
-import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
+import ProgressSpinner from 'primevue/progressspinner'
+
 const crypto = require('crypto')
 
 export default defineComponent({
@@ -174,7 +176,7 @@ export default defineComponent({
         KnParameterSidebar,
         QBEPreviewDialog,
         QBESmartTable,
-        KnOverlaySpinnerPanel
+        ProgressSpinner
     },
     props: { visible: { type: Boolean }, dataset: { type: Object } },
     emits: ['close'],
@@ -333,9 +335,9 @@ export default defineComponent({
             Object.keys(loadedParameters.filterStatus).forEach((key: any) => {
                 const parameter = loadedParameters.filterStatus[key]
                 if (!parameter.multivalue) {
-                    parameters[parameter.urlName] = { value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description }
+                    parameters[parameter.urlName] = [{ value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description }]
                 } else {
-                    parameters[parameter.urlName] = { value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription }
+                    parameters[parameter.urlName] = [{ value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription }]
                 }
             })
             return parameters
@@ -472,22 +474,13 @@ export default defineComponent({
         },
         async exportQueryResults(mimeType) {
             var fileName = ''
-            var fileType = ''
+            mimeType == 'csv' ? (fileName = 'report.csv') : (fileName = 'report.xlsx')
 
-            if (mimeType == 'csv') {
-                fileName = 'report.csv'
-                fileType = 'text/csv'
-            } else if (mimeType == 'xlsx') {
-                fileName = 'report.xlsx'
-                fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            } else {
-                console.log('Unsupported mime type: ', mimeType, fileName, fileType)
-            }
             const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
-                .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
                 .then((response: AxiosResponse<any>) => {
-                    downloadDirect(response.data, fileName, fileType)
+                    downloadDirect(response.data, fileName, response.headers['content-type'])
                 })
                 .catch(() => {})
         },
@@ -735,6 +728,22 @@ export default defineComponent({
             })
             this.selectedQuery.fields.splice(indexOfFieldToDelete, 1)
             this.updateSmartView()
+        },
+        onParametersSave() {
+            this.paramDialogVisible = false
+
+            for (let i = this.selectedQuery.filters.length - 1; i >= 0; i--) {
+                if (this.selectedQuery.filters[i].rightType === 'parameter') {
+                    const index = this.qbe?.pars.findIndex((parameter: any) => parameter.name === this.selectedQuery.filters[i].paramName)
+                    if (index === -1) {
+                        removeInPlace(this.selectedQuery.expression, '$F{' + this.selectedQuery.filters[i].filterId + '}')
+                        this.selectedQuery.filters.splice(index, 1)
+                    }
+                }
+            }
+
+            if (this.selectedQuery.expression.childNodes?.length === 0) this.selectedQuery.expression = {}
+            this.updateSmartView()
         }
     }
 })
@@ -756,17 +765,14 @@ export default defineComponent({
         margin: 0;
     }
 }
-
 .qbe-detail-view {
     display: flex;
     flex-direction: column;
     flex: 3;
 }
-
 .derived-entities-toggle {
     height: 25%;
 }
-
 .qbe-scroll-panel .p-scrollpanel-content {
     padding: 0 !important;
 }

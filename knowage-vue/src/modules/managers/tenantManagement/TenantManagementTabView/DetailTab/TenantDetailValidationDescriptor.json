@@ -3,11 +3,17 @@
         "tenant": [
             {
                 "fieldName": "MULTITENANT_NAME",
-                "validators": [{ "key": "required" }, { "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
-            },
-            {
-                "fieldName": "MULTITENANT_THEME",
-                "validators": [{ "key": "required" }]
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
             }
         ]
     }

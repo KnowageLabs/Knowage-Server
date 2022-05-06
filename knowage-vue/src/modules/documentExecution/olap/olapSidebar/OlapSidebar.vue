@@ -11,7 +11,7 @@
                 <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.drillOnDimension') }}</label>
                 <SelectButton class="p-mt-2" v-model="drillOn" :options="olapSidebarDescriptor.drillOnOptions" @click="$emit('drillTypeChanged', drillOn)"></SelectButton>
             </div>
-            <div v-if="!olapDesignerMode" class="kn-flex">
+            <div v-if="!olapDesignerMode" class="kn-flex-0">
                 <div class="p-d-flex p-flex-column p-my-3">
                     <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.drillOnData') }}</label>
                     <Button
@@ -81,8 +81,35 @@
                             />
                         </div>
                         <div class="p-col-4">
-                            <Button icon="fas fa-save" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.showCustomizedView')" :disabled="!isButtonVisible('BUTTON_SAVE_SUBOBJECT')" @click="$emit('openCustomViewDialog')" />
+                            <Button icon="fas fa-save" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.saveCustomizedView')" :disabled="!isButtonVisible('BUTTON_SAVE_SUBOBJECT')" @click="$emit('openCustomViewDialog')" />
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="olapHasScenario && !olapDesignerMode" id="whatif-container" class="kn-flex">
+                <label class="kn-material-input-label">{{ $t('documentExecution.olap.sidebar.whatIfTitle') }}</label>
+                <div class="p-grid p-mt-1">
+                    <div v-if="olapLocked" class="p-col-4">
+                        <Button :icon="olapLocked ? 'fas fa-lock-open' : 'fas fa-lock'" class="p-button-plain kn-button--secondary" v-tooltip.top="olapLocked ? $t('documentExecution.olap.sidebar.unlockSchema') : $t('documentExecution.olap.sidebar.lockSchema')" @click="changeLock" />
+                    </div>
+                    <div v-if="olapLocked" class="p-col-4">
+                        <Button icon="fa-solid fa-floppy-disk" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.saveAsNewVersion')" :disabled="!isButtonVisible('BUTTON_SAVE_SUBOBJECT')" @click="$emit('showSaveAsNewVersion')" />
+                    </div>
+                    <div v-if="olapLocked" class="p-col-4">
+                        <Button icon="fa-solid fa-rotate-left" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.undo')" :disabled="!isButtonVisible('BUTTON_UNDO')" @click="$emit('undo')" />
+                    </div>
+                    <div v-if="olapLocked" class="p-col-4">
+                        <Button icon="fa-solid fa-trash" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.deleteVersions')" :disabled="!isButtonVisible('BUTTON_VERSION_MANAGER')" @click="$emit('showDeleteVersions')" />
+                    </div>
+                    <div class="p-col-4">
+                        <Button icon="fa-solid fa-share-from-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.outputWizard')" :disabled="!isButtonVisible('BUTTON_EXPORT_OUTPUT')" @click="$emit('showOutputWizard')" />
+                    </div>
+                    <div class="p-col-4">
+                        <Button icon="fa-solid fa-file-excel" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.excel')" :disabled="!isButtonVisible('BUTTON_EDITABLE_EXCEL_EXPORT')" @click="$emit('exportExcel')" />
+                    </div>
+                    <div v-if="olapLocked" class="p-col-4">
+                        <Button icon="fa-solid fa-network-wired" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.alg')" :disabled="!isButtonVisible('BUTTON_ALGORITHMS')" @click="$emit('showAlgorithmDialog')" />
                     </div>
                 </div>
             </div>
@@ -96,15 +123,18 @@
                     <!-- <div class="p-col-4">
                         <Button icon="fas fa-book-open" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureTablePagination')" />
                     </div> -->
+                    <div v-if="whatIfMode" class="p-col-4">
+                        <Button icon="fa-solid fa-note-sticky" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" @click="$emit('showScenarioWizard')" />
+                    </div>
                     <div class="p-col-4">
                         <Button icon="fas fa-arrow-right" class="p-button-plain kn-button--secondary" :class="{ 'olap-sidebar-button-active': crossNavigation }" v-tooltip.top="$t('documentExecution.olap.sidebar.defineCrossNavigation')" @click="$emit('openCrossNavigationDefinitionDialog')" />
                     </div>
                     <div class="p-col-4">
                         <Button icon="far fa-check-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureButtonsVisiblity')" @click="$emit('openButtonWizardDialog')" />
                     </div>
-                    <!-- <div class="p-col-4">
+                    <div class="p-col-4">
                         <Button icon="fas fa-calculator" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.calculatedField')" />
-                    </div> -->
+                    </div>
                 </div>
             </div>
 
@@ -117,122 +147,149 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import olapSidebarDescriptor from './OlapSidebarDescriptor.json'
-    import SelectButton from 'primevue/selectbutton'
+import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
+import olapSidebarDescriptor from './OlapSidebarDescriptor.json'
+import SelectButton from 'primevue/selectbutton'
 
-    export default defineComponent({
-        name: 'olap-sidebar',
-        components: { SelectButton },
-        props: { olap: { type: Object }, olapDesignerMode: { type: Boolean }, propButtons: { type: Array } },
-        emits: [
-            'openCustomViewDialog',
-            'drillTypeChanged',
-            'showParentMemberChanged',
-            'hideSpansChanged',
-            'suppressEmptyChanged',
-            'showPropertiesChanged',
-            'openSortingDialog',
-            'openMdxQueryDialog',
-            'reloadSchema',
-            'enableCrossNavigation',
-            'openCrossNavigationDefinitionDialog',
-            'openButtonWizardDialog',
-            'drillThroughChanged',
-            'saveOlapDesigner'
-        ],
-        data() {
-            return {
-                olapSidebarDescriptor,
-                buttons: [] as any[],
-                drillOn: 'position',
-                enableDrillThrough: false,
-                showParentMembers: false,
-                hideSpans: false,
-                suppressEmpty: false,
-                showProperties: false,
-                crossNavigation: false,
-                mode: 'designer'
-            }
-        },
-        watch: {
-            propButtons() {
-                this.loadButtons()
-            },
-            olap() {
-                this.loadOlapModelConfigValues()
-            }
-        },
-        created() {
-            this.loadButtons()
-            this.loadOlapModelConfigValues()
-        },
-        methods: {
-            loadButtons() {
-                this.buttons = this.propButtons as any[]
-            },
-            isButtonVisible(buttonName: string) {
-                let isVisible = false
-                const index = this.olap?.modelConfig.toolbarVisibleButtons.findIndex((el: any) => el === buttonName)
-                if (index !== -1) isVisible = true
-
-                return isVisible
-            },
-            loadOlapModelConfigValues() {
-                if (this.olap) {
-                    this.drillOn = this.olap.modelConfig.drillType
-                    this.enableDrillThrough = this.olap.modelConfig.enableDrillThrough
-                    this.showParentMembers = this.olap.modelConfig.showParentMembers
-                    this.hideSpans = this.olap.modelConfig.hideSpans
-                    this.suppressEmpty = this.olap.modelConfig.suppressEmpty
-                    this.showProperties = this.olap.modelConfig.showProperties
-                    this.crossNavigation = this.olap.modelConfig?.crossNavigation?.buttonClicked
-                }
-            },
-            onDrillThroughClick() {
-                this.enableDrillThrough = !this.enableDrillThrough
-                this.$emit('drillThroughChanged', this.enableDrillThrough)
-            },
-            onShowParentMemberClick() {
-                this.showParentMembers = !this.showParentMembers
-                this.$emit('showParentMemberChanged', this.showParentMembers)
-            },
-            onHideSpansClick() {
-                this.hideSpans = !this.hideSpans
-                this.$emit('hideSpansChanged', this.hideSpans)
-            },
-            onSuppressRowsColumnsClick() {
-                this.suppressEmpty = !this.suppressEmpty
-                this.$emit('suppressEmptyChanged', this.suppressEmpty)
-            },
-            onShowPropertiesClick() {
-                this.showProperties = !this.showProperties
-                this.$emit('showPropertiesChanged', this.showProperties)
-            },
-            onEnableCrossNavigationClick() {
-                this.crossNavigation = !this.crossNavigation
-                this.$emit('enableCrossNavigation', this.crossNavigation)
-            },
-            closeOlapDesigner() {
-                this.$router.push('/document-browser')
-            }
+export default defineComponent({
+    name: 'olap-sidebar',
+    components: { SelectButton },
+    props: { olap: { type: Object }, olapDesignerMode: { type: Boolean }, propButtons: { type: Array }, whatIfMode: { type: Boolean }, olapHasScenario: { type: Boolean } },
+    emits: [
+        'openCustomViewDialog',
+        'drillTypeChanged',
+        'showParentMemberChanged',
+        'hideSpansChanged',
+        'suppressEmptyChanged',
+        'showPropertiesChanged',
+        'openSortingDialog',
+        'openMdxQueryDialog',
+        'reloadSchema',
+        'enableCrossNavigation',
+        'openCrossNavigationDefinitionDialog',
+        'openButtonWizardDialog',
+        'drillThroughChanged',
+        'saveOlapDesigner',
+        'showOutputWizard',
+        'showScenarioWizard',
+        'showSaveAsNewVersion',
+        'undo',
+        'showAlgorithmDialog',
+        'showDeleteVersions',
+        'loading',
+        'exportExcel'
+    ],
+    data() {
+        return {
+            olapSidebarDescriptor,
+            buttons: [] as any[],
+            drillOn: 'position',
+            enableDrillThrough: false,
+            showParentMembers: false,
+            hideSpans: false,
+            suppressEmpty: false,
+            showProperties: false,
+            crossNavigation: false,
+            mode: 'designer',
+            olapLocked: false
         }
-    })
+    },
+    watch: {
+        propButtons() {
+            this.loadButtons()
+        },
+        olap() {
+            this.loadOlapModelConfigValues()
+        }
+    },
+    created() {
+        this.loadButtons()
+        this.loadOlapModelConfigValues()
+    },
+    methods: {
+        loadButtons() {
+            this.buttons = this.propButtons as any[]
+        },
+        isButtonVisible(buttonName: string) {
+            let isVisible = false
+            const index = this.olap?.modelConfig.toolbarVisibleButtons.findIndex((el: any) => el === buttonName)
+            if (index !== -1) isVisible = true
+
+            return isVisible
+        },
+        loadOlapModelConfigValues() {
+            if (this.olap) {
+                this.drillOn = this.olap.modelConfig.drillType
+                this.enableDrillThrough = this.olap.modelConfig.enableDrillThrough
+                this.showParentMembers = this.olap.modelConfig.showParentMembers
+                this.hideSpans = this.olap.modelConfig.hideSpans
+                this.suppressEmpty = this.olap.modelConfig.suppressEmpty
+                this.showProperties = this.olap.modelConfig.showProperties
+                this.crossNavigation = this.olap.modelConfig?.crossNavigation?.buttonClicked
+                this.olapLocked = this.olap.modelConfig?.status === 'locked_by_user'
+            }
+        },
+        onDrillThroughClick() {
+            this.enableDrillThrough = !this.enableDrillThrough
+            this.$emit('drillThroughChanged', this.enableDrillThrough)
+        },
+        onShowParentMemberClick() {
+            this.showParentMembers = !this.showParentMembers
+            this.$emit('showParentMemberChanged', this.showParentMembers)
+        },
+        onHideSpansClick() {
+            this.hideSpans = !this.hideSpans
+            this.$emit('hideSpansChanged', this.hideSpans)
+        },
+        onSuppressRowsColumnsClick() {
+            this.suppressEmpty = !this.suppressEmpty
+            this.$emit('suppressEmptyChanged', this.suppressEmpty)
+        },
+        onShowPropertiesClick() {
+            this.showProperties = !this.showProperties
+            this.$emit('showPropertiesChanged', this.showProperties)
+        },
+        onEnableCrossNavigationClick() {
+            this.crossNavigation = !this.crossNavigation
+            this.$emit('enableCrossNavigation', this.crossNavigation)
+        },
+        closeOlapDesigner() {
+            this.$router.push('/document-browser')
+        },
+        async changeLock() {
+            if (!this.olap) return
+            this.$emit('loading', true)
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/locker/${this.olap.modelConfig.artifactId}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
+                .then((response: AxiosResponse<any>) => {
+                    if ((response.data.status === 'unlocked' || response.data.status === 'locked_by_user') && this.olap) {
+                        this.$store.commit('setInfo', {
+                            msg: this.$t('common.toast.success')
+                        })
+                        this.olapLocked = response.data.status === 'locked_by_user'
+                    }
+                })
+                .catch(() => {})
+            this.$emit('loading', false)
+        }
+    }
+})
 </script>
 
 <style lang="scss">
-    #olap-sidebar {
-        z-index: 100;
-        background-color: white;
-        height: 100%;
-        width: 250px;
-        position: absolute;
-        top: 0;
-        right: 0;
-        display: flex;
-        flex-direction: column;
-    }
-    .olap-sidebar-button-active {
-        background-color: #43749e !important;
-    }
+#olap-sidebar {
+    z-index: 100;
+    background-color: white;
+    height: 100%;
+    width: 250px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+}
+.olap-sidebar-button-active {
+    background-color: #43749e !important;
+}
 </style>

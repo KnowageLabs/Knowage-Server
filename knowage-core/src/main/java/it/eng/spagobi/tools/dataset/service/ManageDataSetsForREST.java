@@ -131,6 +131,11 @@ public class ManageDataSetsForREST {
 	public static final String JOB_GROUP = "PersistDatasetExecutions";
 	public static final String SERVICE_NAME = "ManageDatasets";
 	public static final String DRIVERS = "DRIVERS";
+
+	public static final String PERSONAL = "personal";
+	public static final String MASKED = "masked";
+	public static final String DECRIPT = "decript";
+	public static final String SUBJECT_ID = "subjectId";
 	// logger component
 	public static Logger logger = Logger.getLogger(ManageDataSetsForREST.class);
 	public static Logger auditlogger = Logger.getLogger("dataset.audit");
@@ -446,6 +451,10 @@ public class ManageDataSetsForREST {
 			newMeta.setAlias(alias);
 			newMeta.setType(type);
 			newMeta.setFieldType(fieldType);
+			newMeta.setPersonal(metaObj.optBoolean("personal"));
+//			newMeta.setMasked(metaObj.optBoolean("masked"));
+			newMeta.setDecript(metaObj.optBoolean("decript"));
+			newMeta.setSubjectId(metaObj.optBoolean("subjectId"));
 			toReturn.addFiedMeta(newMeta);
 		}
 		return toReturn;
@@ -829,14 +838,20 @@ public class ManageDataSetsForREST {
 
 					for (int j = 0; j < metadataArray.length(); j++) {
 
-						if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
-							if ("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+						JSONObject metadataJSONObject = metadataArray.getJSONObject(j);
+						if (ifmd.getName().equals(metadataJSONObject.getString("name"))) {
+							if ("MEASURE".equals(metadataJSONObject.getString("fieldType"))) {
 								ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
-							} else if (IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE.toString().equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+							} else if (IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE.toString().equals(metadataJSONObject.getString("fieldType"))) {
 								ifmd.setFieldType(IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE);
 							} else {
 								ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
 							}
+
+							ifmd.setPersonal(metadataJSONObject.optBoolean("personal"));
+//							ifmd.setMasked(metadataJSONObject.optBoolean("masked"));
+							ifmd.setDecript(metadataJSONObject.optBoolean("decript"));
+							ifmd.setSubjectId(metadataJSONObject.optBoolean("subjectId"));
 							break;
 						}
 					}

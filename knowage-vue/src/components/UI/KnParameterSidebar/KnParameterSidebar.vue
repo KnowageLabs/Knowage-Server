@@ -1,6 +1,6 @@
 <template>
     <div id="kn-parameter-sidebar" :class="positionClass">
-        <Toolbar v-if="mode !== 'workspaceView' && mode !== 'qbeView'" id="kn-parameter-sidebar-toolbar" class="kn-toolbar kn-toolbar--secondary">
+        <Toolbar v-if="mode !== 'workspaceView' && mode !== 'qbeView' && mode !== 'datasetManagement'" id="kn-parameter-sidebar-toolbar" class="kn-toolbar kn-toolbar--secondary">
             <template #start>
                 <div id="kn-parameter-sidebar-toolbar-icons-container" class="p-d-flex p-flex-row p-jc-around">
                     <Button icon="fa fa-eraser" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.top="$t('documentExecution.main.resetParametersTooltip')" @click="resetAllParameters"></Button>
@@ -25,7 +25,9 @@
                             <label class="kn-material-input-label">{{ qbeParameter.name }} <span v-if="mode !== 'datasetManagement'"> *</span> </label>
                             <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="qbeParameter.value = qbeParameter.defaultValue"></i>
                         </div>
+                        <Chips v-if="qbeParameter.multiValue" v-model="qbeParameter.value" />
                         <InputText
+                            v-else
                             class="kn-material-input p-inputtext-sm"
                             v-model="qbeParameter.value"
                             :class="{
@@ -169,6 +171,7 @@ import { setDataDependency, updateDataDependency } from './KnParameterSidebarDat
 import { setLovsDependency, updateLovDependency } from './KnParameterSidebarLovsDependency'
 import Calendar from 'primevue/calendar'
 import Chip from 'primevue/chip'
+import Chips from 'primevue/chips'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import KnParameterPopupDialog from './dialogs/KnParameterPopupDialog.vue'
@@ -182,9 +185,9 @@ import ScrollPanel from 'primevue/scrollpanel'
 
 export default defineComponent({
     name: 'kn-parameter-sidebar',
-    components: { Calendar, Chip, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton, ScrollPanel },
+    components: { Calendar, Chip, Chips, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton, ScrollPanel },
     props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String } },
-    emits: ['execute', 'exportCSV', 'roleChanged'],
+    emits: ['execute', 'exportCSV', 'roleChanged', 'parametersChanged'],
     data() {
         return {
             document: null as iDocument | null,
@@ -477,6 +480,7 @@ export default defineComponent({
             this.updateVisualDependency(parameter)
             updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode)
             updateLovDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode)
+            this.$emit('parametersChanged', { parameters: this.parameters, document: this.propDocument })
         },
         openSaveParameterDialog() {
             this.parameterSaveDialogVisible = true
@@ -574,6 +578,9 @@ export default defineComponent({
         loadQBEParameters() {
             this.qbeParameters = []
             this.propQBEParameters?.forEach((parameter: any) => {
+                if (parameter.multiValue && parameter.defaultValue && !Array.isArray(parameter.defaultValue)) {
+                    parameter.defaultValue = parameter.defaultValue?.split(',').map((el: any) => el.trim())
+                }
                 if (!parameter.value) parameter.value = parameter.defaultValue
                 this.qbeParameters.push(parameter)
             })

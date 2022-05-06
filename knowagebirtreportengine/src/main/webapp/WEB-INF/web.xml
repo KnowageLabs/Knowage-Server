@@ -11,6 +11,23 @@
 	<display-name>knowagebirtreportengine</display-name>
 	<description>Knowage BIRT Report Engine</description>
 
+	<!-- 
+		Logger Setup Filter.
+		
+		Set the logger according the HTTP request data.
+	 -->
+	<filter>
+		<filter-name>LoggerSetupFilter</filter-name>
+		<filter-class>it.eng.knowage.utils.filters.LoggerSetupFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>LoggerSetupFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+
 	<!-- Default locale setting. -->
 	<context-param>
 		<param-name>BIRT_VIEWER_LOCALE</param-name>

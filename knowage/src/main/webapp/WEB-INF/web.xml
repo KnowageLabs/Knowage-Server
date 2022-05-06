@@ -11,6 +11,23 @@
 	<display-name>knowage</display-name>
 	<description>Main app of the Knowage Suite</description>
 
+	<!-- 
+		Logger Setup Filter.
+		
+		Set the logger according the HTTP request data.
+	 -->
+	<filter>
+		<filter-name>LoggerSetupFilter</filter-name>
+		<filter-class>it.eng.knowage.utils.filters.LoggerSetupFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>LoggerSetupFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+
 	<filter>
 		<filter-name>EncodingFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
@@ -33,7 +50,7 @@
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
 		<filter-class>it.eng.spagobi.commons.filters.SpagoBICoreCheckSessionFilter</filter-class>
 	</filter>
-
+	
 	<!--
 	<servlet>
 		<servlet-name>jersey-serlvet</servlet-name>
@@ -183,6 +200,8 @@
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 
+	
+	
 	<!-- If you want to enable HMAC filter:
 		Add the hmac key into server.xml :
 			<Environment description="HMAC key" name="hmacKey" type="java.lang.String" value="abc123"/>

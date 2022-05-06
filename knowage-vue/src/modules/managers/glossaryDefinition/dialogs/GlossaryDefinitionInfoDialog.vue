@@ -80,61 +80,65 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Dialog from 'primevue/dialog'
-import glossaryDefinitionDescriptor from '../GlossaryDefinitionDescriptor.json'
-import glossaryDefinitionDialogDescriptor from './GlossaryDefinitionDialogDescriptor.json'
+    import { defineComponent } from 'vue'
+    import Dialog from 'primevue/dialog'
+    import glossaryDefinitionDescriptor from '../GlossaryDefinitionDescriptor.json'
+    import glossaryDefinitionDialogDescriptor from './GlossaryDefinitionDialogDescriptor.json'
 
-export default defineComponent({
-    name: 'glossary-definition-info-dialog',
-    components: { Dialog },
-    emits: ['close'],
-    props: {
-        visible: { type: Boolean },
-        contentInfo: { type: Object }
-    },
-    data() {
-        return {
-            glossaryDefinitionDescriptor,
-            glossaryDefinitionDialogDescriptor
+    export default defineComponent({
+        name: 'glossary-definition-info-dialog',
+        components: { Dialog },
+        emits: ['close'],
+        props: {
+            visible: { type: Boolean },
+            contentInfo: { type: Object }
+        },
+        data() {
+            return {
+                glossaryDefinitionDescriptor,
+                glossaryDefinitionDialogDescriptor
+            }
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss">
-.glossaryDefinitionDetail {
-    ul {
-        list-style: none;
-        padding: 0;
-        li {
-            display: inline-flex;
-            justify-content: flex-start;
-            height: 40px;
-            &:nth-child(even) {
-                background-color: var(--kn-list-item-alternated-background-color);
-            }
-            span {
-                height: 40px;
+    .glossaryDefinitionDetail {
+        div {
+            ul {
+                list-style: none;
+                padding: 0;
                 display: flex;
-                justify-content: flex-start;
-                align-items: center;
-                &:first-child {
-                    font-weight: 600;
-                    padding-left: 10px;
-                    text-transform: capitalize;
-                    width: 150px;
-                    align-items: center;
-                }
-                &:nth-child(2) {
-                    flex: 1;
+                flex-direction:column;
+                li {
+                    display: inline-flex;
+                    justify-content: flex-start;
+                    height: 40px;
+                    &:nth-child(even) {
+                        background-color: var(--kn-list-item-alternated-background-color);
+                    }
+                    span {
+                        height: 40px;
+                        display: flex;
+                        justify-content: flex-start;
+                        align-items: center;
+                        &:first-child {
+                            font-weight: 600;
+                            padding-left: 10px;
+                            text-transform: capitalize;
+                            width: 150px;
+                            align-items: center;
+                        }
+                        &:nth-child(2) {
+                            flex: 1;
+                        }
+                    }
                 }
             }
         }
-    }
 
-    p {
-        margin: 1rem 0 1rem 1.5rem;
+        p {
+            margin: 1rem 0 1rem 1.5rem;
+        }
     }
-}
 </style>

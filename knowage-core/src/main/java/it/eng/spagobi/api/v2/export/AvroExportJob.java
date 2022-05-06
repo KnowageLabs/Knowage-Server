@@ -46,6 +46,7 @@ import org.json.JSONObject;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import it.eng.knowage.tools.utils.DatabaseUtils;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
@@ -135,9 +136,11 @@ public class AvroExportJob extends AbstractExportJob {
 		try {
 			Class<?> type = dsMeta.getFieldType(i);
 			if (isDate(type)) {
-				value = dateFormatter.format(value);
+				value = dateFormatter.parse((String) value).getTime();
 			} else if (isTimestamp(type)) {
-				value = timestampFormatter.format(value);
+
+				value = DatabaseUtils.timestampFormatter(value);
+
 			} else if (BigDecimal.class.isAssignableFrom(type)) {
 				BigDecimal bigDecimalValue = (BigDecimal) value;
 				value = bigDecimalValue.setScale(BIG_DECIMAL_SCALE, RoundingMode.CEILING);
@@ -233,6 +236,8 @@ public class AvroExportJob extends AbstractExportJob {
 			ret = Schema.create(Schema.Type.LONG);
 		} else if (Double.class.isAssignableFrom(fieldType)) {
 			ret = Schema.create(Schema.Type.DOUBLE);
+		} else if (isTimestamp(fieldType) || isDate(fieldType)) {
+			ret = Schema.create(Schema.Type.LONG);
 		} else {
 			ret = Schema.create(Schema.Type.STRING);
 		}

@@ -46,6 +46,7 @@ import LovsManagementProfileAttributesList from './LovsManagementProfileAttribut
 import LovsManagementTestDialog from './LovsManagementTestDialog/LovsManagementTestDialog.vue'
 import LovsManagementParamsDialog from './LovsManagementParamsDialog/LovsManagementParamsDialog.vue'
 import LovsManagementDataset from './LovsManagementDataset/LovsManagementDataset.vue'
+
 export default defineComponent({
     name: 'lovs-management-wizard-card',
     components: {
@@ -387,7 +388,7 @@ export default defineComponent({
                 if (!this.lov.lovProviderJSON[prop].LOVTYPE) {
                     this.lov.lovProviderJSON[prop].LOVTYPE = 'simple'
                 }
-                this.treeListTypeModel = this.lov.lovProviderJSON[prop]
+                if (!this.treeListTypeModel.LOVTYPE) this.treeListTypeModel = this.lov.lovProviderJSON[prop]
                 this.setColumnValues()
                 if (this.treeListTypeModel && this.treeListTypeModel.LOVTYPE != 'simple' && this.treeListTypeModel.LOVTYPE != '') {
                     this.setTreeLovModel()
@@ -397,7 +398,7 @@ export default defineComponent({
             this.setFormatedVisibleValues()
         },
         setColumnValues() {
-            if (this.lov.id) {
+            if (this.lov.id || this.treeListTypeModel.LOVTYPE !== 'simple') {
                 this.formatedVisibleValues = this.treeListTypeModel['VISIBLE-COLUMNS']?.length > 0 ? this.treeListTypeModel['VISIBLE-COLUMNS'].split(',') : []
                 this.formatedInvisibleValues = []
                 if (!this.treeListTypeModel.LOVTYPE || this.treeListTypeModel.LOVTYPE == 'simple') {
@@ -555,10 +556,20 @@ export default defineComponent({
             this.treeListTypeModel = payload.treeListTypeModel
             this.testLovModel = payload.model
             this.testLovTreeModel = payload.treeModel
+
             this.treeListTypeModel['VISIBLE-COLUMNS'] = ''
             for (let i = 0; i < this.testLovModel.length; i++) {
                 this.treeListTypeModel['VISIBLE-COLUMNS'] += this.testLovModel[i].name
                 this.treeListTypeModel['VISIBLE-COLUMNS'] += i === this.testLovModel.length - 1 ? '' : ','
+            }
+
+            this.treeListTypeModel['VALUE-COLUMNS'] = ''
+            this.treeListTypeModel['DESCRIPTION-COLUMNS'] = ''
+            for (let i = 0; i < this.testLovTreeModel.length; i++) {
+                this.treeListTypeModel['VALUE-COLUMNS'] += this.testLovTreeModel[i].value
+                this.treeListTypeModel['VALUE-COLUMNS'] += i === this.testLovTreeModel.length - 1 ? '' : ','
+                this.treeListTypeModel['DESCRIPTION-COLUMNS'] += this.testLovTreeModel[i].description
+                this.treeListTypeModel['DESCRIPTION-COLUMNS'] += i === this.testLovTreeModel.length - 1 ? '' : ','
             }
             this.handleSubmit(this.sendSave)
             this.testDialogVisible = false

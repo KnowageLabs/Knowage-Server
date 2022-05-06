@@ -925,6 +925,10 @@ public class RESTDataSet extends ConfigurableDataSet {
 				statement = statement.replaceAll("\"", "");
 				statement = statement.replaceAll("'", "");
 				statement = statement.replace("%", "*");
+			} else if (statement.contains(" , ")) {
+				if (!statement.isEmpty() && statement.startsWith("\"") && statement.endsWith("\"")) {
+					statement = statement.substring(1, statement.length() - 1);
+				}
 			}
 		}
 

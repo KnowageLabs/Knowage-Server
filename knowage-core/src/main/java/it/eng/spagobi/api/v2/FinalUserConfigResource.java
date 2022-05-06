@@ -43,7 +43,8 @@ public class FinalUserConfigResource extends AbstractSpagoBIResource {
 	 * In order to add new configurations to the list of the ones visible to the final user just add an item to the following list that contains the string
 	 * label of the config. ex: Arrays.asList("a", "b", "c");
 	 */
-	private static final List<String> userConfigLabels = Arrays.asList("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled", "SPAGOBI.DATE-FORMAT-SERVER.format");
+	private static final List<String> userConfigLabels = Arrays.asList("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled", "SPAGOBI.DATE-FORMAT-SERVER.format",
+			"SPAGOBI.TIMESTAMP-FORMAT.format");
 
 	private static Logger logger = Logger.getLogger(ConfigResource.class);
 

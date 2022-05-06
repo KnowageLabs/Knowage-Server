@@ -18,13 +18,8 @@
             :lazy="true"
             :rows="20"
             :totalRecords="lazyParams.size"
-            :currentPageReportTemplate="
-                $t('common.table.footer.paginated', {
-                    first: '{first}',
-                    last: '{last}',
-                    totalRecords: '{totalRecords}'
-                })
-            "
+            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+            :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
             responsiveLayout="stack"
             breakpoint="960px"
             :scrollable="true"
