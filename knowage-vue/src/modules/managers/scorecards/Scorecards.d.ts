@@ -1,13 +1,14 @@
 export interface iScorecard {
-    id: number,
+    id?: number,
     name: string,
-    creationDate: number | Date,
-    author: string,
-    perspectives: iPerspective[]
+    creationDate?: number | Date,
+    author?: string,
+    perspectives: iPerspective[],
+    description?: string
 }
 
 export interface iPerspective {
-    id: number,
+    id?: number,
     name: string,
     criterion: iScorecardCriterion,
     options: {
@@ -70,7 +71,7 @@ export interface iKpi {
         }[],
         usedByKpi: boolean
     },
-    status: null
+    status: string | null
 }
 
 export interface iScorecardTarget {

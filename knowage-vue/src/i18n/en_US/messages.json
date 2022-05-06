@@ -1923,6 +1923,11 @@
             "zipMailDocument": "Send zipped file?"
         },
         "scorecards": {
+            "addKpiHint": "A Target is a KPI container. It will show the trend for a specific KPI groups.",
+            "addPerspective": "Add Perspective",
+            "addPerspectiveHint": "To create a scorecard at least one perspective (card) should be present. Click on add perspective button to add the first one.",
+            "addTargetHint": "A perspective is the \"card\" container. Add one or more target to assign them some KPIs.",
+            "perspectives": "Perspectives",
             "scorecardDesigner": "Scorecard Designer",
             "title": "Scorecard List"
         },
