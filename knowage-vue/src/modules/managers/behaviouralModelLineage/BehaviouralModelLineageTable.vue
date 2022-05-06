@@ -33,7 +33,7 @@
         </template>
         <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :headerStyle="descriptor.style.uppercase">
             <template #body="slotProps">
-                <span class="kn-truncated" v-tooltip.top="slotProps.data.label">{{ slotProps.data.label }}</span>
+                <span class="kn-truncated" v-tooltip.top="slotProps.data[col.field]">{{ slotProps.data[col.field] }}</span>
             </template>
         </Column>
     </DataTable>
