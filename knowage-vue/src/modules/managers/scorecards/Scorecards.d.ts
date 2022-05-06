@@ -75,7 +75,7 @@ export interface iKpi {
 }
 
 export interface iScorecardTarget {
-    id: number,
+    id?: number,
     name: string,
     criterion: iScorecardCriterion,
     options: {

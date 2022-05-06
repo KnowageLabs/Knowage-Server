@@ -6,6 +6,9 @@
                     <template #start>
                         {{ $t('managers.scorecards.scorecardDesigner') }}
                     </template>
+                    <template #end>
+                        <Button class="kn-button p-button-text" :disabled="saveButtonDisabled" @click="saveScorecard">{{ $t('common.save') }}</Button>
+                    </template>
                 </Toolbar>
 
                 <Card v-if="scorecard" class="p-m-3">
@@ -20,7 +23,7 @@
                                             'p-invalid': !scorecard.name && nameTouched
                                         }"
                                     />
-                                    <label class="kn-material-input-label"> {{ $t('common.name') }}</label>
+                                    <label class="kn-material-input-label"> {{ $t('common.name') + ' *' }}</label>
                                 </span>
                                 <div v-if="!scorecard.name && nameTouched" class="p-error">
                                     <small class="p-col-12"> {{ $t('common.validation.required', { fieldName: $t('documentExecution.olap.crossNavigationDefinition.parameterName') }) }} </small>
@@ -66,6 +69,11 @@ export default defineComponent({
             kpis: [] as iKpi[]
         }
     },
+    computed: {
+        saveButtonDisabled(): boolean {
+            return !this.scorecard || !this.scorecard.name
+        }
+    },
     watch: {
         async id() {
             await this.loadScorecard()
@@ -98,6 +106,9 @@ export default defineComponent({
             this.$store.commit('setLoading', false)
 
             console.log('LOADED KPIS: ', this.kpis)
+        },
+        saveScorecard() {
+            console.log('SCORECARD FOR SAVE: ', this.scorecard)
         }
     }
 })

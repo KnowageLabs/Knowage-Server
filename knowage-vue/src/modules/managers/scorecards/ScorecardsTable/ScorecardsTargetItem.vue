@@ -75,6 +75,7 @@ export default defineComponent({
         loadTarget() {
             this.target = this.propTarget as iScorecardTarget
             console.log('>>> LOADED TARGET: ', this.target)
+            if (this.target.name === 'New Target') this.expanded = true
             this.setSelectedCriteria(this.target)
         },
         setSelectedCriteria(target: iScorecardTarget) {

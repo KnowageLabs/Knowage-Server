@@ -15,7 +15,7 @@
             </div>
 
             <div>
-                <Button icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" />
+                <Button icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" @click="addTarget" />
                 <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deletePerspectiveConfirm" />
             </div>
         </div>
@@ -40,7 +40,7 @@ import ScorecardsTableHint from './ScorecardsTableHint.vue'
 export default defineComponent({
     name: 'scorecards-perspective-item',
     components: { MultiSelect, SelectButton, ScorecardsTargetItem, ScorecardsTableHint },
-    props: { propPerspective: { type: Object as PropType<iPerspective> }, criterias: { type: Array as PropType<iScorecardCriterion[]>, required: true }, kpis: { type: Array as PropType<iKpi[]> } },
+    props: { propPerspective: { type: Object as PropType<iPerspective> }, criterias: { type: Array as PropType<iScorecardCriterion[]>, required: true }, kpis: { type: Array as PropType<iKpi[]>, required: true } },
     emits: ['deletePerspective', 'openKpiDialog'],
     data() {
         return {
@@ -62,6 +62,7 @@ export default defineComponent({
         loadPerspective() {
             this.perspective = this.propPerspective as iPerspective
             console.log('>>> LOADED PERSPECTIVE: ', this.perspective)
+            if (this.perspective.name === 'New Perspective') this.expanded = true
             this.setSelectedCriteria(this.perspective)
         },
         setSelectedCriteria(perspective: iPerspective) {
@@ -77,6 +78,15 @@ export default defineComponent({
                         this.selectedCriteria = 'P'
                 }
             }
+        },
+        addTarget() {
+            if (this.perspective) this.perspective.targets.push({ name: 'New Target', status: 'GRAY', criterion: this.getDefaultCriterion(), options: { criterionPriority: [] }, kpis: [], groupedKpis: [] })
+        },
+        getDefaultCriterion() {
+            let tempCriterion = {} as iScorecardCriterion
+            const index = this.criterias.findIndex((criteria: iScorecardCriterion) => criteria.valueCd === 'MAJORITY')
+            if (index !== -1) tempCriterion = this.criterias[index]
+            return tempCriterion
         },
         onCriteriaChange() {
             if (!this.perspective) return

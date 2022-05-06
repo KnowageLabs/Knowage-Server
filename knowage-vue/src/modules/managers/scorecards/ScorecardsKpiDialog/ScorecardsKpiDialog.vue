@@ -8,7 +8,18 @@
             </Toolbar>
         </template>
 
-        <DataTable :value="kpis" :paginator="kpis.length > 20" :rows="20" class="p-datatable-sm kn-table p-m-2" v-model:selection="selected" dataKey="id" v-model:filters="filters" :globalFilterFields="scorecardsKpiDialogDescriptor.globalFilterFields" responsiveLayout="stack" breakpoint="960px">
+        <DataTable
+            :value="kpis"
+            :paginator="kpis.length > 20"
+            :rows="20"
+            class="p-datatable-sm kn-table p-p-2"
+            v-model:selection="selected"
+            dataKey="id"
+            v-model:filters="filters"
+            :globalFilterFields="scorecardsKpiDialogDescriptor.globalFilterFields"
+            :scrollable="true"
+            :scrollHeight="scorecardsKpiDialogDescriptor.style.dialog.scrollHeight"
+        >
             <template #header>
                 <div class="table-header">
                     <span class="p-input-icon-left">

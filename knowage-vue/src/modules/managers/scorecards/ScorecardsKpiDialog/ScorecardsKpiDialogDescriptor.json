@@ -4,6 +4,7 @@
     "style": {
         "dialog": {
             "height": "80%",
+            "scrollHeight": "80vh",
             "width": "80%"
         }
     }
