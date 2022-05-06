@@ -114,9 +114,6 @@
                     <div class="p-col-4">
                         <Button icon="far fa-eye" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.mdxQuery')" @click="$emit('openMdxQueryDialog')" />
                     </div>
-                    <!-- <div class="p-col-4">
-                        <Button icon="fas fa-book-open" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureTablePagination')" />
-                    </div> -->
                     <div v-if="whatIfMode" class="p-col-4">
                         <Button icon="fa-solid fa-note-sticky" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.scenario')" @click="$emit('showScenarioWizard')" />
                     </div>
