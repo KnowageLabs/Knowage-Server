@@ -15,7 +15,7 @@
             </div>
 
             <div>
-                <Button icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" />
+                <Button icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" @click="openKpiDialog" />
                 <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deleteTargetConfirm" />
             </div>
         </div>
@@ -35,6 +35,8 @@
                 </div>
             </template>
         </div>
+
+        <ScorecardsKpiDialog :visible="kpiDialogVisible" :propKpis="kpis" :selectedKpis="target.kpis" @close="kpiDialogVisible = false" @kpiSelected="onKpiSelected"></ScorecardsKpiDialog>
     </div>
 </template>
 
@@ -45,18 +47,20 @@ import MultiSelect from 'primevue/multiselect'
 import SelectButton from 'primevue/selectbutton'
 import scorecardsTableDescriptor from './ScorecardsTableDescriptor.json'
 import ScorecardsTableHint from './ScorecardsTableHint.vue'
+import ScorecardsKpiDialog from '../ScorecardsKpiDialog/ScorecardsKpiDialog.vue'
 
 export default defineComponent({
     name: 'scorecards-target-item',
-    components: { MultiSelect, SelectButton, ScorecardsTableHint },
-    props: { propTarget: { type: Object as PropType<iScorecardTarget> }, criterias: { type: Array as PropType<iScorecardCriterion[]>, required: true } },
-    emits: ['deleteTarget'],
+    components: { MultiSelect, SelectButton, ScorecardsTableHint, ScorecardsKpiDialog },
+    props: { propTarget: { type: Object as PropType<iScorecardTarget> }, criterias: { type: Array as PropType<iScorecardCriterion[]>, required: true }, kpis: { type: Array as PropType<iKpi[]>, required: true } },
+    emits: ['deleteTarget', 'openKpiDialog'],
     data() {
         return {
             scorecardsTableDescriptor,
             target: null as iScorecardTarget | null,
             expanded: false,
-            selectedCriteria: 'M'
+            selectedCriteria: 'M',
+            kpiDialogVisible: false
         }
     },
     watch: {
@@ -112,6 +116,14 @@ export default defineComponent({
             } else {
                 return 'scorecard-kpi-icon-light-grey'
             }
+        },
+        openKpiDialog() {
+            this.kpiDialogVisible = true
+        },
+        onKpiSelected(selectedKpis: iKpi[]) {
+            console.log('SELECTYED KPIS: ', selectedKpis)
+            if (this.target) this.target.kpis = selectedKpis
+            this.kpiDialogVisible = false
         },
         deleteKpiConfirm(kpi: iKpi) {
             this.$confirm.require({

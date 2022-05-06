@@ -22,7 +22,7 @@
         <div v-if="expanded">
             <ScorecardsTableHint v-if="perspective.targets.length === 0" class="p-m-4" :hint="'managers.scorecards.addTargetHint'"></ScorecardsTableHint>
             <template v-else>
-                <ScorecardsTargetItem v-for="(target, index) in perspective.targets" :key="index" :propTarget="target" :criterias="criterias" @deleteTarget="deleteTarget"></ScorecardsTargetItem>
+                <ScorecardsTargetItem v-for="(target, index) in perspective.targets" :key="index" :propTarget="target" :criterias="criterias" :kpis="kpis" @deleteTarget="deleteTarget" @openKpiDialog="$emit('openKpiDialog', $event)"></ScorecardsTargetItem>
             </template>
         </div>
     </div>
@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iPerspective, iScorecardCriterion, iScorecardTarget } from '../Scorecards'
+import { iPerspective, iScorecardCriterion, iScorecardTarget, iKpi } from '../Scorecards'
 import MultiSelect from 'primevue/multiselect'
 import SelectButton from 'primevue/selectbutton'
 import scorecardsTableDescriptor from './ScorecardsTableDescriptor.json'
@@ -40,8 +40,8 @@ import ScorecardsTableHint from './ScorecardsTableHint.vue'
 export default defineComponent({
     name: 'scorecards-perspective-item',
     components: { MultiSelect, SelectButton, ScorecardsTargetItem, ScorecardsTableHint },
-    props: { propPerspective: { type: Object as PropType<iPerspective> }, criterias: { type: Array as PropType<iScorecardCriterion[]>, required: true } },
-    emits: ['deletePerspective'],
+    props: { propPerspective: { type: Object as PropType<iPerspective> }, criterias: { type: Array as PropType<iScorecardCriterion[]>, required: true }, kpis: { type: Array as PropType<iKpi[]> } },
+    emits: ['deletePerspective', 'openKpiDialog'],
     data() {
         return {
             scorecardsTableDescriptor,

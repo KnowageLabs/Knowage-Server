@@ -11,21 +11,21 @@
 
         <ScorecardsTableHint v-if="scorecard.perspectives.length === 0" class="p-my-2" :hint="'managers.scorecards.addPerspectiveHint'"></ScorecardsTableHint>
         <div v-else>
-            <ScorecardsPerspectiveItem v-for="(perspective, index) in scorecard.perspectives" :key="index" :propPerspective="perspective" :criterias="criterias" @deletePerspective="deletePerspective"></ScorecardsPerspectiveItem>
+            <ScorecardsPerspectiveItem v-for="(perspective, index) in scorecard.perspectives" :key="index" :propPerspective="perspective" :criterias="criterias" :kpis="kpis" @deletePerspective="deletePerspective"></ScorecardsPerspectiveItem>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iScorecard, iScorecardCriterion, iPerspective } from '../Scorecards'
+import { iScorecard, iScorecardCriterion, iPerspective, iKpi } from '../Scorecards'
 import ScorecardsPerspectiveItem from './ScorecardsPerspectiveItem.vue'
 import ScorecardsTableHint from './ScorecardsTableHint.vue'
 
 export default defineComponent({
     name: 'scorecards-table',
     components: { ScorecardsPerspectiveItem, ScorecardsTableHint },
-    props: { propScorecard: { type: Object as PropType<iScorecard> }, criterias: { type: Array as PropType<iScorecardCriterion[]>, required: true } },
+    props: { propScorecard: { type: Object as PropType<iScorecard> }, criterias: { type: Array as PropType<iScorecardCriterion[]>, required: true }, kpis: { type: Array as PropType<iKpi[]> } },
     data() {
         return {
             scorecard: null as iScorecard | null

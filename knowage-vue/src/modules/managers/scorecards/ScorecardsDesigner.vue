@@ -37,7 +37,7 @@
                     </template>
                 </Card>
 
-                <ScorecardsTable v-if="scorecard" :propScorecard="scorecard" :criterias="criterias"></ScorecardsTable>
+                <ScorecardsTable v-if="scorecard" :propScorecard="scorecard" :criterias="criterias" :kpis="kpis"></ScorecardsTable>
             </div>
 
             <div class="p-col-4 p-sm-4 p-md-6 p-p-0 p-m-0">
@@ -49,7 +49,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iScorecard, iScorecardCriterion } from './Scorecards'
+import { iScorecard, iScorecardCriterion, iKpi } from './Scorecards'
 import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import ScorecardsTable from './ScorecardsTable/ScorecardsTable.vue'
@@ -62,7 +62,8 @@ export default defineComponent({
         return {
             scorecard: null as iScorecard | null,
             nameTouched: false,
-            criterias: [] as iScorecardCriterion[]
+            criterias: [] as iScorecardCriterion[],
+            kpis: [] as iKpi[]
         }
     },
     watch: {
@@ -73,6 +74,7 @@ export default defineComponent({
     async created() {
         await this.loadScorecard()
         await this.loadCriterias()
+        await this.loadKpis()
     },
     methods: {
         async loadScorecard() {
@@ -89,8 +91,13 @@ export default defineComponent({
             this.$store.commit('setLoading', true)
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_SCORECARD_CRITE`).then((response: AxiosResponse<any>) => (this.criterias = response.data))
             this.$store.commit('setLoading', false)
+        },
+        async loadKpis() {
+            this.$store.commit('setLoading', true)
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpiWithResult`).then((response: AxiosResponse<any>) => (this.kpis = response.data))
+            this.$store.commit('setLoading', false)
 
-            console.log('LOADED CRITERIA: ', this.criterias)
+            console.log('LOADED KPIS: ', this.kpis)
         }
     }
 })
