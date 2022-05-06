@@ -84,6 +84,7 @@
                             @openHavingDialog="openHavingDialog"
                             @entityDropped="onDropComplete($event, false)"
                             @groupingChanged="onGroupingChanged"
+                            @openCalculatedFieldDialog="editCalcField"
                         ></QBESimpleTable>
                         <QBESmartTable
                             v-else
@@ -116,7 +117,33 @@
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false" @save="onAdvancedFiltersSave"></QBEAdvancedFilterDialog>
         <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" @datasetSaved="$emit('datasetSaved')" />
         <QBEJoinDefinitionDialog v-if="joinDefinitionDialogVisible" :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="uniqueID" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
-        <KnCalculatedField v-model:visibility="calcFieldsVisible" @save="onCalcFieldSave" @cancel="closeCalcField" :fields="calcFieldColumns" :descriptor="calcFieldDescriptor" :readOnly="readOnly" @update:readOnly="updateReadOnly" v-model:template="selectedTransformation" />
+
+        <KnCalculatedField v-model:template="selectedCalcField" v-model:visibility="calcFieldDialogVisible" :fields="calcFieldColumns" :descriptor="calcFieldDescriptor" :readOnly="false" :valid="true" @save="onCalcFieldSave" @cancel="calcFieldDialogVisible = false">
+            <template #additionalInputs>
+                <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
+                    <span class="p-float-label ">
+                        <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.type" :options="qbeDescriptor.types" optionLabel="label" optionValue="name" />
+                        <label for="type" class="kn-material-input-label"> {{ $t('components.knCalculatedField.type') }} </label>
+                    </span>
+                </div>
+                <div v-if="selectedCalcField.type === 'DATE'" class="p-field p-col-3">
+                    <span class="p-float-label ">
+                        <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.format" :options="qbeDescriptor.admissibleDateFormats">
+                            <template #option="slotProps">
+                                <span>{{ moment().format(slotProps.option) }}</span>
+                            </template>
+                        </Dropdown>
+                        <label for="type" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanDateFormat') }} </label>
+                    </span>
+                </div>
+                <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
+                    <span class="p-float-label ">
+                        <Dropdown id="columnType" class="kn-material-input" v-model="selectedCalcField.nature" :options="qbeDescriptor.columnTypes" optionLabel="label" optionValue="name" />
+                        <label for="columnType" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.columnType') }} </label>
+                    </span>
+                </div>
+            </template>
+        </KnCalculatedField>
 
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
@@ -131,6 +158,7 @@ import { onFiltersSaveCallback } from './QBEFilterService'
 import { formatDrivers } from './QBEDriversService'
 import { onHavingsSaveCallback } from './QBEHavingsService'
 import { buildCalculatedField } from '@/helpers/commons/buildQbeCalculatedField'
+import moment from 'moment'
 import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
@@ -154,6 +182,7 @@ import qbeDescriptor from './QBEDescriptor.json'
 import ProgressSpinner from 'primevue/progressspinner'
 import calcFieldDescriptor from './QBECalcFieldDescriptor.json'
 import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
+import Dropdown from 'primevue/dropdown'
 
 const crypto = require('crypto')
 
@@ -180,12 +209,15 @@ export default defineComponent({
         QBEPreviewDialog,
         QBESmartTable,
         ProgressSpinner,
-        KnCalculatedField
+        KnCalculatedField,
+        Dropdown
     },
     props: { visible: { type: Boolean }, dataset: { type: Object } },
     emits: ['close'],
     data() {
         return {
+            moment,
+            qbeDescriptor,
             calcFieldDescriptor,
             qbe: null as iQBE | null,
             customizedDatasetFunctions: {} as any,
@@ -220,10 +252,9 @@ export default defineComponent({
             uniqueID: null,
             filtersData: {} as any,
             qbeLoaded: false,
-            calcFieldsVisible: false,
+            calcFieldDialogVisible: false,
             calcFieldColumns: [] as any,
-            selectedTransformation: null as any,
-            qbeDescriptor,
+            selectedCalcField: null as any,
             colors: ['#D7263D', '#F46036', '#2E294E', '#1B998B', '#C5D86D', '#3F51B5', '#8BC34A', '#009688', '#F44336']
         }
     },
@@ -468,8 +499,7 @@ export default defineComponent({
                 { key: '1', label: this.$t('qbe.detailView.toolbarMenu.sql'), command: () => this.showSQLQuery() },
                 { key: '2', icon: repetitionIcon, label: this.$t('qbe.detailView.toolbarMenu.repetitions'), command: () => this.toggleDiscardRepetitions() },
                 { key: '3', label: this.$t('common.parameters'), command: () => this.showParamDialog() },
-                // { key: '4', label: this.$t('components.knCalculatedField.title'), command: () => this.showCalcField() },
-                { key: '4', label: this.$t('components.knCalculatedField.title'), command: () => this.onCalcFieldSave() },
+                { key: '4', label: this.$t('components.knCalculatedField.title'), visible: !this.smartView, command: () => this.addCalcField() },
                 { key: '5', label: this.$t('qbe.advancedFilters.advancedFilterVisualisation'), command: () => this.showAdvancedFilters() },
                 { key: '6', label: this.$t('qbe.joinDefinitions.title'), command: () => this.showJoinDefinitions() },
                 {
@@ -741,32 +771,46 @@ export default defineComponent({
             this.selectedQuery.fields.splice(indexOfFieldToDelete, 1)
             this.updateSmartView()
         },
-        showCalcField() {
+        addCalcField() {
             this.createCalcFieldColumns()
-            this.calcFieldsVisible = true
+            this.selectedCalcField = { alias: '', expression: '', format: undefined, nature: 'ATTRIBUTE', type: 'STRING' } as any
+            this.calcFieldDialogVisible = true
         },
         createCalcFieldColumns() {
             this.calcFieldColumns = []
             this.selectedQuery.fields.forEach((field) => {
-                this.calcFieldColumns.push({ fieldAlias: field.alias })
+                field.type != 'inline.calculated.field' ? this.calcFieldColumns.push({ fieldAlias: field.alias }) : ''
             })
         },
-        closeCalcField() {
-            this.calcFieldsVisible = false
+        editCalcField(calcField, index) {
+            this.createCalcFieldColumns()
+            this.selectedCalcField = this.formatCalcFieldForComponent(calcField)
+            this.selectedCalcField.index = index
+            this.calcFieldDialogVisible = true
+            console.log(this.selectedCalcField)
         },
-        onCalcFieldSave() {
-            let calcFieldOutput = {
-                alias: 'CALC FIELD NAME', //iz input fielda
-                expression: '$F{Employee id} + $F{Distance} + 9', //codemirror formula
-                format: undefined, // koristi se samo ako je izabran datum, datum formata iz dropdowna
-                nature: 'MEASURE', //nature dropdown
-                type: 'STRING' // type dropdown
-            }
+        formatCalcFieldForComponent(calcField) {
+            let formatField = {
+                alias: calcField.id.alias,
+                type: calcField.id.type,
+                expression: calcField.id.expressionSimple,
+                nature: calcField.id.nature,
+                format: calcField.id.format
+            } as any
+            return formatField
+        },
+        onCalcFieldSave(calcFieldOutput) {
+            this.selectedCalcField.alias = calcFieldOutput.colName
+            this.selectedCalcField.expression = calcFieldOutput.formula
+            let calculatedField = buildCalculatedField(this.selectedCalcField, this.selectedQuery.fields)
+            this.selectedCalcField.index ? this.selectedQuery.fields.splice(this.selectedCalcField.index, 1) : ''
 
-            let calculatedField = buildCalculatedField(calcFieldOutput, this.selectedQuery.fields)
-            console.log(calculatedField)
+            console.log(this.selectedCalcField, calculatedField)
+
             this.selectedQuery.fields.push(calculatedField)
             this.addEntityToMainQuery(calculatedField, true)
+
+            this.calcFieldDialogVisible = false
         }
     }
 })

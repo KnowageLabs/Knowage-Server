@@ -6,7 +6,7 @@
         <Column field="name" :header="$t('common.name')" :sortable="true" />
         <Column :style="descriptor.style.iconColumnStyle" class="p-text-right">
             <template #header>
-                <Button :label="$t('common.add')" class="p-button-link p-text-right" @click="showCalcField" />
+                <Button :label="$t('common.add')" class="p-button-link p-text-right" @click="addCalcField" />
             </template>
             <template #body="slotProps">
                 <Button icon="far fa-edit" class="p-button-link" @click="editCalcField(slotProps.data)" />
@@ -15,17 +15,17 @@
         </Column>
     </DataTable>
 
-    <KnCalculatedField v-model:visibility="calcFieldDialogVisible" @save="onCalcFieldSave" @cancel="closeCalcField" :fields="calcFieldColumns" :descriptor="calcFieldDescriptor" :readOnly="readOnly" @update:readOnly="updateReadOnly" v-model:template="selectedTransformation">
+    <KnCalculatedField v-model:template="selectedCalcField" v-model:visibility="calcFieldDialogVisible" :fields="calcFieldColumns" :descriptor="calcFieldDescriptor" :readOnly="false" :valid="true" @save="onCalcFieldSave" @cancel="calcFieldDialogVisible = false">
         <template #additionalInputs>
             <div class="p-field p-col-4">
                 <span class="p-float-label ">
-                    <Dropdown id="type" class="kn-material-input" v-model="type" :options="types" optionLabel="label" optionValue="name" />
+                    <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.type" :options="descriptor.types" optionLabel="label" optionValue="name" />
                     <label for="type" class="kn-material-input-label"> {{ $t('components.knCalculatedField.type') }} </label>
                 </span>
             </div>
             <div class="p-field p-col-4">
                 <span class="p-float-label ">
-                    <Dropdown id="columnType" class="kn-material-input" v-model="columnType" :options="columnTypes" optionLabel="label" optionValue="label" />
+                    <Dropdown id="columnType" class="kn-material-input" v-model="selectedCalcField.nature" :options="descriptor.columnTypes" optionLabel="label" optionValue="name" />
                     <label for="columnType" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.columnType') }} </label>
                 </span>
             </div>
@@ -59,18 +59,8 @@ export default defineComponent({
             businessModel: null as iBusinessModel | null,
             calcFieldDialogVisible: false,
             readOnly: false,
-            selectedTransformation: {},
-            calcFieldColumns: [] as any,
-            type: null as any,
-            columnType: null as any,
-            columnTypes: [
-                { label: 'Attribute', name: 'attribute' },
-                { label: 'Measure', name: 'measure' }
-            ],
-            types: [
-                { label: 'String', name: 'STRING' },
-                { label: 'Number', name: 'NUMBER' }
-            ]
+            selectedCalcField: {} as any,
+            calcFieldColumns: [] as any
         }
     },
     watch: {
@@ -95,59 +85,83 @@ export default defineComponent({
                 this.$emit('metaUpdated')
             }, 250)
         },
-        editCalcField(event) {
-            console.log(event)
-        },
-        async deleteCalcField(calcField) {
-            let dataToSend = { name: calcField.name, sourceTableName: this.businessModel?.uniqueName }
-            const postData = { data: dataToSend, diff: generate(this.observer) }
-            await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/deleteCalculatedField`, postData)
-                .then((response: AxiosResponse<any>) => {
-                    this.meta = applyPatch(this.meta, response.data).newDocument
-                })
-                .catch(() => {})
-                .finally(() => generate(this.observer))
-        },
-        showCalcField() {
-            this.createCalcFieldColumns()
-            this.calcFieldDialogVisible = true
-        },
+
         createCalcFieldColumns() {
             this.calcFieldColumns = []
             this.businessModel?.simpleBusinessColumns.forEach((field) => {
                 this.calcFieldColumns.push({ fieldAlias: field.name })
             })
         },
-        closeCalcField() {
+
+        editCalcField(calcField) {
+            this.createCalcFieldColumns()
+            this.selectedCalcField = this.formatCalcFieldForComponent(calcField)
+            this.calcFieldDialogVisible = true
+        },
+
+        formatCalcFieldForComponent(calcField) {
+            let formatField = {} as any
+
+            formatField.alias = calcField.name
+            formatField.uniqueName = calcField.uniqueName
+
+            for (var i = 0; i < calcField.properties.length; i++) {
+                var key = Object.keys(calcField.properties[i])[0]
+                if (key === 'structural.datatype') {
+                    formatField.type = calcField.properties[i][key].value.toUpperCase()
+                }
+                if (key === 'structural.expression') {
+                    formatField.expression = calcField.properties[i][key].value
+                }
+                if (key === 'structural.columntype') {
+                    formatField.nature = calcField.properties[i][key].value.toUpperCase()
+                }
+            }
+
+            return formatField
+        },
+
+        addCalcField() {
+            this.createCalcFieldColumns()
+            this.selectedCalcField = { alias: '', expression: '', format: null, nature: 'ATTRIBUTE', type: 'STRING' } as any
+            this.calcFieldDialogVisible = true
+        },
+
+        onCalcFieldSave(event) {
+            let calculatedField = {
+                expression: event.formula,
+                dataType: this.selectedCalcField.type,
+                columnType: this.selectedCalcField.nature.toLowerCase(),
+                name: event.colName,
+                sourceTableName: this.businessModel?.uniqueName,
+                editMode: false
+            } as any
+
+            if (this.selectedCalcField.uniqueName) {
+                calculatedField.uniquename = this.selectedCalcField.uniqueName
+                calculatedField.editMode = true
+            }
+
+            this.createCalcField(calculatedField)
             this.calcFieldDialogVisible = false
         },
-        onCalcFieldSave(event) {
-            // let calcFieldOutput = {
-            //     alias: 'Calc FIELD', //iz input fielda
-            //     expression: 'Employee id + 99 + 3 +2 +1', //codemirror formula
-            //     format: undefined, // koristi se samo ako je izabran datum, datum formata iz dropdowna
-            //     nature: 'MEASURE', //nature dropdown
-            //     type: 'STRING' // type dropdown
-            // }
 
-            // let calculatedField = {
-            //     expression: calcFieldOutput.expression,
-            //     dataType: calcFieldOutput.type,
-            //     columnType: calcFieldOutput.nature.toLowerCase(),
-            //     name: calcFieldOutput.alias,
-            //     sourceTableName: this.businessModel?.uniqueName,
-            //     editMode: false
-            // }
-
-            // let calculatedField = buildCalculatedField(calcFieldOutput, this.selectedQuery.fields)
-            console.log(event)
-            // this.createCalcField(calculatedField)
-        },
         async createCalcField(calculatedField) {
             const postData = { data: calculatedField, diff: generate(this.observer) }
             await this.$http
                 .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/setCalculatedField`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    this.meta = applyPatch(this.meta, response.data).newDocument
+                })
+                .catch(() => {})
+                .finally(() => generate(this.observer))
+        },
+
+        async deleteCalcField(calcField) {
+            let dataToSend = { name: calcField.name, sourceTableName: this.businessModel?.uniqueName }
+            const postData = { data: dataToSend, diff: generate(this.observer) }
+            await this.$http
+                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/deleteCalculatedField`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = applyPatch(this.meta, response.data).newDocument
                 })
