@@ -29,7 +29,7 @@ import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
-import it.eng.spagobi.tools.scheduler.jobs.RestEventJob;
+import it.eng.spagobi.tools.scheduler.jobs.CleanAuditJob;
 import it.eng.spagobi.tools.scheduler.utils.PredefinedCronExpression;
 
 public class CleanAuditQuartzInitializer implements InitializerIFace {
@@ -74,13 +74,13 @@ public class CleanAuditQuartzInitializer implements InitializerIFace {
 				jobDetail.setDurable(true);
 				jobDetail.setVolatile(false);
 				jobDetail.setRequestsRecovery(true);
-				jobDetail.setJobClass(RestEventJob.class);
+				jobDetail.setJobClass(CleanAuditJob.class);
 
 				schedulerDAO.insertJob(jobDetail);
 				logger.debug("Added job with name " + DEFAULT_JOB_NAME);
 			}
 
-			String cronExpression = PredefinedCronExpression.DAILY.getExpression();
+			String cronExpression = PredefinedCronExpression.EVERY_10_MINS.getExpression();
 			schedulerDAO.deleteTrigger(DEFAULT_TRIGGER_NAME, Scheduler.DEFAULT_GROUP);
 
 			String nameTrig = DEFAULT_TRIGGER_NAME;
