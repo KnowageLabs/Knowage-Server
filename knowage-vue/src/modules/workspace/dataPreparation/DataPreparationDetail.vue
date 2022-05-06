@@ -131,8 +131,8 @@
                             </template>
                         </Menu> </template
                     ><template #body="{data}">
-                        <span v-if="col.Type.toLowerCase().includes('time')"> {{ getFormattedDate(data[col.header], { dateStyle: 'short', timeStyle: 'short' }) }}</span>
-                        <span v-else-if="col.Type.toLowerCase().includes('date')"> {{ getFormattedDate(data[col.header], { dateStyle: 'short' }) }}</span>
+                        <span v-if="col.Type.toLowerCase().includes('time')"> {{ getFormattedDate(data[col.header], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'} ) }}</span>
+                        <span v-else-if="col.Type.toLowerCase().includes('date')"> {{ getFormattedDate(data[col.header], { year: 'numeric', month: '2-digit', day: '2-digit'}) }}</span>
                         <span v-else> {{ data[col.header] }}</span>
                     </template></Column
                 >
