@@ -13,7 +13,6 @@
         <div v-else>
             <ScorecardsPerspectiveItem v-for="(perspective, index) in scorecard.perspectives" :key="index" :propPerspective="perspective" :criterias="criterias" @deletePerspective="deletePerspective"></ScorecardsPerspectiveItem>
         </div>
-        {{ scorecard }}
     </div>
 </template>
 
@@ -45,7 +44,6 @@ export default defineComponent({
             this.scorecard = this.propScorecard as iScorecard
         },
         addPerspective() {
-            console.log('addPerspective clicked!!!')
             if (this.scorecard) this.scorecard.perspectives.push({ name: 'New Perspective', status: 'GRAY', criterion: this.getDefaultCriterion(), options: { criterionPriority: [] }, targets: [], groupedKpis: [] })
         },
         getDefaultCriterion() {

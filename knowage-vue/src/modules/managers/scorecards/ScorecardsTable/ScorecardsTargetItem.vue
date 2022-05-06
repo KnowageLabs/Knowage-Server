@@ -1,19 +1,20 @@
 <template>
     <div v-if="target">
-        <div class="p-d-flex p-flex-row p-ai-center p-m-2">
+        <div class="p-d-flex p-flex-row p-ai-center p-m-2 scorecards-target-container">
             <div class="kn-flex">
-                <Button v-if="!expanded" icon="fas fa-chevron-right" class="p-ml-5 p-button-text p-button-rounded p-button-plain scorecards-item-expand-icon" @click="expanded = true" />
-                <Button v-else icon="fas fa-chevron-down" class="p-ml-5 p-button-text p-button-rounded p-button-plain scorecards-item-expand-icon" @click="expanded = false" />
-                <i class="fa-solid fa-bullseye-arrow p-mr-2" />
+                <Button v-if="!expanded" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain scorecards-item-expand-icon" @click="expanded = true" />
+                <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain scorecards-item-expand-icon" @click="expanded = false" />
+                <i class="fa fa-bullseye fa-lg p-mr-2" />
                 <span>
-                    {{ target.name }}
+                    <InputText class="kn-material-input scorecards-target-name-input" v-model="target.name" />
                 </span>
             </div>
-            <div class="kn-flex">
+            <div class="kn-flex p-d-flex p-flex-row">
                 <SelectButton v-model="selectedCriteria" :options="scorecardsTableDescriptor.criteriaOptions" @change="onCriteriaChange"></SelectButton>
+                <MultiSelect v-if="selectedCriteria !== 'M'" class="p-ml-3 scorecards-criteria-multiselect" v-model="target.options.criterionPriority" :options="target.kpis" optionLabel="name" optionValue="name"></MultiSelect>
             </div>
 
-            <div class="kn-flex">
+            <div>
                 <Button icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" />
                 <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deleteTargetConfirm" />
             </div>
@@ -22,7 +23,7 @@
             <ScorecardsTableHint v-if="target.kpis.length === 0" class="p-m-4" :hint="'managers.scorecards.addKpiHint'"></ScorecardsTableHint>
             <template v-else>
                 <div v-for="(kpi, index) in target.kpis" :key="index" class="scorecards-kpi-container p-d-flex">
-                    <div>
+                    <div class="scorecards-kpi-info">
                         <i class="fas fa-square fa-2xl p-mr-2" :class="getKpiIconColorClass(kpi)"></i>
                         <span>
                             {{ kpi.name }}
@@ -40,13 +41,14 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iScorecardTarget, iScorecardCriterion, iKpi } from '../Scorecards'
+import MultiSelect from 'primevue/multiselect'
 import SelectButton from 'primevue/selectbutton'
 import scorecardsTableDescriptor from './ScorecardsTableDescriptor.json'
 import ScorecardsTableHint from './ScorecardsTableHint.vue'
 
 export default defineComponent({
     name: 'scorecards-target-item',
-    components: { SelectButton, ScorecardsTableHint },
+    components: { MultiSelect, SelectButton, ScorecardsTableHint },
     props: { propTarget: { type: Object as PropType<iScorecardTarget> }, criterias: { type: Array as PropType<iScorecardCriterion[]>, required: true } },
     emits: ['deleteTarget'],
     data() {
@@ -122,7 +124,13 @@ export default defineComponent({
         async deleteKpi(kpi: iKpi) {
             if (!this.target) return
             const index = this.target.kpis.findIndex((tempKpi: iKpi) => tempKpi.id === kpi.id)
-            if (index !== -1) this.target.kpis.splice(index, 1)
+            if (index !== -1) {
+                this.target.kpis.splice(index, 1)
+                if (this.target.criterion.valueCd !== 'MAJORITY') {
+                    const index = this.target.options.criterionPriority.findIndex((criteria: string) => criteria === kpi.name)
+                    if (index !== -1) this.target.options.criterionPriority.splice(index, 1)
+                }
+            }
         },
         deleteTargetConfirm() {
             this.$confirm.require({
@@ -136,13 +144,23 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.scorecards-target-container {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #cccccc;
+}
 .scorecards-item-expand-icon {
     color: white;
+    margin-left: 4rem;
 }
 
 .scorecards-kpi-container {
-    margin: 1rem 1rem 1rem 8rem;
+    margin: 1rem 1rem 1rem 1rem;
+    border-bottom: 1px solid #cccccc;
+}
+
+.scorecards-kpi-info {
+    margin-left: 11rem;
 }
 
 .scorecard-kpi-icon-red {
@@ -163,5 +181,13 @@ export default defineComponent({
 
 .scorecard-kpi-icon-light-grey {
     color: #cccccc;
+}
+
+.scorecards-criteria-multiselect {
+    width: 50%;
+}
+
+.scorecards-target-name-input {
+    border: none;
 }
 </style>
