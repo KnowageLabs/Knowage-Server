@@ -346,7 +346,6 @@ export default defineComponent({
             }
         },
         exportOlap(type: string) {
-            console.log('EXPORT OLAP CALLED!', type)
             const url = type === 'PDF' ? `/knowagewhatifengine/restful-services/1.0/model/export/pdf?SBI_EXECUTION_ID=${this.sbiExecutionId}` : `/knowagewhatifengine/restful-services/1.0/model/export/excel?SBI_EXECUTION_ID=${this.sbiExecutionId}`
             window.open(url)
         },
