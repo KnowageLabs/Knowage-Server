@@ -120,6 +120,13 @@ class PerUserBe2BeRequestCustomizer implements RestTemplateRequestCustomizer<Cli
 
 		headers.add(authorizationHeaderName, userToken);
 		headers.add("X-Kn-Correlation-Id", correlationId);
+		/*
+		 * I'll consider this a WORKAROUND: it prevent the JSESSIONID to be sent to
+		 * the BE. On knowage-core side, the authentication mechanism check if the user
+		 * is already authenticated using the JSESSIONID; we don't want that here, because
+		 * we want to just rely on the authentication token.
+		 */
+		headers.add(HttpHeaders.COOKIE, "");
 
 		// TODO : Add kn.lang cookie
 	}
