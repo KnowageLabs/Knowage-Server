@@ -334,12 +334,21 @@ export default defineComponent({
             window.print()
         },
         export(type: string) {
-            const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
-            let tempFrame = window.frames[tempIndex]
-            while (tempFrame && tempFrame.name !== 'documentFrame' + tempIndex) {
-                tempFrame = tempFrame[0].frames
+            if (this.document.typeCode === 'OLAP') {
+                this.exportOlap(type)
+            } else {
+                const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+                let tempFrame = window.frames[tempIndex]
+                while (tempFrame && tempFrame.name !== 'documentFrame' + tempIndex) {
+                    tempFrame = tempFrame[0].frames
+                }
+                tempFrame.postMessage({ type: 'export', format: type.toLowerCase() }, '*')
             }
-            tempFrame.postMessage({ type: 'export', format: type.toLowerCase() }, '*')
+        },
+        exportOlap(type: string) {
+            console.log('EXPORT OLAP CALLED!', type)
+            const url = type === 'PDF' ? `/knowagewhatifengine/restful-services/1.0/model/export/pdf?SBI_EXECUTION_ID=${this.sbiExecutionId}` : `/knowagewhatifengine/restful-services/1.0/model/export/excel?SBI_EXECUTION_ID=${this.sbiExecutionId}`
+            window.open(url)
         },
         openMailDialog() {
             this.mailDialogVisible = true
