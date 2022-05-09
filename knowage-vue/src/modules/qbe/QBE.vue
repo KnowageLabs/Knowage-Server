@@ -621,7 +621,6 @@ export default defineComponent({
             this.updateSmartView()
         },
         addEntityToMainQuery(field, isCalcField?) {
-            console.log('addEntityToMainQuery', field, isCalcField)
             let queryModel = this.selectedQuery.fields
             let editQueryObj = this.selectedQuery
             for (var i = 0; i < queryModel.length; i++) {
@@ -787,7 +786,6 @@ export default defineComponent({
             this.selectedCalcField = this.formatCalcFieldForComponent(calcField)
             this.selectedCalcField.index = index
             this.calcFieldDialogVisible = true
-            console.log(this.selectedCalcField)
         },
         formatCalcFieldForComponent(calcField) {
             let formatField = {
@@ -803,13 +801,10 @@ export default defineComponent({
             this.selectedCalcField.alias = calcFieldOutput.colName
             this.selectedCalcField.expression = calcFieldOutput.formula
             let calculatedField = buildCalculatedField(this.selectedCalcField, this.selectedQuery.fields)
-            this.selectedCalcField.index ? this.selectedQuery.fields.splice(this.selectedCalcField.index, 1) : ''
-
-            console.log(this.selectedCalcField, calculatedField)
+            this.selectedCalcField.index || this.selectedCalcField.index === 0 ? this.selectedQuery.fields.splice(this.selectedCalcField.index, 1) : ''
 
             this.selectedQuery.fields.push(calculatedField)
             this.addEntityToMainQuery(calculatedField, true)
-
             this.calcFieldDialogVisible = false
         }
     }
