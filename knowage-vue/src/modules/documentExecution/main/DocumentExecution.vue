@@ -548,6 +548,10 @@ export default defineComponent({
                 postData.SBI_EXECUTION_ID = this.sbiExecutionId
             }
 
+            if (this.document.typeCode === 'MAP') {
+                postData.EDIT_MODE = 'edit_map'
+            }
+
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData, { headers: { 'X-Disable-Interceptor': 'true' } })
                 .then((response: AxiosResponse<any>) => {
