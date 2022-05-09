@@ -34,9 +34,7 @@
                 <Button v-show="selectedFilters.length > 0" class="kn-button kn-button--primary" @click="clear"> {{ $t('common.clear') }}</Button>
                 <Button v-show="treeLocked" class="kn-button kn-button--primary" @click="treeLocked = false"> {{ $t('common.add') }}</Button>
                 <Button class="kn-button kn-button--primary p-ml-auto" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-                <Button class="kn-button kn-button--primary" :disabled="applyButtonDisabled" @click="apply">
-                    <span v-tooltip.top="{ value: $t('documentExecution.olap.filterDialog.noMembersWarningMessage'), disabled: false }">{{ $t('common.apply') }}</span></Button
-                >
+                <Button class="kn-button kn-button--primary" :disabled="applyButtonDisabled" @click="apply"> {{ $t('common.apply') }}</Button>
             </div>
         </template>
     </Dialog>
