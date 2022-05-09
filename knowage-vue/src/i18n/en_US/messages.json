@@ -2287,7 +2287,8 @@
                 "exportTo": "Export to",
                 "repetitions": "Discard Repetitions",
                 "sql": "SQL Query"
-            }
+            },
+            "modifyCalcField": "Modify calculated field"
         },
         "entities": {
             "derived": "Derived Entities",
