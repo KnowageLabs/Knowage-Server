@@ -17,11 +17,17 @@
  */
 package it.eng.spagobi.tools.scheduler.jobs;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
@@ -34,7 +40,6 @@ public class CleanCacheJob extends AbstractSpagoBIJob implements Job {
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		logger.debug("IN");
 		try {
-			this.setTenant(jobExecutionContext);
 			executeInternal();
 		} finally {
 			this.unsetTenant();
@@ -46,8 +51,16 @@ public class CleanCacheJob extends AbstractSpagoBIJob implements Job {
 
 		logger.debug("IN");
 		try {
-			ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
-			cache.deleteAll();
+
+			List<SbiTenant> allTenants = DAOFactory.getTenantsDAO().loadAllTenants();
+			for (SbiTenant sbiTenant : allTenants) {
+
+				TenantManager.setTenant(new Tenant(sbiTenant.getName()));
+				ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
+				cache.deleteAll();
+				this.unsetTenant();
+			}
+
 			logger.debug("Cache cleaning ended succesfully!");
 		} catch (Exception e) {
 			logger.error("Error while executing job ", e);

@@ -65,24 +65,19 @@ public class QuartzNativeObjectsConverter {
 		super();
 	}
 
-	public static org.quartz.JobDetail convertJobToNativeObject(String tenant, Job spagobiJob) {
+	public static org.quartz.JobDetail convertJobToNativeObject(String tenant, Job spagobiJob, boolean global) {
 
-		String description = Optional.ofNullable(spagobiJob.getDescription())
-				.orElse("");
+		String description = Optional.ofNullable(spagobiJob.getDescription()).orElse("");
 
 		String name = spagobiJob.getName();
-		String group = Optional.ofNullable(spagobiJob.getGroupName())
-				.orElse(Scheduler.DEFAULT_GROUP);
+		String group = Optional.ofNullable(spagobiJob.getGroupName()).orElse(Scheduler.DEFAULT_GROUP);
 
-		group = applyTenant(tenant, group);
+		group = global ? group : applyTenant(tenant, group);
 
-		JobBuilder jobBuilder = newJob().withIdentity(name, group)
-			.withDescription(description)
-			.ofType(spagobiJob.getJobClass())
-			.storeDurably(spagobiJob.isDurable())
-			.requestRecovery(spagobiJob.isRequestsRecovery())
-			// TODO : Not present in Quartz 2.3 : with quartzJob.setVolatility(spagobiJob.isVolatile());
-			;
+		JobBuilder jobBuilder = newJob().withIdentity(name, group).withDescription(description).ofType(spagobiJob.getJobClass())
+				.storeDurably(spagobiJob.isDurable()).requestRecovery(spagobiJob.isRequestsRecovery())
+		// TODO : Not present in Quartz 2.3 : with quartzJob.setVolatility(spagobiJob.isVolatile());
+		;
 
 		JobDataMap parameters = convertParametersToNativeObject(spagobiJob.getParameters());
 		if (parameters.containsKey(MERGE_ALL_SNAPSHOTS)) {
@@ -126,7 +121,7 @@ public class QuartzNativeObjectsConverter {
 		return spagobiJob;
 	}
 
-	public static org.quartz.Trigger convertTriggerToNativeObject(String tenant, Trigger spagobiTrigger) {
+	public static org.quartz.Trigger convertTriggerToNativeObject(String tenant, Trigger spagobiTrigger, boolean global) {
 		logger.debug("IN");
 
 		org.quartz.Trigger quartzTrigger = null;
@@ -153,7 +148,7 @@ public class QuartzNativeObjectsConverter {
 			String jobName = spagobiTrigger.getJob().getName();
 			String jobGroup = Optional.ofNullable(spagobiTrigger.getJob().getGroupName()).orElse(Scheduler.DEFAULT_GROUP);
 
-			jobGroup = applyTenant(tenant, jobGroup);
+			jobGroup = global ? jobGroup : applyTenant(tenant, jobGroup);
 
 			String description = Optional.ofNullable(spagobiTrigger.getDescription()).orElse("");
 
@@ -163,17 +158,11 @@ public class QuartzNativeObjectsConverter {
 
 				SimpleScheduleBuilder schedule = simpleSchedule();
 
-				quartzTrigger = triggerBuilder.forJob(jobName, jobGroup)
-						.withDescription(description)
-						.usingJobData(jobDataMap)
-						.withSchedule(schedule)
-						.build();
+				quartzTrigger = triggerBuilder.forJob(jobName, jobGroup).withDescription(description).usingJobData(jobDataMap).withSchedule(schedule).build();
 
 			} else {
 
-				triggerBuilder = triggerBuilder.withIdentity(triggerName, triggerGroup)
-					.forJob(jobName, jobGroup)
-					.withDescription(description);
+				triggerBuilder = triggerBuilder.withIdentity(triggerName, triggerGroup).forJob(jobName, jobGroup).withDescription(description);
 
 				if (spagobiTrigger.isSimpleTrigger()) {
 					triggerBuilder = triggerBuilder.withSchedule(simpleSchedule());
@@ -188,13 +177,9 @@ public class QuartzNativeObjectsConverter {
 					/*
 					 * Very important during update!
 					 *
-					 * The update keep the previous start time: if we rewrite the same trigger a missfire happens; we don't
-					 * want that!
+					 * The update keep the previous start time: if we rewrite the same trigger a missfire happens; we don't want that!
 					 */
-					triggerBuilder = triggerBuilder.withSchedule(
-							cronSchedule(quartzCronExpression)
-							.withMisfireHandlingInstructionDoNothing()
-						);
+					triggerBuilder = triggerBuilder.withSchedule(cronSchedule(quartzCronExpression).withMisfireHandlingInstructionDoNothing());
 
 					// dirty trick
 					spagobiTrigger.getJob().addParameter(SPAGOBI_CRON_EXPRESSION, spagobiTrigger.getChronExpression().getExpression());
@@ -262,7 +247,7 @@ public class QuartzNativeObjectsConverter {
 		Job job = new Job();
 		job.setName(quartzTrigger.getJobKey().getName());
 		job.setGroupName(quartzTrigger.getJobKey().getGroup());
-		job.setVolatile(/* TODO : Not present in Quartz 2.3 : quartzTrigger.isVolatile()*/ true);
+		job.setVolatile(/* TODO : Not present in Quartz 2.3 : quartzTrigger.isVolatile() */ true);
 		Map<String, String> parameters = convertParametersFromNativeObject(quartzTrigger.getJobDataMap());
 		job.addParameters(parameters);
 
