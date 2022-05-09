@@ -255,7 +255,13 @@ export default defineComponent({
             this.loading = true
             await this.$http
                 .get(process.env.VUE_APP_OLAP_PATH + `1.0/buttons`)
-                .then(async (response: AxiosResponse<any>) => (this.buttons = response.data))
+                .then(async (response: AxiosResponse<any>) => {
+                    this.buttons = response.data
+                    this.buttons.splice(
+                        this.buttons.findIndex((item) => item.name === 'BUTTON_CC'),
+                        1
+                    )
+                })
                 .catch(() => {})
             this.loading = false
         },
