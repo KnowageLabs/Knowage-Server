@@ -16,7 +16,7 @@ export interface iPerspective {
     },
     status: string,
     targets: iScorecardTarget[],
-    groupedKpis: { status: null, count: number }[]
+    groupedKpis?: { status: null, count: number }[]
 }
 
 export interface iScorecardCriterion {
@@ -83,5 +83,5 @@ export interface iScorecardTarget {
     },
     status: string,
     kpis: iKpi[],
-    groupedKpis: { status: null, count: number }[]
+    groupedKpis?: { status: null, count: number }[]
 }

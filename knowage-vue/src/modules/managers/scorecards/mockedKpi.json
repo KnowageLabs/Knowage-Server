@@ -1,0 +1,2063 @@
+[
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":209,\"ruleVersion\":2,\"ruleName\":\"SALES\",\"measureName\":\"STORE_SALES\",\"attributes\":{\"YEAR\":true,\"PRODUCT_FAMILY\":true,\"MONTH\":true},\"$$hashKey\":\"object:413\"},{\"ruleId\":209,\"ruleVersion\":2,\"ruleName\":\"SALES\",\"measureName\":\"STORE_COST\",\"attributes\":{\"YEAR\":true,\"PRODUCT_FAMILY\":true,\"MONTH\":true},\"$$hashKey\":\"object:414\"},{\"ruleId\":209,\"ruleVersion\":2,\"ruleName\":\"SALES\",\"measureName\":\"STORE_SALES\",\"attributes\":{\"YEAR\":true,\"PRODUCT_FAMILY\":true,\"MONTH\":true},\"$$hashKey\":\"object:415\"}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":3,\"PRODUCT_FAMILY\":3,\"MONTH\":3},\"attributeIntersection\":{\"YEAR\":true,\"PRODUCT_FAMILY\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "PROFIT",
+            "translatedValueName": "PROFIT",
+            "valueCd": "PROFIT",
+            "valueDescription": "PROFIT",
+            "valueId": 404,
+            "valueName": "PROFIT"
+        },
+        "dateCreation": 1477312200000,
+        "definition": "{\"formula\":\"((M0-M1)/M2)*100\",\"measures\":[\"STORE_SALES\",\"STORE_COST\",\"STORE_SALES\"],\"functions\":[\"SUM\",\"SUM\",\"SUM\"],\"formulaDecoded\":\"((SUM(STORE_SALES)-SUM(STORE_COST))/SUM(STORE_SALES))*100\",\"formulaSimple\":\" (  ( STORE_SALES - STORE_COST )  / STORE_SALES )  * 100\"}",
+        "enableVersioning": false,
+        "id": 216,
+        "name": "PROFIT MARGIN",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "Threshold_1",
+            "id": 47,
+            "name": "Threshold_1",
+            "thresholdValues": [
+                {
+                    "color": "#00FF00",
+                    "id": 147,
+                    "includeMax": true,
+                    "includeMin": false,
+                    "label": "OK",
+                    "maxValue": 30,
+                    "minValue": 0,
+                    "position": 1,
+                    "severityCd": "URGENT",
+                    "severityId": 78
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 148,
+                    "includeMax": true,
+                    "includeMin": false,
+                    "label": "Medium",
+                    "maxValue": 80,
+                    "minValue": 30,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#FF0000",
+                    "id": 149,
+                    "includeMax": true,
+                    "includeMin": false,
+                    "label": "KO",
+                    "maxValue": 100,
+                    "minValue": 80,
+                    "position": 3,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":209,\"ruleVersion\":2,\"ruleName\":\"SALES\",\"measureName\":\"STORE_SALES\",\"attributes\":{\"YEAR\":true,\"PRODUCT_FAMILY\":true,\"MONTH\":true},\"$$hashKey\":\"object:900\"},{\"ruleId\":209,\"ruleVersion\":2,\"ruleName\":\"SALES\",\"measureName\":\"STORE_COST\",\"attributes\":{\"YEAR\":true,\"PRODUCT_FAMILY\":true,\"MONTH\":true},\"$$hashKey\":\"object:901\"},{\"ruleId\":209,\"ruleVersion\":2,\"ruleName\":\"SALES\",\"measureName\":\"STORE_COST\",\"attributes\":{\"YEAR\":true,\"PRODUCT_FAMILY\":true,\"MONTH\":true},\"$$hashKey\":\"object:902\"}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":3,\"PRODUCT_FAMILY\":3,\"MONTH\":3},\"attributeIntersection\":{\"YEAR\":true,\"PRODUCT_FAMILY\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "PROFIT",
+            "translatedValueName": "PROFIT",
+            "valueCd": "PROFIT",
+            "valueDescription": "PROFIT",
+            "valueId": 404,
+            "valueName": "PROFIT"
+        },
+        "dateCreation": 1477312334000,
+        "definition": "{\"formula\":\"((M0-M1)/M2)*100\",\"measures\":[\"STORE_SALES\",\"STORE_COST\",\"STORE_COST\"],\"functions\":[\"SUM\",\"SUM\",\"SUM\"],\"formulaDecoded\":\"((SUM(STORE_SALES)-SUM(STORE_COST))/SUM(STORE_COST))*100\",\"formulaSimple\":\" (  ( STORE_SALES - STORE_COST )  / STORE_COST )  * 100\"}",
+        "enableVersioning": false,
+        "id": 217,
+        "name": "MARKUP",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "Threshold_1",
+            "id": 48,
+            "name": "Threshold_1 (Clone)",
+            "thresholdValues": [
+                {
+                    "color": "#00FF00",
+                    "id": 150,
+                    "includeMax": true,
+                    "includeMin": false,
+                    "label": "OK",
+                    "maxValue": 60,
+                    "minValue": 0,
+                    "position": 1,
+                    "severityCd": "URGENT",
+                    "severityId": 78
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 151,
+                    "includeMax": true,
+                    "includeMin": false,
+                    "label": "Medium",
+                    "maxValue": 120,
+                    "minValue": 60,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#FF0000",
+                    "id": 152,
+                    "includeMax": true,
+                    "includeMin": false,
+                    "label": "KO",
+                    "maxValue": 200,
+                    "minValue": 120,
+                    "position": 3,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":210,\"ruleVersion\":3,\"ruleName\":\"INVENTORY\",\"measureName\":\"WAREHOUSE_SALES\",\"attributes\":{\"YEAR\":true,\"PRODUCT_FAMILY\":true,\"MONTH\":true}},{\"ruleId\":210,\"ruleVersion\":3,\"ruleName\":\"INVENTORY\",\"measureName\":\"UNIT_ORDERED\",\"attributes\":{\"YEAR\":true,\"PRODUCT_FAMILY\":true,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"PRODUCT_FAMILY\":2,\"MONTH\":2},\"attributeIntersection\":{\"YEAR\":true,\"PRODUCT_FAMILY\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "PROFIT",
+            "translatedValueName": "PROFIT",
+            "valueCd": "PROFIT",
+            "valueDescription": "PROFIT",
+            "valueId": 404,
+            "valueName": "PROFIT"
+        },
+        "dateCreation": 1594037177000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"WAREHOUSE_SALES\",\"UNIT_ORDERED\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(WAREHOUSE_SALES)/SUM(UNIT_ORDERED))*100\",\"formulaSimple\":\" ( WAREHOUSE_SALES / UNIT_ORDERED )  * 100\"}",
+        "enableVersioning": false,
+        "id": 218,
+        "name": "ROTATION",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "Threshold_1",
+            "id": 49,
+            "name": "Threshold_1 (Clone)",
+            "thresholdValues": [
+                {
+                    "color": "#007AFF",
+                    "id": 153,
+                    "includeMax": true,
+                    "includeMin": false,
+                    "label": "OK",
+                    "maxValue": 30,
+                    "minValue": 0,
+                    "position": 1,
+                    "severityCd": "URGENT",
+                    "severityId": 78
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 154,
+                    "includeMax": true,
+                    "includeMin": false,
+                    "label": "Medium",
+                    "maxValue": 80,
+                    "minValue": 30,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#FF0000",
+                    "id": 155,
+                    "includeMax": true,
+                    "includeMin": false,
+                    "label": "KO",
+                    "maxValue": 100,
+                    "minValue": 80,
+                    "position": 3,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 4
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":213,\"ruleVersion\":4,\"ruleName\":\"SALES_INVENTORY\",\"measureName\":\"WAREHOUSE_SALES_INV\",\"attributes\":{\"PRODUCT_FAMILY_INV\":true},\"$$hashKey\":\"object:643\"},{\"ruleId\":213,\"ruleVersion\":4,\"ruleName\":\"SALES_INVENTORY\",\"measureName\":\"UNIT_ORDERED_INV\",\"attributes\":{\"PRODUCT_FAMILY_INV\":true},\"$$hashKey\":\"object:644\"},{\"ruleId\":213,\"ruleVersion\":4,\"ruleName\":\"SALES_INVENTORY\",\"measureName\":\"UNIT_ORDERED_INV\",\"attributes\":{\"PRODUCT_FAMILY_INV\":true},\"$$hashKey\":\"object:645\"}],\"checkedAttribute\":{\"attributeUnion\":{\"PRODUCT_FAMILY_INV\":3},\"attributeIntersection\":{\"PRODUCT_FAMILY_INV\":true}}}",
+        "category": null,
+        "dateCreation": 1481125085000,
+        "definition": "{\"formula\":\"M0/(M1/M2)\",\"measures\":[\"WAREHOUSE_SALES_INV\",\"UNIT_ORDERED_INV\",\"UNIT_ORDERED_INV\"],\"functions\":[\"SUM\",\"SUM\",\"COUNT\"],\"formulaDecoded\":\"SUM(WAREHOUSE_SALES_INV)/(SUM(UNIT_ORDERED_INV)/COUNT(UNIT_ORDERED_INV))\",\"formulaSimple\":\"WAREHOUSE_SALES_INV /  ( UNIT_ORDERED_INV / UNIT_ORDERED_INV ) \"}",
+        "enableVersioning": false,
+        "id": 220,
+        "name": "KPI Inventory Turns",
+        "placeholder": "",
+        "status": "GRAY",
+        "threshold": {
+            "description": "",
+            "id": 51,
+            "name": "Inventory Turns Threshold",
+            "thresholdValues": [
+                {
+                    "color": "#FF0038",
+                    "id": 159,
+                    "includeMax": true,
+                    "includeMin": true,
+                    "label": "",
+                    "maxValue": 7000,
+                    "minValue": 3000,
+                    "position": 1,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                },
+                {
+                    "color": "#00FF45",
+                    "id": 160,
+                    "includeMax": true,
+                    "includeMin": true,
+                    "label": "",
+                    "maxValue": 1000,
+                    "minValue": 0,
+                    "position": 2,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 161,
+                    "includeMax": true,
+                    "includeMin": true,
+                    "label": "",
+                    "maxValue": 3000,
+                    "minValue": 1000,
+                    "position": 3,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_customer_attrited\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true},\"$$hashKey\":\"object:2483\"},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"to_cust\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true},\"$$hashKey\":\"object:2484\"}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"MONTH\":2,\"sales_region\":2},\"attributeIntersection\":{\"YEAR\":true,\"MONTH\":true,\"sales_region\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "CUSTOMER",
+            "translatedValueName": "CUSTOMER",
+            "valueCd": "CUSTOMER",
+            "valueDescription": "CUSTOMER",
+            "valueId": 417,
+            "valueName": "CUSTOMER"
+        },
+        "dateCreation": 1486633670000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"tot_customer_attrited\",\"to_cust\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(tot_customer_attrited)/SUM(to_cust))*100\",\"formulaSimple\":\" ( tot_customer_attrited / to_cust )  * 100\"}",
+        "enableVersioning": false,
+        "id": 222,
+        "name": "ACQUISITION RATE",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 74,
+            "name": "TH_ACQUISITION",
+            "thresholdValues": [
+                {
+                    "color": "#46A4AF",
+                    "id": 226,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 30,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#939490",
+                    "id": 227,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 30,
+                    "minValue": 5,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#C54246",
+                    "id": 228,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 5,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 5
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_customer_attrited\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"to_cust\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"MONTH\":2,\"sales_region\":2},\"attributeIntersection\":{\"YEAR\":true,\"MONTH\":true,\"sales_region\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "CUSTOMER",
+            "translatedValueName": "CUSTOMER",
+            "valueCd": "CUSTOMER",
+            "valueDescription": "CUSTOMER",
+            "valueId": 417,
+            "valueName": "CUSTOMER"
+        },
+        "dateCreation": 1486633829000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"tot_customer_attrited\",\"to_cust\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(tot_customer_attrited)/SUM(to_cust))*100\",\"formulaSimple\":\" ( tot_customer_attrited / to_cust )  * 100\"}",
+        "enableVersioning": false,
+        "id": 223,
+        "name": "ATTRITION RATE",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 76,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#46A4AF",
+                    "id": 232,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 8,
+                    "minValue": 0,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#939490",
+                    "id": 233,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 20,
+                    "minValue": 8,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#C54246",
+                    "id": 234,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 100,
+                    "minValue": 20,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 3
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_retained_cust\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"to_cust\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"sales_region\":2,\"MONTH\":2},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "CUSTOMER",
+            "translatedValueName": "CUSTOMER",
+            "valueCd": "CUSTOMER",
+            "valueDescription": "CUSTOMER",
+            "valueId": 417,
+            "valueName": "CUSTOMER"
+        },
+        "dateCreation": 1486633947000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"tot_retained_cust\",\"to_cust\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(tot_retained_cust)/SUM(to_cust))*100\",\"formulaSimple\":\" ( tot_retained_cust / to_cust )  * 100\"}",
+        "enableVersioning": false,
+        "id": 224,
+        "name": "RETENTION RATE",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 78,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#46A4AF",
+                    "id": 238,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 30,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#939490",
+                    "id": 239,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 30,
+                    "minValue": 5,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#C54246",
+                    "id": 240,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 5,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 1
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_loyal_customer\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"to_cust\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"MONTH\":2,\"sales_region\":2},\"attributeIntersection\":{\"YEAR\":true,\"MONTH\":true,\"sales_region\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "CUSTOMER",
+            "translatedValueName": "CUSTOMER",
+            "valueCd": "CUSTOMER",
+            "valueDescription": "CUSTOMER",
+            "valueId": 417,
+            "valueName": "CUSTOMER"
+        },
+        "dateCreation": 1486634069000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"tot_loyal_customer\",\"to_cust\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(tot_loyal_customer)/SUM(to_cust))*100\",\"formulaSimple\":\" ( tot_loyal_customer / to_cust )  * 100\"}",
+        "enableVersioning": false,
+        "id": 225,
+        "name": "CUSTOMER PARTICIPATION",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 80,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#46A4AF",
+                    "id": 244,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 50,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#939490",
+                    "id": 245,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 50,
+                    "minValue": 10,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#C54246",
+                    "id": 246,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 10,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 4
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"sales_revenue\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"operating_cost\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"operating_cost\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":3,\"sales_region\":3,\"MONTH\":3},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "SALES",
+            "translatedValueName": "SALES",
+            "valueCd": "SALES",
+            "valueDescription": "SALES",
+            "valueId": 418,
+            "valueName": "SALES"
+        },
+        "dateCreation": 1486634182000,
+        "definition": "{\"formula\":\"((M0-M1)/M2)*100\",\"measures\":[\"sales_revenue\",\"operating_cost\",\"operating_cost\"],\"functions\":[\"SUM\",\"SUM\",\"SUM\"],\"formulaDecoded\":\"((SUM(sales_revenue)-SUM(operating_cost))/SUM(operating_cost))*100\",\"formulaSimple\":\" (  ( sales_revenue - operating_cost )  / operating_cost )  * 100\"}",
+        "enableVersioning": false,
+        "id": 227,
+        "name": "OPERATING PROFIT MARGIN",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 82,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#46A4AF",
+                    "id": 250,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 8,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#939490",
+                    "id": 251,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 8,
+                    "minValue": 2,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#C54246",
+                    "id": 252,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 2,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 5
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"COGS\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true},\"$$hashKey\":\"object:1452\"},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"average_inventory\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true},\"$$hashKey\":\"object:1453\"}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"sales_region\":2,\"MONTH\":2},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "INVENTORY",
+            "translatedValueName": "INVENTORY",
+            "valueCd": "INVENTORY",
+            "valueDescription": "INVENTORY",
+            "valueId": 419,
+            "valueName": "INVENTORY"
+        },
+        "dateCreation": 1486394172000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"COGS\",\"average_inventory\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(COGS)/SUM(average_inventory))*100\",\"formulaSimple\":\" ( COGS / average_inventory )  * 100\"}",
+        "enableVersioning": false,
+        "id": 228,
+        "name": "INVENTORY TURNOVER",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 71,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#46A4AF",
+                    "id": 217,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 40,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#939490",
+                    "id": 218,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 40,
+                    "minValue": 20,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#C54246",
+                    "id": 219,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 20,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 2
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"average_inventory\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true},\"$$hashKey\":\"object:2742\"},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"sales_revenue\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true},\"$$hashKey\":\"object:2743\"}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"sales_region\":2,\"MONTH\":2},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "INVENTORY",
+            "translatedValueName": "INVENTORY",
+            "valueCd": "INVENTORY",
+            "valueDescription": "INVENTORY",
+            "valueId": 419,
+            "valueName": "INVENTORY"
+        },
+        "dateCreation": 1486394389000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"average_inventory\",\"sales_revenue\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(average_inventory)/SUM(sales_revenue))*100\",\"formulaSimple\":\" ( average_inventory / sales_revenue )  * 100\"}",
+        "enableVersioning": false,
+        "id": 229,
+        "name": "INVENTORY TO SALES RATIO",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 72,
+            "name": "TH_SALES_RATIO",
+            "thresholdValues": [
+                {
+                    "color": "#46A4AF",
+                    "id": 220,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 30,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#939490",
+                    "id": 221,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 30,
+                    "minValue": 10,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#C54246",
+                    "id": 222,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 10,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 1
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"num_backorders\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_number_orders\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"sales_region\":2,\"MONTH\":2},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "INVENTORY",
+            "translatedValueName": "INVENTORY",
+            "valueCd": "INVENTORY",
+            "valueDescription": "INVENTORY",
+            "valueId": 419,
+            "valueName": "INVENTORY"
+        },
+        "dateCreation": 1486394490000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"num_backorders\",\"tot_number_orders\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(num_backorders)/SUM(tot_number_orders))*100\",\"formulaSimple\":\" ( num_backorders / tot_number_orders )  * 100\"}",
+        "enableVersioning": false,
+        "id": 230,
+        "name": "BACKORDER RATE",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 73,
+            "name": "TH_BACKORDER",
+            "thresholdValues": [
+                {
+                    "color": "#46A4AF",
+                    "id": 223,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 8,
+                    "minValue": 0,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#939490",
+                    "id": 224,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 20,
+                    "minValue": 8,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#C54246",
+                    "id": 225,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 100,
+                    "minValue": 20,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 1
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"sales_revenue\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"direct_cost\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"sales_revenue\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"MONTH\":3,\"YEAR\":3,\"sales_region\":3},\"attributeIntersection\":{\"MONTH\":true,\"YEAR\":true,\"sales_region\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "SALES",
+            "translatedValueName": "SALES",
+            "valueCd": "SALES",
+            "valueDescription": "SALES",
+            "valueId": 418,
+            "valueName": "SALES"
+        },
+        "dateCreation": 1486634342000,
+        "definition": "{\"formula\":\"((M0-M1)/M2)*100\",\"measures\":[\"sales_revenue\",\"direct_cost\",\"sales_revenue\"],\"functions\":[\"SUM\",\"SUM\",\"SUM\"],\"formulaDecoded\":\"((SUM(sales_revenue)-SUM(direct_cost))/SUM(sales_revenue))*100\",\"formulaSimple\":\" (  ( sales_revenue - direct_cost )  / sales_revenue )  * 100\"}",
+        "enableVersioning": false,
+        "id": 231,
+        "name": "GROSS PROFIT MARGIN",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 84,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#46A4AF",
+                    "id": 256,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 50,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#939490",
+                    "id": 257,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 50,
+                    "minValue": 25,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#C54246",
+                    "id": 258,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 25,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 2
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"gain_from_investment\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"cost_of_investment\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"cost_of_investment\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":3,\"MONTH\":3,\"sales_region\":3},\"attributeIntersection\":{\"YEAR\":true,\"MONTH\":true,\"sales_region\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "SALES",
+            "translatedValueName": "SALES",
+            "valueCd": "SALES",
+            "valueDescription": "SALES",
+            "valueId": 418,
+            "valueName": "SALES"
+        },
+        "dateCreation": 1486393920000,
+        "definition": "{\"formula\":\"(M0-M1)/M2*100\",\"measures\":[\"gain_from_investment\",\"cost_of_investment\",\"cost_of_investment\"],\"functions\":[\"SUM\",\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(gain_from_investment)-SUM(cost_of_investment))/SUM(cost_of_investment)*100\",\"formulaSimple\":\" ( gain_from_investment - cost_of_investment )  / cost_of_investment * 100\"}",
+        "enableVersioning": false,
+        "id": 232,
+        "name": "ROI",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 67,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#46A4AF",
+                    "id": 205,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 20,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#939490",
+                    "id": 206,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 20,
+                    "minValue": 5,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#C54246",
+                    "id": 207,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 5,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 1
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"num_cost_days_for_absence\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_workdays\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"sales_region\":2,\"MONTH\":2},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "EMPLOYEE",
+            "translatedValueName": "EMPLOYEE",
+            "valueCd": "EMPLOYEE",
+            "valueDescription": "EMPLOYEE",
+            "valueId": 420,
+            "valueName": "EMPLOYEE"
+        },
+        "dateCreation": 1486394013000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"num_cost_days_for_absence\",\"tot_workdays\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(num_cost_days_for_absence)/SUM(tot_workdays))*100\",\"formulaSimple\":\" ( num_cost_days_for_absence / tot_workdays )  * 100\"}",
+        "enableVersioning": false,
+        "id": 234,
+        "name": "ABSENTEISM RATE",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 68,
+            "name": "TH_ABSENT",
+            "thresholdValues": [
+                {
+                    "color": "#46A4AF",
+                    "id": 208,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 10,
+                    "minValue": 0,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#939490",
+                    "id": 209,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 40,
+                    "minValue": 10,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#C54246",
+                    "id": 210,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 100,
+                    "minValue": 40,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 3
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_employee_trained\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_employee\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"sales_region\":2,\"MONTH\":2},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "EMPLOYEE",
+            "translatedValueName": "EMPLOYEE",
+            "valueCd": "EMPLOYEE",
+            "valueDescription": "EMPLOYEE",
+            "valueId": 420,
+            "valueName": "EMPLOYEE"
+        },
+        "dateCreation": 1486394072000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"tot_employee_trained\",\"tot_employee\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(tot_employee_trained)/SUM(tot_employee))*100\",\"formulaSimple\":\" ( tot_employee_trained / tot_employee )  * 100\"}",
+        "enableVersioning": false,
+        "id": 235,
+        "name": "% OF EMPLOYEE TRAINED",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 69,
+            "name": "TH_TRAINED",
+            "thresholdValues": [
+                {
+                    "color": "#46A4AF",
+                    "id": 211,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 50,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#939490",
+                    "id": 212,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 50,
+                    "minValue": 10,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#C54246",
+                    "id": 213,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 10,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 1
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_separation\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_employee\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"sales_region\":2,\"MONTH\":2},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "EMPLOYEE",
+            "translatedValueName": "EMPLOYEE",
+            "valueCd": "EMPLOYEE",
+            "valueDescription": "EMPLOYEE",
+            "valueId": 420,
+            "valueName": "EMPLOYEE"
+        },
+        "dateCreation": 1486394117000,
+        "definition": "{\"formula\":\"M0/M1*100\",\"measures\":[\"tot_separation\",\"tot_employee\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"SUM(tot_separation)/SUM(tot_employee)*100\",\"formulaSimple\":\"tot_separation / tot_employee * 100\"}",
+        "enableVersioning": false,
+        "id": 236,
+        "name": "YEARLY TURNOVER",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 70,
+            "name": "TH_TURNOVER",
+            "thresholdValues": [
+                {
+                    "color": "#46A4AF",
+                    "id": 214,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 8,
+                    "minValue": 0,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#939490",
+                    "id": 215,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 30,
+                    "minValue": 8,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#C54246",
+                    "id": 216,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 100,
+                    "minValue": 30,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 1
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_customer_attrited\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true},\"$$hashKey\":\"object:2483\"},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"to_cust\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true},\"$$hashKey\":\"object:2484\"}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"MONTH\":2,\"sales_region\":2},\"attributeIntersection\":{\"YEAR\":true,\"MONTH\":true,\"sales_region\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "CUSTOMER",
+            "translatedValueName": "CUSTOMER",
+            "valueCd": "CUSTOMER",
+            "valueDescription": "CUSTOMER",
+            "valueId": 417,
+            "valueName": "CUSTOMER"
+        },
+        "dateCreation": 1486632863000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"tot_customer_attrited\",\"to_cust\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(tot_customer_attrited)/SUM(to_cust))*100\",\"formulaSimple\":\" ( tot_customer_attrited / to_cust )  * 100\"}",
+        "enableVersioning": false,
+        "id": 237,
+        "name": "ACQUISITION RATE STD",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 75,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#00FF00",
+                    "id": 229,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 30,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 230,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 30,
+                    "minValue": 5,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#FF0000",
+                    "id": 231,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 5,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_customer_attrited\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true},\"$$hashKey\":\"object:3020\"},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"to_cust\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true},\"$$hashKey\":\"object:3021\"}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"MONTH\":2,\"sales_region\":2},\"attributeIntersection\":{\"YEAR\":true,\"MONTH\":true,\"sales_region\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "CUSTOMER",
+            "translatedValueName": "CUSTOMER",
+            "valueCd": "CUSTOMER",
+            "valueDescription": "CUSTOMER",
+            "valueId": 417,
+            "valueName": "CUSTOMER"
+        },
+        "dateCreation": 1486633186000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"tot_customer_attrited\",\"to_cust\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(tot_customer_attrited)/SUM(to_cust))*100\",\"formulaSimple\":\" ( tot_customer_attrited / to_cust )  * 100\"}",
+        "enableVersioning": false,
+        "id": 238,
+        "name": "ATTRITION RATE STD",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 77,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#00FF00",
+                    "id": 235,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 8,
+                    "minValue": 0,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 236,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 20,
+                    "minValue": 8,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#FF0000",
+                    "id": 237,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 100,
+                    "minValue": 20,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_retained_cust\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"to_cust\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"sales_region\":2,\"MONTH\":2},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "CUSTOMER",
+            "translatedValueName": "CUSTOMER",
+            "valueCd": "CUSTOMER",
+            "valueDescription": "CUSTOMER",
+            "valueId": 417,
+            "valueName": "CUSTOMER"
+        },
+        "dateCreation": 1486633909000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"tot_retained_cust\",\"to_cust\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(tot_retained_cust)/SUM(to_cust))*100\",\"formulaSimple\":\" ( tot_retained_cust / to_cust )  * 100\"}",
+        "enableVersioning": false,
+        "id": 239,
+        "name": "RETENTION RATE STD",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 55,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#00FF00",
+                    "id": 169,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 30,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 170,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 30,
+                    "minValue": 5,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#FF0000",
+                    "id": 171,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 5,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_loyal_customer\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"to_cust\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"MONTH\":2,\"sales_region\":2},\"attributeIntersection\":{\"YEAR\":true,\"MONTH\":true,\"sales_region\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "CUSTOMER",
+            "translatedValueName": "CUSTOMER",
+            "valueCd": "CUSTOMER",
+            "valueDescription": "CUSTOMER",
+            "valueId": 417,
+            "valueName": "CUSTOMER"
+        },
+        "dateCreation": 1486634039000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"tot_loyal_customer\",\"to_cust\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(tot_loyal_customer)/SUM(to_cust))*100\",\"formulaSimple\":\" ( tot_loyal_customer / to_cust )  * 100\"}",
+        "enableVersioning": false,
+        "id": 240,
+        "name": "CUSTOMER PARTICIPATION STD",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 79,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#00FF00",
+                    "id": 241,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 50,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 242,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 50,
+                    "minValue": 10,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#FF0000",
+                    "id": 243,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 10,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"sales_revenue\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"operating_cost\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"operating_cost\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":3,\"sales_region\":3,\"MONTH\":3},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "SALES",
+            "translatedValueName": "SALES",
+            "valueCd": "SALES",
+            "valueDescription": "SALES",
+            "valueId": 418,
+            "valueName": "SALES"
+        },
+        "dateCreation": 1486634151000,
+        "definition": "{\"formula\":\"((M0-M1)/M2)*100\",\"measures\":[\"sales_revenue\",\"operating_cost\",\"operating_cost\"],\"functions\":[\"SUM\",\"SUM\",\"SUM\"],\"formulaDecoded\":\"((SUM(sales_revenue)-SUM(operating_cost))/SUM(operating_cost))*100\",\"formulaSimple\":\" (  ( sales_revenue - operating_cost )  / operating_cost )  * 100\"}",
+        "enableVersioning": false,
+        "id": 241,
+        "name": "OPERATING PROFIT MARGIN STD",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 81,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#00FF00",
+                    "id": 247,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 8,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 248,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 8,
+                    "minValue": 2,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#FF0000",
+                    "id": 249,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 2,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"sales_revenue\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"direct_cost\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"sales_revenue\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"MONTH\":3,\"YEAR\":3,\"sales_region\":3},\"attributeIntersection\":{\"MONTH\":true,\"YEAR\":true,\"sales_region\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "SALES",
+            "translatedValueName": "SALES",
+            "valueCd": "SALES",
+            "valueDescription": "SALES",
+            "valueId": 418,
+            "valueName": "SALES"
+        },
+        "dateCreation": 1486634262000,
+        "definition": "{\"formula\":\"((M0-M1)/M2)*100\",\"measures\":[\"sales_revenue\",\"direct_cost\",\"sales_revenue\"],\"functions\":[\"SUM\",\"SUM\",\"SUM\"],\"formulaDecoded\":\"((SUM(sales_revenue)-SUM(direct_cost))/SUM(sales_revenue))*100\",\"formulaSimple\":\" (  ( sales_revenue - direct_cost )  / sales_revenue )  * 100\"}",
+        "enableVersioning": false,
+        "id": 242,
+        "name": "GROSS PROFIT MARGIN STD",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 66,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#00FF00",
+                    "id": 202,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 50,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 203,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 50,
+                    "minValue": 25,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#FF0000",
+                    "id": 204,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 25,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"gain_from_investment\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"cost_of_investment\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"cost_of_investment\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":3,\"MONTH\":3,\"sales_region\":3},\"attributeIntersection\":{\"YEAR\":true,\"MONTH\":true,\"sales_region\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "SALES",
+            "translatedValueName": "SALES",
+            "valueCd": "SALES",
+            "valueDescription": "SALES",
+            "valueId": 418,
+            "valueName": "SALES"
+        },
+        "dateCreation": 1486634377000,
+        "definition": "{\"formula\":\"(M0-M1)/M2*100\",\"measures\":[\"gain_from_investment\",\"cost_of_investment\",\"cost_of_investment\"],\"functions\":[\"SUM\",\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(gain_from_investment)-SUM(cost_of_investment))/SUM(cost_of_investment)*100\",\"formulaSimple\":\" ( gain_from_investment - cost_of_investment )  / cost_of_investment * 100\"}",
+        "enableVersioning": false,
+        "id": 243,
+        "name": "ROI STD",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 85,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#00FF00",
+                    "id": 259,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 20,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 260,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 20,
+                    "minValue": 5,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#FF0000",
+                    "id": 261,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 5,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"COGS\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true},\"$$hashKey\":\"object:1452\"},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"average_inventory\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true},\"$$hashKey\":\"object:1453\"}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"sales_region\":2,\"MONTH\":2},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "INVENTORY",
+            "translatedValueName": "INVENTORY",
+            "valueCd": "INVENTORY",
+            "valueDescription": "INVENTORY",
+            "valueId": 419,
+            "valueName": "INVENTORY"
+        },
+        "dateCreation": 1486634464000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"COGS\",\"average_inventory\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(COGS)/SUM(average_inventory))*100\",\"formulaSimple\":\" ( COGS / average_inventory )  * 100\"}",
+        "enableVersioning": false,
+        "id": 244,
+        "name": "INVENTORY TURNOVER STD",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 86,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#00FF00",
+                    "id": 262,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 40,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 263,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 40,
+                    "minValue": 20,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#FF0000",
+                    "id": 264,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 20,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"average_inventory\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true},\"$$hashKey\":\"object:2742\"},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"sales_revenue\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true},\"$$hashKey\":\"object:2743\"}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"sales_region\":2,\"MONTH\":2},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "INVENTORY",
+            "translatedValueName": "INVENTORY",
+            "valueCd": "INVENTORY",
+            "valueDescription": "INVENTORY",
+            "valueId": 419,
+            "valueName": "INVENTORY"
+        },
+        "dateCreation": 1486634535000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"average_inventory\",\"sales_revenue\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(average_inventory)/SUM(sales_revenue))*100\",\"formulaSimple\":\" ( average_inventory / sales_revenue )  * 100\"}",
+        "enableVersioning": false,
+        "id": 245,
+        "name": "INVENTORY TO SALES RATIO STD",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 87,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#00FF00",
+                    "id": 265,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 30,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 266,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 30,
+                    "minValue": 10,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#FF0000",
+                    "id": 267,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 10,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"num_backorders\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_number_orders\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"sales_region\":2,\"MONTH\":2},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "INVENTORY",
+            "translatedValueName": "INVENTORY",
+            "valueCd": "INVENTORY",
+            "valueDescription": "INVENTORY",
+            "valueId": 419,
+            "valueName": "INVENTORY"
+        },
+        "dateCreation": 1486634614000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"num_backorders\",\"tot_number_orders\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(num_backorders)/SUM(tot_number_orders))*100\",\"formulaSimple\":\" ( num_backorders / tot_number_orders )  * 100\"}",
+        "enableVersioning": false,
+        "id": 246,
+        "name": "BACKORDER RATE STD",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 88,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#00FF00",
+                    "id": 268,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 8,
+                    "minValue": 0,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 269,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 20,
+                    "minValue": 8,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#FF0000",
+                    "id": 270,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 100,
+                    "minValue": 20,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_employee_trained\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_employee\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"sales_region\":2,\"MONTH\":2},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "EMPLOYEE",
+            "translatedValueName": "EMPLOYEE",
+            "valueCd": "EMPLOYEE",
+            "valueDescription": "EMPLOYEE",
+            "valueId": 420,
+            "valueName": "EMPLOYEE"
+        },
+        "dateCreation": 1486634694000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"tot_employee_trained\",\"tot_employee\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(tot_employee_trained)/SUM(tot_employee))*100\",\"formulaSimple\":\" ( tot_employee_trained / tot_employee )  * 100\"}",
+        "enableVersioning": false,
+        "id": 247,
+        "name": "% OF EMPLOYEE TRAINED STD",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 89,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#00FF00",
+                    "id": 271,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 100,
+                    "minValue": 50,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 272,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 50,
+                    "minValue": 10,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#FF0000",
+                    "id": 273,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 10,
+                    "minValue": 0,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_separation\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_employee\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"sales_region\":2,\"MONTH\":2},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "EMPLOYEE",
+            "translatedValueName": "EMPLOYEE",
+            "valueCd": "EMPLOYEE",
+            "valueDescription": "EMPLOYEE",
+            "valueId": 420,
+            "valueName": "EMPLOYEE"
+        },
+        "dateCreation": 1486634769000,
+        "definition": "{\"formula\":\"M0/M1*100\",\"measures\":[\"tot_separation\",\"tot_employee\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"SUM(tot_separation)/SUM(tot_employee)*100\",\"formulaSimple\":\"tot_separation / tot_employee * 100\"}",
+        "enableVersioning": false,
+        "id": 248,
+        "name": "YEARLY TURNOVER STD",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 90,
+            "name": "",
+            "thresholdValues": [
+                {
+                    "color": "#00FF00",
+                    "id": 274,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Low",
+                    "maxValue": 8,
+                    "minValue": 0,
+                    "position": 1,
+                    "severityCd": "LOW",
+                    "severityId": 81
+                },
+                {
+                    "color": "#FFFF00",
+                    "id": 275,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "Medium",
+                    "maxValue": 30,
+                    "minValue": 8,
+                    "position": 2,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                },
+                {
+                    "color": "#FF0000",
+                    "id": 276,
+                    "includeMax": false,
+                    "includeMin": true,
+                    "label": "High",
+                    "maxValue": 100,
+                    "minValue": 30,
+                    "position": 3,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    },
+    {
+        "active": false,
+        "author": "demo_admin",
+        "cardinality": "{\"measureList\":[{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"num_cost_days_for_absence\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}},{\"ruleId\":215,\"ruleVersion\":0,\"ruleName\":\"RETAIL INSIDE\",\"measureName\":\"tot_workdays\",\"attributes\":{\"sales_state_province\":false,\"YEAR\":true,\"sales_region\":true,\"PRODUCT_FAMILY\":false,\"MONTH\":true}}],\"checkedAttribute\":{\"attributeUnion\":{\"YEAR\":2,\"sales_region\":2,\"MONTH\":2},\"attributeIntersection\":{\"YEAR\":true,\"sales_region\":true,\"MONTH\":true}}}",
+        "category": {
+            "domainCode": "KPI_KPI_CATEGORY",
+            "domainName": "KPI_KPI_CATEGORY",
+            "translatedValueDescription": "EMPLOYEE",
+            "translatedValueName": "EMPLOYEE",
+            "valueCd": "EMPLOYEE",
+            "valueDescription": "EMPLOYEE",
+            "valueId": 420,
+            "valueName": "EMPLOYEE"
+        },
+        "dateCreation": 1486634841000,
+        "definition": "{\"formula\":\"(M0/M1)*100\",\"measures\":[\"num_cost_days_for_absence\",\"tot_workdays\"],\"functions\":[\"SUM\",\"SUM\"],\"formulaDecoded\":\"(SUM(num_cost_days_for_absence)/SUM(tot_workdays))*100\",\"formulaSimple\":\" ( num_cost_days_for_absence / tot_workdays )  * 100\"}",
+        "enableVersioning": false,
+        "id": 249,
+        "name": "ABSENTEISM RATE STD",
+        "placeholder": "",
+        "status": null,
+        "threshold": {
+            "description": "",
+            "id": 91,
+            "name": "test123",
+            "thresholdValues": [
+                {
+                    "color": "#FFFF",
+                    "id": 277,
+                    "includeMax": true,
+                    "includeMin": true,
+                    "label": "Lowaaa",
+                    "maxValue": 10325,
+                    "minValue": 241,
+                    "position": 1,
+                    "severityCd": "HIGH",
+                    "severityId": 79
+                },
+                {
+                    "color": "#EE",
+                    "id": 278,
+                    "includeMax": true,
+                    "includeMin": true,
+                    "label": "Mediumaaa",
+                    "maxValue": 40325,
+                    "minValue": 104214,
+                    "position": 2,
+                    "severityCd": "URGENT",
+                    "severityId": 78
+                },
+                {
+                    "color": "#YYYT",
+                    "id": 279,
+                    "includeMax": true,
+                    "includeMin": true,
+                    "label": "Highaaa",
+                    "maxValue": 100235,
+                    "minValue": 40532,
+                    "position": 3,
+                    "severityCd": "MEDIUM",
+                    "severityId": 80
+                }
+            ],
+            "type": "Range",
+            "typeId": 75,
+            "usedByKpi": false
+        },
+        "version": 0
+    }
+]

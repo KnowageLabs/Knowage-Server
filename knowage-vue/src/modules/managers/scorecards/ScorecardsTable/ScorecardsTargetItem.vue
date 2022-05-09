@@ -6,7 +6,7 @@
                 <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain scorecards-item-expand-icon" @click="expanded = false" />
                 <i class="fa fa-bullseye fa-lg p-mr-2" />
                 <span>
-                    <InputText class="kn-material-input scorecards-target-name-input" v-model="target.name" />
+                    <InputText class="kn-material-input scorecards-target-name-input" v-model="target.name" @input="$emit('touched')" />
                 </span>
             </div>
             <div class="kn-flex p-d-flex p-flex-row">
@@ -53,7 +53,7 @@ export default defineComponent({
     name: 'scorecards-target-item',
     components: { MultiSelect, SelectButton, ScorecardsTableHint, ScorecardsKpiDialog },
     props: { propTarget: { type: Object as PropType<iScorecardTarget> }, criterias: { type: Array as PropType<iScorecardCriterion[]>, required: true }, kpis: { type: Array as PropType<iKpi[]>, required: true } },
-    emits: ['deleteTarget', 'openKpiDialog'],
+    emits: ['deleteTarget', 'openKpiDialog', 'touched'],
     data() {
         return {
             scorecardsTableDescriptor,
@@ -90,6 +90,7 @@ export default defineComponent({
                     case 'PRIORITY':
                         this.selectedCriteria = 'P'
                 }
+                this.$emit('touched')
             }
         },
         onCriteriaChange() {
@@ -97,6 +98,7 @@ export default defineComponent({
             for (let i = 0; i < this.criterias.length; i++) {
                 if ((this.selectedCriteria === 'M' && this.criterias[i].valueCd === 'MAJORITY') || (this.selectedCriteria === 'MP' && this.criterias[i].valueCd === 'MAJORITY_WITH_PRIORITY') || (this.selectedCriteria === 'P' && this.criterias[i].valueCd === 'PRIORITY')) {
                     this.target.criterion = this.criterias[i]
+                    this.$emit('touched')
                     break
                 }
             }
@@ -143,6 +145,7 @@ export default defineComponent({
                     const index = this.target.options.criterionPriority.findIndex((criteria: string) => criteria === kpi.name)
                     if (index !== -1) this.target.options.criterionPriority.splice(index, 1)
                 }
+                this.$emit('touched')
             }
         },
         deleteTargetConfirm() {

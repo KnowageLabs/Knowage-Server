@@ -6,7 +6,7 @@
                 <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain scorecards-item-expand-icon" @click="expanded = false" />
                 <i class="fa-solid fa-rectangle-list fa-lg p-mr-2" />
                 <span>
-                    <InputText class="kn-material-input scorecards-target-perspective-input" v-model="perspective.name" />
+                    <InputText class="kn-material-input scorecards-target-perspective-input" v-model="perspective.name" @input="$emit('touched')" />
                 </span>
             </div>
             <div class="kn-flex p-d-flex p-flex-row">
@@ -22,7 +22,7 @@
         <div v-if="expanded">
             <ScorecardsTableHint v-if="perspective.targets.length === 0" class="p-m-4" :hint="'managers.scorecards.addTargetHint'"></ScorecardsTableHint>
             <template v-else>
-                <ScorecardsTargetItem v-for="(target, index) in perspective.targets" :key="index" :propTarget="target" :criterias="criterias" :kpis="kpis" @deleteTarget="deleteTarget" @openKpiDialog="$emit('openKpiDialog', $event)"></ScorecardsTargetItem>
+                <ScorecardsTargetItem v-for="(target, index) in perspective.targets" :key="index" :propTarget="target" :criterias="criterias" :kpis="kpis" @deleteTarget="deleteTarget" @openKpiDialog="$emit('openKpiDialog', $event)" @touched="$emit('touched')"></ScorecardsTargetItem>
             </template>
         </div>
     </div>
@@ -41,7 +41,7 @@ export default defineComponent({
     name: 'scorecards-perspective-item',
     components: { MultiSelect, SelectButton, ScorecardsTargetItem, ScorecardsTableHint },
     props: { propPerspective: { type: Object as PropType<iPerspective> }, criterias: { type: Array as PropType<iScorecardCriterion[]>, required: true }, kpis: { type: Array as PropType<iKpi[]>, required: true } },
-    emits: ['deletePerspective', 'openKpiDialog'],
+    emits: ['deletePerspective', 'openKpiDialog', 'touched'],
     data() {
         return {
             scorecardsTableDescriptor,
@@ -77,10 +77,14 @@ export default defineComponent({
                     case 'PRIORITY':
                         this.selectedCriteria = 'P'
                 }
+                this.$emit('touched')
             }
         },
         addTarget() {
-            if (this.perspective) this.perspective.targets.push({ name: 'New Target', status: 'GRAY', criterion: this.getDefaultCriterion(), options: { criterionPriority: [] }, kpis: [], groupedKpis: [] })
+            if (this.perspective) {
+                this.perspective.targets.push({ name: 'New Target', status: 'GRAY', criterion: this.getDefaultCriterion(), options: { criterionPriority: [] }, kpis: [], groupedKpis: [] })
+                this.$emit('touched')
+            }
         },
         getDefaultCriterion() {
             let tempCriterion = {} as iScorecardCriterion
@@ -94,6 +98,7 @@ export default defineComponent({
             for (let i = 0; i < this.criterias.length; i++) {
                 if ((this.selectedCriteria === 'M' && this.criterias[i].valueCd === 'MAJORITY') || (this.selectedCriteria === 'MP' && this.criterias[i].valueCd === 'MAJORITY_WITH_PRIORITY') || (this.selectedCriteria === 'P' && this.criterias[i].valueCd === 'PRIORITY')) {
                     this.perspective.criterion = this.criterias[i]
+                    this.$emit('touched')
                     break
                 }
             }
@@ -117,6 +122,7 @@ export default defineComponent({
                     const index = this.perspective.options.criterionPriority.findIndex((criteria: string) => criteria === target.name)
                     if (index !== -1) this.perspective.options.criterionPriority.splice(index, 1)
                 }
+                this.$emit('touched')
             }
         }
     }

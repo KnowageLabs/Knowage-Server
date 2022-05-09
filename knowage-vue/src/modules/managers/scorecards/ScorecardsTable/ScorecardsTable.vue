@@ -11,7 +11,7 @@
 
         <ScorecardsTableHint v-if="scorecard.perspectives.length === 0" class="p-my-2" :hint="'managers.scorecards.addPerspectiveHint'"></ScorecardsTableHint>
         <div v-else>
-            <ScorecardsPerspectiveItem v-for="(perspective, index) in scorecard.perspectives" :key="index" :propPerspective="perspective" :criterias="criterias" :kpis="kpis" @deletePerspective="deletePerspective"></ScorecardsPerspectiveItem>
+            <ScorecardsPerspectiveItem v-for="(perspective, index) in scorecard.perspectives" :key="index" :propPerspective="perspective" :criterias="criterias" :kpis="kpis" @deletePerspective="deletePerspective" @touched="$emit('touched')"></ScorecardsPerspectiveItem>
         </div>
     </div>
 </template>
@@ -25,7 +25,8 @@ import ScorecardsTableHint from './ScorecardsTableHint.vue'
 export default defineComponent({
     name: 'scorecards-table',
     components: { ScorecardsPerspectiveItem, ScorecardsTableHint },
-    props: { propScorecard: { type: Object as PropType<iScorecard> }, criterias: { type: Array as PropType<iScorecardCriterion[]>, required: true }, kpis: { type: Array as PropType<iKpi[]> } },
+    props: { propScorecard: { type: Object as PropType<iScorecard> }, criterias: { type: Array as PropType<iScorecardCriterion[]>, required: true }, kpis: { type: Array as PropType<iKpi[]>, required: true } },
+    emits: ['touched'],
     data() {
         return {
             scorecard: null as iScorecard | null
@@ -44,7 +45,10 @@ export default defineComponent({
             this.scorecard = this.propScorecard as iScorecard
         },
         addPerspective() {
-            if (this.scorecard) this.scorecard.perspectives.push({ name: 'New Perspective', status: 'GRAY', criterion: this.getDefaultCriterion(), options: { criterionPriority: [] }, targets: [], groupedKpis: [] })
+            if (this.scorecard) {
+                this.scorecard.perspectives.push({ name: 'New Perspective', status: 'GRAY', criterion: this.getDefaultCriterion(), options: { criterionPriority: [] }, targets: [], groupedKpis: [] })
+                this.$emit('touched')
+            }
         },
         getDefaultCriterion() {
             let tempCriterion = {} as iScorecardCriterion
@@ -55,7 +59,10 @@ export default defineComponent({
         deletePerspective(perspective: iPerspective) {
             if (!this.scorecard) return
             const index = this.scorecard.perspectives.findIndex((tempPerspective: iPerspective) => tempPerspective.id === perspective.id)
-            if (index !== -1) this.scorecard.perspectives.splice(index, 1)
+            if (index !== -1) {
+                this.scorecard.perspectives.splice(index, 1)
+                this.$emit('touched')
+            }
         }
     }
 })

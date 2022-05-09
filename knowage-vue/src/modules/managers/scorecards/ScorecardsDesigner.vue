@@ -8,6 +8,7 @@
                     </template>
                     <template #end>
                         <Button class="kn-button p-button-text" :disabled="saveButtonDisabled" @click="saveScorecard">{{ $t('common.save') }}</Button>
+                        <Button class="kn-button p-button-text" @click="close">{{ $t('common.close') }}</Button>
                     </template>
                 </Toolbar>
 
@@ -22,6 +23,7 @@
                                         :class="{
                                             'p-invalid': !scorecard.name && nameTouched
                                         }"
+                                        @input="touched = true"
                                     />
                                     <label class="kn-material-input-label"> {{ $t('common.name') + ' *' }}</label>
                                 </span>
@@ -32,7 +34,7 @@
 
                             <div class="p-field p-col-6">
                                 <span class="p-float-label">
-                                    <InputText class="kn-material-input" v-model="scorecard.description" />
+                                    <InputText class="kn-material-input" v-model="scorecard.description" @input="touched = true" />
                                     <label class="kn-material-input-label"> {{ $t('common.description') }}</label>
                                 </span>
                             </div>
@@ -40,7 +42,7 @@
                     </template>
                 </Card>
 
-                <ScorecardsTable v-if="scorecard" :propScorecard="scorecard" :criterias="criterias" :kpis="kpis"></ScorecardsTable>
+                <ScorecardsTable v-if="scorecard" :propScorecard="scorecard" :criterias="criterias" :kpis="kpis" @touched="touched = true"></ScorecardsTable>
             </div>
 
             <div class="p-col-4 p-sm-4 p-md-6 p-p-0 p-m-0">
@@ -52,10 +54,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { iScorecard, iScorecardCriterion, iKpi } from './Scorecards'
+import { iScorecard, iScorecardCriterion, iKpi, iPerspective, iScorecardTarget } from './Scorecards'
 import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import ScorecardsTable from './ScorecardsTable/ScorecardsTable.vue'
+import mockedKpi from './mockedKpi.json'
+
+const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'scorecards-designer',
@@ -66,12 +71,13 @@ export default defineComponent({
             scorecard: null as iScorecard | null,
             nameTouched: false,
             criterias: [] as iScorecardCriterion[],
-            kpis: [] as iKpi[]
+            kpis: [] as iKpi[],
+            touched: false
         }
     },
     computed: {
         saveButtonDisabled(): boolean {
-            return !this.scorecard || !this.scorecard.name
+            return !this.scorecard || !this.scorecard.name || this.scorecard.perspectives.length === 0
         }
     },
     watch: {
@@ -101,14 +107,65 @@ export default defineComponent({
             this.$store.commit('setLoading', false)
         },
         async loadKpis() {
-            this.$store.commit('setLoading', true)
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpiWithResult`).then((response: AxiosResponse<any>) => (this.kpis = response.data))
-            this.$store.commit('setLoading', false)
+            // TODO
+            // this.$store.commit('setLoading', true)
+            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpiWithResult`).then((response: AxiosResponse<any>) => (this.kpis = response.data))
+            // this.$store.commit('setLoading', false)
 
+            this.kpis = mockedKpi as any
             console.log('LOADED KPIS: ', this.kpis)
         },
-        saveScorecard() {
+        async saveScorecard() {
             console.log('SCORECARD FOR SAVE: ', this.scorecard)
+            const tempScorecard = this.getFormattedScorecard()
+            // TODO - BE needs to be changed
+
+            delete tempScorecard.description
+            const operation = tempScorecard.id ? 'update' : 'create'
+            this.$store.commit('setLoading', true)
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/saveScorecard`, tempScorecard)
+                .then((response: AxiosResponse<any>) => {
+                    console.log('RESPONSE DATA: ', response.data)
+                    if (response.data.id && this.scorecard) {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.' + operation + 'Title'),
+                            msg: this.$t('common.toast.success')
+                        })
+                        this.scorecard.id = response.data.id
+                        if (operation === 'create') this.$router.push(`/scorecards/${this.scorecard.id}`)
+                        this.touched = false
+                    }
+                })
+                .catch(() => {})
+            this.$store.commit('setLoading', false)
+        },
+        getFormattedScorecard() {
+            const tempScorecard = deepcopy(this.scorecard)
+            delete tempScorecard.description
+            tempScorecard.perspectives?.forEach((perspective: iPerspective) => {
+                delete perspective.groupedKpis
+                perspective.targets?.forEach((target: iScorecardTarget) => delete target.groupedKpis)
+            })
+
+            return tempScorecard
+        },
+        close() {
+            if (!this.touched) {
+                this.$router.push(`/scorecards`)
+                this.scorecard = null
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.$router.push(`/scorecards`)
+                        this.scorecard = null
+                    }
+                })
+            }
         }
     }
 })
