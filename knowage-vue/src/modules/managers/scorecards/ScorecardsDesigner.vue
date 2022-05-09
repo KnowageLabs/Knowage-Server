@@ -46,7 +46,7 @@
             </div>
 
             <div class="p-col-4 p-sm-4 p-md-6 p-p-0 p-m-0">
-                PERSPECTIVES LIST
+                <KnPerspectiveCard class="p-m-4" v-for="(perspective, index) in scorecard?.perspectives" :key="index" :propPerspective="perspective"></KnPerspectiveCard>
             </div>
         </div>
     </div>
@@ -58,13 +58,14 @@ import { iScorecard, iScorecardCriterion, iKpi, iPerspective, iScorecardTarget }
 import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import ScorecardsTable from './ScorecardsTable/ScorecardsTable.vue'
+import KnPerspectiveCard from '@/components/UI/KnPerspectiveCard/KnPerspectiveCard.vue'
 import mockedKpi from './mockedKpi.json'
 
 const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'scorecards-designer',
-    components: { Card, ScorecardsTable },
+    components: { Card, ScorecardsTable, KnPerspectiveCard },
     props: { id: { type: String } },
     data() {
         return {
