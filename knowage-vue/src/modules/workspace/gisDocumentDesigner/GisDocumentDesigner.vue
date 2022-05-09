@@ -5,7 +5,7 @@
                 {{ $t('workspace.gis.title') }}
             </template>
             <template #end>
-                <Button class="p-button-text p-button-rounded p-button-plain" :label="$t('workspace.gis.editMap')" @click="openMapConfirm" />
+                <Button class="p-button-text p-button-rounded p-button-plain" :label="$t('workspace.gis.editMap')" :disabled="!canOpenMap" @click="openMapConfirm" />
                 <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="saveDialogDisabled" @click="saveOrUpdateGis" />
                 <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeGis" />
             </template>
@@ -127,7 +127,7 @@ export default defineComponent({
                 indicatorsInvalid: false,
                 filtersInvalid: false
             },
-            iframeUrl: ''
+            canOpenMap: true
         }
     },
     created() {
@@ -139,8 +139,14 @@ export default defineComponent({
         },
         async loadPage() {
             this.loading = true
+            this.disableMapPreview()
             await this.createDocumentData()
             this.loading = false
+        },
+        disableMapPreview() {
+            if (this.$route.path.includes('new')) {
+                this.canOpenMap = false
+            }
         },
 
         async createDocumentData() {
@@ -345,6 +351,7 @@ export default defineComponent({
 
                 await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/saveGeoReportTemplate`, postData).then(async () => {
                     this.saveDialogVisible = false
+                    this.canOpenMap = true
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.updateSuccess')
@@ -362,6 +369,7 @@ export default defineComponent({
 
                 await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/saveDocument/`, postData).then(async () => {
                     this.saveDialogVisible = false
+                    this.canOpenMap = true
                     this.documentData.documentLabel = docLabel
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.createTitle'),
