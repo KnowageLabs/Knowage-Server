@@ -493,7 +493,6 @@
                 "filterUsingDrivers": "Filter using drivers",
                 "infoMessage": "Selected items will be used as filters in the main table.",
                 "level": "Level",
-                "noMembersWarningMessage": "You need to select at least one member.",
                 "parentDisabledTooltip": "It is not possible to choose a parent. Press the Add button.",
                 "searchWarningMessage": "You need at least 3 letters to start search!",
                 "selectFields": "Select Fields",
