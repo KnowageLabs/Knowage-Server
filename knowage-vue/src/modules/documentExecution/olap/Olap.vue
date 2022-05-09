@@ -204,7 +204,7 @@ export default defineComponent({
     },
     computed: {
         olapHasScenario() {
-            if (this.olapDesigner.template.wrappedObject.olap.SCENARIO) {
+            if (this.olapDesigner?.template?.wrappedObject?.olap?.SCENARIO) {
                 return true
             } else return false
         }
