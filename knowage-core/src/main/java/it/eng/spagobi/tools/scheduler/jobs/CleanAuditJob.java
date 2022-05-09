@@ -22,6 +22,9 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.monitoring.dao.AuditManager;
+
 public class CleanAuditJob extends AbstractSpagoBIJob implements Job {
 	static private Logger logger = Logger.getLogger(CleanAuditJob.class);
 
@@ -41,7 +44,11 @@ public class CleanAuditJob extends AbstractSpagoBIJob implements Job {
 
 		logger.debug("IN");
 		try {
-			// TODO: call deletion with periodic value
+			// call deletion with periodic value
+			String periodicValue = SingletonConfig.getInstance().getConfigValue("KNOWAGE.AUDIT_DATA_RETENTION");
+			Integer period = Integer.parseInt(periodicValue);
+			AuditManager auditManager = AuditManager.getInstance();
+			auditManager.eraseAuditPeriodic(period);
 			logger.debug("Audit cleaning ended succesfully!");
 		} catch (Exception e) {
 			logger.error("Error while executiong job ", e);
