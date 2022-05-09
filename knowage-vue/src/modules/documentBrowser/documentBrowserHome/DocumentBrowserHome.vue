@@ -114,9 +114,15 @@ export default defineComponent({
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response: AxiosResponse<any>) => {
                 this.folders = response.data
-                this.folders?.sort((a: any, b: any) => {
-                    return !a.parentId || a.parentId < b.parentId ? -1 : 1
-                })
+                for (let i = 0; i < this.folders.length - 1; i++) {
+                    for (let j = 0; j < this.folders.length - i - 1; j++) {
+                        if (!this.folders[j + 1].parentId || this.folders[j].parentId > this.folders[j + 1].parentId) {
+                            const temp = this.folders[j]
+                            this.folders[j] = this.folders[j + 1]
+                            this.folders[j + 1] = temp
+                        }
+                    }
+                }
             })
 
             this.loading = false
