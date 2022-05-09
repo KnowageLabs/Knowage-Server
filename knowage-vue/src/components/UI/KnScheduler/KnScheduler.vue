@@ -406,6 +406,7 @@
     import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
     import { IDataPrepLog } from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoring'
     import { AxiosResponse } from 'axios'
+    import { mapState } from 'vuex'
 
     export default defineComponent({
         name: 'kn-scheduler',
@@ -465,6 +466,9 @@
             }
         },
         computed: {
+            ...mapState({
+                configuration: 'configuration'
+            }),
             getCronstrueFormula(): String {
                 let locale = localStorage.getItem('locale')
                 let cronLocale = ''
@@ -502,7 +506,8 @@
             }
         },
         async created() {
-            await this.loadUserConfig()
+            if (!this.configuration['SPAGOBI.TIMESTAMP-FORMAT.format']) await this.loadUserConfig()
+
             this.startDateEnabled = this.descriptor?.config.startDateEnabled
             if (this.startDateEnabled) {
                 this.startDate = new Date()

@@ -19,6 +19,7 @@ package it.eng.spagobi.monitoring.dao;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -587,10 +588,12 @@ public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 		try {
 			LocalDate currentDate = LocalDate.now();
 			LocalDate currentDateMinusXDays = currentDate.minusDays(numDays);
+			java.util.Date limitToHandle = java.util.Date.from(currentDateMinusXDays.atStartOfDay(ZoneId.systemDefault()).toInstant());
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Query hqlQuery = aSession.createQuery("DELETE FROM SbiAudit a WHERE a.requestTime < :currentDateMinusXDays").setParameter("currentDateMinusXDays",
-					Timestamp.valueOf(currentDateMinusXDays.atStartOfDay()));
+			Query hqlQuery = aSession.createQuery("delete from SbiAudit a WHERE a.requestTime < :currentDateMinusXDays").setTimestamp("currentDateMinusXDays",
+					limitToHandle);
+
 			hqlQuery.executeUpdate();
 			tx.commit();
 		} catch (HibernateException he) {

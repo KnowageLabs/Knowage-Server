@@ -42,7 +42,7 @@ import it.eng.knowage.boot.dao.SbiConfigDao;
 import it.eng.knowage.boot.dao.dto.SbiConfig;
 
 @Component
-@Order(3)
+@Order(2)
 public class LocaleFilter implements Filter {
 
 	private static final Logger LOGGER = Logger.getLogger(LocaleFilter.class);

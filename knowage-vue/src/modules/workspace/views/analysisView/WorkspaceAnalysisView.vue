@@ -106,7 +106,7 @@ export default defineComponent({
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
         isOwner(): any {
-            return (this.$store.state as any).user.fullName === this.selectedAnalysis.creationUser
+            return (this.$store.state as any).user.userId === this.selectedAnalysis.creationUser
         },
         isShared(): any {
             return this.selectedAnalysis.functionalities.length > 1

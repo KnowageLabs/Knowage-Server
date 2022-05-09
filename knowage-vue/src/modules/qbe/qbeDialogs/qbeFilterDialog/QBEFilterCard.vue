@@ -31,14 +31,21 @@
                 </div>
             </div>
 
-            <div class="p-col-2 p-d-flex p-flex-row p-ai-center">
+            <div class="p-col-2 p-d-flex p-flex-row p-ai-center" v-if="filter.operator !== 'IS NULL' && filter.operator !== 'NOT NULL'">
                 <div class="kn-flex">
                     <label class="kn-material-input-label"> {{ $t('qbe.filters.targetType') }} </label>
-                    <Dropdown class="kn-material-input" v-model="filter.rightType" :options="targetValues" optionValue="value" optionLabel="label" @change="onFilterTypeChange" />
+                    <Dropdown
+                        class="kn-material-input"
+                        v-model="filter.rightType"
+                        :options="['STARTS WITH', 'NOT STARTS WITH', 'ENDS WITH', 'NOT ENDS WITH', 'CONTAINS', 'NOT CONTAINS', 'BETWEEN', 'NOT BETWEEN'].includes(filter.operator) ? [targetValues[0]] : targetValues"
+                        optionValue="value"
+                        optionLabel="label"
+                        @change="onFilterTypeChange"
+                    />
                 </div>
             </div>
 
-            <div class="p-col-4 p-d-flex p-flex-row p-ai-center">
+            <div class="p-col-4 p-d-flex p-flex-row p-ai-center" v-if="filter.operator !== 'IS NULL' && filter.operator !== 'NOT NULL'">
                 <div class="kn-flex">
                     <label class="kn-material-input-label" v-show="!(filter.rightType === 'manual' && ['BETWEEN', 'NOT BETWEEN', 'IN', 'NOT IN'].includes(filter.operator))"> {{ $t('qbe.filters.target') }} </label>
                     <div class="p-d-flex p-flex-row p-ai-center">
@@ -264,18 +271,24 @@ export default defineComponent({
             }
         },
         onFilterOperatorChange() {
-            if (this.filter && this.filter.rightType === 'manual') {
+            if (!this.filter) return
+
+            if (['STARTS WITH', 'NOT STARTS WITH', 'ENDS WITH', 'NOT ENDS WITH', 'CONTAINS', 'NOT CONTAINS', 'BETWEEN', 'NOT BETWEEN'].includes(this.filter.operator)) {
+                this.filter.rightType = 'manual'
+            }
+
+            if (this.filter.rightType === 'manual') {
                 this.filter.rightOperandDescription = ''
                 this.multiManualValues = []
                 this.firstOperand = ''
                 this.secondOperand = ''
                 this.targetDate = null
                 this.targetEndDate = null
-            } else if (this.filter && this.filter.rightType === 'valueOfField') {
+            } else if (this.filter.rightType === 'valueOfField') {
                 this.selectedValues = []
             }
 
-            if (this.filter && this.filter.operator !== 'SPATIAL_NN') {
+            if (this.filter.operator !== 'SPATIAL_NN') {
                 delete this.filter.operatorParameter
             }
             this.resetFilterRightOperandValues()

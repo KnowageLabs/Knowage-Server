@@ -219,7 +219,6 @@ export default defineComponent({
             return formattedDrivers
         },
         async updatePagination(lazyParams: any) {
-            console.log('PAGINATION OBJECT ', lazyParams)
             this.pagination.start = lazyParams.paginationStart
             this.pagination.limit = lazyParams.paginationLimit
             this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()

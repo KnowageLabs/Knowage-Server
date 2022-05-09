@@ -528,5 +528,23 @@ public class AuditManager {
 		return value;
 	}
 
+	/**
+	 * Erase periodic audit.
+	 *
+	 * @param period the integer days period
+	 *
+	 * @throws EMFUserError the EMF user error
+	 */
+	public void eraseAuditPeriodic(Integer period) {
+		logger.debug("IN");
+		try {
+			_auditDAO.eraseAuditPeriodic(period);
+		} catch (Exception e) {
+			logger.error("Error while periodic deleting audit data", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
 	// ----------------------------------------------------------------
 }
