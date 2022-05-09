@@ -7,6 +7,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -108,6 +110,8 @@ public class MainConfiguration {
 @Component
 class PerUserBe2BeRequestCustomizer implements RestTemplateRequestCustomizer<ClientHttpRequest> {
 
+	private static final Logger LOGGER = LogManager.getLogger(PerUserBe2BeRequestCustomizer.class);
+
 	@Autowired
 	private BusinessRequestContext brc;
 
@@ -118,8 +122,17 @@ class PerUserBe2BeRequestCustomizer implements RestTemplateRequestCustomizer<Cli
 		String correlationId = brc.getCorrelationId().toString();
 		HttpHeaders headers = request.getHeaders();
 
+		LOGGER.debug("Customize BE2BE call using " + authorizationHeaderName + " header with value " + userToken);
+
 		headers.add(authorizationHeaderName, userToken);
 		headers.add("X-Kn-Correlation-Id", correlationId);
+		/*
+		 * I'll consider this a WORKAROUND: it prevent the JSESSIONID to be sent to
+		 * the BE. On knowage-core side, the authentication mechanism check if the user
+		 * is already authenticated using the JSESSIONID; we don't want that here, because
+		 * we want to just rely on the authentication token.
+		 */
+		headers.add(HttpHeaders.COOKIE, "");
 
 		// TODO : Add kn.lang cookie
 	}

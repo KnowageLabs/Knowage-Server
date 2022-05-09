@@ -248,9 +248,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 						if(tempCol.fieldType == 'float' || tempCol.fieldType == 'integer' || (tempCol.fieldType == 'string' && tempCol.measure == 'MEASURE' && ["COUNT","COUNT_DISTINCT"].indexOf(tempCol.aggregationSelected) != -1) ) {
 							tempCol.valueFormatter = numberFormatter;
-							if (typeof fields[f].scale !== 'undefined') {
-								tempCol.scale = Math.min(fields[f].scale,$scope.maxScaleValue);
-							}
 							// When server-side pagination is disabled
 							tempCol.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
 								return valueA - valueB;
@@ -461,10 +458,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 * In case of a returning empty string that one will be displayed.
 		 */
 		function numberFormatter(params){
-			var tempScale = typeof params.colDef.scale !== 'undefined' ? params.colDef.scale : 2;
-			if(params.value != "" && (!params.colDef.style || (params.colDef.style && !params.colDef.style.asString))) {
-				var defaultPrecision = (params.colDef.fieldType == 'float') ? tempScale : 0;
-				return $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
+			if(typeof params.value === "number") {
+				var useSeparator = (params.colDef.style && params.colDef.style.asString)? false : true;
+				var defaultPrecision = (params.colDef.fieldType == 'float') ? 2 : 0;
+				var precision = (params.colDef.style && params.colDef.style.precision != undefined) ? params.colDef.style.precision : defaultPrecision;
+				var locale = `${sbiModule_config.curr_language}-${sbiModule_config.curr_country}`;
+				return new Intl.NumberFormat(locale, { minimumFractionDigits:precision, maximumFractionDigits:precision,useGrouping:useSeparator}).format(params.value);
 			}else return params.value;
 		}
 
