@@ -1,7 +1,7 @@
 <template>
     <Card v-if="perspective">
         <template #header>
-            <h2>
+            <h2 class="p-p-1">
                 {{ perspective.name }}
             </h2>
         </template>
