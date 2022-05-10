@@ -34,7 +34,7 @@
                 <Button v-show="selectedFilters.length > 0" class="kn-button kn-button--primary" @click="clear"> {{ $t('common.clear') }}</Button>
                 <Button v-show="treeLocked" class="kn-button kn-button--primary" @click="treeLocked = false"> {{ $t('common.add') }}</Button>
                 <Button class="kn-button kn-button--primary p-ml-auto" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-                <Button class="kn-button kn-button--primary" @click="apply"> {{ $t('common.apply') }}</Button>
+                <Button class="kn-button kn-button--primary" :disabled="applyButtonDisabled" @click="apply"> {{ $t('common.apply') }}</Button>
             </div>
         </template>
     </Dialog>
@@ -73,6 +73,11 @@ export default defineComponent({
             mode: 'selectFields',
             levels: [] as any[],
             loading: false
+        }
+    },
+    computed: {
+        applyButtonDisabled(): boolean {
+            return this.propFilter?.type !== 'slicer' && this.selectedFilters.length === 0
         }
     },
     watch: {
