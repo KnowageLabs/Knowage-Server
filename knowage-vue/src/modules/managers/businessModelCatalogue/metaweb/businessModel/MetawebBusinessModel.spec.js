@@ -93,6 +93,6 @@ describe('Metaweb Business Model', () => {
         const dataTable = wrapper.find('[data-test="bm-table"]')
         await dataTable.find('tr td').trigger('click')
 
-        expect(wrapper.find('.p-tabview-nav li:nth-child(6)').html()).toContain('metaweb.businessModel.tabView.filter')
+        expect(wrapper.find('.p-tabview-nav li:nth-child(5)').html()).toContain('metaweb.businessModel.tabView.filter')
     })
 })
