@@ -286,6 +286,7 @@ const factory = () => {
                 Dossier: true,
                 KnParameterSidebar: true,
                 Menu,
+                Olap: true,
                 ProgressBar,
                 Registry: true,
                 Toolbar,
