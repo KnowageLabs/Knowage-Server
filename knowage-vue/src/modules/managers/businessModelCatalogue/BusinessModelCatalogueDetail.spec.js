@@ -67,6 +67,8 @@ const factory = () => {
     })
 }
 
+window.HTMLElement.prototype.scrollIntoView = function() {}
+
 afterEach(() => {
     jest.clearAllMocks()
 })

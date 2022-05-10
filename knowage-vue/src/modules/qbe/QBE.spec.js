@@ -268,7 +268,8 @@ const factory = () => {
                 SubqueryEntity: true,
                 QBEJoinDefinitionDialog: true,
                 KnParameterSidebar: true,
-                QBEPreviewDialog: true
+                QBEPreviewDialog: true,
+                ProgressSpinner: true
             },
             mocks: {
                 $t: (msg) => msg,
