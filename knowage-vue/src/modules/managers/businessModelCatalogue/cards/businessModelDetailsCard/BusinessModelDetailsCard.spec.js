@@ -60,6 +60,7 @@ const factory = () => {
                 GenerateDatamartCard: true,
                 KnInputFile: true,
                 KnValidationMessages,
+                KnOverlaySpinnerPanel: true,
                 ProgressBar,
                 Toolbar,
                 Tooltip
@@ -97,7 +98,7 @@ describe('Business Model Detail', () => {
         expect(wrapper.emitted().fieldChanged[0][0].value).toBe('test name')
 
         await descriptionInput.setValue('test description')
-        expect(wrapper.emitted().fieldChanged[1][0].value).toBe('test description')
+        expect(wrapper.emitted().fieldChanged[2][0].value).toBe('test description')
     })
 
     it('name field is not editable if the form is not new', async () => {
@@ -125,7 +126,7 @@ describe('Business Model Detail', () => {
 
         await wrapper.setProps({ selectedBusinessModel: mockedBusinessModel })
         expect(wrapper.vm.metaWebVisible).toBe(false)
-        expect(wrapper.find('[data-test="metaweb-button"]').exists()).toBe(false)
+        expect(wrapper.find('[data-test="metaweb-button"]').isVisible()).toBe(false)
     })
 
     it('should show a generate button exiting from meta when something is changed and saved in the model', async () => {

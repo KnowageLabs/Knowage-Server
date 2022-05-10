@@ -1,4 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils'
+import { Client } from '@stomp/stompjs'
 import PrimeVue from 'primevue/config'
 import axios from 'axios'
 import Button from 'primevue/button'
@@ -134,6 +135,13 @@ const $router = {
     push: jest.fn()
 }
 
+const client = new Client({
+    brokerURL: '',
+    connectHeaders: {},
+    heartbeatIncoming: 4000,
+    heartbeatOutgoing: 4000
+})
+
 const factory = (cardDisplay) => {
     return mount(WorkspaceDataView, {
         props: {
@@ -167,7 +175,8 @@ const factory = (cardDisplay) => {
                 $t: (msg) => msg,
                 $store,
                 $http,
-                $router
+                $router,
+                client
             }
         }
     })
@@ -176,7 +185,7 @@ const factory = (cardDisplay) => {
 jest.useFakeTimers()
 jest.spyOn(global, 'setTimeout')
 
-describe('Workspace Analysis View', () => {
+describe('Workspace Data View', () => {
     it('should show an hint if no elements are present in the selected mode', async () => {
         axios.get.mockReturnValueOnce(
             Promise.resolve({

@@ -142,16 +142,14 @@ jest.spyOn(global, 'setTimeout')
 
 describe('Workspace Models View', () => {
     it('should show an hint if no elements are present in the selected mode', async () => {
-        axios.get.mockReturnValueOnce(
-            Promise.resolve({
-                data: []
-            })
-        )
-        axios.get.mockReturnValueOnce(
-            Promise.resolve({
-                data: []
-            })
-        )
+        for (let i = 0; i < 3; i++) {
+            axios.get.mockReturnValueOnce(
+                Promise.resolve({
+                    data: []
+                })
+            )
+        }
+
         const wrapper = factory(false)
 
         await flushPromises()
