@@ -149,12 +149,12 @@
             },
             async loadEtlDocuments() {
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument?includeType=ETL').then((response: AxiosResponse<any>) => {
-                    this.etlDocumentList = [...response.data.item]
+                    this.etlDocumentList = response.data ? response.data.item : []
                 })
             },
             async loadUsers() {
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/users').then((response: AxiosResponse<any>) => {
-                    this.usersList = [...response.data]
+                    this.usersList = response.data
                 })
             },
             handleSave() {
