@@ -38,7 +38,7 @@ export default defineComponent({
     name: 'qbe-simple-table',
     props: { query: { type: Object as PropType<iQuery> } },
     components: { Checkbox, Column, DataTable, Dropdown, Menu },
-    emits: ['columnVisibilityChanged', 'openFilterDialog', 'openHavingDialog', 'entityDropped', 'groupingChanged'],
+    emits: ['columnVisibilityChanged', 'openFilterDialog', 'openHavingDialog', 'entityDropped', 'groupingChanged', 'openCalculatedFieldDialog'],
     data() {
         return {
             QBESimpleTableDescriptor,
@@ -91,6 +91,9 @@ export default defineComponent({
             if ((field.funct && field.funct !== 'NONE') || (field.type === 'inline.calculated.field' && field.fieldType === 'measure')) {
                 this.menuItems.push({ icon: 'pi pi-filter', label: this.$t('qbe.simpleTable.havings'), command: () => this.openHavingsDialog(field) })
             }
+            if (field.type === 'inline.calculated.field') {
+                this.menuItems.push({ icon: 'fas fa-calculator', label: this.$t('qbe.detailView.modifyCalcField'), command: () => this.openCalculatedFieldDialog(field, index) })
+            }
             this.menuItems.push({ icon: 'pi pi-trash', label: this.$t('common.delete'), command: () => this.deleteColumn(index) })
         },
         onRowReorder(event: any) {
@@ -102,6 +105,9 @@ export default defineComponent({
         },
         openHavingsDialog(field: iField) {
             this.$emit('openHavingDialog', { field: field, query: this.selectedQuery })
+        },
+        openCalculatedFieldDialog(field: iField, index) {
+            this.$emit('openCalculatedFieldDialog', field, index)
         },
         onDrop(event) {
             const data = JSON.parse(event.dataTransfer.getData('text/plain'))

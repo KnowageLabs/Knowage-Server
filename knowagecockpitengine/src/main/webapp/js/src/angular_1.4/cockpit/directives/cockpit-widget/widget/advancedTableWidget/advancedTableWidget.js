@@ -458,9 +458,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 * In case of a returning empty string that one will be displayed.
 		 */
 		function numberFormatter(params){
-			if(params.value != "" && (!params.colDef.style || (params.colDef.style && !params.colDef.style.asString))) {
+			if(typeof params.value === "number") {
+				var useSeparator = (params.colDef.style && params.colDef.style.asString)? false : true;
 				var defaultPrecision = (params.colDef.fieldType == 'float') ? 2 : 0;
-				return $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
+				var precision = (params.colDef.style && params.colDef.style.precision != undefined) ? params.colDef.style.precision : defaultPrecision;
+				var locale = `${sbiModule_config.curr_language}-${sbiModule_config.curr_country}`;
+				return new Intl.NumberFormat(locale, { minimumFractionDigits:precision, maximumFractionDigits:precision,useGrouping:useSeparator}).format(params.value);
 			}else return params.value;
 		}
 
