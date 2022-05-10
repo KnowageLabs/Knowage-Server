@@ -66,6 +66,8 @@
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.subreports.title') }}</span>
                     </template>
+
+                    <SubreportsTab :selectedDocument="selectedDocument" :allDocumentDetailsProp="allDocumentDetails" />
                 </TabPanel>
             </TabView>
         </div>
@@ -82,6 +84,7 @@ import DriversTab from './tabs/drivers/DocumentDetailsDrivers.vue'
 import OutputParamsTab from './tabs/outputParams/DocumentDetailsOutputParameters.vue'
 import DataLineageTab from './tabs/dataLineage/DocumentDetailsDataLineage.vue'
 import HistoryTab from './tabs/history/DocumentDetailsHistory.vue'
+import SubreportsTab from './tabs/subreports/DocumentDetailsSubreports.vue'
 import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import Badge from 'primevue/badge'
@@ -91,7 +94,7 @@ import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute
 
 export default defineComponent({
     name: 'document-details',
-    components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, TabView, TabPanel, Dialog, Badge, ProgressSpinner },
+    components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, SubreportsTab, TabView, TabPanel, Dialog, Badge, ProgressSpinner },
     props: {},
     emits: ['closeDetails'],
     data() {
@@ -117,7 +120,10 @@ export default defineComponent({
             savedTables: [] as iTableSmall[],
             availableFolders: [] as iFolder[],
             states: mainDescriptor.states,
-            types: [] as iDocumentType[]
+            types: [] as iDocumentType[],
+            allDocumentDetails: [] as any,
+            savedSubreports: [] as any,
+            selectedSubreports: [] as any
         }
     },
     computed: {
@@ -142,7 +148,6 @@ export default defineComponent({
         isForEdit() {
             this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
         },
-        //#region ===================== Get Persistent Data ====================================================
         async loadPage(id) {
             this.loading = true
             await Promise.all([
@@ -159,7 +164,8 @@ export default defineComponent({
                 this.getDateFormats(),
                 this.getSavedTablesByDocumentID(),
                 this.getDataset(),
-                this.getDataSources()
+                this.getDataSources(),
+                this.getAllSubreports()
             ])
             this.loading = false
         },
@@ -231,7 +237,9 @@ export default defineComponent({
                     })
             }
         },
-        //#endregion ===============================================================================================
+        async getAllSubreports() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/`).then((response: AxiosResponse<any>) => (this.allDocumentDetails = response.data))
+        },
         setTemplateForUpload(event) {
             this.templateToUpload = event
         },
