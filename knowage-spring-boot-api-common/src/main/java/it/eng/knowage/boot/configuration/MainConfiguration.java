@@ -7,6 +7,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeansException;
@@ -27,6 +29,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.support.SimpleThreadScope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpRequest;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -100,9 +104,24 @@ public class MainConfiguration {
 
 		RestTemplate template = builder.rootUri(serviceUrlAsURL.toString())
 			.additionalRequestCustomizers(customizer)
+			.requestFactory(() -> clientHttpRequestFactoryWithoutCookies())
 			.build();
 
 		return template;
+	}
+
+	public ClientHttpRequestFactory clientHttpRequestFactoryWithoutCookies() {
+		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+
+		factory.setConnectTimeout(5000);
+		factory.setReadTimeout(10000);
+
+		HttpClient httpClient = HttpClientBuilder.create()
+				.disableCookieManagement()
+				.build();
+		factory.setHttpClient(httpClient);
+
+		return factory;
 	}
 
 }
@@ -126,13 +145,6 @@ class PerUserBe2BeRequestCustomizer implements RestTemplateRequestCustomizer<Cli
 
 		headers.add(authorizationHeaderName, userToken);
 		headers.add("X-Kn-Correlation-Id", correlationId);
-		/*
-		 * I'll consider this a WORKAROUND: it prevent the JSESSIONID to be sent to
-		 * the BE. On knowage-core side, the authentication mechanism check if the user
-		 * is already authenticated using the JSESSIONID; we don't want that here, because
-		 * we want to just rely on the authentication token.
-		 */
-		headers.add(HttpHeaders.COOKIE, "");
 
 		// TODO : Add kn.lang cookie
 	}
