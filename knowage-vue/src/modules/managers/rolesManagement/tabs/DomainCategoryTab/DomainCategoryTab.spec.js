@@ -66,6 +66,6 @@ describe('Domain Category Tab', () => {
 
         expect(wrapper.vm.selectedCategories).toStrictEqual(mockedOptions)
         expect(wrapper.emitted()).toHaveProperty('changed')
-        expect(wrapper.emitted().changed[0][0]).toStrictEqual(mockedOptions)
+        expect(wrapper.emitted().changed[1][0]).toStrictEqual(mockedOptions)
     })
 })
