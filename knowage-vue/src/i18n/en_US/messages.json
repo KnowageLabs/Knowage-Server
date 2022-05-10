@@ -396,6 +396,12 @@
                 "title": "Output Parameters"
             },
             "subreports": {
+                "deleteError": "Error deleting subreport",
+                "deleteOk": "Subreport deleted",
+                "info": "Select the subreports you want to link to the document",
+                "persistError": "Error persisting subreport",
+                "persistOk": "Subreport persisted",
+                "tableName": "Available Subreports",
                 "title": "Subreports"
             },
             "title": "Document Details"
@@ -2262,6 +2268,7 @@
         },
         "detailView": {
             "hideList": "Hide List",
+            "modifyCalcField": "Modify calculated field",
             "noPreview": "Nothing to preview",
             "parameterDuplicates": "There are parameters with a duplicate name!",
             "showList": "Show List",
@@ -2287,8 +2294,7 @@
                 "exportTo": "Export to",
                 "repetitions": "Discard Repetitions",
                 "sql": "SQL Query"
-            },
-            "modifyCalcField": "Modify calculated field"
+            }
         },
         "entities": {
             "derived": "Derived Entities",
