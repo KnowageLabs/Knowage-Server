@@ -44,8 +44,6 @@ export default defineComponent({
     },
     created() {
         const primevue = usePrimeVue() as any
-                // @ts-ignore
-          console.log("TEEST", this.$i18n.messages[this.$i18n.locale.replaceAll('-', '_')])
         // @ts-ignore
         if (this.$i18n.messages[this.$i18n.locale.replaceAll('-', '_')]) {
             // @ts-ignore

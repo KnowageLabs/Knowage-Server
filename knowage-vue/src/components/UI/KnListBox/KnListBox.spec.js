@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils'
 import Avatar from 'primevue/avatar'
 import Badge from 'primevue/badge'
+import Button from 'primevue/button'
+import KnListButtonRenderer from './KnListButtonRenderer.vue'
 import Listbox from 'primevue/listbox'
 import Menu from 'primevue/menu'
 import KnListBox from './KnListBox.vue'
@@ -51,6 +53,8 @@ const factory = () => {
             stubs: {
                 Avatar,
                 Badge,
+                Button,
+                KnListButtonRenderer,
                 Listbox,
                 Menu
             },
@@ -63,7 +67,7 @@ const factory = () => {
     })
 }
 
-describe('Cross-navigation Management loading', () => {
+describe('KnListBox loading', () => {
     it('the list shows an hint component when loaded empty', async () => {
         const wrapper = factory()
 
@@ -73,12 +77,11 @@ describe('Cross-navigation Management loading', () => {
         expect(wrapper.find('[data-test="list"]').html()).toContain('No available options')
     })
 })
-describe('Cross-navigation Management', () => {
-    it('shows a prompt when user click on a list item delete button to delete it', async () => {
+describe('KnListBox', () => {
+    it('shows list of items', async () => {
         const wrapper = factory()
-        console.log(wrapper.html())
-        const deleteButton = wrapper.find('[data-test="delete-button-0"]')
-        await deleteButton.trigger('click')
+        expect(wrapper.html()).toContain('label1')
+        expect(wrapper.html()).toContain('label2')
+        expect(wrapper.html()).toContain('label3')
     })
-    it('shows the detail when clicking on a item', () => {})
 })
