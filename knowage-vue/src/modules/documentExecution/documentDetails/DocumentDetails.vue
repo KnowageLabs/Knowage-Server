@@ -148,7 +148,6 @@ export default defineComponent({
         isForEdit() {
             this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
         },
-        //#region ===================== Get Persistent Data ====================================================
         async loadPage(id) {
             this.loading = true
             await Promise.all([
@@ -241,7 +240,6 @@ export default defineComponent({
         async getAllSubreports() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/`).then((response: AxiosResponse<any>) => (this.allDocumentDetails = response.data))
         },
-        //#endregion ===============================================================================================
         setTemplateForUpload(event) {
             this.templateToUpload = event
         },
