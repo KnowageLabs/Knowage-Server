@@ -109,6 +109,7 @@ export default defineComponent({
             const emits = e.item && e.item.emits
             e.item = item
             this.$emit(emits || 'click', e)
+            console.log('CLIIIIIIIICKED!!!', e, item)
         },
         getBorderClass(item): string {
             if (this.settings.statusBorder) {

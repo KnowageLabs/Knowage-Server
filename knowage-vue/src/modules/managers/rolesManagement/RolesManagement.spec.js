@@ -66,6 +66,7 @@ const factory = () => {
             stubs: {
                 Button,
                 InputText,
+                KnListBox: true,
                 ProgressBar,
                 Toolbar,
                 routerView: true

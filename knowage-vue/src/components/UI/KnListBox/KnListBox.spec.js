@@ -9,26 +9,54 @@ import KnListBox from './KnListBox.vue'
 import PrimeVue from 'primevue/config'
 
 const mockedOptions = [
-    { id: 1, label: 'label1', name: 'Name1', description: 'Desc1' },
-    { id: 2, label: 'label2', name: 'Name2', description: 'Desc2' },
-    { id: 3, label: 'label3', name: 'Name3', description: 'Desc3' }
+    {
+        id: 544,
+        name: '/albnale/admin',
+        description: '/albnale/admin',
+        roleTypeCD: 'ADMIN',
+        code: null,
+        roleTypeID: 32,
+        organization: 'DEMO',
+        isPublic: false
+    },
+    {
+        id: 450,
+        name: '/demo/admin',
+        description: '/demo/admin',
+        roleTypeCD: 'ADMIN',
+        code: null,
+        roleTypeID: 32,
+        organization: 'DEMO',
+        isPublic: false
+    },
+    {
+        id: 455,
+        name: '/demo/user',
+        description: '/demo/user',
+        roleTypeCD: 'USER',
+        code: '/demo/user',
+        roleTypeID: 31,
+        organization: 'DEMO',
+        isPublic: false
+    }
 ]
 
-const mockedsettings = {
-    defaultSortField: 'name',
-    interaction: {
-        parameterLabel: 'id',
-        parameterValue: 'id',
-        path: 'navigation-detail',
-        type: 'router'
-    },
+const mockedSettings = {
     buttons: [
         {
             emits: 'delete',
             icon: 'fas fa-trash-alt',
             label: 'common.delete'
         }
-    ]
+    ],
+    defaultSortField: 'name',
+    filterFields: ['name'],
+    interaction: {
+        type: 'event'
+    },
+    sortFields: ['name'],
+    textField: 'roleTypeCD',
+    titleField: 'name'
 }
 
 const $confirm = {
@@ -43,7 +71,7 @@ const factory = () => {
     return mount(KnListBox, {
         props: {
             options: mockedOptions,
-            settings: mockedsettings
+            settings: mockedSettings
         },
         global: {
             directives: {
@@ -80,8 +108,21 @@ describe('KnListBox loading', () => {
 describe('KnListBox', () => {
     it('shows list of items', async () => {
         const wrapper = factory()
-        expect(wrapper.html()).toContain('label1')
-        expect(wrapper.html()).toContain('label2')
-        expect(wrapper.html()).toContain('label3')
+
+        await wrapper.find('[data-test="list-item"]').trigger('click')
+
+        expect(wrapper.html()).toContain('/albnale/admin')
+        expect(wrapper.html()).toContain('/demo/admin')
+        expect(wrapper.html()).toContain('/demo/user')
+    })
+    it('TODO shows list of items', async () => {
+        const wrapper = factory()
+
+        await wrapper.find('[data-test="list-item"]').trigger('click')
+
+        expect(wrapper.html()).toContain('/albnale/admin')
+        expect(wrapper.html()).toContain('/demo/admin')
+        expect(wrapper.html()).toContain('/demo/user')
+        console.log('TEEEEEEEEEEEST: ', wrapper.emitted()['click'][0][0])
     })
 })
