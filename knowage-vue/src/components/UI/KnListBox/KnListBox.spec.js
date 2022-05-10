@@ -115,14 +115,28 @@ describe('KnListBox', () => {
         expect(wrapper.html()).toContain('/demo/admin')
         expect(wrapper.html()).toContain('/demo/user')
     })
-    it('TODO shows list of items', async () => {
+    it('emits event with the clicked item on click', async () => {
         const wrapper = factory()
 
         await wrapper.find('[data-test="list-item"]').trigger('click')
 
+        expect(wrapper.emitted()['click'][0][0].item).toStrictEqual(mockedOptions[0])
+    })
+
+    it('filters the list', async () => {
+        const wrapper = factory()
+        const searchInput = wrapper.find('.p-inputtext')
+
         expect(wrapper.html()).toContain('/albnale/admin')
         expect(wrapper.html()).toContain('/demo/admin')
         expect(wrapper.html()).toContain('/demo/user')
-        console.log('TEEEEEEEEEEEST: ', wrapper.emitted()['click'][0][0])
+
+        await searchInput.setValue('/albnale/admin')
+
+        expect(wrapper.html()).toContain('/albnale/admin')
+        expect(wrapper.html()).not.toContain('/demo/admin')
+        expect(wrapper.html()).not.toContain('/demo/user')
+
+        console.log(wrapper.html())
     })
 })
