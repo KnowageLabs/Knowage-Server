@@ -25,7 +25,7 @@
                     </li>
                 </ul>
             </div>
-            <div v-else-if="contentInfo.WORD_ID">
+            <div v-else-if="contentInfo?.WORD_ID">
                 <ul>
                     <li>
                         <span>{{ $tc('managers.glossary.common.word', 1) }}:</span>
@@ -49,14 +49,15 @@
                     </li>
                     <li>
                         <span>{{ $t('managers.glossary.common.link') }}:</span>
-                        <ul>
+                        <Chip class="p-m-1" v-for="(link, index) in contentInfo.LINK" :key="index">{{ link.WORD }}</Chip>
+                        <!-- <ul>
                             <li v-for="(link, index) in contentInfo.LINK" :key="index">
                                 <span>
                                     <span>{{ link.WORD }}</span>
                                     <a v-if="index != contentInfo.LINK.length - 1">-</a>
                                 </span>
                             </li>
-                        </ul>
+                        </ul> -->
                     </li>
                     <li>
                         <span>{{ $t('managers.glossary.common.attributes') }}:</span>
@@ -80,65 +81,66 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import Dialog from 'primevue/dialog'
-    import glossaryDefinitionDescriptor from '../GlossaryDefinitionDescriptor.json'
-    import glossaryDefinitionDialogDescriptor from './GlossaryDefinitionDialogDescriptor.json'
+import { defineComponent } from 'vue'
+import Chip from 'primevue/chip'
+import Dialog from 'primevue/dialog'
+import glossaryDefinitionDescriptor from '../GlossaryDefinitionDescriptor.json'
+import glossaryDefinitionDialogDescriptor from './GlossaryDefinitionDialogDescriptor.json'
 
-    export default defineComponent({
-        name: 'glossary-definition-info-dialog',
-        components: { Dialog },
-        emits: ['close'],
-        props: {
-            visible: { type: Boolean },
-            contentInfo: { type: Object }
-        },
-        data() {
-            return {
-                glossaryDefinitionDescriptor,
-                glossaryDefinitionDialogDescriptor
-            }
+export default defineComponent({
+    name: 'glossary-definition-info-dialog',
+    components: { Chip, Dialog },
+    emits: ['close'],
+    props: {
+        visible: { type: Boolean },
+        contentInfo: { type: Object }
+    },
+    data() {
+        return {
+            glossaryDefinitionDescriptor,
+            glossaryDefinitionDialogDescriptor
         }
-    })
+    }
+})
 </script>
 
 <style lang="scss">
-    .glossaryDefinitionDetail {
-        div {
-            ul {
-                list-style: none;
-                padding: 0;
-                display: flex;
-                flex-direction:column;
-                li {
-                    display: inline-flex;
-                    justify-content: flex-start;
+.glossaryDefinitionDetail {
+    div {
+        ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            li {
+                display: inline-flex;
+                justify-content: flex-start;
+                height: 40px;
+                &:nth-child(even) {
+                    background-color: var(--kn-list-item-alternated-background-color);
+                }
+                span {
                     height: 40px;
-                    &:nth-child(even) {
-                        background-color: var(--kn-list-item-alternated-background-color);
-                    }
-                    span {
-                        height: 40px;
-                        display: flex;
-                        justify-content: flex-start;
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    &:first-child {
+                        font-weight: 600;
+                        padding-left: 10px;
+                        text-transform: capitalize;
+                        width: 150px;
                         align-items: center;
-                        &:first-child {
-                            font-weight: 600;
-                            padding-left: 10px;
-                            text-transform: capitalize;
-                            width: 150px;
-                            align-items: center;
-                        }
-                        &:nth-child(2) {
-                            flex: 1;
-                        }
+                    }
+                    &:nth-child(2) {
+                        flex: 1;
                     }
                 }
             }
         }
-
-        p {
-            margin: 1rem 0 1rem 1.5rem;
-        }
     }
+
+    p {
+        margin: 1rem 0 1rem 1.5rem;
+    }
+}
 </style>

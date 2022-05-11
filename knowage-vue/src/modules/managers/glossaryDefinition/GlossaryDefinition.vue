@@ -47,113 +47,140 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { iWord } from './GlossaryDefinition'
-    import { AxiosResponse } from 'axios'
-    import FabButton from '@/components/UI/KnFabButton.vue'
-    import Listbox from 'primevue/listbox'
-    import glossaryDefinitionDescriptor from './GlossaryDefinitionDescriptor.json'
-    import GlossaryDefinitionDetail from './GlossaryDefinitionDetail.vue'
-    import GlossaryDefinitionInfoDialog from './dialogs/GlossaryDefinitionInfoDialog.vue'
-    import GlossaryDefinitionWordEdit from './dialogs/GlossaryDefinitionWordEdit.vue'
+import { defineComponent } from 'vue'
+import { iWord } from './GlossaryDefinition'
+import { AxiosResponse } from 'axios'
+import FabButton from '@/components/UI/KnFabButton.vue'
+import Listbox from 'primevue/listbox'
+import glossaryDefinitionDescriptor from './GlossaryDefinitionDescriptor.json'
+import GlossaryDefinitionDetail from './GlossaryDefinitionDetail.vue'
+import GlossaryDefinitionInfoDialog from './dialogs/GlossaryDefinitionInfoDialog.vue'
+import GlossaryDefinitionWordEdit from './dialogs/GlossaryDefinitionWordEdit.vue'
 
-    export default defineComponent({
-        name: 'glossary-definition',
-        components: {
-            FabButton,
-            Listbox,
-            GlossaryDefinitionDetail,
-            GlossaryDefinitionInfoDialog,
-            GlossaryDefinitionWordEdit
-        },
-        data() {
-            return {
-                glossaryDefinitionDescriptor,
-                wordsList: [] as iWord[],
-                contentInfo: null as any,
-                infoDialogVisible: false,
-                state: [] as any,
-                category: [] as any,
-                selectedGlossaryId: null as any,
-                user: {} as any,
-                reloadTree: false,
-                loading: false,
-                editWordDialogVisible: false
-            }
-        },
-        async created() {
-            await this.loadPage()
-        },
-        methods: {
-            async loadPage() {
-                this.loading = true
-                await this.loadWordsList()
-                await this.loadState()
-                await this.loadCategory()
-                this.loading = false
-            },
-            async loadWordsList() {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listWords?Page=1&ItemPerPage=`).then((response: AxiosResponse<any>) => (this.wordsList = response.data))
-            },
-            async loadState() {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GLS_STATE`).then((response: AxiosResponse<any>) => (this.state = response.data))
-            },
-            async loadCategory() {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GLS_CATEGORY`).then((response: AxiosResponse<any>) => (this.category = response.data))
-            },
-            async showInfo(content: any) {
-                this.loading = true
-                const url = content.CONTENT_ID ? `1.0/glossary/getContent?CONTENT_ID=${content.CONTENT_ID}` : `1.0/glossary/getWord?WORD_ID=${content.WORD_ID}`
-                await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
-                    .then((response: AxiosResponse<any>) => {
-                        this.contentInfo = response.data
-                        this.infoDialogVisible = true
-                    })
-                    .finally(() => (this.loading = false))
-            },
-            deleteWordConfirm(wordId: number) {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => {
-                        this.deleteWord(wordId)
-                    }
-                })
-            },
-            async deleteWord(wordId: number) {
-                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/business/deleteWord?WORD_ID=${wordId}`).then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.deleteTitle'),
-                        msg: this.$t('common.toast.deleteSuccess')
-                    })
-                    this.$router.push('/glossary-definition')
-                    this.loadWordsList()
-                })
-            },
-            onDragStart(event: any, word: iWord) {
-                event.dataTransfer.setData('text/plain', JSON.stringify(word))
-                event.dataTransfer.dropEffect = 'move'
-                event.dataTransfer.effectAllowed = 'move'
-            },
-            async editWord(id: number, event: any) {
-                if (id != -1) {
-                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getWord?WORD_ID=${id}`).then((response: AxiosResponse<any>) => {
-                        this.contentInfo = response.data
-                    })
-                } else this.contentInfo = { LINK: [], SBI_GL_WORD_ATTR: [], STATE: '', CATEGORY: '', FORMULA: '' }
-                if (event) {
-                    this.contentInfo.PARENT = event.parent
-                    this.selectedGlossaryId = event.glossaryId
-                }
-
-                this.editWordDialogVisible = true
-            },
-            wordSaved() {
-                this.editWordDialogVisible = false
-                this.loadWordsList()
-            }
+export default defineComponent({
+    name: 'glossary-definition',
+    components: {
+        FabButton,
+        Listbox,
+        GlossaryDefinitionDetail,
+        GlossaryDefinitionInfoDialog,
+        GlossaryDefinitionWordEdit
+    },
+    data() {
+        return {
+            glossaryDefinitionDescriptor,
+            wordsList: [] as iWord[],
+            contentInfo: null as any,
+            infoDialogVisible: false,
+            state: [] as any,
+            category: [] as any,
+            selectedGlossaryId: null as any,
+            user: {} as any,
+            reloadTree: false,
+            loading: false,
+            editWordDialogVisible: false
         }
-    })
+    },
+    async created() {
+        await this.loadPage()
+    },
+    methods: {
+        async loadPage() {
+            this.loading = true
+            await this.loadWordsList()
+            await this.loadState()
+            await this.loadCategory()
+            this.loading = false
+        },
+        async loadWordsList() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listWords?Page=1&ItemPerPage=`).then((response: AxiosResponse<any>) => (this.wordsList = response.data))
+        },
+        async loadState() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GLS_STATE`).then((response: AxiosResponse<any>) => (this.state = response.data))
+        },
+        async loadCategory() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GLS_CATEGORY`).then((response: AxiosResponse<any>) => (this.category = response.data))
+        },
+        async showInfo(content: any) {
+            this.loading = true
+            const url = content.CONTENT_ID ? `1.0/glossary/getContent?CONTENT_ID=${content.CONTENT_ID}` : `1.0/glossary/getWord?WORD_ID=${content.WORD_ID}`
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
+                .then((response: AxiosResponse<any>) => {
+                    this.contentInfo = response.data
+                    // TODO REMOVE MOCK
+                    this.contentInfo = {
+                        WORD_ID: 67,
+                        WORD: 'test3',
+                        DESCR: 'test3',
+                        FORMULA: null,
+                        STATE: 194,
+                        STATE_NM: 'sbi.generic.active',
+                        CATEGORY: 196,
+                        CATEGORY_NM: 'sbi.glossary.word',
+                        LINK: [
+                            {
+                                WORD_ID: 38,
+                                WORD: 'testWord'
+                            },
+                            {
+                                WORD_ID: 66,
+                                WORD: 'test2'
+                            },
+                            {
+                                WORD_ID: 65,
+                                WORD: 'test'
+                            }
+                        ],
+                        SBI_GL_WORD_ATTR: []
+                    }
+                    console.log('CONTENT INFO: ', this.contentInfo)
+                    this.infoDialogVisible = true
+                })
+                .finally(() => (this.loading = false))
+        },
+        deleteWordConfirm(wordId: number) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.deleteWord(wordId)
+                }
+            })
+        },
+        async deleteWord(wordId: number) {
+            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/business/deleteWord?WORD_ID=${wordId}`).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.deleteTitle'),
+                    msg: this.$t('common.toast.deleteSuccess')
+                })
+                this.$router.push('/glossary-definition')
+                this.loadWordsList()
+            })
+        },
+        onDragStart(event: any, word: iWord) {
+            event.dataTransfer.setData('text/plain', JSON.stringify(word))
+            event.dataTransfer.dropEffect = 'move'
+            event.dataTransfer.effectAllowed = 'move'
+        },
+        async editWord(id: number, event: any) {
+            if (id != -1) {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getWord?WORD_ID=${id}`).then((response: AxiosResponse<any>) => {
+                    this.contentInfo = response.data
+                })
+            } else this.contentInfo = { LINK: [], SBI_GL_WORD_ATTR: [], STATE: '', CATEGORY: '', FORMULA: '' }
+            if (event) {
+                this.contentInfo.PARENT = event.parent
+                this.selectedGlossaryId = event.glossaryId
+            }
+
+            this.editWordDialogVisible = true
+        },
+        wordSaved() {
+            this.editWordDialogVisible = false
+            this.loadWordsList()
+        }
+    }
+})
 </script>
