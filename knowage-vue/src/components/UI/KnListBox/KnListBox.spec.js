@@ -136,7 +136,15 @@ describe('KnListBox', () => {
         expect(wrapper.html()).toContain('/albnale/admin')
         expect(wrapper.html()).not.toContain('/demo/admin')
         expect(wrapper.html()).not.toContain('/demo/user')
+    })
 
-        console.log(wrapper.html())
+    it('emitts event with item to delete', async () => {
+        const wrapper = factory()
+        const searchInput = wrapper.find('.p-inputtext')
+
+        await searchInput.setValue('/demo/admin')
+        await wrapper.find('[data-test="delete-button-0"]').trigger('click')
+
+        expect(wrapper.emitted().delete[0][0].item).toStrictEqual(mockedOptions[1])
     })
 })
