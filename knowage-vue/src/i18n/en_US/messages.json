@@ -1933,7 +1933,10 @@
             "addPerspective": "Add Perspective",
             "addPerspectiveHint": "To create a scorecard at least one perspective (card) should be present. Click on add perspective button to add the first one.",
             "addTargetHint": "A perspective is the \"card\" container. Add one or more target to assign them some KPIs.",
+            "majority": "Majority",
+            "majorityWithPriority": "Majority with priority",
             "perspectives": "Perspectives",
+            "priority": "Priority",
             "scorecardDesigner": "Scorecard Designer",
             "title": "Scorecard List"
         },

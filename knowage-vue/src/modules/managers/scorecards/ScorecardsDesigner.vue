@@ -100,7 +100,7 @@ export default defineComponent({
                 this.scorecard = { name: '', description: '', perspectives: [] }
             }
             this.$store.commit('setLoading', false)
-            console.log('LOADED SCORECARD: ', this.scorecard)
+            // console.log('LOADED SCORECARD: ', this.scorecard)
         },
         async loadCriterias() {
             this.$store.commit('setLoading', true)
@@ -114,10 +114,10 @@ export default defineComponent({
             // this.$store.commit('setLoading', false)
 
             this.kpis = mockedKpi as any
-            console.log('LOADED KPIS: ', this.kpis)
+            // console.log('LOADED KPIS: ', this.kpis)
         },
         async saveScorecard() {
-            console.log('SCORECARD FOR SAVE: ', this.scorecard)
+            // console.log('SCORECARD FOR SAVE: ', this.scorecard)
             const tempScorecard = this.getFormattedScorecard()
             // TODO - BE needs to be changed
 
@@ -127,7 +127,7 @@ export default defineComponent({
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/saveScorecard`, tempScorecard)
                 .then((response: AxiosResponse<any>) => {
-                    console.log('RESPONSE DATA: ', response.data)
+                    // console.log('RESPONSE DATA: ', response.data)
                     if (response.data.id && this.scorecard) {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.' + operation + 'Title'),
@@ -146,7 +146,11 @@ export default defineComponent({
             delete tempScorecard.description
             tempScorecard.perspectives?.forEach((perspective: iPerspective) => {
                 delete perspective.groupedKpis
-                perspective.targets?.forEach((target: iScorecardTarget) => delete target.groupedKpis)
+                delete perspective.updated
+                perspective.targets?.forEach((target: iScorecardTarget) => {
+                    delete target.groupedKpis
+                    delete target.updated
+                })
             })
 
             return tempScorecard

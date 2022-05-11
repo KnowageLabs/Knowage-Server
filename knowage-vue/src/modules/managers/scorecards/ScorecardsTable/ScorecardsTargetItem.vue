@@ -10,7 +10,11 @@
                 </span>
             </div>
             <div class="kn-flex p-d-flex p-flex-row">
-                <SelectButton v-model="selectedCriteria" :options="scorecardsTableDescriptor.criteriaOptions" @change="onCriteriaChange"></SelectButton>
+                <SelectButton v-model="selectedCriteria" :options="scorecardsTableDescriptor.criteriaOptions" @change="onCriteriaChange">
+                    <template #option="slotProps">
+                        <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option)">{{ slotProps.option }}</span>
+                    </template>
+                </SelectButton>
                 <MultiSelect v-if="selectedCriteria !== 'M'" class="p-ml-3 scorecards-criteria-multiselect" v-model="target.options.criterionPriority" :options="target.kpis" optionLabel="name" optionValue="name"></MultiSelect>
             </div>
 
@@ -74,7 +78,7 @@ export default defineComponent({
     methods: {
         loadTarget() {
             this.target = this.propTarget as iScorecardTarget
-            console.log('>>> LOADED TARGET: ', this.target)
+            //console.log('>>> LOADED TARGET: ', this.target)
             if (this.target.name === 'New Target') this.expanded = true
             this.setSelectedCriteria(this.target)
         },
@@ -104,7 +108,7 @@ export default defineComponent({
             }
         },
         getKpiIconColorClass(kpi: iKpi) {
-            console.log('KPI: ', kpi)
+            //.log('KPI: ', kpi)
             if (kpi.status) {
                 switch (kpi.status) {
                     case 'RED':
@@ -124,7 +128,7 @@ export default defineComponent({
             this.kpiDialogVisible = true
         },
         onKpiSelected(selectedKpis: iKpi[]) {
-            console.log('SELECTYED KPIS: ', selectedKpis)
+            //console.log('SELECTYED KPIS: ', selectedKpis)
             if (this.target) this.target.kpis = selectedKpis
             this.kpiDialogVisible = false
         },
@@ -155,10 +159,28 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => this.$emit('deleteTarget', this.target)
             })
+        },
+        getSelectedCriteriaTooltip(option: string) {
+            switch (option) {
+                case 'M':
+                    return this.$t('managers.scorecards.majority')
+                case 'MP':
+                    return this.$t('managers.scorecards.majorityWithPriority')
+                case 'P':
+                    return this.$t('managers.scorecards.priority')
+                default:
+                    return ''
+            }
         }
     }
 })
 </script>
+
+<style lang="scss">
+.p-selectbutton > div {
+    justify-content: center;
+}
+</style>
 
 <style lang="scss" scoped>
 .scorecards-target-container {

@@ -104,7 +104,7 @@ export default defineComponent({
             return formatDate(tempDate, '', 'DD/MM/YYYY')
         },
         getKpiIconColorClass(kpi: iKpi) {
-            console.log('KPI: ', kpi)
+            // console.log('KPI: ', kpi)
             if (kpi.status) {
                 switch (kpi.status) {
                     case 'RED':

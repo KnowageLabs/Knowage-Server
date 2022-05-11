@@ -10,7 +10,11 @@
                 </span>
             </div>
             <div class="kn-flex p-d-flex p-flex-row">
-                <SelectButton v-model="selectedCriteria" :options="scorecardsTableDescriptor.criteriaOptions" @change="onCriteriaChange"></SelectButton>
+                <SelectButton v-model="selectedCriteria" :options="scorecardsTableDescriptor.criteriaOptions" @change="onCriteriaChange">
+                    <template #option="slotProps">
+                        <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option)">{{ slotProps.option }}</span>
+                    </template>
+                </SelectButton>
                 <MultiSelect v-if="selectedCriteria !== 'M'" class="p-ml-3 scorecards-criteria-multiselect" v-model="perspective.options.criterionPriority" :options="perspective.targets" optionLabel="name" optionValue="name"></MultiSelect>
             </div>
 
@@ -61,7 +65,7 @@ export default defineComponent({
     methods: {
         loadPerspective() {
             this.perspective = this.propPerspective as iPerspective
-            console.log('>>> LOADED PERSPECTIVE: ', this.perspective)
+            // console.log('>>> LOADED PERSPECTIVE: ', this.perspective)
             if (this.perspective.name === 'New Perspective') this.expanded = true
             this.setSelectedCriteria(this.perspective)
         },
@@ -78,12 +82,14 @@ export default defineComponent({
                         this.selectedCriteria = 'P'
                 }
                 this.$emit('touched')
+                perspective.updated = perspective.updated ? true : false
             }
         },
         addTarget() {
             if (this.perspective) {
                 this.perspective.targets.push({ name: 'New Target', status: 'GRAY', criterion: this.getDefaultCriterion(), options: { criterionPriority: [] }, kpis: [], groupedKpis: [] })
                 this.$emit('touched')
+                this.perspective.updated = true
             }
         },
         getDefaultCriterion() {
@@ -99,6 +105,7 @@ export default defineComponent({
                 if ((this.selectedCriteria === 'M' && this.criterias[i].valueCd === 'MAJORITY') || (this.selectedCriteria === 'MP' && this.criterias[i].valueCd === 'MAJORITY_WITH_PRIORITY') || (this.selectedCriteria === 'P' && this.criterias[i].valueCd === 'PRIORITY')) {
                     this.perspective.criterion = this.criterias[i]
                     this.$emit('touched')
+                    this.perspective.updated = true
                     break
                 }
             }
@@ -123,11 +130,30 @@ export default defineComponent({
                     if (index !== -1) this.perspective.options.criterionPriority.splice(index, 1)
                 }
                 this.$emit('touched')
+                this.perspective.updated = true
+            }
+        },
+        getSelectedCriteriaTooltip(option: string) {
+            switch (option) {
+                case 'M':
+                    return this.$t('managers.scorecards.majority')
+                case 'MP':
+                    return this.$t('managers.scorecards.majorityWithPriority')
+                case 'P':
+                    return this.$t('managers.scorecards.priority')
+                default:
+                    return ''
             }
         }
     }
 })
 </script>
+
+<style lang="scss">
+.p-selectbutton > div {
+    justify-content: center;
+}
+</style>
 
 <style lang="scss" scoped>
 .scorecards-item-expand-icon {
