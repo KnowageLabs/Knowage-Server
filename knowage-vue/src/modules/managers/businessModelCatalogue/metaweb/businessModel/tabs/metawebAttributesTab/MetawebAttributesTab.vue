@@ -2,19 +2,21 @@
     <div>
         <DataTable v-if="businessModel" class="p-datatable-sm kn-table p-m-2" :value="businessModel.columns" :loading="loading" responsiveLayout="stack" breakpoint="960px" @rowReorder="onRowReorder">
             <Column :rowReorder="true" :headerStyle="metawebAttributesTabDescriptor.reorderColumnStyle" :reorderableColumn="false" />
-            <Column class="kn-truncated" v-for="(column, index) in metawebAttributesTabDescriptor.columns" :key="index" :field="column.field" :header="$t(column.header)">
-                <template #body="slotProps">
-                    <div class="p-d-flex p-flex-row">
-                        <Checkbox v-if="column.field === 'identifier'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('metaUpdated')"></Checkbox>
-                        <Checkbox v-else-if="column.field === 'visible'" v-model="columnsVisibility[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'visibility')"></Checkbox>
-                        <Checkbox v-else-if="column.field === 'personal'" v-model="columnsPersonal[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'personal')"></Checkbox>
-                        <Checkbox v-else-if="column.field === 'decrypt'" v-model="columnsDecrypt[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'decrypt')"></Checkbox>
-                        <Checkbox v-else-if="column.field === 'subjectId'" v-model="columnsSubjectId[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'subjectId')"></Checkbox>
-                        <span v-else-if="column.field === 'type'">{{ columnsType[slotProps.data.uniqueName] }}</span>
-                        <span v-else>{{ slotProps.data[slotProps.column.props.field] }}</span>
-                    </div>
-                </template>
-            </Column>
+            <template v-for="(column, index) in metawebAttributesTabDescriptor.columns" :key="index">
+                <Column class="kn-truncated" v-if="columnIsVisible(column)" :field="column.field" :header="$t(column.header)">
+                    <template #body="slotProps">
+                        <div class="p-d-flex p-flex-row">
+                            <Checkbox v-if="column.field === 'identifier'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('metaUpdated')"></Checkbox>
+                            <Checkbox v-else-if="column.field === 'visible'" v-model="columnsVisibility[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'visibility')"></Checkbox>
+                            <Checkbox v-else-if="column.field === 'personal' && columnsPersonal[slotProps.data.uniqueName] !== undefined" v-model="columnsPersonal[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'personal')"></Checkbox>
+                            <Checkbox v-else-if="column.field === 'decrypt' && columnsDecrypt[slotProps.data.uniqueName] !== undefined" v-model="columnsDecrypt[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'decrypt')"></Checkbox>
+                            <Checkbox v-else-if="column.field === 'subjectId' && columnsSubjectId[slotProps.data.uniqueName] !== undefined" v-model="columnsSubjectId[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'subjectId')"></Checkbox>
+                            <span v-else-if="column.field === 'type'">{{ columnsType[slotProps.data.uniqueName] }}</span>
+                            <span v-else>{{ slotProps.data[slotProps.column.props.field] }}</span>
+                        </div>
+                    </template>
+                </Column>
+            </template>
             <Column :style="metawebAttributesTabDescriptor.iconColumnStyle">
                 <template #header>
                     <Button class="kn-button kn-button--primary p-button-link p-jc-center" @click="openUnusedFieldsDialog" data-test="add-button"> {{ $t('common.add') }}</Button>
@@ -67,6 +69,7 @@ export default defineComponent({
             unusedFieldDialogVisible: false,
             unusedFields: [] as any[],
             metaObserver: null as any,
+            propertyKeys: [] as string[],
             loading: false
         }
     },
@@ -95,6 +98,9 @@ export default defineComponent({
                     for (let i = 0; i < column.properties.length; i++) {
                         const tempProperty = column.properties[i]
                         const key = Object.keys(tempProperty)[0]
+
+                        if (!this.propertyKeys.includes(key)) this.propertyKeys.push(key)
+
                         if (key === 'structural.visible') {
                             this.columnsVisibility[column.uniqueName] = tempProperty[key].value === 'true'
                         } else if (key === 'structural.columntype') {
@@ -220,6 +226,11 @@ export default defineComponent({
                 .catch(() => {})
                 .finally(() => generate(this.observer))
             this.loading = false
+        },
+        columnIsVisible(column: any) {
+            if ((column.field === 'personal' && !this.propertyKeys.includes('structural.personal')) || (column.field === 'decrypt' && !this.propertyKeys.includes('structural.decrypt')) || (column.field === 'subjectId' && !this.propertyKeys.includes('structural.subjectId'))) return false
+
+            return true
         }
     }
 })
