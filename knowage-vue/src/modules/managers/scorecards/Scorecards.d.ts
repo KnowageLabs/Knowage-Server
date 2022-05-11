@@ -12,7 +12,7 @@ export interface iPerspective {
     name: string,
     criterion: iScorecardCriterion,
     options: {
-        criterionPriority: []
+        criterionPriority: any[]
     },
     status: string,
     targets: iScorecardTarget[],
@@ -79,7 +79,7 @@ export interface iScorecardTarget {
     name: string,
     criterion: iScorecardCriterion,
     options: {
-        criterionPriority: []
+        criterionPriority: any[]
     },
     status: string,
     kpis: iKpi[],

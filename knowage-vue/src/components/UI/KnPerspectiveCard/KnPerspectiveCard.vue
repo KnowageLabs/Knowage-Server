@@ -18,7 +18,10 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iPerspective, iScorecardTarget } from '@/modules/managers/scorecards/Scorecards'
+import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
+
+const deepEqual = require('deep-equal')
 
 export default defineComponent({
     name: 'kn-perspective-card',
@@ -38,8 +41,12 @@ export default defineComponent({
         this.loadPerspective()
     },
     methods: {
-        loadPerspective() {
+        async loadPerspective() {
             this.perspective = this.propPerspective as iPerspective
+            if (this.perspective && this.perspective.criterion.valueId) {
+                await this.evaluatePerspective()
+            }
+
             console.log('>>> LOADED PERSPECTIVE IN CARD: ', this.perspective)
         },
         getTargetIconLetter(target: iScorecardTarget) {
@@ -56,6 +63,62 @@ export default defineComponent({
                         return 'P'
                     default:
                         return ''
+                }
+            }
+        },
+        async evaluateCriteria(criterionId: number, statusArray: any[]) {
+            this.$store.commit('setLoading', true)
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/${criterionId}/evaluateCriterion`, statusArray)
+                .then((response: AxiosResponse<any>) => {
+                    console.log('RESPONSE DATA: ', response.data)
+                })
+                .catch(() => {})
+            this.$store.commit('setLoading', false)
+        },
+        async evaluatePerspective() {
+            if (!this.perspective) return
+
+            for (let i = 0; i < this.perspective.targets.length; i++) {
+                this.addGroupedKpiItems(this.perspective.targets[i])
+            }
+
+            const statusArray = [] as any[]
+            for (let i = 0; i < this.perspective.targets.length; i++) {
+                statusArray.push({ status: this.perspective.targets[i].status, priority: false })
+            }
+
+            for (let i = 0; i < this.perspective.options.criterionPriority.length; i++) {
+                for (let j = 0; j < this.perspective.targets.length; j++) {
+                    if (this.perspective.options.criterionPriority[i].id === this.perspective.targets[j].id) {
+                        statusArray[i].priority = true
+                    }
+                }
+            }
+
+            await this.evaluateCriteria(this.perspective.criterion.valueId, statusArray)
+        },
+        addGroupedKpiItems(target: iScorecardTarget) {
+            console.log(' >>> TARGET: ', target)
+            if (!this.perspective || !target.groupedKpis) return
+
+            if (!this.perspective.groupedKpis) {
+                this.perspective.groupedKpis = []
+            }
+
+            for (let i = 0; i < target.groupedKpis.length; i++) {
+                const tempGroupedKpis = target.groupedKpis[i]
+                let found = false
+
+                for (let j = 0; j < this.perspective?.groupedKpis?.length; i++) {
+                    if (deepEqual(this.perspective.groupedKpis[j].status, tempGroupedKpis.status)) {
+                        this.perspective.groupedKpis[j].count += tempGroupedKpis.count
+                        found = true
+                        break
+                    }
+                }
+                if (!found) {
+                    this.perspective.groupedKpis?.push({ status: tempGroupedKpis.status, count: tempGroupedKpis.count })
                 }
             }
         }
