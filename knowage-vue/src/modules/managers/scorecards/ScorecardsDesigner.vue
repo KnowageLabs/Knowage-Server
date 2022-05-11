@@ -59,7 +59,7 @@ import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import ScorecardsTable from './ScorecardsTable/ScorecardsTable.vue'
 import KnPerspectiveCard from '@/components/UI/KnPerspectiveCard/KnPerspectiveCard.vue'
-import mockedKpi from './mockedKpi.json'
+// import mockedKpi from './mockedKpi.json'
 
 const deepcopy = require('deepcopy')
 
@@ -108,12 +108,12 @@ export default defineComponent({
             this.$store.commit('setLoading', false)
         },
         async loadKpis() {
-            // TODO
-            // this.$store.commit('setLoading', true)
-            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpiWithResult`).then((response: AxiosResponse<any>) => (this.kpis = response.data))
-            // this.$store.commit('setLoading', false)
+            this.$store.commit('setLoading', true)
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpiWithResult`).then((response: AxiosResponse<any>) => (this.kpis = response.data))
+            this.$store.commit('setLoading', false)
 
-            this.kpis = mockedKpi as any
+            // TODO
+            // this.kpis = mockedKpi as any
             // console.log('LOADED KPIS: ', this.kpis)
         },
         async saveScorecard() {

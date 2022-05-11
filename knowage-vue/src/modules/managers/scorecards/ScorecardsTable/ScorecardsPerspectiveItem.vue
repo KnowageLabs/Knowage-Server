@@ -15,7 +15,7 @@
                         <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option)">{{ slotProps.option }}</span>
                     </template>
                 </SelectButton>
-                <MultiSelect v-if="selectedCriteria !== 'M'" class="p-ml-3 scorecards-criteria-multiselect" v-model="perspective.options.criterionPriority" :options="perspective.targets" optionLabel="name" optionValue="name"></MultiSelect>
+                <MultiSelect v-if="selectedCriteria !== 'M'" class="p-ml-3 scorecards-criteria-multiselect" v-model="perspective.options.criterionPriority" :options="perspective.targets" optionLabel="name" optionValue="name" @change="onCriterionPriortyChanged"></MultiSelect>
             </div>
 
             <div>
@@ -26,7 +26,7 @@
         <div v-if="expanded">
             <ScorecardsTableHint v-if="perspective.targets.length === 0" class="p-m-4" :hint="'managers.scorecards.addTargetHint'"></ScorecardsTableHint>
             <template v-else>
-                <ScorecardsTargetItem v-for="(target, index) in perspective.targets" :key="index" :propTarget="target" :criterias="criterias" :kpis="kpis" @deleteTarget="deleteTarget" @openKpiDialog="$emit('openKpiDialog', $event)" @touched="$emit('touched')"></ScorecardsTargetItem>
+                <ScorecardsTargetItem v-for="(target, index) in perspective.targets" :key="index" :propTarget="target" :criterias="criterias" :kpis="kpis" @deleteTarget="deleteTarget" @openKpiDialog="$emit('openKpiDialog', $event)" @touched="onTargetTouched"></ScorecardsTargetItem>
             </template>
         </div>
     </div>
@@ -82,13 +82,14 @@ export default defineComponent({
                         this.selectedCriteria = 'P'
                 }
                 this.$emit('touched')
-                perspective.updated = perspective.updated ? true : false
             }
         },
         addTarget() {
             if (this.perspective) {
                 this.perspective.targets.push({ name: 'New Target', status: 'GRAY', criterion: this.getDefaultCriterion(), options: { criterionPriority: [] }, kpis: [], groupedKpis: [] })
                 this.$emit('touched')
+                console.log('TEEEEEEEEEEEEEEEEEEEEEST 2 ')
+                this.expanded = true
                 this.perspective.updated = true
             }
         },
@@ -105,6 +106,7 @@ export default defineComponent({
                 if ((this.selectedCriteria === 'M' && this.criterias[i].valueCd === 'MAJORITY') || (this.selectedCriteria === 'MP' && this.criterias[i].valueCd === 'MAJORITY_WITH_PRIORITY') || (this.selectedCriteria === 'P' && this.criterias[i].valueCd === 'PRIORITY')) {
                     this.perspective.criterion = this.criterias[i]
                     this.$emit('touched')
+                    console.log('TEEEEEEEEEEEEEEEEEEEEEST 3 ')
                     this.perspective.updated = true
                     break
                 }
@@ -130,6 +132,7 @@ export default defineComponent({
                     if (index !== -1) this.perspective.options.criterionPriority.splice(index, 1)
                 }
                 this.$emit('touched')
+                console.log('TEEEEEEEEEEEEEEEEEEEEEST 4 ')
                 this.perspective.updated = true
             }
         },
@@ -144,6 +147,15 @@ export default defineComponent({
                 default:
                     return ''
             }
+        },
+        onTargetTouched(updatePerspective: boolean) {
+            this.$emit('touched')
+            console.log('TEEEEEEEEEEEEEEEEEEEEEST 5')
+            if (this.perspective && updatePerspective) this.perspective.updated = true
+        },
+        onCriterionPriortyChanged() {
+            this.$emit('touched', true)
+            if (this.perspective) this.perspective.updated = true
         }
     }
 })

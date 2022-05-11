@@ -50,6 +50,7 @@ export default defineComponent({
             this.loadPerspective()
         },
         async perspectiveUpdated(value: boolean) {
+            console.log('>>> !!! >>> Perspective watcher activated! ', value)
             if (value && this.perspective) {
                 await this.evaluatePerspective()
                 this.evaluatePerspectiveTargets()

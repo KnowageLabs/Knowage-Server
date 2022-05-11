@@ -6,7 +6,7 @@
                 <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain scorecards-item-expand-icon" @click="expanded = false" />
                 <i class="fa fa-bullseye fa-lg p-mr-2" />
                 <span>
-                    <InputText class="kn-material-input scorecards-target-name-input" v-model="target.name" @input="$emit('touched')" />
+                    <InputText class="kn-material-input scorecards-target-name-input" v-model="target.name" @input="$emit('touched', false)" />
                 </span>
             </div>
             <div class="kn-flex p-d-flex p-flex-row">
@@ -15,7 +15,7 @@
                         <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option)">{{ slotProps.option }}</span>
                     </template>
                 </SelectButton>
-                <MultiSelect v-if="selectedCriteria !== 'M'" class="p-ml-3 scorecards-criteria-multiselect" v-model="target.options.criterionPriority" :options="target.kpis" optionLabel="name" optionValue="name"></MultiSelect>
+                <MultiSelect v-if="selectedCriteria !== 'M'" class="p-ml-3 scorecards-criteria-multiselect" v-model="target.options.criterionPriority" :options="target.kpis" optionLabel="name" optionValue="name" @change="onCriterionPriortyChanged"></MultiSelect>
             </div>
 
             <div>
@@ -94,7 +94,7 @@ export default defineComponent({
                     case 'PRIORITY':
                         this.selectedCriteria = 'P'
                 }
-                this.$emit('touched')
+                this.$emit('touched', false)
             }
         },
         onCriteriaChange() {
@@ -102,7 +102,8 @@ export default defineComponent({
             for (let i = 0; i < this.criterias.length; i++) {
                 if ((this.selectedCriteria === 'M' && this.criterias[i].valueCd === 'MAJORITY') || (this.selectedCriteria === 'MP' && this.criterias[i].valueCd === 'MAJORITY_WITH_PRIORITY') || (this.selectedCriteria === 'P' && this.criterias[i].valueCd === 'PRIORITY')) {
                     this.target.criterion = this.criterias[i]
-                    this.$emit('touched')
+                    this.$emit('touched', true)
+                    this.target.updated = true
                     break
                 }
             }
@@ -129,7 +130,12 @@ export default defineComponent({
         },
         onKpiSelected(selectedKpis: iKpi[]) {
             //console.log('SELECTYED KPIS: ', selectedKpis)
-            if (this.target) this.target.kpis = selectedKpis
+            if (this.target) {
+                this.target.kpis = selectedKpis
+                this.$emit('touched', true)
+                this.target.updated = true
+                this.expanded = true
+            }
             this.kpiDialogVisible = false
         },
         deleteKpiConfirm(kpi: iKpi) {
@@ -149,7 +155,8 @@ export default defineComponent({
                     const index = this.target.options.criterionPriority.findIndex((criteria: string) => criteria === kpi.name)
                     if (index !== -1) this.target.options.criterionPriority.splice(index, 1)
                 }
-                this.$emit('touched')
+                this.$emit('touched', true)
+                this.target.updated = true
             }
         },
         deleteTargetConfirm() {
@@ -171,6 +178,10 @@ export default defineComponent({
                 default:
                     return ''
             }
+        },
+        onCriterionPriortyChanged() {
+            this.$emit('touched', true)
+            if (this.target) this.target.updated = true
         }
     }
 })
