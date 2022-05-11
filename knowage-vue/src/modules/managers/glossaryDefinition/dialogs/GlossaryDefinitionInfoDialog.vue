@@ -47,9 +47,11 @@
                         <span>{{ $t('managers.glossary.common.formula') }}:</span>
                         <span>{{ contentInfo.FORMULA }}</span>
                     </li>
-                    <li class="p-d-flex p-flex-row kn-truncated">
+                    <li>
                         <span class="p-mr-2">{{ $t('managers.glossary.common.link') }}:</span>
-                        <Chip class="p-m-1" v-for="(link, index) in contentInfo.LINK" :key="index">{{ link.WORD }}</Chip>
+                        <div class="p-d-flex p-flex-row p-flex-wrap">
+                            <Chip class="p-m-1" v-for="(link, index) in contentInfo.LINK" :key="index">{{ link.WORD }}</Chip>
+                        </div>
                     </li>
                     <li>
                         <span>{{ $t('managers.glossary.common.attributes') }}:</span>
@@ -57,9 +59,11 @@
                             <li v-for="(attribute, index) in contentInfo.SBI_GL_WORD_ATTR" :key="index">
                                 <span>{{ attribute.ATTRIBUTE_NM }}:</span>
                                 <span></span>
-                                <ul class="p-d-flex p-flex-row kn-truncated">
+                                <ul>
                                     <li class="p-mr-2">{{ attribute.VALUE }}</li>
-                                    <Chip class="p-m-1" v-for="(link, index) in contentInfo.LINK" :key="index">{{ link.WORD }}</Chip>
+                                    <div class="p-d-flex p-flex-row p-flex-wrap">
+                                        <Chip class="p-m-1" v-for="(link, index) in contentInfo.LINK" :key="index">{{ link.WORD }}</Chip>
+                                    </div>
                                 </ul>
                             </li>
                         </ul>
@@ -108,7 +112,7 @@ export default defineComponent({
             li {
                 display: inline-flex;
                 justify-content: flex-start;
-                height: 40px;
+                min-height: 40px;
                 &:nth-child(even) {
                     background-color: var(--kn-list-item-alternated-background-color);
                 }
