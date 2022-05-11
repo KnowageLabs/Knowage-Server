@@ -299,12 +299,10 @@ export default defineComponent({
             }
         },
         async manageDatasetFieldMetadata(fieldsColumns) {
-            //Temporary workaround because fieldsColumns is now an object with a new structure after changing DataSetJSONSerializer
             if (fieldsColumns.columns != undefined && fieldsColumns.columns != null) {
                 var columnsArray = new Array()
-
                 var columnsNames = new Array()
-                //create columns list
+
                 for (var i = 0; i < fieldsColumns.columns.length; i++) {
                     var element = fieldsColumns.columns[i]
                     columnsNames.push(element.column)
@@ -313,9 +311,10 @@ export default defineComponent({
                 columnsNames = this.removeDuplicates(columnsNames)
 
                 for (i = 0; i < columnsNames.length; i++) {
-                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '' }
+                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '', personal: false, decript: false, subjectId: false }
                     var currentColumnName = columnsNames[i]
-                    //this will remove the part before the double dot if the column is in the format ex: it.eng.spagobi.Customer:customerId
+
+                    //remove the part before the double dot if the column is in the format ex: it.eng.spagobi.Customer:customerId
                     if (currentColumnName.indexOf(':') != -1) {
                         var arr = currentColumnName.split(':')
                         columnObject.displayedName = arr[1]
@@ -331,6 +330,12 @@ export default defineComponent({
                                 columnObject.type = element.pvalue
                             } else if (element.pname.toUpperCase() == 'fieldType'.toUpperCase()) {
                                 columnObject.fieldType = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'personal'.toUpperCase()) {
+                                columnObject.personal = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'decript'.toUpperCase()) {
+                                columnObject.decript = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'subjectId'.toUpperCase()) {
+                                columnObject.subjectId = element.pvalue
                             }
                         }
                     }
@@ -338,7 +343,6 @@ export default defineComponent({
                 }
 
                 return columnsArray
-                // end workaround ---------------------------------------------------
             }
         },
         checkFormulaForParams() {
