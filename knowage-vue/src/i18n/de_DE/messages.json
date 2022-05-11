@@ -493,7 +493,7 @@
         "filterUsingDrivers": "Filter using drivers",
         "infoMessage": "Selected items will be used as filters in the main table.",
         "level": "Level",
-        "parentDisabledTooltip": "It is not possible to choose a parent. Unlock the tree to change the selection.",
+        "parentDisabledTooltip": "It is not possible to choose a parent. Press the Add button.",
         "searchWarningMessage": "You need at least 3 letters to start search!",
         "selectFields": "Select Fields",
         "treeLockedInfoMessage": {

@@ -396,6 +396,12 @@
                 "title": "Output Parameters"
             },
             "subreports": {
+                "deleteError": "Error deleting subreport",
+                "deleteOk": "Subreport deleted",
+                "info": "Select the subreports you want to link to the document",
+                "persistError": "Error persisting subreport",
+                "persistOk": "Subreport persisted",
+                "tableName": "Available Subreports",
                 "title": "Subreports"
             },
             "title": "Document Details"
@@ -493,7 +499,7 @@
                 "filterUsingDrivers": "Filter using drivers",
                 "infoMessage": "Selected items will be used as filters in the main table.",
                 "level": "Level",
-                "parentDisabledTooltip": "It is not possible to choose a parent. Unlock the tree to change the selection.",
+                "parentDisabledTooltip": "It is not possible to choose a parent. Press the Add button.",
                 "searchWarningMessage": "You need at least 3 letters to start search!",
                 "selectFields": "Select Fields",
                 "treeLockedInfoMessage": {
@@ -2262,6 +2268,7 @@
         },
         "detailView": {
             "hideList": "Hide List",
+            "modifyCalcField": "Modify calculated field",
             "noPreview": "Nothing to preview",
             "parameterDuplicates": "There are parameters with a duplicate name!",
             "showList": "Show List",
