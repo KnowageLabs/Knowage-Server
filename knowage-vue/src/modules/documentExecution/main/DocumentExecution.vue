@@ -450,7 +450,7 @@ export default defineComponent({
                 return
             }
 
-            if (this.sessionEnabled) {
+            if (this.sessionEnabled && !this.document.navigationParams) {
                 const tempFilters = sessionStorage.getItem(this.document.label)
                 if (tempFilters) {
                     this.filtersData = JSON.parse(tempFilters) as { filterStatus: iParameter[]; isReadyForExecution: boolean }
