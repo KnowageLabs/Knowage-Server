@@ -7,6 +7,9 @@
                     <div class="p-d-flex p-flex-row">
                         <Checkbox v-if="column.field === 'identifier'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('metaUpdated')"></Checkbox>
                         <Checkbox v-else-if="column.field === 'visible'" v-model="columnsVisibility[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'visibility')"></Checkbox>
+                        <Checkbox v-else-if="column.field === 'personal'" v-model="columnsPersonal[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'personal')"></Checkbox>
+                        <Checkbox v-else-if="column.field === 'decrypt'" v-model="columnsDecrypt[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'decrypt')"></Checkbox>
+                        <Checkbox v-else-if="column.field === 'subjectId'" v-model="columnsSubjectId[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'subjectId')"></Checkbox>
                         <span v-else-if="column.field === 'type'">{{ columnsType[slotProps.data.uniqueName] }}</span>
                         <span v-else>{{ slotProps.data[slotProps.column.props.field] }}</span>
                     </div>
@@ -56,6 +59,9 @@ export default defineComponent({
             businessModel: null as iBusinessModel | null,
             columnsVisibility: {} as any,
             columnsType: {} as any,
+            columnsPersonal: {} as any,
+            columnsDecrypt: {} as any,
+            columnsSubjectId: {} as any,
             attributeDetailDialogVisible: false,
             selectedAttribute: null as iBusinessModelColumn | null,
             unusedFieldDialogVisible: false,
@@ -93,6 +99,12 @@ export default defineComponent({
                             this.columnsVisibility[column.uniqueName] = tempProperty[key].value === 'true'
                         } else if (key === 'structural.columntype') {
                             this.columnsType[column.uniqueName] = tempProperty[key].value
+                        } else if (key === 'structural.personal') {
+                            this.columnsPersonal[column.uniqueName] = tempProperty[key].value === 'true'
+                        } else if (key === 'structural.decrypt') {
+                            this.columnsDecrypt[column.uniqueName] = tempProperty[key].value === 'true'
+                        } else if (key === 'structural.subjectId') {
+                            this.columnsSubjectId[column.uniqueName] = tempProperty[key].value === 'true'
                         }
                     }
                 })
@@ -118,6 +130,12 @@ export default defineComponent({
                     tempProperty[key].value = this.columnsVisibility[column.uniqueName]
                 } else if (key === 'structural.columntype' && type === 'type') {
                     tempProperty[key].value = this.columnsType[column.uniqueName]
+                } else if (key === 'structural.personal' && type === 'personal') {
+                    tempProperty[key].value = this.columnsPersonal[column.uniqueName]
+                } else if (key === 'structural.decrypt' && type === 'decrypt') {
+                    tempProperty[key].value = this.columnsDecrypt[column.uniqueName]
+                } else if (key === 'structural.subjectId' && type === 'subjectId') {
+                    tempProperty[key].value = this.columnsSubjectId[column.uniqueName]
                 }
             }
 
@@ -180,7 +198,6 @@ export default defineComponent({
                         continue
                     } else {
                         const index = this.businessModel.columns.findIndex((el: any) => el.uniqueName === tempColumn.name)
-
                         if (index === -1) this.unusedFields.push(tempColumn)
                     }
                 }
