@@ -47,17 +47,9 @@
                         <span>{{ $t('managers.glossary.common.formula') }}:</span>
                         <span>{{ contentInfo.FORMULA }}</span>
                     </li>
-                    <li>
-                        <span>{{ $t('managers.glossary.common.link') }}:</span>
+                    <li class="p-d-flex p-flex-row kn-truncated">
+                        <span class="p-mr-2">{{ $t('managers.glossary.common.link') }}:</span>
                         <Chip class="p-m-1" v-for="(link, index) in contentInfo.LINK" :key="index">{{ link.WORD }}</Chip>
-                        <!-- <ul>
-                            <li v-for="(link, index) in contentInfo.LINK" :key="index">
-                                <span>
-                                    <span>{{ link.WORD }}</span>
-                                    <a v-if="index != contentInfo.LINK.length - 1">-</a>
-                                </span>
-                            </li>
-                        </ul> -->
                     </li>
                     <li>
                         <span>{{ $t('managers.glossary.common.attributes') }}:</span>
@@ -65,8 +57,9 @@
                             <li v-for="(attribute, index) in contentInfo.SBI_GL_WORD_ATTR" :key="index">
                                 <span>{{ attribute.ATTRIBUTE_NM }}:</span>
                                 <span></span>
-                                <ul>
-                                    <li>{{ attribute.VALUE }}</li>
+                                <ul class="p-d-flex p-flex-row kn-truncated">
+                                    <li class="p-mr-2">{{ attribute.VALUE }}</li>
+                                    <Chip class="p-m-1" v-for="(link, index) in contentInfo.LINK" :key="index">{{ link.WORD }}</Chip>
                                 </ul>
                             </li>
                         </ul>

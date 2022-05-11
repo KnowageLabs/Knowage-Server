@@ -108,33 +108,6 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
                 .then((response: AxiosResponse<any>) => {
                     this.contentInfo = response.data
-                    // TODO REMOVE MOCK
-                    this.contentInfo = {
-                        WORD_ID: 67,
-                        WORD: 'test3',
-                        DESCR: 'test3',
-                        FORMULA: null,
-                        STATE: 194,
-                        STATE_NM: 'sbi.generic.active',
-                        CATEGORY: 196,
-                        CATEGORY_NM: 'sbi.glossary.word',
-                        LINK: [
-                            {
-                                WORD_ID: 38,
-                                WORD: 'testWord'
-                            },
-                            {
-                                WORD_ID: 66,
-                                WORD: 'test2'
-                            },
-                            {
-                                WORD_ID: 65,
-                                WORD: 'test'
-                            }
-                        ],
-                        SBI_GL_WORD_ATTR: []
-                    }
-                    console.log('CONTENT INFO: ', this.contentInfo)
                     this.infoDialogVisible = true
                 })
                 .finally(() => (this.loading = false))
