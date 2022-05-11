@@ -6,8 +6,10 @@
             </h2>
         </template>
         <template #content>
-            <div v-for="(target, index) in perspective.targets" :key="index">
-                {{ target.name }}
+            <div :class="{ 'perspective-target-container': index !== perspective.targets.length - 1 }" v-for="(target, index) in perspective.targets" :key="index">
+                <span class="p-mr-2">{{ target.name }}</span>
+                <span class="perspective-target-icon">{{ getTargetIconLetter(target) }}</span>
+                <i class="fas fa-square fa-2xl p-mr-2"></i>
             </div>
         </template>
     </Card>
@@ -15,7 +17,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { iPerspective } from '@/modules/managers/scorecards/Scorecards'
+import { iPerspective, iScorecardTarget } from '@/modules/managers/scorecards/Scorecards'
 import Card from 'primevue/card'
 
 export default defineComponent({
@@ -39,7 +41,38 @@ export default defineComponent({
         loadPerspective() {
             this.perspective = this.propPerspective as iPerspective
             console.log('>>> LOADED PERSPECTIVE IN CARD: ', this.perspective)
+        },
+        getTargetIconLetter(target: iScorecardTarget) {
+            console.log(' >>> TARGET: ', target)
+            if (target) {
+                switch (target.criterion?.valueCd) {
+                    case 'MAJORITY':
+                        return 'M'
+
+                    case 'MAJORITY_WITH_PRIORITY':
+                        return 'MP'
+
+                    case 'PRIORITY':
+                        return 'P'
+                    default:
+                        return ''
+                }
+            }
         }
     }
 })
 </script>
+
+<style lang="scss">
+.perspective-target-icon {
+    border-radius: 3px;
+    padding: 0 5px;
+    text-align: center;
+    background-color: #c2c2c2;
+}
+
+.perspective-target-container {
+    padding: 1rem;
+    border-bottom: 1px solid #c2c2c2;
+}
+</style>
