@@ -12,10 +12,10 @@
             <div class="kn-flex p-d-flex p-flex-row">
                 <SelectButton v-model="selectedCriteria" :options="scorecardsTableDescriptor.criteriaOptions" @change="onCriteriaChange">
                     <template #option="slotProps">
-                        <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option)">{{ slotProps.option }}</span>
+                        <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option)" :data-test="'select-button-' +slotProps.option">{{ slotProps.option }}</span>
                     </template>
                 </SelectButton>
-                <MultiSelect v-if="selectedCriteria !== 'M'" class="p-ml-3 scorecards-criteria-multiselect" v-model="target.options.criterionPriority" :options="target.kpis" optionLabel="name" optionValue="name" @change="onCriterionPriortyChanged"></MultiSelect>
+                <MultiSelect v-if="selectedCriteria !== 'M'" class="p-ml-3 scorecards-criteria-multiselect" v-model="target.options.criterionPriority" :options="target.kpis" optionLabel="name" optionValue="name" @change="onCriterionPriortyChanged"  data-test="criteria-select-input"></MultiSelect>
             </div>
 
             <div>

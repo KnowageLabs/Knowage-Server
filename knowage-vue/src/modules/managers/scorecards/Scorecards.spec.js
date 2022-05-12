@@ -93,9 +93,8 @@ afterEach(() => {
 
 describe('Scorecards', () => {
     it('should show a loader when opened', async () => {
-        const wrapper = factory()
-
-        console.log(wrapper.html())
+        factory()
+        
         await flushPromises()
         expect($store.commit).toHaveBeenCalledTimes(2)
         expect($store.commit).toHaveBeenNthCalledWith(1, 'setLoading', true)

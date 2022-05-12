@@ -12,10 +12,10 @@
             <div class="kn-flex p-d-flex p-flex-row">
                 <SelectButton v-model="selectedCriteria" :options="scorecardsTableDescriptor.criteriaOptions" @change="onCriteriaChange">
                     <template #option="slotProps">
-                        <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option)">{{ slotProps.option }}</span>
+                        <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option)" :data-test="'select-button-' +slotProps.option">{{ slotProps.option }}</span>
                     </template>
                 </SelectButton>
-                <MultiSelect v-if="selectedCriteria !== 'M'" class="p-ml-3 scorecards-criteria-multiselect" v-model="perspective.options.criterionPriority" :options="perspective.targets" optionLabel="name" optionValue="name" @change="onCriterionPriortyChanged"></MultiSelect>
+                <MultiSelect v-if="selectedCriteria !== 'M'" class="p-ml-3 scorecards-criteria-multiselect" v-model="perspective.options.criterionPriority" :options="perspective.targets" optionLabel="name" optionValue="name" @change="onCriterionPriortyChanged" data-test="criteria-select-input"></MultiSelect>
             </div>
 
             <div>
@@ -24,7 +24,7 @@
             </div>
         </div>
         <div v-if="expanded">
-            <ScorecardsTableHint v-if="perspective.targets.length === 0" class="p-m-4" :hint="'managers.scorecards.addTargetHint'"></ScorecardsTableHint>
+            <ScorecardsTableHint v-if="perspective.targets.length === 0" class="p-m-4" :hint="'managers.scorecards.addTargetHint'" data-test="no-targets-hint"></ScorecardsTableHint>
             <template v-else>
                 <ScorecardsTargetItem v-for="(target, index) in perspective.targets" :key="index" :propTarget="target" :criterias="criterias" :kpis="kpis" @deleteTarget="deleteTarget" @openKpiDialog="$emit('openKpiDialog', $event)" @touched="onTargetTouched"></ScorecardsTargetItem>
             </template>

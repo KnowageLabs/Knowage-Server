@@ -9,7 +9,7 @@
             </template>
         </Toolbar>
 
-        <ScorecardsTableHint v-if="scorecard.perspectives.length === 0" class="p-my-2" :hint="'managers.scorecards.addPerspectiveHint'"></ScorecardsTableHint>
+        <ScorecardsTableHint v-if="scorecard.perspectives.length === 0" class="p-my-2" :hint="'managers.scorecards.addPerspectiveHint'" data-test="no-perspective-hint"></ScorecardsTableHint>
         <div v-else>
             <ScorecardsPerspectiveItem v-for="(perspective, index) in scorecard.perspectives" :key="index" :propPerspective="perspective" :criterias="criterias" :kpis="kpis" @deletePerspective="deletePerspective" @touched="$emit('touched')"></ScorecardsPerspectiveItem>
         </div>
