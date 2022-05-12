@@ -1,5 +1,5 @@
 <template>
-    <div class="p-mx-2 p-d-flex p-flex-column kn-flex kn-overflow" v-if="scorecard">
+    <div class=" p-d-flex p-flex-column kn-flex kn-overflow" v-if="scorecard">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
             <template #start>
                 {{ $t('managers.scorecards.perspectives') }}
@@ -9,11 +9,9 @@
             </template>
         </Toolbar>
 
-        <div class="kn-flex kn-overflow">
-            <ScorecardsTableHint v-if="scorecard.perspectives.length === 0" class="p-my-2" :hint="'managers.scorecards.addPerspectiveHint'" data-test="no-perspective-hint"></ScorecardsTableHint>
-            <div v-else>
-                <ScorecardsPerspectiveItem v-for="(perspective, index) in scorecard.perspectives" :key="index" :propPerspective="perspective" :criterias="criterias" :kpis="kpis" @deletePerspective="deletePerspective" @touched="$emit('touched')"></ScorecardsPerspectiveItem>
-            </div>
+        <ScorecardsTableHint v-if="scorecard.perspectives.length === 0" class="p-my-2" :hint="'managers.scorecards.addPerspectiveHint'" data-test="no-perspective-hint"></ScorecardsTableHint>
+        <div v-else class="kn-flex kn-overflow">
+            <ScorecardsPerspectiveItem v-for="(perspective, index) in scorecard.perspectives" :key="index" :propPerspective="perspective" :criterias="criterias" :kpis="kpis" @deletePerspective="deletePerspective" @touched="$emit('touched')"></ScorecardsPerspectiveItem>
         </div>
     </div>
 </template>

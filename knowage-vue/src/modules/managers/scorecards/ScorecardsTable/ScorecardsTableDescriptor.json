@@ -1,3 +1,13 @@
 {
-    "criteriaOptions": ["M", "MP", "P"]
+    "criteriaOptions": ["M", "MP", "P"],
+    "style": {
+        "multiselect": {
+            "border": "1px solid rgba(0, 0, 0, 0.12)",
+            "height": "35px",
+            "max-width": "200px"
+        },
+        "inputContainer": {
+            "flex": "0 0 261px"
+        }
+    }
 }
