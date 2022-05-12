@@ -67,6 +67,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
+import FunctionsCatalogDatasetFormVue from '@/modules/managers/functionsCatalog/FunctionsCatalogPreviewDialog/tabs/FunctionsCatalogConfiguratorTab/FunctionsCatalogDatasetForm/FunctionsCatalogDatasetForm.vue'
 
 export default defineComponent({
     name: 'document-browser-sidebar',
@@ -91,11 +92,20 @@ export default defineComponent({
             return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
         },
         canEditDocument(): boolean {
-            if (this.document.stateCode === 'TEST') return this.user?.functionalities.includes('DocumentTestManagement')
-            if (this.document.stateCode === 'DEV') return this.user?.functionalities.includes('DocumentDevManagement')
-            if (this.document.stateCode === 'REL') return this.user?.functionalities.includes('DocumentAdminManagement')
-            if (this.document.stateCode === 'SUSPENDED') return this.user?.functionalities.includes('DocumentAdminManagement')
-            return false
+            if (!this.user) return false
+            switch (this.document.stateCode) {
+                case 'TEST':
+                    return this.user.functionalities.includes('DocumentTestManagement')
+                case 'DEV':
+                    return this.user.functionalities.includes('DocumentDevManagement')
+                case 'REL':
+                    return this.user.functionalities.includes('DocumentAdminManagement')
+                case 'SUSPENDED':
+                case 'SUSP':
+                    return this.user.functionalities.includes('DocumentAdminManagement')
+                default:
+                    return false
+            }
         }
     },
     created() {
