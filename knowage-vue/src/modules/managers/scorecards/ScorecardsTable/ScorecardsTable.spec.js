@@ -7,6 +7,14 @@ import ScorecardsTableHint from './ScorecardsTableHint.vue'
 import Toolbar from 'primevue/toolbar'
 
 const mockedScorecard = { name: '', description: '', perspectives: [] }
+const mockedPerspective = {
+    name: 'New Perspective',
+    status: 'GRAY',
+    criterion: {},
+    options: { criterionPriority: [] },
+    targets: [],
+    groupedKpis: []
+}
 
 const $confirm = {
     require: jest.fn()
@@ -66,6 +74,21 @@ describe('Scorecards Table', () => {
         const wrapper = factory()
 
         expect(wrapper.vm.scorecard.perspectives.length).toBe(0)
-        expect(wrapper.find('[data-test="no-perspective-hint"]').exists()).toBe(true)
+        await wrapper.find('[data-test="add-perspective-button"]').trigger('click')
+
+        expect(wrapper.vm.scorecard.perspectives.length).toBe(1)
+        expect(wrapper.vm.scorecard.perspectives[0]).toStrictEqual(mockedPerspective)
+        expect(wrapper.emitted()).toHaveProperty('touched')
+    })
+    it('deletes perspective on delete event', async () => {
+        const wrapper = factory()
+
+        wrapper.vm.scorecard.perspectives = [mockedPerspective]
+
+        expect(wrapper.vm.scorecard.perspectives.length).toBe(1)
+
+        wrapper.vm.deletePerspective(mockedPerspective)
+
+        expect(wrapper.vm.scorecard.perspectives.length).toBe(0)
     })
 })

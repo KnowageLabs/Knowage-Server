@@ -5,7 +5,7 @@
                 {{ $t('managers.scorecards.perspectives') }}
             </template>
             <template #end>
-                <Button :label="$t('managers.scorecards.addPerspective')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="addPerspective" />
+                <Button :label="$t('managers.scorecards.addPerspective')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="addPerspective" data-test="add-perspective-button" />
             </template>
         </Toolbar>
 
