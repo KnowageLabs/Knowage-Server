@@ -67,7 +67,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
-import FunctionsCatalogDatasetFormVue from '@/modules/managers/functionsCatalog/FunctionsCatalogPreviewDialog/tabs/FunctionsCatalogConfiguratorTab/FunctionsCatalogDatasetForm/FunctionsCatalogDatasetForm.vue'
 
 export default defineComponent({
     name: 'document-browser-sidebar',
