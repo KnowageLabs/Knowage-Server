@@ -2,5 +2,10 @@
     "globalFilterFields": ["name", "author"],
     "iconColumnStyle": {
         "text-align": "end"
+    },
+    "style": {
+        "mainDialog": {
+            "height": "100vh"
+        }
     }
 }
