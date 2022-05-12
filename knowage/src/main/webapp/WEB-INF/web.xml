@@ -97,6 +97,13 @@
 		<filter-class>it.eng.spagobi.security.OAuth2.OAuth2Filter</filter-class>
 	</filter>
  	END OAUTH 2 -->
+ 	
+	<!-- START OAUTH 2 with PKCE
+ 	<filter>
+		<filter-name>OAuth2PKCEFilter</filter-name>
+		<filter-class>it.eng.spagobi.security.OAuth2.OAuth2PKCEFilter</filter-class>
+	</filter>
+ 	END OAUTH 2 with PKCE -->
 
 	<!-- This filter tries to create the user profile object before AdapterHTTP servlet execution -->
 	<filter>
@@ -144,6 +151,13 @@
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
  	END OAUTH 2 -->
+ 	
+	<!-- START OAUTH 2 with PKCE
+	<filter-mapping>
+		<filter-name>OAuth2PKCEFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+	</filter-mapping>
+ 	END OAUTH 2 with PKCE -->
 
 	<!-- HmacLoginFilter -->
 	<filter>
