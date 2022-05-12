@@ -506,7 +506,7 @@
             }
         },
         async created() {
-            if (!this.configuration['SPAGOBI.TIMESTAMP-FORMAT.format']) await this.loadUserConfig()
+            if (!this.configuration || (!this.configuration && !this.configuration['SPAGOBI.TIMESTAMP-FORMAT.format'])) await this.loadUserConfig()
 
             this.startDateEnabled = this.descriptor?.config.startDateEnabled
             if (this.startDateEnabled) {
