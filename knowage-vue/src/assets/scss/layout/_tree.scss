@@ -5,6 +5,7 @@
         border-radius: 0;
         .p-tree-container {
             .p-treenode {
+                padding: 0;
                 .p-treenode-content {
                     border-radius: var(--kn-tree-border-radius);
                     &.p-highlight {
