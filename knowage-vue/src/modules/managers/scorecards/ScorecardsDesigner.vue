@@ -1,53 +1,51 @@
 <template>
-    <div class="kn-page">
-        <div class="kn-page-content p-grid p-m-0">
-            <div class="kn-list--column p-col-4 p-sm-8 p-md-6 p-p-0">
-                <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #start>
-                        {{ $t('managers.scorecards.scorecardDesigner') }}
-                    </template>
-                    <template #end>
-                        <Button class="kn-button p-button-text" :disabled="saveButtonDisabled" @click="saveScorecard">{{ $t('common.save') }}</Button>
-                        <Button class="kn-button p-button-text" @click="close">{{ $t('common.close') }}</Button>
-                    </template>
-                </Toolbar>
+    <div class="p-d-flex kn-flex" :style="descriptor.style.mainDialog">
+        <div class="kn-list--column p-col-4 p-sm-8 p-md-6 p-p-0">
+            <Toolbar class="kn-toolbar kn-toolbar--primary">
+                <template #start>
+                    {{ $t('managers.scorecards.scorecardDesigner') }}
+                </template>
+                <template #end>
+                    <Button class="kn-button p-button-text" :disabled="saveButtonDisabled" @click="saveScorecard">{{ $t('common.save') }}</Button>
+                    <Button class="kn-button p-button-text" @click="close">{{ $t('common.close') }}</Button>
+                </template>
+            </Toolbar>
 
-                <Card v-if="scorecard" class="p-m-3">
-                    <template #content>
-                        <div class="p-fluid p-formgrid p-grid p-m-2">
-                            <div class="p-field p-col-6">
-                                <span class="p-float-label">
-                                    <InputText
-                                        class="kn-material-input"
-                                        v-model="scorecard.name"
-                                        :class="{
-                                            'p-invalid': !scorecard.name && nameTouched
-                                        }"
-                                        @input="touched = true"
-                                    />
-                                    <label class="kn-material-input-label"> {{ $t('common.name') + ' *' }}</label>
-                                </span>
-                                <div v-if="!scorecard.name && nameTouched" class="p-error">
-                                    <small class="p-col-12"> {{ $t('common.validation.required', { fieldName: $t('documentExecution.olap.crossNavigationDefinition.parameterName') }) }} </small>
-                                </div>
-                            </div>
-
-                            <div class="p-field p-col-6">
-                                <span class="p-float-label">
-                                    <InputText class="kn-material-input" v-model="scorecard.description" @input="touched = true" />
-                                    <label class="kn-material-input-label"> {{ $t('common.description') }}</label>
-                                </span>
+            <Card v-if="scorecard" class="p-m-2">
+                <template #content>
+                    <div class="p-fluid p-formgrid p-grid p-m-2">
+                        <div class="p-field p-col-6">
+                            <span class="p-float-label">
+                                <InputText
+                                    class="kn-material-input"
+                                    v-model="scorecard.name"
+                                    :class="{
+                                        'p-invalid': !scorecard.name && nameTouched
+                                    }"
+                                    @input="touched = true"
+                                />
+                                <label class="kn-material-input-label"> {{ $t('common.name') + ' *' }}</label>
+                            </span>
+                            <div v-if="!scorecard.name && nameTouched" class="p-error">
+                                <small class="p-col-12"> {{ $t('common.validation.required', { fieldName: $t('documentExecution.olap.crossNavigationDefinition.parameterName') }) }} </small>
                             </div>
                         </div>
-                    </template>
-                </Card>
 
-                <ScorecardsTable v-if="scorecard" :propScorecard="scorecard" :criterias="criterias" :kpis="kpis" @touched="touched = true"></ScorecardsTable>
-            </div>
+                        <div class="p-field p-col-6">
+                            <span class="p-float-label">
+                                <InputText class="kn-material-input" v-model="scorecard.description" @input="touched = true" />
+                                <label class="kn-material-input-label"> {{ $t('common.description') }}</label>
+                            </span>
+                        </div>
+                    </div>
+                </template>
+            </Card>
 
-            <div class="p-col-4 p-sm-4 p-md-6 p-p-0 p-m-0">
-                <KnPerspectiveCard class="p-m-4" v-for="(perspective, index) in scorecard?.perspectives" :key="index" :propPerspective="perspective" :data-test="'perspective-' + perspective.name"></KnPerspectiveCard>
-            </div>
+            <ScorecardsTable v-if="scorecard" :propScorecard="scorecard" :criterias="criterias" :kpis="kpis" @touched="touched = true"></ScorecardsTable>
+        </div>
+
+        <div class="p-col-4 p-sm-4 p-md-6 p-p-0 p-m-0 kn-overflow">
+            <KnPerspectiveCard class="p-m-4" v-for="(perspective, index) in scorecard?.perspectives" :key="index" :propPerspective="perspective" :data-test="'perspective-' + perspective.name"></KnPerspectiveCard>
         </div>
     </div>
 </template>
@@ -60,6 +58,7 @@ import Card from 'primevue/card'
 import ScorecardsTable from './ScorecardsTable/ScorecardsTable.vue'
 import KnPerspectiveCard from '@/components/UI/KnPerspectiveCard/KnPerspectiveCard.vue'
 import mockedKpi from './mockedKpi.json'
+import descriptor from './ScorecardsDescriptor.json'
 
 const deepcopy = require('deepcopy')
 
@@ -69,6 +68,7 @@ export default defineComponent({
     props: { id: { type: String } },
     data() {
         return {
+            descriptor,
             scorecard: null as iScorecard | null,
             nameTouched: false,
             criterias: [] as iScorecardCriterion[],
