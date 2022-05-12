@@ -61,6 +61,7 @@ import { defineComponent, PropType } from 'vue'
 import { iKpi } from '../Scorecards'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { formatDate } from '@/helpers/commons/localeHelper'
+import { getKpiIconColorClass } from '../ScorecardsHelpers'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
@@ -77,7 +78,8 @@ export default defineComponent({
             scorecardsKpiDialogDescriptor,
             kpis: [] as iKpi[],
             filters: { global: [filterDefault] },
-            selected: [] as iKpi[]
+            selected: [] as iKpi[],
+            getKpiIconColorClass
         }
     },
     watch: {
@@ -102,23 +104,6 @@ export default defineComponent({
         getFormattedDate(date: number) {
             const tempDate = moment(date).format('DD/MM/YYYY')
             return formatDate(tempDate, '', 'DD/MM/YYYY')
-        },
-        getKpiIconColorClass(kpi: iKpi) {
-            // console.log('KPI: ', kpi)
-            if (kpi.status) {
-                switch (kpi.status) {
-                    case 'RED':
-                        return 'scorecard-kpi-icon-red'
-                    case 'YELLOW':
-                        return 'scorecard-kpi-icon-yellow'
-                    case 'GREEN':
-                        return 'scorecard-kpi-icon-green'
-                    case 'GREY':
-                        return 'scorecard-kpi-icon-grey'
-                }
-            } else {
-                return 'scorecard-kpi-icon-light-grey'
-            }
         },
         closeDialog() {
             this.$emit('close')

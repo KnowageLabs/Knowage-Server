@@ -100,7 +100,6 @@ export default defineComponent({
                 this.scorecard = { name: '', description: '', perspectives: [] }
             }
             this.$store.commit('setLoading', false)
-            // console.log('LOADED SCORECARD: ', this.scorecard)
         },
         async loadCriterias() {
             this.$store.commit('setLoading', true)
@@ -114,20 +113,15 @@ export default defineComponent({
 
             // TODO
             this.kpis = mockedKpi as any
-            // console.log('LOADED KPIS: ', this.kpis)
         },
         async saveScorecard() {
-            // console.log('SCORECARD FOR SAVE: ', this.scorecard)
             const tempScorecard = this.getFormattedScorecard()
-            // TODO - BE needs to be changed
 
-            delete tempScorecard.description
             const operation = tempScorecard.id ? 'update' : 'create'
             this.$store.commit('setLoading', true)
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/saveScorecard`, tempScorecard)
                 .then((response: AxiosResponse<any>) => {
-                    // console.log('RESPONSE DATA: ', response.data)
                     if (response.data.id && this.scorecard) {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.' + operation + 'Title'),
@@ -143,7 +137,9 @@ export default defineComponent({
         },
         getFormattedScorecard() {
             const tempScorecard = deepcopy(this.scorecard)
+            // TODO - BE needs to be changed for description
             delete tempScorecard.description
+
             tempScorecard.perspectives?.forEach((perspective: iPerspective) => {
                 delete perspective.groupedKpis
                 delete perspective.updated

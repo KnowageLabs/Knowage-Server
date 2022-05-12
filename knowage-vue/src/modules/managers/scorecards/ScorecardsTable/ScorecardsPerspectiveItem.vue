@@ -12,10 +12,19 @@
             <div class="kn-flex p-d-flex p-flex-row">
                 <SelectButton v-model="selectedCriteria" :options="scorecardsTableDescriptor.criteriaOptions" @change="onCriteriaChange">
                     <template #option="slotProps">
-                        <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option)" :data-test="'select-button-' +slotProps.option">{{ slotProps.option }}</span>
+                        <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option, $t)" :data-test="'select-button-' + slotProps.option">{{ slotProps.option }}</span>
                     </template>
                 </SelectButton>
-                <MultiSelect v-if="selectedCriteria !== 'M'" class="p-ml-3 scorecards-criteria-multiselect" v-model="perspective.options.criterionPriority" :options="perspective.targets" optionLabel="name" optionValue="name" @change="onCriterionPriortyChanged" data-test="criteria-select-input"></MultiSelect>
+                <MultiSelect
+                    v-if="selectedCriteria !== 'M'"
+                    class="p-ml-3 scorecards-criteria-multiselect"
+                    v-model="perspective.options.criterionPriority"
+                    :options="perspective.targets"
+                    optionLabel="name"
+                    optionValue="name"
+                    @change="onCriterionPriortyChanged"
+                    data-test="criteria-select-input"
+                ></MultiSelect>
             </div>
 
             <div>
@@ -35,6 +44,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iPerspective, iScorecardCriterion, iScorecardTarget, iKpi } from '../Scorecards'
+import { getSelectedCriteriaTooltip, getDefaultCriterion, getSelectedCriteria } from '../ScorecardsHelpers'
 import MultiSelect from 'primevue/multiselect'
 import SelectButton from 'primevue/selectbutton'
 import scorecardsTableDescriptor from './ScorecardsTableDescriptor.json'
@@ -51,7 +61,8 @@ export default defineComponent({
             scorecardsTableDescriptor,
             perspective: null as iPerspective | null,
             expanded: false,
-            selectedCriteria: 'M'
+            selectedCriteria: 'M',
+            getSelectedCriteriaTooltip
         }
     },
     watch: {
@@ -65,39 +76,16 @@ export default defineComponent({
     methods: {
         loadPerspective() {
             this.perspective = this.propPerspective as iPerspective
-            // console.log('>>> LOADED PERSPECTIVE: ', this.perspective)
             if (this.perspective.name === 'New Perspective') this.expanded = true
-            this.setSelectedCriteria(this.perspective)
-        },
-        setSelectedCriteria(perspective: iPerspective) {
-            if (perspective) {
-                switch (perspective.criterion?.valueCd) {
-                    case 'MAJORITY':
-                        this.selectedCriteria = 'M'
-                        break
-                    case 'MAJORITY_WITH_PRIORITY':
-                        this.selectedCriteria = 'MP'
-                        break
-                    case 'PRIORITY':
-                        this.selectedCriteria = 'P'
-                }
-                this.$emit('touched')
-            }
+            this.selectedCriteria = getSelectedCriteria(this.perspective.criterion?.valueCd)
         },
         addTarget() {
             if (this.perspective) {
-                this.perspective.targets.push({ name: 'New Target', status: 'GRAY', criterion: this.getDefaultCriterion(), options: { criterionPriority: [] }, kpis: [], groupedKpis: [] })
+                this.perspective.targets.push({ name: 'New Target', status: 'GRAY', criterion: getDefaultCriterion(this.criterias), options: { criterionPriority: [] }, kpis: [], groupedKpis: [] })
                 this.$emit('touched')
-                console.log('TEEEEEEEEEEEEEEEEEEEEEST 2 ')
                 this.expanded = true
                 this.perspective.updated = true
             }
-        },
-        getDefaultCriterion() {
-            let tempCriterion = {} as iScorecardCriterion
-            const index = this.criterias.findIndex((criteria: iScorecardCriterion) => criteria.valueCd === 'MAJORITY')
-            if (index !== -1) tempCriterion = this.criterias[index]
-            return tempCriterion
         },
         onCriteriaChange() {
             if (!this.perspective) return
@@ -106,7 +94,6 @@ export default defineComponent({
                 if ((this.selectedCriteria === 'M' && this.criterias[i].valueCd === 'MAJORITY') || (this.selectedCriteria === 'MP' && this.criterias[i].valueCd === 'MAJORITY_WITH_PRIORITY') || (this.selectedCriteria === 'P' && this.criterias[i].valueCd === 'PRIORITY')) {
                     this.perspective.criterion = this.criterias[i]
                     this.$emit('touched')
-                    console.log('TEEEEEEEEEEEEEEEEEEEEEST 3 ')
                     this.perspective.updated = true
                     break
                 }
@@ -132,25 +119,11 @@ export default defineComponent({
                     if (index !== -1) this.perspective.options.criterionPriority.splice(index, 1)
                 }
                 this.$emit('touched')
-                console.log('TEEEEEEEEEEEEEEEEEEEEEST 4 ')
                 this.perspective.updated = true
-            }
-        },
-        getSelectedCriteriaTooltip(option: string) {
-            switch (option) {
-                case 'M':
-                    return this.$t('managers.scorecards.majority')
-                case 'MP':
-                    return this.$t('managers.scorecards.majorityWithPriority')
-                case 'P':
-                    return this.$t('managers.scorecards.priority')
-                default:
-                    return ''
             }
         },
         onTargetTouched(updatePerspective: boolean) {
             this.$emit('touched')
-            console.log('TEEEEEEEEEEEEEEEEEEEEEST 5')
             if (this.perspective && updatePerspective) this.perspective.updated = true
         },
         onCriterionPriortyChanged() {

@@ -12,10 +12,10 @@
             <div class="kn-flex p-d-flex p-flex-row">
                 <SelectButton v-model="selectedCriteria" :options="scorecardsTableDescriptor.criteriaOptions" @change="onCriteriaChange">
                     <template #option="slotProps">
-                        <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option)" :data-test="'select-button-' +slotProps.option">{{ slotProps.option }}</span>
+                        <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option, $t)" :data-test="'select-button-' + slotProps.option">{{ slotProps.option }}</span>
                     </template>
                 </SelectButton>
-                <MultiSelect v-if="selectedCriteria !== 'M'" class="p-ml-3 scorecards-criteria-multiselect" v-model="target.options.criterionPriority" :options="target.kpis" optionLabel="name" optionValue="name" @change="onCriterionPriortyChanged"  data-test="criteria-select-input"></MultiSelect>
+                <MultiSelect v-if="selectedCriteria !== 'M'" class="p-ml-3 scorecards-criteria-multiselect" v-model="target.options.criterionPriority" :options="target.kpis" optionLabel="name" optionValue="name" @change="onCriterionPriortyChanged" data-test="criteria-select-input"></MultiSelect>
             </div>
 
             <div>
@@ -47,6 +47,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iScorecardTarget, iScorecardCriterion, iKpi } from '../Scorecards'
+import { getSelectedCriteriaTooltip, getKpiIconColorClass, getSelectedCriteria } from '../ScorecardsHelpers'
 import MultiSelect from 'primevue/multiselect'
 import SelectButton from 'primevue/selectbutton'
 import scorecardsTableDescriptor from './ScorecardsTableDescriptor.json'
@@ -64,7 +65,9 @@ export default defineComponent({
             target: null as iScorecardTarget | null,
             expanded: false,
             selectedCriteria: 'M',
-            kpiDialogVisible: false
+            kpiDialogVisible: false,
+            getSelectedCriteriaTooltip,
+            getKpiIconColorClass
         }
     },
     watch: {
@@ -78,24 +81,8 @@ export default defineComponent({
     methods: {
         loadTarget() {
             this.target = this.propTarget as iScorecardTarget
-            //console.log('>>> LOADED TARGET: ', this.target)
             if (this.target.name === 'New Target') this.expanded = true
-            this.setSelectedCriteria(this.target)
-        },
-        setSelectedCriteria(target: iScorecardTarget) {
-            if (target) {
-                switch (target.criterion?.valueCd) {
-                    case 'MAJORITY':
-                        this.selectedCriteria = 'M'
-                        break
-                    case 'MAJORITY_WITH_PRIORITY':
-                        this.selectedCriteria = 'MP'
-                        break
-                    case 'PRIORITY':
-                        this.selectedCriteria = 'P'
-                }
-                this.$emit('touched', false)
-            }
+            this.selectedCriteria = getSelectedCriteria(this.target.criterion?.valueCd)
         },
         onCriteriaChange() {
             if (!this.target) return
@@ -108,28 +95,10 @@ export default defineComponent({
                 }
             }
         },
-        getKpiIconColorClass(kpi: iKpi) {
-            //.log('KPI: ', kpi)
-            if (kpi.status) {
-                switch (kpi.status) {
-                    case 'RED':
-                        return 'scorecard-kpi-icon-red'
-                    case 'YELLOW':
-                        return 'scorecard-kpi-icon-yellow'
-                    case 'GREEN':
-                        return 'scorecard-kpi-icon-green'
-                    case 'GREY':
-                        return 'scorecard-kpi-icon-grey'
-                }
-            } else {
-                return 'scorecard-kpi-icon-light-grey'
-            }
-        },
         openKpiDialog() {
             this.kpiDialogVisible = true
         },
         onKpiSelected(selectedKpis: iKpi[]) {
-            //console.log('SELECTYED KPIS: ', selectedKpis)
             if (this.target) {
                 this.target.kpis = selectedKpis
                 this.$emit('touched', true)
@@ -166,18 +135,6 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => this.$emit('deleteTarget', this.target)
             })
-        },
-        getSelectedCriteriaTooltip(option: string) {
-            switch (option) {
-                case 'M':
-                    return this.$t('managers.scorecards.majority')
-                case 'MP':
-                    return this.$t('managers.scorecards.majorityWithPriority')
-                case 'P':
-                    return this.$t('managers.scorecards.priority')
-                default:
-                    return ''
-            }
         },
         onCriterionPriortyChanged() {
             this.$emit('touched', true)

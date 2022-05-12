@@ -19,6 +19,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { iScorecard, iScorecardCriterion, iPerspective, iKpi } from '../Scorecards'
+import { getDefaultCriterion } from '../ScorecardsHelpers'
 import ScorecardsPerspectiveItem from './ScorecardsPerspectiveItem.vue'
 import ScorecardsTableHint from './ScorecardsTableHint.vue'
 
@@ -46,15 +47,9 @@ export default defineComponent({
         },
         addPerspective() {
             if (this.scorecard) {
-                this.scorecard.perspectives.push({ name: 'New Perspective', status: 'GRAY', criterion: this.getDefaultCriterion(), options: { criterionPriority: [] }, targets: [], groupedKpis: [] })
+                this.scorecard.perspectives.push({ name: 'New Perspective', status: 'GRAY', criterion: getDefaultCriterion(this.criterias), options: { criterionPriority: [] }, targets: [], groupedKpis: [] })
                 this.$emit('touched')
             }
-        },
-        getDefaultCriterion() {
-            let tempCriterion = {} as iScorecardCriterion
-            const index = this.criterias.findIndex((criteria: iScorecardCriterion) => criteria.valueCd === 'MAJORITY')
-            if (index !== -1) tempCriterion = this.criterias[index]
-            return tempCriterion
         },
         deletePerspective(perspective: iPerspective) {
             if (!this.scorecard) return
