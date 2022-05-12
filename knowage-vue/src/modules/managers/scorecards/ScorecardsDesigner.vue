@@ -57,7 +57,6 @@ import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import ScorecardsTable from './ScorecardsTable/ScorecardsTable.vue'
 import KnPerspectiveCard from '@/components/UI/KnPerspectiveCard/KnPerspectiveCard.vue'
-import mockedKpi from './mockedKpi.json'
 import descriptor from './ScorecardsDescriptor.json'
 
 const deepcopy = require('deepcopy')
@@ -107,12 +106,9 @@ export default defineComponent({
             this.$store.commit('setLoading', false)
         },
         async loadKpis() {
-            // this.$store.commit('setLoading', true)
-            // await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpiWithResult`).then((response: AxiosResponse<any>) => (this.kpis = response.data))
-            // this.$store.commit('setLoading', false)
-
-            // TODO
-            this.kpis = mockedKpi as any
+            this.$store.commit('setLoading', true)
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpiWithResult`).then((response: AxiosResponse<any>) => (this.kpis = response.data))
+            this.$store.commit('setLoading', false)
         },
         async saveScorecard() {
             const tempScorecard = this.getFormattedScorecard()
@@ -140,12 +136,11 @@ export default defineComponent({
             // TODO - BE needs to be changed for description
             delete tempScorecard.description
 
+            const fieldToDelete = ['groupedKpis', 'statusColor', 'updated']
             tempScorecard.perspectives?.forEach((perspective: iPerspective) => {
-                delete perspective.groupedKpis
-                delete perspective.updated
+                fieldToDelete.forEach((field: string) => delete perspective[field])
                 perspective.targets?.forEach((target: iScorecardTarget) => {
-                    delete target.groupedKpis
-                    delete target.updated
+                    fieldToDelete.forEach((field: string) => delete target[field])
                 })
             })
 
