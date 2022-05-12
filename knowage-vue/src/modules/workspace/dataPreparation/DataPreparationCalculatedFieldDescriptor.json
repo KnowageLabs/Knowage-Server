@@ -274,38 +274,6 @@
         },
         {
             "category": "string",
-            "formula": "element_at(array, index)",
-            "help": "dataPreparation.element_at",
-            "label": "element_at",
-            "name": "element_at",
-            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#element_at"
-        },
-        {
-            "category": "string",
-            "formula": "element_at(map, key)",
-            "help": "dataPreparation.element_at2",
-            "label": "element_at2",
-            "name": "element_at2",
-            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#element_at2"
-        },
-        {
-            "category": "string",
-            "formula": "format_string(strfmt, obj, ...)",
-            "help": "dataPreparation.format_string",
-            "label": "format_string",
-            "name": "format_string",
-            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#format_string"
-        },
-        {
-            "category": "string",
-            "formula": "lcase(str)",
-            "help": "dataPreparation.lcase",
-            "label": "lcase",
-            "name": "lcase",
-            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#lcase"
-        },
-        {
-            "category": "string",
             "formula": "left(str, len)",
             "help": "dataPreparation.left",
             "label": "left",
@@ -407,14 +375,6 @@
             "label": "trim",
             "name": "trim",
             "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#trim"
-        },
-        {
-            "category": "string",
-            "formula": "ucase(str)",
-            "help": "dataPreparation.ucase",
-            "label": "ucase",
-            "name": "ucase",
-            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#ucase"
         },
         {
             "category": "string",
