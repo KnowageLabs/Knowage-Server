@@ -20,7 +20,6 @@ package it.eng.spagobi.services.oauth2;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -35,6 +34,7 @@ import com.auth0.jwk.JwkProviderBuilder;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
 
@@ -43,8 +43,8 @@ import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
- * This SSO service retrieves the OAuth2 access token from session, then decodes it as a JWT token and gets its subject as the user id. Then returns the regular
- * JWT token as per it.eng.spagobi.services.oauth2.JWTSsoService class.
+ * This SSO service retrieves the OAuth2 access token from session, then decodes it as a JWT token and gets configured claim ('sub' is the default) as user id.
+ * Then returns the regular JWT token as per it.eng.spagobi.services.oauth2.JWTSsoService class.
  *
  * @author Davide Zerbetto
  *
@@ -75,15 +75,22 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 
 	private String getUserId(String accessToken) {
 		try {
-			Properties oauth2Config = OAuth2Config.getInstance().getConfig();
 			DecodedJWT decodedJWT = JWT.decode(accessToken);
-			JwkProvider provider = new JwkProviderBuilder(new URL(oauth2Config.getProperty("JWKS_URL"))).build();
+			logger.debug("Access token properly decoded as JWT token");
+			JwkProvider provider = new JwkProviderBuilder(new URL(OAuth2Config.getInstance().getJWKSUrl())).build();
 			Jwk jwk = provider.get(decodedJWT.getKeyId());
 			Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
 			Verification verifier = JWT.require(algorithm);
 			verifier.build().verify(accessToken);
-			String subject = decodedJWT.getSubject();
-			return subject;
+			logger.debug("JWT token verified.");
+			String claimName = OAuth2Config.getInstance().getUserIdClaim();
+			logger.debug("Looking for claim [" + claimName + "] ...");
+			Claim userIdClaim = decodedJWT.getClaim(claimName);
+			if (userIdClaim.isNull()) {
+				throw new SpagoBIRuntimeException("Claim [" + claimName + "] not found on access token.");
+			}
+			String userId = decodedJWT.getClaim(claimName).asString();
+			return userId;
 		} catch (JWTVerificationException | JwkException | MalformedURLException e) {
 			throw new SpagoBIRuntimeException("Cannot get user id from access token [" + accessToken + "]", e);
 		}

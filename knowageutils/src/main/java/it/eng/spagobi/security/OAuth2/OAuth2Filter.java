@@ -19,7 +19,7 @@ package it.eng.spagobi.security.OAuth2;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Properties;
+import java.util.UUID;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -39,6 +39,7 @@ import org.apache.log4j.Logger;
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
  */
 public class OAuth2Filter implements Filter {
+
 	static private Logger logger = Logger.getLogger(OAuth2Filter.class);
 
 	String clientId;
@@ -62,18 +63,17 @@ public class OAuth2Filter implements Filter {
 
 		HttpSession session = ((HttpServletRequest) request).getSession();
 
-		Properties oauth2Config = OAuth2Config.getInstance().getConfig();
+		OAuth2Config oauth2Config = OAuth2Config.getInstance();
 
 		if (session.isNew() || session.getAttribute("access_token") == null) {
 			if (((HttpServletRequest) request).getParameter("code") == null) {
 				// We have to retrieve the Oauth2's code redirecting the browser
 				// to the OAuth2 provider
-				String url = oauth2Config.getProperty("AUTHORIZE_URL");
-				url += "?response_type=code&client_id=" + OAuth2Config.getInstance().getConfig().getProperty("CLIENT_ID");
-				url += "&redirect_uri=" + URLEncoder.encode(oauth2Config.getProperty("REDIRECT_URI"), "UTF-8");
-				if (oauth2Config.containsKey("STATE")) {
-					url += "&state=" + URLEncoder.encode(oauth2Config.getProperty("STATE"), "UTF-8");
-				}
+				String url = oauth2Config.getAuthorizeUrl();
+				url += "?response_type=code&client_id=" + oauth2Config.getClientId();
+				url += "&scope=" + OAuth2Config.getInstance().getScopes();
+				url += "&redirect_uri=" + URLEncoder.encode(oauth2Config.getRedirectUrl(), "UTF-8");
+				url += "&state=" + URLEncoder.encode(UUID.randomUUID().toString(), "UTF-8");
 				((HttpServletResponse) response).sendRedirect(url);
 			} else {
 				// Using the code we get the access token and put it in session

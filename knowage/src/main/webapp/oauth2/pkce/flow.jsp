@@ -20,11 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 From https://github.com/curityio/pkce-javascript-example
 --%>
 
-<%@page import="java.util.Properties"%>
 <%@page import="it.eng.spagobi.security.OAuth2.OAuth2Config"%>
 
 <%
-Properties oauth2Config = OAuth2Config.getInstance().getConfig();
+OAuth2Config oauth2Config = OAuth2Config.getInstance();
 %>
 
 <!DOCTYPE html>
@@ -35,10 +34,10 @@ Properties oauth2Config = OAuth2Config.getInstance().getConfig();
   </head>
   <body>
     <script>
-    const authorizeEndpoint = "<%= oauth2Config.getProperty("AUTHORIZE_URL") %>";
-    const tokenEndpoint = "<%= oauth2Config.getProperty("ACCESS_TOKEN_URL") %>";
-    const clientId = "<%= oauth2Config.getProperty("CLIENT_ID") %>";
-    const redirectUri = "<%= oauth2Config.getProperty("REDIRECT_URI") %>";
+    const authorizeEndpoint = "<%= oauth2Config.getAuthorizeUrl() %>";
+    const tokenEndpoint = "<%= oauth2Config.getAccessTokenUrl() %>";
+    const clientId = "<%= oauth2Config.getClientId() %>";
+    const redirectUri = "<%= oauth2Config.getRedirectUrl() %>";
 
         if (window.location.search) {
             var args = new URLSearchParams(window.location.search);
