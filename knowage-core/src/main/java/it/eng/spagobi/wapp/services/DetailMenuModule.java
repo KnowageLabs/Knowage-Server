@@ -653,8 +653,8 @@ public class DetailMenuModule extends AbstractHttpModule {
 						}
 					} else if (functionality.equals(SpagoBIConstants.WORKSPACE_MANAGEMENT)) {
 						String initialPath = menu.getInitialPath();
-						if (initialPath != null && !initialPath.trim().equals("")) {
-							url += "&currentOptionMainMenu" + "=" + initialPath;
+						if (initialPath != null && initialPath.equals("documents")) {
+							url += "/recent";
 						}
 					}
 
