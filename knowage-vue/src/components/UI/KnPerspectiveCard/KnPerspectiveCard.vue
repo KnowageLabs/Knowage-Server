@@ -50,7 +50,6 @@ export default defineComponent({
             this.loadPerspective()
         },
         async perspectiveUpdated(value: boolean) {
-            console.log('>>> !!! >>> Perspective watcher activated! ', value)
             if (value && this.perspective) {
                 await this.evaluatePerspective()
                 this.evaluatePerspectiveTargets()
@@ -70,8 +69,6 @@ export default defineComponent({
                 await this.evaluatePerspective()
                 this.evaluatePerspectiveTargets()
             }
-
-            console.log('>>> LOADED PERSPECTIVE IN CARD: ', this.perspective)
         },
         getTargetIconLetter(criterionValue: string | null) {
             if (!criterionValue) criterionValue = ''
@@ -88,7 +85,6 @@ export default defineComponent({
             }
         },
         async evaluateCriteria(criterionId: number, statusArray: any[], target: iScorecardTarget | null) {
-            console.log(' >>> !!! >>> EVALUATION CALLED FOR: ', target ?? 'perspective')
             this.$store.commit('setLoading', true)
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/${criterionId}/evaluateCriterion`, statusArray)
@@ -142,7 +138,7 @@ export default defineComponent({
             }
 
             for (let i = 0; i < target.options.criterionPriority.length; i++) {
-                for (let j = 0; j < target.options.criterionPriority.length; j++) {
+                for (let j = 0; j < target.kpis.length; j++) {
                     if (target.options.criterionPriority[i] === target.kpis[j].name) {
                         statusArray[i].priority = true
                     }
