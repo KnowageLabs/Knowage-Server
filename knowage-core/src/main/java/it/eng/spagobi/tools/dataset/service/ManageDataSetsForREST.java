@@ -80,6 +80,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
+import it.eng.spagobi.tools.dataset.bo.PreparedDataSet;
 import it.eng.spagobi.tools.dataset.bo.PythonDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.SPARQLDataSet;
@@ -130,6 +131,11 @@ public class ManageDataSetsForREST {
 	public static final String JOB_GROUP = "PersistDatasetExecutions";
 	public static final String SERVICE_NAME = "ManageDatasets";
 	public static final String DRIVERS = "DRIVERS";
+
+	public static final String PERSONAL = "personal";
+	public static final String MASKED = "masked";
+	public static final String DECRIPT = "decript";
+	public static final String SUBJECT_ID = "subjectId";
 	// logger component
 	public static Logger logger = Logger.getLogger(ManageDataSetsForREST.class);
 	public static Logger auditlogger = Logger.getLogger("dataset.audit");
@@ -304,7 +310,11 @@ public class ManageDataSetsForREST {
 
 				IMetaData currentMetadata = null;
 				try {
-					currentMetadata = getDatasetTestMetadata(dsRecalc, parametersMap, profile, meta);
+					if (ds.getDsType().equals(DataSetConstants.DS_PREPARED)) {
+						currentMetadata = getPreparedDsMeta(meta);
+					} else {
+						currentMetadata = getDatasetTestMetadata(dsRecalc, parametersMap, profile, meta);
+					}
 				} catch (Exception e) {
 					logger.error("Error while recovering dataset metadata: check dataset definition ", e);
 					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.test.error.metadata", e);
@@ -427,6 +437,53 @@ public class ManageDataSetsForREST {
 		return ds;
 	}
 
+	private IMetaData getPreparedDsMeta(String sparkMetadata) throws JSONException {
+		IMetaData toReturn = new MetaData();
+		JSONArray metaArray = new JSONArray(sparkMetadata);
+		for (int i = 0; i < metaArray.length(); i++) {
+			JSONObject metaObj = metaArray.getJSONObject(i);
+			String alias = metaObj.optString("displayedName");
+			String name = metaObj.optString("name");
+			FieldType fieldType = getFieldType(metaObj.optString("fieldType"));
+			Class type = getType(metaObj.optString("type"));
+			FieldMetadata newMeta = new FieldMetadata();
+			newMeta.setName(name);
+			newMeta.setAlias(alias);
+			newMeta.setType(type);
+			newMeta.setFieldType(fieldType);
+			newMeta.setPersonal(metaObj.optBoolean("personal"));
+//			newMeta.setMasked(metaObj.optBoolean("masked"));
+			newMeta.setDecript(metaObj.optBoolean("decript"));
+			newMeta.setSubjectId(metaObj.optBoolean("subjectId"));
+			toReturn.addFiedMeta(newMeta);
+		}
+		return toReturn;
+	}
+
+	private Class getType(String type) {
+		Class toReturn = null;
+		try {
+			toReturn = Class.forName(type);
+		} catch (ClassNotFoundException e) {
+			logger.error("Cannot instantiate class {" + type + "}, returning String.class by default");
+			toReturn = String.class;
+		}
+		return toReturn;
+	}
+
+	private FieldType getFieldType(String fieldType) {
+		FieldType toReturn;
+		if (fieldType.equalsIgnoreCase("ATTRIBUTE"))
+			toReturn = IFieldMetaData.FieldType.ATTRIBUTE;
+		else if (fieldType.equalsIgnoreCase("SPATIAL_ATTRIBUTE"))
+			toReturn = IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE;
+		else if (fieldType.equalsIgnoreCase("MEASURE"))
+			toReturn = IFieldMetaData.FieldType.MEASURE;
+		else
+			throw new SpagoBIRuntimeException("Cannot map fieldType {" + fieldType + "}");
+		return toReturn;
+	}
+
 	private String getDatasetTypeName(String datasetTypeCode, UserProfile userProfile) throws SpagoBIException {
 		Assert.assertNotNull(datasetTypeCode, "Parameter datasetTypeCode cannot be null");
 		Assert.assertTrue(!datasetTypeCode.isEmpty(), "Parameter datasetTypeCode cannot be empty");
@@ -479,6 +536,8 @@ public class ManageDataSetsForREST {
 			toReturn = manageFederatedDataSet(savingDataset, jsonDsConfig, json, userProfile);
 		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FLAT)) {
 			toReturn = manageFlatDataSet(savingDataset, jsonDsConfig, json);
+		} else if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_PREPARED)) {
+			toReturn = managePreparedDataSet(savingDataset, jsonDsConfig, json);
 		} else {
 			throw new SpagoBIRuntimeException("Cannot find a match with dataset type " + datasetTypeName);
 		}
@@ -779,14 +838,20 @@ public class ManageDataSetsForREST {
 
 					for (int j = 0; j < metadataArray.length(); j++) {
 
-						if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
-							if ("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+						JSONObject metadataJSONObject = metadataArray.getJSONObject(j);
+						if (ifmd.getName().equals(metadataJSONObject.getString("name"))) {
+							if ("MEASURE".equals(metadataJSONObject.getString("fieldType"))) {
 								ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
-							} else if (IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE.toString().equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+							} else if (IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE.toString().equals(metadataJSONObject.getString("fieldType"))) {
 								ifmd.setFieldType(IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE);
 							} else {
 								ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
 							}
+
+							ifmd.setPersonal(metadataJSONObject.optBoolean("personal"));
+//							ifmd.setMasked(metadataJSONObject.optBoolean("masked"));
+							ifmd.setDecript(metadataJSONObject.optBoolean("decript"));
+							ifmd.setSubjectId(metadataJSONObject.optBoolean("subjectId"));
 							break;
 						}
 					}
@@ -957,6 +1022,21 @@ public class ManageDataSetsForREST {
 		return dataSet;
 	}
 
+	private PreparedDataSet managePreparedDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException, EMFUserError {
+		PreparedDataSet dataSet = new PreparedDataSet();
+		String tableName = json.optString(DataSetConstants.TABLE_NAME);
+		String dataSourceLabel = json.optString(DataSetConstants.DATA_SOURCE);
+		String dataPrepInstanceId = json.optString(DataSetConstants.DATA_PREPARATION_INSTANCE_ID);
+		jsonDsConfig.put(DataSetConstants.TABLE_NAME, tableName);
+		jsonDsConfig.put(DataSetConstants.DATA_SOURCE, dataSourceLabel);
+		jsonDsConfig.put(DataSetConstants.DATA_PREPARATION_INSTANCE_ID, dataPrepInstanceId);
+		dataSet.setTableName(tableName);
+		IDataSource dataSource = DAOFactory.getDataSourceDAO().loadDataSourceUseForDataprep();
+		dataSet.setDataSource(dataSource);
+		dataSet.setDataPreparationInstance(dataPrepInstanceId);
+		return dataSet;
+	}
+
 	private QbeDataSet manageQbeDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json, UserProfile userProfile)
 			throws JSONException, EMFUserError, IOException {
 		QbeDataSet dataSet = null;
@@ -1042,11 +1122,16 @@ public class ManageDataSetsForREST {
 		SQLDBCache cache = (SQLDBCache) CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 		dataSet.setDataSourceForReading(cache.getDataSource());
 		dataSet.setDataSourceForWriting(cache.getDataSource());
-		jsonDsConfig = new JSONObject(dataSet.getConfiguration());
 
 		// update the json query getting the one passed from the qbe editor
+		String jsonDatamarts = dataSet.getDatasetFederation().getName();
+		String jsonDataSource = json.optString(DataSetConstants.QBE_DATA_SOURCE);
 		String jsonQuery = json.optString(DataSetConstants.QBE_JSON_QUERY);
+
+		jsonDsConfig.put(DataSetConstants.QBE_DATAMARTS, jsonDatamarts);
+		jsonDsConfig.put(DataSetConstants.QBE_DATA_SOURCE, jsonDataSource);
 		jsonDsConfig.put(DataSetConstants.QBE_JSON_QUERY, jsonQuery);
+
 		((FederatedDataSet) (((VersionedDataSet) dataSet).getWrappedDataset())).setJsonQuery(jsonQuery);
 		return dataSet;
 	}
@@ -1234,8 +1319,8 @@ public class ManageDataSetsForREST {
 		String limitRows = json.optString(DataSetConstants.XSL_FILE_LIMIT_ROWS);
 		String xslSheetNumber = json.optString(DataSetConstants.XSL_FILE_SHEET_NUMBER);
 
-		JSONArray dsMeta = json.optJSONArray(DataSetConstants.FILE_DS_METADATA);
-		if (dsMeta != null && dsMeta.length() > 0) {
+		if (json.optJSONObject(DataSetConstants.METADATA) != null && json.optJSONObject(DataSetConstants.METADATA).optJSONArray("columns") != null) {
+			JSONArray dsMeta = json.optJSONObject(DataSetConstants.METADATA).getJSONArray("columns");
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
 			String metadataXML = dsp.metadataToXML(getUserMetaData(dsMeta));
 			dataSet.setDsMetadata(metadataXML);
@@ -1341,13 +1426,9 @@ public class ManageDataSetsForREST {
 
 	private IMetaData getUserMetaData(JSONArray dsMeta) throws JSONException {
 		MetaData toReturn = new MetaData();
-		toReturn.setFieldsMeta(getFieldsMeta(dsMeta));
-		return toReturn;
-	}
 
-	private List<IFieldMetaData> getFieldsMeta(JSONArray dsMeta) throws JSONException {
-		List<IFieldMetaData> toReturn = new ArrayList<IFieldMetaData>();
-		for (int i = 0; i < dsMeta.length() - 1; i = i + 2) {
+		List<IFieldMetaData> fieldsMeta = new ArrayList<IFieldMetaData>();
+		for (int i = 0; i < dsMeta.length() - 1; i = i + 3) {
 			JSONObject currMetaType = dsMeta.getJSONObject(i);
 			JSONObject currMetaFieldType = dsMeta.getJSONObject(i + 1);
 			IFieldMetaData m = new FieldMetadata();
@@ -1357,23 +1438,27 @@ public class ManageDataSetsForREST {
 			m.setProperties(new HashMap<>());
 			m.setFieldType(getFieldTypeFromColumn(currMetaFieldType.getString("pvalue")));
 			m.setMultiValue(false);
-			toReturn.add(m);
+			fieldsMeta.add(m);
 		}
+
+		toReturn.setFieldsMeta(fieldsMeta);
 		return toReturn;
 	}
 
 	private Class getClassTypeFromColumn(String columnClass) {
-		if (columnClass.equalsIgnoreCase("String"))
+		if (columnClass.equalsIgnoreCase("java.lang.String"))
 			return java.lang.String.class;
-		else if (columnClass.equalsIgnoreCase("Long"))
+		else if (columnClass.equalsIgnoreCase("java.lang.Long"))
 			return java.lang.Long.class;
-		else if (columnClass.equalsIgnoreCase("Integer"))
+		else if (columnClass.equalsIgnoreCase("java.lang.Integer"))
+			return java.lang.Integer.class;
+		else if (columnClass.equalsIgnoreCase("java.math.BigDecimal"))
 			return java.math.BigDecimal.class;
-		else if (columnClass.equalsIgnoreCase("Double"))
+		else if (columnClass.equalsIgnoreCase("java.lang.Double"))
 			return java.lang.Double.class;
-		else if (columnClass.equalsIgnoreCase("Date"))
+		else if (columnClass.equalsIgnoreCase("java.util.Date"))
 			return java.sql.Date.class;
-		else if (columnClass.equalsIgnoreCase("Timestamp"))
+		else if (columnClass.equalsIgnoreCase("java.util.Timestamp"))
 			return java.sql.Timestamp.class;
 		else
 			throw new SpagoBIRuntimeException("Couldn't map class <" + columnClass + ">");
@@ -1408,12 +1493,6 @@ public class ManageDataSetsForREST {
 	private PythonDataSet managePythonDataSet(boolean savingDataset, JSONObject config, JSONObject json) throws JSONException {
 		for (String sa : PythonDataSetConstants.PYTHON_STRING_ATTRIBUTES) {
 			config.put(sa, json.optString(sa));
-		}
-		for (String ja : PythonDataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
-			config.put(ja, new JSONObject(json.getString(ja)));
-		}
-		for (String ja : PythonDataSetConstants.REST_JSON_ARRAY_ATTRIBUTES) {
-			config.put(ja, new JSONArray(json.getString(ja)));
 		}
 		config.put(DataSetConstants.DATA_SET_TYPE, DataSetConstants.DS_PYTHON_TYPE);
 		PythonDataSet res = new PythonDataSet(config);
@@ -1473,6 +1552,46 @@ public class ManageDataSetsForREST {
 
 			if ((!(value.startsWith("'") && value.endsWith("'")))) {
 				toReturn = "'" + value + "'";
+			} else {
+				toReturn = value;
+			}
+
+		} else if (type.equalsIgnoreCase(DataSetUtilities.NUMBER_TYPE)) {
+
+			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
+				toReturn = value.substring(1, value.length() - 1);
+			} else {
+				toReturn = value;
+			}
+			if (toReturn == null || toReturn.length() == 0) {
+				toReturn = "";
+			}
+		} else if (type.equalsIgnoreCase(DataSetUtilities.GENERIC_TYPE)) {
+			toReturn = value;
+		} else if (type.equalsIgnoreCase(DataSetUtilities.RAW_TYPE)) {
+			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
+				toReturn = value.substring(1, value.length() - 1);
+			} else {
+				toReturn = value;
+			}
+		}
+
+		return toReturn;
+	}
+
+	/**
+	 * Protected for testing purposes
+	 *
+	 * @param value
+	 * @param type
+	 * @return
+	 */
+	static String getSingleValueSolr(String value, String type) {
+		String toReturn = "";
+		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
+
+			if ((!(value.startsWith("'") && value.endsWith("'")))) {
+				toReturn = "\"" + value + "\"";
 			} else {
 				toReturn = value;
 			}

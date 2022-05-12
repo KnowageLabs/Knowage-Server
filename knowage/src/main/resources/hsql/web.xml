@@ -519,4 +519,14 @@
 	</resource-ref>
 	<!-- END TOMCAT RES -->
 
+	<!-- 
+		This servlet comes from resteasy-jaxrs and is enabled by default mapped to "" URL. The empty string has
+		greater priority than "/": that is a big problem for us because our WARs have mixed resources, REST
+		services, JSPs, HTMLs, etc... The following disables this servlet.
+	 -->
+	<servlet-mapping>
+		<servlet-name>org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher</servlet-name>
+		<url-pattern>/restful-services-default</url-pattern>
+	</servlet-mapping>
+
 </web-app>

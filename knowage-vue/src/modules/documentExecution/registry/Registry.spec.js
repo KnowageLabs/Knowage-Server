@@ -20,7 +20,7 @@ const mockedRegistry = {
             { name: 'column_6', header: 'florist', dataIndex: 'column_6', type: 'boolean', multiValue: false, defaultValue: null },
             { name: 'column_7', header: 'coffee_bar', dataIndex: 'column_7', type: 'boolean', multiValue: false, defaultValue: null },
             { name: 'column_8', header: 'video_store', dataIndex: 'column_8', type: 'boolean', multiValue: false, defaultValue: null },
-            { name: 'column_9', header: 'first_opened_date', dataIndex: 'column_9', type: 'date', subtype: 'timestamp', dateFormat: 'd/m/Y H:i:s.uuu', dateFormatJava: 'dd/MM/yyyy HH:mm:ss.SSS', multiValue: false, defaultValue: null },
+            { name: 'column_9', header: 'first_opened_date', dataIndex: 'column_9', type: 'timestamp', dateFormat: 'd/m/Y H:i:s.uuu', dateFormatJava: 'dd/MM/yyyy HH:mm:ss.SSS', multiValue: false, defaultValue: null },
             { name: 'column_10', header: 'store_sqft', dataIndex: 'column_10', type: 'int', precision: 0, scale: 0, format: '#,###', multiValue: false, defaultValue: null },
             { name: 'column_11', header: 'sales_city', dataIndex: 'column_11', type: 'string', multiValue: false, defaultValue: null }
         ],
@@ -84,14 +84,16 @@ const mockedRegistry = {
 
 jest.mock('axios')
 
-axios.post.mockImplementation((url) => {
-    switch (url) {
-        case `/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=1`:
-            return Promise.resolve({ data: mockedRegistry })
-        default:
-            return Promise.resolve({ data: [] })
-    }
-})
+const $http = {
+    post: axios.post.mockImplementation((url) => {
+        switch (url) {
+            case `/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=1`:
+                return Promise.resolve({ data: mockedRegistry })
+            default:
+                return Promise.resolve({ data: [] })
+        }
+    })
+}
 
 const $confirm = {
     require: jest.fn()
@@ -118,7 +120,8 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $confirm,
-                $store
+                $store,
+                $http
             }
         }
     })

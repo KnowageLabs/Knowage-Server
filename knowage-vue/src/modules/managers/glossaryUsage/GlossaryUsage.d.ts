@@ -31,7 +31,9 @@ export interface iLinkTableItem {
     type: string,
     author: string,
     itemType: string,
-    organization?: string
+    organization?: string,
+    model?: string,
+    datasetId?: number
 }
 
 export interface iWord {

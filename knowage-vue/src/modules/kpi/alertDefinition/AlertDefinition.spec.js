@@ -8,7 +8,7 @@ import flushPromises from 'flush-promises'
 import InputText from 'primevue/inputtext'
 import Listbox from 'primevue/listbox'
 import ProgressBar from 'primevue/progressbar'
-import Alert from './Alert.vue'
+import AlertDefinition from './AlertDefinition.vue'
 import Toolbar from 'primevue/toolbar'
 import KnHint from '@/components/UI/KnHint.vue'
 
@@ -78,10 +78,16 @@ const mockedTarget = [
     }
 ]
 
-jest.mock('axios', () => ({
-    get: jest.fn(() => Promise.resolve({ data: mockedTarget })),
-    delete: jest.fn(() => Promise.resolve())
-}))
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: mockedTarget
+        })
+    ),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 const $confirm = {
     require: jest.fn()
@@ -121,7 +127,7 @@ const $store = {
     commit: jest.fn()
 }
 const factory = () => {
-    return mount(Alert, {
+    return mount(AlertDefinition, {
         global: {
             plugins: [router],
             stubs: {
@@ -138,7 +144,8 @@ const factory = () => {
                 $store,
                 $confirm,
                 $route,
-                $router
+                $router,
+                $http
             }
         }
     })

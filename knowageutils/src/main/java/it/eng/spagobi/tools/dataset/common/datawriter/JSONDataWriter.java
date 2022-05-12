@@ -512,8 +512,7 @@ public class JSONDataWriter implements IDataWriter {
 					}
 				} else if (Timestamp.class.isAssignableFrom(clazz) || "oracle.sql.TIMESTAMP".equals(clazz.getName())) {
 					logger.debug("Column [" + (i + 1) + "] type is equal to [" + "TIMESTAMP" + "]");
-					fieldMetaDataJSON.put("type", "date");
-					fieldMetaDataJSON.put("subtype", "timestamp");
+					fieldMetaDataJSON.put("type", "timestamp");
 					fieldMetaDataJSON.put("dateFormat", "d/m/Y H:i:s.uuu");
 					fieldMetaDataJSON.put("dateFormatJava", "dd/MM/yyyy HH:mm:ss.SSS");
 				} else if (Time.class.isAssignableFrom(clazz)) {

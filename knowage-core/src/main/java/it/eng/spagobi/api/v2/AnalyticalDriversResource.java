@@ -42,6 +42,8 @@ import org.json.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.knowage.analyticalDriver.api.AnalyticalDriverManagementAPI;
+import it.eng.knowage.monitor.IKnowageMonitor;
+import it.eng.knowage.monitor.KnowageMonitorFactory;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
@@ -77,14 +79,21 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		IParameterDAO driversDao = null;
 		List<Parameter> fullList = null;
 
+		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.analyticaldrivers.list");
+
 		try {
 
 			driversDao = DAOFactory.getParameterDAO();
 			driversDao.setUserProfile(getUserProfile());
 			fullList = driversDao.loadAllParameters();
-			return Response.ok(fullList).build();
+			Response response = Response.ok(fullList).build();
+
+			monitor.stop();
+
+			return response;
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
+			monitor.stop(e);
 			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
 

@@ -1,0 +1,10 @@
+.p-breadcrumb.kn-breadcrumb {
+    border-radius: 0;
+    &.border-bottom {
+        border: none;
+        border-bottom: 1px solid var(--kn-breadcrumb-border-color);
+    }
+    .breadcrumbs-item:hover {
+        cursor: pointer;
+    }
+}

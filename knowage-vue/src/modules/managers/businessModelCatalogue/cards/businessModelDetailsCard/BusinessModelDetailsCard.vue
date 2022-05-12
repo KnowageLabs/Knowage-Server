@@ -2,8 +2,8 @@
     <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
-                    {{ $t('managers.businessModelManager.driversDetails') }}
+                <template #start>
+                    {{ $t('managers.businessModelManager.details') }}
                 </template>
             </Toolbar>
         </template>
@@ -133,16 +133,16 @@
                 </div>
 
                 <div class="p-d-flex p-flex-row">
-                    <div class="input-container" v-if="!metaWebVisible && !readonly">
+                    <div class="input-container" v-show="!metaWebVisible && !readonly">
                         <label for="upload" class="kn-material-input-label">{{ $t('managers.businessModelManager.uploadFile') }}:</label>
                         <KnInputFile :changeFunction="uploadFile" :visibility="true" />
                     </div>
-                    <div class="input-container p-d-flex p-flex-row" v-else-if="metaWebVisible">
+                    <div class="input-container p-d-flex p-flex-row">
                         <div class="p-m-2">
-                            <Button class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.metaWeb')" @click="goToMetaWeb" data-test="metaweb-button"></Button>
+                            <Button v-show="metaWebVisible" class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.metaWeb')" @click="goToMetaWeb" data-test="metaweb-button"></Button>
                         </div>
-                        <div class="p-m-2" v-if="toGenerate">
-                            <Button class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.generate')" @click="generateDatamartVisible = true"></Button>
+                        <div class="p-m-2" v-show="toGenerate">
+                            <Button v-show="metaWebVisible" class="kn-button kn-button--primary" :label="$t('managers.businessModelManager.generate')" @click="generateDatamartVisible = true" data-test="generate-button"></Button>
                         </div>
                     </div>
 
@@ -166,10 +166,10 @@
 
                 <div class="p-mt-5" v-if="metaWebVisible">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                        <template #left>
+                        <template #start>
                             {{ $t('managers.businessModelManager.configurationTablePrefixTitle') }}
                         </template>
-                        <template #right>
+                        <template #end>
                             <i class="fa fa-info-circle" v-tooltip.bottom="$t('managers.businessModelManager.prefixTooltip')"></i>
                         </template>
                     </Toolbar>
@@ -232,19 +232,28 @@
                 </div>
             </form>
 
-            <Dialog :contentStyle="businessModelDetailsCardDescriptor.dialog.style" :visible="showMetaWeb" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false">
-                <iframe :style="businessModelDetailsCardDescriptor.iframe.style" :src="metaModelUrl"></iframe>
-            </Dialog>
-
             <GenerateDatamartCard v-if="generateDatamartVisible" :businessModel="selectedBusinessModel" :user="user" @close="generateDatamartVisible = false" @generated="onDatamartGenerated"></GenerateDatamartCard>
+
+            <MetawebSelectDialog :visible="metawebSelectDialogVisible" :selectedBusinessModel="selectedBusinessModel" @close="metawebSelectDialogVisible = false" @metaSelected="onMetaSelect"></MetawebSelectDialog>
+
+            <Metaweb :visible="metawebDialogVisible" :propMeta="meta" :businessModel="businessModel" @closeMetaweb="metawebDialogVisible = false" @modelGenerated="$emit('modelGenerated')" />
+            <KnOverlaySpinnerPanel id="metaweb-spinner" :visibility="loading" />
+
+            <Dialog :visible="saveConfirmVisible" :modal="true" :closable="false">
+                {{ $t('managers.businessModelManager.saveRequired') }}
+                <template #footer>
+                    <Button class="kn-button kn-button--primary" @click="saveConfirmVisible = false"> {{ $t('common.ok') }}</Button>
+                </template>
+            </Dialog>
         </template>
     </Card>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { iBusinessModel } from '../../BusinessModelCatalogue'
 import { createValidations } from '@/helpers/commons/validationHelper'
+import { AxiosResponse } from 'axios'
 import businessModelDetailsCardDescriptor from './BusinessModelDetailsCardDescriptor.json'
 import businessModelDetailsCardValidation from './BusinessModelDetailsCardValidation.json'
 import Card from 'primevue/card'
@@ -254,6 +263,9 @@ import GenerateDatamartCard from './GenerateDatamartCard.vue'
 import InputSwitch from 'primevue/inputswitch'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
+import MetawebSelectDialog from '../../metaweb/metawebSelectDialog/MetawebSelectDialog.vue'
+import Metaweb from '@/modules/managers/businessModelCatalogue/metaweb/Metaweb.vue'
 import useValidate from '@vuelidate/core'
 
 export default defineComponent({
@@ -265,7 +277,10 @@ export default defineComponent({
         GenerateDatamartCard,
         InputSwitch,
         KnInputFile,
-        KnValidationMessages
+        KnValidationMessages,
+        KnOverlaySpinnerPanel,
+        MetawebSelectDialog,
+        Metaweb
     },
     props: {
         selectedBusinessModel: {
@@ -281,17 +296,19 @@ export default defineComponent({
             required: true
         },
         user: {
-            type: Object,
-            required: true
+            type: Object as PropType<Object | null>
         },
         toGenerate: {
             type: Boolean
         },
         readonly: {
             type: Boolean
+        },
+        businessModelVersions: {
+            type: Array
         }
     },
-    emits: ['fieldChanged', 'fileUploaded', 'datamartGenerated'],
+    emits: ['fieldChanged', 'fileUploaded', 'datamartGenerated', 'modelGenerated'],
     watch: {
         selectedBusinessModel() {
             this.v$.$reset()
@@ -306,27 +323,13 @@ export default defineComponent({
     },
     computed: {
         metaModelUrl(): any {
-            return `/knowagemeta/restful-services/1.0/pages/edit?datasourceId=${this.businessModel.dataSourceId}&user_id=${this.user.userUniqueIdentifier}&bmId=${this.businessModel.id}&bmName=${this.businessModel.name}`
+            return `/knowagemeta/restful-services/1.0/pages/edit?datasourceId=${this.businessModel.dataSourceId}&user_id=${(this.user as any)?.userUniqueIdentifier}&bmId=${this.businessModel.id}&bmName=${this.businessModel.name}`
         }
     },
     created() {
-        window.addEventListener('message', (event: any) => {
-            if (event.action == 'closeDialog') {
-                this.showMetaWeb = false
-                this.loadBusinessModel()
-                this.loadCategories()
-            }
-        })
         this.loadBusinessModel()
         this.loadCategories()
         this.loadDatasources()
-    },
-    unmounted() {
-        window.removeEventListener('message', (event: any) => {
-            if (event.action == 'closeDialog') {
-                this.showMetaWeb = false
-            }
-        })
     },
     data() {
         return {
@@ -336,10 +339,15 @@ export default defineComponent({
             categories: [] as any[],
             datasources: [] as any[],
             metaWebVisible: false,
-            showMetaWeb: false,
             generateDatamartVisible: false,
+            metawebSelectDialogVisible: false,
+            metawebDialogVisible: false,
+            meta: null as any,
             touched: false,
-            v$: useValidate() as any
+            v$: useValidate() as any,
+            loading: false,
+            prefixesTouched: false,
+            saveConfirmVisible: false
         }
     },
     validations() {
@@ -361,6 +369,7 @@ export default defineComponent({
             this.$emit('fileUploaded', event.target.files[0])
         },
         onFieldChange(fieldName: string, value: any) {
+            if (fieldName === 'tablePrefixLike' || fieldName === 'tablePrefixNotLike') this.prefixesTouched = true
             this.$emit('fieldChanged', { fieldName, value })
         },
         onLockedChange() {
@@ -369,26 +378,69 @@ export default defineComponent({
         onSmartViewChange() {
             this.$emit('fieldChanged', { fieldName: 'smartView', value: this.businessModel.smartView })
         },
-        goToMetaWeb() {
-            this.showMetaWeb = true
+        async goToMetaWeb() {
+            if (this.prefixesTouched) {
+                this.saveConfirmVisible = true
+            } else {
+                this.loading = true
+                await this.createSession()
+                if (this.businessModelVersions?.length === 0) {
+                    this.metawebSelectDialogVisible = true
+                } else {
+                    await this.loadModelFromSession()
+                }
+                this.loading = false
+            }
         },
         onDatamartGenerated() {
             this.$emit('datamartGenerated')
+        },
+        onMetaSelect(meta: any) {
+            this.meta = meta
+            this.metawebSelectDialogVisible = false
+            this.metawebDialogVisible = true
+        },
+        async loadModelFromSession() {
+            await this.$http
+                .get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/model`)
+                .then((response: AxiosResponse<any>) => {
+                    this.meta = response.data
+                    this.metawebDialogVisible = true
+                })
+                .catch(() => {})
+        },
+        async createSession() {
+            let url = `/1.0/pages/edit?datasourceId=${this.businessModel?.dataSourceId}&user_id=${(this.$store.state as any).user.userUniqueIdentifier}&bmId=${this.businessModel?.id}&bmName=${this.businessModel?.name}`
+            if (this.businessModel.tablePrefixLike) url += `&tablePrefixLike=${this.businessModel.tablePrefixLike}`
+            if (this.businessModel.tablePrefixNotLike) url += `&tablePrefixNotLike=${this.businessModel.tablePrefixNotLike}`
+            await this.$http
+                .get(process.env.VUE_APP_META_API_URL + url, {
+                    headers: {
+                        Accept: 'application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+                    }
+                })
+                .then(() => {})
+                .catch(() => {})
         }
     }
 })
 </script>
 
-<style lang="scss" scoped>
-.input-container {
-    flex: 0.5;
-}
-</style>
 <style lang="scss">
 .full-screen-dialog.p-dialog {
     max-height: 100%;
 }
 .full-screen-dialog.p-dialog .p-dialog-content {
     padding: 0;
+}
+
+.pi-upload {
+    display: none;
+}
+
+#metaweb-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
 }
 </style>

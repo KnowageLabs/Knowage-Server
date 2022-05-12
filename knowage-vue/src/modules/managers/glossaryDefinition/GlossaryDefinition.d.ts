@@ -27,7 +27,7 @@ export interface iWord {
 
 export interface iNode {
     id: number
-    key: number
+    key: string
     parentId?: number
     label: string
     children: iNode[]

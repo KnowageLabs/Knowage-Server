@@ -1,0 +1,12 @@
+{
+    "documentTypeOptions": [
+        {
+            "label": "common.list",
+            "value": "list"
+        },
+        {
+            "label": "common.widget",
+            "value": "widget"
+        }
+    ]
+}

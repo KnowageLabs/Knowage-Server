@@ -107,7 +107,8 @@ function cockpitChartWidgetControllerFunction(
 		cockpitModule_properties,
 		cockpitModule_template,
 		sbiModule_util,
-		$mdDialog){
+		$mdDialog,
+		$mdColorPalette){
 	$scope.property={style:{}};
 	$scope.selectedTab = {'tab' : 0};
 	$scope.cockpitModule_widgetSelection = cockpitModule_widgetSelection;
@@ -189,6 +190,7 @@ function cockpitChartWidgetControllerFunction(
 		$scope.refreshWidget(undefined,'init', true);
 	});
 	$scope.refresh=function(element,width,height,data,nature, undefined, changedChartType,dataAndChartConf){
+		$scope.tempChartConf = dataAndChartConf.chartConf;
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			var aggregations = cockpitModule_widgetSelection.getAggregation($scope.ngModel,dataset);
@@ -1246,12 +1248,21 @@ function cockpitChartWidgetControllerFunction(
 
 
 			// if destination document is specified don't ask
+			var hasVueParent = false
+			if(window.parent.document.getElementById('_KNOWAGE_VUE')){
+				hasVueParent = window.parent
+			}else if(window.parent.parent.document.getElementById('_KNOWAGE_VUE')){
+				hasVueParent = window.parent.parent
+			}
+			
 			if(model.cross.crossName != undefined){
-				parent.execExternalCrossNavigation(outputParameter,{},model.cross.crossName,null,otherOutputParameters);
+				if(hasVueParent) hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":crossSettings,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
+				else parent.execExternalCrossNavigation(outputParameter,{},model.cross.crossName,null,otherOutputParameters);
 				return;
 			}
 			else{
-				parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
+				if(hasVueParent) hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":crossSettings,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
+				else parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
 				return;
 			}
 		}
@@ -1445,6 +1456,11 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 		wconf.chartTemplate = {"CHART":wconf.chartTemplate};
 	}
 	var chartTemplate = wconf.chartTemplate;
+	
+	if(chartTemplate.CHART.type.toUpperCase() === "WORDCLOUD" && !chartTemplate.CHART.sizeCriteria){
+		chartTemplate.CHART.sizeCriteria = "serie";
+	}
+	
 	if(chartTemplate && chartTemplate.CHART && chartTemplate.CHART.VALUES) {
 
 		if(chartTemplate.CHART.VALUES.SERIE) {
@@ -1466,7 +1482,7 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 					obj['formula'] = wconf.columnSelectedOfDatasetAggregations[index].formula;
 					obj['datasetOrTableFlag'] = wconf.columnSelectedOfDatasetAggregations[index].datasetOrTableFlag;
 				}
-				if(wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
+				if(wconf.columnSelectedOfDatasetAggregations && wconf.columnSelectedOfDatasetAggregations[index] && wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
 					obj.boundFunction = wconf.columnSelectedOfDatasetAggregations[index].boundFunction; 
 				}
 				aggregations.push(obj);
@@ -1488,7 +1504,7 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 					obj['fieldType'] = "ATTRIBUTE";
 					obj['orderType'] = chartCategory[i].orderType;
 					obj['orderColumn'] = chartCategory[i].orderColumn;
-					if(wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
+					if(wconf.columnSelectedOfDatasetAggregations && wconf.columnSelectedOfDatasetAggregations[index] && wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
 						obj.boundFunction = wconf.columnSelectedOfDatasetAggregations[index].boundFunction; 
 					}
 					aggregations.push(obj);
@@ -1505,7 +1521,7 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 				obj['orderType'] = chartCategory.drillOrder && chartCategory.drillOrder[chartCategory.column] ? chartCategory.drillOrder[chartCategory.column].orderType : chartCategory.orderType ;
 				obj['orderColumn'] =  chartCategory.drillOrder && chartCategory.drillOrder[chartCategory.column] ? chartCategory.drillOrder[chartCategory.column].orderColumn : chartCategory.orderColumn ;
 				obj['fieldType'] = "ATTRIBUTE";
-				if(wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
+				if(wconf.columnSelectedOfDatasetAggregations && wconf.columnSelectedOfDatasetAggregations[index] && wconf.columnSelectedOfDatasetAggregations[index].boundFunction){
 					obj.boundFunction = wconf.columnSelectedOfDatasetAggregations[index].boundFunction;
 				}
 				aggregations.push(obj);

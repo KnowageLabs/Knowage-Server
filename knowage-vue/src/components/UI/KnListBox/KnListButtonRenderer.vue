@@ -1,7 +1,7 @@
 <template>
-    <template v-if="buttons.length > 2">
+    <template v-if="filteredButtons.length > 2">
         <Button icon="fas fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain" @click="toggleMenu" />
-        <Menu id="buttons_menu" ref="buttons_menu" :model="buttons" :popup="true">
+        <Menu id="buttons_menu" ref="buttons_menu" :model="filteredButtons" :popup="true">
             <template #item="{item}">
                 <a class="p-menuitem-link" role="menuitem" tabindex="0" @click="clickedButton($event, item)">
                     <span class="p-menuitem-icon" :class="item.icon"></span>
@@ -11,22 +11,33 @@
         </Menu>
     </template>
     <template v-else>
-        <Button v-for="(button, index) in buttons" :key="index" :icon="button.icon" class="p-button-text p-button-rounded p-button-plain" @click="clickedButton($event, button)" v-tooltip.bottom="$t(button.label)" :data-test="'delete-button-' + index" />
+        <Button v-for="(button, index) in filteredButtons" :key="index" :icon="button.icon" class="p-button-text p-button-rounded p-button-plain" @click="clickedButton($event, button)" v-tooltip.bottom="$t(button.label)" :data-test="'delete-button-' + index" />
     </template>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { PropType, defineComponent } from 'vue'
 import Menu from 'primevue/menu'
+import { IKnListBoxOptions, Ibutton } from './KnListBox'
 
 export default defineComponent({
     name: 'kn-list-button-renderer',
     components: { Menu },
     props: {
-        buttons: Array
+        buttons: Array as PropType<Array<Ibutton>>,
+        selectedItem: Object as PropType<IKnListBoxOptions>
+    },
+    data() {
+        return {
+            filteredButtons: [] as Array<Ibutton>
+        }
     },
     emits: ['click'],
-    created() {},
+    mounted() {
+        this.filteredButtons = this.buttons!.filter((x) => {
+            return !x.condition || this.selectedItem?.[x.condition]
+        })
+    },
     methods: {
         clickedButton(e, item) {
             e.item = item

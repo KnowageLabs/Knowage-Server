@@ -135,6 +135,12 @@ public class ProfileFilter implements Filter {
 					if (userId != null && !userId.trim().equals("")) {
 						profile = GeneralUtilities.createNewUserProfile(userId);
 
+						if (profile == null) {
+							logger.error("User [" + userId + "] has no profile defined.");
+							httpRequest.getRequestDispatcher("/unprofiledUser.jsp").forward(request, response);
+							return;
+						}
+
 						if (requestIsForHomePage(httpRequest)) {
 							// in case user has a default role, we get his default user profile object only in case the request is for the home page, otherwise
 							// we can have inconsistencies (example: request is for execution of a document not executable by the default role, but another one)
@@ -162,8 +168,14 @@ public class ProfileFilter implements Filter {
 					manageTenant(profile);
 					UserProfileManager.setProfile((UserProfile) profile);
 				} else {
-					String contextName = ChannelUtilities.getSpagoBIContextName(httpRequest);
-					if (!requestIsForHomePage(httpRequest) && !requestIsForLoginByToken(httpRequest) && !requestIsForLoginByJavaScriptSDK(httpRequest)) {
+					// @formatter:off
+					if (!requestIsForHomePage(httpRequest) &&
+							!requestIsForLoginByToken(httpRequest) &&
+							!requestIsForLoginByJavaScriptSDK(httpRequest) &&
+							!requestIsForSessionExpired(httpRequest))
+					// @formatter:on
+					{
+						String contextName = ChannelUtilities.getSpagoBIContextName(httpRequest);
 						String targetService = httpRequest.getRequestURI() + "?" + httpRequest.getQueryString();
 						String redirectURL = contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&targetService="
 								+ URLEncoder.encode(targetService, "UTF-8");
@@ -201,6 +213,11 @@ public class ProfileFilter implements Filter {
 	private boolean requestIsForLoginByJavaScriptSDK(HttpServletRequest request) {
 		// returns true in case request has ACTION_NAME=LOGIN_ACTION_WEB parameter, false otherwise
 		return request.getParameter(Constants.ACTION_NAME) != null && request.getParameter(Constants.ACTION_NAME).equalsIgnoreCase(LoginActionWeb.SERVICE_NAME);
+	}
+
+	private boolean requestIsForSessionExpired(HttpServletRequest request) {
+		// returns true in case request contains the sessionExpiredURL read from Knowage configuration
+		return request.getRequestURI().contains(GeneralUtilities.getSessionExpiredURL());
 	}
 
 	private void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer, HttpSession httpSession) {

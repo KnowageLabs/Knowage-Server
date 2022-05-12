@@ -22,6 +22,16 @@ import constraintsManagementRoutes from '@/modules/managers/constraintsManagemen
 import lovsManagementRoutes from '@/modules/managers/lovsManagement/LovsManagement.routes.js'
 import glossaryDefinitionRoutes from '@/modules/managers/glossaryDefinition/GlossaryDefinition.routes.js'
 import glossaryUsageRoutes from '@/modules/managers/glossaryUsage/GlossaryUsage.routes.js'
+import functionsCatalogRoutes from '@/modules/managers/functionsCatalog/FunctionsCatalog.routes.js'
+import schedulerRoutes from '@/modules/managers/scheduler/Scheduler.routes.js'
+import schedulationAgendaRoutes from '@/modules/managers/schedulationAgendaManagement/SchedulationAgenda.routes.js'
+import datasetManagementRoutes from '@/modules/managers/datasetManagement/DatasetManagement.routes.js'
+import themeManagementRoutes from '@/modules/managers/themeManagement/ThemeManagement.routes.js'
+import behaviouralModelLineage from '@/modules/managers/behaviouralModelLineage/BehaviouralModelLineage.routes.js'
+import layersManagementRoutes from '@/modules/managers/layersManagement/LayersManagement.routes.js'
+import timespanRoutes from '@/modules/managers/timespan/Timespan.routes.js'
+import calendarManagementRoutes from '@/modules/managers/calendarManagement/CalendarManagement.routes.js'
+import hierarchyManagementRoutes from '@/modules/managers/hierarchyManagement/HierarchyManagement.routes.js'
 
 const baseRoutes = []
 
@@ -50,5 +60,15 @@ const routes = baseRoutes
     .concat(lovsManagementRoutes)
     .concat(glossaryDefinitionRoutes)
     .concat(glossaryUsageRoutes)
+    .concat(functionsCatalogRoutes)
+    .concat(schedulerRoutes)
+    .concat(schedulationAgendaRoutes)
+    .concat(datasetManagementRoutes)
+    .concat(themeManagementRoutes)
+    .concat(behaviouralModelLineage)
+    .concat(layersManagementRoutes)
+    .concat(timespanRoutes)
+    .concat(calendarManagementRoutes)
+    .concat(hierarchyManagementRoutes)
 
 export default routes

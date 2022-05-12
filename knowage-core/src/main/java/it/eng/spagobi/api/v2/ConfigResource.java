@@ -42,7 +42,6 @@ import org.json.JSONObject;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -235,14 +234,6 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 	}
 
-	@GET
-	@Path("/EXPORT.LIMITATION")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getExportLimit() {
-		String limitExport = SingletonConfig.getInstance().getConfigValue("dataset.export.xls.resultsLimit");
-		return limitExport;
-	}
-
 	@POST
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
@@ -317,13 +308,16 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 			for (int i = 0; i < jsonArray.length(); i++) {
 				JSONObject configObject = jsonArray.getJSONObject(i);
-				saveReceivedConfig(configObject);
+				try {
+					saveReceivedConfig(configObject);
 
-				if (configObject.get("label").equals(SimpleCacheConfiguration.CACHE_SCHEDULING_FULL_CLEAN)) {
-
-					CacheTriggerManagementAPI cacheTriggerManagementAPI = new CacheTriggerManagementAPI();
-					String confValue = configObject.getString("id");
-					cacheTriggerManagementAPI.updateCronExpression(confValue);
+					if (configObject.get("label").equals(SimpleCacheConfiguration.CACHE_SCHEDULING_FULL_CLEAN)) {
+						CacheTriggerManagementAPI cacheTriggerManagementAPI = new CacheTriggerManagementAPI();
+						String confValue = configObject.getString("id");
+						cacheTriggerManagementAPI.updateCronExpression(confValue);
+					}
+				} catch (Exception e) {
+					logger.error("Couldn't save config: " + configObject.getString("label"), e);
 				}
 			}
 
@@ -332,7 +326,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			logger.error("Error updating config", e);
-			return Response.notModified(e.getMessage()).build();
+			throw new SpagoBIRuntimeException("Error updating config", e);
 		}
 
 	}

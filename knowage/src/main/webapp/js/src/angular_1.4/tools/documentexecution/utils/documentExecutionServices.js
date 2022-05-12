@@ -499,6 +499,7 @@
 
 								if(params[parameter.urlName+'_field_visible_description']!=undefined)
 								{
+									parameter.parameterDescription = {};
 									var ArrDesc = params[parameter.urlName+'_field_visible_description'].split(';');
 									for(var w=0; w<ArrValue.length; w++){
 										parameter.parameterDescription[ArrValue[w]] =ArrDesc[w];

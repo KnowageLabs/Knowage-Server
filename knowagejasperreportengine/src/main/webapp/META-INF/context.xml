@@ -1,4 +1,4 @@
-<Context  path="/knowagejasperreportengine">
+<Context  path="/knowagejasperreportengine" reloadable="false">
 	<CookieProcessor sameSiteCookies="strict" />
 	
 	<!-- <Loader delegate="true"/> -->

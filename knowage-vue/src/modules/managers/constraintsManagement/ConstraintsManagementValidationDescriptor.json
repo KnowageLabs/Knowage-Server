@@ -18,6 +18,17 @@
                 ]
             },
             {
+                "fieldName": "description",
+                "validators": [
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
                 "fieldName": "valueTypeCd",
                 "validators": [
                     {

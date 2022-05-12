@@ -3,10 +3,10 @@
 		<div class="kn-page-content p-grid p-m-0">
 			<div class="p-col-4 p-sm-4 p-md-3 p-p-0 kn-page">
 				<Toolbar class="kn-toolbar kn-toolbar--primary">
-					<template #left>
+					<template #start>
 						{{ $t('managers.widgetGallery.title') }}
 					</template>
-					<template #right>
+					<template #end>
 						<FabButton icon="fas fa-plus" @click="toggleAdd" />
 						<Menu ref="menu" :model="addMenuItems" popup="true" />
 					</template>
@@ -24,7 +24,7 @@
 
 <script lang="ts">
 	import { defineComponent } from 'vue'
-	import axios from 'axios'
+	import { AxiosResponse } from 'axios'
 	import FabButton from '@/components/UI/KnFabButton.vue'
 	import KnInputFile from '@/components/UI/KnInputFile.vue'
 	import { IGalleryTemplate } from './GalleryManagement'
@@ -71,7 +71,7 @@
 				this.loading = true
 				this.axios
 					.get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery')
-					.then((response) => {
+					.then((response: AxiosResponse<any>) => {
 						this.galleryTemplates = response.data.map((item) => {
 							// TODO remove after backend implementation
 							item.label = item.label || item.name
@@ -135,7 +135,7 @@
 				}
 			},
 			importWidget(json: JSON) {
-				axios.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/import', json).then(() => {
+				this.$http.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/import', json).then(() => {
 					this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.uploadTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyUploaded') })
 
 					this.loadAllTemplates()

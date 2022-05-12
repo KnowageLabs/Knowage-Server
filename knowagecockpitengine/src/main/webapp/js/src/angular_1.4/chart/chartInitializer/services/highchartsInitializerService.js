@@ -664,6 +664,16 @@ angular.module('chartInitializer')
 			            	chart.yAxis[0].setTitle(yAxisTitle);
 			            }
 
+						if (chart.widgetData && chart.widgetData.chartTemplate && chart.widgetData.chartTemplate.CHART && chart.widgetData.chartTemplate.CHART.CUSTOMCOLORS && chart.widgetData.chartTemplate.CHART.CUSTOMCOLORS.COLOR ) {
+						for (var i = 0; i<chart.widgetData.chartTemplate.CHART.CUSTOMCOLORS.COLOR.length; i++){
+								for (var j = 0; j<series.data.length; j++){
+									
+									if (chart.widgetData.chartTemplate.CHART.CUSTOMCOLORS.COLOR[i].customName == series.data[j].name) {
+										series.data[j].color = chart.widgetData.chartTemplate.CHART.CUSTOMCOLORS.COLOR[i].customValue;
+									}
+								}
+						}
+						}
 			            chart.addSeriesAsDrilldown(e.point, series);
 
 			            if(series.firstLevelCategory){

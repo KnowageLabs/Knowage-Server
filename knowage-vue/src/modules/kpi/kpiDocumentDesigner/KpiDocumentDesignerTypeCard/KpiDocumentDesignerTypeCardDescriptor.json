@@ -1,0 +1,12 @@
+{
+    "typeOptions": [
+        {
+            "label": "common.kpi",
+            "value": "kpi"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.scorecard",
+            "value": "scorecard"
+        }
+    ]
+}

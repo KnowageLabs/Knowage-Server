@@ -1,10 +1,24 @@
+.layout-wrapper-content {
+    &.layout-wrapper-content-embed {
+        .layout-menu-container {
+            display: none;
+        }
+        .layout-main {
+            margin-left: 0;
+        }
+        .kn-page--full {
+            width: 100vw;
+        }
+    }
+}
+
 .kn-page {
     display: flex;
     flex-direction: column;
     height: 100vh;
     &--full {
         @extend .kn-page;
-        width: calc(100vw - #{$mainmenu-width});
+        width: calc(100vw - #{var(--kn-mainmenu-width)});
     }
     .kn-page-content {
         flex: 1;

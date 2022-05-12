@@ -335,6 +335,10 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 					checkIfExists(response.data);
 					$scope.searchSucessText = $scope.searchText.toLowerCase();
 					//$scope.hierarchyTreeService.setIsSlicer(response.data,filterFather)
+					var visibleMembers = $scope.hierarchyTreeService.getVisibleMembers($scope.data);
+					visibleMembers.forEach(function (aMember) {
+						$scope.updateSelectedMembers(aMember);
+					});
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.filterSearch.error'), 'Error');
 			});
@@ -590,6 +594,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			}
 
 			filterSlice();
+			hlght = false;
 			$mdDialog.hide();
 		}
 		else
@@ -599,6 +604,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				$scope.bindMode=false;
 				selectedFlag = false;
 				$scope.isSlicer=true;
+				hlght = false;
 				$mdDialog.hide();
 			}else{
 

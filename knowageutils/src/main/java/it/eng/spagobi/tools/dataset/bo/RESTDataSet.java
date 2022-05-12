@@ -282,7 +282,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 	protected Map<String, String> getRequestHeadersPropMap(String propName, JSONObject conf, boolean resolveParams) throws JSONException {
 		if (!conf.has(propName) || conf.getString(propName).isEmpty()) {
 			// optional property
-			return Collections.emptyMap();
+			return new HashMap<String, String>();
 		}
 
 		Object c = conf.get(propName);
@@ -910,6 +910,27 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 		attribute = quote(attribute);
 		statement = statement.replaceAll("\\$P\\{" + attribute + "\\}", replaceSpecials(replacement));
+
+		/*
+		 * Workaround in case of multivalue parameters with spaces TODO: See if there is the possibility to add a solution before this place
+		 */
+		if (statement != null && statement.startsWith("\"") && dataset instanceof SolrDataSet) {
+
+			if (statement.contains(" OR ")) {
+				statement = statement.replaceAll("\"", "");
+				statement = statement.replaceAll("'", "\"");
+			} else if (statement.equals("\"*\"")) {
+				statement = statement.replaceAll("\"", "");
+			} else if (statement.equals("\"'%'\"")) {
+				statement = statement.replaceAll("\"", "");
+				statement = statement.replaceAll("'", "");
+				statement = statement.replace("%", "*");
+			} else if (statement.contains(" , ")) {
+				if (!statement.isEmpty() && statement.startsWith("\"") && statement.endsWith("\"")) {
+					statement = statement.substring(1, statement.length() - 1);
+				}
+			}
+		}
 
 		/*
 		 * profileAttributeStartIndex = statement.indexOf("$P{", profileAttributeEndIndex-1); if (profileAttributeStartIndex != -1) statement =

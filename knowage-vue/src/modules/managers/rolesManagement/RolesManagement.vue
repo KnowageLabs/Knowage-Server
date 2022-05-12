@@ -3,42 +3,19 @@
         <div class="kn-page-content p-grid p-m-0">
             <div class="kn-list--column p-col-4 p-sm-4 p-md-3 p-p-0">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.rolesManagement.title') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <FabButton icon="fas fa-plus" @click="showForm" data-test="open-form-button" />
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <Listbox
-                    v-if="!loading"
-                    class="kn-list--column"
-                    :options="roles"
-                    :filter="true"
-                    :filterPlaceholder="$t('common.search')"
-                    optionLabel="name"
-                    filterMatchMode="contains"
-                    :filterFields="rolesDecriptor.filterFields"
-                    :emptyFilterMessage="$t('managers.rolesManagement.noResults')"
-                    @change="showForm"
-                    data-test="roles-list"
-                >
-                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                    <template #option="slotProps">
-                        <div class="kn-list-item" data-test="list-item">
-                            <div class="kn-list-item-text">
-                                <span>{{ slotProps.option.name }}</span>
-                                <span class="kn-list-item-text-secondary">{{ slotProps.option.roleTypeCD }}</span>
-                            </div>
-                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteRoleConfirm(slotProps.option.id)" data-test="delete-button" />
-                        </div>
-                    </template>
-                </Listbox>
+                <KnListBox class="kn-height-full" :options="roles" :settings="rolesDecriptor.knListSettings" @click="showForm" @delete.stop="deleteRoleConfirm(slotProps.option.id)"></KnListBox>
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
-                <router-view @touched="touched = true" @closed="touched = false" @inserted="pageReload" />
+                <router-view :publicRole="publicRole" @touched="touched = true" @closed="touched = false" @inserted="pageReload" />
             </div>
         </div>
     </div>
@@ -47,17 +24,14 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iRole } from './RolesManagement'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import rolesDecriptor from './RolesManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
-import Listbox from 'primevue/listbox'
+import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 
 export default defineComponent({
     name: 'roles-management',
-    components: {
-        FabButton,
-        Listbox
-    },
+    components: { FabButton, KnListBox },
     data() {
         return {
             roles: [] as iRole[],
@@ -65,7 +39,8 @@ export default defineComponent({
             touched: false,
             rolesDecriptor: rolesDecriptor,
             hiddenForm: false,
-            dirty: false
+            dirty: false,
+            publicRole: null as any
         }
     },
     async created() {
@@ -74,15 +49,25 @@ export default defineComponent({
     methods: {
         async loadAllRoles() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.roles = response.data
+                    this.checkAllRolesForPublicRole()
                 })
                 .finally(() => (this.loading = false))
         },
+        checkAllRolesForPublicRole() {
+            this.publicRole = null
+            this.roles.forEach((role) => {
+                if (role.isPublic) {
+                    this.publicRole = role
+                }
+            })
+        },
         showForm(event: any) {
-            const path = event.value ? `/roles-management/${event.value.id}` : '/roles-management/new-role'
+            console.log(event)
+            const path = event.item ? `/roles-management/${event.item.id}` : '/roles-management/new-role'
 
             if (!this.touched) {
                 this.$router.push(path)
@@ -107,8 +92,8 @@ export default defineComponent({
             })
         },
         async deleteRole(roleId: number) {
-            await axios
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId)
+            await this.$http
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),

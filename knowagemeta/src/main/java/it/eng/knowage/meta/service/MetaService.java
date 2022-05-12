@@ -175,6 +175,18 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	@GET
+	@Path("/model")
+	public Response loadModelFromSession(@Context HttpServletRequest req) {
+		try {
+			String translatedModel = (String) req.getSession().getAttribute("translatedModel");
+			return Response.ok(translatedModel).build();
+		} catch (Exception e) {
+			logger.error("Cannot recover model from session", e);
+		}
+		return Response.serverError().build();
+	}
+
+	@GET
 	@Path("/loadSbiModel/{bmId}")
 	public Response loadSbiModel(@PathParam("bmId") Integer bmId, @Context HttpServletRequest req) {
 

@@ -126,6 +126,9 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 						        .hideDelay(3000));
 						cockpitModule_properties.DOCUMENT_ID=response.data.id;
 						window.parent.postMessage(cockpitModule_properties);
+						if(window.parent.document.getElementById('_KNOWAGE_VUE')){
+							window.parent.postMessage({"type":"saveCockpit","model":cockpitModule_properties}, '*');
+						}
 					},
 					function(response){
 						sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.error"));
@@ -198,6 +201,7 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 			window.parent.angular.element(window.frameElement).scope().closeConfirm(true,true);
 		}
 		this.isFromNewCockpit=function(){
+			if(!window.parent.angular) return false;
 			return (window.parent.angular.element(window.frameElement).scope()!=undefined && window.parent.angular.element(window.frameElement).scope().closeConfirm!=undefined);
 		}
 
@@ -231,6 +235,8 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 	}
 	gs.numericalColumn = ['java.lang.Double','java.lang.Float','java.math.BigInteger','java.math.BigDecimal','java.lang.Long','java.lang.Integer'];
 	gs.isNumericColumn = function(column){
-	    return gs.numericalColumn.indexOf(column.type) != -1;
+		if(gs.numericalColumn.indexOf(column.type) != -1) return true;
+		else if(column.type === "java.lang.String" && column.fieldType === "MEASURE" && ["COUNT","COUNT_DISTINCT"].indexOf(column.aggregationSelected) != -1) return true
+	    return false;
 	}
 });

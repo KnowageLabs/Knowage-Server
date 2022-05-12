@@ -2,13 +2,25 @@
     <Card class="p-mx-auto">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.menuManagement.roles') }}
                 </template>
             </Toolbar>
         </template>
         <template #content>
-            <DataTable :value="rolesList" v-model:filters="filters" v-model:selection="selectedRoles" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" @rowSelect="onRowSelect" @rowUnselect="onRowUnselect">
+            <DataTable
+                :value="rolesListFiltered"
+                v-model:filters="filters"
+                v-model:selection="selectedRoles"
+                class="p-datatable-sm kn-table"
+                dataKey="id"
+                responsiveLayout="stack"
+                breakpoint="960px"
+                @rowSelect="onRowSelect"
+                @rowUnselect="onRowUnselect"
+                @rowSelectAll="onAllRowSelectionChange"
+                @rowUnselectAll="onAllRowSelectionChange"
+            >
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
                 </template>
@@ -28,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -43,16 +55,26 @@ export default defineComponent({
         DataTable
     },
     props: {
-        rolesList: Array,
-        selected: Array
+        rolesList: {
+            type: Array as PropType<iRole[]>
+        },
+        selected: Array as PropType<iRole[]>,
+        parentNodeRoles: {
+            type: Array as PropType<iRole[]>
+        }
     },
     emits: ['changed'],
     data() {
         return {
-            selectedRoles: [] as iRole[],
+            selectedRoles: [] as iRole[] | null,
             filters: {
                 global: [filterDefault]
             }
+        }
+    },
+    created() {
+        if (this.selected) {
+            this.selectedRoles = this.selected
         }
     },
     watch: {
@@ -68,6 +90,19 @@ export default defineComponent({
         },
         onRowUnselect() {
             this.$emit('changed', this.selectedRoles)
+        },
+        onAllRowSelectionChange() {
+            setTimeout(() => this.$emit('changed', this.selectedRoles), 0)
+        }
+    },
+    computed: {
+        rolesListFiltered(): iRole[] {
+            if (!this.rolesList) return []
+            if (this.parentNodeRoles) {
+                return this.rolesList.filter((role) => this.parentNodeRoles && this.parentNodeRoles.findIndex((parentNodeRole) => parentNodeRole.id === role.id) >= 0)
+            } else {
+                return this.rolesList
+            }
         }
     }
 })

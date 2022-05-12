@@ -585,8 +585,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 
 	$scope.requestAdditionalParameterAddItem = function() {
-
-		$scope.restRequestAdditionalParameters.push({"name":"","value":"","index":$scope.counterRequestAdditionalParameters++});
+	var index;
+	if($scope.restRequestAdditionalParameters) {
+		index = $scope.restRequestAdditionalParameters.length +1;
+		$scope.counterRequestAdditionalParameters = index;
+	}
+		$scope.restRequestAdditionalParameters.push({"name":"","value":"","index":$scope.counterRequestAdditionalParameters});
 
 		$timeout(
 				function() {
@@ -1972,6 +1976,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					$scope.setFormNotDirty();
 				}
 			}
+			if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="solr"){
+		 		$scope.restRequestAdditionalParameters = angular.copy($scope.selectedDataSet.restRequestAdditionalParameters);
+			}
 			 if($scope.selectedDataSet.dsTypeCd == "Qbe" && !qbeParameterDeletingMessage.includes("Qbe") ){
 					qbeParameterDeletingMessage =  parameterDeletingMessage + "Parameters for Qbe Dataset should be deleted from qbeDesigner";
 			 }
@@ -2206,7 +2213,16 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				  return JSON.stringify(obj) === JSON.stringify({});
 				}
 
+			function IsJsonString(str) {
+    		try {
+        		JSON.parse(str);
+    			} catch (e) {
+        			return false;
+    			}
+ 			   return true;
+			}
 			if($scope.selectedDataSet.restRequestHeaders != undefined && !isObjectEmpty($scope.selectedDataSet.restRequestHeaders)) {
+				if (IsJsonString($scope.selectedDataSet.restRequestHeaders)){
 				for (var key in JSON.parse($scope.selectedDataSet.restRequestHeaders)) {
 
 					var restRequestHeaderTemp = {};
@@ -2220,6 +2236,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					  $scope.counterRequestHeaders++;
 					  restRequestHeadersTemp.push(restRequestHeaderTemp);
 
+				}
 				}
 			}
 
@@ -3361,8 +3378,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						for(var f in fields){
 							if(typeof fields[f] != 'object') continue;
 							var tempCol = {"headerName":fields[f].header,"field":fields[f].name, "tooltipField":fields[f].name};
-							// If there is a subtype, show that
-							tempCol.headerComponentParams = {template: headerTemplate(fields[f].subtype || fields[f].type)};
+							tempCol.headerComponentParams = {template: headerTemplate(fields[f].type)};
 							columns.push(tempCol);
 						}
 						return columns;

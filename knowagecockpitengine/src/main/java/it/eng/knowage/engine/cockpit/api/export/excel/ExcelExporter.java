@@ -23,15 +23,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -49,6 +44,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.engine.cockpit.api.export.AbstractFormatExporter;
+import it.eng.knowage.engine.cockpit.api.export.ExporterClient;
 import it.eng.knowage.engine.cockpit.api.export.excel.exporters.IWidgetExporter;
 import it.eng.knowage.engine.cockpit.api.export.excel.exporters.WidgetExporterFactory;
 import it.eng.qbe.serializer.SerializationException;
@@ -56,11 +53,8 @@ import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -68,53 +62,33 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  * @author Marco Balestri (marco.balestri@eng.it)
  */
 
-public class ExcelExporter {
+public class ExcelExporter extends AbstractFormatExporter {
 
 	static private Logger logger = Logger.getLogger(ExcelExporter.class);
 
 	public static final String UNIQUE_ALIAS_PLACEHOLDER = "_$_";
 
-	private final String userUniqueIdentifier;
 	private final boolean isSingleWidgetExport;
-	private final JSONObject body;
-	private Locale locale;
 	private int uniqueId = 0;
 	private String requestURL = "";
-	private List<Integer> hiddenColumns;
+
+	private Map<String, CellStyle> format2CellStyle = new HashMap<String, CellStyle>();
 
 	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "selector", "selection", "html" };
 	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
 	private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
 	private static final int SHEET_NAME_MAX_LEN = 31;
-	private static final String DATE_FORMAT = "dd/MM/yyyy";
-	public static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
 
 	// used only for scheduled export
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap, String requestURL) {
-		this.userUniqueIdentifier = userUniqueIdentifier;
+		super(userUniqueIdentifier, new JSONObject());
 		this.isSingleWidgetExport = false;
 		this.requestURL = requestURL;
-		this.body = new JSONObject();
 	}
 
 	public ExcelExporter(String outputType, String userUniqueIdentifier, JSONObject body) {
-		this.userUniqueIdentifier = userUniqueIdentifier;
+		super(userUniqueIdentifier, body);
 		this.isSingleWidgetExport = body.optBoolean("exportWidget");
-		this.body = body;
-		this.locale = getLocale(body);
-	}
-
-	private Locale getLocale(JSONObject body) {
-		try {
-			String language = body.getString(SpagoBIConstants.SBI_LANGUAGE);
-			String country = body.getString(SpagoBIConstants.SBI_COUNTRY);
-			Locale toReturn = new Locale(language, country);
-			return toReturn;
-		} catch (Exception e) {
-			logger.warn("Cannot get locale information from input parameters body", e);
-			return Locale.ENGLISH;
-		}
-
 	}
 
 	public String getMimeType() {
@@ -233,28 +207,6 @@ public class ExcelExporter {
 		}
 	}
 
-	String getWidgetTypeFromCockpitTemplate(String templateString, long widgetId) {
-		try {
-			JSONObject templateJson = new JSONObject(templateString);
-			JSONArray sheets = templateJson.getJSONArray("sheets");
-			for (int i = 0; i < sheets.length(); i++) {
-				JSONObject sheet = sheets.getJSONObject(i);
-				JSONArray widgets = sheet.getJSONArray("widgets");
-				for (int j = 0; j < widgets.length(); j++) {
-					JSONObject widget = widgets.getJSONObject(j);
-					long currWidgetId = widget.getLong("id");
-					if (currWidgetId == widgetId) {
-						return widget.getString("type");
-					}
-				}
-			}
-		} catch (Exception e) {
-			logger.error("Couldn't get widget " + widgetId + " type, it will be exported as a normal widget.");
-		}
-		logger.error("Couldn't get widget " + widgetId + " type, it will be exported as a normal widget.");
-		return "";
-	}
-
 	private JSONObject buildOptionsForCrosstab(String templateString) {
 		try {
 			JSONObject template = new JSONObject(templateString);
@@ -277,7 +229,7 @@ public class ExcelExporter {
 						options.put("style", widget.getJSONObject("content").getJSONObject("style"));
 						// variables cannot be retrieved from template so we must recover them from request body
 						options.put("variables", getCockpitVariables());
-						ExcelExporterClient client = new ExcelExporterClient();
+						ExporterClient client = new ExporterClient();
 						int datasetId = widget.getJSONObject("dataset").getInt("dsId");
 						String dsLabel = getDatasetLabel(template, datasetId);
 						String selections = getCockpitSelectionsFromBody(widget).toString();
@@ -301,16 +253,30 @@ public class ExcelExporter {
 		}
 	}
 
-	private JSONObject getCockpitVariables() {
+	@Override
+	protected JSONObject getCockpitSelectionsFromBody(JSONObject widget) {
+		JSONObject cockpitSelections = new JSONObject();
+		if (body == null || body.length() == 0)
+			return cockpitSelections;
 		try {
-			if (body.get("COCKPIT_VARIABLES") instanceof JSONObject)
-				return body.getJSONObject("COCKPIT_VARIABLES");
-			else
-				return body.getJSONArray("COCKPIT_VARIABLES").getJSONObject(0);
-		} catch (JSONException e) {
-			logger.error("Cannot retrieve cockpit variables", e);
+			if (isSingleWidgetExport) { // export single widget
+				cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
+			} else { // export whole cockpit
+				JSONArray allWidgets = body.getJSONArray("widget");
+				int i;
+				for (i = 0; i < allWidgets.length(); i++) {
+					JSONObject curWidget = allWidgets.getJSONObject(i);
+					if (curWidget.getLong("id") == widget.getLong("id"))
+						break;
+				}
+				cockpitSelections = body.getJSONArray("COCKPIT_SELECTIONS").getJSONObject(i);
+			}
+			forceUniqueHeaders(cockpitSelections);
+		} catch (Exception e) {
+			logger.error("Cannot get cockpit selections", e);
 			return new JSONObject();
 		}
+		return cockpitSelections;
 	}
 
 	private String getDatasetLabel(JSONObject template, int dsId) {
@@ -393,6 +359,8 @@ public class ExcelExporter {
 				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
 				String datasetLabel = dataset.getLabel();
 				JSONObject cockpitSelections = getMultiCockpitSelectionsFromBody(widget, datasetId);
+				if (isEmptyLayer(cockpitSelections))
+					continue;
 
 				if (getRealtimeFromWidget(datasetId, configuration))
 					map.put("nearRealtime", true);
@@ -417,89 +385,24 @@ public class ExcelExporter {
 		return multiDataStore;
 	}
 
+	private boolean isEmptyLayer(JSONObject cockpitSelections) {
+		try {
+			JSONObject aggregations = cockpitSelections.getJSONObject("aggregations");
+			JSONArray measures = aggregations.getJSONArray("measures");
+			JSONArray categories = aggregations.getJSONArray("categories");
+			if (measures.length() > 0 || categories.length() > 0)
+				return false;
+			else
+				return true;
+		} catch (Exception e) {
+			logger.warn("Error while checking if layer is empty", e);
+			return false;
+		}
+	}
+
 	public JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget) {
 		// if pagination is disabled offset = 0, fetchSize = -1
 		return getDataStoreForWidget(template, widget, 0, -1);
-	}
-
-	public JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget, int offset, int fetchSize) {
-		Map<String, Object> map = new java.util.HashMap<String, Object>();
-		JSONObject datastore = null;
-		try {
-			JSONObject configuration = template.getJSONObject("configuration");
-			JSONObject datasetObj = widget.getJSONObject("dataset");
-			int datasetId = datasetObj.getInt("dsId");
-			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
-			String datasetLabel = dataset.getLabel();
-
-			if (getRealtimeFromWidget(datasetId, configuration))
-				map.put("nearRealtime", true);
-
-			JSONObject cockpitSelections = getCockpitSelectionsFromBody(widget);
-
-			JSONArray summaryRow = getSummaryRowFromWidget(widget);
-			if (summaryRow != null)
-				cockpitSelections.put("summaryRow", summaryRow);
-
-			if (isSolrDataset(dataset) && !widget.getString("type").equalsIgnoreCase("discovery")) {
-				JSONObject jsOptions = new JSONObject();
-				jsOptions.put("solrFacetPivot", true);
-				cockpitSelections.put("options", jsOptions);
-			}
-
-			datastore = getDatastore(datasetLabel, map, cockpitSelections.toString(), offset, fetchSize);
-			datastore.put("widgetData", widget);
-
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error getting datastore for widget [type=" + widget.optString("type") + "] [id=" + widget.optLong("id") + "]",
-					e);
-		}
-		return datastore;
-	}
-
-	private JSONObject getCockpitSelectionsFromBody(JSONObject widget) {
-		JSONObject cockpitSelections = new JSONObject();
-		if (body == null || body.length() == 0)
-			return cockpitSelections;
-		try {
-			if (isSingleWidgetExport) { // export single widget
-				cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
-			} else { // export whole cockpit
-				JSONArray allWidgets = body.getJSONArray("widget");
-				int i;
-				for (i = 0; i < allWidgets.length(); i++) {
-					JSONObject curWidget = allWidgets.getJSONObject(i);
-					if (curWidget.getLong("id") == widget.getLong("id"))
-						break;
-				}
-				cockpitSelections = body.getJSONArray("COCKPIT_SELECTIONS").getJSONObject(i);
-			}
-			forceUniqueHeaders(cockpitSelections);
-		} catch (Exception e) {
-			logger.error("Cannot get cockpit selections", e);
-			return new JSONObject();
-		}
-		return cockpitSelections;
-	}
-
-	private void forceUniqueHeaders(JSONObject cockpitSelections) throws JSONException {
-		JSONObject aggregations = cockpitSelections.getJSONObject("aggregations");
-		JSONArray measures = aggregations.getJSONArray("measures");
-		manipulateDimensions(measures);
-		JSONArray categories = aggregations.getJSONArray("categories");
-		manipulateDimensions(categories);
-	}
-
-	private void manipulateDimensions(JSONArray dimensions) throws JSONException {
-		Set<String> dimensionsAliases = new HashSet<String>();
-		for (int i = 0; i < dimensions.length(); i++) {
-			JSONObject d = dimensions.getJSONObject(i);
-			String alias = d.getString("alias");
-			if (dimensionsAliases.contains(alias)) {
-				d.put("alias", alias + UNIQUE_ALIAS_PLACEHOLDER + i);
-			}
-			dimensionsAliases.add(alias);
-		}
 	}
 
 	private JSONObject getMultiCockpitSelectionsFromBody(JSONObject widget, int datasetId) {
@@ -552,6 +455,7 @@ public class ExcelExporter {
 			JSONObject widgetData = dataStore.getJSONObject("widgetData");
 			JSONObject widgetContent = widgetData.getJSONObject("content");
 			HashMap<String, String> arrayHeader = new HashMap<String, String>();
+			HashMap<String, String> chartAggregationsMap = new HashMap<String, String>();
 			if (widgetData.getString("type").equalsIgnoreCase("table")) {
 				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 					JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
@@ -562,6 +466,15 @@ public class ExcelExporter {
 						key = column.getString("name");
 					}
 					arrayHeader.put(key, column.getString("aliasToShow"));
+				}
+			} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
+				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
+					JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
+					if (column.has("aggregationSelected") && column.has("alias")) {
+						String col = column.getString("alias");
+						String aggregation = column.getString("aggregationSelected");
+						chartAggregationsMap.put(col, aggregation);
+					}
 				}
 			}
 
@@ -602,10 +515,22 @@ public class ExcelExporter {
 				for (int i = 0; i < columnsOrdered.length(); i++) {
 					JSONObject column = columnsOrdered.getJSONObject(i);
 					String columnName = column.getString("header");
+					String chartAggregation = null;
 					if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("discovery")) {
 						if (arrayHeader.get(columnName) != null) {
 							columnName = arrayHeader.get(columnName);
 						}
+					} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
+						chartAggregation = chartAggregationsMap.get(columnName);
+						if (chartAggregation != null) {
+							columnName = columnName.split("_" + chartAggregation)[0];
+						}
+					}
+
+					columnName = getInternationalizedHeader(columnName);
+
+					if (widgetData.getString("type").equalsIgnoreCase("chart") && chartAggregation != null) {
+						columnName = columnName + "_" + chartAggregation;
 					}
 
 					Cell cell = header.createCell(i);
@@ -631,7 +556,7 @@ public class ExcelExporter {
 			tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
 
 			// cell styles for table widget
-			CellStyle[] columnStyles = getColumnsStyles(wb, createHelper, columnsOrdered, widgetContent);
+			JSONObject[] columnStyles = getColumnsStyles(columnsOrdered, widgetContent);
 
 			// FILL RECORDS
 			int isGroup = mapGroupsAndColumns.isEmpty() ? 0 : 1;
@@ -645,7 +570,7 @@ public class ExcelExporter {
 
 				for (int c = 0; c < columnsOrdered.length(); c++) {
 					JSONObject column = columnsOrdered.getJSONObject(c);
-					String type = column.getString("type");
+					String type = getCellType(column, column.getString("name"), columnStyles[c]);
 					String colIndex = column.getString("name"); // column_1, column_2, column_3...
 
 					Cell cell = row.createCell(c);
@@ -661,13 +586,13 @@ public class ExcelExporter {
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 							}
-							cell.setCellStyle(columnStyles[c] != null ? columnStyles[c] : intCellStyle);
+							cell.setCellStyle(getCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle));
 							break;
 						case "float":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 							}
-							cell.setCellStyle(columnStyles[c] != null ? columnStyles[c] : floatCellStyle);
+							cell.setCellStyle(getCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle));
 							break;
 						case "date":
 							try {
@@ -706,99 +631,72 @@ public class ExcelExporter {
 		}
 	}
 
-	private CellStyle[] getColumnsStyles(Workbook wb, CreationHelper helper, JSONArray columnsOrdered, JSONObject widgetContent) {
+	private String getCellType(JSONObject column, String colName, JSONObject colStyle) {
 		try {
-			CellStyle[] toReturn = new CellStyle[columnsOrdered.length() + 10];
-			JSONArray columns = widgetContent.getJSONArray("columnSelectedOfDataset");
-			for (int i = 0; i < columns.length(); i++) {
-				JSONObject col = columns.getJSONObject(i);
-				if (col.has("style") && col.getJSONObject("style").has("precision")) {
-					int precision = col.getJSONObject("style").getInt("precision");
-					String format = "#,##0";
-					if (precision > 0) {
-						format += ".";
-						for (int j = 0; j < precision; j++) {
-							format += "0";
-						}
-					}
-					CellStyle cellStyle = wb.createCellStyle();
-					cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
-					toReturn[i] = cellStyle;
-				}
-			}
-			return toReturn;
+			return column.getString("type");
 		} catch (Exception e) {
-			logger.error("Error while retrieving table columns formatting.", e);
-			return new CellStyle[columnsOrdered.length() + 10];
+			logger.error("Error while retrieving column {" + colName + "} type. It will be treated as string.", e);
+			return "string";
 		}
 	}
 
-	private List<Integer> getHiddenColumnsList(JSONArray columns) {
-		List<Integer> hiddenColumns = new ArrayList<Integer>();
-		try {
-			for (int i = 0; i < columns.length(); i++) {
-				JSONObject column = columns.getJSONObject(i);
-				if (column.has("style")) {
-					JSONObject style = column.optJSONObject("style");
-					if (style.has("hiddenColumn")) {
-						if (style.getString("hiddenColumn").equals("true")) {
-							hiddenColumns.add(i);
-						}
-					}
-				}
+	private boolean isAvoidSeparator(JSONObject colStyle) throws JSONException {
+		if (colStyle != null && colStyle.has("asString")) {
+			if (colStyle.getBoolean("asString")) {
+				return true;
 			}
-			return hiddenColumns;
+		}
+		return false;
+	}
+
+	private CellStyle getCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, CellStyle defaultStyle) {
+		String colName = null;
+		try {
+			colName = column.getString("name");
+			boolean isAvoidSeparator = isAvoidSeparator(colStyle);
+			String format = null;
+			if (isAvoidSeparator) {
+				format = "0";
+			} else {
+				format = "#,##0";
+			}
+			// precision (i.e. number of digits to right of the decimal point) that is specified on dashboard design wins
+			if ((colStyle != null && colStyle.has("precision")) || isAvoidSeparator) {
+				int precision = (colStyle != null && colStyle.has("precision")) ? colStyle.getInt("precision") : 2;
+				format = getNumberFormatByPrecision(precision, format);
+				CellStyle toReturn = getCellStyleByFormat(wb, helper, format);
+				return toReturn;
+			}
+			return defaultStyle;
 		} catch (Exception e) {
-			logger.error("Error while getting hidden columns list");
-			return new ArrayList<Integer>();
+			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			return defaultStyle;
 		}
 	}
 
-	private JSONArray getTableOrderedColumns(JSONArray columnsNew, JSONArray columnsOld) {
-		JSONArray columnsOrdered = new JSONArray();
-		// new columns are in the correct order
-		// for each of them we have to find the correspondent old column and push it into columnsOrdered
-		try {
-			for (int i = 0; i < columnsNew.length(); i++) {
-
-				if (hiddenColumns.contains(i))
-					continue;
-
-				JSONObject columnNew = columnsNew.getJSONObject(i);
-				String newHeader = getTableColumnHeaderValue(columnNew);
-
-				for (int j = 0; j < columnsOld.length(); j++) {
-					JSONObject columnOld = columnsOld.getJSONObject(j);
-					if (columnOld.getString("header").equals(newHeader)) {
-						columnsOrdered.put(columnOld);
-						break;
-					}
-				}
+	protected String getNumberFormatByPrecision(int precision, String initialFormat) {
+		String format = initialFormat;
+		if (precision > 0) {
+			format += ".";
+			for (int j = 0; j < precision; j++) {
+				format += "0";
 			}
-			return columnsOrdered;
-		} catch (Exception e) {
-			logger.error("Error retrieving ordered columns");
-			return new JSONArray();
 		}
+		return format;
 	}
 
-	private String getTableColumnHeaderValue(JSONObject column) {
-		String header = null;
-		try {
-			if (column.has("variables")) {
-				JSONArray variables = column.getJSONArray("variables");
-				for (int i = 0; i < variables.length(); i++) {
-					JSONObject variable = variables.getJSONObject(i);
-					if (variable.getString("action").equalsIgnoreCase("header"))
-						header = getCockpitVariables().getString(variable.getString("variable"));
-				}
-			} else
-				header = column.getString("aliasToShow");
-			return header;
-		} catch (Exception e) {
-			logger.error("Error retrieving table column header values.", e);
-			return "";
+	/*
+	 * This method avoids cell style objects number to increase by rows number (see https://production.eng.it/jira/browse/KNOWAGE-6692 and
+	 * https://production.eng.it/jira/browse/KNOWAGE-6693)
+	 */
+	protected CellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format) {
+		if (!format2CellStyle.containsKey(format)) {
+			// if cell style does not exist
+			CellStyle cellStyle = wb.createCellStyle();
+			cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
+			format2CellStyle.put(format, cellStyle);
 		}
+		return format2CellStyle.get(format);
 	}
 
 	private Row createHeaderColumnNames(Sheet sheet, Map<String, String> mapGroupsAndColumns, JSONArray columnsOrdered, int startRowOffset) {
@@ -844,49 +742,6 @@ public class ExcelExporter {
 		}
 	}
 
-	private HashMap<String, String> getMapFromGroupsArray(JSONArray groupsArray, JSONArray aggr) {
-		HashMap<String, String> returnMap = new HashMap<String, String>();
-		try {
-			if (aggr != null && groupsArray != null) {
-
-				for (int i = 0; i < groupsArray.length(); i++) {
-
-					String id = groupsArray.getJSONObject(i).getString("id");
-					String groupName = groupsArray.getJSONObject(i).getString("name");
-
-					for (int ii = 0; ii < aggr.length(); ii++) {
-						JSONObject column = aggr.getJSONObject(ii);
-
-						if (column.has("group") && column.getString("group").equals(id)) {
-							String nameToInsert = getTableColumnHeaderValue(column);
-							returnMap.put(nameToInsert, groupName);
-						}
-
-					}
-				}
-			}
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Couldn't create map from groups array", e);
-		}
-		return returnMap;
-
-	}
-
-	private JSONArray filterDataStoreColumns(JSONArray columns) {
-		try {
-			for (int i = 0; i < columns.length(); i++) {
-				String element = columns.getString(i);
-				if (element != null && element.equals("recNo")) {
-					columns.remove(i);
-					break;
-				}
-			}
-		} catch (JSONException e) {
-			logger.error("Can not filter Columns Array");
-		}
-		return columns;
-	}
-
 	public static String[] toStringArray(JSONArray array) {
 		if (array == null)
 			return null;
@@ -901,250 +756,6 @@ public class ExcelExporter {
 	private JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections) {
 		// if pagination is disabled offset = 0, fetchSize = -1
 		return getDatastore(datasetLabel, map, selections, 0, -1);
-	}
-
-	private JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections, int offset, int fetchSize) {
-		ExcelExporterClient client = new ExcelExporterClient();
-		try {
-			JSONObject datastore = client.getDataStore(map, datasetLabel, userUniqueIdentifier, selections, offset, fetchSize);
-			return datastore;
-		} catch (Exception e) {
-			String message = "Unable to get data";
-			logger.error(message, e);
-			throw new SpagoBIRuntimeException(message);
-		}
-	}
-
-	private boolean isSolrDataset(IDataSet dataSet) {
-		if (dataSet instanceof VersionedDataSet) {
-			dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
-		}
-		return dataSet instanceof SolrDataSet;
-	}
-
-	private JSONArray getSummaryRowFromWidget(JSONObject widget) {
-		try {
-			JSONObject settings = widget.optJSONObject("settings");
-			JSONArray jsonArrayForSummary = new JSONArray();
-			if (settings != null) {
-				JSONObject summary = settings.optJSONObject("summary");
-				if (settings.has("summary") && summary.has("enabled") && summary.optBoolean("enabled")) {
-
-					if (summary.has("list")) {
-						JSONArray listArray = summary.getJSONArray("list");
-
-						if (listArray.length() > 1) {
-							for (int jj = 0; jj < listArray.length(); jj++) {
-
-								JSONObject aggrObj = listArray.getJSONObject(jj);
-
-								if (!aggrObj.has("aggregation")) {
-
-									JSONArray measures = new JSONArray();
-									JSONObject content = widget.optJSONObject("content");
-									if (content != null) {
-										JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
-										if (columns != null) {
-											for (int i = 0; i < columns.length(); i++) {
-												JSONObject column = columns.getJSONObject(i);
-												if ("MEASURE".equalsIgnoreCase(column.getString("fieldType"))) {
-													JSONObject measure = new JSONObject();
-													measure.put("id", column.getString("alias"));
-													measure.put("alias", column.getString("aliasToShow"));
-
-													String formula = column.optString("formula");
-													String name = formula.isEmpty() ? column.optString("name") : formula;
-													if (column.has("formula")) {
-														measure.put("formula", name);
-													} else
-														measure.put("columnName", name);
-
-													measure.put("funct", column.getString("funcSummary"));
-
-													boolean hidden = false;
-
-													if (column.has("style")) {
-
-														JSONObject style = column.optJSONObject("style");
-														if (style != null) {
-
-															String hideSummary = style.optString("hideSummary");
-
-															if (hideSummary != null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
-																hidden = true;
-															}
-
-														}
-
-													}
-													if (!hidden)
-														measures.put(measure);
-												}
-											}
-										}
-									}
-									JSONObject summaryRow = new JSONObject();
-									summaryRow.put("measures", measures);
-
-									JSONObject dataset = widget.optJSONObject("dataset");
-									if (dataset != null) {
-										int dsId = dataset.getInt("dsId");
-										summaryRow.put("dataset", dsId);
-									}
-
-									jsonArrayForSummary.put(summaryRow);
-
-								} else {
-
-									JSONArray measures = new JSONArray();
-									JSONObject content = widget.optJSONObject("content");
-									if (content != null) {
-										JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
-										if (columns != null) {
-											for (int i = 0; i < columns.length(); i++) {
-												JSONObject column = columns.getJSONObject(i);
-												if ("MEASURE".equalsIgnoreCase(column.getString("fieldType"))) {
-													JSONObject measure = new JSONObject();
-													measure.put("id", column.getString("alias"));
-													measure.put("alias", column.getString("aliasToShow"));
-
-													String formula = column.optString("formula");
-													String name = formula.isEmpty() ? column.optString("name") : formula;
-													if (column.has("formula")) {
-														measure.put("formula", name);
-													} else
-														measure.put("columnName", name);
-
-													measure.put("funct", aggrObj.get("aggregation"));
-
-													boolean hidden = false;
-
-													if (column.has("style")) {
-
-														JSONObject style = column.optJSONObject("style");
-														if (style != null) {
-
-															String hideSummary = style.optString("hideSummary");
-
-															if (hideSummary != null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
-																hidden = true;
-															}
-
-														}
-
-													}
-													if (!hidden)
-														measures.put(measure);
-												}
-											}
-										}
-									}
-									JSONObject summaryRow = new JSONObject();
-									summaryRow.put("measures", measures);
-
-									JSONObject dataset = widget.optJSONObject("dataset");
-									if (dataset != null) {
-										int dsId = dataset.getInt("dsId");
-										summaryRow.put("dataset", dsId);
-									}
-
-									jsonArrayForSummary.put(summaryRow);
-
-								}
-
-							}
-						} else {
-							JSONArray measures = new JSONArray();
-							JSONObject content = widget.optJSONObject("content");
-							if (content != null) {
-								JSONArray columns = content.optJSONArray("columnSelectedOfDataset");
-								if (columns != null) {
-									for (int i = 0; i < columns.length(); i++) {
-										JSONObject column = columns.getJSONObject(i);
-										if ("MEASURE".equalsIgnoreCase(column.getString("fieldType"))) {
-											JSONObject measure = new JSONObject();
-											measure.put("id", column.getString("alias"));
-											measure.put("alias", column.getString("aliasToShow"));
-
-											String formula = column.optString("formula");
-											String name = formula.isEmpty() ? column.optString("name") : formula;
-											if (column.has("formula")) {
-												measure.put("formula", name);
-											} else
-												measure.put("columnName", name);
-
-											measure.put("funct", column.getString("funcSummary"));
-
-											boolean hidden = false;
-
-											if (column.has("style")) {
-
-												JSONObject style = column.optJSONObject("style");
-												if (style != null) {
-
-													String hideSummary = style.optString("hideSummary");
-
-													if (hideSummary != null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
-														hidden = true;
-													}
-
-												}
-
-											}
-											if (!hidden)
-												measures.put(measure);
-										}
-									}
-								}
-							}
-							JSONObject summaryRow = new JSONObject();
-							summaryRow.put("measures", measures);
-
-							JSONObject dataset = widget.optJSONObject("dataset");
-							if (dataset != null) {
-								int dsId = dataset.getInt("dsId");
-								summaryRow.put("dataset", dsId);
-							}
-
-							jsonArrayForSummary.put(summaryRow);
-						}
-					}
-					return jsonArrayForSummary;
-				}
-			}
-			return null;
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException(e);
-		}
-	}
-
-	private boolean getRealtimeFromWidget(int dsId, JSONObject configuration) {
-		try {
-			JSONObject dataset = getDataset(dsId, configuration);
-			return !dataset.optBoolean("useCache");
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException(e);
-		}
-	}
-
-	private JSONObject getDataset(int dsId, JSONObject configuration) {
-		try {
-			JSONArray datasets = configuration.getJSONArray("datasets");
-			for (int i = 0; i < datasets.length(); i++) {
-				JSONObject dataset = (JSONObject) datasets.get(i);
-				int id = dataset.getInt("dsId");
-				if (id == dsId) {
-					return dataset;
-				}
-			}
-			return null;
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException(e);
-		}
-	}
-
-	public Locale getLocale() {
-		return locale;
 	}
 
 }

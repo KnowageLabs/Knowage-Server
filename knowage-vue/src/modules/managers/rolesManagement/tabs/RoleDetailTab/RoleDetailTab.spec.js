@@ -20,7 +20,9 @@ const mockedRole = {
 
 jest.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
+const $http = {
+    get: axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
+}
 
 const factory = () => {
     return mount(RoleDetailTab, {
@@ -33,7 +35,8 @@ const factory = () => {
                 InputText
             },
             mocks: {
-                $t: (msg) => msg
+                $t: (msg) => msg,
+                $http
             }
         }
     })

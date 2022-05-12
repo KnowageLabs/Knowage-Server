@@ -1,0 +1,39 @@
+{
+    "validations": {
+        "dataset": [
+            {
+                "fieldName": "restAddress",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "solr-fields-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "solrCollection",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "solr-fields-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "solrFieldList",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "document-fields-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

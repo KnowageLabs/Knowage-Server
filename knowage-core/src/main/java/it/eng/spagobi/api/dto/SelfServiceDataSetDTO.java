@@ -21,6 +21,7 @@ package it.eng.spagobi.api.dto;
 import javax.validation.constraints.Size;
 import javax.ws.rs.FormParam;
 
+import it.eng.spagobi.services.validation.AlphanumericNoSpaces;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 
 public class SelfServiceDataSetDTO {
@@ -33,9 +34,6 @@ public class SelfServiceDataSetDTO {
 
 	@FormParam("persist")
 	private String persist;
-
-	@FormParam("tablePrefix")
-	private String tablePrefix;
 
 	@FormParam("tableName")
 	private String tableName;
@@ -112,6 +110,9 @@ public class SelfServiceDataSetDTO {
 	@FormParam("datasetMetadata")
 	private String datasetMetadata;
 
+	@FormParam("config")
+	private String config;
+
 	@ExtendedAlphanumeric
 	@Size(max = 50)
 	public String getLabel() {
@@ -138,15 +139,8 @@ public class SelfServiceDataSetDTO {
 		this.persist = persist;
 	}
 
-	public String getTablePrefix() {
-		return tablePrefix;
-	}
-
-	public void setTablePrefix(String tablePrefix) {
-		this.tablePrefix = tablePrefix;
-	}
-
 	@Size(max = 50)
+	@AlphanumericNoSpaces
 	public String getTableName() {
 		return tableName;
 	}
@@ -350,6 +344,14 @@ public class SelfServiceDataSetDTO {
 
 	public void setDatasetMetadata(String datasetMetadata) {
 		this.datasetMetadata = datasetMetadata;
+	}
+
+	public String getConfig() {
+		return config;
+	}
+
+	public void setConfig(String config) {
+		this.config = config;
 	}
 
 }

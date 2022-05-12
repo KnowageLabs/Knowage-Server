@@ -1,0 +1,7 @@
+.kn-tieredMenu.p-tieredmenu.p-tieredmenu-overlay {
+    transform: translateX(var(--kn-mainmenu-width)) translateY(-41px);
+    border-radius: 0;
+    &.smallScreen {
+        transform: translateX(var(--kn-mainmenu-width)) translateY(41px);
+    }
+}

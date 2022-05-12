@@ -59,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.bulkSelection = false;
 		$scope.selectedCells = [];
 		$scope.selectedRows = [];
-
+		$scope.maxScaleValue = 10;
 		$scope.getTemplateUrl = function(template){
 	  		return cockpitModule_generalServices.getTemplateUrl('advancedTableWidget',template);
 	  	}
@@ -88,7 +88,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 		}
-		
+
 		var replacePlaceholders = function(text, data, skipAdapting){
 			function adaptToType(value) {
 				if(skipAdapting) return value;
@@ -149,6 +149,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}else{
 							tempCol.headerTooltip = $scope.ngModel.content.columnSelectedOfDataset[c].aliasToShow || $scope.ngModel.content.columnSelectedOfDataset[c].alias;
 						}
+						if(tempCol.measure === 'MEASURE') tempCol.aggregationSelected = $scope.ngModel.content.columnSelectedOfDataset[c].aggregationSelected;
 						tempCol.pinned = $scope.ngModel.content.columnSelectedOfDataset[c].pinned;
 
 						if ($scope.ngModel.content.columnSelectedOfDataset[c].isCalculated){
@@ -192,7 +193,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								if(variableUsage.action == 'hide' && eval(escapeIfString(variableValue) + variableUsage.condition + escapeIfString(variableUsage.value))) tempCol.hide = true;
 								if(variableUsage.action == 'header' && variableValue) {
 									tempCol.headerName = variableValue;
-									tempCol.headerTooltip = tempCol.headerName;
+									if(!tempCol.headerTooltip) tempCol.headerTooltip = tempCol.headerName;
 								}
 							}
 						}
@@ -237,9 +238,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 						tempCol.fieldType = cockpitModule_generalOptions.typesMap[$scope.ngModel.content.columnSelectedOfDataset[c].type || ($scope.ngModel.content.columnSelectedOfDataset[c].fieldType == 'ATTRIBUTE'? 'java.lang.String': 'java.lang.Float')].label;
 						if($scope.ngModel.content.columnSelectedOfDataset[c].dateFormat) tempCol.dateFormat = $scope.ngModel.content.columnSelectedOfDataset[c].dateFormat;
-						if(tempCol.fieldType == 'date') tempCol.valueFormatter = dateFormatter;
-						if(tempCol.fieldType == 'timestamp') tempCol.valueFormatter = dateTimeFormatter;
-						if(tempCol.fieldType == 'float' || tempCol.fieldType == 'integer' ) {
+						if(tempCol.fieldType == 'date') {
+							tempCol.valueFormatter = dateFormatter;
+							tempCol.comparator = dateComparator;
+						}
+						if(tempCol.fieldType == 'timestamp') {
+							tempCol.valueFormatter = dateTimeFormatter;
+							tempCol.comparator = dateComparator;
+						}
+						if(tempCol.fieldType == 'float' || tempCol.fieldType == 'integer' || (tempCol.fieldType == 'string' && tempCol.measure == 'MEASURE' && ["COUNT","COUNT_DISTINCT"].indexOf(tempCol.aggregationSelected) != -1) ) {
 							tempCol.valueFormatter = numberFormatter;
 							// When server-side pagination is disabled
 							tempCol.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
@@ -427,18 +434,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return isNaN(moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS'))? params.value : moment(params.value,'DD/MM/YYYY HH:mm:ss.SSS').locale(sbiModule_config.curr_language).format(params.colDef.dateFormat || 'LLL');
 		}
 
+		function dateComparator(date1, date2) {
+
+			  var date1Number = date1 && moment(date1, this.fieldType == 'date' ? 'DD/MM/YYYY': 'DD/MM/YYYY HH:mm:ss.SSS');
+			  var date2Number = date2 && moment(date2, this.fieldType == 'date' ? 'DD/MM/YYYY': 'DD/MM/YYYY HH:mm:ss.SSS');
+
+			  if (date1Number == null && date2Number == null) {
+			    return 0;
+			  }
+
+			  if (date1Number == null) {
+			    return -1;
+			  } else if (date2Number == null) {
+			    return 1;
+			  }
+
+			  return date1Number - date2Number;
+		}
+
 		/*
 		 * The number formatter prepares the data to show the number correctly in the user locale format.
 		 * If a precision is set will use it, otherwise will set the precision to 2 if float, 0 if int.
 		 * In case of a returning empty string that one will be displayed.
 		 */
 		function numberFormatter(params){
-			if(params.value != "" && (!params.colDef.style || (params.colDef.style && !params.colDef.style.asString))) {
+			if(typeof params.value === "number") {
+				var useSeparator = (params.colDef.style && params.colDef.style.asString)? false : true;
 				var defaultPrecision = (params.colDef.fieldType == 'float') ? 2 : 0;
-				return $filter('number')(params.value, (params.colDef.style && typeof params.colDef.style.precision != 'undefined') ? params.colDef.style.precision : defaultPrecision);
+				var precision = (params.colDef.style && params.colDef.style.precision != undefined) ? params.colDef.style.precision : defaultPrecision;
+				var locale = `${sbiModule_config.curr_language}-${sbiModule_config.curr_country}`;
+				return new Intl.NumberFormat(locale, { minimumFractionDigits:precision, maximumFractionDigits:precision,useGrouping:useSeparator}).format(params.value);
 			}else return params.value;
 		}
-		
+
 
 		$scope.showHiddenValues = function(e,values,multi){
 			e.stopImmediatePropagation();
@@ -478,7 +506,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				if(params.colDef.ranges && params.colDef.ranges.length > 0){
 					for(var k in params.colDef.ranges){
-						if (typeof params.value != "undefined" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
+						if (typeof params.value != "undefined" && typeof params.value != "string" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
 							if(params.colDef.ranges[k]['background-color']) {
 								if(params.colDef.visType && (params.colDef.visType.toLowerCase() == 'chart' || params.colDef.visType.toLowerCase() == 'text & chart')) {
 									this.eGui.innerHTML = this.eGui.innerHTML.replace(/background-color:([\#a-z0-9\(\)\,]+);/g,function(match,p1){
@@ -540,7 +568,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		function crossIconRenderer(params){
-			return '<md-button class="md-icon-button" ng-click=""><md-icon md-font-icon="'+params.colDef.crossIcon+'"></md-icon></md-button>';
+			if(params.node.rowPinned === 'bottom') return '';
+			else return '<md-button class="md-icon-button" ng-click=""><md-icon md-font-icon="'+params.colDef.crossIcon+'"></md-icon></md-button>';
 		}
 
 		function cellMultiRenderer () {}
@@ -707,7 +736,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				obj["type"] = 'table';
 			return obj;
 		}
-		
+
 		function rowThresholdComparer(data){
 			var validThresholds = [];
 			for(var k in $scope.ngModel.settings.rowThresholds.list){
@@ -733,7 +762,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						var parameterKey = cockpitModule_analyticalDrivers[threshold.compareValue+'_description'] ? threshold.compareValue+'_description' : threshold.compareValue;
 						valueToCompare = cockpitModule_analyticalDrivers[parameterKey];
 					}
-					
+
 					// getting the condition to compare with and comparing
 					var fullfilledCondition = false;
 					switch(threshold.condition){
@@ -759,7 +788,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						fullfilledCondition = data[threshold.column] != valueToCompare;
 						break;
 					}
-					
+
 					if(fullfilledCondition){
 						// changing border color property to override ag-grid default behaviour
 						if(threshold.style['border-bottom-color']) threshold.style['border-bottom'] = "1px solid "+threshold.style['border-bottom-color'];
@@ -996,13 +1025,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 					var rows = [];
 					var tempAlias = '';
-					
+
 					for(var i in $scope.ngModel.content.columnSelectedOfDataset){
 						if($scope.ngModel.content.columnSelectedOfDataset[i].name == $scope.ngModel.settings.modalSelectionColumn){
 							tempAlias = $scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow;
 						}
 					}
-					
+
 					rows.push(mapRow(node.data));
 
 					for(var k in rows){

@@ -1,15 +1,15 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-        <template #left>{{ datasource.label }}</template>
-        <template #right>
-            <Button icon="pi pi-check-circle" class="p-button-text p-button-rounded p-button-plain" :disabled="readOnly" @click="testDataSource" v-tooltip.bottom="$t('common.test')" />
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="readOnly || buttonDisabled" @click="handleSubmit" v-tooltip.bottom="$t('common.save')" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" v-tooltip.bottom="$t('common.close')" />
+        <template #start>{{ datasource.label }}</template>
+        <template #end>
+            <Button class="p-button-text p-button-rounded p-button-plain p-jc-center" :disabled="readOnly" @click="testDataSource">{{ $t('common.test') }}</Button>
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="readOnly || buttonDisabled" @click="handleSubmit" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <Message severity="info" v-if="showOwnerMessage" class="p-m-3">{{ ownerMessage }}</Message>
-    <div class="kn-overflow-y kn-flex p-p-3">
+    <div class="kn-overflow-y">
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+        <Message severity="info" v-if="showOwnerMessage">{{ ownerMessage }}</Message>
         <Card :style="dataSourceDescriptor.card.style">
             <template #content>
                 <form class="p-fluid p-m-5">
@@ -92,17 +92,21 @@
                     <label class="kn-material-input-label">{{ $t('managers.dataSourceManagement.form.readOnly') }}</label>
                     <div class="p-field p-formgroup-inline p-mb-3 p-mt-2" :style="dataSourceDescriptor.pField.style">
                         <div class="p-field-radiobutton">
-                            <RadioButton id="readOnly" :value="true" v-model="datasource.readOnly" :disabled="datasource.writeDefault || readOnly" />
+                            <RadioButton id="readOnly" :value="true" v-model="datasource.readOnly" :disabled="datasource.writeDefault || readOnly || datasource.useForDataprep" />
                             <label for="readOnly">{{ $t('managers.dataSourceManagement.form.readOnly') }}</label>
                         </div>
                         <div class="p-field-radiobutton">
                             <RadioButton id="readAndWrite" :value="false" v-model="datasource.readOnly" :disabled="readOnly || !selectedDatabase.cacheSupported" />
                             <label for="readAndWrite">{{ $t('managers.dataSourceManagement.form.readAndWrite') }}</label>
                         </div>
-                        <span class="p-float-label" v-if="currentUser.isSuperadmin">
+                        <div class="p-field-checkbox" :style="dataSourceDescriptor.pField.style" v-if="currentUser.isSuperadmin">
                             <Checkbox id="writeDefault" v-model="datasource.writeDefault" :binary="true" :disabled="readOnly || !selectedDatabase.cacheSupported || datasource.readOnly || !currentUser.isSuperadmin" />
                             <label for="writeDefault" :style="dataSourceDescriptor.checkboxLabel.style"> {{ $t('managers.dataSourceManagement.form.writeDefault') }} </label>
-                        </span>
+                        </div>
+                        <div class="p-field-checkbox" v-if="currentUser.isSuperadmin">
+                            <Checkbox id="useForDataprep" v-model="datasource.useForDataprep" :binary="true" :disabled="readOnly || !selectedDatabase.cacheSupported || datasource.readOnly || !currentUser.isSuperadmin" />
+                            <label for="useForDataprep"> {{ $t('managers.dataSourceManagement.form.useForDataprep') }} </label>
+                        </div>
                     </div>
 
                     <label class="kn-material-input-label">{{ $t('common.type') }}</label>
@@ -118,8 +122,7 @@
                     </div>
 
                     <div class="p-field" :style="dataSourceDescriptor.pField.style" v-if="jdbcOrJndi.type == 'JNDI'">
-                        <span class="p-field">
-                            <label for="jndi" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.jndi') }} * </label>
+                        <span class="p-float-label">
                             <InputText
                                 id="jndi"
                                 class="kn-material-input"
@@ -132,9 +135,8 @@
                                 @blur="v$.datasource.jndi.$touch()"
                                 @input="onFieldChange"
                                 :disabled="readOnly"
-                                placeholder="comp/env/jdbc/example"
                             />
-
+                            <label for="jndi" class="kn-material-input-label"> {{ $t('managers.dataSourceManagement.form.jndi') }} * </label>
                             <small id="jndi-help">{{ $t('managers.dataSourceManagement.form.jndiInfo') }}</small>
                         </span>
                         <KnValidationMessages :vComp="v$.datasource.jndi" :additionalTranslateParams="{ fieldName: $t('managers.dataSourceManagement.form.jndi') }" />
@@ -207,7 +209,7 @@
 /* eslint-disable no-prototype-builtins */
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import useValidate from '@vuelidate/core'
 import dataSourceDescriptor from '../DataSourceDescriptor.json'
 import dataSourceDetailValidationDescriptor from './DataSourceDetailValidationDescriptor.json'
@@ -253,7 +255,7 @@ export default defineComponent({
     mounted() {
         this.currentUser = { ...this.user } as any
         this.availableDatabases = this.databases
-        if (this.selectedDatasource && Object.keys(this.selectedDatasource).length > 0) {
+        if (this.selectedDatasource) {
             this.loadExistingDataSourceValues()
         } else {
             this.createNewDataSourceValues()
@@ -416,7 +418,7 @@ export default defineComponent({
             dsToTest = { ...this.datasource }
             dsToTest.type = this.jdbcOrJndi.type
 
-            await axios.post(url, dsToTest).then((response) => {
+            await this.$http.post(url, dsToTest).then((response: AxiosResponse<any>) => {
                 if (response.data.error) {
                     this.$store.commit('setError', { title: this.$t('managers.dataSourceManagement.form.errorTitle'), msg: response.data.error })
                 } else {
@@ -426,7 +428,7 @@ export default defineComponent({
         },
 
         async createOrUpdate(url, dsToSave) {
-            return this.operation === 'update' ? axios.put(url, dsToSave) : axios.post(url, dsToSave)
+            return this.operation === 'update' ? this.$http.put(url, dsToSave) : this.$http.post(url, dsToSave)
         },
 
         async handleSubmit() {
@@ -435,18 +437,17 @@ export default defineComponent({
             }
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/'
             let dsToSave = {} as any
-            if (!this.datasource.multischema && this.datasource.schemaAttribute) delete this.datasource.schemaAttribute
             dsToSave = { ...this.datasource }
 
             if (dsToSave.hasOwnProperty('jdbcPoolConfiguration')) {
                 this.convertToMili(dsToSave)
             }
 
-            await this.createOrUpdate(url, dsToSave).then((response) => {
+            await this.createOrUpdate(url, dsToSave).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
                     this.$store.commit('setError', { title: 'Error', msg: response.data.error })
                 } else {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.success'), msg: this.$t('common.toast.updateSuccess') })
+                    this.$store.commit('setInfo', { title: 'Ok', msg: 'Saved OK' })
                 }
             })
             this.$emit('inserted')
@@ -478,7 +479,7 @@ export default defineComponent({
             this.$emit('touched')
         },
         closeTemplate() {
-            this.$router.push('/datasource-management')
+            this.$router.push('/datasource')
             this.$emit('closed')
         }
     }

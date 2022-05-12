@@ -1,13 +1,36 @@
 <template>
-    <Message severity="info" v-if="showGuide" @close="$emit('onGuideClose')">{{ $t('kpi.kpiDefinition.formulaTabInstructions') }}</Message>
-    <VCodeMirror v-if="!loading" ref="codeMirror" class="CodeMirrorMathematica" v-model:value="kpi.definition.formula" :autoHeight="true" :options="codeMirrorOptions" @keyup="onKeyUp" @mousedown="onMouseDown" />
-    <div v-if="kpi.author">
-        <span class="p-m-1"
-            ><b>{{ $t('common.author') }}</b></span
-        >
-        :<span class="p-m-1">{{ kpi.author }}</span>
-    </div>
-
+    <form class="p-fluid p-formgrid p-grid p-mt-3">
+        <div class="p-field p-col-6">
+            <span class="p-float-label p-mb-2">
+                <InputText
+                    id="name"
+                    class="kn-material-input"
+                    type="text"
+                    maxLength="25"
+                    v-model.trim="v$.selectedKpi.name.$model"
+                    :class="{
+                        'p-invalid': v$.selectedKpi.name.$invalid && v$.selectedKpi.name.$dirty
+                    }"
+                    @blur="v$.selectedKpi.name.$touch()"
+                />
+                <label for="label" class="kn-material-input-label">{{ $t('common.name') }} * </label>
+            </span>
+            <KnValidationMessages
+                :vComp="v$.selectedKpi.name"
+                :additionalTranslateParams="{
+                    fieldName: $t('common.name')
+                }"
+            >
+            </KnValidationMessages>
+        </div>
+        <div class="p-field p-col-6">
+            <span class="p-float-label p-mb-2">
+                <InputText id="name" class="kn-material-input" type="text" v-model.trim="selectedKpi.author" :disabled="true" />
+                <label for="name" class="kn-material-input-label"> {{ $t('common.author') }}</label>
+            </span>
+        </div>
+    </form>
+    <VCodeMirror v-if="!loading" ref="codeMirror" class="CodeMirrorMathematica" v-model:value="selectedKpi.definition.formula" :autoHeight="true" :options="codeMirrorOptions" @keyup="onKeyUp" @mousedown="onMouseDown" />
     <Dialog class="kn-dialog--toolbar--primary importExportDialog" footer="footer" v-bind:visible="functionDialogVisible" :closable="false" modal>
         <template #header>
             <h4>{{ $t('kpi.kpiDefinition.formulaDialogHeader') }} {{ this.dialogHeaderInfo.functionName }}</h4>
@@ -43,15 +66,17 @@
 import { defineComponent } from 'vue'
 import { VCodeMirror } from 'vue3-code-mirror'
 import { setMathematicaModified } from '@/helpers/commons/codeMirrorMathematicaModifiedHelper'
+import { createValidations } from '@/helpers/commons/validationHelper'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import useValidate from '@vuelidate/core'
 import tabViewDescriptor from '../KpiDefinitionDetailDescriptor.json'
 import CodeMirror from 'codemirror'
 import Dialog from 'primevue/dialog'
 import RadioButton from 'primevue/radiobutton'
-import Message from 'primevue/message'
 
 export default defineComponent({
-    components: { VCodeMirror, Dialog, RadioButton, Message },
-    props: { selectedKpi: Object as any, measures: { type: Array as any }, aliasToInput: { type: String }, checkFormula: { type: Boolean }, activeTab: { type: Number }, loading: Boolean, reloadKpi: Boolean, showGuide: Boolean },
+    components: { VCodeMirror, Dialog, RadioButton, KnValidationMessages },
+    props: { propKpi: Object as any, measures: { type: Array as any }, aliasToInput: { type: String }, checkFormula: { type: Boolean }, activeTab: { type: Number }, loading: Boolean, reloadKpi: Boolean },
     emits: ['touched', 'errorInFormula', 'updateFormulaToSave', 'onGuideClose'],
 
     data() {
@@ -71,8 +96,9 @@ export default defineComponent({
                     'Ctrl-Space': this.keyAssistFunc
                 } as any
             },
+            v$: useValidate() as any,
             tabViewDescriptor,
-            kpi: {} as any,
+            selectedKpi: {} as any,
             codeMirror: {} as any,
             previousTabIndex: 0 as any,
             dialogHeaderInfo: {} as any,
@@ -87,22 +113,26 @@ export default defineComponent({
             cursorPosition: null
         }
     },
+    validations() {
+        return {
+            selectedKpi: createValidations('selectedKpi', tabViewDescriptor.validations.selectedKpi)
+        }
+    },
     created() {
         setMathematicaModified()
     },
     mounted() {
-        if (this.selectedKpi) {
-            this.kpi = this.selectedKpi as any
+        if (this.propKpi) {
+            this.selectedKpi = this.propKpi as any
         }
         this.registerCodeMirrorHelper()
         this.loadKPI()
     },
-
     watch: {
-        selectedKpi() {
-            this.kpi = this.selectedKpi as any
-            if (this.kpi.definition != '') {
-                this.kpi.definition = JSON.parse(this.kpi.definition)
+        propKpi() {
+            this.selectedKpi = this.propKpi as any
+            if (this.selectedKpi.definition != '') {
+                this.selectedKpi.definition = JSON.parse(this.selectedKpi.definition)
             }
             this.loadKPI()
         },
@@ -248,9 +278,9 @@ export default defineComponent({
                 }, 0)
                 this.codeMirror.setValue('')
                 this.codeMirror.clearHistory()
-                this.codeMirror.setValue(this.kpi.definition.formulaSimple)
+                this.codeMirror.setValue(this.selectedKpi.definition.formulaSimple)
 
-                this.changeIndexWithMeasures(this.kpi.definition.functions, this.codeMirror)
+                this.changeIndexWithMeasures(this.selectedKpi.definition.functions, this.codeMirror)
                 clearInterval(interval)
             }, 200)
         },
@@ -499,14 +529,14 @@ export default defineComponent({
                     this.reset()
                 }
                 if (this.formula != '' && flag) {
-                    this.kpi.definition['formula'] = this.formula
-                    this.kpi.definition['measures'] = this.measuresToJSON
-                    this.kpi.definition['functions'] = this.functionsTOJSON
-                    this.kpi.definition['formulaDecoded'] = this.formulaDecoded
-                    this.kpi.definition['formulaSimple'] = this.formulaSimple
+                    this.selectedKpi.definition['formula'] = this.formula
+                    this.selectedKpi.definition['measures'] = this.measuresToJSON
+                    this.selectedKpi.definition['functions'] = this.functionsTOJSON
+                    this.selectedKpi.definition['formulaDecoded'] = this.formulaDecoded
+                    this.selectedKpi.definition['formulaSimple'] = this.formulaSimple
                     this.$emit('updateFormulaToSave', this.formula)
                     this.loadKPI()
-                    return this.kpi.definition
+                    return this.selectedKpi.definition
                 }
             }
             return {}

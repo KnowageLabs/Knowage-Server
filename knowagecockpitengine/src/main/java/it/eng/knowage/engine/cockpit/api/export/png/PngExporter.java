@@ -11,7 +11,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.engine.cockpit.api.export.pdf.AbstractNodeJSBasedExporter;
+import it.eng.knowage.engine.cockpit.api.export.pdf.nodejs.AbstractNodeJSBasedExporter;
 import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 

@@ -1,0 +1,36 @@
+{
+    "accordion": {
+        "document": {
+            "descriptionMaxLength": 100,
+            "nameMaxLength": 100
+        },
+        "file": {
+            "destinationFolderMaxLength": 100,
+            "nameMaxLength": 100,
+            "zipFileNameMaxLength": 100
+        },
+        "javaClass": {
+            "classPathMaxLength": 100
+        },
+        "mail": {
+            "expressionMaxLength": 100,
+            "fileNameMaxLength": 100,
+            "mailSubjectMaxLength": 100,
+            "mailTextMaxLength": 2000,
+            "mailToMaxLength": 1000,
+            "zipMailNameMaxLength": 100
+        },
+        "snapshot": {
+            "descriptionMaxLength": 100,
+            "nameMaxLength": 100
+        }
+    },
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    }
+}

@@ -10,6 +10,7 @@ import flushPromises from 'flush-promises'
 import Listbox from 'primevue/listbox'
 import KpiScheduler from './KpiScheduler.vue'
 import Menu from 'primevue/menu'
+import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 
@@ -36,9 +37,15 @@ const mockedSchedulers = [
 
 jest.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: mockedSchedulers }))
-axios.post.mockImplementation(() => Promise.resolve({ data: [] }))
-axios.delete.mockImplementation(() => Promise.resolve())
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: mockedSchedulers
+        })
+    ),
+    post: axios.post.mockImplementation(() => Promise.resolve({ data: [] })),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 const $confirm = {
     require: jest.fn()
@@ -83,7 +90,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [router],
+            plugins: [router, PrimeVue],
             stubs: {
                 Button,
                 Card,
@@ -98,7 +105,8 @@ const factory = () => {
                 $t: (msg) => msg,
                 $store,
                 $confirm,
-                $router
+                $router,
+                $http
             }
         }
     })

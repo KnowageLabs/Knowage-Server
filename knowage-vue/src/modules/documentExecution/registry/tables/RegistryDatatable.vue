@@ -2,7 +2,7 @@
     <Card class="p-m-2 kn-card no-padding">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #right>
+                <template #end>
                     <div class="p-d-flex p-flex-row">
                         <Button class="kn-button p-button-text" :label="$t('managers.businessModelManager.add')" v-if="buttons.enableButtons || buttons.enableAddRecords" @click="addNewRow" data-test="new-row-button" />
                     </div>
@@ -35,9 +35,11 @@
                     stripedRows
                     showGridlines
                     @page="onPage($event)"
+                    @cell-edit-complete="onCellEditComplete"
                 >
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <Column class="kn-truncated" :style="registryDatatableDescriptor.numerationColumn.style" :field="columns[0].field" :header="columns[0].title"></Column>
+
                     <template v-for="col of columns.slice(1)" :key="col.field">
                         <Column
                             class="kn-truncated"
@@ -73,22 +75,20 @@
                             <template #body="slotProps">
                                 <div class="p-d-flex p-flex-row" :data-test="col.field + '-body'">
                                     <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
-                                    <Calendar
-                                        :style="registryDatatableDescriptor.pivotStyles.inputFields"
-                                        class="pivot-calendar"
+                                    <RegistryDatatableEditableField
                                         v-else-if="col.isEditable && col.columnInfo.type === 'date'"
-                                        v-model="slotProps.data[col.field]"
-                                        :showTime="col.columnInfo.subtype === 'timestamp'"
-                                        :showSeconds="col.columnInfo.subtype === 'timestamp'"
-                                        :dateFormat="col.columnInfo.dateFormat"
-                                        :showButtonBar="true"
-                                        @date-select="setRowEdited(slotProps.data)"
-                                    />
+                                        :column="col"
+                                        :propRow="slotProps.data"
+                                        :comboColumnOptions="comboColumnOptions"
+                                        @rowChanged="setRowEdited(slotProps.data)"
+                                        @dropdownChanged="onDropdownChange"
+                                        @dropdownOpened="addColumnOptions"
+                                    ></RegistryDatatableEditableField>
                                     <div v-else-if="col.isEditable">
                                         <span v-if="(col.columnInfo.type === 'int' || col.columnInfo.type === 'float') && slotProps.data[col.field]">{{ getFormatedNumber(slotProps.data[col.field]) }}</span>
                                         <span v-else> {{ slotProps.data[col.field] }}</span>
                                     </div>
-                                    <span v-else-if="col.columnInfo.type === 'date'"> {{ getFormatedDate(slotProps.data[col.field], col.columnInfo.dateFormat) }}</span>
+                                    <span v-else-if="col.columnInfo.type === 'date'"> {{ getFormattedDate(slotProps.data[col.field], 'MM/DD/YYYY hh:mm:ss') }}</span>
                                     <span v-else> {{ slotProps.data[col.field] }}</span>
                                 </div>
                             </template>
@@ -112,9 +112,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { formatDateWithLocale, formatNumberWithLocale } from '@/helpers/commons/localeHelper'
-import axios from 'axios'
-import Calendar from 'primevue/calendar'
+import { formatDate, formatNumberWithLocale } from '@/helpers/commons/localeHelper'
+import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
@@ -124,11 +123,12 @@ import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
 import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue'
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
 
+const deepcopy = require('deepcopy')
+
 export default defineComponent({
     name: 'registry-datatable',
     components: {
         Card,
-        Calendar,
         Checkbox,
         Column,
         DataTable,
@@ -142,9 +142,10 @@ export default defineComponent({
         propConfiguration: { type: Object },
         pagination: { type: Object },
         entity: { type: String },
-        id: { type: String }
+        id: { type: String },
+        stopWarningsState: { type: Array }
     },
-    emits: ['rowChanged', 'rowDeleted', 'pageChanged'],
+    emits: ['rowChanged', 'rowDeleted', 'pageChanged', 'warningChanged'],
     data() {
         return {
             registryDescriptor,
@@ -194,6 +195,7 @@ export default defineComponent({
         this.loadRows()
         this.loadConfiguration()
         this.loadPagination()
+        this.loadWarningState()
     },
     methods: {
         loadColumns() {
@@ -224,7 +226,7 @@ export default defineComponent({
             })
         },
         loadRows() {
-            this.rows = [...(this.propRows as any[])]
+            this.rows = deepcopy(this.propRows)
         },
         loadConfiguration() {
             this.configuration = this.propConfiguration
@@ -244,6 +246,9 @@ export default defineComponent({
         },
         loadPagination() {
             this.lazyParams = { ...this.pagination } as any
+        },
+        loadWarningState() {
+            this.stopWarnings = this.stopWarningsState as any[]
         },
         onPage(event: any) {
             this.lazyParams = {
@@ -287,8 +292,8 @@ export default defineComponent({
                 return 'any'
             }
         },
-        getFormatedDate(date: any, format: any) {
-            return formatDateWithLocale(date, format)
+        getFormattedDate(date: any, format: any) {
+            return formatDate(date, format)
         },
         getFormatedNumber(number: number, precision?: number, format?: any) {
             return formatNumberWithLocale(number, precision, format)
@@ -321,9 +326,9 @@ export default defineComponent({
             if (column.dependences && row && row[column.dependences]) {
                 postData.append('DEPENDENCES', this.entity + subEntity + ':' + column.dependences + '=' + row[column.dependences])
             }
-            await axios
+            await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_FILTER_VALUES_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-                .then((response) => (this.comboColumnOptions[column.field][row[column.dependences]] = response.data.rows))
+                .then((response: AxiosResponse<any>) => (this.comboColumnOptions[column.field][row[column.dependences]] = response.data.rows))
         },
         addNewRow() {
             const newRow = { id: this.rows.length, isNew: true }
@@ -364,6 +369,7 @@ export default defineComponent({
         onWarningDialogClose(payload: any) {
             if (payload.stopWarnings) {
                 this.stopWarnings[payload.columnField] = true
+                this.$emit('warningChanged', this.stopWarnings)
             }
 
             this.clearDependentColumnsValues()
@@ -389,6 +395,9 @@ export default defineComponent({
         setRowEdited(row: any) {
             row.edited = true
             this.$emit('rowChanged', row)
+        },
+        onCellEditComplete(event: any) {
+            this.rows[event.index] = event.newData
         }
     }
 })

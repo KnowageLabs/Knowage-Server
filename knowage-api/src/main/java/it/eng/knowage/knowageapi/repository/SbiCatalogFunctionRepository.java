@@ -25,9 +25,9 @@ import javax.transaction.Transactional.TxType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import it.eng.knowage.boot.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.dao.SbiCatalogFunctionDao;
 import it.eng.knowage.knowageapi.dao.dto.SbiCatalogFunction;
-import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 
 /**
  * @author Marco Libanori

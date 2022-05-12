@@ -1,11 +1,11 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0">
-        <template #right>
+        <template #end>
             <Button icon="pi pi-save" class="kn-button p-button-text p-button-rounded" :disabled="buttonDisabled" @click="handleSubmit" />
             <Button class="kn-button p-button-text p-button-rounded" icon="pi pi-times" @click="closeTemplate" />
         </template>
     </Toolbar>
-    <div class="p-grid p-m-0 p-fluid p-jc-center">
+    <div class="p-grid p-m-0 p-fluid p-jc-center" data-test="metadata-form">
         <div class="p-col-9">
             <Card>
                 <template #content>
@@ -123,88 +123,87 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iMetadata } from './MetadataManagement'
-import { createValidations } from '@/helpers/commons/validationHelper'
-import axios from 'axios'
-import Dropdown from 'primevue/dropdown'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import metadataManagementDescriptor from './MetadataManagementDescriptor.json'
-import metadataManagementValidationDescriptor from './MetadataManagementValidationDescriptor.json'
-import useValidate from '@vuelidate/core'
+    import { defineComponent } from 'vue'
+    import { iMetadata } from './MetadataManagement'
+    import { createValidations } from '@/helpers/commons/validationHelper'
+    import Dropdown from 'primevue/dropdown'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import metadataManagementDescriptor from './MetadataManagementDescriptor.json'
+    import metadataManagementValidationDescriptor from './MetadataManagementValidationDescriptor.json'
+    import useValidate from '@vuelidate/core'
 
-export default defineComponent({
-    name: 'metadata-management-detail',
-    components: {
-        Dropdown,
-        KnValidationMessages
-    },
-    props: {
-        model: {
-            type: Object,
-            required: false
-        }
-    },
-    emits: ['close', 'saved', 'touched'],
-    data() {
-        return {
-            metadataManagementDescriptor: metadataManagementDescriptor,
-            metadataManagementValidationDescriptor,
-            metadata: {} as iMetadata,
-            metadataTypes: metadataManagementDescriptor.metadataTypes,
-            submitted: false as Boolean,
-            operation: 'insert',
-            v$: useValidate() as any
-        }
-    },
-    validations() {
-        return {
-            metadata: createValidations('metadata', metadataManagementValidationDescriptor.validations.metadata)
-        }
-    },
-    computed: {
-        buttonDisabled(): any {
-            return this.v$.$invalid
+    export default defineComponent({
+        name: 'metadata-management-detail',
+        components: {
+            Dropdown,
+            KnValidationMessages
         },
-        title(): any {
-            return this.metadata.id ? this.$t('common.edit') : this.$t('common.new')
-        }
-    },
-    watch: {
-        model() {
-            this.v$.$reset()
-            this.metadata = { ...this.model } as iMetadata
-        }
-    },
-    mounted() {
-        if (this.model) {
-            this.metadata = { ...this.model } as iMetadata
-        }
-    },
-    methods: {
-        async handleSubmit() {
-            if (this.v$.$invalid) {
-                return
+        props: {
+            model: {
+                type: Object,
+                required: false
             }
-
-            if (this.metadata.id) {
-                this.operation = 'update'
+        },
+        emits: ['close', 'saved', 'touched'],
+        data() {
+            return {
+                metadataManagementDescriptor: metadataManagementDescriptor,
+                metadataManagementValidationDescriptor,
+                metadata: {} as iMetadata,
+                metadataTypes: metadataManagementDescriptor.metadataTypes,
+                submitted: false as Boolean,
+                operation: 'insert',
+                v$: useValidate() as any
             }
+        },
+        validations() {
+            return {
+                metadata: createValidations('metadata', metadataManagementValidationDescriptor.validations.metadata)
+            }
+        },
+        computed: {
+            buttonDisabled(): any {
+                return this.v$.$invalid
+            },
+            title(): any {
+                return this.metadata.id ? this.$t('common.edit') : this.$t('common.new')
+            }
+        },
+        watch: {
+            model() {
+                this.v$.$reset()
+                this.metadata = { ...this.model } as iMetadata
+            }
+        },
+        mounted() {
+            if (this.model) {
+                this.metadata = { ...this.model } as iMetadata
+            }
+        },
+        methods: {
+            async handleSubmit() {
+                if (this.v$.$invalid) {
+                    return
+                }
 
-            await axios.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata', this.metadata).then(() => {
-                this.$store.commit('setInfo', {
-                    title: this.$t(this.metadataManagementDescriptor.operation[this.operation].toastTitle),
-                    msg: this.$t(this.metadataManagementDescriptor.operation.success)
+                if (this.metadata.id) {
+                    this.operation = 'update'
+                }
+
+                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata', this.metadata).then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t(this.metadataManagementDescriptor.operation[this.operation].toastTitle),
+                        msg: this.$t(this.metadataManagementDescriptor.operation.success)
+                    })
+                    this.$emit('saved')
                 })
-                this.$emit('saved')
-            })
-        },
-        closeTemplate() {
-            this.$emit('close')
-        },
-        setDirty(): void {
-            this.$emit('touched')
+            },
+            closeTemplate() {
+                this.$emit('close')
+            },
+            setDirty(): void {
+                this.$emit('touched')
+            }
         }
-    }
-})
+    })
 </script>

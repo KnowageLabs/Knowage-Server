@@ -48,6 +48,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.monitor.IKnowageMonitor;
+import it.eng.knowage.monitor.KnowageMonitorFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
@@ -107,6 +109,8 @@ public class LovResource extends AbstractSpagoBIResource {
 
 		logger.debug("IN");
 
+		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.lovs.list");
+
 		List<ModalitiesValue> modalitiesValues = null;
 		IModalitiesValueDAO modalitiesValueDAO = null;
 
@@ -123,9 +127,11 @@ public class LovResource extends AbstractSpagoBIResource {
 			}
 			logger.debug("Getting the list of all LOVs - done successfully");
 
-		} catch (Exception exception) {
+			monitor.stop();
 
+		} catch (Exception exception) {
 			logger.error("Error while getting the list of LOVs", exception);
+			monitor.stop(exception);
 			throw new SpagoBIServiceException("Error while getting the list of LOVs", exception);
 
 		} finally {

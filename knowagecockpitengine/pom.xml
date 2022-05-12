@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -12,83 +13,83 @@
 	<artifactId>knowagecockpitengine</artifactId>
 	<packaging>war</packaging>
 	<name>knowagecockpitengine</name>
-	
+
 	<build>
 		<finalName>knowagecockpitengine</finalName>
-	    <plugins>
-	        <plugin>
-	            <artifactId>maven-war-plugin</artifactId>
-	            <configuration>
-	                <attachClasses>true</attachClasses>
-	                <classesClassifier>classes</classesClassifier>
-	            </configuration>
-	        </plugin>
-	        <plugin>
+		<plugins>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<attachClasses>true</attachClasses>
+					<classesClassifier>classes</classesClassifier>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
-					<artifactId>exec-maven-plugin</artifactId>
-					<version>1.6.0</version>
-					<executions>
-					<execution>		
-							<id>npm-package-install</id>
-						   <phase>process-sources</phase>
-	                  		<goals>
-		                    	<goal>exec</goal>
-		                  	</goals>
-		                  	<configuration>
-								<executable>npm</executable>
-			                    <arguments>
-		                      		<argument>install</argument>
-			                    </arguments>
-			                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
-							</configuration>
-						</execution>
-						<execution>		
-							<id>npm-update-version</id>
-						   <phase>process-sources</phase>
-	                  		<goals>
-		                    	<goal>exec</goal>
-		                  	</goals>
-		                  	<configuration>
-								<executable>npm</executable>
-			                    <arguments>
-		                      		<argument>version</argument>
-		                      		<argument>${project.version}</argument>
-		                      		<argument>--allow-same-version</argument>
-			                    </arguments>
-			                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
-							</configuration>
-						</execution>
-						<execution>		
-							<id>grunt-concat-dist</id>
-						   <phase>process-resources</phase>
-	                  		<goals>
-		                    	<goal>exec</goal>
-		                  	</goals>
-		                  	<configuration>
-								<executable>grunt</executable>
-			                    <arguments>
-		                      		<argument>knowagecockpit-concat</argument>
-			                    </arguments>
-			                    <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
-							</configuration>
-						</execution>
-					</executions>
-		  	</plugin>
-      	</plugins>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<id>npm-package-install</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>install</argument>
+							</arguments>
+							<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm-update-version</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>version</argument>
+								<argument>${project.version}</argument>
+								<argument>--allow-same-version</argument>
+							</arguments>
+							<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>grunt-concat-dist</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>grunt</executable>
+							<arguments>
+								<argument>knowagecockpit-concat</argument>
+							</arguments>
+							<workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
-	
+
 	<profiles>
 		<profile>
 			<id>development</id>
-            <activation>
-                <!-- this profile is active by default -->
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-           		<application.environment>development</application.environment>
-            </properties>
-         	<build>
-			    <plugins>
+			<activation>
+				<!-- this profile is active by default -->
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<application.environment>development</application.environment>
+			</properties>
+			<build>
+				<plugins>
 					<plugin>
 						<groupId>org.codehaus.cargo</groupId>
 						<artifactId>cargo-maven2-plugin</artifactId>
@@ -105,22 +106,24 @@
 							</configuration>
 						</configuration>
 					</plugin>
-			    </plugins>
+				</plugins>
 			</build>
 		</profile>
-		
+
 		<profile>
 			<id>production</id>
-            <properties>
-           		<application.environment>production</application.environment>
-           		<disable.console.logging>*/console.log = function() {}; console.warn = function() {}; console.debug = function() {}; console.info = function() {};  /*</disable.console.logging>
-            </properties>
-         	<build>
-			    <plugins>
-			        <plugin>
-			        	<groupId>org.apache.maven.plugins</groupId>
-			            <artifactId>maven-war-plugin</artifactId>
-			            <configuration>   		            	   
+			<properties>
+				<application.environment>production</application.environment>
+				<disable.console.logging>*/console.log = function() {}; console.warn
+					= function() {}; console.debug = function() {}; console.info =
+					function() {}; /*</disable.console.logging>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<configuration>
 							<warSourceExcludes>js/src/**</warSourceExcludes>
 							<webResources>
 								<resource>
@@ -128,15 +131,15 @@
 									<filtering>true</filtering>
 									<includes>
 										<include>**/angularImport.jsp</include>
-									</includes>									
+									</includes>
 								</resource>
-						        <resource>
-						          <directory>src/main/webapp/js/src</directory>
-						          <targetPath>js/src-${project.version}</targetPath>
-						        </resource>
-					      </webResources>
-			            </configuration>
-			        </plugin>
+								<resource>
+									<directory>src/main/webapp/js/src</directory>
+									<targetPath>js/src-${project.version}</targetPath>
+								</resource>
+							</webResources>
+						</configuration>
+					</plugin>
 					<plugin>
 						<groupId>org.codehaus.cargo</groupId>
 						<artifactId>cargo-maven2-plugin</artifactId>
@@ -153,11 +156,11 @@
 							</configuration>
 						</configuration>
 					</plugin>
-			    </plugins>
+				</plugins>
 			</build>
 		</profile>
 	</profiles>
-	
+
 	<dependencies>
 
 		<dependency>
@@ -166,7 +169,7 @@
 			<version>8.1.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
@@ -187,28 +190,28 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>qbe-core</artifactId>
 			<version>8.1.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity</artifactId>
 			<version>1.7</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/velocity-tools/velocity-tools -->
 		<dependency>
-		    <groupId>velocity-tools</groupId>
-		    <artifactId>velocity-tools</artifactId>
-		    <version>1.4</version>
+			<groupId>velocity-tools</groupId>
+			<artifactId>velocity-tools</artifactId>
+			<version>1.4</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>backport-util-concurrent</groupId>
 			<artifactId>backport-util-concurrent</artifactId>
@@ -218,55 +221,64 @@
 
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<version>3.1.2.Final</version>
+			<artifactId>resteasy-servlet-initializer</artifactId>
+			<version>${resteasy.version}</version>
 			<scope>runtime</scope>
-        </dependency>
+		</dependency>
 
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-legacy</artifactId>
-			<version>3.1.2.Final</version>
-			<scope>runtime</scope>
-        </dependency>
-		
+			<artifactId>resteasy-html</artifactId>
+			<version>${resteasy.version}</version>
+		</dependency>
+
 		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-servlet-initializer</artifactId>
-			<version>3.1.2.Final</version>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.5.1</version>
 			<scope>runtime</scope>
 		</dependency>
-		
-		<dependency>
-           <groupId>wsdl4j</groupId>
-           <artifactId>wsdl4j</artifactId>
-           <version>1.5.1</version>
-           <scope>runtime</scope>
-       </dependency>
-	   
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.1.0</version> <!-- WebLogic uses 3.1.0, Tomcat 7 uses 3.0 -->
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.fdsapi</groupId>
 			<artifactId>fdsapi</artifactId>
 			<version>1.2</version>
-		</dependency> 
+		</dependency>
 
 		<dependency>
 			<groupId>net.sf.xss-html-filter</groupId>
 			<artifactId>xss-html-filter</artifactId>
 			<version>1.5</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
 			<version>2.7.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.dhorions</groupId>
+			<artifactId>boxable</artifactId>
+			<version>1.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-web</artifactId>
+		</dependency>
+
+		<!-- Provides support for Graylog in log4j2 -->
+		<dependency>
+			<groupId>biz.paluch.logging</groupId>
+			<artifactId>logstash-gelf</artifactId>
 		</dependency>
 
 	</dependencies>

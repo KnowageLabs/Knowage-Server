@@ -22,17 +22,16 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
-import it.eng.knowage.knowageapi.error.TenantRepositoryMissingException;
-import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
-import it.eng.knowage.knowageapi.error.ImpossibleToReadFilesListException;
-import it.eng.knowage.knowageapi.error.ImpossibleToCreateFolderException;
 import it.eng.knowage.knowageapi.error.ImpossibleToCreateFileException;
-import it.eng.knowage.knowageapi.error.ImpossibleToDeleteFolderException;
+import it.eng.knowage.knowageapi.error.ImpossibleToCreateFolderException;
 import it.eng.knowage.knowageapi.error.ImpossibleToDeleteFileException;
+import it.eng.knowage.knowageapi.error.ImpossibleToDeleteFolderException;
 import it.eng.knowage.knowageapi.error.ImpossibleToDownloadFileException;
-import it.eng.knowage.knowageapi.error.ImpossibleToUploadFileException;
-import it.eng.knowage.knowageapi.error.ImpossibleToSaveMetadataException;
+import it.eng.knowage.knowageapi.error.ImpossibleToReadFilesListException;
+import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadMetadataException;
+import it.eng.knowage.knowageapi.error.ImpossibleToSaveMetadataException;
+import it.eng.knowage.knowageapi.error.ImpossibleToUploadFileException;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
 import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
 import it.eng.knowage.resourcemanager.resource.dto.RootFolderDTO;
@@ -40,45 +39,43 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 public interface ResourceManagerAPI {
 
-	public RootFolderDTO getFolders(SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToReadFolderListException;
+	public RootFolderDTO getFolders(SpagoBIUserProfile profile) throws ImpossibleToReadFolderListException;
 
-	boolean createFolder(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToCreateFolderException;
+	boolean createFolder(String path, SpagoBIUserProfile profile) throws ImpossibleToCreateFolderException;
 
-	boolean delete(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToDeleteFolderException, ImpossibleToDeleteFileException;
+	boolean delete(String path, SpagoBIUserProfile profile) throws IOException, ImpossibleToDeleteFolderException, ImpossibleToDeleteFileException;
 
-	public List<FileDTO> getListOfFiles(String key, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToReadFilesListException, ImpossibleToReadFolderListException;
+	public List<FileDTO> getListOfFiles(String key, SpagoBIUserProfile profile) throws ImpossibleToReadFilesListException, ImpossibleToReadFolderListException;
 
-	java.nio.file.Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) throws TenantRepositoryMissingException, ImpossibleToDownloadFileException;
+	java.nio.file.Path getDownloadFilePath(List<String> path, SpagoBIUserProfile profile, boolean multi) throws ImpossibleToDownloadFileException;
 
-	boolean canSee(Path path, SpagoBIUserProfile profile);
+	boolean canSee(Path path, SpagoBIUserProfile profile) throws IOException;
 
 	void importFile(InputStream archiveInputStream, String path, SpagoBIUserProfile profile)
-			throws IOException, TenantRepositoryMissingException, ImpossibleToCreateFileException, ImpossibleToUploadFileException;
+			throws IOException, ImpossibleToCreateFileException, ImpossibleToUploadFileException;
 
-	void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException, TenantRepositoryMissingException;
+	void importFileAndExtract(InputStream archiveInputStream, String path, SpagoBIUserProfile profile) throws IOException;
 
-	MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToReadMetadataException;
+	MetadataDTO getMetadata(String path, SpagoBIUserProfile profile) throws ImpossibleToReadMetadataException;
 
-	MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToSaveMetadataException;
+	MetadataDTO saveMetadata(MetadataDTO fileDTO, String path, SpagoBIUserProfile profile) throws ImpossibleToSaveMetadataException;
 
 	/**
 	 * @param key
 	 * @param profile
 	 * @return
 	 * @throws ImpossibleToReadFolderListException
-	 * @throws TenantRepositoryMissingException
 	 */
-	public String getFolderByKey(String key, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToReadFolderListException;
+	public String getFolderByKey(String key, SpagoBIUserProfile profile) throws ImpossibleToReadFolderListException;
 
 	/**
 	 * @param key
 	 * @param path
 	 * @param profile
 	 * @return
-	 * @throws TenantRepositoryMissingException
 	 * @throws ImpossibleToCreateFileException
 	 */
-	Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToCreateFileException;
+	Path getDownloadFolderPath(String key, String path, SpagoBIUserProfile profile) throws ImpossibleToCreateFileException;
 
 	/**
 	 * @param completePath
@@ -86,7 +83,6 @@ public interface ResourceManagerAPI {
 	 * @param profile
 	 * @return
 	 * @throws ImpossibleToCreateFolderException
-	 * @throws TenantRepositoryMissingException
 	 */
-	public boolean updateFolder(Path completePath, String folderName, SpagoBIUserProfile profile) throws TenantRepositoryMissingException, ImpossibleToCreateFolderException;
+	public boolean updateFolder(Path completePath, String folderName, SpagoBIUserProfile profile) throws IOException, ImpossibleToCreateFolderException;
 }

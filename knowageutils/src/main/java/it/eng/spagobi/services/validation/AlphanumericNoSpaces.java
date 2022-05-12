@@ -28,9 +28,12 @@ import javax.validation.Payload;
 import javax.validation.constraints.Pattern;
 
 @Pattern(regexp = "^([a-zA-Z0-9\\-\\_])*$", message = "it is not alphanumeric or it contains spaces")
-@Target({ ElementType.FIELD, ElementType.METHOD })
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 @Retention(value = RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = GenericValidator.class)
+/*
+ * It seems a workaround but it's the legal way: see @Pattern
+ */
+@Constraint(validatedBy = {})
 @Documented
 public @interface AlphanumericNoSpaces {
 	String message() default "";

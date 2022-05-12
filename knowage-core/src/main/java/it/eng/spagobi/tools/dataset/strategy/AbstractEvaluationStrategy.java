@@ -259,8 +259,9 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 				if (selections instanceof Projection) {
 					Projection proj = (Projection) selections;
 					String projectionAlias = proj.getAlias();
-					if (summaryRowProjection != null
-							&& (summaryRowProjection.getAlias().equals(projectionAlias) || summaryRowProjection.getName().equals(projectionAlias))) {
+					String projectionName = proj.getName();
+					if (summaryRowProjection != null && (summaryRowProjection.getAlias().equals(projectionAlias)
+							|| summaryRowProjection.getName().equals(projectionAlias) || summaryRowProjection.getName().equals(projectionName))) {
 						projectionToSummaryRowProjection.put(j, i);
 						break;
 					}

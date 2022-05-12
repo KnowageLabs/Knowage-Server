@@ -1,0 +1,12 @@
+.p-paginator {
+    border: 0;
+    .p-paginator-pages {
+        .p-paginator-page {
+            &.p-highlight {
+                background-color: var(--kn-paginator-background-color);
+                color: var(--kn-paginator-color);
+                border-color: var(--kn-paginator-background-color);
+            }
+        }
+    }
+}

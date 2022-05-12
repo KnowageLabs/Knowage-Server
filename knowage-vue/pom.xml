@@ -48,6 +48,27 @@
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-web</artifactId>
+		</dependency>
+
+		<!-- Provides support for Graylog in log4j2 -->
+		<dependency>
+			<groupId>biz.paluch.logging</groupId>
+			<artifactId>logstash-gelf</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -74,6 +95,21 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>1.6.0</version>
 				<executions>
+					<execution>
+						<id>npm-set-version</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>process-resources</phase>
+						<configuration>
+							<executable>npm</executable>
+							<arguments>
+								<argument>version</argument>
+								<argument>--allow-same-version</argument>
+								<argument>${project.version}</argument>
+							</arguments>
+						</configuration>
+					</execution>
 					<execution>
 						<id>npm-install</id>
 						<goals>

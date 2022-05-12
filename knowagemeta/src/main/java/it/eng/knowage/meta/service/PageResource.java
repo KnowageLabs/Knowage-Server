@@ -39,6 +39,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
+import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONObject;
 
 import it.eng.knowage.meta.generator.jpamapping.wrappers.JpaProperties;
@@ -97,7 +98,7 @@ public class PageResource {
 	@GET
 	@Path("/{pagename}")
 	@Produces("text/html")
-	public void getPage(@PathParam("pagename") String pageName, @QueryParam("bmName") String businessModelName) {
+	public View getPage(@PathParam("pagename") String pageName, @QueryParam("bmName") String businessModelName) throws Exception {
 		String dispatchUrl = urls.get(pageName);
 
 		try {
@@ -109,9 +110,6 @@ public class PageResource {
 				ioManager.setUserProfile(userProfile);
 			}
 
-			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
-			// HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-			// HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 			ioManager.getHttpSession().setAttribute("ioManager", ioManager);
 			ioManager.getHttpSession().setAttribute("userProfile", userProfile);
 
@@ -175,7 +173,7 @@ public class PageResource {
 						logger.error("Business model file not found");
 					}
 					if (!modelFound) {
-						request.getRequestDispatcher(urls.get("error")).forward(request, response);
+						return new View(urls.get("error"));
 					}
 
 				}
@@ -212,10 +210,11 @@ public class PageResource {
 			response.setContentType("text/html");
 			response.setCharacterEncoding("UTF-8");
 
-			request.getRequestDispatcher(dispatchUrl).forward(request, response);
+			return new View(dispatchUrl);
 
 		} catch (Exception e) {
 			logger.error("Error during Metamodel initialization: ", e);
+			throw e;
 		} finally {
 			DbTypeThreadLocal.unset();
 			logger.debug("OUT");

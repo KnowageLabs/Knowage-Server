@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-        <template #left>{{ tenant.MULTITENANT_NAME }}</template>
-        <template #right>
+        <template #start>{{ tenant.MULTITENANT_NAME }}</template>
+        <template #end>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" :disabled="buttonDisabled" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
@@ -38,7 +38,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iMultitenant, iTenantToSave } from '../TenantManagement'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import tabViewDescriptor from './TenantManagementTabViewDescriptor.json'
@@ -104,18 +104,18 @@ export default defineComponent({
     },
     methods: {
         loadData(dataType: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`)
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`)
         },
 
         async loadAllData() {
             this.loading = true
-            await this.loadData('/themes').then((response) => {
+            await this.loadData('/themes').then((response: AxiosResponse<any>) => {
                 this.listOfThemes = response.data.root
             })
-            await this.loadData('/datasources').then((response) => {
+            await this.loadData('/datasources').then((response: AxiosResponse<any>) => {
                 this.listOfDataSources = response.data.root
             })
-            await this.loadData('/producttypes').then((response) => {
+            await this.loadData('/producttypes').then((response: AxiosResponse<any>) => {
                 this.listOfProductTypes = response.data.root
                 this.filterArrayByTargetArr(this.listOfProductTypes, this.availableLicenses)
             })
@@ -133,13 +133,13 @@ export default defineComponent({
             this.listOfSelectedDataSources = null
             this.touched = false
 
-            await this.loadData(`/producttypes?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response) => {
+            await this.loadData(`/producttypes?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response: AxiosResponse<any>) => {
                 var productTypes = response.data.root
 
                 this.listOfSelectedProducts = []
                 this.copySelectedElement(productTypes, this.listOfSelectedProducts)
             })
-            await this.loadData(`/datasources?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response) => {
+            await this.loadData(`/datasources?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response: AxiosResponse<any>) => {
                 var dataSources = response.data.root
 
                 this.listOfSelectedDataSources = []
@@ -161,7 +161,7 @@ export default defineComponent({
             }
             let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant/save'
 
-            await axios.post(url, this.createTenantToSave()).then((response) => {
+            await this.$http.post(url, this.createTenantToSave()).then((response: AxiosResponse<any>) => {
                 if (this.selectedTenant) {
                     this.$store.commit('setInfo', {
                         title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle),
@@ -185,6 +185,7 @@ export default defineComponent({
             tenantToSave.MULTITENANT_ID = this.tenant.MULTITENANT_ID ? '' + this.tenant.MULTITENANT_ID : ''
             tenantToSave.MULTITENANT_NAME = this.tenant.MULTITENANT_NAME
             tenantToSave.MULTITENANT_THEME = this.tenant.MULTITENANT_THEME
+            tenantToSave.MULTITENANT_IMAGE = this.tenant.MULTITENANT_IMAGE
             tenantToSave.DS_LIST = this.listOfSelectedDataSources.map((dataSource) => {
                 delete dataSource.CHECKED
                 return dataSource

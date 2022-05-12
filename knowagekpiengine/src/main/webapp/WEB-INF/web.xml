@@ -8,8 +8,26 @@
 		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 		version="3.1" >
 
-	<description>Knowage Kpi Engine</description>
 	<display-name>knowagekpiengine</display-name>
+	<description>Knowage Kpi Engine</description>
+	
+	<!-- 
+		Logger Setup Filter.
+		
+		Set the logger according the HTTP request data.
+	 -->
+	<filter>
+		<filter-name>LoggerSetupFilter</filter-name>
+		<filter-class>it.eng.knowage.utils.filters.LoggerSetupFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>LoggerSetupFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+
 	<filter>
 		<filter-name>EncodingFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
@@ -103,12 +121,17 @@
 
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
+
 	<servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>
@@ -150,5 +173,15 @@
 		<res-sharing-scope>Shareable</res-sharing-scope>
 	</resource-ref>
 	<!-- END TOMCAT RES -->
+
+	<!-- 
+		This servlet comes from resteasy-jaxrs and is enabled by default mapped to "" URL. The empty string has
+		greater priority than "/": that is a big problem for us because our WARs have mixed resources, REST
+		services, JSPs, HTMLs, etc... The following disables this servlet.
+	 -->
+	<servlet-mapping>
+		<servlet-name>org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher</servlet-name>
+		<url-pattern>/restful-services-default</url-pattern>
+	</servlet-mapping>
 
 </web-app>

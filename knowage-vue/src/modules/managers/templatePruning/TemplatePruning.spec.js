@@ -68,7 +68,9 @@ const $store = {
 
 jest.mock('axios')
 
-axios.post.mockImplementation(() => Promise.resolve())
+const $http = {
+    post: axios.post.mockImplementation(() => Promise.resolve())
+}
 
 const factory = () => {
     return mount(TemplatePruning, {
@@ -85,7 +87,8 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $store,
-                $confirm
+                $confirm,
+                $http
             }
         }
     })
@@ -113,7 +116,7 @@ describe('Template Pruning', () => {
         expect(filterButton.element.disabled).toBe(true)
     })
     it('if no template is available the card below shows a no available template message', async () => {
-        axios.get.mockImplementation((url) => {
+        $http.get = axios.get.mockImplementation((url) => {
             switch (url) {
                 case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/folders?includeDocs=true':
                     return Promise.resolve({ data: [] })
@@ -141,7 +144,7 @@ describe('Template Pruning', () => {
         expect(wrapper.find('[data-test="delete-button"]').exists()).toBe(false)
     })
     it('if one or more templates are available the folder tree appears with the search bar', async () => {
-        axios.get.mockImplementation((url) => {
+        $http.get = axios.get.mockImplementation((url) => {
             switch (url) {
                 case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/folders?includeDocs=true':
                     return Promise.resolve({ data: mockedFolders })

@@ -1,0 +1,12 @@
+{
+    "dialog": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+    "node": {
+        "style": {
+            "padding": "0"
+        }
+    }
+}

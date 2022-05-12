@@ -178,6 +178,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							model.content.chartTemplate.CHART.AXES_LIST.AXIS[k].LABELS.rotationEnabled = true;
 						}
 					}
+					if(model.content.chartTemplate.CHART.TOOLTIP && !model.content.chartTemplate.CHART.TOOLTIP.backgroundColor) {
+							model.content.chartTemplate.CHART.TOOLTIP.backgroundColor= "#D6D6D6"
+					}
 				 }
 				}
 				if(model.type=='map') {

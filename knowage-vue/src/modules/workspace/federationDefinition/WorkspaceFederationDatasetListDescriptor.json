@@ -1,0 +1,25 @@
+{
+    "styles": {
+        "assContainer": {
+            "max-height": "35vh",
+            "overflow": "auto"
+        },
+        "dsList": {
+            "height": "75vh"
+        },
+        "maxHeight": "height:100%",
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        },
+        "metaContainer": {
+            "min-width": 0,
+            "overflow": "hidden"
+        },
+        "metaList": {
+            "min-width": "250px"
+        }
+    }
+}

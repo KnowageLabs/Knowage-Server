@@ -6,6 +6,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import InputNumber from 'primevue/inputnumber'
 import flushPromises from 'flush-promises'
+import PrimeVue from 'primevue/config'
 import RadioButton from 'primevue/radiobutton'
 import Listbox from 'primevue/listbox'
 import KpiSchedulerTabView from './KpiSchedulerTabView.vue'
@@ -30,21 +31,23 @@ const mockedScheduler = {
 
 jest.mock('axios')
 
-axios.get.mockImplementation((url) => {
-    switch (url) {
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/1/loadSchedulerKPI':
-            return Promise.resolve({ data: mockedScheduler })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_PLACEHOLDER_TYPE`:
-            return Promise.resolve({ data: [] })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_PLACEHOLDER_FUNC`:
-            return Promise.resolve({ data: [] })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all/':
-            return Promise.resolve({ data: [] })
-        case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi':
-            return Promise.resolve({ data: [] })
-    }
-})
-axios.post.mockImplementation(() => Promise.resolve({ data: [] }))
+const $http = {
+    get: axios.get.mockImplementation((url) => {
+        switch (url) {
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/1/loadSchedulerKPI':
+                return Promise.resolve({ data: mockedScheduler })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_PLACEHOLDER_TYPE`:
+                return Promise.resolve({ data: [] })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_PLACEHOLDER_FUNC`:
+                return Promise.resolve({ data: [] })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all/':
+                return Promise.resolve({ data: [] })
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi':
+                return Promise.resolve({ data: [] })
+        }
+    }),
+    post: axios.post.mockImplementation(() => Promise.resolve({ data: [] }))
+}
 
 const $confirm = {
     require: jest.fn()
@@ -64,6 +67,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
+            plugins: [PrimeVue],
             stubs: {
                 Button,
                 Card,
@@ -84,7 +88,8 @@ const factory = () => {
                 $t: (msg) => msg,
                 $store,
                 $confirm,
-                $router
+                $router,
+                $http
             }
         }
     })

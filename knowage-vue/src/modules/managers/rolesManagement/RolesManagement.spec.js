@@ -39,8 +39,14 @@ const mockedRoles = [
 
 jest.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: mockedRoles }))
-axios.delete.mockImplementation(() => Promise.resolve())
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: mockedRoles
+        })
+    ),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 const $confirm = {
     require: jest.fn()
@@ -68,7 +74,8 @@ const factory = () => {
                 $t: (msg) => msg,
                 $store,
                 $confirm,
-                $router
+                $router,
+                $http
             }
         }
     })
@@ -110,7 +117,7 @@ describe('Roles Management', () => {
 
         await wrapper.vm.deleteRole(1)
         expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/' + 1)
+        expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/' + 1, { headers: { 'X-Disable-Errors': 'true' } })
     })
     it('changes url when the "+" button is clicked', async () => {
         const wrapper = factory()
@@ -118,14 +125,14 @@ describe('Roles Management', () => {
 
         await openButton.trigger('click')
 
-        expect($router.push).toHaveBeenCalledWith('/roles/new-role')
+        expect($router.push).toHaveBeenCalledWith('/roles-management/new-role')
     })
     it('changes url with clicked row id when a row is clicked', async () => {
         const wrapper = factory()
         await flushPromises()
         await wrapper.find('[data-test="list-item"]').trigger('click')
 
-        expect($router.push).toHaveBeenCalledWith('/roles/' + 1)
+        expect($router.push).toHaveBeenCalledWith('/roles-management/' + 1)
     })
 })
 

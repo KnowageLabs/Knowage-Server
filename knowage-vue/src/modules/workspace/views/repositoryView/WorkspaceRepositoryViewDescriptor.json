@@ -1,0 +1,20 @@
+{
+    "columns": [
+        {
+            "field": "documentType",
+            "header": "importExport.gallery.column.type"
+        },
+        {
+            "field": "documentLabel",
+            "header": "importExport.catalogFunction.column.label"
+        },
+        {
+            "field": "documentName",
+            "header": "importExport.gallery.column.name"
+        },
+        {
+            "field": "documentDescription",
+            "header": "managers.businessModelManager.description"
+        }
+    ]
+}

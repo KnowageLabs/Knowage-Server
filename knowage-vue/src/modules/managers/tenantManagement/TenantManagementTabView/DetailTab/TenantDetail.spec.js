@@ -20,11 +20,19 @@ const mockedTenantEnabled = {
 
 jest.mock('axios')
 
+const $http = {
+    get: axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
+}
+
 axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
 
 const factory = () => {
     return mount(TenantDetail, {
+        props: { listOfThemes: [] },
         global: {
+            directives: {
+                tooltip() {}
+            },
             stubs: {
                 Card,
                 Dropdown,
@@ -32,7 +40,8 @@ const factory = () => {
                 InputText
             },
             mocks: {
-                $t: (msg) => msg
+                $t: (msg) => msg,
+                $http
             }
         }
     })
@@ -44,7 +53,7 @@ describe('Role Detail Tab', () => {
         await wrapper.setProps({ selectedTenant: mockedTenant })
         const nameInput = wrapper.find('[data-test="name-input"]')
 
-        expect(wrapper.vm.tenant).toStrictEqual(mockedTenant)
+        expect(wrapper.vm.tenant).toStrictEqual({ ...mockedTenant, MULTITENANT_IMAGE: [] })
 
         expect(nameInput.wrapperElement._value).toBe('DEFAULT_TENANT')
     })

@@ -1,0 +1,142 @@
+{
+    "availableFunctions": [
+        {
+            "category": "AGGREGATION",
+            "formula": "sum(expr1, expr2, …, exprN)",
+            "help": "dataPreparation.sum",
+            "label": "SUM",
+            "name": "SUM"
+        },
+        {
+            "category": "AGGREGATION",
+            "formula": "min(expr)",
+            "help": "dataPreparation.min",
+            "label": "MIN",
+            "name": "MIN"
+        },
+        {
+            "category": "AGGREGATION",
+            "formula": "max(expr)",
+            "help": "dataPreparation.max",
+            "label": "MAX",
+            "name": "MAX"
+        },
+        {
+            "category": "AGGREGATION",
+            "formula": "COUNT(column_name)",
+            "help": "dataPreparation.count",
+            "label": "COUNT",
+            "name": "COUNT"
+        },
+        {
+            "category": "AGGREGATION",
+            "formula": "avg(expr)",
+            "help": "dataPreparation.avg",
+            "label": "AVG",
+            "name": "AVG"
+        },
+        {
+            "category": "String",
+            "formula": "concat(col1, col2, ..., colN)",
+            "help": "dataPreparation.concat",
+            "label": "concat",
+            "name": "concat"
+        },
+        {
+            "category": "String",
+            "formula": "length(expr)",
+            "help": "dataPreparation.lenght",
+            "label": "Lenght",
+            "name": "Lenght"
+        },
+        {
+            "category": "String",
+            "formula": "lower(str)",
+            "help": "dataPreparation.lower",
+            "label": "Lower",
+            "name": "Lower"
+        },
+        {
+            "category": "String",
+            "formula": "upper(str)",
+            "help": "dataPreparation.upper",
+            "label": "upper",
+            "name": "upper"
+        },
+        {
+            "category": "String",
+            "formula": "trim(str)",
+            "help": "dataPreparation.trim",
+            "label": "trim",
+            "name": "trim"
+        },
+        {
+            "category": "String",
+            "formula": "substring(str, pos[, len])",
+            "help": "dataPreparation.substring",
+            "label": "substring",
+            "name": "substring"
+        }
+    ],
+    "availableOutputTypes": [
+        {
+            "code": "string",
+            "label": "string"
+        },
+        {
+            "code": "numeric",
+            "label": "numeric"
+        },
+        {
+            "code": "date",
+            "label": "date"
+        }
+    ],
+    "category": {
+        "label": "category"
+    },
+    "formula": "dataPreparation.formula",
+    "hint": "dataPreparation.hint",
+    "validations": [
+        {
+            "fieldName": "colName",
+            "validators": [
+                {
+                    "key": "required"
+                },
+                {
+                    "key": "maximumCharacters",
+                    "validator": {
+                        "params": {
+                            "max": 100
+                        },
+                        "type": "maxLength"
+                    }
+                },
+                {
+                    "key": "regex",
+                    "validator": {
+                        "type": "extendedAlphanumericRegex"
+                    }
+                }
+            ]
+        },
+        {
+            "fieldName": "formula",
+            "validators": [
+                {
+                    "key": "required"
+                },
+                {
+                    "key": "maximumCharacters",
+                    "validator": {
+                        "params": {
+                            "max": 1000
+                        },
+                        "type": "maxLength"
+                    }
+                }
+            ]
+        }
+    ]
+}

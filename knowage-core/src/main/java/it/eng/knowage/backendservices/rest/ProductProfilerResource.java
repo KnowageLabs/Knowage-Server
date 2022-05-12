@@ -27,8 +27,6 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 
 import it.eng.knowage.security.ProductProfiler;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.user.UserProfileManager;
 
 @Path("/2.0/backendservices/productprofiler")
 public class ProductProfilerResource {
@@ -39,15 +37,13 @@ public class ProductProfilerResource {
 	@Path("cockpit/widget")
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean canCreateWidget(@QueryParam("type") String type) {
-		UserProfile userProfile = UserProfileManager.getProfile();
 		return ProductProfiler.canCreateWidget(type);
 	}
 
 	@GET
 	@Path("cockpit/functions")
 	@Produces(MediaType.APPLICATION_JSON)
-	public boolean getUserProfile() {
-		UserProfile userProfile = UserProfileManager.getProfile();
+	public boolean canUseFunctions() {
 		return ProductProfiler.canUseFunctions();
 	}
 

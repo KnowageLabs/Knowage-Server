@@ -2,10 +2,10 @@
     <Card>
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ title }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button v-if="canSeeLinkTable" class="kn-button p-button-text" @click="$emit('linkClicked', type)">{{ $t('managers.glossary.glossaryUsage.link') }}</Button>
                 </template>
             </Toolbar>
@@ -52,80 +52,86 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { filterDefault } from '@/helpers/commons/filterHelper'
-import Card from 'primevue/card'
-import Column from 'primevue/column'
-import DataTable from 'primevue/datatable'
-import glossaryUsageNavigationCardDescriptor from './GlossaryUsageNavigationCardDescriptor.json'
+    import { defineComponent } from 'vue'
+    import { filterDefault } from '@/helpers/commons/filterHelper'
+    import Card from 'primevue/card'
+    import Column from 'primevue/column'
+    import DataTable from 'primevue/datatable'
+    import glossaryUsageNavigationCardDescriptor from './GlossaryUsageNavigationCardDescriptor.json'
 
-export default defineComponent({
-    name: 'glossary-usage-navigation-card',
-    components: { Card, Column, DataTable },
-    props: {
-        items: { type: Object },
-        type: { type: String }
-    },
-    emits: ['infoClicked', 'linkClicked', 'selected'],
-    data() {
-        return {
-            glossaryUsageNavigationCardDescriptor,
-            filters: { global: [filterDefault] } as Object,
-            selectedItems: [],
-            user: {} as any
-        }
-    },
-    computed: {
-        title(): string {
-            switch (this.type) {
-                case 'document':
-                    return this.$t('managers.glossary.glossaryUsage.documents')
-                case 'dataset':
-                    return this.$t('managers.glossary.glossaryUsage.dataset')
-                case 'businessClass':
-                    return this.$t('managers.glossary.glossaryUsage.businessClass')
-                case 'table':
-                    return this.$t('managers.glossary.glossaryUsage.tables')
-                default:
-                    return ''
+    export default defineComponent({
+        name: 'glossary-usage-navigation-card',
+        components: { Card, Column, DataTable },
+        props: {
+            items: { type: Object },
+            type: { type: String },
+            glossaryChanged: { type: Boolean }
+        },
+        emits: ['infoClicked', 'linkClicked', 'selected'],
+        data() {
+            return {
+                glossaryUsageNavigationCardDescriptor,
+                filters: { global: [filterDefault] } as Object,
+                selectedItems: [],
+                user: {} as any
             }
         },
-        canSeeLinkTable(): boolean {
-            let index = -1
-            if (this.user.functionalities) {
-                index = this.user.functionalities.findIndex((el: string) => el === 'ManageGlossaryTechnical')
+        watch: {
+            glossaryChanged() {
+                this.selectedItems = []
             }
-            return index !== -1
+        },
+        computed: {
+            title(): string {
+                switch (this.type) {
+                    case 'document':
+                        return this.$t('managers.glossary.glossaryUsage.documents')
+                    case 'dataset':
+                        return this.$t('managers.glossary.glossaryUsage.dataset')
+                    case 'businessClass':
+                        return this.$t('managers.glossary.glossaryUsage.businessClass')
+                    case 'table':
+                        return this.$t('managers.glossary.glossaryUsage.tables')
+                    default:
+                        return ''
+                }
+            },
+            canSeeLinkTable(): boolean {
+                let index = -1
+                if (this.user.functionalities) {
+                    index = this.user.functionalities.findIndex((el: string) => el === 'ManageGlossaryTechnical')
+                }
+                return index !== -1
+            }
+        },
+        created() {
+            this.user = (this.$store.state as any).user
+        },
+        methods: {
+            onItemsSelected() {
+                this.$emit('selected', this.selectedItems)
+            }
         }
-    },
-    created() {
-        this.user = (this.$store.state as any).user
-    },
-    methods: {
-        onItemsSelected() {
-            this.$emit('selected', this.selectedItems)
-        }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-.label {
-    text-transform: uppercase;
-}
-
-#no-words-present-info {
-    margin: 0 2rem;
-    font-size: 0.8rem;
-    display: flex;
-    justify-content: center;
-    border: 1px solid rgba(59, 103, 140, 0.1);
-    border-color: #c2c2c2;
-    border-radius: 2px;
-    background-color: #eaf0f6;
-    color: $color-primary;
-    p {
-        margin: 0.3rem;
+    .label {
+        text-transform: uppercase;
     }
-}
+
+    #no-words-present-info {
+        margin: 0 2rem;
+        font-size: 0.8rem;
+        display: flex;
+        justify-content: center;
+        border: 1px solid rgba(59, 103, 140, 0.1);
+        border-color: #c2c2c2;
+        border-radius: 2px;
+        background-color: #eaf0f6;
+        color: var(--kn-color-primary);
+        p {
+            margin: 0.3rem;
+        }
+    }
 </style>

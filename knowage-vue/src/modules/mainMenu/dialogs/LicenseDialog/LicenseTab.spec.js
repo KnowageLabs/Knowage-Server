@@ -32,13 +32,16 @@ const mockedHost = {
     hardwareId: '123456789qwertyuiopasdfghhjklzxcvbnm123456789qwertyuiopasdfghjkl'
 }
 
-jest.mock('axios', () => ({
-    get: jest.fn(() => Promise.resolve({ data: [] })),
-    post: jest.fn(() => Promise.resolve({ data: [] }))
-}))
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation(() => Promise.resolve({ data: [] })),
+    post: axios.post.mockImplementation(() => Promise.resolve({ data: [] }))
+}
 
 const $store = {
-    commit: jest.fn()
+    commit: jest.fn(),
+    dispatch: jest.fn()
 }
 
 const $confirm = {
@@ -65,7 +68,8 @@ const factory = (licenses, host) => {
             mocks: {
                 $t: (msg) => msg,
                 $store,
-                $confirm
+                $confirm,
+                $http
             }
         }
     })
@@ -113,7 +117,7 @@ describe('License management', () => {
         wrapper.vm.startUpload('KnowageSI')
         await flushPromises()
 
-        expect(axios.post).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/upload/DESKTOP-TEST12?isForUpdate=false', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        expect(axios.post).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/upload/DESKTOP-TEST12?isForUpdate=false', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
         expect(wrapper.emitted().reloadList).toBeTruthy()
         expect($store.commit).toHaveBeenCalledTimes(1)
     })
@@ -127,7 +131,7 @@ describe('License management', () => {
         wrapper.vm.startUpload('KnowageSI')
         await flushPromises()
 
-        expect(axios.post).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/upload/DESKTOP-TEST12?isForUpdate=true', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+        expect(axios.post).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/upload/DESKTOP-TEST12?isForUpdate=true', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
         expect(wrapper.emitted().reloadList).toBeTruthy()
         expect($store.commit).toHaveBeenCalledTimes(1)
     })

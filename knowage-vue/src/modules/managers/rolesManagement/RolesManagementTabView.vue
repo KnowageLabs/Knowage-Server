@@ -1,60 +1,58 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-        <template #left>{{ selectedRole.name }} </template>
-        <template #right>
+        <template #start>{{ selectedRole.name }} </template>
+        <template #end>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" :disabled="buttonDisabled" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <div class="rolesDetail">
-        <TabView class="tabview-custom kn-tab" data-test="tab-view">
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.rolesManagement.detail.title') }}</span>
-                </template>
+    <TabView class="roles-tabview" data-test="tab-view">
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.rolesManagement.detail.title') }}</span>
+            </template>
 
-                <RoleDetailTab :selectedRole="selectedRole" @fieldChanged="onFieldChange" @roleTypeChanged="onRoleTypeChange" />
-            </TabPanel>
+            <RoleDetailTab :selectedRole="selectedRole" :publicRole="publicRole" @fieldChanged="onFieldChange" @roleTypeChanged="onRoleTypeChange" />
+        </TabPanel>
 
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.rolesManagement.authorizations.title') }}</span>
-                </template>
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.rolesManagement.authorizations.title') }}</span>
+            </template>
 
-                <RoleAuthorizationsTab :selectedRole="selectedRole" :authList="authorizationList" :authCBs="authorizationCBs" @authChanged="onFieldChange" />
-            </TabPanel>
+            <RoleAuthorizationsTab :selectedRole="selectedRole" :authList="authorizationList" :authCBs="authorizationCBs" @authChanged="onFieldChange" />
+        </TabPanel>
 
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.rolesManagement.businessModels') }}</span>
-                </template>
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.rolesManagement.businessModels') }}</span>
+            </template>
 
-                <DomainCategoryTab :title="$t('managers.rolesManagement.businessModels') + ' ' + $t('managers.rolesManagement.categories')" :categoryList="businessModelList" :selected="selectedBusinessModels" @changed="setSelectedBusinessModels($event)"></DomainCategoryTab>
-            </TabPanel>
+            <DomainCategoryTab :title="$t('managers.rolesManagement.businessModels') + ' ' + $t('managers.rolesManagement.categories')" :categoryList="businessModelList" :selected="selectedBusinessModels" @changed="setSelectedBusinessModels($event)"></DomainCategoryTab>
+        </TabPanel>
 
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.rolesManagement.dataSets') }}</span>
-                </template>
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.rolesManagement.dataSets') }}</span>
+            </template>
 
-                <DomainCategoryTab :title="$t('managers.rolesManagement.dataSets') + ' ' + $t('managers.rolesManagement.categories')" :categoryList="dataSetList" :selected="selectedDataSets" @changed="setSelectedDataSets($event)"></DomainCategoryTab>
-            </TabPanel>
+            <DomainCategoryTab :title="$t('managers.rolesManagement.dataSets') + ' ' + $t('managers.rolesManagement.categories')" :categoryList="dataSetList" :selected="selectedDataSets" @changed="setSelectedDataSets($event)"></DomainCategoryTab>
+        </TabPanel>
 
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.rolesManagement.kpiCategories') }}</span>
-                </template>
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.rolesManagement.kpiCategories') }}</span>
+            </template>
 
-                <DomainCategoryTab :title="$t('managers.rolesManagement.kpiCategories')" :categoryList="kpiCategoriesList" :selected="selectedKPICategories" @changed="setSelectedKPICategories($event)"></DomainCategoryTab>
-            </TabPanel>
-        </TabView>
-    </div>
+            <DomainCategoryTab :title="$t('managers.rolesManagement.kpiCategories')" :categoryList="kpiCategoriesList" :selected="selectedKPICategories" @changed="setSelectedKPICategories($event)"></DomainCategoryTab>
+        </TabPanel>
+    </TabView>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iCategory, iRole } from './RolesManagement'
-import axios from 'axios'
+import { AxiosResponse } from 'axios'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import rolesManagementTabViewDescriptor from './RolesManagementTabViewDescriptor.json'
@@ -71,12 +69,7 @@ export default defineComponent({
         TabPanel,
         RoleAuthorizationsTab
     },
-    props: {
-        id: {
-            type: String,
-            required: false
-        }
-    },
+    props: { id: { type: String, required: false }, publicRole: { type: Object, required: false } },
     emits: ['touched', 'closed', 'inserted'],
     data() {
         return {
@@ -130,7 +123,7 @@ export default defineComponent({
                 url += this.selectedRole.id
             }
 
-            await axios.post(url, this.selectedRole).then(() => {
+            await this.$http.post(url, this.selectedRole).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t(this.rolesManagementTabViewDescriptor.operation[this.operation].toastTitle),
                     msg: this.$t(this.rolesManagementTabViewDescriptor.operation.success)
@@ -140,16 +133,16 @@ export default defineComponent({
             })
         },
         loadCategories(id: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/categories/${id}`).finally(() => (this.loading = false))
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/categories/${id}`).finally(() => (this.loading = false))
         },
         loadDomains(type: string) {
-            return axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`).finally(() => (this.loading = false))
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`).finally(() => (this.loading = false))
         },
         async loadAuthorizations() {
             this.loading = true
-            await axios
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'authorizations')
-                .then((response) => {
+                .then((response: AxiosResponse<any>) => {
                     this.authorizationList = response.data.root
                     this.rolesManagementTabViewDescriptor.authorizations.forEach((authorization) => {
                         authorization.visible = this.authorizationList.findIndex((auth) => authorization.dbname === auth.name) >= 0
@@ -164,7 +157,7 @@ export default defineComponent({
         },
         async loadAllDomainsData() {
             this.loading = true
-            await this.loadDomains('BM_CATEGORY').then((response) => {
+            await this.loadDomains('BM_CATEGORY').then((response: AxiosResponse<any>) => {
                 response.data.map((category: any) => {
                     this.businessModelList.push({
                         categoryId: category.VALUE_ID,
@@ -172,7 +165,7 @@ export default defineComponent({
                     } as iCategory)
                 })
             })
-            await this.loadDomains('CATEGORY_TYPE').then((response) => {
+            await this.loadDomains('CATEGORY_TYPE').then((response: AxiosResponse<any>) => {
                 response.data.map((category: any) => {
                     this.dataSetList.push({
                         categoryId: category.VALUE_ID,
@@ -180,7 +173,7 @@ export default defineComponent({
                     } as iCategory)
                 })
             })
-            await this.loadDomains('KPI_KPI_CATEGORY').then((response) => {
+            await this.loadDomains('KPI_KPI_CATEGORY').then((response: AxiosResponse<any>) => {
                 response.data.map((category: any) => {
                     this.kpiCategoriesList.push({
                         categoryId: category.VALUE_ID,
@@ -193,9 +186,9 @@ export default defineComponent({
         async loadSelectedRole() {
             this.loading = true
             if (this.id) {
-                await axios.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/${this.id}`).then((response) => (this.selectedRole = response.data))
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/${this.id}`).then((response: AxiosResponse<any>) => (this.selectedRole = response.data))
 
-                await this.loadCategories(this.id).then((response) => {
+                await this.loadCategories(this.id).then((response: AxiosResponse<any>) => {
                     this.clearSelectedLists()
 
                     response.data.map((category: any) => {
@@ -289,11 +282,26 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss" scoped>
-.rolesDetail {
-    overflow: auto;
-    flex: 1;
+<style lang="scss">
+.roles-absolute-scroll {
+    height: 100%;
+    left: 0;
+    top: 0;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+}
+
+.roles-tabview,
+.roles-tabview .p-tabview-panels,
+.roles-tabview .p-tabview-panel {
     display: flex;
     flex-direction: column;
+    flex: 1;
+}
+
+.roles-tabview .p-tabview-panels {
+    padding: 0 !important;
 }
 </style>

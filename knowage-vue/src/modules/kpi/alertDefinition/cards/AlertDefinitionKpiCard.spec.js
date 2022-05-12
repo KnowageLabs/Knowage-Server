@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import KpiCard from './KpiCard.vue'
+import AlertDefinitionKpiCard from './AlertDefinitionKpiCard.vue'
 import Toolbar from 'primevue/toolbar'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -122,7 +122,7 @@ const mockedAlert = {
 }
 
 const factory = () => {
-    return mount(KpiCard, {
+    return mount(AlertDefinitionKpiCard, {
         props: {
             selectedAlert: mockedAlert
         },

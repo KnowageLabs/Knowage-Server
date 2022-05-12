@@ -34,19 +34,19 @@ public class DataSourceFactory {
 		switch (type) {
 		case MYSQL:
 			dataSource = createDataSource(TestConstants.MYSQL_LABEL, TestConstants.MYSQL_URL, TestConstants.MYSQL_USER, TestConstants.MYSQL_PWD,
-					TestConstants.MYSQL_DRIVER, TestConstants.MYSQL_DIALECT_CLASS, TestConstants.MYSQL_DIALECT_NAME, true, false);
+					TestConstants.MYSQL_DRIVER, TestConstants.MYSQL_DIALECT_CLASS, TestConstants.MYSQL_DIALECT_NAME, true, false, false);
 			break;
 		case POSTGRES:
 			dataSource = createDataSource(TestConstants.POSTGRES_LABEL, TestConstants.POSTGRES_URL, TestConstants.POSTGRES_USER, TestConstants.POSTGRES_PWD,
-					TestConstants.POSTGRES_DRIVER, TestConstants.POSTGRES_DIALECT_CLASS, TestConstants.POSTGRES_DIALECT_NAME, true, false);
+					TestConstants.POSTGRES_DRIVER, TestConstants.POSTGRES_DIALECT_CLASS, TestConstants.POSTGRES_DIALECT_NAME, true, false, false);
 			break;
 		case ORACLE:
 			dataSource = createDataSource(TestConstants.ORACLE_LABEL, TestConstants.ORACLE_URL, TestConstants.ORACLE_USER, TestConstants.ORACLE_PWD,
-					TestConstants.ORACLE_DRIVER, TestConstants.ORACLE_DIALECT_CLASS, TestConstants.ORACLE_DIALECT_NAME, true, false);
+					TestConstants.ORACLE_DRIVER, TestConstants.ORACLE_DIALECT_CLASS, TestConstants.ORACLE_DIALECT_NAME, true, false, false);
 			break;
 		case SQLSERVER:
 			dataSource = createDataSource(TestConstants.SQLSERVER_LABEL, TestConstants.SQLSERVER_URL, TestConstants.SQLSERVER_USER, TestConstants.SQLSERVER_PWD,
-					TestConstants.SQLSERVER_DRIVER, TestConstants.SQLSERVER_DIALECT_CLASS, TestConstants.SQLSERVER_DIALECT_NAME, true, false);
+					TestConstants.SQLSERVER_DRIVER, TestConstants.SQLSERVER_DIALECT_CLASS, TestConstants.SQLSERVER_DIALECT_NAME, true, false, false);
 			break;
 		}
 
@@ -54,7 +54,7 @@ public class DataSourceFactory {
 	}
 
 	public static IDataSource createDataSource(String label, String url, String user, String password, String driver, String hibDialectClass,
-			String hibDialectName, boolean isReadOnly, boolean isWriteDefault) {
+			String hibDialectName, boolean isReadOnly, boolean isWriteDefault, boolean useForDataprep) {
 		IDataSource dataSource = it.eng.spagobi.tools.datasource.bo.DataSourceFactory.getDataSource();
 		Random rand = new Random();
 
@@ -72,6 +72,7 @@ public class DataSourceFactory {
 		dataSource.setHibDialectClass(hibDialectClass);
 		dataSource.setReadOnly(isReadOnly);
 		dataSource.setWriteDefault(isWriteDefault);
+		dataSource.setUseForDataprep(useForDataprep);
 
 		/*
 		 * //EXAMPLE for reference dataSourceFoodmart = new DataSource();

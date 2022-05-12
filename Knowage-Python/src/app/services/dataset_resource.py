@@ -18,6 +18,7 @@
 
 from flask import Blueprint, request
 from app.utilities import security, utils
+import logging
 
 dataset = Blueprint('dataset', __name__)
 #url: knowage_addr:port/dataset
@@ -32,6 +33,7 @@ def python_dataset_execute():
         df_name = data['df_name']
         knowage_parameters = data['parameters']
     except Exception as e:
+        logging.exception("Error parsing dataset request")
         return str(e), 400
 
     if not isAuthenticated:
@@ -47,6 +49,7 @@ def python_dataset_execute():
         namespace = {df_name: "", "parameters_": parameters}
         exec (script, namespace)
     except Exception as e:
+        logging.exception("Error resolving input references inside script")
         return str(e), 400
     # collect script result
     df = namespace[df_name]

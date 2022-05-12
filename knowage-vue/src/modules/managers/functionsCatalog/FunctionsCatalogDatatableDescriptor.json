@@ -1,0 +1,39 @@
+{
+    "breakpoint": "960px",
+    "columns": [
+        {
+            "field": "label",
+            "header": "managers.functionsCatalog.label",
+            "style": {}
+        },
+        {
+            "field": "name",
+            "header": "managers.functionsCatalog.name",
+            "style": {}
+        },
+        {
+            "field": "type",
+            "header": "common.type",
+            "style": {}
+        },
+        {
+            "field": "language",
+            "header": "common.language",
+            "style": {}
+        },
+        {
+            "field": "owner",
+            "header": "common.owner",
+            "style": {}
+        }
+    ],
+    "responsiveLayout": "stack",
+    "rows": 15,
+    "table": {
+        "iconColumn": {
+            "style": {
+                "text-align": "end"
+            }
+        }
+    }
+}

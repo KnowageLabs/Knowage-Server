@@ -168,7 +168,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			} else {
 				String type = documentDTO.getType();
 				if ("MAP".equalsIgnoreCase(type)) {
-					insertGeoreportDocument(saveDocumentDTO, documentManagementAPI);
+					id = insertGeoreportDocument(saveDocumentDTO, documentManagementAPI);
 				} else if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type)) {
 					id = insertCockpitDocument(saveDocumentDTO, documentManagementAPI);
 				} else if ("KPI".equalsIgnoreCase(type)) {
@@ -271,7 +271,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		return toReturn;
 	}
 
-	private JSError insertGeoreportDocument(SaveDocumentDTO saveDocumentDTO, AnalyticalModelDocumentManagementAPI documentManagementAPI)
+	private Integer insertGeoreportDocument(SaveDocumentDTO saveDocumentDTO, AnalyticalModelDocumentManagementAPI documentManagementAPI)
 			throws JSONException, EMFUserError {
 		String sourceModelName = getAttributeAsString("model_name");
 		DocumentDTO documentDTO = saveDocumentDTO.getDocumentDTO();
@@ -281,17 +281,19 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 
 		Assert.assertNotNull(customDataDTO, "Custom data object cannot be null");
 
+		Integer id = null;
+
 		if (saveDocumentDTO.getSourceDatasetDTO() != null) {
 			SourceDatasetDTO sourceDatasetDTO = saveDocumentDTO.getSourceDatasetDTO();
-			insertGeoReportDocumentCreatedOnDataset(sourceDatasetDTO, documentDTO, customDataDTO, filteredFolders, documentManagementAPI);
+			id = insertGeoReportDocumentCreatedOnDataset(sourceDatasetDTO, documentDTO, customDataDTO, filteredFolders, documentManagementAPI);
 		} else if (sourceModelName != null) {
-			return new JSError().addError("Impossible to create geo document defined on a metamodel");
+			throw new SpagoBIRuntimeException("Impossible to create geo document defined on a metamodel");
 		} else {
-			insertGeoReportDocumentCreatedOnDataset(null, documentDTO, customDataDTO, filteredFolders, documentManagementAPI);
+			id = insertGeoReportDocumentCreatedOnDataset(null, documentDTO, customDataDTO, filteredFolders, documentManagementAPI);
 			// throw new SpagoBIServiceException(SERVICE_NAME,
 			// "Impossible to create geo document because both sourceModel and sourceDataset are null");
 		}
-		return new JSError();
+		return id;
 	}
 
 	private Integer insertKPIDocument(SaveDocumentDTO saveDocumentDTO, AnalyticalModelDocumentManagementAPI documentManagementAPI)
@@ -348,7 +350,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		return document.getId();
 	}
 
-	private JSError insertGeoReportDocumentCreatedOnDataset(SourceDatasetDTO sourceDataset, DocumentDTO documentDTO, CustomDataDTO customData,
+	private Integer insertGeoReportDocumentCreatedOnDataset(SourceDatasetDTO sourceDataset, DocumentDTO documentDTO, CustomDataDTO customData,
 			List<Integer> folders, AnalyticalModelDocumentManagementAPI documentManagementAPI) throws EMFUserError, JSONException {
 
 		logger.debug("IN");
@@ -365,10 +367,10 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			try {
 				ISourceDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceDatasetLabel);
 			} catch (Throwable t) {
-				return new JSError().addError("Impossible to load source datset [" + sourceDatasetLabel + "]");
+				throw new SpagoBIRuntimeException("Impossible to load source datset [" + sourceDatasetLabel + "]");
 			}
 			if (ISourceDataset == null) {
-				return new JSError().addError("Source datset [" + sourceDatasetLabel + "] does not exist");
+				throw new SpagoBIRuntimeException("Source datset [" + sourceDatasetLabel + "] does not exist");
 			}
 			document.setDataSetId(ISourceDataset.getId());
 		}
@@ -382,7 +384,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		if (metadata != null && metadata.size() > 0) {
 			documentManagementAPI.saveDocumentMetadataProperties(document, null, metadata);
 		}
-		return new JSError();
+		return document.getId();
 	}
 
 	// TODO consolidate the following 2 methods

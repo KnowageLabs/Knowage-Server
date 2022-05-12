@@ -1,0 +1,55 @@
+{
+    "httpMethods": [
+        {
+            "name": "Get",
+            "value": "Get"
+        },
+        {
+            "name": "Post",
+            "value": "Post"
+        },
+        {
+            "name": "Put",
+            "value": "Put"
+        },
+        {
+            "name": "Delete",
+            "value": "Delete"
+        }
+    ],
+    "style": {
+        "infoColumnsContainer": {
+            "display": "flex",
+            "justify-content": "space-between"
+        },
+        "maxWidth": {
+            "width": "100%"
+        }
+    },
+    "validations": {
+        "dataset": [
+            {
+                "fieldName": "restAddress",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "rest-fields-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "restHttpMethod",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "rest-fields-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

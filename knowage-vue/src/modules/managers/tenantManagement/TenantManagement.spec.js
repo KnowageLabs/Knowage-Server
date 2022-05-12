@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import Button from 'primevue/button'
+import Card from 'primevue/card'
 import flushPromises from 'flush-promises'
 import InputText from 'primevue/inputtext'
 import TenantManagement from './TenantManagement.vue'
@@ -27,8 +28,17 @@ const mockedTenants = [
 
 jest.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: { root: mockedTenants } }))
-axios.delete.mockImplementation(() => Promise.resolve())
+const $http = {
+    get: axios.get.mockImplementation((url) => {
+        switch (url) {
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license`:
+                return Promise.resolve({ data: { hosts: [{ hostName: 'host' }], licenses: { host: '' } } })
+            default:
+                return Promise.resolve({ data: { root: mockedTenants } })
+        }
+    }),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
 
 const $confirm = {
     require: jest.fn()
@@ -47,6 +57,7 @@ const factory = () => {
         global: {
             stubs: {
                 Button,
+                Card,
                 InputText,
                 ProgressBar,
                 Toolbar,
@@ -56,7 +67,8 @@ const factory = () => {
                 $t: (msg) => msg,
                 $store,
                 $confirm,
-                $router
+                $router,
+                $http
             }
         }
     })
@@ -74,7 +86,7 @@ describe('Tenant management loading', () => {
         expect(wrapper.find('[data-test="progress-bar"]').exists()).toBe(true)
     })
     it('shows "no data" label when loaded empty', async () => {
-        axios.get.mockReturnValueOnce(Promise.resolve({ data: { root: [] } }))
+        $http.get = axios.get.mockReturnValueOnce(Promise.resolve({ data: { hosts: [{ hostName: '' }] } }))
         const wrapper = factory()
 
         await flushPromises()
@@ -104,13 +116,13 @@ describe('Tenant Management', () => {
 
         await openButton.trigger('click')
 
-        expect($router.push).toHaveBeenCalledWith('/tenants/new-tenant')
+        expect($router.push).toHaveBeenCalledWith('/tenants-management/new-tenant')
     })
     it('opens filled detail when a row is clicked', async () => {
         const wrapper = factory()
         await flushPromises()
         await wrapper.find('[data-test="list-item"]').trigger('click')
 
-        expect($router.push).toHaveBeenCalledWith('/tenants/' + 1)
+        expect($router.push).toHaveBeenCalledWith('/tenants-management/' + 1)
     })
 })
