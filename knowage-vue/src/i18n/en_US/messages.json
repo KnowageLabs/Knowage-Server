@@ -1314,6 +1314,11 @@
                 "title": "Use modes"
             }
         },
+        "eventsManagement": {
+            "eventModel": "Select favourite type",
+            "title": "Events Management",
+            "user": "User"
+        },
         "functionalitiesManagement": {
             "creation": "Creation",
             "development": "Development",
