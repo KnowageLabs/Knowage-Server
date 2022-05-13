@@ -900,7 +900,7 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
-            if (temp.length > 0) {
+            if (temp.length > 1) {
                 this.crossNavigationDocuments = temp
                 this.destinationSelectDialogVisible = true
             } else {
