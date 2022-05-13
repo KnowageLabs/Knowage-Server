@@ -113,7 +113,7 @@ export default defineComponent({
             for (let i = 0; i < this.perspective.options.criterionPriority.length; i++) {
                 for (let j = 0; j < this.perspective.targets.length; j++) {
                     if (this.perspective.options.criterionPriority[i] === this.perspective.targets[j].name) {
-                        statusArray[i].priority = true
+                        statusArray[j].priority = true
                     }
                 }
             }
@@ -135,14 +135,10 @@ export default defineComponent({
                 statusArray.push({ status: target.kpis[i].status, priority: false })
             }
 
-            console.log('STATUS ARRAY: ', statusArray)
-            console.log('TARGET KPIS: ', target.kpis)
-            console.log('target.options.criterionPriority[i]: ', target.kpis)
-
             for (let i = 0; i < target.options.criterionPriority.length; i++) {
                 for (let j = 0; j < target.kpis.length; j++) {
                     if (target.options.criterionPriority[i] === target.kpis[j].name) {
-                        statusArray[i].priority = true
+                        statusArray[j].priority = true
                     }
                 }
             }
