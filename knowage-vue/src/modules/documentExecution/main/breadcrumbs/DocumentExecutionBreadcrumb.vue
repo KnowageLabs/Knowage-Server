@@ -1,7 +1,7 @@
 <template>
     <Breadcrumb :home="home" :model="items">
         <template #item="{item}">
-            <span class="breadcrumbs-item" @click="selectBreadcrumb">{{ item.label }}</span>
+            <span class="breadcrumbs-item" @click="selectBreadcrumb">{{ item.crossBreadcrumb ?? item.label }}</span>
         </template>
     </Breadcrumb>
 </template>
@@ -32,6 +32,7 @@ export default defineComponent({
     methods: {
         loadBreadcrumbs() {
             this.items = this.breadcrumbs as any[]
+            console.log('LOADED BREADCRUMBS: ', this.items)
         },
         selectBreadcrumb(event: any) {
             const index = this.items.findIndex((el: any) => el.label === event.target.textContent)
