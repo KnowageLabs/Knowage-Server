@@ -65,100 +65,100 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { formatDate } from '@/helpers/commons/localeHelper'
+    import { defineComponent } from 'vue'
+    import { formatDate } from '@/helpers/commons/localeHelper'
 
-export default defineComponent({
-    name: 'document-browser-sidebar',
-    props: { selectedDocument: { type: Object } },
-    emits: ['documentCloneClick', 'documentDeleteClick', 'itemSelected', 'documentChangeStateClicked', 'showDocumentDetails'],
-    data() {
-        return {
-            document: null as any,
-            user: null as any
-        }
-    },
-    watch: {
-        selectedDocument() {
+    export default defineComponent({
+        name: 'document-browser-sidebar',
+        props: { selectedDocument: { type: Object } },
+        emits: ['documentCloneClick', 'documentDeleteClick', 'itemSelected', 'documentChangeStateClicked', 'showDocumentDetails'],
+        data() {
+            return {
+                document: null as any,
+                user: null as any
+            }
+        },
+        watch: {
+            selectedDocument() {
+                this.loadDocument()
+            }
+        },
+        computed: {
+            isSuperAdmin(): boolean {
+                return this.user?.isSuperadmin
+            },
+            getImageUrl(): string {
+                return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
+            },
+            canEditDocument(): boolean {
+                if (this.document.stateCode === 'TEST') return this.user?.functionalities.includes('DocumentTestManagement')
+                if (this.document.stateCode === 'DEV') return this.user?.functionalities.includes('DocumentDevManagement')
+                if (this.document.stateCode === 'REL') return this.user?.functionalities.includes('DocumentAdminManagement')
+                if (this.document.stateCode === 'SUSPENDED' || this.document.stateCode === 'SUSP') return this.user?.functionalities.includes('DocumentAdminManagement')
+                return false
+            }
+        },
+        created() {
             this.loadDocument()
+            this.user = (this.$store.state as any).user
+        },
+        methods: {
+            loadDocument() {
+                this.document = this.selectedDocument
+            },
+            getFormatedDate(date: any) {
+                return formatDate(date, 'MMM DD, YYYY h:mm:ss A')
+            },
+            cloneDocumentConfirm() {
+                this.$confirm.require({
+                    header: this.$t('common.toast.cloneConfirmTitle'),
+                    accept: () => this.$emit('documentCloneClick', this.document)
+                })
+            },
+            deleteDocumentConfirm() {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.$emit('documentDeleteClick', this.document)
+                })
+            },
+            changeStateDocumentConfirm(direction: string) {
+                this.$confirm.require({
+                    message: this.$t('documentBrowser.changeStateMessage'),
+                    header: this.$t('documentBrowser.changeStateTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.$emit('documentChangeStateClicked', { document: this.document, direction: direction })
+                })
+            },
+            executeDocument() {
+                this.$emit('itemSelected', { item: this.document, mode: 'execute' })
+            }
         }
-    },
-    computed: {
-        isSuperAdmin(): boolean {
-            return this.user?.isSuperadmin
-        },
-        getImageUrl(): string {
-            return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
-        },
-        canEditDocument(): boolean {
-            if (this.document.stateCode === 'TEST') return this.user?.functionalities.includes('DocumentTestManagement')
-            if (this.document.stateCode === 'DEV') return this.user?.functionalities.includes('DocumentDevManagement')
-            if (this.document.stateCode === 'REL') return this.user?.functionalities.includes('DocumentAdminManagement')
-            if (this.document.stateCode === 'SUSPENDED') return this.user?.functionalities.includes('DocumentAdminManagement')
-            return false
-        }
-    },
-    created() {
-        this.loadDocument()
-        this.user = (this.$store.state as any).user
-    },
-    methods: {
-        loadDocument() {
-            this.document = this.selectedDocument
-        },
-        getFormatedDate(date: any) {
-            return formatDate(date, 'MMM DD, YYYY h:mm:ss A')
-        },
-        cloneDocumentConfirm() {
-            this.$confirm.require({
-                header: this.$t('common.toast.cloneConfirmTitle'),
-                accept: () => this.$emit('documentCloneClick', this.document)
-            })
-        },
-        deleteDocumentConfirm() {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.$emit('documentDeleteClick', this.document)
-            })
-        },
-        changeStateDocumentConfirm(direction: string) {
-            this.$confirm.require({
-                message: this.$t('documentBrowser.changeStateMessage'),
-                header: this.$t('documentBrowser.changeStateTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.$emit('documentChangeStateClicked', { document: this.document, direction: direction })
-            })
-        },
-        executeDocument() {
-            this.$emit('itemSelected', { item: this.document, mode: 'execute' })
-        }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-#document-detail-toolbar .p-toolbar-group-left {
-    width: 100%;
-}
+    #document-detail-toolbar .p-toolbar-group-left {
+        width: 100%;
+    }
 
-#document-icons-container {
-    width: 100%;
-}
+    #document-icons-container {
+        width: 100%;
+    }
 
-.document-pointer:hover {
-    cursor: pointer;
-}
+    .document-pointer:hover {
+        cursor: pointer;
+    }
 
-#image-preview {
-    max-width: 100%;
-    max-height: 200px;
-}
+    #image-preview {
+        max-width: 100%;
+        max-height: 200px;
+    }
 
-#document-browser-sidebar {
-    z-index: 150;
-    background-color: white;
-    height: 100%;
-}
+    #document-browser-sidebar {
+        z-index: 150;
+        background-color: white;
+        height: 100%;
+    }
 </style>
