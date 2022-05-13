@@ -44,10 +44,11 @@ import BadgeDirective from 'primevue/badgedirective'
 import ConfirmationService from 'primevue/confirmationservice'
 import internationalizationPlugin from './plugins/internationalization.js'
 
+import VueGridLayout from 'vue-grid-layout'
+
 import i18n from '@/App.i18n'
 
 import QBEOperator from './modules/qbe/qbeDialogs/qbeAdvancedFilterDialog/QBEOperator.vue'
-
 
 createApp(App)
     .use(VueAxios, interceptor)
@@ -58,6 +59,7 @@ createApp(App)
     .use(ToastService)
     .use(ConfirmationService)
     .use(internationalizationPlugin, store.state.internationalization)
+    .use(VueGridLayout)
 
     .directive('badge', BadgeDirective)
     .directive('tooltip', Tooltip)

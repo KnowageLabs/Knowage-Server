@@ -1,10 +1,12 @@
 import { createStore } from 'vuex'
 import overlayStore from './overlay/Overlay.store'
+import dashboardStore from './modules/documentExecution/dashboard/Dashboard.store'
 
 // Create a new store instance.
 const store = createStore({
     modules: {
-        overlayStore
+        overlayStore,
+        dashboard: dashboardStore
     },
     state() {
         return {
