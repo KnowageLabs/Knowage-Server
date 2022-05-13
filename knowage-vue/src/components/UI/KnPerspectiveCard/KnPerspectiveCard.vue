@@ -137,6 +137,10 @@ export default defineComponent({
                 statusArray.push({ status: target.kpis[i].status, priority: false })
             }
 
+            console.log('STATUS ARRAY: ', statusArray)
+            console.log('TARGET KPIS: ', target.kpis)
+            console.log('target.options.criterionPriority[i]: ', target.kpis)
+
             for (let i = 0; i < target.options.criterionPriority.length; i++) {
                 for (let j = 0; j < target.kpis.length; j++) {
                     if (target.options.criterionPriority[i] === target.kpis[j].name) {
