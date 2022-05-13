@@ -73,6 +73,7 @@
             <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :propDocument="document" :propMetadata="metadata" :propLoading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
             <DocumentExecutionMailDialog :visible="mailDialogVisible" @close="mailDialogVisible = false" @sendMail="onMailSave"></DocumentExecutionMailDialog>
             <DocumentExecutionLinkDialog :visible="linkDialogVisible" :linkInfo="linkInfo" :embedHTML="embedHTML" :propDocument="document" :parameters="linkParameters" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
+            <DocumentExecutionSelectCrossNavigationDialog :visible="destinationSelectDialogVisible" :crossNavigationDocuments="crossNavigationDocuments" @close="destinationSelectDialogVisible = false" @selected="onCrossNavigationSelected"></DocumentExecutionSelectCrossNavigationDialog>
         </div>
     </div>
 </template>
@@ -97,6 +98,7 @@ import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
 import Olap from '../olap/Olap.vue'
 import moment from 'moment'
+import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
 
 const deepcopy = require('deepcopy')
 
@@ -115,7 +117,8 @@ export default defineComponent({
         TieredMenu,
         Registry,
         Dossier,
-        Olap
+        Olap,
+        DocumentExecutionSelectCrossNavigationDialog
     },
     props: { id: { type: String }, parameterValuesMap: { type: Object }, tabKey: { type: String } },
     emits: ['close', 'updateDocumentName', 'parametersChanged'],
@@ -154,7 +157,10 @@ export default defineComponent({
             loading: false,
             olapDesignerMode: false,
             sessionEnabled: false,
-            dateFormat: '' as string
+            dateFormat: '' as string,
+            destinationSelectDialogVisible: false,
+            crossNavigationDocuments: [] as any[],
+            angularData: null as any
         }
     },
     async activated() {
@@ -884,6 +890,7 @@ export default defineComponent({
             await this.loadPage()
         },
         async executeCrossNavigation(event: any) {
+            this.angularData = event.data
             await this.loadCrossNavigationByDocument(event.data)
         },
         async loadCrossNavigationByDocument(angularData: any) {
@@ -893,13 +900,21 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
-            this.document = { ...temp[0].document, navigationParams: this.formatNavigationParams(angularData.otherOutputParameters, temp[0].navigationParams) }
+            if (temp.length > 0) {
+                this.crossNavigationDocuments = temp
+                this.destinationSelectDialogVisible = true
+            } else {
+                this.loadCrossNavigation(temp[0], angularData)
+            }
+        },
+        async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
+            this.document = { ...crossNavigationDocument.document, navigationParams: this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument.navigationParams) }
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
-                this.breadcrumbs.push({ label: this.document.crossBreadcrumb, document: this.document, crossBreadcrumb: temp[0].crossBreadcrumb })
+                this.breadcrumbs.push({ label: this.document.crossBreadcrumb, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb })
             }
 
             await this.loadPage()
@@ -1012,6 +1027,10 @@ export default defineComponent({
             })
 
             sessionStorage.setItem(this.document.label, JSON.stringify(tempFilters))
+        },
+        async onCrossNavigationSelected(event: any) {
+            this.destinationSelectDialogVisible = false
+            await this.loadCrossNavigation(event, this.angularData)
         }
     }
 })
