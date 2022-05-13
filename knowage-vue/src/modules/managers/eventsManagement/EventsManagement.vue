@@ -55,6 +55,14 @@
                                     </span>
                                 </div>
                             </template>
+                            <template #loading>
+                                {{ $t('common.info.dataLoading') }}
+                            </template>
+                            <template #empty>
+                                <div id="noDatasetsFound">
+                                    {{ $t('common.info.noDataFound') }}
+                                </div>
+                            </template>
                             <Column field="user" :header="$t('managers.eventsManagement.user')" :sortable="true"></Column>
                             <Column field="formattedDate" :header="$t('cron.date')" :sortable="true"></Column>
                             <Column field="type" :header="$t('common.type')" :sortable="true"></Column>
@@ -117,6 +125,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.events = response.data.results
                     this.lazyParams.size = response.data.total
+                    this.lazyParams.paginationStart = response.data.start
                 })
                 .finally(() => (this.loading = false))
         },
