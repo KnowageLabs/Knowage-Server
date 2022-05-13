@@ -20,7 +20,6 @@ package it.eng.spagobi.commons.initializers.metadata;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -46,12 +45,10 @@ import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class OAuth2TenantInitializer extends SpagoBIInitializer {
-	static private Logger logger = Logger.getLogger(OAuth2TenantInitializer.class);
-	private static Properties config;
 
-	public OAuth2TenantInitializer() {
-		config = OAuth2Config.getInstance().getConfig();
-	}
+	static private Logger logger = Logger.getLogger(OAuth2TenantInitializer.class);
+
+	private static OAuth2Config config = OAuth2Config.getInstance();
 
 	// It retrieves organizations associated with fi-ware application. If they are not inside the database, it stores them in it
 	@Override
@@ -169,8 +166,6 @@ public class OAuth2TenantInitializer extends SpagoBIInitializer {
 		try {
 			OAuth2Client oauth2Client = new OAuth2Client();
 
-			Properties config = OAuth2Config.getInstance().getConfig();
-
 			// Retrieve the admin's token for REST services authentication
 			String token = oauth2Client.getAdminToken();
 
@@ -178,7 +173,7 @@ public class OAuth2TenantInitializer extends SpagoBIInitializer {
 
 			// Get roles of the application (specified in the
 			// oauth2.config.properties)
-			String url = config.getProperty("REST_BASE_URL") + "users/" + config.getProperty("ADMIN_ID") + "/projects";
+			String url = config.getRestAPIBaseUrl() + "users/" + config.getAdminId() + "/projects";
 			GetMethod httpget = new GetMethod(url);
 			httpget.addRequestHeader("X-Auth-Token", token);
 
@@ -220,7 +215,7 @@ public class OAuth2TenantInitializer extends SpagoBIInitializer {
 			String token = oauth2Client.getAdminToken();
 
 			HttpClient httpClient = oauth2Client.getHttpClient();
-			String url = config.getProperty("REST_BASE_URL") + config.getProperty("ORGANIZATION_INFO_PATH") + organizationId;
+			String url = config.getRestAPIBaseUrl() + config.getOrganizationInfoPath() + organizationId;
 			GetMethod httpget = new GetMethod(url);
 			httpget.addRequestHeader("X-Auth-Token", token);
 
