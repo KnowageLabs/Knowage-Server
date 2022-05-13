@@ -532,8 +532,7 @@ export default defineComponent({
             Object.keys(this.document.navigationParams).forEach((key: string) => {
                 for (let i = 0; i < this.filtersData.filterStatus.length; i++) {
                     const tempParam = this.filtersData.filterStatus[i]
-
-                    if (key === tempParam.urlName) {
+                    if (key === tempParam.urlName || key === tempParam.label) {
                         tempParam.parameterValue[0].value = this.document.navigationParams[key]
                         if (this.document.navigationParams[key + '_field_visible_description']) tempParam.parameterValue[0].description = this.document.navigationParams[key + '_field_visible_description']
                         if (tempParam.selectionType === 'COMBOBOX') this.setCrossNavigationComboParameterDescription(tempParam)
@@ -908,25 +907,54 @@ export default defineComponent({
             }
         },
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
-            this.document = { ...crossNavigationDocument.document, navigationParams: this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument.navigationParams) }
+            this.formatAngularOutputParameters(angularData.otherOutputParameters)
+
+            this.document = { ...crossNavigationDocument?.document, navigationParams: this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument.navigationParams) }
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
-                this.breadcrumbs.push({ label: this.document.crossBreadcrumb, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb })
+                this.breadcrumbs.push({ label: this.document.label, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb })
             }
 
             await this.loadPage()
+        },
+        formatAngularOutputParameters(otherOutputParameters: any[]) {
+            const startDocumentInputParameters = deepcopy(this.document.drivers)
+            const keys = [] as any[]
+            otherOutputParameters.forEach((parameter: any) => keys.push(Object.keys(parameter)[0]))
+
+            for (let i = 0; i < startDocumentInputParameters.length; i++) {
+                if (!keys.includes(startDocumentInputParameters[i].label)) {
+                    const tempObject = {} as any
+                    tempObject[startDocumentInputParameters[i].label] = this.getParameterValueForCrossNavigation(startDocumentInputParameters[i].label)
+                    otherOutputParameters.push(tempObject)
+                }
+            }
+        },
+        getParameterValueForCrossNavigation(parameterLabel: string) {
+            const index = this.filtersData.filterStatus?.findIndex((param: any) => param.label === parameterLabel)
+            return index !== -1 ? this.filtersData.filterStatus[index].parameterValue[0].value : ''
         },
         formatNavigationParams(otherOutputParameters: any[], navigationParams: any) {
             let formatedParams = {} as any
 
             otherOutputParameters.forEach((el: any) => {
-                const index = Object.keys(navigationParams).findIndex((key: string) => key === Object.keys(el)[0])
-                if (index !== -1) {
-                    formatedParams[Object.keys(el)[0]] = el[Object.keys(el)[0]]
-                    formatedParams[Object.keys(el)[0] + '_field_visible_description'] = el[Object.keys(el)[0]]
+                let found = false
+                let label = ''
+
+                for (let i = 0; i < Object.keys(navigationParams).length; i++) {
+                    if (navigationParams[Object.keys(navigationParams)[i]].value.label === Object.keys(el)[0]) {
+                        found = true
+                        label = Object.keys(navigationParams)[i]
+                        break
+                    }
+                }
+
+                if (found) {
+                    formatedParams[label] = el[Object.keys(el)[0]]
+                    formatedParams[label + '_field_visible_description'] = el[Object.keys(el)[0]]
                 }
             })
 
