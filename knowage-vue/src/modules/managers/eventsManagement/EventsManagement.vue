@@ -1,14 +1,13 @@
 <template>
     <div class="kn-page">
         <ProgressSpinner class="kn-progress-spinner" v-if="loading" />
-
-        <div class="kn-page-content">
+        <div class="p-d-flex p-flex-column kn-flex">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #start>
                     {{ $t('managers.eventsManagement.title') }}
                 </template>
             </Toolbar>
-            <div id="input-container">
+            <div id="input-container" class="p-d-flex p-flex-column kn-flex">
                 <Card class="p-m-2 events-input-card">
                     <template #content>
                         <form class="p-fluid p-formgrid p-grid p-m-1">
@@ -28,19 +27,45 @@
                         </form>
                     </template>
                 </Card>
-                <DataTable class="p-datatable-sm kn-table" :value="events" dataKey="id" :scrollable="true" scrollHeight="flex" v-model:filters="filters" :globalFilterFields="globalFilterFields">
-                    <template #header>
-                        <div class="table-header p-d-flex p-ai-center">
-                            <span id="search-container" class="p-input-icon-left p-mr-3">
-                                <i class="pi pi-search" />
-                                <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
-                            </span>
-                        </div>
+                <Card class="domainCard" style="height: calc(100vh - 125px)">
+                    <template #content>
+                        <DataTable
+                            class="p-datatable-sm kn-table"
+                            :value="events"
+                            dataKey="id"
+                            :paginator="true"
+                            :totalRecords="lazyParams.size"
+                            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                            :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
+                            :rows="23"
+                            responsiveLayout="stack"
+                            breakpoint="960px"
+                            :scrollable="true"
+                            scrollHeight="flex"
+                            stripedRows="true"
+                            v-model:filters="filters"
+                            :globalFilterFields="globalFilterFields"
+                            @page="onPage($event)"
+                        >
+                            <template #header>
+                                <div class="table-header p-d-flex p-ai-center">
+                                    <span id="search-container" class="p-input-icon-left p-mr-3">
+                                        <i class="pi pi-search" />
+                                        <InputText class="kn-material-input" v-model="filters['global'].value" :placeholder="$t('common.search')" />
+                                    </span>
+                                </div>
+                            </template>
+                            <Column field="user" :header="$t('managers.eventsManagement.user')" :sortable="true"></Column>
+                            <Column field="formattedDate" :header="$t('cron.date')" :sortable="true"></Column>
+                            <Column field="type" :header="$t('common.type')" :sortable="true"></Column>
+                            <Column :header="$t('common.description')" :sortable="true">
+                                <template #body="slotProps">
+                                    <span v-tooltip.top="slotProps.data.desc"> {{ slotProps.data.desc }}</span>
+                                </template>
+                            </Column>
+                        </DataTable>
                     </template>
-                    <Column field="user" :header="$t('managers.eventsManagement.user')" :sortable="true"></Column>
-                    <Column field="formattedDate" :header="$t('cron.date')" :sortable="true"></Column>
-                    <Column field="type" :header="$t('common.type')" :sortable="true"></Column>
-                </DataTable>
+                </Card>
             </div>
         </div>
     </div>
@@ -49,6 +74,7 @@
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { filterDefault } from '@/helpers/commons/filterHelper'
+import moment from 'moment'
 import descriptor from './EventsManagementDescriptor.json'
 import ProgressSpinner from 'primevue/progressspinner'
 import Card from 'primevue/card'
@@ -58,7 +84,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 
 export default defineComponent({
-    name: 'dataset-management',
+    name: 'events-management',
     components: { ProgressSpinner, Card, Dropdown, Calendar, DataTable, Column },
     data() {
         return {
@@ -72,7 +98,8 @@ export default defineComponent({
             endDate: null as any,
             selectedEventModel: '' as String,
             filters: { global: [filterDefault] } as Object,
-            globalFilterFields: ['user', 'type']
+            globalFilterFields: ['user', 'type'],
+            lazyParams: {} as any
         }
     },
     created() {
@@ -81,23 +108,36 @@ export default defineComponent({
     methods: {
         async getEvents() {
             this.loading = true
-            let url = ''
-            if (this.selectedEventModel === '') {
-                url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=${this.fetchSize}&offset=${this.offset}`
-            } else {
-                url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=${this.fetchSize}&offset=${this.offset}&type=${this.selectedEventModel}`
-            }
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=${this.fetchSize}&offset=${this.offset}`
+            this.selectedEventModel != '' ? (url += `&type=${this.selectedEventModel}`) : ''
+            this.startDate ? (url += `&startDate=${encodeURIComponent(moment(this.startDate).format('YYYY-MM-DD+HH:mm:ss'))}`) : ''
+            this.endDate ? (url += `&endDate=${encodeURIComponent(moment(this.endDate).format('YYYY-MM-DD+HH:mm:ss'))}`) : ''
             await this.$http
                 .get(url)
-                .then((response: AxiosResponse<any>) => (this.events = response.data.results))
+                .then((response: AxiosResponse<any>) => {
+                    this.events = response.data.results
+                    this.lazyParams.size = response.data.total
+                })
                 .finally(() => (this.loading = false))
+        },
+        onPage(event: any) {
+            this.lazyParams = { paginationStart: event.first, paginationLimit: event.rows, paginationEnd: event.first + event.rows, size: this.lazyParams.size }
+            console.log(this.lazyParams)
         }
     }
 })
 </script>
-<style lang="scss">
-// .events-input-card .p-card-body,
-// .events-input-card .p-card-content {
-//     padding: 0;
-// }
+<style lang="scss" scoped>
+.domainCard {
+    &:deep(.p-card-body) {
+        height: calc(100% - 35px);
+        .p-card-content {
+            height: 100%;
+            padding-bottom: 0;
+            .p-paginator-bottom {
+                border: none;
+            }
+        }
+    }
+}
 </style>
