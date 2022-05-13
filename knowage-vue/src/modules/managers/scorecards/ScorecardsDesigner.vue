@@ -1,6 +1,6 @@
 <template>
     <div class="p-d-flex kn-flex" :style="descriptor.style.mainDialog">
-        <div class="kn-list--column p-col-4 p-sm-8 p-md-6 p-p-0">
+        <div class="kn-list--column" :style="descriptor.style.designer">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #start>
                     {{ $t('managers.scorecards.scorecardDesigner') }}
@@ -13,7 +13,7 @@
 
             <Card v-if="scorecard" class="p-m-2">
                 <template #content>
-                    <div class="p-fluid p-formgrid p-grid p-m-2">
+                    <div class="p-fluid p-formgrid p-grid">
                         <div class="p-field p-col-6">
                             <span class="p-float-label">
                                 <InputText
@@ -44,7 +44,7 @@
             <ScorecardsTable v-if="scorecard" :propScorecard="scorecard" :criterias="criterias" :kpis="kpis" @touched="touched = true"></ScorecardsTable>
         </div>
 
-        <div class="p-col-4 p-sm-4 p-md-6 p-p-0 p-m-0 kn-overflow">
+        <div id="sideMenu" class="kn-overflow" :style="descriptor.style.perspective">
             <KnPerspectiveCard class="p-m-4" v-for="(perspective, index) in scorecard?.perspectives" :key="index" :propPerspective="perspective" :data-test="'perspective-' + perspective.name"></KnPerspectiveCard>
         </div>
     </div>
@@ -166,3 +166,13 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss">
+@media screen and (max-width: 1024px) {
+    #sideMenu {
+        display: none;
+    }
+}
+.scorecard-blue-icon {
+    color: rgb(67, 116, 158);
+}
+</style>

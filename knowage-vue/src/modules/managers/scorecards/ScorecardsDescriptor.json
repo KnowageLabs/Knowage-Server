@@ -4,8 +4,14 @@
         "text-align": "end"
     },
     "style": {
+        "designer": {
+            "flex": "70%"
+        },
         "mainDialog": {
             "height": "100vh"
+        },
+        "perspective": {
+            "flex": "30%"
         }
     }
 }

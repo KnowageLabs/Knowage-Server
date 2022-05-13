@@ -1,39 +1,30 @@
 <template>
-    <div v-if="perspective">
-        <div class="p-d-flex p-flex-row p-ai-center p-m-2">
-            <div class="kn-flex">
-                <Button v-if="!expanded" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain scorecards-item-expand-icon" @click="expanded = true" />
-                <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain scorecards-item-expand-icon" @click="expanded = false" />
-                <i class="fa-solid fa-rectangle-list fa-lg p-mr-2" />
-                <span>
-                    <InputText class="kn-material-input scorecards-target-perspective-input" v-model="perspective.name" @input="$emit('touched')" />
-                </span>
+    <div id="perspective" v-if="perspective">
+        <div class="p-d-flex p-flex-row p-ai-center">
+            <div class="p-d-flex p-ai-center" :style="descriptor.style.inputContainer">
+                <Button v-if="!expanded" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" @click="expanded = true" />
+                <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="expanded = false" />
+                <i class="fa-solid fa-rectangle-list fa-lg p-mr-1 scorecard-blue-icon" />
+                <InputText class="kn-material-input scorecards-target-perspective-input" v-model="perspective.name" @input="$emit('touched')" />
             </div>
-            <div class="kn-flex p-d-flex p-flex-row">
-                <SelectButton v-model="selectedCriteria" :options="scorecardsTableDescriptor.criteriaOptions" @change="onCriteriaChange">
+            <div class="p-d-flex p-flex-row p-ai-center kn-flex">
+                <SelectButton class="p-mr-1" v-model="selectedCriteria" :options="descriptor.criteriaOptions" @change="onCriteriaChange">
                     <template #option="slotProps">
                         <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option, $t)" :data-test="'select-button-' + slotProps.option">{{ slotProps.option }}</span>
                     </template>
                 </SelectButton>
-                <MultiSelect
-                    v-if="selectedCriteria !== 'M'"
-                    class="p-ml-3 scorecards-criteria-multiselect"
-                    v-model="perspective.options.criterionPriority"
-                    :options="perspective.targets"
-                    optionLabel="name"
-                    optionValue="name"
-                    @change="onCriterionPriortyChanged"
-                    data-test="criteria-select-input"
-                ></MultiSelect>
+                <MultiSelect v-if="selectedCriteria !== 'M'" :style="descriptor.style.multiselect" v-model="perspective.options.criterionPriority" :options="perspective.targets" optionLabel="name" optionValue="name" @change="onCriterionPriortyChanged" data-test="criteria-select-input" />
             </div>
 
-            <div>
+            <div class="p-d-flex p-ai-center">
                 <Button icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" @click="addTarget" />
                 <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deletePerspectiveConfirm" />
             </div>
         </div>
         <div v-if="expanded">
-            <ScorecardsTableHint v-if="perspective.targets.length === 0" class="p-m-4" :hint="'managers.scorecards.addTargetHint'" data-test="no-targets-hint"></ScorecardsTableHint>
+            <div v-if="perspective.targets.length === 0" class="p-d-flex p-flex-row p-ai-center scorecards-kpi-container">
+                <ScorecardsTableHint :hint="'managers.scorecards.addTargetHint'" data-test="no-targets-hint"></ScorecardsTableHint>
+            </div>
             <template v-else>
                 <ScorecardsTargetItem v-for="(target, index) in perspective.targets" :key="index" :propTarget="target" :criterias="criterias" :kpis="kpis" @deleteTarget="deleteTarget" @openKpiDialog="$emit('openKpiDialog', $event)" @touched="onTargetTouched"></ScorecardsTargetItem>
             </template>
@@ -47,7 +38,7 @@ import { iPerspective, iScorecardCriterion, iScorecardTarget, iKpi } from '../Sc
 import { getSelectedCriteriaTooltip, getDefaultCriterion, getSelectedCriteria } from '../ScorecardsHelpers'
 import MultiSelect from 'primevue/multiselect'
 import SelectButton from 'primevue/selectbutton'
-import scorecardsTableDescriptor from './ScorecardsTableDescriptor.json'
+import descriptor from './ScorecardsTableDescriptor.json'
 import ScorecardsTargetItem from './ScorecardsTargetItem.vue'
 import ScorecardsTableHint from './ScorecardsTableHint.vue'
 
@@ -58,7 +49,7 @@ export default defineComponent({
     emits: ['deletePerspective', 'openKpiDialog', 'touched'],
     data() {
         return {
-            scorecardsTableDescriptor,
+            descriptor,
             perspective: null as iPerspective | null,
             expanded: false,
             selectedCriteria: 'M',
@@ -138,17 +129,13 @@ export default defineComponent({
 .p-selectbutton > div {
     justify-content: center;
 }
+#perspective {
+    border-bottom: 1px solid var(--kn-list-border-color);
+    border-left: 1px solid var(--kn-list-border-color);
+}
 </style>
 
 <style lang="scss" scoped>
-.scorecards-item-expand-icon {
-    color: white;
-}
-
-.scorecards-criteria-multiselect {
-    width: 50%;
-}
-
 .scorecards-target-perspective-input {
     border: none;
 }

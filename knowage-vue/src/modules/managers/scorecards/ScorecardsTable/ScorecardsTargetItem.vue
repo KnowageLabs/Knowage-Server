@@ -1,37 +1,35 @@
 <template>
     <div v-if="target">
-        <div class="p-d-flex p-flex-row p-ai-center p-m-2 scorecards-target-container">
-            <div class="kn-flex">
-                <Button v-if="!expanded" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain scorecards-item-expand-icon" @click="expanded = true" />
-                <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain scorecards-item-expand-icon" @click="expanded = false" />
-                <i class="fa fa-bullseye fa-lg p-mr-2" />
-                <span>
-                    <InputText class="kn-material-input scorecards-target-name-input" v-model="target.name" @input="$emit('touched', false)" />
-                </span>
+        <div class="p-d-flex p-flex-row p-ai-center scorecards-target-container">
+            <div class="p-d-flex p-ai-center p-ml-5">
+                <Button v-if="!expanded" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" @click="expanded = true" />
+                <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="expanded = false" />
+                <i class="fa fa-bullseye fa-lg p-mr-1 scorecard-blue-icon" />
+                <InputText class="kn-material-input scorecards-target-name-input" v-model="target.name" @input="$emit('touched', false)" />
             </div>
-            <div class="kn-flex p-d-flex p-flex-row">
-                <SelectButton v-model="selectedCriteria" :options="scorecardsTableDescriptor.criteriaOptions" @change="onCriteriaChange">
+            <div class="p-d-flex p-flex-row p-ai-center">
+                <SelectButton class="p-mr-1" v-model="selectedCriteria" :options="descriptor.criteriaOptions" @change="onCriteriaChange">
                     <template #option="slotProps">
                         <span v-tooltip="getSelectedCriteriaTooltip(slotProps.option, $t)" :data-test="'select-button-' + slotProps.option">{{ slotProps.option }}</span>
                     </template>
                 </SelectButton>
-                <MultiSelect v-if="selectedCriteria !== 'M'" class="p-ml-3 scorecards-criteria-multiselect" v-model="target.options.criterionPriority" :options="target.kpis" optionLabel="name" optionValue="name" @change="onCriterionPriortyChanged" data-test="criteria-select-input"></MultiSelect>
+                <MultiSelect v-if="selectedCriteria !== 'M'" :style="descriptor.style.multiselect" v-model="target.options.criterionPriority" :options="target.kpis" optionLabel="name" optionValue="name" @change="onCriterionPriortyChanged" data-test="criteria-select-input"></MultiSelect>
             </div>
 
-            <div>
+            <div class="p-ml-auto">
                 <Button icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" @click="openKpiDialog" />
                 <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deleteTargetConfirm" />
             </div>
         </div>
         <div v-if="expanded">
-            <ScorecardsTableHint v-if="target.kpis.length === 0" class="p-m-4" :hint="'managers.scorecards.addKpiHint'"></ScorecardsTableHint>
+            <div v-if="target.kpis.length === 0" class="p-d-flex p-flex-row p-ai-center scorecards-kpi-container">
+                <ScorecardsTableHint :hint="'managers.scorecards.addKpiHint'"></ScorecardsTableHint>
+            </div>
             <template v-else>
-                <div v-for="(kpi, index) in target.kpis" :key="index" class="scorecards-kpi-container p-d-flex">
+                <div v-for="(kpi, index) in target.kpis" :key="index" class="p-d-flex p-flex-row p-ai-center scorecards-kpi-container">
                     <div class="scorecards-kpi-info">
                         <i class="fas fa-square fa-2xl p-mr-2" :class="getKpiIconColorClass(kpi)"></i>
-                        <span>
-                            {{ kpi.name }}
-                        </span>
+                        <span> {{ kpi.name }}</span>
                     </div>
                     <div class="p-ml-auto">
                         <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deleteKpiConfirm(kpi)" />
@@ -50,7 +48,7 @@ import { iScorecardTarget, iScorecardCriterion, iKpi } from '../Scorecards'
 import { getSelectedCriteriaTooltip, getKpiIconColorClass, getSelectedCriteria } from '../ScorecardsHelpers'
 import MultiSelect from 'primevue/multiselect'
 import SelectButton from 'primevue/selectbutton'
-import scorecardsTableDescriptor from './ScorecardsTableDescriptor.json'
+import descriptor from './ScorecardsTableDescriptor.json'
 import ScorecardsTableHint from './ScorecardsTableHint.vue'
 import ScorecardsKpiDialog from '../ScorecardsKpiDialog/ScorecardsKpiDialog.vue'
 
@@ -61,7 +59,7 @@ export default defineComponent({
     emits: ['deleteTarget', 'openKpiDialog', 'touched'],
     data() {
         return {
-            scorecardsTableDescriptor,
+            descriptor,
             target: null as iScorecardTarget | null,
             expanded: false,
             selectedCriteria: 'M',
@@ -148,25 +146,19 @@ export default defineComponent({
 .p-selectbutton > div {
     justify-content: center;
 }
+
+.scorecards-kpi-container {
+    border-top: 1px solid var(--kn-list-border-color);
+}
 </style>
 
 <style lang="scss" scoped>
 .scorecards-target-container {
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #cccccc;
-}
-.scorecards-item-expand-icon {
-    color: white;
-    margin-left: 4rem;
-}
-
-.scorecards-kpi-container {
-    margin: 1rem 1rem 1rem 1rem;
-    border-bottom: 1px solid #cccccc;
+    border-top: 1px solid #cccccc;
 }
 
 .scorecards-kpi-info {
-    margin-left: 11rem;
+    margin-left: 6rem;
 }
 
 .scorecard-kpi-icon-red {

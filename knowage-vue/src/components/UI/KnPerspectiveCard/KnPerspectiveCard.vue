@@ -1,15 +1,13 @@
 <template>
-    <Card v-if="perspective">
+    <Card class="perspective-card" v-if="perspective">
         <template #header>
             <div class="perspective-header p-d-flex p-flex-row p-ai-center" :class="toolbarBorderClass">
-                <h2 class="p-m-0 p-p-2">
-                    {{ perspective.name }}
-                </h2>
+                <h2 class="p-m-0 p-p-2">{{ perspective.name }}</h2>
                 <span v-tooltip="getSelectedCriteriaTooltip(perspective.criterion?.valueCd)" class="perspective-target-icon kn-cursor-pointer">{{ getTargetIconLetter(perspective.criterion?.valueCd) }}</span>
             </div>
         </template>
         <template #content>
-            <div class="target-row p-d-flex p-flex-row p-ai-center p-p-3" :class="{ 'perspective-target-container': index !== perspective.targets.length - 1 }" v-for="(target, index) in perspective.targets" :key="index">
+            <div class="target-row p-d-flex p-flex-row p-ai-center p-p-3 p-my-2" :class="{ 'perspective-target-container': index !== perspective.targets.length - 1 }" v-for="(target, index) in perspective.targets" :key="index">
                 <div>
                     <span class="p-mr-2">{{ target.name }}</span>
                     <span v-tooltip="getSelectedCriteriaTooltip(target.criterion?.valueCd)" class="perspective-target-icon kn-cursor-pointer">{{ getTargetIconLetter(target.criterion?.valueCd) }}</span>
@@ -239,6 +237,11 @@ export default defineComponent({
 <style lang="scss">
 .perspective-header {
     border-bottom: 1px solid #c2c2c2;
+}
+
+.perspective-card .p-card-body,
+.perspective-card .p-card-body .p-card-content {
+    padding: 0;
 }
 
 .target-row {
