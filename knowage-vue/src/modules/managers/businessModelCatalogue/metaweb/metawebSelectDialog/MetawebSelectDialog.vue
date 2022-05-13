@@ -13,7 +13,7 @@
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-        <DataTable v-else :value="rows" class="p-datatable-sm kn-table p-ml-1" :scrollable="true" scrollHeight="100%" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields">
+        <DataTable v-else :value="rows" class="p-datatable-sm kn-table p-ml-1" :scrollable="true" scrollHeight="100%" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields" @filter="onRowsFiltered">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -76,6 +76,7 @@ export default defineComponent({
             filters: {
                 global: [filterDefault]
             } as Object,
+            filteredRows: [] as { value: string }[],
             loading: false
         }
     },
@@ -133,23 +134,30 @@ export default defineComponent({
         },
         setAllChecked(typeChecked: string) {
             Object.keys(this.selected).forEach((key: string) => {
-                if (typeChecked === 'business') {
-                    this.selected[key].business = this.allBusinessSelected
-                    if (this.allBusinessSelected) {
-                        this.selected[key].physical = true
-                        this.allPhysicalSelected = true
-                    }
-                } else {
-                    this.selected[key].physical = this.allPhysicalSelected
-                    if (!this.allPhysicalSelected) {
-                        this.selected[key].business = false
-                        this.allBusinessSelected = false
+                if (this.checkIfTheSelectedIsInFilteredRows(key)) {
+                    if (typeChecked === 'business') {
+                        this.selected[key].business = this.allBusinessSelected
+                        if (this.allBusinessSelected) {
+                            this.selected[key].physical = true
+                            this.allPhysicalSelected = true
+                        }
+                    } else {
+                        this.selected[key].physical = this.allPhysicalSelected
+                        if (!this.allPhysicalSelected) {
+                            this.selected[key].business = false
+                            this.allBusinessSelected = false
+                        }
                     }
                 }
             })
         },
+        checkIfTheSelectedIsInFilteredRows(key: string) {
+            const index = this.filteredRows.findIndex((el: { value: string }) => el.value === key)
+            return index !== -1
+        },
         closeDialog() {
             this.$emit('close')
+            this.filters['global'].value = ''
             this.selected = {}
             this.allPhysicalSelected = false
             this.allBusinessSelected = false
@@ -199,6 +207,25 @@ export default defineComponent({
             }
 
             return isSelected
+        },
+        onRowsFiltered(event: any) {
+            this.filteredRows = event.filteredValue
+            this.allPhysicalSelected = true
+            this.allBusinessSelected = true
+
+            if (this.filteredRows.length === 0) {
+                this.allPhysicalSelected = false
+                this.allBusinessSelected = false
+            }
+
+            for (let i = 0; i < this.filteredRows.length; i++) {
+                if (!this.selected[this.filteredRows[i].value].physical) {
+                    this.allPhysicalSelected = false
+                }
+                if (!this.selected[this.filteredRows[i].value].business) {
+                    this.allBusinessSelected = false
+                }
+            }
         }
     }
 })
