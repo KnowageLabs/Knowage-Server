@@ -252,6 +252,9 @@
         "everyWeekday": "Every Weekday",
         "everyday": "Every Day",
         "february": "February",
+        "fifth": "Fifth",
+        "first": "First",
+        "fourth": "Fourth",
         "friday": "Friday",
         "hour": "Hour",
         "hours": "Hours",
@@ -269,6 +272,7 @@
         "minutes": "Minutes",
         "monday": "Monday",
         "month": "Month",
+        "monthly": "Monthly",
         "months": "Months",
         "nextExecution": "Next execution",
         "november": "November",
@@ -276,6 +280,7 @@
         "quarter": "Quarter",
         "repeatInterval": "Repeat Interval",
         "saturday": "Saturday",
+        "second": "Second",
         "selectDays": "Select day(s)",
         "selectHours": "Select hour(s)",
         "selectMinutes": "Select minute(s)",
@@ -288,13 +293,16 @@
         "sunday": "Sunday",
         "theDay": "The day",
         "theWeek": "The week",
+        "third": "Third",
         "thursday": "Thursday",
         "tuesday": "Tuesday",
         "wednesday": "Wednesday",
         "week": "Week",
         "weekday": "Weekday",
         "weekdays": "Weekdays",
-        "year": "Year"
+        "weekly": "Weekly",
+        "year": "Year",
+        "yearly": "Yearly"
     },
     "documentBrowser": {
         "changeStateMessage": "Are you sure you want to change the state for this document?",
@@ -680,7 +688,7 @@
     },
     "infoDialog": {
         "aboutKnowage": "About Knowage",
-        "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
+        "copyright": "Â© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
     },
     "knScheduler": {
@@ -1211,6 +1219,7 @@
                 "schemaAttribute": "Multischema Attribute",
                 "testOk": "Tested parameters are correct!",
                 "urlConnection": "URL",
+                "useForDataprep": "Use for data preparation",
                 "user": "User",
                 "writeDefault": "Use as cache"
             },

@@ -836,7 +836,11 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 			job.setName(name);
 			job.setGroupName(groupName);
 			job.setJobClass(jobClass);
-			job.setDurable(false);
+			/*
+			 * Fixes the Quartz error:
+			 *   Jobs added with no trigger must be durable.
+			 */
+			job.setDurable(true);
 			job.setVolatile(false);
 			job.setRequestsRecovery(true);
 			if (parameters != null) {
