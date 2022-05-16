@@ -74,6 +74,7 @@
             <DocumentExecutionMailDialog :visible="mailDialogVisible" @close="mailDialogVisible = false" @sendMail="onMailSave"></DocumentExecutionMailDialog>
             <DocumentExecutionLinkDialog :visible="linkDialogVisible" :linkInfo="linkInfo" :embedHTML="embedHTML" :propDocument="document" :parameters="linkParameters" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
             <DocumentExecutionSelectCrossNavigationDialog :visible="destinationSelectDialogVisible" :crossNavigationDocuments="crossNavigationDocuments" @close="destinationSelectDialogVisible = false" @selected="onCrossNavigationSelected"></DocumentExecutionSelectCrossNavigationDialog>
+            <DocumentExecutionCNContainerDialog v-if="crossNavigationContainerData" :visible="crossNavigationContainerVisible" :data="crossNavigationContainerData" @close="onCrossNavigationContainerClose"></DocumentExecutionCNContainerDialog>
         </div>
     </div>
 </template>
@@ -99,6 +100,7 @@ import Dossier from '../dossier/Dossier.vue'
 import Olap from '../olap/Olap.vue'
 import moment from 'moment'
 import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
+import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
 
 const deepcopy = require('deepcopy')
 
@@ -118,7 +120,8 @@ export default defineComponent({
         Registry,
         Dossier,
         Olap,
-        DocumentExecutionSelectCrossNavigationDialog
+        DocumentExecutionSelectCrossNavigationDialog,
+        DocumentExecutionCNContainerDialog
     },
     props: { id: { type: String }, parameterValuesMap: { type: Object }, tabKey: { type: String } },
     emits: ['close', 'updateDocumentName', 'parametersChanged'],
@@ -160,7 +163,9 @@ export default defineComponent({
             dateFormat: '' as string,
             destinationSelectDialogVisible: false,
             crossNavigationDocuments: [] as any[],
-            angularData: null as any
+            angularData: null as any,
+            crossNavigationContainerVisible: false,
+            crossNavigationContainerData: null as any
         }
     },
     async activated() {
@@ -414,12 +419,12 @@ export default defineComponent({
                 this.mode = 'iframe'
             }
         },
-        async loadPage(initialLoading: boolean = false) {
+        async loadPage(initialLoading: boolean = false, documentLabel: string | null = null) {
             this.loading = true
 
             await this.loadFilters(initialLoading)
             if (this.filtersData?.isReadyForExecution) {
-                await this.loadURL(null)
+                await this.loadURL(null, documentLabel)
                 await this.loadExporters()
             } else if (this.filtersData?.filterStatus) {
                 this.parameterSidebarVisible = true
@@ -554,7 +559,7 @@ export default defineComponent({
 
             return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
         },
-        async loadURL(olapParameters: any) {
+        async loadURL(olapParameters: any, documentLabel: string | null = null) {
             const postData = { label: this.document.label, role: this.userRole, parameters: olapParameters ? olapParameters : this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
 
             if (this.sbiExecutionId) {
@@ -582,13 +587,13 @@ export default defineComponent({
                 this.sbiExecutionId = this.urlData?.sbiExecutionId as string
             }
 
-            await this.sendForm()
+            await this.sendForm(documentLabel)
         },
         async loadExporters() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
-        async sendForm() {
-            const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+        async sendForm(documentLabel: string | null = null) {
+            let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label) as any
 
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
             const postObject = { params: { document: null } as any, url: documentUrl.split('?')[0] }
@@ -608,7 +613,7 @@ export default defineComponent({
                 postForm.id = 'postForm_' + postObject.params.document
                 postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
                 postForm.method = 'post'
-                postForm.target = 'documentFrame' + tempIndex
+                postForm.target = tempIndex !== -1 ? 'documentFrame' + tempIndex : documentLabel
                 postForm.acceptCharset = 'UTF-8'
                 document.body.appendChild(postForm)
             }
@@ -908,17 +913,37 @@ export default defineComponent({
         },
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
             this.formatAngularOutputParameters(angularData.otherOutputParameters)
+            const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument.navigationParams)
 
-            this.document = { ...crossNavigationDocument?.document, navigationParams: this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument.navigationParams) }
+            this.document = { ...crossNavigationDocument?.document, navigationParams: navigationParams }
 
-            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
-            if (index !== -1) {
-                this.breadcrumbs[index].document = this.document
+            const popupOptions = crossNavigationDocument.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
+
+            if (crossNavigationDocument.crossType === 2) {
+                this.openCrossNavigationInNewWindow(popupOptions, crossNavigationDocument, navigationParams)
+            } else if (crossNavigationDocument.crossType === 1) {
+                const documentLabel = crossNavigationDocument?.document.label
+                this.crossNavigationContainerData = { documentLabel: documentLabel, iFrameName: documentLabel }
+                this.crossNavigationContainerVisible = true
+                await this.loadPage(false, documentLabel)
             } else {
-                this.breadcrumbs.push({ label: this.document.label, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb })
-            }
+                const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+                if (index !== -1) {
+                    this.breadcrumbs[index].document = this.document
+                } else {
+                    this.breadcrumbs.push({ label: this.document.label, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb })
+                }
 
-            await this.loadPage()
+                await this.loadPage()
+            }
+        },
+        openCrossNavigationInNewWindow(popupOptions: any, crossNavigationDocument: any, navigationParams: any) {
+            if (!crossNavigationDocument || !crossNavigationDocument.document) return
+            const parameters = encodeURI(JSON.stringify(navigationParams))
+            const url =
+                process.env.VUE_APP_HOST_URL +
+                `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${crossNavigationDocument.document.id}&OBJECT_LABEL=${crossNavigationDocument.document.label}&SELECTED_ROLE=${this.sessionRole}&SBI_EXECUTION_ID=null&OBJECT_NAME=${crossNavigationDocument.document.name}&CROSS_PARAMETER=${parameters}`
+            window.open(url, '_blank', `toolbar=0,status=0,menubar=0,width=${popupOptions.width || '800'},height=${popupOptions.height || '600'}`)
         },
         formatAngularOutputParameters(otherOutputParameters: any[]) {
             const startDocumentInputParameters = deepcopy(this.document.drivers)
@@ -1059,6 +1084,11 @@ export default defineComponent({
         async onCrossNavigationSelected(event: any) {
             this.destinationSelectDialogVisible = false
             await this.loadCrossNavigation(event, this.angularData)
+        },
+        onCrossNavigationContainerClose() {
+            this.crossNavigationContainerData = null
+            this.crossNavigationContainerVisible = true
+            this.onBreadcrumbClick(this.breadcrumbs[0])
         }
     }
 })

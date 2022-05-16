@@ -33,7 +33,7 @@ import documentExecutionSelectCNDialogDsecriptor from './DocumentExecutionSelect
 import Listbox from 'primevue/listbox'
 
 export default defineComponent({
-    name: 'document-execution-notes-dialog',
+    name: 'document-execution-select-cn-dialog',
     components: { Dialog, Listbox },
     props: { visible: { type: Boolean }, crossNavigationDocuments: { type: Array } },
     emits: ['close', 'selected'],
