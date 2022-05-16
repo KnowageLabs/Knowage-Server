@@ -327,6 +327,8 @@ export default defineComponent({
         getQBEFromModel() {
             if (!this.dataset) return {}
 
+            this.smartView = this.dataset.smartView
+
             return {
                 dsTypeCd: 'Qbe',
                 qbeDatamarts: this.dataset.name,

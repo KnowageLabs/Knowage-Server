@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Dialog :header="$t('workspace.federationDefinition.savingFederation')" :style="workspaceAnalysisViewEditDialogDescriptor.dialog.style" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+        <Dialog :header="$t('workspace.myAnalysis.editAnalysis')" :style="workspaceAnalysisViewEditDialogDescriptor.dialog.style" :visible="visible" :modal="true" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
             <div v-if="analysis">
                 <div class="p-m-4">
                     <span>

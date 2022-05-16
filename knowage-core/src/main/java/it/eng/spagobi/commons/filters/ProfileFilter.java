@@ -135,6 +135,12 @@ public class ProfileFilter implements Filter {
 					if (userId != null && !userId.trim().equals("")) {
 						profile = GeneralUtilities.createNewUserProfile(userId);
 
+						if (profile == null) {
+							logger.error("User [" + userId + "] has no profile defined.");
+							httpRequest.getRequestDispatcher("/unprofiledUser.jsp").forward(request, response);
+							return;
+						}
+
 						if (requestIsForHomePage(httpRequest)) {
 							// in case user has a default role, we get his default user profile object only in case the request is for the home page, otherwise
 							// we can have inconsistencies (example: request is for execution of a document not executable by the default role, but another one)
