@@ -248,15 +248,16 @@ export default defineComponent({
         openDataPreparation(dataset: any) {
             if (dataset.dsTypeCd == 'Prepared') {
                 //edit existing data prep
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.label}`).then(
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
                     (response: AxiosResponse<any>) => {
                         let instanceId = response.data.configuration.dataPrepInstanceId
                         this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
                             (response: AxiosResponse<any>) => {
                                 let transformations = response.data.definition
                                 let processId = response.data.id
+                                let datasetId = response.data.instance.dataSetId
                                 let datasetLabel = response.data.instance.dataSetLabel
-                                if (this.isAvroReady(datasetLabel))
+                                if (this.isAvroReady(datasetId))
                                     // check if Avro file has been deleted or not
                                     this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
                                 else {
@@ -277,7 +278,7 @@ export default defineComponent({
                         })
                     }
                 )
-            } else if (this.isAvroReady(dataset.label)) {
+            } else if (this.isAvroReady(dataset.id)) {
                 // original dataset already exported in Avro
                 this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
             } else {
@@ -287,8 +288,8 @@ export default defineComponent({
                 })
             }
         },
-        isAvroReady(dsLabel: String) {
-            if (this.avroDatasets.indexOf(dsLabel) >= 0) return true
+        isAvroReady(dsId: Number) {
+            if (this.avroDatasets.indexOf(dsId) >= 0) return true
             else return false
         },
         async getAllAvroDataSets() {
