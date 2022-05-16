@@ -32,7 +32,7 @@
                     {{ $t('documentExecution.documentDetails.drivers.detailsTitle') }}
                 </template>
             </Toolbar>
-            <div id="driver-details-container" class="kn-flex kn-relative">
+            <div v-if="!loading" id="driver-details-container" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <div class="p-m-2">
                         <div v-if="Object.keys(selectedDriver).length === 0">
@@ -192,6 +192,7 @@ export default defineComponent({
         selectedDocument() {
             this.getDocumentDrivers()
             this.document = this.selectedDocument
+            this.selectedDriver = {} as iDriver
         }
     },
     validations() {
