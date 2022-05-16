@@ -3,7 +3,8 @@ import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
-import FabButton from '@/components/UI/KnFabButton.vue'
+import InputText from 'primevue/inputtext'
+import KnFabButton from '@/components/UI/KnFabButton.vue'
 import flushPromises from 'flush-promises'
 import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
@@ -71,7 +72,8 @@ const factory = () => {
                 Button,
                 Column,
                 DataTable,
-                FabButton,
+                InputText,
+                KnFabButton,
                 ProgressBar,
                 Toolbar,
                 routerView: true
@@ -94,7 +96,7 @@ afterEach(() => {
 describe('Scorecards', () => {
     it('should show a loader when opened', async () => {
         factory()
-        
+
         await flushPromises()
         expect($store.commit).toHaveBeenCalledTimes(2)
         expect($store.commit).toHaveBeenNthCalledWith(1, 'setLoading', true)

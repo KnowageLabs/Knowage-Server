@@ -142,16 +142,6 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
-.p-selectbutton > div {
-    justify-content: center;
-}
-
-.scorecards-kpi-container {
-    border-top: 1px solid var(--kn-list-border-color);
-}
-</style>
-
 <style lang="scss" scoped>
 .scorecards-target-container {
     border-top: 1px solid #cccccc;
@@ -178,6 +168,13 @@ export default defineComponent({
 }
 
 .scorecard-kpi-icon-light-grey {
+    .p-selectbutton > div {
+        justify-content: center;
+    }
+
+    .scorecards-kpi-container {
+        border-top: 1px solid var(--kn-list-border-color);
+    }
     color: #cccccc;
 }
 

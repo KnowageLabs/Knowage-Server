@@ -44,36 +44,8 @@ export interface iKpi {
     definition: string,
     cardinality: string,
     placeholder: string,
-    category: {
-        valueId: number,
-        valueCd: string,
-        valueName: string,
-        valueDescription: string,
-        domainCode: string,
-        domainName: string,
-        translatedValueName: string,
-        translatedValueDescription: string
-    },
-    threshold: {
-        id: number,
-        description: string,
-        name: string,
-        typeId: number,
-        type: string,
-        thresholdValues: {
-            id: number,
-            position: number,
-            label: string,
-            color: string,
-            severityId: number,
-            severityCd: string,
-            minValue: number,
-            includeMin: boolean,
-            maxValue: number,
-            includeMax: boolean
-        }[],
-        usedByKpi: boolean
-    },
+    category: iCategory,
+    threshold: iThreshold,
     status: string | null
 }
 
@@ -89,4 +61,38 @@ export interface iScorecardTarget {
     groupedKpis?: { status: null, count: number }[],
     statusColor?: string | null,
     updated?: boolean
+}
+
+export interface iCategory {
+    valueId: number,
+    valueCd: string,
+    valueName: string,
+    valueDescription: string,
+    domainCode: string,
+    domainName: string,
+    translatedValueName: string,
+    translatedValueDescription: string
+}
+
+export interface iThreshold {
+    id: number,
+    description: string,
+    name: string,
+    typeId: number,
+    type: string,
+    thresholdValues: iThresholdValues[],
+    usedByKpi: boolean
+}
+
+export interface iThresholdValues {
+    id: number,
+    position: number,
+    label: string,
+    color: string,
+    severityId: number,
+    severityCd: string,
+    minValue: number,
+    includeMin: boolean,
+    maxValue: number,
+    includeMax: boolean
 }

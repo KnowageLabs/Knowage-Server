@@ -116,7 +116,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #scorecards-kpi-dialog .p-dialog-header,
 #scorecards-kpi-dialog .p-dialog-content {
     padding: 0;

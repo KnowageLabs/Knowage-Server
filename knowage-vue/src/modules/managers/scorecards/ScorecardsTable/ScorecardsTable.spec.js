@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
+import InputText from 'primevue/inputtext'
 import PrimeVue from 'primevue/config'
 import ScorecardsTable from './ScorecardsTable.vue'
 import ScorecardsTableHint from './ScorecardsTableHint.vue'
@@ -44,6 +45,7 @@ const factory = () => {
             stubs: {
                 Button,
                 Card,
+                InputText,
                 ScorecardsPerspectiveItem: true,
                 ScorecardsTableHint,
                 Toolbar,
