@@ -73,7 +73,7 @@
                                                 :filter="true"
                                                 :filterPlaceholder="$t('documentExecution.documentDetails.drivers.dropdownSearchHint')"
                                                 @blur="v$.selectedDriver.parameter.$touch()"
-                                                @change="markSelectedDriverForChange, setParId($event.value.id)"
+                                                @change="changeDriverValue"
                                             >
                                                 <template #value="slotProps">
                                                     <div class="p-dropdown-driver-value" v-if="slotProps.value">
@@ -231,6 +231,12 @@ export default defineComponent({
         markSelectedDriverForChange() {
             this.selectedDriver.isChanged = true
             this.selectedDriver.numberOfErrors = this.v$.$errors.length
+        },
+        changeDriverValue(event) {
+            this.selectedDriver.isChanged = true
+            this.selectedDriver.numberOfErrors = this.v$.$errors.length
+            this.setParId(event.value.id)
+            console.log(this.selectedDriver)
         },
         setParameterInfo(driver) {
             if (this.availableAnalyticalDrivers) {
