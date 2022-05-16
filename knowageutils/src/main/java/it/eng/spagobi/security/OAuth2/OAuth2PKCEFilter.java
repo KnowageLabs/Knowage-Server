@@ -64,19 +64,20 @@ public class OAuth2PKCEFilter implements Filter {
 
 		String accessToken = httpRequest.getParameter("access_token");
 
-		if (session.isNew() || accessToken == null) {
-			logger.debug("Access token not found, starting OAuth2 PKCE flow...");
-			request.getRequestDispatcher("/oauth2/pkce/flow.jsp").forward(request, response);
-
-		} else {
-
-			if (accessToken != null) {
-				LogMF.debug(logger, "Access token found: [{0}]", accessToken);
-				session.setAttribute(Oauth2SsoService.ACCESS_TOKEN, accessToken);
-			}
-
+		if (accessToken != null) {
+			// request contains access token --> set it in session and continue with filters chain
+			LogMF.debug(logger, "Access token found: [{0}]", accessToken);
+			session.setAttribute(Oauth2SsoService.ACCESS_TOKEN, accessToken);
 			chain.doFilter(request, response);
-
+		} else {
+			if (session.isNew() || session.getAttribute(Oauth2SsoService.ACCESS_TOKEN) == null) {
+				// OAuth2 PKCE must take place --> stop filters chain
+				logger.debug("Access token not found, starting OAuth2 PKCE flow...");
+				request.getRequestDispatcher("/oauth2/pkce/flow.jsp").forward(request, response);
+			} else {
+				// session is already initialized --> continue with filters chain
+				chain.doFilter(request, response);
+			}
 		}
 
 		logger.debug("OUT");
