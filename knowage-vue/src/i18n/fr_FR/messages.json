@@ -440,6 +440,7 @@
       "crossNavigationNoTargetError": "No cross navigation targets available",
       "currentRank": "Curent Rank is...",
       "customMetadata": "Custom Metadata",
+      "destinationSelectionTitle": "Selection of the destination document",
       "editCockpit": "Edit cockpit document",
       "editModeConfirm": "You are leaving edit mode. Continue?",
       "embedInHtml": "Embed in HTML",
@@ -2546,6 +2547,7 @@
       "schedulation": "Schedulation"
     },
     "myAnalysis": {
+      "editAnalysis": "Edit Analysis",
       "geoRef": "Geo-referenced analysis",
       "menuItems": {
         "clone": "Clone Document",
