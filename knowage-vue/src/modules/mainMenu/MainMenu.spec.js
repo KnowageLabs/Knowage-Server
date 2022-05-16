@@ -138,15 +138,7 @@ const factory = () => {
 }
 
 describe('Main Menu', () => {
-    test('is administrator', async () => {
-        const wrapper = factory()
-        wrapper.vm.localObject.locale = wrapper.vm.localObject.locale.replaceAll('_', '-')
-
-        expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + wrapper.vm.localObject.locale)
-        await flushPromises()
-        console.log('TEEEEEEEST: ', wrapper.vm.technicalUserFunctionalities.length)
-        expect(wrapper.vm.technicalUserFunctionalities.length).not.toBe(0)
-    })
+    it.todo('is administrator')
 })
 
 describe('Main Menu', () => {
