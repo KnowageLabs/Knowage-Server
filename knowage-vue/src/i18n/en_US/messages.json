@@ -2497,6 +2497,7 @@
             "schedulation": "Schedulation"
         },
         "myAnalysis": {
+            "editAnalysis": "Edit Analysis",
             "geoRef": "Geo-referenced analysis",
             "menuItems": {
                 "clone": "Clone Document",
