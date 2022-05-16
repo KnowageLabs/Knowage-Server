@@ -206,7 +206,7 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 							field = new Field(contentsMap.get(header[i]));
 							// update metadata type in order with the real value's type (default was string)
 							// check if it's integer
-							if (NumberUtils.isDigits((String) field.getValue())) {
+							if (NumberUtils.isDigits((String) field.getValue()) && !isIntegerOverflow((String) field.getValue())) {
 								meta = ((FieldMetadata) dataStore.getMetaData().getFieldMeta(i));
 								meta.setType(getNewMetaType(meta.getType(), Integer.class));
 								field.setValue(new Integer(String.valueOf(field.getValue())));
@@ -282,6 +282,16 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 			}
 		}
 		return dataStore;
+	}
+
+	private boolean isIntegerOverflow(String currentIntStringValue) {
+		String maxIntStringValue = Integer.toString(Integer.MAX_VALUE);
+		if (currentIntStringValue.length() > maxIntStringValue.length())
+			return true;
+		else if (currentIntStringValue.length() < maxIntStringValue.length())
+			return false;
+		else
+			return currentIntStringValue.compareTo(maxIntStringValue) > 0;
 	}
 
 	@Override

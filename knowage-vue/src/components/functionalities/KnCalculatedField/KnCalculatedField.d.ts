@@ -1,5 +1,5 @@
 export interface IKnCalculatedField {
     colName?: string
-    outputType?: string
+    type?: string
     formula?: string
 }

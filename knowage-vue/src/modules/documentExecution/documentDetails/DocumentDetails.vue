@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="document-details-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+    <Dialog class="document-details-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="true" :modal="false" :closable="false" :draggable="false" position="right" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -7,14 +7,14 @@
                 </template>
                 <template #end>
                     <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || v$.$invalid" />
-                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('closeDetails')" />
+                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDocument" />
                 </template>
             </Toolbar>
         </template>
-        <KnOverlaySpinnerPanel :visibility="loading" :style="mainDescriptor.style.spinnerStyle" />
+        <ProgressSpinner v-if="loading" class="doc-details-spinner" :style="mainDescriptor.style.spinnerStyle" />
 
         <div class="document-details-tab-container p-d-flex p-flex-column kn-flex">
-            <TabView class="document-details-tabview p-d-flex p-flex-column kn-flex">
+            <TabView class="document-details-tabview p-d-flex p-flex-column kn-flex" @tab-change="onTabChange">
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.info.infoTitle') }}</span>
@@ -23,7 +23,6 @@
                         v-if="!loading"
                         :selectedDocument="selectedDocument"
                         :availableFolders="availableFolders"
-                        :selectedFolder="selectedFolder"
                         :documentTypes="types"
                         :documentEngines="engines"
                         :availableDatasources="dataSources"
@@ -67,6 +66,8 @@
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.subreports.title') }}</span>
                     </template>
+
+                    <SubreportsTab :selectedDocument="selectedDocument" :allDocumentDetailsProp="allDocumentDetails" />
                 </TabPanel>
             </TabView>
         </div>
@@ -76,7 +77,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
-import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import useValidate from '@vuelidate/core'
 import mainDescriptor from './DocumentDetailsDescriptor.json'
 import InformationsTab from './tabs/informations/DocumentDetailsInformations.vue'
@@ -84,22 +84,26 @@ import DriversTab from './tabs/drivers/DocumentDetailsDrivers.vue'
 import OutputParamsTab from './tabs/outputParams/DocumentDetailsOutputParameters.vue'
 import DataLineageTab from './tabs/dataLineage/DocumentDetailsDataLineage.vue'
 import HistoryTab from './tabs/history/DocumentDetailsHistory.vue'
+import SubreportsTab from './tabs/subreports/DocumentDetailsSubreports.vue'
 import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import Badge from 'primevue/badge'
 import TabPanel from 'primevue/tabpanel'
+import ProgressSpinner from 'primevue/progressspinner'
 import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam, iDocumentType } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 
 export default defineComponent({
     name: 'document-details',
-    components: { KnOverlaySpinnerPanel, InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, TabView, TabPanel, Dialog, Badge },
-    props: { docId: { type: Number, required: true }, selectedFolder: { type: Object, required: true }, visible: { type: Boolean, required: false } },
+    components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, SubreportsTab, TabView, TabPanel, Dialog, Badge, ProgressSpinner },
+    props: {},
     emits: ['closeDetails'],
     data() {
         return {
             v$: useValidate() as any,
             mainDescriptor,
             loading: false,
+            docId: null as any,
+            folderId: null as any,
             templateToUpload: null as any,
             imageToUpload: null as any,
             selectedDataset: {} as any,
@@ -116,7 +120,10 @@ export default defineComponent({
             savedTables: [] as iTableSmall[],
             availableFolders: [] as iFolder[],
             states: mainDescriptor.states,
-            types: [] as iDocumentType[]
+            types: [] as iDocumentType[],
+            allDocumentDetails: [] as any,
+            savedSubreports: [] as any,
+            selectedSubreports: [] as any
         }
     },
     computed: {
@@ -134,19 +141,20 @@ export default defineComponent({
         }
     },
     async created() {
+        this.isForEdit()
         await this.loadPage(this.docId)
     },
     methods: {
-        //#region ===================== Get Persistent Data ====================================================
+        isForEdit() {
+            this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
+        },
         async loadPage(id) {
             this.loading = true
             await Promise.all([
                 await this.getSelectedDocumentById(id),
-                this.getAnalyticalDrivers(),
                 this.getFunctionalities(),
+                this.getAnalyticalDrivers(),
                 this.getDatasources(),
-                this.getDocumentDrivers(),
-                this.getTemplates(),
                 this.getTypes(),
                 this.getEngines(),
                 this.getAttributes(),
@@ -164,11 +172,16 @@ export default defineComponent({
             } else {
                 this.selectedDocument = { ...this.mainDescriptor.newDocument }
                 this.selectedDocument.functionalities = []
-                this.selectedDocument.functionalities.push(this.selectedFolder.path)
             }
         },
         async getFunctionalities() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders?includeDocs=false`).then((response: AxiosResponse<any>) => (this.availableFolders = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders?includeDocs=false`).then((response: AxiosResponse<any>) => {
+                this.availableFolders = response.data
+                if (this.$route.params.folderId) {
+                    let sourceFolder = this.availableFolders.find((folder) => folder.id == parseInt(this.folderId)) as iFolder
+                    this.selectedDocument.functionalities.push(sourceFolder.path)
+                }
+            })
         },
         async getAnalyticalDrivers() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers`).then((response: AxiosResponse<any>) => (this.analyticalDrivers = response.data))
@@ -221,7 +234,11 @@ export default defineComponent({
                     })
             }
         },
-        //#endregion ===============================================================================================
+        async getAllSubreports() {
+            this.loading = true
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/`).then((response: AxiosResponse<any>) => (this.allDocumentDetails = response.data))
+            this.loading = false
+        },
         setTemplateForUpload(event) {
             this.templateToUpload = event
         },
@@ -325,10 +342,19 @@ export default defineComponent({
                     await this.uploadImage(this.imageToUpload, response.data.id)
                     this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
                     setTimeout(() => {
+                        const path = `/document-details/${response.data.id}`
+                        !this.selectedDocument.id ? this.$router.push(path) : ''
                         this.loadPage(response.data.id)
                     }, 200)
                 })
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
+        },
+        closeDocument() {
+            const path = `/document-browser`
+            this.$router.push(path)
+        },
+        onTabChange(event) {
+            event.index === 5 ? this.getAllSubreports() : ''
         }
     }
 })
@@ -363,5 +389,9 @@ export default defineComponent({
 
 .details-warning-color {
     color: red;
+}
+
+.doc-details-spinner .p-progress-spinner-svg {
+    width: 125px;
 }
 </style>

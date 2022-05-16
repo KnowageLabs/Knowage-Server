@@ -12,7 +12,7 @@
                 </template>
             </Toolbar>
         </template>
-        <KnOverlaySpinnerPanel :visibility="loading" />
+        <ProgressSpinner class="kn-progress-spinner" v-if="loading" />
         <div v-if="!qbePreviewDialogVisible" class="kn-relative p-d-flex p-flex-row kn-height-full kn-width-full">
             <div v-if="parameterSidebarVisible" :style="qbeDescriptor.style.backdrop" @click="parameterSidebarVisible = false"></div>
             <div v-show="showEntitiesLists && qbeLoaded" :style="qbeDescriptor.style.entitiesLists">
@@ -38,14 +38,14 @@
                         </template>
                         <template #end>
                             <Button v-if="showEntitiesLists" icon="fas fa-plus-circle" class="p-button-text p-button-rounded p-button-plain" v-tooltip.top="$t('common.add')" @click="createSubquery" />
-                            <Chip style="background-color:white"> {{ mainQuery.subqueries?.length }} </Chip>
+                            <Chip style="background-color:white"> {{ mainQuery?.subqueries?.length }} </Chip>
                             <Button v-if="showDerivedList" icon="pi pi-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
                             <Button v-else icon="pi pi-chevron-up" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
                         </template>
                     </Toolbar>
                     <div v-show="showDerivedList" class="kn-flex kn-overflow-hidden">
                         <ScrollPanel class="kn-height-full qbe-scroll-panel">
-                            <SubqueryEntity :availableEntities="mainQuery.subqueries" @editSubquery="selectSubquery" @deleteSubquery="deleteSubquery" />
+                            <SubqueryEntity :availableEntities="mainQuery?.subqueries" @editSubquery="selectSubquery" @deleteSubquery="deleteSubquery" />
                         </ScrollPanel>
                     </div>
                 </div>
@@ -84,6 +84,7 @@
                             @openHavingDialog="openHavingDialog"
                             @entityDropped="onDropComplete($event, false)"
                             @groupingChanged="onGroupingChanged"
+                            @openCalculatedFieldDialog="editCalcField"
                         ></QBESimpleTable>
                         <QBESmartTable
                             v-else
@@ -111,11 +112,38 @@
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="uniqueID" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery?.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
-        <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" />
+        <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" @save="onParametersSave" />
         <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" :entities="selectedQuery?.fields" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false" @save="onAdvancedFiltersSave"></QBEAdvancedFilterDialog>
         <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" @datasetSaved="$emit('datasetSaved')" />
         <QBEJoinDefinitionDialog v-if="joinDefinitionDialogVisible" :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="uniqueID" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
+
+        <KnCalculatedField v-model:template="selectedCalcField" v-model:visibility="calcFieldDialogVisible" :fields="calcFieldColumns" :descriptor="calcFieldDescriptor" :readOnly="false" :valid="true" @save="onCalcFieldSave" @cancel="calcFieldDialogVisible = false">
+            <template #additionalInputs>
+                <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
+                    <span class="p-float-label ">
+                        <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.type" :options="qbeDescriptor.types" optionLabel="label" optionValue="name" />
+                        <label for="type" class="kn-material-input-label"> {{ $t('components.knCalculatedField.type') }} </label>
+                    </span>
+                </div>
+                <div v-if="selectedCalcField.type === 'DATE'" class="p-field p-col-3">
+                    <span class="p-float-label ">
+                        <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.format" :options="qbeDescriptor.admissibleDateFormats">
+                            <template #option="slotProps">
+                                <span>{{ moment().format(slotProps.option) }}</span>
+                            </template>
+                        </Dropdown>
+                        <label for="type" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanDateFormat') }} </label>
+                    </span>
+                </div>
+                <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
+                    <span class="p-float-label ">
+                        <Dropdown id="columnType" class="kn-material-input" v-model="selectedCalcField.nature" :options="qbeDescriptor.columnTypes" optionLabel="label" optionValue="name" />
+                        <label for="columnType" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.columnType') }} </label>
+                    </span>
+                </div>
+            </template>
+        </KnCalculatedField>
 
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     </Dialog>
@@ -129,6 +157,9 @@ import { iQBE, iQuery, iField, iQueryResult, iFilter } from './QBE'
 import { onFiltersSaveCallback } from './QBEFilterService'
 import { formatDrivers } from './QBEDriversService'
 import { onHavingsSaveCallback } from './QBEHavingsService'
+import { buildCalculatedField } from '@/helpers/commons/buildQbeCalculatedField'
+import moment from 'moment'
+import { removeInPlace } from './qbeDialogs/qbeAdvancedFilterDialog/treeService'
 import Dialog from 'primevue/dialog'
 import Chip from 'primevue/chip'
 import InputSwitch from 'primevue/inputswitch'
@@ -149,7 +180,11 @@ import QBEJoinDefinitionDialog from './qbeDialogs/qbeJoinDefinitionDialog/QBEJoi
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import QBEPreviewDialog from './qbeDialogs/qbePreviewDialog/QBEPreviewDialog.vue'
 import qbeDescriptor from './QBEDescriptor.json'
-import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
+import ProgressSpinner from 'primevue/progressspinner'
+import calcFieldDescriptor from './QBECalcFieldDescriptor.json'
+import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
+import Dropdown from 'primevue/dropdown'
+
 const crypto = require('crypto')
 
 export default defineComponent({
@@ -174,15 +209,19 @@ export default defineComponent({
         KnParameterSidebar,
         QBEPreviewDialog,
         QBESmartTable,
-        KnOverlaySpinnerPanel
+        ProgressSpinner,
+        KnCalculatedField,
+        Dropdown
     },
     props: { visible: { type: Boolean }, dataset: { type: Object } },
     emits: ['close'],
     data() {
         return {
+            moment,
+            qbeDescriptor,
+            calcFieldDescriptor,
             qbe: null as iQBE | null,
             customizedDatasetFunctions: {} as any,
-            exportLimit: null as number | null,
             entities: {} as any,
             queryPreviewData: {} as iQueryResult,
             selectedQuery: {} as any,
@@ -214,7 +253,9 @@ export default defineComponent({
             uniqueID: null,
             filtersData: {} as any,
             qbeLoaded: false,
-            qbeDescriptor,
+            calcFieldDialogVisible: false,
+            calcFieldColumns: [] as any,
+            selectedCalcField: null as any,
             colors: ['#D7263D', '#F46036', '#2E294E', '#1B998B', '#C5D86D', '#3F51B5', '#8BC34A', '#009688', '#F44336']
         }
     },
@@ -252,10 +293,10 @@ export default defineComponent({
             }
             this.loadQuery()
             await this.loadDatasetDrivers()
-            if (this.qbe?.pars.length === 0 && this.filtersData?.isReadyForExecution) {
+            if (this.qbe?.pars?.length === 0 && this.filtersData?.isReadyForExecution) {
                 await this.loadQBE()
                 this.qbeLoaded = true
-            } else if (this.qbe?.pars.length !== 0 || !this.filtersData?.isReadyForExecution) {
+            } else if (this.qbe?.pars?.length !== 0 || !this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = true
             }
             this.loading = false
@@ -263,7 +304,6 @@ export default defineComponent({
         async loadQBE() {
             await this.initializeQBE()
             await this.loadCustomizedDatasetFunctions()
-            await this.loadExportLimit()
             await this.loadEntities()
 
             if (!this.dataset?.dataSourceLabel) {
@@ -286,6 +326,8 @@ export default defineComponent({
         },
         getQBEFromModel() {
             if (!this.dataset) return {}
+
+            this.smartView = this.dataset.smartView
 
             return {
                 dsTypeCd: 'Qbe',
@@ -335,9 +377,9 @@ export default defineComponent({
             Object.keys(loadedParameters.filterStatus).forEach((key: any) => {
                 const parameter = loadedParameters.filterStatus[key]
                 if (!parameter.multivalue) {
-                    parameters[parameter.urlName] = { value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description }
+                    parameters[parameter.urlName] = [{ value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description }]
                 } else {
-                    parameters[parameter.urlName] = { value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription }
+                    parameters[parameter.urlName] = [{ value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription }]
                 }
             })
             return parameters
@@ -345,9 +387,6 @@ export default defineComponent({
         async loadCustomizedDatasetFunctions() {
             const id = this.dataset?.dataSourceId ? this.dataset.dataSourceId : this.qbe?.qbeDataSourceId
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${id}`).then((response: AxiosResponse<any>) => (this.customizedDatasetFunctions = response.data))
-        },
-        async loadExportLimit() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/EXPORT.LIMITATION`).then((response: AxiosResponse<any>) => (this.exportLimit = response.data))
         },
         async loadEntities() {
             const datamartName = this.dataset?.dataSourceId ? this.dataset.name : this.qbe?.qbeDatamarts
@@ -369,7 +408,7 @@ export default defineComponent({
 
             if (!this.qbe) return
 
-            const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
+            const postData = { catalogue: this.qbe?.qbeJSONQuery?.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
                 .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&start=${this.pagination.start}&limit=${this.pagination.limit}`, postData)
                 .then((response: AxiosResponse<any>) => {
@@ -390,7 +429,7 @@ export default defineComponent({
         },
         formatQbeMeta() {
             const meta = [] as any[]
-            this.qbe?.qbeJSONQuery.catalogue.queries?.forEach((query: iQuery) => {
+            this.qbe?.qbeJSONQuery?.catalogue.queries?.forEach((query: iQuery) => {
                 query.fields?.forEach((field: iField) => {
                     meta.push({ dataType: field.dataType, displayedName: field.alias, fieldType: field.fieldType.toUpperCase(), format: field.format, name: field.alias, type: field.type })
                 })
@@ -463,10 +502,11 @@ export default defineComponent({
                 { key: '1', label: this.$t('qbe.detailView.toolbarMenu.sql'), command: () => this.showSQLQuery() },
                 { key: '2', icon: repetitionIcon, label: this.$t('qbe.detailView.toolbarMenu.repetitions'), command: () => this.toggleDiscardRepetitions() },
                 { key: '3', label: this.$t('common.parameters'), command: () => this.showParamDialog() },
-                { key: '4', label: this.$t('qbe.advancedFilters.advancedFilterVisualisation'), command: () => this.showAdvancedFilters() },
-                { key: '5', label: this.$t('qbe.joinDefinitions.title'), command: () => this.showJoinDefinitions() },
+                { key: '4', label: this.$t('components.knCalculatedField.title'), visible: !this.smartView, command: () => this.addCalcField() },
+                { key: '5', label: this.$t('qbe.advancedFilters.advancedFilterVisualisation'), command: () => this.showAdvancedFilters() },
+                { key: '6', label: this.$t('qbe.joinDefinitions.title'), command: () => this.showJoinDefinitions() },
                 {
-                    key: '6',
+                    key: '7',
                     label: this.$t('qbe.detailView.toolbarMenu.exportTo'),
                     items: [
                         { label: 'CSV', command: () => this.exportQueryResults('csv') },
@@ -477,22 +517,13 @@ export default defineComponent({
         },
         async exportQueryResults(mimeType) {
             var fileName = ''
-            var fileType = ''
+            mimeType == 'csv' ? (fileName = 'report.csv') : (fileName = 'report.xlsx')
 
-            if (mimeType == 'csv') {
-                fileName = 'report.csv'
-                fileType = 'text/csv'
-            } else if (mimeType == 'xlsx') {
-                fileName = 'report.xlsx'
-                fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            } else {
-                console.log('Unsupported mime type: ', mimeType, fileName, fileType)
-            }
-            const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
+            const postData = { catalogue: this.qbe?.qbeJSONQuery?.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
-                .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
                 .then((response: AxiosResponse<any>) => {
-                    downloadDirect(response.data, fileName, fileType)
+                    downloadDirect(response.data, fileName, response.headers['content-type'])
                 })
                 .catch(() => {})
         },
@@ -515,6 +546,7 @@ export default defineComponent({
         showAdvancedFilters() {
             this.advancedFilterDialogVisible = true
         },
+
         showJoinDefinitions() {
             this.joinDefinitionDialogVisible = true
         },
@@ -691,7 +723,7 @@ export default defineComponent({
         createQueryName() {
             var lastcount = 0
             var lastIndex = this.mainQuery.subqueries?.length - 1
-            if (lastIndex != -1) {
+            if (lastIndex != -1 && this.mainQuery.subqueries) {
                 var lastQueryId = this.mainQuery.subqueries[lastIndex].id
                 lastcount = parseInt(lastQueryId.substr(1))
             } else {
@@ -740,6 +772,59 @@ export default defineComponent({
             })
             this.selectedQuery.fields.splice(indexOfFieldToDelete, 1)
             this.updateSmartView()
+        },
+        addCalcField() {
+            this.createCalcFieldColumns()
+            this.selectedCalcField = { alias: '', expression: '', format: undefined, nature: 'ATTRIBUTE', type: 'STRING' } as any
+            this.calcFieldDialogVisible = true
+        },
+        createCalcFieldColumns() {
+            this.calcFieldColumns = []
+            this.selectedQuery.fields.forEach((field) => {
+                field.type != 'inline.calculated.field' ? this.calcFieldColumns.push({ fieldAlias: field.alias }) : ''
+            })
+        },
+        editCalcField(calcField, index) {
+            this.createCalcFieldColumns()
+            this.selectedCalcField = this.formatCalcFieldForComponent(calcField)
+            this.selectedCalcField.index = index
+            this.calcFieldDialogVisible = true
+        },
+        formatCalcFieldForComponent(calcField) {
+            let formatField = {
+                alias: calcField.id.alias,
+                type: calcField.id.type,
+                expression: calcField.id.expressionSimple,
+                nature: calcField.id.nature,
+                format: calcField.id.format
+            } as any
+            return formatField
+        },
+        onCalcFieldSave(calcFieldOutput) {
+            this.selectedCalcField.alias = calcFieldOutput.colName
+            this.selectedCalcField.expression = calcFieldOutput.formula
+            let calculatedField = buildCalculatedField(this.selectedCalcField, this.selectedQuery.fields)
+            this.selectedCalcField.index || this.selectedCalcField.index === 0 ? this.selectedQuery.fields.splice(this.selectedCalcField.index, 1) : ''
+
+            this.selectedQuery.fields.push(calculatedField)
+            this.addEntityToMainQuery(calculatedField, true)
+            this.calcFieldDialogVisible = false
+        },
+        onParametersSave() {
+            this.paramDialogVisible = false
+
+            for (let i = this.selectedQuery.filters.length - 1; i >= 0; i--) {
+                if (this.selectedQuery.filters[i].rightType === 'parameter') {
+                    const index = this.qbe?.pars.findIndex((parameter: any) => parameter.name === this.selectedQuery.filters[i].paramName)
+                    if (index === -1) {
+                        removeInPlace(this.selectedQuery.expression, '$F{' + this.selectedQuery.filters[i].filterId + '}')
+                        this.selectedQuery.filters.splice(index, 1)
+                    }
+                }
+            }
+
+            if (this.selectedQuery.expression.childNodes?.length === 0) this.selectedQuery.expression = {}
+            this.updateSmartView()
         }
     }
 })
@@ -761,17 +846,14 @@ export default defineComponent({
         margin: 0;
     }
 }
-
 .qbe-detail-view {
     display: flex;
     flex-direction: column;
     flex: 3;
 }
-
 .derived-entities-toggle {
     height: 25%;
 }
-
 .qbe-scroll-panel .p-scrollpanel-content {
     padding: 0 !important;
 }

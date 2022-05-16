@@ -49,7 +49,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageInterceptor {
 
-	static private Logger logger = Logger.getLogger(AbstractSecurityServerInterceptor.class);
+	private static final Logger LOGGER = Logger.getLogger(AbstractSecurityServerInterceptor.class);
 
 	@Context
 	private ResourceInfo resourceInfo;
@@ -65,16 +65,16 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 
-		logger.trace("IN");
+		LOGGER.trace("IN");
 
 		try {
 
 			Method method = resourceInfo.getResourceMethod();
-			logger.info("Receiving request from: " + servletRequest.getRemoteAddr());
-			logger.info("Attempt to invoke method [" + method.getName() + "] on class [" + resourceInfo.getResourceClass() + "]");
+			LOGGER.info("Receiving request from: " + servletRequest.getRemoteAddr());
+			LOGGER.info("Attempt to invoke method [" + method.getName() + "] on class [" + resourceInfo.getResourceClass() + "]");
 
 			if (method.isAnnotationPresent(PublicService.class)) {
-				logger.debug("Invoked service is public");
+				LOGGER.debug("Invoked service is public");
 				return;
 			}
 
@@ -82,10 +82,15 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 
 			// Other checks are required
 			boolean authenticated = isUserAuthenticatedInSpagoBI();
+
 			if (!authenticated) {
+				LOGGER.debug("User is not authenticated in SpagoBI");
+
 				// try to authenticate the user on the fly using simple-authentication schema
 				profile = authenticateUser();
 			} else {
+				LOGGER.debug("User is already authenticated in SpagoBI");
+
 				// get the user profile from session
 				profile = getUserProfileFromSession();
 			}
@@ -119,7 +124,7 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 							+ method.getName() + "] on class [" + resourceInfo.getResourceClass() + "]", e);
 				}
 			} else {
-				logger.debug("The user [" + profile.getUserName() + "] is enabled to invoke method [" + method.getName() + "] on class ["
+				LOGGER.debug("The user [" + profile.getUserName() + "] is enabled to invoke method [" + method.getName() + "] on class ["
 						+ resourceInfo.getResourceClass() + "]");
 			}
 
@@ -134,11 +139,11 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 		UserProfile userProfile = (UserProfile) profile;
 		// retrieving tenant id
 		String tenantId = userProfile.getOrganization();
-		logger.debug("Retrieved tenantId from user profile object : [" + tenantId + "]");
+		LOGGER.debug("Retrieved tenantId from user profile object : [" + tenantId + "]");
 		// putting tenant id on thread local
 		Tenant tenant = new Tenant(tenantId);
 		TenantManager.setTenant(tenant);
-		logger.debug("Tenant [" + tenantId + "] set into TenantManager");
+		LOGGER.debug("Tenant [" + tenantId + "] set into TenantManager");
 	}
 
 	/**
@@ -149,9 +154,9 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 
 	@Override
 	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		UserProfileManager.unset();
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	protected abstract UserProfile authenticateUser();
@@ -170,16 +175,16 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 		try {
 			userId = getUserIdentifier();
 		} catch (Exception e) {
-			logger.debug("User identifier not found");
+			LOGGER.debug("User identifier not found");
 			throw new SpagoBIRuntimeException("User identifier not found", e);
 		}
 
-		logger.debug("User id = " + userId);
+		LOGGER.debug("User id = " + userId);
 		if (StringUtilities.isNotEmpty(userId)) {
 			try {
 				engProfile = createProfile(userId);
 			} catch (Exception e) {
-				logger.debug("Error creating user profile");
+				LOGGER.debug("Error creating user profile");
 				throw new SpagoBIRuntimeException("Error creating user profile", e);
 			}
 			setUserProfileInSession(engProfile);
@@ -201,13 +206,13 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 	 * @throws Exception in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
 	 */
 	protected String getUserIdentifier() throws Exception {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String userId = null;
 		try {
 			SsoServiceInterface userProxy = SsoServiceFactory.createProxyService();
 			userId = userProxy.readUserIdentifier(servletRequest);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return userId;
 	}

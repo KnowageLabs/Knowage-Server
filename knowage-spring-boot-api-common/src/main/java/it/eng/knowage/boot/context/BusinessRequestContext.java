@@ -30,7 +30,7 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
  */
 public class BusinessRequestContext {
 
-	private UUID uuid = UUID.randomUUID();
+	private UUID correlationId = UUID.randomUUID();
 
 	private final String version;
 
@@ -49,12 +49,12 @@ public class BusinessRequestContext {
 		this.version = version.replaceAll("SNAPSHOT", "S");
 	}
 
-	public UUID getUuid() {
-		return uuid;
+	public UUID getCorrelationId() {
+		return correlationId;
 	}
 
-	public void setUuid(UUID uuid) {
-		this.uuid = uuid;
+	public void setCorrelationId(UUID uuid) {
+		this.correlationId = uuid;
 	}
 
 	public String getUsername() {

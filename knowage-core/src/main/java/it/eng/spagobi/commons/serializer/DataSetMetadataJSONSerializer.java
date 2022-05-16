@@ -88,6 +88,15 @@ public class DataSetMetadataJSONSerializer implements Serializer {
 						jsonMeta.put("name", name);
 						jsonMeta.put("type", type);
 						jsonMeta.put("fieldType", fieldType);
+
+						boolean personal = "true".equalsIgnoreCase((String) row.getAttribute("personal"));
+						jsonMeta.put("personal", personal);
+//						boolean masked = "true".equalsIgnoreCase((String) row.getAttribute("masked"));
+//						jsonMeta.put("masked", masked);
+						boolean decript = "true".equalsIgnoreCase((String) row.getAttribute("decript"));
+						jsonMeta.put("decript", decript);
+						boolean subjectId = "true".equalsIgnoreCase((String) row.getAttribute("subjectId"));
+						jsonMeta.put("subjectId", subjectId);
 						metaListJSON.put(jsonMeta);
 					}
 				} else if (source.getName().equals("METADATALIST")) {
@@ -99,6 +108,16 @@ public class DataSetMetadataJSONSerializer implements Serializer {
 						JSONObject jsonMeta = new JSONObject();
 						jsonMeta.put("name", name);
 						jsonMeta.put("type", type);
+
+						boolean personal = "true".equalsIgnoreCase((String) row.getAttribute("personal"));
+						jsonMeta.put("personal", personal);
+//						boolean masked = "true".equalsIgnoreCase((String) row.getAttribute("masked"));
+//						jsonMeta.put("masked", masked);
+						boolean decript = "true".equalsIgnoreCase((String) row.getAttribute("decript"));
+						jsonMeta.put("decript", decript);
+						boolean subjectId = "true".equalsIgnoreCase((String) row.getAttribute("subjectId"));
+						jsonMeta.put("subjectId", subjectId);
+
 						metaListJSON.put(jsonMeta);
 					}
 				}
@@ -166,6 +185,22 @@ public class DataSetMetadataJSONSerializer implements Serializer {
 							fieldAliasJSONObject.put("pvalue", fieldAlias);
 							columnsJSONArray.put(fieldAliasJSONObject);
 
+							boolean personal = "true".equalsIgnoreCase((String) row.getAttribute("personal"));
+							JSONObject personalJSONObject = createPropertyObject(columnName, "personal", personal);
+							columnsJSONArray.put(personalJSONObject);
+
+//							boolean masked = "true".equalsIgnoreCase((String) row.getAttribute("masked"));
+//							JSONObject maskedJSONObject = createPropertyObject(columnName, "masked", masked);
+//							columnsJSONArray.put(maskedJSONObject);
+
+							boolean decript = "true".equalsIgnoreCase((String) row.getAttribute("decript"));
+							JSONObject decriptJSONObject = createPropertyObject(columnName, "decript", decript);
+							columnsJSONArray.put(decriptJSONObject);
+
+							boolean subjectId = "true".equalsIgnoreCase((String) row.getAttribute("subjectId"));
+							JSONObject subjectIdJSONObject = createPropertyObject(columnName, "subjectId", subjectId);
+							columnsJSONArray.put(subjectIdJSONObject);
+
 							List<SourceBean> properties = row.getAttributeAsList("PROPERTY");
 							for (int j = 0; j < properties.size(); j++) {
 								SourceBean property = properties.get(j);
@@ -189,6 +224,20 @@ public class DataSetMetadataJSONSerializer implements Serializer {
 
 		}
 		return metadataJSONObject;
+	}
+
+	/**
+	 * @param columnName
+	 * @param pvalue
+	 * @return
+	 * @throws JSONException
+	 */
+	private JSONObject createPropertyObject(String columnName, String pname, Object pvalue) throws JSONException {
+		JSONObject sensitiveDataJSONObject = new JSONObject();
+		sensitiveDataJSONObject.put("column", columnName);
+		sensitiveDataJSONObject.put("pname", pname);
+		sensitiveDataJSONObject.put("pvalue", pvalue);
+		return sensitiveDataJSONObject;
 	}
 
 }

@@ -66,7 +66,7 @@ export default defineComponent({
     },
     methods: {
         loadSelectedParameter() {
-            this.selectedParameter = this.propSelectedParameter as iOlapCrossNavigationParameter
+            this.selectedParameter = this.propSelectedParameter ?? ({} as iOlapCrossNavigationParameter)
             if (this.selectedParameter.name) {
                 this.selectedParameter.value = this.selectedParameter.type === 'From Cell' ? `dimension=${this.selectedParameter.dimension} hierarchy=${this.selectedParameter.hierarchy} level=${this.selectedParameter.level}` : (this.selectedParameter.uniqueName as string)
             } else {

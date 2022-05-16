@@ -16,10 +16,12 @@
         "cc": "CC",
         "choose": "choose",
         "clean": "Clean",
+        "clear": "Clear",
         "clicked": "Clicked",
         "clone": "Clone",
         "close": "close",
         "cockpit": "Cockpit",
+        "code": "Code",
         "codingLanguages": {
             "css": "css",
             "html": "html",
@@ -37,6 +39,7 @@
         "delete": "delete",
         "deleteAll": "delete all",
         "description": "description",
+        "detail": "Detail",
         "details": "Details",
         "development": "Development",
         "documentDetails": "Document Details",
@@ -68,12 +71,14 @@
         "field": "Field",
         "file": "File",
         "fileName": "File Name",
+        "filterBy": "Filter by",
         "filters": "Filters",
         "from": "From",
         "general": "General",
         "generate": "Generate",
         "group": "Group",
         "home": "Home",
+        "id": "id",
         "image": "image",
         "import": "import",
         "inUse": "In use",
@@ -93,6 +98,7 @@
         "lastChangeDate": "Last change date",
         "left": "left",
         "library": "Library",
+        "list": "List",
         "load": "Load",
         "locked": "Locked",
         "loggedUser": "logged user",
@@ -113,7 +119,9 @@
         "object": "Object",
         "ok": "ok",
         "onlineHelp": "Help Online",
+        "options": "Options",
         "order": "Order",
+        "orderBy": "Order by",
         "output": "Output",
         "owner": "Owner",
         "packages": "Packages",
@@ -131,6 +139,7 @@
         "released": "Released",
         "replyTo": "Reply To",
         "required": "Required",
+        "restore": "restore",
         "reused": "Reused",
         "right": "right",
         "role": "Role",
@@ -157,6 +166,7 @@
         "sqlExpression": "SQL expression",
         "state": "State",
         "status": "Status",
+        "style": "Style",
         "suspended": "Suspended",
         "table": {
             "footer": {
@@ -190,6 +200,7 @@
         },
         "top": "top",
         "type": "type",
+        "update": "Update",
         "upload": "upload",
         "uploadFile": "Upload File",
         "uploadFileSuccess": "File uploaded",
@@ -208,6 +219,7 @@
         "visibility": "Visibility",
         "visible": "Visible",
         "warning": "Warning",
+        "widget": "Widget",
         "yes": "Yes"
     },
     "components": {
@@ -218,7 +230,8 @@
             "formula": "Formula",
             "functions": "Functions",
             "officialDocumentation": "Official documentation ({function})",
-            "title": "Calculated field"
+            "title": "Calculated field",
+            "type": "Type"
         }
     },
     "cron": {
@@ -264,6 +277,7 @@
         "nextExecution": "Next execution",
         "november": "November",
         "october": "October",
+        "quarter": "Quarter",
         "repeatInterval": "Repeat Interval",
         "saturday": "Saturday",
         "second": "Second",
@@ -283,9 +297,11 @@
         "thursday": "Thursday",
         "tuesday": "Tuesday",
         "wednesday": "Wednesday",
+        "week": "Week",
         "weekday": "Weekday",
         "weekdays": "Weekdays",
         "weekly": "Weekly",
+        "year": "Year",
         "yearly": "Yearly"
     },
     "documentBrowser": {
@@ -388,6 +404,12 @@
                 "title": "Output Parameters"
             },
             "subreports": {
+                "deleteError": "Error deleting subreport",
+                "deleteOk": "Subreport deleted",
+                "info": "Select the subreports you want to link to the document",
+                "persistError": "Error persisting subreport",
+                "persistOk": "Subreport persisted",
+                "tableName": "Available Subreports",
                 "title": "Subreports"
             },
             "title": "Document Details"
@@ -418,6 +440,7 @@
             "crossNavigationNoTargetError": "No cross navigation targets available",
             "currentRank": "Curent Rank is...",
             "customMetadata": "Custom Metadata",
+            "destinationSelectionTitle": "Selection of the destination document",
             "editCockpit": "Edit cockpit document",
             "editModeConfirm": "You are leaving edit mode. Continue?",
             "embedInHtml": "Embed in HTML",
@@ -444,6 +467,11 @@
             "yourRating": "Your rating"
         },
         "olap": {
+            "alDialog": {
+                "availableAlg": "Available algorithms",
+                "infoMsg": "You can change algorithm acting on the form below.",
+                "title": "Change algorithm"
+            },
             "buttonsWizard": {
                 "title": "Buttons Wizard"
             },
@@ -458,6 +486,10 @@
             "customView": {
                 "title": "Olap custom view List"
             },
+            "deleteVersion": {
+                "id": "id",
+                "title": "Select the version to delete"
+            },
             "drillTru": {
                 "clearAll": "Clear All",
                 "drillLevelsError": "An error occurred while getting drill through levels",
@@ -470,7 +502,23 @@
                 "title": "Drill Through"
             },
             "editModeConfirm": "You are leaving edit mode. Continue?",
+            "filterDialog": {
+                "ancestorDescendantWarning": "Warning: You selected some members that are in ancestor-descendant relationship: measures will be aggregated over both of them. Are you sure this is what you want?",
+                "driverProfileAttribute": "Driver/ProfileAttribute",
+                "filterUsingDrivers": "Filter using drivers",
+                "infoMessage": "Selected items will be used as filters in the main table.",
+                "level": "Level",
+                "parentDisabledTooltip": "It is not possible to choose a parent. Press the Add button.",
+                "searchWarningMessage": "You need at least 3 letters to start search!",
+                "selectFields": "Select Fields",
+                "treeLockedInfoMessage": {
+                    "partOne": "Selected items are used as filters in the main table. You can remove some or clicking on ",
+                    "partThree": " the whole tree will be unlocked",
+                    "partTwo": "add selection"
+                }
+            },
             "filterPanel": {
+                "activeLevels": "Active levels",
                 "drop": "Drop here to use as a slicer",
                 "filterPanelEmpty": "Drag the member here if you want to use it as a slicer"
             },
@@ -491,10 +539,39 @@
             },
             "openDesigner": "Open Designer",
             "openDesignerMsg": "By opening designer you will lose all unsaved changes, are you sure?",
+            "outputWizard": {
+                "fieldDelimiter": "Field delimiter",
+                "fileInfo": "Please fill the CSV options.",
+                "infoMsg": "Select the output type for the analysis. This operation will take some minutes. In the meanwhile you can continue to work on your cube",
+                "tableInfo": "What is the name of the table for the output process?",
+                "tableMsg": "Analysis exported",
+                "title": "Output wizard",
+                "version": "Verson to export"
+            },
+            "saveVersion": {
+                "infoMessage": "Type the name of the version. If you leave it blank the name and the description assume the version number",
+                "title": "Save new version",
+                "versionDescription": "Version description",
+                "versionName": "Version name"
+            },
             "savingCustomizedView": "Saving customized view",
+            "scenarioWizard": {
+                "clearData": "Clear data",
+                "deleteAllMsg": "Are you sure you want to delete all variables?",
+                "deleteAllTitle": "Delete All",
+                "editableMeasures": "Editable measures",
+                "longInfo": "Selecting an edit cube and an editable measure is mandatory. In order to perform what if analysis your database as well as OLAP schema should have a specific structure. Please check in the documentation of the WhatIF functionality. The edited cube should be the cube that you want to save with the new version of data.",
+                "parameterName": "Parameter name",
+                "parameterValue": "Parameter value",
+                "scenarioUpdated": "Successfully added scenario to template",
+                "selectedCube": "Selected cube",
+                "shortInfo": "Selecting an edit cube and an editable measure is mandatory.",
+                "title": "Scenario Wizard"
+            },
             "showMdxQuery": "Show MDX Query",
             "showScheduledExecutions": "Show scheduled executions",
             "sidebar": {
+                "alg": "Select an algorithm",
                 "calculatedField": "Calculated field",
                 "calculatedFieldWizard": "Calculated field wizard",
                 "closeDesigner": "Close Designer",
@@ -502,23 +579,29 @@
                 "configureScenario": "Configure scenario",
                 "configureTablePagination": "Configure table pagination",
                 "defineCrossNavigation": "Define cross navigation",
+                "deleteVersions": "Delete versions",
                 "drillOnData": "Drill on data",
                 "drillOnDimension": "Drill on dimension",
                 "drillThrough": "Drill Through",
                 "enableCrossNavigation": "Enable crossnavigation",
+                "excel": "Export excel for edit",
                 "exportExcel": "Export excel for edit",
                 "exportOutput": "Export output",
                 "hideSpans": "Hide spans",
+                "lockSchema": "Lock schema",
                 "manageVersions": "Manage versions",
                 "mdxQuery": "Mdx Query",
                 "member": "Member",
                 "olapFunctions": "OLAP functions",
+                "outputWizard": "Output wizard",
                 "position": "Position",
                 "reloadSchema": "Reload schema",
                 "replace": "Replace",
+                "saveAsNewVersion": "Save as new version",
                 "saveCustomizedView": "Save customized view",
                 "saveNewVersion": "Save new version",
                 "saveTemplate": "Save template",
+                "scenario": "Configure scenario",
                 "selectAlgorithm": "Select algorithm",
                 "showCustomizedView": "Show customized view",
                 "showParentMembers": "Show parent members",
@@ -527,8 +610,11 @@
                 "suppressEmptyRowsColumns": "Suppress empty rows/columns",
                 "tableFunctions": "Table functions",
                 "templateEditing": "Template editing",
-                "undo": "Undo"
+                "undo": "Undo",
+                "unlockSchema": "Unlock schema",
+                "whatIfTitle": "What If"
             },
+            "sliceVersionError": "You must slice on Version first",
             "userRoleError": "User does not have valid roles for the execution of the selected document",
             "viewCockpit": "View cockpit document",
             "yourRating": "Your rating"
@@ -603,10 +689,11 @@
     },
     "infoDialog": {
         "aboutKnowage": "About Knowage",
-        "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
+        "copyright": "Â© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
     },
     "knScheduler": {
+        "customCronHint": "Writing your own custom schedulation expression make sure the format is compliant to Quartz (more info <a target=\"_blank\" href=\"http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html#format\">here</a>)",
         "enableSchedulation": "Enable schedulation",
         "everyDay": "Every {day} day/s ",
         "everyMonth": "Every {month} month/s ",
@@ -678,6 +765,59 @@
             "title": "KPI Definition",
             "tresholdTitle": "Threshold",
             "useIt": "Use It"
+        },
+        "kpiDocumentDesigner": {
+            "addScorecardAssociation": "Add Scorecard Association",
+            "color": "Color",
+            "font": {
+                "extended": "Extended (16px)",
+                "large": "Large (18px)",
+                "medium": "Medium (14px)",
+                "small": "Small (10px)",
+                "xlarge": "Extra-large (24px)",
+                "xsmall": "Extra-small (8px)",
+                "xxlarge": "Very Large (40px)"
+            },
+            "fontFamily": {
+                "arial": "Arial",
+                "courierNew": "Courier-new",
+                "roboto": "Roboto",
+                "tahoma": "Tahoma",
+                "timesNewRoman": "Times New Roman",
+                "verdana": "verdana"
+            },
+            "fontSize": "Font-size",
+            "fontWeight": {
+                "bold": "Bold",
+                "light": "Light",
+                "normal": "Normal",
+                "title": "Font Weight"
+            },
+            "kpiCard": "Kpi Card",
+            "kpiList": "KPI List",
+            "kpiName": "Kpi name",
+            "precision": "Precision",
+            "prefix": "Prefix",
+            "prefixSuffixLabel": "Prefix / Suffix label",
+            "rangeMaxValue": "Range Max Value",
+            "rangeMinValue": "Range Min Value",
+            "saveDialogTitle": "KPI Document Designer Save",
+            "saveSubheader": "Please enter a valid name",
+            "saveTitle": "KPI Name is required",
+            "scorecard": "Scorecard",
+            "scorecardList": "Scorecard List",
+            "showLabelAs": "Show label as",
+            "showPercentage": "Show Percentage",
+            "showTarget": "Show Target",
+            "showThreshold": "Show Threshold",
+            "showValue": "Show Value",
+            "speedometer": "Speedometer",
+            "suffix": "Suffix",
+            "title": "Kpi Document Designer",
+            "typeOfDocument": "Type of Document",
+            "units": "Units",
+            "viewAs": "View as",
+            "viewAsPlaceholder": "Select view as"
         },
         "kpiScheduler": {
             "addKpiAssociation": "Add KPI associations",
@@ -858,6 +998,7 @@
             "noSavedVersions": "No saved versions",
             "operationInfo": "Filter operator is used for comparing a column value of the AD {driver} and the value of the AD on which it depends",
             "prefixTooltip": "Prefixes considered ONLY at meta tool table list retrieval",
+            "saveRequired": "Save operation required",
             "savedVersions": "Saved versions",
             "schemaName": "Schema Name",
             "setActiveVersion": "Set active version",
@@ -1088,7 +1229,7 @@
             "noSourceTables": "There are no source tables for selected dataset.",
             "noTablesToLink": "There are no tables to link in this source.",
             "noVersions": "There are no previous versions of this dataset, save it with changes to create an older version.",
-            "oldVersions": "Older Dataset Versions",
+            "oldVersions": "Dataset Versions",
             "openQbeButton": "Open Qbe",
             "params": "Parameters",
             "peristenceWarning": "Dataset with parameters cannot be persisted!",
@@ -1275,7 +1416,7 @@
                 "formula": "Formula",
                 "glossary": "Glossary",
                 "glossaryHint": "Edit the input to change the glossary name",
-                "help": "Select a Glossary from the combo box to show its word hierarchy structure or type a name to create a new one. You can edit it by adding nodes or by dropping words from the right side list",
+                "help": "Select a Glossary from the combo box to show its word hierarchy structure. You can edit it by adding nodes or by dropping words from the right side list",
                 "hint": "The Glossary definition page allows you to create glossary to identify a set of words to apply in different documents and datasets. It's also possible to create a word hierarchy for each glossary. Select one existing item from the dropdown, or press the \"+\" button to add one.",
                 "newNode": "New node",
                 "saveTitle": "New glossary",
@@ -1314,6 +1455,36 @@
                 "title": "Glossary",
                 "word": "Word"
             }
+        },
+        "hierarchyManagement": {
+            "afterDate": "After Date",
+            "backup": "Backup",
+            "backupDeleted": "Backup deleted successfully.",
+            "createHierarchyMaster": "Create Hierarchy Master",
+            "createHierarchyMasterErrorMessage": "You can select only two items",
+            "deleteBackupConfirm": "Are you sure you want to delete the backup?",
+            "dimensions": "Dimensions",
+            "hierarchies": "Hierarchies",
+            "hierarchiesSource": "Hierarchies Source",
+            "hierarchiesTarget": "Hierarchies Target",
+            "hierarchy": "Hierarchy",
+            "hierarchyType": "Hierarchy Type",
+            "lev": "Lev.",
+            "levelNode": "LEVEL node",
+            "master": "Master",
+            "modifyHierarchy": "Modify Hierarchy",
+            "noHierarchiesForPropagation": "No hierarchies found for propagation",
+            "nodeCloneError": "The duplicate leaf can not be equal to the original",
+            "parentWithoutChildrenConfirm": "The tree contains nodes with no children, they will be lost. Proceed to save?",
+            "recursive": "Recursive",
+            "restoreMsg": "Are you sure you want to restore the backup?",
+            "restoreTitle": "Restore",
+            "saveBackupMessage": "Are you sure to save the modification?",
+            "saveChanges": "Save Changes",
+            "showMissingElements": "Show missing elements",
+            "synchronizationSuccess": "Successful synchronization",
+            "synchronize": "Synchronize",
+            "technical": "Technical"
         },
         "internationalizationManagement": {
             "defaultLanguage": "(Default)",
@@ -2107,6 +2278,7 @@
         },
         "detailView": {
             "hideList": "Hide List",
+            "modifyCalcField": "Modify calculated field",
             "noPreview": "Nothing to preview",
             "parameterDuplicates": "There are parameters with a duplicate name!",
             "showList": "Show List",
@@ -2266,6 +2438,52 @@
             "selectedDatasetsMessage": "Click to remove from federation",
             "title": "Federation definition"
         },
+        "gis": {
+            "datasetJoinTitle": "Dataset Join",
+            "datasetLayerTitle": "Dataset & Layer",
+            "dnl": {
+                "addDataset": "add dataset",
+                "addFilters": "add filters",
+                "addLayer": "add layer",
+                "changeDataset": "change dataset",
+                "changeDsMessage": "Do you want to confirm the dataset modification? This operation will undo all previous configuration.",
+                "changeLayer": "change layer",
+                "changeLayerMessage": "Do you want to confirm the layer modification? This operation will undo all dataset join configuration.",
+                "datasetList": "Dataset List",
+                "dialogEmptyInfo": "No available datasets",
+                "driverParameter": "Driver parameter",
+                "driversDialogEmpty": "No available drivers",
+                "driversTableEmpty": "Add a filter driver",
+                "emptyInfo": "Add a dataset",
+                "layerFilters": "Layer Filters",
+                "layerList": "Layer List",
+                "layersDialogEmpty": "No available layers",
+                "layersTableEmpty": "Add a layer",
+                "openMapWarning": "Opening the map will undo all unsaved modifications, are you sure you want to continue?"
+            },
+            "dsj": {
+                "addButton": "Add join column",
+                "dsJoinCol": "Dataset join column",
+                "lyrJoinCol": "Layer join column"
+            },
+            "editMap": "Edit Map",
+            "fieldRequired": "Field required",
+            "filtersMenu": "Filters & Menu",
+            "indicators": "Indicators",
+            "menu": {
+                "crossNavigationMultiselect": "Enable cross with multiselection",
+                "showBaseLayer": "Enable base layer selection",
+                "showDistanceCalculator": "Enable distance calculator",
+                "showDownloadButton": "Enable download button",
+                "showLayer": "Enable layer selection",
+                "showLegendButton": "Enable show/hide legend button",
+                "showMapConfig": "Enable map style configuration",
+                "showRightConfigMenu": "Enable map configuration menu",
+                "showSelectMode": "Enable mode selection"
+            },
+            "save": "Save new map",
+            "title": "GIS Document Designer"
+        },
         "hint": "Workspace is your personal space where you can find your documents and datasets. Click one of the items categories in the left list to select and interact with them.",
         "menuLabels": {
             "advanced": "Data Preparation",
@@ -2279,6 +2497,7 @@
             "schedulation": "Schedulation"
         },
         "myAnalysis": {
+            "editAnalysis": "Edit Analysis",
             "geoRef": "Geo-referenced analysis",
             "menuItems": {
                 "clone": "Clone Document",

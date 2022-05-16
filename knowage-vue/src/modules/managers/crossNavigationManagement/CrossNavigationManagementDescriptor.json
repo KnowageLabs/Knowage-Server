@@ -34,7 +34,7 @@
             }
         ],
         "defaultSortField": "name",
-        "filterFields": ["name", "type"],
+        "filterFields": ["name", "type", "fromDoc", "toDoc"],
         "interaction": {
             "type": "event"
         },

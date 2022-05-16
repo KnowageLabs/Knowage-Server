@@ -316,6 +316,7 @@
                             </div>
                             <div v-else-if="selectedRefreshRate === 'custom'">
                                 <span class="p-float-label p-col-12"> <InputText :id="name" type="text" v-model="localCronExpression" v-bind="$attrs" :class="[cssClass ? cssClass + ' kn-truncated' : 'kn-material-input kn-truncated', required && !modelValue ? 'p-invalid' : '']"/></span>
+                                <small id="custom-cron-hint" v-html="$t('knScheduler.customCronHint')"></small>
                             </div>
                         </div>
 
@@ -372,7 +373,7 @@
                             :selectionMode="col.field == 'selectionMode' ? 'multiple' : ''"
                             :exportable="col.field == 'selectionMode' ? false : ''"
                             ><template #body="slotProps">
-                                <span v-if="col.field === 'start' || col.field === 'stop'"> {{ getFormattedDate(slotProps.data[col.field], 'MM/DD/YYYY') }}</span>
+                                <span v-if="col.field === 'start' || col.field === 'stop'"> {{ getFormattedDate(slotProps.data[col.field]) }}</span>
                                 <span v-else>{{ slotProps.data[col.field] }}</span>
                             </template></Column
                         >
@@ -400,8 +401,12 @@
     import InputSwitch from 'primevue/inputswitch'
 
     import moment from 'moment'
-    import { formatDate } from '@/helpers/commons/localeHelper'
+    import { luxonFormatDate } from '@/helpers/commons/localeHelper'
     import cronstrue from 'cronstrue/i18n'
+    import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
+    import { IDataPrepLog } from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoring'
+    import { AxiosResponse } from 'axios'
+    import { mapState } from 'vuex'
 
     export default defineComponent({
         name: 'kn-scheduler',
@@ -440,6 +445,7 @@
                 selectedDayOrdinal: null,
                 selectedDayNumber: null,
                 selectedMonthExtended: null,
+                dateFormat: '' as string,
                 dayConf: null,
                 monthConf: null,
                 yearConf: null,
@@ -460,6 +466,9 @@
             }
         },
         computed: {
+            ...mapState({
+                configuration: 'configuration'
+            }),
             getCronstrueFormula(): String {
                 let locale = localStorage.getItem('locale')
                 let cronLocale = ''
@@ -497,6 +506,8 @@
             }
         },
         async created() {
+            if (!this.configuration || (!this.configuration && !this.configuration['SPAGOBI.TIMESTAMP-FORMAT.format'])) await this.loadUserConfig()
+
             this.startDateEnabled = this.descriptor?.config.startDateEnabled
             if (this.startDateEnabled) {
                 this.startDate = new Date()
@@ -530,8 +541,13 @@
             this.paused = this.schedulationPaused
         },
         methods: {
-            getFormattedDate(date: any, format: any): String {
-                return formatDate(date, format)
+            async downloadLog(item: IDataPrepLog) {
+                await this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/' + item.id + '/log/download').then((response: AxiosResponse<any>) => {
+                    downloadDirectFromResponse(response)
+                })
+            },
+            getFormattedDate(date: any): String {
+                return luxonFormatDate(new Date(date), undefined, this.dateFormat)
             },
             getNumberOptions(max: Number) {
                 let tmp = [] as any
@@ -540,6 +556,13 @@
             },
             isSet(cronExpressionToken): Boolean {
                 return cronExpressionToken !== this.allValues && cronExpressionToken !== this.noSpecificValue
+            },
+            async loadUserConfig() {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
+                    if (response.data) {
+                        this.dateFormat = response.data['SPAGOBI.TIMESTAMP-FORMAT.format'] ? response.data['SPAGOBI.TIMESTAMP-FORMAT.format'] : response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === '%Y-%m-%d' ? 'dd/MM/yyyy' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
+                    }
+                })
             },
             parseFormula(cronExpression) {
                 if (cronExpression === '0 0 0 ? * MON,TUE,WED,THU,FRI *') {

@@ -1,5 +1,5 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
+    <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-2 p-mx-2">
         <template #start>
             <Button v-if="!expandParamsCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandParamsCard = true" />
             <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandParamsCard = false" />
@@ -10,7 +10,7 @@
             <Button icon="fas fa-eraser" class="p-button-text p-button-rounded p-button-plain" :disabled="disableDeleteAll" @click="removeAllParams" />
         </template>
     </Toolbar>
-    <Card v-show="expandParamsCard">
+    <Card v-show="expandParamsCard" class="p-mx-2">
         <template #content>
             <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.pars" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
                 <template #empty>

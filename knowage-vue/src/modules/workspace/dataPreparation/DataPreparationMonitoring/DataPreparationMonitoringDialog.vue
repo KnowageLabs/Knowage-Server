@@ -32,7 +32,6 @@
     import { IDataPrepLog } from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoring'
     import { AxiosResponse } from 'axios'
 
-    import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
     import { filterDefault } from '@/helpers/commons/filterHelper'
 
     export default defineComponent({
@@ -69,12 +68,6 @@
         },
 
         methods: {
-            async downloadLog(item: IDataPrepLog) {
-                await this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/' + item.id + '/log/download').then((response: AxiosResponse<any>) => {
-                    downloadDirectFromResponse(response)
-                })
-            },
-
             async loadLogs() {
                 if (this.dataset && this.dataset.label) {
                     await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + this.dataset.label).then((response: AxiosResponse<any>) => {
@@ -112,6 +105,7 @@
                 this.touched = false
                 this.showHint = false
                 this.$emit('close')
+                this.$store.commit('setLoading', false)
             },
             setCronValid(event) {
                 this.validSchedulation = event.item

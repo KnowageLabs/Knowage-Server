@@ -1,4 +1,6 @@
-let routes = [
+import GisRoutes from '@/modules/workspace/gisDocumentDesigner/GisDocumentDesigner.routes.js'
+
+let baseRoutes = [
     {
         path: '/workspace',
         name: 'workspace',
@@ -51,5 +53,7 @@ let routes = [
         ]
     }
 ]
+
+const routes = baseRoutes.concat(GisRoutes)
 
 export default routes

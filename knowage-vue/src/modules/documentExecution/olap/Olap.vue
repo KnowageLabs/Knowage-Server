@@ -1,5 +1,7 @@
 <template>
     <div class="p-d-flex p-flex-column kn-flex">
+        <ProgressSpinner class="kn-progress-spinner" v-if="loading" />
+
         <OlapCustomViewTable v-if="customViewVisible" class="olap-overlay-dialog" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)" />
 
         <DrillTruDialog
@@ -17,13 +19,13 @@
             @drill="drillThrough"
         />
 
-        <FilterPanel :olapProp="olap" @putFilterOnAxis="putFilterOnAxis" @showMultiHierarchy="showMultiHierarchy" />
-        <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" />
+        <FilterPanel :olapProp="olap" :olapDesigner="olapDesigner" @putFilterOnAxis="putFilterOnAxis" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
+        <FilterTopToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @swapAxis="swapAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
 
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
-            <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" />
+            <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
             <div id="table-container" class="kn-flex" :style="olapDescriptor.style.tableContainer">
-                <div id="olap-table" class="kn-flex kn-olap-table" ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick"></div>
+                <div id="olap-table" class="kn-flex kn-olap-table" ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick" @dblclick="handleTableDoubleClick"></div>
             </div>
         </div>
 
@@ -48,6 +50,8 @@
             :olap="olap"
             :olapDesignerMode="olapDesignerMode"
             :propButtons="buttons"
+            :whatIfMode="whatIfMode"
+            :olapHasScenario="olapHasScenario"
             @openCustomViewDialog="customViewSaveDialogVisible = true"
             @drillTypeChanged="onDrillTypeChanged"
             @showParentMemberChanged="onShowParentMemberChanged"
@@ -62,7 +66,21 @@
             @openCrossNavigationDefinitionDialog="crossNavigationDefinitionDialogVisible = true"
             @openButtonWizardDialog="buttonsWizardDialogVisible = true"
             @saveOlapDesigner="saveOlapDesigner"
+            @showOutputWizard="outputWizardVisible = true"
+            @showScenarioWizard="scenarioWizardVisible = true"
+            @showSaveAsNewVersion="saveVersionDialogVisible = true"
+            @showAlgorithmDialog="algorithmDialogVisible = true"
+            @undo="undo"
+            @showDeleteVersions="deleteVersionDialogVisible = true"
+            @exportExcel="exportExcel"
+            @loading="loading = $event"
         />
+    </div>
+
+    <div id="whatif-input" ref="whatifInput" class="p-inputgroup">
+        <InputText v-model="whatifInputNewValue" @keyup.enter="onWhatifInput" />
+        <InputText v-model="whatifInputOldValue" :disabled="true" />
+        <Button icon="pi pi-times" class="kn-button--secondary" @click="closeWhatifInput" />
     </div>
 
     <!-- DIALOGS ------------------------------------------->
@@ -73,19 +91,26 @@
     <OlapButtonWizardDialog :visible="buttonsWizardDialogVisible" :propButtons="buttons" :propOlapDesigner="olapDesigner" @close="buttonsWizardDialogVisible = false"></OlapButtonWizardDialog>
     <MultiHierarchyDialog :selectedFilter="multiHierFilter" :multiHierUN="selecetedMultiHierUN" :visible="multiHierarchyDialogVisible" @setMultiHierUN="setMultiHierUN" @updateHierarchy="updateHierarchy" @close="multiHierarchyDialogVisible = false" />
     <KnOverlaySpinnerPanel :visibility="loading" />
+    <OutputWizard v-if="outputWizardVisible" :visible="outputWizardVisible" :olapVersionsProp="olapVersions" :sbiExecutionId="id" @close="outputWizardVisible = false" />
+    <ScenarioWizard v-if="scenarioWizardVisible" :visible="scenarioWizardVisible" :hiddenFormDataProp="hiddenFormDataProp" :sbiExecutionId="id" :olapDesignerProp="olapDesigner" @saveScenario="saveScenario" @deleteScenario="deleteScenario" @close="scenarioWizardVisible = false" />
+    <AlgorithmDialog v-if="algorithmDialogVisible" :visible="algorithmDialogVisible" :sbiExecutionId="id" @close="algorithmDialogVisible = false" />
+    <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" :olapDesignerMode="olapDesignerMode" :parameters="parameters" :profileAttributes="profileAttributes" :olapDesigner="olapDesigner" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
+    <OlapSaveNewVersionDialog :visible="saveVersionDialogVisible" :id="id" @close="saveVersionDialogVisible = false"></OlapSaveNewVersionDialog>
+    <OlapDeleteVersionsDialog :visible="deleteVersionDialogVisible" :id="id" :propOlapVersions="olapVersions" @close="deleteVersionDialogVisible = false"></OlapDeleteVersionsDialog>
 </template>
 
 <script lang="ts">
 import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
-import { iOlapCustomView, iButton, iOlapFilter, iOlap } from './Olap'
+import { iOlapCustomView, iButton, iOlapFilter, iOlap, iParameter, iProfileAttribute } from './Olap'
+import { downloadDirect } from '@/helpers/commons/fileHelper'
+import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import olapDescriptor from './OlapDescriptor.json'
 import OlapSidebar from './olapSidebar/OlapSidebar.vue'
 import OlapSortingDialog from './sortingDialog/OlapSortingDialog.vue'
 import OlapCustomViewTable from './customView/OlapCustomViewTable.vue'
 import OlapCustomViewSaveDialog from './customViewSaveDialog/OlapCustomViewSaveDialog.vue'
 import OlapMDXQueryDialog from './mdxQueryDialog/OlapMDXQueryDialog.vue'
-import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import FilterPanel from './filterPanel/OlapFilterPanel.vue'
 import FilterTopToolbar from './filterToolbar/OlapTopFilterToolbar.vue'
 import FilterLeftToolbar from './filterToolbar/OlapLeftFilterToolbar.vue'
@@ -93,11 +118,37 @@ import OlapCrossNavigationDefinitionDialog from './crossNavigationDefinition/Ola
 import OlapButtonWizardDialog from './buttonWizard/OlapButtonWizardDialog.vue'
 import MultiHierarchyDialog from './multiHierarchyDialog/OlapMultiHierarchyDialog.vue'
 import DrillTruDialog from './drillThroughDialog/OlapDrillThroughDialog.vue'
+import OutputWizard from './outputWizard/OlapOutputWizard.vue'
+import ScenarioWizard from './scenarioWizard/OlapScenarioWizard.vue'
+import OlapFilterDialog from './filterDialog/OlapFilterDialog.vue'
+import OlapSaveNewVersionDialog from './newVersionDialog/OlapSaveNewVersionDialog.vue'
+import AlgorithmDialog from './algorithmDialog/OlapAlgorithmDialog.vue'
+import OlapDeleteVersionsDialog from './deleteVersionsDialog/OlapDeleteVersionsDialog.vue'
 
 export default defineComponent({
     name: 'olap',
-    components: { OlapSidebar, DrillTruDialog, OlapCustomViewTable, OlapCustomViewSaveDialog, KnOverlaySpinnerPanel, OlapSortingDialog, FilterPanel, FilterTopToolbar, FilterLeftToolbar, OlapMDXQueryDialog, OlapCrossNavigationDefinitionDialog, OlapButtonWizardDialog, MultiHierarchyDialog },
-    props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean } },
+    components: {
+        OutputWizard,
+        OlapSidebar,
+        DrillTruDialog,
+        OlapCustomViewTable,
+        OlapCustomViewSaveDialog,
+        KnOverlaySpinnerPanel,
+        OlapSortingDialog,
+        FilterPanel,
+        FilterTopToolbar,
+        FilterLeftToolbar,
+        OlapMDXQueryDialog,
+        OlapCrossNavigationDefinitionDialog,
+        OlapButtonWizardDialog,
+        MultiHierarchyDialog,
+        OlapFilterDialog,
+        ScenarioWizard,
+        OlapSaveNewVersionDialog,
+        AlgorithmDialog,
+        OlapDeleteVersionsDialog
+    },
+    props: { id: { type: String }, olapId: { type: String }, olapName: { type: String }, reloadTrigger: { type: Boolean }, olapCustomViewVisible: { type: Boolean }, hiddenFormDataProp: { type: Object, required: true } },
     emits: ['closeOlapCustomView', 'applyCustomView', 'executeCrossNavigation'],
     data() {
         return {
@@ -113,6 +164,9 @@ export default defineComponent({
             buttonsWizardDialogVisible: false,
             multiHierarchyDialogVisible: false,
             drillTruDialogVisible: false,
+            outputWizardVisible: false,
+            scenarioWizardVisible: false,
+            algorithmDialogVisible: false,
             multiHierFilter: {} as iOlapFilter,
             selecetedMultiHierUN: '',
             sort: null as any,
@@ -127,8 +181,19 @@ export default defineComponent({
             formattedColumns: [] as any,
             dtAssociatedLevels: [] as any,
             dtTree: [] as any,
+            olapVersions: [] as any,
             dtMaxRows: 0,
-            usedOrdinal: 0 as Number
+            usedOrdinal: 0 as Number,
+            selectedFilter: null as any,
+            filterDialogVisible: false,
+            parameters: [] as iParameter[],
+            profileAttributes: [] as iProfileAttribute[],
+            saveVersionDialogVisible: false,
+            deleteVersionDialogVisible: false,
+            whatIfMode: false,
+            whatifInputNewValue: 0 as Number,
+            whatifInputOldValue: 0 as Number,
+            whatifInputOrdinal: 0 as Number
         }
     },
     async created() {
@@ -137,7 +202,13 @@ export default defineComponent({
         }
         await this.loadPage()
     },
-    computed: {},
+    computed: {
+        olapHasScenario() {
+            if (this.olapDesigner?.template?.wrappedObject?.olap?.SCENARIO) {
+                return true
+            } else return false
+        }
+    },
     watch: {
         async id() {
             await this.loadPage()
@@ -159,7 +230,10 @@ export default defineComponent({
         async loadOlapDesigner() {
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `olap/designer/${this.olapId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
-                .then(async (response: AxiosResponse<any>) => (this.olapDesigner = response.data))
+                .then(async (response: AxiosResponse<any>) => {
+                    this.olapDesigner = response.data
+                    this.whatIfMode = this.olapDesigner?.ENGINE === 'knowagewhatifengine'
+                })
                 .catch(() => {})
         },
         async loadCustomView() {
@@ -181,7 +255,13 @@ export default defineComponent({
             this.loading = true
             await this.$http
                 .get(process.env.VUE_APP_OLAP_PATH + `1.0/buttons`)
-                .then(async (response: AxiosResponse<any>) => (this.buttons = response.data))
+                .then(async (response: AxiosResponse<any>) => {
+                    this.buttons = response.data
+                    this.buttons.splice(
+                        this.buttons.findIndex((item) => item.name === 'BUTTON_CC'),
+                        1
+                    )
+                })
                 .catch(() => {})
             this.loading = false
         },
@@ -192,9 +272,14 @@ export default defineComponent({
                 .then(async (response: AxiosResponse<any>) => {
                     this.olap = response.data
                     await this.loadOlapDesigner()
+                    if (this.olapDesigner) {
+                        await this.loadParameters()
+                        await this.loadProfileAttributes()
+                    }
                     await this.loadOlapButtons()
                     this.setClickedButtons()
                     await this.loadModelConfig()
+                    await this.loadVersions()
                 })
                 .catch(() => {})
             this.loading = false
@@ -240,6 +325,17 @@ export default defineComponent({
                 .catch(() => {})
 
             this.formatOlapTable()
+            this.loading = false
+        },
+        async loadVersions() {
+            this.loading = true
+            if (this.olapHasScenario) {
+                await this.$http
+                    .get(process.env.VUE_APP_OLAP_PATH + `1.0/version?SBI_EXECUTION_ID=${this.id}`)
+                    .then((response: AxiosResponse<any>) => (this.olapVersions = response.data))
+                    .catch(() => {})
+            }
+
             this.loading = false
         },
         formatOlapTable() {
@@ -389,11 +485,18 @@ export default defineComponent({
             this.loading = false
         },
         async putFilterOnAxis(fromAxis, filter) {
+            if (fromAxis === -1) this.removeFilterLevels(filter)
             var toSend = { fromAxis: fromAxis, hierarchy: filter.selectedHierarchyUniqueName, toAxis: filter.axis }
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/moveDimensionToOtherAxis?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
-                .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .then((response: AxiosResponse<any>) => {
+                    this.olap = response.data
+                    if (this.olapDesigner) {
+                        this.olapDesigner.template.wrappedObject.olap.MDXMondrianQuery.XML_TAG_TEXT_CONTENT = this.olap.MDXWITHOUTCF
+                        this.olapDesigner.template.wrappedObject.olap.MDXQUERY.XML_TAG_TEXT_CONTENT = this.olap.MDXWITHOUTCF
+                    }
+                })
                 .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.putFilterOnAxisError') }))
             this.formatOlapTable()
             this.loading = false
@@ -512,17 +615,10 @@ export default defineComponent({
                 return
             }
 
-            const cell = {
-                axisordinal: attributes[0].value,
-                dimensiontype: attributes[1].value,
-                dimensionuniquename: attributes[2].value,
-                hierarchyuniquename: attributes[3].value,
-                level: attributes[4].value,
-                member: attributes[5].value,
-                parentmember: attributes[6].value,
-                position: attributes[7].value,
-                uniquename: attributes[9]?.value
-            } as any
+            const cell = {}
+            for (let i = 0; i < attributes.length; i++) {
+                cell[attributes[i].nodeName] = attributes[i].value
+            }
 
             if (this.selectedCell) {
                 this.selectedCell.event.target.style.border = 'none'
@@ -543,7 +639,7 @@ export default defineComponent({
             await this.$http
                 .post(
                     process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.olapName}/saveOlapTemplate`,
-                    { ...this.olapDesigner.template.wrappedObject, JSONTEMPLATE: { XML_TAG_TEXT_CONTENT: JSON.stringify(this.olapDesigner.template.wrappedObject) } },
+                    { olap: { ...this.olapDesigner.template.wrappedObject.olap, JSONTEMPLATE: { XML_TAG_TEXT_CONTENT: JSON.stringify(this.olapDesigner.template.wrappedObject) } } },
                     { headers: { Accept: 'application/json, text/plain, */*' } }
                 )
                 .then(async () => {
@@ -727,6 +823,164 @@ export default defineComponent({
                         break
                 }
             }
+        },
+        openFilterDialog(filter: any) {
+            this.selectedFilter = filter
+            this.filterDialogVisible = true
+        },
+        closeFilterDialog() {
+            this.filterDialogVisible = false
+            this.selectedFilter = null
+        },
+        async applyFilters(payload: any) {
+            this.filterDialogVisible = false
+            this.loading = true
+            if (payload.type === 'slicer') {
+                delete payload.type
+                if (this.olapDesignerMode) this.updateDynamicSlicer(payload)
+                await this.sliceOLAP(payload)
+            } else {
+                await this.placeMembersOnAxis(payload)
+            }
+
+            this.formatOlapTable()
+            this.loading = false
+        },
+        async sliceOLAP(payload) {
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/hierarchy/slice?SBI_EXECUTION_ID=${this.id}`, payload, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .catch(() => {})
+        },
+        async placeMembersOnAxis(payload) {
+            const members = payload.members?.map((member: any) => {
+                return { id: member.id, leaf: member.leaf, name: member.name, uniqueName: member.uniqueName, visible: member.visible }
+            })
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/${payload.axis}/placeMembersOnAxis?SBI_EXECUTION_ID=${this.id}`, members, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .then((response: AxiosResponse<any>) => (this.olap = response.data))
+                .catch(() => {})
+        },
+        async loadParameters() {
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.olapDesigner.DOCUMENT_LABEL}/parameters`)
+                .then((response: AxiosResponse<any>) => (this.parameters = response.data ? response.data.results : []))
+                .catch(() => {})
+        },
+        async loadProfileAttributes() {
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/attributes`)
+                .then((response: AxiosResponse<any>) => (this.profileAttributes = response.data))
+                .catch(() => {})
+        },
+        async undo() {
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/undo/?SBI_EXECUTION_ID=${this.id}`, {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                })
+                .catch((error: any) =>
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: error?.localizedMessage
+                    })
+                )
+            this.loading = false
+        },
+        saveScenario(scenario) {
+            this.olapDesigner.template.wrappedObject.olap.SCENARIO = scenario
+            this.scenarioWizardVisible = false
+            this.$store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('documentExecution.olap.scenarioWizard.scenarioUpdated') })
+        },
+        deleteScenario() {
+            delete this.olapDesigner.template.wrappedObject.olap.SCENARIO
+            this.scenarioWizardVisible = false
+        },
+        updateDynamicSlicer(payload: any) {
+            this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER = payload.DYNAMIC_SLICER?.filter((level: any) => level.DRIVER || level.PROFILE_ATTRIBUTE).map((level: any) => {
+                return {
+                    HIERARCHY: level.HIERARCHY,
+                    LEVEL: level.LEVEL,
+                    DRIVER: level.DRIVER,
+                    PROFILE_ATTRIBUTE: level.PROFILE_ATTRIBUTE
+                }
+            })
+            if (!this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER || this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.length === 0) delete this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER
+        },
+        exportExcel() {
+            if (this.checkIfVersionIsSet()) {
+                this.loading = true
+                this.$http
+                    .get(process.env.VUE_APP_OLAP_PATH + `1.0/model/exceledit?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
+                    .then((response: AxiosResponse<any>) => {
+                        let fileName = response.headers['content-disposition'].split('filename="')[1].split('"')[0]
+                        downloadDirect(response.data, fileName, response.headers['content-type'])
+                    })
+                    .catch(() => {})
+                    .finally(() => (this.loading = false))
+            } else {
+                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
+            }
+        },
+        removeFilterLevels(filter: any) {
+            if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER) {
+                for (let i = this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.length - 1; i >= 0; i--) {
+                    if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER[i].HIERARCHY === filter.uniqueName) {
+                        this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.splice(i, 1)
+                    }
+                }
+            }
+        },
+        handleTableDoubleClick(event: any) {
+            if (!event.target.attributes.cell) return
+            let clickLocation = event.target.getBoundingClientRect()
+
+            if (!this.checkIfVersionIsSet()) {
+                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
+            } else {
+                // @ts-ignore
+                this.$refs.whatifInput.style.top = `${clickLocation.top}px`
+                // @ts-ignore
+                this.$refs.whatifInput.style.left = `${clickLocation.left}px`
+                // @ts-ignore
+                this.$refs.whatifInput.style.display = 'flex'
+
+                this.whatifInputNewValue = event.target.attributes.value.value
+                this.whatifInputOldValue = event.target.attributes.value.value
+                this.whatifInputOrdinal = event.target.attributes.ordinal.value
+            }
+        },
+        closeWhatifInput() {
+            // @ts-ignore
+            this.$refs.whatifInput.style.display = 'none'
+        },
+        async onWhatifInput() {
+            let postData = { expression: this.whatifInputNewValue }
+
+            this.loading = true
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/setValue/${this.whatifInputOrdinal}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .then((response: AxiosResponse<any>) => {
+                    this.olap = response.data
+                    this.closeWhatifInput()
+                })
+                .catch(() => {})
+                .finally(() => (this.loading = false))
+
+            this.formatOlapTable()
+        },
+        checkIfVersionIsSet() {
+            let versionIsSet = false
+            for (let i = 0; i < this.olap.filters.length; i++) {
+                if (this.olap.filters[i].uniqueName === '[Version]') {
+                    versionIsSet = this.olap.filters[i].hierarchies[0].slicers.length > 0
+                }
+            }
+            return versionIsSet
         }
     }
 })
@@ -738,6 +992,7 @@ export default defineComponent({
     z-index: 300;
     background-color: white;
     height: 100%;
+    width: 100%;
 }
 .olap-page-container {
     display: flex;
@@ -882,5 +1137,13 @@ export default defineComponent({
             background-color: white;
         }
     }
+}
+
+#whatif-input {
+    width: 358px;
+    height: 22px;
+    position: absolute;
+    display: none;
+    z-index: 99999;
 }
 </style>

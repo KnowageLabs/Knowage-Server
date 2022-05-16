@@ -31,7 +31,7 @@ const factory = () => {
         attachToDocument: true,
         global: {
             plugins: [],
-            stubs: { Button, InputText, ProgressBar, Toolbar, Card, KnHint, Tree },
+            stubs: { Button, InputText, MenuManagementDocumentBrowserTree: true, ProgressBar, Toolbar, Card, KnHint, Tree },
             mocks: {
                 $t: (msg) => msg,
                 $store,

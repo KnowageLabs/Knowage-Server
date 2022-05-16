@@ -42,7 +42,6 @@ import org.json.JSONObject;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -233,14 +232,6 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 		return toReturn.toString();
 
-	}
-
-	@GET
-	@Path("/EXPORT.LIMITATION")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getExportLimit() {
-		String limitExport = SingletonConfig.getInstance().getConfigValue("dataset.export.xls.resultsLimit");
-		return limitExport;
 	}
 
 	@POST

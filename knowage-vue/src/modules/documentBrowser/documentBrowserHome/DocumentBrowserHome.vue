@@ -15,12 +15,13 @@
             <span v-if="!searchMode" class="p-mx-4">
                 <i class="pi pi-search search-pointer" @click="openSearchBar()" />
             </span>
-            <KnFabButton v-if="(isSuperAdmin || canAddNewDocument) && selectedFolder && selectedFolder.parentId" icon="fas fa-plus" @click="toggle($event)" aria-haspopup="true" aria-controls="overlay_menu"></KnFabButton>
+            <KnFabButton v-if="(isSuperAdmin || canAddNewDocument) && selectedFolder && selectedFolder.parentId && selectedFolder.codType !== 'USER_FUNCT'" icon="fas fa-plus" @click="toggle($event)" aria-haspopup="true" aria-controls="overlay_menu"></KnFabButton>
             <Menu ref="menu" :model="items" :popup="true" />
         </template>
     </Toolbar>
 
     <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
+
     <div id="document-browser-detail" class="p-d-flex p-flex-row kn-flex p-m-0">
         <div v-if="sidebarVisible && windowWidth < 1024" id="document-browser-sidebar-backdrop" @click="sidebarVisible = false"></div>
 
@@ -38,13 +39,11 @@
                 @documentCloned="loadDocuments"
                 @documentStateChanged="loadDocuments"
                 @itemSelected="$emit('itemSelected', $event)"
-                @showDocumentDetails="showDocumentDetailsDialog"
+                @showDocumentDetails="openDocumentDetails"
             ></DocumentBrowserDetail>
             <DocumentBrowserHint v-else data-test="document-browser-hint"></DocumentBrowserHint>
         </div>
     </div>
-
-    <DocumentDetails v-if="showDocumentDetails" :docId="documentId" :selectedDocument="selectedDocument" :selectedFolder="selectedFolder" :visible="showDocumentDetails" @closeDetails="onCloseDetails" @reloadDocument="getSelectedDocument" />
 </template>
 
 <script lang="ts">
@@ -53,13 +52,12 @@ import { AxiosResponse } from 'axios'
 import DocumentBrowserHint from './DocumentBrowserHint.vue'
 import DocumentBrowserTree from './DocumentBrowserTree.vue'
 import DocumentBrowserDetail from './DocumentBrowserDetail.vue'
-import DocumentDetails from '@/modules/documentExecution/documentDetails/DocumentDetails.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Menu from 'primevue/menu'
 
 export default defineComponent({
     name: 'document-browser-home',
-    components: { DocumentBrowserHint, DocumentBrowserTree, DocumentBrowserDetail, KnFabButton, Menu, DocumentDetails },
+    components: { DocumentBrowserHint, DocumentBrowserTree, DocumentBrowserDetail, KnFabButton, Menu },
     emits: ['itemSelected'],
     data() {
         return {
@@ -114,7 +112,13 @@ export default defineComponent({
         },
         async loadFolders() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response: AxiosResponse<any>) => (this.folders = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response: AxiosResponse<any>) => {
+                this.folders = response.data
+                this.folders?.sort((a: any, b: any) => {
+                    return a.id - b.id
+                })
+            })
+
             this.loading = false
         },
         async loadDocuments() {
@@ -134,9 +138,11 @@ export default defineComponent({
             await this.loadDocumentsWithBreadcrumbs()
         },
         async loadDocumentsWithBreadcrumbs() {
-            if (this.selectedFolder) {
+            if (this.selectedFolder && this.selectedFolder.id !== -1) {
                 await this.loadDocuments()
                 this.createBreadcrumbs()
+            } else {
+                this.documents = []
             }
         },
         createBreadcrumbs() {
@@ -173,11 +179,13 @@ export default defineComponent({
         },
         createNewDocument() {
             this.documentId = null
-            this.showDocumentDetails = true
+            const path = `/document-details/new/${this.selectedFolder.id}`
+            this.$router.push(path)
         },
-        async showDocumentDetailsDialog(event) {
+        async openDocumentDetails(event) {
             this.documentId = event.id
-            this.showDocumentDetails = true
+            const path = `/document-details/${event.id}`
+            this.$router.push(path)
         },
         createNewCockpit() {
             this.$emit('itemSelected', { item: null, mode: 'createCockpit', functionalityId: this.selectedFolder.id })

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,28 +11,24 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.scheduler.init;
 
+import org.apache.log4j.Logger;
+import org.quartz.Scheduler;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.init.InitializerIFace;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.tools.scheduler.jobs.CleanCacheJob;
 import it.eng.spagobi.tools.scheduler.utils.PredefinedCronExpression;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.quartz.Scheduler;
 
 public class CleanCacheQuartzInitializer implements InitializerIFace {
 
@@ -51,12 +47,7 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 	public void init(SourceBean config) {
 		logger.debug("IN");
 		try {
-			// just to check if a cache is available
-			SpagoBICacheConfiguration.getInstance();
-			List<SbiTenant> tenants = DAOFactory.getTenantsDAO().loadAllTenants();
-			for (SbiTenant tenant : tenants) {
-				initCleanForTenant(tenant);
-			}
+			initCleanForDefaultTenant();
 		} catch (Exception e) {
 			logger.debug("NO WRITE DATASOURCE AVAILABLE.", e);
 		} finally {
@@ -64,13 +55,14 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 		}
 	}
 
-	public void initCleanForTenant(SbiTenant tenant) {
+	public void initCleanForDefaultTenant() {
 
 		ISchedulerDAO schedulerDAO = null;
 		try {
 			logger.debug("IN");
 			schedulerDAO = DAOFactory.getSchedulerDAO();
-			schedulerDAO.setTenant(tenant.getName());
+			schedulerDAO.setTenant("DEFAULT_TENANT");
+			schedulerDAO.setGlobal(true);
 			Job jobDetail = schedulerDAO.loadJob(DEFAULT_JOB_NAME, DEFAULT_JOB_NAME);
 			if (jobDetail == null) {
 				// CREATE JOB DETAIL
@@ -101,8 +93,7 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 				schedulerDAO.insertTrigger(simpleTrigger);
 				logger.debug("Added trigger with name " + DEFAULT_TRIGGER_NAME);
 			} else {
-				logger.debug("The value "
-						+ valueCheck
+				logger.debug("The value " + valueCheck
 						+ " is not a valid value for schedule cache cleaning trigger. Please provide a valid one and restart the Server. PERIODIC CACHE CLEANING DISABLED.");
 			}
 			logger.debug("OUT");

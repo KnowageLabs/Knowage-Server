@@ -1,9 +1,9 @@
 <template>
-    <div id="filterCard" class="p-d-flex p-flex-row" v-for="(filter, index) in filterCardList" :key="index">
+    <div id="filterCard" class="p-d-flex p-flex-row" v-for="(filter, index) in filterCardList" :key="index" v-tooltip="{ value: $t('documentExecution.olap.filterPanel.activeLevels') + ': ' + getNumberOfActiveLevels(filter), disabled: getNumberOfActiveLevels(filter) === 0 }">
         <div :id="'filter-' + filter.name" :ref="'filter-' + filter.name" :style="panelDescriptor.style.filterCard" draggable="true" @dragstart="onDragStart($event, filter, 'filter-' + filter.name)" @dragend="removeDragClass('filter-' + filter.name)">
             <Button v-if="filter.hierarchies.length > 1" icon="fas fa-sitemap" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMultiHierarchy', filter)" />
             <span class="p-ml-1"> {{ filter.caption }} </span>
-            <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain p-ml-auto" :disabled="true" />
+            <Button icon="fas fa-filter" :class="{ 'olap-active-filter-icon': filterIsActive(filter) }" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click="openFilterDialog(filter)" />
             <!-- TODO Change Request for next sprint: Tooltip for selected filters when hovering on icon and knowage magenta button color if filter is selected -->
         </div>
     </div>
@@ -15,8 +15,8 @@ import panelDescriptor from './OlapFilterPanelDescriptor.json'
 
 export default defineComponent({
     components: {},
-    props: { filterCardList: { type: Array, required: true } },
-    emits: ['dragging', 'dragend', 'showMultiHierarchy'],
+    props: { filterCardList: { type: Array, required: true }, olapDesigner: { type: Object } },
+    emits: ['dragging', 'dragend', 'showMultiHierarchy', 'openFilterDialog'],
     data() {
         return {
             panelDescriptor
@@ -36,6 +36,28 @@ export default defineComponent({
             // @ts-ignore
             this.$refs[`${filterId}`].classList.remove('filter-dragging')
             this.$emit('dragend')
+        },
+        openFilterDialog(filter: any) {
+            this.$emit('openFilterDialog', { filter: filter, type: 'slicer' })
+        },
+        filterIsActive(filter: any) {
+            let isActive = false
+            for (let i = 0; i < filter.hierarchies.length; i++) {
+                if (filter.hierarchies[i].slicers && filter.hierarchies[i].slicers.length > 0) {
+                    isActive = true
+                    break
+                }
+            }
+            return isActive
+        },
+        getNumberOfActiveLevels(filter: any) {
+            const dynamicSlicers = this.olapDesigner?.template?.wrappedObject.olap.DYNAMIC_SLICER
+            if (!dynamicSlicers) return 0
+            let numberOfActiveLevels = 0
+            for (let i = 0; i < dynamicSlicers.length; i++) {
+                if (dynamicSlicers[i].HIERARCHY === filter.uniqueName) numberOfActiveLevels++
+            }
+            return numberOfActiveLevels
         }
     }
 })
@@ -43,5 +65,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 .filter-dragging {
     background-color: #bbd6ed !important;
+}
+
+.olap-active-filter-icon {
+    color: red !important;
 }
 </style>

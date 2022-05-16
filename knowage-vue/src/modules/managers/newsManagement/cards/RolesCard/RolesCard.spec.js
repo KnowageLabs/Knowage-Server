@@ -80,6 +80,6 @@ describe('Roles Card', () => {
 
         expect(wrapper.vm.selectedCategories).toStrictEqual(mockedRoles)
         expect(wrapper.emitted()).toHaveProperty('changed')
-        expect(wrapper.emitted().changed[0][0]).toStrictEqual(mockedRoles)
+        expect(wrapper.emitted().changed[1][0]).toStrictEqual(mockedRoles)
     })
 })
