@@ -56,6 +56,7 @@ export default defineComponent({
                     this.checkAllRolesForPublicRole()
                 })
                 .finally(() => (this.loading = false))
+            console.log('LOADED ROLES: ', this.roles)
         },
         checkAllRolesForPublicRole() {
             this.publicRole = null
@@ -66,7 +67,6 @@ export default defineComponent({
             })
         },
         showForm(event: any) {
-            console.log(event)
             const path = event.item ? `/roles-management/${event.item.id}` : '/roles-management/new-role'
 
             if (!this.touched) {

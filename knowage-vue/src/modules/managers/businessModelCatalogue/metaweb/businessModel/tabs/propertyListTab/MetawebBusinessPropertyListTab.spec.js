@@ -67,12 +67,12 @@ const factory = () => {
 }
 
 describe('Metaweb Business Property List Tab', () => {
-    it('the detail field of a business model should show the name of the selected business model in read-only mode', async () => {
+    it('the detail field of a business model should show the name of the selected business model in edit mode', async () => {
         const wrapper = factory()
 
         expect(wrapper.vm.businessModel).toStrictEqual(mockedBusinessModel)
 
         expect(wrapper.find('[data-test="input-name"]').wrapperElement._value).toBe('Product class')
-        expect(wrapper.find('[data-test="input-name"]').element.disabled).toBe(true)
+        expect(wrapper.find('[data-test="input-name"]').element.disabled).toBe(false)
     })
 })

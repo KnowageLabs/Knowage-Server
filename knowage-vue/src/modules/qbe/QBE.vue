@@ -38,14 +38,14 @@
                         </template>
                         <template #end>
                             <Button v-if="showEntitiesLists" icon="fas fa-plus-circle" class="p-button-text p-button-rounded p-button-plain" v-tooltip.top="$t('common.add')" @click="createSubquery" />
-                            <Chip style="background-color:white"> {{ mainQuery.subqueries?.length }} </Chip>
+                            <Chip style="background-color:white"> {{ mainQuery?.subqueries?.length }} </Chip>
                             <Button v-if="showDerivedList" icon="pi pi-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
                             <Button v-else icon="pi pi-chevron-up" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
                         </template>
                     </Toolbar>
                     <div v-show="showDerivedList" class="kn-flex kn-overflow-hidden">
                         <ScrollPanel class="kn-height-full qbe-scroll-panel">
-                            <SubqueryEntity :availableEntities="mainQuery.subqueries" @editSubquery="selectSubquery" @deleteSubquery="deleteSubquery" />
+                            <SubqueryEntity :availableEntities="mainQuery?.subqueries" @editSubquery="selectSubquery" @deleteSubquery="deleteSubquery" />
                         </ScrollPanel>
                     </div>
                 </div>
@@ -293,10 +293,10 @@ export default defineComponent({
             }
             this.loadQuery()
             await this.loadDatasetDrivers()
-            if (this.qbe?.pars.length === 0 && this.filtersData?.isReadyForExecution) {
+            if (this.qbe?.pars?.length === 0 && this.filtersData?.isReadyForExecution) {
                 await this.loadQBE()
                 this.qbeLoaded = true
-            } else if (this.qbe?.pars.length !== 0 || !this.filtersData?.isReadyForExecution) {
+            } else if (this.qbe?.pars?.length !== 0 || !this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = true
             }
             this.loading = false
@@ -408,7 +408,7 @@ export default defineComponent({
 
             if (!this.qbe) return
 
-            const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
+            const postData = { catalogue: this.qbe?.qbeJSONQuery?.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
                 .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&start=${this.pagination.start}&limit=${this.pagination.limit}`, postData)
                 .then((response: AxiosResponse<any>) => {
@@ -429,7 +429,7 @@ export default defineComponent({
         },
         formatQbeMeta() {
             const meta = [] as any[]
-            this.qbe?.qbeJSONQuery.catalogue.queries?.forEach((query: iQuery) => {
+            this.qbe?.qbeJSONQuery?.catalogue.queries?.forEach((query: iQuery) => {
                 query.fields?.forEach((field: iField) => {
                     meta.push({ dataType: field.dataType, displayedName: field.alias, fieldType: field.fieldType.toUpperCase(), format: field.format, name: field.alias, type: field.type })
                 })
@@ -519,7 +519,7 @@ export default defineComponent({
             var fileName = ''
             mimeType == 'csv' ? (fileName = 'report.csv') : (fileName = 'report.xlsx')
 
-            const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
+            const postData = { catalogue: this.qbe?.qbeJSONQuery?.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
                 .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
                 .then((response: AxiosResponse<any>) => {
@@ -723,7 +723,7 @@ export default defineComponent({
         createQueryName() {
             var lastcount = 0
             var lastIndex = this.mainQuery.subqueries?.length - 1
-            if (lastIndex != -1) {
+            if (lastIndex != -1 && this.mainQuery.subqueries) {
                 var lastQueryId = this.mainQuery.subqueries[lastIndex].id
                 lastcount = parseInt(lastQueryId.substr(1))
             } else {
