@@ -14,7 +14,7 @@
         <ProgressSpinner v-if="loading" class="doc-details-spinner" :style="mainDescriptor.style.spinnerStyle" />
 
         <div class="document-details-tab-container p-d-flex p-flex-column kn-flex">
-            <TabView class="document-details-tabview p-d-flex p-flex-column kn-flex">
+            <TabView class="document-details-tabview p-d-flex p-flex-column kn-flex" @tab-change="onTabChange">
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.info.infoTitle') }}</span>
@@ -155,8 +155,6 @@ export default defineComponent({
                 this.getFunctionalities(),
                 this.getAnalyticalDrivers(),
                 this.getDatasources(),
-                this.getDocumentDrivers(),
-                this.getTemplates(),
                 this.getTypes(),
                 this.getEngines(),
                 this.getAttributes(),
@@ -164,8 +162,7 @@ export default defineComponent({
                 this.getDateFormats(),
                 this.getSavedTablesByDocumentID(),
                 this.getDataset(),
-                this.getDataSources(),
-                this.getAllSubreports()
+                this.getDataSources()
             ])
             this.loading = false
         },
@@ -238,7 +235,9 @@ export default defineComponent({
             }
         },
         async getAllSubreports() {
+            this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/`).then((response: AxiosResponse<any>) => (this.allDocumentDetails = response.data))
+            this.loading = false
         },
         setTemplateForUpload(event) {
             this.templateToUpload = event
@@ -353,6 +352,9 @@ export default defineComponent({
         closeDocument() {
             const path = `/document-browser`
             this.$router.push(path)
+        },
+        onTabChange(event) {
+            event.index === 5 ? this.getAllSubreports() : ''
         }
     }
 })

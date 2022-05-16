@@ -118,30 +118,62 @@ export default defineComponent({
         getFormatedDate(date: any) {
             return formatDate(date, 'MMM DD, YYYY h:mm:ss A')
         },
-        cloneDocumentConfirm() {
-            this.$confirm.require({
-                header: this.$t('common.toast.cloneConfirmTitle'),
-                accept: () => this.$emit('documentCloneClick', this.document)
-            })
+        watch: {
+            selectedDocument() {
+                this.loadDocument()
+            }
         },
-        deleteDocumentConfirm() {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.$emit('documentDeleteClick', this.document)
-            })
+        computed: {
+            isSuperAdmin(): boolean {
+                return this.user?.isSuperadmin
+            },
+            getImageUrl(): string {
+                return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
+            },
+            canEditDocument(): boolean {
+                if (this.document.stateCode === 'TEST') return this.user?.functionalities.includes('DocumentTestManagement')
+                if (this.document.stateCode === 'DEV') return this.user?.functionalities.includes('DocumentDevManagement')
+                if (this.document.stateCode === 'REL') return this.user?.functionalities.includes('DocumentAdminManagement')
+                if (this.document.stateCode === 'SUSPENDED' || this.document.stateCode === 'SUSP') return this.user?.functionalities.includes('DocumentAdminManagement')
+                return false
+            }
         },
-        changeStateDocumentConfirm(direction: string) {
-            this.$confirm.require({
-                message: this.$t('documentBrowser.changeStateMessage'),
-                header: this.$t('documentBrowser.changeStateTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.$emit('documentChangeStateClicked', { document: this.document, direction: direction })
-            })
+        created() {
+            this.loadDocument()
+            this.user = (this.$store.state as any).user
         },
-        executeDocument() {
-            this.$emit('itemSelected', { item: this.document, mode: 'execute' })
+        methods: {
+            loadDocument() {
+                this.document = this.selectedDocument
+            },
+            getFormatedDate(date: any) {
+                return formatDate(date, 'MMM DD, YYYY h:mm:ss A')
+            },
+            cloneDocumentConfirm() {
+                this.$confirm.require({
+                    header: this.$t('common.toast.cloneConfirmTitle'),
+                    accept: () => this.$emit('documentCloneClick', this.document)
+                })
+            },
+            deleteDocumentConfirm() {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.$emit('documentDeleteClick', this.document)
+                })
+            },
+            changeStateDocumentConfirm(direction: string) {
+                this.$confirm.require({
+                    message: this.$t('documentBrowser.changeStateMessage'),
+                    header: this.$t('documentBrowser.changeStateTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.$emit('documentChangeStateClicked', { document: this.document, direction: direction })
+                })
+            },
+            executeDocument() {
+                this.$emit('itemSelected', { item: this.document, mode: 'execute' })
+            }
         }
     }
 })

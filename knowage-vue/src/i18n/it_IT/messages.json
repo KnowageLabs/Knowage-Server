@@ -245,13 +245,16 @@
     "days": "giorni",
     "december": "dicembre",
     "endDate": "data fine",
-    "endTime": "data inizio",
+    "endTime": "orario fine",
     "everyHour": "ogni ora",
     "everyMinute": "ogni minuto",
     "everyMonth": "ogni mese",
     "everyWeekday": "ogni giorno della settimana",
     "everyday": "ogni giorno",
     "february": "febbraio",
+    "fifth": "quinto",
+    "first": "primo",
+    "fourth": "quarto",
     "friday": "venerdi",
     "hour": "ora",
     "hours": "ore",
@@ -269,6 +272,7 @@
     "minutes": "minuti",
     "monday": "lunedi",
     "month": "mese",
+    "monthly": "mensile",
     "months": "mesi",
     "nextExecution": "prossima esecuzione",
     "november": "novembre",
@@ -276,6 +280,7 @@
     "quarter": "Quarter",
     "repeatInterval": "ripeti intervallo",
     "saturday": "sabato",
+    "second": "secondo",
     "selectDays": "seleziona giorno/i",
     "selectHours": "seleziona ora/e",
     "selectMinutes": "seleziona minuto/i",
@@ -288,13 +293,16 @@
     "sunday": "domenica",
     "theDay": "il giorno",
     "theWeek": "la settimana",
+    "third": "terzo",
     "thursday": "giovedì",
     "tuesday": "martedì",
     "wednesday": "mercoledì",
     "week": "Week",
     "weekday": "giorno della settimana",
     "weekdays": "giorni della settimana",
-    "year": "Year"
+    "weekly": "settimanale",
+    "year": "Year",
+    "yearly": "annuale"
   },
   "documentBrowser": {
     "changeStateMessage": "sei sicuro di voler cambiare lo stato del documento?",
@@ -396,6 +404,12 @@
         "title": "parametro di output"
       },
       "subreports": {
+        "deleteError": "Error deleting subreport",
+        "deleteOk": "Subreport deleted",
+        "info": "Select the subreports you want to link to the document",
+        "persistError": "Error persisting subreport",
+        "persistOk": "Subreport persisted",
+        "tableName": "Available Subreports",
         "title": "sottoreport"
       },
       "title": "dettagli documento"
@@ -674,7 +688,7 @@
   },
   "infoDialog": {
     "aboutKnowage": "about Knowage",
-    "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
+    "copyright": "Â© {year} Engineering Ingegneria Informatica S.p.A.",
     "sourceCode": "codice sorgente disponibile "
   },
   "knScheduler": {
@@ -1205,6 +1219,7 @@
         "schemaAttribute": "Multischema Attribute",
         "testOk": "Tested parameters are correct!",
         "urlConnection": "URL",
+        "useForDataprep": "Use for data preparation",
         "user": "User",
         "writeDefault": "Use as cache"
       },
@@ -2312,6 +2327,7 @@
     },
     "detailView": {
       "hideList": "Hide List",
+      "modifyCalcField": "Modify calculated field",
       "noPreview": "Nothing to preview",
       "parameterDuplicates": "There are parameters with a duplicate name!",
       "showList": "Show List",
