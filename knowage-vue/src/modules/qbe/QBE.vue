@@ -129,6 +129,9 @@
                 <div v-if="selectedCalcField.type === 'DATE'" class="p-field p-col-3">
                     <span class="p-float-label ">
                         <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.format" :options="qbeDescriptor.admissibleDateFormats">
+                            <template #value>
+                                <span>{{ selectedCalcField.format ? moment().format(selectedCalcField.format) : '' }}</span>
+                            </template>
                             <template #option="slotProps">
                                 <span>{{ moment().format(slotProps.option) }}</span>
                             </template>
