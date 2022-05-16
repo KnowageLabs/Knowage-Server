@@ -23,7 +23,6 @@
             <div v-if="selectedDocument?.previewFile" class="p-text-center">
                 <img id="image-preview" :src="getImageUrl" />
             </div>
-
             <div v-if="document.functionalities && document.functionalities.length > 0" class="p-m-4">
                 <h3 class="p-m-0">{{ $t('common.path') }}</h3>
                 <p v-for="(path, index) in document.functionalities" :key="index" class="p-m-0">{{ path }}</p>
@@ -63,11 +62,9 @@
         </div>
     </div>
 </template>
-
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
-
 export default defineComponent({
     name: 'document-browser-sidebar',
     props: { selectedDocument: { type: Object } },
@@ -118,85 +115,48 @@ export default defineComponent({
         getFormatedDate(date: any) {
             return formatDate(date, 'MMM DD, YYYY h:mm:ss A')
         },
-        watch: {
-            selectedDocument() {
-                this.loadDocument()
-            }
+        cloneDocumentConfirm() {
+            this.$confirm.require({
+                header: this.$t('common.toast.cloneConfirmTitle'),
+                accept: () => this.$emit('documentCloneClick', this.document)
+            })
         },
-        computed: {
-            isSuperAdmin(): boolean {
-                return this.user?.isSuperadmin
-            },
-            getImageUrl(): string {
-                return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
-            },
-            canEditDocument(): boolean {
-                if (this.document.stateCode === 'TEST') return this.user?.functionalities.includes('DocumentTestManagement')
-                if (this.document.stateCode === 'DEV') return this.user?.functionalities.includes('DocumentDevManagement')
-                if (this.document.stateCode === 'REL') return this.user?.functionalities.includes('DocumentAdminManagement')
-                if (this.document.stateCode === 'SUSPENDED' || this.document.stateCode === 'SUSP') return this.user?.functionalities.includes('DocumentAdminManagement')
-                return false
-            }
+        deleteDocumentConfirm() {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.$emit('documentDeleteClick', this.document)
+            })
         },
-        created() {
-            this.loadDocument()
-            this.user = (this.$store.state as any).user
+        changeStateDocumentConfirm(direction: string) {
+            this.$confirm.require({
+                message: this.$t('documentBrowser.changeStateMessage'),
+                header: this.$t('documentBrowser.changeStateTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.$emit('documentChangeStateClicked', { document: this.document, direction: direction })
+            })
         },
-        methods: {
-            loadDocument() {
-                this.document = this.selectedDocument
-            },
-            getFormatedDate(date: any) {
-                return formatDate(date, 'MMM DD, YYYY h:mm:ss A')
-            },
-            cloneDocumentConfirm() {
-                this.$confirm.require({
-                    header: this.$t('common.toast.cloneConfirmTitle'),
-                    accept: () => this.$emit('documentCloneClick', this.document)
-                })
-            },
-            deleteDocumentConfirm() {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.$emit('documentDeleteClick', this.document)
-                })
-            },
-            changeStateDocumentConfirm(direction: string) {
-                this.$confirm.require({
-                    message: this.$t('documentBrowser.changeStateMessage'),
-                    header: this.$t('documentBrowser.changeStateTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.$emit('documentChangeStateClicked', { document: this.document, direction: direction })
-                })
-            },
-            executeDocument() {
-                this.$emit('itemSelected', { item: this.document, mode: 'execute' })
-            }
+        executeDocument() {
+            this.$emit('itemSelected', { item: this.document, mode: 'execute' })
         }
     }
 })
 </script>
-
 <style lang="scss" scoped>
 #document-detail-toolbar .p-toolbar-group-left {
     width: 100%;
 }
-
 #document-icons-container {
     width: 100%;
 }
-
 .document-pointer:hover {
     cursor: pointer;
 }
-
 #image-preview {
     max-width: 100%;
     max-height: 200px;
 }
-
 #document-browser-sidebar {
     z-index: 150;
     background-color: white;
