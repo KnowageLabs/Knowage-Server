@@ -1,6 +1,8 @@
 <template>
-    <DocumentExecution :id="name" v-if="mode === 'document-execution'" :parameterValuesMap="parameterValuesMap" :tabKey="tabKey" @parametersChanged="$emit('parametersChanged', $event)"></DocumentExecution>
-    <DocumentDetails v-else-if="mode === 'document-detail'" :propDocId="item?.id" :propFolderId="functionalityId" @closeDetails="$emit('closeDetails', item)" @documentSaved="onDocumentsSaved"></DocumentDetails>
+    <div id="cockpit-container" class="kn-height-full">
+        <DocumentExecution :id="name" v-if="mode === 'document-execution'" :parameterValuesMap="parameterValuesMap" :tabKey="tabKey" @parametersChanged="$emit('parametersChanged', $event)"></DocumentExecution>
+        <DocumentDetails id="EXECUTINO_DETAIL" v-else-if="mode === 'document-detail'" :propDocId="item?.id" :propFolderId="functionalityId" @closeDetails="$emit('closeDetails', item)" @documentSaved="onDocumentsSaved"></DocumentDetails>
+    </div>
 </template>
 
 <script lang="ts">
