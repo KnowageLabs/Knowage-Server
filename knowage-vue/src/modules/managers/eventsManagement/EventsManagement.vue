@@ -31,18 +31,20 @@
                     <template #content>
                         <DataTable
                             class="p-datatable-sm kn-table"
+                            v-model:first="first"
                             :value="events"
                             dataKey="id"
                             :paginator="true"
+                            :lazy="true"
                             :totalRecords="lazyParams.size"
                             paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
                             :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
-                            :rows="23"
+                            :rows="20"
                             responsiveLayout="stack"
                             breakpoint="960px"
                             :scrollable="true"
                             scrollHeight="flex"
-                            stripedRows="true"
+                            :stripedRows="true"
                             v-model:filters="filters"
                             :globalFilterFields="globalFilterFields"
                             @page="onPage($event)"
@@ -99,15 +101,14 @@ export default defineComponent({
             descriptor,
             loading: false,
             events: [] as any,
-            fetchSize: 23,
-            offset: 0,
             eventModel: descriptor.eventModel,
             startDate: null as any,
             endDate: null as any,
             selectedEventModel: '' as String,
             filters: { global: [filterDefault] } as Object,
             globalFilterFields: ['user', 'type'],
-            lazyParams: {} as any
+            lazyParams: { size: 20, paginationStart: 0 } as any,
+            first: 0
         }
     },
     created() {
@@ -116,7 +117,7 @@ export default defineComponent({
     methods: {
         async getEvents() {
             this.loading = true
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=${this.fetchSize}&offset=${this.offset}`
+            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=${this.lazyParams.size}&offset=${this.lazyParams.paginationStart}`
             this.selectedEventModel != '' ? (url += `&type=${this.selectedEventModel}`) : ''
             this.startDate ? (url += `&startDate=${encodeURIComponent(moment(this.startDate).format('YYYY-MM-DD+HH:mm:ss'))}`) : ''
             this.endDate ? (url += `&endDate=${encodeURIComponent(moment(this.endDate).format('YYYY-MM-DD+HH:mm:ss'))}`) : ''
@@ -129,9 +130,9 @@ export default defineComponent({
                 })
                 .finally(() => (this.loading = false))
         },
-        onPage(event: any) {
+        async onPage(event: any) {
             this.lazyParams = { paginationStart: event.first, paginationLimit: event.rows, paginationEnd: event.first + event.rows, size: this.lazyParams.size }
-            console.log(this.lazyParams)
+            await this.getEvents()
         }
     }
 })
