@@ -217,6 +217,8 @@ export default defineComponent({
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
 
+        if (!this.id) return
+
         await this.loadUserConfig()
 
         this.isOlapDesignerMode()

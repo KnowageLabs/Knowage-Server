@@ -1,11 +1,12 @@
 <template>
     <router-view
-        v-if="item"
+        v-show="item"
         v-slot="{ Component }"
         :functionalityId="functionalityId"
         :item="item"
         :parameterValuesMap="parameterValuesMap"
         :tabKey="key"
+        :propMode="mode"
         @close="$emit('close', item)"
         @parametersChanged="onParametersChange"
         @iframeCreated="onIframeCreated"

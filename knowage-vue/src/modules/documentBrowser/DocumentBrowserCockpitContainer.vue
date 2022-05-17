@@ -1,7 +1,15 @@
 <template>
     <div id="cockpit-container" class="kn-height-full">
-        <DocumentExecution :id="name" v-if="mode === 'document-execution'" :parameterValuesMap="parameterValuesMap" :tabKey="tabKey" @parametersChanged="$emit('parametersChanged', $event)"></DocumentExecution>
-        <DocumentDetails v-else-if="mode === 'document-detail'" :propMode="'execution'" :propDocId="item?.id" :propFolderId="functionalityId" @closeDetails="$emit('closeDetails', item)" @documentSaved="onDocumentsSaved"></DocumentDetails>
+        <DocumentExecution :id="name" v-show="mode === 'document-execution'" v-bind:style="[mode === 'document-execution' ? '' : 'display: none !important; ']" :parameterValuesMap="parameterValuesMap" :tabKey="tabKey" @parametersChanged="$emit('parametersChanged', $event)"></DocumentExecution>
+        <DocumentDetails
+            v-show="mode === 'document-detail'"
+            v-bind:style="[mode === 'document-detail' ? '' : 'display: none !important;']"
+            :propMode="'execution'"
+            :propDocId="item?.id"
+            :propFolderId="functionalityId"
+            @closeDetails="$emit('closeDetails', item)"
+            @documentSaved="onDocumentsSaved"
+        ></DocumentDetails>
     </div>
 </template>
 
@@ -16,7 +24,7 @@ export default defineComponent({
         DocumentExecution,
         DocumentDetails
     },
-    props: { id: { type: String }, functionalityId: { type: String }, item: { type: Object }, parameterValuesMap: { type: Object }, tabKey: { type: String } },
+    props: { id: { type: String }, functionalityId: { type: String }, item: { type: Object }, parameterValuesMap: { type: Object }, tabKey: { type: String }, propMode: { type: String } },
     emits: ['iframeCreated', 'closeIframe', 'parametersChanged', 'closeDetails', 'documentSaved'],
     data() {
         return {
@@ -53,11 +61,11 @@ export default defineComponent({
             this.url = process.env.VUE_APP_HOST_URL + `/knowagecockpitengine/api/1.0/pages/edit?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&user_id=${uniqueID}&SBI_COUNTRY=${country}&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=true&documentMode=EDIT&FUNCTIONALITY_ID=${this.functionalityId}`
         },
         setMode() {
-            if (this.$router.currentRoute.value.name === 'document-browser-document-details-edit' || this.$router.currentRoute.value.name === 'document-browser-document-details-new') {
+            if (this.propMode === 'documentDetail') {
                 this.mode = 'document-detail'
-            } else if (this.item?.name) {
+            } else if (this.propMode === 'execute') {
                 this.mode = 'document-execution'
-            } else {
+            } else if (this.propMode === 'createCockpit') {
                 this.mode = 'cockpit'
                 this.$emit('iframeCreated', { iframe: this.url, item: this.item })
             }
