@@ -23,7 +23,7 @@
                                 <Dropdown id="eventModel" class="kn-material-input" v-model="selectedEventModel" :options="eventModel" />
                                 <label for="eventModel" class="kn-material-input-label"> {{ $t('managers.eventsManagement.eventModel') }} </label>
                             </span>
-                            <Button icon="pi pi-search" class="p-button-text kn-button thirdButton" @click="getEvents" />
+                            <Button icon="pi pi-search" class="p-button-text kn-button thirdButton" @click="onSearchClicked" />
                         </form>
                     </template>
                 </Card>
@@ -132,6 +132,11 @@ export default defineComponent({
         },
         async onPage(event: any) {
             this.lazyParams = { paginationStart: event.first, paginationLimit: event.rows, paginationEnd: event.first + event.rows, size: this.lazyParams.size }
+            await this.getEvents()
+        },
+        async onSearchClicked() {
+            this.first = 0
+            this.lazyParams = { size: 20, paginationStart: 0 }
             await this.getEvents()
         }
     }
