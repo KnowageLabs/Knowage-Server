@@ -304,7 +304,7 @@ export default defineComponent({
         availableTemplates: { type: Array as PropType<iTemplate[]> },
         availableAttributes: { type: Array as PropType<iAttribute[]> }
     },
-    emits: ['setTemplateForUpload', 'setImageForUpload', 'deleteImage', 'touched'],
+    emits: ['setTemplateForUpload', 'setImageForUpload', 'deleteImage', 'touched', 'openDesignerDialog'],
     computed: {
         filteredEngines(): any {
             if (this.document.typeCode) {
@@ -459,7 +459,12 @@ export default defineComponent({
         },
         openDesigner() {
             console.log(' >>> DOCUMENT: ', this.document)
-            this.$router.push(`/olap-designer/${this.document.id}`)
+            console.log(' >>> availableTemplates: ', this.availableTemplates)
+            if (this.availableTemplates?.length === 0) {
+                this.$emit('openDesignerDialog')
+            } else {
+                this.$router.push(`/olap-designer/${this.document.id}`)
+            }
         },
         translatedLabel(a) {
             return this.$t(a.label)

@@ -31,6 +31,7 @@
                         @setTemplateForUpload="setTemplateForUpload"
                         @setImageForUpload="setImageForUpload"
                         @deleteImage="deleteImage"
+                        @openDesignerDialog="openDesignerDialog"
                     />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id">
@@ -70,7 +71,7 @@
             </TabView>
         </div>
 
-        <DocumentDetailOlapDesignerDialog :visible="designerDialogVisible" @close="designerDialogVisible = false"></DocumentDetailOlapDesignerDialog>
+        <DocumentDetailOlapDesignerDialog :visible="designerDialogVisible" :selectedDocument="selectedDocument" @close="designerDialogVisible = false"></DocumentDetailOlapDesignerDialog>
     </div>
 </template>
 
@@ -385,6 +386,9 @@ export default defineComponent({
         },
         onTabChange(event) {
             event.index === 5 ? this.getAllSubreports() : ''
+        },
+        openDesignerDialog() {
+            this.designerDialogVisible = true
         }
     }
 })

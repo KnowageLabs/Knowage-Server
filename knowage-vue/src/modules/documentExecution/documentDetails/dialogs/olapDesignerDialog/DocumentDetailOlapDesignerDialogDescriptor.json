@@ -1,0 +1,12 @@
+{
+    "typeOptions": [
+        {
+            "label": "documentExecution.documentDetails.designerDialog.xmla",
+            "value": "xmla"
+        },
+        {
+            "label": "documentExecution.documentDetails.designerDialog.mondrian",
+            "value": "mondrian"
+        }
+    ]
+}

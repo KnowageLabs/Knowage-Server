@@ -227,3 +227,26 @@ export interface iDocumentType {
     valueId: number
     valueName: string
 }
+
+export interface iMondrianSchema {
+    id: number,
+    currentContentId: number,
+    name: string,
+    description: string,
+    type: string,
+    modelLocked: boolean,
+    modelLocker: string | null
+}
+
+export interface iXMLATemplate {
+    address: string;
+    parameters: any[]
+}
+
+export interface iMondrianTemplate {
+    id: number,
+    mondrianSchema: string,
+    mondrianSchemaId: number,
+    mdxQuery: string,
+    mondrianMdxQuery: string
+}

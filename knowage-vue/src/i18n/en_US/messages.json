@@ -339,6 +339,12 @@
                 "selectSource": "Select Source",
                 "title": "Data Lineage"
             },
+            "designerDialog": {
+                "mondrian": "Mondrian",
+                "olapDesigner": "Olap Designer",
+                "templateType": "Select type of Template",
+                "xmla": "XMLA Server"
+            },
             "drivers": {
                 "ad": "Driver AD",
                 "adDepends": "depends from the AD",
