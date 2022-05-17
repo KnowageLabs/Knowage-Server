@@ -246,7 +246,7 @@ export default defineComponent({
         },
         onDocumentSaved(document: any) {
             this.selectedItem.functionalityId = null
-            this.selectedItem.item = { name: document.name, label: document.id, routerId: crypto.randomBytes(16).toString('hex') }
+            this.selectedItem.item = { name: document.name, label: document.id, routerId: crypto.randomBytes(16).toString('hex'), id: document.id }
             this.$router.push(`/document-browser/document-details/${document.id}`)
         }
     }
