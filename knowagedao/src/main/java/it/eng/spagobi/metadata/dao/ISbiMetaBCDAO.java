@@ -17,13 +17,13 @@
  */
 package it.eng.spagobi.metadata.dao;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.metadata.metadata.SbiMetaBc;
-
 import java.util.List;
 
 import org.hibernate.Session;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -34,8 +34,6 @@ public interface ISbiMetaBCDAO extends ISpagoBIDao {
 	public SbiMetaBc loadBcByID(Integer id) throws EMFUserError;
 
 	public SbiMetaBc loadBcByName(String name) throws EMFUserError;
-
-	public SbiMetaBc loadBcByUniqueName(String uniqueName) throws EMFUserError;
 
 	public void modifyBc(SbiMetaBc aMetaBC) throws EMFUserError;
 
@@ -57,8 +55,6 @@ public interface ISbiMetaBCDAO extends ISpagoBIDao {
 
 	public SbiMetaBc loadBcByName(Session session, String name) throws EMFUserError;
 
-	public SbiMetaBc loadBcByUniqueName(Session session, String uniqueName) throws EMFUserError;
-
 	public void modifyBc(Session session, SbiMetaBc aMetaBC) throws EMFUserError;
 
 	public Integer insertBc(Session session, SbiMetaBc aMetaBC) throws EMFUserError;
@@ -68,5 +64,9 @@ public interface ISbiMetaBCDAO extends ISpagoBIDao {
 	public Integer countSbiMetaBC(String searchText) throws EMFUserError;
 
 	public SbiMetaBc loadBcWithAttributesByID(Integer id) throws EMFUserError;
+
+	public SbiMetaBc loadBcByUniqueName(String model, String uniqueName) throws EMFUserError;
+
+	public SbiMetaBc loadBcByUniqueName(Session session, String model, String uniqueName) throws EMFUserError;
 
 }
