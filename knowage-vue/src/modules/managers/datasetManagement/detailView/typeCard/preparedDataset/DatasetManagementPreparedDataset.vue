@@ -2,34 +2,27 @@
     <Card class="p-m-2">
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
-                <div class="p-field p-col-6 p-d-flex">
-                    <div class="kn-flex">
-                        <span class="p-float-label">
-                            <InputText id="prepDatasetName" class="kn-material-input" v-model="dataset.name" :disabled="true" @change="$emit('touched')" />
-                            <label for="prepDatasetName" class="kn-material-input-label"> {{ $t('common.name') }} </label>
-                        </span>
-                    </div>
-                    <Button icon="fas fa-search fa-1x" class="p-button-text p-button-plain" @click="openPrepDatasetList" />
+                <div class="p-field p-col-6">
+                    <Button :label="$t('managers.datasetManagement.monitoring')" class="kn-button kn-button--primary" @click="showMonitoringDialog = true" />
                 </div>
                 <div class="p-field p-col-6">
-                    <Button label="OPEN DATA PREPARATION" class="kn-button kn-button--primary" @click="showDatasetListDialog = true" />
+                    <Button :label="$t('managers.datasetManagement.openDP')" class="kn-button kn-button--primary" @click="routeToDataPreparation" />
                 </div>
             </form>
         </template>
     </Card>
 
-    <KnDatasetList :visibility="showDatasetListDialog" :items="availableDatasets" @selected="newDataPrep" @save="openDataPreparation(selectedDsForDataPrep)" @cancel="showDatasetListDialog = false" />
+    <MonitoringDialog :visibility="showMonitoringDialog" :dataset="selectedDataset" @close="showMonitoringDialog = false" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { AxiosResponse } from 'axios'
 import descriptor from './DatasetManagementPreparedDataset.json'
 import Card from 'primevue/card'
-import KnDatasetList from '@/components/functionalities/KnDatasetList/KnDatasetList.vue'
+import MonitoringDialog from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDialog.vue'
 
 export default defineComponent({
-    components: { Card, KnDatasetList },
+    components: { Card, MonitoringDialog },
     props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any } },
     emits: ['touched'],
     data() {
@@ -37,7 +30,7 @@ export default defineComponent({
             descriptor,
             dataset: {} as any,
             availableDatasets: [] as any,
-            showDatasetListDialog: false
+            showMonitoringDialog: false
         }
     },
     created() {
@@ -49,16 +42,16 @@ export default defineComponent({
         }
     },
     methods: {
-        openPrepDatasetList() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/for-dataprep`).then(
-                (response: AxiosResponse<any>) => {
-                    this.availableDatasets = [...response.data.root]
-                    this.showDatasetListDialog = true
-                },
-                () => {
-                    this.$store.commit('setError', { title: 'Error', msg: 'Cannot load dataset list' })
+        routeToDataPreparation() {
+            let path = ''
+            this.$confirm.require({
+                header: this.$t('managers.datasetManagement.openDP'),
+                message: this.$t('managers.datasetManagement.confirmMsg'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.$router.push(path)
                 }
-            )
+            })
         }
     }
 })

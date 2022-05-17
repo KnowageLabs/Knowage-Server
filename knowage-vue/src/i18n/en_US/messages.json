@@ -933,62 +933,12 @@
     },
     "locale": {
         "dateFormat": "mm/dd/yy",
-        "dayNames": [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday"
-        ],
-        "dayNamesMin": [
-            "Su",
-            "Mo",
-            "Tu",
-            "We",
-            "Th",
-            "Fr",
-            "Sa"
-        ],
-        "dayNamesShort": [
-            "Sun",
-            "Mon",
-            "Tue",
-            "Wed",
-            "Thu",
-            "Fri",
-            "Sat"
-        ],
+        "dayNames": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        "dayNamesMin": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+        "dayNamesShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
         "firstDayOfWeek": 0,
-        "monthNames": [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December"
-        ],
-        "monthNamesShort": [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec"
-        ],
+        "monthNames": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        "monthNamesShort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         "today": "Today",
         "weekHeader": "Wk"
     },
@@ -1331,7 +1281,10 @@
             "typeOrJsonPathValue": "Type or JSON Path Type",
             "viewQbeButton": "View Qbe Query",
             "viewQbeMsg": "The dataset should be saved before viewing the QBE query",
-            "viewQbeWarning": "Cannot open QBE query"
+            "viewQbeWarning": "Cannot open QBE query",
+            "openDP": "Open data preparation",
+            "confirmMsg": "You will lose all unsaved changes, are you sure you want to open Data Preparation?",
+            "monitoring": "Monitoring"
         },
         "domainsManagement": {
             "domainCode": "Domain code",

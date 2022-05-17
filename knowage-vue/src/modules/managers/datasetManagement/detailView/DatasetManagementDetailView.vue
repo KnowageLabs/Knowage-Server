@@ -33,7 +33,7 @@
                 </template>
                 <TypeCard
                     :selectedDataset="selectedDataset"
-                    :datasetTypes="datasetTypes"
+                    :datasetTypes="filteredDatasetTypes"
                     :dataSources="dataSources"
                     :businessModels="businessModels"
                     :scriptTypes="scriptTypes"
@@ -60,7 +60,7 @@
                 <LinkCard :selectedDataset="selectedDataset" :metaSourceResource="metaSourceResource" :activeTab="activeTab" @addTables="onAddLinkedTables" @removeTables="onRemoveLinkedTables" />
             </TabPanel>
 
-            <TabPanel>
+            <TabPanel v-if="selectedDataset.dsTypeCd != 'Prepared'">
                 <template #header>
                     <span>{{ $t('cron.advanced') }}</span>
                 </template>
@@ -118,6 +118,7 @@ export default defineComponent({
             selectedDataset: {} as any,
             previewDataset: {} as any,
             selectedDatasetVersions: [] as any,
+            filteredDatasetTypes: [] as any,
             scheduling: {
                 repeatInterval: null as String | null
             } as any,
@@ -167,9 +168,13 @@ export default defineComponent({
                 await this.getSelectedDataset()
                 await this.getSelectedDatasetVersions()
                 this.insertCurrentVersion()
+                this.filteredDatasetTypes = this.datasetTypes
             } else {
                 this.selectedDataset = { ...detailViewDescriptor.newDataset }
                 this.selectedDatasetVersions = []
+                this.filteredDatasetTypes = this.datasetTypes.filter((cd) => {
+                    return cd.VALUE_CD != 'Prepared'
+                })
             }
         },
         insertCurrentVersion() {
