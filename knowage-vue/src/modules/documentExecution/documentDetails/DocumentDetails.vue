@@ -1,16 +1,4 @@
 <template>
-    <!-- <Dialog class="document-details-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="true" :modal="false" :closable="false" :draggable="false" position="right" :baseZIndex="1" :autoZIndex="true">
-        <template #header>
-            <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #start>
-                    {{ $t('documentExecution.documentDetails.title') }}
-                </template>
-                <template #end>
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || v$.$invalid" />
-                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDocument" />
-                </template>
-            </Toolbar>
-        </template> -->
     <div id="document-details-container" class="p-d-flex p-flex-column kn-flex kn-height-full">
         <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
             <template #start>
@@ -18,7 +6,7 @@
             </template>
             <template #end>
                 <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || v$.$invalid" />
-                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDocument" />
+                <Button v-if="propMode === 'execution'" icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDocument" />
             </template>
         </Toolbar>
         <ProgressSpinner v-if="loading" class="doc-details-spinner" :style="mainDescriptor.style.spinnerStyle" />
@@ -119,7 +107,7 @@ export default defineComponent({
         Badge,
         ProgressSpinner
     },
-    props: { propDocId: { type: String }, propFolderId: { type: String } },
+    props: { propDocId: { type: String }, propFolderId: { type: String }, propMode: { type: String } },
     emits: ['closeDetails', 'documentSaved'],
     data() {
         return {
@@ -167,30 +155,27 @@ export default defineComponent({
     watch: {
         async propDocId() {
             this.isForEdit()
-            console.log('CAAAAAAAAAAAAAAAAAAALED 1: ', this.docId)
             await this.loadPage(this.docId)
         }
-        // async propFolderId() {
-        //     this.isForEdit()
-        //     await this.loadPage(this.docId)
-        // }
     },
     async created() {
-        console.log(' >>> >>>> ROUTE: ', this.$route)
         this.isForEdit()
-        console.log('CAAAAAAAAAAAAAAAAAAALED 2: ', this.docId)
         await this.loadPage(this.docId)
     },
     methods: {
         isForEdit() {
-            console.log(this.$route.params)
-            console.log('DOC ID _--------', this.$route.params.docId)
-            console.log(' ID _--------', this.$route.params.id)
-            //this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
-            //this.$route.params.id ? (this.docId = this.$route.params.id) : (this.folderId = this.$route.params.folderId)
+            if (this.propMode === 'execution') {
+                this.loadAsExecution()
+            } else {
+                this.loadAsDetail()
+            }
+        },
+        loadAsExecution() {
             this.docId = this.propDocId
             this.folderId = this.propFolderId
-            console.log(' FOLDER ID--------', this.folderId)
+        },
+        loadAsDetail() {
+            this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
         },
         async loadPage(id) {
             this.loading = true
@@ -211,14 +196,12 @@ export default defineComponent({
             this.loading = false
         },
         async getSelectedDocumentById(id) {
-            console.log(' TEEEEEEEEEEEEEEMP ID: ', id)
             if (id) {
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${id}`).then((response: AxiosResponse<any>) => (this.selectedDocument = response.data))
             } else {
                 this.selectedDocument = { ...this.mainDescriptor.newDocument }
                 this.selectedDocument.functionalities = []
             }
-            console.log('SELECTED DOCUIMENT: ', this.selectedDocument)
         },
         async getFunctionalities() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders?includeDocs=false`).then((response: AxiosResponse<any>) => {
@@ -390,7 +373,6 @@ export default defineComponent({
                     setTimeout(() => {
                         const path = `/document-details/${response.data.id}`
                         !this.selectedDocument.id ? this.$router.push(path) : ''
-                        console.log('DOCUMENT SAVED: ', response.data)
                         if (!docToSave.id) this.$emit('documentSaved', response.data)
                         this.loadPage(response.data.id)
                     }, 200)
@@ -398,8 +380,6 @@ export default defineComponent({
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         closeDocument() {
-            // const path = `/document-browser`
-            // this.$router.push(path)
             this.$emit('closeDetails')
         },
         onTabChange(event) {
