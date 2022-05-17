@@ -162,10 +162,10 @@ export default defineComponent({
     },
 
     methods: {
-        async loadDataset(datasetLabel: string) {
+        async loadDataset(datasetId: number) {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${datasetLabel}`)
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/id/${datasetId}`)
                 .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0]
                 })
@@ -235,7 +235,7 @@ export default defineComponent({
             this.showDatasetDialog = true
         },
         async previewDataset(dataset: any) {
-            await this.loadDataset(dataset.label)
+            await this.loadDataset(dataset.id)
             this.previewDialogVisible = true
         },
         editFileDataset() {
@@ -355,7 +355,7 @@ export default defineComponent({
             this.loading = false
         },
         async cloneDataset(dataset: any) {
-            await this.loadDataset(dataset.label)
+            await this.loadDataset(dataset.id)
             this.cloneDialogVisible = true
         },
         async handleDatasetClone(dataset: any) {
@@ -433,7 +433,7 @@ export default defineComponent({
 
             await this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config }).then(
                 () => {
-                    this.loadDataset(this.selectedDataset.label)
+                    this.loadDataset(this.selectedDataset.id)
                 },
                 () => {
                     this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })
