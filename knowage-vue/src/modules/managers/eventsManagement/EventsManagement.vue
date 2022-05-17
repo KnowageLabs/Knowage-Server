@@ -1,6 +1,6 @@
 <template>
     <div class="kn-page">
-        <ProgressSpinner class="kn-progress-spinner" v-if="loading" />
+        <ProgressSpinner class="kn-progress-spinner" v-if="loading" data-test="progress-spinner" />
         <div class="p-d-flex p-flex-column kn-flex">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #start>
@@ -23,7 +23,7 @@
                                 <Dropdown id="eventModel" class="kn-material-input" v-model="selectedEventModel" :options="eventModel" />
                                 <label for="eventModel" class="kn-material-input-label"> {{ $t('managers.eventsManagement.eventModel') }} </label>
                             </span>
-                            <Button icon="pi pi-search" class="p-button-text kn-button thirdButton" @click="onSearchClicked" />
+                            <Button icon="pi pi-search" class="p-button-text kn-button thirdButton" @click="onSearchClicked" data-test="search-button" />
                         </form>
                     </template>
                 </Card>
