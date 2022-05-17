@@ -12,7 +12,7 @@
 
                 <TabPanel v-for="(tab, index) in tabs" :key="index">
                     <template #header>
-                        <span>{{ tab.item?.name ? tab.item?.name : 'new dashboard' }}</span>
+                        <span>{{ getTabName(tab) }}</span>
                     </template>
                 </TabPanel>
             </TabView>
@@ -85,7 +85,8 @@ export default defineComponent({
             console.log('ON TAB CHANGE ITEM: ', this.selectedItem)
 
             if (this.selectedItem.mode === 'documentDetail') {
-                this.$router.push(`/document-browser/document-details/${this.selectedItem.item.label}`)
+                const path = this.selectedItem.functionalityId ? `/document-browser/document-details/new/${this.selectedItem.functionalityId}` : `/document-browser/document-details/${this.selectedItem.item.label}`
+                this.$router.push(path)
             } else {
                 let routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
                 routeDocumentType ? this.$router.push(`/document-browser/${routeDocumentType}/` + id) : this.$router.push('/document-browser/new-dashboard')
@@ -105,18 +106,18 @@ export default defineComponent({
 
             this.selectedItem = tempItem
 
-            const id = payload.item ? payload.item.label : 'new-dashboard'
-            if (payload.item) {
-                if (payload.mode === 'documentDetail') {
-                    const path = `/document-browser/document-details/${payload.item.id}`
-                    this.$router.push(path)
-                } else {
+            if (payload.mode === 'documentDetail') {
+                const path = payload.functionalityId ? `/document-browser/document-details/new/${payload.functionalityId}` : `/document-browser/document-details/${payload.item.id}`
+                this.$router.push(path)
+            } else {
+                const id = payload.item ? payload.item.label : 'new-dashboard'
+                if (payload.item) {
                     let routeDocumentType = this.getRouteDocumentType(payload.item)
                     this.$router.push(`/document-browser/${routeDocumentType}/` + id)
+                } else {
+                    this.selectedItem.item = { routerId: crypto.randomBytes(16).toString('hex') }
+                    this.$router.push(`/document-browser/new-dashboard`)
                 }
-            } else {
-                this.selectedItem.item = { routerId: crypto.randomBytes(16).toString('hex') }
-                this.$router.push(`/document-browser/new-dashboard`)
             }
 
             this.activeIndex = this.tabs.length
@@ -227,6 +228,14 @@ export default defineComponent({
             this.selectedItem = { item: { ...cockpit, routerId: crypto.randomBytes(16).toString('hex'), name: cockpit.DOCUMENT_NAME, label: cockpit.DOCUMENT_LABEL, mode: 'document-composite' } }
             this.tabs[this.activeIndex - 1] = this.selectedItem
             this.$router.push(`/document-browser/document-composite/${cockpit.DOCUMENT_LABEL}`)
+        },
+        getTabName(tab: any) {
+            if (tab.item && tab.item.name) {
+                return tab.item.name
+            } else {
+                console.log('>>> >>> TAB: ', tab)
+                return tab.mode === 'documentDetail' ? 'new document' : 'new dashboard'
+            }
         }
     }
 })
