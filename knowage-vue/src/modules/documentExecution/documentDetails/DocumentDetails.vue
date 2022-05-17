@@ -350,8 +350,9 @@ export default defineComponent({
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         closeDocument() {
-            const path = `/document-browser`
-            this.$router.push(path)
+            // const path = `/document-browser`
+            // this.$router.push(path)
+            this.$emit('closeDetails')
         },
         onTabChange(event) {
             event.index === 5 ? this.getAllSubreports() : ''
@@ -367,9 +368,10 @@ export default defineComponent({
 .document-details-tabview .p-tabview-panels {
     padding: 0 !important;
 }
+
 .document-details-dialog.p-dialog {
     max-height: 100%;
-    height: 100vh;
+    height: 80vh;
     width: calc(100vw - var(--kn-mainmenu-width));
     margin: 0;
 }

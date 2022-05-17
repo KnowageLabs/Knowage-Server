@@ -60,10 +60,10 @@ export default defineComponent({
             }
         })
 
-        if (this.$route.params.id && this.$route.name === 'document-browser-document-execution') {
+        if (this.$route.params.id && (this.$route.name === 'document-browser-document-execution' || this.$route.name === 'document-browser-document-details-edit')) {
             let tempDocument = {} as any
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$route.params.id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
-            const tempItem = { item: { name: tempDocument.name, label: this.$route.params.id, mode: this.$route.params.mode, routerId: crypto.randomBytes(16).toString('hex') }, mode: 'execute' }
+            const tempItem = { item: { name: tempDocument.name, label: this.$route.params.id, mode: this.$route.params.mode, routerId: crypto.randomBytes(16).toString('hex') }, mode: this.$route.name === 'document-browser-document-execution' ? 'execute' : 'documentDetail' }
             this.tabs.push(tempItem)
 
             this.activeIndex = 1
@@ -82,15 +82,24 @@ export default defineComponent({
 
             this.selectedItem = this.tabs[this.activeIndex - 1]
 
-            let routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
-            routeDocumentType ? this.$router.push(`/document-browser/${routeDocumentType}/` + id) : this.$router.push('/document-browser/new-dashboard')
+            console.log('ON TAB CHANGE ITEM: ', this.selectedItem)
+
+            if (this.selectedItem.mode === 'documentDetail') {
+                this.$router.push(`/document-browser/document-details/${this.selectedItem.item.label}`)
+            } else {
+                let routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
+                routeDocumentType ? this.$router.push(`/document-browser/${routeDocumentType}/` + id) : this.$router.push('/document-browser/new-dashboard')
+            }
         },
         onItemSelect(payload: any) {
+            console.log(' >>> PAYLOAD: ', payload)
+
             if (payload.item) {
                 payload.item.routerId = crypto.randomBytes(16).toString('hex')
             }
 
             const tempItem = { ...payload, item: { ...payload.item } }
+            if (payload.mode === 'documentDetail') tempItem.mode = 'documentDetail'
 
             this.tabs.push(tempItem)
 
@@ -98,8 +107,13 @@ export default defineComponent({
 
             const id = payload.item ? payload.item.label : 'new-dashboard'
             if (payload.item) {
-                let routeDocumentType = this.getRouteDocumentType(payload.item)
-                this.$router.push(`/document-browser/${routeDocumentType}/` + id)
+                if (payload.mode === 'documentDetail') {
+                    const path = `/document-browser/document-details/${payload.item.id}`
+                    this.$router.push(path)
+                } else {
+                    let routeDocumentType = this.getRouteDocumentType(payload.item)
+                    this.$router.push(`/document-browser/${routeDocumentType}/` + id)
+                }
             } else {
                 this.selectedItem.item = { routerId: crypto.randomBytes(16).toString('hex') }
                 this.$router.push(`/document-browser/new-dashboard`)

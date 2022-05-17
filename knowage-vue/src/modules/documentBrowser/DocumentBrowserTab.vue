@@ -1,5 +1,17 @@
 <template>
-    <router-view v-if="item" v-slot="{ Component }" :functionalityId="functionalityId" :item="item" :parameterValuesMap="parameterValuesMap" :tabKey="key" @close="$emit('close', item)" @parametersChanged="onParametersChange" @iframeCreated="onIframeCreated" @closeIframe="$emit('closeIframe')">
+    <router-view
+        v-if="item"
+        v-slot="{ Component }"
+        :functionalityId="functionalityId"
+        :item="item"
+        :parameterValuesMap="parameterValuesMap"
+        :tabKey="key"
+        @close="$emit('close', item)"
+        @parametersChanged="onParametersChange"
+        @iframeCreated="onIframeCreated"
+        @closeIframe="$emit('closeIframe')"
+        @closeDetails="$emit('close', item)"
+    >
         <keep-alive>
             <component :is="Component" :key="key"></component>
         </keep-alive>
