@@ -96,7 +96,7 @@ export default defineComponent({
     name: 'document-details',
     components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, SubreportsTab, TabView, TabPanel, Dialog, Badge, ProgressSpinner },
     props: {},
-    emits: ['closeDetails'],
+    emits: ['closeDetails', 'documentSaved'],
     data() {
         return {
             v$: useValidate() as any,
@@ -344,6 +344,8 @@ export default defineComponent({
                     setTimeout(() => {
                         const path = `/document-details/${response.data.id}`
                         !this.selectedDocument.id ? this.$router.push(path) : ''
+                        console.log('DOCUMENT SAVED: ', response.data)
+                        this.$emit('documentSaved', response.data)
                         this.loadPage(response.data.id)
                     }, 200)
                 })

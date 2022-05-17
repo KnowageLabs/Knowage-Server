@@ -11,6 +11,7 @@
         @iframeCreated="onIframeCreated"
         @closeIframe="$emit('closeIframe')"
         @closeDetails="$emit('close', item)"
+        @documentSaved="$emit('documentSaved', $event)"
     >
         <keep-alive>
             <component :is="Component" :key="key"></component>

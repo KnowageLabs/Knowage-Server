@@ -1,6 +1,6 @@
 <template>
     <DocumentExecution :id="name" v-if="mode === 'document-execution'" :parameterValuesMap="parameterValuesMap" :tabKey="tabKey" @parametersChanged="$emit('parametersChanged', $event)"></DocumentExecution>
-    <DocumentDetails v-else-if="mode === 'document-detail'" :docId="id" :folderId="functionalityId" @closeDetails="$emit('closeDetails', item)"></DocumentDetails>
+    <DocumentDetails v-else-if="mode === 'document-detail'" :docId="id" :folderId="functionalityId" @closeDetails="$emit('closeDetails', item)" @documentSaved="onDocumentsSaved"></DocumentDetails>
 </template>
 
 <script lang="ts">
@@ -15,7 +15,7 @@ export default defineComponent({
         DocumentDetails
     },
     props: { id: { type: String }, functionalityId: { type: String }, item: { type: Object }, parameterValuesMap: { type: Object }, tabKey: { type: String } },
-    emits: ['iframeCreated', 'closeIframe', 'parametersChanged', 'closeDetails'],
+    emits: ['iframeCreated', 'closeIframe', 'parametersChanged', 'closeDetails', 'documentSaved'],
     data() {
         return {
             url: '',
@@ -65,6 +65,10 @@ export default defineComponent({
                 this.mode = 'cockpit'
                 this.$emit('iframeCreated', { iframe: this.url, item: this.item })
             }
+        },
+        onDocumentsSaved(document: any) {
+            console.log('>>> >>> EVENT: ', document)
+            this.$emit('documentSaved', document)
         }
     }
 })

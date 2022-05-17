@@ -17,7 +17,16 @@
                 </TabPanel>
             </TabView>
 
-            <DocumentBrowserTab v-show="selectedItem" :item="selectedItem?.item" :mode="selectedItem?.mode" :functionalityId="selectedItem?.functionalityId" @close="closeDocument('current')" @iframeCreated="onIFrameCreated" @closeIframe="closeIframe"></DocumentBrowserTab>
+            <DocumentBrowserTab
+                v-show="selectedItem"
+                :item="selectedItem?.item"
+                :mode="selectedItem?.mode"
+                :functionalityId="selectedItem?.functionalityId"
+                @close="closeDocument('current')"
+                @iframeCreated="onIFrameCreated"
+                @closeIframe="closeIframe"
+                @documentSaved="onDocumentSaved"
+            ></DocumentBrowserTab>
             <div v-for="(iframe, index) in iFrameContainers" :key="index">
                 <iframe v-show="iframe.item?.routerId === selectedItem?.item.routerId" ref="iframe" class="document-browser-cockpit-iframe" :src="iframe.iframe"></iframe>
             </div>
@@ -236,6 +245,11 @@ export default defineComponent({
                 console.log('>>> >>> TAB: ', tab)
                 return tab.mode === 'documentDetail' ? 'new document' : 'new dashboard'
             }
+        },
+        onDocumentSaved(document: any) {
+            console.log(' >>> >>> ON DOCUMENT SAVED: ', document)
+            this.selectedItem = document
+            this.$router.push(`/document-browser/document-details/${document.label}`)
         }
     }
 })
