@@ -391,7 +391,7 @@ export default defineComponent({
                         const path = `/document-details/${response.data.id}`
                         !this.selectedDocument.id ? this.$router.push(path) : ''
                         console.log('DOCUMENT SAVED: ', response.data)
-                        this.$emit('documentSaved', response.data)
+                        if (!docToSave.id) this.$emit('documentSaved', response.data)
                         this.loadPage(response.data.id)
                     }, 200)
                 })
