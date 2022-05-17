@@ -1,6 +1,14 @@
 <template>
     <div id="cockpit-container" class="kn-height-full">
-        <DocumentExecution :id="name" v-show="mode === 'document-execution'" v-bind:style="[mode === 'document-execution' ? '' : 'display: none !important; ']" :parameterValuesMap="parameterValuesMap" :tabKey="tabKey" @parametersChanged="$emit('parametersChanged', $event)"></DocumentExecution>
+        <DocumentExecution
+            :id="name"
+            v-show="mode === 'document-execution'"
+            :propMode="mode"
+            v-bind:style="[mode === 'document-execution' ? '' : 'display: none !important; ']"
+            :parameterValuesMap="parameterValuesMap"
+            :tabKey="tabKey"
+            @parametersChanged="$emit('parametersChanged', $event)"
+        ></DocumentExecution>
         <DocumentDetails
             v-show="mode === 'document-detail'"
             v-bind:style="[mode === 'document-detail' ? '' : 'display: none !important;']"
