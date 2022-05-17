@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="document-details-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="true" :modal="false" :closable="false" :draggable="false" position="right" :baseZIndex="1" :autoZIndex="true">
+    <!-- <Dialog class="document-details-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="true" :modal="false" :closable="false" :draggable="false" position="right" :baseZIndex="1" :autoZIndex="true">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -10,7 +10,17 @@
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDocument" />
                 </template>
             </Toolbar>
-        </template>
+        </template> -->
+    <div id="document-details-container" class="p-d-flex p-flex-column kn-flex kn-height-full">
+        <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
+            <template #start>
+                {{ $t('documentExecution.documentDetails.title') }}
+            </template>
+            <template #end>
+                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || v$.$invalid" />
+                <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDocument" />
+            </template>
+        </Toolbar>
         <ProgressSpinner v-if="loading" class="doc-details-spinner" :style="mainDescriptor.style.spinnerStyle" />
 
         <div class="document-details-tab-container p-d-flex p-flex-column kn-flex">
@@ -71,7 +81,9 @@
                 </TabPanel>
             </TabView>
         </div>
-    </Dialog>
+    </div>
+
+    <!-- </Dialog> -->
 </template>
 
 <script lang="ts">
@@ -85,7 +97,7 @@ import OutputParamsTab from './tabs/outputParams/DocumentDetailsOutputParameters
 import DataLineageTab from './tabs/dataLineage/DocumentDetailsDataLineage.vue'
 import HistoryTab from './tabs/history/DocumentDetailsHistory.vue'
 import SubreportsTab from './tabs/subreports/DocumentDetailsSubreports.vue'
-import Dialog from 'primevue/dialog'
+// import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import Badge from 'primevue/badge'
 import TabPanel from 'primevue/tabpanel'
@@ -94,7 +106,19 @@ import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute
 
 export default defineComponent({
     name: 'document-details',
-    components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, SubreportsTab, TabView, TabPanel, Dialog, Badge, ProgressSpinner },
+    components: {
+        InformationsTab,
+        DriversTab,
+        OutputParamsTab,
+        DataLineageTab,
+        HistoryTab,
+        SubreportsTab,
+        TabView,
+        TabPanel,
+        // Dialog,
+        Badge,
+        ProgressSpinner
+    },
     props: {},
     emits: ['closeDetails', 'documentSaved'],
     data() {
@@ -146,7 +170,11 @@ export default defineComponent({
     },
     methods: {
         isForEdit() {
+            console.log(this.$route.params)
+            console.log('DOC ID _--------', this.$route.params.docId)
+            console.log(' ID _--------', this.$route.params.id)
             this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
+            this.$route.params.id ? (this.docId = this.$route.params.id) : (this.folderId = this.$route.params.folderId)
         },
         async loadPage(id) {
             this.loading = true
