@@ -13,11 +13,11 @@
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <Card class="p-m-2">
                         <template #content>
-                            <div id="upload-template-container" v-if="templates.length == 0">
+                            <div v-if="templates.length == 0">
                                 <div class="p-field p-col-12 p-d-flex">
                                     <div class="kn-flex">
                                         <span class="p-float-label">
-                                            <InputText id="fileName" class="kn-material-input" v-model="templateToUpload.name" :disabled="true" />
+                                            <InputText id="fileName" class="kn-material-input kn-width-full" v-model="templateToUpload.name" :disabled="true" />
                                             <label for="fileName" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.uploadTemplate') }} </label>
                                         </span>
                                     </div>
@@ -213,7 +213,7 @@
                         <Card>
                             <template #content>
                                 <span class="p-field p-float-label p-col-12">
-                                    <Dropdown id="attributes" class="kn-material-input" v-model="document.parametersRegion" :options="driversPositions" :optionLabel="translatedLabel" optionValue="value">
+                                    <Dropdown id="attributes" class="kn-material-input kn-width-full" v-model="document.parametersRegion" :options="driversPositions" :optionLabel="translatedLabel" optionValue="value">
                                         <template #option="slotProps">
                                             <div class="p-dropdown-option">
                                                 <span class="kn-capitalize">{{ $t(slotProps.option.label) }}</span>
@@ -235,7 +235,7 @@
                             <template #content>
                                 <form class="p-formgrid p-grid p-mb-3">
                                     <span class="p-float-label p-col-10">
-                                        <Textarea id="profiledVisibility" class="kn-material-input" rows="1" :autoResize="true" v-model="document.profiledVisibility" :disabled="true" />
+                                        <Textarea id="profiledVisibility" class="kn-material-input kn-width-full" rows="1" :autoResize="true" v-model="document.profiledVisibility" :disabled="true" />
                                         <label for="profiledVisibility" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.profiledVisibility') }} </label>
                                     </span>
                                     <Button icon="fas fa-plus-circle fa-1x" class="p-button-text p-button-plain p-ml-2 p-col-1" :disabled="!visibilityAttribute" @click="addRestriction" />
@@ -243,12 +243,12 @@
                                 </form>
                                 <form class="p-formgrid p-grid">
                                     <span class="p-field p-float-label p-col-12 p-lg-5">
-                                        <Dropdown id="attributes" class="kn-material-input" v-model="visibilityAttribute" :options="availableAttributes" optionLabel="attributeName" optionValue="attributeName" />
+                                        <Dropdown id="attributes" class="kn-material-input kn-width-full" v-model="visibilityAttribute" :options="availableAttributes" optionLabel="attributeName" optionValue="attributeName" />
                                         <label for="attributes" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.attribute') }} </label>
                                     </span>
                                     <span class="p-col-12 p-lg-1" :style="infoDescriptor.style.center">=</span>
                                     <span class="p-field p-float-label p-col-12 p-lg-6">
-                                        <InputText id="restrictionValue" class="kn-material-input" v-model="restrictionValue" />
+                                        <InputText id="restrictionValue" class="kn-material-input kn-width-full" v-model="restrictionValue" />
                                         <label for="restrictionValue" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.restrictionValueHint') }} </label>
                                     </span>
                                 </form>
