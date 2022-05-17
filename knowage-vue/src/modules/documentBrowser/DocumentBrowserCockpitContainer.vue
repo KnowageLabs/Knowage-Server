@@ -1,6 +1,6 @@
 <template>
     <DocumentExecution :id="name" v-if="mode === 'document-execution'" :parameterValuesMap="parameterValuesMap" :tabKey="tabKey" @parametersChanged="$emit('parametersChanged', $event)"></DocumentExecution>
-    <DocumentDetails v-else-if="mode === 'document-detail'" :docId="id" :folderId="functionalityId" @closeDetails="$emit('closeDetails', this.item)"></DocumentDetails>
+    <DocumentDetails v-else-if="mode === 'document-detail'" :docId="id" :folderId="functionalityId" @closeDetails="$emit('closeDetails', item)"></DocumentDetails>
 </template>
 
 <script lang="ts">
