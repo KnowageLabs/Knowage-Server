@@ -615,17 +615,10 @@ export default defineComponent({
                 return
             }
 
-            const cell = {
-                axisordinal: attributes[0].value,
-                dimensiontype: attributes[1].value,
-                dimensionuniquename: attributes[2].value,
-                hierarchyuniquename: attributes[3].value,
-                level: attributes[4].value,
-                member: attributes[5].value,
-                parentmember: attributes[6].value,
-                position: attributes[7].value,
-                uniquename: attributes[9]?.value
-            } as any
+            const cell = {}
+            for (let i = 0; i < attributes.length; i++) {
+                cell[attributes[i].nodeName] = attributes[i].value
+            }
 
             if (this.selectedCell) {
                 this.selectedCell.event.target.style.border = 'none'

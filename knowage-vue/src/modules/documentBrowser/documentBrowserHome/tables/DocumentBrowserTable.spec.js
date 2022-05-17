@@ -101,7 +101,7 @@ const mockedDocuments = [
 
 const $store = {
     state: {
-        user: { isSuperadmin: true }
+        user: { isSuperadmin: true, functionalities: ['DocumentManagement'] }
     }
 }
 
