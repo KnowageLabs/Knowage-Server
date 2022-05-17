@@ -159,7 +159,6 @@ export default defineComponent({
         }
     },
     async created() {
-        console.log(' DOC DETAILS CREATED!!!')
         this.isForEdit()
         await this.loadPage(this.docId)
     },
