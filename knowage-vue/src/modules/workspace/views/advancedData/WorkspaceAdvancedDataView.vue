@@ -256,10 +256,9 @@ export default defineComponent({
                                 let transformations = response.data.definition
                                 let processId = response.data.id
                                 let datasetId = response.data.instance.dataSetId
-                                let datasetLabel = response.data.instance.dataSetLabel
                                 if (this.isAvroReady(datasetId))
                                     // check if Avro file has been deleted or not
-                                    this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
+                                    this.$router.push({ name: 'data-preparation', params: { id: datasetId, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
                                 else {
                                     this.$store.commit('setInfo', {
                                         title: 'Avro file is missing',
@@ -280,7 +279,7 @@ export default defineComponent({
                 )
             } else if (this.isAvroReady(dataset.id)) {
                 // original dataset already exported in Avro
-                this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+                this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
             } else {
                 this.$store.commit('setInfo', {
                     title: 'Avro file is missing',
@@ -377,7 +376,7 @@ export default defineComponent({
                 })
         },
         datasetPreparation(dataset: any) {
-            this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+            this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
         },
 
         deleteDatasetConfirm(dataset: any) {

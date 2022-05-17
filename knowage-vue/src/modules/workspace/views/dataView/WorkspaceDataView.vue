@@ -448,11 +448,10 @@ export default defineComponent({
                             (response: AxiosResponse<any>) => {
                                 let transformations = response.data.definition
                                 let processId = response.data.id
-                                let datasetLabel = response.data.instance.dataSetLabel
                                 let datasetId = response.data.instance.dataSetId
                                 if (this.isAvroReady(datasetId))
                                     // check if Avro file has been deleted or not
-                                    this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
+                                    this.$router.push({ name: 'data-preparation', params: { id: datasetId, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
                                 else {
                                     this.generateAvro(datasetId)
                                 }
@@ -470,7 +469,7 @@ export default defineComponent({
                 )
             } else if (this.isAvroReady(dataset.id)) {
                 // original dataset already exported in Avro
-                this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+                this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
             } else {
                 this.generateAvro(dataset.id)
             }
@@ -577,7 +576,7 @@ export default defineComponent({
                 })
         },
         datasetPreparation(dataset: any) {
-            this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+            this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
         },
 
         deleteDatasetConfirm(dataset: any) {
