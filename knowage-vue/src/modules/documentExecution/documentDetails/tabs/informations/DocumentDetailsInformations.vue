@@ -458,6 +458,7 @@ export default defineComponent({
             })
         },
         openDesigner() {
+            console.log(' >>> DOCUMENT: ', this.document)
             this.$router.push(`/olap-designer/${this.document.id}`)
         },
         translatedLabel(a) {

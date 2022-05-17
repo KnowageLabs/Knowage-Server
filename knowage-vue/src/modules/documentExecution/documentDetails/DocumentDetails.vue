@@ -69,9 +69,9 @@
                 </TabPanel>
             </TabView>
         </div>
-    </div>
 
-    <!-- </Dialog> -->
+        <DocumentDetailOlapDesignerDialog :visible="designerDialogVisible" @close="designerDialogVisible = false"></DocumentDetailOlapDesignerDialog>
+    </div>
 </template>
 
 <script lang="ts">
@@ -85,12 +85,12 @@ import OutputParamsTab from './tabs/outputParams/DocumentDetailsOutputParameters
 import DataLineageTab from './tabs/dataLineage/DocumentDetailsDataLineage.vue'
 import HistoryTab from './tabs/history/DocumentDetailsHistory.vue'
 import SubreportsTab from './tabs/subreports/DocumentDetailsSubreports.vue'
-// import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import Badge from 'primevue/badge'
 import TabPanel from 'primevue/tabpanel'
 import ProgressSpinner from 'primevue/progressspinner'
 import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam, iDocumentType } from '@/modules/documentExecution/documentDetails/DocumentDetails'
+import DocumentDetailOlapDesignerDialog from './dialogs/olapDesignerDialog/DocumentDetailOlapDesignerDialog.vue'
 
 export default defineComponent({
     name: 'document-details',
@@ -103,9 +103,9 @@ export default defineComponent({
         SubreportsTab,
         TabView,
         TabPanel,
-        // Dialog,
         Badge,
-        ProgressSpinner
+        ProgressSpinner,
+        DocumentDetailOlapDesignerDialog
     },
     props: { propDocId: { type: String }, propFolderId: { type: String }, propMode: { type: String } },
     emits: ['closeDetails', 'documentSaved'],
@@ -135,7 +135,8 @@ export default defineComponent({
             types: [] as iDocumentType[],
             allDocumentDetails: [] as any,
             savedSubreports: [] as any,
-            selectedSubreports: [] as any
+            selectedSubreports: [] as any,
+            designerDialogVisible: false
         }
     },
     computed: {
