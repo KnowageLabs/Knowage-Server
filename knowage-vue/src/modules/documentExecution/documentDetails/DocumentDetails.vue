@@ -119,7 +119,7 @@ export default defineComponent({
         Badge,
         ProgressSpinner
     },
-    props: {},
+    props: { propDocId: { type: String }, propFolderId: { type: String } },
     emits: ['closeDetails', 'documentSaved'],
     data() {
         return {
@@ -164,8 +164,21 @@ export default defineComponent({
             return 0
         }
     },
+    watch: {
+        async propDocId() {
+            this.isForEdit()
+            console.log('CAAAAAAAAAAAAAAAAAAALED 1: ', this.docId)
+            await this.loadPage(this.docId)
+        }
+        // async propFolderId() {
+        //     this.isForEdit()
+        //     await this.loadPage(this.docId)
+        // }
+    },
     async created() {
+        console.log(' >>> >>>> ROUTE: ', this.$route)
         this.isForEdit()
+        console.log('CAAAAAAAAAAAAAAAAAAALED 2: ', this.docId)
         await this.loadPage(this.docId)
     },
     methods: {
@@ -173,8 +186,11 @@ export default defineComponent({
             console.log(this.$route.params)
             console.log('DOC ID _--------', this.$route.params.docId)
             console.log(' ID _--------', this.$route.params.id)
-            this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
-            this.$route.params.id ? (this.docId = this.$route.params.id) : (this.folderId = this.$route.params.folderId)
+            //this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
+            //this.$route.params.id ? (this.docId = this.$route.params.id) : (this.folderId = this.$route.params.folderId)
+            this.docId = this.propDocId
+            this.folderId = this.propFolderId
+            console.log(' FOLDER ID--------', this.folderId)
         },
         async loadPage(id) {
             this.loading = true
@@ -195,12 +211,14 @@ export default defineComponent({
             this.loading = false
         },
         async getSelectedDocumentById(id) {
+            console.log(' TEEEEEEEEEEEEEEMP ID: ', id)
             if (id) {
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${id}`).then((response: AxiosResponse<any>) => (this.selectedDocument = response.data))
             } else {
                 this.selectedDocument = { ...this.mainDescriptor.newDocument }
                 this.selectedDocument.functionalities = []
             }
+            console.log('SELECTED DOCUIMENT: ', this.selectedDocument)
         },
         async getFunctionalities() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders?includeDocs=false`).then((response: AxiosResponse<any>) => {

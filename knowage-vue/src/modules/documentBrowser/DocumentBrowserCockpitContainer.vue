@@ -1,6 +1,6 @@
 <template>
     <DocumentExecution :id="name" v-if="mode === 'document-execution'" :parameterValuesMap="parameterValuesMap" :tabKey="tabKey" @parametersChanged="$emit('parametersChanged', $event)"></DocumentExecution>
-    <DocumentDetails v-else-if="mode === 'document-detail'" :docId="id" :folderId="functionalityId" @closeDetails="$emit('closeDetails', item)" @documentSaved="onDocumentsSaved"></DocumentDetails>
+    <DocumentDetails v-else-if="mode === 'document-detail'" :propDocId="item?.id" :propFolderId="functionalityId" @closeDetails="$emit('closeDetails', item)" @documentSaved="onDocumentsSaved"></DocumentDetails>
 </template>
 
 <script lang="ts">
@@ -34,11 +34,6 @@ export default defineComponent({
         this.name = this.id as string
         this.createUrl()
         this.setMode()
-        console.log(' >>> ROUTE: ', this.$route)
-        console.log(' >>> ID: ', this.id)
-        console.log(' >>> functionalityId: ', this.functionalityId)
-        console.log(' >>> item: ', this.item)
-        console.log(' >>> mode: ', this.mode)
     },
     activated() {
         this.setMode()
@@ -56,8 +51,7 @@ export default defineComponent({
             this.url = process.env.VUE_APP_HOST_URL + `/knowagecockpitengine/api/1.0/pages/edit?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&user_id=${uniqueID}&SBI_COUNTRY=${country}&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=true&documentMode=EDIT&FUNCTIONALITY_ID=${this.functionalityId}`
         },
         setMode() {
-            console.log('ITEM: ', this.item)
-            if (this.$route.name === 'document-browser-document-details-edit' || this.$route.name === 'document-browser-document-details-new') {
+            if (this.$router.currentRoute.value.name === 'document-browser-document-details-edit' || this.$router.currentRoute.value.name === 'document-browser-document-details-new') {
                 this.mode = 'document-detail'
             } else if (this.item?.name) {
                 this.mode = 'document-execution'
@@ -67,7 +61,6 @@ export default defineComponent({
             }
         },
         onDocumentsSaved(document: any) {
-            console.log('>>> >>> EVENT: ', document)
             this.$emit('documentSaved', document)
         }
     }

@@ -64,15 +64,18 @@ export default defineComponent({
     },
     async created() {
         window.addEventListener('message', (event) => {
-            if (event.data.type === 'saveCockpit' && this.$route.name === 'new-dashboard') {
+            if (event.data.type === 'saveCockpit' && this.$router.currentRoute.value.name === 'new-dashboard') {
                 this.loadSavedCockpit(event.data.model)
             }
         })
 
-        if (this.$route.params.id && (this.$route.name === 'document-browser-document-execution' || this.$route.name === 'document-browser-document-details-edit')) {
+        if (this.$router.currentRoute.value.params.id && (this.$router.currentRoute.value.name === 'document-browser-document-execution' || this.$router.currentRoute.value.name === 'document-browser-document-details-edit')) {
             let tempDocument = {} as any
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$route.params.id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
-            const tempItem = { item: { name: tempDocument.name, label: this.$route.params.id, mode: this.$route.params.mode, routerId: crypto.randomBytes(16).toString('hex') }, mode: this.$route.name === 'document-browser-document-execution' ? 'execute' : 'documentDetail' }
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$router.currentRoute.value.params.id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
+            const tempItem = {
+                item: { name: tempDocument.name, label: this.$router.currentRoute.value.params.id, mode: this.$router.currentRoute.value.params.mode, routerId: crypto.randomBytes(16).toString('hex'), id: this.$router.currentRoute.value.params.id },
+                mode: this.$router.currentRoute.value.name === 'document-browser-document-execution' ? 'execute' : 'documentDetail'
+            }
             this.tabs.push(tempItem)
 
             this.activeIndex = 1
@@ -91,10 +94,8 @@ export default defineComponent({
 
             this.selectedItem = this.tabs[this.activeIndex - 1]
 
-            console.log('ON TAB CHANGE ITEM: ', this.selectedItem)
-
             if (this.selectedItem.mode === 'documentDetail') {
-                const path = this.selectedItem.functionalityId ? `/document-browser/document-details/new/${this.selectedItem.functionalityId}` : `/document-browser/document-details/${this.selectedItem.item.label}`
+                const path = this.selectedItem.functionalityId ? `/document-browser/document-details/new/${this.selectedItem.functionalityId}` : `/document-browser/document-details/${this.selectedItem.item.id}`
                 this.$router.push(path)
             } else {
                 let routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
@@ -102,8 +103,6 @@ export default defineComponent({
             }
         },
         onItemSelect(payload: any) {
-            console.log(' >>> PAYLOAD: ', payload)
-
             if (payload.item) {
                 payload.item.routerId = crypto.randomBytes(16).toString('hex')
             }
@@ -242,14 +241,13 @@ export default defineComponent({
             if (tab.item && tab.item.name) {
                 return tab.item.name
             } else {
-                console.log('>>> >>> TAB: ', tab)
                 return tab.mode === 'documentDetail' ? 'new document' : 'new dashboard'
             }
         },
         onDocumentSaved(document: any) {
-            console.log(' >>> >>> ON DOCUMENT SAVED: ', document)
-            this.selectedItem = document
-            this.$router.push(`/document-browser/document-details/${document.label}`)
+            this.selectedItem.functionalityId = null
+            this.selectedItem.item = { name: document.name, label: document.id, routerId: crypto.randomBytes(16).toString('hex') }
+            this.$router.push(`/document-browser/document-details/${document.id}`)
         }
     }
 })

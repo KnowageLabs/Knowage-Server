@@ -25,7 +25,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
     name: 'document-browser-tab',
     components: {},
-    emits: ['close', 'iframeCreated', 'closeIframe'],
+    emits: ['close', 'iframeCreated', 'closeIframe', 'documentSaved'],
     props: { item: { type: Object }, mode: { type: String }, functionalityId: { type: String } },
     data() {
         return {
