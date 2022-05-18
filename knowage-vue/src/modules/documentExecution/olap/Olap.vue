@@ -876,12 +876,14 @@ export default defineComponent({
         async undo() {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/undo/?SBI_EXECUTION_ID=${this.id}`, {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
-                .then(() => {
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/undo/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
+                .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })
+                    this.olap = response.data
+                    this.formatOlapTable()
                 })
                 .catch((error: any) =>
                     this.$store.commit('setError', {
