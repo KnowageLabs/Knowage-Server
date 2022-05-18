@@ -936,8 +936,6 @@ export default defineComponent({
             }
         },
         handleTableDoubleClick(event: any) {
-            console.log(this.olap.modelConfig)
-
             if (!this.olapHasScenario) return
             if (!event.target.attributes.cell) return
             let clickLocation = event.target.getBoundingClientRect()
@@ -945,7 +943,9 @@ export default defineComponent({
             if (!this.checkIfVersionIsSet()) {
                 return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
             } else if (this.checkIfModelIsLocked()) {
-                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
+                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.editErrorLocked') })
+            } else if (!this.checkIfMeasureIsEditable(event.target.getAttribute('measurename'))) {
+                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: 'NOT EDITABLE' })
             } else {
                 // @ts-ignore
                 this.$refs.whatifInput.style.top = `${clickLocation.top}px`
@@ -972,6 +972,21 @@ export default defineComponent({
             if (this.olap.modelConfig.status == 'locked_by_other' || this.olap.modelConfig.status == 'unlocked') {
                 return true
             } else return false
+        },
+        checkIfMeasureIsEditable(measureName) {
+            if (this.olap.modelConfig && this.olap.modelConfig.writeBackConf) {
+                if (this.olap.modelConfig.writeBackConf.editableMeasures == null || this.olap.modelConfig.writeBackConf.editableMeasures.length == 0) {
+                    return true
+                } else {
+                    var measures = this.olap.modelConfig.writeBackConf.editableMeasures
+                    for (var i = 0; i < measures.length; i++) {
+                        if (measures[i] === measureName) {
+                            return true
+                        }
+                    }
+                }
+                return false
+            }
         },
         closeWhatifInput() {
             // @ts-ignore
