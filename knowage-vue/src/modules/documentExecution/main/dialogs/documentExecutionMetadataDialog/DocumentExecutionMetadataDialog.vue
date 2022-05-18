@@ -11,7 +11,7 @@
 
         <div v-if="metadata">
             <div v-if="metadata.generalMetadata.length > 0">
-                <h2>{{ $t('documentExecution.main.customMetadata') }}</h2>
+                <h2>{{ $t('common.documentDetails') }}</h2>
                 <div class="p-grid p-ai-center">
                     <template v-for="(meta, index) in metadata.generalMetadata" :key="index">
                         <div v-if="meta.value && index !== metadata.generalMetadata.length - 1" :class="{ 'p-col-4': index !== 3, 'p-col-12': index === 3 }">
@@ -24,7 +24,7 @@
             </div>
 
             <div v-if="metadata.shortText.length > 0 || metadata.longText.length > 0">
-                <h2>{{ $t('common.documentDetails') }}</h2>
+                <h2>{{ $t('documentExecution.main.customMetadata') }}</h2>
 
                 <div v-show="metadata.shortText.length > 0" class="p-grid">
                     <div v-for="(meta, index) in metadata.shortText" :key="index" class="p-col-4">
