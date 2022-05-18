@@ -190,7 +190,7 @@ export default defineComponent({
                 })
             await this.getDatasets()
         },
-        async loadDataset(datasetLabel: string) {
+        async loadDataset(datasetId: Number) {
             this.loading = true
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/id/${datasetId}`)
@@ -455,7 +455,7 @@ export default defineComponent({
         async updateDatasetAndSave(newConfig) {
             this.showMonitoring = false
 
-            await this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config },{ headers: { Accept: 'application/json, */*'} }).then(
+            await this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config }, { headers: { Accept: 'application/json, */*' } }).then(
                 () => {
                     this.loadDataset(this.selectedDataset.id)
                 },
