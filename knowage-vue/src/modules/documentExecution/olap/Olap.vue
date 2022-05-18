@@ -968,11 +968,10 @@ export default defineComponent({
                     .then((response: AxiosResponse<any>) => {
                         this.olap = response.data
                         this.closeWhatifInput()
+                        this.formatOlapTable()
                     })
                     .catch(() => {})
                     .finally(() => (this.loading = false))
-
-                this.formatOlapTable()
             }
             this.closeWhatifInput()
         },
