@@ -501,6 +501,7 @@
                 "selectLevels": "Select visible levels",
                 "title": "Drill Through"
             },
+            "editErrorLocked": "It's not possible to edit a schema if you have not set a lock on it.",
             "editModeConfirm": "You are leaving edit mode. Continue?",
             "filterDialog": {
                 "ancestorDescendantWarning": "Warning: You selected some members that are in ancestor-descendant relationship: measures will be aggregated over both of them. Are you sure this is what you want?",

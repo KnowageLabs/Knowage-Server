@@ -936,11 +936,15 @@ export default defineComponent({
             }
         },
         handleTableDoubleClick(event: any) {
+            console.log(this.olap.modelConfig)
+
             if (!this.olapHasScenario) return
             if (!event.target.attributes.cell) return
             let clickLocation = event.target.getBoundingClientRect()
 
             if (!this.checkIfVersionIsSet()) {
+                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
+            } else if (this.checkIfModelIsLocked()) {
                 return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
             } else {
                 // @ts-ignore
@@ -954,6 +958,20 @@ export default defineComponent({
                 this.whatifInputOldValue = event.target.attributes.value.value
                 this.whatifInputOrdinal = event.target.attributes.ordinal.value
             }
+        },
+        checkIfVersionIsSet() {
+            let versionIsSet = false
+            for (let i = 0; i < this.olap.filters.length; i++) {
+                if (this.olap.filters[i].uniqueName === '[Version]') {
+                    versionIsSet = this.olap.filters[i].hierarchies[0].slicers.length > 0
+                }
+            }
+            return versionIsSet
+        },
+        checkIfModelIsLocked() {
+            if (this.olap.modelConfig.status == 'locked_by_other' || this.olap.modelConfig.status == 'unlocked') {
+                return true
+            } else return false
         },
         closeWhatifInput() {
             // @ts-ignore
@@ -974,15 +992,6 @@ export default defineComponent({
                     .finally(() => (this.loading = false))
             }
             this.closeWhatifInput()
-        },
-        checkIfVersionIsSet() {
-            let versionIsSet = false
-            for (let i = 0; i < this.olap.filters.length; i++) {
-                if (this.olap.filters[i].uniqueName === '[Version]') {
-                    versionIsSet = this.olap.filters[i].hierarchies[0].slicers.length > 0
-                }
-            }
-            return versionIsSet
         }
     }
 })
