@@ -17,19 +17,16 @@
  */
 package it.eng.spagobi.tools.scheduler.init;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.quartz.Scheduler;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.init.InitializerIFace;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
-import it.eng.spagobi.tools.scheduler.jobs.RestEventJob;
+import it.eng.spagobi.tools.scheduler.jobs.CleanAuditJob;
 import it.eng.spagobi.tools.scheduler.utils.PredefinedCronExpression;
 
 public class CleanAuditQuartzInitializer implements InitializerIFace {
@@ -49,21 +46,24 @@ public class CleanAuditQuartzInitializer implements InitializerIFace {
 	public void init(SourceBean config) {
 		logger.debug("IN");
 
-		List<SbiTenant> tenants = DAOFactory.getTenantsDAO().loadAllTenants();
-		for (SbiTenant tenant : tenants) {
-			initAuditForTenant(tenant);
+		try {
+			initCleanForDefaultTenant();
+		} catch (Exception e) {
+		} finally {
+			logger.debug("OUT");
 		}
 
 		logger.debug("OUT");
 	}
 
-	public void initAuditForTenant(SbiTenant tenant) {
+	public void initCleanForDefaultTenant() {
 		logger.debug("IN");
 
 		ISchedulerDAO schedulerDAO = null;
 		try {
 			schedulerDAO = DAOFactory.getSchedulerDAO();
-			schedulerDAO.setTenant(tenant.getName());
+			schedulerDAO.setGlobal(true);
+			schedulerDAO.setTenant("DEFAULT_TENANT");
 
 			Job jobDetail = schedulerDAO.loadJob(DEFAULT_JOB_NAME, DEFAULT_JOB_NAME);
 			if (jobDetail == null) { // create job detail
@@ -74,7 +74,7 @@ public class CleanAuditQuartzInitializer implements InitializerIFace {
 				jobDetail.setDurable(true);
 				jobDetail.setVolatile(false);
 				jobDetail.setRequestsRecovery(true);
-				jobDetail.setJobClass(RestEventJob.class);
+				jobDetail.setJobClass(CleanAuditJob.class);
 
 				schedulerDAO.insertJob(jobDetail);
 				logger.debug("Added job with name " + DEFAULT_JOB_NAME);

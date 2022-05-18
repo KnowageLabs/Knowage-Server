@@ -98,7 +98,7 @@ const mockedDocuments = [
 
 const $store = {
     state: {
-        user: {}
+        user: { functionalities: ['DocumentUserManagement'] }
     }
 }
 

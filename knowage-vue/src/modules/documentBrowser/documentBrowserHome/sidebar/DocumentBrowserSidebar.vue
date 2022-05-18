@@ -23,7 +23,6 @@
             <div v-if="selectedDocument?.previewFile" class="p-text-center">
                 <img id="image-preview" :src="getImageUrl" />
             </div>
-
             <div v-if="document.functionalities && document.functionalities.length > 0" class="p-m-4">
                 <h3 class="p-m-0">{{ $t('common.path') }}</h3>
                 <p v-for="(path, index) in document.functionalities" :key="index" class="p-m-0">{{ path }}</p>
@@ -63,11 +62,9 @@
         </div>
     </div>
 </template>
-
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
-
 export default defineComponent({
     name: 'document-browser-sidebar',
     props: { selectedDocument: { type: Object } },
@@ -91,11 +88,20 @@ export default defineComponent({
             return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
         },
         canEditDocument(): boolean {
-            if (this.document.stateCode === 'TEST') return this.user?.functionalities.includes('DocumentTestManagement')
-            if (this.document.stateCode === 'DEV') return this.user?.functionalities.includes('DocumentDevManagement')
-            if (this.document.stateCode === 'REL') return this.user?.functionalities.includes('DocumentAdminManagement')
-            if (this.document.stateCode === 'SUSPENDED') return this.user?.functionalities.includes('DocumentAdminManagement')
-            return false
+            if (!this.user) return false
+            switch (this.document.stateCode) {
+                case 'TEST':
+                    return this.user.functionalities.includes('DocumentTestManagement')
+                case 'DEV':
+                    return this.user.functionalities.includes('DocumentDevManagement')
+                case 'REL':
+                    return this.user.functionalities.includes('DocumentAdminManagement')
+                case 'SUSPENDED':
+                case 'SUSP':
+                    return this.user.functionalities.includes('DocumentAdminManagement')
+                default:
+                    return false
+            }
         }
     },
     created() {
@@ -137,25 +143,20 @@ export default defineComponent({
     }
 })
 </script>
-
 <style lang="scss" scoped>
 #document-detail-toolbar .p-toolbar-group-left {
     width: 100%;
 }
-
 #document-icons-container {
     width: 100%;
 }
-
 .document-pointer:hover {
     cursor: pointer;
 }
-
 #image-preview {
     max-width: 100%;
     max-height: 200px;
 }
-
 #document-browser-sidebar {
     z-index: 150;
     background-color: white;

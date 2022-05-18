@@ -14,7 +14,7 @@
                 </Column>
                 <Column field="Type" :header="$t('importExport.catalogFunction.column.type')" :sortable="true">
                     <template #body="{data}">
-                        <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.Type" :options="valueTypes" optionDisabled="disabled" optionLabel="value" optionValue="name" @change="saveFieldsMetadata" />
+                        <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.Type" :options="valueTypes" optionDisabled="disabled" optionLabel="value" optionValue="name" @change="saveFieldsMetadata" :disabled="true" />
                     </template>
                 </Column>
                 <Column field="fieldType" :header="$t('managers.datasetManagement.fieldType')" :sortable="true">
@@ -31,89 +31,89 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import linkTabDescriptor from './DatasetManagementMetadataCardDescriptor.json'
-import Card from 'primevue/card'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import Message from 'primevue/message'
-import Dropdown from 'primevue/dropdown'
+    import { defineComponent } from 'vue'
+    import linkTabDescriptor from './DatasetManagementMetadataCardDescriptor.json'
+    import Card from 'primevue/card'
+    import DataTable from 'primevue/datatable'
+    import Column from 'primevue/column'
+    import Message from 'primevue/message'
+    import Dropdown from 'primevue/dropdown'
 
-export default defineComponent({
-    components: { Card, Column, DataTable, Message, Dropdown },
-    props: {
-        selectedDataset: { type: Object as any }
-    },
-    computed: {},
-    emits: ['touched'],
-    data() {
-        return {
-            linkTabDescriptor,
-            fieldMetadataTypes: linkTabDescriptor.fieldsMetadataTypes,
-            valueTypes: linkTabDescriptor.valueTypes,
-            dataset: {} as any,
-            fieldsMetadata: [] as any
-        }
-    },
-    created() {
-        this.dataset = this.selectedDataset
-        this.dataset.meta ? this.exctractFieldsMetadata(this.dataset.meta.columns) : ''
-    },
-    watch: {
-        selectedDataset() {
+    export default defineComponent({
+        components: { Card, Column, DataTable, Message, Dropdown },
+        props: {
+            selectedDataset: { type: Object as any }
+        },
+        computed: {},
+        emits: ['touched'],
+        data() {
+            return {
+                linkTabDescriptor,
+                fieldMetadataTypes: linkTabDescriptor.fieldsMetadataTypes,
+                valueTypes: linkTabDescriptor.valueTypes,
+                dataset: {} as any,
+                fieldsMetadata: [] as any
+            }
+        },
+        created() {
             this.dataset = this.selectedDataset
             this.dataset.meta ? this.exctractFieldsMetadata(this.dataset.meta.columns) : ''
-        }
-    },
-
-    methods: {
-        exctractFieldsMetadata(array) {
-            var object = {}
-
-            for (var item in array) {
-                var element = object[array[item].column]
-                if (!element) {
-                    element = {}
-                    object[array[item].column] = element
-                    element['column'] = array[item].column
-                }
-                element[array[item].pname] = array[item].pvalue
-            }
-
-            var fieldsMetadata = new Array()
-
-            for (item in object) {
-                fieldsMetadata.push(object[item])
-            }
-
-            this.fieldsMetadata = fieldsMetadata
         },
-        saveFieldsMetadata() {
-            var numberOfSpatialAttribute = 0
-            for (let i = 0; i < this.fieldsMetadata.length; i++) {
-                if (this.fieldsMetadata[i].fieldType == 'SPATIAL_ATTRIBUTE') {
-                    numberOfSpatialAttribute++
-                    if (numberOfSpatialAttribute > 1) {
-                        this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.datasetManagement.duplicateSpatialAttribute') })
-                        return
+        watch: {
+            selectedDataset() {
+                this.dataset = this.selectedDataset
+                this.dataset.meta ? this.exctractFieldsMetadata(this.dataset.meta.columns) : ''
+            }
+        },
+
+        methods: {
+            exctractFieldsMetadata(array) {
+                var object = {}
+
+                for (var item in array) {
+                    var element = object[array[item].column]
+                    if (!element) {
+                        element = {}
+                        object[array[item].column] = element
+                        element['column'] = array[item].column
+                    }
+                    element[array[item].pname] = array[item].pvalue
+                }
+
+                var fieldsMetadata = new Array()
+
+                for (item in object) {
+                    fieldsMetadata.push(object[item])
+                }
+
+                this.fieldsMetadata = fieldsMetadata
+            },
+            saveFieldsMetadata() {
+                var numberOfSpatialAttribute = 0
+                for (let i = 0; i < this.fieldsMetadata.length; i++) {
+                    if (this.fieldsMetadata[i].fieldType == 'SPATIAL_ATTRIBUTE') {
+                        numberOfSpatialAttribute++
+                        if (numberOfSpatialAttribute > 1) {
+                            this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.datasetManagement.duplicateSpatialAttribute') })
+                            return
+                        }
                     }
                 }
-            }
-            for (let i = 0; i < this.fieldsMetadata.length; i++) {
-                for (let j = 0; j < this.dataset.meta.columns.length; j++) {
-                    if (this.fieldsMetadata[i].column == this.dataset.meta.columns[j].column && this.dataset.meta.columns[j].pname == 'fieldType') {
-                        this.dataset.meta.columns[j].pvalue = this.fieldsMetadata[i].fieldType
+                for (let i = 0; i < this.fieldsMetadata.length; i++) {
+                    for (let j = 0; j < this.dataset.meta.columns.length; j++) {
+                        if (this.fieldsMetadata[i].column == this.dataset.meta.columns[j].column && this.dataset.meta.columns[j].pname == 'fieldType') {
+                            this.dataset.meta.columns[j].pvalue = this.fieldsMetadata[i].fieldType
+                        }
                     }
                 }
-            }
-            for (let i = 0; i < this.fieldsMetadata.length; i++) {
-                for (let j = 0; j < this.dataset.meta.columns.length; j++) {
-                    if (this.fieldsMetadata[i].column == this.dataset.meta.columns[j].column && this.dataset.meta.columns[j].pname == 'Type') {
-                        this.dataset.meta.columns[j].pvalue = this.fieldsMetadata[i].Type
+                for (let i = 0; i < this.fieldsMetadata.length; i++) {
+                    for (let j = 0; j < this.dataset.meta.columns.length; j++) {
+                        if (this.fieldsMetadata[i].column == this.dataset.meta.columns[j].column && this.dataset.meta.columns[j].pname == 'Type') {
+                            this.dataset.meta.columns[j].pvalue = this.fieldsMetadata[i].Type
+                        }
                     }
                 }
             }
         }
-    }
-})
+    })
 </script>

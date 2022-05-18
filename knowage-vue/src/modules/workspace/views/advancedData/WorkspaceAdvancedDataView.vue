@@ -51,7 +51,7 @@
                     :viewType="'dataset'"
                     :document="dataset"
                     @previewDataset="previewDataset"
-                    @editFileDataset="editFileDataset"
+                    @editDataset="editDataset"
                     @exportToXlsx="exportDataset($event, 'xls')"
                     @exportToCsv="exportDataset($event, 'csv')"
                     @shareDataset="shareDataset"
@@ -70,7 +70,7 @@
         :viewType="'dataset'"
         :document="selectedDataset"
         @previewDataset="previewDataset"
-        @editFileDataset="editFileDataset"
+        @editDataset="editDataset"
         @exportToXlsx="exportDataset($event, 'xls')"
         @exportToCsv="exportDataset($event, 'csv')"
         @shareDataset="shareDataset"
@@ -82,6 +82,7 @@
         data-test="detail-sidebar"
     />
 
+    <EditPreparedDatasetDialog :dataset="selectedDataset" :visible="showEditPreparedDatasetDialog" @save="updatePreparedDataset" @cancel="showEditPreparedDatasetDialog = false" />
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
     <Menu id="creationMenu" ref="creationMenu" :model="creationMenuButtons" />
 
@@ -93,6 +94,7 @@
 import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
+import EditPreparedDatasetDialog from '@/modules/workspace/views/dataView/dialogs/EditPreparedDatasetDialog.vue'
 import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import DetailSidebar from '@/modules/workspace/genericComponents/DetailSidebar.vue'
 import WorkspaceCard from '@/modules/workspace/genericComponents/WorkspaceCard.vue'
@@ -110,7 +112,7 @@ import { AxiosResponse } from 'axios'
 import DataPreparationMonitoringDialog from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDialog.vue'
 
 export default defineComponent({
-    components: { DataTable, KnDatasetList, Column, Chip, DataPreparationMonitoringDialog, DetailSidebar, WorkspaceCard, KnFabButton, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataPreviewDialog, Message, Menu },
+    components: { DataTable, KnDatasetList, Column, Chip, DataPreparationMonitoringDialog, EditPreparedDatasetDialog, DetailSidebar, WorkspaceCard, KnFabButton, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataPreviewDialog, Message, Menu },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
@@ -135,7 +137,7 @@ export default defineComponent({
             loading: false,
             showDetailSidebar: false,
             showDatasetList: false as Boolean,
-            showDatasetDialog: false,
+            showEditPreparedDatasetDialog: false,
             datasetList: [] as Array<IDataset>,
             preparedDatasets: [] as any,
             availableDatasets: [] as any,
@@ -162,6 +164,32 @@ export default defineComponent({
     },
 
     methods: {
+        async updatePreparedDataset(newDataset) {
+            this.showEditPreparedDatasetDialog = false
+            this.selectedDataset.name = newDataset.name
+            this.selectedDataset.description = newDataset.description
+            this.selectedDataset.type = 'PreparedDataset'
+
+            await this.$http({
+                method: 'POST',
+                url: process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'selfservicedataset/update',
+                data: this.selectedDataset,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Disable-Errors': 'true' },
+
+                transformRequest: function(obj) {
+                    var str = [] as any
+                    for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
+                    return str.join('&')
+                }
+            })
+                .then(() => {
+                    this.$store.commit('setInfo', { title: 'Updated successfully' })
+                })
+                .catch(() => {
+                    this.$store.commit('setError', { title: 'Save error', msg: 'Cannot update Prepared Dataset' })
+                })
+            await this.getDatasets()
+        },
         async loadDataset(datasetLabel: string) {
             this.loading = true
             await this.$http
@@ -230,16 +258,12 @@ export default defineComponent({
             this.creationMenuButtons = []
             this.creationMenuButtons.push({ key: '0', label: this.$t('workspace.myData.prepareData'), visible: true })
         },
-        toggleDatasetDialog() {
-            this.selectedDataset = {}
-            this.showDatasetDialog = true
-        },
         async previewDataset(dataset: any) {
             await this.loadDataset(dataset.label)
             this.previewDialogVisible = true
         },
-        editFileDataset() {
-            this.showDatasetDialog = true
+        editDataset() {
+            this.showEditPreparedDatasetDialog = true
         },
         handleMonitoring(dataset: any) {
             console.log(dataset)

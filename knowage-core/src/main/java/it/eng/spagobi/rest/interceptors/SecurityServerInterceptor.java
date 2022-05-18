@@ -53,7 +53,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 	 */
 	private static final String KNOWAGE_AUTHORIZATION_HEADER_NAME = "KNOWAGE_AUTHORIZATION_HEADER_NAME";
 
-	private static Logger logger = Logger.getLogger(SecurityServerInterceptor.class);
+	private static final Logger LOGGER = Logger.getLogger(SecurityServerInterceptor.class);
 
 	/**
 	 * TODO : Move from here into a generic configuration class
@@ -73,13 +73,16 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 	protected UserProfile authenticateUser() {
 		UserProfile profile = null;
 
-		logger.trace("IN");
+		LOGGER.trace("IN");
 
 		try {
 			String authorizationHeaderName = getAuthorizationHeaderName();
 
 			if (servletRequest.getHeader(authorizationHeaderName) != null) {
 				String token = servletRequest.getHeader(authorizationHeaderName);
+
+				LOGGER.trace("Token is: " + token);
+
 				token = token.replaceFirst("Bearer ", "");
 				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 
@@ -92,6 +95,9 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 				 * author radmila.selakovic@mht.net checking if request header is "X-Auth-Token"
 				 */
 				String auto = servletRequest.getHeader("Authorization");
+
+				LOGGER.trace("Token is: " + auto);
+
 				int position = auto.indexOf("Direct");
 				if (position > -1 && position < 5) {// Direct stay at the beginning of the header
 					String encodedUser = auto.replaceFirst("Direct ", "");
@@ -119,6 +125,9 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 				// if request header is
 				// "X-Auth-Token chencking authorization will be by access token"
 				String token = servletRequest.getHeader("X-Auth-Token");
+
+				LOGGER.trace("Token is: " + token);
+
 				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 
 				SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthenticationToken(token);
@@ -127,9 +136,9 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 				}
 			}
 		} catch (Throwable t) {
-			logger.trace("Problem during authentication, returning null", t);
+			LOGGER.trace("Problem during authentication, returning null", t);
 		} finally {
-			logger.trace("OUT");
+			LOGGER.trace("OUT");
 		}
 
 		return profile;
@@ -159,9 +168,9 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 			engProfile = this.getUserProfileFromUserId();
 
 			if (engProfile != null) {
-				logger.debug("User is authenticated but his profile is not already stored in session");
+				LOGGER.debug("User is authenticated but his profile is not already stored in session");
 			} else {
-				logger.debug("User is not authenticated");
+				LOGGER.debug("User is not authenticated");
 				authenticated = false;
 			}
 		}

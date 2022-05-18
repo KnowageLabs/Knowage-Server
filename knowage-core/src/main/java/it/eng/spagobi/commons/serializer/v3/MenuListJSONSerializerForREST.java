@@ -40,8 +40,11 @@ import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.Serializer;
 import it.eng.spagobi.commons.utilities.DocumentUtilities;
@@ -774,11 +777,29 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private void setPropertiesForObjectMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
-		if (childElem.isClickable() == true) {
-			temp2.put(TO, contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=" + childElem.getMenuId());
-		} else {
-			temp2.put("isClickable", "false");
+		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
+		try {
+			BIObject document = dao.loadBIObjectById(childElem.getObjId());
+			String documentLink = getDocumentLink(document);
+			if (childElem.isClickable() == true) {
+				temp2.put(TO, documentLink);
+			} else {
+				temp2.put("isClickable", "false");
+			}
+		} catch (Exception e) {
+			logger.error("Cannot load menu item for document: " + childElem.getObjId(), e);
 		}
+
+	}
+
+	private String getDocumentLink(BIObject document) {
+		String documentLabel = document.getLabel();
+		String enginePath;
+		if (document.getEngineLabel() != null && document.getEngineLabel().equals("knowageolapengine"))
+			enginePath = "olap";
+		else
+			enginePath = "document-composite";
+		return "/document-browser/" + enginePath + "/" + documentLabel;
 	}
 
 	private void setPropertiesForAdminWithUrlMenu(Menu childElem, Locale locale, JSONObject temp2, String path) throws JSONException {

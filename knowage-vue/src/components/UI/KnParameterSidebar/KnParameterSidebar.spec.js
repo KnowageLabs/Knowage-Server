@@ -468,10 +468,6 @@ describe('Parameter Sidebar - Document has parameters', () => {
         expect(wrapper.vm.parameters.filterStatus[1].driverDefaultValue).toStrictEqual([{ value: '5', desc: '5' }])
         expect(wrapper.find('[data-test="parameter-input-7635"]').wrapperElement._value).toBe('5')
 
-        expect(wrapper.vm.parameters.filterStatus[2].type).toBe('DATE')
-        expect(wrapper.vm.parameters.filterStatus[2].driverDefaultValue).toStrictEqual([{ value: '01/01/2002', desc: '2002-01-01#yyyy-mm-dd' }])
-        expect(wrapper.find('[data-test="parameter-date-input-7636"]').wrapperElement._value).toBe('01/01/2002')
-
         expect(wrapper.vm.parameters.filterStatus[0].selectionType).toBe('LIST')
         expect(wrapper.vm.parameters.filterStatus[0].driverDefaultValue).toStrictEqual([{ _col0: 'Non-Consumable', _col1: '0' }])
         expect(wrapper.vm.selectedParameterCheckbox[7632]).toStrictEqual(['Non-Consumable'])

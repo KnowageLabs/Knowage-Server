@@ -1,32 +1,62 @@
 import { mount } from '@vue/test-utils'
 import Avatar from 'primevue/avatar'
 import Badge from 'primevue/badge'
+import Button from 'primevue/button'
+import KnListButtonRenderer from './KnListButtonRenderer.vue'
 import Listbox from 'primevue/listbox'
 import Menu from 'primevue/menu'
 import KnListBox from './KnListBox.vue'
 import PrimeVue from 'primevue/config'
 
 const mockedOptions = [
-    { id: 1, label: 'label1', name: 'Name1', description: 'Desc1' },
-    { id: 2, label: 'label2', name: 'Name2', description: 'Desc2' },
-    { id: 3, label: 'label3', name: 'Name3', description: 'Desc3' }
+    {
+        id: 544,
+        name: '/albnale/admin',
+        description: '/albnale/admin',
+        roleTypeCD: 'ADMIN',
+        code: null,
+        roleTypeID: 32,
+        organization: 'DEMO',
+        isPublic: false
+    },
+    {
+        id: 450,
+        name: '/demo/admin',
+        description: '/demo/admin',
+        roleTypeCD: 'ADMIN',
+        code: null,
+        roleTypeID: 32,
+        organization: 'DEMO',
+        isPublic: false
+    },
+    {
+        id: 455,
+        name: '/demo/user',
+        description: '/demo/user',
+        roleTypeCD: 'USER',
+        code: '/demo/user',
+        roleTypeID: 31,
+        organization: 'DEMO',
+        isPublic: false
+    }
 ]
 
-const mockedsettings = {
-    defaultSortField: 'name',
-    interaction: {
-        parameterLabel: 'id',
-        parameterValue: 'id',
-        path: 'navigation-detail',
-        type: 'router'
-    },
+const mockedSettings = {
     buttons: [
         {
             emits: 'delete',
             icon: 'fas fa-trash-alt',
             label: 'common.delete'
         }
-    ]
+    ],
+    defaultSortField: 'name',
+    filterFields: ['name'],
+    interaction: {
+        type: 'event'
+    },
+    sortFields: ['name'],
+    textField: 'roleTypeCD',
+    titleField: 'name'
 }
 
 const $confirm = {
@@ -41,7 +71,7 @@ const factory = () => {
     return mount(KnListBox, {
         props: {
             options: mockedOptions,
-            settings: mockedsettings
+            settings: mockedSettings
         },
         global: {
             directives: {
@@ -51,6 +81,8 @@ const factory = () => {
             stubs: {
                 Avatar,
                 Badge,
+                Button,
+                KnListButtonRenderer,
                 Listbox,
                 Menu
             },
@@ -63,7 +95,7 @@ const factory = () => {
     })
 }
 
-describe('Cross-navigation Management loading', () => {
+describe('KnListBox loading', () => {
     it('the list shows an hint component when loaded empty', async () => {
         const wrapper = factory()
 
@@ -73,12 +105,46 @@ describe('Cross-navigation Management loading', () => {
         expect(wrapper.find('[data-test="list"]').html()).toContain('No available options')
     })
 })
-describe('Cross-navigation Management', () => {
-    it('shows a prompt when user click on a list item delete button to delete it', async () => {
+describe('KnListBox', () => {
+    it('shows list of items', async () => {
         const wrapper = factory()
-        console.log(wrapper.html())
-        const deleteButton = wrapper.find('[data-test="delete-button-0"]')
-        await deleteButton.trigger('click')
+
+        await wrapper.find('[data-test="list-item"]').trigger('click')
+
+        expect(wrapper.html()).toContain('/albnale/admin')
+        expect(wrapper.html()).toContain('/demo/admin')
+        expect(wrapper.html()).toContain('/demo/user')
     })
-    it('shows the detail when clicking on a item', () => {})
+    it('emits event with the clicked item on click', async () => {
+        const wrapper = factory()
+
+        await wrapper.find('[data-test="list-item"]').trigger('click')
+
+        expect(wrapper.emitted()['click'][0][0].item).toStrictEqual(mockedOptions[0])
+    })
+
+    it('filters the list', async () => {
+        const wrapper = factory()
+        const searchInput = wrapper.find('.p-inputtext')
+
+        expect(wrapper.html()).toContain('/albnale/admin')
+        expect(wrapper.html()).toContain('/demo/admin')
+        expect(wrapper.html()).toContain('/demo/user')
+
+        await searchInput.setValue('/albnale/admin')
+
+        expect(wrapper.html()).toContain('/albnale/admin')
+        expect(wrapper.html()).not.toContain('/demo/admin')
+        expect(wrapper.html()).not.toContain('/demo/user')
+    })
+
+    it('emitts event with item to delete', async () => {
+        const wrapper = factory()
+        const searchInput = wrapper.find('.p-inputtext')
+
+        await searchInput.setValue('/demo/admin')
+        await wrapper.find('[data-test="delete-button-0"]').trigger('click')
+
+        expect(wrapper.emitted().delete[0][0].item).toStrictEqual(mockedOptions[1])
+    })
 })

@@ -82,7 +82,7 @@ export default defineComponent({
             })
         },
         attachFolderToTree(folder: iNode, foldersWithMissingParent: iNode[], personalFolder: iNode) {
-            if (folder.parentId) {
+            if (folder.parentId && folder.parentId !== -1) {
                 let parentFolder = null as iNode | null
                 for (let i = 0; i < foldersWithMissingParent.length; i++) {
                     if (folder.parentId === foldersWithMissingParent[i].id && foldersWithMissingParent[i].data.codType !== 'USER_FUNCT') {

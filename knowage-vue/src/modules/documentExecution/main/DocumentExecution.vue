@@ -73,6 +73,8 @@
             <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :propDocument="document" :propMetadata="metadata" :propLoading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
             <DocumentExecutionMailDialog :visible="mailDialogVisible" @close="mailDialogVisible = false" @sendMail="onMailSave"></DocumentExecutionMailDialog>
             <DocumentExecutionLinkDialog :visible="linkDialogVisible" :linkInfo="linkInfo" :embedHTML="embedHTML" :propDocument="document" :parameters="linkParameters" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
+            <DocumentExecutionSelectCrossNavigationDialog :visible="destinationSelectDialogVisible" :crossNavigationDocuments="crossNavigationDocuments" @close="destinationSelectDialogVisible = false" @selected="onCrossNavigationSelected"></DocumentExecutionSelectCrossNavigationDialog>
+            <DocumentExecutionCNContainerDialog v-if="crossNavigationContainerData" :visible="crossNavigationContainerVisible" :data="crossNavigationContainerData" @close="onCrossNavigationContainerClose"></DocumentExecutionCNContainerDialog>
         </div>
     </div>
 </template>
@@ -97,6 +99,8 @@ import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
 import Olap from '../olap/Olap.vue'
 import moment from 'moment'
+import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
+import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
 
 const deepcopy = require('deepcopy')
 
@@ -115,7 +119,9 @@ export default defineComponent({
         TieredMenu,
         Registry,
         Dossier,
-        Olap
+        Olap,
+        DocumentExecutionSelectCrossNavigationDialog,
+        DocumentExecutionCNContainerDialog
     },
     props: { id: { type: String }, parameterValuesMap: { type: Object }, tabKey: { type: String } },
     emits: ['close', 'updateDocumentName', 'parametersChanged'],
@@ -154,7 +160,12 @@ export default defineComponent({
             loading: false,
             olapDesignerMode: false,
             sessionEnabled: false,
-            dateFormat: '' as string
+            dateFormat: '' as string,
+            destinationSelectDialogVisible: false,
+            crossNavigationDocuments: [] as any[],
+            angularData: null as any,
+            crossNavigationContainerVisible: false,
+            crossNavigationContainerData: null as any
         }
     },
     async activated() {
@@ -334,12 +345,20 @@ export default defineComponent({
             window.print()
         },
         export(type: string) {
-            const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
-            let tempFrame = window.frames[tempIndex]
-            while (tempFrame && tempFrame.name !== 'documentFrame' + tempIndex) {
-                tempFrame = tempFrame[0].frames
+            if (this.document.typeCode === 'OLAP') {
+                this.exportOlap(type)
+            } else {
+                const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+                let tempFrame = window.frames[tempIndex]
+                while (tempFrame && tempFrame.name !== 'documentFrame' + tempIndex) {
+                    tempFrame = tempFrame[0].frames
+                }
+                tempFrame.postMessage({ type: 'export', format: type.toLowerCase() }, '*')
             }
-            tempFrame.postMessage({ type: 'export', format: type.toLowerCase() }, '*')
+        },
+        exportOlap(type: string) {
+            const url = type === 'PDF' ? `/knowagewhatifengine/restful-services/1.0/model/export/pdf?SBI_EXECUTION_ID=${this.sbiExecutionId}` : `/knowagewhatifengine/restful-services/1.0/model/export/excel?SBI_EXECUTION_ID=${this.sbiExecutionId}`
+            window.open(url)
         },
         openMailDialog() {
             this.mailDialogVisible = true
@@ -400,12 +419,12 @@ export default defineComponent({
                 this.mode = 'iframe'
             }
         },
-        async loadPage(initialLoading: boolean = false) {
+        async loadPage(initialLoading: boolean = false, documentLabel: string | null = null) {
             this.loading = true
 
             await this.loadFilters(initialLoading)
             if (this.filtersData?.isReadyForExecution) {
-                await this.loadURL(null)
+                await this.loadURL(null, documentLabel)
                 await this.loadExporters()
             } else if (this.filtersData?.filterStatus) {
                 this.parameterSidebarVisible = true
@@ -442,7 +461,7 @@ export default defineComponent({
                 return
             }
 
-            if (this.sessionEnabled) {
+            if (this.sessionEnabled && !this.document.navigationParams) {
                 const tempFilters = sessionStorage.getItem(this.document.label)
                 if (tempFilters) {
                     this.filtersData = JSON.parse(tempFilters) as { filterStatus: iParameter[]; isReadyForExecution: boolean }
@@ -518,8 +537,7 @@ export default defineComponent({
             Object.keys(this.document.navigationParams).forEach((key: string) => {
                 for (let i = 0; i < this.filtersData.filterStatus.length; i++) {
                     const tempParam = this.filtersData.filterStatus[i]
-
-                    if (key === tempParam.urlName) {
+                    if (key === tempParam.urlName || key === tempParam.label) {
                         tempParam.parameterValue[0].value = this.document.navigationParams[key]
                         if (this.document.navigationParams[key + '_field_visible_description']) tempParam.parameterValue[0].description = this.document.navigationParams[key + '_field_visible_description']
                         if (tempParam.selectionType === 'COMBOBOX') this.setCrossNavigationComboParameterDescription(tempParam)
@@ -541,11 +559,15 @@ export default defineComponent({
 
             return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
         },
-        async loadURL(olapParameters: any) {
+        async loadURL(olapParameters: any, documentLabel: string | null = null) {
             const postData = { label: this.document.label, role: this.userRole, parameters: olapParameters ? olapParameters : this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
 
             if (this.sbiExecutionId) {
                 postData.SBI_EXECUTION_ID = this.sbiExecutionId
+            }
+
+            if (this.document.typeCode === 'MAP') {
+                postData.EDIT_MODE = 'edit_map'
             }
 
             await this.$http
@@ -565,13 +587,13 @@ export default defineComponent({
                 this.sbiExecutionId = this.urlData?.sbiExecutionId as string
             }
 
-            await this.sendForm()
+            await this.sendForm(documentLabel)
         },
         async loadExporters() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
-        async sendForm() {
-            const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+        async sendForm(documentLabel: string | null = null) {
+            let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label) as any
 
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
             const postObject = { params: { document: null } as any, url: documentUrl.split('?')[0] }
@@ -591,7 +613,7 @@ export default defineComponent({
                 postForm.id = 'postForm_' + postObject.params.document
                 postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
                 postForm.method = 'post'
-                postForm.target = 'documentFrame' + tempIndex
+                postForm.target = tempIndex !== -1 ? 'documentFrame' + tempIndex : documentLabel
                 postForm.acceptCharset = 'UTF-8'
                 document.body.appendChild(postForm)
             }
@@ -872,6 +894,7 @@ export default defineComponent({
             await this.loadPage()
         },
         async executeCrossNavigation(event: any) {
+            this.angularData = event.data
             await this.loadCrossNavigationByDocument(event.data)
         },
         async loadCrossNavigationByDocument(angularData: any) {
@@ -881,25 +904,82 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
-            this.document = { ...temp[0].document, navigationParams: this.formatNavigationParams(angularData.otherOutputParameters, temp[0].navigationParams) }
-
-            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
-            if (index !== -1) {
-                this.breadcrumbs[index].document = this.document
+            if (temp.length > 1) {
+                this.crossNavigationDocuments = temp
+                this.destinationSelectDialogVisible = true
             } else {
-                this.breadcrumbs.push({ label: this.document.label, document: this.document })
+                this.loadCrossNavigation(temp[0], angularData)
             }
+        },
+        async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
+            this.formatAngularOutputParameters(angularData.otherOutputParameters)
+            const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument.navigationParams)
 
-            await this.loadPage()
+            this.document = { ...crossNavigationDocument?.document, navigationParams: navigationParams }
+
+            const popupOptions = crossNavigationDocument.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
+
+            if (crossNavigationDocument.crossType === 2) {
+                this.openCrossNavigationInNewWindow(popupOptions, crossNavigationDocument, navigationParams)
+            } else if (crossNavigationDocument.crossType === 1) {
+                const documentLabel = crossNavigationDocument?.document.label
+                this.crossNavigationContainerData = { documentLabel: documentLabel, iFrameName: documentLabel }
+                this.crossNavigationContainerVisible = true
+                await this.loadPage(false, documentLabel)
+            } else {
+                const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+                if (index !== -1) {
+                    this.breadcrumbs[index].document = this.document
+                } else {
+                    this.breadcrumbs.push({ label: this.document.label, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb })
+                }
+
+                await this.loadPage()
+            }
+        },
+        openCrossNavigationInNewWindow(popupOptions: any, crossNavigationDocument: any, navigationParams: any) {
+            if (!crossNavigationDocument || !crossNavigationDocument.document) return
+            const parameters = encodeURI(JSON.stringify(navigationParams))
+            const url =
+                process.env.VUE_APP_HOST_URL +
+                `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${crossNavigationDocument.document.id}&OBJECT_LABEL=${crossNavigationDocument.document.label}&SELECTED_ROLE=${this.sessionRole}&SBI_EXECUTION_ID=null&OBJECT_NAME=${crossNavigationDocument.document.name}&CROSS_PARAMETER=${parameters}`
+            window.open(url, '_blank', `toolbar=0,status=0,menubar=0,width=${popupOptions.width || '800'},height=${popupOptions.height || '600'}`)
+        },
+        formatAngularOutputParameters(otherOutputParameters: any[]) {
+            const startDocumentInputParameters = deepcopy(this.document.drivers)
+            const keys = [] as any[]
+            otherOutputParameters.forEach((parameter: any) => keys.push(Object.keys(parameter)[0]))
+
+            for (let i = 0; i < startDocumentInputParameters.length; i++) {
+                if (!keys.includes(startDocumentInputParameters[i].label)) {
+                    const tempObject = {} as any
+                    tempObject[startDocumentInputParameters[i].label] = this.getParameterValueForCrossNavigation(startDocumentInputParameters[i].label)
+                    otherOutputParameters.push(tempObject)
+                }
+            }
+        },
+        getParameterValueForCrossNavigation(parameterLabel: string) {
+            const index = this.filtersData.filterStatus?.findIndex((param: any) => param.label === parameterLabel)
+            return index !== -1 ? this.filtersData.filterStatus[index].parameterValue[0].value : ''
         },
         formatNavigationParams(otherOutputParameters: any[], navigationParams: any) {
             let formatedParams = {} as any
 
             otherOutputParameters.forEach((el: any) => {
-                const index = Object.keys(navigationParams).findIndex((key: string) => key === Object.keys(el)[0])
-                if (index !== -1) {
-                    formatedParams[Object.keys(el)[0]] = el[Object.keys(el)[0]]
-                    formatedParams[Object.keys(el)[0] + '_field_visible_description'] = el[Object.keys(el)[0]]
+                let found = false
+                let label = ''
+
+                for (let i = 0; i < Object.keys(navigationParams).length; i++) {
+                    if (navigationParams[Object.keys(navigationParams)[i]].value.label === Object.keys(el)[0]) {
+                        found = true
+                        label = Object.keys(navigationParams)[i]
+                        break
+                    }
+                }
+
+                if (found) {
+                    formatedParams[label] = el[Object.keys(el)[0]]
+                    formatedParams[label + '_field_visible_description'] = el[Object.keys(el)[0]]
                 }
             })
 
@@ -1000,6 +1080,15 @@ export default defineComponent({
             })
 
             sessionStorage.setItem(this.document.label, JSON.stringify(tempFilters))
+        },
+        async onCrossNavigationSelected(event: any) {
+            this.destinationSelectDialogVisible = false
+            await this.loadCrossNavigation(event, this.angularData)
+        },
+        onCrossNavigationContainerClose() {
+            this.crossNavigationContainerData = null
+            this.crossNavigationContainerVisible = true
+            this.onBreadcrumbClick(this.breadcrumbs[0])
         }
     }
 })

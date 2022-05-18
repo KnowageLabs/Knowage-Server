@@ -17,10 +17,19 @@
  */
 package it.eng.spagobi.tools.scheduler.jobs;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.monitoring.dao.AuditManager;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 
 public class CleanAuditJob extends AbstractSpagoBIJob implements Job {
 	static private Logger logger = Logger.getLogger(CleanAuditJob.class);
@@ -29,7 +38,6 @@ public class CleanAuditJob extends AbstractSpagoBIJob implements Job {
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		logger.debug("IN");
 		try {
-			this.setTenant(jobExecutionContext);
 			executeInternal();
 		} finally {
 			this.unsetTenant();
@@ -41,7 +49,18 @@ public class CleanAuditJob extends AbstractSpagoBIJob implements Job {
 
 		logger.debug("IN");
 		try {
-			// TODO: call deletion with periodic value
+			// call deletion with periodic value
+			String periodicValue = SingletonConfig.getInstance().getConfigValue("KNOWAGE.AUDIT_DATA_RETENTION");
+			Integer period = Integer.parseInt(periodicValue);
+			List<SbiTenant> allTenants = DAOFactory.getTenantsDAO().loadAllTenants();
+			for (SbiTenant sbiTenant : allTenants) {
+
+				TenantManager.setTenant(new Tenant(sbiTenant.getName()));
+				AuditManager auditManager = AuditManager.getInstance();
+				auditManager.eraseAuditPeriodic(period);
+				this.unsetTenant();
+			}
+
 			logger.debug("Audit cleaning ended succesfully!");
 		} catch (Exception e) {
 			logger.error("Error while executiong job ", e);

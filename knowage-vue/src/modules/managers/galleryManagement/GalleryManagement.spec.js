@@ -1,4 +1,4 @@
-import GalleryManagement from './galleryManagement.vue'
+import GalleryManagement from './GalleryManagement.vue'
 
 describe('GalleryManagement', () => {
   // Inspect the raw component options
