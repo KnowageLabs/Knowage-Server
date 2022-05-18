@@ -288,7 +288,7 @@ export default defineComponent({
             }
         },
         isAvroReady(dsId: Number) {
-            if (this.avroDatasets.indexOf(dsId) >= 0) return true
+            if (this.avroDatasets.indexOf(dsId) >= 0 || (dsId && this.avroDatasets.indexOf(dsId.toString())) >= 0) return true
             else return false
         },
         async getAllAvroDataSets() {
