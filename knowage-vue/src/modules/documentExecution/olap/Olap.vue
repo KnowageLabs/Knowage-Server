@@ -96,7 +96,7 @@
     <AlgorithmDialog v-if="algorithmDialogVisible" :visible="algorithmDialogVisible" :sbiExecutionId="id" @close="algorithmDialogVisible = false" />
     <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" :olapDesignerMode="olapDesignerMode" :parameters="parameters" :profileAttributes="profileAttributes" :olapDesigner="olapDesigner" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
     <OlapSaveNewVersionDialog :visible="saveVersionDialogVisible" :id="id" @close="saveVersionDialogVisible = false"></OlapSaveNewVersionDialog>
-    <OlapDeleteVersionsDialog :visible="deleteVersionDialogVisible" :id="id" :propOlapVersions="olapVersions" @close="deleteVersionDialogVisible = false"></OlapDeleteVersionsDialog>
+    <OlapDeleteVersionsDialog :visible="deleteVersionDialogVisible" :id="id" :propOlapVersions="olapVersions" :olap="olap" @close="deleteVersionDialogVisible = false"></OlapDeleteVersionsDialog>
 </template>
 
 <script lang="ts">
