@@ -1970,6 +1970,7 @@
         },
         "timespan": {
             "cloneAlreadyDefined": "The next timespan is already defiend",
+            "hint": "No timespan selected",
             "invalidDatesError": "The dates are not valid",
             "noIntervalError": "Please define at least one interval",
             "startDateGreaterError": "Start date greater than end date",
