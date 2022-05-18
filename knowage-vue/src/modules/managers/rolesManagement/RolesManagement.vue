@@ -11,7 +11,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <KnListBox class="kn-height-full" :options="roles" :settings="rolesDecriptor.knListSettings" @click="showForm" @delete.stop="deleteRoleConfirm(slotProps.option.id)"></KnListBox>
+                <KnListBox class="kn-height-full" :options="roles" :settings="rolesDecriptor.knListSettings" @click="showForm" @delete.stop="deleteRoleConfirm"></KnListBox>
             </div>
 
             <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-router-view">
@@ -83,12 +83,13 @@ export default defineComponent({
                 })
             }
         },
-        deleteRoleConfirm(roleId: number) {
+        deleteRoleConfirm(event: any) {
+            if (!event.item) return
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteTitle'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteRole(roleId)
+                accept: () => this.deleteRole(event.item.id)
             })
         },
         async deleteRole(roleId: number) {
