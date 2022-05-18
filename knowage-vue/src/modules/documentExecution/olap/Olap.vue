@@ -95,7 +95,7 @@
     <ScenarioWizard v-if="scenarioWizardVisible" :visible="scenarioWizardVisible" :hiddenFormDataProp="hiddenFormDataProp" :sbiExecutionId="id" :olapDesignerProp="olapDesigner" @saveScenario="saveScenario" @deleteScenario="deleteScenario" @close="scenarioWizardVisible = false" />
     <AlgorithmDialog v-if="algorithmDialogVisible" :visible="algorithmDialogVisible" :sbiExecutionId="id" @close="algorithmDialogVisible = false" />
     <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" :olapDesignerMode="olapDesignerMode" :parameters="parameters" :profileAttributes="profileAttributes" :olapDesigner="olapDesigner" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
-    <OlapSaveNewVersionDialog :visible="saveVersionDialogVisible" :id="id" @close="saveVersionDialogVisible = false"></OlapSaveNewVersionDialog>
+    <OlapSaveNewVersionDialog :visible="saveVersionDialogVisible" :id="id" @close="saveVersionDialogVisible = false" @newVersionSaved="onNewVersionSaved"></OlapSaveNewVersionDialog>
     <OlapDeleteVersionsDialog :visible="deleteVersionDialogVisible" :id="id" :propOlapVersions="olapVersions" :olap="olap" @close="deleteVersionDialogVisible = false"></OlapDeleteVersionsDialog>
 </template>
 
@@ -983,6 +983,11 @@ export default defineComponent({
                 }
             }
             return versionIsSet
+        },
+        onNewVersionSaved(olap: iOlap) {
+            this.olap = olap
+            this.formatOlapTable()
+            this.saveVersionDialogVisible = false
         }
     }
 })
