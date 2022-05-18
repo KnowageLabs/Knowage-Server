@@ -936,6 +936,7 @@ export default defineComponent({
             }
         },
         handleTableDoubleClick(event: any) {
+            if (!this.olapHasScenario) return
             if (!event.target.attributes.cell) return
             let clickLocation = event.target.getBoundingClientRect()
 
@@ -959,19 +960,21 @@ export default defineComponent({
             this.$refs.whatifInput.style.display = 'none'
         },
         async onWhatifInput() {
-            let postData = { expression: this.whatifInputNewValue }
+            if (this.whatifInputNewValue != this.whatifInputOldValue) {
+                let postData = { expression: this.whatifInputNewValue }
+                this.loading = true
+                await this.$http
+                    .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/setValue/${this.whatifInputOrdinal}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                    .then((response: AxiosResponse<any>) => {
+                        this.olap = response.data
+                        this.closeWhatifInput()
+                    })
+                    .catch(() => {})
+                    .finally(() => (this.loading = false))
 
-            this.loading = true
-            await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/setValue/${this.whatifInputOrdinal}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
-                .then((response: AxiosResponse<any>) => {
-                    this.olap = response.data
-                    this.closeWhatifInput()
-                })
-                .catch(() => {})
-                .finally(() => (this.loading = false))
-
-            this.formatOlapTable()
+                this.formatOlapTable()
+            }
+            this.closeWhatifInput()
         },
         checkIfVersionIsSet() {
             let versionIsSet = false
