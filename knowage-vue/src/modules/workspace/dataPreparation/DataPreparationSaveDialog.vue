@@ -154,8 +154,8 @@ export default defineComponent({
             else return this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process', processDefinition)
         },
         saveOrUpdateInstance(processId, datasetDefinition) {
-            if (this.instanceId && this.instanceId != '') return this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/instance/${this.instanceId}`, datasetDefinition)
-            else return this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/' + processId + '/instance', datasetDefinition)
+            if (this.instanceId && this.instanceId != '') return this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/instance/${this.instanceId}`, datasetDefinition)
+            else return this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/' + processId + '/instance', datasetDefinition)
         },
         createDatasetDefinition() {
             let toReturn = {}

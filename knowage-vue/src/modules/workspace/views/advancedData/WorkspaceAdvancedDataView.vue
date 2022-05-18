@@ -431,7 +431,7 @@ export default defineComponent({
         async updateDatasetAndSave(newConfig) {
             this.showMonitoring = false
 
-            await this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config }).then(
+            await this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config },{ headers: { Accept: 'application/json, */*'} }).then(
                 () => {
                     this.loadDataset(this.selectedDataset.id)
                 },
