@@ -947,7 +947,7 @@ export default defineComponent({
             } else if (this.checkIfModelIsLocked()) {
                 return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.editErrorLocked') })
             } else if (!this.checkIfMeasureIsEditable(event.target.getAttribute('measurename'))) {
-                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: 'NOT EDITABLE' })
+                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.notEditable') })
             } else {
                 // @ts-ignore
                 this.$refs.whatifInput.style.top = `${clickLocation.top}px`
