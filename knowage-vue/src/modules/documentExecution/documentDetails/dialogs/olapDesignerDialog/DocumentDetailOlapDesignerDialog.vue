@@ -5,6 +5,10 @@
                 <template #start>
                     <span>{{ $t('documentExecution.documentDetails.designerDialog.olapDesigner') }}</span>
                 </template>
+                <template #end>
+                    <Button class="kn-button kn-button--primary olap-designer-toolbar-button" @click="closeDialog"> {{ $t('common.back') }}</Button>
+                    <Button class="kn-button kn-button--primary olap-designer-toolbar-button" @click="start"> {{ $t('common.start') }}</Button>
+                </template>
             </Toolbar>
         </template>
         <ProgressSpinner class="kn-progress-spinner" v-if="loading" />
@@ -28,8 +32,8 @@
                 </span>
             </div>
         </div>
-        <DocumentDetailXMLAForm v-if="type === 'xmla'" :xmlModel="xmlModel"></DocumentDetailXMLAForm>
-        <DocumentDetailMondrianForm v-else></DocumentDetailMondrianForm>
+        <DocumentDetailXMLAForm v-if="type === 'xmla'" class="p-m-4" :xmlModel="xmlModel"></DocumentDetailXMLAForm>
+        <DocumentDetailMondrianForm v-else class="p-m-4" :mondrianModel="mondrianModel" :mondrianSchemas="mondrianSchemas"></DocumentDetailMondrianForm>
     </Dialog>
 </template>
 
@@ -48,6 +52,7 @@ export default defineComponent({
     name: 'document-detail-olap-designer-dialog',
     components: { Dialog, DocumentDetailXMLAForm, DocumentDetailMondrianForm, Dropdown, ProgressSpinner },
     props: { visible: { type: Boolean }, selectedDocument: { type: Object as PropType<iDocument> } },
+    emits: ['designerStarted', 'close'],
     data() {
         return {
             descriptor,
@@ -68,12 +73,35 @@ export default defineComponent({
         this.loadDocument()
     },
     methods: {
-        loadDocument() {
+        async loadDocument() {
             this.document = this.selectedDocument ? { ...this.selectedDocument } : ({} as iDocument)
+
+            this.loadMondrianSchemaResources()
         },
         async loadMondrianSchemaResources() {
             this.$store.commit('setLoading', true)
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource`).then((response: AxiosResponse<any>) => (this.mondrianSchemas = response.data))
+            this.$store.commit('setLoading', false)
+        },
+        closeDialog() {
+            this.$emit('close')
+            this.type = 'xmla'
+            this.xmlModel = { address: '', parameters: [] }
+            this.mondrianModel = {} as iMondrianTemplate
+        },
+        async start() {
+            console.log(' >>> START xmlModel: ', this.xmlModel)
+            console.log(' >>> START mondrianModel: ', this.mondrianModel)
+            // TODO - REMOVE HARCODED SBI_EXECUTION_ID
+            const postData = this.type === 'xmla' ? { ...this.xmlModel } : { ...this.mondrianModel }
+            this.$store.commit('setLoading', true)
+            await this.$http
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes?SBI_EXECUTION_ID=d4d3e96cd68311ec84fe71c8fc9b4bdb`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .then((response: AxiosResponse<any>) => {
+                    console.log('RESPONSE DATA: ', response.data)
+                    this.$emit('designerStarted', this.selectedDocument)
+                })
+                .catch(() => {})
             this.$store.commit('setLoading', false)
         }
     }
@@ -96,5 +124,9 @@ export default defineComponent({
         padding: 0;
         margin: 0;
     }
+}
+
+.olap-designer-toolbar-button {
+    font-size: 0.75rem;
 }
 </style>

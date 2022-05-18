@@ -164,6 +164,7 @@
         "sort": "sort",
         "source": "Source",
         "sqlExpression": "SQL expression",
+        "start": "Start",
         "state": "State",
         "status": "Status",
         "style": "Style",
@@ -340,10 +341,15 @@
                 "title": "Data Lineage"
             },
             "designerDialog": {
+                "addParameter": "Add Parameter",
                 "mondrian": "Mondrian",
                 "olapDesigner": "Olap Designer",
+                "selectCube": "Select Cube",
+                "selectMondrianSchema": "Select Mondrian Schema",
                 "templateType": "Select type of Template",
-                "xmla": "XMLA Server"
+                "xmla": "XMLA Server",
+                "xmlaAddress": "XMLA Address",
+                "xmlaParameters": "XMLA Parameters"
             },
             "drivers": {
                 "ad": "Driver AD",

@@ -1,4 +1,7 @@
 {
+    "iconColumnStyle": {
+        "width": "20%"
+    },
     "typeOptions": [
         {
             "label": "documentExecution.documentDetails.designerDialog.xmla",
@@ -7,6 +10,16 @@
         {
             "label": "documentExecution.documentDetails.designerDialog.mondrian",
             "value": "mondrian"
+        }
+    ],
+    "xmlaParametersColumns": [
+        {
+            "field": "name",
+            "header": "common.name"
+        },
+        {
+            "field": "value",
+            "header": "common.value"
         }
     ]
 }

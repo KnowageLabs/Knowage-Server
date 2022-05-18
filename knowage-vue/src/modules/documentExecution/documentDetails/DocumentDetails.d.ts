@@ -240,7 +240,7 @@ export interface iMondrianSchema {
 
 export interface iXMLATemplate {
     address: string;
-    parameters: any[]
+    parameters: { name: string, value: string }[]
 }
 
 export interface iMondrianTemplate {
