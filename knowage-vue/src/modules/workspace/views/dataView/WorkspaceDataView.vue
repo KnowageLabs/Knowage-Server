@@ -62,7 +62,7 @@
                     :key="index"
                     :viewType="'dataset'"
                     :document="dataset"
-                    :isAvroReady="isAvroReady(dataset.label)"
+                    :isAvroReady="isAvroReady(dataset.id)"
                     @previewDataset="previewDataset"
                     @editDataset="editDataset"
                     @openDatasetInQBE="openDatasetInQBE($event)"
@@ -84,7 +84,7 @@
         :visible="showDetailSidebar"
         :viewType="'dataset'"
         :document="selectedDataset"
-        :isAvroReady="isAvroReady(selectedDataset.label)"
+        :isAvroReady="isAvroReady(selectedDataset.id)"
         :datasetCategories="datasetCategories"
         @previewDataset="previewDataset"
         @editDataset="editDataset"
@@ -256,13 +256,13 @@ export default defineComponent({
                 if (message.body) {
                     let avroJobResponse = JSON.parse(message.body)
                     if (avroJobResponse.statusOk) {
-                        this.$store.commit('setInfo', { title: 'Dataset ' + avroJobResponse.dsLabel + ' prepared successfully' })
-                        this.loadedAvros.push(avroJobResponse.dsLabel)
-                        this.avroDatasets.push(avroJobResponse.dsLabel)
+                        this.$store.commit('setInfo', { title: 'Dataset prepared successfully' })
+                        this.loadedAvros.push(avroJobResponse.dsId)
+                        this.avroDatasets.push(avroJobResponse.dsId)
                     } else {
-                        this.$store.commit('setError', { title: 'Cannot prepare dataset ' + avroJobResponse.dsLabel, msg: avroJobResponse.errorMessage })
+                        this.$store.commit('setError', { title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
                     }
-                    let idx = this.loadingAvros.indexOf(avroJobResponse.dsLabel)
+                    let idx = this.loadingAvros.indexOf(avroJobResponse.dsId)
                     if (idx >= 0) this.loadingAvros.splice(idx, 1)
                 } else {
                     this.$store.commit('setError', { title: 'Websocket error', msg: 'got empty message' })
@@ -309,10 +309,10 @@ export default defineComponent({
             await this.getAllData()
         },
         isAvroLoaded(dataset) {
-            return this.loadedAvros.indexOf(dataset.label) >= 0
+            return this.loadedAvros.indexOf(dataset.id) >= 0
         },
         isAvroLoading(dataset) {
-            return this.loadingAvros.indexOf(dataset.label) >= 0
+            return this.loadingAvros.indexOf(dataset.id) >= 0
         },
         getDatasets(filter: string) {
             this.loading = true
@@ -408,63 +408,52 @@ export default defineComponent({
             if (this.selectedDataset.dsTypeCd == 'File') this.showDatasetDialog = true
             else if (this.selectedDataset.dsTypeCd == 'Prepared') this.showEditPreparedDatasetDialog = true
         },
-        isAvroReady(dsLabel: String) {
-            if (this.avroDatasets.indexOf(dsLabel) >= 0) return true
+        isAvroReady(dsId: Number) {
+            if (this.avroDatasets.indexOf(dsId) >= 0 || (dsId && this.avroDatasets.indexOf(dsId.toString())) >= 0) return true
             else return false
         },
-        async generateAvro(dataset: any) {
-            if (dataset) {
-                // launch avro export job
-                this.$http
-                    .post(
-                        process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${dataset.id}`,
-                        {},
-                        {
-                            headers: {
-                                Accept: 'application/json, text/plain, */*',
-                                'Content-Type': 'application/json;charset=UTF-8'
-                            }
+        async generateAvro(dsId: Number) {
+            // launch avro export job
+            this.$http
+                .post(
+                    process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${dsId}`,
+                    {},
+                    {
+                        headers: {
+                            Accept: 'application/json, text/plain, */*',
+                            'Content-Type': 'application/json;charset=UTF-8'
                         }
-                    )
-                    .then(() => {
-                        this.$store.commit('setInfo', {
-                            title: this.$t('workspace.myData.isPreparing')
-                        })
-                        this.loadingAvros.push(dataset.label)
-                        let idx = this.loadedAvros.indexOf(dataset.label)
-                        if (idx >= 0) this.loadedAvros.splice(idx, 1)
+                    }
+                )
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('workspace.myData.isPreparing')
                     })
-                    .catch(() => {})
+                    this.loadingAvros.push(dsId)
+                    let idx = this.loadedAvros.indexOf(dsId)
+                    if (idx >= 0) this.loadedAvros.splice(idx, 1)
+                })
+                .catch(() => {})
 
-                // listen on websocket for avro export job to be finished
-                this.client.publish({ destination: '/app/prepare', body: dataset.label })
-            }
+            // listen on websocket for avro export job to be finished
+            this.client.publish({ destination: '/app/prepare', body: dsId })
         },
         openDataPreparation(dataset: any) {
             if (dataset.dsTypeCd == 'Prepared') {
                 //edit existing data prep
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.label}`).then(
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
                     (response: AxiosResponse<any>) => {
                         let instanceId = response.data.configuration.dataPrepInstanceId
                         this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
                             (response: AxiosResponse<any>) => {
                                 let transformations = response.data.definition
                                 let processId = response.data.id
-                                let datasetLabel = response.data.instance.dataSetLabel
-                                if (this.isAvroReady(datasetLabel))
+                                let datasetId = response.data.instance.dataSetId
+                                if (this.isAvroReady(datasetId))
                                     // check if Avro file has been deleted or not
-                                    this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
+                                    this.$router.push({ name: 'data-preparation', params: { id: datasetId, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
                                 else {
-                                    this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${datasetLabel}`).then(
-                                        (response: AxiosResponse<any>) => {
-                                            this.generateAvro(response.data[0])
-                                        },
-                                        () => {
-                                            this.$store.commit('setError', {
-                                                title: 'Cannot open data preparation'
-                                            })
-                                        }
-                                    )
+                                    this.generateAvro(datasetId)
                                 }
                             },
                             () => {
@@ -478,11 +467,11 @@ export default defineComponent({
                         })
                     }
                 )
-            } else if (this.isAvroReady(dataset.label)) {
+            } else if (this.isAvroReady(dataset.id)) {
                 // original dataset already exported in Avro
-                this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+                this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
             } else {
-                this.generateAvro(dataset)
+                this.generateAvro(dataset.id)
             }
         },
         openDatasetInQBE(dataset: any) {
@@ -587,7 +576,7 @@ export default defineComponent({
                 })
         },
         datasetPreparation(dataset: any) {
-            this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+            this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
         },
 
         deleteDatasetConfirm(dataset: any) {

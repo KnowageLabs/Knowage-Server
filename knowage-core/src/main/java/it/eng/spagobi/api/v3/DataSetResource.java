@@ -401,13 +401,14 @@ public class DataSetResource {
 	 *
 	 */
 	@GET
-	@Path("/advanced/{label}")
+	@Path("/advanced/{dsId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public SbiDataSet getAdvancedDataSet(@PathParam("label") String label) {
+	public SbiDataSet getAdvancedDataSet(@PathParam("dsId") int dsId) {
 
 		try {
-			SbiDataSet dataSet = DAOFactory.getSbiDataSetDAO().loadSbiDataSetByLabel(label);
+			final UserProfile userProfile = getUserProfile();
+			SbiDataSet dataSet = DAOFactory.getSbiDataSetDAO().loadSbiDataSetByIdAndOrganiz(dsId, userProfile.getOrganization());
 			return dataSet;
 
 		} catch (Exception t) {
@@ -424,8 +425,8 @@ public class DataSetResource {
 	@Path("/avro")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public List<String> getPreparedDataSets() {
-		List<String> preparedDataSets = new ArrayList<String>();
+	public List<String> getAvroDataSets() {
+		List<String> avroDataSets = new ArrayList<String>();
 		try {
 			final UserProfile userProfile = getUserProfile();
 			java.nio.file.Path avroExportFolder = Paths.get(SpagoBIUtilities.getRootResourcePath(), userProfile.getOrganization(), "dataPreparation",
@@ -434,14 +435,14 @@ public class DataSetResource {
 			for (int i = 0; i < datasets.length; i++) {
 				boolean avroReady = new File(datasets[i], "ready").exists();
 				if (avroReady) {
-					preparedDataSets.add(datasets[i].getName());
+					avroDataSets.add(datasets[i].getName());
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Cannot get list of prepared datasets", e);
+			logger.error("Cannot get list of Avro datasets", e);
 			return new ArrayList<String>();
 		}
-		return preparedDataSets;
+		return avroDataSets;
 	}
 
 	/**

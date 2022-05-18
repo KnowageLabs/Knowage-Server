@@ -193,7 +193,7 @@ export default defineComponent({
         async loadDataset(datasetLabel: string) {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${datasetLabel}`)
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/id/${datasetId}`)
                 .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0]
                 })
@@ -259,7 +259,7 @@ export default defineComponent({
             this.creationMenuButtons.push({ key: '0', label: this.$t('workspace.myData.prepareData'), visible: true })
         },
         async previewDataset(dataset: any) {
-            await this.loadDataset(dataset.label)
+            await this.loadDataset(dataset.id)
             this.previewDialogVisible = true
         },
         editDataset() {
@@ -272,17 +272,17 @@ export default defineComponent({
         openDataPreparation(dataset: any) {
             if (dataset.dsTypeCd == 'Prepared') {
                 //edit existing data prep
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.label}`).then(
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
                     (response: AxiosResponse<any>) => {
                         let instanceId = response.data.configuration.dataPrepInstanceId
                         this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
                             (response: AxiosResponse<any>) => {
                                 let transformations = response.data.definition
                                 let processId = response.data.id
-                                let datasetLabel = response.data.instance.dataSetLabel
-                                if (this.isAvroReady(datasetLabel))
+                                let datasetId = response.data.instance.dataSetId
+                                if (this.isAvroReady(datasetId))
                                     // check if Avro file has been deleted or not
-                                    this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
+                                    this.$router.push({ name: 'data-preparation', params: { id: datasetId, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
                                 else {
                                     this.$store.commit('setInfo', {
                                         title: 'Avro file is missing',
@@ -301,9 +301,9 @@ export default defineComponent({
                         })
                     }
                 )
-            } else if (this.isAvroReady(dataset.label)) {
+            } else if (this.isAvroReady(dataset.id)) {
                 // original dataset already exported in Avro
-                this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+                this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
             } else {
                 this.$store.commit('setInfo', {
                     title: 'Avro file is missing',
@@ -311,8 +311,8 @@ export default defineComponent({
                 })
             }
         },
-        isAvroReady(dsLabel: String) {
-            if (this.avroDatasets.indexOf(dsLabel) >= 0) return true
+        isAvroReady(dsId: Number) {
+            if (this.avroDatasets.indexOf(dsId) >= 0 || (dsId && this.avroDatasets.indexOf(dsId.toString())) >= 0) return true
             else return false
         },
         async getAllAvroDataSets() {
@@ -379,7 +379,7 @@ export default defineComponent({
             this.loading = false
         },
         async cloneDataset(dataset: any) {
-            await this.loadDataset(dataset.label)
+            await this.loadDataset(dataset.id)
             this.cloneDialogVisible = true
         },
         async handleDatasetClone(dataset: any) {
@@ -400,7 +400,7 @@ export default defineComponent({
                 })
         },
         datasetPreparation(dataset: any) {
-            this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+            this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
         },
 
         deleteDatasetConfirm(dataset: any) {
@@ -455,9 +455,9 @@ export default defineComponent({
         async updateDatasetAndSave(newConfig) {
             this.showMonitoring = false
 
-            await this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config }).then(
+            await this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config },{ headers: { Accept: 'application/json, */*'} }).then(
                 () => {
-                    this.loadDataset(this.selectedDataset.label)
+                    this.loadDataset(this.selectedDataset.id)
                 },
                 () => {
                     this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })
