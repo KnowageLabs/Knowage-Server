@@ -64,7 +64,7 @@
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.close') }}</Button>
-                <Button class="kn-button kn-button--primary" @click="save"> {{ $t('common.save') }}</Button>
+                <Button class="kn-button kn-button--primary" :disabled="!canModify" @click="save"> {{ $t('common.save') }}</Button>
             </div>
         </template>
     </Dialog>
