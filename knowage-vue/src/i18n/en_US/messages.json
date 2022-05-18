@@ -487,6 +487,7 @@
                 "title": "Olap custom view List"
             },
             "deleteVersion": {
+                "errorMessage": "You can not delete active version, please try again.",
                 "id": "id",
                 "title": "Select the version to delete"
             },
