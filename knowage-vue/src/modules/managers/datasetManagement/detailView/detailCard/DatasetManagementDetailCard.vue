@@ -1,337 +1,134 @@
 <template>
     <Card class="p-m-2">
-        <template #content>
-            <form class="p-fluid p-formgrid p-grid">
-                <div class="p-field p-mt-1 p-col-6">
-                    <span class="p-float-label">
-                        <InputText id="label" class="kn-material-input" type="text" maxLength="50" v-model="v$.dataset.label.$model" :class="{ 'p-invalid': v$.dataset.label.$invalid && v$.dataset.label.$dirty }" @blur="v$.dataset.label.$touch()" @change="$emit('touched')" data-test="label-input" />
-                        <label for="label" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
-                    </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.label" :additionalTranslateParams="{ fieldName: $t('common.label') }" />
-                </div>
-                <div class="p-field p-mt-1 p-col-6">
-                    <span class="p-float-label">
-                        <InputText id="name" class="kn-material-input" type="text" maxLength="50" v-model="v$.dataset.name.$model" :class="{ 'p-invalid': v$.dataset.name.$invalid && v$.dataset.name.$dirty }" @blur="v$.dataset.name.$touch()" @change="$emit('touched')" data-test="name-input" />
-                        <label for="name" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
-                    </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.name" :additionalTranslateParams="{ fieldName: $t('common.name') }" />
-                </div>
-                <div class="p-field p-mt-1 p-col-12">
-                    <span class="p-float-label">
-                        <InputText
-                            id="description"
-                            class="kn-material-input"
-                            type="text"
-                            maxLength="150"
-                            v-model="v$.dataset.description.$model"
-                            :class="{ 'p-invalid': v$.dataset.description.$invalid && v$.dataset.description.$dirty }"
-                            @blur="v$.dataset.description.$touch()"
-                            @change="$emit('touched')"
-                            data-test="description-input"
-                        />
-                        <label for="description" class="kn-material-input-label"> {{ $t('common.description') }} </label>
-                    </span>
-                    <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.description" :additionalTranslateParams="{ fieldName: $t('common.description') }" />
-                </div>
-                <div class="p-field p-mt-1 p-col-6">
-                    <span class="p-float-label">
-                        <Dropdown
-                            id="scope"
-                            class="kn-material-input"
-                            :options="scopeTypes"
-                            optionLabel="VALUE_CD"
-                            optionValue="VALUE_CD"
-                            v-model="v$.dataset.scopeCd.$model"
-                            :class="{
-                                'p-invalid': v$.dataset.scopeCd.$invalid && v$.dataset.scopeCd.$dirty
-                            }"
-                            @before-show="v$.dataset.scopeCd.$touch()"
-                            @change="updateIdFromCd(this.scopeTypes, 'scopeId', $event.value), $emit('touched')"
-                            data-test="scope-input"
-                        />
-                        <label for="scope" class="kn-material-input-label"> {{ $t('managers.datasetManagement.scope') }} * </label>
-                    </span>
-                    <KnValidationMessages
-                        :vComp="v$.dataset.scopeCd"
-                        :additionalTranslateParams="{
-                            fieldName: $t('managers.datasetManagement.scope')
-                        }"
-                    />
-                </div>
-                <div class="p-field p-mt-1 p-col-6">
-                    <span class="p-float-label">
-                        <Dropdown
-                            id="category"
-                            class="kn-material-input"
-                            :options="categoryTypes"
-                            optionLabel="VALUE_CD"
-                            optionValue="VALUE_CD"
-                            v-model="v$.dataset.catTypeVn.$model"
-                            :class="{
-                                'p-invalid': v$.dataset.catTypeVn.$invalid && v$.dataset.catTypeVn.$dirty
-                            }"
-                            @before-show="v$.dataset.catTypeVn.$touch()"
-                            @change="updateIdFromCd(this.categoryTypes, 'catTypeId', $event.value), $emit('touched')"
-                            data-test="category-input"
-                        />
-                        <label v-if="this.dataset.scopeCd == 'USER'" for="category" class="kn-material-input-label"> {{ $t('common.category') }} </label>
-                        <label v-else for="category" class="kn-material-input-label"> {{ $t('common.category') }} * </label>
-                    </span>
-                    <KnValidationMessages
-                        :vComp="v$.dataset.catTypeVn"
-                        :additionalTranslateParams="{
-                            fieldName: $t('managers.datasetManagement.scope')
-                        }"
-                    />
-                </div>
-                <div class="p-field p-mt-1 p-col-12">
-                    <span class="p-float-label kn-material-input">
-                        <AutoComplete v-model="dataset.tags" :suggestions="filteredTagsNames" :multiple="true" @complete="searchTag" @keydown.enter="createTagChip">
-                            <template #chip="slotProps">
-                                {{ slotProps.value.name }}
-                            </template>
-                            <template #item="slotProps">
-                                {{ slotProps.item.name }}
-                            </template>
-                        </AutoComplete>
-                        <label for="tags" class="kn-material-input-label">{{ $t('common.tags') }}</label>
-                    </span>
-                    <small id="username1-help">{{ $t('managers.widgetGallery.tags.availableCharacters') }}</small>
-                </div>
-            </form>
-        </template>
-    </Card>
-    <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #start>
-                    {{ $t('managers.datasetManagement.oldVersions') }}
-                </template>
-                <template #end>
-                    <Button icon="fas fa-eraser" class="p-button-text p-button-rounded p-button-plain" :disabled="noDatasetVersions" @click="deleteConfirm('deleteAll')" />
+                    {{ $t('managers.datasetManagement.fieldsMetadata') }}
                 </template>
             </Toolbar>
         </template>
         <template #content>
-            <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="versions-loading" />
-            <DataTable v-if="!loading" class="p-datatable-sm kn-table" :value="selectedDatasetVersions" :scrollable="true" scrollHeight="400px" :loading="loading" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
-                <template #empty>
-                    {{ $t('managers.datasetManagement.noVersions') }}
-                </template>
-                <Column field="userIn" :header="$t('managers.datasetManagement.creationUser')" :sortable="true" />
-                <Column field="type" :header="$t('importExport.gallery.column.type')" :sortable="true" />
-                <Column field="dateIn" :header="$t('managers.mondrianSchemasManagement.headers.creationDate')" dataType="date" :sortable="true">
+            <DataTable v-if="dataset.meta && (dataset.meta.ccolumns || dataset.meta.dataset)" class="p-datatable-sm kn-table kn-table-small-input" :scrollable="true" scrollHeight="750px" :value="fieldsMetadata" responsiveLayout="stack" breakpoint="960px">
+                <Column field="fieldAlias" :header="$t('managers.datasetManagement.fieldAlias')" :sortable="true">
+                    <template #body="{data}"> {{ data.fieldAlias }} </template>
+                </Column>
+                <Column field="Type" :header="$t('importExport.catalogFunction.column.type')" :sortable="true">
                     <template #body="{data}">
-                        {{ formatDate(data.dateIn) }}
+                        <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.Type" :options="valueTypes" optionDisabled="disabled" optionLabel="value" optionValue="name" @change="saveFieldsMetadata" :disabled="true" />
                     </template>
                 </Column>
-                <Column @rowClick="false">
-                    <template #body="slotProps">
-                        <Button v-if="slotProps.data.versNum !== 0" icon="fas fa-retweet" class="p-button-link" @click="restoreVersionConfirm(slotProps.data)" />
-                        <Button v-if="slotProps.data.versNum !== 0" icon="pi pi-trash" class="p-button-link" @click="deleteConfirm('deleteOne', slotProps.data)" />
+                <Column field="fieldType" :header="$t('managers.datasetManagement.fieldType')" :sortable="true">
+                    <template #body="{data}">
+                        <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.fieldType" :options="fieldMetadataTypes" optionLabel="value" optionValue="value" @change="saveFieldsMetadata('fieldType')" />
+                    </template>
+                </Column>
+                <Column field="personal" :header="$t('managers.datasetManagement.personal')" :sortable="true">
+                    <template #body="{data}">
+                        <Checkbox id="personal" v-model="data.personal" :binary="true" @change="saveFieldsMetadata('personal')" />
+                    </template>
+                </Column>
+                <Column field="decript" :header="$t('managers.datasetManagement.decript')" :sortable="true">
+                    <template #body="{data}">
+                        <Checkbox id="decript" v-model="data.decript" :binary="true" @change="saveFieldsMetadata('decript')" />
+                    </template>
+                </Column>
+                <Column field="subjectId" :header="$t('managers.datasetManagement.subjectId')" :sortable="true">
+                    <template #body="{data}">
+                        <Checkbox id="subjectId" v-model="data.subjectId" :binary="true" @change="saveFieldsMetadata('subjectId')" />
                     </template>
                 </Column>
             </DataTable>
+            <div v-if="!dataset.meta || dataset.meta.length == 0">
+                <Message severity="info" :closable="false">{{ $t('managers.datasetManagement.metadataInfo') }}</Message>
+            </div>
         </template>
     </Card>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import { AxiosResponse } from 'axios'
-import useValidate from '@vuelidate/core'
-import detailTabDescriptor from './DatasetManagementDetailCardDescriptor.json'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-import Card from 'primevue/card'
-import Dropdown from 'primevue/dropdown'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import AutoComplete from 'primevue/autocomplete'
-import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+    import { defineComponent } from 'vue'
+    import linkTabDescriptor from '@/modules/managers/datasetManagement/detailView/metadataCard/DatasetManagementMetadataCardDescriptor.json'
+    import Card from 'primevue/card'
+    import DataTable from 'primevue/datatable'
+    import Column from 'primevue/column'
+    import Message from 'primevue/message'
+    import Dropdown from 'primevue/dropdown'
+    import Checkbox from 'primevue/checkbox'
 
-export default defineComponent({
-    components: { Card, Dropdown, KnValidationMessages, DataTable, Column, AutoComplete },
-    props: {
-        scopeTypes: { type: Array as any, required: true },
-        categoryTypes: { type: Array as any, required: true },
-        selectedDataset: { type: Object as any },
-        selectedDatasetVersions: { type: Array as any },
-        availableTags: { type: Array as any },
-        loading: { type: Boolean }
-    },
-    computed: {
-        noDatasetVersions(): any {
-            if (this.selectedDatasetVersions.length > 0) {
-                return false
+    export default defineComponent({
+        components: { Card, Column, DataTable, Message, Dropdown, Checkbox },
+        props: {
+            selectedDataset: { type: Object as any }
+        },
+        computed: {},
+        emits: ['touched'],
+        data() {
+            return {
+                linkTabDescriptor,
+                fieldMetadataTypes: linkTabDescriptor.fieldsMetadataTypes,
+                valueTypes: linkTabDescriptor.valueTypes,
+                dataset: {} as any,
+                fieldsMetadata: [] as any
             }
-            return true
-        }
-    },
-    emits: ['touched', 'reloadVersions', 'loadingOlderVersion', 'olderVersionLoaded'],
-    data() {
-        return {
-            detailTabDescriptor,
-            loadingVersion: false,
-            v$: useValidate() as any,
-            dataset: {} as any,
-            datasetVersions: [] as any,
-            availableTagsNames: [] as any,
-            selectedTagsNames: [] as any,
-            filteredTagsNames: null as any
-        }
-    },
-    created() {
-        this.dataset = this.selectedDataset
-    },
-    watch: {
-        selectedDataset() {
+        },
+        created() {
             this.dataset = this.selectedDataset
-        }
-    },
-    validations() {
-        const catTypeRequired = (value) => {
-            return this.dataset.scopeCd == 'USER' || value
-        }
-        const customValidators: ICustomValidatorMap = { 'cat-type-required': catTypeRequired }
-        const validationObject = { dataset: createValidations('dataset', detailTabDescriptor.validations.dataset, customValidators) }
-        return validationObject
-    },
-    methods: {
-        //#region ===================== Delete Versions Functionality ====================================================
-        deleteConfirm(deletetype, event) {
-            console.log(event)
-            let msgDesc = ''
-            deletetype === 'deleteOne' ? (msgDesc = 'managers.datasetManagement.deleteOneVersionMsg') : (msgDesc = 'managers.datasetManagement.deleteAllVersionsMsg')
-            this.$confirm.require({
-                message: this.$t(msgDesc),
-                header: this.$t('common.uppercaseDelete'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => {
-                    deletetype === 'deleteOne' ? this.deleteSelectedVersion(event) : this.deleteAllVersions()
-                }
-            })
+            this.dataset.meta ? this.exctractFieldsMetadata(this.dataset.meta.columns) : ''
         },
-        async deleteSelectedVersion(event) {
-            return this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.dsId}/version/${event.versNum}`)
-                .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
-                    this.$emit('reloadVersions')
-                })
-                .catch((error) => this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: error.message }))
-        },
-        async deleteAllVersions() {
-            return this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.selectedDataset.id}/allversions/`)
-                .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('managers.datasetManagement.deleteAllVersionsSuccess') })
-                    this.$emit('reloadVersions')
-                })
-                .catch((error) => this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: error.message }))
-        },
-        //#endregion ================================================================================================
-
-        //#region ===================== Restore Versions Functionality ====================================================
-        restoreVersionConfirm(event) {
-            this.$confirm.require({
-                icon: 'pi pi-exclamation-triangle',
-                message: this.$t('managers.datasetManagement.restoreMsg'),
-                header: this.$t('managers.datasetManagement.restoreTitle'),
-                accept: () => this.restoreVersion(event)
-            })
-        },
-        async restoreVersion(dsToRestore) {
-            this.$emit('loadingOlderVersion')
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.dataset.id}/restore?versionId=${dsToRestore.versNum}`).then((response: AxiosResponse<any>) => {
-                this.dataset.dsTypeCd.toLowerCase() == 'file' ? this.refactorFileDatasetConfig(response.data[0]) : ''
-                this.$emit('olderVersionLoaded', response.data[0])
-            })
-            this.loadingVersion = false
-        },
-        refactorFileDatasetConfig(item) {
-            this.dataset.fileType = item != undefined ? item.fileType : ''
-            this.dataset.fileName = item != undefined ? item.fileName : ''
-            this.dataset.csvEncoding = item != undefined ? item.csvEncoding : 'UTF-8'
-            this.dataset.csvDelimiter = item != undefined ? item.csvDelimiter : ','
-            this.dataset.csvQuote = item != undefined ? item.csvQuote : '"'
-            this.dataset.dateFormat = item != undefined && item.dateFormat != undefined ? item.dateFormat : 'dd/MM/yyyy'
-            this.dataset.timestampFormat = item != undefined && item.timestampFormat != undefined ? item.timestampFormat : 'dd/MM/yyyy HH:mm:ss'
-
-            if (item != undefined) {
-                if (item.limitRows != null && item.limitRows != '') {
-                    this.dataset.limitRows = Number(item.limitRows)
-                } else {
-                    this.dataset.limitRows = item.limitRows
-                }
-            } else {
-                this.dataset.limitRows = null
-            }
-
-            this.dataset.catTypeVn = item != undefined ? item.catTypeVn : ''
-
-            if (item != undefined) {
-                this.dataset.catTypeId = Number(item.catTypeId)
-                this.dataset.xslSheetNumber = Number(1)
-                this.dataset.skipRows = Number(item.skipRows)
-                this.dataset.limitRows = Number(null)
-            } else {
-                this.dataset.catTypeId = null
-                this.dataset.xslSheetNumber = null
-                this.dataset.skipRows = null
-                this.dataset.limitRows = null
-            }
-
-            this.dataset.id = item != undefined ? item.id : ''
-            this.dataset.label = item != undefined ? item.label : ''
-            this.dataset.name = item != undefined ? item.name : ''
-            this.dataset.description = item != undefined ? item.description : ''
-            this.dataset.meta = item != undefined ? item.meta : []
-
-            this.dataset.fileUploaded = false
-        },
-        //#endregion ================================================================================================
-
-        //#region ===================== Tags Functionality ====================================================
-        searchTag(event) {
-            setTimeout(() => {
-                if (!event.query.trim().length) {
-                    this.filteredTagsNames = [...this.availableTags]
-                } else {
-                    this.filteredTagsNames = this.availableTags.filter((tag) => {
-                        return tag.name.toLowerCase().startsWith(event.query.toLowerCase())
-                    })
-                }
-            }, 250)
-        },
-        createTagChip(event: any) {
-            if (event.target.value) {
-                const tempWord = this.availableTags.find((el) => el.name == event.target.value)
-                if (!tempWord) {
-                    this.dataset.tags.push(event.target.value)
-                    this.buildTagObject()
-                    event.target.value = ''
-                }
+        watch: {
+            selectedDataset() {
+                this.dataset = this.selectedDataset
+                this.dataset.meta ? this.exctractFieldsMetadata(this.dataset.meta.columns) : ''
             }
         },
-        buildTagObject() {
-            this.dataset.tags = this.dataset.tags.map((tag) => {
-                if (typeof tag !== 'string') {
-                    return tag
-                } else {
-                    return { name: tag }
-                }
-            })
-        },
-        //#endregion ================================================================================================
 
-        formatDate(date) {
-            return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
-        },
-        updateIdFromCd(optionsArray, fieldToUpdate, updatedField) {
-            const selectedField = optionsArray.find((option) => option.VALUE_CD === updatedField)
-            selectedField ? (this.dataset[fieldToUpdate] = selectedField.VALUE_ID) : ''
+        methods: {
+            exctractFieldsMetadata(array) {
+                var object = {}
+
+                for (var item in array) {
+                    var element = object[array[item].column]
+                    if (!element) {
+                        element = {}
+                        object[array[item].column] = element
+                        element['column'] = array[item].column
+                    }
+                    element[array[item].pname] = array[item].pvalue
+                }
+
+                var fieldsMetadata = new Array()
+
+                for (item in object) {
+                    fieldsMetadata.push(object[item])
+                }
+
+                this.fieldsMetadata = fieldsMetadata
+            },
+            saveFieldsMetadata(fieldName) {
+                this.warnForDuplicateSpatialFields()
+                this.applyMetadataChangesToFields(fieldName)
+            },
+            applyMetadataChangesToFields(fieldName) {
+                for (let i = 0; i < this.fieldsMetadata.length; i++) {
+                    for (let j = 0; j < this.dataset.meta.columns.length; j++) {
+                        if (this.fieldsMetadata[i].column == this.dataset.meta.columns[j].column && this.dataset.meta.columns[j].pname == fieldName) {
+                            this.dataset.meta.columns[j].pvalue = this.fieldsMetadata[i][fieldName]
+                        }
+                    }
+                }
+            },
+            warnForDuplicateSpatialFields() {
+                var numberOfSpatialAttribute = 0
+                for (let i = 0; i < this.fieldsMetadata.length; i++) {
+                    if (this.fieldsMetadata[i].fieldType == 'SPATIAL_ATTRIBUTE') {
+                        numberOfSpatialAttribute++
+                        if (numberOfSpatialAttribute > 1) {
+                            this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.datasetManagement.duplicateSpatialAttribute') })
+                            return
+                        }
+                    }
+                }
+            }
         }
-    }
-})
+    })
 </script>
