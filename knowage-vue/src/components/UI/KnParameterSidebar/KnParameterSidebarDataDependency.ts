@@ -26,11 +26,6 @@ export async function updateDataDependency(loadedParameters: { filterStatus: iPa
 
 export async function dataDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string) {
     loading = true
-    if (parameter.parameterValue[0]) {
-        parameter.parameterValue[0] = { value: '', description: '' }
-    } else {
-        parameter.parameterValue = [{ value: '', description: '' }]
-    }
 
     const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters), paramId: parameter.urlName, role: sessionRole }
     let url = '2.0/documentExeParameters/admissibleValues'
@@ -48,7 +43,10 @@ export async function dataDependencyCheck(loadedParameters: { filterStatus: iPar
 }
 
 export function formatParameterAfterDataDependencyCheck(parameter: any) {
-    parameter.parameterValue = parameter.multivalue ? [] : [{ value: '', description: '' }]
+    if (!checkIfParameterDataContainsNewValue(parameter)) {
+        parameter.parameterValue = parameter.multivalue ? [] : [{ value: '', description: '' }]
+    }
+
     if (parameter.data) {
         parameter.data = parameter.data.map((data: any) => {
             return formatParameterDataOptions(parameter, data)
@@ -91,4 +89,26 @@ export function getFormattedParameters(loadedParameters: { filterStatus: iParame
     })
 
     return parameters
+}
+
+function checkIfParameterDataContainsNewValue(parameter: iParameter) {
+    const valueColumn = parameter.metadata.valueColumn
+    const descriptionColumn = parameter.metadata.descriptionColumn
+    let valueIndex = null as any
+    if (parameter.metadata.colsMap) {
+        valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
+    }
+    let descriptionIndex = null as any
+    if (parameter.metadata.colsMap) {
+        descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
+    }
+
+    const index = parameter.data.findIndex((option: any) => {
+        if (option.value || option.description) {
+            return parameter.parameterValue[0].value === option.value && parameter.parameterValue[0].description === option.description
+        } else {
+            return parameter.parameterValue[0].value === option[valueIndex] && parameter.parameterValue[0].description === option[descriptionIndex]
+        }
+    })
+    return index !== -1;
 }

@@ -96,9 +96,6 @@
                     <div class="p-col-4">
                         <Button icon="fa-solid fa-share-from-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.outputWizard')" v-if="isButtonVisible('BUTTON_EXPORT_OUTPUT')" @click="$emit('showOutputWizard')" />
                     </div>
-                    <div class="p-col-4">
-                        <Button icon="fa-solid fa-file-excel" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.excel')" v-if="isButtonVisible('BUTTON_EDITABLE_EXCEL_EXPORT')" @click="$emit('exportExcel')" />
-                    </div>
                     <div v-if="olapLocked" class="p-col-4">
                         <Button icon="fa-solid fa-network-wired" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.alg')" v-if="isButtonVisible('BUTTON_ALGORITHMS')" @click="$emit('showAlgorithmDialog')" />
                     </div>

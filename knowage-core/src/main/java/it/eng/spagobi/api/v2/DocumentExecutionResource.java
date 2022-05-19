@@ -662,8 +662,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				boolean showParameterLov = true;
 
 				// Parameters NO TREE
-				if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
-						&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)) {
+				if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())) {
 
 					ArrayList<HashMap<String, Object>> admissibleValues = objParameter.getAdmissibleValues();
 

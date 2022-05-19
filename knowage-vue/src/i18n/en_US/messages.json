@@ -392,7 +392,8 @@
                 "restrictionValueHint": "Enter Value",
                 "restrictionsTitle": "Visibility Restrictions",
                 "uploadTemplate": "Upload template",
-                "visibilityLocationTitle": "Select the functionalities where the document will be visible"
+                "visibilityLocationTitle": "Select the functionalities where the document will be visible",
+                "imageInfo": "Image successfully uploaded"
             },
             "outputParams": {
                 "customValue": "Custom Value",
@@ -440,6 +441,7 @@
             "crossNavigationNoTargetError": "No cross navigation targets available",
             "currentRank": "Curent Rank is...",
             "customMetadata": "Custom Metadata",
+            "destinationSelectionTitle": "Selection of the destination document",
             "editCockpit": "Edit cockpit document",
             "editModeConfirm": "You are leaving edit mode. Continue?",
             "embedInHtml": "Embed in HTML",
@@ -486,6 +488,7 @@
                 "title": "Olap custom view List"
             },
             "deleteVersion": {
+                "errorMessage": "You can not delete active version, please try again.",
                 "id": "id",
                 "title": "Select the version to delete"
             },
@@ -500,6 +503,7 @@
                 "selectLevels": "Select visible levels",
                 "title": "Drill Through"
             },
+            "editErrorLocked": "It's not possible to edit a schema if you have not set a lock on it.",
             "editModeConfirm": "You are leaving edit mode. Continue?",
             "filterDialog": {
                 "ancestorDescendantWarning": "Warning: You selected some members that are in ancestor-descendant relationship: measures will be aggregated over both of them. Are you sure this is what you want?",
@@ -536,6 +540,7 @@
                 "detail2": "You can change it acting on the form below.",
                 "dropdownLabel": "Available hierarchies"
             },
+            "notEditable": "Measure is not editable",
             "openDesigner": "Open Designer",
             "openDesignerMsg": "By opening designer you will lose all unsaved changes, are you sure?",
             "outputWizard": {
@@ -1975,6 +1980,7 @@
         },
         "timespan": {
             "cloneAlreadyDefined": "The next timespan is already defiend",
+            "hint": "No timespan selected",
             "invalidDatesError": "The dates are not valid",
             "noIntervalError": "Please define at least one interval",
             "startDateGreaterError": "Start date greater than end date",
@@ -2186,6 +2192,7 @@
             },
             "businessClass": "Business Class",
             "businessView": "Business View",
+            "decrypt": "Decrypt",
             "editJoin": "Edit Join Relationship",
             "inbound": {
                 "name": "Insert a Business Relationship Name",
@@ -2195,6 +2202,7 @@
             "newBusiness": "New Business Class",
             "newView": "New Business View",
             "noUnusedFields": "No columns to add",
+            "personal": "Personal",
             "physTable": "Physical Table",
             "physicalColumn": "Physical Column",
             "physicalColumnHint": "The original physical column of this column",
@@ -2203,6 +2211,7 @@
             "sourceAttr": "Source Attributes",
             "sourceHint": "Select source table",
             "sourceTable": "Source Table",
+            "subjectId": "Subject Id",
             "summary": "Summary",
             "summaryHint": "Link tables to see the summary",
             "tabView": {
@@ -2502,6 +2511,7 @@
             "schedulation": "Schedulation"
         },
         "myAnalysis": {
+            "editAnalysis": "Edit Analysis",
             "geoRef": "Geo-referenced analysis",
             "menuItems": {
                 "clone": "Clone Document",

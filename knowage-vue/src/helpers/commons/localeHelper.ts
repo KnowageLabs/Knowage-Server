@@ -2,9 +2,11 @@ import moment from 'moment'
 import { DateTime } from 'luxon'
 import store from '@/App.store.js'
 
+import formats from '@/helpers/commons/localeDateFormats.json'
+
 let fallbackLocale = 'en_US'
 
-function getLocale(js?: boolean): string {
+export function getLocale(js?: boolean): string {
     let locale = ''
     if (localStorage.getItem('locale')) locale = localStorage.getItem('locale') || ''
     else locale = store.locale ? store.local : fallbackLocale
@@ -31,4 +33,8 @@ export function luxonFormatDate(dateString: any | Date, inputFormat?: string, ou
     const tempDate = inputFormat ? DateTime.fromFormat(dateString, inputFormat) : DateTime.fromJSDate(dateString).setLocale(getLocale(true))
     if (outputFormat) return tempDate.toFormat(outputFormat)
     else return tempDate.toLocaleString(DateTime.DATE_SHORT)
+}
+
+export function primeVueDate(locale: any = 'en-US'): String {
+    return formats[locale].replaceAll('yy', 'y').replaceAll('M', 'm')
 }

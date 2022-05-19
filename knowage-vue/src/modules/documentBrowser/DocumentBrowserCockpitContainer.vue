@@ -1,18 +1,39 @@
 <template>
-    <DocumentExecution :id="name" v-if="mode === 'document-execution'" :parameterValuesMap="parameterValuesMap" :tabKey="tabKey" @parametersChanged="$emit('parametersChanged', $event)"></DocumentExecution>
+    <div id="cockpit-container" class="kn-height-full">
+        <DocumentExecution
+            :id="name"
+            v-show="mode === 'document-execution'"
+            :propMode="mode"
+            v-bind:style="[mode === 'document-execution' ? '' : 'display: none !important; ']"
+            :parameterValuesMap="parameterValuesMap"
+            :tabKey="tabKey"
+            @parametersChanged="$emit('parametersChanged', $event)"
+        ></DocumentExecution>
+        <DocumentDetails
+            v-show="mode === 'document-detail'"
+            v-bind:style="[mode === 'document-detail' ? '' : 'display: none !important;']"
+            :propMode="'execution'"
+            :propDocId="item?.id"
+            :propFolderId="functionalityId"
+            @closeDetails="$emit('closeDetails', item)"
+            @documentSaved="onDocumentsSaved"
+        ></DocumentDetails>
+    </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import DocumentExecution from '@/modules/documentExecution/main/DocumentExecution.vue'
+import DocumentDetails from '@/modules/documentExecution/documentDetails/DocumentDetails.vue'
 
 export default defineComponent({
     name: 'document-browser-cockpit-container',
     components: {
-        DocumentExecution
+        DocumentExecution,
+        DocumentDetails
     },
-    props: { id: { type: String }, functionalityId: { type: String }, item: { type: Object }, parameterValuesMap: { type: Object }, tabKey: { type: String } },
-    emits: ['iframeCreated', 'closeIframe', 'parametersChanged'],
+    props: { id: { type: String }, functionalityId: { type: String }, item: { type: Object }, parameterValuesMap: { type: Object }, tabKey: { type: String }, propMode: { type: String } },
+    emits: ['iframeCreated', 'closeIframe', 'parametersChanged', 'closeDetails', 'documentSaved'],
     data() {
         return {
             url: '',
@@ -48,12 +69,17 @@ export default defineComponent({
             this.url = process.env.VUE_APP_HOST_URL + `/knowagecockpitengine/api/1.0/pages/edit?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&user_id=${uniqueID}&SBI_COUNTRY=${country}&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=true&documentMode=EDIT&FUNCTIONALITY_ID=${this.functionalityId}`
         },
         setMode() {
-            if (this.item?.name) {
+            if (this.propMode === 'documentDetail') {
+                this.mode = 'document-detail'
+            } else if (this.propMode === 'execute') {
                 this.mode = 'document-execution'
-            } else {
+            } else if (this.propMode === 'createCockpit') {
                 this.mode = 'cockpit'
                 this.$emit('iframeCreated', { iframe: this.url, item: this.item })
             }
+        },
+        onDocumentsSaved(document: any) {
+            this.$emit('documentSaved', document)
         }
     }
 })

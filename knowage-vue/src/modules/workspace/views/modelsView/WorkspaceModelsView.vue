@@ -155,7 +155,7 @@ export default defineComponent({
         },
         searchItems(event?) {
             setTimeout(() => {
-                if (event.value) {
+                if (event?.value) {
                     this.selectedCategoryIds = [] as any
                     event.value.forEach((el) => {
                         this.selectedCategoryIds.push(el.VALUE_ID)

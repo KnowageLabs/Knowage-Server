@@ -12,12 +12,21 @@
 
                 <TabPanel v-for="(tab, index) in tabs" :key="index">
                     <template #header>
-                        <span>{{ tab.item?.name ? tab.item?.name : 'new dashboard' }}</span>
+                        <span>{{ getTabName(tab) }}</span>
                     </template>
                 </TabPanel>
             </TabView>
 
-            <DocumentBrowserTab v-show="selectedItem" :item="selectedItem?.item" :mode="selectedItem?.mode" :functionalityId="selectedItem?.functionalityId" @close="closeDocument('current')" @iframeCreated="onIFrameCreated" @closeIframe="closeIframe"></DocumentBrowserTab>
+            <DocumentBrowserTab
+                v-show="selectedItem"
+                :item="selectedItem?.item"
+                :mode="selectedItem?.mode"
+                :functionalityId="selectedItem?.functionalityId"
+                @close="closeDocument('current')"
+                @iframeCreated="onIFrameCreated"
+                @closeIframe="closeIframe"
+                @documentSaved="onDocumentSaved"
+            ></DocumentBrowserTab>
             <div v-for="(iframe, index) in iFrameContainers" :key="index">
                 <iframe v-show="iframe.item?.routerId === selectedItem?.item.routerId" ref="iframe" class="document-browser-cockpit-iframe" :src="iframe.iframe"></iframe>
             </div>
@@ -55,15 +64,18 @@ export default defineComponent({
     },
     async created() {
         window.addEventListener('message', (event) => {
-            if (event.data.type === 'saveCockpit' && this.$route.name === 'new-dashboard') {
+            if (event.data.type === 'saveCockpit' && this.$router.currentRoute.value.name === 'new-dashboard') {
                 this.loadSavedCockpit(event.data.model)
             }
         })
 
-        if (this.$route.params.id && this.$route.name === 'document-browser-document-execution') {
+        if (this.$router.currentRoute.value.params.id && (this.$router.currentRoute.value.name === 'document-browser-document-execution' || this.$router.currentRoute.value.name === 'document-browser-document-details-edit')) {
             let tempDocument = {} as any
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$route.params.id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
-            const tempItem = { item: { name: tempDocument.name, label: this.$route.params.id, mode: this.$route.params.mode, routerId: crypto.randomBytes(16).toString('hex') }, mode: 'execute' }
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$router.currentRoute.value.params.id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
+            const tempItem = {
+                item: { name: tempDocument.name, label: this.$router.currentRoute.value.params.id, mode: this.$router.currentRoute.value.params.mode, routerId: crypto.randomBytes(16).toString('hex'), id: this.$router.currentRoute.value.params.id },
+                mode: this.$router.currentRoute.value.name === 'document-browser-document-execution' ? 'execute' : 'documentDetail'
+            }
             this.tabs.push(tempItem)
 
             this.activeIndex = 1
@@ -82,8 +94,13 @@ export default defineComponent({
 
             this.selectedItem = this.tabs[this.activeIndex - 1]
 
-            let routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
-            routeDocumentType ? this.$router.push(`/document-browser/${routeDocumentType}/` + id) : this.$router.push('/document-browser/new-dashboard')
+            if (this.selectedItem.mode === 'documentDetail') {
+                const path = this.selectedItem.functionalityId ? `/document-browser/document-details/new/${this.selectedItem.functionalityId}` : `/document-browser/document-details/${this.selectedItem.item.id}`
+                this.$router.push(path)
+            } else {
+                let routeDocumentType = this.tabs[this.activeIndex - 1].item.mode ? this.tabs[this.activeIndex - 1].item.mode : this.getRouteDocumentType(this.tabs[this.activeIndex - 1].item)
+                routeDocumentType ? this.$router.push(`/document-browser/${routeDocumentType}/` + id) : this.$router.push('/document-browser/new-dashboard')
+            }
         },
         onItemSelect(payload: any) {
             if (payload.item) {
@@ -91,18 +108,24 @@ export default defineComponent({
             }
 
             const tempItem = { ...payload, item: { ...payload.item } }
+            if (payload.mode === 'documentDetail') tempItem.mode = 'documentDetail'
 
             this.tabs.push(tempItem)
 
             this.selectedItem = tempItem
 
-            const id = payload.item ? payload.item.label : 'new-dashboard'
-            if (payload.item) {
-                let routeDocumentType = this.getRouteDocumentType(payload.item)
-                this.$router.push(`/document-browser/${routeDocumentType}/` + id)
+            if (payload.mode === 'documentDetail') {
+                const path = payload.functionalityId ? `/document-browser/document-details/new/${payload.functionalityId}` : `/document-browser/document-details/${payload.item.id}`
+                this.$router.push(path)
             } else {
-                this.selectedItem.item = { routerId: crypto.randomBytes(16).toString('hex') }
-                this.$router.push(`/document-browser/new-dashboard`)
+                const id = payload.item ? payload.item.label : 'new-dashboard'
+                if (payload.item) {
+                    let routeDocumentType = this.getRouteDocumentType(payload.item)
+                    this.$router.push(`/document-browser/${routeDocumentType}/` + id)
+                } else {
+                    this.selectedItem.item = { routerId: crypto.randomBytes(16).toString('hex') }
+                    this.$router.push(`/document-browser/new-dashboard`)
+                }
             }
 
             this.activeIndex = this.tabs.length
@@ -213,6 +236,18 @@ export default defineComponent({
             this.selectedItem = { item: { ...cockpit, routerId: crypto.randomBytes(16).toString('hex'), name: cockpit.DOCUMENT_NAME, label: cockpit.DOCUMENT_LABEL, mode: 'document-composite' } }
             this.tabs[this.activeIndex - 1] = this.selectedItem
             this.$router.push(`/document-browser/document-composite/${cockpit.DOCUMENT_LABEL}`)
+        },
+        getTabName(tab: any) {
+            if (tab.item && tab.item.name) {
+                return tab.item.name
+            } else {
+                return tab.mode === 'documentDetail' ? 'new document' : 'new dashboard'
+            }
+        },
+        onDocumentSaved(document: any) {
+            this.selectedItem.functionalityId = null
+            this.selectedItem.item = { name: document.name, label: document.id, routerId: crypto.randomBytes(16).toString('hex'), id: document.id }
+            this.$router.push(`/document-browser/document-details/${document.id}`)
         }
     }
 })

@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import axios from 'axios'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import PrimeVue from 'primevue/config'
@@ -31,6 +32,16 @@ const mockedTrigger = {
     endTimeTiming: null
 }
 
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: []
+        })
+    )
+}
+
 const factory = () => {
     return mount(SchedulerTimingOutputDetailDialog, {
         props: {
@@ -55,7 +66,8 @@ const factory = () => {
                 Toolbar
             },
             mocks: {
-                $t: (msg) => msg
+                $t: (msg) => msg,
+                $http
             }
         }
     })

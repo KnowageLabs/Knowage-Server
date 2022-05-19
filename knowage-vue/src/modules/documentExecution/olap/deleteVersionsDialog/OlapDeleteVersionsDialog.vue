@@ -26,6 +26,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
+import { iOlap } from '../Olap'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
@@ -34,7 +35,7 @@ import olapDeleteVersionsDialogDescriptor from './OlapDeleteVersionsDialogDescri
 export default defineComponent({
     name: 'olap-delete-versions-dialog',
     components: { Column, DataTable, Dialog },
-    props: { visible: { type: Boolean }, id: { type: String }, propOlapVersions: { type: Array as PropType<{ id: number; name: string; description: string }[]> } },
+    props: { visible: { type: Boolean }, id: { type: String }, propOlapVersions: { type: Array as PropType<{ id: number; name: string; description: string }[]> }, olap: { type: Object as PropType<iOlap> } },
     emits: ['close'],
     computed: {},
     data() {
@@ -63,6 +64,13 @@ export default defineComponent({
         },
         async deleteVersions() {
             this.loading = true
+
+            if (this.checkIfActiveVersionIsSelected()) {
+                this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.deleteVersion.errorMessage') })
+                this.loading = false
+                return
+            }
+
             const versionsToDelete = this.selectedVersions?.map((version: { id: number; name: string; description: string }) => version.id).join(',')
             if (!versionsToDelete || versionsToDelete.length === 0) return
             await this.$http
@@ -81,6 +89,27 @@ export default defineComponent({
                     })
                 )
             this.loading = false
+        },
+        checkIfActiveVersionIsSelected() {
+            if (!this.olap) return
+
+            let selected = false
+            let activeVersions = []
+            for (let i = 0; i < this.olap.filters.length; i++) {
+                if (this.olap.filters[i].name === 'Version') {
+                    activeVersions = this.olap.filters[i].hierarchies[0].slicers
+                    break
+                }
+            }
+
+            for (let i = 0; i < this.selectedVersions.length; i++) {
+                const index = activeVersions.findIndex((version: any) => version.name === this.selectedVersions[i].name)
+                if (index !== -1) {
+                    selected = true
+                    break
+                }
+            }
+            return selected
         }
     }
 })

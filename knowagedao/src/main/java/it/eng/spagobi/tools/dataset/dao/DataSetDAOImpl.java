@@ -2807,7 +2807,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					SbiMetaTable metaTable = DAOFactory.getSbiMetaTableDAO().loadTableByNameAndSource(entityName, sourceId);
 					SbiMetaBc metaBC = null;
 					if (metaTable == null) {
-						metaBC = DAOFactory.getSbiMetaBCDAO().loadBcByUniqueName(entityName);
+						metaBC = DAOFactory.getSbiMetaBCDAO().loadBcByUniqueName(qbeDataMart, entityName);
 					} else {
 						Integer tableId = metaTable.getTableId();
 						List<SbiMetaBc> metaTableBCList = DAOFactory.getSbiTableBCDAO().loadBcByTableId(tableId);

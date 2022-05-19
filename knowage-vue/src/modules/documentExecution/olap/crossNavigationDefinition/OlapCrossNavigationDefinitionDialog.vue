@@ -109,6 +109,7 @@ export default defineComponent({
             this.step = 0
             this.selectedParameter = {} as iOlapCrossNavigationParameter
             this.cell = null
+            this.addNewParameterVisible = false
         },
         save() {
             if (this.selectedParameter) {

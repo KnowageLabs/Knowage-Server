@@ -500,6 +500,7 @@ export default defineComponent({
             this.loading = true
 
             if (!this.selectedGlossary?.GLOSSARY_NM || !this.glossaryChanged()) {
+                this.loading = false
                 return
             }
 

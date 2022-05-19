@@ -38,14 +38,14 @@
                         </template>
                         <template #end>
                             <Button v-if="showEntitiesLists" icon="fas fa-plus-circle" class="p-button-text p-button-rounded p-button-plain" v-tooltip.top="$t('common.add')" @click="createSubquery" />
-                            <Chip style="background-color:white"> {{ mainQuery.subqueries?.length }} </Chip>
+                            <Chip style="background-color:white"> {{ mainQuery?.subqueries?.length }} </Chip>
                             <Button v-if="showDerivedList" icon="pi pi-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
                             <Button v-else icon="pi pi-chevron-up" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
                         </template>
                     </Toolbar>
                     <div v-show="showDerivedList" class="kn-flex kn-overflow-hidden">
                         <ScrollPanel class="kn-height-full qbe-scroll-panel">
-                            <SubqueryEntity :availableEntities="mainQuery.subqueries" @editSubquery="selectSubquery" @deleteSubquery="deleteSubquery" />
+                            <SubqueryEntity :availableEntities="mainQuery?.subqueries" @editSubquery="selectSubquery" @deleteSubquery="deleteSubquery" />
                         </ScrollPanel>
                     </div>
                 </div>
@@ -118,7 +118,7 @@
         <QBESavingDialog :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" @datasetSaved="$emit('datasetSaved')" />
         <QBEJoinDefinitionDialog v-if="joinDefinitionDialogVisible" :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="uniqueID" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
 
-        <KnCalculatedField v-model:template="selectedCalcField" v-model:visibility="calcFieldDialogVisible" :fields="calcFieldColumns" :descriptor="calcFieldDescriptor" :readOnly="false" :valid="true" @save="onCalcFieldSave" @cancel="calcFieldDialogVisible = false">
+        <KnCalculatedField v-model:template="selectedCalcField" v-model:visibility="calcFieldDialogVisible" :fields="calcFieldColumns" :descriptor="calcFieldDescriptor" :readOnly="false" :valid="true" source="QBE" @save="onCalcFieldSave" @cancel="calcFieldDialogVisible = false">
             <template #additionalInputs>
                 <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
                     <span class="p-float-label ">
@@ -129,6 +129,9 @@
                 <div v-if="selectedCalcField.type === 'DATE'" class="p-field p-col-3">
                     <span class="p-float-label ">
                         <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.format" :options="qbeDescriptor.admissibleDateFormats">
+                            <template #value>
+                                <span>{{ selectedCalcField.format ? moment().format(selectedCalcField.format) : '' }}</span>
+                            </template>
                             <template #option="slotProps">
                                 <span>{{ moment().format(slotProps.option) }}</span>
                             </template>
@@ -293,10 +296,10 @@ export default defineComponent({
             }
             this.loadQuery()
             await this.loadDatasetDrivers()
-            if (this.qbe?.pars.length === 0 && this.filtersData?.isReadyForExecution) {
+            if (this.qbe?.pars?.length === 0 && this.filtersData?.isReadyForExecution) {
                 await this.loadQBE()
                 this.qbeLoaded = true
-            } else if (this.qbe?.pars.length !== 0 || !this.filtersData?.isReadyForExecution) {
+            } else if (this.qbe?.pars?.length !== 0 || !this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = true
             }
             this.loading = false
@@ -326,6 +329,8 @@ export default defineComponent({
         },
         getQBEFromModel() {
             if (!this.dataset) return {}
+
+            this.smartView = this.dataset.smartView
 
             return {
                 dsTypeCd: 'Qbe',
@@ -406,7 +411,7 @@ export default defineComponent({
 
             if (!this.qbe) return
 
-            const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
+            const postData = { catalogue: this.qbe?.qbeJSONQuery?.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
                 .post(process.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&start=${this.pagination.start}&limit=${this.pagination.limit}`, postData)
                 .then((response: AxiosResponse<any>) => {
@@ -427,7 +432,7 @@ export default defineComponent({
         },
         formatQbeMeta() {
             const meta = [] as any[]
-            this.qbe?.qbeJSONQuery.catalogue.queries?.forEach((query: iQuery) => {
+            this.qbe?.qbeJSONQuery?.catalogue.queries?.forEach((query: iQuery) => {
                 query.fields?.forEach((field: iField) => {
                     meta.push({ dataType: field.dataType, displayedName: field.alias, fieldType: field.fieldType.toUpperCase(), format: field.format, name: field.alias, type: field.type })
                 })
@@ -500,7 +505,7 @@ export default defineComponent({
                 { key: '1', label: this.$t('qbe.detailView.toolbarMenu.sql'), command: () => this.showSQLQuery() },
                 { key: '2', icon: repetitionIcon, label: this.$t('qbe.detailView.toolbarMenu.repetitions'), command: () => this.toggleDiscardRepetitions() },
                 { key: '3', label: this.$t('common.parameters'), command: () => this.showParamDialog() },
-                { key: '4', label: this.$t('components.knCalculatedField.title'), visible: !this.smartView, command: () => this.addCalcField() },
+                { key: '4', label: this.$t('components.knCalculatedField.title'), visible: !this.smartView && this.selectedQuery.fields.length > 0, command: () => this.addCalcField() },
                 { key: '5', label: this.$t('qbe.advancedFilters.advancedFilterVisualisation'), command: () => this.showAdvancedFilters() },
                 { key: '6', label: this.$t('qbe.joinDefinitions.title'), command: () => this.showJoinDefinitions() },
                 {
@@ -517,7 +522,7 @@ export default defineComponent({
             var fileName = ''
             mimeType == 'csv' ? (fileName = 'report.csv') : (fileName = 'report.xlsx')
 
-            const postData = { catalogue: this.qbe?.qbeJSONQuery.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
+            const postData = { catalogue: this.qbe?.qbeJSONQuery?.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
                 .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
                 .then((response: AxiosResponse<any>) => {
@@ -721,7 +726,7 @@ export default defineComponent({
         createQueryName() {
             var lastcount = 0
             var lastIndex = this.mainQuery.subqueries?.length - 1
-            if (lastIndex != -1) {
+            if (lastIndex != -1 && this.mainQuery.subqueries) {
                 var lastQueryId = this.mainQuery.subqueries[lastIndex].id
                 lastcount = parseInt(lastQueryId.substr(1))
             } else {
@@ -779,7 +784,7 @@ export default defineComponent({
         createCalcFieldColumns() {
             this.calcFieldColumns = []
             this.selectedQuery.fields.forEach((field) => {
-                field.type != 'inline.calculated.field' ? this.calcFieldColumns.push({ fieldAlias: field.alias }) : ''
+                field.type != 'inline.calculated.field' ? this.calcFieldColumns.push({ fieldAlias: `$F{${field.alias}}`, fieldLabel: field.alias }) : ''
             })
         },
         editCalcField(calcField, index) {

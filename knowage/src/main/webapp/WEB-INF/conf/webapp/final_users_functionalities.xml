@@ -12,7 +12,7 @@
 		<APPLICATION code="WorkspaceManagement" 
 	             title="#menu.Workspace"  
 	             functionality="WorkspaceManagement" 
-	             link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_WORKSPACE" 
+	             link="/workspace" 
 	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/bidocuments16.png">
 	</APPLICATION>
 
