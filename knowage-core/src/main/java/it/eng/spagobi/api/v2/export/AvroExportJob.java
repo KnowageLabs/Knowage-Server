@@ -136,7 +136,7 @@ public class AvroExportJob extends AbstractExportJob {
 		try {
 			Class<?> type = dsMeta.getFieldType(i);
 			if (isDate(type)) {
-				value = dateFormatter.parse((String) value).getTime();
+				value = dateFormatter.parse(value.toString()).getTime();
 			} else if (isTimestamp(type)) {
 
 				value = DatabaseUtils.timestampFormatter(value);

@@ -193,7 +193,7 @@
             async loadDataset(datasetId: Number) {
                 this.loading = true
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/id/${datasetId}`, { headers: { Accept: 'text/html' } })
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`)
                     .then((response: AxiosResponse<any>) => {
                         this.selectedDataset = response.data[0]
                     })
