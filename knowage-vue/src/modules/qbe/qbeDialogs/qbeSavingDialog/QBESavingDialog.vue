@@ -78,8 +78,11 @@ export default defineComponent({
         this.selectedDataset = this.propDataset
     },
     watch: {
-        propDataset() {
-            this.selectedDataset = this.propDataset
+        propDataset: {
+            handler() {
+                this.selectedDataset = this.propDataset
+            },
+            deep: true
         }
     },
     methods: {
@@ -93,8 +96,6 @@ export default defineComponent({
         },
 
         async saveDataset() {
-            console.log('dataset', this.selectedDataset)
-
             let dsToSave = { ...this.selectedDataset } as any
             dsToSave.pars ? '' : (dsToSave.pars = [])
             dsToSave.pythonEnvironment ? (dsToSave.pythonEnvironment = JSON.stringify(dsToSave.pythonEnvironment)) : ''
@@ -136,7 +137,7 @@ export default defineComponent({
                 columnsNames = this.removeDuplicates(columnsNames)
 
                 for (i = 0; i < columnsNames.length; i++) {
-                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '' }
+                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '', personal: false, decript: false, subjectId: false }
                     var currentColumnName = columnsNames[i]
 
                     if (currentColumnName.indexOf(':') != -1) {
@@ -154,6 +155,12 @@ export default defineComponent({
                                 columnObject.type = element.pvalue
                             } else if (element.pname.toUpperCase() == 'fieldType'.toUpperCase()) {
                                 columnObject.fieldType = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'personal'.toUpperCase()) {
+                                columnObject.personal = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'decript'.toUpperCase()) {
+                                columnObject.decript = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'subjectId'.toUpperCase()) {
+                                columnObject.subjectId = element.pvalue
                             }
                         }
                     }
