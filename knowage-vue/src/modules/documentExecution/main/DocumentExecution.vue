@@ -123,7 +123,7 @@ export default defineComponent({
         DocumentExecutionSelectCrossNavigationDialog,
         DocumentExecutionCNContainerDialog
     },
-    props: { id: { type: String }, parameterValuesMap: { type: Object }, tabKey: { type: String } },
+    props: { id: { type: String }, parameterValuesMap: { type: Object }, tabKey: { type: String }, propMode: { type: String } },
     emits: ['close', 'updateDocumentName', 'parametersChanged'],
     data() {
         return {
@@ -217,13 +217,14 @@ export default defineComponent({
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
 
+        if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer')) return
+
         await this.loadUserConfig()
 
         this.isOlapDesignerMode()
         this.setMode()
 
         this.document = { label: this.id }
-        if (!this.document.label) return
 
         if (!this.document.label) return
 

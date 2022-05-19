@@ -39,7 +39,7 @@
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <VCodeMirror v-if="showTemplateContent" ref="codeMirrorScriptType" class="kn-height-full" v-model:value="selectedTemplateContent" :options="scriptOptions" @keyup="$emit('touched')" />
                     <div v-else>
-                        <InlineMessage severity="info" class="p-m-2"> {{ $t('documentExecution.documentDetails.history.templateHint') }}</InlineMessage>
+                        <InlineMessage severity="info" class="p-m-2 kn-width-full"> {{ $t('documentExecution.documentDetails.history.templateHint') }}</InlineMessage>
                     </div>
                 </div>
             </div>
