@@ -26,14 +26,15 @@
         </form>
 
         <template #footer>
-            <Button class="kn-button kn-button--secondary" @click="close"> {{ $t('common.close') }}</Button>
-            <Button class="kn-button kn-button--primary" @click="save"> {{ $t('common.save') }}</Button>
+            <Button class="kn-button kn-button--secondary" :disabled="loading" @click="close"> {{ $t('common.close') }}</Button>
+            <Button class="kn-button kn-button--primary" :disabled="loading" @click="save"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
 import Dialog from 'primevue/dialog'
 import InlineMessage from 'primevue/inlinemessage'
 import olapSaveNewVersionDialogDescriptor from './OlapSaveNewVersionDialogDescriptor.json'
@@ -43,7 +44,7 @@ export default defineComponent({
     name: 'olap-save-new-version-dialog',
     components: { Dialog, InlineMessage, Textarea },
     props: { visible: { type: Boolean }, id: { type: String } },
-    emits: ['close', 'save'],
+    emits: ['close', 'save', 'newVersionSaved'],
     computed: {},
     data() {
         return {
@@ -64,14 +65,15 @@ export default defineComponent({
             await this.$http
                 .post(
                     process.env.VUE_APP_OLAP_PATH + `1.0/model/saveAs?SBI_EXECUTION_ID=${this.id}`,
-                    { name: this.version.name ?? 'sbiNoDescription', descr: this.version.descr ?? 'sbiNoDescription' },
+                    { name: this.version.name !== '' ? this.version.name : 'sbiNoDescription', descr: this.version.descr !== '' ? this.version.descr : 'sbiNoDescription' },
                     { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } }
                 )
-                .then(() => {
+                .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
+                    this.$emit('newVersionSaved', response.data)
                     this.close()
                 })
                 .catch((error: any) =>

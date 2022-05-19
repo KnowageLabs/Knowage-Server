@@ -95,8 +95,8 @@
     <ScenarioWizard v-if="scenarioWizardVisible" :visible="scenarioWizardVisible" :hiddenFormDataProp="hiddenFormDataProp" :sbiExecutionId="id" :olapDesignerProp="olapDesigner" @saveScenario="saveScenario" @deleteScenario="deleteScenario" @close="scenarioWizardVisible = false" />
     <AlgorithmDialog v-if="algorithmDialogVisible" :visible="algorithmDialogVisible" :sbiExecutionId="id" @close="algorithmDialogVisible = false" />
     <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" :olapDesignerMode="olapDesignerMode" :parameters="parameters" :profileAttributes="profileAttributes" :olapDesigner="olapDesigner" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
-    <OlapSaveNewVersionDialog :visible="saveVersionDialogVisible" :id="id" @close="saveVersionDialogVisible = false"></OlapSaveNewVersionDialog>
-    <OlapDeleteVersionsDialog :visible="deleteVersionDialogVisible" :id="id" :propOlapVersions="olapVersions" @close="deleteVersionDialogVisible = false"></OlapDeleteVersionsDialog>
+    <OlapSaveNewVersionDialog :visible="saveVersionDialogVisible" :id="id" @close="saveVersionDialogVisible = false" @newVersionSaved="onNewVersionSaved"></OlapSaveNewVersionDialog>
+    <OlapDeleteVersionsDialog :visible="deleteVersionDialogVisible" :id="id" :propOlapVersions="olapVersions" :olap="olap" @close="deleteVersionDialogVisible = false"></OlapDeleteVersionsDialog>
 </template>
 
 <script lang="ts">
@@ -876,12 +876,14 @@ export default defineComponent({
         async undo() {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/undo/?SBI_EXECUTION_ID=${this.id}`, {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
-                .then(() => {
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/undo/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
+                .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })
+                    this.olap = response.data
+                    this.formatOlapTable()
                 })
                 .catch((error: any) =>
                     this.$store.commit('setError', {
@@ -936,11 +938,16 @@ export default defineComponent({
             }
         },
         handleTableDoubleClick(event: any) {
+            if (!this.olapHasScenario) return
             if (!event.target.attributes.cell) return
             let clickLocation = event.target.getBoundingClientRect()
 
             if (!this.checkIfVersionIsSet()) {
                 return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
+            } else if (this.checkIfModelIsLocked()) {
+                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.editErrorLocked') })
+            } else if (!this.checkIfMeasureIsEditable(event.target.getAttribute('measurename'))) {
+                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.notEditable') })
             } else {
                 // @ts-ignore
                 this.$refs.whatifInput.style.top = `${clickLocation.top}px`
@@ -954,25 +961,6 @@ export default defineComponent({
                 this.whatifInputOrdinal = event.target.attributes.ordinal.value
             }
         },
-        closeWhatifInput() {
-            // @ts-ignore
-            this.$refs.whatifInput.style.display = 'none'
-        },
-        async onWhatifInput() {
-            let postData = { expression: this.whatifInputNewValue }
-
-            this.loading = true
-            await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/setValue/${this.whatifInputOrdinal}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
-                .then((response: AxiosResponse<any>) => {
-                    this.olap = response.data
-                    this.closeWhatifInput()
-                })
-                .catch(() => {})
-                .finally(() => (this.loading = false))
-
-            this.formatOlapTable()
-        },
         checkIfVersionIsSet() {
             let versionIsSet = false
             for (let i = 0; i < this.olap.filters.length; i++) {
@@ -981,6 +969,51 @@ export default defineComponent({
                 }
             }
             return versionIsSet
+        },
+        checkIfModelIsLocked() {
+            if (this.olap.modelConfig.status == 'locked_by_other' || this.olap.modelConfig.status == 'unlocked') {
+                return true
+            } else return false
+        },
+        checkIfMeasureIsEditable(measureName) {
+            if (this.olap.modelConfig && this.olap.modelConfig.writeBackConf) {
+                if (this.olap.modelConfig.writeBackConf.editableMeasures == null || this.olap.modelConfig.writeBackConf.editableMeasures.length == 0) {
+                    return true
+                } else {
+                    var measures = this.olap.modelConfig.writeBackConf.editableMeasures
+                    for (var i = 0; i < measures.length; i++) {
+                        if (measures[i] === measureName) {
+                            return true
+                        }
+                    }
+                }
+                return false
+            }
+        },
+        closeWhatifInput() {
+            // @ts-ignore
+            this.$refs.whatifInput.style.display = 'none'
+        },
+        async onWhatifInput() {
+            if (this.whatifInputNewValue != this.whatifInputOldValue) {
+                let postData = { expression: this.whatifInputNewValue }
+                this.loading = true
+                await this.$http
+                    .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/setValue/${this.whatifInputOrdinal}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                    .then((response: AxiosResponse<any>) => {
+                        this.olap = response.data
+                        this.closeWhatifInput()
+                        this.formatOlapTable()
+                    })
+                    .catch(() => {})
+                    .finally(() => (this.loading = false))
+            }
+            this.closeWhatifInput()
+        },
+        onNewVersionSaved(olap: iOlap) {
+            this.olap = olap
+            this.formatOlapTable()
+            this.saveVersionDialogVisible = false
         }
     }
 })
