@@ -2186,6 +2186,7 @@
             },
             "businessClass": "Business Class",
             "businessView": "Business View",
+            "decrypt": "Decrypt",
             "editJoin": "Edit Join Relationship",
             "inbound": {
                 "name": "Insert a Business Relationship Name",
@@ -2195,6 +2196,7 @@
             "newBusiness": "New Business Class",
             "newView": "New Business View",
             "noUnusedFields": "No columns to add",
+            "personal": "Personal",
             "physTable": "Physical Table",
             "physicalColumn": "Physical Column",
             "physicalColumnHint": "The original physical column of this column",
@@ -2203,6 +2205,7 @@
             "sourceAttr": "Source Attributes",
             "sourceHint": "Select source table",
             "sourceTable": "Source Table",
+            "subjectId": "Subject Id",
             "summary": "Summary",
             "summaryHint": "Link tables to see the summary",
             "tabView": {
