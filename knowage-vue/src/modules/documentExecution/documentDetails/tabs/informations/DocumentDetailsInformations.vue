@@ -64,7 +64,8 @@
                                 </div>
 
                                 <div class="p-field p-col-12 p-lg-6">
-                                    <img v-if="selectedDocument?.previewFile" id="image-preview" :src="getImageUrl" :height="mainDescriptor.style.previewImage" />
+                                    <img v-if="selectedDocument?.previewFile && !imagePreview" id="image-preview" :src="getImageUrl" :height="mainDescriptor.style.previewImage" />
+                                    <img v-if="imagePreviewUrl && imagePreview" id="image-preview" :src="imagePreviewUrl" :height="mainDescriptor.style.previewImage" />
                                 </div>
 
                                 <div class="p-field p-col-12 p-lg-6">
@@ -363,7 +364,9 @@ export default defineComponent({
             imageToUpload: { name: '' } as any,
             visibilityAttribute: '',
             restrictionValue: '',
-            driversPositions: infoDescriptor.driversPositions
+            driversPositions: infoDescriptor.driversPositions,
+            imagePreviewUrl: null as any,
+            imagePreview: false
         }
     },
     created() {
@@ -384,6 +387,7 @@ export default defineComponent({
             this.document = this.selectedDocument as iDocument
             this.dataset = this.selectedDataset
             this.folders = this.availableFolders as iFolder[]
+            this.resetImagePreview()
             this.IsLockedByUser()
         },
         IsLockedByUser() {
@@ -427,8 +431,18 @@ export default defineComponent({
             this.uploading = true
             this.imageToUpload = event.target.files[0]
             this.$emit('setImageForUpload', event.target.files[0])
+            this.setImagePreview(event.target.files[0])
             this.triggerImageUpload = false
             setTimeout(() => (this.uploading = false), 200)
+        },
+        setImagePreview(imageFile) {
+            this.imagePreviewUrl = URL.createObjectURL(imageFile)
+            this.imagePreview = true
+            this.$store.commit('setInfo', { title: this.$t('common.uploadFileSuccess'), msg: this.$t('documentExecution.documentDetails.info.imageInfo') })
+        },
+        resetImagePreview() {
+            this.imagePreviewUrl = null
+            this.imagePreview = false
         },
         setFunctionality(event) {
             this.document.functionalities = event

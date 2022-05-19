@@ -392,7 +392,8 @@
                 "restrictionValueHint": "Enter Value",
                 "restrictionsTitle": "Visibility Restrictions",
                 "uploadTemplate": "Upload template",
-                "visibilityLocationTitle": "Select the functionalities where the document will be visible"
+                "visibilityLocationTitle": "Select the functionalities where the document will be visible",
+                "imageInfo": "Image successfully uploaded"
             },
             "outputParams": {
                 "customValue": "Custom Value",
