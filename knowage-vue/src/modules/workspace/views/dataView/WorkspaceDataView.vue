@@ -133,7 +133,7 @@
     import WorkspaceDataShareDialog from './dialogs/WorkspaceDataShareDialog.vue'
     import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDialog.vue'
     import { AxiosResponse } from 'axios'
-    import { downloadDirect } from '@/helpers/commons/fileHelper'
+    import { downloadDirectFromResponseWithCustomName } from '@/helpers/commons/fileHelper'
     import SelectButton from 'primevue/selectbutton'
     import QBE from '@/modules/qbe/QBE.vue'
     import { Client } from '@stomp/stompjs'
@@ -520,7 +520,8 @@
                                 msg: this.$t('common.error.downloading')
                             })
                         } else {
-                            downloadDirect(response.data, this.selectedDataset.label, this.getFileType(this.selectedDataset.fileType.toLowerCase()))
+                            let fileName = response.headers['content-disposition'].split('fileName=')[1].split(';')[0]
+                            downloadDirectFromResponseWithCustomName(response, fileName)
                             this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
                         }
                     })
