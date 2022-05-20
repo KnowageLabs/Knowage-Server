@@ -229,8 +229,10 @@ export default defineComponent({
             event.dataTransfer.effectAllowed = 'move'
         },
         setFilteredWords(words: any) {
+            this.loading = true
             this.nodes = []
             words.forEach((el: any) => this.nodes.push(this.createNode(el)))
+            this.loading = false
         },
         setLoading(value: boolean) {
             this.loading = value
