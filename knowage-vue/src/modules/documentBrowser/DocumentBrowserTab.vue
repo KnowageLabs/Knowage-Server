@@ -14,7 +14,7 @@
         @documentSaved="$emit('documentSaved', $event)"
     >
         <keep-alive>
-            <component :is="Component" :key="key"></component>
+            <component :is="Component" :key="key" :functionalityId="functionalityId" :item="loadedItem" :parameterValuesMap="parameterValuesMap" :tabKey="key"></component>
         </keep-alive>
     </router-view>
 </template>
