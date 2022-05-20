@@ -6,7 +6,6 @@
         :item="item"
         :parameterValuesMap="parameterValuesMap"
         :tabKey="key"
-        :propMode="mode"
         @close="$emit('close', item)"
         @parametersChanged="onParametersChange"
         @iframeCreated="onIframeCreated"
@@ -27,7 +26,7 @@ export default defineComponent({
     name: 'document-browser-tab',
     components: {},
     emits: ['close', 'iframeCreated', 'closeIframe', 'documentSaved'],
-    props: { item: { type: Object }, mode: { type: String }, functionalityId: { type: String } },
+    props: { item: { type: Object }, functionalityId: { type: String } },
     data() {
         return {
             parameterValuesMap: {} as any

@@ -17,16 +17,7 @@
                 </TabPanel>
             </TabView>
 
-            <DocumentBrowserTab
-                v-show="selectedItem && selectedItem.mode"
-                :item="selectedItem?.item"
-                :mode="selectedItem?.mode"
-                :functionalityId="selectedItem?.functionalityId"
-                @close="closeDocument('current')"
-                @iframeCreated="onIFrameCreated"
-                @closeIframe="closeIframe"
-                @documentSaved="onDocumentSaved"
-            ></DocumentBrowserTab>
+            <DocumentBrowserTab v-show="selectedItem && selectedItem.mode" :item="selectedItem?.item" :functionalityId="selectedItem?.functionalityId" @close="closeDocument('current')" @iframeCreated="onIFrameCreated" @closeIframe="closeIframe" @documentSaved="onDocumentSaved"></DocumentBrowserTab>
             <div v-for="(iframe, index) in iFrameContainers" :key="index">
                 <iframe v-show="iframe.item?.routerId === selectedItem?.item.routerId" ref="iframe" class="document-browser-cockpit-iframe" :src="iframe.iframe"></iframe>
             </div>
@@ -73,7 +64,14 @@ export default defineComponent({
             let tempDocument = {} as any
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$router.currentRoute.value.params.id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
             const tempItem = {
-                item: { name: tempDocument.name, label: this.$router.currentRoute.value.params.id, mode: this.$router.currentRoute.value.params.mode, routerId: crypto.randomBytes(16).toString('hex'), id: this.$router.currentRoute.value.params.id },
+                item: {
+                    name: tempDocument.name,
+                    label: this.$router.currentRoute.value.params.id,
+                    mode: this.$router.currentRoute.value.params.mode,
+                    routerId: crypto.randomBytes(16).toString('hex'),
+                    id: this.$router.currentRoute.value.params.id,
+                    showMode: this.$router.currentRoute.value.name === 'document-browser-document-execution' ? 'execute' : 'documentDetail'
+                },
                 mode: this.$router.currentRoute.value.name === 'document-browser-document-execution' ? 'execute' : 'documentDetail'
             }
             this.tabs.push(tempItem)
@@ -116,14 +114,17 @@ export default defineComponent({
 
             if (payload.mode === 'documentDetail') {
                 const path = payload.functionalityId ? `/document-browser/document-details/new/${payload.functionalityId}` : `/document-browser/document-details/${payload.item.id}`
+                this.selectedItem.item.showMode = 'documentDetail'
                 this.$router.push(path)
             } else {
                 const id = payload.item ? payload.item.label : 'new-dashboard'
                 if (payload.item) {
                     let routeDocumentType = this.getRouteDocumentType(payload.item)
+                    this.selectedItem.item.showMode = 'execute'
                     this.$router.push(`/document-browser/${routeDocumentType}/` + id)
                 } else {
                     this.selectedItem.item = { routerId: crypto.randomBytes(16).toString('hex') }
+                    this.selectedItem.item.showMode = 'createCockpit'
                     this.$router.push(`/document-browser/new-dashboard`)
                 }
             }
@@ -233,7 +234,7 @@ export default defineComponent({
         },
         loadSavedCockpit(cockpit: any) {
             this.closeIframe()
-            this.selectedItem = { item: { ...cockpit, routerId: crypto.randomBytes(16).toString('hex'), name: cockpit.DOCUMENT_NAME, label: cockpit.DOCUMENT_LABEL, mode: 'document-composite' } }
+            this.selectedItem = { item: { ...cockpit, routerId: crypto.randomBytes(16).toString('hex'), name: cockpit.DOCUMENT_NAME, label: cockpit.DOCUMENT_LABEL, showMode: 'createCockpit' } }
             this.tabs[this.activeIndex - 1] = this.selectedItem
             this.$router.push(`/document-browser/document-composite/${cockpit.DOCUMENT_LABEL}`)
         },
