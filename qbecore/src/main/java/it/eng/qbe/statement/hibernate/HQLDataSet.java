@@ -36,7 +36,9 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
+ * @deprecated Used in the old QBE
  */
+@Deprecated
 public class HQLDataSet extends AbstractQbeDataSet {
 
 	/** Logger component. */
