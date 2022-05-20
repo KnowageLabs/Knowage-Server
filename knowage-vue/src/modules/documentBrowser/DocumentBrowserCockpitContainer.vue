@@ -39,21 +39,29 @@ export default defineComponent({
             url: '',
             mode: '',
             testIFrame: null as any,
-            name: '' as string
+            name: '' as string,
+            loadedItem: null as any
         }
     },
     watch: {
         id() {
             this.name = this.id as string
+            this.loadItem()
+            this.setMode()
+        },
+        item() {
+            this.loadItem()
             this.setMode()
         }
     },
     created() {
         this.name = this.id as string
         this.createUrl()
+        this.loadItem()
         this.setMode()
     },
     activated() {
+        this.loadItem()
         this.setMode()
     },
     deactivated() {
@@ -69,19 +77,22 @@ export default defineComponent({
             this.url = process.env.VUE_APP_HOST_URL + `/knowagecockpitengine/api/1.0/pages/edit?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&user_id=${uniqueID}&SBI_COUNTRY=${country}&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=true&documentMode=EDIT&FUNCTIONALITY_ID=${this.functionalityId}`
         },
         setMode() {
-            if (!this.item) return
+            if (!this.loadedItem) return
 
-            if (this.item.showMode === 'documentDetail') {
+            if (this.loadedItem.showMode === 'documentDetail') {
                 this.mode = 'document-detail'
-            } else if (this.item.showMode === 'execute') {
+            } else if (this.loadedItem.showMode === 'execute') {
                 this.mode = 'document-execution'
-            } else if (this.item.showMode === 'createCockpit') {
+            } else if (this.loadedItem.showMode === 'createCockpit') {
                 this.mode = 'cockpit'
                 this.$emit('iframeCreated', { iframe: this.url, item: this.item })
             }
         },
         onDocumentsSaved(document: any) {
             this.$emit('documentSaved', document)
+        },
+        loadItem() {
+            this.loadedItem = this.item
         }
     }
 })

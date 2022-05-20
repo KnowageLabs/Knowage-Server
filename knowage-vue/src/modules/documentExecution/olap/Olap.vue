@@ -956,10 +956,32 @@ export default defineComponent({
                 // @ts-ignore
                 this.$refs.whatifInput.style.display = 'flex'
 
-                this.whatifInputNewValue = event.target.attributes.value.value
+                let locale = localStorage.getItem('locale') as any
+                let cutLocalString = locale.split('_')
+
+                this.whatifInputNewValue = this.parseLocaleNumber(event.target.attributes.value.value, cutLocalString[0])
                 this.whatifInputOldValue = event.target.attributes.value.value
                 this.whatifInputOrdinal = event.target.attributes.ordinal.value
             }
+        },
+        parseLocaleNumber(stringNumber, locale) {
+            let num = 123456.789,
+                fmt_local = new Intl.NumberFormat(locale),
+                parts_local = fmt_local.formatToParts(num),
+                group = ''
+
+            // separators
+            parts_local.forEach(function(i) {
+                switch (i.type) {
+                    case 'group':
+                        group = i.value
+                        break
+                    default:
+                        break
+                }
+            })
+
+            return stringNumber.replace(new RegExp('\\' + group, 'g'), '')
         },
         checkIfVersionIsSet() {
             let versionIsSet = false
@@ -1141,27 +1163,27 @@ export default defineComponent({
     table {
         border-collapse: collapse;
         thead {
-                border-bottom: 1px solid #ccc;
-                overflow: auto;
-                th {
-                    position: relative !important;
-                    border-right: 1px solid #ccc;
-                    border-left: 1px solid #ccc;
-                    padding: 5px;
-                    background: #f5f5f5;
-                    white-space: nowrap;
-                    text-align: left;
-                }
-                td {
-                    border-top-width: 1px !important;
-                    border-right-width: 1px !important;
-                    text-align: right;
-                    vertical-align: middle;
-                    border-bottom: 1px solid #3b678c;
-                    border-right: 1px solid #3b678c;
-                    max-height: 43px !important;
-                }
+            border-bottom: 1px solid #ccc;
+            overflow: auto;
+            th {
+                position: relative !important;
+                border-right: 1px solid #ccc;
+                border-left: 1px solid #ccc;
+                padding: 5px;
+                background: #f5f5f5;
+                white-space: nowrap;
+                text-align: left;
             }
+            td {
+                border-top-width: 1px !important;
+                border-right-width: 1px !important;
+                text-align: right;
+                vertical-align: middle;
+                border-bottom: 1px solid #3b678c;
+                border-right: 1px solid #3b678c;
+                max-height: 43px !important;
+            }
+        }
         tbody {
             th {
                 border-right: 1px solid #ccc;
@@ -1180,7 +1202,6 @@ export default defineComponent({
             }
         }
     }
-    
 }
 
 #whatif-input {

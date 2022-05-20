@@ -3,7 +3,7 @@
         v-show="item"
         v-slot="{ Component }"
         :functionalityId="functionalityId"
-        :item="item"
+        :item="loadedItem"
         :parameterValuesMap="parameterValuesMap"
         :tabKey="key"
         @close="$emit('close', item)"
@@ -29,7 +29,8 @@ export default defineComponent({
     props: { item: { type: Object }, functionalityId: { type: String } },
     data() {
         return {
-            parameterValuesMap: {} as any
+            parameterValuesMap: {} as any,
+            loadedItem: null as any
         }
     },
     computed: {
@@ -37,14 +38,23 @@ export default defineComponent({
             return this.item?.routerId
         }
     },
-    watch: {},
-    created() {},
+    watch: {
+        item() {
+            this.loadItem()
+        }
+    },
+    created() {
+        this.loadItem()
+    },
     methods: {
         onIframeCreated(payload: any) {
             this.$emit('iframeCreated', payload)
         },
         onParametersChange(payload: any) {
             this.parameterValuesMap[payload.document.label + '-' + this.key] = payload.parameters
+        },
+        loadItem() {
+            this.loadedItem = this.item
         }
     }
 })
