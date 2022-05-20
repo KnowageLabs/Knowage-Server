@@ -7,9 +7,9 @@
                     <div class="p-d-flex p-flex-row">
                         <Checkbox v-if="column.field === 'identifier'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('metaUpdated')"></Checkbox>
                         <Checkbox v-else-if="column.field === 'visible'" v-model="columnsVisibility[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'visibility')"></Checkbox>
-                        <Checkbox v-else-if="column.field === 'personal' && columnsPersonal[slotProps.data.uniqueName] !== undefined" v-model="columnsPersonal[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'personal')"></Checkbox>
-                        <Checkbox v-else-if="column.field === 'decrypt' && columnsDecrypt[slotProps.data.uniqueName] !== undefined" v-model="columnsDecrypt[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'decrypt')"></Checkbox>
-                        <Checkbox v-else-if="column.field === 'subjectId' && columnsSubjectId[slotProps.data.uniqueName] !== undefined" v-model="columnsSubjectId[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'subjectId')"></Checkbox>
+                        <Checkbox v-else-if="column.field === 'personal'" v-model="columnsPersonal[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'personal')"></Checkbox>
+                        <Checkbox v-else-if="column.field === 'decrypt'" v-model="columnsDecrypt[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'decrypt')"></Checkbox>
+                        <Checkbox v-else-if="column.field === 'subjectId'" v-model="columnsSubjectId[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'subjectId')"></Checkbox>
                         <span v-else-if="column.field === 'type'">{{ columnsType[slotProps.data.uniqueName] }}</span>
                         <span v-else>{{ slotProps.data[slotProps.column.props.field] }}</span>
                     </div>
