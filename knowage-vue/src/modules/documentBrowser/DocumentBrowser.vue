@@ -18,7 +18,7 @@
             </TabView>
 
             <DocumentBrowserTab
-                v-show="selectedItem"
+                v-show="selectedItem && selectedItem.mode"
                 :item="selectedItem?.item"
                 :mode="selectedItem?.mode"
                 :functionalityId="selectedItem?.functionalityId"

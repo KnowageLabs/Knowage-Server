@@ -46,6 +46,9 @@ export default defineComponent({
         id() {
             this.name = this.id as string
             this.setMode()
+        },
+        propMode() {
+            this.setMode()
         }
     },
     created() {
