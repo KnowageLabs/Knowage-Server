@@ -31,6 +31,11 @@
             "value": "Date"
         },
         {
+            "disabled": false,
+            "name": "java.time.LocalDateTime",
+            "value": "Local Date"
+        },
+        {
             "disabled": true,
             "name": "net.minidev.json.JSONArray",
             "value": "JSON"
