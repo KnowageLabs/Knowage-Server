@@ -20,6 +20,8 @@ package it.eng.spagobi.services.oauth2;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -53,6 +55,8 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 
 	static private Logger logger = Logger.getLogger(Oauth2HybridSsoService.class);
 
+	private static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
+
 	@Override
 	public String readUserIdentifier(HttpServletRequest request) {
 		HttpSession session = request.getSession();
@@ -70,7 +74,10 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 	private String accessToken2JWTToken(String accessToken) {
 		String userId = getUserId(accessToken);
 		LogMF.debug(logger, "User id detected from access token [{0}]", userId);
-		return JWTSsoService.userId2jwtToken(userId);
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.HOUR, USER_JWT_TOKEN_EXPIRE_HOURS);
+		Date expiresAt = calendar.getTime();
+		return JWTSsoService.userId2jwtToken(userId, expiresAt);
 	}
 
 	private String getUserId(String accessToken) {
