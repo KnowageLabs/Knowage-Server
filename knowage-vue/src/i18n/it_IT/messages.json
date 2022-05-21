@@ -392,7 +392,8 @@
         "restrictionValueHint": "inserisci valore",
         "restrictionsTitle": "condizioni di visibilità",
         "uploadTemplate": "carica template",
-        "visibilityLocationTitle": "seleziona le funzionalità in cui il documento sarà visibile"
+        "visibilityLocationTitle": "seleziona le funzionalità in cui il documento sarà visibile",
+        "imageInfo": "Image successfully uploaded"
       },
       "outputParams": {
         "customValue": "valore personalizzato",
@@ -487,6 +488,7 @@
         "title": "Olap custom view List"
       },
       "deleteVersion": {
+        "errorMessage": "You can not delete active version, please try again.",
         "id": "id",
         "title": "Select the version to delete"
       },
@@ -501,6 +503,7 @@
         "selectLevels": "Select visible levels",
         "title": "Drill Through"
       },
+      "editErrorLocked": "It's not possible to edit a schema if you have not set a lock on it.",
       "editModeConfirm": "You are leaving edit mode. Continue?",
       "filterDialog": {
         "ancestorDescendantWarning": "Warning: You selected some members that are in ancestor-descendant relationship: measures will be aggregated over both of them. Are you sure this is what you want?",
@@ -537,6 +540,7 @@
         "detail2": "You can change it acting on the form below.",
         "dropdownLabel": "gerarchie disponibili"
       },
+      "notEditable": "Measure is not editable",
       "openDesigner": "apri designer",
       "openDesignerMsg": "aprendo il designer perderai tutti i cambiamenti non salvati, sei sicuro?",
       "outputWizard": {
@@ -1243,6 +1247,7 @@
       "ckanXslSheetNumber": "Sheet Number",
       "creationUser": "Creation User",
       "dataframeName": "Dataframe variable name",
+      "decript": "Decript value",
       "deleteAllParams": "Clear all dataset parameters",
       "deleteAllParamsMsg": "Are you sure you want to delete all dataset parameters?",
       "deleteAllRequestHeaderMsg": "Are you sure you want to delete all REST request headers",
@@ -1284,6 +1289,7 @@
       "params": "Parameters",
       "peristenceWarning": "Dataset with parameters cannot be persisted!",
       "persistTableName": "Persist Table Name",
+      "personal": "Sensitive data",
       "pivotColName": "Category Column to be Pivoted",
       "pivotColValue": "Value Column to be Pivoted",
       "pivotIsNumRows": "Automatic Columns numeration?",
@@ -1323,13 +1329,17 @@
       "sparqlDefaultGraphIri": "Default Graph IRI",
       "sparqlEndpoint": "Sparql Endpoint",
       "sparqlExecutionTimeout": "Execution timeout(s)",
+      "subjectId": "Subject key",
       "tableEmpty": "Click on the + icon to insert data.",
       "timestampFormat": "Timestamp Format",
       "title": "Dataset Management",
       "typeOrJsonPathValue": "Type or JSON Path Type",
       "viewQbeButton": "View Qbe Query",
       "viewQbeMsg": "The dataset should be saved before viewing the QBE query",
-      "viewQbeWarning": "Cannot open QBE query"
+      "viewQbeWarning": "Cannot open QBE query",
+      "openDP": "Open data preparation",
+      "confirmMsg": "You will lose all unsaved changes, are you sure you want to open Data Preparation?",
+      "monitoring": "Monitoring"
     },
     "domainsManagement": {
       "domainCode": "Domain code",
@@ -2020,6 +2030,7 @@
     },
     "timespan": {
       "cloneAlreadyDefined": "The next timespan is already defiend",
+      "hint": "No timespan selected",
       "invalidDatesError": "The dates are not valid",
       "noIntervalError": "Please define at least one interval",
       "startDateGreaterError": "Start date greater than end date",
@@ -2231,6 +2242,7 @@
       },
       "businessClass": "Business Class",
       "businessView": "Business View",
+      "decrypt": "Decrypt",
       "editJoin": "Edit Join Relationship",
       "inbound": {
         "name": "Insert a Business Relationship Name",
@@ -2240,6 +2252,7 @@
       "newBusiness": "New Business Class",
       "newView": "New Business View",
       "noUnusedFields": "No columns to add",
+      "personal": "Personal",
       "physTable": "Physical Table",
       "physicalColumn": "Physical Column",
       "physicalColumnHint": "The original physical column of this column",
@@ -2248,6 +2261,7 @@
       "sourceAttr": "Source Attributes",
       "sourceHint": "Select source table",
       "sourceTable": "Source Table",
+      "subjectId": "Subject Id",
       "summary": "Summary",
       "summaryHint": "Link tables to see the summary",
       "tabView": {
