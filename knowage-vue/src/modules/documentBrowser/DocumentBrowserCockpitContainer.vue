@@ -14,6 +14,7 @@
             v-show="mode === 'document-detail'"
             v-bind:style="[mode === 'document-detail' ? '' : 'display: none !important;']"
             :propMode="'execution'"
+            :viewMode="mode"
             :propDocId="item?.id"
             :propFolderId="functionalityId"
             @closeDetails="$emit('closeDetails', item)"
