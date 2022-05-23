@@ -52,55 +52,61 @@
     },
     "sheets": [
         {
+            "icon": "fa-solid fa-ice-cream",
+            "id": "060da80c-c38e-4be6-8572-02ec048d062e",
             "label": "first sheet",
-            "widgets": [
-                {
-                    "h": 4,
-                    "i": 0,
-                    "id": "5e4aba6e-6857-43b8-b385-61a16b2a5b15",
-                    "position": 0,
-                    "w": 20,
-                    "x": 0,
-                    "y": 0
-                },
-                {
-                    "h": 5,
-                    "i": 1,
-                    "id": "5e4aba6e-6857-43b8-b385-61a16b2a5b15",
-                    "position": 0,
-                    "w": 25,
-                    "x": 22,
-                    "y": 12
-                }
-            ]
+            "widgets": {
+                "lg": [
+                    {
+                        "h": 6,
+                        "i": 0,
+                        "id": "5e4aba6e-6857-43b8-b385-61a16b2a5b15",
+                        "w": 10,
+                        "x": 0,
+                        "y": 0
+                    },
+                    {
+                        "h": 5,
+                        "i": 1,
+                        "id": "5e4aba6e-6857-43b8-b385-61a16b2a5b15",
+                        "w": 5,
+                        "x": 5,
+                        "y": 12
+                    }
+                ]
+            }
         },
         {
+            "id": "860c851c-1a7c-491c-bf6e-e6629a1d20bf",
             "label": "second sheet",
-            "widgets": [
-                {
-                    "h": 5,
-                    "i": 2,
-                    "id": "5e4aba6e-6857-43b8-b385-61a16b2a5b15",
-                    "position": 0,
-                    "w": 10,
-                    "x": 20,
-                    "y": 0
-                }
-            ]
+            "widgets": {
+                "lg": [
+                    {
+                        "h": 5,
+                        "i": 2,
+                        "id": "edcb4ec8-dd96-4c4a-9400-b55502bfd082",
+                        "w": 10,
+                        "x": 20,
+                        "y": 0
+                    }
+                ]
+            }
         },
         {
+            "id": "ab90f97f-927a-4abe-a800-375d3194a60a",
             "label": "third sheet",
-            "widgets": [
-                {
-                    "h": 2,
-                    "i": 3,
-                    "id": "5e4aba6e-6857-43b8-b385-61a16b2a5b15",
-                    "position": 0,
-                    "w": 4,
-                    "x": 2,
-                    "y": 5
-                }
-            ]
+            "widgets": {
+                "lg": [
+                    {
+                        "h": 2,
+                        "i": 3,
+                        "id": "5e4aba6e-6857-43b8-b385-61a16b2a5b15",
+                        "w": 4,
+                        "x": 2,
+                        "y": 5
+                    }
+                ]
+            }
         }
     ],
     "version": "8.2.0",
@@ -173,6 +179,11 @@
             },
             "theme": "edcb4ec8-dd96-4c4a-9400-b55502bfd082",
             "type": "table"
+        },
+        {
+            "id": "edcb4ec8-dd96-4c4a-9400-b55502bfd082",
+            "theme": "edcb4ec8-dd96-4c4a-9400-b55502bfd082",
+            "type": "chart"
         }
     ]
 }

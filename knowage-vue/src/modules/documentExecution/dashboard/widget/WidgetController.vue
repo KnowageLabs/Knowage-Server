@@ -1,7 +1,7 @@
 <template>
     <grid-item :key="item.i" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle">
         <div v-if="initialized" class="drag-handle"></div>
-        <Skeleton shape="rectangle" v-if="!initialized" height="100%" />
+        <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
         <WidgetRenderer :widget="widget" v-if="initialized"></WidgetRenderer>
     </grid-item>
 </template>
@@ -14,15 +14,18 @@ import Skeleton from 'primevue/skeleton'
 export default defineComponent({
     name: 'widget-manager',
     components: { Skeleton, WidgetRenderer },
+    inject: ['dHash'],
     props: {
         item: {
-            required: true
+            required: true,
+            type: Object
         },
-        sheet: {
-            required: true
+        activeSheet: {
+            type: Boolean
         },
         widget: {
-            required: true
+            required: true,
+            type: Object
         }
     },
     data() {
@@ -31,10 +34,17 @@ export default defineComponent({
             initialized: false
         }
     },
+    methods: {
+        initializeWidget() {
+            setTimeout(() => {
+                this.initialized = true
+            }, 1000)
+        }
+    },
     updated() {
-        // @ts-ignore
-        if (this.sheet === 0 || this.sheet === this.$store.state.dashboard.dashboards['7961fdeb-545f-4d08-9e3c-ba2d48be597f']) {
-            setTimeout(() => (this.initialized = true), 1000)
+        if (!this.initialized && this.activeSheet) {
+            this.$nextTick()
+            this.initializeWidget()
         }
     }
 })

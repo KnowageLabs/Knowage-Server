@@ -1,6 +1,6 @@
 <template>
     <div class="widget-renderer">
-        {{ widget.id }}
+        {{ widget.type }}
     </div>
 </template>
 
@@ -11,7 +11,8 @@ export default defineComponent({
     name: 'widget-renderer',
     props: {
         widget: {
-            required: true
+            required: true,
+            type: Object
         }
     }
 })

@@ -6,6 +6,9 @@ const dashboardStore = {
         }
     },
     mutations: {
+        removeDashboard(state, dashboard) {
+            delete state.dashboards[dashboard.id]
+        },
         setDashboardSheet(state, dashboard) {
             state.dashboards[dashboard.id] = dashboard.sheet
         }
