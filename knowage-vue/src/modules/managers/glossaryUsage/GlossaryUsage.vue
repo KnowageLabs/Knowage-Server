@@ -120,6 +120,8 @@ export default defineComponent({
             if (!parent) {
                 this.selectedWords = []
                 this.selectedKeys = []
+                this.loading = false
+                return
             }
 
             if (parent?.WORD_ID || this.searchWord) {
@@ -230,8 +232,11 @@ export default defineComponent({
         },
         setFilteredWords(words: any) {
             this.loading = true
-            this.nodes = []
-            words.forEach((el: any) => this.nodes.push(this.createNode(el)))
+            setTimeout(() => {
+                this.nodes = []
+                words.forEach((el: any) => this.nodes.push(this.createNode(el)))
+            }, 250)
+
             this.loading = false
         },
         setLoading(value: boolean) {
