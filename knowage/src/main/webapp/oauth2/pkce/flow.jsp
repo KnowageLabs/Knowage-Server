@@ -55,6 +55,9 @@ OAuth2Config oauth2Config = OAuth2Config.getInstance();
                     var response = xhr.response;
 
                     if (xhr.status == 200) {
+                    	// storing id_token for later usage (on logout)
+                    	window.sessionStorage.setItem("id_token", response.id_token);
+                    	
                     	var lastRedirectUri = window.location.href.split('?')[0];
                     	var args = new URLSearchParams({
                     		PAGE : "LoginPage",
@@ -98,7 +101,8 @@ OAuth2Config oauth2Config = OAuth2Config.getInstance();
                     code_challenge_method: "S256",
                     code_challenge: codeChallenge,
                     state: state,
-                    redirect_uri: redirectUri
+                    redirect_uri: redirectUri,
+                    scope: "openid profile"
                 });
                 window.location = authorizeEndpoint + "/?" + args;
             });
