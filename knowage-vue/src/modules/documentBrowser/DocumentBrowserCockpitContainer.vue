@@ -8,6 +8,7 @@
             :parameterValuesMap="parameterValuesMap"
             :tabKey="tabKey"
             @parametersChanged="$emit('parametersChanged', $event)"
+            @close="$emit('close')"
         ></DocumentExecution>
         <DocumentDetails
             v-show="mode === 'document-detail'"
@@ -33,7 +34,7 @@ export default defineComponent({
         DocumentDetails
     },
     props: { id: { type: String }, functionalityId: { type: String }, item: { type: Object }, parameterValuesMap: { type: Object }, tabKey: { type: String } },
-    emits: ['iframeCreated', 'closeIframe', 'parametersChanged', 'closeDetails', 'documentSaved'],
+    emits: ['iframeCreated', 'closeIframe', 'parametersChanged', 'closeDetails', 'documentSaved', 'close'],
     data() {
         return {
             url: '',
