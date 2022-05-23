@@ -159,6 +159,7 @@ export default defineComponent({
         }
     },
     async created() {
+        if (this.propMode === 'execution') return
         this.isForEdit()
         await this.loadPage(this.docId)
     },
