@@ -88,6 +88,7 @@ export default defineComponent({
                 this.mode = 'cockpit'
                 this.$emit('iframeCreated', { iframe: this.url, item: this.item })
             }
+            console.log('MODE: ', this.mode)
         },
         onDocumentsSaved(document: any) {
             this.$emit('documentSaved', document)

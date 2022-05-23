@@ -1,5 +1,5 @@
 <template>
-    <div id="document-details-container" class="p-d-flex p-flex-column kn-flex kn-height-full">
+    <div v-if="propMode !== 'execution'" id="document-details-container" class="p-d-flex p-flex-column kn-flex kn-height-full">
         <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
             <template #start>
                 {{ $t('documentExecution.documentDetails.title') }}
