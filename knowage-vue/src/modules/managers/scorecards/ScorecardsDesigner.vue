@@ -44,8 +44,8 @@
             <ScorecardsTable v-if="scorecard" :propScorecard="scorecard" :criterias="criterias" :kpis="kpis" @touched="touched = true"></ScorecardsTable>
         </div>
 
-        <div id="sideMenu" class="kn-overflow" :style="descriptor.style.perspective">
-            <KnPerspectiveCard class="p-m-4" v-for="(perspective, index) in scorecard?.perspectives" :key="index" :propPerspective="perspective" :data-test="'perspective-' + perspective.name"></KnPerspectiveCard>
+        <div v-if="scorecard" id="sideMenu" class="kn-overflow" :style="descriptor.style.perspective">
+            <KnPerspectiveCard class="p-m-4" v-for="(perspective, index) in scorecard.perspectives" :key="index" :propPerspective="perspective" :data-test="'perspective-' + perspective.name"></KnPerspectiveCard>
         </div>
     </div>
 </template>
@@ -63,7 +63,7 @@ const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'scorecards-designer',
-    components: { Card, ScorecardsTable, KnPerspectiveCard },
+    components: { Card, KnPerspectiveCard, ScorecardsTable },
     props: { id: { type: String } },
     data() {
         return {

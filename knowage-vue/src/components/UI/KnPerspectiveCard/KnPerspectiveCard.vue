@@ -4,13 +4,15 @@
             <div class="perspective-header p-d-flex p-flex-row p-ai-center" :class="toolbarBorderClass">
                 <h2 class="p-m-0 p-p-2">{{ perspective.name }}</h2>
                 <span v-tooltip="getSelectedCriteriaTooltip(perspective.criterion?.valueCd)" class="perspective-target-icon kn-cursor-pointer">{{ getTargetIconLetter(perspective.criterion?.valueCd) }}</span>
+                <div v-if="perspective.criterion?.valueCd !== 'MAJORITY'" class="p-ml-2 kn-truncated priority-items-container">{{ '(' + getPriorityItems(perspective) + ')' }}</div>
             </div>
         </template>
         <template #content>
             <div class="target-row p-d-flex p-flex-row p-ai-center p-p-3 p-my-2" :class="{ 'perspective-target-container': index !== perspective.targets.length - 1 }" v-for="(target, index) in perspective.targets" :key="index">
-                <div>
-                    <span class="p-mr-2">{{ target.name }}</span>
-                    <span v-tooltip="getSelectedCriteriaTooltip(target.criterion?.valueCd)" class="perspective-target-icon kn-cursor-pointer">{{ getTargetIconLetter(target.criterion?.valueCd) }}</span>
+                <div class="p-d-flex p-flex-row">
+                    <span class="p-mr-2 kn-flex">{{ target.name }}</span>
+                    <span v-tooltip="getSelectedCriteriaTooltip(target.criterion?.valueCd)" class="p-ml-auto perspective-target-icon kn-cursor-pointer">{{ getTargetIconLetter(target.criterion?.valueCd) }}</span>
+                    <div v-if="target.criterion?.valueCd !== 'MAJORITY'" class="p-ml-2 kn-truncated priority-items-container">{{ '(' + getPriorityItems(target) + ')' }}</div>
                 </div>
                 <div class="p-ml-auto">
                     <i class="fas fa-square fa-2xl p-mr-2" :class="getTargetStatusIconColor(target)"></i>
@@ -55,13 +57,12 @@ export default defineComponent({
             }
         }
     },
-
     created() {
         this.loadPerspective()
     },
     methods: {
         async loadPerspective() {
-            this.perspective = this.propPerspective ?? ({} as iPerspective)
+            this.perspective = this.propPerspective ? this.propPerspective : ({} as iPerspective)
 
             if (this.perspective && this.perspective.criterion.valueId) {
                 await this.evaluatePerspective()
@@ -167,7 +168,7 @@ export default defineComponent({
                 const tempGroupedKpis = target.groupedKpis[i]
                 let found = false
 
-                for (let j = 0; j < this.perspective?.groupedKpis?.length; i++) {
+                for (let j = 0; j < this.perspective?.groupedKpis?.length; j++) {
                     if (deepEqual(this.perspective.groupedKpis[j].status, tempGroupedKpis.status)) {
                         this.perspective.groupedKpis[j].count += tempGroupedKpis.count
                         found = true
@@ -225,6 +226,17 @@ export default defineComponent({
                 default:
                     return ''
             }
+        },
+        getPriorityItems(item: iPerspective | iScorecardTarget) {
+            let targets = ''
+            if (item && item.options) {
+                for (let i = 0; i < item.options.criterionPriority.length; i++) {
+                    targets += item.options.criterionPriority[i]
+                    targets += i === item.options.criterionPriority.length - 1 ? ' ' : ', '
+                }
+            }
+
+            return targets
         }
     }
 })
@@ -294,5 +306,10 @@ export default defineComponent({
 
 .scorecard-icon-light-grey {
     color: #cccccc;
+}
+
+.priority-items-container {
+    width: 100%;
+    max-width: 250px;
 }
 </style>
