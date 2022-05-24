@@ -12,15 +12,15 @@
                     <template #content>
                         <form class="p-fluid p-formgrid p-grid p-m-1">
                             <div class="p-float-label p-col">
-                                <Calendar ref="test" id="startDate" class="kn-material-input" v-model="startDate" :showIcon="true" />
+                                <Calendar ref="test" id="startDate" class="kn-material-input" v-model="startDate" :showIcon="true" @date-select="setFocusOnSearchButton" />
                                 <label for="endDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.startDate') }} </label>
                             </div>
                             <div class="p-float-label p-col">
-                                <Calendar id="endDate" class="kn-material-input" v-model="endDate" :showIcon="true" />
+                                <Calendar id="endDate" class="kn-material-input" v-model="endDate" :showIcon="true" @date-select="setFocusOnSearchButton" />
                                 <label for="endDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.endDate') }} </label>
                             </div>
                             <span class="p-field p-float-label p-col">
-                                <Dropdown id="eventModel" class="kn-material-input" v-model="selectedEventModel" :options="eventModel" @change="onSelectedEventModelChange" />
+                                <Dropdown id="eventModel" class="kn-material-input" v-model="selectedEventModel" :options="eventModel" @change="setFocusOnSearchButton" />
                                 <label for="eventModel" class="kn-material-input-label"> {{ $t('managers.eventsManagement.eventModel') }} </label>
                             </span>
                             <Button ref="search-button" id="search-button" icon="pi pi-search" class="p-button-text kn-button thirdButton" @click="onSearchClicked" data-test="search-button" />
@@ -139,7 +139,7 @@ export default defineComponent({
             this.lazyParams = { size: 20, paginationStart: 0 }
             await this.getEvents()
         },
-        onSelectedEventModelChange() {
+        setFocusOnSearchButton() {
             this.$nextTick(() => {
                 const searchButton = this.$refs['search-button'] as any
                 searchButton.$el.focus()
