@@ -1428,18 +1428,47 @@ public class ManageDataSetsForREST {
 		MetaData toReturn = new MetaData();
 
 		List<IFieldMetaData> fieldsMeta = new ArrayList<IFieldMetaData>();
-		for (int i = 0; i < dsMeta.length() - 1; i = i + 3) {
+		Map<String, IFieldMetaData> m = new HashMap<String, IFieldMetaData>();
+
+		for (int i = 0; i < dsMeta.length() - 1; i++) {
 			JSONObject currMetaType = dsMeta.getJSONObject(i);
-			JSONObject currMetaFieldType = dsMeta.getJSONObject(i + 1);
-			IFieldMetaData m = new FieldMetadata();
-			m.setName(currMetaType.getString("column"));
-			m.setAlias(null);
-			m.setType(getClassTypeFromColumn(currMetaType.getString("pvalue")));
-			m.setProperties(new HashMap<>());
-			m.setFieldType(getFieldTypeFromColumn(currMetaFieldType.getString("pvalue")));
-			m.setMultiValue(false);
-			fieldsMeta.add(m);
+			String column = currMetaType.getString("column");
+			IFieldMetaData columnMap = m.get(column);
+			if (columnMap == null) {
+				m.put(column, new FieldMetadata());
+
+				m.get(column).setName(currMetaType.getString("column"));
+				m.get(column).setProperties(new HashMap<>());
+				m.get(column).setMultiValue(false);
+			}
+
+			switch (currMetaType.getString("pname")) {
+			case "Type":
+				m.get(column).setType(getClassTypeFromColumn(currMetaType.getString("pvalue")));
+				break;
+			case "fieldType":
+				m.get(column).setFieldType(getFieldTypeFromColumn(currMetaType.getString("pvalue")));
+				break;
+			case "fieldAlias":
+				m.get(column).setAlias(currMetaType.getString("pvalue"));
+				break;
+			case "personal":
+				m.get(column).setPersonal(currMetaType.getBoolean("pvalue"));
+				break;
+			case "decript":
+				m.get(column).setDecript(currMetaType.getBoolean("pvalue"));
+				break;
+			case "subjectId":
+				m.get(column).setSubjectId(currMetaType.getBoolean("pvalue"));
+				break;
+
+			default:
+				break;
+			}
+
 		}
+
+		m.keySet().forEach(x -> fieldsMeta.add(m.get(x)));
 
 		toReturn.setFieldsMeta(fieldsMeta);
 		return toReturn;
