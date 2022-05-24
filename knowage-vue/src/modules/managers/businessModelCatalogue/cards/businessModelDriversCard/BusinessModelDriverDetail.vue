@@ -153,7 +153,6 @@
                 <div class="p-field p-d-flex">
                     <div :style="businessModelDriverDetailDescriptor.input.parFather.style">
                         <span class="p-float-label">
-                            {{ drivers }}
                             <Dropdown id="parFather" class="kn-material-input" v-model="condition.parFatherId" :options="drivers" placeholder=" " optionValue="id" :disabled="readonly">
                                 <template #value="slotProps">
                                     <div v-if="slotProps.value">
