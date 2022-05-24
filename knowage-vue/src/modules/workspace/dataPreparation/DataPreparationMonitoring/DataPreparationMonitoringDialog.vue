@@ -69,8 +69,8 @@
 
         methods: {
             async loadLogs() {
-                if (this.dataset && this.dataset.label) {
-                    await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + this.dataset.label).then((response: AxiosResponse<any>) => {
+                if (this.dataset && this.dataset.id) {
+                    await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + this.dataset.id).then((response: AxiosResponse<any>) => {
                         let instance = response.data.instance
                         if (instance) {
                             this.instanceId = instance.id

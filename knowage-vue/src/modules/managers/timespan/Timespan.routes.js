@@ -6,7 +6,7 @@ const routes = [
         children: [
             {
                 path: '',
-                component: () => import('@/modules/managers/timespan/TimespanDetail.vue')
+                component: () => import('@/modules/managers/timespan/TimespanHint.vue')
             },
             {
                 path: 'new-timespan',

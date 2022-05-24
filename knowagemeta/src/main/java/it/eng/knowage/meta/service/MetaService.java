@@ -214,7 +214,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			return Response.ok(translatedModel.toString()).build();
 
-		} catch (Throwable t) {
+		} catch (Throwable t) {			logger.error("Impossibile to load the model", t);
 			throw new SpagoBIServiceException(req.getPathInfo(), t);
 		}
 	}
@@ -801,13 +801,13 @@ public class MetaService extends AbstractSpagoBIResource {
 				}
 
 			} catch (IOException e) {
-				logger.error("Error during metamodel generation - IOException: " + e);
+				logger.error("Error during metamodel generation - IOException", e);
 				errors.addErrorKey("metaWeb.generation.io.error", e.getMessage());
 			} catch (AssertionError e) {
-				logger.error("Error during metamodel generation - AssertionError: " + e);
+				logger.error("Error during metamodel generation - AssertionError", e);
 				errors.addError(e.getMessage());
 			} catch (Throwable t) {
-				logger.error("Error during metamodel generation : " + t);
+				logger.error("Error during metamodel generation", t);
 				errors.addErrorKey("common.generic.error");
 			}
 		} finally {
@@ -862,6 +862,7 @@ public class MetaService extends AbstractSpagoBIResource {
 				}
 
 			} catch (KnowageMetaException t) {
+				logger.error("Error during set of calculated field", t);
 				return Response.ok(new JSError().addError(t.getMessage()).toString()).build();
 			}
 

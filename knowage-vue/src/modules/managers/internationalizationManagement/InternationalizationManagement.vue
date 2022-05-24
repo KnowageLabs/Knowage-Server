@@ -36,7 +36,7 @@
 
                     <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :class="{ disabledColumn: col.disabled, editableColumn: !col.disabled }">
                         <template #body="slotProps">
-                            <InputText v-model="slotProps.data[slotProps.column.props.field]" v-if="!col.disabled" class="kn-material-input p-inputtext-sm p-p-2" @input="atFieldChange(slotProps)" />
+                            <InputText v-model="slotProps.data[slotProps.column.props.field]" v-if="!col.disabled" class="kn-material-input p-inputtext-sm p-p-2" @input="atFieldChange(slotProps)" :data-test="'input-field-' + slotProps.data['id']" />
                             <span v-else :class="{ disabledCell: col.disabled, 'kn-disabled-text': col.disabled, editableCell: !col.disabled }">{{ slotProps.data[slotProps.column.props.field] }}</span>
                         </template>
                     </Column>

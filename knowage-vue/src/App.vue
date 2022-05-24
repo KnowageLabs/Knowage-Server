@@ -21,6 +21,7 @@
     import { mapState } from 'vuex'
     import WEB_SOCKET from '@/services/webSocket.js'
     import themeHelper from '@/helpers/themeHelper/themeHelper'
+    import { primeVueDate, getLocale } from '@/helpers/commons/localeHelper'
 
     export default defineComponent({
         components: { ConfirmDialog, KnOverlaySpinnerPanel, MainMenu, Toast },
@@ -49,8 +50,16 @@
                     }
                     localStorage.setItem('locale', storedLocale)
                     localStorage.setItem('token', response.data.userUniqueIdentifier)
+
                     store.commit('setLocale', storedLocale)
                     this.$i18n.locale = storedLocale
+
+                    // @ts-ignore
+                    if (this.$i18n.messages[this.$i18n.locale.replaceAll('-', '_')]) {
+                        // @ts-ignore
+                        this.$primevue.config.locale = { ...this.$primevue.config.locale, ...this.$i18n.messages[this.$i18n.locale.replaceAll('-', '_')].locale }
+                    }
+                    this.$primevue.config.locale.dateFormat = primeVueDate(getLocale(true))
 
                     let language = this.$i18n
                     let splittedLanguage = language.locale.split('_')
