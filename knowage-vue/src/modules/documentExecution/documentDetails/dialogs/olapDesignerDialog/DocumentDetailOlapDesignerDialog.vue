@@ -48,6 +48,8 @@ import DocumentDetailMondrianForm from './DocumentDetailMondrianForm.vue'
 import Dropdown from 'primevue/dropdown'
 import ProgressSpinner from 'primevue/progressspinner'
 
+const crypto = require('crypto')
+
 export default defineComponent({
     name: 'document-detail-olap-designer-dialog',
     components: { Dialog, DocumentDetailXMLAForm, DocumentDetailMondrianForm, Dropdown, ProgressSpinner },
@@ -61,6 +63,7 @@ export default defineComponent({
             type: 'xmla' as string,
             xmlModel: { address: '', parameters: [] } as iXMLATemplate,
             mondrianModel: {} as iMondrianTemplate,
+            sbiExecutionId: '',
             loading: false
         }
     },
@@ -75,6 +78,7 @@ export default defineComponent({
     methods: {
         async loadDocument() {
             this.document = this.selectedDocument ? { ...this.selectedDocument } : ({} as iDocument)
+            this.sbiExecutionId = crypto.randomBytes(16).toString('hex')
 
             this.loadMondrianSchemaResources()
         },

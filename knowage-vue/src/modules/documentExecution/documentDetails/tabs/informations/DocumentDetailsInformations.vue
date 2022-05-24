@@ -278,6 +278,7 @@
 import { iDocument, iDataSource, iEngine, iTemplate, iAttribute, iFolder } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import { defineComponent, PropType } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
+import { AxiosResponse } from 'axios'
 import mainDescriptor from '../../DocumentDetailsDescriptor.json'
 import infoDescriptor from './DocumentDetailsInformationsDescriptor.json'
 import useValidate from '@vuelidate/core'
@@ -363,15 +364,18 @@ export default defineComponent({
             imageToUpload: { name: '' } as any,
             visibilityAttribute: '',
             restrictionValue: '',
-            driversPositions: infoDescriptor.driversPositions
+            driversPositions: infoDescriptor.driversPositions,
+            listOfTemplates: [] as iTemplate[]
         }
     },
-    created() {
+    async created() {
         this.setData()
+        await this.getAllTemplates()
     },
     watch: {
-        selectedDocument() {
+        async selectedDocument() {
             this.setData()
+            await this.getAllTemplates()
         }
     },
     validations() {
@@ -457,10 +461,10 @@ export default defineComponent({
                 }
             })
         },
-        openDesigner() {
+        async openDesigner() {
             console.log(' >>> DOCUMENT: ', this.document)
-            console.log(' >>> availableTemplates: ', this.availableTemplates)
-            if (this.availableTemplates?.length === 0) {
+            console.log(' >>> availableTemplates: ', this.listOfTemplates)
+            if (this.listOfTemplates.length === 0) {
                 this.$emit('openDesignerDialog')
             } else {
                 this.$router.push(`/olap-designer/${this.document.id}`)
@@ -474,6 +478,9 @@ export default defineComponent({
         },
         openGis() {
             this.$router.push(`/gis/edit?documentId=${this.document.id}`)
+        },
+        async getAllTemplates() {
+            if (this.document && this.document.id) this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.document.id}/templates`).then((response: AxiosResponse<any>) => (this.listOfTemplates = response.data as iTemplate[]))
         }
     }
 })
