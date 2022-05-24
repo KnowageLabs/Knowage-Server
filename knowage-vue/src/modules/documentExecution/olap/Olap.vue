@@ -625,7 +625,7 @@ export default defineComponent({
             }
 
             this.selectedCell = { cell: cell, event: event }
-            event.target.style.border = '1px solid red'
+            event.target.style.border = '2px solid red'
         },
         cellSelected() {
             this.olapSidebarVisible = true
@@ -1175,8 +1175,6 @@ export default defineComponent({
                 text-align: left;
             }
             td {
-                border-top-width: 1px !important;
-                border-right-width: 1px !important;
                 text-align: right;
                 vertical-align: middle;
                 border-bottom: 1px solid #3b678c;
