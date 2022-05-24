@@ -226,7 +226,7 @@
                         }
                     })
                     .then((response: AxiosResponse<any>) => {
-                        downloadDirectFromResponseWithCustomName(response, this.selectedFolder.label)
+                        downloadDirectFromResponseWithCustomName(response, this.selectedFolder.label + '.zip')
                     })
                     .finally(() => (this.loading = false))
             },

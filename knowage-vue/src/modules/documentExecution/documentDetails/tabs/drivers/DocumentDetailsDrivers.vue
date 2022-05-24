@@ -36,7 +36,7 @@
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <div class="p-m-2">
                         <div v-if="Object.keys(selectedDriver).length === 0">
-                            <InlineMessage severity="info">{{ $t('documentExecution.documentDetails.drivers.noDriverSelected') }}</InlineMessage>
+                            <InlineMessage severity="info" class="kn-width-full">{{ $t('documentExecution.documentDetails.drivers.noDriverSelected') }}</InlineMessage>
                         </div>
                         <Card v-else>
                             <template #content>

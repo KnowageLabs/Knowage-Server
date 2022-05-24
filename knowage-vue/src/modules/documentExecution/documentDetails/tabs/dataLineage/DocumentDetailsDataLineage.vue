@@ -18,15 +18,15 @@
                             <template #content>
                                 <div class="p-field p-col-12">
                                     <span class="p-float-label ">
-                                        <Dropdown id="dataSource" class="kn-material-input" v-model="dataSource" :options="metaSourceResource" @change="getTablesBySourceID" optionLabel="name" />
+                                        <Dropdown id="dataSource" class="kn-material-input kn-width-full" v-model="dataSource" :options="metaSourceResource" @change="getTablesBySourceID" optionLabel="name" />
                                         <label for="dataSource" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.dataLineage.selectSource') }} </label>
                                     </span>
                                 </div>
                                 <div v-if="metaSourceResource.length == 0">
-                                    <InlineMessage severity="info">{{ $t('documentExecution.documentDetails.dataLineage.noDatasources') }}</InlineMessage>
+                                    <InlineMessage severity="info" class="kn-width-full">{{ $t('documentExecution.documentDetails.dataLineage.noDatasources') }}</InlineMessage>
                                 </div>
                                 <div v-if="dataSource && tablesList.length == 0 && metaSourceResource.length != 0">
-                                    <InlineMessage severity="info">{{ $t('documentExecution.documentDetails.dataLineage.noTables') }}</InlineMessage>
+                                    <InlineMessage severity="info" class="kn-width-full">{{ $t('documentExecution.documentDetails.dataLineage.noTables') }}</InlineMessage>
                                 </div>
                                 <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
                                 <DataTable

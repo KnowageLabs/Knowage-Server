@@ -31,7 +31,7 @@ export default defineComponent({
     name: 'glossary-usage-detail',
     components: { GlossaryUsageNavigationCard, GlossaryUsageLinkCard },
     props: { glossaryId: { type: Number }, selectedWords: { type: Array } },
-    emits: ['infoClicked', 'linkClicked', 'wordsFiltered'],
+    emits: ['infoClicked', 'linkClicked', 'wordsFiltered', 'loading'],
     data() {
         return {
             glossaryUsageDescriptor,
@@ -72,6 +72,7 @@ export default defineComponent({
     methods: {
         async loadNavigationItems(type: string, item: string) {
             this.loading = true
+            this.$emit('loading', true)
             const postData = {
                 type: type,
                 item: item,
@@ -101,7 +102,10 @@ export default defineComponent({
                         msg: response
                     })
                 })
-                .finally(() => (this.loading = false))
+                .finally(() => {
+                    this.loading = false
+                    this.$emit('loading', false)
+                })
         },
         formatNavigationItems(data: any) {
             if ('document' in data) {

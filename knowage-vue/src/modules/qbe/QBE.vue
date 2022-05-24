@@ -115,7 +115,7 @@
         <QBEParamDialog v-if="paramDialogVisible" :visible="paramDialogVisible" :propDataset="qbe" @close="paramDialogVisible = false" @save="onParametersSave" />
         <QBEHavingDialog :visible="havingDialogVisible" :havingDialogData="havingDialogData" :entities="selectedQuery?.fields" @close="havingDialogVisible = false" @save="onHavingsSave"></QBEHavingDialog>
         <QBEAdvancedFilterDialog :visible="advancedFilterDialogVisible" :query="selectedQuery" @close="advancedFilterDialogVisible = false" @save="onAdvancedFiltersSave"></QBEAdvancedFilterDialog>
-        <QBESavingDialog v-if="savingDialogVisible" :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" @datasetSaved="$emit('datasetSaved')" />
+        <QBESavingDialog :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" @datasetSaved="$emit('datasetSaved')" />
         <QBEJoinDefinitionDialog v-if="joinDefinitionDialogVisible" :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="uniqueID" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
 
         <KnCalculatedField v-model:template="selectedCalcField" v-model:visibility="calcFieldDialogVisible" :fields="calcFieldColumns" :descriptor="calcFieldDescriptor" :readOnly="false" :valid="true" source="QBE" @save="onCalcFieldSave" @cancel="calcFieldDialogVisible = false">

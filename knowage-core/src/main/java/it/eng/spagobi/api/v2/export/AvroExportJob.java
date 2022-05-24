@@ -136,7 +136,7 @@ public class AvroExportJob extends AbstractExportJob {
 		try {
 			Class<?> type = dsMeta.getFieldType(i);
 			if (isDate(type)) {
-				value = dateFormatter.parse((String) value).getTime();
+				value = dateFormatter.parse(value.toString()).getTime();
 			} else if (isTimestamp(type)) {
 
 				value = DatabaseUtils.timestampFormatter(value);
@@ -247,7 +247,8 @@ public class AvroExportJob extends AbstractExportJob {
 	@Override
 	protected OutputStream getDataOutputStream() {
 		try {
-			avroExportFolder = Paths.get(resourcePathAsStr, "dataPreparation", (String) userProfile.getUserId(), dataSet.getLabel());
+			String dsIdasString = Integer.toString(dataSet.getId());
+			avroExportFolder = Paths.get(resourcePathAsStr, "dataPreparation", (String) userProfile.getUserId(), dsIdasString);
 			Files.createDirectories(avroExportFolder);
 			return Files.newOutputStream(avroExportFolder.resolve(data));
 		} catch (Exception e) {
