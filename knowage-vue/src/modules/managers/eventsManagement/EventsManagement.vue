@@ -12,7 +12,7 @@
                     <template #content>
                         <form class="p-fluid p-formgrid p-grid p-m-1">
                             <div class="p-float-label p-col">
-                                <Calendar id="startDate" class="kn-material-input" v-model="startDate" :showIcon="true" />
+                                <Calendar ref="test" id="startDate" class="kn-material-input" v-model="startDate" :showIcon="true" />
                                 <label for="endDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.startDate') }} </label>
                             </div>
                             <div class="p-float-label p-col">
@@ -20,10 +20,10 @@
                                 <label for="endDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.endDate') }} </label>
                             </div>
                             <span class="p-field p-float-label p-col">
-                                <Dropdown id="eventModel" class="kn-material-input" v-model="selectedEventModel" :options="eventModel" />
+                                <Dropdown id="eventModel" class="kn-material-input" v-model="selectedEventModel" :options="eventModel" @change="onSelectedEventModelChange" />
                                 <label for="eventModel" class="kn-material-input-label"> {{ $t('managers.eventsManagement.eventModel') }} </label>
                             </span>
-                            <Button icon="pi pi-search" class="p-button-text kn-button thirdButton" @click="onSearchClicked" data-test="search-button" />
+                            <Button ref="search-button" id="search-button" icon="pi pi-search" class="p-button-text kn-button thirdButton" @click="onSearchClicked" data-test="search-button" />
                         </form>
                     </template>
                 </Card>
@@ -138,6 +138,12 @@ export default defineComponent({
             this.first = 0
             this.lazyParams = { size: 20, paginationStart: 0 }
             await this.getEvents()
+        },
+        onSelectedEventModelChange() {
+            this.$nextTick(() => {
+                const searchButton = this.$refs['search-button'] as any
+                searchButton.$el.focus()
+            })
         }
     }
 })
@@ -154,5 +160,9 @@ export default defineComponent({
             }
         }
     }
+}
+
+.thirdButton:focus {
+    color: #c2c2c2 !important;
 }
 </style>
