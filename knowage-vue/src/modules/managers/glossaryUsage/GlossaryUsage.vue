@@ -10,7 +10,7 @@
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <div class="p-d-flex p-flex-column p-m-3">
                     <label v-if="selectedGlossaryId" for="glossary" class="kn-material-input-label">{{ $t('managers.glossary.glossaryUsage.title') }}</label>
-                    <Dropdown id="glossary" class="kn-material-input" v-model="selectedGlossaryId" :options="glossaryList" optionLabel="GLOSSARY_NM" optionValue="GLOSSARY_ID" :placeholder="$t('managers.glossary.glossaryUsage.selectGlossary')" @change="listContents($event.value, null)" />
+                    <Dropdown id="glossary" class="kn-material-input" v-model="selectedGlossaryId" :options="glossaryList" optionLabel="GLOSSARY_NM" optionValue="GLOSSARY_ID" :placeholder="$t('managers.glossary.glossaryUsage.selectGlossary')" />
                 </div>
                 <div>
                     <div v-if="glossaryList.length === 0" data-test="no-glossary-found-hint">
@@ -232,10 +232,8 @@ export default defineComponent({
         },
         setFilteredWords(words: any) {
             this.loading = true
-            setTimeout(() => {
-                this.nodes = []
-                words.forEach((el: any) => this.nodes.push(this.createNode(el)))
-            }, 250)
+            this.nodes = []
+            words.forEach((el: any) => this.nodes.push(this.createNode(el)))
 
             this.loading = false
         },
