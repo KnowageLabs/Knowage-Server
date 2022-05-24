@@ -120,7 +120,7 @@
                     {{ $t('managers.businessModelManager.driverDataConditions') }}
                 </template>
                 <template #end>
-                    <Button class="kn-button p-button-text" @click="showForm" :disabled="modes.length === 0 || readonly">{{ $t('managers.businessModelManager.addCondition') }}</Button>
+                    <Button class="kn-button p-button-text" @click="showForm" :disabled="modes.length === 0 || !driver.id || readonly">{{ $t('managers.businessModelManager.addCondition') }}</Button>
                 </template>
             </Toolbar>
         </template>
@@ -153,6 +153,7 @@
                 <div class="p-field p-d-flex">
                     <div :style="businessModelDriverDetailDescriptor.input.parFather.style">
                         <span class="p-float-label">
+                            {{ drivers }}
                             <Dropdown id="parFather" class="kn-material-input" v-model="condition.parFatherId" :options="drivers" placeholder=" " optionValue="id" :disabled="readonly">
                                 <template #value="slotProps">
                                     <div v-if="slotProps.value">
@@ -391,7 +392,7 @@ export default defineComponent({
             const index = this.lovs.findIndex((lov) => lov.id === lovId)
             if (index > -1) {
                 const lov = JSON.parse(this.lovs[index].lovProviderJSON)
-                return lov.QUERY['VISIBLE-COLUMNS'].split(',')
+                return lov.QUERY ? lov.QUERY['VISIBLE-COLUMNS'].split(',') : []
             }
         },
         isModeActive(modeId: number) {
