@@ -11,6 +11,7 @@
                         <Checkbox v-else-if="column.field === 'decrypt'" v-model="columnsDecrypt[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'decrypt')"></Checkbox>
                         <Checkbox v-else-if="column.field === 'subjectId'" v-model="columnsSubjectId[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'subjectId')"></Checkbox>
                         <Dropdown v-else-if="column.field === 'type'" class="kn-material-input" v-model="columnsType[slotProps.data.uniqueName]" :options="metawebAttributesTabDescriptor.typeOptions" @change="onChange(slotProps.data, 'type')" />
+                        <InputText v-else-if="column.field === 'name'" v-model="slotProps.data[slotProps.column.props.field]" class="kn-material-input p-inputtext-sm p-p-2" @blur="$emit('metaUpdated')" />
                         <span v-else>{{ slotProps.data[slotProps.column.props.field] }}</span>
                     </div>
                 </template>

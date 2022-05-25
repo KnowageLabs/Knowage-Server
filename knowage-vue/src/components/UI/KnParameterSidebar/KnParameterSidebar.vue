@@ -11,7 +11,7 @@
         </Toolbar>
 
         <div class="p-fluid kn-parameter-sidebar-content kn-alternated-rows">
-            <div class="p-field p-my-1 p-p-2" v-if="user && (!sessionRole || sessionRole === 'No default role selected')">
+            <div class="p-field p-my-1 p-p-2" v-if="user && (!sessionRole || sessionRole === this.$t('role.defaultRolePlaceholder'))">
                 <div class="p-d-flex">
                     <label class="kn-material-input-label">{{ $t('common.roles') }}</label>
                 </div>
