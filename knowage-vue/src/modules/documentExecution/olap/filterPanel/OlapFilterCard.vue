@@ -10,7 +10,6 @@
                 v-tooltip="{ value: getSlicersTooltip(filter), disabled: !filter || !filter.hierarchies[0].slicers || filter.hierarchies[0].slicers.length === 0 }"
                 @click="openFilterDialog(filter)"
             />
-            <!-- TODO Change Request for next sprint: Tooltip for selected filters when hovering on icon and knowage magenta button color if filter is selected -->
         </div>
     </div>
 </template>
