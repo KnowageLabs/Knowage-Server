@@ -121,17 +121,18 @@
 			},
 			onReaderLoad(event) {
 				let json = JSON.parse(event.target.result)
-
-				if (!json.id || json.id === '') {
-					this.$confirm.require({
-						message: this.$t('importExport.import.itemWithoutIdConfirm'),
-						header: this.$t('common.import'),
-						icon: 'pi pi-exclamation-triangle',
-						accept: () => {
-							json.id = ''
-							this.importWidget(json)
-						}
-					})
+			if (json.id) {
+                    this.importWidget(json)
+                } else {
+                    this.$confirm.require({
+                        message: this.$t('importExport.import.itemWithoutIdConfirm'),
+                        header: this.$t('common.import'),
+                        icon: 'pi pi-exclamation-triangle',
+                        accept: () => {
+                            json.id = ''
+                            this.importWidget(json)
+                        }
+                    })
 				}
 			},
 			importWidget(json: JSON) {
