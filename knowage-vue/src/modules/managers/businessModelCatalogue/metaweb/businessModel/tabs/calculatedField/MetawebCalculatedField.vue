@@ -89,7 +89,7 @@ export default defineComponent({
         createCalcFieldColumns() {
             this.calcFieldColumns = []
             this.businessModel?.simpleBusinessColumns.forEach((field) => {
-                this.calcFieldColumns.push({ fieldAlias: field.name })
+                this.calcFieldColumns.push({ fieldAlias: field.name, fieldLabel: field.name })
             })
         },
 
