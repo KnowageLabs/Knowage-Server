@@ -2,7 +2,7 @@
     <div class="kn-height-full detail-page-container">
         <Toolbar v-if="!embed && !olapDesignerMode" class="kn-toolbar kn-toolbar--primary p-col-12">
             <template #start>
-                <span>{{ document?.label }}</span>
+                <span>{{ document?.name }}</span>
             </template>
 
             <template #end>

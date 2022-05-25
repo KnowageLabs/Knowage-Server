@@ -10,7 +10,7 @@
                         <Checkbox v-else-if="column.field === 'personal'" v-model="columnsPersonal[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'personal')"></Checkbox>
                         <Checkbox v-else-if="column.field === 'decrypt'" v-model="columnsDecrypt[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'decrypt')"></Checkbox>
                         <Checkbox v-else-if="column.field === 'subjectId'" v-model="columnsSubjectId[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'subjectId')"></Checkbox>
-                        <span v-else-if="column.field === 'type'">{{ columnsType[slotProps.data.uniqueName] }}</span>
+                        <Dropdown v-else-if="column.field === 'type'" class="kn-material-input" v-model="columnsType[slotProps.data.uniqueName]" :options="metawebAttributesTabDescriptor.typeOptions" @change="onChange(slotProps.data, 'type')" />
                         <span v-else>{{ slotProps.data[slotProps.column.props.field] }}</span>
                     </div>
                 </template>
@@ -41,6 +41,7 @@ import { iBusinessModel, iBusinessModelColumn } from '../../../Metaweb'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import Dropdown from 'primevue/dropdown'
 import metawebAttributesTabDescriptor from './MetawebAttributesTabDescriptor.json'
 import MetawebAttributeDetailDialog from './dialogs/metawebAttributeDetail/MetawebAttributeDetailDialog.vue'
 import MetawebAttributeUnusedFieldDialog from './dialogs/metawebAttributeUnusedField/MetawebAttributeUnusedFieldDialog.vue'
@@ -49,7 +50,7 @@ const { generate, applyPatch } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'metaweb-attributes-tab',
-    components: { Checkbox, Column, DataTable, MetawebAttributeDetailDialog, MetawebAttributeUnusedFieldDialog },
+    components: { Checkbox, Column, DataTable, Dropdown, MetawebAttributeDetailDialog, MetawebAttributeUnusedFieldDialog },
     props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, propMeta: { type: Object }, observer: { type: Object }, roles: { type: Array } },
     emits: ['loading', 'metaUpdated'],
     data() {
