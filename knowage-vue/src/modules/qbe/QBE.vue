@@ -283,7 +283,7 @@ export default defineComponent({
     async created() {
         this.uniqueID = crypto.randomBytes(16).toString('hex')
         this.user = (this.$store.state as any).user
-        this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
+        this.userRole = this.user.sessionRole && this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
         await this.loadPage()
     },
     methods: {
