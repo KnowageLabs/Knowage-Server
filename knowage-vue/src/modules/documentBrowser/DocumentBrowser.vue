@@ -102,7 +102,7 @@ export default defineComponent({
         parseSelectedMenuItem() {
             if (!this.selectedMenuItem) return null
 
-            return this.selectedMenuItem.to?.substring(this.selectedMenuItem.to.lastIndexOf('/'))
+            return this.selectedMenuItem.to?.substring(this.selectedMenuItem.to.lastIndexOf('/') + 1)
         },
         onTabChange() {
             if (this.activeIndex === 0) {
