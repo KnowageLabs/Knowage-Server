@@ -43,6 +43,7 @@ const crypto = require('crypto')
 export default defineComponent({
     name: 'document-browser',
     components: { DocumentBrowserHome, DocumentBrowserTab, Menu, TabView, TabPanel },
+    props: { selectedMenuItem: { type: Object }, menuItemClickedTrigger: { type: Boolean } },
     data() {
         return {
             tabs: [] as any[],
@@ -50,37 +51,59 @@ export default defineComponent({
             menuItems: [] as any[],
             selectedItem: null as any,
             id: 0,
-            iFrameContainers: [] as any[]
+            iFrameContainers: [] as any[],
+            menuItem: null
+        }
+    },
+    watch: {
+        menuItemClickedTrigger() {
+            if (!this.selectedMenuItem) return
+            if (this.selectedMenuItem.to === '/document-browser') {
+                this.selectedItem = null
+                this.activeIndex = 0
+            } else if (this.selectedMenuItem.to && this.selectedMenuItem.to.includes('document-browser')) {
+                this.loadPage()
+            }
         }
     },
     async created() {
-        window.addEventListener('message', (event) => {
-            if (event.data.type === 'saveCockpit' && this.$router.currentRoute.value.name === 'new-dashboard') {
-                this.loadSavedCockpit(event.data.model)
-            }
-        })
-
-        if (this.$router.currentRoute.value.params.id && (this.$router.currentRoute.value.name === 'document-browser-document-execution' || this.$router.currentRoute.value.name === 'document-browser-document-details-edit')) {
-            let tempDocument = {} as any
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.$router.currentRoute.value.params.id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
-            const tempItem = {
-                item: {
-                    name: tempDocument.name,
-                    label: this.$router.currentRoute.value.params.id,
-                    mode: this.$router.currentRoute.value.params.mode,
-                    routerId: crypto.randomBytes(16).toString('hex'),
-                    id: this.$router.currentRoute.value.params.id,
-                    showMode: this.$router.currentRoute.value.name === 'document-browser-document-execution' ? 'execute' : 'documentDetail'
-                },
-                mode: this.$router.currentRoute.value.name === 'document-browser-document-execution' ? 'execute' : 'documentDetail'
-            }
-            this.tabs.push(tempItem)
-
-            this.activeIndex = 1
-            this.selectedItem = tempItem
-        }
+        this.loadPage()
     },
     methods: {
+        async loadPage() {
+            window.addEventListener('message', (event) => {
+                if (event.data.type === 'saveCockpit' && this.$router.currentRoute.value.name === 'new-dashboard') {
+                    this.loadSavedCockpit(event.data.model)
+                }
+            })
+
+            let id = this.$router.currentRoute.value.params.id ?? this.parseSelectedMenuItem()
+
+            if (id && id !== '/document-browser' && (this.$router.currentRoute.value.name === 'document-browser-document-execution' || this.$router.currentRoute.value.name === 'document-browser-document-details-edit' || this.$router.currentRoute.value.name === 'document-browser')) {
+                let tempDocument = {} as any
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${id}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
+                const tempItem = {
+                    item: {
+                        name: tempDocument.name,
+                        label: id,
+                        mode: this.$router.currentRoute.value.params.mode,
+                        routerId: crypto.randomBytes(16).toString('hex'),
+                        id: id,
+                        showMode: this.$router.currentRoute.value.name === 'document-browser-document-execution' ? 'execute' : 'documentDetail'
+                    },
+                    mode: this.$router.currentRoute.value.name === 'document-browser-document-execution' && this.$router.currentRoute.value.params.id ? 'execute' : 'documentDetail'
+                }
+                this.tabs.push(tempItem)
+
+                this.activeIndex = 1
+                this.selectedItem = tempItem
+            }
+        },
+        parseSelectedMenuItem() {
+            if (!this.selectedMenuItem) return null
+
+            return this.selectedMenuItem.to?.substring(this.selectedMenuItem.to.lastIndexOf('/'))
+        },
         onTabChange() {
             if (this.activeIndex === 0) {
                 this.selectedItem = null

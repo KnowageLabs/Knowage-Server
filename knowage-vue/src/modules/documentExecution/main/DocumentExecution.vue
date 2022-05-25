@@ -217,7 +217,7 @@ export default defineComponent({
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
 
-        if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer')) return
+        if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution') return
 
         await this.loadUserConfig()
 
