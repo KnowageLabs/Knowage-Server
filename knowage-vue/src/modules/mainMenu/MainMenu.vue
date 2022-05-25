@@ -49,7 +49,7 @@
                         <MainMenuItem :item="item" @click="itemClick" :badge="getBadgeValue(item)" @mouseover="toggleMenu($event, item)"></MainMenuItem>
                     </template>
                     <template v-for="(item, i) of dynamicUserFunctionalities" :key="i">
-                        <MainMenuItem :item="item" @click="itemClick" @mouseover="toggleMenu($event, item)"></MainMenuItem>
+                        <MainMenuItem :item="item" @click="itemClick" @mouseover="toggleMenu($event, item)" :internationalize="true"></MainMenuItem>
                     </template>
                 </ul>
             </ScrollPanel>
