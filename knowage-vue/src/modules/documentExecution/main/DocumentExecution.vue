@@ -182,7 +182,7 @@ export default defineComponent({
     },
     computed: {
         sessionRole(): string {
-            return this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
+            return this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
         },
         url(): string {
             if (this.document) {
@@ -215,7 +215,7 @@ export default defineComponent({
         })
 
         this.user = (this.$store.state as any).user
-        this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
+        this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
 
         if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution') return
 
