@@ -102,7 +102,7 @@
     export default defineComponent({
         name: 'dossier',
         components: { Card, Column, DataTable, KnHint, KnValidationMessages },
-        props: { id: { type: String, required: false }, reloadTrigger: { type: Boolean } },
+        props: { id: { type: String, required: false }, reloadTrigger: { type: Boolean }, filterData: Object },
         computed: {
             showHint() {
                 if (this.dossierActivities.length != 0) {
@@ -171,8 +171,15 @@
             async getDossierTemplate() {
                 this.loading = true
                 let url = `/knowagedossierengine/api/start/dossierTemplate?documentId=${this.id}`
+                let filters = this.filterData ? this.filterData : {}
+                let config = {
+                 headers: {  Accept: 'application/json, text/plain, */*'  },
+                    params: {
+                      filterData : encodeURIComponent(JSON.stringify(filters))
+                      },
+                        }
                 await this.$http
-                    .get(url, { headers: { Accept: 'application/json, text/plain, */*' } })
+                    .get(url, config )
                     .then((response: AxiosResponse<any>) => {
                         this.jsonTemplate = { ...response.data }
                     })
