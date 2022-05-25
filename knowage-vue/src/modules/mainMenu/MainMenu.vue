@@ -108,7 +108,7 @@ export default defineComponent({
             hoverTimer: false as any
         }
     },
-    emits: ['update:visibility'],
+    emits: ['update:visibility', 'menuItemSelected'],
     methods: {
         info() {
             this.display = !this.display
@@ -155,6 +155,7 @@ export default defineComponent({
                 this[item.command]()
             } else if (item.to && event.navigate) {
                 event.navigate(event.originalEvent)
+                this.$emit('menuItemSelected', item)
             } else if (item.url && (!item.target || item.target === 'insideKnowage')) this.$router.push({ name: 'externalUrl', params: { url: item.url } })
             if (this.adminMenuOpened) this.adminMenuOpened = false
         },
