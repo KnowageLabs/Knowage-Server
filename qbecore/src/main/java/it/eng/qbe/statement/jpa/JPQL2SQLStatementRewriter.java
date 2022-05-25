@@ -211,9 +211,8 @@ public class JPQL2SQLStatementRewriter {
 				if (value instanceof Collection) {
 					Collection<?> coll = (Collection) value;
 					for (Object obj : coll) {
-						values.add(fix(value));
+						values.add(fix(obj));
 					}
-					values.addAll((Collection<Object>) value);
 				} else {
 					values.add(fix(value));
 				}

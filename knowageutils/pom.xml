@@ -670,15 +670,12 @@
 			<version>1.2.10.1009</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.oracle.jdbc/ojdbc7 -->
+
 		<dependency>
-			<!-- Could not find the original Oracle JDBC driver on Maven Central, using this one with BSD license -->
-			<groupId>com.github.noraui</groupId>
-			<artifactId>ojdbc7</artifactId>
-			<version>12.1.0.2</version>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
 
 	</dependencies>
 

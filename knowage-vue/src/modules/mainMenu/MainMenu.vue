@@ -74,7 +74,6 @@ import DownloadsDialog from '@/modules/mainMenu/dialogs/DownloadsDialog/Download
 import { IMenuItem } from '@/modules/mainMenu/MainMenu'
 import TieredMenu from 'primevue/tieredmenu'
 import ScrollPanel from 'primevue/scrollpanel'
-
 export default defineComponent({
     name: 'Knmenu',
     components: {
@@ -109,7 +108,7 @@ export default defineComponent({
             hoverTimer: false as any
         }
     },
-    emits: ['update:visibility', 'menuItemSelected'],
+    emits: ['update:visibility'],
     methods: {
         info() {
             this.display = !this.display
@@ -156,16 +155,13 @@ export default defineComponent({
                 this[item.command]()
             } else if (item.to && event.navigate) {
                 event.navigate(event.originalEvent)
-                this.$emit('menuItemSelected', item)
             } else if (item.url && (!item.target || item.target === 'insideKnowage')) this.$router.push({ name: 'externalUrl', params: { url: item.url } })
-
             if (this.adminMenuOpened) this.adminMenuOpened = false
         },
         getHref(item) {
             let to = item.to
             if (to) {
                 to = to.replace(/\\\//g, '/')
-
                 if (to.startsWith('/')) to = to.substring(1)
                 return process.env.VUE_APP_PUBLIC_PATH + to
             }
@@ -218,7 +214,6 @@ export default defineComponent({
             }
             return toRet
         },
-
         toggleMenu(event, item) {
             if (item.items) {
                 clearTimeout(this.hoverTimer)

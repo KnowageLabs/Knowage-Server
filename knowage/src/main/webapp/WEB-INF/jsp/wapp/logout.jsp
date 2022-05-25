@@ -175,8 +175,14 @@ else if (active != null && active.equalsIgnoreCase("true")) {
 <script>
 
 function redirect() {
-    window.location = "<%= redirectUrl %>";
+	var redirectUrl = "<%= redirectUrl %>";
+	redirectUrl = resolveDynamicParameters(redirectUrl);
+    window.location = redirectUrl;
 };
+
+function resolveDynamicParameters(url) {
+	return url.replace("<%= "${id_token}" %>", window.sessionStorage.getItem("id_token"));
+}
 
 function setTimeoutToRedirect() {
 	setTimeout(function(){

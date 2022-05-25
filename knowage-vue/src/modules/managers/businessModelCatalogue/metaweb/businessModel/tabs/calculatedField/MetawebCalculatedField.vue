@@ -15,7 +15,7 @@
         </Column>
     </DataTable>
 
-    <KnCalculatedField v-model:template="selectedCalcField" v-model:visibility="calcFieldDialogVisible" :fields="calcFieldColumns" :descriptor="calcFieldDescriptor" :readOnly="false" :valid="true" @save="onCalcFieldSave" @cancel="calcFieldDialogVisible = false">
+    <KnCalculatedField v-model:template="selectedCalcField" v-model:visibility="calcFieldDialogVisible" :fields="calcFieldColumns" :descriptor="calcFieldDescriptor" :source="'QBE'" :readOnly="false" :valid="true" @save="onCalcFieldSave" @cancel="calcFieldDialogVisible = false">
         <template #additionalInputs>
             <div class="p-field p-col-4">
                 <span class="p-float-label ">
@@ -89,7 +89,7 @@ export default defineComponent({
         createCalcFieldColumns() {
             this.calcFieldColumns = []
             this.businessModel?.simpleBusinessColumns.forEach((field) => {
-                this.calcFieldColumns.push({ fieldAlias: field.name })
+                this.calcFieldColumns.push({ fieldAlias: field.name, fieldLabel: field.name })
             })
         },
 
