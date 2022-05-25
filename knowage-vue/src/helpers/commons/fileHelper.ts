@@ -45,13 +45,12 @@ export function downloadDirect(jsonData, filename, contentType) {
 
             link.setAttribute('download', filename)
 
-            if (fnBrowserDetect() !== 'firefox') {
-                let lastDot = filename.lastIndexOf('.')
-                if (lastDot != -1) {
-                    let fileNameWithoutExtension = filename.substring(0, lastDot)
-                    link.setAttribute('download', fileNameWithoutExtension)
-                }
-            }
+            /*             let lastDot = filename.lastIndexOf('.')
+            if (lastDot != -1) {
+                let fileNameWithoutExtension = filename.substring(0, lastDot)
+                link.setAttribute('download', fileNameWithoutExtension)
+            } */
+
             link.style.visibility = 'hidden'
             document.body.appendChild(link)
             link.click()
@@ -72,7 +71,7 @@ export function byteToHumanFriendlyFormat(bytes, decimals = 2) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
 }
 
-function fnBrowserDetect() {
+/* function fnBrowserDetect() {
     let userAgent = navigator.userAgent
     let browserName
 
@@ -91,4 +90,4 @@ function fnBrowserDetect() {
     }
 
     return browserName
-}
+ }*/
