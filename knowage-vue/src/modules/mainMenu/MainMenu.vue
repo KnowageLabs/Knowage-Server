@@ -49,7 +49,7 @@
                         <MainMenuItem :item="item" @click="itemClick" :badge="getBadgeValue(item)" @mouseover="toggleMenu($event, item)"></MainMenuItem>
                     </template>
                     <template v-for="(item, i) of dynamicUserFunctionalities" :key="i">
-                        <MainMenuItem :item="item" @click="itemClick" @mouseover="toggleMenu($event, item)"></MainMenuItem>
+                        <MainMenuItem :item="item" @click="itemClick" @mouseover="toggleMenu($event, item)" :internationalize="true"></MainMenuItem>
                     </template>
                 </ul>
             </ScrollPanel>
@@ -66,7 +66,6 @@ import LanguageDialog from '@/modules/mainMenu/dialogs/LanguageDialog/LanguageDi
 import LicenseDialog from '@/modules/mainMenu/dialogs/LicenseDialog/LicenseDialog.vue'
 import NewsDialog from '@/modules/mainMenu/dialogs/NewsDialog/NewsDialog.vue'
 import RoleDialog from '@/modules/mainMenu/dialogs/RoleDialog.vue'
-import { getGravatar } from '@/helpers/commons/gravatarHelper'
 import { mapState } from 'vuex'
 import auth from '@/helpers/commons/authHelper'
 import { AxiosResponse } from 'axios'
@@ -175,8 +174,7 @@ export default defineComponent({
         },
         getProfileImage(user) {
             if (user && user.organizationImageb64) return user.organizationImageb64
-            else if (user && user.attributes && user.attributes.email) return getGravatar(user.attributes.email)
-            else return getGravatar('knowage@eng.it')
+            return require('@/assets/images/commons/logo_knowage.svg')
         },
         updateNewsAndDownload() {
             for (var idx in this.allowedUserFunctionalities) {
