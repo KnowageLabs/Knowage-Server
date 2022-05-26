@@ -207,10 +207,14 @@ public class JPQL2SQLStatementRewriter {
 				String filterName = (String) filterNameField.get(currParameter);
 				String parameterName = (String) parameterNameField.get(currParameter);
 				Object value = session.getLoadQueryInfluencers().getFilterParameterValue( filterName + '.' + parameterName );
+
 				if (value instanceof Collection) {
-					values.addAll((Collection<Object>) value);
+					Collection<?> coll = (Collection) value;
+					for (Object obj : coll) {
+						values.add(fix(obj));
+					}
 				} else {
-					values.add(value);
+					values.add(fix(value));
 				}
 			} catch (Exception e) {
 				throw new SpagoBIRuntimeException(e);
@@ -270,6 +274,31 @@ public class JPQL2SQLStatementRewriter {
 		HQL2SQLStatementRewriter queryRewriter = new HQL2SQLStatementRewriter(session);
 		String sqlQueryString = queryRewriter.rewrite(qi.getHibernateQuery().getQueryString());
 		return sqlQueryString;
+	}
+
+	/**
+	 * Fixes SQL values.
+	 *
+	 * WORKAROUND This code is present because of the way {@link it.eng.qbe.statement.jpa.JPQLDataSet} does the count
+	 * TODO Remove this and fix the count in {@link it.eng.qbe.statement.jpa.JPQLDataSet}6
+	 *
+	 * @param value Value to fix
+	 * @return Fixed value
+	 */
+	private Object fix(Object value) {
+		if (value instanceof String) {
+			String _value = (String) value;
+			value = escapeString(_value);
+		}
+		return value;
+	}
+
+	/**
+	 * WORKAROUND This code is present because of the way {@link it.eng.qbe.statement.jpa.JPQLDataSet} does the count
+	 * TODO Remove this and fix the count in {@link it.eng.qbe.statement.jpa.JPQLDataSet}6
+	 */
+	private String escapeString(String value) {
+		return value.toString().replace("'", "''");
 	}
 
 }

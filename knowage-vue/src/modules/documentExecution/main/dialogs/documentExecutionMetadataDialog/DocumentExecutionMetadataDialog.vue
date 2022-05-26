@@ -11,7 +11,7 @@
 
         <div v-if="metadata">
             <div v-if="metadata.generalMetadata.length > 0">
-                <h2>{{ $t('documentExecution.main.customMetadata') }}</h2>
+                <h2>{{ $t('common.documentDetails') }}</h2>
                 <div class="p-grid p-ai-center">
                     <template v-for="(meta, index) in metadata.generalMetadata" :key="index">
                         <div v-if="meta.value && index !== metadata.generalMetadata.length - 1" :class="{ 'p-col-4': index !== 3, 'p-col-12': index === 3 }">
@@ -24,7 +24,7 @@
             </div>
 
             <div v-if="metadata.shortText.length > 0 || metadata.longText.length > 0">
-                <h2>{{ $t('common.documentDetails') }}</h2>
+                <h2>{{ $t('documentExecution.main.customMetadata') }}</h2>
 
                 <div v-show="metadata.shortText.length > 0" class="p-grid">
                     <div v-for="(meta, index) in metadata.shortText" :key="index" class="p-col-4">
@@ -64,7 +64,7 @@
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.close') }}</Button>
-                <Button class="kn-button kn-button--primary" @click="save"> {{ $t('common.save') }}</Button>
+                <Button class="kn-button kn-button--primary" :disabled="!canModify" @click="save"> {{ $t('common.save') }}</Button>
             </div>
         </template>
     </Dialog>
@@ -153,6 +153,7 @@ export default defineComponent({
                             title: this.$t('common.uploadFile'),
                             msg: this.$t('common.uploadFileSuccess')
                         })
+                        this.updateMetadataFile(meta.id, this.uploadedFiles[meta.id].name)
                     })
                     .catch((error: any) =>
                         this.$store.commit('setError', {
@@ -163,10 +164,17 @@ export default defineComponent({
                 this.loading = false
             }
         },
+        updateMetadataFile(fileId: number, fileName: string) {
+            if (!this.metadata) return
+            const index = this.metadata?.file.findIndex((tempFile: any) => tempFile.id === fileId)
+            if (index !== -1) this.metadata.file[index].fileToSave = { file: {}, fileName: fileName }
+        },
         cleanFile(meta: any) {
             const temp = this.$refs[meta.id] as any
-            if (temp) {
+            if (temp && this.metadata) {
                 temp.resetInput()
+                const index = this.metadata.file.findIndex((tempFile: any) => tempFile.id === meta.id)
+                if (index !== -1) delete this.metadata.file[index].fileToSave
             }
         },
         closeDialog() {

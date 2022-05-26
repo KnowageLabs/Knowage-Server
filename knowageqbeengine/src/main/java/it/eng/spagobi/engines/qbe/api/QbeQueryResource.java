@@ -298,7 +298,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			dataStore = dataSet.getDataStore();
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName() + "] cannot be null");
 		} catch (Exception e) {
-			logger.debug("Query execution aborted because of an internal exceptian");
+			logger.error("Query execution aborted because of an internal exceptian", e);
 			SpagoBIEngineServiceException exception;
 			String message;
 

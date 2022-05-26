@@ -26,8 +26,7 @@
             "display": "flex",
             "flex-basis": "25%",
             "flex-direction": "column",
-            "height": "100%",
-            "margin-left": "5px"
+            "height": "100%"
         }
     },
     "types": [

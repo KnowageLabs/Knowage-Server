@@ -1072,8 +1072,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				Response response = restClient.target(serviceUrlAsURL + "/knowage-data-preparation/api/1.0/instance/" + instanceId).request()
 						.header("X-Kn-Authorization", token).get();
 				JSONObject instance = new JSONObject(response.readEntity(String.class));
-				String sourceDsLabel = instance.getString("dataSetLabel");
-				deleteAvroFolder(sourceDsLabel);
+				int sourceDsId = instance.getInt("dataSetId");
+				deleteAvroFolder(sourceDsId);
 				// delete data preparation process instance
 				restClient.target(serviceUrlAsURL + "/knowage-data-preparation/api/1.0/instance/" + instanceId).request().header("X-Kn-Authorization", token)
 						.delete();
@@ -1085,9 +1085,10 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return Response.ok().build();
 	}
 
-	private void deleteAvroFolder(String label) {
+	private void deleteAvroFolder(int dsId) {
 		try {
-			Path avroExportFolder = Paths.get(SpagoBIUtilities.getResourcePath(), "dataPreparation", (String) getUserProfile().getUserId(), label);
+			Path avroExportFolder = Paths.get(SpagoBIUtilities.getResourcePath(), "dataPreparation", (String) getUserProfile().getUserId(),
+					Integer.toString(dsId));
 			Files.walkFileTree(avroExportFolder, new SimpleFileVisitor<Path>() {
 
 				// delete directories or folders

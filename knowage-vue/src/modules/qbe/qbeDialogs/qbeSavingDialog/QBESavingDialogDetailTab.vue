@@ -97,7 +97,6 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import descriptor from './QBESavingDialogDescriptor.json'
-
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
     components: { Card, Dropdown, KnValidationMessages },

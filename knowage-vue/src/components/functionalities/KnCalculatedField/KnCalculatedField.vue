@@ -33,7 +33,8 @@
                             ><template #option="slotProps">
                                 <div class="p-text-uppercase kn-list-item fieldType" draggable="true" @dragstart="dragElement($event, slotProps.option, 'field')">
                                     <div><i class="fa fa-solid fa-bars"></i></div>
-                                    <div class="p-ml-2">{{ slotProps.option.fieldAlias }}</div>
+                                    <div v-if="source === 'QBE'" class="p-ml-2">{{ slotProps.option.fieldLabel }}</div>
+                                    <div v-else class="p-ml-2">{{ slotProps.option.fieldAlias }}</div>
                                 </div>
                             </template></Listbox
                         >
@@ -107,7 +108,8 @@ export default defineComponent({
         readOnly: Boolean,
         descriptor: Object,
         template: {} as any,
-        valid: Boolean
+        valid: Boolean,
+        source: String
     },
     data() {
         return {
@@ -156,7 +158,7 @@ export default defineComponent({
             }
         }
 
-        if (!this.readOnly && this.template && !this.template.parameters) {
+        if (!this.readOnly && this.template && !this.template.parameters && this.source === 'QBE') {
             this.cf = { colName: this.template.alias, formula: this.template.expression } as IKnCalculatedField
         }
     },

@@ -2,7 +2,7 @@
     <div class="kn-height-full detail-page-container">
         <Toolbar v-if="!embed && !olapDesignerMode" class="kn-toolbar kn-toolbar--primary p-col-12">
             <template #start>
-                <span>{{ document?.label }}</span>
+                <span>{{ document?.name }}</span>
             </template>
 
             <template #end>
@@ -26,7 +26,7 @@
 
             <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
                 <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
-                <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
+                <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger" :filterData="filtersData"></Dossier>
                 <Olap
                     v-else-if="mode === 'olap'"
                     :id="urlData?.sbiExecutionId"
@@ -182,7 +182,7 @@ export default defineComponent({
     },
     computed: {
         sessionRole(): string {
-            return this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
+            return this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
         },
         url(): string {
             if (this.document) {
@@ -215,9 +215,9 @@ export default defineComponent({
         })
 
         this.user = (this.$store.state as any).user
-        this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
+        this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
 
-        if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer')) return
+        if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution') return
 
         await this.loadUserConfig()
 
@@ -812,10 +812,10 @@ export default defineComponent({
         async onMetadataSave(metadata: any) {
             this.loading = true
             const jsonMeta = [] as any[]
-            const properties = ['shortText', 'longText']
+            const properties = ['shortText', 'longText', 'file']
             properties.forEach((property: string) =>
                 metadata[property].forEach((el: any) => {
-                    if (el.value) {
+                    if (el.value || (property === 'file' && el.fileToSave)) {
                         jsonMeta.push(el)
                     }
                 })

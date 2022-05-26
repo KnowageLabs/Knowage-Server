@@ -76,8 +76,8 @@ export default defineComponent({
             this.olapDesigner?.template?.wrappedObject?.olap?.MDXQUERY?.clickable?.forEach((el: any) => fromMemberParameters.push({ ...el, name: el.clickParameter.name, type: 'From Member' }))
 
             this.parameters = []
-            this.parameters = this.parameters.concat(fromCellParameters)
-            this.parameters = this.parameters.concat(fromMemberParameters)
+            if (fromCellParameters?.length > 0) this.parameters = this.parameters.concat(fromCellParameters)
+            if (fromMemberParameters?.length > 0) this.parameters = this.parameters.concat(fromMemberParameters)
         },
         addNewParameter() {
             this.selectedParameter = {} as iOlapCrossNavigationParameter

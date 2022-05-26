@@ -506,6 +506,16 @@ public class DataSetResource extends AbstractDataSetResource {
 		return super.deleteDataset(label);
 	}
 
+	@DELETE
+	@Path("/id/{id}")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public Response deleteDatasetById(@PathParam("id") int id) {
+		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+		IDataSet dataset = datasetDao.loadDataSetById(id);
+		String label = dataset.getLabel();
+		return super.deleteDataset(label);
+	}
+
 	/**
 	 * Delete a version for the selected dataset.
 	 *

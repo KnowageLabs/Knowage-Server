@@ -76,6 +76,195 @@
             "help": "dataPreparation.substring",
             "label": "substring",
             "name": "substring"
+        },
+        {
+            "category": "SQL",
+            "formula": "CASE WHEN expr1 THEN expr2 [WHEN expr3 THEN expr4]* [ELSE expr5] END",
+            "help": "dataPreparation.case",
+            "label": "case",
+            "name": "case"
+        },
+        {
+            "category": "TIME",
+            "formula": "current_date",
+            "help": "dataPreparation.current_date",
+            "label": "CURRENT_DATE",
+            "name": "CURRENT_DATE"
+        },
+        {
+            "category": "TIME",
+            "formula": "current_time",
+            "help": "dataPreparation.current_time",
+            "label": "CURRENT_TIME",
+            "name": "CURRENT_TIME"
+        },
+        {
+            "category": "TIME",
+            "formula": "second(datetime_expression)",
+            "help": "dataPreparation.second",
+            "label": "second",
+            "name": "second"
+        },
+        {
+            "category": "TIME",
+            "formula": "hour(datetime_expression)",
+            "help": "dataPreparation.hour",
+            "label": "hour",
+            "name": "hour"
+        },
+        {
+            "category": "TIME",
+            "formula": "year(date_expression)",
+            "help": "dataPreparation.year",
+            "label": "year",
+            "name": "year"
+        },
+        {
+            "category": "TIME",
+            "formula": "month(date_expression)",
+            "help": "dataPreparation.month",
+            "label": "month",
+            "name": "month"
+        },
+        {
+            "category": "TIME",
+            "formula": "day(date_expression)",
+            "help": "dataPreparation.day",
+            "label": "day",
+            "name": "day"
+        },
+        {
+            "category": "TIME",
+            "formula": "get_quarter(date_expression)",
+            "help": "dataPreparation.get_quarter",
+            "label": "get_quarter",
+            "name": "get_quarter"
+        },
+        {
+            "category": "TIME",
+            "formula": "get_week(date_expression)",
+            "help": "dataPreparation.get_week",
+            "label": "get_week",
+            "name": "get_week"
+        },
+        {
+            "category": "TIME",
+            "formula": "get_day_of_the_week(date_expression)",
+            "help": "dataPreparation.get_day_of_the_week",
+            "label": "get_day_of_the_week",
+            "name": "get_day_of_the_week"
+        },
+        {
+            "category": "TIME",
+            "formula": "add_days(${date_expression},${number_of_days})",
+            "help": "dataPreparation.add_days",
+            "label": "add_days",
+            "name": "add_days"
+        },
+        {
+            "category": "TIME",
+            "formula": "add_hours(${date_expression},${number_of_hours})",
+            "help": "dataPreparation.add_hours",
+            "label": "add_hours",
+            "name": "add_hours"
+        },
+        {
+            "category": "TIME",
+            "formula": "add_months(${date_expression},${number_of_months})",
+            "help": "dataPreparation.add_months",
+            "label": "add_months",
+            "name": "add_months"
+        },
+        {
+            "category": "TIME",
+            "formula": "add_years(${date_expression},${number_of_years})",
+            "help": "dataPreparation.add_years",
+            "label": "add_years",
+            "name": "add_years"
+        },
+        {
+            "category": "TIME",
+            "formula": "subtract_days(${date_expression},${number_of_days})",
+            "help": "dataPreparation.subtract_days",
+            "label": "subtract_days",
+            "name": "subtract_days"
+        },
+        {
+            "category": "TIME",
+            "formula": "subtract_hours(${date_expression},${number_of_hours})",
+            "help": "dataPreparation.subtract_hours",
+            "label": "subtract_hours",
+            "name": "subtract_hours"
+        },
+        {
+            "category": "TIME",
+            "formula": "subtract_months(${date_expression},${number_of_months})",
+            "help": "dataPreparation.subtract_months",
+            "label": "subtract_months",
+            "name": "subtract_months"
+        },
+        {
+            "category": "TIME",
+            "formula": "subtract_years(${date_expression},${number_of_years})",
+            "help": "dataPreparation.subtract_years",
+            "label": "subtract_years",
+            "name": "subtract_years"
+        },
+        {
+            "category": "TIME",
+            "formula": "datediff_in_days(${starting_date},${ending_date})",
+            "help": "dataPreparation.datediff_in_days",
+            "label": "datediff_in_days",
+            "name": "datediff_in_days"
+        },
+        {
+            "category": "TIME",
+            "formula": "datediff_in_hours(${starting_date},${ending_date})",
+            "help": "dataPreparation.datediff_in_hours",
+            "label": "datediff_in_hours",
+            "name": "datediff_in_hours"
+        },
+        {
+            "category": "TIME",
+            "formula": "datediff_in_minutes(${starting_date},${ending_date})  ",
+            "help": "dataPreparation.datediff_in_minutes",
+            "label": "datediff_in_minutes",
+            "name": "datediff_in_minutes"
+        },
+        {
+            "category": "SPATIAL",
+            "formula": "distance(${geom1}, ${geom2}, ${tol}, ${unit})",
+            "help": "dataPreparation.distance",
+            "label": "distance",
+            "name": "distance"
+        },
+        {
+            "category": "SPATIAL",
+            "formula": "centroid(${geom1}, ${tol})",
+            "help": "dataPreparation.centroid",
+            "label": "Centroid",
+            "name": "Centroid"
+        },
+        {
+            "category": "SPATIAL",
+            "formula": "length_spa(${geom}, ${tol}, ${unit})",
+            "help": "dataPreparation.length_spa",
+            "label": "length_spa",
+            "name": "length_spa"
+        },
+        {
+            "category": "SPATIAL",
+            "formula": "relate(${geom1}, ${mask}, ${geom2}, ${tol}))",
+            "help": "dataPreparation.relate",
+            "label": "Relate",
+            "name": "Relate"
+        },
+        {
+            "category": "SPATIAL",
+            "formula": "intersection(${geom1},  ${geom2}, ${tol}))",
+            "help": "dataPreparation.intersection",
+            "label": "Intersection",
+            "name": "Intersection"
         }
     ],
     "availableOutputTypes": [

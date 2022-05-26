@@ -8,11 +8,13 @@
             :parameterValuesMap="parameterValuesMap"
             :tabKey="tabKey"
             @parametersChanged="$emit('parametersChanged', $event)"
+            @close="$emit('close')"
         ></DocumentExecution>
         <DocumentDetails
             v-show="mode === 'document-detail'"
             v-bind:style="[mode === 'document-detail' ? '' : 'display: none !important;']"
             :propMode="'execution'"
+            :viewMode="mode"
             :propDocId="item?.id"
             :propFolderId="functionalityId"
             @closeDetails="$emit('closeDetails', item)"
@@ -32,28 +34,36 @@ export default defineComponent({
         DocumentExecution,
         DocumentDetails
     },
-    props: { id: { type: String }, functionalityId: { type: String }, item: { type: Object }, parameterValuesMap: { type: Object }, tabKey: { type: String }, propMode: { type: String } },
-    emits: ['iframeCreated', 'closeIframe', 'parametersChanged', 'closeDetails', 'documentSaved'],
+    props: { id: { type: String }, functionalityId: { type: String }, item: { type: Object }, parameterValuesMap: { type: Object }, tabKey: { type: String } },
+    emits: ['iframeCreated', 'closeIframe', 'parametersChanged', 'closeDetails', 'documentSaved', 'close'],
     data() {
         return {
             url: '',
             mode: '',
             testIFrame: null as any,
-            name: '' as string
+            name: '' as string,
+            loadedItem: null as any
         }
     },
     watch: {
         id() {
             this.name = this.id as string
+            this.loadItem()
+            this.setMode()
+        },
+        item() {
+            this.loadItem()
             this.setMode()
         }
     },
     created() {
         this.name = this.id as string
         this.createUrl()
+        this.loadItem()
         this.setMode()
     },
     activated() {
+        this.loadItem()
         this.setMode()
     },
     deactivated() {
@@ -69,17 +79,22 @@ export default defineComponent({
             this.url = process.env.VUE_APP_HOST_URL + `/knowagecockpitengine/api/1.0/pages/edit?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&user_id=${uniqueID}&SBI_COUNTRY=${country}&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=true&documentMode=EDIT&FUNCTIONALITY_ID=${this.functionalityId}`
         },
         setMode() {
-            if (this.propMode === 'documentDetail') {
+            if (!this.loadedItem) return
+
+            if (this.loadedItem.showMode === 'documentDetail') {
                 this.mode = 'document-detail'
-            } else if (this.propMode === 'execute') {
+            } else if (this.loadedItem.showMode === 'execute') {
                 this.mode = 'document-execution'
-            } else if (this.propMode === 'createCockpit') {
+            } else if (this.loadedItem.showMode === 'createCockpit') {
                 this.mode = 'cockpit'
                 this.$emit('iframeCreated', { iframe: this.url, item: this.item })
             }
         },
         onDocumentsSaved(document: any) {
             this.$emit('documentSaved', document)
+        },
+        loadItem() {
+            this.loadedItem = this.item
         }
     }
 })

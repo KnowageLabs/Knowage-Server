@@ -19,6 +19,18 @@
         {
             "field": "description",
             "header": "common.description"
+        },
+        {
+            "field": "personal",
+            "header": "metaweb.businessModel.personal"
+        },
+        {
+            "field": "decrypt",
+            "header": "metaweb.businessModel.decrypt"
+        },
+        {
+            "field": "subjectId",
+            "header": "metaweb.businessModel.subjectId"
         }
     ],
     "iconColumnStyle": {

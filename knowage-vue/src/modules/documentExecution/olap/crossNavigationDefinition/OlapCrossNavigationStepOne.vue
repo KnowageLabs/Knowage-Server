@@ -55,6 +55,7 @@ export default defineComponent({
     methods: {
         loadParameters() {
             this.parameters = this.propParameters as iOlapCrossNavigationParameter[]
+            console.log('LOADED PARAMETRS: ', this.propParameters)
         },
         loadSelectedParameter() {
             this.selectedParameter = this.propSelectedParameter as iOlapCrossNavigationParameter

@@ -44,7 +44,8 @@
     <SparqlDataset v-if="dataset.dsTypeCd == 'SPARQL'" :selectedDataset="selectedDataset" />
     <SolrDataset v-if="dataset.dsTypeCd == 'Solr'" :selectedDataset="selectedDataset" />
     <PythonDataset v-if="dataset.dsTypeCd == 'Python/R'" :selectedDataset="selectedDataset" :pythonEnvironments="pythonEnvironments" :rEnvironments="rEnvironments" />
-    <ParamTable v-if="dataset.dsTypeCd && dataset.dsTypeCd != 'File' && dataset.dsTypeCd != 'Flat'" :selectedDataset="selectedDataset" />
+    <PreparedDataset v-if="dataset.dsTypeCd == 'Prepared'" :selectedDataset="selectedDataset" :pythonEnvironments="pythonEnvironments" :rEnvironments="rEnvironments" />
+    <ParamTable v-if="dataset.dsTypeCd && dataset.dsTypeCd != 'File' && dataset.dsTypeCd != 'Flat' && dataset.dsTypeCd != 'Prepared'" :selectedDataset="selectedDataset" />
 </template>
 
 <script lang="ts">
@@ -67,8 +68,9 @@ import RestDataset from './restDataset/DatasetManagementRestDataset.vue'
 import SparqlDataset from './sparqlDataset/DatasetManagementSparqlDataset.vue'
 import SolrDataset from './solrDataset/DatasetManagementSolrDataset.vue'
 import PythonDataset from './pythonDataset/DatasetManagementPythonDataset.vue'
+import PreparedDataset from './preparedDataset/DatasetManagementPreparedDataset.vue'
 export default defineComponent({
-    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset, ScriptDataset, SparqlDataset, PythonDataset, FileDataset },
+    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset, ScriptDataset, SparqlDataset, PythonDataset, FileDataset, PreparedDataset },
     props: {
         parentValid: { type: Boolean },
         selectedDataset: { type: Object as any },

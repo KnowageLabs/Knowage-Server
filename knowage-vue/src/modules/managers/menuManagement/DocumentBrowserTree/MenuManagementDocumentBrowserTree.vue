@@ -97,6 +97,7 @@ export default defineComponent({
             }
         },
         expandAll() {
+            if (!this.nodes) return;
             for (let node of this.nodes) {
                 this.expandNode(node)
             }
@@ -122,8 +123,8 @@ export default defineComponent({
             await this.$http
                 .get(this.apiUrl + 'menu/functionalities')
                 .then((response: AxiosResponse<any>) => {
-                    this.nodes = response.data.functionality.map((item) => this.createNodes(item))
-                    this.flatTree = this.nodes.map((node) => this.flattenTree(node, 'children')).reduce((a, b) => a.concat(b), [])
+                    this.nodes = response.data ? response.data.functionality?.map((item) => this.createNodes(item)) : []
+                    this.flatTree = this.nodes?.map((node) => this.flattenTree(node, 'children')).reduce((a, b) => a.concat(b), [])
                 })
                 .finally(() => {
                     this.load = false

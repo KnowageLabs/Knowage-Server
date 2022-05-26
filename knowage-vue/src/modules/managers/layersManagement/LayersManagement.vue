@@ -101,6 +101,7 @@ export default defineComponent({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })
+                layerId == this.selectedLayer?.layerId ? this.onDetailClose() : ''
                 this.getAllLayers()
             })
         },

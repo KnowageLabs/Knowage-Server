@@ -3,10 +3,9 @@
         v-show="item"
         v-slot="{ Component }"
         :functionalityId="functionalityId"
-        :item="item"
+        :item="loadedItem"
         :parameterValuesMap="parameterValuesMap"
         :tabKey="key"
-        :propMode="mode"
         @close="$emit('close', item)"
         @parametersChanged="onParametersChange"
         @iframeCreated="onIframeCreated"
@@ -15,7 +14,7 @@
         @documentSaved="$emit('documentSaved', $event)"
     >
         <keep-alive>
-            <component :is="Component" :key="key"></component>
+            <component :is="Component" :key="key" :functionalityId="functionalityId" :item="loadedItem" :parameterValuesMap="parameterValuesMap" :tabKey="key"></component>
         </keep-alive>
     </router-view>
 </template>
@@ -27,10 +26,11 @@ export default defineComponent({
     name: 'document-browser-tab',
     components: {},
     emits: ['close', 'iframeCreated', 'closeIframe', 'documentSaved'],
-    props: { item: { type: Object }, mode: { type: String }, functionalityId: { type: String } },
+    props: { item: { type: Object }, functionalityId: { type: String } },
     data() {
         return {
-            parameterValuesMap: {} as any
+            parameterValuesMap: {} as any,
+            loadedItem: null as any
         }
     },
     computed: {
@@ -38,14 +38,23 @@ export default defineComponent({
             return this.item?.routerId
         }
     },
-    watch: {},
-    created() {},
+    watch: {
+        item() {
+            this.loadItem()
+        }
+    },
+    created() {
+        this.loadItem()
+    },
     methods: {
         onIframeCreated(payload: any) {
             this.$emit('iframeCreated', payload)
         },
         onParametersChange(payload: any) {
             this.parameterValuesMap[payload.document.label + '-' + this.key] = payload.parameters
+        },
+        loadItem() {
+            this.loadedItem = this.item
         }
     }
 })

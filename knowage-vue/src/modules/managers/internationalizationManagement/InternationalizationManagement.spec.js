@@ -192,13 +192,16 @@ describe('Internationalization Management Search', () => {
         const messageList = wrapper.find('[data-test="messages-table"]')
         const searchInput = messageList.find('[data-test="filterInput"]')
 
-        expect(messageList.html()).toContain('test11')
-        expect(messageList.html()).toContain('test22')
+        expect(wrapper.find('[data-test="input-field-1"]').exists()).toBe(true)
+        expect(wrapper.find('[data-test="input-field-1"]').wrapperElement._value).toBe('test11')
+        expect(wrapper.find('[data-test="input-field-2"]').exists()).toBe(true)
+        expect(wrapper.find('[data-test="input-field-2"]').wrapperElement._value).toBe('test22')
 
         await searchInput.setValue('test22')
 
-        expect(messageList.html()).not.toContain('test11')
-        expect(messageList.html()).toContain('test22')
+        expect(wrapper.find('[data-test="input-field-1"]').exists()).toBe(false)
+        expect(wrapper.find('[data-test="input-field-2"]').exists()).toBe(true)
+        expect(wrapper.find('[data-test="input-field-2"]').wrapperElement._value).toBe('test22')
     })
     it('returns no data if the text is not present', async () => {
         const wrapper = factory()
@@ -209,8 +212,10 @@ describe('Internationalization Management Search', () => {
         const messageList = wrapper.find('[data-test="messages-table"]')
         const searchInput = messageList.find('[data-test="filterInput"]')
 
-        expect(messageList.html()).toContain('test11')
-        expect(messageList.html()).toContain('test22')
+        expect(wrapper.find('[data-test="input-field-1"]').exists()).toBe(true)
+        expect(wrapper.find('[data-test="input-field-1"]').wrapperElement._value).toBe('test11')
+        expect(wrapper.find('[data-test="input-field-2"]').exists()).toBe(true)
+        expect(wrapper.find('[data-test="input-field-2"]').wrapperElement._value).toBe('test22')
 
         await searchInput.setValue('data that doesnt exist')
 

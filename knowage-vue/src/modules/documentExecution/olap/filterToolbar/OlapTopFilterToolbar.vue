@@ -1,7 +1,7 @@
 <template>
     <div id="top-toolbar-container" class="p-d-flex" :style="toolbarDescriptor.style.topToolbarContainer">
         <span id="topaxis" ref="filterPanelContainer" class="kn-flex p-d-flex" :style="toolbarDescriptor.style.topAxis" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone" @dragleave="hideDropzone">
-            <span class="swapAxis" :style="toolbarDescriptor.style.toolbarMainColor" @click="$emit('swapAxis')"> &nbsp; </span>
+            <Button icon="fa-solid fa-repeat" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" @click="$emit('swapAxis')" />
             <Button v-if="scrollContainerWidth < scrollContentWidth" icon="fas fa-arrow-circle-left" class="p-button-text p-button-rounded p-button-plain p-ml-1 p-as-center" :style="toolbarDescriptor.style.whiteColor" @click="scrollLeft" />
             <div ref="filterItemsContainer" class="p-d-flex p-ai-center kn-flex" :style="toolbarDescriptor.style.scroll">
                 <div v-for="(column, index) in columns" :key="index" class="p-d-flex">
@@ -128,13 +128,6 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-.swapAxis {
-    cursor: pointer;
-    width: 32px;
-    background-image: url(http://localhost:8080/knowage/themes/commons/img/olap/double-arrow.png);
-    background-repeat: no-repeat;
-    background-position: center center;
-}
 .filter-dragging {
     background-color: #bbd6ed !important;
 }

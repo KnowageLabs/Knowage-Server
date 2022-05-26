@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -57,7 +57,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * The Class HQLStatement.
+  * @deprecated Used in the old QBE
  */
+@Deprecated
 public class HQLStatement extends AbstractStatement {
 
 	/** Logger component. */
@@ -76,6 +78,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.EQUALS_TO;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
 						"Operand cannot be null when the operator is " + getName());
@@ -87,6 +90,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.NOT_EQUALS_TO;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
 						"Operand cannot be null when the operator is " + getName());
@@ -98,6 +102,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.GREATER_THAN;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
 						"Operand cannot be null when the operator is " + getName());
@@ -109,6 +114,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.EQUALS_OR_GREATER_THAN;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
 						"Operand cannot be null when the operator is " + getName());
@@ -120,6 +126,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.LESS_THAN;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
 						"Operand cannot be null when the operator is " + getName());
@@ -131,6 +138,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.EQUALS_OR_LESS_THAN;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
 						"Operand cannot be null when the operator is " + getName());
@@ -142,6 +150,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.STARTS_WITH;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
 						"Operand cannot be null when the operator is " + getName());
@@ -156,6 +165,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.NOT_STARTS_WITH;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
 						"Operand cannot be null when the operator is " + getName());
@@ -170,6 +180,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.ENDS_WITH;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
 						"Operand cannot be null when the operator is " + getName());
@@ -184,6 +195,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.NOT_ENDS_WITH;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
 						"Operand cannot be null when the operator is " + getName());
@@ -198,6 +210,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.CONTAINS;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
 						"Operand cannot be null when the operator is " + getName());
@@ -212,6 +225,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.NOT_CONTAINS;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null,
 						"Operand cannot be null when the operator is " + getName());
@@ -226,6 +240,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.IS_NULL;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValue) {
 				return leftHandValue + " IS NULL";
 			}
@@ -235,6 +250,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.NOT_NULL;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValue) {
 				return leftHandValue + " IS NOT NULL";
 			}
@@ -245,6 +261,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.BETWEEN;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues.length == 2,
 						"When BEETWEEN operator is used the operand must contain minValue and MaxValue");
@@ -256,6 +273,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.NOT_BETWEEN;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				Assert.assertTrue(rightHandValues != null && rightHandValues.length == 2,
 						"When BEETWEEN operator is used the operand must contain minValue and MaxValue");
@@ -268,6 +286,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.IN;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				String rightHandValue = StringUtils.join(rightHandValues, ",");
 				return leftHandValue + " IN (" + rightHandValue + ")";
@@ -278,6 +297,7 @@ public class HQLStatement extends AbstractStatement {
 				return CriteriaConstants.NOT_IN;
 			}
 
+			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
 				String rightHandValue = StringUtils.join(rightHandValues, ",");
 				return leftHandValue + " NOT IN (" + rightHandValue + ")";
@@ -862,7 +882,7 @@ public class HQLStatement extends AbstractStatement {
 	/**
 	 * Builds the sql statement (for the having or the where clause) for the
 	 * calculate fields.
-	 * 
+	 *
 	 * @param operator
 	 *            the operator of the clause
 	 * @param leftOperand
@@ -1276,6 +1296,7 @@ public class HQLStatement extends AbstractStatement {
 		return buffer.toString().trim();
 	}
 
+	@Override
 	public Set getSelectedEntities() {
 		Set selectedEntities;
 		Map entityAliasesMaps;
@@ -1366,6 +1387,7 @@ public class HQLStatement extends AbstractStatement {
 		return queryStr;
 	}
 
+	@Override
 	public void prepare() {
 		String queryStr;
 
@@ -1397,6 +1419,7 @@ public class HQLStatement extends AbstractStatement {
 		return super.getQueryString();
 	}
 
+	@Override
 	public String getSqlQueryString() {
 		String sqlQuery = null;
 		Session session = null;

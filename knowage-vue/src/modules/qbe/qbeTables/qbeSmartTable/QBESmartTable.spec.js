@@ -308,7 +308,6 @@ describe('QBE Simple Table', () => {
 
         await wrapper.find('[data-test="delete-column-Warehouse id"]').trigger('click')
         expect(wrapper.emitted()).toHaveProperty('removeFieldFromQuery')
-        expect(wrapper.emitted('removeFieldFromQuery')[0][0]).toStrictEqual(1)
     })
 
     it('shows a filter icon on a column if it uses a filter', () => {

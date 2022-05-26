@@ -1,9 +1,11 @@
 import { mount } from '@vue/test-utils'
+import { createRouter, createWebHistory } from 'vue-router'
 import axios from 'axios'
 import Button from 'primevue/button'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import flushPromises from 'flush-promises'
 import Timespan from './Timespan.vue'
+import TimespanHint from './TimespanHint.vue'
 import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
@@ -86,6 +88,29 @@ const $router = {
     push: jest.fn()
 }
 
+const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+        {
+            path: '/',
+            component: TimespanHint
+        },
+        {
+            path: '/timespan',
+            component: TimespanHint
+        },
+        {
+            path: '/timespan/new-timespan',
+            component: null
+        },
+        {
+            path: '/timespan/edit-timespan',
+            props: (route) => ({ id: route.query.id, clone: route.query.clone }),
+            component: null
+        }
+    ]
+})
+
 const factory = () => {
     return mount(Timespan, {
         provide: [PrimeVue],
@@ -93,7 +118,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [router],
             stubs: {
                 Button,
                 FabButton,
