@@ -1,5 +1,4 @@
 <template>
-    'SHJOULD HIDE: '{{ isGeographicBm }}
     <DataTable :value="businessModel.calculatedBusinessColumns" class="p-datatable-sm kn-table p-ml-2" responsiveLayout="stack" breakpoint="960px">
         <template #empty>
             {{ $t('common.info.noDataFound') }}
@@ -96,7 +95,6 @@ export default defineComponent({
             this.loadMeta()
             this.loadBusinessModel()
             this.calcFieldFunctions = this.createCalcFieldFunctions(calcFieldDescriptor.availableFunctions, this.propCustomFunctions)
-            console.log('WATCHER', this.calcFieldFunctions)
         }
     },
     created() {
@@ -203,21 +201,15 @@ export default defineComponent({
             let functions = deepcopy(providedFunctions)
 
             if (customFunctions) {
-                console.log('I HAVE CUSTOM FUNCT')
                 customFunctions.forEach((funct) => {
                     functions.push(funct)
                 })
             }
-            if (this.isGeographicBm) {
-                console.log('SHOW SPATIALS', this.isGeographicBm)
-            } else {
+            if (!this.isGeographicBm) {
                 let tempFunctions = deepcopy(functions)
-                console.log('HIDE SPATIALS')
                 functions = tempFunctions.filter((funct) => {
-                    console.log(funct.category)
                     return funct.category !== 'SPATIAL'
                 })
-                console.log(functions)
             }
 
             return functions
