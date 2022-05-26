@@ -181,7 +181,8 @@ export default defineComponent({
         this.parameterSidebarVisible = false
     },
     computed: {
-        sessionRole(): string {
+        sessionRole(): string | null {
+            if (!this.user) return null
             return this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
         },
         url(): string {
