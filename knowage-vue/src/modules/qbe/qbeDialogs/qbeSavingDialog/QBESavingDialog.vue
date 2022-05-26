@@ -222,7 +222,7 @@ export default defineComponent({
             }
         },
         setEndUserScope() {
-            if (!this.selectedDataset.id && !(this.$store.state as any).user.functionalities.includes('QbeAdvancedSaving')) {
+            if (this.selectedDataset && !this.selectedDataset.id && !(this.$store.state as any).user.functionalities.includes('QbeAdvancedSaving')) {
                 let userScope = this.scopeTypes.find((scope) => scope.VALUE_CD === 'USER')
                 this.selectedDataset.scopeCd = userScope.VALUE_CD
                 this.selectedDataset.scopeId = userScope.VALUE_ID
