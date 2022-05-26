@@ -118,7 +118,19 @@
         <QBESavingDialog :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" @datasetSaved="$emit('datasetSaved')" />
         <QBEJoinDefinitionDialog v-if="joinDefinitionDialogVisible" :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="uniqueID" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
 
-        <KnCalculatedField v-model:template="selectedCalcField" v-model:visibility="calcFieldDialogVisible" :fields="calcFieldColumns" :descriptor="calcFieldDescriptor" :readOnly="false" :valid="true" source="QBE" @save="onCalcFieldSave" @cancel="calcFieldDialogVisible = false">
+        <KnCalculatedField
+            v-if="calcFieldDialogVisible"
+            v-model:template="selectedCalcField"
+            v-model:visibility="calcFieldDialogVisible"
+            :fields="calcFieldColumns"
+            :descriptor="calcFieldDescriptor"
+            :propCalcFieldFunctions="calcFieldFunctions"
+            :readOnly="false"
+            :valid="true"
+            source="QBE"
+            @save="onCalcFieldSave"
+            @cancel="calcFieldDialogVisible = false"
+        >
             <template #additionalInputs>
                 <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
                     <span class="p-float-label ">
@@ -259,6 +271,7 @@ export default defineComponent({
             calcFieldDialogVisible: false,
             calcFieldColumns: [] as any,
             selectedCalcField: null as any,
+            calcFieldFunctions: [] as any,
             colors: ['#D7263D', '#F46036', '#2E294E', '#1B998B', '#C5D86D', '#3F51B5', '#8BC34A', '#009688', '#F44336']
         }
     },
@@ -305,6 +318,7 @@ export default defineComponent({
             this.loading = false
         },
         async loadQBE() {
+            this.loadCalcFieldFunctions()
             await this.initializeQBE()
             await this.loadCustomizedDatasetFunctions()
             await this.loadEntities()
@@ -326,6 +340,9 @@ export default defineComponent({
         loadQuery() {
             this.mainQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
             this.selectedQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
+        },
+        loadCalcFieldFunctions() {
+            this.calcFieldFunctions = calcFieldDescriptor.availableFunctions
         },
         getQBEFromModel() {
             if (!this.dataset) return {}
@@ -389,7 +406,50 @@ export default defineComponent({
         },
         async loadCustomizedDatasetFunctions() {
             const id = this.dataset?.dataSourceId ? this.dataset.dataSourceId : this.qbe?.qbeDataSourceId
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${id}`).then((response: AxiosResponse<any>) => (this.customizedDatasetFunctions = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${id}`).then((response: AxiosResponse<any>) => {
+                this.customizedDatasetFunctions = response.data
+                if (response.data.data && response.data.data.length > 0) {
+                    let customFunctions = response.data.data.map((funct) => ({ category: 'CUSTOM', formula: funct.value, label: funct.label, name: funct.name, help: 'dataPreparation.custom' }))
+                    customFunctions.forEach((funct) => {
+                        this.calcFieldFunctions.push(funct)
+                    })
+                }
+                let test = [
+                    {
+                        name: 'saluta',
+                        label: 'saluta',
+                        value: 'saluta()',
+                        type: 'custom',
+                        parameters: [
+                            {
+                                name: 'par1',
+                                type: 'String'
+                            }
+                        ]
+                    },
+                    {
+                        name: 'anni',
+                        label: 'anni',
+                        value: 'anni(,)',
+                        type: 'custom',
+                        parameters: [
+                            {
+                                name: 'par1',
+                                type: 'String'
+                            },
+                            {
+                                name: 'par2',
+                                type: 'String'
+                            }
+                        ]
+                    }
+                ]
+                let test2 = test.map((funct) => ({ category: 'CUSTOM', formula: funct.value, label: funct.label, name: funct.name, help: 'dataPreparation.custom' }))
+
+                test2.forEach((funct) => {
+                    this.calcFieldFunctions.push(funct)
+                })
+            })
         },
         async loadEntities() {
             const datamartName = this.dataset?.dataSourceId ? this.dataset.name : this.qbe?.qbeDatamarts
