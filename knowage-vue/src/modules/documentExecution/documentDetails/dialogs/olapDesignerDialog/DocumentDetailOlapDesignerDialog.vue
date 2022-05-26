@@ -33,7 +33,7 @@
             </div>
         </div>
         <DocumentDetailXMLAForm v-if="type === 'xmla'" class="p-m-4" :xmlModel="xmlModel"></DocumentDetailXMLAForm>
-        <DocumentDetailMondrianForm v-else class="p-m-4" :mondrianModel="mondrianModel" :mondrianSchemas="mondrianSchemas"></DocumentDetailMondrianForm>
+        <DocumentDetailMondrianForm v-else class="p-m-4" :sbiExecutionId="sbiExecutionId" :mondrianModel="mondrianModel" :mondrianSchemas="mondrianSchemas"></DocumentDetailMondrianForm>
     </Dialog>
 </template>
 
@@ -41,6 +41,7 @@
 import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iDocument, iMondrianSchema, iXMLATemplate, iMondrianTemplate } from '../../DocumentDetails'
+import { mapState } from 'vuex'
 import Dialog from 'primevue/dialog'
 import descriptor from './DocumentDetailOlapDesignerDialogDescriptor.json'
 import DocumentDetailXMLAForm from './DocumentDetailXMLAForm.vue'
@@ -67,6 +68,11 @@ export default defineComponent({
             loading: false
         }
     },
+    computed: {
+        ...mapState({
+            user: 'user'
+        })
+    },
     watch: {
         selectedDocument() {
             this.loadDocument()
@@ -80,7 +86,22 @@ export default defineComponent({
             this.document = this.selectedDocument ? { ...this.selectedDocument } : ({} as iDocument)
             this.sbiExecutionId = crypto.randomBytes(16).toString('hex')
 
+            this.initialize()
             this.loadMondrianSchemaResources()
+        },
+        async initialize() {
+            if (!this.document) return
+            this.$store.commit('setLoading', true)
+            let language = this.user.locale.split('_')[0]
+            let country = this.user.locale.split('_')[1]
+            await this.$http
+                .get(
+                    process.env
+                        .VUE_APP_RESTFUL_SERVICES_PATH`knowagewhatifengine/restful-services/olap/startolap/edit?SBI_LANGUAGE=${language}&SBI_COUNTRY=${country}&DOCUMENT_LABEL=${this.document.label}&mode=edit&user_id=$${this.user.userUniqueIdentifier}&document=${this.document.id}&ENGINE=knowageolapengine&SBI_EXECUTION_ID=${this.sbiExecutionId}`,
+                    { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } }
+                )
+                .then(() => {})
+            this.$store.commit('setLoading', false)
         },
         async loadMondrianSchemaResources() {
             this.$store.commit('setLoading', true)
@@ -100,7 +121,7 @@ export default defineComponent({
             const postData = this.type === 'xmla' ? { ...this.xmlModel } : { ...this.mondrianModel }
             this.$store.commit('setLoading', true)
             await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes?SBI_EXECUTION_ID=d4d3e96cd68311ec84fe71c8fc9b4bdb`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes?SBI_EXECUTION_ID=${this.sbiExecutionId}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) => {
                     console.log('RESPONSE DATA: ', response.data)
                     this.$emit('designerStarted', this.selectedDocument)

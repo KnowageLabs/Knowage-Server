@@ -71,7 +71,7 @@
             </TabView>
         </div>
 
-        <DocumentDetailOlapDesignerDialog :visible="designerDialogVisible" :selectedDocument="selectedDocument" @close="designerDialogVisible = false" @designerStarted="onDesignerStart"></DocumentDetailOlapDesignerDialog>
+        <DocumentDetailOlapDesignerDialog v-if="designerDialogVisible" :visible="designerDialogVisible" :selectedDocument="selectedDocument" @close="designerDialogVisible = false" @designerStarted="onDesignerStart"></DocumentDetailOlapDesignerDialog>
     </div>
 </template>
 

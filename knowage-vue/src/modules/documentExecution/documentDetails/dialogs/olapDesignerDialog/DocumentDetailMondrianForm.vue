@@ -28,7 +28,7 @@ import { AxiosResponse } from 'axios'
 export default defineComponent({
     name: 'document-detail-mondrian-form',
     components: { Dropdown },
-    props: { mondrianModel: { type: Object as PropType<iMondrianTemplate> }, mondrianSchemas: { type: Array as PropType<iMondrianSchema[]> } },
+    props: { sbiExecutionId: { type: String }, mondrianModel: { type: Object as PropType<iMondrianTemplate> }, mondrianSchemas: { type: Array as PropType<iMondrianSchema[]> } },
     data() {
         return {
             model: {} as iMondrianTemplate,
@@ -63,7 +63,7 @@ export default defineComponent({
 
             this.$store.commit('setLoading', true)
             // TODO - REMOVE HARCODED SBI_EXECUTION_ID
-            await this.$http.get(process.env.VUE_APP_OLAP_PATH + `1.0/designer/allcubes/${this.selectedMondrianSchema.currentContentId}?SBI_EXECUTION_ID=ccbd0f15d68111ec84fe71c8fc9b4bdb`).then((response: AxiosResponse<any>) => (this.cubes = response.data))
+            await this.$http.get(process.env.VUE_APP_OLAP_PATH + `1.0/designer/allcubes/${this.selectedMondrianSchema.currentContentId}?SBI_EXECUTION_ID=${this.sbiExecutionId}`).then((response: AxiosResponse<any>) => (this.cubes = response.data))
             this.$store.commit('setLoading', false)
             console.log('LOADED CUBES: ', this.cubes)
         },
@@ -79,7 +79,7 @@ export default defineComponent({
             this.$store.commit('setLoading', true)
             // TODO - REMOVE HARCODED SBI_EXECUTION_ID
             await this.$http
-                .get(process.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes/getMDX/${this.selectedMondrianSchema.currentContentId}/${this.selectedCube}?SBI_EXECUTION_ID=ccbd0f15d68111ec84fe71c8fc9b4bdb`, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .get(process.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes/getMDX/${this.selectedMondrianSchema.currentContentId}/${this.selectedCube}?SBI_EXECUTION_ID=${this.sbiExecutionId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) => {
                     this.model.mdxQuery = response.data
                     this.model.mondrianMdxQuery = response.data
