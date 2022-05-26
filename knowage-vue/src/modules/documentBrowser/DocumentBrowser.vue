@@ -32,6 +32,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
+import { getRouteDocumentType } from './documentBrowserHelper'
 import DocumentBrowserHome from './documentBrowserHome/DocumentBrowserHome.vue'
 import DocumentBrowserTab from './DocumentBrowserTab.vue'
 import Menu from 'primevue/menu'
@@ -52,7 +53,8 @@ export default defineComponent({
             selectedItem: null as any,
             id: 0,
             iFrameContainers: [] as any[],
-            menuItem: null
+            menuItem: null,
+            getRouteDocumentType
         }
     },
     watch: {
@@ -154,41 +156,6 @@ export default defineComponent({
 
             this.activeIndex = this.tabs.length
         },
-        getRouteDocumentType(item: any) {
-            let routeDocumentType = ''
-
-            switch (item.typeCode) {
-                case 'DATAMART':
-                    routeDocumentType = 'registry'
-                    break
-                case 'DOCUMENT_COMPOSITE':
-                    routeDocumentType = 'document-composite'
-                    break
-                case 'OFFICE_DOC':
-                    routeDocumentType = 'office-doc'
-                    break
-                case 'OLAP':
-                    routeDocumentType = 'olap'
-                    break
-                case 'MAP':
-                    routeDocumentType = 'map'
-                    break
-                case 'REPORT':
-                    routeDocumentType = 'report'
-                    break
-                case 'KPI':
-                    routeDocumentType = 'kpi'
-                    break
-                case 'DOSSIER':
-                    routeDocumentType = 'dossier'
-                    break
-                case 'ETL':
-                    routeDocumentType = 'etl'
-                    break
-            }
-
-            return routeDocumentType
-        },
         toggle(event: any) {
             this.createMenuItems()
             const menu = this.$refs.menu as any
@@ -270,7 +237,7 @@ export default defineComponent({
         },
         onDocumentSaved(document: any) {
             this.selectedItem.functionalityId = null
-            this.selectedItem.item = { name: document.name, label: document.id, routerId: crypto.randomBytes(16).toString('hex'), id: document.id }
+            this.selectedItem.item = { name: document.name, label: document.id, routerId: crypto.randomBytes(16).toString('hex'), id: document.id, showMode: 'documentDetail' }
             this.$router.push(`/document-browser/document-details/${document.id}`)
         }
     }
