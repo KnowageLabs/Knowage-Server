@@ -214,9 +214,6 @@ export default defineComponent({
             }
         })
 
-        this.user = (this.$store.state as any).user
-        this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
-
         if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution') return
 
         await this.loadUserConfig()
@@ -229,6 +226,9 @@ export default defineComponent({
         if (!this.document.label) return
 
         await this.loadDocument()
+
+        this.user = (this.$store.state as any).user
+        this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
 
         if (this.userRole) {
             await this.loadPage(true)
