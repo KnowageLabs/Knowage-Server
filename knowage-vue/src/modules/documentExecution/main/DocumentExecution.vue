@@ -812,10 +812,10 @@ export default defineComponent({
         async onMetadataSave(metadata: any) {
             this.loading = true
             const jsonMeta = [] as any[]
-            const properties = ['shortText', 'longText']
+            const properties = ['shortText', 'longText', 'file']
             properties.forEach((property: string) =>
                 metadata[property].forEach((el: any) => {
-                    if (el.value) {
+                    if (el.value || (property === 'file' && el.fileToSave)) {
                         jsonMeta.push(el)
                     }
                 })
