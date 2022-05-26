@@ -1,5 +1,5 @@
 <template>
-    <div v-if="viewMode === 'document-detail'" id="document-details-container" class="p-d-flex p-flex-column kn-flex kn-height-full">
+    <div v-if="viewMode === 'document-detail' || $route.name !== 'document-details-new-document' || $route.name !== 'document-details-new-document'" id="document-details-container" class="p-d-flex p-flex-column kn-flex kn-height-full">
         <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
             <template #start>
                 {{ $t('documentExecution.documentDetails.title') }}
@@ -159,7 +159,7 @@ export default defineComponent({
         }
     },
     async created() {
-        if (this.viewMode !== 'document-detail') return
+        if (this.viewMode !== 'document-detail' && (this.$route.name !== 'document-details-new-document' || this.$route.name !== 'document-details-new-document')) return
         this.isForEdit()
         await this.loadPage(this.docId)
     },

@@ -7,12 +7,14 @@ const routes = [
             {
                 path: 'new/:folderId',
                 component: () => import('@/modules/documentExecution/documentDetails/DocumentDetails.vue'),
-                props: true
+                props: true,
+                name: 'document-details-new-document'
             },
             {
                 path: ':docId',
                 component: () => import('@/modules/documentExecution/documentDetails/DocumentDetails.vue'),
-                props: true
+                props: true,
+                name: 'document-details-edit-document'
             }
         ]
     }
