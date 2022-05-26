@@ -414,41 +414,6 @@ export default defineComponent({
                         this.calcFieldFunctions.push(funct)
                     })
                 }
-                let test = [
-                    {
-                        name: 'saluta',
-                        label: 'saluta',
-                        value: 'saluta()',
-                        type: 'custom',
-                        parameters: [
-                            {
-                                name: 'par1',
-                                type: 'String'
-                            }
-                        ]
-                    },
-                    {
-                        name: 'anni',
-                        label: 'anni',
-                        value: 'anni(,)',
-                        type: 'custom',
-                        parameters: [
-                            {
-                                name: 'par1',
-                                type: 'String'
-                            },
-                            {
-                                name: 'par2',
-                                type: 'String'
-                            }
-                        ]
-                    }
-                ]
-                let test2 = test.map((funct) => ({ category: 'CUSTOM', formula: funct.value, label: funct.label, name: funct.name, help: 'dataPreparation.custom' }))
-
-                test2.forEach((funct) => {
-                    this.calcFieldFunctions.push(funct)
-                })
             })
         },
         async loadEntities() {
