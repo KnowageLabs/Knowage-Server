@@ -3,3 +3,11 @@ export interface IKnCalculatedField {
     type?: string
     formula?: string
 }
+
+export interface IKnCalculatedFieldFunction {
+    category: string
+    formula: string
+    label: string
+    name: string
+    help: string
+}

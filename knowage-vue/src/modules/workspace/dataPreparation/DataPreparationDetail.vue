@@ -1,6 +1,17 @@
 <template>
     <div class="kn-page kn-data-preparation">
-        <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" :readOnly="readOnly" @update:readOnly="updateReadOnly" v-model:template="selectedTransformation" :valid="cfType !== ''">
+        <KnCalculatedField
+            v-model:visibility="showCFDialog"
+            @save="saveCFDialog"
+            @cancel="cancelCFDialog"
+            :fields="columns"
+            :descriptor="cfDescriptor"
+            :propCalcFieldFunctions="cfDescriptor.availableFunctions"
+            :readOnly="readOnly"
+            @update:readOnly="updateReadOnly"
+            v-model:template="selectedTransformation"
+            :valid="cfType !== ''"
+        >
             <template #additionalInputs>
                 <div class="p-col-4">
                     <span v-if="cfDescriptor.availableTypes" class="p-float-label p-field p-ml-2 kn-flex">

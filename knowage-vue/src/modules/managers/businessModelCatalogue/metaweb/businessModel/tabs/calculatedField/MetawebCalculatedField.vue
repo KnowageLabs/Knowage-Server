@@ -15,7 +15,19 @@
         </Column>
     </DataTable>
 
-    <KnCalculatedField v-model:template="selectedCalcField" v-model:visibility="calcFieldDialogVisible" :fields="calcFieldColumns" :descriptor="calcFieldDescriptor" :source="'QBE'" :readOnly="false" :valid="true" @save="onCalcFieldSave" @cancel="calcFieldDialogVisible = false">
+    <KnCalculatedField
+        v-if="calcFieldDialogVisible"
+        v-model:template="selectedCalcField"
+        v-model:visibility="calcFieldDialogVisible"
+        :fields="calcFieldColumns"
+        :descriptor="calcFieldDescriptor"
+        :propCalcFieldFunctions="calcFieldFunctions"
+        :source="'QBE'"
+        :readOnly="false"
+        :valid="true"
+        @save="onCalcFieldSave"
+        @cancel="calcFieldDialogVisible = false"
+    >
         <template #additionalInputs>
             <div class="p-field p-col-4">
                 <span class="p-float-label ">
@@ -37,6 +49,7 @@
 import { AxiosResponse } from 'axios'
 import { defineComponent, PropType } from 'vue'
 import { iBusinessModel } from '../../../Metaweb'
+import { IKnCalculatedFieldFunction } from '@/components/functionalities/KnCalculatedField/KnCalculatedField'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import descriptor from './MetawebCalculatedFieldDescriptor.json'
@@ -45,11 +58,12 @@ import KnCalculatedField from '@/components/functionalities/KnCalculatedField/Kn
 import Dropdown from 'primevue/dropdown'
 
 const { generate, applyPatch } = require('fast-json-patch')
+const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'metaweb-filter-tab',
     components: { DataTable, Column, KnCalculatedField, Dropdown },
-    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, propMeta: { type: Object }, observer: { type: Object, required: true } },
+    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, propMeta: { type: Object }, propCustomFunctions: { type: Array }, observer: { type: Object, required: true } },
     emits: ['metaUpdated'],
     data() {
         return {
@@ -60,18 +74,33 @@ export default defineComponent({
             calcFieldDialogVisible: false,
             readOnly: false,
             selectedCalcField: {} as any,
-            calcFieldColumns: [] as any
+            calcFieldColumns: [] as any,
+            calcFieldFunctions: [] as IKnCalculatedFieldFunction[]
+        }
+    },
+    computed: {
+        isGeographicBm(): boolean {
+            let hideFields = false
+            this.businessModel?.properties?.forEach((el: any) => {
+                const key = Object.keys(el)[0]
+                if (key === 'structural.tabletype' && el[key].value === 'geographic dimension') {
+                    hideFields = true
+                } else hideFields = false
+            })
+            return hideFields
         }
     },
     watch: {
         selectedBusinessModel() {
             this.loadMeta()
             this.loadBusinessModel()
+            this.calcFieldFunctions = this.createCalcFieldFunctions(calcFieldDescriptor.availableFunctions, this.propCustomFunctions)
         }
     },
     created() {
         this.loadMeta()
         this.loadBusinessModel()
+        this.calcFieldFunctions = this.createCalcFieldFunctions(calcFieldDescriptor.availableFunctions, this.propCustomFunctions)
     },
     methods: {
         loadMeta() {
@@ -167,6 +196,23 @@ export default defineComponent({
                 })
                 .catch(() => {})
                 .finally(() => generate(this.observer))
+        },
+        createCalcFieldFunctions(providedFunctions, customFunctions?) {
+            let functions = deepcopy(providedFunctions)
+
+            if (customFunctions) {
+                customFunctions.forEach((funct) => {
+                    functions.push(funct)
+                })
+            }
+            if (!this.isGeographicBm) {
+                let tempFunctions = deepcopy(functions)
+                functions = tempFunctions.filter((funct) => {
+                    return funct.category !== 'SPATIAL'
+                })
+            }
+
+            return functions
         }
     }
 })
