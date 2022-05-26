@@ -105,7 +105,7 @@
                     </div>
                 </div>
             </div>
-            <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="dataset" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe.pars" @execute="onExecute"></KnParameterSidebar>
+            <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="dataset" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe?.pars" @execute="onExecute" @roleChanged="onRoleChange"></KnParameterSidebar>
         </div>
 
         <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="uniqueID" :queryPreviewData="queryPreviewData" :pagination="pagination" :entities="entities?.entities" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
@@ -284,7 +284,11 @@ export default defineComponent({
         this.uniqueID = crypto.randomBytes(16).toString('hex')
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole && this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
-        await this.loadPage()
+        if (this.userRole) {
+            await this.loadPage()
+        } else {
+            this.parameterSidebarVisible = true
+        }
     },
     methods: {
         async loadPage() {
@@ -354,12 +358,15 @@ export default defineComponent({
             const label = this.qbe.label ? this.qbe.label : this.qbe.qbeDatamarts
             const url = this.qbe.label ? `3.0/datasets/${label}/filters` : `1.0/businessmodel/${this.qbe.qbeDatamarts}/filters`
 
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, { role: this.userRole }).then((response: AxiosResponse<any>) => {
-                this.filtersData = response.data
-                if (this.filtersData.filterStatus) {
-                    this.filtersData.filterStatus = this.filtersData.filterStatus.filter((filter: any) => filter.id)
-                }
-            })
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, { role: this.userRole })
+                .then((response: AxiosResponse<any>) => {
+                    this.filtersData = response.data
+                    if (this.filtersData.filterStatus) {
+                        this.filtersData.filterStatus = this.filtersData.filterStatus.filter((filter: any) => filter.id)
+                    }
+                })
+                .catch(() => {})
 
             formatDrivers(this.filtersData)
         },
@@ -828,6 +835,11 @@ export default defineComponent({
 
             if (this.selectedQuery.expression.childNodes?.length === 0) this.selectedQuery.expression = {}
             this.updateSmartView()
+        },
+        async onRoleChange(role: string) {
+            this.userRole = role as any
+            this.filtersData = {}
+            await this.loadPage()
         }
     }
 })
