@@ -46,7 +46,7 @@ psutil==5.6.5
 py4j==0.10.7
 pybase64==1.0.1
 pycparser==2.19
-Pygments==2.4.2
+Pygments==2.7.4
 PyJWT==2.4.0
 Pympler==0.9
 pyOpenSSL==19.1.0
