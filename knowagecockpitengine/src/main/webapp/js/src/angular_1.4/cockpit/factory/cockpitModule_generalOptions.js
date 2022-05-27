@@ -109,6 +109,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {label:'time',value:'java.sql.Time'},
 			 {label:'timestamp',value:'java.sql.Timestamp'},
 			 {label:'timestamp',value:'oracle.sql.TIMESTAMP'},
+			 {label:'timestamp',value:'java.time.LocalDateTime'},
 			 {label:'blob',value:'oracle.sql.BLOB'},
 			 {label:'clob',value:'oracle.sql.CLOB'}
 		 ],
