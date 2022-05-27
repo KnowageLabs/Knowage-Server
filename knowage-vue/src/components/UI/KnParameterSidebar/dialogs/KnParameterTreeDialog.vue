@@ -39,6 +39,8 @@ import Dialog from 'primevue/dialog'
 import knParameterTreeDialogDescriptor from './KnParameterTreeDialogDescriptor.json'
 import Tree from 'primevue/tree'
 
+const deepcopy = require('deepcopy')
+
 export default defineComponent({
     name: 'kn-parameter-tree-dialog',
     components: { Dialog, Tree },
@@ -77,6 +79,18 @@ export default defineComponent({
         loadParameter() {
             this.parameter = this.selectedParameter as iParameter
             this.multivalue = this.selectedParameter?.multivalue
+            if (this.multivalue) {
+                this.setMultipleSelectedRows()
+            } else {
+                this.selectedValue = this.selectedParameter?.parameterValue[0]
+                if (this.selectedValue) {
+                    this.selectedValuesKeys[this.selectedValue.description] = true
+                }
+            }
+        },
+        setMultipleSelectedRows() {
+            if (!this.selectedParameter) return
+            this.multipleSelectedValues = deepcopy(this.selectedParameter.parameterValue)
         },
         async loadLeaf(parent: any) {
             this.loading = true
@@ -103,8 +117,8 @@ export default defineComponent({
                     })
                 )
                 .catch((error: any) => console.log('ERROR: ', error))
-            content.forEach((el: any) => this.checkIfNodeIsSelected(el))
             this.attachContentToTree(parent, content)
+            content.forEach((el: any) => this.checkIfNodeIsSelected(el))
             this.loading = false
             if (parent) this.setOpenFolderIcon(parent)
         },
@@ -113,9 +127,20 @@ export default defineComponent({
                 const index = this.parameter?.parameterValue.findIndex((el: any) => el.value === node.data.value)
                 if (index !== -1) {
                     this.selectedValuesKeys[node.key] = { checked: true, partialyChecked: false }
-                    this.multipleSelectedValues.push(node.data)
+                    if (this.checkIfAllChildrensAreSelected(node.parent)) this.selectedValuesKeys[node.parent.key] = { checked: true, partialyChecked: false }
                 }
             }
+        },
+        checkIfAllChildrensAreSelected(node: iNode) {
+            let allChecked = true
+            for (let i = 0; i < node.children.length; i++) {
+                if (!this.selectedValuesKeys[node.children[i].key] || !this.selectedValuesKeys[node.children[i].key].checked) {
+                    allChecked = false
+                    break
+                }
+            }
+
+            return allChecked
         },
         attachContentToTree(parent: iNode, content: iNode[]) {
             if (parent) {
@@ -128,17 +153,22 @@ export default defineComponent({
         },
         createNode(el: iNode, parent: iNode) {
             return {
-                key: el.id,
+                key: el.label,
                 id: el.id,
                 label: el.label,
                 children: [] as iNode[],
                 data: { value: el.data, description: el.label },
                 style: this.knParameterTreeDialogDescriptor.node.style,
                 leaf: el.leaf,
-                selectable: el.leaf,
+                selectable: this.isNodeSelectable(el),
                 parent: parent,
                 icon: el.leaf ? 'pi pi-file' : 'pi pi-folder'
             }
+        },
+        isNodeSelectable(el) {
+            if (!this.multivalue) return true
+
+            return el.leaf
         },
         setOpenFolderIcon(node: iNode) {
             node.icon = 'pi pi-folder-open'
@@ -149,17 +179,29 @@ export default defineComponent({
         setSelectedValue(node: iNode) {
             if (!this.multivalue) {
                 this.selectedValue = node.data
-            } else {
+            } else if (node.leaf) {
                 this.multipleSelectedValues.push(node.data)
+            } else {
+                node?.children.forEach((child: iNode) => {
+                    const index = this.multipleSelectedValues.findIndex((el: { value: string; description: string }) => el.value === child.data.value && el.description === child.data.description)
+                    if (index === -1) this.multipleSelectedValues.push(child.data)
+                })
             }
         },
         removeSelectedValue(node: iNode) {
             if (!this.multivalue) {
                 this.selectedValue = null
+            } else if (node.leaf) {
+                this.removeSelectedNode(node)
             } else {
-                const index = this.multipleSelectedValues.findIndex((el: any) => el.value === node.data.value)
-                if (index !== -1) this.multipleSelectedValues.splice(index, 1)
+                node?.children.forEach((child: iNode) => {
+                    this.removeSelectedNode(child)
+                })
             }
+        },
+        removeSelectedNode(node: iNode) {
+            const index = this.multipleSelectedValues.findIndex((el: any) => el.value === node.data.value)
+            if (index !== -1) this.multipleSelectedValues.splice(index, 1)
         },
         closeDialog() {
             this.$emit('close')

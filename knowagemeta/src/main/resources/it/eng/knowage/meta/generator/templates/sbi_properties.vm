@@ -18,6 +18,11 @@ ${jpaColumn.uniqueName}.attribute = $jpaColumn.getAttribute("structural.attribut
 ${jpaColumn.uniqueName}.filtercondition = $jpaColumn.getAttribute("structural.filtercondition")
 ${jpaColumn.uniqueName}.datatype = $jpaColumn.getAttribute("structural.datatype")
 ${jpaColumn.uniqueName}.aggtype = $jpaColumn.getAttribute("structural.aggtype")
+${jpaColumn.uniqueName}.personal = #{if}($jpaColumn.getAttribute("structural.sensible"))$jpaColumn.getAttribute("structural.sensible")#{else}false#{end}
+
+${jpaColumn.uniqueName}.decrypt = #{if}($jpaColumn.getAttribute("structural.encrypted"))$jpaColumn.getAttribute("structural.encrypted")#{else}false#{end}
+
+${jpaColumn.uniqueName}.subjectId = #{if}($jpaColumn.getAttribute("structural.subjectId"))$jpaColumn.getAttribute("structural.subjectId")#{else}false#{end}
 
 
 #if($jpaColumn.getAttribute("structural.datatype") == "DATE")

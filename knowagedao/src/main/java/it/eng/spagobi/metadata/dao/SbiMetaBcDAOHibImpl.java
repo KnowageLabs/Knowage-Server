@@ -17,16 +17,6 @@
  */
 package it.eng.spagobi.metadata.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.metadata.metadata.SbiMetaBc;
-import it.eng.spagobi.metadata.metadata.SbiMetaBcAttribute;
-import it.eng.spagobi.metadata.metadata.SbiMetaSource;
-import it.eng.spagobi.metadata.metadata.SbiMetaTable;
-import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,9 +31,21 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.SimpleExpression;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.metadata.metadata.SbiMetaBc;
+import it.eng.spagobi.metadata.metadata.SbiMetaBcAttribute;
+import it.eng.spagobi.metadata.metadata.SbiMetaSource;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -156,7 +158,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#loadBcByName(string)
 	 */
 	@Override
-	public SbiMetaBc loadBcByUniqueName(String name) throws EMFUserError {
+	public SbiMetaBc loadBcByUniqueName(String model, String name) throws EMFUserError {
 		logger.debug("IN");
 
 		SbiMetaBc toReturn = null;
@@ -166,7 +168,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			toReturn = loadBcByUniqueName(tmpSession, name);
+			toReturn = loadBcByUniqueName(tmpSession, model, name);
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -618,15 +620,18 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaBcDAOHibImpl#loadBcByUniqueName(session, string)
 	 */
 	@Override
-	public SbiMetaBc loadBcByUniqueName(Session session, String uniqueName) throws EMFUserError {
+	public SbiMetaBc loadBcByUniqueName(Session session, String model, String uniqueName) throws EMFUserError {
 		logger.debug("IN");
 
 		SbiMetaBc toReturn = null;
 
 		try {
-			Criterion labelCriterrion = Expression.eq("uniqueName", uniqueName);
+			SimpleExpression subCond1 = Restrictions.eq("uniqueName", uniqueName);
+			SimpleExpression subCond2 = Restrictions.eq("name", model);
+			LogicalExpression cond = Restrictions.and(subCond1, subCond2);
+
 			Criteria criteria = session.createCriteria(SbiMetaBc.class);
-			criteria.add(labelCriterrion);
+			criteria.add(cond);
 			toReturn = (SbiMetaBc) criteria.uniqueResult();
 		} catch (HibernateException he) {
 			logException(he);

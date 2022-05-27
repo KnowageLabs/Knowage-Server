@@ -19,7 +19,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iNode } from '../DocumentBrowser'
-import documentBrowserTreeDescriptor from './DocumentBrowserTreeDescriptor.json'
 import Tree from 'primevue/tree'
 
 export default defineComponent({
@@ -29,7 +28,6 @@ export default defineComponent({
     emits: ['folderSelected'],
     data() {
         return {
-            documentBrowserTreeDescriptor,
             folders: [] as any[],
             nodes: [] as iNode[],
             selectedFolderKey: {},
@@ -59,12 +57,12 @@ export default defineComponent({
             const personalFolder = {
                 key: 'Personal_Folders',
                 icon: 'pi pi-folder',
-                id: 1,
+                id: -1,
                 parentId: null,
                 label: 'Personal_Folders',
                 children: [] as iNode[],
                 data: {
-                    id: 1,
+                    id: -1,
                     codType: 'LOW_FUNCT',
                     code: 'Personal_Folders',
                     createRoles: [],
@@ -78,16 +76,16 @@ export default defineComponent({
             this.nodes = [personalFolder]
             const foldersWithMissingParent = [] as iNode[]
             this.folders.forEach((folder: any) => {
-                const node = { key: folder.name, icon: 'pi pi-folder', id: folder.id, parentId: folder.parentId, label: folder.name, children: [] as iNode[], data: folder, style: this.documentBrowserTreeDescriptor.node.style }
-                node.children = foldersWithMissingParent.filter((folder: iNode) => node.id === folder.parentId)
+                const node = { key: folder.name, icon: 'pi pi-folder', id: folder.id, parentId: folder.parentId, label: folder.name, children: [] as iNode[], data: folder }
+                node.children = foldersWithMissingParent.filter((folder: iNode) => node.id === folder.parentId && folder.data.codType !== 'LOW_FUNCT')
                 this.attachFolderToTree(node, foldersWithMissingParent, personalFolder)
             })
         },
         attachFolderToTree(folder: iNode, foldersWithMissingParent: iNode[], personalFolder: iNode) {
-            if (folder.parentId) {
+            if (folder.parentId && folder.parentId !== -1) {
                 let parentFolder = null as iNode | null
                 for (let i = 0; i < foldersWithMissingParent.length; i++) {
-                    if (folder.parentId === foldersWithMissingParent[i].id) {
+                    if (folder.parentId === foldersWithMissingParent[i].id && foldersWithMissingParent[i].data.codType !== 'USER_FUNCT') {
                         folder.data.parentFolder = foldersWithMissingParent[i]
                         foldersWithMissingParent[i].children?.push(folder)
                         break
@@ -95,13 +93,14 @@ export default defineComponent({
                 }
                 for (let i = 0; i < this.nodes.length; i++) {
                     parentFolder = this.findParentFolder(folder, this.nodes[i])
-                    if (parentFolder) {
+
+                    if (parentFolder && parentFolder.data.codType !== 'USER_FUNCT') {
                         folder.data.parentFolder = parentFolder
                         parentFolder.children?.push(folder)
                         break
                     }
                 }
-                if (!parentFolder) {
+                if (!parentFolder && folder.data.codType !== 'USER_FUNCT') {
                     foldersWithMissingParent.push(folder)
                 }
             } else if (folder.data.codType === 'USER_FUNCT') {
@@ -113,6 +112,9 @@ export default defineComponent({
             }
         },
         findParentFolder(folderToAdd: iNode, folderToSearch: iNode) {
+            if (folderToAdd.data.codType === 'USER_FUNCT') {
+                return null
+            }
             if (folderToAdd.parentId === folderToSearch.id) {
                 return folderToSearch
             } else {

@@ -32,7 +32,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iBusinessModelVersion } from '../../BusinessModelCatalogue'
-import { formatDate } from '@/helpers/commons/localeHelper'
+import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
 import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
@@ -89,7 +89,7 @@ export default defineComponent({
             })
         },
         creationDate(date: string) {
-            return formatDate(date, 'DD/MM/yyyy HH:mm:ss')
+            return formatDateWithLocale(date, { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })
         },
         toggle(event: any, version: iBusinessModelVersion) {
             this.createMenuItems(version)

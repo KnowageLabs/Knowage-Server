@@ -13,7 +13,7 @@
         </template>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
 
-        <DataTable :value="rows" class="p-datatable-sm kn-table p-ml-1" :scrollable="true" scrollHeight="100%" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields">
+        <DataTable v-else :value="rows" class="p-datatable-sm kn-table p-ml-1" :scrollable="true" scrollHeight="100%" v-model:filters="filters" :globalFilterFields="metawebSelectDialogDescriptor.globalFilterFields" @filter="onRowsFiltered">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -76,6 +76,7 @@ export default defineComponent({
             filters: {
                 global: [filterDefault]
             } as Object,
+            filteredRows: [] as { value: string }[],
             loading: false
         }
     },
@@ -83,8 +84,13 @@ export default defineComponent({
         async businessModel() {
             await this.loadData()
         },
-        visible() {
-            this.loadRows()
+        async visible(value: boolean) {
+            if (value) {
+                this.loading = true
+                await this.loadDatasourceStructure()
+                this.loadRows()
+                this.loading = false
+            }
         }
     },
     async created() {
@@ -92,15 +98,16 @@ export default defineComponent({
     },
     methods: {
         async loadData() {
+            this.loading = true
             this.loadBusinessModel()
             await this.loadDatasourceStructure()
             this.loadRows()
+            this.loading = false
         },
         loadBusinessModel() {
             this.businessModel = this.selectedBusinessModel as iBusinessModel
         },
         async loadDatasourceStructure() {
-            this.loading = true
             if (this.businessModel?.dataSourceId) {
                 let url = `2.0/datasources/structure/${this.businessModel.dataSourceId}?`
                 const urlParams = {} as any
@@ -108,7 +115,6 @@ export default defineComponent({
                 if (this.businessModel.tablePrefixNotLike) urlParams.tablePrefixNotLike = this.businessModel.tablePrefixNotLike
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, { params: urlParams }).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
             }
-            this.loading = false
         },
         loadRows() {
             this.rows = []
@@ -128,23 +134,30 @@ export default defineComponent({
         },
         setAllChecked(typeChecked: string) {
             Object.keys(this.selected).forEach((key: string) => {
-                if (typeChecked === 'business') {
-                    this.selected[key].business = this.allBusinessSelected
-                    if (this.allBusinessSelected) {
-                        this.selected[key].physical = true
-                        this.allPhysicalSelected = true
-                    }
-                } else {
-                    this.selected[key].physical = this.allPhysicalSelected
-                    if (!this.allPhysicalSelected) {
-                        this.selected[key].business = false
-                        this.allBusinessSelected = false
+                if (this.checkIfTheSelectedIsInFilteredRows(key)) {
+                    if (typeChecked === 'business') {
+                        this.selected[key].business = this.allBusinessSelected
+                        if (this.allBusinessSelected) {
+                            this.selected[key].physical = true
+                            this.allPhysicalSelected = true
+                        }
+                    } else {
+                        this.selected[key].physical = this.allPhysicalSelected
+                        if (!this.allPhysicalSelected) {
+                            this.selected[key].business = false
+                            this.allBusinessSelected = false
+                        }
                     }
                 }
             })
         },
+        checkIfTheSelectedIsInFilteredRows(key: string) {
+            const index = this.filteredRows.findIndex((el: { value: string }) => el.value === key)
+            return index !== -1
+        },
         closeDialog() {
             this.$emit('close')
+            this.filters['global'].value = ''
             this.selected = {}
             this.allPhysicalSelected = false
             this.allBusinessSelected = false
@@ -194,6 +207,25 @@ export default defineComponent({
             }
 
             return isSelected
+        },
+        onRowsFiltered(event: any) {
+            this.filteredRows = event.filteredValue
+            this.allPhysicalSelected = true
+            this.allBusinessSelected = true
+
+            if (this.filteredRows.length === 0) {
+                this.allPhysicalSelected = false
+                this.allBusinessSelected = false
+            }
+
+            for (let i = 0; i < this.filteredRows.length; i++) {
+                if (!this.selected[this.filteredRows[i].value].physical) {
+                    this.allPhysicalSelected = false
+                }
+                if (!this.selected[this.filteredRows[i].value].business) {
+                    this.allBusinessSelected = false
+                }
+            }
         }
     }
 })

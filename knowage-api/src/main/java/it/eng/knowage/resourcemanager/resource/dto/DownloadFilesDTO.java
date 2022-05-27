@@ -27,7 +27,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import it.eng.spagobi.services.validation.FilesCheck;
+import it.eng.knowage.boot.validation.FilesCheck;
 
 /**
  * @author albnale

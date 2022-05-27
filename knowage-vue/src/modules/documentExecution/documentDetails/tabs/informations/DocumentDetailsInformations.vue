@@ -6,18 +6,18 @@
                     {{ $t('documentExecution.documentDetails.info.infoTitle') }}
                 </template>
                 <template #end>
-                    <Button :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-plain" @click="openDesignerConfirm" />
+                    <Button v-if="designerButtonVisible" :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-plain" @click="openDesignerConfirm" />
                 </template>
             </Toolbar>
             <div id="informations-content" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <Card class="p-m-2">
                         <template #content>
-                            <div id="upload-template-container" v-if="templates.length == 0">
+                            <div v-if="templates.length == 0">
                                 <div class="p-field p-col-12 p-d-flex">
                                     <div class="kn-flex">
                                         <span class="p-float-label">
-                                            <InputText id="fileName" class="kn-material-input" v-model="templateToUpload.name" :disabled="true" />
+                                            <InputText id="fileName" class="kn-material-input kn-width-full" v-model="templateToUpload.name" :disabled="true" />
                                             <label for="fileName" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.uploadTemplate') }} </label>
                                         </span>
                                     </div>
@@ -64,7 +64,8 @@
                                 </div>
 
                                 <div class="p-field p-col-12 p-lg-6">
-                                    <img id="image-preview" :src="getImageUrl" :height="mainDescriptor.style.previewImage" />
+                                    <img v-if="selectedDocument?.previewFile && !imagePreview" id="image-preview" :src="getImageUrl" :height="mainDescriptor.style.previewImage" />
+                                    <img v-if="imagePreviewUrl && imagePreview" id="image-preview" :src="imagePreviewUrl" :height="mainDescriptor.style.previewImage" />
                                 </div>
 
                                 <div class="p-field p-col-12 p-lg-6">
@@ -204,6 +205,27 @@
             </Toolbar>
             <div id="position-content" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
+                    <div id="driver-position-container" class="p-m-2" v-if="document.drivers && document.drivers.length > 0">
+                        <Toolbar class="kn-toolbar kn-toolbar--default">
+                            <template #start>
+                                {{ $t('documentExecution.documentDetails.info.parametersPanelPosition') }}
+                            </template>
+                        </Toolbar>
+                        <Card>
+                            <template #content>
+                                <span class="p-field p-float-label p-col-12">
+                                    <Dropdown id="attributes" class="kn-material-input kn-width-full" v-model="document.parametersRegion" :options="driversPositions" :optionLabel="translatedLabel" optionValue="value">
+                                        <template #option="slotProps">
+                                            <div class="p-dropdown-option">
+                                                <span class="kn-capitalize">{{ $t(slotProps.option.label) }}</span>
+                                            </div>
+                                        </template>
+                                    </Dropdown>
+                                    <label for="attributes" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.positionTitle') }} </label>
+                                </span>
+                            </template>
+                        </Card>
+                    </div>
                     <div id="restriction-container" class="p-m-2">
                         <Toolbar class="kn-toolbar kn-toolbar--default">
                             <template #start>
@@ -214,7 +236,7 @@
                             <template #content>
                                 <form class="p-formgrid p-grid p-mb-3">
                                     <span class="p-float-label p-col-10">
-                                        <Textarea id="profiledVisibility" class="kn-material-input" rows="1" :autoResize="true" v-model="document.profiledVisibility" :disabled="true" />
+                                        <Textarea id="profiledVisibility" class="kn-material-input kn-width-full" rows="1" :autoResize="true" v-model="document.profiledVisibility" :disabled="true" />
                                         <label for="profiledVisibility" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.profiledVisibility') }} </label>
                                     </span>
                                     <Button icon="fas fa-plus-circle fa-1x" class="p-button-text p-button-plain p-ml-2 p-col-1" :disabled="!visibilityAttribute" @click="addRestriction" />
@@ -222,12 +244,12 @@
                                 </form>
                                 <form class="p-formgrid p-grid">
                                     <span class="p-field p-float-label p-col-12 p-lg-5">
-                                        <Dropdown id="attributes" class="kn-material-input" v-model="visibilityAttribute" :options="availableAttributes" optionLabel="attributeName" optionValue="attributeName" />
+                                        <Dropdown id="attributes" class="kn-material-input kn-width-full" v-model="visibilityAttribute" :options="availableAttributes" optionLabel="attributeName" optionValue="attributeName" />
                                         <label for="attributes" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.attribute') }} </label>
                                     </span>
                                     <span class="p-col-12 p-lg-1" :style="infoDescriptor.style.center">=</span>
                                     <span class="p-field p-float-label p-col-12 p-lg-6">
-                                        <InputText id="restrictionValue" class="kn-material-input" v-model="restrictionValue" />
+                                        <InputText id="restrictionValue" class="kn-material-input kn-width-full" v-model="restrictionValue" />
                                         <label for="restrictionValue" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.restrictionValueHint') }} </label>
                                     </span>
                                 </form>
@@ -254,182 +276,222 @@
 </template>
 
 <script lang="ts">
-    import { iDocument, iDataSource, iEngine, iTemplate, iAttribute, iFolder } from '@/modules/documentExecution/documentDetails/DocumentDetails'
-    import { defineComponent, PropType } from 'vue'
-    import { createValidations } from '@/helpers/commons/validationHelper'
-    import mainDescriptor from '../../DocumentDetailsDescriptor.json'
-    import infoDescriptor from './DocumentDetailsInformationsDescriptor.json'
-    import useValidate from '@vuelidate/core'
-    import DatasetDialog from './DocumentDetailsDatasetDialog.vue'
-    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-    import Card from 'primevue/card'
-    import Textarea from 'primevue/textarea'
-    import Dropdown from 'primevue/dropdown'
-    import InputSwitch from 'primevue/inputswitch'
-    import KnInputFile from '@/components/UI/KnInputFile.vue'
-    import DocumentDetailsTree from './DocumentDetailsTree.vue'
+import { iDocument, iDataSource, iEngine, iTemplate, iAttribute, iFolder } from '@/modules/documentExecution/documentDetails/DocumentDetails'
+import { defineComponent, PropType } from 'vue'
+import { createValidations } from '@/helpers/commons/validationHelper'
+import mainDescriptor from '../../DocumentDetailsDescriptor.json'
+import infoDescriptor from './DocumentDetailsInformationsDescriptor.json'
+import useValidate from '@vuelidate/core'
+import DatasetDialog from './DocumentDetailsDatasetDialog.vue'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import Card from 'primevue/card'
+import Textarea from 'primevue/textarea'
+import Dropdown from 'primevue/dropdown'
+import InputSwitch from 'primevue/inputswitch'
+import KnInputFile from '@/components/UI/KnInputFile.vue'
+import DocumentDetailsTree from './DocumentDetailsTree.vue'
 
-    export default defineComponent({
-        name: 'document-details-informations',
-        components: { DatasetDialog, Card, Textarea, Dropdown, InputSwitch, KnValidationMessages, KnInputFile, DocumentDetailsTree },
-        props: {
-            selectedDocument: { type: Object as PropType<iDocument> },
-            selectedDataset: { type: Object },
-            availableStates: { type: Array },
-            selectedFolder: { type: Object as PropType<iFolder>, required: true },
-            documentTypes: { type: Array as any, required: true },
-            documentEngines: { type: Array as PropType<iEngine[]>, required: true },
-            availableDatasources: { type: Array as PropType<iDataSource[]> },
-            availableFolders: { type: Array as PropType<iFolder[]> },
-            availableTemplates: { type: Array as PropType<iTemplate[]> },
-            availableAttributes: { type: Array as PropType<iAttribute[]> }
+export default defineComponent({
+    name: 'document-details-informations',
+    components: { DatasetDialog, Card, Textarea, Dropdown, InputSwitch, KnValidationMessages, KnInputFile, DocumentDetailsTree },
+    props: {
+        selectedDocument: { type: Object as PropType<iDocument> },
+        selectedDataset: { type: Object },
+        availableStates: { type: Array },
+        documentTypes: { type: Array as any, required: true },
+        documentEngines: { type: Array as PropType<iEngine[]>, required: true },
+        availableDatasources: { type: Array as PropType<iDataSource[]> },
+        availableFolders: { type: Array as PropType<iFolder[]> },
+        availableTemplates: { type: Array as PropType<iTemplate[]> },
+        availableAttributes: { type: Array as PropType<iAttribute[]> }
+    },
+    emits: ['setTemplateForUpload', 'setImageForUpload', 'deleteImage', 'touched'],
+    computed: {
+        filteredEngines(): any {
+            if (this.document.typeCode) {
+                return this.documentEngines.filter((engine) => engine.biobjTypeId === this.documentTypes.filter((type) => type.valueCd === this.document.typeCode)[0].valueId)
+            }
+            return []
         },
-        emits: ['setTemplateForUpload', 'setImageForUpload', 'deleteImage', 'touched'],
-        computed: {
-            filteredEngines(): any {
-                if (this.document.typeCode) {
-                    return this.documentEngines.filter((engine) => engine.biobjTypeId === this.documentTypes.filter((type) => type.valueCd === this.document.typeCode)[0].valueId)
-                }
-                return []
-            },
-            isDataSourceVisible(): boolean {
-                switch (this.document.engine) {
-                    case 'knowageofficeengine':
-                    case 'knowagecompositedoce':
-                    case 'knowageprocessengine':
-                    case 'knowagechartengine':
-                    case 'knowagenetworkengine':
-                    case 'knowagecockpitengine':
-                    case 'knowagedossierengine':
-                    case 'knowagekpiengine':
-                    case 'knowagesvgviewerengine':
-                        return false
-                    default:
-                        return true
-                }
-            },
-            isDataSetVisible(): boolean {
-                switch (this.document.engine) {
-                    case 'knowagegisengine':
-                    case 'knowagechartengine':
-                    case 'knowagenetworkengine':
-                        return true
-                    default:
-                        return false
-                }
-            },
-            getImageUrl(): string {
-                return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
+        isDataSourceVisible(): boolean {
+            switch (this.document.engine) {
+                case 'knowageofficeengine':
+                case 'knowagecompositedoce':
+                case 'knowageprocessengine':
+                case 'knowagechartengine':
+                case 'knowagenetworkengine':
+                case 'knowagecockpitengine':
+                case 'knowagedossierengine':
+                case 'knowagekpiengine':
+                case 'knowagesvgviewerengine':
+                    return false
+                default:
+                    return true
             }
         },
-        data() {
-            return {
-                v$: useValidate() as any,
-                mainDescriptor,
-                infoDescriptor,
-                uploading: false,
-                lockedByUser: false,
-                triggerUpload: false,
-                showDatasetDialog: false,
-                triggerImageUpload: false,
-                dataset: {} as any,
-                folders: [] as iFolder[],
-                document: {} as iDocument,
-                templates: [] as iTemplate[],
-                templateToUpload: { name: '' } as any,
-                imageToUpload: { name: '' } as any,
-                visibilityAttribute: '',
-                restrictionValue: ''
+        isDataSetVisible(): boolean {
+            switch (this.document.engine) {
+                case 'knowagegisengine':
+                case 'knowagechartengine':
+                case 'knowagenetworkengine':
+                    return true
+                default:
+                    return false
             }
         },
-        created() {
-            this.setData()
+        getImageUrl(): string {
+            return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
         },
-        watch: {
-            document() {
-                this.setData()
-            }
-        },
-        validations() {
-            const validationObject = { document: createValidations('document', infoDescriptor.validations.document) }
-            return validationObject
-        },
-        methods: {
-            setData() {
-                this.templates = this.availableTemplates as iTemplate[]
-                this.document = this.selectedDocument as iDocument
-                this.dataset = this.selectedDataset
-                this.folders = this.availableFolders as iFolder[]
-                this.IsLockedByUser()
-            },
-            IsLockedByUser() {
-                this.lockedByUser = this.document.lockedByUser === 'true' ? true : false
-            },
-            setIsLockedByUser() {
-                this.document.lockedByUser = this.lockedByUser ? 'true' : 'false'
-            },
-            addRestriction() {
-                if (this.document.profiledVisibility) {
-                    this.document.profiledVisibility = this.document.profiledVisibility + ' AND ' + this.visibilityAttribute + ' = ' + this.restrictionValue
-                } else {
-                    this.document.profiledVisibility = this.visibilityAttribute + ' = ' + this.restrictionValue
-                }
-            },
-            clearAllRestrictions() {
-                this.document.profiledVisibility = ''
-                this.visibilityAttribute = ''
-                this.restrictionValue = ''
-            },
-            saveSelectedDataset(event) {
-                this.document.dataSetId = event.id
-                this.dataset = event
-            },
-            setUploadType() {
-                this.triggerUpload = false
-                setTimeout(() => (this.triggerUpload = true), 200)
-            },
-            setTemplateForUpload(event) {
-                this.uploading = true
-                this.templateToUpload = event.target.files[0]
-                this.$emit('setTemplateForUpload', event.target.files[0])
-                this.triggerUpload = false
-                setTimeout(() => (this.uploading = false), 200)
-            },
-            setImageUploadType() {
-                this.triggerImageUpload = false
-                setTimeout(() => (this.triggerImageUpload = true), 200)
-            },
-            setImageForUpload(event) {
-                this.uploading = true
-                this.imageToUpload = event.target.files[0]
-                this.$emit('setImageForUpload', event.target.files[0])
-                this.triggerImageUpload = false
-                setTimeout(() => (this.uploading = false), 200)
-            },
-            setFunctionality(event) {
-                this.document.functionalities = event
-            },
-            onTypeChange() {
-                this.$emit('touched')
-                this.document.engine = ''
-            },
-            openDesignerConfirm() {
-                this.$confirm.require({
-                    header: this.$t('common.toast.warning'),
-                    message: this.$t('documentExecution.olap.openDesignerMsg'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.openDesigner()
-                })
-            },
-            openDesigner() {
-                this.$router.push(`/olap-designer/${this.document.id}`)
-            }
+        designerButtonVisible(): boolean {
+            return this.document.typeCode == 'OLAP' || this.document.typeCode == 'KPI' || this.document.engine == 'knowagegisengine'
         }
-    })
+    },
+    data() {
+        return {
+            v$: useValidate() as any,
+            mainDescriptor,
+            infoDescriptor,
+            uploading: false,
+            lockedByUser: false,
+            triggerUpload: false,
+            showDatasetDialog: false,
+            triggerImageUpload: false,
+            dataset: {} as any,
+            folders: [] as iFolder[],
+            document: {} as iDocument,
+            templates: [] as iTemplate[],
+            templateToUpload: { name: '' } as any,
+            imageToUpload: { name: '' } as any,
+            visibilityAttribute: '',
+            restrictionValue: '',
+            driversPositions: infoDescriptor.driversPositions,
+            imagePreviewUrl: null as any,
+            imagePreview: false
+        }
+    },
+    created() {
+        this.setData()
+    },
+    watch: {
+        selectedDocument() {
+            this.setData()
+        }
+    },
+    validations() {
+        const validationObject = { document: createValidations('document', infoDescriptor.validations.document) }
+        return validationObject
+    },
+    methods: {
+        setData() {
+            this.templates = this.availableTemplates as iTemplate[]
+            this.document = this.selectedDocument as iDocument
+            this.dataset = this.selectedDataset
+            this.folders = this.availableFolders as iFolder[]
+            this.resetImagePreview()
+            this.IsLockedByUser()
+        },
+        IsLockedByUser() {
+            this.lockedByUser = this.document.lockedByUser === 'true' ? true : false
+        },
+        setIsLockedByUser() {
+            this.document.lockedByUser = this.lockedByUser ? 'true' : 'false'
+        },
+        addRestriction() {
+            if (this.document.profiledVisibility) {
+                this.document.profiledVisibility = this.document.profiledVisibility + ' AND ' + this.visibilityAttribute + ' = ' + this.restrictionValue
+            } else {
+                this.document.profiledVisibility = this.visibilityAttribute + ' = ' + this.restrictionValue
+            }
+        },
+        clearAllRestrictions() {
+            this.document.profiledVisibility = ''
+            this.visibilityAttribute = ''
+            this.restrictionValue = ''
+        },
+        saveSelectedDataset(event) {
+            this.document.dataSetId = event.id
+            this.dataset = event
+        },
+        setUploadType() {
+            this.triggerUpload = false
+            setTimeout(() => (this.triggerUpload = true), 200)
+        },
+        setTemplateForUpload(event) {
+            this.uploading = true
+            this.templateToUpload = event.target.files[0]
+            this.$emit('setTemplateForUpload', event.target.files[0])
+            this.triggerUpload = false
+            setTimeout(() => (this.uploading = false), 200)
+        },
+        setImageUploadType() {
+            this.triggerImageUpload = false
+            setTimeout(() => (this.triggerImageUpload = true), 200)
+        },
+        setImageForUpload(event) {
+            this.uploading = true
+            this.imageToUpload = event.target.files[0]
+            this.$emit('setImageForUpload', event.target.files[0])
+            this.setImagePreview(event.target.files[0])
+            this.triggerImageUpload = false
+            setTimeout(() => (this.uploading = false), 200)
+        },
+        setImagePreview(imageFile) {
+            this.imagePreviewUrl = URL.createObjectURL(imageFile)
+            this.imagePreview = true
+            this.$store.commit('setInfo', { title: this.$t('common.uploadFileSuccess'), msg: this.$t('documentExecution.documentDetails.info.imageInfo') })
+        },
+        resetImagePreview() {
+            this.imagePreviewUrl = null
+            this.imagePreview = false
+        },
+        setFunctionality(event) {
+            this.document.functionalities = event
+        },
+        onTypeChange() {
+            this.$emit('touched')
+            this.document.engine = ''
+        },
+        openDesignerConfirm() {
+            this.$confirm.require({
+                header: this.$t('common.toast.warning'),
+                message: this.$t('documentExecution.olap.openDesignerMsg'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    switch (this.document.typeCode) {
+                        case 'KPI':
+                            this.openKpiDocumentDesigner()
+                            break
+                        case 'MAP': {
+                            this.openGis()
+                            break
+                        }
+                        default:
+                            this.openDesigner()
+                    }
+                }
+            })
+        },
+        openDesigner() {
+            this.$router.push(`/olap-designer/${this.document.id}`)
+        },
+        translatedLabel(a) {
+            return this.$t(a.label)
+        },
+        openKpiDocumentDesigner() {
+            this.$router.push(`/kpi-edit/${this.document.id}?from=documentDetail`)
+        },
+        openGis() {
+            this.$router.push(`/gis/edit?documentId=${this.document.id}`)
+        }
+    }
+})
 </script>
 <style lang="scss">
-    .card-0-padding .p-card-body,
-    .card-0-padding .p-card-content {
-        padding: 0px;
-    }
+.p-dropdown-label {
+    text-transform: capitalize;
+}
+.card-0-padding .p-card-body,
+.card-0-padding .p-card-content {
+    padding: 0px;
+}
 </style>

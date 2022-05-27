@@ -1,42 +1,24 @@
 <template>
-    <DataTable class="p-datatable-sm kn-table p-m-2 kn-height-full" :value="rows" editMode="cell" responsiveLayout="stack" breakpoint="960px" :scrollable="true" @rowReorder="onRowReorder" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent @cell-edit-complete="onCellEditComplete">
-        <Column :rowReorder="true" :headerStyle="QBESimpleTableDescriptor.headerStyle" />
-        <Column v-for="column in QBESimpleTableDescriptor.columns" :key="column.header" :field="column.field" :style="column.style">
+    <DataTable class="p-datatable-sm kn-table  kn-height-full" :value="rows" responsiveLayout="scroll" @rowReorder="onRowReorder" @drop="onDrop($event)" @dragover.prevent @dragenter.prevent>
+        <Column :rowReorder="true" :style="QBESimpleTableDescriptor.style.firstColumn" />
+        <Column v-for="column in QBESimpleTableDescriptor.columns" :key="column.header" :field="column.field" :style="column.style" :sortable="true">
             <template #header>
                 <span v-tooltip.top="getHeaderTooltip(column)">{{ $t(column.header) }}</span>
             </template>
-            <template #editor="slotProps">
-                <div class="p-d-flex p-flex-row p-ai-center">
-                    <InputText v-if="column.field === 'alias'" class="kn-material-input p-inputtext-sm qbe-simple-table-input" v-model="slotProps.data[slotProps.column.props.field]"></InputText>
-
-                    <Checkbox v-else-if="column.field === 'group'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="onGroupingChanged(slotProps.data)"></Checkbox>
-                    <Dropdown v-else-if="column.field === 'order'" v-model="slotProps.data[slotProps.column.props.field]" :options="QBESimpleTableDescriptor.orderingOptions" />
-                    <Dropdown v-else-if="column.field === 'funct'" class="qbe-simple-table-dropdown" v-model="slotProps.data[slotProps.column.props.field]" :options="getAttributeOptions(slotProps.data)" :disabled="slotProps.data['group']" />
-                    <Checkbox v-else-if="column.field === 'visible'" class="p-ml-3" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('columnVisibilityChanged')"></Checkbox>
-                    <Checkbox v-else-if="column.field === 'inUse'" class="p-ml-2" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
-                    <span v-else v-tooltip.top="slotProps.data[slotProps.column.props.field]" class="kn-truncated">{{ slotProps.data[slotProps.column.props.field] }}</span>
-                    <i v-if="['alias', 'order', 'funct'].includes(column.field)" class="pi pi-pencil p-ml-2" />
-                </div>
-            </template>
             <template #body="slotProps">
-                <div class="p-d-flex p-flex-row p-ai-center">
-                    <Checkbox v-if="column.field === 'group'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="onGroupingChanged(slotProps.data)"></Checkbox>
-                    <Dropdown v-else-if="column.field === 'funct'" class="qbe-simple-table-dropdown" v-model="slotProps.data[slotProps.column.props.field]" :options="getAttributeOptions(slotProps.data)" :disabled="slotProps.data['group']" />
-                    <Checkbox v-else-if="column.field === 'visible'" class="p-ml-3" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('columnVisibilityChanged')"></Checkbox>
-                    <Checkbox v-else-if="column.field === 'inUse'" class="p-ml-2" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
-                    <span v-else v-tooltip.top="slotProps.data[slotProps.column.props.field]" class="kn-truncated">{{ slotProps.data[slotProps.column.props.field] }}</span>
-                    <i v-if="['alias', 'order', 'funct'].includes(column.field)" class="pi pi-pencil p-ml-2" />
-                </div>
+                <InputText v-if="column.field === 'alias'" class="kn-material-input p-inputtext-sm qbe-simple-table-input" v-model="slotProps.data[slotProps.column.props.field]"></InputText>
+                <Checkbox v-else-if="column.field === 'group'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="onGroupingChanged(slotProps.data)"></Checkbox>
+                <Dropdown v-else-if="column.field === 'order'" class="kn-material-input" v-model="slotProps.data[slotProps.column.props.field]" :options="QBESimpleTableDescriptor.orderingOptions" />
+                <Dropdown v-else-if="column.field === 'funct'" class="kn-material-input" v-model="slotProps.data[slotProps.column.props.field]" :options="getAttributeOptions(slotProps.data)" :disabled="slotProps.data['group']" />
+                <Checkbox v-else-if="column.field === 'visible'" class="p-ml-3" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('columnVisibilityChanged')"></Checkbox>
+                <Checkbox v-else-if="column.field === 'inUse'" class="p-ml-2" v-model="slotProps.data[slotProps.column.props.field]" :binary="true"></Checkbox>
+                <span v-else v-tooltip.top="slotProps.data[slotProps.column.props.field]" class="kn-truncated">{{ slotProps.data[slotProps.column.props.field] }}</span>
             </template>
         </Column>
-        <Column>
+        <Column :style="QBESimpleTableDescriptor.style.lastColumn">
             <template #body="slotProps">
-                <div class="p-d-flex p-flex-row p-jc-end">
-                    <div class="p-d-flex p-flex-row">
-                        <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="toggle($event, slotProps.data, slotProps.index)" data-test="menu-toggle" />
-                        <Menu ref="menu" :model="menuItems" :popup="true" />
-                    </div>
-                </div>
+                <Button icon="fas fa-ellipsis-v" class="p-button-link" @click="toggle($event, slotProps.data, slotProps.index)" data-test="menu-toggle" />
+                <Menu ref="menu" :model="menuItems" :popup="true" />
             </template>
         </Column>
     </DataTable>
@@ -56,7 +38,7 @@ export default defineComponent({
     name: 'qbe-simple-table',
     props: { query: { type: Object as PropType<iQuery> } },
     components: { Checkbox, Column, DataTable, Dropdown, Menu },
-    emits: ['columnVisibilityChanged', 'openFilterDialog', 'openHavingDialog', 'entityDropped', 'groupingChanged'],
+    emits: ['columnVisibilityChanged', 'openFilterDialog', 'openHavingDialog', 'entityDropped', 'groupingChanged', 'openCalculatedFieldDialog'],
     data() {
         return {
             QBESimpleTableDescriptor,
@@ -109,6 +91,9 @@ export default defineComponent({
             if ((field.funct && field.funct !== 'NONE') || (field.type === 'inline.calculated.field' && field.fieldType === 'measure')) {
                 this.menuItems.push({ icon: 'pi pi-filter', label: this.$t('qbe.simpleTable.havings'), command: () => this.openHavingsDialog(field) })
             }
+            if (field.type === 'inline.calculated.field') {
+                this.menuItems.push({ icon: 'fas fa-calculator', label: this.$t('qbe.detailView.modifyCalcField'), command: () => this.openCalculatedFieldDialog(field, index) })
+            }
             this.menuItems.push({ icon: 'pi pi-trash', label: this.$t('common.delete'), command: () => this.deleteColumn(index) })
         },
         onRowReorder(event: any) {
@@ -121,6 +106,9 @@ export default defineComponent({
         openHavingsDialog(field: iField) {
             this.$emit('openHavingDialog', { field: field, query: this.selectedQuery })
         },
+        openCalculatedFieldDialog(field: iField, index) {
+            this.$emit('openCalculatedFieldDialog', field, index)
+        },
         onDrop(event) {
             const data = JSON.parse(event.dataTransfer.getData('text/plain'))
             this.$emit('entityDropped', data)
@@ -131,20 +119,7 @@ export default defineComponent({
         },
         deleteColumn(index: number) {
             this.rows.splice(index, 1)
-        },
-        onCellEditComplete(event: any) {
-            this.rows[event.index] = event.newData
         }
     }
 })
 </script>
-
-<style lang="scss">
-.qbe-simple-table-input {
-    max-width: 100px;
-}
-
-.qbe-simple-table-dropdown {
-    max-width: 100px;
-}
-</style>

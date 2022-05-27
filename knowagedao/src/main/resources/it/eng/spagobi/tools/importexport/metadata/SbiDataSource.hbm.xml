@@ -42,6 +42,9 @@
         <property name="writeDefault" type="boolean">
             <column name="WRITE_DEFAULT" />
         </property>
+         <property name="useForDataprep" type="boolean">
+            <column name="USE_FOR_DATAPREP" />
+        </property>
          <property name="jdbcPoolConfiguration" type="string">
             <column name="JDBC_ADVANCED_CONFIGURATION" />
         </property>

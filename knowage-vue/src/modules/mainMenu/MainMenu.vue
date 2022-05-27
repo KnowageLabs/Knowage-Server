@@ -49,7 +49,7 @@
                         <MainMenuItem :item="item" @click="itemClick" :badge="getBadgeValue(item)" @mouseover="toggleMenu($event, item)"></MainMenuItem>
                     </template>
                     <template v-for="(item, i) of dynamicUserFunctionalities" :key="i">
-                        <MainMenuItem :item="item" @click="itemClick" @mouseover="toggleMenu($event, item)"></MainMenuItem>
+                        <MainMenuItem :item="item" @click="itemClick" @mouseover="toggleMenu($event, item)" :internationalize="true"></MainMenuItem>
                     </template>
                 </ul>
             </ScrollPanel>
@@ -66,7 +66,6 @@ import LanguageDialog from '@/modules/mainMenu/dialogs/LanguageDialog/LanguageDi
 import LicenseDialog from '@/modules/mainMenu/dialogs/LicenseDialog/LicenseDialog.vue'
 import NewsDialog from '@/modules/mainMenu/dialogs/NewsDialog/NewsDialog.vue'
 import RoleDialog from '@/modules/mainMenu/dialogs/RoleDialog.vue'
-import { getGravatar } from '@/helpers/commons/gravatarHelper'
 import { mapState } from 'vuex'
 import auth from '@/helpers/commons/authHelper'
 import { AxiosResponse } from 'axios'
@@ -74,7 +73,6 @@ import DownloadsDialog from '@/modules/mainMenu/dialogs/DownloadsDialog/Download
 import { IMenuItem } from '@/modules/mainMenu/MainMenu'
 import TieredMenu from 'primevue/tieredmenu'
 import ScrollPanel from 'primevue/scrollpanel'
-
 export default defineComponent({
     name: 'Knmenu',
     components: {
@@ -109,7 +107,7 @@ export default defineComponent({
             hoverTimer: false as any
         }
     },
-    emits: ['update:visibility'],
+    emits: ['update:visibility', 'menuItemSelected'],
     methods: {
         info() {
             this.display = !this.display
@@ -127,7 +125,7 @@ export default defineComponent({
             if (item.conditionedView) {
                 if (item.conditionedView === 'downloads' && this.downloads && this.downloads.count.total > 0) return true
                 if (item.conditionedView === 'news' && this.news && this.news.count.total > 0) return true
-                if (item.conditionedView === 'roleSelection' && this.user && this.user.roles.length > 1) return true
+                if (item.conditionedView === 'roleSelection' && this.user && this.user.roles && this.user.roles.length > 1) return true
                 return false
             } else {
                 return true
@@ -156,15 +154,14 @@ export default defineComponent({
                 this[item.command]()
             } else if (item.to && event.navigate) {
                 event.navigate(event.originalEvent)
+                this.$emit('menuItemSelected', item)
             } else if (item.url && (!item.target || item.target === 'insideKnowage')) this.$router.push({ name: 'externalUrl', params: { url: item.url } })
-
             if (this.adminMenuOpened) this.adminMenuOpened = false
         },
         getHref(item) {
             let to = item.to
             if (to) {
                 to = to.replace(/\\\//g, '/')
-
                 if (to.startsWith('/')) to = to.substring(1)
                 return process.env.VUE_APP_PUBLIC_PATH + to
             }
@@ -177,8 +174,7 @@ export default defineComponent({
         },
         getProfileImage(user) {
             if (user && user.organizationImageb64) return user.organizationImageb64
-            else if (user && user.attributes && user.attributes.email) return getGravatar(user.attributes.email)
-            else return getGravatar('knowage@eng.it')
+            return require('@/assets/images/commons/logo_knowage.svg')
         },
         updateNewsAndDownload() {
             for (var idx in this.allowedUserFunctionalities) {
@@ -217,7 +213,6 @@ export default defineComponent({
             }
             return toRet
         },
-
         toggleMenu(event, item) {
             if (item.items) {
                 clearTimeout(this.hoverTimer)
@@ -313,20 +308,6 @@ export default defineComponent({
             isEnterprise: 'isEnterprise',
             licenses: 'licenses'
         })
-    },
-    watch: {
-        downloads(newDownload, oldDownload) {
-            if (oldDownload != this.downloads) {
-                this.downloads = newDownload
-            }
-            this.updateNewsAndDownload()
-        },
-        news(newNews, oldNews) {
-            if (oldNews != this.news) {
-                this.news = newNews
-            }
-            this.updateNewsAndDownload()
-        }
     }
 })
 </script>
@@ -346,7 +327,7 @@ export default defineComponent({
     padding: 0 0 18px 0;
 }
 .layout-menu-container {
-    z-index: 100;
+    z-index: 9000;
     width: var(--kn-mainmenu-width);
     top: 0;
     background-color: var(--kn-mainmenu-background-color);

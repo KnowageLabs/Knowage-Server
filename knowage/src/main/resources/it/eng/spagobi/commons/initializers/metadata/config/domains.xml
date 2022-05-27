@@ -326,7 +326,6 @@
 		domainNm="Data Set Type" valueDs="SbiCkanDataSet" />
 	<DOMAIN valueCd="Federated" valueNm="SbiFederatedDataSet" domainCd="DATA_SET_TYPE"
 		domainNm="Data Set Type" valueDs="SbiFederatedDataSet" />
-		
 	<DOMAIN valueCd="SPARQL" valueNm="SbiSPARQLDataSet" domainCd="DATA_SET_TYPE"
 		domainNm="Data Set Type" valueDs="SbiSPARQLDataSet" />
 		
@@ -490,6 +489,8 @@
 	<DOMAIN valueCd="Solr" valueNm="SbiSolrDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiSolrDataSet"/>
 	
 	<DOMAIN valueCd="Python/R" valueNm="SbiPythonDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiPythonDataSet"/>
+	
+	<DOMAIN valueCd="Prepared" valueNm="SbiPreparedDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiPreparedDataSet"/>
 	
 	<DOMAIN valueCd="org.hibernate.dialect.RedShiftDialect"
 		valueNm="sbidomains.nm.redshift" domainCd="DIALECT_HIB"

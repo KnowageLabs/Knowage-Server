@@ -8,8 +8,26 @@
 		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 		version="3.1" >
 
-	<description>SpagoBI - SpagoBIGeoReportEngine</description>
 	<display-name>knowagesvgviewerengine</display-name>
+	<description>Knowage SVG Viewer Engine</description>
+
+	<!-- 
+		Logger Setup Filter.
+		
+		Set the logger according the HTTP request data.
+	 -->
+	<filter>
+		<filter-name>LoggerSetupFilter</filter-name>
+		<filter-class>it.eng.knowage.utils.filters.LoggerSetupFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>LoggerSetupFilter</filter-name>
+		<dispatcher>REQUEST</dispatcher>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+
 	<filter>
 		<filter-name>EncodingFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>

@@ -2358,7 +2358,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				hibDataSet.setPivotRowName(dataSet.getPivotRowName());
 				hibDataSet.setPivotColumnValue(dataSet.getPivotColumnValue());
 				hibDataSet.setNumRows(dataSet.isNumRows());
-
 				hibDataSet.setCategory(category);
 				hibDataSet.setParameters(dataSet.getParameters());
 				hibDataSet.setDsMetadata(dataSet.getDsMetadata());
@@ -2808,7 +2807,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					SbiMetaTable metaTable = DAOFactory.getSbiMetaTableDAO().loadTableByNameAndSource(entityName, sourceId);
 					SbiMetaBc metaBC = null;
 					if (metaTable == null) {
-						metaBC = DAOFactory.getSbiMetaBCDAO().loadBcByUniqueName(entityName);
+						metaBC = DAOFactory.getSbiMetaBCDAO().loadBcByUniqueName(qbeDataMart, entityName);
 					} else {
 						Integer tableId = metaTable.getTableId();
 						List<SbiMetaBc> metaTableBCList = DAOFactory.getSbiTableBCDAO().loadBcByTableId(tableId);

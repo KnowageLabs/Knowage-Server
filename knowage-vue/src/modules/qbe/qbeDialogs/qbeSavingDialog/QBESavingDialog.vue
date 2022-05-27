@@ -34,7 +34,7 @@
 
         <template #footer>
             <Button class="kn-button kn-button--secondary" @click="$emit('close')"> {{ $t('common.cancel') }}</Button>
-            <Button class="kn-button kn-button--primary" @click="saveDataset"> {{ $t('common.save') }}</Button>
+            <Button class="kn-button kn-button--primary" :disabled="buttonDisabled" @click="saveDataset"> {{ $t('common.save') }}</Button>
         </template>
     </Dialog>
 </template>
@@ -48,17 +48,25 @@ import TabPanel from 'primevue/tabpanel'
 import DetailTab from './QBESavingDialogDetailTab.vue'
 import PersistenceTab from './QBESavingDialogPersistence.vue'
 import MetadataCard from '@/modules/managers/datasetManagement/detailView/metadataCard/DatasetManagementMetadataCard.vue'
+import useValidate from '@vuelidate/core'
 import descriptor from './QBESavingDialogDescriptor.json'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
     components: { TabView, TabPanel, Dialog, DetailTab, PersistenceTab, MetadataCard },
-    props: { propDataset: Object, visible: Boolean },
+    props: { propDataset: { type: Object, required: true }, visible: Boolean },
+    computed: {
+        buttonDisabled(): any {
+            return this.v$.$invalid
+        }
+    },
     data() {
         return {
             descriptor,
+            v$: useValidate() as any,
             scopeTypes: [] as any,
             selectedDataset: {} as any,
+            selectedDatasetId: null as any,
             categoryTypes: [] as any,
             scheduling: {
                 repeatInterval: null as String | null
@@ -70,8 +78,11 @@ export default defineComponent({
         this.selectedDataset = this.propDataset
     },
     watch: {
-        propDataset() {
-            this.selectedDataset = this.propDataset
+        propDataset: {
+            handler() {
+                this.selectedDataset = this.propDataset
+            },
+            deep: true
         }
     },
     methods: {
@@ -79,8 +90,9 @@ export default defineComponent({
             return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
         },
         async getDomainData() {
-            this.getDomainByType('DS_SCOPE').then((response: AxiosResponse<any>) => (this.scopeTypes = response.data))
-            this.getDomainByType('CATEGORY_TYPE').then((response: AxiosResponse<any>) => (this.categoryTypes = response.data))
+            await this.getDomainByType('DS_SCOPE').then((response: AxiosResponse<any>) => (this.scopeTypes = response.data))
+            await this.getDomainByType('CATEGORY_TYPE').then((response: AxiosResponse<any>) => (this.categoryTypes = response.data))
+            this.setEndUserScope()
         },
 
         async saveDataset() {
@@ -101,7 +113,12 @@ export default defineComponent({
                 })
                 .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
-                    this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
+                    this.selectedDataset.meta = response.data.meta
+                    if (!this.selectedDataset.id) {
+                        this.selectedDataset.id = response.data.id
+                        this.$emit('created', response)
+                    } else this.$emit('updated')
+                    this.$emit('datasetSaved')
                     this.$emit('close')
                 })
                 .catch()
@@ -120,7 +137,7 @@ export default defineComponent({
                 columnsNames = this.removeDuplicates(columnsNames)
 
                 for (i = 0; i < columnsNames.length; i++) {
-                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '' }
+                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '', personal: false, decript: false, subjectId: false }
                     var currentColumnName = columnsNames[i]
 
                     if (currentColumnName.indexOf(':') != -1) {
@@ -138,6 +155,12 @@ export default defineComponent({
                                 columnObject.type = element.pvalue
                             } else if (element.pname.toUpperCase() == 'fieldType'.toUpperCase()) {
                                 columnObject.fieldType = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'personal'.toUpperCase()) {
+                                columnObject.personal = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'decript'.toUpperCase()) {
+                                columnObject.decript = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'subjectId'.toUpperCase()) {
+                                columnObject.subjectId = element.pvalue
                             }
                         }
                     }
@@ -196,6 +219,13 @@ export default defineComponent({
             } else {
                 stringValue = '*'
                 return stringValue
+            }
+        },
+        setEndUserScope() {
+            if (this.selectedDataset && !this.selectedDataset.id && !(this.$store.state as any).user.functionalities.includes('QbeAdvancedSaving')) {
+                let userScope = this.scopeTypes.find((scope) => scope.VALUE_CD === 'USER')
+                this.selectedDataset.scopeCd = userScope.VALUE_CD
+                this.selectedDataset.scopeId = userScope.VALUE_ID
             }
         }
     }

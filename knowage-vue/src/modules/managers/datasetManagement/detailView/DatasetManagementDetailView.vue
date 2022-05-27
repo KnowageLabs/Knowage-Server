@@ -33,7 +33,7 @@
                 </template>
                 <TypeCard
                     :selectedDataset="selectedDataset"
-                    :datasetTypes="datasetTypes"
+                    :datasetTypes="filteredDatasetTypes"
                     :dataSources="dataSources"
                     :businessModels="businessModels"
                     :scriptTypes="scriptTypes"
@@ -42,6 +42,7 @@
                     :rEnvironments="rEnvironments"
                     @fileUploaded="selectedDataset.fileUploaded = true"
                     @touched="$emit('touched')"
+                    @qbeSaved="getSelectedDataset"
                 />
             </TabPanel>
 
@@ -59,7 +60,7 @@
                 <LinkCard :selectedDataset="selectedDataset" :metaSourceResource="metaSourceResource" :activeTab="activeTab" @addTables="onAddLinkedTables" @removeTables="onRemoveLinkedTables" />
             </TabPanel>
 
-            <TabPanel>
+            <TabPanel v-if="selectedDataset.dsTypeCd != 'Prepared'">
                 <template #header>
                     <span>{{ $t('cron.advanced') }}</span>
                 </template>
@@ -117,6 +118,7 @@ export default defineComponent({
             selectedDataset: {} as any,
             previewDataset: {} as any,
             selectedDatasetVersions: [] as any,
+            filteredDatasetTypes: [] as any,
             scheduling: {
                 repeatInterval: null as String | null
             } as any,
@@ -143,7 +145,7 @@ export default defineComponent({
     methods: {
         //#region ===================== Get All Data ====================================================
         async getSelectedDataset() {
-            this.$http
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`)
                 .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0] ? { ...response.data[0] } : {}
@@ -152,7 +154,7 @@ export default defineComponent({
                 .catch()
         },
         async getSelectedDatasetVersions() {
-            this.$http
+            await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/olderversions/${this.id}`)
                 .then((response: AxiosResponse<any>) => {
                     response.data.root ? (this.selectedDatasetVersions = response.data.root) : (this.selectedDatasetVersions = [])
@@ -165,9 +167,20 @@ export default defineComponent({
                 this.loading = true
                 await this.getSelectedDataset()
                 await this.getSelectedDatasetVersions()
+                this.insertCurrentVersion()
+                this.filteredDatasetTypes = this.datasetTypes
             } else {
                 this.selectedDataset = { ...detailViewDescriptor.newDataset }
                 this.selectedDatasetVersions = []
+                this.filteredDatasetTypes = this.datasetTypes.filter((cd) => {
+                    return cd.VALUE_CD != 'Prepared'
+                })
+            }
+        },
+        insertCurrentVersion() {
+            if (this.selectedDatasetVersions.length === 0) {
+                const selectedType = this.datasetTypes.find((type) => type.VALUE_CD === this.selectedDataset.dsTypeCd)
+                this.selectedDatasetVersions.push({ type: selectedType.VALUE_DS, userIn: this.selectedDataset.owner, versNum: 0, dateIn: this.selectedDataset.dateIn, dsId: this.selectedDataset.id })
             }
         },
         //#endregion ===============================================================================================
@@ -182,7 +195,10 @@ export default defineComponent({
             })
         },
         async cloneDataset(datasetId) {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`).then(async (response: AxiosResponse<any>) => {
+                if (response.data[0].dsTypeCd === 'File') {
+                    await this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/clone-file?fileName=${response.data[0].fileName}`)
+                }
                 delete response.data[0].id
                 response.data[0].label = '...'
                 response.data[0].dsVersions = []
@@ -203,7 +219,7 @@ export default defineComponent({
                     restRequestHeadersTemp[dsToSave.restRequestHeaders[i]['name']] = dsToSave.restRequestHeaders[i]['value']
                 }
             }
-            this.previewDataset['restRequestHeaders'] = JSON.stringify(restRequestHeadersTemp)
+            dsToSave['restRequestHeaders'] = JSON.stringify(restRequestHeadersTemp)
             dsToSave['restJsonPathAttributes'] && dsToSave['restJsonPathAttributes'].length > 0 ? (dsToSave.restJsonPathAttributes = JSON.stringify(dsToSave.restJsonPathAttributes)) : (dsToSave.restJsonPathAttributes = '')
             dsToSave.pars ? '' : (dsToSave.pars = [])
             dsToSave.pythonEnvironment ? (dsToSave.pythonEnvironment = JSON.stringify(dsToSave.pythonEnvironment)) : ''
@@ -288,12 +304,10 @@ export default defineComponent({
             }
         },
         async manageDatasetFieldMetadata(fieldsColumns) {
-            //Temporary workaround because fieldsColumns is now an object with a new structure after changing DataSetJSONSerializer
             if (fieldsColumns.columns != undefined && fieldsColumns.columns != null) {
                 var columnsArray = new Array()
-
                 var columnsNames = new Array()
-                //create columns list
+
                 for (var i = 0; i < fieldsColumns.columns.length; i++) {
                     var element = fieldsColumns.columns[i]
                     columnsNames.push(element.column)
@@ -302,9 +316,10 @@ export default defineComponent({
                 columnsNames = this.removeDuplicates(columnsNames)
 
                 for (i = 0; i < columnsNames.length; i++) {
-                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '' }
+                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '', personal: false, decript: false, subjectId: false }
                     var currentColumnName = columnsNames[i]
-                    //this will remove the part before the double dot if the column is in the format ex: it.eng.spagobi.Customer:customerId
+
+                    //remove the part before the double dot if the column is in the format ex: it.eng.spagobi.Customer:customerId
                     if (currentColumnName.indexOf(':') != -1) {
                         var arr = currentColumnName.split(':')
                         columnObject.displayedName = arr[1]
@@ -320,6 +335,12 @@ export default defineComponent({
                                 columnObject.type = element.pvalue
                             } else if (element.pname.toUpperCase() == 'fieldType'.toUpperCase()) {
                                 columnObject.fieldType = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'personal'.toUpperCase()) {
+                                columnObject.personal = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'decript'.toUpperCase()) {
+                                columnObject.decript = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'subjectId'.toUpperCase()) {
+                                columnObject.subjectId = element.pvalue
                             }
                         }
                     }
@@ -327,7 +348,6 @@ export default defineComponent({
                 }
 
                 return columnsArray
-                // end workaround ---------------------------------------------------
             }
         },
         checkFormulaForParams() {

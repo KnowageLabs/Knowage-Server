@@ -3,7 +3,7 @@
         <label>{{ $t('managers.datasetManagement.selectDatasetType') }}: </label> <b>Federated</b>
     </div>
     <div id="is-not-federated" v-else>
-        <Card>
+        <Card class="p-m-2">
             <template #content>
                 <div id="dropdownContainer">
                     <span class="p-float-label">
@@ -37,14 +37,15 @@
     <QueryDataset v-if="dataset.dsTypeCd == 'Query'" :selectedDataset="selectedDataset" :dataSources="dataSources" :scriptTypes="scriptTypes" />
     <JavaDataset v-if="dataset.dsTypeCd == 'Java Class'" :selectedDataset="selectedDataset" />
     <ScriptDataset v-if="dataset.dsTypeCd == 'Script'" :selectedDataset="selectedDataset" :scriptTypes="scriptTypes" />
-    <QbeDataset v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'" :selectedDataset="selectedDataset" :businessModels="businessModels" :dataSources="dataSources" :parentValid="parentValid" />
+    <QbeDataset v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'" :selectedDataset="selectedDataset" :businessModels="businessModels" :dataSources="dataSources" :parentValid="parentValid" @qbeSaved="$emit('qbeSaved')" />
     <FlatDataset v-if="dataset.dsTypeCd == 'Flat'" :selectedDataset="selectedDataset" :dataSources="dataSources" />
     <CkanDataset v-if="dataset.dsTypeCd == 'Ckan'" :selectedDataset="selectedDataset" />
     <RestDataset v-if="dataset.dsTypeCd == 'REST'" :selectedDataset="selectedDataset" />
     <SparqlDataset v-if="dataset.dsTypeCd == 'SPARQL'" :selectedDataset="selectedDataset" />
     <SolrDataset v-if="dataset.dsTypeCd == 'Solr'" :selectedDataset="selectedDataset" />
     <PythonDataset v-if="dataset.dsTypeCd == 'Python/R'" :selectedDataset="selectedDataset" :pythonEnvironments="pythonEnvironments" :rEnvironments="rEnvironments" />
-    <ParamTable v-if="dataset.dsTypeCd && dataset.dsTypeCd != 'File' && dataset.dsTypeCd != 'Flat'" :selectedDataset="selectedDataset" />
+    <PreparedDataset v-if="dataset.dsTypeCd == 'Prepared'" :selectedDataset="selectedDataset" :pythonEnvironments="pythonEnvironments" :rEnvironments="rEnvironments" />
+    <ParamTable v-if="dataset.dsTypeCd && dataset.dsTypeCd != 'File' && dataset.dsTypeCd != 'Flat' && dataset.dsTypeCd != 'Prepared'" :selectedDataset="selectedDataset" />
 </template>
 
 <script lang="ts">
@@ -67,8 +68,9 @@ import RestDataset from './restDataset/DatasetManagementRestDataset.vue'
 import SparqlDataset from './sparqlDataset/DatasetManagementSparqlDataset.vue'
 import SolrDataset from './solrDataset/DatasetManagementSolrDataset.vue'
 import PythonDataset from './pythonDataset/DatasetManagementPythonDataset.vue'
+import PreparedDataset from './preparedDataset/DatasetManagementPreparedDataset.vue'
 export default defineComponent({
-    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset, ScriptDataset, SparqlDataset, PythonDataset, FileDataset },
+    components: { Card, Dropdown, KnValidationMessages, ParamTable, CkanDataset, QbeDataset, RestDataset, JavaDataset, FlatDataset, SolrDataset, QueryDataset, ScriptDataset, SparqlDataset, PythonDataset, FileDataset, PreparedDataset },
     props: {
         parentValid: { type: Boolean },
         selectedDataset: { type: Object as any },
@@ -80,7 +82,7 @@ export default defineComponent({
         rEnvironments: { type: Array as any }
     },
     computed: {},
-    emits: ['touched', 'fileUploaded'],
+    emits: ['touched', 'fileUploaded', 'qbeSaved'],
     data() {
         return {
             typeTabDescriptor,

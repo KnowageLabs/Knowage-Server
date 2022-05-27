@@ -51,7 +51,7 @@ public abstract class DataSourceFactory {
 		dataSource.setReadOnly(dataSourceConfig.getReadOnly());
 		dataSource.setWriteDefault(dataSourceConfig.getWriteDefault());
 		dataSource.setHibDialectClass(dataSourceConfig.getHibDialectClass());
-
+		dataSource.setUseForDataprep(dataSourceConfig.getUseForDataprep());
 		if (dataSourceConfig.getJdbcPoolConfiguration() != null) {
 			JDBCDataSourcePoolConfiguration jdbcDataSourcePoolConfiguration = (JDBCDataSourcePoolConfiguration) new JDBCDataSourcePoolConfigurationJSONDeserializer()
 					.deserialize(dataSourceConfig.getJdbcPoolConfiguration());

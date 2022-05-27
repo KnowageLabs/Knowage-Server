@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -120,7 +119,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 			ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), encodedUserId, outputDir.toString(), url.toString());
 			Process exec = processBuilder.start();
-			exec.waitFor(2, TimeUnit.MINUTES);
+			exec.waitFor();
 			// the script creates the resulting xls and saves it to outputFile
 			Path outputFile = outputDir.resolve(documentLabel + ".xlsx");
 			return getByteArrayFromFile(outputFile, outputDir);
@@ -587,13 +586,13 @@ public class ExcelExporter extends AbstractFormatExporter {
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 							}
-							cell.setCellStyle(getCellStyle(wb, createHelper, column.getString("name"), columnStyles[c], intCellStyle));
+							cell.setCellStyle(getCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle));
 							break;
 						case "float":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 							}
-							cell.setCellStyle(getCellStyle(wb, createHelper, column.getString("name"), columnStyles[c], floatCellStyle));
+							cell.setCellStyle(getCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle));
 							break;
 						case "date":
 							try {
@@ -634,38 +633,56 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 	private String getCellType(JSONObject column, String colName, JSONObject colStyle) {
 		try {
-			String toReturn = column.getString("type");
-			if (colStyle != null && colStyle.has("asString")) {
-				if (colStyle.getBoolean("asString")) {
-					toReturn = "string";
-				}
-			}
-			return toReturn;
+			return column.getString("type");
 		} catch (Exception e) {
 			logger.error("Error while retrieving column {" + colName + "} type. It will be treated as string.", e);
 			return "string";
 		}
 	}
 
-	private CellStyle getCellStyle(Workbook wb, CreationHelper helper, String colName, JSONObject colStyle, CellStyle defaultStyle) {
-		try {
-			CellStyle toReturn = defaultStyle;
-			if (colStyle != null && colStyle.has("precision")) {
-				int precision = colStyle.getInt("precision");
-				String format = "#,##0";
-				if (precision > 0) {
-					format += ".";
-					for (int j = 0; j < precision; j++) {
-						format += "0";
-					}
-				}
-				toReturn = getCellStyleByFormat(wb, helper, format);
+	private boolean isAvoidSeparator(JSONObject colStyle) throws JSONException {
+		if (colStyle != null && colStyle.has("asString")) {
+			if (colStyle.getBoolean("asString")) {
+				return true;
 			}
-			return toReturn;
+		}
+		return false;
+	}
+
+	private CellStyle getCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, CellStyle defaultStyle) {
+		String colName = null;
+		try {
+			colName = column.getString("name");
+			boolean isAvoidSeparator = isAvoidSeparator(colStyle);
+			String format = null;
+			if (isAvoidSeparator) {
+				format = "0";
+			} else {
+				format = "#,##0";
+			}
+			// precision (i.e. number of digits to right of the decimal point) that is specified on dashboard design wins
+			if ((colStyle != null && colStyle.has("precision")) || isAvoidSeparator) {
+				int precision = (colStyle != null && colStyle.has("precision")) ? colStyle.getInt("precision") : 2;
+				format = getNumberFormatByPrecision(precision, format);
+				CellStyle toReturn = getCellStyleByFormat(wb, helper, format);
+				return toReturn;
+			}
+			return defaultStyle;
 		} catch (Exception e) {
 			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
 			return defaultStyle;
 		}
+	}
+
+	protected String getNumberFormatByPrecision(int precision, String initialFormat) {
+		String format = initialFormat;
+		if (precision > 0) {
+			format += ".";
+			for (int j = 0; j < precision; j++) {
+				format += "0";
+			}
+		}
+		return format;
 	}
 
 	/*

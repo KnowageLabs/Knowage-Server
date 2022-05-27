@@ -1,4 +1,4 @@
-<Context  path="/SpagoBIWhatIfEngine" >
+<Context path="/SpagoBIWhatIfEngine" reloadable="false">
 	<CookieProcessor sameSiteCookies="strict" />
 	
 	<!-- <Loader delegate="true"/> -->

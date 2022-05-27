@@ -36,7 +36,7 @@ import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.tag.SbiTag;
 
-class DataSetForWorkspaceDTO extends DataSetMainDTO {
+class DataSetForWorkspaceDTO extends AbstractDataSetDTO {
 
 	private static final DataSetMetadataJSONSerializer metaSerializer = new DataSetMetadataJSONSerializer();
 	private final List<DataSetParameterDTO> params = new ArrayList<>();
@@ -75,7 +75,8 @@ class DataSetForWorkspaceDTO extends DataSetMainDTO {
 
 	private void initMeta() throws SourceBeanException, JSONException {
 		String metaAsString = dataset.getDsMetadata();
-		meta = metaSerializer.serializeToJson(metaAsString).getWrappedObject();
+		if (metaAsString != null)
+			meta = metaSerializer.serializeToJson(metaAsString).getWrappedObject();
 	}
 
 	private void initDrivers() throws JSONException {

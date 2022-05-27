@@ -1,4 +1,4 @@
-<Context path="/knowagemeta">
+<Context path="/knowagemeta" reloadable="false">
 	<CookieProcessor sameSiteCookies="strict" />
 	
 	<!-- <Loader delegate="true"/> -->

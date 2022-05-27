@@ -1,4 +1,15 @@
 {
+    "admissibleDateFormats": ["LLLL", "llll", "LLL", "lll", "DD/MM/YYYY HH:mm:SS", "DD/MM/YYYY HH:mm", "LL", "ll", "L", "l"],
+    "columnTypes": [
+        {
+            "label": "Attribute",
+            "name": "ATTRIBUTE"
+        },
+        {
+            "label": "Measure",
+            "name": "MEASURE"
+        }
+    ],
     "style": {
         "backdrop": {
             "background-color": "rgba(33, 33, 33, 1)",
@@ -13,9 +24,23 @@
         "entitiesLists": {
             "border-right": "1px solid #ccc",
             "display": "flex",
-            "flex": 1,
+            "flex-basis": "25%",
             "flex-direction": "column",
             "height": "100%"
         }
-    }
+    },
+    "types": [
+        {
+            "label": "String",
+            "name": "STRING"
+        },
+        {
+            "label": "Number",
+            "name": "NUMBER"
+        },
+        {
+            "label": "Date",
+            "name": "DATE"
+        }
+    ]
 }

@@ -548,11 +548,6 @@
         description="If true, when opening a document, it will be executed automatically in case no mandatory drivers are missing"
         isActive="true" valueCheck="true" valueType="STRING"
         category="GENERIC_CONFIGURATION" />    
-        
-	<CONFIG label="dataset.export.xls.resultsLimit" name="Dataset XLS/XLSX export result limit"
-		description="Specify max number of rows as a dataset when exporting into XLS/XLSX"
-		isActive="true" valueCheck="10000" valueType="NUM"
-		category="GENERIC_CONFIGURATION" />
 
 	<CONFIG label="internal.security.login.checkForMaxFailedLoginAttempts" name="Max failed login attempts filter"
 		description="Enable filter for max value of failed login attempts" isActive="true"
@@ -617,6 +612,21 @@
 		description="Time period of validity of records into SBI_WS_EVENT in seconds"
 		isActive="true" valueCheck="31536000" valueType="NUM"
 		category="GENERIC_CONFIGURATION" />
-	
+
+	<CONFIG label="KNOWAGE.DATAPREP.LIVY_URL" name="KNOWAGE.DATAPREP.LIVY_HOST"
+		description="The URL where Apache Livy is listening"
+		isActive="true" valueCheck="http://localhost:8998" valueType="STRING"
+		category="DATA_PREPARATION" />
+		
+	<CONFIG label="KNOWAGE.AUDIT_ENABLED" name="KNOWAGE.AUDIT_ENABLED"
+		description="Enables audit table updating"
+		isActive="true" valueCheck="true" valueType="STRING"
+		category="GENERIC_CONFIGURATION" />
+		
+	<CONFIG label="KNOWAGE.AUDIT_DATA_RETENTION" name="KNOWAGE.AUDIT_DATA_RETENTION"
+		description="Set retention period for audit table cleaning"
+		isActive="true" valueCheck="180" valueType="NUM"
+		category="GENERIC_CONFIGURATION" />
+
 </CONFIGS>
 

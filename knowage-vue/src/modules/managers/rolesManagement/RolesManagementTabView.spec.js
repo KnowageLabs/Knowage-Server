@@ -176,8 +176,8 @@ describe('Roles Management Tab View', () => {
         await flushPromises()
         await wrapper.find('.p-tabview-nav li:nth-child(2)').trigger('click')
 
-        expect(wrapper.find('[role="tabpanel"]:nth-child(2)').html()).toContain('managers.rolesManagement.authorizations.name.createDocuments')
-        expect(wrapper.find('[role="tabpanel"]:nth-child(2)').html()).toContain('managers.rolesManagement.authorizations.name.seeDocBrowser')
+        expect(wrapper.find('[role="tabpanel"]:nth-child(2)').html()).toContain('managers.rolesManagement.authorizations.createDocuments')
+        expect(wrapper.find('[role="tabpanel"]:nth-child(2)').html()).toContain('managers.rolesManagement.authorizations.viewDocBrowser')
         expect(wrapper.vm.authorizationList).toStrictEqual(mockedAuthorizations)
     })
     it('switches to Business Models tab if Business Models is clicked', async () => {

@@ -69,13 +69,13 @@ abstract class AbstractExportJob implements Job {
 	private Locale locale = null;
 	private Map<String, String> parameters = null;
 	Path resourcePath = null;
-	private String resourcePathAsStr = null;
-	private UserProfile userProfile = null;
+	String resourcePathAsStr = null;
+	UserProfile userProfile = null;
 
 	/**
 	 * Internal cleanup in case of error.
 	 */
-	private void deleteJobDirectory() {
+	protected void deleteJobDirectory() {
 		try {
 			FileUtils.deleteDirectory(resourcePath.toFile());
 		} catch (IOException e) {

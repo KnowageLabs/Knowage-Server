@@ -1,0 +1,354 @@
+{
+    "compatibilityMap": {
+        "all": {
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                },
+                {
+                    "code": "integer",
+                    "label": "java.lang.Integer"
+                },
+                {
+                    "code": "string",
+                    "label": "java.util.String"
+                },
+                {
+                    "code": "float",
+                    "label": "java.lang.Float"
+                },
+                {
+                    "code": "double",
+                    "label": "java.lang.Double"
+                }
+            ]
+        },
+        "java.lang.Double": {
+            "icon": {
+                "class": "material-icons",
+                "name": "numbers"
+            },
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                }
+            ]
+        },
+        "java.lang.Integer": {
+            "icon": {
+                "class": "material-icons",
+                "name": "numbers"
+            },
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                },
+                {
+                    "code": "float",
+                    "label": "java.lang.Float"
+                },
+                {
+                    "code": "double",
+                    "label": "java.lang.Double"
+                }
+            ]
+        },
+        "java.lang.Long": {
+            "icon": {
+                "class": "material-icons",
+                "name": "numbers"
+            },
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                },
+                {
+                    "code": "double",
+                    "label": "java.lang.Double"
+                }
+            ]
+        },
+        "java.lang.String": {
+            "icon": "fas fa-quote-left",
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                },
+                {
+                    "code": "integer",
+                    "label": "java.lang.Integer"
+                },
+                {
+                    "code": "double",
+                    "label": "java.lang.Double"
+                }
+            ]
+        },
+        "java.math.BigDecimal": {
+            "icon": {
+                "class": "material-icons",
+                "name": "numbers"
+            },
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                },
+                {
+                    "code": "double",
+                    "label": "java.lang.Double"
+                }
+            ]
+        },
+        "java.sql.Date": {
+            "icon": "fas fa-quote-left",
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                }
+            ]
+        },
+        "java.sql.Timestamp": {
+            "icon": "fas fa-quote-left",
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                }
+            ]
+        },
+        "java.util.String": {
+            "icon": "far fa-calendar-alt",
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                }
+            ]
+        },
+        "oracle.sql.TIMESTAMP": {
+            "icon": "fas fa-quote-left",
+            "values": [
+                {
+                    "code": "string",
+                    "label": "java.lang.String"
+                }
+            ]
+        }
+    },
+    "css": {
+        "buttonClassHeader": "p-button-text p-button-rounded p-button-plain kn-datapreparation-button"
+    },
+    "dataPreparation": {
+        "refreshRate": {
+            "options": [
+                {
+                    "code": "NEVER",
+                    "id": 1,
+                    "name": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.frequency.NEVER"
+                },
+                {
+                    "code": "DAILY",
+                    "id": 2,
+                    "name": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.frequency.DAILY"
+                },
+                {
+                    "code": "WEEKLY",
+                    "id": 3,
+                    "name": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.frequency.WEEKLY"
+                },
+                {
+                    "code": "MONTHLY",
+                    "id": 4,
+                    "name": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.frequency.MONTHLY"
+                },
+                {
+                    "code": "YEARLY",
+                    "id": 5,
+                    "name": "managers.workspaceManagement.dataPreparation.dataset.refreshRate.frequency.YEARLY"
+                }
+            ]
+        }
+    },
+    "roles": [
+        {
+            "code": "ATTRIBUTE",
+            "icon": "fas fa-font",
+            "label": "managers.workspaceManagement.dataPreparation.roles.attribute"
+        },
+        {
+            "code": "MEASURE",
+            "icon": "fas fa-hashtag",
+            "label": "managers.workspaceManagement.dataPreparation.roles.measure"
+        }
+    ],
+    "transformations": [
+        {
+            "category": "tableStructure",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.calculatedField.description",
+            "editColumn": false,
+            "icon": "pi pi-plus-circle",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.calculatedField.label",
+            "name": "calculatedField",
+            "position": 0,
+            "toolbar": true,
+            "type": "calculatedField"
+        },
+        {
+            "category": "tableStructure",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.drop.description",
+            "editColumn": true,
+            "icon": "pi pi-minus-circle",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.drop.label",
+            "name": "drop",
+            "position": 1,
+            "toolbar": false,
+            "type": "simple"
+        },
+        {
+            "category": "tableStructure",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.merge.description",
+            "editColumn": false,
+            "icon": {
+                "class": "material-icons",
+                "name": "merge_type"
+            },
+            "label": "managers.workspaceManagement.dataPreparation.transformations.merge.label",
+            "name": "merge",
+            "position": 2,
+            "toolbar": true,
+            "type": "simple"
+        },
+        {
+            "category": "tableStructure",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.split.description",
+            "editColumn": false,
+            "icon": {
+                "class": "material-icons",
+                "name": "call_split"
+            },
+            "label": "managers.workspaceManagement.dataPreparation.transformations.split.label",
+            "name": "split",
+            "position": 3,
+            "toolbar": true,
+            "type": "split"
+        },
+        {
+            "category": "filtering",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.filter.description",
+            "editColumn": true,
+            "icon": {
+                "class": "material-icons",
+                "name": "auto_fix_normal"
+            },
+            "label": "managers.workspaceManagement.dataPreparation.transformations.filter.label",
+            "name": "filter",
+            "position": 4,
+            "toolbar": true,
+            "type": "filter"
+        },
+        {
+            "category": "visualization",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.padding.description",
+            "editColumn": true,
+            "icon": {
+                "class": "material-icons",
+                "name": "padding"
+            },
+            "label": "managers.workspaceManagement.dataPreparation.transformations.padding.label",
+            "name": "padding",
+            "position": 6,
+            "toolbar": true,
+            "type": "simple"
+        },
+        {
+            "category": "cleaning",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.removeDuplicates.description",
+            "editColumn": true,
+            "icon": {
+                "class": "material-icons",
+                "name": "control_point_duplicate"
+            },
+            "label": "managers.workspaceManagement.dataPreparation.transformations.removeDuplicates.label",
+            "name": "removeDuplicates",
+            "position": 7,
+            "toolbar": true,
+            "type": "simple"
+        },
+        {
+            "category": "cleaning",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.removeNull.description",
+            "editColumn": true,
+            "icon": "fas fa-columns",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.removeNull.label",
+            "name": "removeNull",
+            "position": 8,
+            "toolbar": true,
+            "type": "simple"
+        },
+        {
+            "category": "editing",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.replace.description",
+            "editColumn": true,
+            "icon": "fas fa-sync-alt",
+            "incompatibleDataTypes": ["date"],
+            "label": "managers.workspaceManagement.dataPreparation.transformations.replace.label",
+            "name": "replace",
+            "position": 9,
+            "toolbar": true,
+            "type": "simple"
+        },
+        {
+            "category": "reporting",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.statistics.description",
+            "editColumn": false,
+            "icon": "pi pi-chart-bar",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.statistics.label",
+            "name": "statistics",
+            "position": 10,
+            "toolbar": false,
+            "type": "custom"
+        },
+        {
+            "category": "cleaning",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.trim.description",
+            "editColumn": true,
+            "icon": "fas fa-cut",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.trim.label",
+            "name": "trim",
+            "position": 11,
+            "toolbar": false,
+            "type": "simple"
+        },
+        {
+            "category": "tableStructure",
+            "description": "managers.workspaceManagement.dataPreparation.transformations.changeType.description",
+            "editColumn": true,
+            "hidden": true,
+            "icon": "fas fa-hashtag",
+            "label": "managers.workspaceManagement.dataPreparation.transformations.changeType.label",
+            "name": "changeType",
+            "position": 12,
+            "toolbar": true,
+            "type": "simple"
+        }
+    ],
+    "typeMap": {
+        "java.lang.Double": "number",
+        "java.lang.Float": "number",
+        "java.lang.Integer": "number",
+        "java.lang.Long": "number",
+        "java.lang.String": "string",
+        "java.math.BigDecimal": "number",
+        "java.sql.Date": "date",
+        "java.sql.Timestamp": "timestamp",
+        "java.util.String": "string",
+        "oracle.sql.TIMESTAMP": "timestamp"
+    }
+}

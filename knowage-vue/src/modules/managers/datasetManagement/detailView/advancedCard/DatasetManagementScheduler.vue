@@ -1,5 +1,5 @@
 <template>
-    <Card>
+    <Card class="p-m-2">
         <template #content>
             <div class="date-picker-container p-ml-2 p-mb-5">
                 <div class="p-field p-grid">
@@ -224,7 +224,7 @@ export default defineComponent({
 
                 var minutesForCron = this.stringifySchedulingValues(this.scheduling.minutesSelected && this.scheduling.minutesSelected.length != 0, 'minutesSelected')
                 var hoursForCron = this.stringifySchedulingValues(repeatInterval != 'minute' && this.scheduling.hoursSelected && this.scheduling.hoursSelected.length != 0, 'hoursSelected')
-                var daysForCron = this.stringifySchedulingValues((repeatInterval === 'day' || repeatInterval === 'month') && this.scheduling.daysSelected.length != 0, 'daysSelected')
+                var daysForCron = this.stringifySchedulingValues((repeatInterval === 'day' || repeatInterval === 'month') && this.scheduling.daysSelected && this.scheduling.daysSelected.length != 0, 'daysSelected')
                 var monthsForCron = this.stringifySchedulingValues(repeatInterval === 'month' && this.scheduling.monthsSelected.length != 0, 'monthsSelected')
                 var weekdaysForCron = this.stringifySchedulingValues(repeatInterval === 'week' && this.scheduling.weekdaysSelected.length != 0, 'weekdaysSelected')
 

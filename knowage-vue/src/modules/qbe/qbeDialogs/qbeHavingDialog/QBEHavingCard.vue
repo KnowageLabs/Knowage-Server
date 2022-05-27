@@ -31,7 +31,7 @@
                 <label class="kn-material-input-label"> {{ $t('qbe.filters.target') }} </label>
                 <div class="p-d-flex p-flex-row p-ai-center">
                     <InputText v-if="having.rightType === ''" class="kn-material-input" v-model="having.rightOperandDescription" @input="onManualValueChange" />
-                    <Dropdown class="kn-material-input kn-flex" v-else-if="having.rightType === 'anotherEntity'" v-model="having.rightOperandDescription" :options="entities" optionLabel="field" optionValue="field" @change="onEntityTypeChanged" />
+                    <Dropdown class="kn-material-input kn-flex" v-else-if="having.rightType === 'anotherEntity'" v-model="having.rightOperandDescription" :options="entities" optionLabel="field" optionValue="id" @change="onEntityTypeChanged" />
                 </div>
             </div>
 
@@ -89,6 +89,7 @@ export default defineComponent({
             if (this.having) {
                 this.having.rightOperandDescription = ''
                 this.having.rightOperandLongDescription = ''
+                this.having.rightOperandAggregator = ''
                 this.having.rightOperandType = this.having.rightType === 'anotherEntity' ? 'Field Content' : 'Static Content'
             }
         },
@@ -99,6 +100,13 @@ export default defineComponent({
         },
         onEntityTypeChanged() {
             if (this.having) {
+                if (this.having.rightOperandType === 'Field Content' && this.entities) {
+                    let rightOperand = null as any
+                    const index = this.entities.findIndex((entity: any) => this.having?.rightOperandDescription === entity.id)
+                    if (index !== -1) rightOperand = this.entities[index]
+                    this.having.rightOperandAggregator = rightOperand.funct
+                }
+
                 this.having.rightOperandValue = [this.having.rightOperandDescription]
                 this.having.rightOperandLongDescription = this.having.rightOperandDescription
             }

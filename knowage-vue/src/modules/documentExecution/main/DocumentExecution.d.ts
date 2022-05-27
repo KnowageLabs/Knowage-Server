@@ -20,14 +20,14 @@ export interface iSchedulation {
 }
 
 export interface iNote {
-    owner: string,
+    content: string,
     creationDate: string | Date,
+    documentId: number,
+    id?: number,
     lastChangeDate: string | Date,
-    nota: string,
-    profile: string,
-    type?: string,
-    content?: string,
-    execReq?: string
+    owner: string,
+    public: boolean,
+    type: string
 }
 
 export interface iMail {
@@ -44,5 +44,5 @@ export interface iMetadata {
     generalMetadata: { name: string, value: string }[],
     shortText: { id: number, name: string, value: string }[],
     longText: { id: number, name: string, value: string }[],
-    file: { id: number, name: string, value: string }[]
+    file: { id: number, name: string, value: string, fileToSave?: { file: {}, fileName: string } }[],
 }

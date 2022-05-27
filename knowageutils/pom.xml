@@ -340,17 +340,13 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.opensymphony.quartz</groupId>
+			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz</artifactId>
-			<version>1.6.1</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>org.opensymphony.quartz</groupId>
+			<groupId>org.quartz-scheduler</groupId>
 			<artifactId>quartz-oracle</artifactId>
-			<version>1.6.1</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
@@ -411,7 +407,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>4.13.1</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -614,6 +610,12 @@
 			<artifactId>java-jwt</artifactId>
 			<version>3.3.0</version>
 		</dependency>
+		
+		<dependency>
+		    <groupId>com.auth0</groupId>
+		    <artifactId>jwks-rsa</artifactId>
+		    <version>0.21.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -668,15 +670,12 @@
 			<version>1.2.10.1009</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.oracle.jdbc/ojdbc7 -->
+
 		<dependency>
-			<!-- Could not find the original Oracle JDBC driver on Maven Central, using this one with BSD license -->
-			<groupId>com.github.noraui</groupId>
-			<artifactId>ojdbc7</artifactId>
-			<version>12.1.0.2</version>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
 
 	</dependencies>
 

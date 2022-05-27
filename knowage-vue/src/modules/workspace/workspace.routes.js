@@ -1,4 +1,6 @@
-let routes = [
+import GisRoutes from '@/modules/workspace/gisDocumentDesigner/GisDocumentDesigner.routes.js'
+
+let baseRoutes = [
     {
         path: '/workspace',
         name: 'workspace',
@@ -43,9 +45,15 @@ let routes = [
             {
                 path: 'schedulation',
                 component: () => import('@/modules/workspace/views/schedulationView/WorkspaceSchedulationView.vue')
+            },
+            {
+                path: 'advanced',
+                component: () => import('@/modules/workspace/views/advancedData/WorkspaceAdvancedDataView.vue')
             }
         ]
     }
 ]
+
+const routes = baseRoutes.concat(GisRoutes)
 
 export default routes

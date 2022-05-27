@@ -18,13 +18,8 @@
             :lazy="true"
             :rows="20"
             :totalRecords="lazyParams.size"
-            :currentPageReportTemplate="
-                $t('common.table.footer.paginated', {
-                    first: '{first}',
-                    last: '{last}',
-                    totalRecords: '{totalRecords}'
-                })
-            "
+            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+            :currentPageReportTemplate="$t('common.table.footer.paginated', { first: '{first}', last: '{last}', totalRecords: '{totalRecords}' })"
             responsiveLayout="stack"
             breakpoint="960px"
             :scrollable="true"
@@ -38,7 +33,7 @@
             </template>
             <Column class="kn-truncated" v-for="col of columns" :field="col.dataIndex" :header="col.header" :key="col.field" :sortable="true">
                 <template #body="slotProps">
-                    {{ col.type === 'date' ? getFormattedDate(slotProps.data[col.dataIndex], col.dateFormat) : slotProps.data[col.dataIndex] }}
+                    {{ col.metawebDateFormat ? getFormattedDate(slotProps.data[col.dataIndex], col) : slotProps.data[col.dataIndex] }}
                 </template>
             </Column>
         </DataTable>
@@ -51,15 +46,17 @@ import { formatDate } from '@/helpers/commons/localeHelper'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import QBEPreviewDialogDescriptor from './QBEPreviewDialogDescriptor.json'
+import QBEDescriptor from '../../QBEDescriptor.json'
 
 export default defineComponent({
     name: 'qbe-preview-dialog',
     components: { Column, DataTable },
-    props: { id: { type: String }, queryPreviewData: { type: Object }, pagination: { type: Object } },
+    props: { id: { type: String }, queryPreviewData: { type: Object }, pagination: { type: Object }, entities: { type: Array }, selectedQuery: { type: Object, required: true } },
     emits: ['close', 'pageChanged'],
     data() {
         return {
             QBEPreviewDialogDescriptor,
+            QBEDescriptor,
             columns: [] as any[],
             rows: [] as any[],
             lazyParams: {} as any,
@@ -88,9 +85,39 @@ export default defineComponent({
         },
         setPreviewColumns(data: any) {
             this.columns = []
+
             for (let i = 1; i < data.metaData?.fields?.length; i++) {
+                const tempColumn = data.metaData?.fields[i]
+                if (['timestamp', 'date'].includes(tempColumn.type)) {
+                    const field = this.findField(tempColumn) as any
+                    if (field) tempColumn.metawebDateFormat = field.format
+                    if (!tempColumn.metawebDateFormat) {
+                        this.setCalculatedFieldDateFormat(tempColumn, i - 1)
+                    }
+                }
                 this.columns.push(data.metaData?.fields[i])
             }
+        },
+        setCalculatedFieldDateFormat(tempColumn: any, index: number) {
+            if (!this.selectedQuery || !this.selectedQuery.fields) return
+            if (this.selectedQuery.fields[index]) tempColumn.metawebDateFormat = this.selectedQuery.fields[index].id.format ?? 'L'
+        },
+        findField(column: any) {
+            if (!this.entities) return
+
+            let field = null
+
+            for (let i = 0; i < this.entities.length; i++) {
+                const tempEntity = this.entities[i] as any
+                for (let j = 0; j < tempEntity.children.length; j++) {
+                    if (tempEntity.children[j].attributes.field === column.header) {
+                        field = tempEntity.children[j]
+                        break
+                    }
+                }
+            }
+
+            return field
         },
         loadPagination() {
             this.lazyParams = this.pagination as any
@@ -105,8 +132,13 @@ export default defineComponent({
             this.first = 0
             this.lazyParams = {}
         },
-        getFormattedDate(date: any, format: any) {
-            return formatDate(date, format)
+        getFormattedDate(date: any, column: any) {
+            const inputFormat = column.type === 'timestamp' ? 'DD/MM/YYYY HH:mm:ss.SSS' : 'DD/MM/YYYY'
+            let format = undefined as string | undefined
+            if (QBEDescriptor.admissibleDateFormats.includes(column.metawebDateFormat)) {
+                format = column.metawebDateFormat
+            }
+            return formatDate(date, format, inputFormat)
         }
     }
 })
