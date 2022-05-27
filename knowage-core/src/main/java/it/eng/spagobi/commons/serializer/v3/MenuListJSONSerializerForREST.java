@@ -794,12 +794,26 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 	private String getDocumentLink(BIObject document) {
 		String documentLabel = document.getLabel();
+		String engineLabel = document.getEngineLabel();
 		String enginePath;
-		if (document.getEngineLabel() != null && document.getEngineLabel().equals("knowageolapengine"))
-			enginePath = "olap";
-		else
+		switch (engineLabel) {
+		case "knowagedossierengine":
+			enginePath = "dossier";
+			break;
+		case "knowagegisengine":
+			enginePath = "map";
+			break;
+		case "knowagekpiengine":
+			enginePath = "kpi";
+			break;
+		case "knowageofficeengine":
+			enginePath = "office-doc";
+			break;
+		default:
 			enginePath = "document-composite";
-		return "/document-browser/" + enginePath + "/" + documentLabel;
+			break;
+		}
+		return String.format("/%s/%s", enginePath, documentLabel);
 	}
 
 	private void setPropertiesForAdminWithUrlMenu(Menu childElem, Locale locale, JSONObject temp2, String path) throws JSONException {

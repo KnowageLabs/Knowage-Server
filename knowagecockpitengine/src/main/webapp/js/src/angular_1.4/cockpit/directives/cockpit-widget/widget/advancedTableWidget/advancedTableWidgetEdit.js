@@ -44,6 +44,9 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 			break;
 		}
 	}
+	if (!$scope.newModel.settings) $scope.newModel.settings = {}
+	if (!$scope.newModel.settings.exportpdf) $scope.newModel.settings.exportpdf = {}
+	$scope.newModel.settings.exportpdf.enabled = typeof($scope.newModel.settings.exportpdf.enabled) != 'undefined' ? $scope.newModel.settings.exportpdf.enabled : true;
 
 	$scope.isObject = function(item){
 		return typeof item == 'object';
@@ -298,6 +301,10 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
   	$scope.initTh = function(){
   		return typeof($scope.newModel.style.th.enabled) != 'undefined' ? $scope.newModel.style.th.enabled : true;
   	}
+
+  	$scope.toggleExportPDF = function(){
+  		$scope.newModel.settings.exportpdf.enabled = !$scope.newModel.settings.exportpdf.enabled;
+	}
 
   	$scope.toggleColumnVisibility = function(rowIndex){
   		if($scope.newModel.content.columnSelectedOfDataset[rowIndex].style) $scope.newModel.content.columnSelectedOfDataset[rowIndex].style.hiddenColumn = !$scope.newModel.content.columnSelectedOfDataset[rowIndex].style.hiddenColumn;
