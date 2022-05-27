@@ -103,6 +103,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {label:'time',value:'java.sql.Time'},
 			 {label:'timestamp',value:'java.sql.Timestamp'},
 			 {label:'timestamp',value:'oracle.sql.TIMESTAMP'},
+			 {label:'timestamp',value:'java.time.LocalDateTime'},
 			 {label:'blob',value:'oracle.sql.BLOB'},
 			 {label:'clob',value:'oracle.sql.CLOB'}
 		 ],
@@ -123,6 +124,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			"java.util.Date": {label:'date',icon:'fa fa-calendar'},
 			"java.sql.Date": {label:'date',icon:'fa fa-calendar'},
 			"java.sql.Time": {label:'time',icon:'fa fa-clock-o'},
+			"java.time.LocalDateTime" : {label:'time',icon:'fa fa-clock-o'},
 			"oracle.sql.BLOB": {label:'blob',icon:'fa fa-archive'},
 			"oracle.sql.CLOB": {label:'clob',icon:'fa fa-archive'}
 		},
