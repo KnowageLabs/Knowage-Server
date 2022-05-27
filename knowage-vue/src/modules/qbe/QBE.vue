@@ -694,7 +694,8 @@ export default defineComponent({
                     format: field.format,
                     longDescription: field.attributes.longDescription,
                     distinct: editQueryObj.distinct,
-                    leaf: field.leaf
+                    leaf: field.leaf,
+                    originalId: field.id
                 } as any
             }
             // eslint-disable-next-line no-prototype-builtins
