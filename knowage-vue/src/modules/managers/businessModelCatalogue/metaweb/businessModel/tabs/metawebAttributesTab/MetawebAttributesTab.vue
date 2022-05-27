@@ -7,7 +7,11 @@
                     <div class="p-d-flex p-flex-row">
                         <Checkbox v-if="column.field === 'identifier'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="$emit('metaUpdated')"></Checkbox>
                         <Checkbox v-else-if="column.field === 'visible'" v-model="columnsVisibility[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'visibility')"></Checkbox>
-                        <span v-else-if="column.field === 'type'">{{ columnsType[slotProps.data.uniqueName] }}</span>
+                        <Checkbox v-else-if="column.field === 'personal'" v-model="columnsPersonal[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'personal')"></Checkbox>
+                        <Checkbox v-else-if="column.field === 'decrypt'" v-model="columnsDecrypt[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'decrypt')"></Checkbox>
+                        <Checkbox v-else-if="column.field === 'subjectId'" v-model="columnsSubjectId[slotProps.data.uniqueName]" :binary="true" @change="onChange(slotProps.data, 'subjectId')"></Checkbox>
+                        <Dropdown v-else-if="column.field === 'type'" class="kn-material-input" v-model="columnsType[slotProps.data.uniqueName]" :options="metawebAttributesTabDescriptor.typeOptions" @change="onChange(slotProps.data, 'type')" />
+                        <InputText v-else-if="column.field === 'name'" v-model="slotProps.data[slotProps.column.props.field]" class="kn-material-input p-inputtext-sm p-p-2" @blur="$emit('metaUpdated')" />
                         <span v-else>{{ slotProps.data[slotProps.column.props.field] }}</span>
                     </div>
                 </template>
@@ -38,6 +42,7 @@ import { iBusinessModel, iBusinessModelColumn } from '../../../Metaweb'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import Dropdown from 'primevue/dropdown'
 import metawebAttributesTabDescriptor from './MetawebAttributesTabDescriptor.json'
 import MetawebAttributeDetailDialog from './dialogs/metawebAttributeDetail/MetawebAttributeDetailDialog.vue'
 import MetawebAttributeUnusedFieldDialog from './dialogs/metawebAttributeUnusedField/MetawebAttributeUnusedFieldDialog.vue'
@@ -46,7 +51,7 @@ const { generate, applyPatch } = require('fast-json-patch')
 
 export default defineComponent({
     name: 'metaweb-attributes-tab',
-    components: { Checkbox, Column, DataTable, MetawebAttributeDetailDialog, MetawebAttributeUnusedFieldDialog },
+    components: { Checkbox, Column, DataTable, Dropdown, MetawebAttributeDetailDialog, MetawebAttributeUnusedFieldDialog },
     props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null> }, propMeta: { type: Object }, observer: { type: Object }, roles: { type: Array } },
     emits: ['loading', 'metaUpdated'],
     data() {
@@ -56,11 +61,15 @@ export default defineComponent({
             businessModel: null as iBusinessModel | null,
             columnsVisibility: {} as any,
             columnsType: {} as any,
+            columnsPersonal: {} as any,
+            columnsDecrypt: {} as any,
+            columnsSubjectId: {} as any,
             attributeDetailDialogVisible: false,
             selectedAttribute: null as iBusinessModelColumn | null,
             unusedFieldDialogVisible: false,
             unusedFields: [] as any[],
             metaObserver: null as any,
+            propertyKeys: [] as string[],
             loading: false
         }
     },
@@ -89,10 +98,19 @@ export default defineComponent({
                     for (let i = 0; i < column.properties.length; i++) {
                         const tempProperty = column.properties[i]
                         const key = Object.keys(tempProperty)[0]
+
+                        if (!this.propertyKeys.includes(key)) this.propertyKeys.push(key)
+
                         if (key === 'structural.visible') {
                             this.columnsVisibility[column.uniqueName] = tempProperty[key].value === 'true'
                         } else if (key === 'structural.columntype') {
                             this.columnsType[column.uniqueName] = tempProperty[key].value
+                        } else if (key === 'structural.personal') {
+                            this.columnsPersonal[column.uniqueName] = tempProperty[key].value === 'true'
+                        } else if (key === 'structural.decrypt') {
+                            this.columnsDecrypt[column.uniqueName] = tempProperty[key].value === 'true'
+                        } else if (key === 'structural.subjectId') {
+                            this.columnsSubjectId[column.uniqueName] = tempProperty[key].value === 'true'
                         }
                     }
                 })
@@ -118,6 +136,12 @@ export default defineComponent({
                     tempProperty[key].value = this.columnsVisibility[column.uniqueName]
                 } else if (key === 'structural.columntype' && type === 'type') {
                     tempProperty[key].value = this.columnsType[column.uniqueName]
+                } else if (key === 'structural.personal' && type === 'personal') {
+                    tempProperty[key].value = this.columnsPersonal[column.uniqueName]
+                } else if (key === 'structural.decrypt' && type === 'decrypt') {
+                    tempProperty[key].value = this.columnsDecrypt[column.uniqueName]
+                } else if (key === 'structural.subjectId' && type === 'subjectId') {
+                    tempProperty[key].value = this.columnsSubjectId[column.uniqueName]
                 }
             }
 
@@ -180,7 +204,6 @@ export default defineComponent({
                         continue
                     } else {
                         const index = this.businessModel.columns.findIndex((el: any) => el.uniqueName === tempColumn.name)
-
                         if (index === -1) this.unusedFields.push(tempColumn)
                     }
                 }

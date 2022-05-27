@@ -6,6 +6,7 @@ import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
 import InputText from 'primevue/inputtext'
 import Listbox from 'primevue/listbox'
+import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 
@@ -39,7 +40,7 @@ const $http = {
 const factory = () => {
     return mount(TargetDefinitionDetail, {
         global: {
-            plugins: [],
+            plugins: [PrimeVue],
             stubs: {
                 Button,
                 Card,

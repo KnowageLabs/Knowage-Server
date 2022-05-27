@@ -252,6 +252,9 @@
     "everyWeekday": "Every Weekday",
     "everyday": "Every Day",
     "february": "February",
+    "fifth": "Fifth",
+    "first": "First",
+    "fourth": "Fourth",
     "friday": "Friday",
     "hour": "Hour",
     "hours": "Hours",
@@ -269,6 +272,7 @@
     "minutes": "Minutes",
     "monday": "Monday",
     "month": "Month",
+    "monthly": "Monthly",
     "months": "Months",
     "nextExecution": "Next execution",
     "november": "November",
@@ -276,6 +280,7 @@
     "quarter": "Quarter",
     "repeatInterval": "Repeat Interval",
     "saturday": "Saturday",
+    "second": "Second",
     "selectDays": "Select day(s)",
     "selectHours": "Select hour(s)",
     "selectMinutes": "Select minute(s)",
@@ -288,13 +293,16 @@
     "sunday": "Sunday",
     "theDay": "The day",
     "theWeek": "The week",
+    "third": "Third",
     "thursday": "Thursday",
     "tuesday": "Tuesday",
     "wednesday": "Wednesday",
     "week": "Week",
     "weekday": "Weekday",
     "weekdays": "Weekdays",
-    "year": "Year"
+    "weekly": "Weekly",
+    "year": "Year",
+    "yearly": "Yearly"
   },
   "documentBrowser": {
     "changeStateMessage": "Are you sure you want to change the state for this document?",
@@ -384,7 +392,8 @@
         "restrictionValueHint": "Enter Value",
         "restrictionsTitle": "Visibility Restrictions",
         "uploadTemplate": "Upload template",
-        "visibilityLocationTitle": "Select the functionalities where the document will be visible"
+        "visibilityLocationTitle": "Select the functionalities where the document will be visible",
+        "imageInfo": "Image successfully uploaded"
       },
       "outputParams": {
         "customValue": "Custom Value",
@@ -396,6 +405,12 @@
         "title": "Output Parameters"
       },
       "subreports": {
+        "deleteError": "Error deleting subreport",
+        "deleteOk": "Subreport deleted",
+        "info": "Select the subreports you want to link to the document",
+        "persistError": "Error persisting subreport",
+        "persistOk": "Subreport persisted",
+        "tableName": "Available Subreports",
         "title": "Subreports"
       },
       "title": "Document Details"
@@ -426,6 +441,7 @@
       "crossNavigationNoTargetError": "No cross navigation targets available",
       "currentRank": "Curent Rank is...",
       "customMetadata": "Custom Metadata",
+      "destinationSelectionTitle": "Selection of the destination document",
       "editCockpit": "Edit cockpit document",
       "editModeConfirm": "You are leaving edit mode. Continue?",
       "embedInHtml": "Embed in HTML",
@@ -472,6 +488,7 @@
         "title": "Olap custom view List"
       },
       "deleteVersion": {
+        "errorMessage": "You can not delete active version, please try again.",
         "id": "id",
         "title": "Select the version to delete"
       },
@@ -486,6 +503,7 @@
         "selectLevels": "Select visible levels",
         "title": "Drill Through"
       },
+      "editErrorLocked": "It's not possible to edit a schema if you have not set a lock on it.",
       "editModeConfirm": "You are leaving edit mode. Continue?",
       "filterDialog": {
         "ancestorDescendantWarning": "Warning: You selected some members that are in ancestor-descendant relationship: measures will be aggregated over both of them. Are you sure this is what you want?",
@@ -493,7 +511,7 @@
         "filterUsingDrivers": "Filter using drivers",
         "infoMessage": "Selected items will be used as filters in the main table.",
         "level": "Level",
-        "parentDisabledTooltip": "It is not possible to choose a parent. Unlock the tree to change the selection.",
+        "parentDisabledTooltip": "It is not possible to choose a parent. Press the Add button.",
         "searchWarningMessage": "You need at least 3 letters to start search!",
         "selectFields": "Select Fields",
         "treeLockedInfoMessage": {
@@ -522,6 +540,7 @@
         "detail2": "You can change it acting on the form below.",
         "dropdownLabel": "Available hierarchies"
       },
+      "notEditable": "Measure is not editable",
       "openDesigner": "Open Designer",
       "openDesignerMsg": "By opening designer you will lose all unsaved changes, are you sure?",
       "outputWizard": {
@@ -674,7 +693,7 @@
   },
   "infoDialog": {
     "aboutKnowage": "About Knowage",
-    "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
+    "copyright": "Â© {year} Engineering Ingegneria Informatica S.p.A.",
     "sourceCode": "Source code available on "
   },
   "knScheduler": {
@@ -1205,6 +1224,7 @@
         "schemaAttribute": "Multischema Attribute",
         "testOk": "Tested parameters are correct!",
         "urlConnection": "URL",
+        "useForDataprep": "Use for data preparation",
         "user": "User",
         "writeDefault": "Use as cache"
       },
@@ -1227,6 +1247,7 @@
       "ckanXslSheetNumber": "Sheet Number",
       "creationUser": "Creation User",
       "dataframeName": "Dataframe variable name",
+      "decript": "Decript value",
       "deleteAllParams": "Clear all dataset parameters",
       "deleteAllParamsMsg": "Are you sure you want to delete all dataset parameters?",
       "deleteAllRequestHeaderMsg": "Are you sure you want to delete all REST request headers",
@@ -1268,6 +1289,7 @@
       "params": "Parameters",
       "peristenceWarning": "Dataset with parameters cannot be persisted!",
       "persistTableName": "Persist Table Name",
+      "personal": "Sensitive data",
       "pivotColName": "Category Column to be Pivoted",
       "pivotColValue": "Value Column to be Pivoted",
       "pivotIsNumRows": "Automatic Columns numeration?",
@@ -1307,13 +1329,17 @@
       "sparqlDefaultGraphIri": "Default Graph IRI",
       "sparqlEndpoint": "Sparql Endpoint",
       "sparqlExecutionTimeout": "Execution timeout(s)",
+      "subjectId": "Subject key",
       "tableEmpty": "Click on the + icon to insert data.",
       "timestampFormat": "Timestamp Format",
       "title": "Dataset Management",
       "typeOrJsonPathValue": "Type or JSON Path Type",
       "viewQbeButton": "View Qbe Query",
       "viewQbeMsg": "The dataset should be saved before viewing the QBE query",
-      "viewQbeWarning": "Cannot open QBE query"
+      "viewQbeWarning": "Cannot open QBE query",
+      "openDP": "Open data preparation",
+      "confirmMsg": "You will lose all unsaved changes, are you sure you want to open Data Preparation?",
+      "monitoring": "Monitoring"
     },
     "domainsManagement": {
       "domainCode": "Domain code",
@@ -1450,7 +1476,7 @@
         "formula": "Formula",
         "glossary": "Glossary",
         "glossaryHint": "Edit the input to change the glossary name",
-        "help": "Select a Glossary from the combo box to show its word hierarchy structure or type a name to create a new one. You can edit it by adding nodes or by dropping words from the right side list",
+        "help": "Select a Glossary from the combo box to show its word hierarchy structure. You can edit it by adding nodes or by dropping words from the right side list",
         "hint": "The Glossary definition page allows you to create glossary to identify a set of words to apply in different documents and datasets. It's also possible to create a word hierarchy for each glossary. Select one existing item from the dropdown, or press the \"+\" button to add one.",
         "newNode": "New node",
         "saveTitle": "New glossary",
@@ -2004,6 +2030,7 @@
     },
     "timespan": {
       "cloneAlreadyDefined": "The next timespan is already defiend",
+      "hint": "No timespan selected",
       "invalidDatesError": "The dates are not valid",
       "noIntervalError": "Please define at least one interval",
       "startDateGreaterError": "Start date greater than end date",
@@ -2215,6 +2242,7 @@
       },
       "businessClass": "Business Class",
       "businessView": "Business View",
+      "decrypt": "Decrypt",
       "editJoin": "Edit Join Relationship",
       "inbound": {
         "name": "Insert a Business Relationship Name",
@@ -2224,6 +2252,7 @@
       "newBusiness": "New Business Class",
       "newView": "New Business View",
       "noUnusedFields": "No columns to add",
+      "personal": "Personal",
       "physTable": "Physical Table",
       "physicalColumn": "Physical Column",
       "physicalColumnHint": "The original physical column of this column",
@@ -2232,6 +2261,7 @@
       "sourceAttr": "Source Attributes",
       "sourceHint": "Select source table",
       "sourceTable": "Source Table",
+      "subjectId": "Subject Id",
       "summary": "Summary",
       "summaryHint": "Link tables to see the summary",
       "tabView": {
@@ -2312,6 +2342,7 @@
     },
     "detailView": {
       "hideList": "Hide List",
+      "modifyCalcField": "Modify calculated field",
       "noPreview": "Nothing to preview",
       "parameterDuplicates": "There are parameters with a duplicate name!",
       "showList": "Show List",
@@ -2530,6 +2561,7 @@
       "schedulation": "Schedulation"
     },
     "myAnalysis": {
+      "editAnalysis": "Edit Analysis",
       "geoRef": "Geo-referenced analysis",
       "menuItems": {
         "clone": "Clone Document",

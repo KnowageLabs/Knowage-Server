@@ -23,8 +23,8 @@ public class LoggerSetupFilter implements Filter {
 	private static final String HTTP_HEADER_X_KN_CORRELATION_ID = "X-Kn-Correlation-Id";
 	private static final String HTTP_HEADER_X_FORWARDED_HOST = "X-Forwarded-Host";
 
-	private static final String THREAD_CONTEXT_KEY_ENVIRONMENT = "environment";
 	private static final String THREAD_CONTEXT_KEY_CORRELATION_ID = "correlationId";
+	private static final String THREAD_CONTEXT_KEY_ENVIRONMENT = "environment";
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -33,7 +33,6 @@ public class LoggerSetupFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
 
 		if (request instanceof HttpServletRequest) {
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -81,8 +80,8 @@ public class LoggerSetupFilter implements Filter {
 		try {
 			uuid = UUID.fromString(header);
 		} catch (Exception e) {
-			LOGGER.debug("Invalid correlation id value: " + header);
 			uuid = UUID.randomUUID();
+			LOGGER.debug("Invalid correlation id value: " + header + ". We will use: " + uuid);
 		}
 
 		header = uuid.toString();

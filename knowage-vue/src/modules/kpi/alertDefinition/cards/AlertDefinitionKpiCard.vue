@@ -30,9 +30,9 @@
                     </Toolbar>
                     <div class="p-d-flex p-flex-column severity-container p-m-2" v-if="action">
                         <div class="p-d-inline-flex p-m-2" v-for="(threshVal, index) in action.thresholdData" :key="index">
-                            <div class="color-box" :style="{ 'background-color': threshVal.color }"></div>
-                            <span flex>{{ threshVal.label }}</span>
-                            <span class="severity-box" style="text" v-if="threshVal.severityCd != undefined">({{ threshVal.severityCd }})</span>
+                            <div class="color-box" :style="{ 'background-color': threshVal?.color }"></div>
+                            <span flex>{{ threshVal?.label }}</span>
+                            <span class="severity-box" style="text" v-if="threshVal?.severityCd != undefined">({{ threshVal.severityCd }})</span>
                         </div>
                     </div>
                 </div>

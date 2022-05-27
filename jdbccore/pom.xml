@@ -14,26 +14,25 @@
 
 	<dependencies>
 
-  		<dependency>
-    		<groupId>org.apache.logging.log4j</groupId>
-    		<artifactId>log4j-1.2-api</artifactId>
-    		<version>2.17.1</version>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-1.2-api</artifactId>
+			<version>2.17.1</version>
 			<scope>compile</scope>
 		</dependency>
 		
-		<dependency>
-			<!-- Could not find the original Oracle JDBC driver on Maven Central, using this one with BSD license -->
-			<groupId>com.github.noraui</groupId>
-			<artifactId>ojdbc7</artifactId>
-			<version>12.1.0.2</version>
-			<scope>provided</scope>
-		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>2.9.3</version>
 			<scope>compile</scope>
-		</dependency>		
+		</dependency>
+		
+		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
+			<scope>provided</scope>
+		</dependency>
 		
 	</dependencies>
 	

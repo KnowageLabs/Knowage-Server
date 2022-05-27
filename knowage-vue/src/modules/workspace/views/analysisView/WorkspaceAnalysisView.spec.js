@@ -271,6 +271,7 @@ const factory = (cardDisplay) => {
                 WorkspaceWarningDialog: true,
                 WorkspaceAnalysisViewShareDialog: true,
                 WorkspaceCard,
+                WorkspaceCockpitDialog: true,
                 'router-link': true
             },
             mocks: {

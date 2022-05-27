@@ -82,7 +82,6 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 	private static final String RESOURCE_FUNCTIONALITY_DEV = "ResourceManagementDev";
 	private static final String RESOURCE_FUNCTIONALITY = "ResourceManagement";
-	private static final String MODEL_CATALOG_FUNCTIONALITY = "ModelCatalogResourceManagement";
 
 	@Autowired
 	HMACUtilities HMACUtilities;
@@ -208,7 +207,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				for (String folder : restrictedFolders) {
 
 					Path completePath = getTotalPath(folder, profile);
-					if (path.toString().toLowerCase().startsWith(completePath.toString().toLowerCase())) {
+					if (path.toString().toLowerCase().startsWith(completePath.toString().toLowerCase())
+							|| path.toString().toLowerCase().startsWith(getWorkDirectory(profile).toString().toLowerCase())) {
 						return true;
 					}
 

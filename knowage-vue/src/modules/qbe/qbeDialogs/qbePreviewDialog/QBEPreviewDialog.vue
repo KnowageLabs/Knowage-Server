@@ -51,7 +51,7 @@ import QBEDescriptor from '../../QBEDescriptor.json'
 export default defineComponent({
     name: 'qbe-preview-dialog',
     components: { Column, DataTable },
-    props: { id: { type: String }, queryPreviewData: { type: Object }, pagination: { type: Object }, entities: { type: Array } },
+    props: { id: { type: String }, queryPreviewData: { type: Object }, pagination: { type: Object }, entities: { type: Array }, selectedQuery: { type: Object, required: true } },
     emits: ['close', 'pageChanged'],
     data() {
         return {
@@ -85,14 +85,22 @@ export default defineComponent({
         },
         setPreviewColumns(data: any) {
             this.columns = []
+
             for (let i = 1; i < data.metaData?.fields?.length; i++) {
                 const tempColumn = data.metaData?.fields[i]
                 if (['timestamp', 'date'].includes(tempColumn.type)) {
                     const field = this.findField(tempColumn) as any
                     if (field) tempColumn.metawebDateFormat = field.format
+                    if (!tempColumn.metawebDateFormat) {
+                        this.setCalculatedFieldDateFormat(tempColumn, i - 1)
+                    }
                 }
                 this.columns.push(data.metaData?.fields[i])
             }
+        },
+        setCalculatedFieldDateFormat(tempColumn: any, index: number) {
+            if (!this.selectedQuery || !this.selectedQuery.fields) return
+            if (this.selectedQuery.fields[index]) tempColumn.metawebDateFormat = this.selectedQuery.fields[index].id.format ?? 'L'
         },
         findField(column: any) {
             if (!this.entities) return

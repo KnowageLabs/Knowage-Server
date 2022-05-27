@@ -16,7 +16,7 @@
 
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
-			<artifactId>knowage-dao</artifactId>
+			<artifactId>knowage-core</artifactId>
 			<version>8.1.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>

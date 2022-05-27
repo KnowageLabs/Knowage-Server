@@ -15,7 +15,7 @@
                     <p class="p-m-0" v-if="field.type === 'category' && datasetCategory">
                         {{ datasetCategory }}
                     </p>
-                    <p class="p-m-0" v-if="field.type === 'date'">{{ getFormattedDate(document[field.value], 'MM/DD/YYYY hh:mm:ss') }}</p>
+                    <p class="p-m-0" v-if="field.type === 'date'">{{ getFormattedDate(document[field.value], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }) }}</p>
                     <p class="p-m-0" v-if="field.type != 'date' && field.type != 'category'">{{ document[field.value] }}</p>
                 </div>
             </div>
@@ -28,7 +28,7 @@ import { defineComponent } from 'vue'
 import descriptor from './DetailSidebarDescriptor.json'
 import Sidebar from 'primevue/sidebar'
 import Menu from 'primevue/contextmenu'
-import { formatDate } from '@/helpers/commons/localeHelper'
+import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     name: 'workspace-sidebar',
@@ -201,7 +201,7 @@ export default defineComponent({
             }
         },
         getFormattedDate(date: any, format: any) {
-            return formatDate(date, format)
+            return formatDateWithLocale(date, format)
         },
         emitEvent(event) {
             return () => this.$emit(event, this.document)

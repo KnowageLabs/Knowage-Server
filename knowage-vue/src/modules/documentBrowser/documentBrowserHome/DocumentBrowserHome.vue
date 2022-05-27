@@ -115,7 +115,7 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response: AxiosResponse<any>) => {
                 this.folders = response.data
                 this.folders?.sort((a: any, b: any) => {
-                    return !a.parentId || a.parentId < b.parentId ? -1 : 1
+                    return a.id - b.id
                 })
             })
 
@@ -179,13 +179,15 @@ export default defineComponent({
         },
         createNewDocument() {
             this.documentId = null
-            const path = `/document-details/new/${this.selectedFolder.id}`
-            this.$router.push(path)
+            // const path = `/document-browser/document-details/new/${this.selectedFolder.id}`
+            // this.$router.push(path)
+            this.$emit('itemSelected', { item: null, mode: 'documentDetail', functionalityId: this.selectedFolder.id })
         },
         async openDocumentDetails(event) {
             this.documentId = event.id
-            const path = `/document-details/${event.id}`
-            this.$router.push(path)
+            // const path = `/document-browser/document-details/${event.id}`
+            // this.$router.push(path)
+            this.$emit('itemSelected', { item: event, mode: 'documentDetail', functionalityId: null })
         },
         createNewCockpit() {
             this.$emit('itemSelected', { item: null, mode: 'createCockpit', functionalityId: this.selectedFolder.id })

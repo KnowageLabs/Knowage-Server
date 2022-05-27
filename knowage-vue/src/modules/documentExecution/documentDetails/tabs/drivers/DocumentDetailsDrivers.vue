@@ -32,11 +32,11 @@
                     {{ $t('documentExecution.documentDetails.drivers.detailsTitle') }}
                 </template>
             </Toolbar>
-            <div id="driver-details-container" class="kn-flex kn-relative">
+            <div v-if="!loading" id="driver-details-container" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
                     <div class="p-m-2">
                         <div v-if="Object.keys(selectedDriver).length === 0">
-                            <InlineMessage severity="info">{{ $t('documentExecution.documentDetails.drivers.noDriverSelected') }}</InlineMessage>
+                            <InlineMessage severity="info" class="kn-width-full">{{ $t('documentExecution.documentDetails.drivers.noDriverSelected') }}</InlineMessage>
                         </div>
                         <Card v-else>
                             <template #content>
@@ -73,7 +73,7 @@
                                                 :filter="true"
                                                 :filterPlaceholder="$t('documentExecution.documentDetails.drivers.dropdownSearchHint')"
                                                 @blur="v$.selectedDriver.parameter.$touch()"
-                                                @change="markSelectedDriverForChange, setParId($event.value.id)"
+                                                @change="changeDriverValue"
                                             >
                                                 <template #value="slotProps">
                                                     <div class="p-dropdown-driver-value" v-if="slotProps.value">
@@ -146,156 +146,169 @@
 </template>
 
 <script lang="ts">
-    import { iDriver, iAnalyticalDriver, iDocument } from '@/modules/documentExecution/documentDetails/DocumentDetails'
-    import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-    import { defineComponent, PropType } from 'vue'
-    import { AxiosResponse } from 'axios'
-    import mainDescriptor from '@/modules/documentExecution/documentDetails/DocumentDetailsDescriptor.json'
-    import driversDescriptor from './DocumentDetailsDriversDescriptor.json'
-    import DataConditions from './DocumentDetailsDataConditions.vue'
-    import VisibilityConditions from './DocumentDetailsVisibilityConditions.vue'
-    import useValidate from '@vuelidate/core'
-    import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
-    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-    import InputSwitch from 'primevue/inputswitch'
-    import Dropdown from 'primevue/dropdown'
-    import InlineMessage from 'primevue/inlinemessage'
+import { iDriver, iAnalyticalDriver, iDocument } from '@/modules/documentExecution/documentDetails/DocumentDetails'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+import { defineComponent, PropType } from 'vue'
+import { AxiosResponse } from 'axios'
+import mainDescriptor from '@/modules/documentExecution/documentDetails/DocumentDetailsDescriptor.json'
+import driversDescriptor from './DocumentDetailsDriversDescriptor.json'
+import DataConditions from './DocumentDetailsDataConditions.vue'
+import VisibilityConditions from './DocumentDetailsVisibilityConditions.vue'
+import useValidate from '@vuelidate/core'
+import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import InputSwitch from 'primevue/inputswitch'
+import Dropdown from 'primevue/dropdown'
+import InlineMessage from 'primevue/inlinemessage'
 
-    export default defineComponent({
-        name: 'document-drivers',
-        components: { DataConditions, VisibilityConditions, KnListBox, KnValidationMessages, InputSwitch, Dropdown, InlineMessage },
-        props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, availableDrivers: { type: Array as PropType<iDriver[]>, required: true }, availableAnalyticalDrivers: { type: Array as PropType<iAnalyticalDriver[]>, required: true } },
-        emits: ['driversChanged'],
-        data() {
-            return {
-                mainDescriptor,
-                driversDescriptor,
-                v$: useValidate() as any,
-                drivers: [] as iDriver[],
-                driversToChange: [] as iDriver[],
-                driversToDelete: [] as iDriver[],
-                selectedDriver: {} as iDriver,
-                driverParuses: [] as any,
-                lovIdAndColumns: [] as any,
-                visusalDependencyObjects: [] as any,
-                dataDependencyObjects: [] as any,
-                transformedObj: {} as any,
-                document: {} as any,
-                loading: false
-            }
-        },
-        created() {
+export default defineComponent({
+    name: 'document-drivers',
+    components: { DataConditions, VisibilityConditions, KnListBox, KnValidationMessages, InputSwitch, Dropdown, InlineMessage },
+    props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, availableDrivers: { type: Array as PropType<iDriver[]>, required: true }, availableAnalyticalDrivers: { type: Array as PropType<iAnalyticalDriver[]>, required: true } },
+    emits: ['driversChanged'],
+    data() {
+        return {
+            mainDescriptor,
+            driversDescriptor,
+            v$: useValidate() as any,
+            drivers: [] as iDriver[],
+            driversToChange: [] as iDriver[],
+            driversToDelete: [] as iDriver[],
+            selectedDriver: {} as iDriver,
+            driverParuses: [] as any,
+            lovIdAndColumns: [] as any,
+            visusalDependencyObjects: [] as any,
+            dataDependencyObjects: [] as any,
+            transformedObj: {} as any,
+            document: {} as any,
+            loading: false
+        }
+    },
+    created() {
+        this.getDocumentDrivers()
+        this.document = this.selectedDocument
+    },
+    watch: {
+        selectedDocument() {
             this.getDocumentDrivers()
             this.document = this.selectedDocument
-        },
-        validations() {
-            const customValidators: ICustomValidatorMap = {
-                'custom-unique': (value: string) => {
-                    return this.urlNotUnique(value)
-                },
-                'drivers-validator': (value: string) => {
-                    return Object.keys(this.selectedDriver).length === 0 || value
-                }
-            }
-            const validationObject = { selectedDriver: createValidations('driver', driversDescriptor.validations.driver, customValidators) }
-            return validationObject
-        },
-        methods: {
-            urlNotUnique(url: string) {
-                const index = this.document.drivers.findIndex((driver) => driver.parameterUrlName === url && driver.id != this.selectedDriver?.id)
-                return index === -1
+            this.selectedDriver = {} as iDriver
+        }
+    },
+    validations() {
+        const customValidators: ICustomValidatorMap = {
+            'custom-unique': (value: string) => {
+                return this.urlNotUnique(value)
             },
-            async getDocumentDrivers() {
-                this.loading = true
-                if (this.selectedDocument?.id) {
-                    this.$http
-                        .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/drivers`)
-                        .then((response: AxiosResponse<any>) => (this.document.drivers = response.data))
-                        .finally(() => (this.loading = false))
-                }
-            },
-            selectDriver(driver) {
-                this.selectedDriver = driver
-                this.setParameterInfo(this.selectedDriver)
-            },
-            setParId(id) {
-                this.selectedDriver.parID = id
-            },
-            markSelectedDriverForChange() {
-                this.selectedDriver.isChanged = true
-                this.selectedDriver.numberOfErrors = this.v$.$errors.length
-            },
-            setParameterInfo(driver) {
-                if (this.availableAnalyticalDrivers) {
-                    for (var i = 0; i < this.availableAnalyticalDrivers.length; i++) {
-                        if ((driver.parameter && this.availableAnalyticalDrivers[i].id == driver.parID) || (driver.parameter && this.availableAnalyticalDrivers[i].name == driver.parameter.name)) {
-                            driver.parameter = { ...this.availableAnalyticalDrivers[i] }
-                            driver.parID = this.availableAnalyticalDrivers[i].id
-                        }
-                    }
-                }
-            },
-
-            addNewDriver() {
-                this.transformedObj = {}
-                let newDriver = {
-                    label: '',
-                    parameter: this.availableAnalyticalDrivers[0] ? this.availableAnalyticalDrivers[0] : null,
-                    parameterUrlName: '',
-                    priority: this.document.drivers.length == 0 ? 1 : this.document.drivers.length + 1,
-                    biObjectID: this.selectedDocument.id,
-                    visible: true,
-                    required: true,
-                    multivalue: false,
-                    numberOfErrors: 1
-                } as iDriver
-                if (this.selectedDocument.id) {
-                    if (this.document.drivers) {
-                        this.document.drivers.push(newDriver)
-                        this.selectDriver(this.document.drivers[this.document.drivers.length - 1])
-                    } else {
-                        this.document.drivers = [newDriver]
-                        this.selectDriver(this.document.drivers[1])
-                    }
-                }
-            },
-            async movePriority(driver, direction) {
-                direction == 'up' ? (driver.priority -= 1) : (driver.priority += 1)
-                await this.$http
-                    .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${driver.id}`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                    .then(() => {
-                        this.$store.commit('setInfo', { title: 'Succes', msg: 'Driver priority changed' })
-                        this.getDocumentDrivers()
-                    })
-                    .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.priorityError') }))
-            },
-            deleteDriverConfirm(event) {
-                this.$confirm.require({
-                    header: this.$t('common.toast.deleteConfirmTitle'),
-                    message: this.$t('documentExecution.documentDetails.drivers.deleteMessage'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.deleteDriver(event.item)
-                })
-            },
-            async deleteDriver(driverToDelete) {
-                if (driverToDelete.id) {
-                    await this.$http
-                        .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.document.id}/drivers/${driverToDelete.id}`, { headers: { 'X-Disable-Errors': 'true' } })
-                        .then(() => {
-                            let deletedDriver = this.document.drivers.findIndex((param) => param.id === driverToDelete.id)
-                            this.document.drivers.splice(deletedDriver, 1)
-                            this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
-                            this.selectedDriver = {} as iDriver
-                        })
-                        .catch((error) => {
-                            this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message })
-                        })
-                } else {
-                    let deletedDriver = this.document.drivers.findIndex((param) => param.priority === driverToDelete.priority)
-                    this.document.drivers.splice(deletedDriver, 1)
-                    this.selectedDriver = {} as iDriver
-                }
+            'drivers-validator': (value: string) => {
+                return Object.keys(this.selectedDriver).length === 0 || value
             }
         }
-    })
+        const validationObject = { selectedDriver: createValidations('driver', driversDescriptor.validations.driver, customValidators) }
+        return validationObject
+    },
+    methods: {
+        urlNotUnique(url: string) {
+            const index = this.document.drivers.findIndex((driver) => driver.parameterUrlName === url && driver.id != this.selectedDriver?.id)
+            return index === -1
+        },
+        async getDocumentDrivers() {
+            this.loading = true
+            if (this.selectedDocument?.id) {
+                this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/drivers`)
+                    .then((response: AxiosResponse<any>) => (this.document.drivers = response.data))
+                    .finally(() => (this.loading = false))
+            }
+        },
+        selectDriver(driver) {
+            this.selectedDriver = driver
+            this.setParameterInfo(this.selectedDriver)
+        },
+        setParId(id) {
+            this.selectedDriver.parID = id
+        },
+        markSelectedDriverForChange() {
+            this.selectedDriver.isChanged = true
+            this.selectedDriver.numberOfErrors = this.v$.$errors.length
+        },
+        changeDriverValue(event) {
+            this.selectedDriver.isChanged = true
+            this.selectedDriver.numberOfErrors = this.v$.$errors.length
+            this.setParId(event.value.id)
+            console.log(this.selectedDriver)
+        },
+        setParameterInfo(driver) {
+            if (this.availableAnalyticalDrivers) {
+                for (var i = 0; i < this.availableAnalyticalDrivers.length; i++) {
+                    if ((driver.parameter && this.availableAnalyticalDrivers[i].id == driver.parID) || (driver.parameter && this.availableAnalyticalDrivers[i].name == driver.parameter.name)) {
+                        driver.parameter = { ...this.availableAnalyticalDrivers[i] }
+                        driver.parID = this.availableAnalyticalDrivers[i].id
+                    }
+                }
+            }
+        },
+
+        addNewDriver() {
+            this.transformedObj = {}
+            let newDriver = {
+                label: '',
+                parameter: this.availableAnalyticalDrivers[0] ? this.availableAnalyticalDrivers[0] : null,
+                parameterUrlName: '',
+                priority: this.document.drivers.length == 0 ? 1 : this.document.drivers.length + 1,
+                biObjectID: this.selectedDocument.id,
+                visible: true,
+                required: true,
+                multivalue: false,
+                numberOfErrors: 1
+            } as iDriver
+            if (this.selectedDocument.id) {
+                if (this.document.drivers) {
+                    this.document.drivers.push(newDriver)
+                    this.selectDriver(this.document.drivers[this.document.drivers.length - 1])
+                } else {
+                    this.document.drivers = [newDriver]
+                    this.selectDriver(this.document.drivers[1])
+                }
+            }
+        },
+        async movePriority(driver, direction) {
+            direction == 'up' ? (driver.priority -= 1) : (driver.priority += 1)
+            await this.$http
+                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${driver.id}`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                .then(() => {
+                    this.$store.commit('setInfo', { title: 'Succes', msg: 'Driver priority changed' })
+                    this.getDocumentDrivers()
+                })
+                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.priorityError') }))
+        },
+        deleteDriverConfirm(event) {
+            this.$confirm.require({
+                header: this.$t('common.toast.deleteConfirmTitle'),
+                message: this.$t('documentExecution.documentDetails.drivers.deleteMessage'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteDriver(event.item)
+            })
+        },
+        async deleteDriver(driverToDelete) {
+            if (driverToDelete.id) {
+                await this.$http
+                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.document.id}/drivers/${driverToDelete.id}`, { headers: { 'X-Disable-Errors': 'true' } })
+                    .then(() => {
+                        let deletedDriver = this.document.drivers.findIndex((param) => param.id === driverToDelete.id)
+                        this.document.drivers.splice(deletedDriver, 1)
+                        this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                        this.selectedDriver = {} as iDriver
+                    })
+                    .catch((error) => {
+                        this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message })
+                    })
+            } else {
+                let deletedDriver = this.document.drivers.findIndex((param) => param.priority === driverToDelete.priority)
+                this.document.drivers.splice(deletedDriver, 1)
+                this.selectedDriver = {} as iDriver
+            }
+        }
+    }
+})
 </script>

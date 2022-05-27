@@ -662,10 +662,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				boolean showParameterLov = true;
 
 				// Parameters NO TREE
-				if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
-						&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)) {
+				if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())) {
 
-					ArrayList<HashMap<String, Object>> admissibleValues = filterNullValues(objParameter.getAdmissibleValues());
+					ArrayList<HashMap<String, Object>> admissibleValues = objParameter.getAdmissibleValues();
 
 					metadata.put("colsMap", colPlaceholder2ColName);
 					metadata.put("descriptionColumn", lovDescriptionColumnName);
@@ -775,18 +774,18 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 								BiMap<String, String> inverse = colPlaceholder2ColName.inverse();
 								String valColName = inverse.get(lovValueColumnName);
-							String descColName = inverse.get(lovDescriptionColumnName);
+								String descColName = inverse.get(lovDescriptionColumnName);
 
-							// TODO : workaround
-							valColName = Optional.ofNullable(valColName).orElse("value");
-							descColName = Optional.ofNullable(descColName).orElse("desc");
+								// TODO : workaround
+								valColName = Optional.ofNullable(valColName).orElse("value");
+								descColName = Optional.ofNullable(descColName).orElse("desc");
 
-							Map<String, Object> ret = new LinkedHashMap<>();
+								Map<String, Object> ret = new LinkedHashMap<>();
 
-							ret.put(valColName, e.getValue());
+								ret.put(valColName, e.getValue());
 
-							if (!valColName.equals(descColName)) {
-								ret.put(descColName, e.getDescription());
+								if (!valColName.equals(descColName)) {
+									ret.put(descColName, e.getDescription());
 								}
 
 								return ret;
@@ -879,27 +878,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		logger.debug("OUT");
 		return Response.ok(resultAsMap).build();
-	}
-
-	private ArrayList<HashMap<String, Object>> filterNullValues(ArrayList<HashMap<String, Object>> arrayList) {
-		ArrayList<HashMap<String, Object>> filteredValues = new ArrayList<HashMap<String, Object>>();
-		for (Map<String, Object> v : arrayList) {
-			if (isNull(v)) {
-				logger.debug("Skipping null value " + v.get("label"));
-			} else {
-				filteredValues.add((HashMap<String, Object>) v);
-			}
-		}
-		return filteredValues;
-	}
-
-	private boolean isNull(Map<String, Object> v) {
-		if (v.get("value") == null || v.get("VALUE") == null || v.get("value").equals("null") || v.get("VALUE").equals("null"))
-			return true;
-		else if (v.get("description") == null || v.get("DESCRIPTION") == null || v.get("description").equals("null") || v.get("DESCRIPTION").equals("null"))
-			return true;
-		else
-			return false;
 	}
 
 	// private List<AbstractDriverRuntime<AbstractDriver>>
@@ -1133,7 +1111,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		}
 		return defaultValues;
 	}
-
 	@POST
 	@Path("/admissibleValuesTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")

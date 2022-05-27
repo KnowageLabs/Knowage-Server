@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <!-- SELECT TOAST CONFIRM -------------------------------------->
+        <!-- SELECT TOAST CONFIRM -->
         <div v-if="mode === 'From Cell' || mode === 'From Member'" id="custom-toast" :style="olapDescriptor.style.customToastContainer">
             <div id="custom-toast-content" :style="olapDescriptor.style.customToastContent">
                 <div class="p-d-flex p-flex-column">
@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <!-- SIDEBAR -------------------------------------->
+        <!-- SIDEBAR -->
         <div v-if="olapSidebarVisible" id="olap-backdrop" @click="olapSidebarVisible = false" />
         <OlapSidebar
             v-if="olapSidebarVisible"
@@ -83,7 +83,7 @@
         <Button icon="pi pi-times" class="kn-button--secondary" @click="closeWhatifInput" />
     </div>
 
-    <!-- DIALOGS ------------------------------------------->
+    <!-- DIALOGS -->
     <OlapCustomViewSaveDialog :visible="customViewSaveDialogVisible" :sbiExecutionId="id" @close="customViewSaveDialogVisible = false"></OlapCustomViewSaveDialog>
     <OlapSortingDialog :visible="sortingDialogVisible" :olap="olap" @save="onSortingSelect"></OlapSortingDialog>
     <OlapMDXQueryDialog :visible="mdxQueryDialogVisible" :mdxQuery="olap?.MDXWITHOUTCF" @close="mdxQueryDialogVisible = false"></OlapMDXQueryDialog>
@@ -95,8 +95,8 @@
     <ScenarioWizard v-if="scenarioWizardVisible" :visible="scenarioWizardVisible" :hiddenFormDataProp="hiddenFormDataProp" :sbiExecutionId="id" :olapDesignerProp="olapDesigner" @saveScenario="saveScenario" @deleteScenario="deleteScenario" @close="scenarioWizardVisible = false" />
     <AlgorithmDialog v-if="algorithmDialogVisible" :visible="algorithmDialogVisible" :sbiExecutionId="id" @close="algorithmDialogVisible = false" />
     <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" :olapDesignerMode="olapDesignerMode" :parameters="parameters" :profileAttributes="profileAttributes" :olapDesigner="olapDesigner" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
-    <OlapSaveNewVersionDialog :visible="saveVersionDialogVisible" :id="id" @close="saveVersionDialogVisible = false"></OlapSaveNewVersionDialog>
-    <OlapDeleteVersionsDialog :visible="deleteVersionDialogVisible" :id="id" :propOlapVersions="olapVersions" @close="deleteVersionDialogVisible = false"></OlapDeleteVersionsDialog>
+    <OlapSaveNewVersionDialog :visible="saveVersionDialogVisible" :id="id" @close="saveVersionDialogVisible = false" @newVersionSaved="onNewVersionSaved"></OlapSaveNewVersionDialog>
+    <OlapDeleteVersionsDialog :visible="deleteVersionDialogVisible" :id="id" :propOlapVersions="olapVersions" :olap="olap" @close="deleteVersionDialogVisible = false"></OlapDeleteVersionsDialog>
 </template>
 
 <script lang="ts">
@@ -204,7 +204,7 @@ export default defineComponent({
     },
     computed: {
         olapHasScenario() {
-            if (this.olapDesigner.template.wrappedObject.olap.SCENARIO) {
+            if (this.olapDesigner?.template?.wrappedObject?.olap?.SCENARIO) {
                 return true
             } else return false
         }
@@ -255,7 +255,13 @@ export default defineComponent({
             this.loading = true
             await this.$http
                 .get(process.env.VUE_APP_OLAP_PATH + `1.0/buttons`)
-                .then(async (response: AxiosResponse<any>) => (this.buttons = response.data))
+                .then(async (response: AxiosResponse<any>) => {
+                    this.buttons = response.data
+                    this.buttons.splice(
+                        this.buttons.findIndex((item) => item.name === 'BUTTON_CC'),
+                        1
+                    )
+                })
                 .catch(() => {})
             this.loading = false
         },
@@ -609,24 +615,17 @@ export default defineComponent({
                 return
             }
 
-            const cell = {
-                axisordinal: attributes[0].value,
-                dimensiontype: attributes[1].value,
-                dimensionuniquename: attributes[2].value,
-                hierarchyuniquename: attributes[3].value,
-                level: attributes[4].value,
-                member: attributes[5].value,
-                parentmember: attributes[6].value,
-                position: attributes[7].value,
-                uniquename: attributes[9]?.value
-            } as any
+            const cell = {}
+            for (let i = 0; i < attributes.length; i++) {
+                cell[attributes[i].nodeName] = attributes[i].value
+            }
 
             if (this.selectedCell) {
                 this.selectedCell.event.target.style.border = 'none'
             }
 
             this.selectedCell = { cell: cell, event: event }
-            event.target.style.border = '1px solid red'
+            event.target.style.border = '2px solid red'
         },
         cellSelected() {
             this.olapSidebarVisible = true
@@ -877,12 +876,14 @@ export default defineComponent({
         async undo() {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/undo/?SBI_EXECUTION_ID=${this.id}`, {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
-                .then(() => {
+                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/undo/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
+                .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })
+                    this.olap = response.data
+                    this.formatOlapTable()
                 })
                 .catch((error: any) =>
                     this.$store.commit('setError', {
@@ -937,11 +938,16 @@ export default defineComponent({
             }
         },
         handleTableDoubleClick(event: any) {
+            if (!this.olapHasScenario) return
             if (!event.target.attributes.cell) return
             let clickLocation = event.target.getBoundingClientRect()
 
             if (!this.checkIfVersionIsSet()) {
                 return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
+            } else if (this.checkIfModelIsLocked()) {
+                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.editErrorLocked') })
+            } else if (!this.checkIfMeasureIsEditable(event.target.getAttribute('measurename'))) {
+                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.notEditable') })
             } else {
                 // @ts-ignore
                 this.$refs.whatifInput.style.top = `${clickLocation.top}px`
@@ -950,29 +956,32 @@ export default defineComponent({
                 // @ts-ignore
                 this.$refs.whatifInput.style.display = 'flex'
 
-                this.whatifInputNewValue = event.target.attributes.value.value
+                let locale = localStorage.getItem('locale') as any
+                let cutLocalString = locale.split('_')
+
+                this.whatifInputNewValue = this.parseLocaleNumber(event.target.attributes.value.value, cutLocalString[0])
                 this.whatifInputOldValue = event.target.attributes.value.value
                 this.whatifInputOrdinal = event.target.attributes.ordinal.value
             }
         },
-        closeWhatifInput() {
-            // @ts-ignore
-            this.$refs.whatifInput.style.display = 'none'
-        },
-        async onWhatifInput() {
-            let postData = { expression: this.whatifInputNewValue }
+        parseLocaleNumber(stringNumber, locale) {
+            let num = 123456.789,
+                fmt_local = new Intl.NumberFormat(locale),
+                parts_local = fmt_local.formatToParts(num),
+                group = ''
 
-            this.loading = true
-            await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/setValue/${this.whatifInputOrdinal}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
-                .then((response: AxiosResponse<any>) => {
-                    this.olap = response.data
-                    this.closeWhatifInput()
-                })
-                .catch(() => {})
-                .finally(() => (this.loading = false))
+            // separators
+            parts_local.forEach(function(i) {
+                switch (i.type) {
+                    case 'group':
+                        group = i.value
+                        break
+                    default:
+                        break
+                }
+            })
 
-            this.formatOlapTable()
+            return stringNumber.replace(new RegExp('\\' + group, 'g'), '')
         },
         checkIfVersionIsSet() {
             let versionIsSet = false
@@ -982,6 +991,51 @@ export default defineComponent({
                 }
             }
             return versionIsSet
+        },
+        checkIfModelIsLocked() {
+            if (this.olap.modelConfig.status == 'locked_by_other' || this.olap.modelConfig.status == 'unlocked') {
+                return true
+            } else return false
+        },
+        checkIfMeasureIsEditable(measureName) {
+            if (this.olap.modelConfig && this.olap.modelConfig.writeBackConf) {
+                if (this.olap.modelConfig.writeBackConf.editableMeasures == null || this.olap.modelConfig.writeBackConf.editableMeasures.length == 0) {
+                    return true
+                } else {
+                    var measures = this.olap.modelConfig.writeBackConf.editableMeasures
+                    for (var i = 0; i < measures.length; i++) {
+                        if (measures[i] === measureName) {
+                            return true
+                        }
+                    }
+                }
+                return false
+            }
+        },
+        closeWhatifInput() {
+            // @ts-ignore
+            this.$refs.whatifInput.style.display = 'none'
+        },
+        async onWhatifInput() {
+            if (this.whatifInputNewValue != this.whatifInputOldValue) {
+                let postData = { expression: this.whatifInputNewValue }
+                this.loading = true
+                await this.$http
+                    .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/setValue/${this.whatifInputOrdinal}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                    .then((response: AxiosResponse<any>) => {
+                        this.olap = response.data
+                        this.closeWhatifInput()
+                        this.formatOlapTable()
+                    })
+                    .catch(() => {})
+                    .finally(() => (this.loading = false))
+            }
+            this.closeWhatifInput()
+        },
+        onNewVersionSaved(olap: iOlap) {
+            this.olap = olap
+            this.formatOlapTable()
+            this.saveVersionDialogVisible = false
         }
     }
 })
@@ -1031,6 +1085,7 @@ export default defineComponent({
     background-repeat: no-repeat;
     height: 0.8rem;
     width: 0.8rem;
+    float: left;
 }
 
 .drill-down {
@@ -1039,6 +1094,7 @@ export default defineComponent({
     background-repeat: no-repeat;
     height: 0.8rem;
     width: 0.8rem;
+    float: left;
 }
 
 .drill-up-replace {
@@ -1047,6 +1103,7 @@ export default defineComponent({
     background-repeat: no-repeat;
     height: 0.8rem;
     width: 0.8rem;
+    float: left;
 }
 
 .sort-basic {
@@ -1055,6 +1112,7 @@ export default defineComponent({
     background-repeat: no-repeat;
     height: 0.8rem;
     width: 0.8rem;
+    float: left;
 }
 
 .sort-asc {
@@ -1063,6 +1121,7 @@ export default defineComponent({
     background-repeat: no-repeat;
     height: 0.8rem;
     width: 0.8rem;
+    float: left;
 }
 
 .sort-desc {
@@ -1071,6 +1130,7 @@ export default defineComponent({
     background-repeat: no-repeat;
     height: 0.8rem;
     width: 0.8rem;
+    float: left;
 }
 
 .cell-cross-navigation {
@@ -1079,6 +1139,7 @@ export default defineComponent({
     background-repeat: no-repeat;
     height: 0.8rem;
     width: 0.8rem;
+    float: left;
 }
 
 .drillthrough {
@@ -1087,6 +1148,7 @@ export default defineComponent({
     background-repeat: no-repeat;
     height: 0.8rem;
     width: 0.8rem;
+    float: left;
 }
 
 .kn-olap-table {
@@ -1098,44 +1160,44 @@ export default defineComponent({
     table-layout: fixed;
     color: rgba(0, 0, 0, 0.54);
     font-size: 12px;
-    border-collapse: collapse;
-    thead {
-        border-bottom: 1px solid #ccc;
-        overflow: auto;
-        th {
-            position: relative !important;
-            border-right: 1px solid #ccc;
-            border-left: 1px solid #ccc;
-            padding: 5px;
-            background: #f5f5f5;
-            white-space: nowrap;
-            text-align: left;
+    table {
+        border-collapse: collapse;
+        thead {
+            border-bottom: 1px solid #ccc;
+            overflow: auto;
+            th {
+                position: relative !important;
+                border-right: 1px solid #ccc;
+                border-left: 1px solid #ccc;
+                padding: 5px;
+                background: #f5f5f5;
+                white-space: nowrap;
+                text-align: left;
+            }
+            td {
+                text-align: right;
+                vertical-align: middle;
+                border-bottom: 1px solid #3b678c;
+                border-right: 1px solid #3b678c;
+                max-height: 43px !important;
+            }
         }
-        td {
-            border-top-width: 1px !important;
-            border-right-width: 1px !important;
-            text-align: right;
-            vertical-align: middle;
-            border-bottom: 1px solid #3b678c;
-            border-right: 1px solid #3b678c;
-            max-height: 43px !important;
+        tbody {
+            th {
+                border-right: 1px solid #ccc;
+                padding-right: 5px;
+            }
+            td[measurename] {
+                text-align: right;
+            }
         }
-    }
-    tbody {
-        th {
-            border-right: 1px solid #ccc;
-            padding-right: 5px;
-        }
-        td[measurename] {
-            text-align: right;
-        }
-    }
-    tr {
-        &:nth-child(even) {
-            background-color: #eceff1;
-        }
-        &:nth-child(odd) {
-            background-color: white;
+        tr {
+            &:nth-child(even) {
+                background-color: #eceff1;
+            }
+            &:nth-child(odd) {
+                background-color: white;
+            }
         }
     }
 }

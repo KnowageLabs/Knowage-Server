@@ -26,7 +26,7 @@
     "newLayer": {
         "baseLayer": false,
         "category_id": null,
-        "descr": null,
+        "descr": "",
         "icon": null,
         "label": null,
         "layerId2": null,

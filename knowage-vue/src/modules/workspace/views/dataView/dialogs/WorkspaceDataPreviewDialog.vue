@@ -69,7 +69,13 @@ export default defineComponent({
                     break
                 }
             }
-            return parameterVisible || this.dataset.pars.length !== 0
+            let pars = false
+            if (this.dataset && this.dataset.pars) {
+                if (this.dataset.pars.length !== 0) {
+                    pars = this.dataset.pars.length !== 0
+                }
+            }
+            return parameterVisible || pars
         }
     },
     watch: {
@@ -88,7 +94,7 @@ export default defineComponent({
         }
     },
     async created() {
-        this.userRole = (this.$store.state as any).user.sessionRole !== 'No default role selected' ? (this.$store.state as any).user.sessionRole : null
+        this.userRole = (this.$store.state as any).user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? (this.$store.state as any).user.sessionRole : null
         await this.loadPreview()
         this.setSidebarMode()
     },
@@ -155,7 +161,7 @@ export default defineComponent({
             this.loading = false
         },
         async loadDatasetDrivers() {
-            if (this.dataset.label && this.dataset.id && this.dataset.dsTypeCd != 'Prepared') {
+            if (this.dataset.label && this.dataset.id && this.dataset.dsTypeCd !== 'Prepared') {
                 await this.$http
                     .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${this.dataset.label}/filters`, { role: this.userRole })
                     .then((response: AxiosResponse<any>) => {
@@ -219,7 +225,6 @@ export default defineComponent({
             return formattedDrivers
         },
         async updatePagination(lazyParams: any) {
-            console.log('PAGINATION OBJECT ', lazyParams)
             this.pagination.start = lazyParams.paginationStart
             this.pagination.limit = lazyParams.paginationLimit
             this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
@@ -252,7 +257,9 @@ export default defineComponent({
             this.$emit('close')
         },
         async onExecute(datasetParameters: any[]) {
+            if (!this.dataset.pars) this.dataset.pars = []
             this.dataset.pars = datasetParameters
+
             this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
             this.parameterSidebarVisible = false
         },
