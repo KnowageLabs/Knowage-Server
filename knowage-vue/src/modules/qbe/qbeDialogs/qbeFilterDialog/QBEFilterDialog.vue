@@ -96,12 +96,14 @@ export default defineComponent({
             })
             this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
             if (this.filterDialogData.field.type === 'inline.calculated.field') {
-                this.setCalculatedFieldLongDescription(this.filterDialogData.field)
+                this.setCalculatedFieldLongDescription(this.filterDialogData.field, this.filterDialogData.field.originalId as string)
+            } else if (this.filterDialogData.field.attributes.type === 'inLineCalculatedField') {
+                this.setCalculatedFieldLongDescription(this.filterDialogData.field, this.filterDialogData.field.id)
             }
         },
-        setCalculatedFieldLongDescription(field: any) {
-            if (field.originalId) {
-                const temp = field.originalId.substring(field.originalId.lastIndexOf('.') + 1)
+        setCalculatedFieldLongDescription(field: any, id: string | null) {
+            if (id) {
+                const temp = id.substring(id.lastIndexOf('.') + 1)
                 const tempSplitted = temp.split(':')
                 field.longDescription = tempSplitted[0] + ' : ' + tempSplitted[1]
             }
@@ -126,10 +128,10 @@ export default defineComponent({
                 filterDescripion: 'Filter' + this.nextFilterIndex,
                 filterInd: this.nextFilterIndex,
                 promptable: false,
-                leftOperandValue: field.id,
+                leftOperandValue: this.filterDialogData?.field.attributes.type === 'inLineCalculatedField' ? this.filterDialogData?.field.attributes.formState : field.id,
                 leftOperandDescription: field.longDescription ?? field.attributes.longDescription,
                 leftOperandLongDescription: field.longDescription ?? field.attributes.longDescription,
-                leftOperandType: this.filterDialogData?.field.type === 'inline.calculated.field' ? 'inline.calculated.field' : 'Field Content',
+                leftOperandType: this.filterDialogData?.field.type === 'inline.calculated.field' || this.filterDialogData?.field.attributes.type === 'inLineCalculatedField' ? 'inline.calculated.field' : 'Field Content',
                 leftOperandDefaultValue: null,
                 leftOperandLastValue: null,
                 leftOperandAlias: field.alias ?? field.attributes.field,
@@ -210,7 +212,7 @@ export default defineComponent({
                         leftOperandValue: this.filterDialogData?.field.id,
                         leftOperandDescription: this.filterDialogData?.field.longDescription,
                         leftOperandLongDescription: this.filterDialogData?.field.longDescription,
-                        leftOperandType: this.filterDialogData?.field.type === 'inline.calculated.field' ? 'inline.calculated.field' : 'Field Content',
+                        leftOperandType: this.filterDialogData?.field.type === 'inline.calculated.field' || this.filterDialogData?.field.attributes.type === 'inLineCalculatedField' ? 'inline.calculated.field' : 'Field Content',
                         leftOperandDefaultValue: null,
                         leftOperandLastValue: null,
                         leftOperandAlias: this.filterDialogData?.field.alias,

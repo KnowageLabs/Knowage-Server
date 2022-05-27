@@ -80,7 +80,7 @@ export default defineComponent({
                     leftOperandValue: field.id,
                     leftOperandDescription: field.entity + ': ' + field.funct + ' (' + field.alias + ')',
                     leftOperandLongDescription: field.entity + ': ' + field.funct + ' (' + field.alias + ')',
-                    leftOperandType: field.type === 'inline.calculated.field' ? 'inline.calculated.field' : 'Field Content',
+                    leftOperandType: field.type === 'inline.calculated.field' || field.attributes?.type === 'inLineCalculatedField' ? 'inline.calculated.field' : 'Field Content',
                     leftOperandDefaultValue: null,
                     leftOperandLastValue: null,
                     operator: 'EQUALS TO',
