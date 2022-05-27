@@ -97,7 +97,7 @@ export default defineComponent({
             this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
             if (this.filterDialogData.field.type === 'inline.calculated.field') {
                 this.setCalculatedFieldLongDescription(this.filterDialogData.field, this.filterDialogData.field.originalId as string)
-            } else if (this.filterDialogData.field.attributes.type === 'inLineCalculatedField') {
+            } else if (this.filterDialogData.field.attributes?.type === 'inLineCalculatedField') {
                 this.setCalculatedFieldLongDescription(this.filterDialogData.field, this.filterDialogData.field.id)
             }
         },
