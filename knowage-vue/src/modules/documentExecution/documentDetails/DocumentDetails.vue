@@ -163,6 +163,21 @@ export default defineComponent({
         this.isForEdit()
         await this.loadPage(this.docId)
     },
+    activated() {
+        if (this.propFolderId) {
+            this.getFunctionalities()
+            this.getAnalyticalDrivers()
+            this.getDatasources()
+            this.getTypes()
+            this.getEngines()
+            this.getAttributes()
+            this.getParTypes()
+            this.getDateFormats()
+            this.getSavedTablesByDocumentID()
+            this.getDataset()
+            this.getDataSources()
+        }
+    },
     methods: {
         isForEdit() {
             if (this.propMode === 'execution') {
