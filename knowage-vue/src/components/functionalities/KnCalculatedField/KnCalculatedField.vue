@@ -149,6 +149,10 @@ export default defineComponent({
         })
 
         this.cf = { formula: '' } as IKnCalculatedField
+
+        if (!this.readOnly && this.template && !this.template.parameters && this.source === 'QBE') {
+            this.cf = { colName: this.template.alias, formula: this.template.expression } as IKnCalculatedField
+        }
     },
 
     updated() {

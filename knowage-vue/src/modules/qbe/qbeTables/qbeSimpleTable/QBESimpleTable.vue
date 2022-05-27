@@ -38,7 +38,7 @@ export default defineComponent({
     name: 'qbe-simple-table',
     props: { query: { type: Object as PropType<iQuery> } },
     components: { Checkbox, Column, DataTable, Dropdown, Menu },
-    emits: ['columnVisibilityChanged', 'openFilterDialog', 'openHavingDialog', 'entityDropped', 'groupingChanged', 'openCalculatedFieldDialog'],
+    emits: ['columnVisibilityChanged', 'openFilterDialog', 'openHavingDialog', 'entityDropped', 'groupingChanged', 'openCalculatedFieldDialog', 'fieldDeleted'],
     data() {
         return {
             QBESimpleTableDescriptor,
@@ -118,6 +118,7 @@ export default defineComponent({
             this.$emit('groupingChanged', field)
         },
         deleteColumn(index: number) {
+            this.$emit('fieldDeleted', { ...this.rows[index] })
             this.rows.splice(index, 1)
         }
     }

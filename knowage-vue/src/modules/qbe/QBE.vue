@@ -85,6 +85,7 @@
                             @entityDropped="onDropComplete($event, false)"
                             @groupingChanged="onGroupingChanged"
                             @openCalculatedFieldDialog="editCalcField"
+                            @fieldDeleted="onFieldDeleted"
                         ></QBESimpleTable>
                         <QBESmartTable
                             v-else
@@ -694,7 +695,8 @@ export default defineComponent({
                     format: field.format,
                     longDescription: field.attributes.longDescription,
                     distinct: editQueryObj.distinct,
-                    leaf: field.leaf
+                    leaf: field.leaf,
+                    originalId: field.id
                 } as any
             }
             // eslint-disable-next-line no-prototype-builtins
@@ -805,6 +807,7 @@ export default defineComponent({
             let indexOfFieldToDelete = this.selectedQuery.fields.findIndex((field) => {
                 return field.uniqueID === uniqueID
             })
+            this.onFieldDeleted({ ...this.selectedQuery.fields[indexOfFieldToDelete] })
             this.selectedQuery.fields.splice(indexOfFieldToDelete, 1)
             this.updateSmartView()
         },
@@ -865,6 +868,13 @@ export default defineComponent({
             this.userRole = role as any
             this.filtersData = {}
             await this.loadPage()
+        },
+        onFieldDeleted(field: any) {
+            for (let i = this.selectedQuery.havings.length - 1; i >= 0; i--) {
+                if (this.selectedQuery.havings[i].leftOperandValue === field.id) {
+                    this.selectedQuery.havings.splice(i, 1)
+                }
+            }
         }
     }
 })

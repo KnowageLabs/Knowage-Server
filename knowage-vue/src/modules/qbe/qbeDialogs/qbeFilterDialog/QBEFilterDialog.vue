@@ -95,6 +95,18 @@ export default defineComponent({
                 }
             })
             this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
+            if (this.filterDialogData.field.type === 'inline.calculated.field') {
+                this.setCalculatedFieldLongDescription(this.filterDialogData.field, this.filterDialogData.field.originalId as string)
+            } else if (this.filterDialogData.field.attributes?.type === 'inLineCalculatedField') {
+                this.setCalculatedFieldLongDescription(this.filterDialogData.field, this.filterDialogData.field.id)
+            }
+        },
+        setCalculatedFieldLongDescription(field: any, id: string | null) {
+            if (id) {
+                const temp = id.substring(id.lastIndexOf('.') + 1)
+                const tempSplitted = temp.split(':')
+                field.longDescription = tempSplitted[0] + ' : ' + tempSplitted[1]
+            }
         },
         loadParameters() {
             this.parameters = this.propParameters ? [...this.propParameters] : []
@@ -116,10 +128,10 @@ export default defineComponent({
                 filterDescripion: 'Filter' + this.nextFilterIndex,
                 filterInd: this.nextFilterIndex,
                 promptable: false,
-                leftOperandValue: field.id,
+                leftOperandValue: this.filterDialogData?.field.attributes?.type === 'inLineCalculatedField' ? this.filterDialogData?.field.attributes.formState : field.id,
                 leftOperandDescription: field.longDescription ?? field.attributes.longDescription,
                 leftOperandLongDescription: field.longDescription ?? field.attributes.longDescription,
-                leftOperandType: 'Field Content',
+                leftOperandType: this.filterDialogData?.field.type === 'inline.calculated.field' || this.filterDialogData?.field.attributes?.type === 'inLineCalculatedField' ? 'inline.calculated.field' : 'Field Content',
                 leftOperandDefaultValue: null,
                 leftOperandLastValue: null,
                 leftOperandAlias: field.alias ?? field.attributes.field,
@@ -183,7 +195,7 @@ export default defineComponent({
             }
         },
         temporalFiltersEnabled() {
-            return (this.$store.state as any).user.functionalities.includes('Timespan') && (this.filterDialogData?.field.dataType.toLowerCase() === 'java.sql.date' || this.filterDialogData?.field.dataType.toLowerCase() === 'java.sql.timestamp')
+            return (this.$store.state as any).user.functionalities.includes('Timespan') && (this.filterDialogData?.field.dataType?.toLowerCase() === 'java.sql.date' || this.filterDialogData?.field.dataType?.toLowerCase() === 'java.sql.timestamp')
         },
         async openTemporalFilterDialog() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/listTimespan/?types=DAY_OF_WEEK&types=DAY_OF_WEEK&types=DAY_OF_WEEK`).then((response: AxiosResponse<any>) => (this.temporalFilters = response.data.data))
@@ -197,13 +209,13 @@ export default defineComponent({
                         filterDescripion: 'Filter' + this.nextFilterIndex,
                         filterInd: this.nextFilterIndex,
                         promptable: false,
-                        leftOperandValue: this.filterDialogData?.field.id,
-                        leftOperandDescription: this.filterDialogData?.field.longDescription,
-                        leftOperandLongDescription: this.filterDialogData?.field.longDescription,
-                        leftOperandType: 'Field Content',
+                        leftOperandValue: this.filterDialogData?.field.attributes?.type === 'inLineCalculatedField' ? this.filterDialogData?.field.attributes.formState : this.filterDialogData?.field.id,
+                        leftOperandDescription: this.filterDialogData?.field.longDescription ?? this.filterDialogData?.field.attributes.longDescription,
+                        leftOperandLongDescription: this.filterDialogData?.field.longDescription ?? this.filterDialogData?.field.attributes.longDescription,
+                        leftOperandType: this.filterDialogData?.field.type === 'inline.calculated.field' || this.filterDialogData?.field.attributes?.type === 'inLineCalculatedField' ? 'inline.calculated.field' : 'Field Content',
                         leftOperandDefaultValue: null,
                         leftOperandLastValue: null,
-                        leftOperandAlias: this.filterDialogData?.field.alias,
+                        leftOperandAlias: this.filterDialogData?.field.alias ?? this.filterDialogData?.field.attributes.field,
                         leftOperandDataType: '',
                         operator: 'BETWEEN',
                         rightType: 'manual',
