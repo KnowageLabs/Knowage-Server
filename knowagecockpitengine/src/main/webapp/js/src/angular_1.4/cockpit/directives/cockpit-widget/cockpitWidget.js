@@ -289,6 +289,13 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		return availableTypes.indexOf(type) != -1;
 	}
 
+	$scope.isExportPdfEnabled = function(){
+		toReturn = true;
+		if ($scope.ngModel.settings && $scope.ngModel.settings.exportpdf) toReturn = $scope.ngModel.settings.exportpdf.enabled;
+		toReturn = typeof(toReturn) != 'undefined' ? toReturn : true;
+		return toReturn;
+	}
+
 	$scope.checkChartType = function(model, notAvailableCharts){
 		return !(notAvailableCharts.indexOf(model.content.chartTemplate.CHART.type.toLowerCase()) != -1);
 	}
@@ -1114,7 +1121,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 										}else if(parameter.column == columnName){
 											paramValue = columnValue;
 										}
-										
+
 									}
 									else{
 										for(var c in $scope.ngModel.content.columnSelectedOfDataset){
