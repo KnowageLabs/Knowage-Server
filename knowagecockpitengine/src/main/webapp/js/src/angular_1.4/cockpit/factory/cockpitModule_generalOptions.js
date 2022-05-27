@@ -130,6 +130,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			"java.util.Date": {label:'date',icon:'fa fa-calendar'},
 			"java.sql.Date": {label:'date',icon:'fa fa-calendar'},
 			"java.sql.Time": {label:'time',icon:'fa fa-clock-o'},
+			"java.time.LocalDateTime" : {label:'time',icon:'fa fa-clock-o'},
 			"oracle.sql.BLOB": {label:'blob',icon:'fa fa-archive'},
 			"oracle.sql.CLOB": {label:'clob',icon:'fa fa-archive'},
 			"com.simba.googlebigquery.dsi.dataengine.utilities.TimestampTz": {label:'timestamp',icon:'fa fa-calendar'}
