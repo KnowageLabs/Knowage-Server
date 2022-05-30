@@ -224,8 +224,6 @@ export default defineComponent({
 
         this.document = { label: this.id }
 
-        console.log('DOCUMENT: ', this.document)
-
         if (!this.document.label) return
 
         await this.loadDocument()
