@@ -11,8 +11,8 @@
             </Toolbar>
         </template>
 
-        <div class="p-d-flex p-flex-row">
-            <Listbox class="kn-list--column kn-flex" :options="words" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="documentExecutionHelpDialogDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
+        <div class="p-d-flex p-flex-row kn-height-full">
+            <Listbox class="kn-list--column kn-flex kn-height-full" :options="words" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="documentExecutionHelpDialogDescriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item" @click="loadWordDetail(slotProps.option)">
@@ -20,7 +20,7 @@
                     </div>
                 </template>
             </Listbox>
-            <DocumentExecutionWordDetail  id="document-execution-word-detail" :wordDetail="wordDetail" :selectedWordName="selectedWordName"></DocumentExecutionWordDetail>
+            <DocumentExecutionWordDetail id="document-execution-word-detail" :wordDetail="wordDetail" :selectedWordName="selectedWordName"></DocumentExecutionWordDetail>
         </div>
     </Dialog>
 </template>

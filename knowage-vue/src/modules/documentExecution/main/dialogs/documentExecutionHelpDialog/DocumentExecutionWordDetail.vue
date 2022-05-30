@@ -1,5 +1,5 @@
 <template>
-    <div class="word-info-container p-m-5">
+    <div class="word-info-container p-m-5 kn-overflow">
         <Toolbar v-if="selectedWordName" class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0 p-col-12">
             <template #start>
                 {{ selectedWordName }}
