@@ -86,8 +86,8 @@ export default defineComponent({
         },
         getDatasetColumns() {
             this.datasetColumns = []
-            for (let i = 2; i < this.dataset.meta.columns.length; i += 3) {
-                if (this.dataset.meta.columns[i]) {
+            for (let i = 2; i < this.dataset.meta.columns.length; i++) {
+                if (this.dataset.meta.columns[i].pname === 'fieldAlias') {
                     this.datasetColumns.push(this.dataset.meta.columns[i].pvalue)
                 }
             }
