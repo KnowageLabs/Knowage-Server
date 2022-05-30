@@ -2,7 +2,7 @@
     <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="documentExecutionLinkDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.main.linkToDocument ') }}
                 </template>
             </Toolbar>
@@ -83,6 +83,8 @@ export default defineComponent({
         },
         getPublicUrl() {
             const tenet = (this.$store.state as any).user.organization
+
+            if (!this.document) return
 
             if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER') {
                 if (this.embedHTML) {

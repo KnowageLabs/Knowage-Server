@@ -2,7 +2,7 @@
     <Dialog class="p-fluid kn-dialog--toolbar--primary" :contentStyle="documentExecutionMetadataDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('common.metadata') }}
                 </template>
             </Toolbar>
@@ -11,7 +11,7 @@
 
         <div v-if="metadata">
             <div v-if="metadata.generalMetadata.length > 0">
-                <h2>{{ $t('documentExecution.main.customMetadata') }}</h2>
+                <h2>{{ $t('common.documentDetails') }}</h2>
                 <div class="p-grid p-ai-center">
                     <template v-for="(meta, index) in metadata.generalMetadata" :key="index">
                         <div v-if="meta.value && index !== metadata.generalMetadata.length - 1" :class="{ 'p-col-4': index !== 3, 'p-col-12': index === 3 }">
@@ -24,25 +24,25 @@
             </div>
 
             <div v-if="metadata.shortText.length > 0 || metadata.longText.length > 0">
-                <h2>{{ $t('common.documentDetails') }}</h2>
+                <h2>{{ $t('documentExecution.main.customMetadata') }}</h2>
 
-                <div v-if="metadata.shortText.length > 0" class="p-grid p-ai-centerp-d-flex p-flex-row">
-                    <div v-for="(meta, index) in metadata.shortText" :key="index" class="metadata-small-text-input p-col-4">
+                <div v-show="metadata.shortText.length > 0" class="p-grid">
+                    <div v-for="(meta, index) in metadata.shortText" :key="index" class="p-col-4">
                         <label class="kn-material-input-label">{{ meta.name }}</label>
                         <InputText class="kn-material-input p-inputtext-sm" v-model="meta.value" :disabled="!canModify" />
                     </div>
                 </div>
-
-                <TabView v-if="metadata.longText.length > 0">
-                    <TabPanel v-for="(meta, index) in metadata.longText" :key="index">
-                        <template #header>
-                            <span class="p-text-uppercase">{{ meta.name }}</span>
-                        </template>
-
-                        <Editor v-model="meta.value" :readonly="!canModify" :editorStyle="documentExecutionMetadataDialogDescriptor.editor.style"></Editor>
-                    </TabPanel>
-                </TabView>
             </div>
+
+            <TabView v-if="(metadata.shortText.length > 0 || metadata.longText.length > 0) && metadata.longText.length > 0" scrollable>
+                <TabPanel v-for="(meta, index) in metadata.longText" :key="index">
+                    <template #header>
+                        <span class="p-text-uppercase kn-truncated">{{ meta.name }}</span>
+                    </template>
+
+                    <Editor v-model="meta.value" :readonly="!canModify" :editorStyle="documentExecutionMetadataDialogDescriptor.editor.style"></Editor>
+                </TabPanel>
+            </TabView>
 
             <div v-show="metadata.file.length > 0">
                 <h2>{{ $t('common.attachments') }}</h2>
@@ -64,7 +64,7 @@
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.close') }}</Button>
-                <Button class="kn-button kn-button--primary" @click="save"> {{ $t('common.save') }}</Button>
+                <Button class="kn-button kn-button--primary" :disabled="!canModify" @click="save"> {{ $t('common.save') }}</Button>
             </div>
         </template>
     </Dialog>
@@ -153,6 +153,7 @@ export default defineComponent({
                             title: this.$t('common.uploadFile'),
                             msg: this.$t('common.uploadFileSuccess')
                         })
+                        this.updateMetadataFile(meta.id, this.uploadedFiles[meta.id].name)
                     })
                     .catch((error: any) =>
                         this.$store.commit('setError', {
@@ -163,10 +164,17 @@ export default defineComponent({
                 this.loading = false
             }
         },
+        updateMetadataFile(fileId: number, fileName: string) {
+            if (!this.metadata) return
+            const index = this.metadata?.file.findIndex((tempFile: any) => tempFile.id === fileId)
+            if (index !== -1) this.metadata.file[index].fileToSave = { file: {}, fileName: fileName }
+        },
         cleanFile(meta: any) {
             const temp = this.$refs[meta.id] as any
-            if (temp) {
+            if (temp && this.metadata) {
                 temp.resetInput()
+                const index = this.metadata.file.findIndex((tempFile: any) => tempFile.id === meta.id)
+                if (index !== -1) delete this.metadata.file[index].fileToSave
             }
         },
         closeDialog() {
@@ -181,10 +189,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.metadata-small-text-input {
-    flex: 0.3;
-}
-
 .pi-upload {
     display: none;
 }

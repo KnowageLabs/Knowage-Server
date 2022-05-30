@@ -24,7 +24,7 @@
         "interaction": {
             "type": "event"
         },
-        "textField": "priority",
+        "textField": "parameterUrlName",
         "titleField": "label"
     },
     "style": {

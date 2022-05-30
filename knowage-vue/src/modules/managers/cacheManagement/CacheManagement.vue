@@ -1,14 +1,14 @@
 <template>
     <div class="cache-management kn-page">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
-            <template #left>
+            <template #start>
                 {{ $t('managers.cacheManagement.title') }}
             </template>
         </Toolbar>
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="showProgressBar" data-test="progress-bar" />
         <div class="p-d-flex p-flex-wrap kn-page-content">
             <div class="p-col-4 p-sm-12 p-md-4 p-p-0">
-                <RuntimeInformationCard v-if="selectedDatasource" :item="cache" :chartData="chartData" @refresh="loadCache"></RuntimeInformationCard>
+                <RuntimeInformationCard v-if="selectedDatasource" :item="cache" :chartData="chartData" @refresh="onRefresh"></RuntimeInformationCard>
             </div>
             <div class="p-col-8 p-sm-12 p-md-8 p-p-0">
                 <GeneralSettingsCard v-if="settingsPendingCount == 0" :item="settings" :datasources="datasources" :selectedDatasource="selectedDatasource" @inserted="pageReload"></GeneralSettingsCard>
@@ -146,6 +146,10 @@ export default defineComponent({
         },
         pageReload() {
             this.loadPage()
+        },
+        onRefresh() {
+            this.loadCache()
+            this.loadDatasetsMetadata()
         }
     }
 })

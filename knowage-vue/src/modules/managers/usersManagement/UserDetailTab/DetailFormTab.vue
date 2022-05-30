@@ -4,7 +4,7 @@
             <Card>
                 <template #header>
                     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                        <template #left> {{ $t('managers.usersManagement.detail') }} </template>
+                        <template #start> {{ $t('managers.usersManagement.detail') }} </template>
                     </Toolbar>
                 </template>
                 <template #content>
@@ -69,59 +69,59 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import useValidate from '@vuelidate/core'
-import Card from 'primevue/card'
-import InlineMessage from 'primevue/inlinemessage'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+    import { defineComponent } from 'vue'
+    import useValidate from '@vuelidate/core'
+    import Card from 'primevue/card'
+    import InlineMessage from 'primevue/inlinemessage'
+    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 
-export default defineComponent({
-    name: 'roles-tab',
-    components: {
-        InlineMessage,
-        Card,
-        KnValidationMessages
-    },
-    emits: ['unlock', 'dataChanged'],
-    props: {
-        formValues: Object,
-        disabledUID: Boolean,
-        vobj: Object,
-        formInsert: {
-            type: Boolean,
-            default: false
-        }
-    },
-    watch: {
-        formValues: {
-            handler: function(values) {
-                this.userDetailsForm = values
+    export default defineComponent({
+        name: 'roles-tab',
+        components: {
+            InlineMessage,
+            Card,
+            KnValidationMessages
+        },
+        emits: ['unlock', 'dataChanged'],
+        props: {
+            formValues: Object,
+            disabledUID: Boolean,
+            vobj: Object,
+            formInsert: {
+                type: Boolean,
+                default: false
             }
         },
-        disabledUID: {
-            handler: function(value) {
-                this.disableUsername = value
+        watch: {
+            formValues: {
+                handler: function(values) {
+                    this.userDetailsForm = values
+                }
+            },
+            disabledUID: {
+                handler: function(value) {
+                    this.disableUsername = value
+                }
+            }
+        },
+        data() {
+            return {
+                v$: useValidate() as any,
+                userDetailsForm: {} as any,
+                defaultRole: null,
+                hiddenForm: true as Boolean,
+                disableUsername: true as Boolean,
+                loading: false as Boolean
+            }
+        },
+        methods: {
+            unlockUser() {
+                this.$emit('unlock')
+            },
+            onDataChange(v$Comp) {
+                v$Comp.$touch()
+                this.$emit('dataChanged')
             }
         }
-    },
-    data() {
-        return {
-            v$: useValidate() as any,
-            userDetailsForm: {} as any,
-            defaultRole: null,
-            hiddenForm: true as Boolean,
-            disableUsername: true as Boolean,
-            loading: false as Boolean
-        }
-    },
-    methods: {
-        unlockUser() {
-            this.$emit('unlock')
-        },
-        onDataChange(v$Comp) {
-            v$Comp.$touch()
-            this.$emit('dataChanged')
-        }
-    }
-})
+    })
 </script>

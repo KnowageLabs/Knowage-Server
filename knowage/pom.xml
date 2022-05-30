@@ -330,7 +330,7 @@
 			<version>8.1.0-SNAPSHOT</version>
 			<scope>runtime</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowageazuresecurityprovider</artifactId>
@@ -403,6 +403,17 @@
 			<artifactId>javax.websocket-api</artifactId>
 			<version>1.1</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-web</artifactId>
+		</dependency>
+
+		<!-- Provides support for Graylog in log4j2 -->
+		<dependency>
+			<groupId>biz.paluch.logging</groupId>
+			<artifactId>logstash-gelf</artifactId>
 		</dependency>
 
 	</dependencies>

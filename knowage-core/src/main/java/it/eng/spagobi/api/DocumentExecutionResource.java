@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.file.Paths;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1173,7 +1174,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		Boolean toReturn = false;
-		Boolean noPublicRoleError = false;
+
 		JSONObject results = new JSONObject();
 		try {
 			BIObject biObj;
@@ -1187,17 +1188,13 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			if (biObj != null) {
 				SpagoBIUserProfile publicProfile = PublicProfile.createPublicUserProfile(PublicProfile.PUBLIC_USER_PREFIX + tenant);
 
-				if (publicProfile == null) {
-					noPublicRoleError = true;
-					toReturn = false;
-				} else {
+				if (publicProfile != null) {
 					UserProfile publicUserProfile = new UserProfile(publicProfile);
 					boolean canExec = ObjectsAccessVerifier.canExec(biObj, publicUserProfile);
 					toReturn = canExec;
 				}
 
 				results.put("isPublic", toReturn);
-				results.put("noPublicRoleError", noPublicRoleError);
 
 			} else {
 				logger.error("Object with label " + label + " not found");
@@ -1228,15 +1225,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			if (input != null) {
 
-				String saveDirectoryPath = SpagoBIUtilities.getResourcePath() + "/" + METADATA_DIR + "/" + getUserProfile().getUserName().toString();
+				java.nio.file.Path saveDirectoryPath = Paths.get(SpagoBIUtilities.getResourcePath(), METADATA_DIR, getUserProfile().getUserId().toString());
 				final FormFile file = input.getFormFileParameterValues("file")[0];
 				bytes = file.getContent();
 
-				File saveDirectory = new File(saveDirectoryPath);
+				File saveDirectory = saveDirectoryPath.toFile();
 				if (!(saveDirectory.exists() && saveDirectory.isDirectory())) {
 					saveDirectory.mkdirs();
 				}
-				String tempFile = saveDirectoryPath + "/" + file.getFileName();
+				String tempFile = Paths.get(saveDirectoryPath.toString(), file.getFileName()).toString();
 				File tempFileToSave = new File(tempFile);
 				tempFileToSave.createNewFile();
 				DataOutputStream os = new DataOutputStream(new FileOutputStream(tempFileToSave));

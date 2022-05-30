@@ -60,178 +60,178 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { AxiosResponse } from 'axios'
-    import Dialog from 'primevue/dialog'
-    import Dropdown from 'primevue/dropdown'
-    import { mapState } from 'vuex'
-    import InputSwitch from 'primevue/inputswitch'
-    import resourceManagementDescriptor from './ResourceManagementDescriptor.json'
-    import Textarea from 'primevue/textarea'
+import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
+import Dialog from 'primevue/dialog'
+import Dropdown from 'primevue/dropdown'
+import { mapState } from 'vuex'
+import InputSwitch from 'primevue/inputswitch'
+import resourceManagementDescriptor from './ResourceManagementDescriptor.json'
+import Textarea from 'primevue/textarea'
 
-    import Accordion from 'primevue/accordion'
-    import AccordionTab from 'primevue/accordiontab'
-    import { iModelMetadataTemplate } from './ResourceManagement'
+import Accordion from 'primevue/accordion'
+import AccordionTab from 'primevue/accordiontab'
+import { iModelMetadataTemplate } from './ResourceManagement'
 
-    export default defineComponent({
-        name: 'metadata-dialog',
-        components: { Dialog, Dropdown, InputSwitch, Accordion, AccordionTab, Textarea },
-        data() {
-            return {
-                dirty: false,
-                loading: true,
-                metadata: {} as iModelMetadataTemplate,
-                checked: false,
-                descriptor: resourceManagementDescriptor,
-                translatedOptions: Array<any>()
-            }
-        },
-        created() {
-            this.loadMetadata()
-            let notTranslatedOptions = this.descriptor.metadata.typeOfAnalytics.options
-            for (var idx in notTranslatedOptions) {
-                let translatedOption = notTranslatedOptions[idx]
-                translatedOption.name = this.$t(translatedOption.name)
-                this.translatedOptions.push(translatedOption)
-            }
-        },
-        props: {
-            id: String,
-            visibility: Boolean
-        },
-        emits: ['update:visibility'],
-        methods: {
-            closeDialog() {
-                this.$emit('update:visibility', false)
-            },
-            loadMetadata() {
-                this.loading = true
-
-                if (this.id) {
-                    this.$http
-                        .get(process.env.VUE_APP_API_PATH + `2.0/resources/files/metadata?key=` + this.id)
-                        .then((response: AxiosResponse<any>) => {
-                            this.metadata = response.data
-                        })
-                        .catch(() => {
-                            this.$store.commit('setError', {
-                                title: this.$t('common.toast.metadata'),
-                                msg: this.$t('common.toast.metadataLoadingFailed')
-                            })
-                        })
-                }
-                this.loading = false
-            },
-            removeImage() {
-                this.metadata.image = ''
-                this.setDirty()
-            },
-            saveMetadata(): void {
-                this.loading = true
-                if (this.id) {
-                    this.$http
-                        .post(process.env.VUE_APP_API_PATH + `2.0/resources/files/metadata?key=` + this.id, this.metadata, {
-                            responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
-
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        })
-                        .then(() => {
-                            this.$store.commit('setInfo', {
-                                title: this.$t('common.toast.updateTitle'),
-                                msg: this.$t('common.toast.updateSuccess')
-                            })
-                        })
-                        .catch((error) => {
-                            this.$store.commit('setError', {
-                                title: this.$t('common.toast.updateTitle'),
-                                msg: this.$t(error)
-                            })
-                        })
-                }
-                this.loading = false
-                this.closeDialog()
-            },
-            setDirty(): void {
-                this.dirty = true
-            },
-            uploadFile(event): void {
-                const reader = new FileReader()
-                let self = this
-                reader.addEventListener(
-                    'load',
-                    function() {
-                        self.metadata.image = reader.result || ''
-                    },
-                    false
-                )
-                if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
-                    reader.readAsDataURL(event.srcElement.files[0])
-                    this.setDirty()
-                } else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
-            }
-        },
-        computed: {
-            ...mapState({
-                locale: 'locale'
-            })
-        },
-        watch: {
-            id() {
-                this.loadMetadata()
-            }
+export default defineComponent({
+    name: 'metadata-dialog',
+    components: { Dialog, Dropdown, InputSwitch, Accordion, AccordionTab, Textarea },
+    data() {
+        return {
+            dirty: false,
+            loading: true,
+            metadata: {} as iModelMetadataTemplate,
+            checked: false,
+            descriptor: resourceManagementDescriptor,
+            translatedOptions: Array<any>()
         }
-    })
+    },
+    created() {
+        this.loadMetadata()
+        let notTranslatedOptions = this.descriptor.metadata.typeOfAnalytics.options
+        for (var idx in notTranslatedOptions) {
+            let translatedOption = notTranslatedOptions[idx]
+            translatedOption.name = this.$t(translatedOption.name)
+            this.translatedOptions.push(translatedOption)
+        }
+    },
+    props: {
+        id: String,
+        visibility: Boolean
+    },
+    emits: ['update:visibility'],
+    methods: {
+        closeDialog() {
+            this.$emit('update:visibility', false)
+        },
+        loadMetadata() {
+            this.loading = true
+
+            if (this.id) {
+                this.$http
+                    .get(process.env.VUE_APP_API_PATH + `2.0/resources/files/metadata?key=` + this.id)
+                    .then((response: AxiosResponse<any>) => {
+                        this.metadata = response.data
+                    })
+                    .catch(() => {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.toast.metadata'),
+                            msg: this.$t('common.toast.metadataLoadingFailed')
+                        })
+                    })
+            }
+            this.loading = false
+        },
+        removeImage() {
+            this.metadata.image = ''
+            this.setDirty()
+        },
+        saveMetadata(): void {
+            this.loading = true
+            if (this.id) {
+                this.$http
+                    .post(process.env.VUE_APP_API_PATH + `2.0/resources/files/metadata?key=` + this.id, this.metadata, {
+                        responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
+
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(() => {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.updateTitle'),
+                            msg: this.$t('common.toast.updateSuccess')
+                        })
+                    })
+                    .catch((error) => {
+                        this.$store.commit('setError', {
+                            title: this.$t('common.toast.updateTitle'),
+                            msg: this.$t(error)
+                        })
+                    })
+            }
+            this.loading = false
+            this.closeDialog()
+        },
+        setDirty(): void {
+            this.dirty = true
+        },
+        uploadFile(event): void {
+            const reader = new FileReader()
+            let self = this
+            reader.addEventListener(
+                'load',
+                function() {
+                    self.metadata.image = reader.result || ''
+                },
+                false
+            )
+            if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
+                reader.readAsDataURL(event.srcElement.files[0])
+                this.setDirty()
+            } else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
+        }
+    },
+    computed: {
+        ...mapState({
+            locale: 'locale'
+        })
+    },
+    watch: {
+        id() {
+            this.loadMetadata()
+        }
+    }
+})
 </script>
 
 <style scoped lang="scss">
-    #inputImage {
-        display: none;
+#inputImage {
+    display: none;
+}
+.knMetadataDialog {
+    &:deep(.p-dialog-content) {
+        width: 600px;
+        min-width: 600px;
+        max-width: 1200px;
+
+        height: 600px;
+        min-height: 600px;
+        max-height: 900px;
     }
-    .knMetadataDialog {
-        &:deep(.p-dialog-content) {
-            width: 600px;
-            min-width: 600px;
-            max-width: 1200px;
 
-            height: 600px;
-            min-height: 600px;
-            max-height: 900px;
+    .p-fileupload-buttonbar {
+        border: none;
+
+        .p-button:not(.p-fileupload-choose) {
+            display: none;
         }
 
-        .p-fileupload-buttonbar {
-            border: none;
-
-            .p-button:not(.p-fileupload-choose) {
-                display: none;
-            }
-
-            .p-fileupload-choose {
-                @extend .kn-button--primary;
-            }
+        .p-fileupload-choose {
+            @extend .kn-button--primary;
         }
+    }
 
-        .metadataTextArea {
-            width: 100%;
+    .metadataTextArea {
+        width: 100%;
+    }
+    .imageContainer {
+        height: 100%;
+        .icon {
+            color: var(--kn-color-secondary);
         }
-        .imageContainer {
-            height: 100%;
-            .icon {
-                color: $color-secondary;
-            }
-            img {
-                height: 150px;
-                max-width: 300px;
-            }
+        img {
+            height: 150px;
+            max-width: 300px;
         }
+    }
 
-        .descriptionTextArea {
+    .descriptionTextArea {
+        height: 200px;
+
+        &:deep(.p-inputtextarea) {
             height: 200px;
-
-            &:deep(.p-inputtextarea) {
-                height: 200px;
-            }
         }
     }
+}
 </style>

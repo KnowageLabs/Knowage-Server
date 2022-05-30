@@ -1,12 +1,12 @@
 <template>
     <Toast></Toast>
     <ConfirmDialog></ConfirmDialog>
-    <KnOverlaySpinnerPanel :visibility="loading" />
+    <KnOverlaySpinnerPanel />
     <div class="layout-wrapper-content" :class="{ 'layout-wrapper-content-embed': documentExecution.embed }">
-        <MainMenu></MainMenu>
+        <MainMenu @menuItemSelected="setSelectedMenuItem"></MainMenu>
 
         <div class="layout-main">
-            <router-view />
+            <router-view :selectedMenuItem="selectedMenuItem" :menuItemClickedTrigger="menuItemClickedTrigger" />
         </div>
     </div>
 </template>
@@ -20,9 +20,19 @@ import { defineComponent } from 'vue'
 import store from '@/App.store'
 import { mapState } from 'vuex'
 import WEB_SOCKET from '@/services/webSocket.js'
+import themeHelper from '@/helpers/themeHelper/themeHelper'
+import { primeVueDate, getLocale } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     components: { ConfirmDialog, KnOverlaySpinnerPanel, MainMenu, Toast },
+
+    data() {
+        return {
+            themeHelper: new themeHelper(),
+            selectedMenuItem: null,
+            menuItemClickedTrigger: false
+        }
+    },
 
     async beforeCreate() {
         await this.$http
@@ -42,8 +52,16 @@ export default defineComponent({
                 }
                 localStorage.setItem('locale', storedLocale)
                 localStorage.setItem('token', response.data.userUniqueIdentifier)
+
                 store.commit('setLocale', storedLocale)
                 this.$i18n.locale = storedLocale
+
+                // @ts-ignore
+                if (this.$i18n.messages[this.$i18n.locale.replaceAll('-', '_')]) {
+                    // @ts-ignore
+                    this.$primevue.config.locale = { ...this.$primevue.config.locale, ...this.$i18n.messages[this.$i18n.locale.replaceAll('-', '_')].locale }
+                }
+                this.$primevue.config.locale.dateFormat = primeVueDate(getLocale(true))
 
                 let language = this.$i18n
                 let splittedLanguage = language.locale.split('_')
@@ -55,7 +73,7 @@ export default defineComponent({
                 url += '&SCRIPT_ID=' + (splittedLanguage.length > 2 ? splittedLanguage[2].replaceAll('#', '') : '')
                 url += '&THEME_NAME=sbi_default'
 
-                this.$emit('update:loading', true)
+                this.$store.commit('setLoading', true)
                 this.$http.get(url).then(
                     () => {
                         store.commit('setLocale', language.locale)
@@ -64,7 +82,7 @@ export default defineComponent({
                     },
                     (error) => console.error(error)
                 )
-                this.$emit('update:loading', false)
+                this.$store.commit('setLoading', false)
             })
             .catch(function(error) {
                 if (error.response) {
@@ -73,10 +91,23 @@ export default defineComponent({
                     console.log(error.response.headers)
                 }
             })
+        await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/user-configs').then((response) => {
+            store.commit('setConfigurations', response.data)
+        })
         if (this.isEnterprise) {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
+            if (Object.keys(this.defaultTheme.length === 0)) store.commit('setDefaultTheme', await this.themeHelper.getDefaultKnowageTheme())
+
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
                 store.commit('setLicenses', response.data)
             })
+            if (Object.keys(this.theme).length === 0) {
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement/current`).then((response) => {
+                    store.commit('setTheme', response.data.config)
+                    this.themeHelper.setTheme(response.data.config)
+                })
+            } else {
+                this.themeHelper.setTheme(this.theme)
+            }
         }
     },
     mounted() {
@@ -160,6 +191,10 @@ export default defineComponent({
                     }
                 }
             }
+        },
+        setSelectedMenuItem(menuItem) {
+            this.selectedMenuItem = menuItem
+            this.menuItemClickedTrigger = !this.menuItemClickedTrigger
         }
     },
     computed: {
@@ -169,7 +204,9 @@ export default defineComponent({
             user: 'user',
             loading: 'loading',
             isEnterprise: 'isEnterprise',
-            documentExecution: 'documentExecution'
+            documentExecution: 'documentExecution',
+            theme: 'theme',
+            defaultTheme: 'defaultTheme'
         })
     },
     watch: {
@@ -191,9 +228,6 @@ export default defineComponent({
                 life: typeof newInfo.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newInfo.duration
             })
         },
-        loading(newLoading) {
-            this.loading = newLoading
-        },
         user() {
             /* if (!oldUser.userId && oldUser != newUser)  */
         }
@@ -202,10 +236,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+html {
+    font-size: var(--kn-font-size);
+}
 body {
     padding: 0;
     margin: 0;
-    font-family: 'Roboto';
+    font-family: var(--kn-font-family);
 }
 .layout-wrapper-content {
     display: flex;

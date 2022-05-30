@@ -4,6 +4,5 @@
     "dropdownStyle": {
         "border": "none"
     },
-    "editMode": "cell",
     "responsiveLayout": "stack"
 }

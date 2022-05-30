@@ -52,6 +52,13 @@
 			
 		<CONFIG></CONFIG>
 	</ACTION>
+	
+	<ACTION name="EXPORT_RESULT_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.ExportResultAction"  
+			scope="REQUEST">
+			
+		<CONFIG></CONFIG>
+	</ACTION>
 
 	
 

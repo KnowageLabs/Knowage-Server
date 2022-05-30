@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.constants;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.eng.spagobi.tools.dataset.bo.PreparedDataSet;
 import it.eng.spagobi.tools.dataset.bo.PythonDataSet;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
@@ -112,10 +113,12 @@ public class DataSetConstants {
 	public static final String DS_FEDERATED = "SbiFederatedDataSet";
 	public static final String DS_CUSTOM = "SbiCustomDataSet";
 	public static final String DS_FLAT = "SbiFlatDataSet";
+	public static final String DS_PREPARED = "SbiPreparedDataSet";
 	public static final String DS_REST_TYPE = RESTDataSet.DATASET_TYPE;
 	public static final String DS_PYTHON_TYPE = PythonDataSet.DATASET_TYPE;
 	public static final String DS_SOLR_TYPE = SolrDataSet.DATASET_TYPE;
 	public static final String DS_SPARQL = "SbiSPARQLDataSet";
+	public static final String PREPARED_DATASET = PreparedDataSet.DS_TYPE;
 
 	public static final String QBE_DATA_SOURCE = "qbeDataSource";
 	public static final String QBE_DATAMARTS = "qbeDatamarts";
@@ -128,6 +131,8 @@ public class DataSetConstants {
 	public static final String IS_PERSISTED = "isPersisted";
 	public static final String IS_PERSISTED_HDFS = "isPersistedHDFS";
 	public static final String IS_SCHEDULED = "isScheduled";
+	public static final String TABLE_NAME = "tableName";
+	public static final String DATA_PREPARATION_INSTANCE_ID = "dataPrepInstanceId";
 	public static final String FLAT_TABLE_NAME = "flatTableName";
 	public static final String DATA_SOURCE_FLAT = "dataSourceFlat";
 	public static final String IS_PUBLIC = "isPublic";
@@ -143,7 +148,6 @@ public class DataSetConstants {
 	public static final String FILTERS = "FILTERS";
 
 	public static final String FILE_TYPE = "fileType";
-	public static final String FILE_DS_METADATA = "fileDsMetadata";
 	public static final String CSV_FILE_DELIMITER_CHARACTER = "csvDelimiter";
 	public static final String CSV_FILE_QUOTE_CHARACTER = "csvQuote";
 	public static final String CSV_FILE_ENCODING = "csvEncoding";
@@ -172,6 +176,7 @@ public class DataSetConstants {
 		name2Code.put(DS_REST_NAME, DS_REST_TYPE);
 		name2Code.put(DS_PYTHON_NAME, DS_PYTHON_TYPE);
 		name2Code.put("SPARQL", DataSetConstants.DS_SPARQL);
+		name2Code.put("Prepared", DataSetConstants.DS_PREPARED);
 
 		// add all REST attributes
 		int curr = 0;
@@ -212,6 +217,7 @@ public class DataSetConstants {
 		code2name.put(DataSetConstants.DS_SOLR_TYPE, "Solr");
 		code2name.put(DS_PYTHON_TYPE, DS_PYTHON_NAME);
 		code2name.put(DataSetConstants.DS_SPARQL, "SPARQL");
+		code2name.put(DataSetConstants.DS_PREPARED, "Prepared");
 	}
 
 }

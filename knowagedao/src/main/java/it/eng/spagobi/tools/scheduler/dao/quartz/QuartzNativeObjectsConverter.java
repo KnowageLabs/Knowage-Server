@@ -17,19 +17,28 @@
  */
 package it.eng.spagobi.tools.scheduler.dao.quartz;
 
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
-import org.quartz.TriggerUtils;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 
 import it.eng.spagobi.tools.scheduler.bo.CronExpression;
 import it.eng.spagobi.tools.scheduler.bo.Job;
@@ -50,17 +59,25 @@ public class QuartzNativeObjectsConverter {
 
 	private static Logger logger = Logger.getLogger(QuartzNativeObjectsConverter.class);
 
-	public static org.quartz.JobDetail convertJobToNativeObject(Job spagobiJob) {
-		org.quartz.JobDetail quartzJob;
+	public static final String GROUP_NAME_SEPARATOR = "/";
 
-		quartzJob = new org.quartz.JobDetail();
-		quartzJob.setName(spagobiJob.getName());
-		quartzJob.setGroup(spagobiJob.getGroupName());
-		quartzJob.setDescription(spagobiJob.getDescription());
-		quartzJob.setJobClass(spagobiJob.getJobClass());
-		quartzJob.setDurability(spagobiJob.isDurable());
-		quartzJob.setRequestsRecovery(spagobiJob.isRequestsRecovery());
-		quartzJob.setVolatility(spagobiJob.isVolatile());
+	private QuartzNativeObjectsConverter() {
+		super();
+	}
+
+	public static org.quartz.JobDetail convertJobToNativeObject(String tenant, Job spagobiJob, boolean global) {
+
+		String description = Optional.ofNullable(spagobiJob.getDescription()).orElse("");
+
+		String name = spagobiJob.getName();
+		String group = Optional.ofNullable(spagobiJob.getGroupName()).orElse(Scheduler.DEFAULT_GROUP);
+
+		group = global ? group : applyTenant(tenant, group);
+
+		JobBuilder jobBuilder = newJob().withIdentity(name, group).withDescription(description).ofType(spagobiJob.getJobClass())
+				.storeDurably(spagobiJob.isDurable()).requestRecovery(spagobiJob.isRequestsRecovery())
+		// TODO : Not present in Quartz 2.3 : with quartzJob.setVolatility(spagobiJob.isVolatile());
+		;
 
 		JobDataMap parameters = convertParametersToNativeObject(spagobiJob.getParameters());
 		if (parameters.containsKey(MERGE_ALL_SNAPSHOTS)) {
@@ -73,22 +90,22 @@ public class QuartzNativeObjectsConverter {
 					"An unexpected error occured while converting Job to native object: " + COLLATE_SNAPSHOTS + " property already defined");
 		}
 		parameters.put(COLLATE_SNAPSHOTS, spagobiJob.isCollateSnapshots() ? "true" : "false");
-		quartzJob.setJobDataMap(parameters);
+		jobBuilder = jobBuilder.usingJobData(parameters);
 
-		return quartzJob;
+		return jobBuilder.build();
 	}
 
 	public static Job convertJobFromNativeObject(org.quartz.JobDetail quartzJob) {
-		Job spagobiJob;
+		Job spagobiJob = new Job();
+		JobKey key = quartzJob.getKey();
 
-		spagobiJob = new Job();
-		spagobiJob.setName(quartzJob.getName());
-		spagobiJob.setGroupName(quartzJob.getGroup());
+		spagobiJob.setName(key.getName());
+		spagobiJob.setGroupName(key.getGroup());
 		spagobiJob.setDescription(quartzJob.getDescription());
 		spagobiJob.setJobClass(quartzJob.getJobClass());
 		spagobiJob.setDurable(quartzJob.isDurable());
 		spagobiJob.setRequestsRecovery(quartzJob.requestsRecovery());
-		spagobiJob.setVolatile(quartzJob.isVolatile());
+		spagobiJob.setVolatile(/* TODO : Not present in Quartz 2.3 : quartzJob.isVolatile() */ true);
 
 		Map<String, String> parameters = convertParametersFromNativeObject(quartzJob.getJobDataMap());
 		if (parameters.containsKey(MERGE_ALL_SNAPSHOTS)) {
@@ -104,14 +121,15 @@ public class QuartzNativeObjectsConverter {
 		return spagobiJob;
 	}
 
-	public static org.quartz.Trigger convertTriggerToNativeObject(Trigger spagobiTrigger) {
-		org.quartz.Trigger quartzTrigger;
-
+	public static org.quartz.Trigger convertTriggerToNativeObject(String tenant, Trigger spagobiTrigger, boolean global) {
 		logger.debug("IN");
 
-		quartzTrigger = null;
+		org.quartz.Trigger quartzTrigger = null;
+
 		try {
 			Assert.assertNotNull(spagobiTrigger, "Input parameter [spagobiTrigger] csannot be null");
+
+			TriggerBuilder triggerBuilder = TriggerBuilder.newTrigger();
 
 			if (!org.quartz.CronExpression.isValidExpression(spagobiTrigger.getChronExpression().getExpression())) {
 				try {
@@ -124,58 +142,60 @@ public class QuartzNativeObjectsConverter {
 				}
 			}
 
+			String triggerName = spagobiTrigger.getName();
+			String triggerGroup = Optional.ofNullable(spagobiTrigger.getGroupName()).orElse(Scheduler.DEFAULT_GROUP);
+
+			String jobName = spagobiTrigger.getJob().getName();
+			String jobGroup = Optional.ofNullable(spagobiTrigger.getJob().getGroupName()).orElse(Scheduler.DEFAULT_GROUP);
+
+			jobGroup = global ? jobGroup : applyTenant(tenant, jobGroup);
+
+			String description = Optional.ofNullable(spagobiTrigger.getDescription()).orElse("");
+
 			if (spagobiTrigger.isRunImmediately()) {
 				spagobiTrigger.getJob().addParameter("originalTriggerName", spagobiTrigger.getOriginalTriggerName());
-				quartzTrigger = TriggerUtils.makeImmediateTrigger(spagobiTrigger.getName(), 0, 10000);
-				quartzTrigger.setJobName(spagobiTrigger.getJob().getName());
-				quartzTrigger.setJobGroup(spagobiTrigger.getJob().getGroupName());
 				JobDataMap jobDataMap = convertParametersToNativeObject(spagobiTrigger.getJob().getParameters());
-				quartzTrigger.setJobDataMap(jobDataMap);
+
+				SimpleScheduleBuilder schedule = simpleSchedule();
+
+				quartzTrigger = triggerBuilder.forJob(jobName, jobGroup).withDescription(description).usingJobData(jobDataMap).withSchedule(schedule).build();
 
 			} else {
 
+				triggerBuilder = triggerBuilder.withIdentity(triggerName, triggerGroup).forJob(jobName, jobGroup).withDescription(description);
+
 				if (spagobiTrigger.isSimpleTrigger()) {
-					quartzTrigger = new org.quartz.SimpleTrigger();
+					triggerBuilder = triggerBuilder.withSchedule(simpleSchedule());
 				} else {
-					org.quartz.CronTrigger quartzCronTrigger = new org.quartz.CronTrigger();
 					String quartzCronExpression = null;
 					if (org.quartz.CronExpression.isValidExpression(spagobiTrigger.getChronExpression().getExpression())) {
 						quartzCronExpression = spagobiTrigger.getChronExpression().getExpression();
 					} else {
 						quartzCronExpression = convertCronExpressionToNativeObject(spagobiTrigger.getChronExpression(), spagobiTrigger.getStartTime());
 					}
-					quartzCronTrigger.setCronExpression(quartzCronExpression);
-					quartzTrigger = quartzCronTrigger;
+
+					/*
+					 * Very important during update!
+					 *
+					 * The update keep the previous start time: if we rewrite the same trigger a missfire happens; we don't want that!
+					 */
+					triggerBuilder = triggerBuilder.withSchedule(cronSchedule(quartzCronExpression).withMisfireHandlingInstructionDoNothing());
+
 					// dirty trick
 					spagobiTrigger.getJob().addParameter(SPAGOBI_CRON_EXPRESSION, spagobiTrigger.getChronExpression().getExpression());
 				}
 
-				quartzTrigger.setName(spagobiTrigger.getName());
-				quartzTrigger.setDescription(spagobiTrigger.getDescription());
-				if (spagobiTrigger.getGroupName() == null) {
-					quartzTrigger.setGroup(Scheduler.DEFAULT_GROUP);
-				} else {
-					quartzTrigger.setGroup(spagobiTrigger.getGroupName());
-				}
-
 				if (spagobiTrigger.getStartTime() != null) {
-					quartzTrigger.setStartTime(spagobiTrigger.getStartTime());
+					triggerBuilder = triggerBuilder.startAt(spagobiTrigger.getStartTime());
 				}
 				if (spagobiTrigger.getEndTime() != null) {
-					quartzTrigger.setEndTime(spagobiTrigger.getEndTime());
+					triggerBuilder = triggerBuilder.endAt(spagobiTrigger.getEndTime());
 				}
-				quartzTrigger.setJobName(spagobiTrigger.getJob().getName());
-				if (spagobiTrigger.getJob().getGroupName() == null) {
-					quartzTrigger.setJobGroup(Scheduler.DEFAULT_GROUP);
-				} else {
-					quartzTrigger.setJobGroup(spagobiTrigger.getJob().getGroupName());
-				}
-
-				quartzTrigger.setVolatility(spagobiTrigger.getJob().isVolatile());
 
 				JobDataMap jobDataMap = convertParametersToNativeObject(spagobiTrigger.getJob().getParameters());
-				quartzTrigger.setJobDataMap(jobDataMap);
+				triggerBuilder = triggerBuilder.usingJobData(jobDataMap);
 
+				quartzTrigger = triggerBuilder.build();
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected error occured while converting Trigger to native object", t);
@@ -190,8 +210,9 @@ public class QuartzNativeObjectsConverter {
 		Trigger spagobiTrigger;
 
 		spagobiTrigger = new Trigger();
-		spagobiTrigger.setName(quartzTrigger.getName());
-		spagobiTrigger.setGroupName(quartzTrigger.getGroup());
+		TriggerKey key = quartzTrigger.getKey();
+		spagobiTrigger.setName(key.getName());
+		spagobiTrigger.setGroupName(key.getGroup());
 		spagobiTrigger.setDescription(quartzTrigger.getDescription());
 
 		// spagobiTrigger.setCalendarName( quartzTrigger.getCalendarName() );
@@ -224,9 +245,9 @@ public class QuartzNativeObjectsConverter {
 		spagobiTrigger.setChronType(spagobiTrigger.getChronExpression().getChronoType());
 
 		Job job = new Job();
-		job.setName(quartzTrigger.getJobName());
-		job.setGroupName(quartzTrigger.getJobGroup());
-		job.setVolatile(quartzTrigger.isVolatile());
+		job.setName(quartzTrigger.getJobKey().getName());
+		job.setGroupName(quartzTrigger.getJobKey().getGroup());
+		job.setVolatile(/* TODO : Not present in Quartz 2.3 : quartzTrigger.isVolatile() */ true);
 		Map<String, String> parameters = convertParametersFromNativeObject(quartzTrigger.getJobDataMap());
 		job.addParameters(parameters);
 
@@ -499,6 +520,10 @@ public class QuartzNativeObjectsConverter {
 			throw new SpagoBIRuntimeException("Error while converting spagobi chron expression [" + cronString + "] to quartz cron expression", t);
 		}
 		return chronExpression;
+	}
+
+	private static String applyTenant(String tenant, String jobGroupName) {
+		return tenant + GROUP_NAME_SEPARATOR + jobGroupName;
 	}
 
 }

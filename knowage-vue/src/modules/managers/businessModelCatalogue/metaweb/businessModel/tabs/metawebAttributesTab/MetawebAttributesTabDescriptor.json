@@ -1,0 +1,43 @@
+{
+    "columns": [
+        {
+            "field": "name",
+            "header": "common.name"
+        },
+        {
+            "field": "identifier",
+            "header": "metaweb.businessModel.primaryKey"
+        },
+        {
+            "field": "visible",
+            "header": "common.visibility"
+        },
+        {
+            "field": "type",
+            "header": "common.type"
+        },
+        {
+            "field": "description",
+            "header": "common.description"
+        },
+        {
+            "field": "personal",
+            "header": "metaweb.businessModel.personal"
+        },
+        {
+            "field": "decrypt",
+            "header": "metaweb.businessModel.decrypt"
+        },
+        {
+            "field": "subjectId",
+            "header": "metaweb.businessModel.subjectId"
+        }
+    ],
+    "iconColumnStyle": {
+        "width": "10%"
+    },
+    "reorderColumnStyle": {
+        "width": "3rem"
+    },
+    "typeOptions": ["attribute", "measure"]
+}

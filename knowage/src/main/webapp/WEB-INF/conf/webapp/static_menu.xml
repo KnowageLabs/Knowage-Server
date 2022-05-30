@@ -48,7 +48,7 @@
 				to="/constraint-management" />
 			<ITEM id="3005" label="menu.BehaviouralModelLineage"
 				requiredFunctionality="BehaviouralModelLineage"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=behaviouralModelLineage" />
+				to="/behavioural-model-lineage" />
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="4000" label="menu.Catalogs"
@@ -71,7 +71,7 @@
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=measuresCatalogue" />
 			<ITEM id="4006" label="menu.LayersCatalogue"
 				requiredFunctionality="GeoLayersManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=layerCatalogue" />
+				to="/layers-management" />
 			<ITEM id="4007" label="menu.glossary.technical"
 				requiredFunctionality="ManageGlossaryTechnical"
 				to="/glossary-usage"
@@ -82,10 +82,10 @@
 				iconCls="fa fa-2x fa-building" />
 			<ITEM id="4009" label="menu.timespan"
 				requiredFunctionality="Timespan"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=timespan" />
+				to="/timespan" />
 			<ITEM id="4010" label="menu.calendar"
 				requiredFunctionality="Calendar"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=calendarTemplate" />
+				to="/calendar-management" />
 			<ITEM id="4011" label="menu.FunctionsCatalog"
 				toBeLicensed="KnowagePA"
 				requiredFunctionality="FunctionsCatalogManagement"
@@ -107,7 +107,7 @@
 				to="/schedulation-agenda" />
 			<ITEM id="5003" label="menu.HierarchiesEditor"
 				requiredFunctionality="HierarchiesManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=hierarchiesEditor" />
+				to="/hierarchy-management" />
 			<ITEM id="5004" label="menu.CacheManagement"
 				requiredFunctionality="CacheManagement"
 				to="/cache-management" />
@@ -173,13 +173,15 @@
 			<ITEM id="8002" label="menu.TemplateManagement"
 				requiredFunctionality="TemplateManagement"
 				to="/template-pruning" />
-			
-			<ITEM id="8011" label="menu.InstallConf"
+			<ITEM id="8003" label="menu.ThemeManagement"
+				requiredFunctionality="ThemeManagement"
+				to="/theme-management" />
+			<ITEM id="8004" label="menu.InstallConf"
 				requiredFunctionality="InstallConfig"
 				to="${SPAGOBI_CONTEXT}/restful-services/2.0/installconfig" />
-			<ITEM id="8012" label="menu.license"
+			<ITEM id="8005" label="menu.license"
 				requiredFunctionality="LicenseManagement" command="licenseSelection"/>
-			<ITEM id="8013" label="menu.event"
+			<ITEM id="8006" label="menu.event"
 				requiredFunctionality="EventsManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=eventLogsApp" />
 		</GROUP_ITEM>
@@ -247,11 +249,12 @@
 
 	<ALLOWED_USER_FUNCTIONALITIES id="11000">
 		<ITEM id="11001" label="menu.Browser" requiredFunctionality="SeeDocBrowser"
-			to="${SPAGOBI_CONTEXT}/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+			to="/document-browser"
 			iconCls="far fa-folder-open" />
 
 		<ITEM id="11002" label="menu.workspace"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=workspaceManagement"
+			requiredFunctionality="SeeMyWorkspace"
+			to="/workspace"
 			iconCls="fas fa-briefcase" />
 
 		<ITEM id="11003" label="menu.myAccount" condition="my_account"
@@ -265,7 +268,7 @@
 		
 		<ITEM id="11005" label="menu.HierarchiesEditor"
 			requiredFunctionality="HierarchiesManagement"
-			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=hierarchiesEditor"
+			to="/hierarchy-management"
 			iconCls="fas fa-sitemap" />
 		<ITEM id="11006" label="menu.FunctionsCatalog"
 			requiredFunctionality="FunctionsCatalogUsage"
@@ -283,7 +286,8 @@
 		<ITEM id="11009" label="menu.cross.definition"
 			requiredFunctionality="ManageCrossNavigation"
 			to="/cross-navigation-management" />
-		<ITEM id="11010" label="menu.calendar" requiredFunctionality="ManageCalendar"
+		<ITEM id="11010" label="menu.calendar"
+			requiredFunctionality="ManageCalendar"
 			to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=calendarTemplate"
 			iconCls="fas fa-calendar" />
 		<ITEM id="11011" label="menu.lovs.management"

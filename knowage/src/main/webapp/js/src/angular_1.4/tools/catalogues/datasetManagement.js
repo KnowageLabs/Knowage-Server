@@ -585,9 +585,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 
 	$scope.requestAdditionalParameterAddItem = function() {
-	var index; 
+	var index;
 	if($scope.restRequestAdditionalParameters) {
-		index = $scope.restRequestAdditionalParameters.length++;
+		index = $scope.restRequestAdditionalParameters.length +1;
 		$scope.counterRequestAdditionalParameters = index;
 	}
 		$scope.restRequestAdditionalParameters.push({"name":"","value":"","index":$scope.counterRequestAdditionalParameters});
@@ -2212,7 +2212,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				  }
 				  return JSON.stringify(obj) === JSON.stringify({});
 				}
-				
+
 			function IsJsonString(str) {
     		try {
         		JSON.parse(str);
@@ -3378,8 +3378,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						for(var f in fields){
 							if(typeof fields[f] != 'object') continue;
 							var tempCol = {"headerName":fields[f].header,"field":fields[f].name, "tooltipField":fields[f].name};
-							// If there is a subtype, show that
-							tempCol.headerComponentParams = {template: headerTemplate(fields[f].subtype || fields[f].type)};
+							tempCol.headerComponentParams = {template: headerTemplate(fields[f].type)};
 							columns.push(tempCol);
 						}
 						return columns;

@@ -3,16 +3,16 @@
         <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         <div class="p-grid p-m-0" v-if="!linkTableVisible">
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :type="'document'" :items="documents" @infoClicked="showDocumentInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onDocumentsSelected"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :type="'document'" :items="documents" :glossaryChanged="glossaryChanged" @infoClicked="showDocumentInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onDocumentsSelected"></GlossaryUsageNavigationCard>
             </div>
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :type="'dataset'" :items="datasets" @infoClicked="showDatasetInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onDatasetsSelected"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :type="'dataset'" :items="datasets" :glossaryChanged="glossaryChanged" @infoClicked="showDatasetInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onDatasetsSelected"></GlossaryUsageNavigationCard>
             </div>
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :type="'businessClass'" :items="businessClasses" @infoClicked="showBusinessClassInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onBusinessClassesSelected"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :type="'businessClass'" :items="businessClasses" :glossaryChanged="glossaryChanged" @infoClicked="showBusinessClassInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onBusinessClassesSelected"></GlossaryUsageNavigationCard>
             </div>
             <div class="p-col-6">
-                <GlossaryUsageNavigationCard class="p-m-2" :type="'table'" :items="tables" @infoClicked="showTableInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onTablesSelected"></GlossaryUsageNavigationCard>
+                <GlossaryUsageNavigationCard class="p-m-2" :type="'table'" :items="tables" :glossaryChanged="glossaryChanged" @infoClicked="showTableInfo($event)" @linkClicked="onLinkClicked($event)" @selected="onTablesSelected"></GlossaryUsageNavigationCard>
             </div>
         </div>
         <GlossaryUsageLinkCard v-else :title="linkTableTitle" class="p-m-2" :items="linkTableItems" :words="selectedLinkItemWords" :treeWords="selectedLinkItemTree" :showModelColumn="showModelColumn" @close="onLinkTableClose" @selected="onLinkItemSelect"></GlossaryUsageLinkCard>
@@ -31,7 +31,7 @@ export default defineComponent({
     name: 'glossary-usage-detail',
     components: { GlossaryUsageNavigationCard, GlossaryUsageLinkCard },
     props: { glossaryId: { type: Number }, selectedWords: { type: Array } },
-    emits: ['infoClicked', 'linkClicked', 'wordsFiltered'],
+    emits: ['infoClicked', 'linkClicked', 'wordsFiltered', 'loading'],
     data() {
         return {
             glossaryUsageDescriptor,
@@ -49,12 +49,14 @@ export default defineComponent({
             selectedLinkItemWords: {} as any,
             selectedLinkItemTree: {} as any,
             showModelColumn: false,
+            glossaryChanged: false,
             loading: false
         }
     },
     watch: {
         async glossaryId() {
             this.linkTableVisible = false
+            this.resetSelected()
             await this.loadNavigationItems('all', 'word')
         },
         selectedWords: {
@@ -70,6 +72,7 @@ export default defineComponent({
     methods: {
         async loadNavigationItems(type: string, item: string) {
             this.loading = true
+            this.$emit('loading', true)
             const postData = {
                 type: type,
                 item: item,
@@ -80,10 +83,10 @@ export default defineComponent({
                     page: 1,
                     GLOSSARY_ID: this.glossaryId
                 },
-                document: { selected: this.selectedDocuments, search: '', item_number: 9223372036854775807, page: 1 },
-                dataset: { selected: this.selectedDatasets, search: '', item_number: 9223372036854775807, page: 1 },
-                table: { selected: this.selectedTables, search: '', item_number: 9223372036854775807, page: 1 },
-                bness_cls: { selected: this.selectedBusinessClasses, search: '', item_number: 9223372036854775807, page: 1 }
+                document: { selected: this.selectedDocuments, search: '', item_number: 9223372036854775807, page: 1, GLOSSARY_ID: this.glossaryId },
+                dataset: { selected: this.selectedDatasets, search: '', item_number: 9223372036854775807, page: 1, GLOSSARY_ID: this.glossaryId },
+                table: { selected: this.selectedTables, search: '', item_number: 9223372036854775807, page: 1, GLOSSARY_ID: this.glossaryId },
+                bness_cls: { selected: this.selectedBusinessClasses, search: '', item_number: 9223372036854775807, page: 1, GLOSSARY_ID: this.glossaryId }
             }
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/loadNavigationItem', postData)
@@ -99,7 +102,10 @@ export default defineComponent({
                         msg: response
                     })
                 })
-                .finally(() => (this.loading = false))
+                .finally(() => {
+                    this.loading = false
+                    this.$emit('loading', false)
+                })
         },
         formatNavigationItems(data: any) {
             if ('document' in data) {
@@ -382,6 +388,13 @@ export default defineComponent({
         async onLinkTableClose() {
             this.linkTableVisible = false
             await this.loadNavigationItems('all', 'word')
+        },
+        resetSelected() {
+            this.selectedDocuments = []
+            this.selectedDatasets = []
+            this.selectedBusinessClasses = []
+            this.selectedTables = []
+            this.glossaryChanged = !this.glossaryChanged
         }
     }
 })

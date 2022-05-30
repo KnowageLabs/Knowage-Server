@@ -1,10 +1,10 @@
 <template>
     <div class="kn-page">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
-            <template #left>
+            <template #start>
                 {{ $t('managers.configurationManagement.title') }}
             </template>
-            <template #right>
+            <template #end>
                 <KnFabButton icon="fas fa-plus" @click="showForm()" data-test="open-form-button"></KnFabButton>
             </template>
         </Toolbar>
@@ -51,7 +51,7 @@
                         {{ $t('common.info.dataLoading') }}
                     </template>
 
-                    <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :style="col.style" class="kn-truncated">
+                    <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :style="[col.style, [col.field == 'valueCheck' ? 'max-width: 200px' : '']]" class="kn-truncated">
                         <template #filter="{ filterModel }">
                             <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                         </template>

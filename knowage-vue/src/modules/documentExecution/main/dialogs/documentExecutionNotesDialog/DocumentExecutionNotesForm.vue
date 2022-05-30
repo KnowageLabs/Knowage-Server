@@ -1,6 +1,6 @@
 <template>
     <div class="p-m-2">
-        <Editor v-model="note.content" class="p-m-2"></Editor>
+        <Editor v-model="note.content" class="p-m-2" editorStyle="height: 220px"></Editor>
 
         <div class="p-d-field p-my-3">
             <label class="kn-material-input-label">{{ $t('common.type') + ' *' }}</label>

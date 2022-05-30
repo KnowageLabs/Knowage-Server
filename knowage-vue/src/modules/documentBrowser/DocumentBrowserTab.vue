@@ -1,7 +1,20 @@
 <template>
-    <router-view v-if="item" v-slot="{ Component }" @close="$emit('close', item)">
+    <router-view
+        v-show="item"
+        v-slot="{ Component }"
+        :functionalityId="functionalityId"
+        :item="loadedItem"
+        :parameterValuesMap="parameterValuesMap"
+        :tabKey="key"
+        @close="$emit('close', item)"
+        @parametersChanged="onParametersChange"
+        @iframeCreated="onIframeCreated"
+        @closeIframe="$emit('closeIframe')"
+        @closeDetails="$emit('close', item)"
+        @documentSaved="$emit('documentSaved', $event)"
+    >
         <keep-alive>
-            <component :is="Component" :key="item.routerId"></component>
+            <component :is="Component" :key="key" :functionalityId="functionalityId" :item="loadedItem" :parameterValuesMap="parameterValuesMap" :tabKey="key"></component>
         </keep-alive>
     </router-view>
 </template>
@@ -12,15 +25,37 @@ import { defineComponent } from 'vue'
 export default defineComponent({
     name: 'document-browser-tab',
     components: {},
-    emits: ['close'],
-    props: { item: { type: Object }, mode: { type: String } },
+    emits: ['close', 'iframeCreated', 'closeIframe', 'documentSaved'],
+    props: { item: { type: Object }, functionalityId: { type: String } },
     data() {
         return {
-            selectedItem: {}
+            parameterValuesMap: {} as any,
+            loadedItem: null as any
         }
     },
-    watch: {},
-    created() {},
-    methods: {}
+    computed: {
+        key(): string {
+            return this.item?.routerId
+        }
+    },
+    watch: {
+        item() {
+            this.loadItem()
+        }
+    },
+    created() {
+        this.loadItem()
+    },
+    methods: {
+        onIframeCreated(payload: any) {
+            this.$emit('iframeCreated', payload)
+        },
+        onParametersChange(payload: any) {
+            this.parameterValuesMap[payload.document.label + '-' + this.key] = payload.parameters
+        },
+        loadItem() {
+            this.loadedItem = this.item
+        }
+    }
 })
 </script>

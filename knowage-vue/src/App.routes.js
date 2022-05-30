@@ -8,6 +8,8 @@ import documentBrowserRoutes from '@/modules/documentBrowser/DocumentBrowser.rou
 import workspaceRoutes from '@/modules/workspace/workspace.routes.js'
 import overlayRoutes from '@/overlay/Overlay.routes.js'
 import authHelper from '@/helpers/commons/authHelper'
+import dataPreparationRoutes from '@/modules/workspace/dataPreparation/DataPreparation.routes.js'
+import { loadLanguageAsync } from '@/App.i18n.js'
 
 const baseRoutes = [
     {
@@ -19,6 +21,12 @@ const baseRoutes = [
         path: '/about',
         name: 'about',
         component: () => import('@/views/About.vue')
+    },
+    {
+        path: '/externalUrl/',
+        name: 'externalUrl',
+        component: IframeRenderer,
+        props: (route) => ({ url: route.params.url, externalLink: true })
     },
     {
         path: '/knowage/servlet/:catchAll(.*)',
@@ -65,6 +73,7 @@ const routes = baseRoutes
     .concat(documentBrowserRoutes)
     .concat(workspaceRoutes)
     .concat(overlayRoutes)
+    .concat(dataPreparationRoutes)
 
 const router = createRouter({
     base: process.env.VUE_APP_PUBLIC_PATH,
@@ -73,11 +82,12 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+    if (localStorage.getItem('locale')) loadLanguageAsync(localStorage.getItem('locale')).then(() => next())
     const checkRequired = !('/' == to.fullPath && '/' == from.fullPath)
     const loggedIn = localStorage.getItem('token')
 
     if (checkRequired && !loggedIn) {
-        authHelper.logout()
+        authHelper.handleUnauthorized()
     } else {
         next()
     }

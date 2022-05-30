@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -270,45 +271,88 @@ public class PdfExporter extends AbstractFormatExporter {
 					if (orderedCol.getString("header").equals(col.getString("aliasToShow"))) {
 						if (col.has("dateFormat")) {
 							String angularDateFormat = col.getString("dateFormat");
-							switch (angularDateFormat) {
-							case "LLLL":
-								toReturn[i] = "EEEE, MMMM d, yyyy h:mm:ss a";
-								break;
-							case "llll":
-								toReturn[i] = "EEEE, MMMM d, yyyy h:mm:ss a";
-								break;
-							case "LLL":
-								toReturn[i] = "MMMM d, yyyy h:mm:ss a";
-								break;
-							case "lll":
-								toReturn[i] = "MMMM d, yyyy h:mm:ss a";
-								break;
-							case "DD/MM/YYYY HH:mm:SS":
-								toReturn[i] = "dd/MM/YYYY HH:mm:SS";
-								break;
-							case "DD/MM/YYYY HH:mm":
-								toReturn[i] = "dd/MM/YYYY HH:mm";
-								break;
-							case "LL":
-								toReturn[i] = "MMMM d, yyyy";
-								break;
-							case "ll":
-								toReturn[i] = "MMMM d, yyyy";
-								break;
-							case "L":
-								toReturn[i] = "MM/dd/YYYY";
-								break;
-							case "l":
-								toReturn[i] = "MM/d/YYYY";
-								break;
-							case "LT":
-								toReturn[i] = "HH:mm a";
-								break;
-							case "LTS":
-								toReturn[i] = "HH:mm:SS a";
-								break;
-							default:
-								break;
+							if (getLocale().equals(Locale.ITALY)) {
+								switch (angularDateFormat) {
+								case "LLLL":
+									toReturn[i] = "EEEE d MMMM yyyy h:mm:ss a";
+									break;
+								case "llll":
+									toReturn[i] = "EEEE d MMMM yyyy h:mm:ss a";
+									break;
+								case "LLL":
+									toReturn[i] = "d MMMM yyyy h:mm:ss a";
+									break;
+								case "lll":
+									toReturn[i] = "d MMMM yyyy h:mm:ss a";
+									break;
+								case "DD/MM/YYYY HH:mm:SS":
+									toReturn[i] = "dd/MM/YYYY HH:mm:SS";
+									break;
+								case "DD/MM/YYYY HH:mm":
+									toReturn[i] = "dd/MM/YYYY HH:mm";
+									break;
+								case "LL":
+									toReturn[i] = "dd MMMM yyyy";
+									break;
+								case "ll":
+									toReturn[i] = "dd MMMM yyyy";
+									break;
+								case "L":
+									toReturn[i] = "dd/MM/YYYY";
+									break;
+								case "l":
+									toReturn[i] = "d/MM/YYYY";
+									break;
+								case "LT":
+									toReturn[i] = "HH:mm a";
+									break;
+								case "LTS":
+									toReturn[i] = "HH:mm:SS a";
+									break;
+								default:
+									break;
+								}
+							} else {
+								switch (angularDateFormat) {
+								case "LLLL":
+									toReturn[i] = "EEEE, MMMM d, yyyy h:mm:ss a";
+									break;
+								case "llll":
+									toReturn[i] = "EEEE, MMMM d, yyyy h:mm:ss a";
+									break;
+								case "LLL":
+									toReturn[i] = "MMMM d, yyyy h:mm:ss a";
+									break;
+								case "lll":
+									toReturn[i] = "MMMM d, yyyy h:mm:ss a";
+									break;
+								case "DD/MM/YYYY HH:mm:SS":
+									toReturn[i] = "dd/MM/YYYY HH:mm:SS";
+									break;
+								case "DD/MM/YYYY HH:mm":
+									toReturn[i] = "dd/MM/YYYY HH:mm";
+									break;
+								case "LL":
+									toReturn[i] = "MMMM d, yyyy";
+									break;
+								case "ll":
+									toReturn[i] = "MMMM d, yyyy";
+									break;
+								case "L":
+									toReturn[i] = "MM/dd/YYYY";
+									break;
+								case "l":
+									toReturn[i] = "MM/d/YYYY";
+									break;
+								case "LT":
+									toReturn[i] = "HH:mm a";
+									break;
+								case "LTS":
+									toReturn[i] = "HH:mm:SS a";
+									break;
+								default:
+									break;
+								}
 							}
 						}
 					}

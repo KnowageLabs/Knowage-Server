@@ -29,6 +29,12 @@
                 <column name="ORGANIZATION_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.commons.metadata.SbiOrganizationProductType" />
-        </set>        
+        </set>
+        <set name="sbiOrganizationThemes" inverse="true" cascade="all-delete-orphan">
+            <key>
+                <column name="ORGANIZATION_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.commons.metadata.SbiOrganizationTheme"/>
+        </set>
     </class>
 </hibernate-mapping>

@@ -8,14 +8,15 @@ const store = createStore({
     },
     state() {
         return {
+            configurations: {},
             user: {},
             error: {},
             info: {},
             warning: {},
             downloads: { count: { total: 0, unRead: 0 } },
-            locale: {},
+            locale: 'en_US',
             news: { count: { total: 0, unRead: 0 } },
-            loading: false,
+            loading: 0,
             homePage: {},
             internationalization: [],
             isEnterprise: false,
@@ -24,7 +25,9 @@ const store = createStore({
                 licenses: {},
                 cpuNumber: -1
             },
-            documentExecution: {}
+            documentExecution: {},
+            theme: {},
+            defaultTheme: {}
         }
     },
     actions: {
@@ -50,6 +53,9 @@ const store = createStore({
         }
     },
     mutations: {
+        setConfigurations(state, configs) {
+            state.configurations = configs
+        },
         setUser(state, user) {
             state.user = user
         },
@@ -60,7 +66,10 @@ const store = createStore({
             state.info = info
         },
         setLoading(state, loading) {
-            state.loading = loading
+            if (loading) state.loading++
+            else state.loading--
+
+            if (state.loading < 0) state.loading = 0
         },
         setWarning(state, warning) {
             state.warning = warning
@@ -91,6 +100,12 @@ const store = createStore({
         },
         setDocumentExecutionEmbed(state) {
             state.documentExecution.embed = true
+        },
+        setTheme(state, theme) {
+            state.theme = theme
+        },
+        setDefaultTheme(state, defaultTheme) {
+            state.defaultTheme = defaultTheme
         }
     }
 })

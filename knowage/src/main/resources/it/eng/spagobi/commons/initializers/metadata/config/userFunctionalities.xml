@@ -123,7 +123,9 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ResourceManagementDev" description="ResourceManagementDev" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ProfileAttributeListManagement" description="ProfileAttributeListManagement" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="LicenseReadOnly" description="LicenseReadOnly" />
-	
+	<USER_FUNCTIONALITY productType="KnowageSI" name="ThemeManagement" description="ThemeManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="QbeAdvancedSaving" description="QbeAdvancedSaving"/>	
+		
 	<!-- Authorizations for KnowageER -->
 	<USER_FUNCTIONALITY productType="KnowageER" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="FunctionalitiesManagement" description="FunctionalitiesManagement"/>
@@ -319,6 +321,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="PythonWidget" description="CreatePythonWidget" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="PythonDataset" description="CreatePythonDataset" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ProfileAttributeListManagement" description="ProfileAttributeListManagement" />
-	<USER_FUNCTIONALITY productType="KnowagePA" name="LicenseReadOnly" description="LicenseReadOnly" />
+	<USER_FUNCTIONALITY productType="KnowagePA" name="LicenseReadOnly" description="LicenseReadOnly" /> 
 	
 </USER_FUNCTIONALITIES>

@@ -3,10 +3,10 @@ span<template>
         <Card class="p-col-6 p-p-0">
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.businessModelManager.drivers') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <Button class="kn-button p-button-text" :disabled="readonly" @click="showForm">{{ $t('managers.businessModelManager.add') }}</Button>
                     </template>
                 </Toolbar>
@@ -41,127 +41,127 @@ span<template>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { iBusinessModelDriver } from '../../BusinessModelCatalogue'
-import BuisnessModelDriverDetail from './BusinessModelDriverDetail.vue'
-import Card from 'primevue/card'
-import Listbox from 'primevue/listbox'
+    import { defineComponent } from 'vue'
+    import { iBusinessModelDriver } from '../../BusinessModelCatalogue'
+    import BuisnessModelDriverDetail from './BusinessModelDriverDetail.vue'
+    import Card from 'primevue/card'
+    import Listbox from 'primevue/listbox'
 
-export default defineComponent({
-    name: 'business-model-drivers-card',
-    components: {
-        BuisnessModelDriverDetail,
-        Card,
-        Listbox
-    },
-    props: {
-        id: {
-            type: Number,
-            required: true
+    export default defineComponent({
+        name: 'business-model-drivers-card',
+        components: {
+            BuisnessModelDriverDetail,
+            Card,
+            Listbox
         },
-        drivers: {
-            type: Array,
-            required: true
+        props: {
+            id: {
+                type: Number,
+                required: true
+            },
+            drivers: {
+                type: Array,
+                required: true
+            },
+            driversOptions: {
+                type: Array,
+                required: true
+            },
+            readonly: {
+                type: Boolean
+            }
         },
-        driversOptions: {
-            type: Array,
-            required: true
+        emits: ['delete'],
+        data() {
+            return {
+                businessModelDrivers: [] as iBusinessModelDriver[],
+                driversForDelete: [] as iBusinessModelDriver[],
+                analyticalDrivers: [] as any[],
+                selectedDriver: null as iBusinessModelDriver | null,
+                formVisible: false
+            }
         },
-        readonly: {
-            type: Boolean
-        }
-    },
-    emits: ['delete'],
-    data() {
-        return {
-            businessModelDrivers: [] as iBusinessModelDriver[],
-            driversForDelete: [] as iBusinessModelDriver[],
-            analyticalDrivers: [] as any[],
-            selectedDriver: null as iBusinessModelDriver | null,
-            formVisible: false
-        }
-    },
-    watch: {
-        drivers() {
-            this.selectedDriver = null
+        watch: {
+            drivers() {
+                this.selectedDriver = null
+                this.loadDrivers()
+            },
+            driversOptions() {
+                this.loadAnalyticalDrivers()
+            }
+        },
+        created() {
             this.loadDrivers()
-        },
-        driversOptions() {
             this.loadAnalyticalDrivers()
-        }
-    },
-    created() {
-        this.loadDrivers()
-        this.loadAnalyticalDrivers()
-    },
-    methods: {
-        loadDrivers() {
-            this.businessModelDrivers = this.drivers as any[]
         },
-        loadAnalyticalDrivers() {
-            this.analyticalDrivers = this.driversOptions
-        },
-        showForm(event: any) {
-            if (event.value) {
-                this.selectedDriver = event.value
-            } else {
-                this.selectedDriver = { biMetaModelID: this.id, modifiable: 0, priority: this.businessModelDrivers.length + 1, required: true, visible: true, multivalue: false, numberOfErrors: 1 }
-                this.businessModelDrivers.push(this.selectedDriver)
-            }
+        methods: {
+            loadDrivers() {
+                this.businessModelDrivers = this.drivers as any[]
+            },
+            loadAnalyticalDrivers() {
+                this.analyticalDrivers = this.driversOptions
+            },
+            showForm(event: any) {
+                if (event.value) {
+                    this.selectedDriver = event.value
+                } else {
+                    this.selectedDriver = { biMetaModelID: this.id, modifiable: 0, priority: this.businessModelDrivers.length + 1, required: true, visible: true, multivalue: false, numberOfErrors: 1 }
+                    this.businessModelDrivers.push(this.selectedDriver)
+                }
 
-            if (this.selectedDriver && this.selectedDriver.parameter) {
-                this.selectedDriver.parameter = this.analyticalDrivers.find((driver) => {
-                    return driver.id === this.selectedDriver?.parameter?.id
+                if (this.selectedDriver && this.selectedDriver.parameter) {
+                    this.selectedDriver.parameter = this.analyticalDrivers.find((driver) => {
+                        return driver.id === this.selectedDriver?.parameter?.id
+                    })
+                }
+
+                this.formVisible = true
+            },
+            movePriority(driverId: number, direction: 'UP' | 'DOWN') {
+                const currentDriverIndex = this.businessModelDrivers.findIndex((driver) => driver.id === driverId)
+
+                if (direction === 'UP') {
+                    this.businessModelDrivers[currentDriverIndex - 1].priority++
+                    this.businessModelDrivers[currentDriverIndex - 1].status = 'CHANGED'
+                    this.businessModelDrivers[currentDriverIndex].priority--
+                    this.businessModelDrivers[currentDriverIndex].status = 'CHANGED'
+
+                    const temp = this.businessModelDrivers[currentDriverIndex - 1]
+                    this.businessModelDrivers[currentDriverIndex - 1] = this.businessModelDrivers[currentDriverIndex]
+                    this.businessModelDrivers[currentDriverIndex] = temp
+                } else {
+                    this.businessModelDrivers[currentDriverIndex + 1].priority--
+                    this.businessModelDrivers[currentDriverIndex + 1].status = 'CHANGED'
+                    this.businessModelDrivers[currentDriverIndex].priority++
+                    this.businessModelDrivers[currentDriverIndex].status = 'CHANGED'
+
+                    const temp = this.businessModelDrivers[currentDriverIndex + 1]
+                    this.businessModelDrivers[currentDriverIndex + 1] = this.businessModelDrivers[currentDriverIndex]
+                    this.businessModelDrivers[currentDriverIndex] = temp
+                }
+            },
+            deleteDriverConfirm(index: number) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.deleteMessage'),
+                    header: this.$t('common.toast.deleteTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.deleteDriver(index)
                 })
+            },
+            deleteDriver(index: number) {
+                if (this.businessModelDrivers[index].id) {
+                    this.driversForDelete.push(this.businessModelDrivers[index])
+                }
+                this.businessModelDrivers.splice(index, 1)
+                this.$emit('delete', this.driversForDelete)
+                this.selectedDriver = null
             }
-
-            this.formVisible = true
-        },
-        movePriority(driverId: number, direction: 'UP' | 'DOWN') {
-            const currentDriverIndex = this.businessModelDrivers.findIndex((driver) => driver.id === driverId)
-
-            if (direction === 'UP') {
-                this.businessModelDrivers[currentDriverIndex - 1].priority++
-                this.businessModelDrivers[currentDriverIndex - 1].status = 'CHANGED'
-                this.businessModelDrivers[currentDriverIndex].priority--
-                this.businessModelDrivers[currentDriverIndex].status = 'CHANGED'
-
-                const temp = this.businessModelDrivers[currentDriverIndex - 1]
-                this.businessModelDrivers[currentDriverIndex - 1] = this.businessModelDrivers[currentDriverIndex]
-                this.businessModelDrivers[currentDriverIndex] = temp
-            } else {
-                this.businessModelDrivers[currentDriverIndex + 1].priority--
-                this.businessModelDrivers[currentDriverIndex + 1].status = 'CHANGED'
-                this.businessModelDrivers[currentDriverIndex].priority++
-                this.businessModelDrivers[currentDriverIndex].status = 'CHANGED'
-
-                const temp = this.businessModelDrivers[currentDriverIndex + 1]
-                this.businessModelDrivers[currentDriverIndex + 1] = this.businessModelDrivers[currentDriverIndex]
-                this.businessModelDrivers[currentDriverIndex] = temp
-            }
-        },
-        deleteDriverConfirm(index: number) {
-            this.$confirm.require({
-                message: this.$t('common.toast.deleteMessage'),
-                header: this.$t('common.toast.deleteTitle'),
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteDriver(index)
-            })
-        },
-        deleteDriver(index: number) {
-            if (this.businessModelDrivers[index].id) {
-                this.driversForDelete.push(this.businessModelDrivers[index])
-            }
-            this.businessModelDrivers.splice(index, 1)
-            this.$emit('delete', this.driversForDelete)
-            this.selectedDriver = null
         }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-.driver-invalid {
-    color: red;
-}
+    .driver-invalid {
+        color: red;
+    }
 </style>

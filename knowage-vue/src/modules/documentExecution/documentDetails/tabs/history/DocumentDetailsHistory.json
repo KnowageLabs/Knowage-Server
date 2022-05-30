@@ -43,6 +43,7 @@
         },
         "sortFields": ["name", "active"],
         "textField": "creationDate",
+        "textFieldType": "date",
         "titleField": "name"
     },
     "validations": {

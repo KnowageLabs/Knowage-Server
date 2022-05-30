@@ -5,17 +5,9 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.security;
 
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.security.OAuth2.OAuth2Client;
-import it.eng.spagobi.security.OAuth2.OAuth2Config;
-import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
-import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -25,11 +17,19 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.security.OAuth2.OAuth2Client;
+import it.eng.spagobi.security.OAuth2.OAuth2Config;
+import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
  *
  */
 public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
+
 	static private Logger logger = Logger.getLogger(OAuth2SecurityServiceSupplier.class);
 
 	@Override
@@ -38,14 +38,14 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 
 		SpagoBIUserProfile profile;
 		try {
-			Properties config = OAuth2Config.getInstance().getConfig();
+			OAuth2Config config = OAuth2Config.getInstance();
 
 			OAuth2Client oauth2Client = new OAuth2Client();
 
 			HttpClient httpClient = oauth2Client.getHttpClient();
 
 			// We call the OAuth2 provider to get user's info
-			GetMethod httpget = new GetMethod(config.getProperty("USER_INFO_URL") + "?access_token=" + userUniqueIdentifier);
+			GetMethod httpget = new GetMethod(config.getUserInfoUrl() + "?access_token=" + userUniqueIdentifier);
 			int statusCode = httpClient.executeMethod(httpget);
 			byte[] response = httpget.getResponseBody();
 			if (statusCode != HttpStatus.SC_OK) {
@@ -71,11 +71,10 @@ public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 			profile.setOrganization("DEFAULT_TENANT");
 
 			/*
-			 * If the user's email is the same as the owner of the application
-			 * (as configured in the oauth2.config.properties file) we consider
-			 * him as the superadmin
+			 * If the user's email is the same as the owner of the application (as configured in the oauth2.config.properties file) we consider him as the
+			 * superadmin
 			 */
-			String adminEmail = config.getProperty("ADMIN_EMAIL");
+			String adminEmail = config.getAdminEmail();
 			String email = jsonObject.getString("email");
 			profile.setIsSuperadmin(email.equalsIgnoreCase(adminEmail));
 

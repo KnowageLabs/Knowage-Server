@@ -5,5 +5,11 @@
             "width": "80vw"
         }
     },
-    "dropdownOptions": ["Public", "Private"]
+    "dropdownOptions": ["Public", "Private"],
+    "messageStyle": {
+        "align-items": "center",
+        "display": "flex",
+        "justify-content": "center",
+        "text-align": "center"
+    }
 }

@@ -17,13 +17,19 @@
  */
 package it.eng.knowage.engine.cockpit.api.page;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +40,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.axis.encoding.Base64;
 import org.apache.log4j.Logger;
@@ -46,6 +53,9 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
+import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
+import it.eng.knowage.engine.cockpit.api.export.pdf.nodejs.PdfExporterV2;
+import it.eng.knowage.engine.cockpit.api.export.png.PngExporter;
 import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.knowage.export.wrapper.beans.ViewportDimensions;
 import it.eng.spago.error.EMFUserError;
@@ -122,17 +132,56 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	@GET
 	@Path("/{pagename}")
-	public View openPageGet(@PathParam("pagename") String pageName) {
+	public Object openPageGet(@PathParam("pagename") String pageName) {
 		return openPageInternal(pageName);
 	}
 
 	@POST
 	@Path("/{pagename}")
-	public View openPagePost(@PathParam("pagename") String pageName) {
+	public Object openPagePost(@PathParam("pagename") String pageName) {
 		return openPageInternal(pageName);
 	}
 
-	private View openPageInternal(String pageName) {
+	@GET
+	@Path("/{pagename}/pdf")
+	public Response openPageGetPdf(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException {
+		return openPagePdfInternal(pageName);
+	}
+
+	@POST
+	@Path("/{pagename}/pdf")
+	public Response openPagePostPdf(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException {
+		return openPagePdfInternal(pageName);
+	}
+
+	@GET
+	@Path("/{pagename}/spreadsheet")
+	public Response openPageGetSpreadsheet(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException {
+		return openPageSpreadsheetInternal(pageName);
+	}
+
+	@POST
+	@Path("/{pagename}/spreadsheet")
+	public Response openPagePostSpreadsheet(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException {
+		return openPageSpreadsheetInternal(pageName);
+	}
+
+	@GET
+	@Path("/{pagename}/png")
+	public Response openPageGetPng(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException {
+		return openPagePngInternal(pageName);
+	}
+
+	@POST
+	@Path("/{pagename}/png")
+	public Response openPagePostPng(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException {
+		return openPagePngInternal(pageName);
+	}
+
+	/**
+	 * @return Could be either a {@link View}, for HTML output type and error, or a {@link Response}, for PDF, PNG and Excel.
+	 */
+	private Object openPageInternal(String pageName) {
 		CockpitEngineInstance engineInstance;
 		String dispatchUrl = null;
 
@@ -160,32 +209,13 @@ public class PageResource extends AbstractCockpitEngineResource {
 			if ("execute".equals(pageName)) {
 				String outputType = request.getParameter(OUTPUT_TYPE);
 				if ("xls".equalsIgnoreCase(outputType) || "xlsx".equalsIgnoreCase(outputType)) {
-					request.setAttribute("template", getIOManager().getTemplateAsString());
-					String requestURL = getRequestUrlForExcelExport(request);
-					request.setAttribute("requestURL", requestURL);
-					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportExcel.jsp";
-					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+					return createRedirect("/spreadsheet");
 				} else if ("pdf".equalsIgnoreCase(outputType)) {
-					String requestURL = getRequestUrlForPdfExport(request);
-					request.setAttribute("requestURL", requestURL);
-
-					RenderOptions renderOptions = getRenderOptionsForPdfExporter(request);
-					request.setAttribute("renderOptions", renderOptions);
-
-					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportPdf.jsp";
-					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+					return createRedirect("/pdf");
 				} else if ("JPG".equalsIgnoreCase(outputType)) {
 					throw new UnsupportedOperationException("This method is not implemented anymore");
 				} else if ("PNG".equalsIgnoreCase(outputType)) {
-					// TO CHANGE
-					String requestURL = getRequestUrlForPdfExport(request);
-					request.setAttribute("requestURL", requestURL);
-
-					RenderOptions renderOptions = getRenderOptionsForPdfExporter(request);
-					request.setAttribute("renderOptions", renderOptions);
-
-					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportPng.jsp";
-					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+					return createRedirect("/png");
 				} else {
 					engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
 					getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
@@ -217,8 +247,6 @@ public class PageResource extends AbstractCockpitEngineResource {
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				// getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				dispatchUrl = "/WEB-INF/jsp/ngCockpit.jsp";
-			} else if ("test".equals(pageName)) {
-				dispatchUrl = "/WEB-INF/jsp/test4.jsp";
 			} else {
 				// error
 				dispatchUrl = "/WEB-INF/jsp/error.jsp";
@@ -230,6 +258,100 @@ public class PageResource extends AbstractCockpitEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private Response createRedirect(String suffix) throws URISyntaxException {
+		URI newLocation = createNewLocation(suffix);
+
+		return Response.status(307).header("Location", newLocation).build();
+	}
+
+	private URI createNewLocation(String suffix) throws URISyntaxException {
+		String requestURL = request.getRequestURI();
+		String queryString = request.getQueryString();
+
+		StringBuilder sb = new StringBuilder(requestURL.toString());
+		sb.append(suffix);
+		if (Objects.nonNull(queryString)) {
+			sb.append("?");
+			sb.append(queryString);
+		}
+
+		URI newLocation = new URI(sb.toString());
+
+		return newLocation;
+	}
+
+	private Response openPagePdfInternal(String pageName) throws EMFUserError, IOException, InterruptedException {
+		String requestURL = getRequestUrlForPdfExport(request);
+		RenderOptions renderOptions = getRenderOptionsForPdfExporter(request);
+
+		int documentId = Integer.valueOf(request.getParameter("document"));
+		String userId = request.getParameter("user_id");
+		String pdfPageOrientation = request.getParameter("pdfPageOrientation");
+		boolean pdfFrontPage = Boolean.valueOf(request.getParameter("pdfFrontPage"));
+		boolean pdfBackPage = Boolean.valueOf(request.getParameter("pdfBackPage"));
+
+		PdfExporterV2 pdfExporter = new PdfExporterV2(documentId, userId, requestURL, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage);
+		byte[] data = pdfExporter.getBinaryData();
+
+		return Response.ok(data, "application/pdf")
+				.header("Content-Length", Integer.toString(data.length))
+				.header("Content-Disposition", "attachment; fileName=" + request.getParameter("DOCUMENT_LABEL") + ".pdf")
+				.build();
+	}
+
+	private Response openPageSpreadsheetInternal(String pageName) throws EMFUserError, IOException, InterruptedException {
+		String requestURL = getRequestUrlForExcelExport(request);
+
+		request.setAttribute("template", getIOManager().getTemplateAsString());
+
+		String outputType = request.getParameter("outputType");
+		String userId = request.getParameter("user_id");
+		Map<String,String[]> parameterMap = request.getParameterMap();
+
+		String documentLabel = request.getParameter("DOCUMENT_LABEL");
+
+		ExcelExporter excelExporter = new ExcelExporter(outputType, userId, parameterMap, requestURL);
+		String mimeType = excelExporter.getMimeType();
+		byte[] data = excelExporter.getBinaryData(documentLabel);
+
+		return Response.ok(data, mimeType)
+				.header("Content-length", Integer.toString(data.length))
+				.header("Content-Disposition", "attachment; fileName=" + documentLabel + ".xlsx")
+				.build();
+	}
+
+	private Response openPagePngInternal(String pageName) throws EMFUserError, IOException, InterruptedException {
+		String requestURL = getRequestUrlForPdfExport(request);
+		RenderOptions renderOptions = getRenderOptionsForPdfExporter(request);
+
+		int documentId = Integer.valueOf(request.getParameter("document"));
+		String userId = request.getParameter("user_id");
+		String pdfPageOrientation = request.getParameter("pdfPageOrientation");
+		boolean pdfFrontPage = request.getParameter("pdfFrontPage") != null ? Boolean.valueOf(request.getParameter("pdfFrontPage")) : false;
+		boolean pdfBackPage = request.getParameter("pdfBackPage") != null ? Boolean.valueOf(request.getParameter("pdfBackPage")) : false;
+
+		PngExporter pngExporter = new PngExporter(documentId, userId, requestURL, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage);
+		byte[] data = pngExporter.getBinaryData();
+
+		boolean isZipped = new ZipInputStream(new ByteArrayInputStream(data)).getNextEntry() != null;
+
+		String mimeType = null;
+		String contentDisposition = null;
+
+		if (!isZipped) {
+			mimeType = "image/png";
+			contentDisposition = "attachment; fileName=" + request.getParameter("DOCUMENT_LABEL") + ".png";
+		} else {
+			mimeType = "application/zip";
+			contentDisposition = "attachment; fileName=" + request.getParameter("DOCUMENT_LABEL") + ".zip";
+		}
+
+		return Response.ok(data, mimeType)
+				.header("Content-length", Integer.toString(data.length))
+				.header("Content-Disposition", contentDisposition)
+				.build();
 	}
 
 	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request) throws UnsupportedEncodingException {

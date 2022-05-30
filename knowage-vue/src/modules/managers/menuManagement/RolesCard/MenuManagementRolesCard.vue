@@ -2,13 +2,25 @@
     <Card class="p-mx-auto">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.menuManagement.roles') }}
                 </template>
             </Toolbar>
         </template>
         <template #content>
-            <DataTable :value="rolesListFiltered" v-model:filters="filters" v-model:selection="selectedRoles" class="p-datatable-sm kn-table" dataKey="id" responsiveLayout="stack" breakpoint="960px" @rowSelect="onRowSelect" @rowUnselect="onRowUnselect">
+            <DataTable
+                :value="rolesListFiltered"
+                v-model:filters="filters"
+                v-model:selection="selectedRoles"
+                class="p-datatable-sm kn-table"
+                dataKey="id"
+                responsiveLayout="stack"
+                breakpoint="960px"
+                @rowSelect="onRowSelect"
+                @rowUnselect="onRowUnselect"
+                @rowSelectAll="onAllRowSelectionChange"
+                @rowUnselectAll="onAllRowSelectionChange"
+            >
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
                 </template>
@@ -78,6 +90,9 @@ export default defineComponent({
         },
         onRowUnselect() {
             this.$emit('changed', this.selectedRoles)
+        },
+        onAllRowSelectionChange() {
+            setTimeout(() => this.$emit('changed', this.selectedRoles), 0)
         }
     },
     computed: {

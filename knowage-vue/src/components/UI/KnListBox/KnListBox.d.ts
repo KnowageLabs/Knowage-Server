@@ -18,4 +18,5 @@ export interface Ibutton {
     label: string
     className?: string
     emits: string
+    condition?: string
 }

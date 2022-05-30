@@ -1,55 +1,53 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-        <template #left>{{ selectedRole.name }} </template>
-        <template #right>
+        <template #start>{{ selectedRole.name }} </template>
+        <template #end>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" :disabled="buttonDisabled" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplate" />
         </template>
     </Toolbar>
     <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
-    <div class="rolesDetail">
-        <TabView class="tabview-custom kn-tab" data-test="tab-view">
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.rolesManagement.detail.title') }}</span>
-                </template>
+    <TabView class="roles-tabview" data-test="tab-view">
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.rolesManagement.detail.title') }}</span>
+            </template>
 
-                <RoleDetailTab :selectedRole="selectedRole" @fieldChanged="onFieldChange" @roleTypeChanged="onRoleTypeChange" />
-            </TabPanel>
+            <RoleDetailTab :selectedRole="selectedRole" :publicRole="publicRole" @fieldChanged="onFieldChange" @roleTypeChanged="onRoleTypeChange" />
+        </TabPanel>
 
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.rolesManagement.authorizations.title') }}</span>
-                </template>
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.rolesManagement.authorizations.title') }}</span>
+            </template>
 
-                <RoleAuthorizationsTab :selectedRole="selectedRole" :authList="authorizationList" :authCBs="authorizationCBs" @authChanged="onFieldChange" />
-            </TabPanel>
+            <RoleAuthorizationsTab :selectedRole="selectedRole" :authList="authorizationList" :authCBs="authorizationCBs" @authChanged="onFieldChange" />
+        </TabPanel>
 
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.rolesManagement.businessModels') }}</span>
-                </template>
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.rolesManagement.businessModels') }}</span>
+            </template>
 
-                <DomainCategoryTab :title="$t('managers.rolesManagement.businessModels') + ' ' + $t('managers.rolesManagement.categories')" :categoryList="businessModelList" :selected="selectedBusinessModels" @changed="setSelectedBusinessModels($event)"></DomainCategoryTab>
-            </TabPanel>
+            <DomainCategoryTab :title="$t('managers.rolesManagement.businessModels') + ' ' + $t('managers.rolesManagement.categories')" :categoryList="businessModelList" :selected="selectedBusinessModels" @changed="setSelectedBusinessModels($event)"></DomainCategoryTab>
+        </TabPanel>
 
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.rolesManagement.dataSets') }}</span>
-                </template>
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.rolesManagement.dataSets') }}</span>
+            </template>
 
-                <DomainCategoryTab :title="$t('managers.rolesManagement.dataSets') + ' ' + $t('managers.rolesManagement.categories')" :categoryList="dataSetList" :selected="selectedDataSets" @changed="setSelectedDataSets($event)"></DomainCategoryTab>
-            </TabPanel>
+            <DomainCategoryTab :title="$t('managers.rolesManagement.dataSets') + ' ' + $t('managers.rolesManagement.categories')" :categoryList="dataSetList" :selected="selectedDataSets" @changed="setSelectedDataSets($event)"></DomainCategoryTab>
+        </TabPanel>
 
-            <TabPanel>
-                <template #header>
-                    <span>{{ $t('managers.rolesManagement.kpiCategories') }}</span>
-                </template>
+        <TabPanel>
+            <template #header>
+                <span>{{ $t('managers.rolesManagement.kpiCategories') }}</span>
+            </template>
 
-                <DomainCategoryTab :title="$t('managers.rolesManagement.kpiCategories')" :categoryList="kpiCategoriesList" :selected="selectedKPICategories" @changed="setSelectedKPICategories($event)"></DomainCategoryTab>
-            </TabPanel>
-        </TabView>
-    </div>
+            <DomainCategoryTab :title="$t('managers.rolesManagement.kpiCategories')" :categoryList="kpiCategoriesList" :selected="selectedKPICategories" @changed="setSelectedKPICategories($event)"></DomainCategoryTab>
+        </TabPanel>
+    </TabView>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -71,12 +69,7 @@ export default defineComponent({
         TabPanel,
         RoleAuthorizationsTab
     },
-    props: {
-        id: {
-            type: String,
-            required: false
-        }
-    },
+    props: { id: { type: String, required: false }, publicRole: { type: Object, required: false } },
     emits: ['touched', 'closed', 'inserted'],
     data() {
         return {
@@ -289,11 +282,26 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss" scoped>
-.rolesDetail {
-    overflow: auto;
-    flex: 1;
+<style lang="scss">
+.roles-absolute-scroll {
+    height: 100%;
+    left: 0;
+    top: 0;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+}
+
+.roles-tabview,
+.roles-tabview .p-tabview-panels,
+.roles-tabview .p-tabview-panel {
     display: flex;
     flex-direction: column;
+    flex: 1;
+}
+
+.roles-tabview .p-tabview-panels {
+    padding: 0 !important;
 }
 </style>

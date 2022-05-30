@@ -63,6 +63,11 @@ public class DatasetMetadataParser {
 	public static final String MULTIVALUE = "multivalue";
 	public static final String VERSION = "version";
 
+	public static final String PERSONAL = "personal";
+	public static final String MASKED = "masked";
+	public static final String DECRIPT = "decript";
+	public static final String SUBJECT_ID = "subjectId";
+
 	// XML VALUES FOR PROPERTIES TAG
 
 	public static final String VALUE = "value";
@@ -89,7 +94,9 @@ public class DatasetMetadataParser {
 				String type = fieldMetaData.getType().getName();
 				boolean multiValue = fieldMetaData.isMultiValue();
 				Assert.assertNotNull(type, "Type of the field " + name + " cannot be null");
+
 				FieldType fieldType = fieldMetaData.getFieldType();
+
 				Map properties = fieldMetaData.getProperties();
 
 				SourceBean sbMeta = new SourceBean(DatasetMetadataParser.COLUMN);
@@ -98,9 +105,11 @@ public class DatasetMetadataParser {
 				SourceBeanAttribute attM = new SourceBeanAttribute(MULTIVALUE, multiValue);
 				SourceBeanAttribute attA = alias != null ? new SourceBeanAttribute(ALIAS, alias) : null;
 				SourceBeanAttribute attF = fieldType != null ? new SourceBeanAttribute(FIELD_TYPE, fieldType.toString()) : null;
+
 				sbMeta.setAttribute(attN);
 				sbMeta.setAttribute(attT);
 				sbMeta.setAttribute(attM);
+
 				if (attA != null)
 					sbMeta.setAttribute(attA);
 				if (attF != null)
@@ -148,6 +157,7 @@ public class DatasetMetadataParser {
 				String name = fieldMetaData.getName();
 				String alias = fieldMetaData.getAlias();
 				String type = fieldMetaData.getType().getName();
+
 				boolean multiValue = fieldMetaData.isMultiValue();
 				Assert.assertNotNull(type, "Type of the field " + name + " cannot be null");
 				FieldType fieldType = fieldMetaData.getFieldType();
@@ -168,6 +178,15 @@ public class DatasetMetadataParser {
 				sbMeta.setAttribute(attN);
 				sbMeta.setAttribute(attT);
 				sbMeta.setAttribute(attM);
+
+				SourceBeanAttribute attPersonal = new SourceBeanAttribute(PERSONAL, fieldMetaData.isPersonal());
+				sbMeta.setAttribute(attPersonal);
+//				SourceBeanAttribute attMasked = new SourceBeanAttribute(MASKED, fieldMetaData.isMaskValue());
+//				sbMeta.setAttribute(attMasked);
+				SourceBeanAttribute attDecript = new SourceBeanAttribute(DECRIPT, fieldMetaData.isDecript());
+				sbMeta.setAttribute(attDecript);
+				SourceBeanAttribute attSubjectId = new SourceBeanAttribute(SUBJECT_ID, fieldMetaData.isSubjectId());
+				sbMeta.setAttribute(attSubjectId);
 
 				sbColumns.setAttribute(sbMeta);
 
@@ -329,6 +348,15 @@ public class DatasetMetadataParser {
 						fieldMeta.setFieldType(FieldType.SPATIAL_ATTRIBUTE);
 					else
 						fieldMeta.setFieldType(FieldType.ATTRIBUTE);
+
+					boolean personal = sbRow.getAttribute(PERSONAL) != null ? Boolean.parseBoolean((String) sbRow.getAttribute(PERSONAL)) : false;
+					fieldMeta.setPersonal(personal);
+//					boolean masked = sbRow.getAttribute(MASKED) != null ? Boolean.parseBoolean((String) sbRow.getAttribute(MASKED)) : false;
+//					fieldMeta.setMasked(masked);
+					boolean decript = sbRow.getAttribute(DECRIPT) != null ? Boolean.parseBoolean((String) sbRow.getAttribute(DECRIPT)) : false;
+					fieldMeta.setDecript(decript);
+					boolean subjectId = sbRow.getAttribute(SUBJECT_ID) != null ? Boolean.parseBoolean((String) sbRow.getAttribute(SUBJECT_ID)) : false;
+					fieldMeta.setSubjectId(subjectId);
 
 					List properties = sbRow.getAttributeAsList(DatasetMetadataParser.PROPERTY);
 

@@ -89,7 +89,7 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 	@Override
 	public void loadData(int offset, int fetchSize, int maxResults) {
 
-		if (this.isPersisted() || this.isFlatDataset()) {
+		if (this.isPersisted() || this.isFlatDataset() || this.isPreparedDataSet()) {
 			JDBCDataSet dataset = new JDBCDataSet();
 			dataset.setDataSource(getDataSourceForReading());
 			dataset.setQuery("select * from " + getTableNameForReading());
@@ -144,6 +144,7 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 					((FileDatasetCsvDataReader) dataReader).setMetaData(this.getMetadata());
 			} catch (Exception e) {
 				// Yes, it's mute
+				logger.debug("Cannot set user metadata", e);
 			}
 
 			dataStore = dataProxy.load(dataReader);

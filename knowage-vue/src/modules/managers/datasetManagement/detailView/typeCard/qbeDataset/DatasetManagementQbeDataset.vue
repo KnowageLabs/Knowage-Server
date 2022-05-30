@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-mt-3">
+    <Card class="p-m-2">
         <template #content>
             <form v-if="dataset.dsTypeCd == 'Qbe'" class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-6">
@@ -50,39 +50,75 @@
                 </div>
             </form>
             <div v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'">
-                <Button :label="$t('managers.datasetManagement.viewQbeButton')" class="p-col-2 p-mr-2 p-button kn-button--primary" style="max-height:38px" @click="viewQbe" />
-                <Button :label="$t('managers.datasetManagement.openQbeButton')" class="p-col-2 p-button kn-button--primary" :disabled="parentValid" @click="showQbeDataset" />
+                <Button :label="$t('managers.datasetManagement.viewQbeButton')" class="p-col-2 p-mr-2 p-button kn-button--primary" style="max-height:38px" @click="openQbeQueryDialog" />
+                <Button :label="$t('managers.datasetManagement.openQbeButton')" class="p-col-2 p-button kn-button--primary" :disabled="parentValid" @click="openDatasetInQBE" />
             </div>
         </template>
     </Card>
+
+    <Dialog class="dmdialog" :visible="qbeQueryDialogVisible" :modal="true" :closable="false" :style="qbeDescriptor.style.codeMirror">
+        <template #header>
+            <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12">
+                <template #start>
+                    <span>{{ $t('managers.datasetManagement.viewQbeButton') }}</span>
+                </template>
+                <template #end>
+                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="qbeQueryDialogVisible = false" />
+                </template>
+            </Toolbar>
+        </template>
+        <VCodeMirror class="kn-height-full" ref="codeMirror" v-model:value="qbeQuery" :options="codemirrorOptions" />
+    </Dialog>
+
+    <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="dataset" @close="closeQbe" @datasetSaved="$emit('datasetSaved')" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+import { VCodeMirror } from 'vue3-code-mirror'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import qbeDescriptor from './DatasetManagementQbeDatasetDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
+import Dialog from 'primevue/dialog'
+import QBE from '@/modules/qbe/QBE.vue'
 
 export default defineComponent({
-    components: { Card, Dropdown, KnValidationMessages },
+    components: { Card, Dropdown, KnValidationMessages, Dialog, VCodeMirror, QBE },
     props: { parentValid: { type: Boolean }, selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, businessModels: { type: Array as any } },
-    emits: ['touched'],
+    emits: ['touched', 'qbeSaved'],
     data() {
         return {
             qbeDescriptor,
             dataset: {} as any,
-            v$: useValidate() as any
+            v$: useValidate() as any,
+            qbeQuery: '' as any,
+            qbeQueryDialogVisible: false,
+            qbeVisible: false,
+            codeMirror: {} as any,
+            codemirrorOptions: {
+                readOnly: true,
+                mode: 'text/javascript',
+                indentWithTabs: true,
+                smartIndent: true,
+                lineWrapping: true,
+                matchBrackets: true,
+                autofocus: true,
+                theme: 'eclipse',
+                lineNumbers: true
+            }
         }
     },
     created() {
         this.dataset = this.selectedDataset
+        this.setupCodeMirror()
     },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
+            this.setupCodeMirror()
         }
     },
     validations() {
@@ -94,22 +130,42 @@ export default defineComponent({
         return validationObject
     },
     methods: {
-        viewQbe() {
-            if (this.dataset.qbeJSONQuery) {
-                if (typeof this.dataset.qbeJSONQuery === 'string') {
-                    this.dataset.qbeJSONQuery = JSON.stringify(JSON.parse(this.dataset.qbeJSONQuery), null, 2)
-                } else {
-                    this.dataset.qbeJSONQuery = JSON.stringify(this.dataset.qbeJSONQuery, null, 2)
-                }
-
-                this.$store.commit('setInfo', { title: 'TODO', msg: 'This functionality is to be created in the following sprints...' })
-            } else {
-                this.$store.commit('setInfo', { title: this.$t('managers.datasetManagement.viewQbeWarning'), msg: this.$t('managers.datasetManagement.viewQbeMsg') })
-            }
+        setupCodeMirror() {
+            const interval = setInterval(() => {
+                if (!this.$refs.codeMirror) return
+                this.codeMirror = (this.$refs.codeMirror as any).editor as any
+                setTimeout(() => {
+                    this.codeMirror.refresh()
+                }, 0)
+                clearInterval(interval)
+            }, 200)
         },
-        showQbeDataset() {
-            this.$store.commit('setInfo', { title: 'TODO', msg: 'This functionality is to be created in the following sprints...' })
+        openQbeQueryDialog() {
+            if (typeof this.dataset.qbeJSONQuery === 'string') {
+                this.qbeQuery = JSON.stringify(JSON.parse(this.dataset.qbeJSONQuery), null, 2)
+            } else {
+                this.qbeQuery = JSON.stringify(this.dataset.qbeJSONQuery, null, 2)
+            }
+            this.qbeQueryDialogVisible = true
+        },
+        openDatasetInQBE() {
+            this.qbeVisible = true
+        },
+        closeQbe() {
+            this.qbeVisible = false
+            this.$emit('qbeSaved')
         }
     }
 })
 </script>
+<style lang="scss">
+.dmdialog.p-dialog .p-dialog-header,
+.dmdialog.p-dialog .p-dialog-content {
+    padding: 0;
+}
+.dmdialog.p-dialog .p-dialog-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+</style>

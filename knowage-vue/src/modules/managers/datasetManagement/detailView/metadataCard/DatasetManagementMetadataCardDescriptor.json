@@ -21,31 +21,68 @@
     },
     "valueTypes": [
         {
+            "disabled": false,
             "name": "java.lang.String",
             "value": "String"
         },
         {
+            "disabled": false,
+            "name": "java.sql.Date",
+            "value": "Date"
+        },
+        {
+            "disabled": false,
+            "name": "java.time.LocalDateTime",
+            "value": "Local Date"
+        },
+        {
+            "disabled": true,
+            "name": "net.minidev.json.JSONArray",
+            "value": "JSON"
+        },
+        {
+            "disabled": true,
+            "name": "java.util.LinkedHashMap",
+            "value": "Hash Map"
+        },
+        {
+            "disabled": true,
+            "name": "java.lang.Boolean",
+            "value": "Boolean"
+        },
+        {
+            "disabled": true,
             "name": "java.lang.Double",
             "value": "Double"
         },
         {
+            "disabled": false,
             "name": "java.lang.Integer",
             "value": "Integer"
         },
         {
+            "disabled": true,
             "name": "java.lang.Long",
             "value": "Long"
         },
         {
+            "disabled": false,
             "name": "java.util.Date",
             "value": "Date"
         },
         {
+            "disabled": false,
             "name": "java.sql.Timestamp",
             "value": "Timestamp"
         },
         {
+            "disabled": false,
             "name": "java.math.BigDecimal",
+            "value": "Float"
+        },
+        {
+            "disabled": false,
+            "name": "java.lang.Float",
             "value": "Float"
         }
     ]

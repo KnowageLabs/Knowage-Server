@@ -3,10 +3,10 @@
         <div class="kn-page-content p-grid p-m-0">
             <div class="p-col-4 p-sm-4 p-md-3 p-p-0 kn-page">
                 <Toolbar class="kn-toolbar kn-toolbar--primary">
-                    <template #left>
+                    <template #start>
                         {{ $t('managers.crossNavigationManagement.title') }}
                     </template>
-                    <template #right>
+                    <template #end>
                         <KnFabButton icon="fas fa-plus" @click="showForm(-1)" data-test="new-button" />
                     </template>
                 </Toolbar>

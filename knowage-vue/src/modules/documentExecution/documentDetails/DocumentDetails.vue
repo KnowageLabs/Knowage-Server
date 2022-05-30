@@ -1,27 +1,26 @@
 <template>
-    <Dialog class="document-details-dialog remove-padding p-fluid kn-dialog--toolbar--primary" :contentStyle="mainDescriptor.style.flex" :visible="visible" :modal="false" :closable="false" position="right" :baseZIndex="1" :autoZIndex="true">
-        <template #header>
-            <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
-                <template #left>
-                    {{ $t('documentExecution.documentDetails.title') }}
-                </template>
-                <template #right>
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || v$.$invalid" />
-                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('closeDetails')" />
-                </template>
-            </Toolbar>
-        </template>
+    <div v-if="viewMode === 'document-detail' || $route.name === 'document-details-new-document' || $route.name === 'document-details-edit-document'" id="document-details-container" class="p-d-flex p-flex-column kn-flex kn-height-full">
+        <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
+            <template #start>
+                {{ $t('documentExecution.documentDetails.title') }}
+            </template>
+            <template #end>
+                <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDocument" :disabled="invalidDrivers > 0 || invalidOutputParams > 0 || v$.$invalid" />
+                <Button v-if="propMode === 'execution'" icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeDocument" />
+            </template>
+        </Toolbar>
+        <ProgressSpinner v-if="loading" class="doc-details-spinner" :style="mainDescriptor.style.spinnerStyle" />
+
         <div class="document-details-tab-container p-d-flex p-flex-column kn-flex">
-            <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" data-test="progress-bar" />
-            <TabView v-if="!loading" class="document-details-tabview p-d-flex p-flex-column kn-flex">
+            <TabView class="document-details-tabview p-d-flex p-flex-column kn-flex" @tab-change="onTabChange">
                 <TabPanel>
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.info.infoTitle') }}</span>
                     </template>
                     <InformationsTab
+                        v-if="!loading"
                         :selectedDocument="selectedDocument"
                         :availableFolders="availableFolders"
-                        :selectedFolder="selectedFolder"
                         :documentTypes="types"
                         :documentEngines="engines"
                         :availableDatasources="dataSources"
@@ -65,10 +64,14 @@
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.subreports.title') }}</span>
                     </template>
+
+                    <SubreportsTab :selectedDocument="selectedDocument" :allDocumentDetailsProp="allDocumentDetails" />
                 </TabPanel>
             </TabView>
         </div>
-    </Dialog>
+    </div>
+
+    <!-- </Dialog> -->
 </template>
 
 <script lang="ts">
@@ -81,22 +84,38 @@ import DriversTab from './tabs/drivers/DocumentDetailsDrivers.vue'
 import OutputParamsTab from './tabs/outputParams/DocumentDetailsOutputParameters.vue'
 import DataLineageTab from './tabs/dataLineage/DocumentDetailsDataLineage.vue'
 import HistoryTab from './tabs/history/DocumentDetailsHistory.vue'
-import Dialog from 'primevue/dialog'
+import SubreportsTab from './tabs/subreports/DocumentDetailsSubreports.vue'
+// import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import Badge from 'primevue/badge'
 import TabPanel from 'primevue/tabpanel'
-import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam } from '@/modules/documentExecution/documentDetails/DocumentDetails'
+import ProgressSpinner from 'primevue/progressspinner'
+import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam, iDocumentType } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 
 export default defineComponent({
     name: 'document-details',
-    components: { InformationsTab, DriversTab, OutputParamsTab, DataLineageTab, HistoryTab, TabView, TabPanel, Dialog, Badge },
-    props: { docId: { type: Number, required: true }, selectedFolder: { type: Object, required: true }, visible: { type: Boolean, required: false } },
-    emits: ['closeDetails'],
+    components: {
+        InformationsTab,
+        DriversTab,
+        OutputParamsTab,
+        DataLineageTab,
+        HistoryTab,
+        SubreportsTab,
+        TabView,
+        TabPanel,
+        // Dialog,
+        Badge,
+        ProgressSpinner
+    },
+    props: { propDocId: { type: String }, propFolderId: { type: String }, propMode: { type: String }, viewMode: { type: String } },
+    emits: ['closeDetails', 'documentSaved'],
     data() {
         return {
             v$: useValidate() as any,
             mainDescriptor,
             loading: false,
+            docId: null as any,
+            folderId: null as any,
             templateToUpload: null as any,
             imageToUpload: null as any,
             selectedDataset: {} as any,
@@ -113,7 +132,10 @@ export default defineComponent({
             savedTables: [] as iTableSmall[],
             availableFolders: [] as iFolder[],
             states: mainDescriptor.states,
-            types: mainDescriptor.types
+            types: [] as iDocumentType[],
+            allDocumentDetails: [] as any,
+            savedSubreports: [] as any,
+            selectedSubreports: [] as any
         }
     },
     computed: {
@@ -130,25 +152,60 @@ export default defineComponent({
             return 0
         }
     },
+    watch: {
+        async propDocId() {
+            this.isForEdit()
+            await this.loadPage(this.docId)
+        }
+    },
     async created() {
+        if (this.viewMode !== 'document-detail' && this.$route.name !== 'document-details-new-document' && this.$route.name !== 'document-details-edit-document') return
+        this.isForEdit()
         await this.loadPage(this.docId)
     },
+    activated() {
+        if (this.propFolderId) {
+            this.getFunctionalities()
+            this.getAnalyticalDrivers()
+            this.getDatasources()
+            this.getTypes()
+            this.getEngines()
+            this.getAttributes()
+            this.getParTypes()
+            this.getDateFormats()
+            this.getSavedTablesByDocumentID()
+            this.getDataset()
+            this.getDataSources()
+        }
+    },
     methods: {
-        //#region ===================== Get Persistent Data ====================================================
+        isForEdit() {
+            if (this.propMode === 'execution') {
+                this.loadAsExecution()
+            } else {
+                this.loadAsDetail()
+            }
+        },
+        loadAsExecution() {
+            this.docId = this.propDocId
+            this.folderId = this.propFolderId
+        },
+        loadAsDetail() {
+            this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
+        },
         async loadPage(id) {
             this.loading = true
             await Promise.all([
                 await this.getSelectedDocumentById(id),
-                this.getAnalyticalDrivers(),
                 this.getFunctionalities(),
+                this.getAnalyticalDrivers(),
                 this.getDatasources(),
-                this.getDocumentDrivers(),
-                this.getTemplates(),
+                this.getTypes(),
                 this.getEngines(),
                 this.getAttributes(),
                 this.getParTypes(),
                 this.getDateFormats(),
-                this.getTablesByDocumentID(),
+                this.getSavedTablesByDocumentID(),
                 this.getDataset(),
                 this.getDataSources()
             ])
@@ -158,11 +215,18 @@ export default defineComponent({
             if (id) {
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${id}`).then((response: AxiosResponse<any>) => (this.selectedDocument = response.data))
             } else {
-                this.selectedDocument = this.mainDescriptor.newDocument
+                this.selectedDocument = { ...this.mainDescriptor.newDocument }
+                this.selectedDocument.functionalities = []
             }
         },
         async getFunctionalities() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders?includeDocs=false`).then((response: AxiosResponse<any>) => (this.availableFolders = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders?includeDocs=false`).then((response: AxiosResponse<any>) => {
+                this.availableFolders = response.data
+                if (this.$route.params.folderId) {
+                    let sourceFolder = this.availableFolders.find((folder) => folder.id == parseInt(this.folderId)) as iFolder
+                    this.selectedDocument.functionalities.push(sourceFolder.path)
+                }
+            })
         },
         async getAnalyticalDrivers() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers`).then((response: AxiosResponse<any>) => (this.analyticalDrivers = response.data))
@@ -180,8 +244,11 @@ export default defineComponent({
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/templates`).then((response: AxiosResponse<any>) => (this.templates = response.data))
             }
         },
+        async getTypes() {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/document-detail/types`).then((response: AxiosResponse<any>) => (this.types = response.data))
+        },
         async getEngines() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/engines`).then((response: AxiosResponse<any>) => (this.engines = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/document-detail/engines`).then((response: AxiosResponse<any>) => (this.engines = response.data))
         },
         async getAttributes() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/attributes`).then((response: AxiosResponse<any>) => (this.attributes = response.data))
@@ -193,11 +260,11 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/DATE_FORMAT`).then((response: AxiosResponse<any>) => (this.dateFormats = response.data))
         },
         async getDataSources() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`).then((response: AxiosResponse<any>) => ((this.metaSourceResource = response.data), (this.metaSourceResource = this.mainDescriptor.metaSourceResource)))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`).then((response: AxiosResponse<any>) => (this.metaSourceResource = response.data))
         },
-        async getTablesByDocumentID() {
+        async getSavedTablesByDocumentID() {
             if (this.selectedDocument.id) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/document/${this.selectedDocument.id}`).then((response: AxiosResponse<any>) => ((this.savedTables = response.data), (this.savedTables = this.mainDescriptor.savedTables)))
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/document/${this.selectedDocument.id}`).then((response: AxiosResponse<any>) => (this.savedTables = response.data))
             }
         },
         async getDataset() {
@@ -212,7 +279,11 @@ export default defineComponent({
                     })
             }
         },
-        //#endregion ===============================================================================================
+        async getAllSubreports() {
+            this.loading = true
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/`).then((response: AxiosResponse<any>) => (this.allDocumentDetails = response.data))
+            this.loading = false
+        },
         setTemplateForUpload(event) {
             this.templateToUpload = event
         },
@@ -302,6 +373,7 @@ export default defineComponent({
             }
         },
         async saveDocument() {
+            this.loading = true
             let docToSave = { ...this.selectedDocument }
             delete docToSave.drivers
             delete docToSave.outputParameters
@@ -315,10 +387,19 @@ export default defineComponent({
                     await this.uploadImage(this.imageToUpload, response.data.id)
                     this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
                     setTimeout(() => {
+                        const path = `/document-details/${response.data.id}`
+                        !this.selectedDocument.id ? this.$router.push(path) : ''
+                        if (!docToSave.id) this.$emit('documentSaved', response.data)
                         this.loadPage(response.data.id)
                     }, 200)
                 })
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
+        },
+        closeDocument() {
+            this.$emit('closeDetails')
+        },
+        onTabChange(event) {
+            event.index === 5 ? this.getAllSubreports() : ''
         }
     }
 })
@@ -331,10 +412,11 @@ export default defineComponent({
 .document-details-tabview .p-tabview-panels {
     padding: 0 !important;
 }
+
 .document-details-dialog.p-dialog {
     max-height: 100%;
-    height: 100vh;
-    width: calc(100vw - #{$mainmenu-width});
+    height: 80vh;
+    width: calc(100vw - var(--kn-mainmenu-width));
     margin: 0;
 }
 
@@ -353,5 +435,9 @@ export default defineComponent({
 
 .details-warning-color {
     color: red;
+}
+
+.doc-details-spinner .p-progress-spinner-svg {
+    width: 125px;
 }
 </style>

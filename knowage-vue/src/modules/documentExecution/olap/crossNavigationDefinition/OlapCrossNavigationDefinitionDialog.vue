@@ -2,10 +2,10 @@
     <Dialog id="olap-cross-naviagtion-definition-dialog" class="p-fluid kn-dialog--toolbar--primary" :style="olapCrossNavigationDefinitionDialogDescriptor.dialog.style" :visible="visible" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-2 p-col-12">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.olap.crossNavigationDefinition.title') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button v-if="step === 0" id="olap-add-new-cross-navigation-button" class="kn-button kn-button--primary" @click="addNewParameter"> {{ $t('common.addNew') }}</Button>
                 </template>
             </Toolbar>
@@ -76,8 +76,8 @@ export default defineComponent({
             this.olapDesigner?.template?.wrappedObject?.olap?.MDXQUERY?.clickable?.forEach((el: any) => fromMemberParameters.push({ ...el, name: el.clickParameter.name, type: 'From Member' }))
 
             this.parameters = []
-            this.parameters = this.parameters.concat(fromCellParameters)
-            this.parameters = this.parameters.concat(fromMemberParameters)
+            if (fromCellParameters?.length > 0) this.parameters = this.parameters.concat(fromCellParameters)
+            if (fromMemberParameters?.length > 0) this.parameters = this.parameters.concat(fromMemberParameters)
         },
         addNewParameter() {
             this.selectedParameter = {} as iOlapCrossNavigationParameter
@@ -109,6 +109,7 @@ export default defineComponent({
             this.step = 0
             this.selectedParameter = {} as iOlapCrossNavigationParameter
             this.cell = null
+            this.addNewParameterVisible = false
         },
         save() {
             if (this.selectedParameter) {
@@ -132,6 +133,14 @@ export default defineComponent({
                 type: this.selectedParameter?.type
             }
 
+            if (!this.olapDesigner.template.wrappedObject.olap.CROSS_NAVIGATION) {
+                this.olapDesigner.template.wrappedObject.olap.CROSS_NAVIGATION = {
+                    PARAMETERS: {
+                        PARAMETER: []
+                    }
+                }
+            }
+
             const olapDesignerParameters = this.olapDesigner.template.wrappedObject.olap.CROSS_NAVIGATION.PARAMETERS.PARAMETER
 
             const index = olapDesignerParameters.findIndex((el: any) => el.name === this.selectedParameter?.name)
@@ -142,6 +151,9 @@ export default defineComponent({
                 return
             }
 
+            if (!this.olapDesigner.template.wrappedObject.olap.MDXQUERY.clickable) {
+                this.olapDesigner.template.wrappedObject.olap.MDXQUERY.clickable = []
+            }
             const clickable = this.olapDesigner.template.wrappedObject.olap.MDXQUERY.clickable
             const tempParameter = { clickParameter: { name: this.selectedParameter.name, value: '{0}' }, name: this.selectedParameter.name, type: this.selectedParameter.type, uniqueName: this.selectedParameter.value }
 

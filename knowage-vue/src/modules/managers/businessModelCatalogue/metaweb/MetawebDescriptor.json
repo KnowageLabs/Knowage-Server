@@ -1,0 +1,270 @@
+{
+    "style": {
+        "absoluteScroll": {
+            "height": "100%",
+            "left": 0,
+            "overflow-x": "hidden",
+            "overflow-y": "auto",
+            "position": "absolute",
+            "top": 0,
+            "width": "100%"
+        },
+        "chip": {
+            "font-size": "0.8rem"
+        },
+        "columnMain": {
+            "flex": "10"
+        },
+        "columnTrash": {
+            "flex": "1"
+        },
+        "flex": {
+            "display": "flex",
+            "flex": 1,
+            "flex-direction": "column"
+        },
+        "flex3": {
+            "flex": 3
+        }
+    },
+    "test": [
+        {
+            "comment": "",
+            "dataType": "VARCHAR",
+            "decimalDigits": 0,
+            "defaultValue": null,
+            "description": null,
+            "id": null,
+            "markedDeleted": false,
+            "name": "category_id",
+            "nullable": false,
+            "octectLength": 30,
+            "partOfCompositePrimaryKey": false,
+            "position": 1,
+            "primaryKey": true,
+            "properties": [
+                {
+                    "structural.deleted": {
+                        "propertyType": {
+                            "admissibleValues": [],
+                            "defaultValue": "false",
+                            "description": "Specify if this column was deleted after a db update",
+                            "id": "structural.deleted",
+                            "name": "Deleted"
+                        },
+                        "value": "false"
+                    }
+                }
+            ],
+            "radix": 10,
+            "size": 30,
+            "tableName": "category",
+            "typeName": "VARCHAR",
+            "uniqueName": null
+        },
+        {
+            "comment": "",
+            "dataType": "VARCHAR",
+            "decimalDigits": 0,
+            "defaultValue": null,
+            "description": null,
+            "id": null,
+            "markedDeleted": false,
+            "name": "category_id",
+            "nullable": false,
+            "octectLength": 30,
+            "partOfCompositePrimaryKey": false,
+            "position": 1,
+            "primaryKey": true,
+            "properties": [
+                {
+                    "structural.deleted": {
+                        "propertyType": {
+                            "admissibleValues": [],
+                            "defaultValue": "false",
+                            "description": "Specify if this column was deleted after a db update",
+                            "id": "structural.deleted",
+                            "name": "Deleted"
+                        },
+                        "value": "false"
+                    }
+                }
+            ],
+            "radix": 10,
+            "size": 30,
+            "tableName": "category",
+            "typeName": "VARCHAR",
+            "uniqueName": null
+        },
+        {
+            "comment": "",
+            "dataType": "VARCHAR",
+            "decimalDigits": 0,
+            "defaultValue": null,
+            "description": null,
+            "id": null,
+            "markedDeleted": false,
+            "name": "category_id",
+            "nullable": false,
+            "octectLength": 30,
+            "partOfCompositePrimaryKey": false,
+            "position": 1,
+            "primaryKey": true,
+            "properties": [
+                {
+                    "structural.deleted": {
+                        "propertyType": {
+                            "admissibleValues": [],
+                            "defaultValue": "false",
+                            "description": "Specify if this column was deleted after a db update",
+                            "id": "structural.deleted",
+                            "name": "Deleted"
+                        },
+                        "value": "false"
+                    }
+                }
+            ],
+            "radix": 10,
+            "size": 30,
+            "tableName": "category",
+            "typeName": "VARCHAR",
+            "uniqueName": null
+        },
+        {
+            "comment": "",
+            "dataType": "VARCHAR",
+            "decimalDigits": 0,
+            "defaultValue": null,
+            "description": null,
+            "id": null,
+            "markedDeleted": false,
+            "name": "category_id",
+            "nullable": false,
+            "octectLength": 30,
+            "partOfCompositePrimaryKey": false,
+            "position": 1,
+            "primaryKey": true,
+            "properties": [
+                {
+                    "structural.deleted": {
+                        "propertyType": {
+                            "admissibleValues": [],
+                            "defaultValue": "false",
+                            "description": "Specify if this column was deleted after a db update",
+                            "id": "structural.deleted",
+                            "name": "Deleted"
+                        },
+                        "value": "false"
+                    }
+                }
+            ],
+            "radix": 10,
+            "size": 30,
+            "tableName": "category",
+            "typeName": "VARCHAR",
+            "uniqueName": null
+        },
+        {
+            "comment": "",
+            "dataType": "VARCHAR",
+            "decimalDigits": 0,
+            "defaultValue": null,
+            "description": null,
+            "id": null,
+            "markedDeleted": false,
+            "name": "category_parent",
+            "nullable": true,
+            "octectLength": 30,
+            "partOfCompositePrimaryKey": false,
+            "position": 2,
+            "primaryKey": false,
+            "properties": [
+                {
+                    "structural.deleted": {
+                        "propertyType": {
+                            "admissibleValues": [],
+                            "defaultValue": "false",
+                            "description": "Specify if this column was deleted after a db update",
+                            "id": "structural.deleted",
+                            "name": "Deleted"
+                        },
+                        "value": "false"
+                    }
+                }
+            ],
+            "radix": 10,
+            "size": 30,
+            "tableName": "category",
+            "typeName": "VARCHAR",
+            "uniqueName": null
+        },
+        {
+            "comment": "",
+            "dataType": "VARCHAR",
+            "decimalDigits": 0,
+            "defaultValue": null,
+            "description": null,
+            "id": null,
+            "markedDeleted": false,
+            "name": "category_description",
+            "nullable": false,
+            "octectLength": 30,
+            "partOfCompositePrimaryKey": false,
+            "position": 3,
+            "primaryKey": false,
+            "properties": [
+                {
+                    "structural.deleted": {
+                        "propertyType": {
+                            "admissibleValues": [],
+                            "defaultValue": "false",
+                            "description": "Specify if this column was deleted after a db update",
+                            "id": "structural.deleted",
+                            "name": "Deleted"
+                        },
+                        "value": "false"
+                    }
+                }
+            ],
+            "radix": 10,
+            "size": 30,
+            "tableName": "category",
+            "typeName": "VARCHAR",
+            "uniqueName": null
+        },
+        {
+            "comment": "",
+            "dataType": "VARCHAR",
+            "decimalDigits": 0,
+            "defaultValue": null,
+            "description": null,
+            "id": null,
+            "markedDeleted": false,
+            "name": "category_rollup",
+            "nullable": true,
+            "octectLength": 30,
+            "partOfCompositePrimaryKey": false,
+            "position": 4,
+            "primaryKey": false,
+            "properties": [
+                {
+                    "structural.deleted": {
+                        "propertyType": {
+                            "admissibleValues": [],
+                            "defaultValue": "false",
+                            "description": "Specify if this column was deleted after a db update",
+                            "id": "structural.deleted",
+                            "name": "Deleted"
+                        },
+                        "value": "false"
+                    }
+                }
+            ],
+            "radix": 10,
+            "size": 30,
+            "tableName": "category",
+            "typeName": "VARCHAR",
+            "uniqueName": null
+        }
+    ]
+}

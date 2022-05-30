@@ -1,8 +1,8 @@
 import { iParameter, } from './KnParameterSidebar'
 
 export function setVisualDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter) {
-    if (parameter.dependencies.visual.length !== 0) {
-        parameter.dependencies.visual.forEach((dependency: any) => {
+    if (parameter.dependencies?.visual.length !== 0) {
+        parameter.dependencies?.visual.forEach((dependency: any) => {
             const index = loadedParameters.filterStatus.findIndex((param: any) => {
                 return param.urlName === dependency.parFatherUrlName
             })
@@ -20,35 +20,41 @@ export function updateVisualDependency(parameter: iParameter) {
 }
 
 export function visualDependencyCheck(parameter: iParameter, changedParameter: any) {
-    let showOnPanel = 'true'
-    for (let i = 0; i < parameter.dependencies.visual.length && showOnPanel === 'true'; i++) {
-        showOnPanel = 'false'
+    let showOnPanel = 'false'
+    for (let i = 0; i < parameter.dependencies.visual.length; i++) {
+        let itemFound = false
         const visualDependency = parameter.dependencies.visual[i]
 
         if (parameter.dependsOnParameters) {
-            const index = parameter.dependsOnParameters.findIndex((el: any) => el.urlName === visualDependency.parFatherUrlName)
+            const index = parameter.dependsOnParameters.findIndex((el: any) => {
+                return el.urlName === visualDependency.parFatherUrlName
+            })
             const parentParameter = parameter.dependsOnParameters[index]
 
-            for (let i = 0; i < parentParameter.parameterValue.length; i++) {
+            for (let i = 0; i < parentParameter?.parameterValue?.length; i++) {
                 if (parentParameter.parameterValue[i].value === visualDependency.compareValue) {
                     if (changedParameter.urlName === visualDependency.parFatherUrlName) {
                         parameter.label = visualDependency.viewLabel
                     }
-                    showOnPanel = 'true'
+                    itemFound = true
                     break
                 }
             }
 
             if (visualDependency.operation === 'not contains') {
-                if (showOnPanel == 'true') {
+                if (itemFound) {
                     showOnPanel = 'false'
-                    break
+                    break;
+
                 } else {
                     showOnPanel = 'true'
                 }
+            } else {
+                showOnPanel = itemFound ? 'true' : 'false'
+                if (itemFound) break;
             }
-        }
 
-        parameter.showOnPanel = showOnPanel
+        }
     }
+    parameter.showOnPanel = showOnPanel
 }

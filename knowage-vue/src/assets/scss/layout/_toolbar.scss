@@ -1,39 +1,39 @@
 .kn-toolbar {
     border-radius: 0 !important;
-    height: $toolbar-height;
-    min-height: $toolbar-height;
-    font-weight: $toolbar-font-weight !important;
-    font-size: $toolbar-font-size !important;
+    height: var(--kn-toolbar-height);
+    min-height: var(--kn-toolbar-height);
+    font-weight: var(--kn-toolbar-font-weight) !important;
+    font-size: var(--kn-toolbar-font-size) !important;
     border: none;
-    padding: $toolbar-padding !important;
-    background-color: $toolbar-background-color-default;
-    color: $toolbar-color-default;
+    padding: var(--kn-toolbar-padding) !important;
+    background-color: var(--kn-toolbar-default-background-color);
+    color: var(--kn-toolbar-default-color);
     border-top-right-radius: 0;
     border-top-right-radius: 0;
     text-transform: capitalize;
 
     &--primary {
         @extend .kn-toolbar;
-        background-color: $toolbar-background-color-primary !important;
-        color: $toolbar-color-primary;
+        background-color: var(--kn-toolbar-primary-background-color) !important;
+        color: var(--kn-toolbar-primary-color);
         .p-button.p-button-text.p-button-plain {
-            color: $button-text-color;
+            color: var(--kn-toolbar-primary-icon-color);
             &:enabled:hover {
-                color: darken($button-text-color, 15%);
+                color: var(--kn-toolbar-primary-icon-hover-color);
             }
         }
     }
 
     &--secondary {
         @extend .kn-toolbar;
-        background-color: $toolbar-background-color-secondary !important;
-        color: $toolbar-color-secondary;
+        background-color: var(--kn-toolbar-secondary-background-color) !important;
+        color: var(--kn-toolbar-secondary-color);
     }
 
     &--default {
         @extend .kn-toolbar;
-        background-color: $toolbar-background-color-default !important;
-        color: $toolbar-color-default;
+        background-color: var(--kn-toolbar-default-background-color) !important;
+        color: var(--kn-toolbar-default-color);
     }
 
     &--transparent {

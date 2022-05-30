@@ -96,16 +96,19 @@ export default defineComponent({
             }
         },
         canBeMovedUp(node: iMenuNode) {
-            return node.prog !== 1
+            return node.prog !== 1 && node.menuId
         },
         canBeMovedDown(node: iMenuNode) {
-            let canBeMoved = false
-            this.menuElements.forEach((currentNode) => {
-                if (node.parentId === currentNode.parentId && node.prog < currentNode.prog) {
-                    canBeMoved = true
-                }
-            })
-            return canBeMoved
+            if (node.menuId === null) {
+                return false
+            }
+            let parentNode: iMenuNode | null = null
+            if (node.parentId) {
+                parentNode = this.findNode(node.parentId, this.menuElements)
+            } else {
+                parentNode = this.menuElements[0]
+            }
+            return parentNode && parentNode.children && parentNode.children.length !== node.prog
         },
         findNode(menuId: any, nodes: iMenuNode[]): iMenuNode | null {
             for (let node of nodes) {
@@ -151,6 +154,6 @@ export default defineComponent({
     }
 }
 .toolbar-height {
-    padding-bottom: $toolbar-height;
+    padding-bottom: var(--kn-toolbar-height);
 }
 </style>

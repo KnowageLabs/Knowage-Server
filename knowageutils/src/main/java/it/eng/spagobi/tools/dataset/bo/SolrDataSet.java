@@ -540,9 +540,9 @@ public class SolrDataSet extends RESTDataSet {
 			String value = values[j].trim();
 			if (!value.isEmpty()) {
 				if (value.startsWith(delim) && value.endsWith(delim)) {
-					if (value.contains("','")) {
+					if (value.contains(",")) {
 						value = value.substring(1, value.length() - 1);
-						String[] valuesArray = value.split("','");
+						String[] valuesArray = value.split(",");
 						String newValuesFromArray = "";
 						for (int i = 0; i < valuesArray.length; i++) {
 							String temp = valuesArray[i];

@@ -1,4 +1,4 @@
-<Context path="/knowagecockpitengine">
+<Context path="/knowagecockpitengine" reloadable="false">
 	<CookieProcessor sameSiteCookies="strict" />
 	
 	<!-- <Loader delegate="true"/> -->

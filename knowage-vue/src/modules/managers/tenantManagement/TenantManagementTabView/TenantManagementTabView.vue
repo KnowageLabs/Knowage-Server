@@ -1,7 +1,7 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
-        <template #left>{{ tenant.MULTITENANT_NAME }}</template>
-        <template #right>
+        <template #start>{{ tenant.MULTITENANT_NAME }}</template>
+        <template #end>
             <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSubmit" :disabled="buttonDisabled" />
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
@@ -184,7 +184,7 @@ export default defineComponent({
             let tenantToSave = {} as iTenantToSave
             tenantToSave.MULTITENANT_ID = this.tenant.MULTITENANT_ID ? '' + this.tenant.MULTITENANT_ID : ''
             tenantToSave.MULTITENANT_NAME = this.tenant.MULTITENANT_NAME
-            tenantToSave.MULTITENANT_THEME = this.tenant.MULTITENANT_THEME
+            this.tenant.MULTITENANT_THEME ? (tenantToSave.MULTITENANT_THEME = this.tenant.MULTITENANT_THEME) : ''
             tenantToSave.MULTITENANT_IMAGE = this.tenant.MULTITENANT_IMAGE
             tenantToSave.DS_LIST = this.listOfSelectedDataSources.map((dataSource) => {
                 delete dataSource.CHECKED

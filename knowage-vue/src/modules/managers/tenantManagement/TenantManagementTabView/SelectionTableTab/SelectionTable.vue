@@ -2,7 +2,7 @@
     <Card :style="tabViewDescriptor.card.style">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ title }}
                 </template>
             </Toolbar>
@@ -17,8 +17,8 @@
                 breakpoint="960px"
                 @rowSelect="setDirty"
                 @rowUnselect="setDirty"
-                @rowSelectAll="setDirty"
-                @rowUnselectAll="setDirty"
+                @rowSelectAll="onSelectAll"
+                @rowUnselectAll="onUnselectAll"
                 :scrollable="true"
                 data-test="data-table"
             >
@@ -55,19 +55,27 @@ export default defineComponent({
     data() {
         return {
             tabViewDescriptor,
-            selectedCategories: [] as any[]
+            selectedCategories: [] as any
         }
     },
     watch: {
         selectedData() {
-            this.selectedCategories = this.selectedData as any[]
+            this.selectedCategories = this.selectedData
         }
     },
     created() {
-        this.selectedCategories = this.selectedData as any[]
+        this.selectedCategories = this.selectedData
     },
     methods: {
         setDirty() {
+            this.$emit('changed', this.selectedCategories)
+        },
+        onSelectAll(event) {
+            this.selectedCategories = event.data
+            this.$emit('changed', this.selectedCategories)
+        },
+        onUnselectAll() {
+            this.selectedCategories = []
             this.$emit('changed', this.selectedCategories)
         }
     }

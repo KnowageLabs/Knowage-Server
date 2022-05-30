@@ -376,12 +376,6 @@
 				console.log('getParametersForExecution response OK -> ', response);
 
 				var canExec = response.data.isPublic;
-				var noPublicRoleError = response.data.noPublicRoleError;
-
-				if(noPublicRoleError == true){
-					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.execution.noPublicRole"), sbiModule_translate.load('sbi.generic.error'));
-					return;
-				}
 
 				var publicStr = canExec == true ? "/public" : "";
 

@@ -282,7 +282,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 	protected Map<String, String> getRequestHeadersPropMap(String propName, JSONObject conf, boolean resolveParams) throws JSONException {
 		if (!conf.has(propName) || conf.getString(propName).isEmpty()) {
 			// optional property
-			return Collections.emptyMap();
+			return new HashMap<String, String>();
 		}
 
 		Object c = conf.get(propName);
@@ -925,6 +925,10 @@ public class RESTDataSet extends ConfigurableDataSet {
 				statement = statement.replaceAll("\"", "");
 				statement = statement.replaceAll("'", "");
 				statement = statement.replace("%", "*");
+			} else if (statement.contains(" , ")) {
+				if (!statement.isEmpty() && statement.startsWith("\"") && statement.endsWith("\"")) {
+					statement = statement.substring(1, statement.length() - 1);
+				}
 			}
 		}
 

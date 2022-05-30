@@ -2,10 +2,11 @@
     <DataTable
         class="p-datatable-sm kn-table p-m-2"
         :value="inputColumns"
-        :editMode="functionsCatalogDatasetFormColumnsTableDescriptor.editMode"
+        editMode="cell"
         :dataKey="functionsCatalogDatasetFormColumnsTableDescriptor.dataKey"
         :responsiveLayout="functionsCatalogDatasetFormColumnsTableDescriptor.responsiveLayout"
         :breakpoint="functionsCatalogDatasetFormColumnsTableDescriptor.breakpoint"
+        @cell-edit-complete="onCellEditComplete"
     >
         <Column class="kn-truncated" field="name" :header="$t('managers.functionsCatalog.inputColumnName')"> </Column>
         <Column class="kn-truncated" field="type" :header="$t('common.type')">
@@ -70,6 +71,9 @@ export default defineComponent({
                 default:
                     return ''
             }
+        },
+        onCellEditComplete(event: any) {
+            this.inputColumns[event.index] = event.newData
         }
     }
 })

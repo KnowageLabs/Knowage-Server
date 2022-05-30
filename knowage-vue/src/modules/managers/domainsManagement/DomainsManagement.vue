@@ -1,10 +1,10 @@
 <template>
     <div class="kn-page">
         <Toolbar class="kn-toolbar kn-toolbar--primary">
-            <template #left>
+            <template #start>
                 {{ $t('managers.domainsManagement.title') }}
             </template>
-            <template #right>
+            <template #end>
                 <KnFabButton icon="fas fa-plus" @click="showForm()" data-test="open-form-button"></KnFabButton>
             </template>
         </Toolbar>
@@ -16,6 +16,8 @@
                     :paginator="true"
                     :loading="loading"
                     :rows="20"
+                    v-model:selection="selectedDomain"
+                    selectionMode="single"
                     class="p-datatable-sm kn-table"
                     dataKey="id"
                     v-model:filters="filters"

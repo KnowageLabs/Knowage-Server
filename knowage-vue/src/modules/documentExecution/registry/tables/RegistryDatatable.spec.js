@@ -144,8 +144,7 @@ const mockedColumns = [
             name: 'column_9',
             header: 'first_opened_date',
             dataIndex: 'column_9',
-            type: 'date',
-            subtype: 'timestamp',
+            type: 'timestamp',
             dateFormat: 'd/m/Y H:i:s.uuu',
             dateFormatJava: 'dd/MM/yyyy HH:mm:ss.SSS',
             multiValue: false,
@@ -299,7 +298,7 @@ const factory = (rows) => {
             plugins: [],
             stubs: {
                 Button,
-                Calendar,
+                Calendar: true,
                 Card,
                 Checkbox,
                 Column,
@@ -390,9 +389,6 @@ describe('Registry loading', () => {
         const wrapper = factory(mockedRows)
 
         expect(wrapper.vm.columns[8].field).toBe('first_opened_date')
-        expect(wrapper.vm.columns[8].columnInfo.type).toBe('date')
-
-        await wrapper.find('[data-test="first_opened_date-body"]').trigger('click')
-        expect(wrapper.find('[data-test="first_opened_date-editor"]').html()).toContain('p-calendar')
+        expect(wrapper.vm.columns[8].columnInfo.type).toBe('timestamp')
     })
 })

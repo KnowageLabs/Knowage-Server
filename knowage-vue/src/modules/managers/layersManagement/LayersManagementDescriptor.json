@@ -1,0 +1,42 @@
+{
+    "knListSettings": {
+        "buttons": [
+            {
+                "emits": "download",
+                "icon": "fas fa-download",
+                "label": "common.download"
+            },
+            {
+                "emits": "delete",
+                "icon": "far fa-trash-alt",
+                "label": "common.delete"
+            }
+        ],
+        "defaultSortField": "type",
+        "filterFields": ["name", "type"],
+        "interaction": {
+            "parameterLabel": "id",
+            "parameterValue": "id",
+            "type": "event"
+        },
+        "sortFields": ["name", "type"],
+        "textField": "type",
+        "titleField": "name"
+    },
+    "newLayer": {
+        "baseLayer": false,
+        "category_id": null,
+        "descr": "",
+        "icon": null,
+        "label": null,
+        "layerId2": null,
+        "layerIdentify": null,
+        "layerLabel": null,
+        "layerName": null,
+        "layerOrder": null,
+        "name": null,
+        "properties": [],
+        "roles": [],
+        "type": null
+    }
+}

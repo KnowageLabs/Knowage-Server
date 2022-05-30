@@ -102,21 +102,21 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>wsdl4j</groupId>
 			<artifactId>wsdl4j</artifactId>
 			<version>1.5.1</version>
 			<scope>runtime</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>xml-apis</groupId>
 			<artifactId>xml-apis</artifactId>
@@ -124,19 +124,21 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- maybe they are runtime dependencies???
 		<dependency>
-			<groupId>com.fdsapi</groupId>
-			<artifactId>fdsapi</artifactId>
-			<version>1.2</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-web</artifactId>
 		</dependency>
-		
+
+		<!-- Provides support for Graylog in log4j2 -->
 		<dependency>
-			<groupId>xerces</groupId>
-			<artifactId>xercesImpl</artifactId>
-			<version>2.10.0</version>
+			<groupId>biz.paluch.logging</groupId>
+			<artifactId>logstash-gelf</artifactId>
 		</dependency>
-		-->
-		
+
+		<!-- maybe they are runtime dependencies??? <dependency> <groupId>com.fdsapi</groupId> 
+			<artifactId>fdsapi</artifactId> <version>1.2</version> </dependency> <dependency> 
+			<groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> <version>2.10.0</version> 
+			</dependency> -->
+
 	</dependencies>
 </project>

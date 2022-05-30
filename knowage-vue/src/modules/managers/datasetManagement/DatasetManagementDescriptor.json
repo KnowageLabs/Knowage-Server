@@ -93,6 +93,13 @@
                         "background-color": "#673ab7",
                         "color": "white"
                     }
+                },
+                "Prepared": {
+                    "icon": "fas fa-database",
+                    "style": {
+                        "background-color": "#673ab7",
+                        "color": "white"
+                    }
                 }
             }
         },
@@ -117,7 +124,7 @@
             "parameterValue": "id",
             "type": "event"
         },
-        "sortFields": ["label", "name"],
+        "sortFields": ["label", "name", "dsTypeCd"],
         "textField": "name",
         "titleField": "label"
     }

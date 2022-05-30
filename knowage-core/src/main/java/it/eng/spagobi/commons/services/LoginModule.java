@@ -18,6 +18,7 @@
 package it.eng.spagobi.commons.services;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -40,6 +41,8 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import it.eng.knowage.monitor.IKnowageMonitor;
+import it.eng.knowage.monitor.KnowageMonitorFactory;
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
@@ -76,6 +79,7 @@ import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.services.ChangeTheme;
 import it.eng.spagobi.wapp.util.MenuUtilities;
@@ -196,6 +200,7 @@ public class LoginModule extends AbstractHttpModule {
 		if (userId != null) {
 			String pwd = (String) request.getAttribute("password");
 			SpagoBIUserProfile userProfile = null;
+			IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.login.authentication");
 			try {
 
 				userProfile = supplier.checkAuthentication(userId, pwd);
@@ -204,6 +209,7 @@ public class LoginModule extends AbstractHttpModule {
 					EMFUserError emfu = new EMFUserError(EMFErrorSeverity.ERROR, 501);
 					errorHandler.addError(emfu);
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "KO");
+					monitor.stop(new SpagoBIRuntimeException("Incorrect credentials"));
 					return;
 				} else if (isInternalSecurity == true) {
 					SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
@@ -212,13 +218,16 @@ public class LoginModule extends AbstractHttpModule {
 						EMFUserError emfu = new EMFUserError(EMFErrorSeverity.ERROR, 502);
 						errorHandler.addError(emfu);
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "KO");
+						monitor.stop(new SpagoBIRuntimeException("Password blocked"));
 						return;
 					}
 
 				}
+				monitor.stop();
 
 			} catch (Exception e) {
 				logger.error("Reading user information... ERROR", e);
+				monitor.stop(e);
 				throw new SecurityException("Reading user information... ERROR", e);
 			}
 			// if it's internal (SpagoBI) active pwd management and checks
@@ -378,7 +387,21 @@ public class LoginModule extends AbstractHttpModule {
 			}
 			// End writing log in the DB
 
-			redirectToKnowageVue();
+			String targetService = getHttpRequest().getParameter("targetService");
+
+			if (StringUtils.isNotBlank(targetService)) {
+
+				URI url = new URI(getHttpRequest().getParameter("targetService").toString());
+
+				if (!url.isAbsolute()) {
+					getHttpResponse().sendRedirect(targetService);
+				} else {
+					redirectToKnowageVue();
+				}
+			} else {
+				redirectToKnowageVue();
+			}
+//			redirectToKnowageVue();
 		} finally {
 			// since TenantManager uses a ThreadLocal, we must clean after request processed in each case
 			TenantManager.unset();

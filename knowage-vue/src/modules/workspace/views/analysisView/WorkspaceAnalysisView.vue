@@ -1,10 +1,10 @@
 <template>
     <Toolbar class="kn-toolbar kn-toolbar--secondary">
-        <template #left>
+        <template #start>
             <Button id="showSidenavIcon" icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" @click="$emit('showMenu')" />
             {{ $t('workspace.menuLabels.myAnalysis') }}
         </template>
-        <template #right>
+        <template #end>
             <Button v-if="toggleCardDisplay" icon="fas fa-list" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
             <Button v-if="!toggleCardDisplay" icon="fas fa-th-large" class="p-button-text p-button-rounded p-button-plain" @click="$emit('toggleDisplayView')" />
             <KnFabButton icon="fas fa-plus" data-test="new-folder-button" @click="showCreationMenu" />
@@ -15,7 +15,7 @@
     <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
 
     <div class="p-m-2 kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table" :value="filteredAnalysisDocuments" :loading="loading" dataKey="id" responsiveLayout="stack" breakpoint="600px" data-test="analysis-table">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredAnalysisDocuments" :loading="loading" dataKey="id" responsiveLayout="stack" breakpoint="600px" data-test="analysis-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
@@ -48,7 +48,7 @@
                     :viewType="'analysis'"
                     :document="document"
                     @executeAnalysisDocument="executeAnalysisDocument"
-                    @editAnalysisDocument="editAnalysisDocument"
+                    @editAnalysisDocument="openKpiDesigner"
                     @shareAnalysisDocument="shareAnalysisDocument"
                     @cloneAnalysisDocument="cloneAnalysisDocument"
                     @deleteAnalysisDocument="deleteAnalysisDocumentConfirm"
@@ -79,6 +79,7 @@
     <WorkspaceWarningDialog :visible="warningDialogVisbile" :title="$t('workspace.menuLabels.myAnalysis')" :warningMessage="warningMessage" @close="closeWarningDialog"></WorkspaceWarningDialog>
 
     <KnInputFile v-if="!uploading" :changeFunction="uploadAnalysisFile" accept="image/*" :triggerInput="triggerUpload" />
+    <WorkspaceCockpitDialog :visible="cockpitDialogVisible" @close="closeCockpitDialog"></WorkspaceCockpitDialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -96,15 +97,16 @@ import WorkspaceWarningDialog from '../../genericComponents/WorkspaceWarningDial
 import WorkspaceAnalysisViewShareDialog from './dialogs/WorkspaceAnalysisViewShareDialog.vue'
 import { AxiosResponse } from 'axios'
 import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+import WorkspaceCockpitDialog from './dialogs/WorkspaceCockpitDialog.vue'
 
 export default defineComponent({
     name: 'workspace-analysis-view',
-    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, Message, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceWarningDialog, WorkspaceAnalysisViewShareDialog },
+    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, Message, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceWarningDialog, WorkspaceAnalysisViewShareDialog, WorkspaceCockpitDialog },
     emits: ['showMenu', 'toggleDisplayView', 'execute'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
         isOwner(): any {
-            return (this.$store.state as any).user.fullName === this.selectedAnalysis.creationUser
+            return (this.$store.state as any).user.userId === this.selectedAnalysis.creationUser
         },
         isShared(): any {
             return this.selectedAnalysis.functionalities.length > 1
@@ -127,7 +129,8 @@ export default defineComponent({
             triggerUpload: false,
             uploading: false,
             shareDialogVisible: false,
-            creationMenuButtons: [] as any
+            creationMenuButtons: [] as any,
+            cockpitDialogVisible: false
         }
     },
     created() {
@@ -160,18 +163,21 @@ export default defineComponent({
         },
         // prettier-ignore
         createMenuItems() {
-            this.menuButtons = []
-            this.menuButtons.push(
-                { key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: () => { this.editAnalysisDocument(this.selectedAnalysis) }, visible: this.isOwner},
-                { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share-alt', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: !this.isShared},
-                { key: '1', label: this.$t('workspace.myAnalysis.menuItems.unshare'), icon: 'fas fa-times-circle', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: this.isShared},
-                { key: '2', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: () => { this.cloneAnalysisDocument(this.selectedAnalysis) }},
-                { key: '3', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => { this.deleteAnalysisDocumentConfirm(this.selectedAnalysis) }},
-                { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: () => { this.uploadAnalysisPreviewFile(this.selectedAnalysis) }}
-            )
-        },
+        this.menuButtons = []
+        this.menuButtons.push(
+            { key: '0', label: this.$t('workspace.myAnalysis.menuItems.edit'), icon: 'fas fa-edit', command: () => { this.editAnalysisDocument(this.selectedAnalysis) }, visible: this.isOwner},
+            { key: '1', label: this.$t('workspace.myAnalysis.menuItems.share'), icon: 'fas fa-share-alt', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: !this.isShared},
+            { key: '1', label: this.$t('workspace.myAnalysis.menuItems.unshare'), icon: 'fas fa-times-circle', command: () => { this.shareAnalysisDocument(this.selectedAnalysis) }, visible: this.isShared},
+            { key: '2', label: this.$t('workspace.myAnalysis.menuItems.clone'), icon: 'fas fa-clone', command: () => { this.cloneAnalysisDocument(this.selectedAnalysis) }},
+            { key: '3', label: this.$t('workspace.myAnalysis.menuItems.delete'), icon: 'fas fa-trash', command: () => { this.deleteAnalysisDocumentConfirm(this.selectedAnalysis) }},
+            { key: '4', label: this.$t('workspace.myAnalysis.menuItems.upload'), icon: 'fas fa-upload', command: () => { this.uploadAnalysisPreviewFile(this.selectedAnalysis) }}
+        )
+    },
         executeAnalysisDocument(document: any) {
             this.$emit('execute', document)
+        },
+        openKpiDesigner(analysis: any) {
+            this.$router.push(`/kpi-edit/${analysis?.id}?from=Workspace`)
         },
         editAnalysisDocument(analysis: any) {
             this.selectedAnalysis = analysis
@@ -345,16 +351,23 @@ export default defineComponent({
         createCreationMenuButtons() {
             this.creationMenuButtons = []
             this.creationMenuButtons.push(
-                { key: '0', label: this.$t('common.cockpit'), command: this.todoToast, visible: true },
-                { key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.todoToast, visible: true },
-                { key: '2', label: this.$t('common.kpi'), command: this.todoToast, visible: true }
+                { key: '0', label: this.$t('common.cockpit'), command: this.openCockpitDialog, visible: true },
+                { key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: this.openGeoRefCreation, visible: true },
+                { key: '2', label: this.$t('common.kpi'), command: this.openKpiDocumentDesigner, visible: true }
             )
         },
-        todoToast() {
-            this.$store.commit('setInfo', {
-                title: 'TODO',
-                msg: 'Functionality not in this sprint'
-            })
+        openCockpitDialog() {
+            this.cockpitDialogVisible = true
+        },
+        closeCockpitDialog() {
+            this.cockpitDialogVisible = false
+            this.getAnalysisDocs()
+        },
+        openKpiDocumentDesigner() {
+            this.$router.push('/kpi-edit/new-kpi?from=Workspace')
+        },
+        openGeoRefCreation() {
+            this.$router.push('/gis/new')
         }
     }
 })

@@ -99,7 +99,8 @@ describe('Template Pruning', () => {
         const wrapper = factory()
         const dateInput = wrapper.find('[data-test="date-input"]')
 
-        expect(dateInput.wrapperElement._value).toBe(moment().format('MM/DD/YYYY'))
+        expect(wrapper.vm.selectedDate).toBeTruthy()
+        expect(dateInput.exists()).toBe(true)
     })
     it('datepicker max date is the current date', () => {
         const wrapper = factory()

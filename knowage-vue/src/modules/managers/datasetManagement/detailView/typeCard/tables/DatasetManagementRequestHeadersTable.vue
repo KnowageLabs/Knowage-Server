@@ -1,18 +1,18 @@
 <template>
-    <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
-        <template #left>
+    <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-2 p-mx-2">
+        <template #start>
             <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = true" />
             <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = false" />
             {{ $t('managers.datasetManagement.requestHeaders') }}
         </template>
-        <template #right>
+        <template #end>
             <Button icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain" @click="addNewParam" />
             <Button icon="fas fa-eraser" class="p-button-text p-button-rounded p-button-plain" :disabled="disableDeleteAll" @click="removeAllParams" />
         </template>
     </Toolbar>
-    <Card v-show="expandTableCard">
+    <Card v-show="expandTableCard" class="p-mx-2">
         <template #content>
-            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.restRequestHeaders" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px">
+            <DataTable class="p-datatable-sm kn-table" editMode="cell" :value="dataset.restRequestHeaders" :scrollable="true" scrollHeight="250px" dataKey="versNum" responsiveLayout="stack" breakpoint="960px" @cell-edit-complete="onCellEditComplete">
                 <template #empty>
                     {{ $t('managers.datasetManagement.tableEmpty') }}
                 </template>
@@ -94,6 +94,10 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => (this.dataset.restRequestHeaders = [])
             })
+        },
+
+        onCellEditComplete(event) {
+            this.dataset.restRequestHeaders[event.index] = event.newData
         }
     }
 })

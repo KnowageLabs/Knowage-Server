@@ -1,23 +1,29 @@
 <template>
-    <Card class="kn-card no-padding">
-        <template #content>
-            <div v-for="(category, index) of rolesManagementTabViewDescriptor.categories" :key="index">
-                <template v-if="authorizationCBs[category.categoryName] && authorizationCBs[category.categoryName].length">
-                    <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                        <template #left>
-                            {{ $t(category.name) }}
+    <div id="informations-content" class="kn-flex kn-relative kn-height-full">
+        <div class="roles-absolute-scroll">
+            <Card class="kn-card no-padding">
+                <template #content>
+                    <div v-for="(category, index) of rolesManagementTabViewDescriptor.categories" :key="index">
+                        <template v-if="authorizationCBs[category.categoryName] && authorizationCBs[category.categoryName].length">
+                            <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                                <template #start>
+                                    {{ $t(category.name) }}
+                                </template>
+                            </Toolbar>
+                            <div class="p-grid">
+                                <div v-for="(authCBInfo, ind) of authorizationCBs[category.categoryName]" :key="ind" class="p-xl-3 p-lg-4 p-md-6 p-sm-12">
+                                    <div class="p-field-checkbox p-m-3">
+                                        <InputSwitch :id="'cb-' + index + '-' + ind" v-model="role[authCBInfo.fieldName]" :disabled="authCBInfo.enableForRole && role.roleTypeCD === 'ADMIN'" @change="authChanged(authCBInfo.fieldName, role[authCBInfo.fieldName])" />
+                                        <label :for="'cb-' + index + '-' + ind">{{ $t(authCBInfo.label) }}</label>
+                                    </div>
+                                </div>
+                            </div>
                         </template>
-                    </Toolbar>
-                    <div v-for="(authCBInfo, ind) of authorizationCBs[category.categoryName]" :key="ind">
-                        <div class="p-field-checkbox p-m-3">
-                            <InputSwitch :id="'cb-' + index + '-' + ind" v-model="role[authCBInfo.fieldName]" :disabled="authCBInfo.enableForRole && role.roleTypeCD === 'ADMIN'" @change="authChanged(authCBInfo.fieldName, role[authCBInfo.fieldName])" />
-                            <label :for="'cb-' + index + '-' + ind">{{ $t(authCBInfo.label) }}</label>
-                        </div>
                     </div>
                 </template>
-            </div>
-        </template>
-    </Card>
+            </Card>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">

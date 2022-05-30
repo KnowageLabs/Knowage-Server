@@ -47,6 +47,10 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.eng.knowage.boot.error.KnowageBusinessException;
+import it.eng.knowage.boot.error.KnowageRuntimeException;
+import it.eng.knowage.boot.utils.ContextPropertiesConfig;
+import it.eng.knowage.boot.utils.HMACUtilities;
 import it.eng.knowage.knowageapi.error.ImpossibleToCreateFileException;
 import it.eng.knowage.knowageapi.error.ImpossibleToCreateFolderException;
 import it.eng.knowage.knowageapi.error.ImpossibleToDeleteFileException;
@@ -57,10 +61,6 @@ import it.eng.knowage.knowageapi.error.ImpossibleToReadFolderListException;
 import it.eng.knowage.knowageapi.error.ImpossibleToReadMetadataException;
 import it.eng.knowage.knowageapi.error.ImpossibleToSaveMetadataException;
 import it.eng.knowage.knowageapi.error.ImpossibleToUploadFileException;
-import it.eng.knowage.knowageapi.error.KnowageBusinessException;
-import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
-import it.eng.knowage.knowageapi.utils.ContextPropertiesConfig;
-import it.eng.knowage.knowageapi.utils.HMACUtilities;
 import it.eng.knowage.resourcemanager.resource.dto.FileDTO;
 import it.eng.knowage.resourcemanager.resource.dto.FolderDTO;
 import it.eng.knowage.resourcemanager.resource.dto.MetadataDTO;
@@ -82,7 +82,6 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 	private static final String RESOURCE_FUNCTIONALITY_DEV = "ResourceManagementDev";
 	private static final String RESOURCE_FUNCTIONALITY = "ResourceManagement";
-	private static final String MODEL_CATALOG_FUNCTIONALITY = "ModelCatalogResourceManagement";
 
 	@Autowired
 	HMACUtilities HMACUtilities;
@@ -208,7 +207,8 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				for (String folder : restrictedFolders) {
 
 					Path completePath = getTotalPath(folder, profile);
-					if (path.toString().toLowerCase().startsWith(completePath.toString().toLowerCase())) {
+					if (path.toString().toLowerCase().startsWith(completePath.toString().toLowerCase())
+							|| path.toString().toLowerCase().startsWith(getWorkDirectory(profile).toString().toLowerCase())) {
 						return true;
 					}
 

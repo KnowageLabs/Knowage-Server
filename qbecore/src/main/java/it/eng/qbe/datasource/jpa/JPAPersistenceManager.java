@@ -50,6 +50,7 @@ import org.json.JSONObject;
 import it.eng.qbe.datasource.IPersistenceManager;
 import it.eng.qbe.datasource.jpa.audit.JPAPersistenceManagerAuditLogger;
 import it.eng.qbe.datasource.jpa.audit.Operation;
+import it.eng.qbe.logger.QueryAuditLogger;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.CriteriaConstants;
@@ -72,9 +73,9 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 	private JPADataSource dataSource;
 
-	public static transient Logger logger = Logger.getLogger(JPAPersistenceManager.class);
+	private static final Logger logger = Logger.getLogger(JPAPersistenceManager.class);
 
-	public static transient Logger auditlogger = Logger.getLogger("audit.query");
+	private static final Logger auditlogger = QueryAuditLogger.LOGGER;
 
 	public JPAPersistenceManager(JPADataSource dataSource) {
 		super();

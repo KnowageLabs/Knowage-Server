@@ -27,14 +27,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import it.eng.spagobi.services.validation.AlphanumericWithBrackets;
-import it.eng.spagobi.services.validation.Xss;
+import it.eng.knowage.boot.validation.NotInvalidCharacters;
+import it.eng.knowage.boot.validation.Xss;
 
 public class FolderDTO {
 
 	@NotNull
 	@Xss
-	@AlphanumericWithBrackets
+	@NotInvalidCharacters
 	private String label;
 
 	private String key;

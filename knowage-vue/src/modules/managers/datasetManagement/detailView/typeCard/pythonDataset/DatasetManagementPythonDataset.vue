@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-mt-3">
+    <Card class="p-m-2">
         <template #content>
             <div class="p-field-radiobutton">
                 <RadioButton name="Python" value="python" v-model="dataset.pythonDatasetType" @click="resetPythonEnv" />
@@ -7,7 +7,6 @@
                 <RadioButton name="R" class="p-ml-3" value="r" v-model="dataset.pythonDatasetType" @click="resetPythonEnv" />
                 <label for="R">R</label>
             </div>
-            {{ this.dataset.pythonEnvironment }}
             <form class="p-fluid p-formgrid p-grid p-mt-2">
                 <div class="p-field p-col-6">
                     <span class="p-float-label">

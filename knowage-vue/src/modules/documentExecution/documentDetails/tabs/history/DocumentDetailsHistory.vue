@@ -2,10 +2,10 @@
     <div class="p-grid p-m-0 kn-flex">
         <div class="p-col-4 p-sm-4 p-md-3 p-p-0 p-d-flex p-flex-column kn-flex">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.documentDetails.history.listTitle') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button :label="$t('common.add')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="setUploadType" />
                     <KnInputFile label="" v-if="!uploading" :changeFunction="startTemplateUpload" :triggerInput="triggerUpload" />
                 </template>
@@ -28,18 +28,18 @@
         </div>
         <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0" :style="mainDescriptor.style.driverDetailsContainer">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.documentDetails.history.template') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="openDesignerConfirm" />
                 </template>
             </Toolbar>
             <div id="driver-details-container" class="kn-flex kn-relative">
                 <div :style="mainDescriptor.style.absoluteScroll">
-                    <VCodeMirror v-if="showTemplateContent" ref="codeMirrorScriptType" :style="mainDescriptor.style.height100" v-model:value="selectedTemplateContent" :options="scriptOptions" @keyup="$emit('touched')" />
+                    <VCodeMirror v-if="showTemplateContent" ref="codeMirrorScriptType" class="kn-height-full" v-model:value="selectedTemplateContent" :options="scriptOptions" @keyup="$emit('touched')" />
                     <div v-else>
-                        <InlineMessage severity="info" class="p-m-2"> {{ $t('documentExecution.documentDetails.history.templateHint') }}</InlineMessage>
+                        <InlineMessage severity="info" class="p-m-2 kn-width-full"> {{ $t('documentExecution.documentDetails.history.templateHint') }}</InlineMessage>
                     </div>
                 </div>
             </div>
@@ -60,7 +60,6 @@ import historyDescriptor from './DocumentDetailsHistory.json'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import InlineMessage from 'primevue/inlinemessage'
-
 export default defineComponent({
     name: 'document-drivers',
     components: { KnListBox, KnInputFile, VCodeMirror, InlineMessage },
@@ -76,9 +75,10 @@ export default defineComponent({
                     return true
                 case 'sbicockpit':
                     return true
-                case 'json': {
+                case 'json':
                     return true
-                }
+                case 'sbigeoreport':
+                    return true
                 default:
                     return false
             }
@@ -125,7 +125,7 @@ export default defineComponent({
         },
         async getSelectedTemplate(templateId) {
             this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/selected/${templateId}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then((response: AxiosResponse<any>) => {
-                this.selectedTemplateFileType == 'sbicockpit' || this.selectedTemplateFileType == 'json' ? (this.selectedTemplateContent = JSON.stringify(response.data, null, 4)) : (this.selectedTemplateContent = response.data)
+                this.selectedTemplateFileType == 'sbicockpit' || this.selectedTemplateFileType == 'json' || this.selectedTemplateFileType == 'sbigeoreport' ? (this.selectedTemplateContent = JSON.stringify(response.data, null, 4)) : (this.selectedTemplateContent = response.data)
             })
         },
         setupCodeMirror() {
@@ -150,9 +150,11 @@ export default defineComponent({
                 case 'sbicockpit':
                     mode = 'text/javascript'
                     break
-                case 'json': {
+                case 'json':
                     mode = 'text/javascript'
-                }
+                    break
+                case 'sbigeoreport':
+                    mode = 'text/javascript'
             }
             setTimeout(() => {
                 this.setupCodeMirror()
@@ -248,15 +250,34 @@ export default defineComponent({
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         openDesignerConfirm() {
+            console.log(this.selectedDocument.typeCode)
             this.$confirm.require({
                 header: this.$t('common.toast.warning'),
                 message: this.$t('documentExecution.olap.openDesignerMsg'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => this.openDesigner()
+                accept: () => {
+                    switch (this.selectedDocument.typeCode) {
+                        case 'KPI':
+                            this.openKpiDocumentDesigner()
+                            break
+                        case 'MAP': {
+                            this.openGis()
+                            break
+                        }
+                        default:
+                            this.openDesigner()
+                    }
+                }
             })
         },
         openDesigner() {
             this.$router.push(`/olap-designer/${this.selectedDocument.id}`)
+        },
+        openGis() {
+            this.$router.push(`/gis/edit?documentId=${this.selectedDocument.id}`)
+        },
+        openKpiDocumentDesigner() {
+            this.$router.push(`/kpi-edit/${this.selectedDocument.id}?from=documentDetail`)
         }
     }
 })

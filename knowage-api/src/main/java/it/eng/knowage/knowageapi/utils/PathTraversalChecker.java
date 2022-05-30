@@ -25,7 +25,8 @@ import java.nio.file.Paths;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
+import it.eng.knowage.boot.error.KnowageRuntimeException;
+import it.eng.knowage.boot.utils.ContextPropertiesConfig;
 import it.eng.knowage.knowageapi.error.PathTraversalAttackException;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
@@ -60,10 +61,9 @@ public class PathTraversalChecker {
 			boolean isInDesiredDirectory = isInDesiredDirectory(fileToCheck.toFile(), desideredDir.toFile());
 
 			if (!isInDesiredDirectory) {
-				LogMF.error(logger, "User [{0}] is trying to access the file [{1}] that is not inside [{2}]!!!",
-						new Object[] { profile, fileToCheck.toFile().getAbsolutePath(), desideredDir.toFile().getAbsolutePath() });
-				throw new PathTraversalAttackException("User [" + profile + "] is trying to access the file [" + fileToCheck.toFile().getAbsolutePath()
-						+ "] that is not inside [" + desideredDir.toFile().getAbsolutePath() + "]!!!");
+				LogMF.error(logger, "User [{0}] is trying to access the file [{1}] that is not inside [{2}]",
+						new Object[] { profile.getUserId(), fileToCheck.toFile().getAbsolutePath(), desideredDir.toFile().getAbsolutePath() });
+				throw new PathTraversalAttackException("Invalid Request");
 			}
 		} finally {
 			logger.debug("OUT");

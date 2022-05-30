@@ -1,8 +1,8 @@
 <template>
-    <Card class="domainCard" :style="domainCategoryTabDescriptor.card.style">
+    <Card class="domainCard" style="height: calc(100vh - 75px)">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ title }}
                 </template>
             </Toolbar>
@@ -17,6 +17,8 @@
                 :rows="20"
                 responsiveLayout="stack"
                 breakpoint="960px"
+                :scrollable="true"
+                scrollHeight="flex"
                 @rowSelect="setDirty"
                 @rowUnselect="setDirty"
                 @rowSelectAll="setDirty"
@@ -26,7 +28,7 @@
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
                 </template>
-                <Column selectionMode="multiple" :style="domainCategoryTabDescriptor.column.style" dataKey="categoryId"></Column>
+                <Column class="kn-column-checkbox" selectionMode="multiple" dataKey="categoryId"></Column>
                 <Column field="categoryName" :header="$t('common.name')" :style="domainCategoryTabDescriptor.column.header.style"></Column>
             </DataTable>
         </template>
@@ -77,7 +79,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .domainCard {
-    &:deep(.p-card-body){
+    &:deep(.p-card-body) {
         height: calc(100% - 35px);
         .p-card-content {
             height: 100%;

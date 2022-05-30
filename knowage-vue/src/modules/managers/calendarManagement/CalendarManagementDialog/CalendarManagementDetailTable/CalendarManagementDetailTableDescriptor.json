@@ -1,0 +1,19 @@
+{
+    "columnStyle": {
+        "date": {
+            "width": "20%"
+        },
+        "day": {
+            "width": "20%"
+        },
+        "checkbox": {
+            "width": "10%"
+        },
+        "checkEvent": {
+            "width": "30%"
+        }
+    },
+    "iconColumnStyle": {
+        "text-align": "end"
+    }
+}

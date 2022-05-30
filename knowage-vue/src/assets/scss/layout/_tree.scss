@@ -1,11 +1,37 @@
 .kn-tree {
     &.p-tree {
         border: none;
-        border-right: 1px solid $tree-border-color;
+        border-right: 1px solid var(--kn-tree-border-color);
         border-radius: 0;
+        .p-tree-container {
+            .p-treenode {
+                padding: 0;
+                .p-treenode-content {
+                    border-radius: var(--kn-tree-border-radius);
+                    &.p-highlight {
+                        background-color: var(--kn-tree-selected-background-color);
+                        color: var(--kn-tree-selected-color);
+                        .p-treenode-icon,
+                        .p-tree-toggler {
+                            color: var(--kn-tree-selected-color);
+                        }
+                    }
+                }
+            }
+        }
         .p-tree-filter-container {
             .p-tree-filter {
                 border-radius: 0;
+            }
+        }
+    }
+
+    &.kn-column-tree {
+        .p-tree-filter-container {
+            margin: 0;
+            padding: 8px;
+            .p-tree-filter-icon {
+                right: 1.75rem;
             }
         }
     }

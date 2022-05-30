@@ -40,8 +40,11 @@ import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.Serializer;
 import it.eng.spagobi.commons.utilities.DocumentUtilities;
@@ -508,29 +511,34 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		Boolean isLicensed = true;
 
 		String requiredLicensesString = (String) itemSB.getAttribute(TO_BE_LICENSED);
-		if (isEnterpriseEdition() && requiredLicensesString != null) {
-			if (requiredLicensesString.isEmpty()) {
-				try {
-					Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
+		if (requiredLicensesString != null) {
 
-					isLicensed = !DocumentUtilities.getValidLicenses().isEmpty();
-				} catch (ClassNotFoundException e) {
-					isLicensed = false;
+			if (isEnterpriseEdition()) {
+				if (requiredLicensesString.isEmpty()) {
+					try {
+						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
+
+						isLicensed = !DocumentUtilities.getValidLicenses().isEmpty();
+					} catch (ClassNotFoundException e) {
+						isLicensed = false;
+					}
+				} else {
+					try {
+						String[] requiredLicenses = requiredLicensesString.split(",", -1);
+						Class productProfilerEE = Class.forName("it.eng.knowage.enterprise.security.ProductProfiler");
+						Method getActiveProductsMethod = productProfilerEE.getMethod("getActiveProducts");
+						List<String> activeProducts = (List<String>) getActiveProductsMethod.invoke(productProfilerEE);
+						for (String lic : requiredLicenses) {
+							isLicensed = activeProducts.contains(lic);
+							if (isLicensed)
+								break;
+						}
+					} catch (Exception e) {
+						isLicensed = false;
+					}
 				}
 			} else {
-				try {
-					String[] requiredLicenses = requiredLicensesString.split(",", -1);
-					Class productProfilerEE = Class.forName("it.eng.knowage.enterprise.security.ProductProfiler");
-					Method getActiveProductsMethod = productProfilerEE.getMethod("getActiveProducts");
-					List<String> activeProducts = (List<String>) getActiveProductsMethod.invoke(productProfilerEE);
-					for (String lic : requiredLicenses) {
-						isLicensed = activeProducts.contains(lic);
-						if (isLicensed)
-							break;
-					}
-				} catch (Exception e) {
-					isLicensed = false;
-				}
+				isLicensed = false;
 			}
 		}
 
@@ -769,11 +777,43 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private void setPropertiesForObjectMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
-		if (childElem.isClickable() == true) {
-			temp2.put(TO, contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=" + childElem.getMenuId());
-		} else {
-			temp2.put("isClickable", "false");
+		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
+		try {
+			BIObject document = dao.loadBIObjectById(childElem.getObjId());
+			String documentLink = getDocumentLink(document);
+			if (childElem.isClickable() == true) {
+				temp2.put(TO, documentLink);
+			} else {
+				temp2.put("isClickable", "false");
+			}
+		} catch (Exception e) {
+			logger.error("Cannot load menu item for document: " + childElem.getObjId(), e);
 		}
+
+	}
+
+	private String getDocumentLink(BIObject document) {
+		String documentLabel = document.getLabel();
+		String engineLabel = document.getEngineLabel();
+		String enginePath;
+		switch (engineLabel) {
+		case "knowagedossierengine":
+			enginePath = "dossier";
+			break;
+		case "knowagegisengine":
+			enginePath = "map";
+			break;
+		case "knowagekpiengine":
+			enginePath = "kpi";
+			break;
+		case "knowageofficeengine":
+			enginePath = "office-doc";
+			break;
+		default:
+			enginePath = "document-composite";
+			break;
+		}
+		return String.format("/%s/%s", enginePath, documentLabel);
 	}
 
 	private void setPropertiesForAdminWithUrlMenu(Menu childElem, Locale locale, JSONObject temp2, String path) throws JSONException {

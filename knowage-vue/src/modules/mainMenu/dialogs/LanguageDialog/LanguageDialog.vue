@@ -22,7 +22,6 @@
     import Listbox from 'primevue/listbox'
     import { mapState } from 'vuex'
     import store from '@/App.store'
-    import { usePrimeVue } from 'primevue/config'
 
     import { AxiosResponse } from 'axios'
 
@@ -42,11 +41,7 @@
                 languages: Array<Language>()
             }
         },
-        created() {
-            const primevue = usePrimeVue() as any
-            // @ts-ignore
-            primevue.config.locale = { ...primevue.config.locale, ...this.$i18n.messages[this.$i18n.locale.replaceAll('-', '_')].locale }
-        },
+
         props: {
             visibility: Boolean
         },

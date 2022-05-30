@@ -43,4 +43,7 @@
 	<!-- INTERNAL PROFILING -->
 	<INITIALIZER class="it.eng.spagobi.security.init.InternalSecurityInitializer" config="" />
 	
+		<!-- Initializer for Audit Cleaning -->
+	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.CleanAuditQuartzInitializer" config="" />
+	
 </INITIALIZERS>

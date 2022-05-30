@@ -3,6 +3,11 @@
         "filterInput": {
             "width": "25%"
         },
+        "flex": {
+            "display": "flex",
+            "flex": 1,
+            "flex-direction": "column"
+        },
         "iconColumn": {
             "text-align": "end",
             "width": "15%"
@@ -15,6 +20,9 @@
             "display": "flex",
             "justify-content": "center",
             "text-align": "center"
+        },
+        "multiselect": {
+            "max-width": "300px"
         }
     }
 }

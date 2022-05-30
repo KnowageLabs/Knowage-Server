@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
+import axios from 'axios'
 import AlertDefinitionKpiCard from './AlertDefinitionKpiCard.vue'
 import Toolbar from 'primevue/toolbar'
 import Button from 'primevue/button'
@@ -121,6 +122,17 @@ const mockedAlert = {
     }
 }
 
+jest.mock('axios')
+
+const $http = {
+    get: axios.get.mockImplementation(() =>
+        Promise.resolve({
+            data: mockedKpi
+        })
+    ),
+    delete: axios.delete.mockImplementation(() => Promise.resolve())
+}
+
 const factory = () => {
     return mount(AlertDefinitionKpiCard, {
         props: {
@@ -137,7 +149,8 @@ const factory = () => {
                 InputText
             },
             mocks: {
-                $t: (msg) => msg
+                $t: (msg) => msg,
+                $http
             }
         }
     })

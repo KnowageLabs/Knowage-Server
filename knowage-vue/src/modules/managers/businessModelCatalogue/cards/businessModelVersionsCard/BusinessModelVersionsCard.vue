@@ -2,7 +2,7 @@
     <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary">
-                <template #left>
+                <template #start>
                     {{ $t('managers.businessModelManager.savedVersions') }}
                 </template>
             </Toolbar>
@@ -32,7 +32,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iBusinessModelVersion } from '../../BusinessModelCatalogue'
-import { formatDate } from '@/helpers/commons/localeHelper'
+import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
 import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
@@ -89,7 +89,7 @@ export default defineComponent({
             })
         },
         creationDate(date: string) {
-            return formatDate(date, 'DD/MM/yyyy HH:mm:ss')
+            return formatDateWithLocale(date, { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })
         },
         toggle(event: any, version: iBusinessModelVersion) {
             this.createMenuItems(version)
@@ -121,6 +121,7 @@ export default defineComponent({
         async downloadFile(versionId: number, filetype: string) {
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/${versionId}/${filetype}/file`, {
+                    responseType: 'arraybuffer',
                     headers: {
                         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
                     }
@@ -133,12 +134,12 @@ export default defineComponent({
                         })
                     } else {
                         if (response.headers) {
-                            var contentDisposition = response.headers['content-disposition']
-                            var contentDispositionMatches = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)
+                            const contentDisposition = response.headers['content-disposition']
+                            const contentDispositionMatches = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)
                             if (contentDispositionMatches && contentDispositionMatches.length > 1) {
-                                var fileAndExtension = contentDispositionMatches[1]
-                                var completeFileName = fileAndExtension.replaceAll('"', '')
-                                downloadDirect(response.data, completeFileName, 'application/zip; charset=utf-8')
+                                const fileAndExtension = contentDispositionMatches[1]
+                                const completeFileName = fileAndExtension.replaceAll('"', '')
+                                downloadDirect(response.data, completeFileName, response.headers['content-type'])
                             }
                         }
                         this.$store.commit('setInfo', { title: this.$t('common.toast.success') })

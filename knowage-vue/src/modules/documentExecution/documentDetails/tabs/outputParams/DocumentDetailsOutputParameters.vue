@@ -2,10 +2,10 @@
     <div class="p-grid p-m-0 kn-flex">
         <div class="p-col-4 p-sm-4 p-md-3 p-p-0 p-d-flex p-flex-column kn-flex">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.documentDetails.outputParams.title') }}
                 </template>
-                <template #right>
+                <template #end>
                     <Button :label="$t('common.add')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="addParam" />
                 </template>
             </Toolbar>
@@ -17,13 +17,13 @@
         </div>
         <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0" :style="mainDescriptor.style.driverDetailsContainer">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #left>
+                <template #start>
                     {{ $t('documentExecution.documentDetails.outputParams.paramDetails') }}
                 </template>
             </Toolbar>
             <div id="driver-details-container" class="p-m-2 kn-flex kn-relative">
                 <div v-if="Object.keys(selectedParam).length === 0">
-                    <InlineMessage severity="info"> {{ $t('documentExecution.documentDetails.outputParams.noParamSelected') }}</InlineMessage>
+                    <InlineMessage severity="info" class="kn-width-full"> {{ $t('documentExecution.documentDetails.outputParams.noParamSelected') }}</InlineMessage>
                 </div>
                 <Card v-else>
                     <template #content>

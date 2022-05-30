@@ -24,6 +24,8 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import it.eng.knowage.boot.error.KnowageBusinessException;
+
 public class ImpossibleToCreateFolderException extends KnowageBusinessException {
 
 	/*
