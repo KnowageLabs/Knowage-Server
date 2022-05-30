@@ -96,8 +96,8 @@ export default defineComponent({
             let country = this.user.locale.split('_')[1]
             await this.$http
                 .get(
-                    process.env
-                        .VUE_APP_RESTFUL_SERVICES_PATH`knowagewhatifengine/restful-services/olap/startolap/edit?SBI_LANGUAGE=${language}&SBI_COUNTRY=${country}&DOCUMENT_LABEL=${this.document.label}&mode=edit&user_id=$${this.user.userUniqueIdentifier}&document=${this.document.id}&ENGINE=knowageolapengine&SBI_EXECUTION_ID=${this.sbiExecutionId}`,
+                    process.env.VUE_APP_RESTFUL_SERVICES_PATH +
+                        `knowagewhatifengine/restful-services/olap/startolap/edit?SBI_LANGUAGE=${language}&SBI_COUNTRY=${country}&DOCUMENT_LABEL=${this.document.label}&mode=edit&user_id=$${this.user.userUniqueIdentifier}&document=${this.document.id}&ENGINE=knowageolapengine&SBI_EXECUTION_ID=${this.sbiExecutionId}`,
                     { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } }
                 )
                 .then(() => {})

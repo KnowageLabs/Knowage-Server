@@ -601,7 +601,7 @@ export default defineComponent({
             const postObject = { params: { document: null } as any, url: documentUrl.split('?')[0] }
             postObject.params.documentMode = this.documentMode
             this.hiddenFormUrl = postObject.url
-            const paramsFromUrl = documentUrl.split('?')[1].split('&')
+            const paramsFromUrl = documentUrl?.split('?')[1]?.split('&')
 
             for (let i in paramsFromUrl) {
                 if (typeof paramsFromUrl !== 'function') {
