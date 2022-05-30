@@ -426,6 +426,7 @@ export default defineComponent({
 
             await this.loadFilters(initialLoading)
             if (this.filtersData?.isReadyForExecution) {
+                this.parameterSidebarVisible = false
                 await this.loadURL(null, documentLabel)
                 await this.loadExporters()
             } else if (this.filtersData?.filterStatus) {
