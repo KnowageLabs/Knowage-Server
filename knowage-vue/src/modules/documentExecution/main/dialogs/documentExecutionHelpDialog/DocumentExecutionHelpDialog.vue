@@ -67,7 +67,6 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getDocumentInfo?DOCUMENT_ID=${this.document.id}`)
                 .then((response: AxiosResponse<any>) => (this.words = response.data.word))
                 .finally(() => this.$store.commit('setLoading', false))
-            console.log('LOADED WORDS: ', this.words)
         },
         async loadWordDetail(word: { WORD_ID: number; WORD: string }) {
             this.$store.commit('setLoading', true)
@@ -78,7 +77,6 @@ export default defineComponent({
                     this.wordDetail = response.data
                 })
                 .finally(() => this.$store.commit('setLoading', false))
-            console.log('LOADED WORD DETAIL: ', this.wordDetail)
         },
         closeDialog() {
             this.$emit('close')
