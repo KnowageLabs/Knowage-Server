@@ -215,7 +215,7 @@ export default defineComponent({
             }
         })
 
-        if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution') return
+        if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
 
         await this.loadUserConfig()
 
@@ -223,6 +223,8 @@ export default defineComponent({
         this.setMode()
 
         this.document = { label: this.id }
+
+        console.log('DOCUMENT: ', this.document)
 
         if (!this.document.label) return
 
