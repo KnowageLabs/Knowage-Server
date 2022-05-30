@@ -215,7 +215,7 @@ export default defineComponent({
             }
         })
 
-        if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution') return
+        if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
 
         await this.loadUserConfig()
 
@@ -426,6 +426,7 @@ export default defineComponent({
 
             await this.loadFilters(initialLoading)
             if (this.filtersData?.isReadyForExecution) {
+                this.parameterSidebarVisible = false
                 await this.loadURL(null, documentLabel)
                 await this.loadExporters()
             } else if (this.filtersData?.filterStatus) {

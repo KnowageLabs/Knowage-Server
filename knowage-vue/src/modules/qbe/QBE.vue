@@ -15,7 +15,7 @@
         <ProgressSpinner class="kn-progress-spinner" v-if="loading" />
         <div v-if="!qbePreviewDialogVisible" class="kn-relative p-d-flex p-flex-row kn-height-full kn-width-full">
             <div v-if="parameterSidebarVisible" :style="qbeDescriptor.style.backdrop" @click="parameterSidebarVisible = false"></div>
-            <div v-show="showEntitiesLists && qbeLoaded" :style="qbeDescriptor.style.entitiesLists">
+            <div v-if="showEntitiesLists && qbeLoaded" :style="qbeDescriptor.style.entitiesLists">
                 <div class="p-d-flex p-flex-column kn-flex kn-overflow-hidden">
                     <Toolbar class="kn-toolbar kn-toolbar--secondary kn-flex-0">
                         <template #start>
@@ -316,7 +316,6 @@ export default defineComponent({
             await this.loadDatasetDrivers()
             if (this.qbe?.pars?.length === 0 && this.filtersData?.isReadyForExecution) {
                 await this.loadQBE()
-                this.qbeLoaded = true
             } else if (this.qbe?.pars?.length !== 0 || !this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = true
             }
@@ -396,7 +395,9 @@ export default defineComponent({
             if (this.dataset) {
                 await this.$http
                     .get(process.env.VUE_APP_QBE_PATH + `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`)
-                    .then(() => {})
+                    .then(() => {
+                        this.qbeLoaded = true
+                    })
                     .catch(() => {})
             }
         },
@@ -778,7 +779,6 @@ export default defineComponent({
                 }
                 await this.loadQBE()
                 this.loadQuery()
-                this.qbeLoaded = true
                 this.parameterSidebarVisible = false
             }
         },
@@ -867,7 +867,13 @@ export default defineComponent({
         async onRoleChange(role: string) {
             this.userRole = role as any
             this.filtersData = {}
-            await this.loadPage()
+            if (this.dataset && !this.dataset.dataSourceId) {
+                await this.loadDataset()
+            } else {
+                this.qbe = this.getQBEFromModel()
+            }
+            this.loadQuery()
+            await this.loadDatasetDrivers()
         },
         onFieldDeleted(field: any) {
             for (let i = this.selectedQuery.havings.length - 1; i >= 0; i--) {
