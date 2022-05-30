@@ -73,7 +73,9 @@ export interface iField {
     longDescription: string
     order: string
     type: string
-    visible: boolean
+    visible: boolean,
+    attributes?: any,
+    originalId?: string
 }
 
 export interface iQueryResult {

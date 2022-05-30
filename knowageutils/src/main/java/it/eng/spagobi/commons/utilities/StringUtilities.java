@@ -266,7 +266,7 @@ public class StringUtilities {
 		if (slashEIndex == -1)
 			return "\\Q" + s + "\\E";
 
-		StringBuffer sb = new StringBuffer(s.length() * 2);
+		StringBuilder sb = new StringBuilder(s.length() * 2);
 		sb.append("\\Q");
 		slashEIndex = 0;
 		int current = 0;
@@ -463,6 +463,8 @@ public class StringUtilities {
 					replacement = "'" + replacement;
 				if (!replacement.endsWith("'"))
 					replacement = replacement + "'";
+
+				replacement = escapeInternalQuotes(replacement);
 			}
 
 			attribute = quote(attribute);
@@ -473,6 +475,14 @@ public class StringUtilities {
 
 		return statement;
 
+	}
+
+	private static String escapeInternalQuotes(String replacement) {
+		return new StringBuilder()
+				.append(replacement.charAt(0))
+				.append(replacement.substring(1, replacement.length() - 1).replaceAll("'","''"))
+				.append(replacement.charAt(replacement.length() - 1))
+				.toString();
 	}
 
 	/**

@@ -85,10 +85,11 @@
 </template>
 
 <script lang="ts">
+import { PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import { defineComponent } from 'vue'
-import { IKnCalculatedField } from '@/components/functionalities/KnCalculatedField/KnCalculatedField'
+import { IKnCalculatedField, IKnCalculatedFieldFunction } from '@/components/functionalities/KnCalculatedField/KnCalculatedField'
 import { VCodeMirror } from 'vue3-code-mirror'
 
 import Dropdown from 'primevue/dropdown'
@@ -109,7 +110,8 @@ export default defineComponent({
         descriptor: Object,
         template: {} as any,
         valid: Boolean,
-        source: String
+        source: String,
+        propCalcFieldFunctions: { type: Array as PropType<IKnCalculatedFieldFunction[]>, required: true }
     },
     data() {
         return {
@@ -132,12 +134,14 @@ export default defineComponent({
             },
             v$: useValidate() as any,
             formulaValidationInterval: {} as any,
-            isValidFormula: false
+            isValidFormula: false,
+            calcFieldFunctions: [] as IKnCalculatedFieldFunction[]
         }
     },
     emits: ['save', 'cancel', 'update:readOnly'],
     created() {
-        this.availableFunctions = [...this.descriptor?.availableFunctions].sort((a, b) => {
+        this.calcFieldFunctions = [...this.propCalcFieldFunctions]
+        this.availableFunctions = [...this.calcFieldFunctions].sort((a, b) => {
             return a.name.localeCompare(b.name)
         })
         this.availableFunctions.forEach((x) => {
@@ -145,6 +149,10 @@ export default defineComponent({
         })
 
         this.cf = { formula: '' } as IKnCalculatedField
+
+        if (!this.readOnly && this.template && !this.template.parameters && this.source === 'QBE') {
+            this.cf = { colName: this.template.alias, formula: this.template.expression } as IKnCalculatedField
+        }
     },
 
     updated() {
@@ -186,7 +194,7 @@ export default defineComponent({
             this.selectedCategory = ''
         },
         filterFunctions() {
-            let tmp = [...this.descriptor?.availableFunctions].sort((a, b) => {
+            let tmp = [...this.calcFieldFunctions].sort((a, b) => {
                 return a.name.localeCompare(b.name)
             })
             tmp.forEach((x) => {
@@ -201,7 +209,7 @@ export default defineComponent({
         handleOptions() {
             let tmp = [] as any
 
-            this.descriptor?.availableFunctions
+            this.calcFieldFunctions
                 .sort((a, b) => {
                     return a.name.localeCompare(b.name)
                 })

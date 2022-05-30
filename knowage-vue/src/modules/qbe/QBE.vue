@@ -85,6 +85,7 @@
                             @entityDropped="onDropComplete($event, false)"
                             @groupingChanged="onGroupingChanged"
                             @openCalculatedFieldDialog="editCalcField"
+                            @fieldDeleted="onFieldDeleted"
                         ></QBESimpleTable>
                         <QBESmartTable
                             v-else
@@ -105,10 +106,10 @@
                     </div>
                 </div>
             </div>
-            <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="dataset" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe.pars" @execute="onExecute"></KnParameterSidebar>
+            <KnParameterSidebar v-if="parameterSidebarVisible" :filtersData="filtersData" :propDocument="dataset" :userRole="userRole" :propMode="'qbeView'" :propQBEParameters="qbe?.pars" @execute="onExecute" @roleChanged="onRoleChange"></KnParameterSidebar>
         </div>
 
-        <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="uniqueID" :queryPreviewData="queryPreviewData" :pagination="pagination" :entities="entities?.entities" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
+        <QBEPreviewDialog v-show="!loading && qbePreviewDialogVisible" :id="uniqueID" :queryPreviewData="queryPreviewData" :pagination="pagination" :entities="entities?.entities" :selectedQuery="selectedQuery" @close="closePreview" @pageChanged="updatePagination($event)"></QBEPreviewDialog>
         <QBEFilterDialog :visible="filterDialogVisible" :filterDialogData="filterDialogData" :id="uniqueID" :entities="entities?.entities" :propParameters="qbe?.pars" :propExpression="selectedQuery?.expression" @close="filterDialogVisible = false" @save="onFiltersSave"></QBEFilterDialog>
         <QBESqlDialog :visible="sqlDialogVisible" :sqlData="sqlData" @close="sqlDialogVisible = false" />
         <QBERelationDialog :visible="relationDialogVisible" :propEntity="relationEntity" @close="relationDialogVisible = false" />
@@ -118,7 +119,19 @@
         <QBESavingDialog :visible="savingDialogVisible" :propDataset="qbe" @close="savingDialogVisible = false" @datasetSaved="$emit('datasetSaved')" />
         <QBEJoinDefinitionDialog v-if="joinDefinitionDialogVisible" :visible="joinDefinitionDialogVisible" :qbe="qbe" :propEntities="entities?.entities" :id="uniqueID" :selectedQuery="selectedQuery" @close="onJoinDefinitionDialogClose"></QBEJoinDefinitionDialog>
 
-        <KnCalculatedField v-model:template="selectedCalcField" v-model:visibility="calcFieldDialogVisible" :fields="calcFieldColumns" :descriptor="calcFieldDescriptor" :readOnly="false" :valid="true" source="QBE" @save="onCalcFieldSave" @cancel="calcFieldDialogVisible = false">
+        <KnCalculatedField
+            v-if="calcFieldDialogVisible"
+            v-model:template="selectedCalcField"
+            v-model:visibility="calcFieldDialogVisible"
+            :fields="calcFieldColumns"
+            :descriptor="calcFieldDescriptor"
+            :propCalcFieldFunctions="calcFieldFunctions"
+            :readOnly="false"
+            :valid="true"
+            source="QBE"
+            @save="onCalcFieldSave"
+            @cancel="calcFieldDialogVisible = false"
+        >
             <template #additionalInputs>
                 <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
                     <span class="p-float-label ">
@@ -259,6 +272,7 @@ export default defineComponent({
             calcFieldDialogVisible: false,
             calcFieldColumns: [] as any,
             selectedCalcField: null as any,
+            calcFieldFunctions: [] as any,
             colors: ['#D7263D', '#F46036', '#2E294E', '#1B998B', '#C5D86D', '#3F51B5', '#8BC34A', '#009688', '#F44336']
         }
     },
@@ -284,7 +298,11 @@ export default defineComponent({
         this.uniqueID = crypto.randomBytes(16).toString('hex')
         this.user = (this.$store.state as any).user
         this.userRole = this.user.sessionRole && this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
-        await this.loadPage()
+        if (this.userRole) {
+            await this.loadPage()
+        } else {
+            this.parameterSidebarVisible = true
+        }
     },
     methods: {
         async loadPage() {
@@ -305,6 +323,7 @@ export default defineComponent({
             this.loading = false
         },
         async loadQBE() {
+            this.loadCalcFieldFunctions()
             await this.initializeQBE()
             await this.loadCustomizedDatasetFunctions()
             await this.loadEntities()
@@ -326,6 +345,9 @@ export default defineComponent({
         loadQuery() {
             this.mainQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
             this.selectedQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
+        },
+        loadCalcFieldFunctions() {
+            this.calcFieldFunctions = calcFieldDescriptor.availableFunctions
         },
         getQBEFromModel() {
             if (!this.dataset) return {}
@@ -354,12 +376,15 @@ export default defineComponent({
             const label = this.qbe.label ? this.qbe.label : this.qbe.qbeDatamarts
             const url = this.qbe.label ? `3.0/datasets/${label}/filters` : `1.0/businessmodel/${this.qbe.qbeDatamarts}/filters`
 
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, { role: this.userRole }).then((response: AxiosResponse<any>) => {
-                this.filtersData = response.data
-                if (this.filtersData.filterStatus) {
-                    this.filtersData.filterStatus = this.filtersData.filterStatus.filter((filter: any) => filter.id)
-                }
-            })
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, { role: this.userRole })
+                .then((response: AxiosResponse<any>) => {
+                    this.filtersData = response.data
+                    if (this.filtersData.filterStatus) {
+                        this.filtersData.filterStatus = this.filtersData.filterStatus.filter((filter: any) => filter.id)
+                    }
+                })
+                .catch(() => {})
 
             formatDrivers(this.filtersData)
         },
@@ -389,7 +414,15 @@ export default defineComponent({
         },
         async loadCustomizedDatasetFunctions() {
             const id = this.dataset?.dataSourceId ? this.dataset.dataSourceId : this.qbe?.qbeDataSourceId
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${id}`).then((response: AxiosResponse<any>) => (this.customizedDatasetFunctions = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${id}`).then((response: AxiosResponse<any>) => {
+                this.customizedDatasetFunctions = response.data
+                if (response.data.data && response.data.data.length > 0) {
+                    let customFunctions = response.data.data.map((funct) => ({ category: 'CUSTOM', formula: funct.value, label: funct.label, name: funct.name, help: 'dataPreparation.custom' }))
+                    customFunctions.forEach((funct) => {
+                        this.calcFieldFunctions.push(funct)
+                    })
+                }
+            })
         },
         async loadEntities() {
             const datamartName = this.dataset?.dataSourceId ? this.dataset.name : this.qbe?.qbeDatamarts
@@ -662,7 +695,8 @@ export default defineComponent({
                     format: field.format,
                     longDescription: field.attributes.longDescription,
                     distinct: editQueryObj.distinct,
-                    leaf: field.leaf
+                    leaf: field.leaf,
+                    originalId: field.id
                 } as any
             }
             // eslint-disable-next-line no-prototype-builtins
@@ -773,6 +807,7 @@ export default defineComponent({
             let indexOfFieldToDelete = this.selectedQuery.fields.findIndex((field) => {
                 return field.uniqueID === uniqueID
             })
+            this.onFieldDeleted({ ...this.selectedQuery.fields[indexOfFieldToDelete] })
             this.selectedQuery.fields.splice(indexOfFieldToDelete, 1)
             this.updateSmartView()
         },
@@ -828,6 +863,18 @@ export default defineComponent({
 
             if (this.selectedQuery.expression.childNodes?.length === 0) this.selectedQuery.expression = {}
             this.updateSmartView()
+        },
+        async onRoleChange(role: string) {
+            this.userRole = role as any
+            this.filtersData = {}
+            await this.loadPage()
+        },
+        onFieldDeleted(field: any) {
+            for (let i = this.selectedQuery.havings.length - 1; i >= 0; i--) {
+                if (this.selectedQuery.havings[i].leftOperandValue === field.id) {
+                    this.selectedQuery.havings.splice(i, 1)
+                }
+            }
         }
     }
 })
