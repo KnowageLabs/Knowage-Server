@@ -418,7 +418,7 @@ export default defineComponent({
         },
         async getParameterPopupInfo(parameter: iParameter) {
             this.loading = true
-            const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole }
+            const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole ?? this.role }
 
             let url = '2.0/documentExeParameters/admissibleValues'
             if (this.mode !== 'execution' && this.document) {
