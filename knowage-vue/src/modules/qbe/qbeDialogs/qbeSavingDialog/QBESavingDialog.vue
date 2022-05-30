@@ -33,6 +33,7 @@
         </TabView>
 
         <template #footer>
+            <Button class="kn-button kn-button--default" @click="logme"> LOG ME </Button>
             <Button class="kn-button kn-button--secondary" @click="$emit('close')"> {{ $t('common.cancel') }}</Button>
             <Button class="kn-button kn-button--primary" :disabled="buttonDisabled" @click="saveDataset"> {{ $t('common.save') }}</Button>
         </template>
@@ -227,6 +228,9 @@ export default defineComponent({
                 this.selectedDataset.scopeCd = userScope.VALUE_CD
                 this.selectedDataset.scopeId = userScope.VALUE_ID
             }
+        },
+        logme() {
+            console.log(this.v$)
         }
     }
 })
