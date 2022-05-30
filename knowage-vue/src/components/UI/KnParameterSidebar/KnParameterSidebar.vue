@@ -515,7 +515,7 @@ export default defineComponent({
                 if (index !== -1) {
                     const parameter = this.parameters.filterStatus[index]
                     if (parameter.type === 'DATE') {
-                        parameter.parameterValue[0].value = this.getFormattedDate(tempParameters[key], 'MM/DD/YYYY')
+                        parameter.parameterValue[0].value = this.getFormattedDate(tempParameters[key], 'DD/MM/yyyy')
                     } else if ((parameter.valueSelection === 'man_in' || parameter.selectionType === 'COMBOBOX') && !parameter.multivalue) {
                         parameter.parameterValue[0].value = tempParameters[key]
                         parameter.parameterValue[0].description = tempParameters[key + '_field_visible_description']
