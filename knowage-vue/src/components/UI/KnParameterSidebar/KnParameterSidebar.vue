@@ -478,8 +478,8 @@ export default defineComponent({
         },
         updateDependency(parameter: iParameter) {
             this.updateVisualDependency(parameter)
-            updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode)
-            updateLovDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode)
+            updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode, this.role)
+            updateLovDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode, this.role)
             this.$emit('parametersChanged', { parameters: this.parameters, document: this.propDocument })
         },
         openSaveParameterDialog() {
