@@ -11,3 +11,7 @@ export interface IWidget {
     settings: object
     interactions?: Array<object>
 }
+
+export interface IInteraction {
+    type: string
+}

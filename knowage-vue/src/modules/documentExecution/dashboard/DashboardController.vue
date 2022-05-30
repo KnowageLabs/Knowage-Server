@@ -5,6 +5,9 @@
 </template>
 
 <script lang="ts">
+/**
+ * ! this component will be in charge of creating the dashboard instance and to get initializing informations needed like the theme or the datasets.
+ */
 import { defineComponent } from 'vue'
 import DashboardRenderer from './DashboardRenderer.vue'
 import mock from './DashboardMock.json'

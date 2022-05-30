@@ -21,6 +21,9 @@
 </template>
 
 <script lang="ts">
+/**
+ * ! this component will be in charge of creating the dashboard visualizazion, specifically to manage responsive structure and sheets.
+ */
 import { defineComponent } from 'vue'
 import { mapState } from 'vuex'
 import WidgetController from './widget/WidgetController.vue'
