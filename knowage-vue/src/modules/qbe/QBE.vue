@@ -307,7 +307,8 @@ export default defineComponent({
     methods: {
         async loadPage() {
             this.loading = true
-            if (this.dataset && !this.dataset.dataSourceId) {
+
+            if (this.dataset && !this.dataset.dataSourceId && !this.dataset.federation_id) {
                 await this.loadDataset()
             } else {
                 this.qbe = this.getQBEFromModel()
@@ -772,7 +773,7 @@ export default defineComponent({
         async onExecute(qbeParameters: any[]) {
             if (this.qbe) {
                 this.qbe.pars = [...qbeParameters]
-                if (this.dataset && !this.dataset.dataSourceId) {
+                if (this.dataset && !this.dataset.dataSourceId && !this.dataset.federation_id) {
                     await this.loadDataset()
                 } else {
                     this.qbe = this.getQBEFromModel()
@@ -867,7 +868,7 @@ export default defineComponent({
         async onRoleChange(role: string) {
             this.userRole = role as any
             this.filtersData = {}
-            if (this.dataset && !this.dataset.dataSourceId) {
+            if (this.dataset && !this.dataset.dataSourceId && !this.dataset.federation_id) {
                 await this.loadDataset()
             } else {
                 this.qbe = this.getQBEFromModel()
