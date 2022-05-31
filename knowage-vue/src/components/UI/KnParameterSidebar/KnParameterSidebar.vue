@@ -11,7 +11,7 @@
         </Toolbar>
 
         <div class="p-fluid kn-parameter-sidebar-content kn-alternated-rows">
-            <div class="p-field p-my-1 p-p-2" v-if="user && (!sessionRole || sessionRole === $t('role.defaultRolePlaceholder'))">
+            <div class="p-field p-my-1 p-p-2" v-if="user && (!sessionRole || sessionRole === $t('role.defaultRolePlaceholder')) && (mode === 'execution' || mode === 'qbeView' || (mode === 'workspaceView' && dataset?.drivers.length > 0))">
                 <div class="p-d-flex">
                     <label class="kn-material-input-label">{{ $t('common.roles') }}</label>
                 </div>
@@ -156,13 +156,13 @@
             <Menu ref="executeButtonMenu" :model="executeMenuItems" :popup="true" />
         </div>
         <KnParameterPopupDialog v-if="popupDialogVisible" :visible="popupDialogVisible" :selectedParameter="selectedParameter" :propLoading="loading" :parameterPopUpData="parameterPopUpData" @close="popupDialogVisible = false" @save="onPopupSave"></KnParameterPopupDialog>
-        <KnParameterTreeDialog v-if="treeDialogVisible" :visible="treeDialogVisible" :selectedParameter="selectedParameter" :formatedParameterValues="formatedParameterValues" :document="document" :mode="mode" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
+        <KnParameterTreeDialog v-if="treeDialogVisible" :visible="treeDialogVisible" :selectedParameter="selectedParameter" :formatedParameterValues="formatedParameterValues" :document="document" :mode="mode" :selectedRole="role" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
         <KnParameterSaveDialog :visible="parameterSaveDialogVisible" :propLoading="loading" @close="parameterSaveDialogVisible = false" @saveViewpoint="saveViewpoint"></KnParameterSaveDialog>
         <KnParameterSavedParametersDialog :visible="savedParametersDialogVisible" :propViewpoints="viewpoints" @close="savedParametersDialogVisible = false" @fillForm="fillParameterForm" @executeViewpoint="executeViewpoint" @deleteViewpoint="deleteViewpoint"></KnParameterSavedParametersDialog>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import { iDocument, iParameter, iAdmissibleValues } from './KnParameterSidebar'
@@ -182,11 +182,12 @@ import Menu from 'primevue/menu'
 import MultiSelect from 'primevue/multiselect'
 import RadioButton from 'primevue/radiobutton'
 import ScrollPanel from 'primevue/scrollpanel'
+import moment from 'moment'
 
 export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Chips, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton, ScrollPanel },
-    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String } },
+    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: Object as PropType<String | null> }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String }, dataset: { type: Object } },
     emits: ['execute', 'exportCSV', 'roleChanged', 'parametersChanged'],
     data() {
         return {
@@ -418,7 +419,8 @@ export default defineComponent({
         },
         async getParameterPopupInfo(parameter: iParameter) {
             this.loading = true
-            const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole ?? this.role }
+            const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
+            const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: role }
 
             let url = '2.0/documentExeParameters/admissibleValues'
             if (this.mode !== 'execution' && this.document) {
@@ -477,16 +479,21 @@ export default defineComponent({
             this.treeDialogVisible = false
         },
         updateDependency(parameter: iParameter) {
+            const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
             this.updateVisualDependency(parameter)
-            updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode, this.role)
-            updateLovDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode, this.role)
+            updateDataDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode)
+            updateLovDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode)
             this.$emit('parametersChanged', { parameters: this.parameters, document: this.propDocument })
         },
         openSaveParameterDialog() {
             this.parameterSaveDialogVisible = true
         },
         async saveViewpoint(viewpoint: any) {
-            const postData = { ...viewpoint, OBJECT_LABEL: this.document?.label, ROLE: this.sessionRole, VIEWPOINT: this.getParameterValues() }
+            const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
+
+            if (!role) return
+
+            const postData = { ...viewpoint, OBJECT_LABEL: this.document?.label, ROLE: role, VIEWPOINT: this.getParameterValues() }
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/addViewpoint`, postData)
@@ -501,8 +508,10 @@ export default defineComponent({
             this.loading = false
         },
         async openSavedParametersDialog() {
+            const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
+            if (!role) return
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/getViewpoints?label=${this.document?.label}&role=${this.sessionRole}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/getViewpoints?label=${this.document?.label}&role=${role}`).then((response: AxiosResponse<any>) => {
                 this.viewpoints = response.data.viewpoints
                 this.savedParametersDialogVisible = true
             })
@@ -510,12 +519,14 @@ export default defineComponent({
         },
         fillParameterForm(viewpoint: any) {
             const tempParameters = this.decodeViewpointPrameterValues(viewpoint.vpValueParams)
+
             Object.keys(tempParameters)?.forEach((key: any) => {
                 const index = this.parameters.filterStatus.findIndex((el: any) => el.urlName === key)
                 if (index !== -1) {
                     const parameter = this.parameters.filterStatus[index]
                     if (parameter.type === 'DATE') {
-                        parameter.parameterValue[0].value = this.getFormattedDate(tempParameters[key], 'DD/MM/yyyy')
+                        const temp = new Date(tempParameters[key])
+                        parameter.parameterValue[0].value = temp instanceof Date && !isNaN(temp as any) ? this.getFormattedDate(moment(temp).format('DD/MM/YYYY'), 'DD/MM/YYYY') : this.getFormattedDate(tempParameters[key], 'DD/MM/YYYY')
                     } else if ((parameter.valueSelection === 'man_in' || parameter.selectionType === 'COMBOBOX') && !parameter.multivalue) {
                         parameter.parameterValue[0].value = tempParameters[key]
                         parameter.parameterValue[0].description = tempParameters[key + '_field_visible_description']
@@ -538,7 +549,7 @@ export default defineComponent({
             })
         },
         getFormattedDate(date: any, format: any) {
-            return formatDate(date, format)
+            return formatDate(date, undefined, format)
         },
         decodeViewpointPrameterValues(string: string) {
             const parametersJson = {}

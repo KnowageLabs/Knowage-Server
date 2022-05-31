@@ -17,15 +17,15 @@ export function setLovsDependency(loadedParameters: { filterStatus: iParameter[]
     }
 }
 
-export async function updateLovDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string, selectedRole: string | null) {
+export async function updateLovDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
     if (parameter && parameter.lovDependentParameters) {
         for (let i = 0; i < parameter.lovDependentParameters.length; i++) {
-            await lovDependencyCheck(loadedParameters, parameter.lovDependentParameters[i], loading, document, sessionRole, $http, mode, selectedRole)
+            await lovDependencyCheck(loadedParameters, parameter.lovDependentParameters[i], loading, document, sessionRole, $http, mode)
         }
     }
 }
 
-export async function lovDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string, selectedRole: string | null) {
+export async function lovDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
     loading = true
     if (parameter.parameterValue[0]) {
         parameter.parameterValue[0] = { value: '', description: '' }
@@ -33,7 +33,7 @@ export async function lovDependencyCheck(loadedParameters: { filterStatus: iPara
         parameter.parameterValue = [{ value: '', description: '' }]
     }
 
-    const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters), paramId: parameter.urlName, role: sessionRole ?? selectedRole }
+    const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters), paramId: parameter.urlName, role: sessionRole }
     let url = '2.0/documentExeParameters/admissibleValues'
 
     if (mode !== 'execution' && document) {

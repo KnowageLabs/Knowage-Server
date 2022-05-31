@@ -405,6 +405,7 @@ export default defineComponent({
         },
         async previewDataset(dataset: any) {
             await this.loadDataset(dataset.label)
+            if (this.selectedDataset) this.selectedDataset.drivers = dataset.drivers
             this.previewDialogVisible = true
         },
         editDataset() {
