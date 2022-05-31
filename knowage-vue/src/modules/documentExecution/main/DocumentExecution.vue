@@ -663,6 +663,7 @@ export default defineComponent({
             if (index !== -1) this.breadcrumbs[index].hiddenFormData = this.hiddenFormData
         },
         async sendHiddenFormData() {
+            console.log('HIDDEN FORM DATA: ', this.hiddenFormData)
             await this.$http
                 .post(this.hiddenFormUrl, this.hiddenFormData, {
                     headers: {

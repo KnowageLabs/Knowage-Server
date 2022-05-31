@@ -64,6 +64,7 @@ export default defineComponent({
             type: 'xmla' as string,
             xmlModel: { address: '', parameters: [] } as iXMLATemplate,
             mondrianModel: {} as iMondrianTemplate,
+            user: null as any,
             sbiExecutionId: '',
             loading: false
         }
@@ -79,6 +80,8 @@ export default defineComponent({
         }
     },
     async created() {
+        this.sbiExecutionId = crypto.randomBytes(16).toString('hex')
+        this.user = (this.$store.state as any).user
         this.loadDocument()
     },
     methods: {
@@ -90,17 +93,48 @@ export default defineComponent({
             this.loadMondrianSchemaResources()
         },
         async initialize() {
-            if (!this.document) return
+            if (!this.document || !this.user) return
+
+            const language = this.user.locale?.split('_')[0]
+            const uniqueID = this.user.userUniqueIdentifier
+            const country = this.user.locale?.split('_')[1]
+
+            console.log('DOCUMENT: ', this.document)
+
+            const hiddenFormData = new URLSearchParams()
+            hiddenFormData.set('document', decodeURIComponent('' + this.document.id))
+            // hiddenFormData.set('documentMode', decodeURIComponent('VIEW'))
+            // hiddenFormData.set('DEFAULT_DATASOURCE_FOR_WRITING_LABEL', decodeURIComponent('CacheDS'))
+            hiddenFormData.set('user_id', decodeURIComponent(uniqueID))
+            // hiddenFormData.set('SPAGOBI_AUDIT_ID', decodeURIComponent('39018'))
+            hiddenFormData.set('DOCUMENT_LABEL', decodeURIComponent(this.document.label))
+            // hiddenFormData.set('SBI_ARTIFACT_ID', decodeURIComponent('25'))
+            // hiddenFormData.set('DOCUMENT_OUTPUT_PARAMETERS', decodeURIComponent('[]'))
+            // hiddenFormData.set('DOCUMENT_COMMUNITIES', decodeURIComponent('[]'))
+            // hiddenFormData.set('knowage_sys_country', decodeURIComponent('us'))
+            // hiddenFormData.set('DOCUMENT_IS_VISIBLE', decodeURIComponent('true'))
+            // hiddenFormData.set('SBI_EXECUTION_ROLE', decodeURIComponent('/demo/admin'))
+            // hiddenFormData.set('SBI_ARTIFACT_VERSION_ID', decodeURIComponent('231'))
+            // hiddenFormData.set('knowage_sys_language', decodeURIComponent('en'))
+            // hiddenFormData.set('DOCUMENT_FUNCTIONALITIES', decodeURIComponent('[726, 725, 727]'))
+            hiddenFormData.set('SBI_COUNTRY', decodeURIComponent(country))
+            hiddenFormData.set('DOCUMENT_AUTHOR', decodeURIComponent(this.document.creationUser))
+            hiddenFormData.set('DOCUMENT_DESCRIPTION', decodeURIComponent(this.document.description))
+            // hiddenFormData.set('IS_TECHNICAL_USER', decodeURIComponent('true'))
+            hiddenFormData.set('SBI_LANGUAGE', decodeURIComponent(language))
+            hiddenFormData.set('DOCUMENT_NAME', decodeURIComponent(this.document.name))
+            hiddenFormData.set('NEW_SESSION', decodeURIComponent('TRUE'))
+            // hiddenFormData.set('DOCUMENT_IS_PUBLIC', decodeURIComponent('true'))
+            // hiddenFormData.set('DOCUMENT_VERSION', decodeURIComponent('8189'))
+            // hiddenFormData.set('SBI_ENVIRONMENT', decodeURIComponent('DOCBROWSER'))
+            hiddenFormData.set('SBI_EXECUTION_ID', decodeURIComponent(this.sbiExecutionId))
+            hiddenFormData.set('EDIT_MODE', decodeURIComponent('null'))
+            hiddenFormData.set('timereloadurl', decodeURIComponent('' + new Date().getTime()))
+
             this.$store.commit('setLoading', true)
-            let language = this.user.locale.split('_')[0]
-            let country = this.user.locale.split('_')[1]
-            await this.$http
-                .get(
-                    process.env.VUE_APP_RESTFUL_SERVICES_PATH +
-                        `knowagewhatifengine/restful-services/olap/startolap/edit?SBI_LANGUAGE=${language}&SBI_COUNTRY=${country}&DOCUMENT_LABEL=${this.document.label}&mode=edit&user_id=$${this.user.userUniqueIdentifier}&document=${this.document.id}&ENGINE=knowageolapengine&SBI_EXECUTION_ID=${this.sbiExecutionId}`,
-                    { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } }
-                )
-                .then(() => {})
+            // et language = this.user.locale.split('_')[0]
+            // let country = this.user.locale.split('_')[1]
+            await this.$http.post(process.env.VUE_APP_OLAP_PATH + `olap/startolap`, hiddenFormData, { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } }).then(() => {})
             this.$store.commit('setLoading', false)
         },
         async loadMondrianSchemaResources() {
