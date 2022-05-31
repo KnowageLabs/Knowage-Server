@@ -182,6 +182,7 @@ export default defineComponent({
             this.loading = false
         },
         async loadDatasetDrivers() {
+            let hasError = false
             if (this.dataset.label && this.dataset.id && this.dataset.dsTypeCd !== 'Prepared') {
                 await this.$http
                     .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${this.dataset.label}/filters`, { role: this.userRole })
@@ -191,9 +192,12 @@ export default defineComponent({
                             this.filtersData.filterStatus = this.filtersData.filterStatus.filter((filter: any) => filter.id)
                         }
                     })
-                    .catch(() => {})
+                    .catch(() => {
+                        hasError = true
+                    })
                 this.formatDrivers()
             }
+            return hasError
         },
         formatDrivers() {
             this.filtersData?.filterStatus?.forEach((el: any) => {
@@ -290,8 +294,9 @@ export default defineComponent({
         async onRoleChange(role: string) {
             this.userRole = role as any
             this.filtersData = {}
-            if (this.dataset.drivers && this.dataset.drivers.length > 0) await this.loadDatasetDrivers()
-            if (this.dataset.label && this.dataset.pars.length === 0 && (this.filtersData.isReadyForExecution === undefined || this.filtersData.isReadyForExecution)) {
+            let hasError = false
+            if (this.dataset.drivers && this.dataset.drivers.length > 0) hasError = await this.loadDatasetDrivers()
+            if (!hasError && this.dataset.label && this.dataset.pars.length === 0 && (this.filtersData.isReadyForExecution === undefined || this.filtersData.isReadyForExecution)) {
                 this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
                 this.parameterSidebarVisible = false
             } else {
