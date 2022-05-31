@@ -11,7 +11,7 @@
         </Toolbar>
 
         <div class="p-fluid kn-parameter-sidebar-content kn-alternated-rows">
-            <div class="p-field p-my-1 p-p-2" v-if="user && (!sessionRole || sessionRole === $t('role.defaultRolePlaceholder'))">
+            <div class="p-field p-my-1 p-p-2" v-if="user && (!sessionRole || sessionRole === $t('role.defaultRolePlaceholder')) && (propMode === 'execution' || dataset?.drivers.length > 0)">
                 <div class="p-d-flex">
                     <label class="kn-material-input-label">{{ $t('common.roles') }}</label>
                 </div>
@@ -162,7 +162,7 @@
     </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import { iDocument, iParameter, iAdmissibleValues } from './KnParameterSidebar'
@@ -187,7 +187,7 @@ import moment from 'moment'
 export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Chips, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton, ScrollPanel },
-    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String } },
+    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: Object as PropType<String | null> }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String }, dataset: { type: Object } },
     emits: ['execute', 'exportCSV', 'roleChanged', 'parametersChanged'],
     data() {
         return {
