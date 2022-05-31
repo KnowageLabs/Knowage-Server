@@ -901,6 +901,8 @@ export default defineComponent({
             await this.loadCrossNavigationByDocument(event.data)
         },
         async loadCrossNavigationByDocument(angularData: any) {
+            if (!this.document) return
+
             let temp = {} as any
 
             this.loading = true
