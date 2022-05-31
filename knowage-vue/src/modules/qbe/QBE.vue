@@ -125,7 +125,7 @@
             v-model:visibility="calcFieldDialogVisible"
             :fields="calcFieldColumns"
             :descriptor="calcFieldDescriptor"
-            :propCalcFieldFunctions="calcFieldFunctions"
+            :propCalcFieldFunctions="calcFieldFunctionsToShow"
             :readOnly="false"
             :valid="true"
             source="QBE"
@@ -202,6 +202,7 @@ import KnCalculatedField from '@/components/functionalities/KnCalculatedField/Kn
 import Dropdown from 'primevue/dropdown'
 
 const crypto = require('crypto')
+const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'qbe',
@@ -273,6 +274,7 @@ export default defineComponent({
             calcFieldColumns: [] as any,
             selectedCalcField: null as any,
             calcFieldFunctions: [] as any,
+            calcFieldFunctionsToShow: [] as any,
             colors: ['#D7263D', '#F46036', '#2E294E', '#1B998B', '#C5D86D', '#3F51B5', '#8BC34A', '#009688', '#F44336']
         }
     },
@@ -422,6 +424,7 @@ export default defineComponent({
                     customFunctions.forEach((funct) => {
                         this.calcFieldFunctions.push(funct)
                     })
+                    this.calcFieldFunctionsToShow = deepcopy(this.calcFieldFunctions)
                 }
             })
         },
@@ -429,8 +432,9 @@ export default defineComponent({
             const datamartName = this.dataset?.dataSourceId ? this.dataset.name : this.qbe?.qbeDatamarts
             await this.$http
                 .get(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=GET_TREE_ACTION&SBI_EXECUTION_ID=${this.uniqueID}&datamartName=${datamartName}`)
-                .then((response: AxiosResponse<any>) => {
+                .then(async (response: AxiosResponse<any>) => {
                     this.addExpandedProperty(response.data.entities)
+                    await this.addSpatialProperty(response.data.entities)
                     this.entities = response.data
                 })
                 .catch((error: any) => console.log('ERROR: ', error))
@@ -438,6 +442,15 @@ export default defineComponent({
         addExpandedProperty(entities) {
             entities.forEach((entity) => {
                 entity.expanded = false
+            })
+        },
+        async addSpatialProperty(entities) {
+            await entities.forEach((entity) => {
+                if (entity.iconCls == 'geographic_dimension') {
+                    entity.children.forEach((child) => {
+                        child.isSpatial = true
+                    })
+                }
             })
         },
         async executeQBEQuery(showPreview: boolean) {
@@ -661,7 +674,6 @@ export default defineComponent({
             this.updateSmartView()
         },
         addEntityToMainQuery(field, isCalcField?) {
-            console.log('addEntityToMainQuery', field, isCalcField)
             let queryModel = this.selectedQuery.fields
             let editQueryObj = this.selectedQuery
             for (var i = 0; i < queryModel.length; i++) {
@@ -698,7 +710,8 @@ export default defineComponent({
                     longDescription: field.attributes.longDescription,
                     distinct: editQueryObj.distinct,
                     leaf: field.leaf,
-                    originalId: field.id
+                    originalId: field.id,
+                    isSpatial: field.isSpatial
                 } as any
             }
             // eslint-disable-next-line no-prototype-builtins
@@ -712,6 +725,16 @@ export default defineComponent({
             if (!isCalcField) {
                 editQueryObj.fields.push(newField)
             }
+            this.hideSpatialFunct()
+        },
+        hideSpatialFunct() {
+            const isSpatial = (field) => field.isSpatial
+            if (!this.selectedQuery.fields.some(isSpatial)) {
+                let tempFunctions = deepcopy(this.calcFieldFunctions)
+                this.calcFieldFunctionsToShow = tempFunctions.filter((funct) => {
+                    return funct.category !== 'SPATIAL'
+                })
+            } else this.calcFieldFunctionsToShow = deepcopy(this.calcFieldFunctions)
         },
         getFunct(field) {
             if (this.isColumnType(field, 'measure') && field.aggtype) {
@@ -828,7 +851,6 @@ export default defineComponent({
             this.selectedCalcField = this.formatCalcFieldForComponent(calcField)
             this.selectedCalcField.index = index
             this.calcFieldDialogVisible = true
-            console.log(this.selectedCalcField)
         },
         formatCalcFieldForComponent(calcField) {
             let formatField = {
@@ -845,9 +867,6 @@ export default defineComponent({
             this.selectedCalcField.expression = calcFieldOutput.formula
             let calculatedField = buildCalculatedField(this.selectedCalcField, this.selectedQuery.fields)
             this.selectedCalcField.index ? this.selectedQuery.fields.splice(this.selectedCalcField.index, 1) : ''
-
-            console.log(this.selectedCalcField, calculatedField)
-
             this.selectedQuery.fields.push(calculatedField)
             this.addEntityToMainQuery(calculatedField, true)
 
@@ -886,6 +905,9 @@ export default defineComponent({
                     this.selectedQuery.havings.splice(i, 1)
                 }
             }
+            setTimeout(() => {
+                this.hideSpatialFunct()
+            }, 0)
         }
     }
 })

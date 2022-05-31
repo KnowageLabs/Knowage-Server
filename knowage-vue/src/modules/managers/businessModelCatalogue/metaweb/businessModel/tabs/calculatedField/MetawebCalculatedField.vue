@@ -100,16 +100,19 @@ export default defineComponent({
                 const key = Object.keys(el)[0]
                 if (key === 'structural.tabletype' && el[key].value === 'geographic dimension') {
                     hideFields = true
-                } else hideFields = false
+                }
             })
             return hideFields
         }
     },
     watch: {
-        selectedBusinessModel() {
-            this.loadMeta()
-            this.loadBusinessModel()
-            this.calcFieldFunctions = this.createCalcFieldFunctions(calcFieldDescriptor.availableFunctions, this.propCustomFunctions)
+        selectedBusinessModel: {
+            handler() {
+                this.loadMeta()
+                this.loadBusinessModel()
+                this.calcFieldFunctions = this.createCalcFieldFunctions(calcFieldDescriptor.availableFunctions, this.propCustomFunctions)
+            },
+            deep: true
         }
     },
     created() {
