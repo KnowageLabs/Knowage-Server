@@ -418,7 +418,7 @@ export default defineComponent({
         },
         async getParameterPopupInfo(parameter: iParameter) {
             this.loading = true
-            const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole }
+            const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole ?? this.role }
 
             let url = '2.0/documentExeParameters/admissibleValues'
             if (this.mode !== 'execution' && this.document) {
@@ -478,8 +478,8 @@ export default defineComponent({
         },
         updateDependency(parameter: iParameter) {
             this.updateVisualDependency(parameter)
-            updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode)
-            updateLovDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode)
+            updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode, this.role)
+            updateLovDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode, this.role)
             this.$emit('parametersChanged', { parameters: this.parameters, document: this.propDocument })
         },
         openSaveParameterDialog() {
@@ -515,7 +515,7 @@ export default defineComponent({
                 if (index !== -1) {
                     const parameter = this.parameters.filterStatus[index]
                     if (parameter.type === 'DATE') {
-                        parameter.parameterValue[0].value = this.getFormattedDate(tempParameters[key], 'MM/DD/YYYY')
+                        parameter.parameterValue[0].value = this.getFormattedDate(tempParameters[key], 'DD/MM/yyyy')
                     } else if ((parameter.valueSelection === 'man_in' || parameter.selectionType === 'COMBOBOX') && !parameter.multivalue) {
                         parameter.parameterValue[0].value = tempParameters[key]
                         parameter.parameterValue[0].description = tempParameters[key + '_field_visible_description']

@@ -16,18 +16,18 @@ export function setDataDependency(loadedParameters: { filterStatus: iParameter[]
     }
 }
 
-export async function updateDataDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string) {
+export async function updateDataDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string, selectedRole: string | null) {
     if (parameter && parameter.dataDependentParameters) {
         for (let i = 0; i < parameter.dataDependentParameters.length; i++) {
-            await dataDependencyCheck(loadedParameters, parameter.dataDependentParameters[i], loading, document, sessionRole, $http, mode)
+            await dataDependencyCheck(loadedParameters, parameter.dataDependentParameters[i], loading, document, sessionRole, $http, mode, selectedRole)
         }
     }
 }
 
-export async function dataDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string) {
+export async function dataDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string, selectedRole: string | null) {
     loading = true
 
-    const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters), paramId: parameter.urlName, role: sessionRole }
+    const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters), paramId: parameter.urlName, role: sessionRole ?? selectedRole }
     let url = '2.0/documentExeParameters/admissibleValues'
 
     if (mode !== 'execution' && document) {

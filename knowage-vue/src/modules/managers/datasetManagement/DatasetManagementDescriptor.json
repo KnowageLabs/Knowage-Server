@@ -118,7 +118,7 @@
             }
         ],
         "defaultSortField": "label",
-        "filterFields": ["label", "name"],
+        "filterFields": ["label", "name", "tags"],
         "interaction": {
             "parameterLabel": "id",
             "parameterValue": "id",

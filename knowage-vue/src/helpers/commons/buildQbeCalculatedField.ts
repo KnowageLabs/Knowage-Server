@@ -36,7 +36,7 @@ export function buildCalculatedField(calcFieldOutput, selectedQueryFields) {
     calculatedField.id.expressionSimple = cleanExpression(calculatedField.id.expressionSimple)
     calculatedField.formula = cleanExpression(addedParameters.expression)
     calculatedField.expression = cleanExpression(addedParameters.expressionSimple)
-    calculatedField.longDescription = cleanExpression(addedParameters.expression)
+    calculatedField.longDescription = cleanExpression(addedParameters.alias + ' : ' + addedParameters.alias)
 
     return calculatedField
 }

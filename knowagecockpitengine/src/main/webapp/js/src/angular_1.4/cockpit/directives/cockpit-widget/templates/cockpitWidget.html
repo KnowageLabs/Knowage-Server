@@ -214,7 +214,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.widgets.tooltip.export.excel")}}</md-tooltip>					
 					<md-icon md-font-icon="fa fa-file-excel-o" ng-if="!ngModel.loadingScreen"></md-icon>
 				</md-button>
-				<md-button class="md-fab md-raised md-mini" ng-click="exportToPdf($event,ngModel,options)" ng-disabled="ngModel.loadingScreen" ng-if="checkType(ngModel.type, ['table'])">
+				<md-button class="md-fab md-raised md-mini" ng-click="exportToPdf($event,ngModel,options)" ng-disabled="ngModel.loadingScreen" ng-if="checkType(ngModel.type, ['table']) && isExportPdfEnabled()">
 					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.widgets.tooltip.export.pdf")}}</md-tooltip>					
 					<md-icon md-font-icon="fa fa-file-pdf" ng-if="!ngModel.loadingScreen"></md-icon>
 				</md-button>

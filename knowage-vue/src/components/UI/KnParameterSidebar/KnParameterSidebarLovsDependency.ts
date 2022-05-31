@@ -17,15 +17,15 @@ export function setLovsDependency(loadedParameters: { filterStatus: iParameter[]
     }
 }
 
-export async function updateLovDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string) {
+export async function updateLovDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string, selectedRole: string | null) {
     if (parameter && parameter.lovDependentParameters) {
         for (let i = 0; i < parameter.lovDependentParameters.length; i++) {
-            await lovDependencyCheck(loadedParameters, parameter.lovDependentParameters[i], loading, document, sessionRole, $http, mode)
+            await lovDependencyCheck(loadedParameters, parameter.lovDependentParameters[i], loading, document, sessionRole, $http, mode, selectedRole)
         }
     }
 }
 
-export async function lovDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string) {
+export async function lovDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string, selectedRole: string | null) {
     loading = true
     if (parameter.parameterValue[0]) {
         parameter.parameterValue[0] = { value: '', description: '' }
@@ -33,7 +33,7 @@ export async function lovDependencyCheck(loadedParameters: { filterStatus: iPara
         parameter.parameterValue = [{ value: '', description: '' }]
     }
 
-    const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters), paramId: parameter.urlName, role: sessionRole }
+    const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters), paramId: parameter.urlName, role: sessionRole ?? selectedRole }
     let url = '2.0/documentExeParameters/admissibleValues'
 
     if (mode !== 'execution' && document) {

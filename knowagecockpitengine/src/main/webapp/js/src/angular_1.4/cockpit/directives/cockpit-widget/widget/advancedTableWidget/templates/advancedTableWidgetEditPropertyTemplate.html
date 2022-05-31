@@ -403,11 +403,12 @@
 		        <md-card>
 					<md-toolbar class="ternaryToolbar" >
 						<div class="md-toolbar-tools" layout="row">
-							Export PDF
+							<md-switch ng-model="newModel.settings.exportpdf.enabled">Export PDF</md-switch>
+							<span flex></span>
 						</div>
 					</md-toolbar>
 					<md-card-content>
-						<div flex layout="row">
+						<div flex layout="row" ng-show="newModel.settings.exportpdf.enabled">
 							<md-checkbox flex layout="row" layout-align="start center" ng-model="newModel.settings.exportpdf.a4portrait" class="md-block" ng-click="setPortrait()"">
 									A4 Portrait
 							</md-checkbox>
