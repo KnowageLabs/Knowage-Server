@@ -418,7 +418,8 @@ export default defineComponent({
         },
         async getParameterPopupInfo(parameter: iParameter) {
             this.loading = true
-            const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole ?? this.role }
+            const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
+            const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: role }
 
             let url = '2.0/documentExeParameters/admissibleValues'
             if (this.mode !== 'execution' && this.document) {
@@ -477,16 +478,18 @@ export default defineComponent({
             this.treeDialogVisible = false
         },
         updateDependency(parameter: iParameter) {
+            const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
             this.updateVisualDependency(parameter)
-            updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode, this.role)
-            updateLovDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode, this.role)
+            updateDataDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode)
+            updateLovDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode)
             this.$emit('parametersChanged', { parameters: this.parameters, document: this.propDocument })
         },
         openSaveParameterDialog() {
             this.parameterSaveDialogVisible = true
         },
         async saveViewpoint(viewpoint: any) {
-            const postData = { ...viewpoint, OBJECT_LABEL: this.document?.label, ROLE: this.sessionRole, VIEWPOINT: this.getParameterValues() }
+            const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
+            const postData = { ...viewpoint, OBJECT_LABEL: this.document?.label, ROLE: role, VIEWPOINT: this.getParameterValues() }
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/addViewpoint`, postData)
@@ -501,8 +504,10 @@ export default defineComponent({
             this.loading = false
         },
         async openSavedParametersDialog() {
+            const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
+
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/getViewpoints?label=${this.document?.label}&role=${this.sessionRole}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/getViewpoints?label=${this.document?.label}&role=${role}`).then((response: AxiosResponse<any>) => {
                 this.viewpoints = response.data.viewpoints
                 this.savedParametersDialogVisible = true
             })
@@ -510,12 +515,13 @@ export default defineComponent({
         },
         fillParameterForm(viewpoint: any) {
             const tempParameters = this.decodeViewpointPrameterValues(viewpoint.vpValueParams)
+
             Object.keys(tempParameters)?.forEach((key: any) => {
                 const index = this.parameters.filterStatus.findIndex((el: any) => el.urlName === key)
                 if (index !== -1) {
                     const parameter = this.parameters.filterStatus[index]
                     if (parameter.type === 'DATE') {
-                        parameter.parameterValue[0].value = this.getFormattedDate(tempParameters[key], 'DD/MM/yyyy')
+                        parameter.parameterValue[0].value = this.getFormattedDate(tempParameters[key], 'DD/MM/YYYY')
                     } else if ((parameter.valueSelection === 'man_in' || parameter.selectionType === 'COMBOBOX') && !parameter.multivalue) {
                         parameter.parameterValue[0].value = tempParameters[key]
                         parameter.parameterValue[0].description = tempParameters[key + '_field_visible_description']
@@ -538,7 +544,7 @@ export default defineComponent({
             })
         },
         getFormattedDate(date: any, format: any) {
-            return formatDate(date, format)
+            return formatDate(date, undefined, format)
         },
         decodeViewpointPrameterValues(string: string) {
             const parametersJson = {}
