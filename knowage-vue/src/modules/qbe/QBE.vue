@@ -62,7 +62,7 @@
                         </span>
                     </template>
                     <template #end>
-                        <i v-if="selectedQuery.fields.length > 0" class="fas fa-eraser kn-cursor-pointer p-mx-2" v-tooltip.top="$t('qbe.viewToolbar.deleteAllSelectedFields')" @click="deleteAllSelectedFields"></i>
+                        <i v-if="selectedQuery.fields.length > 0" class="fas fa-eraser kn-cursor-pointer p-mx-2" v-tooltip.top="$t('qbe.viewToolbar.deleteAllSelectedFields')" @click="deleteAllFieldsFromQuery"></i>
                         <i v-if="hiddenColumnsExist" class="pi pi-eye kn-cursor-pointer p-mx-2" v-tooltip.top="$t('qbe.viewToolbar.showHiddenColumns')" @click="showHiddenColumns"></i>
                         <span v-if="selectedQuery.filters.length > 0" class="fa-stack p-mx-2">
                             <i class="fas fa-ban fa-stack-2x"></i>
@@ -93,7 +93,7 @@
                             :query="selectedQuery"
                             :previewData="queryPreviewData"
                             :pagination="pagination"
-                            @removeFieldFromQuery="onQueryFieldRemoved"
+                            @removeFieldFromQuery="deleteFieldFromQuery"
                             @orderChanged="updateSmartView"
                             @fieldHidden="smartViewFieldHidden"
                             @fieldGrouped="updateSmartView"
@@ -310,6 +310,7 @@ export default defineComponent({
         }
     },
     methods: {
+        //#region ===================== Load QBE and format data ====================================================
         async loadPage() {
             this.loading = true
 
@@ -333,37 +334,39 @@ export default defineComponent({
             console.log('QBE METADATA', this.qbeMetadata)
             console.log('QBE QUERY', this.qbe?.qbeJSONQuery?.catalogue?.queries[0])
         },
-        async loadQBE() {
-            this.loadCalcFieldFunctions()
-            await this.initializeQBE()
-            await this.loadCustomizedDatasetFunctions()
-            await this.loadEntities()
-
-            if (!this.dataset?.dataSourceLabel) {
-                await this.executeQBEQuery(false)
-            }
-        },
         async loadDataset() {
             if (!this.dataset) {
                 return
             }
-
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.dataset.label}`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe && this.qbe.qbeJSONQuery) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
         },
+        getQBEFromModel() {
+            if (!this.dataset) return {}
+
+            this.smartView = this.dataset.smartView
+            return {
+                dsTypeCd: 'Qbe',
+                qbeDatamarts: this.dataset.name,
+                qbeDataSource: this.dataset.dataSourceLabel,
+                qbeJSONQuery: {
+                    catalogue: {
+                        queries: [{ id: 'q1', name: 'Main', fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] }]
+                    }
+                },
+                meta: [],
+                pars: [],
+                scopeId: null,
+                scopeCd: '',
+                label: '',
+                name: ''
+            } as any
+        },
         loadQuery() {
             this.mainQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
             this.selectedQuery = this.qbe?.qbeJSONQuery?.catalogue?.queries[0]
-        },
-        generateFieldsAndMetadataId() {
-            this.selectedQuery.fields.forEach((field) => {
-                field.uniqueID = crypto.randomBytes(4).toString('hex')
-                this.qbeMetadata.find((metadata) => {
-                    field.alias === metadata.column ? (metadata.uniqueID = field.uniqueID) : ''
-                })
-            })
         },
         extractFieldsMetadata(array) {
             if (array && array.length > 0) {
@@ -384,30 +387,13 @@ export default defineComponent({
                 return fieldsMetadata
             } else return []
         },
-        loadCalcFieldFunctions() {
-            this.calcFieldFunctions = calcFieldDescriptor.availableFunctions
-        },
-        getQBEFromModel() {
-            if (!this.dataset) return {}
-
-            this.smartView = this.dataset.smartView
-
-            return {
-                dsTypeCd: 'Qbe',
-                qbeDatamarts: this.dataset.name,
-                qbeDataSource: this.dataset.dataSourceLabel,
-                qbeJSONQuery: {
-                    catalogue: {
-                        queries: [{ id: 'q1', name: 'Main', fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] }]
-                    }
-                },
-                meta: [],
-                pars: [],
-                scopeId: null,
-                scopeCd: '',
-                label: '',
-                name: ''
-            } as any
+        generateFieldsAndMetadataId() {
+            this.selectedQuery.fields.forEach((field) => {
+                field.uniqueID = crypto.randomBytes(4).toString('hex')
+                this.qbeMetadata.find((metadata) => {
+                    field.alias === metadata.column ? (metadata.uniqueID = field.uniqueID) : ''
+                })
+            })
         },
         async loadDatasetDrivers() {
             if (!this.qbe) return
@@ -425,6 +411,19 @@ export default defineComponent({
                 .catch(() => {})
 
             formatDrivers(this.filtersData)
+        },
+        async loadQBE() {
+            this.loadCalcFieldFunctions()
+            await this.initializeQBE()
+            await this.loadCustomizedDatasetFunctions()
+            await this.loadEntities()
+
+            if (!this.dataset?.dataSourceLabel) {
+                await this.executeQBEQuery(false)
+            }
+        },
+        loadCalcFieldFunctions() {
+            this.calcFieldFunctions = calcFieldDescriptor.availableFunctions
         },
         async initializeQBE() {
             const label = this.dataset?.dataSourceLabel ? this.dataset.dataSourceLabel : this.qbe?.qbeDataSource
@@ -464,6 +463,15 @@ export default defineComponent({
                 }
             })
             this.hideSpatialFunct()
+        },
+        hideSpatialFunct() {
+            const isSpatial = (field) => field.isSpatial
+            if (!this.selectedQuery.fields.some(isSpatial)) {
+                let tempFunctions = deepcopy(this.calcFieldFunctions)
+                this.calcFieldFunctionsToShow = tempFunctions.filter((funct) => {
+                    return funct.category !== 'SPATIAL'
+                })
+            } else this.calcFieldFunctionsToShow = deepcopy(this.calcFieldFunctions)
         },
         async loadEntities() {
             const datamartName = this.dataset?.dataSourceId ? this.dataset.name : this.qbe?.qbeDatamarts
@@ -508,11 +516,6 @@ export default defineComponent({
                 })
             this.loading = false
         },
-        async updatePagination(lazyParams: any) {
-            this.pagination.start = lazyParams.paginationStart
-            this.pagination.limit = lazyParams.paginationLimit
-            await this.executeQBEQuery(false)
-        },
         formatQbeMeta() {
             const meta = [] as any[]
             this.qbe?.qbeJSONQuery?.catalogue.queries?.forEach((query: iQuery) => {
@@ -522,65 +525,158 @@ export default defineComponent({
             })
             return meta
         },
-        toggleEntitiesLists() {
-            this.showEntitiesLists = !this.showEntitiesLists
+        //#endregion ================================================================================================
+
+        //#region ===================== Manage Fields Logic =========================================================
+        onDropComplete(field) {
+            if (field.connector) return
+            if (field.children) {
+                for (var i in field.children) {
+                    this.addEntityToMainQuery(field.children[i])
+                }
+            } else {
+                this.addEntityToMainQuery(field)
+            }
+            this.updateSmartView()
         },
-        collapseDerivedList() {
-            this.showDerivedList = !this.showDerivedList
+        addEntityToMainQuery(field, isCalcField?) {
+            let queryModel = this.selectedQuery.fields
+            let editQueryObj = this.selectedQuery
+            for (var i = 0; i < queryModel.length; i++) {
+                if (queryModel != undefined && !this.smartView && queryModel.length > 0) {
+                    editQueryObj.fields[i].group = queryModel[i].group
+                    editQueryObj.fields[i].funct = queryModel[i].funct
+                    editQueryObj.fields[i].visible = queryModel[i].visible
+                    editQueryObj.fields[i].distinct = queryModel[i].distinct
+                    editQueryObj.fields[i].iconCls = queryModel[i].visible
+                    editQueryObj.fields[i].inUse = queryModel[i].inUse
+                }
+                editQueryObj.fields[i].alias = queryModel[i].alias
+            }
+
+            if (!isCalcField) {
+                var newField = createNewField(editQueryObj, field)
+                var newMetadata = creatNewMetadataFromField(newField)
+
+                editQueryObj.fields.push(newField)
+                this.qbeMetadata.push(newMetadata)
+
+                console.log('SAME ID, COMPARE VALUES', newField, newMetadata)
+            }
+            // eslint-disable-next-line no-prototype-builtins
+            this.hideSpatialFunct()
         },
-        deleteAllSelectedFields() {
+        deleteAllFieldsFromQuery() {
             this.selectedQuery.fields = []
             this.selectedQuery.havings = []
             this.qbeMetadata = []
             if (this.smartView) this.executeQBEQuery(false)
         },
-        checkIfHiddenColumnsExist() {
-            if (this.qbe) {
-                this.hiddenColumnsExist = false
-                for (let i = 0; i < this.selectedQuery.fields.length; i++) {
-                    if (!this.selectedQuery.fields[i].visible) {
-                        this.hiddenColumnsExist = true
-                        break
-                    }
-                }
-            }
-        },
-        showHiddenColumns() {
-            this.selectedQuery.fields.forEach((field: iField) => (field.visible = true))
-            if (this.smartView) {
-                this.updateSmartView()
-            }
-            this.hiddenColumnsExist = false
-        },
-        openFilterDialog(field: iField) {
-            this.filterDialogData = { field: field, query: this.selectedQuery }
-            this.filterDialogVisible = true
-        },
-        openHavingDialog(payload: { field: iField; query: iQuery }) {
-            this.havingDialogData = payload
-            this.havingDialogVisible = true
-        },
-        onFiltersSave(filters: iFilter[], field: iField, parameters: any[], expression: any) {
-            onFiltersSaveCallback(filters, field, parameters, expression, this.qbe, this.selectedQuery, this.smartView, this.executeQBEQuery)
-            this.filterDialogVisible = false
-        },
-        onAdvancedFiltersSave(expression: any) {
-            this.selectedQuery.expression = expression
-            this.advancedFilterDialogVisible = false
+        deleteFieldFromQuery(fieldID) {
+            console.log('unique ID', fieldID)
+            let indexOfFieldToDelete = this.selectedQuery.fields.findIndex((field) => {
+                if (field.uniqueID === fieldID) console.log('field to delete', field)
+                return field.uniqueID === fieldID
+            })
+            this.onFieldDeleted({ ...this.selectedQuery.fields[indexOfFieldToDelete] })
+            this.selectedQuery.fields.splice(indexOfFieldToDelete, 1)
             this.updateSmartView()
         },
+        onFieldDeleted(field: any) {
+            this.deleteFieldMetadata(field.uniqueID)
+            for (let i = this.selectedQuery.havings.length - 1; i >= 0; i--) {
+                if (this.selectedQuery.havings[i].leftOperandValue === field.id) {
+                    this.selectedQuery.havings.splice(i, 1)
+                }
+            }
+            setTimeout(() => {
+                this.hideSpatialFunct()
+            }, 0)
+        },
+        deleteFieldMetadata(fieldID) {
+            let indexOfFieldMetadataToDelete = this.qbeMetadata.findIndex((metadata) => {
+                if (metadata.uniqueID === fieldID) console.log('meta to delete', metadata)
+                return metadata.uniqueID === fieldID
+            })
+            this.qbeMetadata.splice(indexOfFieldMetadataToDelete, 1)
+        },
+        //#endregion ================================================================================================
+
+        //#region ===================== Calc Fields Logic ===========================================================
+        addCalcField() {
+            this.createCalcFieldColumns()
+            this.selectedCalcField = { alias: '', expression: '', format: undefined, nature: 'ATTRIBUTE', type: 'STRING' } as any
+            this.calcFieldDialogVisible = true
+        },
+        editCalcField(calcField, index) {
+            this.createCalcFieldColumns()
+            this.selectedCalcField = this.formatCalcFieldForComponent(calcField)
+            this.selectedCalcField.index = index
+            this.calcFieldDialogVisible = true
+        },
+        formatCalcFieldForComponent(calcField) {
+            let formatField = {
+                alias: calcField.id.alias,
+                type: calcField.id.type,
+                expression: calcField.id.expressionSimple,
+                nature: calcField.id.nature,
+                format: calcField.id.format
+            } as any
+            return formatField
+        },
+        createCalcFieldColumns() {
+            this.calcFieldColumns = []
+            this.selectedQuery.fields.forEach((field) => {
+                field.type != 'inline.calculated.field' ? this.calcFieldColumns.push({ fieldAlias: `$F{${field.alias}}`, fieldLabel: field.alias }) : ''
+            })
+        },
+        onCalcFieldSave(calcFieldOutput) {
+            this.selectedCalcField.alias = calcFieldOutput.colName
+            this.selectedCalcField.expression = calcFieldOutput.formula
+            let calculatedField = buildCalculatedField(this.selectedCalcField, this.selectedQuery.fields)
+            calculatedField.uniqueID = crypto.randomBytes(4).toString('hex')
+            this.selectedCalcField.index ? this.selectedQuery.fields.splice(this.selectedCalcField.index, 1) : ''
+            this.selectedQuery.fields.push(calculatedField)
+            this.addEntityToMainQuery(calculatedField, true)
+            this.addCalculatedFieldMetadata(calculatedField)
+
+            this.calcFieldDialogVisible = false
+        },
+        addCalculatedFieldMetadata(calculatedField) {
+            var newMetadata = {
+                uniqueID: calculatedField.uniqueID,
+                column: calculatedField.alias,
+                fieldAlias: calculatedField.field,
+                fieldType: calculatedField.id.nature.toUpperCase(),
+                decript: false,
+                personal: false,
+                subjectid: false
+            } as any
+
+            switch (calculatedField.id.type) {
+                case 'STRING':
+                    newMetadata.Type = 'java.lang.String'
+                    break
+                case 'NUMBER':
+                    newMetadata.Type = 'java.lang.Long'
+                    break
+                case 'DATE':
+                    newMetadata.Type = 'java.sql.Date'
+                    break
+            }
+
+            console.log('calcField', calculatedField)
+            console.log('calc metadata', newMetadata)
+            this.qbeMetadata.push(newMetadata)
+        },
+        //#endregion ================================================================================================
+
+        //#region ===================== Mini Menu Handler ==========================================================
         showMenu(event) {
             this.createMenuItems()
             // eslint-disable-next-line
             // @ts-ignore
             this.$refs.optionsMenu.toggle(event)
-        },
-        showRelationDialog(entity) {
-            this.relationEntity = entity
-            this.relationDialogVisible = true
-        },
-        showParamDialog() {
-            this.paramDialogVisible = true
         },
         createMenuItems() {
             this.menuButtons = []
@@ -601,55 +697,6 @@ export default defineComponent({
                     ]
                 }
             )
-        },
-        async exportQueryResults(mimeType) {
-            var fileName = ''
-            mimeType == 'csv' ? (fileName = 'report.csv') : (fileName = 'report.xlsx')
-
-            const postData = { catalogue: this.qbe?.qbeJSONQuery?.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
-            await this.$http
-                .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
-                .then((response: AxiosResponse<any>) => {
-                    downloadDirect(response.data, fileName, response.headers['content-type'])
-                })
-                .catch(() => {})
-        },
-        toggleDiscardRepetitions() {
-            this.discardRepetitions = !this.discardRepetitions
-            this.qbe ? (this.qbe.qbeJSONQuery.catalogue.queries[0].distinct = this.discardRepetitions) : ''
-            if (this.smartView) {
-                this.executeQBEQuery(false)
-            }
-        },
-        onHavingsSave(havings: iFilter[]) {
-            onHavingsSaveCallback(havings, this.qbe, this.selectedQuery)
-            this.havingDialogVisible = false
-        },
-        onGroupingChanged(field: iField) {
-            if (field.group && this.selectedQuery) {
-                this.selectedQuery.havings = this.selectedQuery.havings.filter((having: any) => having.letOperandValue !== field.id)
-            }
-        },
-        showAdvancedFilters() {
-            this.advancedFilterDialogVisible = true
-        },
-
-        showJoinDefinitions() {
-            this.joinDefinitionDialogVisible = true
-        },
-        onJoinDefinitionDialogClose() {
-            this.joinDefinitionDialogVisible = false
-            if (this.smartView) {
-                this.executeQBEQuery(false)
-            }
-        },
-        deleteAllFilters() {
-            if (this.qbe) {
-                this.selectedQuery.filters = []
-                this.selectedQuery.havings = []
-                this.selectedQuery.expression = {}
-                if (this.smartView) this.executeQBEQuery(false)
-            }
         },
         async showSQLQuery() {
             var item = {} as any
@@ -699,53 +746,114 @@ export default defineComponent({
                     this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error.errors[0].message })
                 })
         },
-        onDropComplete(field) {
-            if (field.connector) return
-            if (field.children) {
-                for (var i in field.children) {
-                    this.addEntityToMainQuery(field.children[i])
-                }
-            } else {
-                this.addEntityToMainQuery(field)
+        toggleDiscardRepetitions() {
+            this.discardRepetitions = !this.discardRepetitions
+            this.qbe ? (this.qbe.qbeJSONQuery.catalogue.queries[0].distinct = this.discardRepetitions) : ''
+            if (this.smartView) {
+                this.executeQBEQuery(false)
             }
+        },
+        showParamDialog() {
+            this.paramDialogVisible = true
+        },
+        showAdvancedFilters() {
+            this.advancedFilterDialogVisible = true
+        },
+        showJoinDefinitions() {
+            this.joinDefinitionDialogVisible = true
+        },
+        async exportQueryResults(mimeType) {
+            var fileName = ''
+            mimeType == 'csv' ? (fileName = 'report.csv') : (fileName = 'report.xlsx')
+
+            const postData = { catalogue: this.qbe?.qbeJSONQuery?.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
+            await this.$http
+                .post(process.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
+                .then((response: AxiosResponse<any>) => {
+                    downloadDirect(response.data, fileName, response.headers['content-type'])
+                })
+                .catch(() => {})
+        },
+        //#endregion ================================================================================================
+
+        //#region ===================== Event Handlers ==============================================================
+        async updatePagination(lazyParams: any) {
+            this.pagination.start = lazyParams.paginationStart
+            this.pagination.limit = lazyParams.paginationLimit
+            await this.executeQBEQuery(false)
+        },
+        toggleEntitiesLists() {
+            this.showEntitiesLists = !this.showEntitiesLists
+        },
+        collapseDerivedList() {
+            this.showDerivedList = !this.showDerivedList
+        },
+        checkIfHiddenColumnsExist() {
+            if (this.qbe) {
+                this.hiddenColumnsExist = false
+                for (let i = 0; i < this.selectedQuery.fields.length; i++) {
+                    if (!this.selectedQuery.fields[i].visible) {
+                        this.hiddenColumnsExist = true
+                        break
+                    }
+                }
+            }
+        },
+        showHiddenColumns() {
+            this.selectedQuery.fields.forEach((field: iField) => (field.visible = true))
+            if (this.smartView) {
+                this.updateSmartView()
+            }
+            this.hiddenColumnsExist = false
+        },
+        openFilterDialog(field: iField) {
+            this.filterDialogData = { field: field, query: this.selectedQuery }
+            this.filterDialogVisible = true
+        },
+        openHavingDialog(payload: { field: iField; query: iQuery }) {
+            this.havingDialogData = payload
+            this.havingDialogVisible = true
+        },
+        onFiltersSave(filters: iFilter[], field: iField, parameters: any[], expression: any) {
+            onFiltersSaveCallback(filters, field, parameters, expression, this.qbe, this.selectedQuery, this.smartView, this.executeQBEQuery)
+            this.filterDialogVisible = false
+        },
+        onAdvancedFiltersSave(expression: any) {
+            this.selectedQuery.expression = expression
+            this.advancedFilterDialogVisible = false
             this.updateSmartView()
         },
-        addEntityToMainQuery(field, isCalcField?) {
-            let queryModel = this.selectedQuery.fields
-            let editQueryObj = this.selectedQuery
-            for (var i = 0; i < queryModel.length; i++) {
-                if (queryModel != undefined && !this.smartView && queryModel.length > 0) {
-                    editQueryObj.fields[i].group = queryModel[i].group
-                    editQueryObj.fields[i].funct = queryModel[i].funct
-                    editQueryObj.fields[i].visible = queryModel[i].visible
-                    editQueryObj.fields[i].distinct = queryModel[i].distinct
-                    editQueryObj.fields[i].iconCls = queryModel[i].visible
-                    editQueryObj.fields[i].inUse = queryModel[i].inUse
-                }
-                editQueryObj.fields[i].alias = queryModel[i].alias
-            }
 
-            if (!isCalcField) {
-                var newField = createNewField(editQueryObj, field)
-                var newMetadata = creatNewMetadataFromField(newField)
-
-                editQueryObj.fields.push(newField)
-                this.qbeMetadata.push(newMetadata)
-
-                console.log('SAME ID, COMPARE VALUES', newField, newMetadata)
-            }
-            // eslint-disable-next-line no-prototype-builtins
-            this.hideSpatialFunct()
+        showRelationDialog(entity) {
+            this.relationEntity = entity
+            this.relationDialogVisible = true
         },
-        hideSpatialFunct() {
-            const isSpatial = (field) => field.isSpatial
-            if (!this.selectedQuery.fields.some(isSpatial)) {
-                let tempFunctions = deepcopy(this.calcFieldFunctions)
-                this.calcFieldFunctionsToShow = tempFunctions.filter((funct) => {
-                    return funct.category !== 'SPATIAL'
-                })
-            } else this.calcFieldFunctionsToShow = deepcopy(this.calcFieldFunctions)
+
+        onHavingsSave(havings: iFilter[]) {
+            onHavingsSaveCallback(havings, this.qbe, this.selectedQuery)
+            this.havingDialogVisible = false
         },
+        onGroupingChanged(field: iField) {
+            if (field.group && this.selectedQuery) {
+                this.selectedQuery.havings = this.selectedQuery.havings.filter((having: any) => having.letOperandValue !== field.id)
+            }
+        },
+
+        onJoinDefinitionDialogClose() {
+            this.joinDefinitionDialogVisible = false
+            if (this.smartView) {
+                this.executeQBEQuery(false)
+            }
+        },
+        deleteAllFilters() {
+            if (this.qbe) {
+                this.selectedQuery.filters = []
+                this.selectedQuery.havings = []
+                this.selectedQuery.expression = {}
+                if (this.smartView) this.executeQBEQuery(false)
+            }
+        },
+
         selectSubquery(subquery) {
             this.selectedQuery = subquery
             this.updateSmartView()
@@ -814,89 +922,6 @@ export default defineComponent({
             this.qbePreviewDialogVisible = false
             this.pagination = { start: 0, limit: 25 }
         },
-        onQueryFieldRemoved(fieldID) {
-            console.log('unique ID', fieldID)
-            let indexOfFieldToDelete = this.selectedQuery.fields.findIndex((field) => {
-                if (field.uniqueID === fieldID) console.log('field to delete', field)
-                return field.uniqueID === fieldID
-            })
-            this.onFieldDeleted({ ...this.selectedQuery.fields[indexOfFieldToDelete] })
-            this.selectedQuery.fields.splice(indexOfFieldToDelete, 1)
-            this.updateSmartView()
-        },
-        deleteFieldMetadata(fieldID) {
-            let indexOfFieldMetadataToDelete = this.qbeMetadata.findIndex((metadata) => {
-                if (metadata.uniqueID === fieldID) console.log('meta to delete', metadata)
-                return metadata.uniqueID === fieldID
-            })
-            this.qbeMetadata.splice(indexOfFieldMetadataToDelete, 1)
-        },
-        addCalcField() {
-            this.createCalcFieldColumns()
-            this.selectedCalcField = { alias: '', expression: '', format: undefined, nature: 'ATTRIBUTE', type: 'STRING' } as any
-            this.calcFieldDialogVisible = true
-        },
-        createCalcFieldColumns() {
-            this.calcFieldColumns = []
-            this.selectedQuery.fields.forEach((field) => {
-                field.type != 'inline.calculated.field' ? this.calcFieldColumns.push({ fieldAlias: `$F{${field.alias}}`, fieldLabel: field.alias }) : ''
-            })
-        },
-        editCalcField(calcField, index) {
-            this.createCalcFieldColumns()
-            this.selectedCalcField = this.formatCalcFieldForComponent(calcField)
-            this.selectedCalcField.index = index
-            this.calcFieldDialogVisible = true
-        },
-        formatCalcFieldForComponent(calcField) {
-            let formatField = {
-                alias: calcField.id.alias,
-                type: calcField.id.type,
-                expression: calcField.id.expressionSimple,
-                nature: calcField.id.nature,
-                format: calcField.id.format
-            } as any
-            return formatField
-        },
-        onCalcFieldSave(calcFieldOutput) {
-            this.selectedCalcField.alias = calcFieldOutput.colName
-            this.selectedCalcField.expression = calcFieldOutput.formula
-            let calculatedField = buildCalculatedField(this.selectedCalcField, this.selectedQuery.fields)
-            calculatedField.uniqueID = crypto.randomBytes(4).toString('hex')
-            this.selectedCalcField.index ? this.selectedQuery.fields.splice(this.selectedCalcField.index, 1) : ''
-            this.selectedQuery.fields.push(calculatedField)
-            this.addEntityToMainQuery(calculatedField, true)
-            this.addCalculatedFieldMetadata(calculatedField)
-
-            this.calcFieldDialogVisible = false
-        },
-        addCalculatedFieldMetadata(calculatedField) {
-            var newMetadata = {
-                uniqueID: calculatedField.uniqueID,
-                column: calculatedField.alias,
-                fieldAlias: calculatedField.field,
-                fieldType: calculatedField.id.nature.toUpperCase(),
-                decript: false,
-                personal: false,
-                subjectid: false
-            } as any
-
-            switch (calculatedField.id.type) {
-                case 'STRING':
-                    newMetadata.Type = 'java.lang.String'
-                    break
-                case 'NUMBER':
-                    newMetadata.Type = 'java.lang.Long'
-                    break
-                case 'DATE':
-                    newMetadata.Type = 'java.sql.Date'
-                    break
-            }
-
-            console.log('calcField', calculatedField)
-            console.log('calc metadata', newMetadata)
-            this.qbeMetadata.push(newMetadata)
-        },
         onFieldAliasChange(field) {
             console.log('alias changed ---------------------', field)
             this.qbeMetadata.findIndex((metadata) => {
@@ -930,18 +955,8 @@ export default defineComponent({
             }
             this.loadQuery()
             await this.loadDatasetDrivers()
-        },
-        onFieldDeleted(field: any) {
-            this.deleteFieldMetadata(field.uniqueID)
-            for (let i = this.selectedQuery.havings.length - 1; i >= 0; i--) {
-                if (this.selectedQuery.havings[i].leftOperandValue === field.id) {
-                    this.selectedQuery.havings.splice(i, 1)
-                }
-            }
-            setTimeout(() => {
-                this.hideSpatialFunct()
-            }, 0)
         }
+        //#endregion ================================================================================================
     }
 })
 </script>
