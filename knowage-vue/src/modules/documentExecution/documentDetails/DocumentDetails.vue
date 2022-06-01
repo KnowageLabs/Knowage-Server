@@ -224,7 +224,7 @@ export default defineComponent({
                 this.availableFolders = response.data
                 if (this.$route.params.folderId) {
                     let sourceFolder = this.availableFolders.find((folder) => folder.id == parseInt(this.folderId)) as iFolder
-                    this.selectedDocument.functionalities.push(sourceFolder.path)
+                    if (!this.selectedDocument.functionalities.includes(sourceFolder.path)) this.selectedDocument.functionalities.push(sourceFolder.path)
                 }
             })
         },

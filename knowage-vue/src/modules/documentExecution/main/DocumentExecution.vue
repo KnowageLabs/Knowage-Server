@@ -880,7 +880,7 @@ export default defineComponent({
         },
         getFormattedDate(date: any, useDefaultFormat?: boolean) {
             const format = date instanceof Date ? undefined : 'dd/MM/yyyy'
-            return luxonFormatDate(date,format, useDefaultFormat ? undefined : this.dateFormat)
+            return luxonFormatDate(date, format, useDefaultFormat ? undefined : this.dateFormat)
         },
         onBreadcrumbClick(item: any) {
             this.document = item.document
@@ -901,6 +901,8 @@ export default defineComponent({
             await this.loadCrossNavigationByDocument(event.data)
         },
         async loadCrossNavigationByDocument(angularData: any) {
+            if (!this.document) return
+
             let temp = {} as any
 
             this.loading = true
@@ -918,9 +920,11 @@ export default defineComponent({
             this.formatAngularOutputParameters(angularData.otherOutputParameters)
             const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument.navigationParams)
 
-            this.document = { ...crossNavigationDocument?.document, navigationParams: navigationParams }
-
             const popupOptions = crossNavigationDocument.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
+
+            if (crossNavigationDocument.crossType !== 2) {
+                this.document = { ...crossNavigationDocument?.document, navigationParams: navigationParams }
+            }
 
             if (crossNavigationDocument.crossType === 2) {
                 this.openCrossNavigationInNewWindow(popupOptions, crossNavigationDocument, navigationParams)

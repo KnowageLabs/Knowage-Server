@@ -44,7 +44,7 @@ const deepcopy = require('deepcopy')
 export default defineComponent({
     name: 'kn-parameter-tree-dialog',
     components: { Dialog, Tree },
-    props: { visible: { type: Boolean }, selectedParameter: { type: Object }, formatedParameterValues: { type: Object }, document: { type: Object }, mode: { type: String } },
+    props: { visible: { type: Boolean }, selectedParameter: { type: Object }, formatedParameterValues: { type: Object }, document: { type: Object }, mode: { type: String }, selectedRole: { type: String } },
     emits: ['close', 'save'],
     data() {
         return {
@@ -102,12 +102,15 @@ export default defineComponent({
                 return
             }
 
+            const sessionRole = (this.$store.state as any).user.sessionRole
+            const role = sessionRole && sessionRole !== this.$t('role.defaultRolePlaceholder') ? sessionRole : this.selectedRole
+
             let url = '2.0/documentexecution/admissibleValuesTree'
             if (this.mode !== 'execution') {
                 url = this.document.type === 'businessModel' ? `1.0/businessmodel/${this.document.name}/admissibleValuesTree` : `/3.0/datasets/${this.document.label}/admissibleValuesTree`
             }
 
-            const postData = { label: this.document.label ?? this.document.name, role: (this.$store.state as any).user.sessionRole, parameterId: this.parameter?.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
+            const postData = { label: this.document.label ?? this.document.name, role: role, parameterId: this.parameter?.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
             let content = [] as any[]
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
