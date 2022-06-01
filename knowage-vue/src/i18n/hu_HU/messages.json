@@ -1350,12 +1350,12 @@
       "valueName": "Value name"
     },
     "driversManagement": {
+      "partialSuccessMessage": "Not all data has been updated successfully. Check again for unsaved informations.",
       "add": "Add",
       "deleteError": "Error",
       "functional": "Functional",
       "hint": "Driver models a concept or a piece of data frequently used as a distinguishing criterion on the global data context.Click on one existing item from the list on the side, or press the \"+\" button to add one.",
       "options": "Options",
-      "partialSuccessMessage": "Not all data has been updated successfully. Check again for unsaved informations.",
       "temporal": "Temporal",
       "title": "Drivers management",
       "useModes": {
