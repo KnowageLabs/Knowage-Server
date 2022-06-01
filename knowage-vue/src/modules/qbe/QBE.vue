@@ -175,7 +175,7 @@ import { onFiltersSaveCallback } from './QBEFilterService'
 import { formatDrivers } from './QBEDriversService'
 import { onHavingsSaveCallback } from './QBEHavingsService'
 import { createNewField, creatNewMetadataFromField } from '@/helpers/commons/qbeHelpers'
-import { buildCalculatedField } from '@/helpers/commons/buildQbeCalculatedField'
+import { buildCalculatedField, updateCalculatedField } from '@/helpers/commons/buildQbeCalculatedField'
 import { removeInPlace } from './qbeDialogs/qbeAdvancedFilterDialog/treeService'
 import moment from 'moment'
 import Dialog from 'primevue/dialog'
@@ -329,10 +329,6 @@ export default defineComponent({
                 this.parameterSidebarVisible = true
             }
             this.loading = false
-
-            console.log('WHOLE QBE', this.qbe)
-            console.log('QBE METADATA', this.qbeMetadata)
-            console.log('QBE QUERY', this.qbe?.qbeJSONQuery?.catalogue?.queries[0])
         },
         async loadDataset() {
             if (!this.dataset) {
@@ -560,8 +556,6 @@ export default defineComponent({
 
                 editQueryObj.fields.push(newField)
                 this.qbeMetadata.push(newMetadata)
-
-                console.log('SAME ID, COMPARE VALUES', newField, newMetadata)
             }
             // eslint-disable-next-line no-prototype-builtins
             this.hideSpatialFunct()
@@ -573,9 +567,7 @@ export default defineComponent({
             if (this.smartView) this.executeQBEQuery(false)
         },
         deleteFieldFromQuery(fieldID) {
-            console.log('unique ID', fieldID)
             let indexOfFieldToDelete = this.selectedQuery.fields.findIndex((field) => {
-                if (field.uniqueID === fieldID) console.log('field to delete', field)
                 return field.uniqueID === fieldID
             })
             this.onFieldDeleted({ ...this.selectedQuery.fields[indexOfFieldToDelete] })
@@ -595,7 +587,6 @@ export default defineComponent({
         },
         deleteFieldMetadata(fieldID) {
             let indexOfFieldMetadataToDelete = this.qbeMetadata.findIndex((metadata) => {
-                if (metadata.uniqueID === fieldID) console.log('meta to delete', metadata)
                 return metadata.uniqueID === fieldID
             })
             this.qbeMetadata.splice(indexOfFieldMetadataToDelete, 1)
@@ -603,19 +594,19 @@ export default defineComponent({
         //#endregion ================================================================================================
 
         //#region ===================== Calc Fields Logic ===========================================================
-        addCalcField() {
+        createNewCalcField() {
             this.createCalcFieldColumns()
             this.selectedCalcField = { alias: '', expression: '', format: undefined, nature: 'ATTRIBUTE', type: 'STRING' } as any
             this.calcFieldDialogVisible = true
         },
-        editCalcField(calcField, index) {
+        editCalcField(calcField) {
             this.createCalcFieldColumns()
             this.selectedCalcField = this.formatCalcFieldForComponent(calcField)
-            this.selectedCalcField.index = index
             this.calcFieldDialogVisible = true
         },
         formatCalcFieldForComponent(calcField) {
             let formatField = {
+                uniqueID: calcField.uniqueID,
                 alias: calcField.id.alias,
                 type: calcField.id.type,
                 expression: calcField.id.expressionSimple,
@@ -631,14 +622,19 @@ export default defineComponent({
             })
         },
         onCalcFieldSave(calcFieldOutput) {
+            var calculatedField = {} as any
             this.selectedCalcField.alias = calcFieldOutput.colName
             this.selectedCalcField.expression = calcFieldOutput.formula
-            let calculatedField = buildCalculatedField(this.selectedCalcField, this.selectedQuery.fields)
-            calculatedField.uniqueID = crypto.randomBytes(4).toString('hex')
-            this.selectedCalcField.index ? this.selectedQuery.fields.splice(this.selectedCalcField.index, 1) : ''
-            this.selectedQuery.fields.push(calculatedField)
-            this.addEntityToMainQuery(calculatedField, true)
-            this.addCalculatedFieldMetadata(calculatedField)
+
+            if (this.selectedCalcField.uniqueID) {
+                this.updateExistingCalculatedField(this.selectedCalcField)
+            } else {
+                calculatedField = buildCalculatedField(this.selectedCalcField, this.selectedQuery.fields)
+                calculatedField.uniqueID = crypto.randomBytes(4).toString('hex')
+                this.selectedQuery.fields.push(calculatedField)
+                this.addEntityToMainQuery(calculatedField, true)
+                this.addCalculatedFieldMetadata(calculatedField)
+            }
 
             this.calcFieldDialogVisible = false
         },
@@ -664,10 +660,32 @@ export default defineComponent({
                     newMetadata.Type = 'java.sql.Date'
                     break
             }
-
-            console.log('calcField', calculatedField)
-            console.log('calc metadata', newMetadata)
             this.qbeMetadata.push(newMetadata)
+        },
+        updateExistingCalculatedField(calculatedField) {
+            let fieldToEditIndex = this.selectedQuery.fields.findIndex((field) => field.uniqueID == calculatedField.uniqueID)
+            this.selectedQuery.fields[fieldToEditIndex] = updateCalculatedField(this.selectedQuery.fields[fieldToEditIndex], this.selectedCalcField, this.selectedQuery.fields)
+            this.updateCalculatedFieldMetadata(this.selectedQuery.fields[fieldToEditIndex])
+        },
+        updateCalculatedFieldMetadata(calculatedField) {
+            let metaToEditIndex = this.qbeMetadata.findIndex((meta) => meta.uniqueID == calculatedField.uniqueID)
+
+            this.qbeMetadata[metaToEditIndex].alias = calculatedField.alias
+            this.qbeMetadata[metaToEditIndex].column = calculatedField.alias
+            this.qbeMetadata[metaToEditIndex].fieldAlias = calculatedField.field
+            this.qbeMetadata[metaToEditIndex].fieldType = calculatedField.id.nature.toUpperCase()
+            this.qbeMetadata[metaToEditIndex].format = calculatedField.format
+            switch (calculatedField.id.type) {
+                case 'STRING':
+                    this.qbeMetadata[metaToEditIndex].Type = 'java.lang.String'
+                    break
+                case 'NUMBER':
+                    this.qbeMetadata[metaToEditIndex].Type = 'java.lang.Long'
+                    break
+                case 'DATE':
+                    this.qbeMetadata[metaToEditIndex].Type = 'java.sql.Date'
+                    break
+            }
         },
         //#endregion ================================================================================================
 
@@ -685,7 +703,7 @@ export default defineComponent({
                 { key: '1', label: this.$t('qbe.detailView.toolbarMenu.sql'), command: () => this.showSQLQuery() },
                 { key: '2', icon: repetitionIcon, label: this.$t('qbe.detailView.toolbarMenu.repetitions'), command: () => this.toggleDiscardRepetitions() },
                 { key: '3', label: this.$t('common.parameters'), command: () => this.showParamDialog() },
-                { key: '4', label: this.$t('components.knCalculatedField.title'), visible: !this.smartView && this.selectedQuery.fields.length > 0, command: () => this.addCalcField() },
+                { key: '4', label: this.$t('components.knCalculatedField.title'), visible: !this.smartView && this.selectedQuery.fields.length > 0, command: () => this.createNewCalcField() },
                 { key: '5', label: this.$t('qbe.advancedFilters.advancedFilterVisualisation'), command: () => this.showAdvancedFilters() },
                 { key: '6', label: this.$t('qbe.joinDefinitions.title'), command: () => this.showJoinDefinitions() },
                 {
@@ -923,7 +941,6 @@ export default defineComponent({
             this.pagination = { start: 0, limit: 25 }
         },
         onFieldAliasChange(field) {
-            console.log('alias changed ---------------------', field)
             this.qbeMetadata.findIndex((metadata) => {
                 if (metadata.uniqueID === field.uniqueID) metadata.fieldAlias = field.alias
             })

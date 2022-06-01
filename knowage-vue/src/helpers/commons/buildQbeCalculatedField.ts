@@ -28,7 +28,7 @@ export function buildCalculatedField(calcFieldOutput, selectedQueryFields) {
     calculatedField.field = calcFieldOutput.alias
     calculatedField.funct = calcFieldOutput.nature == 'MEASURE' ? 'SUM' : ''
     calculatedField.group = calcFieldOutput.nature == 'ATTRIBUTE' ? true : false
-    calculatedField.order = ''
+    calculatedField.order = 'NONE'
     calculatedField.include = true
     calculatedField.inUse = true
     calculatedField.visible = true
@@ -37,6 +37,43 @@ export function buildCalculatedField(calcFieldOutput, selectedQueryFields) {
     calculatedField.formula = cleanExpression(addedParameters.expression)
     calculatedField.expression = cleanExpression(addedParameters.expressionSimple)
     calculatedField.longDescription = cleanExpression(addedParameters.alias + ' : ' + addedParameters.alias)
+
+    return calculatedField
+}
+
+export function updateCalculatedField(fieldToUpdate, calcFieldOutput, selectedQueryFields) {
+    let calculatedField = {} as any
+    let addedParameters = {} as any
+
+    addedParameters.alias = calcFieldOutput.alias
+    addedParameters.type = calcFieldOutput.type
+    addedParameters.nature = calcFieldOutput.nature
+    addedParameters.expressionSimple = calcFieldOutput.expression
+    addedParameters.expression = formatCalcFieldFormula(calcFieldOutput.expression, selectedQueryFields)
+    addedParameters.type === 'DATE' ? (addedParameters.format = calcFieldOutput.format) : ''
+
+    calculatedField.id = addedParameters
+    calculatedField.alias = addedParameters.alias
+    calculatedField.nature = addedParameters.nature
+    calculatedField.type = 'inline.calculated.field'
+    calculatedField.distinct = false
+    addedParameters.type === 'DATE' ? (calculatedField.format = calcFieldOutput.format) : ''
+    calculatedField.fieldType = calcFieldOutput.nature.toLowerCase()
+    calculatedField.entity = calcFieldOutput.alias
+    calculatedField.field = calcFieldOutput.alias
+    calculatedField.group = fieldToUpdate.group
+    calculatedField.order = fieldToUpdate.order
+    calculatedField.funct = fieldToUpdate.funct
+    calculatedField.visible = fieldToUpdate.visible
+    calculatedField.inUse = fieldToUpdate.inUse
+    calculatedField.include = true
+    calculatedField.id.expression = cleanExpression(calculatedField.id.expression)
+    calculatedField.id.expressionSimple = cleanExpression(calculatedField.id.expressionSimple)
+    calculatedField.formula = cleanExpression(addedParameters.expression)
+    calculatedField.expression = cleanExpression(addedParameters.expressionSimple)
+    calculatedField.longDescription = cleanExpression(addedParameters.alias + ' : ' + addedParameters.alias)
+    calculatedField.uniqueID = fieldToUpdate.uniqueID
+    calculatedField.iconCls = fieldToUpdate.iconCls
 
     return calculatedField
 }
