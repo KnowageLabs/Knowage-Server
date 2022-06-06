@@ -686,7 +686,7 @@ export default defineComponent({
             let tagFound = false
             for (let i = 0; i < dataset.tags.length; i++) {
                 const tempTag = dataset.tags[i]
-                if (tempTag.name.toLowerCase() === this.searchWord.toLowerCase()) {
+                if (tempTag.name.toLowerCase().includes(this.searchWord.toLowerCase())) {
                     tagFound = true
                     break
                 }
