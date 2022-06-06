@@ -182,7 +182,6 @@ import Menu from 'primevue/menu'
 import MultiSelect from 'primevue/multiselect'
 import RadioButton from 'primevue/radiobutton'
 import ScrollPanel from 'primevue/scrollpanel'
-import moment from 'moment'
 
 export default defineComponent({
     name: 'kn-parameter-sidebar',
