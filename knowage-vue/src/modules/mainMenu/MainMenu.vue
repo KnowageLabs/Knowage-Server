@@ -281,7 +281,7 @@
                     for (var index in responseCommonUserFunctionalities) {
                         let item = responseCommonUserFunctionalities[index]
                         item.visible = this.isItemToDisplay(item)
-                        if (parseInt(index) == 0 && this.stateHomePage) item.to = this.stateHomePage.to.replaceAll('\\/', '/')
+                        if (parseInt(index) == 0 && this.stateHomePage?.to) item.to = this.stateHomePage.to.replaceAll('\\/', '/')
                         this.commonUserFunctionalities.push(item)
                     }
                     this.updateNewsAndDownload()
