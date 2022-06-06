@@ -40,196 +40,206 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { mapState } from 'vuex'
+    import { defineComponent } from 'vue'
+    import { mapState } from 'vuex'
 
-export default defineComponent({
-    name: 'Home',
-    components: {},
-    props: {},
-    data() {
-        return {
-            completeUrl: false
+    export default defineComponent({
+        name: 'Home',
+        components: {},
+        props: {},
+        data() {
+            return {
+                completeUrl: false
+            }
+        },
+        beforeMounted() {
+            this.setCompleteUrl()
+        },
+        methods: {
+            setCompleteUrl() {
+                if (Object.keys(this.homePage).length > 0) {
+                    this.completeUrl = this.homePage.url
+                    if (this.homePage.to) {
+                        let to = this.homePage.to?.replaceAll('\\/', '/')
+
+                        if (to === '/document-browser' || to.startsWith('/workspace')) this.$router.push(to)
+                        else this.completeUrl = process.env.VUE_APP_HOST_URL + this.homePage.to.replaceAll('\\/', '/')
+                    }
+                } else {
+                    this.completeUrl = false
+                }
+            }
+        },
+        computed: {
+            ...mapState({
+                homePage: 'homePage',
+                user: 'user'
+            })
+        },
+        watch: {
+            homePage(oldHomePage, newHomePage) {
+                if (oldHomePage !== newHomePage) this.setCompleteUrl()
+            }
         }
-    },
-    mounted() {
-        this.setCompleteUrl()
-    },
-    methods: {
-        setCompleteUrl() {
-            this.completeUrl = this.homePage.to ? process.env.VUE_APP_HOST_URL + this.homePage.to.replaceAll('\\/', '/') : this.homePage.url
-        }
-    },
-    computed: {
-        ...mapState({
-            homePage: 'homePage',
-            user: 'user'
-        })
-    },
-    watch: {
-        homePage(oldHomePage, newHomePage) {
-            if (oldHomePage !== newHomePage) this.setCompleteUrl()
-        }
-    }
-})
+    })
 </script>
 
 <style lang="scss" scoped>
-$knowageBlueColor: #042d5f;
-.homeContainer {
-    height: 100vh;
-    padding: 64px;
-    background: url('../assets/images/home/home-background.png') no-repeat;
-    background-position: bottom right;
-    background-size: 120%;
-    display: flex;
-    flex-direction: column;
-
-    .upperSection {
-        flex-wrap: wrap;
-        .logo {
-            width: 40%;
-            min-width: 400px;
-            img {
-                width: 100%;
-            }
-        }
-        .buttons {
-            flex-direction: column;
-            a {
-                width: 300px;
-                height: 60px;
-                line-height: 60px;
-                text-transform: uppercase;
-                text-decoration: none;
-                color: white;
-                border-radius: 2px;
-                text-align: center;
-                background-color: $knowageBlueColor;
-                box-shadow: 0px 2px 2px #686868;
-                margin-bottom: 20px;
-                transition: all 0.3s ease-in;
-                &:hover {
-                    background-color: lighten($knowageBlueColor, 5%);
-                }
-                &:active {
-                    box-shadow: 0px 0px 2px #686868;
-                }
-            }
-        }
-        .text {
-            margin-top: 5%;
-            h2 {
-                color: $knowageBlueColor;
-                font-size: 2rem;
-            }
-            p {
-                font-size: 1.5rem;
-                color: lighten(black, 40%);
-            }
-        }
-    }
-    .upperSection,
-    .lowerSection {
-        flex: 1;
-    }
-    .lowerSection {
+    $knowageBlueColor: #042d5f;
+    .homeContainer {
+        height: 100vh;
+        padding: 64px;
+        background: url('../assets/images/home/home-background.png') no-repeat;
+        background-position: bottom right;
+        background-size: 120%;
         display: flex;
-        justify-content: center;
-        align-items: center;
-        .border-container {
-            flex: 1;
-            max-width: 1100px;
-            border-bottom: 10px solid var(--kn-color-fab);
-            display: flex;
-            justify-content: space-around;
-        }
-        .image {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: #ccc;
-            height: 200px;
-            width: 200px;
-            img {
-                height: 50px;
-                margin: 10px;
-            }
-            p {
-                text-transform: uppercase;
-                font-size: 1.8rem;
-                font-weight: 100;
-                margin: 10px;
-                text-align: center;
-                color: $knowageBlueColor;
-            }
-        }
-    }
-}
+        flex-direction: column;
 
-@media screen and (max-width: 1200px) {
-    .homeContainer {
         .upperSection {
-            .text {
-                h2 {
-                    font-size: 1.6rem;
-                }
-                p {
-                    font-size: 1.1rem;
+            flex-wrap: wrap;
+            .logo {
+                width: 40%;
+                min-width: 400px;
+                img {
+                    width: 100%;
                 }
             }
-        }
-    }
-}
-@media screen and (max-width: 1000px) {
-    .homeContainer {
-        .upperSection {
-            .buttons {
-                flex-direction: row;
-                width: 100%;
-                justify-content: space-around;
-                margin-top: 20px;
-            }
-        }
-
-        .lowerSection {
-            .border-container {
-                border: 0;
-                flex-wrap: wrap;
-                .image {
-                    width: 40%;
-                    margin: 20px 5%;
-                }
-            }
-        }
-    }
-}
-@media screen and (max-width: 800px) {
-    .homeContainer {
-        padding: 16px;
-        .upperSection {
             .buttons {
                 flex-direction: column;
-                align-items: center;
+                a {
+                    width: 300px;
+                    height: 60px;
+                    line-height: 60px;
+                    text-transform: uppercase;
+                    text-decoration: none;
+                    color: white;
+                    border-radius: 2px;
+                    text-align: center;
+                    background-color: $knowageBlueColor;
+                    box-shadow: 0px 2px 2px #686868;
+                    margin-bottom: 20px;
+                    transition: all 0.3s ease-in;
+                    &:hover {
+                        background-color: lighten($knowageBlueColor, 5%);
+                    }
+                    &:active {
+                        box-shadow: 0px 0px 2px #686868;
+                    }
+                }
+            }
+            .text {
+                margin-top: 5%;
+                h2 {
+                    color: $knowageBlueColor;
+                    font-size: 2rem;
+                }
+                p {
+                    font-size: 1.5rem;
+                    color: lighten(black, 40%);
+                }
             }
         }
+        .upperSection,
         .lowerSection {
+            flex: 1;
+        }
+        .lowerSection {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             .border-container {
-                border: 0;
-                flex-wrap: wrap;
-                .image {
-                    width: 80%;
-                    margin: 20px 10%;
+                flex: 1;
+                max-width: 1100px;
+                border-bottom: 10px solid var(--kn-color-fab);
+                display: flex;
+                justify-content: space-around;
+            }
+            .image {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                background-color: #ccc;
+                height: 200px;
+                width: 200px;
+                img {
+                    height: 50px;
+                    margin: 10px;
+                }
+                p {
+                    text-transform: uppercase;
+                    font-size: 1.8rem;
+                    font-weight: 100;
+                    margin: 10px;
+                    text-align: center;
+                    color: $knowageBlueColor;
                 }
             }
         }
     }
-}
 
-iframe {
-    border: 0;
-    width: 100%;
-    height: 100%;
-}
+    @media screen and (max-width: 1200px) {
+        .homeContainer {
+            .upperSection {
+                .text {
+                    h2 {
+                        font-size: 1.6rem;
+                    }
+                    p {
+                        font-size: 1.1rem;
+                    }
+                }
+            }
+        }
+    }
+    @media screen and (max-width: 1000px) {
+        .homeContainer {
+            .upperSection {
+                .buttons {
+                    flex-direction: row;
+                    width: 100%;
+                    justify-content: space-around;
+                    margin-top: 20px;
+                }
+            }
+
+            .lowerSection {
+                .border-container {
+                    border: 0;
+                    flex-wrap: wrap;
+                    .image {
+                        width: 40%;
+                        margin: 20px 5%;
+                    }
+                }
+            }
+        }
+    }
+    @media screen and (max-width: 800px) {
+        .homeContainer {
+            padding: 16px;
+            .upperSection {
+                .buttons {
+                    flex-direction: column;
+                    align-items: center;
+                }
+            }
+            .lowerSection {
+                .border-container {
+                    border: 0;
+                    flex-wrap: wrap;
+                    .image {
+                        width: 80%;
+                        margin: 20px 10%;
+                    }
+                }
+            }
+        }
+    }
+
+    iframe {
+        border: 0;
+        width: 100%;
+        height: 100%;
+    }
 </style>
