@@ -394,6 +394,7 @@ export default defineComponent({
                     }, 200)
                 })
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
+                .finally(() => (this.loading = false))
         },
         closeDocument() {
             this.$emit('closeDetails')
