@@ -29,13 +29,26 @@
         @cancel="calcFieldDialogVisible = false"
     >
         <template #additionalInputs>
-            <div class="p-field p-col-4">
+            <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
                 <span class="p-float-label ">
                     <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.type" :options="descriptor.types" optionLabel="label" optionValue="name" />
                     <label for="type" class="kn-material-input-label"> {{ $t('components.knCalculatedField.type') }} </label>
                 </span>
             </div>
-            <div class="p-field p-col-4">
+            <div v-if="selectedCalcField.type === 'DATE'" class="p-field p-col-3">
+                <span class="p-float-label ">
+                    <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.format" :options="descriptor.admissibleDateFormats">
+                        <template #value>
+                            <span>{{ selectedCalcField.format ? moment().format(selectedCalcField.format) : '' }}</span>
+                        </template>
+                        <template #option="slotProps">
+                            <span>{{ moment().format(slotProps.option) }}</span>
+                        </template>
+                    </Dropdown>
+                    <label for="type" class="kn-material-input-label"> {{ $t('managers.datasetManagement.ckanDateFormat') }} </label>
+                </span>
+            </div>
+            <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
                 <span class="p-float-label ">
                     <Dropdown id="columnType" class="kn-material-input" v-model="selectedCalcField.nature" :options="descriptor.columnTypes" optionLabel="label" optionValue="name" />
                     <label for="columnType" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.columnType') }} </label>
@@ -50,6 +63,7 @@ import { AxiosResponse } from 'axios'
 import { defineComponent, PropType } from 'vue'
 import { iBusinessModel } from '../../../Metaweb'
 import { IKnCalculatedFieldFunction } from '@/components/functionalities/KnCalculatedField/KnCalculatedField'
+import moment from 'moment'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import descriptor from './MetawebCalculatedFieldDescriptor.json'
@@ -67,6 +81,7 @@ export default defineComponent({
     emits: ['metaUpdated'],
     data() {
         return {
+            moment,
             descriptor,
             calcFieldDescriptor,
             meta: null as any,
@@ -85,16 +100,19 @@ export default defineComponent({
                 const key = Object.keys(el)[0]
                 if (key === 'structural.tabletype' && el[key].value === 'geographic dimension') {
                     hideFields = true
-                } else hideFields = false
+                }
             })
             return hideFields
         }
     },
     watch: {
-        selectedBusinessModel() {
-            this.loadMeta()
-            this.loadBusinessModel()
-            this.calcFieldFunctions = this.createCalcFieldFunctions(calcFieldDescriptor.availableFunctions, this.propCustomFunctions)
+        selectedBusinessModel: {
+            handler() {
+                this.loadMeta()
+                this.loadBusinessModel()
+                this.calcFieldFunctions = this.createCalcFieldFunctions(calcFieldDescriptor.availableFunctions, this.propCustomFunctions)
+            },
+            deep: true
         }
     },
     created() {
@@ -152,7 +170,7 @@ export default defineComponent({
 
         addCalcField() {
             this.createCalcFieldColumns()
-            this.selectedCalcField = { alias: '', expression: '', format: null, nature: 'ATTRIBUTE', type: 'STRING' } as any
+            this.selectedCalcField = { alias: '', expression: '', format: undefined, nature: 'ATTRIBUTE', type: 'STRING' } as any
             this.calcFieldDialogVisible = true
         },
 
@@ -165,6 +183,9 @@ export default defineComponent({
                 sourceTableName: this.businessModel?.uniqueName,
                 editMode: false
             } as any
+
+            console.log(calculatedField.dataType, event)
+            calculatedField.dataType == 'DATE' ? (calculatedField.format = this.selectedCalcField.format) : ''
 
             if (this.selectedCalcField.uniqueName) {
                 calculatedField.uniquename = this.selectedCalcField.uniqueName
