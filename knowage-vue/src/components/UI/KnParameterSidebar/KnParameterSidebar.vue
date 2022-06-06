@@ -526,7 +526,8 @@ export default defineComponent({
                     const parameter = this.parameters.filterStatus[index]
                     if (parameter.type === 'DATE') {
                         const temp = new Date(tempParameters[key])
-                        parameter.parameterValue[0].value = temp instanceof Date && !isNaN(temp as any) ? this.getFormattedDate(moment(temp).format('DD/MM/YYYY'), 'DD/MM/YYYY') : this.getFormattedDate(tempParameters[key], 'DD/MM/YYYY')
+                        parameter.parameterValue[0].value = temp instanceof Date && !isNaN(temp as any) ? temp : this.getFormattedDate(tempParameters[key], 'DD/MM/YYYY')
+                        parameter.parameterValue[0].value = temp as any
                     } else if ((parameter.valueSelection === 'man_in' || parameter.selectionType === 'COMBOBOX') && !parameter.multivalue) {
                         parameter.parameterValue[0].value = tempParameters[key]
                         parameter.parameterValue[0].description = tempParameters[key + '_field_visible_description']
@@ -549,7 +550,7 @@ export default defineComponent({
             })
         },
         getFormattedDate(date: any, format: any) {
-            return formatDate(date, undefined, format)
+            return formatDate(date, 'l', format)
         },
         decodeViewpointPrameterValues(string: string) {
             const parametersJson = {}
