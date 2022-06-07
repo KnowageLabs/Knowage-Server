@@ -62,6 +62,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -664,7 +665,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				// Parameters NO TREE
 				if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())) {
 
-					ArrayList<HashMap<String, Object>> admissibleValues = objParameter.getAdmissibleValues();
+					ArrayList<HashMap<String, Object>> admissibleValues = filterNullValues(objParameter.getAdmissibleValues());
 
 					metadata.put("colsMap", colPlaceholder2ColName);
 					metadata.put("descriptionColumn", lovDescriptionColumnName);
@@ -769,28 +770,26 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					valueList = objParameter.getDefaultValues();
 
 					if (!valueList.isEmpty()) {
-						defValue = valueList.stream()
-							.map(e -> {
+						defValue = valueList.stream().map(e -> {
 
-								BiMap<String, String> inverse = colPlaceholder2ColName.inverse();
-								String valColName = inverse.get(lovValueColumnName);
-								String descColName = inverse.get(lovDescriptionColumnName);
+							BiMap<String, String> inverse = colPlaceholder2ColName.inverse();
+							String valColName = inverse.get(lovValueColumnName);
+							String descColName = inverse.get(lovDescriptionColumnName);
 
-								// TODO : workaround
-								valColName = Optional.ofNullable(valColName).orElse("value");
-								descColName = Optional.ofNullable(descColName).orElse("desc");
+							// TODO : workaround
+							valColName = Optional.ofNullable(valColName).orElse("value");
+							descColName = Optional.ofNullable(descColName).orElse("desc");
 
-								Map<String, Object> ret = new LinkedHashMap<>();
+							Map<String, Object> ret = new LinkedHashMap<>();
 
-								ret.put(valColName, e.getValue());
+							ret.put(valColName, e.getValue());
 
-								if (!valColName.equals(descColName)) {
-									ret.put(descColName, e.getDescription());
-								}
+							if (!valColName.equals(descColName)) {
+								ret.put(descColName, e.getDescription());
+							}
 
-								return ret;
-							})
-							.collect(Collectors.toList());
+							return ret;
+						}).collect(Collectors.toList());
 					}
 
 					if (jsonCrossParameters.isNull(objParameter.getId())
@@ -878,6 +877,52 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		logger.debug("OUT");
 		return Response.ok(resultAsMap).build();
+	}
+
+	private ArrayList<HashMap<String, Object>> filterNullValues(ArrayList<HashMap<String, Object>> admissibleValues) {
+		ArrayList<HashMap<String, Object>> filteredValues = new ArrayList<HashMap<String, Object>>();
+		if (admissibleValues != null && !admissibleValues.isEmpty()) {
+			for (Map<String, Object> v : admissibleValues) {
+				if (isNull(v)) {
+					logger.debug("Skipping null value " + v.get("label"));
+				} else {
+					filteredValues.add((HashMap<String, Object>) v);
+				}
+			}
+		}
+		return filteredValues;
+	}
+
+	private boolean isNull(Map<String, Object> v) {
+
+		boolean result = false;
+
+		String value = String.valueOf(v.get("value"));
+		if (StringUtils.isNotBlank(value)) {
+			result = value.equals("null");
+		}
+
+		if (!result) {
+			value = String.valueOf(v.get("VALUE"));
+			if (StringUtils.isNotBlank(value)) {
+				result = value.equals("null");
+			}
+
+			if (!result) {
+				String description = String.valueOf(v.get("description"));
+				if (StringUtils.isNotBlank(description)) {
+					result = description.equals("null");
+				}
+
+				if (!result) {
+					description = String.valueOf(v.get("DESCRIPTION"));
+					if (StringUtils.isNotBlank(description)) {
+						result = description.equals("null");
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 	// private List<AbstractDriverRuntime<AbstractDriver>>
@@ -1111,6 +1156,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		}
 		return defaultValues;
 	}
+
 	@POST
 	@Path("/admissibleValuesTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
