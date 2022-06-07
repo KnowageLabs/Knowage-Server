@@ -529,7 +529,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if($scope.bulkSelection){
 				this.manageMultiSelection(params);
 			}
-			if(typeof tempValue != "undefined" && this.eGui.innerHTML == '') {
+			if(typeof tempValue != "undefined" && tempValue != "" && this.eGui.innerHTML == '') {
 				this.eGui.innerHTML = ((params.colDef.style && params.colDef.style.prefix) || '') + tempValue + ((params.colDef.style && params.colDef.style.suffix) || '');
 				if(params.colDef.style && params.colDef.style.maxChars && params.value.length > params.colDef.style.maxChars){
 					this.eGui.style["display"] = "inline-flex";
