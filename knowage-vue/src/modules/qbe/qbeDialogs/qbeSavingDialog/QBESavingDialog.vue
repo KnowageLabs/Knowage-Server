@@ -244,6 +244,15 @@ export default defineComponent({
                 this.selectedDataset.scopeCd = userScope.VALUE_CD
                 this.selectedDataset.scopeId = userScope.VALUE_ID
             }
+            console.log('dataset --------------------', this.selectedDataset)
+            console.log('functionality --------------------', (this.$store.state as any).user.functionalities.includes('QbeAdvancedSaving'))
+            console.log(
+                'userScope  --------------------',
+                this.scopeTypes.find((scope) => scope.VALUE_CD === 'USER')
+            )
+            console.log('scopeCd  --------------------', this.selectedDataset.scopeCd)
+            console.log('scopeId --------------------', this.selectedDataset.scopeId)
+            console.log('whole dataset --------------------', this.selectedDataset)
         },
         logme() {
             console.log(this.v$)
