@@ -45,7 +45,7 @@
 				                </div>
 							</md-subheader>
 							<div layout="row" layout-margin>
-						        <md-input-container flex="40" class="md-block" ng-show="newModel.content.columnSelectedOfDataset.length>0">
+						        <md-input-container flex="30" class="md-block" ng-show="newModel.content.columnSelectedOfDataset.length>0">
 					      			<label>{{translate.load("sbi.cockpit.widgets.table.modalselectioncolumn");}}</label>
 					         		<md-select md-option-empty ng-model="newModel.settings.modalSelectionColumn">
 					         			<md-option md-option-empty ng-value=""></md-option>
@@ -54,7 +54,7 @@
 					          			</md-option>
 					      			</md-select>
 							    </md-input-container>
-							    <md-input-container flex="40" class="md-block">
+							    <md-input-container flex="30" class="md-block">
 					       			<label>{{translate.load("sbi.cockpit.widgets.table.sorting.column");}}</label>
 					          		<md-select ng-model="newModel.settings.sortingColumn" multiple="false">
 					          			<md-option></md-option>
@@ -70,7 +70,7 @@
 					          			<md-option value="DESC">{{translate.load("sbi.cockpit.widgets.table.sorting.desc");}}</md-option>
 					       			</md-select>
 							    </md-input-container>
-							    <md-input-container flex class="md-block"> 
+							    <md-input-container flex="20" class="md-block"> 
 									<md-switch ng-model="newModel.settings.sortable" aria-label="Fixed rows per page" layout-align="center center">
 										 {{translate.load('enable sorting')}}
 									</md-switch>
