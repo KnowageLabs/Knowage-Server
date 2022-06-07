@@ -9,9 +9,6 @@
         </template>
         <template #content>
             <DataTable class="p-datatable-sm kn-table kn-table-small-input" :autoLayout="true" :value="fieldsMetadata" responsiveLayout="stack" breakpoint="960px">
-                <Column field="fieldAlias" :header="'ID'" :sortable="true">
-                    <template #body="{data}"> {{ data.uniqueID }} </template>
-                </Column>
                 <Column field="fieldAlias" :header="$t('managers.datasetManagement.fieldAlias')" :sortable="true">
                     <template #body="{data}"> {{ data.fieldAlias }} </template>
                 </Column>
@@ -25,17 +22,17 @@
                         <Dropdown class="kn-material-input" :style="linkTabDescriptor.style.maxwidth" v-model="data.fieldType" :options="fieldMetadataTypes" optionLabel="value" optionValue="value" @change="warnForDuplicateSpatialFields('fieldType')" />
                     </template>
                 </Column>
-                <Column field="personal" :header="$t('managers.datasetManagement.personal')" :sortable="true">
+                <Column hidden="true" field="personal" :header="$t('managers.datasetManagement.personal')" :sortable="true">
                     <template #body="{data}">
                         <Checkbox id="personal" v-model="data.personal" :binary="true" @change="warnForDuplicateSpatialFields('personal')" />
                     </template>
                 </Column>
-                <Column field="decript" :header="$t('managers.datasetManagement.decript')" :sortable="true">
+                <Column hidden="true" field="decript" :header="$t('managers.datasetManagement.decript')" :sortable="true">
                     <template #body="{data}">
                         <Checkbox id="decript" v-model="data.decript" :binary="true" @change="warnForDuplicateSpatialFields('decript')" />
                     </template>
                 </Column>
-                <Column field="subjectId" :header="$t('managers.datasetManagement.subjectId')" :sortable="true">
+                <Column hidden="true" field="subjectId" :header="$t('managers.datasetManagement.subjectId')" :sortable="true">
                     <template #body="{data}">
                         <Checkbox id="subjectId" v-model="data.subjectId" :binary="true" @change="warnForDuplicateSpatialFields('subjectId')" />
                     </template>
