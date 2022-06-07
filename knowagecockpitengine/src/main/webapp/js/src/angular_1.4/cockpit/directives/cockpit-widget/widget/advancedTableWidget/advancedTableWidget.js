@@ -362,7 +362,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								'	</div>'+
 								'</div>';
 
-		    if(params.column.colDef.sortable){
+		    if(typeof $scope.ngModel.settings.sortable == 'undefined' ? true : $scope.ngModel.settings.sortable && params.column.colDef.sortable){
 		    	this.mySortAscButton = this.eGui.querySelector(".ag-cell-label-container");
 			    this.eSortDownButton = this.eGui.querySelector(".ag-sort-descending-icon");
 			    this.eSortUpButton = this.eGui.querySelector(".ag-sort-ascending-icon");
@@ -812,7 +812,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				defaultColDef: {
 					resizable: cockpitModule_properties.EDIT_MODE,
 					suppressMovable: true,
-					sortable: true
+					sortable: typeof $scope.ngModel.settings.sortable == 'undefined' ? true : $scope.ngModel.settings.sortable
 				},
 				components: {
 			        agColumnHeader: CustomHeader

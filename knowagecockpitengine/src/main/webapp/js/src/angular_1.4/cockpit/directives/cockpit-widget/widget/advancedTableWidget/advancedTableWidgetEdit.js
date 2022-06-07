@@ -47,6 +47,9 @@ function advancedTableWidgetEditControllerFunction($scope,$compile,finishEdit,$q
 	if (!$scope.newModel.settings) $scope.newModel.settings = {}
 	if (!$scope.newModel.settings.exportpdf) $scope.newModel.settings.exportpdf = {}
 	$scope.newModel.settings.exportpdf.enabled = typeof($scope.newModel.settings.exportpdf.enabled) != 'undefined' ? $scope.newModel.settings.exportpdf.enabled : true;
+	if(typeof $scope.newModel.settings.sortable == 'undefined'){
+			$scope.newModel.settings.sortable = true;
+		}
 
 	$scope.isObject = function(item){
 		return typeof item == 'object';

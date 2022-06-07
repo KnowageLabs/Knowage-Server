@@ -70,6 +70,11 @@
 					          			<md-option value="DESC">{{translate.load("sbi.cockpit.widgets.table.sorting.desc");}}</md-option>
 					       			</md-select>
 							    </md-input-container>
+							    <md-input-container flex class="md-block"> 
+									<md-switch ng-model="newModel.settings.sortable" aria-label="Fixed rows per page" layout-align="center center">
+										 {{translate.load('enable sorting')}}
+									</md-switch>
+							     </md-input-container>
 							</div>
 							
 							<!-- COLUMNS DEFINITION TABLE -->
