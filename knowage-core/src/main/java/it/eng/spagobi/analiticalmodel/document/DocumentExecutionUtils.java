@@ -244,8 +244,8 @@ public class DocumentExecutionUtils {
 		return url;
 	}
 
-	public static <T extends IDrivableBIResource<? extends AbstractDriver>> List handleNormalExecutionError(UserProfile profile, T obj, HttpServletRequest req, String env, String role, String modality,
-			JSONObject parametersJson, Locale locale) { // isFromCross,
+	public static <T extends IDrivableBIResource<? extends AbstractDriver>> List handleNormalExecutionError(UserProfile profile, T obj, HttpServletRequest req,
+			String env, String role, String modality, JSONObject parametersJson, Locale locale) { // isFromCross,
 		Monitor handleNormalExecutionErrorMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.handleNormalExecutionError");
 
 		DocumentRuntime dum = new DocumentRuntime(profile, locale);
@@ -439,8 +439,9 @@ public class DocumentExecutionUtils {
 	 * @param executionRole
 	 * @param biObject
 	 * @param objParameter
-	 * @param requestVal Something like:
-	 *   <pre>
+	 * @param requestVal       Something like:
+	 * 
+	 *                         <pre>
 	 *   {
 	 *     "label": "KNOWAGE-6401",
 	 *     "role": "admin",
@@ -460,7 +461,8 @@ public class DocumentExecutionUtils {
 	 *       "KNOWAGE-6401-1-3_field_visible_description": ""
 	 *     }
 	 *   }
-	 *   </pre>
+	 *                         </pre>
+	 *
 	 * @param treeLovNodeLevel
 	 * @param treeLovNodeValue
 	 * @param locale
@@ -468,14 +470,8 @@ public class DocumentExecutionUtils {
 	 * @deprecated Where possible, prefer {@link #getLovDefaultValues(String, List, BIObjectParameter, JSONObject, Integer, String, Locale)}
 	 */
 	@Deprecated
-	public static Map<String, Object> getLovDefaultValues(
-			String executionRole,
-			BIObject biObject,
-			BIObjectParameter objParameter,
-			JSONObject requestVal,
-			Integer treeLovNodeLevel,
-			String treeLovNodeValue,
-			Locale locale) {
+	public static Map<String, Object> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter, JSONObject requestVal,
+			Integer treeLovNodeLevel, String treeLovNodeValue, Locale locale) {
 		List<BIObjectParameter> drivers = biObject.getDrivers();
 		return getLovDefaultValues(executionRole, drivers, objParameter, requestVal, treeLovNodeLevel, treeLovNodeValue, locale);
 	}
@@ -602,7 +598,6 @@ public class DocumentExecutionUtils {
 			throw new SpagoBIServiceException("Impossible to get parameter's values", e);
 		}
 	}
-
 
 	// Same method as GetParameterValuesForExecutionAction.getChildrenForTreeLov()
 	private static JSONArray getChildrenForTreeLov(ILovDetail lovProvDet, List rows, String mode, Integer treeLovNodeLevel, String treeLovNodeValue) {
@@ -753,8 +748,8 @@ public class DocumentExecutionUtils {
 	 * @deprecated Where possible, prefer #getLovResult
 	 */
 	@Deprecated
-	public static String getLovResult(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, BIObject biObject,
-			Locale locale, boolean retrieveIfNotcached) throws Exception {
+	public static String getLovResult(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, BIObject biObject, Locale locale,
+			boolean retrieveIfNotcached) throws Exception {
 		List<BIObjectParameter> drivers = biObject.getDrivers();
 		return getLovResult(profile, lovDefinition, dependencies, drivers, locale, retrieveIfNotcached);
 	}
@@ -791,14 +786,10 @@ public class DocumentExecutionUtils {
 	 * in case when the lov is a query and there is correlation, the executed statement if different from the original query (since correlation expression is
 	 * injected inside SQL query using in-line view construct), therefore we should consider the modified query.
 	 *
-	 * @param profile
-	 *            The user profile
-	 * @param lovDefinition
-	 *            The lov original definition
-	 * @param dependencies
-	 *            The dependencies to be considered (if any)
-	 * @param biObject
-	 *            The document object
+	 * @param profile       The user profile
+	 * @param lovDefinition The lov original definition
+	 * @param dependencies  The dependencies to be considered (if any)
+	 * @param biObject      The document object
 	 * @return The key to be used in cache
 	 * @throws Exception
 	 * @deprecated Where possible, prefer {@link #getCacheKey(IEngUserProfile, ILovDetail, List, List)}
@@ -877,6 +868,11 @@ public class DocumentExecutionUtils {
 
 				String value = (String) row.getAttribute(valueColumn);
 				String description = (String) row.getAttribute(descriptionColumn);
+
+				if (value == null || (value != null && value.equals("null")))
+					continue;
+				if (description == null || (description != null && description.equals("null")))
+					continue;
 				valueJSON.put("value", value);
 				valueJSON.put("label", description);
 				valueJSON.put("description", description);
@@ -910,7 +906,8 @@ public class DocumentExecutionUtils {
 
 	/**
 	 * @param paramsArray Something like:
-	 *   <pre>
+	 * 
+	 *                    <pre>
 	 *     [
 	 *       {
 	 *         "name": "KNOWAGE-6401-1-1",
@@ -933,7 +930,8 @@ public class DocumentExecutionUtils {
 	 *         "description": ""
 	 *       }
 	 *     ]
-	 *   </pre>
+	 *                    </pre>
+	 *
 	 * @return
 	 */
 	public static Map<String, Object> createParameterValuesMap(JSONArray paramsArray) {
@@ -944,7 +942,7 @@ public class DocumentExecutionUtils {
 			try {
 				ret = new HashMap<>();
 
-				for (int j=0; j<length; j++) {
+				for (int j = 0; j < length; j++) {
 					JSONObject jsonObject = (JSONObject) paramsArray.get(j);
 
 					String key = (String) jsonObject.get("label");
@@ -970,8 +968,8 @@ public class DocumentExecutionUtils {
 					} else if (v instanceof Double) {
 						ret.put(key, "" + v);
 					} else {
-						Assert.assertUnreachable("Attribute [" + key + "] value [" + v
-								+ "] of PARAMETERS is not of type JSONArray nor String. It is of type [" + v.getClass().getName() + "]");
+						Assert.assertUnreachable("Attribute [" + key + "] value [" + v + "] of PARAMETERS is not of type JSONArray nor String. It is of type ["
+								+ v.getClass().getName() + "]");
 					}
 				}
 			} catch (JSONException e) {
