@@ -846,9 +846,8 @@ export default defineComponent({
             this.relationEntity = entity
             this.relationDialogVisible = true
         },
-
-        onHavingsSave(havings: iFilter[]) {
-            onHavingsSaveCallback(havings, this.qbe, this.selectedQuery)
+        onHavingsSave(havings: iFilter[], field: iField) {
+            onHavingsSaveCallback(havings, this.qbe, this.selectedQuery, field)
             this.havingDialogVisible = false
         },
         onGroupingChanged(field: iField) {
