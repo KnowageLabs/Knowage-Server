@@ -152,7 +152,7 @@
         </div>
         <div v-if="(parameters && parameters.filterStatus.length > 0) || mode === 'qbeView' || mode === 'workspaceView' || mode === 'datasetManagement'" class="p-fluid p-d-flex p-flex-row p-m-2 kn-parameter-sidebar-buttons">
             <Button class="kn-button kn-button--primary" :disabled="buttonsDisabled" @click="$emit('execute', qbeParameters)"> {{ $t('common.execute') }}</Button>
-            <Button v-if="mode !== 'qbeView' && mode !== 'workspaceView'" class="kn-button kn-button--primary p-ml-1" icon="fa fa-chevron-down" :disabled="buttonsDisabled" @click="toggle($event)" />
+            <Button v-if="mode !== 'qbeView' && mode !== 'workspaceView' && mode !== 'datasetManagement'" class="kn-button kn-button--primary p-ml-1" icon="fa fa-chevron-down" :disabled="buttonsDisabled" @click="toggle($event)" />
             <Menu ref="executeButtonMenu" :model="executeMenuItems" :popup="true" />
         </div>
         <KnParameterPopupDialog v-if="popupDialogVisible" :visible="popupDialogVisible" :selectedParameter="selectedParameter" :propLoading="loading" :parameterPopUpData="parameterPopUpData" @close="popupDialogVisible = false" @save="onPopupSave"></KnParameterPopupDialog>

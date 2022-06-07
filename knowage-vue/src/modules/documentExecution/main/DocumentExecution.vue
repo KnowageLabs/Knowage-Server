@@ -938,7 +938,7 @@ export default defineComponent({
                 if (index !== -1) {
                     this.breadcrumbs[index].document = this.document
                 } else {
-                    this.breadcrumbs.push({ label: this.document.label, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb })
+                    this.breadcrumbs.push({ label: this.document.label, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb ?? this.document.name })
                 }
 
                 await this.loadPage()
