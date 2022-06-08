@@ -116,6 +116,7 @@ export default defineComponent({
             const id = this.tabs[this.activeIndex - 1].item ? this.tabs[this.activeIndex - 1].item.label : 'new-dashboard'
 
             this.selectedItem = this.tabs[this.activeIndex - 1]
+            this.selectedItem.item.fromTab = true
 
             if (this.selectedItem.mode === 'documentDetail') {
                 const path = this.selectedItem.functionalityId ? `/document-browser/document-details/new/${this.selectedItem.functionalityId}` : `/document-browser/document-details/${this.selectedItem.item.id}`

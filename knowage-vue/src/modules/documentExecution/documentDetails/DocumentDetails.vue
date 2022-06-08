@@ -107,7 +107,7 @@ export default defineComponent({
         Badge,
         ProgressSpinner
     },
-    props: { propDocId: { type: String }, propFolderId: { type: String }, propMode: { type: String }, viewMode: { type: String } },
+    props: { propDocId: { type: String }, propFolderId: { type: String }, propMode: { type: String }, viewMode: { type: String }, wholeItem: { type: Object } },
     emits: ['closeDetails', 'documentSaved'],
     data() {
         return {
@@ -154,16 +154,15 @@ export default defineComponent({
     },
     watch: {
         async propDocId() {
-            this.isForEdit()
-            await this.loadPage(this.docId)
+            await this.isForEdit()
         }
     },
     async created() {
         if (this.viewMode !== 'document-detail' && this.$route.name !== 'document-details-new-document' && this.$route.name !== 'document-details-edit-document') return
-        this.isForEdit()
-        await this.loadPage(this.docId)
+        await this.isForEdit()
     },
     activated() {
+        this.resetNewDocumentData()
         if (this.propFolderId) {
             this.getFunctionalities()
             this.getAnalyticalDrivers()
@@ -179,19 +178,20 @@ export default defineComponent({
         }
     },
     methods: {
-        isForEdit() {
+        async isForEdit() {
             if (this.propMode === 'execution') {
-                this.loadAsExecution()
+                this.docId = this.propDocId
+                this.folderId = this.propFolderId
             } else {
-                this.loadAsDetail()
+                this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
             }
+            await this.loadPage(this.docId)
         },
-        loadAsExecution() {
-            this.docId = this.propDocId
-            this.folderId = this.propFolderId
-        },
-        loadAsDetail() {
-            this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
+        resetNewDocumentData() {
+            if (this.wholeItem && !this.wholeItem.fromTab && this.propFolderId) {
+                this.selectedDocument = { ...this.mainDescriptor.newDocument }
+                this.selectedDocument.functionalities = []
+            }
         },
         async loadPage(id) {
             this.loading = true
