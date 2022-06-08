@@ -213,9 +213,9 @@ public class AvroExportJob extends AbstractExportJob {
 			metadata.put("knColumnAlias", dsMeta.getFieldAlias(i));
 			metadata.put("knJavaType", dsMeta.getFieldType(i).getName());
 
-			fieldAssembler.name(dsMeta.getFieldName(i)).prop("knColumnAlias", dsMeta.getFieldAlias(i)).prop("knJavaType", dsMeta.getFieldType(i).getName())
-					.prop("knFieldType", dsMeta.getFieldMeta(i).getFieldType().toString()).type().unionOf().nullType().and()
-					.type(getType(dsMeta.getFieldType(i))).endUnion().noDefault();
+			fieldAssembler.name("column_" + i).prop("knColumnAlias", dsMeta.getFieldAlias(i)).prop("knJavaType", dsMeta.getFieldType(i).getName())
+					.prop("knColumnName", dsMeta.getFieldName(i)).prop("knFieldType", dsMeta.getFieldMeta(i).getFieldType().toString()).type().unionOf()
+					.nullType().and().type(getType(dsMeta.getFieldType(i))).endUnion().noDefault();
 
 		}
 

@@ -449,7 +449,7 @@ export default defineComponent({
             }
         },
         getColHeader(metadata: Array<any>, idx: Number): string {
-            let columnMapping = 'Column_' + idx
+            let columnMapping = 'column_' + idx
             let toReturn = metadata.filter((x) => x.mappedTo == columnMapping)[0].alias
             return toReturn
         },

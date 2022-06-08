@@ -275,7 +275,8 @@ export default defineComponent({
             let to = { line: cursor.line, ch: end }
 
             let range = editor.getRange(from, to)
-            let spContent = data.elementType === 'function' ? data.item : data.item.fieldAlias
+            let fieldAlias = this.source !== 'QBE' ? '$F{'+data.item.fieldAlias+'}' : data.item.fieldAlias
+            let spContent = data.elementType === 'function' ? data.item : fieldAlias
 
             if (range === '' || range.match(/\(|\)|,|\./g)) {
                 editor.replaceSelection(spContent, cursor)
