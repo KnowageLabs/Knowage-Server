@@ -179,6 +179,7 @@ export default defineComponent({
     },
     deactivated() {
         this.parameterSidebarVisible = false
+        window.removeEventListener('message', this.crossNavigationListener)
     },
     computed: {
         sessionRole(): string | null {
@@ -209,11 +210,7 @@ export default defineComponent({
         }
     },
     async created() {
-        window.addEventListener('message', (event) => {
-            if (event.data.type === 'crossNavigation') {
-                this.executeCrossNavigation(event)
-            }
-        })
+        window.addEventListener('message', this.crossNavigationListener)
 
         if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
 
@@ -238,6 +235,11 @@ export default defineComponent({
         }
     },
     methods: {
+        crossNavigationListener(event) {
+            if (event.data.type === 'crossNavigation') {
+                this.executeCrossNavigation(event)
+            }
+        },
         editCockpitDocumentConfirm() {
             if (this.documentMode === 'EDIT') {
                 this.$confirm.require({
@@ -403,6 +405,7 @@ export default defineComponent({
         closeDocument() {
             const link = this.$route.path.includes('workspace') ? '/workspace' : '/document-browser'
             this.$router.push(link)
+            this.breadcrumbs = []
             this.$emit('close')
         },
         setMode() {
@@ -921,7 +924,7 @@ export default defineComponent({
         },
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
             this.formatAngularOutputParameters(angularData.otherOutputParameters)
-            const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument.navigationParams)
+            const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument ? crossNavigationDocument.navigationParams : [])
 
             const popupOptions = crossNavigationDocument.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
 
