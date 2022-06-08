@@ -619,13 +619,13 @@ export default defineComponent({
             let postForm = document.getElementById('postForm_' + postObject.params.document) as any
             if (!postForm) {
                 postForm = document.createElement('form')
-                postForm.id = 'postForm_' + postObject.params.document
-                postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
-                postForm.method = 'post'
-                postForm.target = tempIndex !== -1 ? 'documentFrame' + tempIndex : documentLabel
-                postForm.acceptCharset = 'UTF-8'
-                document.body.appendChild(postForm)
             }
+            postForm.id = 'postForm_' + postObject.params.document
+            postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
+            postForm.method = 'post'
+            postForm.target = tempIndex !== -1 ? 'documentFrame' + tempIndex : documentLabel
+            postForm.acceptCharset = 'UTF-8'
+            document.body.appendChild(postForm)
 
             this.hiddenFormData = new URLSearchParams()
 
