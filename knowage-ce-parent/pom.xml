@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>it.eng.knowage</groupId>
   <artifactId>knowage-ce-parent</artifactId>
-  <version>7.4.25</version>
+  <version>7.4.26-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>knowage-ce-parent</name>
 
