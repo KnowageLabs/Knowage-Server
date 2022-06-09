@@ -7,7 +7,7 @@
                         <i class="fa fa-folder-open"></i>
                     </template>
 
-                    <DocumentBrowserHome @itemSelected="onItemSelect($event)"></DocumentBrowserHome>
+                    <DocumentBrowserHome :documentSaved="documentSaved" :documentSavedTrigger="documentSavedTrigger" @itemSelected="onItemSelect($event)"></DocumentBrowserHome>
                 </TabPanel>
 
                 <TabPanel v-for="(tab, index) in tabs" :key="index">
@@ -54,6 +54,8 @@ export default defineComponent({
             id: 0,
             iFrameContainers: [] as any[],
             menuItem: null,
+            documentSaved: null,
+            documentSavedTrigger: false,
             getRouteDocumentType
         }
     },
@@ -237,6 +239,8 @@ export default defineComponent({
             }
         },
         onDocumentSaved(document: any) {
+            this.documentSaved = document
+            this.documentSavedTrigger = !this.documentSavedTrigger
             this.selectedItem.functionalityId = null
             this.selectedItem.item = { name: document.name, label: document.id, routerId: crypto.randomBytes(16).toString('hex'), id: document.id, showMode: 'documentDetail' }
             this.$router.push(`/document-browser/document-details/${document.id}`)
