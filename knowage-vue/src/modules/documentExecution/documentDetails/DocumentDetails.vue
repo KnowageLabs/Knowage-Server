@@ -375,6 +375,7 @@ export default defineComponent({
         async saveDocument() {
             this.loading = true
             let docToSave = { ...this.selectedDocument }
+            const folderId = this.propFolderId
             delete docToSave.drivers
             delete docToSave.outputParameters
             delete docToSave.dataSetLabel
@@ -389,7 +390,7 @@ export default defineComponent({
                     setTimeout(() => {
                         const path = `/document-details/${response.data.id}`
                         !this.selectedDocument.id ? this.$router.push(path) : ''
-                        if (!docToSave.id) this.$emit('documentSaved', response.data)
+                        if (!docToSave.id) this.$emit('documentSaved', { ...response.data, folderId: folderId })
                         this.loadPage(response.data.id)
                     }, 200)
                 })
