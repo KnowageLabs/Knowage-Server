@@ -138,10 +138,8 @@ export default defineComponent({
     },
     watch: {
         localTransformation: {
-            handler(newValue, oldValue) {
-                if (oldValue !== newValue) {
-                    this.$emit('update:transformation', newValue)
-                }
+            handler(newValue) {
+                    this.$emit('update:transformation', newValue)             
             },
             deep: true
         }

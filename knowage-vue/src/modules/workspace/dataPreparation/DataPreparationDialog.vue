@@ -148,10 +148,8 @@ export default defineComponent({
     },
     watch: {
         transformation: {
-            handler(newValue, oldValue) {
-                if (oldValue !== newValue) {
+            handler(newValue) {
                     this.localCopy = JSON.parse(JSON.stringify(newValue))
-                }
             },
             deep: true
         }
