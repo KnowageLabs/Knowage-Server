@@ -62,6 +62,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -897,26 +898,28 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		boolean result = false;
 
 		String value = String.valueOf(v.get("value"));
-		if (value != null) {
+		if (StringUtils.isNotBlank(value)) {
 			result = value.equals("null");
-		} else {
-			value = String.valueOf(v.get("VALUE"));
-			if (value != null) {
-				result = value.equals("null");
-			}
 		}
 
 		if (!result) {
+			value = String.valueOf(v.get("VALUE"));
+			if (StringUtils.isNotBlank(value)) {
+				result = value.equals("null");
+			}
 
-			String description = String.valueOf(v.get("description"));
-			if (description != null) {
-				result = description.equals("null");
-			} else {
-				description = String.valueOf(v.get("DESCRIPTION"));
-				if (description != null) {
+			if (!result) {
+				String description = String.valueOf(v.get("description"));
+				if (StringUtils.isNotBlank(description)) {
 					result = description.equals("null");
 				}
 
+				if (!result) {
+					description = String.valueOf(v.get("DESCRIPTION"));
+					if (StringUtils.isNotBlank(description)) {
+						result = description.equals("null");
+					}
+				}
 			}
 		}
 		return result;
