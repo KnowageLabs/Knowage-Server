@@ -464,6 +464,7 @@ export default defineComponent({
         async loadFilters(initialLoading: boolean = false) {
             if (this.parameterValuesMap && this.parameterValuesMap[this.document.label + '-' + this.tabKey] && initialLoading) {
                 this.filtersData = this.parameterValuesMap[this.document.label + '-' + this.tabKey]
+                this.setFiltersForBreadcrumbItem()
                 return
             }
 
@@ -476,6 +477,7 @@ export default defineComponent({
                             filter.parameterValue[0].value = new Date(filter.parameterValue[0].value)
                         }
                     })
+                    this.setFiltersForBreadcrumbItem()
                     return
                 }
             }
@@ -536,6 +538,9 @@ export default defineComponent({
                 this.loadNavigationParamsInitialValue()
             }
 
+            this.setFiltersForBreadcrumbItem()
+        },
+        setFiltersForBreadcrumbItem() {
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
         },
