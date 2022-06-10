@@ -146,3 +146,5 @@ from ``knowage-ce-parent`` folder.
 ## License
 
 [AGPL](LICENSE) © 2021 Engineering Ingegneria Informatica S.p.A.
+
+
