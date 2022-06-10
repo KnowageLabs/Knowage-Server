@@ -58,6 +58,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
@@ -203,6 +204,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		JSONObject jsonParameters = requestVal.optJSONObject("parameters");
 
 		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
+		if (aRequestContainer == null)
+			return Response.status(Status.UNAUTHORIZED).build();
+
 		SessionContainer aSessionContainer = aRequestContainer.getSessionContainer();
 		SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
 
