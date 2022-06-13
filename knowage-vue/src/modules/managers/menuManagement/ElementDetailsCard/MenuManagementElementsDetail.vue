@@ -191,7 +191,6 @@ export default defineComponent({
         selectedMenuNode: {
             handler: function(node) {
                 this.v$.$reset()
-                console.log('node', node)
                 this.loadNode(node)
             }
         },
@@ -429,7 +428,6 @@ export default defineComponent({
         populateForm(menuNode: iMenuNode) {
             this.hideForm = false
             this.menuNode = { ...menuNode }
-            console.log(this.menuNode)
             if (menuNode.objId) {
                 this.getDocumentNameByID(menuNode.objId)
             }
