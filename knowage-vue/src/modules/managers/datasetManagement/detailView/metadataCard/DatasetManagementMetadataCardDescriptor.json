@@ -72,6 +72,11 @@
         },
         {
             "disabled": false,
+            "name": "oracle.sql.TIMESTAMP",
+            "value": "Date"
+        },
+        {
+            "disabled": false,
             "name": "java.sql.Timestamp",
             "value": "Timestamp"
         },

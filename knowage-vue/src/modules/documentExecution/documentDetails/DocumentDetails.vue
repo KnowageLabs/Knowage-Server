@@ -85,7 +85,6 @@ import OutputParamsTab from './tabs/outputParams/DocumentDetailsOutputParameters
 import DataLineageTab from './tabs/dataLineage/DocumentDetailsDataLineage.vue'
 import HistoryTab from './tabs/history/DocumentDetailsHistory.vue'
 import SubreportsTab from './tabs/subreports/DocumentDetailsSubreports.vue'
-// import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import Badge from 'primevue/badge'
 import TabPanel from 'primevue/tabpanel'
@@ -103,7 +102,6 @@ export default defineComponent({
         SubreportsTab,
         TabView,
         TabPanel,
-        // Dialog,
         Badge,
         ProgressSpinner
     },
@@ -394,8 +392,9 @@ export default defineComponent({
                         this.loadPage(response.data.id)
                     }, 200)
                 })
-                .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
-                .finally(() => (this.loading = false))
+                .catch((error) => {
+                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }), (this.loading = false)
+                })
         },
         closeDocument() {
             this.$emit('closeDetails')
