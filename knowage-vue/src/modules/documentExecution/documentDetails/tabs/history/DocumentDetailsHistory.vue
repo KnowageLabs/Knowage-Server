@@ -32,7 +32,7 @@
                     {{ $t('documentExecution.documentDetails.history.template') }}
                 </template>
                 <template #end>
-                    <Button :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="openDesignerConfirm" />
+                    <Button v-if="designerButtonVisible" :label="$t('documentExecution.olap.openDesigner')" class="p-button-text p-button-rounded p-button-plain kn-white-color" @click="openDesignerConfirm" />
                 </template>
             </Toolbar>
             <div id="driver-details-container" class="kn-flex kn-relative">
@@ -82,6 +82,9 @@ export default defineComponent({
                 default:
                     return false
             }
+        },
+        designerButtonVisible(): boolean {
+            return this.selectedDocument.typeCode == 'OLAP' || this.selectedDocument.typeCode == 'KPI' || this.selectedDocument.engine == 'knowagegisengine'
         }
     },
     data() {
