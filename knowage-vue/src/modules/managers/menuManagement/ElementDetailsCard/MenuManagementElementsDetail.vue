@@ -71,7 +71,7 @@
                                             :options="staticPagesList"
                                             @change="onStaticPageSelect(v$.menuNode.staticPage)"
                                             optionLabel="name"
-                                            optionValue="id"
+                                            optionValue="name"
                                             class="p-dropdown p-component p-inputwrapper p-inputwrapper-filled kn-material-input"
                                         />
                                         <label for="staticPage">{{ $t('managers.menuManagement.form.staticPage') }} *</label>
