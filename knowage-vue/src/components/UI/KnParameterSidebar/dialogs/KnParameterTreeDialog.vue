@@ -12,7 +12,7 @@
         <Tree
             id="kn-parameter-tree"
             :value="nodes"
-            :selectionMode="multivalue ? 'checkbox' : 'single'"
+            :selectionMode="!multivalue ? 'single' : null"
             v-model:selectionKeys="selectedValuesKeys"
             :metaKeySelection="false"
             @node-select="setSelectedValue($event)"
@@ -20,6 +20,11 @@
             @nodeExpand="loadLeaf($event)"
             @node-collapse="setClosedFolderIcon($event)"
         >
+            <template #default="slotProps">
+                <Checkbox v-if="multivalue && slotProps.node.selectable" class="p-ml-2" v-model="selectedNodes" :value="slotProps.node.data" @change="onNodeChange($event)" />
+                <span>{{ slotProps.node.label }}</span
+                >e
+            </template>
         </Tree>
 
         <template #footer>
@@ -35,6 +40,7 @@
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iNode, iParameter } from '../KnParameterSidebar'
+import Checkbox from 'primevue/checkbox'
 import Dialog from 'primevue/dialog'
 import knParameterTreeDialogDescriptor from './KnParameterTreeDialogDescriptor.json'
 import Tree from 'primevue/tree'
@@ -43,7 +49,7 @@ const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'kn-parameter-tree-dialog',
-    components: { Dialog, Tree },
+    components: { Checkbox, Dialog, Tree },
     props: { visible: { type: Boolean }, selectedParameter: { type: Object }, formatedParameterValues: { type: Object }, document: { type: Object }, mode: { type: String }, selectedRole: { type: String } },
     emits: ['close', 'save'],
     data() {
@@ -55,6 +61,7 @@ export default defineComponent({
             selectedValue: null as any,
             multipleSelectedValues: [] as any[],
             multivalue: false,
+            selectedNodes: [] as any[],
             loading: false
         }
     },
@@ -83,6 +90,7 @@ export default defineComponent({
                 this.setMultipleSelectedRows()
             } else {
                 this.selectedValue = this.selectedParameter?.parameterValue[0]
+                this.selectedNodes = [this.selectedValue]
                 if (this.selectedValue) {
                     this.selectedValuesKeys[this.selectedValue.description] = true
                 }
@@ -91,6 +99,7 @@ export default defineComponent({
         setMultipleSelectedRows() {
             if (!this.selectedParameter) return
             this.multipleSelectedValues = deepcopy(this.selectedParameter.parameterValue)
+            this.selectedNodes = [...this.multipleSelectedValues]
         },
         async loadLeaf(parent: any) {
             this.loading = true
@@ -169,15 +178,18 @@ export default defineComponent({
             }
         },
         isNodeSelectable(el) {
-            if (!this.multivalue) return true
+            if (!this.multivalue || !this.parameter) return true
 
-            return el.leaf
+            return this.parameter.allowInternalNodeSelection || el.leaf
         },
         setOpenFolderIcon(node: iNode) {
             node.icon = 'pi pi-folder-open'
         },
         setClosedFolderIcon(node: iNode) {
             node.icon = 'pi pi-folder'
+        },
+        onNodeChange() {
+            this.multipleSelectedValues = [...this.selectedNodes]
         },
         setSelectedValue(node: iNode) {
             if (!this.multivalue) {
