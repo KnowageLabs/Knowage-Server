@@ -532,8 +532,6 @@ export default defineComponent({
                 if (el.parameterValue[0] && !el.parameterValue[0].description) {
                     el.parameterValue[0].description = el.parameterDescription ? el.parameterDescription[0] : ''
                 }
-
-                this.setMissingParameterValue(el)
             })
 
             if (this.document.navigationParams) {
@@ -541,14 +539,6 @@ export default defineComponent({
             }
 
             this.setFiltersForBreadcrumbItem()
-        },
-        setMissingParameterValue(parameter: any) {
-            if (!parameter || !parameter.parameterValue) return
-            for (let i = 0; i < parameter.parameterValue.length; i++) {
-                if (parameter.parameterValue[i].description && !parameter.parameterValue[i].value) {
-                    parameter.parameterValue[i].value = parameter.parameterValue[i].description
-                }
-            }
         },
         setFiltersForBreadcrumbItem() {
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
