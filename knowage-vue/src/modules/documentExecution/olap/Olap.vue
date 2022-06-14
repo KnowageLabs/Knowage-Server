@@ -929,7 +929,7 @@ export default defineComponent({
             }
         },
         removeFilterLevels(filter: any) {
-            if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER) {
+            if (this.olapDesigner && this.olapDesigner.template && this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER) {
                 for (let i = this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.length - 1; i >= 0; i--) {
                     if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER[i].HIERARCHY === filter.uniqueName) {
                         this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.splice(i, 1)
