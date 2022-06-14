@@ -78,7 +78,7 @@ tornado==6.0.3
 tqdm==4.37.0
 twine==3.1.1
 typing-extensions==3.7.4.3
-urllib3==1.26.5
+urllib3==1.25.6
 virtualenv==20.0.8
 webencodings==0.5.1
 Werkzeug==0.16.0
