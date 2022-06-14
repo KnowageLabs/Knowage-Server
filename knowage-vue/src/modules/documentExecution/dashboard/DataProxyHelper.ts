@@ -7,6 +7,6 @@
 export const getData = (item) =>
     new Promise((resolve) => {
         setTimeout(() => {
-            resolve(item)
+            resolve({ item, ...new Date() })
         }, 1000)
     })

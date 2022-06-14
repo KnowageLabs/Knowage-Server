@@ -1,5 +1,5 @@
 <template>
-    <div class="dashboard-container">
+    <div class="dashboard-container" :id="`dashboard_${model.configuration.id}`">
         <DashboardRenderer :model="model"></DashboardRenderer>
     </div>
 </template>
@@ -37,6 +37,7 @@ export default defineComponent({
     width: 100%;
     height: 100vh;
     overflow-y: auto;
+    position: relative;
 }
 @media screen and (max-width: 600px) {
     .dashboard-container {

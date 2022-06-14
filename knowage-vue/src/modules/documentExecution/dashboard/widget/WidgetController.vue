@@ -4,6 +4,10 @@
         <ProgressBar mode="indeterminate" v-if="loading" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
         <WidgetRenderer :widget="widget" :data="widgetData" v-if="initialized" @interaction="manageInteraction"></WidgetRenderer>
+        <WidgetButtonBar @edit-widget="toggleEditMode"></WidgetButtonBar>
+        <Transition name="editorEnter" appear>
+            <WidgetEditor :widget="widget" @close="toggleEditMode" v-if="editMode"></WidgetEditor>
+        </Transition>
     </grid-item>
 </template>
 
@@ -13,7 +17,9 @@
  */
 import { defineComponent } from 'vue'
 import { mapState } from 'vuex'
+import WidgetEditor from './WidgetEditor/WidgetEditor.vue'
 import WidgetRenderer from './WidgetRenderer.vue'
+import WidgetButtonBar from './WidgetButtonBar.vue'
 import { getData } from '../DataProxyHelper'
 import Skeleton from 'primevue/skeleton'
 import ProgressBar from 'primevue/progressbar'
@@ -22,7 +28,7 @@ export const emitter = mitt()
 
 export default defineComponent({
     name: 'widget-manager',
-    components: { ProgressBar, Skeleton, WidgetRenderer },
+    components: { ProgressBar, Skeleton, WidgetButtonBar, WidgetEditor, WidgetRenderer },
     inject: ['dHash'],
     props: {
         item: {
@@ -41,7 +47,8 @@ export default defineComponent({
         return {
             loading: true,
             initialized: false,
-            widgetData: [] as any
+            widgetData: [] as any,
+            editMode: false
         }
     },
     mounted() {
@@ -75,6 +82,9 @@ export default defineComponent({
 
             // @ts-ignore
             emitter.emit('interaction', { id: this.dHash, event: e })
+        },
+        toggleEditMode() {
+            this.editMode = !this.editMode
         }
     },
     updated() {
@@ -85,4 +95,14 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss"></style>
+<style lang="scss">
+.editorEnter-enter-active,
+.editorEnter-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.editorEnter-enter-from,
+.editorEnter-leave-to {
+    opacity: 0;
+}
+</style>
