@@ -10,27 +10,11 @@
         },
         {
             "category": "conditional",
-            "formula": "exists(expr, pred)",
-            "help": "dataPreparation.exists",
-            "label": "exists",
-            "name": "exists",
-            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#exists"
-        },
-        {
-            "category": "conditional",
             "formula": "if(expr1, expr2, expr3)",
             "help": "dataPreparation.if",
             "label": "if",
             "name": "if",
             "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#if"
-        },
-        {
-            "category": "conditional",
-            "formula": "not expr",
-            "help": "dataPreparation.not",
-            "label": "not",
-            "name": "not",
-            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#not"
         },
         {
             "category": "conditional",
