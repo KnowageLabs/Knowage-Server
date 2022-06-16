@@ -1,4 +1,4 @@
-<md-dialog style='width:50%;' layout="column">
+<md-dialog style='width:50%;'>
 	
 	<md-toolbar class="primaryToolbar" >
 		<div class="md-toolbar-tools">
@@ -6,7 +6,7 @@
 		</div>
 	</md-toolbar>
 	
-	<md-dialog-content class="olapDialogContent" >
+	<md-content class="dialog-style" style="height:90%">
 		<div layout-padding layout="column">
 			<md-input-container class="md-block">
 				<label>{{translate.load("sbi.common.name");}}</label>
@@ -29,7 +29,7 @@
 				</md-select>
 			</md-input-container>
 		</div>
-	</md-dialog-content>
+	</md-content>
 	<md-dialog-actions layout="row">
 		<md-button ng-click="cancelSavingSubObject()" class="md-raised">
 			{{translate.load("sbi.common.cancel");}}
