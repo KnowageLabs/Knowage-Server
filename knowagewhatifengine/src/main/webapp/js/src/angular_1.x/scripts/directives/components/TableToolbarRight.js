@@ -676,19 +676,6 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  });
 	  }
 
-	  $scope.exists = function(id){
-		  return $scope.versionsForDelete.indexOf(id) > -1;
-	  }
-
-	  $scope.selectForDelete = function(id){
-		  var idx = $scope.versionsForDelete.indexOf(id);
-
-		  if(idx > -1)
-			  $scope.versionsForDelete.splice(idx,1);
-		  else
-			  $scope.versionsForDelete.push(id);
-	  }
-
 	  $scope.selectUnselectAll = function(){
 		  if($scope.versionsForDelete.length == $scope.outputVersions.length){
 			  $scope.versionsForDelete = [];
@@ -702,6 +689,8 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	  }
 
 	  $scope.deleteVersions = function(){
+
+		  $scope.versionsForDelete = $scope.outputVersions.filter( (item) => item.selected ).map( (item) => item.id );
 
 		  var okToDelete = isOkToDeleteVersion($scope.versionsForDelete);
 
@@ -758,11 +747,11 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 
 	  isOkToDeleteVersion = function(versions){
 		  for(var i=0; i< versions.length;i++){
-			  if(versions[i].id == $scope.selectedVersion){
-				  return true;
+			  if(versions[i] == $scope.selectedVersion){
+				  return false;
 			  }
 		  }
-		  return false;
+		  return true;
 	  }
 
 
