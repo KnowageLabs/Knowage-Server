@@ -388,7 +388,7 @@ export default defineComponent({
                     setTimeout(() => {
                         const path = `/document-details/${response.data.id}`
                         !this.selectedDocument.id ? this.$router.push(path) : ''
-                        if (!docToSave.id) this.$emit('documentSaved', { ...response.data, folderId: folderId })
+                        this.$emit('documentSaved', { ...response.data, folderId: folderId })
                         this.loadPage(response.data.id)
                     }, 200)
                 })

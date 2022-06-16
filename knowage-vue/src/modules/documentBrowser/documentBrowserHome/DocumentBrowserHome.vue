@@ -100,10 +100,10 @@ export default defineComponent({
     },
     watch: {
         documentSavedTrigger() {
-            if (this.documentSaved && this.documentSaved.folderId) {
-                this.selectedFolder.id = this.documentSaved.folderId
-                this.loadDocumentsWithBreadcrumbs()
-            }
+            if (!this.documentSaved) return
+
+            if (this.documentSaved.folderId) this.selectedFolder.id = this.documentSaved.folderId
+            this.loadDocumentsWithBreadcrumbs()
         }
     },
     async created() {
