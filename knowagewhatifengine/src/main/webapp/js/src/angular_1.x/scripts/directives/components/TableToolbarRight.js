@@ -192,9 +192,9 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				if(exportBtn.img == "BUTTON_EXPORT_OUTPUT"){
 					$scope.whatifToolbarButtons.push(exportBtn);
 				}
-				if(exportEditableBtn.img == "BUTTON_EDITABLE_EXCEL_EXPORT"){
-					$scope.whatifToolbarButtons.push(exportEditableBtn);
-				}
+//				if(exportEditableBtn.img == "BUTTON_EDITABLE_EXCEL_EXPORT"){
+//					$scope.whatifToolbarButtons.push(exportEditableBtn);
+//				}
 
 			}
 
