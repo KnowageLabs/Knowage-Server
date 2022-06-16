@@ -1,26 +1,31 @@
-<md-dialog style='height:45%; width:40%;' layout="column">
+<md-dialog style='height:45%; width:40%;'>
 	
 	<md-toolbar class="primaryToolbar">
 		<div class="md-toolbar-tools">
 			<h2>{{translate.load("sbi.olap.toolbar.export.wizard.title")}}</h2>
 		</div>
 	</md-toolbar>
-	<md-dialog-content layout-padding class="olapDialogContent">
-		{{translate.load("sbi.olap.toolbar.save.as.description")}}
-		<br/>
-		<label>{{translate.load("sbi.olap.toolbar.save.as.version.name")}}</label>
-		<input ng-model="saveAsName" required="Name is required" ng-required="true" style="margin:10px"/>
-		<br/>
-		<label>{{translate.load("sbi.olap.toolbar.save.as.version.description")}}</label>
-		<textarea  ng-model="saveAsDescription">
-		</textarea>
+	<md-content class="dialog-style" style="height:90%">
+		<md-input-container class="md-block">
+			<label>{{translate.load("sbi.olap.toolbar.save.as.version.name")}}</label>
+			<input ng-model="saveAsName" type="text">
+			<div ng-show="!saveAsName">
+         		 <div ng-message="required" class="md-input-message-animation ng-binding">required</div>
+       		</div>
+		</md-input-container>
+	
+		<md-input-container class="md-block">
+			<label>{{translate.load("sbi.olap.toolbar.save.as.version.description")}}</label>
+			<input ng-model="saveAsDescription" type="text">
+		</md-input-container>
+
 	</md-content>
 	
 	<md-dialog-actions layout="row">
-		<md-button ng-click="closeDialogToolbarRight()">
+		<md-button class="md-raised md-secondary" ng-click="closeDialogToolbarRight()">
 			Cancel
 		</md-button>
-		<md-button ng-click="saveAsFunction()">
+		<md-button class="md-raised md-primary" ng-click="saveAsFunction()">
 			Save
 		</md-button>
 	</md-dialog-actions>
