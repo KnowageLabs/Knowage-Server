@@ -112,8 +112,9 @@ public class MetaUtils {
 		return parametersArrayList;
 	}
 
-	private ArrayList<HashMap<String, Object>> getDatasetDriversByModelName(UserProfile userProfile, Locale locale, String businessModelName,
-			Boolean loadDSwithDrivers) {
+
+
+	private ArrayList<HashMap<String, Object>> getDatasetDriversByModelName(UserProfile userProfile, Locale locale, String businessModelName, Boolean loadDSwithDrivers) {
 		ArrayList<HashMap<String, Object>> parametersArrList = new ArrayList<>();
 		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
@@ -551,7 +552,7 @@ public class MetaUtils {
 					String placeHolder = colName2colPlaceholder.inverse().get(e);
 
 					Object value = row.getAttribute(e.toUpperCase());
-					if (value != null && !value.equals("null")) {
+					if (value != null) {
 						try {
 							valueJSON.put(placeHolder, value.toString());
 						} catch (JSONException ex) {
@@ -563,8 +564,7 @@ public class MetaUtils {
 				visibleColumnNames.forEach(putInRow);
 				invisibleColumnNames.forEach(putInRow);
 
-				if (valueJSON.length() > 0)
-					valuesDataJSON.put(valueJSON);
+				valuesDataJSON.put(valueJSON);
 			}
 
 			String[] visiblecolumns;
@@ -583,5 +583,6 @@ public class MetaUtils {
 		// END building JSON object to be returned
 
 	}
+
 
 }

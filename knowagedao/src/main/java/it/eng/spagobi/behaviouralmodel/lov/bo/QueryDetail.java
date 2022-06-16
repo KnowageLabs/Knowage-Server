@@ -799,6 +799,21 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 					}
 				}
 			}
+			result.delAttribute(DataRow.ROW_TAG);
+
+			((List<SourceBean>) rows).stream().filter((rowBean) -> {
+
+				return colNames.stream().filter((col) -> rowBean.getAttribute(col) != null && !String.valueOf(rowBean.getAttribute(col)).trim().equals("")
+						&& !rowBean.getAttribute(col).equals("null")).count() == colNames.size();
+
+			}).forEach(x -> {
+				try {
+					result.setAttribute(x);
+				} catch (SourceBeanException e) {
+					throw new SpagoBIRuntimeException("Error while retrieving data from lov", e);
+				}
+			});
+
 			resStr = result.toXML(false);
 			resStr = resStr.trim();
 			if (resStr.startsWith("<?")) {
