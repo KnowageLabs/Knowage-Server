@@ -217,7 +217,6 @@ export default defineComponent({
             })
         },
         prepareFormData(menuNode: iMenuNode) {
-            console.log(menuNode)
             if (this.hideForm) {
                 this.hideForm = false
             }
