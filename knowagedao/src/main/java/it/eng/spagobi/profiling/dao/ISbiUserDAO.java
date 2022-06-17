@@ -29,21 +29,19 @@ import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bo.UserBO;
 
+/**
+ * DAO for SBI_USER table and related ones.
+ *
+ * WARNING : All the implementation must consider the difference between queries
+ * and commands because all the commands executed must be tracked for GDPR.
+ *
+ */
 public interface ISbiUserDAO extends ISpagoBIDao {
 
+	// Query
 	public SbiUser loadSbiUserByUserId(String userId);
 
 	public SbiUser loadSbiUserById(Integer id);
-
-	public void deleteSbiUserById(Integer id);
-
-	public void deleteSbiUserAttributeById(Integer id, Integer attrId);
-
-	public Integer saveSbiUser(SbiUser user);
-
-	public void updateSbiUserRoles(SbiExtUserRoles role);
-
-	public void updateSbiUserAttributes(SbiUserAttributes attribute);
 
 	public ArrayList<SbiExtRoles> loadSbiUserRolesById(Integer id);
 
@@ -57,22 +55,34 @@ public interface ISbiUserDAO extends ISpagoBIDao {
 
 	public List<UserBO> loadUsers(QueryFilters filters, String dateFilter);
 
+	public PagedList<UserBO> loadUsersPagedList(QueryFilters filters, Integer offset, Integer fetchSize);
+
+	public boolean thereIsAnyUsers();
+
+	public int getFailedLoginAttempts(String userId);
+
+	public Integer isUserIdAlreadyInUse(String userId);
+
+	public void checkUserId(String userId, Integer id);
+
+	// Commands
+
+	public void deleteSbiUserById(Integer id);
+
+	public void deleteSbiUserAttributeById(Integer id, Integer attrId);
+
+	public Integer saveSbiUser(SbiUser user);
+
+	public void updateSbiUserRoles(SbiExtUserRoles role);
+
+	public void updateSbiUserAttributes(SbiUserAttributes attribute);
+
 	public void updateSbiUser(SbiUser user, Integer userID);
 
 	public Integer fullSaveOrUpdateSbiUser(SbiUser user);
 
-	public PagedList<UserBO> loadUsersPagedList(QueryFilters filters, Integer offset, Integer fetchSize);
-
-	public void checkUserId(String userId, Integer id);
-
-	public Integer isUserIdAlreadyInUse(String userId);
-
-	public int getFailedLoginAttempts(String userId);
-
 	public void incrementFailedLoginAttempts(String userId);
 
 	public void resetFailedLoginAttempts(String userId);
-
-	public boolean thereIsAnyUsers();
 
 }

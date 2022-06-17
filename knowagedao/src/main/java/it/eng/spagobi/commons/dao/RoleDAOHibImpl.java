@@ -17,12 +17,21 @@
  */
 package it.eng.spagobi.commons.dao;
 
+import static java.util.Objects.isNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -56,6 +65,7 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
 import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
+import it.eng.spagobi.profiling.bean.SbiEs;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -393,6 +403,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		updateSbiCommonInfo4Insert(hibRole);
 		aSession.save(hibRole);
 
+		emitRoleAddedEvent(aSession, hibRole);
+
 		logger.debug("The [insertRoleWithSession] occurs. Role cache will be cleaned.");
 		this.clearCache();
 	}
@@ -448,6 +460,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 
 			aSession.delete(hibRole);
+
+			emitRoleDeletedEvent(aSession, hibRole);
+
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -477,6 +492,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		if (hibRole != null) {
 			hibRole.setIsPublic(false);
 			aSession.update(hibRole);
+
+			emitPublicFlagSetEvent(aSession, hibRole);
 		}
 
 	}
@@ -520,7 +537,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			SbiDomains roleType = (SbiDomains) aSession.load(SbiDomains.class, aRole.getRoleTypeID());
 			hibRole.setRoleType(roleType);
 
-			hibRole.setIsPublic(aRole.getIsPublic());
+			if (!Objects.equals(hibRole.getIsPublic(), aRole.getIsPublic())) {
+				hibRole.setIsPublic(aRole.getIsPublic());
+
+				emitPublicFlagSetEvent(aSession, hibRole);
+			}
 
 			hibRole.setRoleTypeCode(aRole.getRoleTypeCD());
 			updateSbiCommonInfo4Update(hibRole);
@@ -570,6 +591,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				}
 
 			}
+
+			emitRoleUpdatedEvent(aSession, hibRole);
 
 			tx.commit();
 		} catch (HibernateException he) {
@@ -1116,6 +1139,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession.flush();
 			hibRole.setSbiAuthorizationsRoleses(functs);
 			aSession.save(hibRole);
+
+			emitRoleAddedEvent(aSession, hibRole);
+
 			tx.commit();
 
 		} catch (HibernateException he) {
@@ -1463,6 +1489,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setSbiDataSetCategories(dataSetCategories);
 
 			aSession.saveOrUpdate(hibRole);
+
+			emitDatasetCategoryAddedEvent(aSession, hibRole);
+
 			aSession.flush();
 
 			updateSbiCommonInfo4Update(hibRole);
@@ -1511,6 +1540,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (dataSetCategories != null) {
 				if (dataSetCategories.contains(category)) {
 					dataSetCategories.remove(category);
+
+					emitDatasetCategoryRemovedEvent(aSession, hibRole);
+
 					hibRole.setSbiDataSetCategories(dataSetCategories);
 				} else {
 					logger.debug("Category " + category.getValueNm() + " is not associated to the role " + hibRole.getName());
@@ -1518,6 +1550,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 			}
 			aSession.saveOrUpdate(hibRole);
+
 			aSession.flush();
 			updateSbiCommonInfo4Update(hibRole);
 			tx.commit();
@@ -1751,6 +1784,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			for (Iterator iterator = functs.iterator(); iterator.hasNext();) {
 				SbiAuthorizationsRoles SbiAuthorizationsRoles = (SbiAuthorizationsRoles) iterator.next();
 				currSessionDB.delete(SbiAuthorizationsRoles);
+
+				SbiExtRoles sbiExtRoles = SbiAuthorizationsRoles.getSbiExtRoles();
+
+				emitRoleUpdatedEvent(currSessionDB, sbiExtRoles);
 			}
 
 		} catch (HibernateException he) {
@@ -1944,4 +1981,232 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 		}
 	}
+
+	private void emitRoleDeletedEvent(Session aSession, SbiExtRoles role) {
+
+		JsonArray authorizations = createAuthorizationsAsJsonArray(role);
+		JsonArray datasetCategories = createDatasetCategoriesAsJsonArray(role);
+		JsonArray metaModelCategories = createMetaModelCategoriesAsJsonArray(role);
+
+		JsonObjectBuilder builder = createCommonDataForEvent()
+				.add("id", role.getExtRoleId());
+		if (role.getCode() == null) {
+			builder.addNull("code");
+		} else {
+			builder.add("code", role.getCode());
+		}
+		JsonObject data = builder.add("name", role.getName())
+				.add("isPublic", role.getIsPublic())
+				.add("roleTypeCode", role.getRoleTypeCode())
+				.add("authorizations", authorizations)
+				.add("datasetCategories", datasetCategories)
+				.add("metaModelCategories", metaModelCategories)
+				.build();
+
+		SbiEs event = createRoleEvent(role)
+				.withEvent("RoleAdded")
+				.withData(data)
+				.build();
+
+		aSession.save(event);
+
+	}
+
+	private void emitRoleAddedEvent(Session aSession, SbiExtRoles role) {
+
+		JsonArray authorizations = createAuthorizationsAsJsonArray(role);
+		JsonArray datasetCategories = createDatasetCategoriesAsJsonArray(role);
+		JsonArray metaModelCategories = createMetaModelCategoriesAsJsonArray(role);
+
+		JsonObjectBuilder builder = createCommonDataForEvent()
+				.add("id", role.getExtRoleId());
+		if (role.getCode() == null) {
+			builder.addNull("code");
+		} else {
+			builder.add("code", role.getCode());
+		}
+		builder.add("name", role.getName());
+
+		if (isNull(role.getIsPublic())) {
+			builder.addNull("isPublic");
+		} else {
+			builder.add("isPublic", role.getIsPublic());
+		}
+		JsonObject data = builder.add("roleTypeCode", role.getRoleTypeCode())
+				.add("authorizations", authorizations)
+				.add("datasetCategories", datasetCategories)
+				.add("metaModelCategories", metaModelCategories)
+				.build();
+
+		SbiEs event = createRoleEvent(role)
+				.withEvent("RoleAdded")
+				.withData(data)
+				.build();
+
+		aSession.save(event);
+
+	}
+
+	private void emitDatasetCategoryRemovedEvent(Session aSession, SbiExtRoles role) {
+
+		JsonArray datasetCategories = createDatasetCategoriesAsJsonArray(role);
+
+		JsonObjectBuilder builder = createCommonDataForEvent()
+				.add("id", role.getExtRoleId());
+		if (role.getCode() == null) {
+			builder.addNull("code");
+		} else {
+			builder.add("code", role.getCode());
+		}
+		JsonObject data = builder.add("name", role.getName())
+				.add("datasetCategories", datasetCategories)
+				.build();
+
+		SbiEs event = createRoleEvent(role)
+				.withEvent("DatasetCategoryRemoved")
+				.withData(data)
+				.build();
+
+		aSession.save(event);
+
+	}
+
+	private void emitDatasetCategoryAddedEvent(Session aSession, SbiExtRoles role) {
+
+		JsonArray datasetCategories = createDatasetCategoriesAsJsonArray(role);
+
+		JsonObjectBuilder builder = createCommonDataForEvent()
+				.add("id", role.getExtRoleId());
+		if (role.getCode() == null) {
+			builder.addNull("code");
+		} else {
+			builder.add("code", role.getCode());
+		}
+		JsonObject data = builder.add("name", role.getName())
+				.add("datasetCategories", datasetCategories)
+				.build();
+
+		SbiEs event = createRoleEvent(role)
+				.withEvent("DatasetCategoryAdded")
+				.withData(data)
+				.build();
+
+		aSession.save(event);
+
+	}
+
+	private void emitRoleUpdatedEvent(Session aSession, SbiExtRoles role) {
+
+		JsonArray authorizations = createAuthorizationsAsJsonArray(role);
+		JsonArray datasetCategories = createDatasetCategoriesAsJsonArray(role);
+		JsonArray metaModelCategories = createMetaModelCategoriesAsJsonArray(role);
+
+		JsonObjectBuilder builder = createCommonDataForEvent()
+				.add("id", role.getExtRoleId());
+		if (role.getCode() == null) {
+			builder.addNull("code");
+		} else {
+			builder.add("code", role.getCode());
+		}
+		JsonObject data = builder.add("name", role.getName())
+				.add("isPublic", role.getIsPublic())
+				.add("roleTypeCode", role.getRoleTypeCode())
+				.add("authorizations", authorizations)
+				.add("datasetCategories", datasetCategories)
+				.add("metaModelCategories", metaModelCategories)
+				.build();
+
+		SbiEs event = createRoleEvent(role)
+				.withEvent("RoleUpdated")
+				.withData(data)
+				.build();
+
+		aSession.save(event);
+
+	}
+
+	private void emitPublicFlagSetEvent(Session aSession, SbiExtRoles role) {
+
+		JsonObjectBuilder builder = createCommonDataForEvent()
+				.add("id", role.getExtRoleId());
+		if (role.getCode() == null) {
+			builder.addNull("code");
+		} else {
+			builder.add("code", role.getCode());
+		}
+		JsonObject data = builder.add("name", role.getName())
+				.add("isPublic", role.getIsPublic())
+				.build();
+
+		SbiEs event = createRoleEvent(role)
+				.withEvent("PublicFlagSet")
+				.withData(data)
+				.build();
+
+		aSession.save(event);
+
+	}
+
+	private JsonArray createAuthorizationsAsJsonArray(SbiExtRoles role) {
+		JsonArrayBuilder authorizationsArrayBuilder = Json.createArrayBuilder();
+
+		((Set<SbiAuthorizationsRoles>) role.getSbiAuthorizationsRoleses())
+			.stream()
+			.map(e -> {
+
+				JsonObjectBuilder builder = Json.createObjectBuilder()
+						.add("authorizationId", e.getId().getAuthorizationId())
+						.add("roleId", e.getId().getRoleId());
+
+				if (isNull(e.getSbiAuthorizations())) {
+					builder.addNull("name");
+				} else {
+					builder.add("name", e.getSbiAuthorizations().getName());
+				}
+
+				JsonObject ret = builder.build();
+
+				return ret;
+			})
+			.forEach(authorizationsArrayBuilder::add);
+
+		return authorizationsArrayBuilder.build();
+	}
+
+	private JsonArray createDatasetCategoriesAsJsonArray(SbiExtRoles role) {
+		JsonArrayBuilder authorizationsArrayBuilder = Json.createArrayBuilder();
+
+		if (!isNull(role.getSbiDataSetCategories())) {
+			((Set<SbiDomains>) role.getSbiDataSetCategories())
+				.stream()
+				.map(this::fromSbiDomainsToJsonObject)
+				.forEach(authorizationsArrayBuilder::add);
+		}
+
+		return authorizationsArrayBuilder.build();
+	}
+
+	private JsonArray createMetaModelCategoriesAsJsonArray(SbiExtRoles role) {
+		JsonArrayBuilder authorizationsArrayBuilder = Json.createArrayBuilder();
+
+		if (!isNull(role.getSbiMetaModelCategories())) {
+			((Set<SbiDomains>) role.getSbiMetaModelCategories())
+				.stream()
+				.map(this::fromSbiDomainsToJsonObject)
+				.forEach(authorizationsArrayBuilder::add);
+		}
+
+		return authorizationsArrayBuilder.build();
+	}
+
+	private SbiEs.Builder createRoleEvent(SbiExtRoles role) {
+		return createRoleEvent(role.getExtRoleId());
+	}
+
+	private SbiEs.Builder createRoleEvent(int roleId) {
+		return SbiEs.Builder.newBuilder()
+			.withType("Role")
+			.withId(roleId);
+	}
+
 }
