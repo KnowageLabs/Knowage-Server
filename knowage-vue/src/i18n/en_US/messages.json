@@ -57,6 +57,7 @@
             "exceededSize": "Uploaded file exceedes max size {size}",
             "generic": "Generic Error",
             "incompatibleType": "Incompatible file type",
+            "sameFileName": "It is not possible to upload a file with the same name",
             "saving": "Error saving",
             "tags": {
                 "tagIsNotValid": "Tag ({tag}) is not valid'"
@@ -1300,7 +1301,6 @@
             "valueName": "Value name"
         },
         "driversManagement": {
-            "partialSuccessMessage": "Not all data has been updated successfully. Check again for unsaved informations.",
             "add": "Add",
             "deleteError": "Error",
             "functional": "Functional",
