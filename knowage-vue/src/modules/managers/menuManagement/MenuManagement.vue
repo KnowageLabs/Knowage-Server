@@ -121,12 +121,6 @@ export default defineComponent({
                 .get(this.apiUrl + 'menu/htmls')
                 .then((response: AxiosResponse<any>) => {
                     this.staticPagesList = response.data
-                    this.staticPagesList = [
-                        {
-                            id: 1,
-                            name: 'home.html'
-                        }
-                    ]
                 })
                 .finally(() => (this.loading = false))
         },
