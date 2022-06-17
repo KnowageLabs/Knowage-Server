@@ -289,7 +289,7 @@ export default defineComponent({
 
     methods: {
         getFormattedDate(date: any, format: any) {
-            return formatDateWithLocale(date, format)
+            return formatDateWithLocale(date, format, true)
         },
         getProgressValue() {
             if (this.dataset.config && this.dataset.config.transformations && this.dataset.config.transformations.length && this.dataset.config.transformations.length > 1) {
