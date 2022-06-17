@@ -1,4 +1,4 @@
-<md-dialog layout="column" ng-dragg=true>
+<md-dialog style='height:45%; width:40%;' ng-dragg=true>
 	
 	<md-toolbar class="primaryToolbar">
 		<div class="md-toolbar-tools">
@@ -6,12 +6,12 @@
 		</div>
 	</md-toolbar>
 	
-	<md-dialog-content class="olapDialogContent">
+	<md-dialog-content class="dialog-style" style="height:90%">
 		<textarea ng-model='cellValue' md-autofocus layout-fill></textarea>
 	</md-dialog-content>
 	
 	<md-dialog-actions layout="row">
-		<md-button class="md-raised" ng-click="closeFormulaDialog()">
+		<md-button class="md-raised md-secondary" ng-click="closeFormulaDialog()">
 			Cancel
 		</md-button>
 		<md-button class="md-raised md-primary" ng-click="sendFormula()">
