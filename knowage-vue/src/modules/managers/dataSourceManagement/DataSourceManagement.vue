@@ -83,7 +83,7 @@
         methods: {
             async getAllDatabases() {
                 return this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/databases`)
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/databases`)
                     .then((response: AxiosResponse<any>) => {
                         this.listOfAvailableDatabases = response.data
                     })
@@ -92,7 +92,7 @@
 
             async getCurrentUser() {
                 return this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/currentuser`)
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/currentuser`)
                     .then((response: AxiosResponse<any>) => {
                         this.user = response.data
                     })
@@ -102,7 +102,7 @@
             async getAllDatasources() {
                 this.loading = true
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources')
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources')
                     .then((response: AxiosResponse<any>) => {
                         this.datasources = response.data
                         this.convertToSeconds(this.datasources)
@@ -151,7 +151,7 @@
             },
             async deleteDatasource(datasourceId: number) {
                 await this.$http
-                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/' + datasourceId)
+                    .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/' + datasourceId)
                     .then(() => {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.deleteTitle'),

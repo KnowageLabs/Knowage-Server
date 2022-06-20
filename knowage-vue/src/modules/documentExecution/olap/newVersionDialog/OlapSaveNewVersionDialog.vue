@@ -64,7 +64,7 @@ export default defineComponent({
             this.loading = true
             await this.$http
                 .post(
-                    process.env.VUE_APP_OLAP_PATH + `1.0/model/saveAs?SBI_EXECUTION_ID=${this.id}`,
+                    import.meta.env.VUE_APP_OLAP_PATH + `1.0/model/saveAs?SBI_EXECUTION_ID=${this.id}`,
                     { name: this.version.name !== '' ? this.version.name : 'sbiNoDescription', descr: this.version.descr !== '' ? this.version.descr : 'sbiNoDescription' },
                     { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } }
                 )

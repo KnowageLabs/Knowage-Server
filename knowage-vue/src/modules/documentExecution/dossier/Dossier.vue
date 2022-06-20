@@ -160,7 +160,7 @@
             async getDossierActivities() {
                 this.loading = true
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activities/${this.id}`)
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activities/${this.id}`)
                     .then((response: AxiosResponse<any>) => {
                         this.dossierActivities = [...response.data]
                     })
@@ -196,7 +196,7 @@
                 })
             },
             async deleteDossier(selectedDossier) {
-                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedDossier.id}`
+                let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedDossier.id}`
 
                 if (selectedDossier.status == 'DOWNLOAD' || selectedDossier.status == 'ERROR') {
                     await this.$http
@@ -237,10 +237,10 @@
             async downloadActivity(selectedActivity) {
                 if (selectedActivity.status == 'ERROR') {
                     if (selectedActivity.hasBinContent) {
-                        var link = process.env.VUE_APP_DOSSIER_PATH + `dossier/activity/${selectedActivity.id}/txt?activityName=${selectedActivity.activity}`
+                        var link = import.meta.env.VUE_APP_DOSSIER_PATH + `dossier/activity/${selectedActivity.id}/txt?activityName=${selectedActivity.activity}`
                         window.open(link)
                     } else {
-                        await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`).then((response: AxiosResponse<any>) => {
+                        await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`).then((response: AxiosResponse<any>) => {
                             var url = `../api/start/errorFile?activityId=${selectedActivity.id}&randomKey=${response.data}&activityName=${selectedActivity.activity}`
                             if (this.jsonTemplate.PPT_TEMPLATE != null) {
                                 url += '&type=PPT'
@@ -249,20 +249,20 @@
                                 url += '&type=DOC'
                                 url += '&templateName=' + this.jsonTemplate.DOC_TEMPLATE.name
                             }
-                            link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + url
+                            link = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + url
                             window.open(link)
                             response.data.errors ? this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: response.data.errors[0].message }) : ''
                         })
                     }
                 } else if (selectedActivity.partial == selectedActivity.total) {
                     if (selectedActivity.hasBinContent) {
-                        link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/pptx?activityName=${selectedActivity.activity}`
+                        link = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/pptx?activityName=${selectedActivity.activity}`
                         window.open(link)
                     } else if (selectedActivity.hasDocBinContent) {
-                        link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/doc?activityName=${selectedActivity.activity}`
+                        link = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedActivity.id}/doc?activityName=${selectedActivity.activity}`
                         window.open(link)
                     } else {
-                        link = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`
+                        link = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `dossier/random-key/${selectedActivity.progressId}`
                         await this.$http.get(link, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response: AxiosResponse<any>) => {
                             if (this.jsonTemplate.PPT_TEMPLATE != null) {
                                 this.storePPT(selectedActivity.id, response.data, selectedActivity.activity)
@@ -280,12 +280,12 @@
                 }
             },
             storePPT(id, randomKey, activityName) {
-                var link = process.env.VUE_APP_HOST_URL + `/knowagedossierengine/api/start/generatePPT?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.PPT_TEMPLATE.name}&activityName=${activityName}`
+                var link = import.meta.env.VUE_APP_HOST_URL + `/knowagedossierengine/api/start/generatePPT?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.PPT_TEMPLATE.name}&activityName=${activityName}`
                 window.open(link)
             },
 
             storeDOC(id, randomKey, activityName) {
-                var link = process.env.VUE_APP_HOST_URL + `/knowagedossierengine/api/start/generateDOC?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.DOC_TEMPLATE.name}&activityName=${activityName}`
+                var link = import.meta.env.VUE_APP_HOST_URL + `/knowagedossierengine/api/start/generateDOC?activityId=${id}&randomKey=${randomKey}&templateName=${this.jsonTemplate.DOC_TEMPLATE.name}&activityName=${activityName}`
                 window.open(link)
             }
         }

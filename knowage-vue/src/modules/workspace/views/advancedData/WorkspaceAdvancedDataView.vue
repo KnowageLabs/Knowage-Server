@@ -172,7 +172,7 @@
 
                 await this.$http({
                     method: 'POST',
-                    url: process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'selfservicedataset/update',
+                    url: import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + 'selfservicedataset/update',
                     data: this.selectedDataset,
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Disable-Errors': 'true' },
 
@@ -193,7 +193,7 @@
             async loadDataset(datasetId: Number) {
                 this.loading = true
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`)
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`)
                     .then((response: AxiosResponse<any>) => {
                         this.selectedDataset = response.data[0]
                     })
@@ -215,7 +215,7 @@
                 this.selectedDsForDataPrep = {}
             },
             showDataSetCatalog() {
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/for-dataprep`).then(
+                this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/for-dataprep`).then(
                     (response: AxiosResponse<any>) => {
                         this.availableDatasets = [...response.data.root]
                         this.showDatasetList = true
@@ -272,10 +272,10 @@
             openDataPreparation(dataset: any) {
                 if (dataset.dsTypeCd == 'Prepared') {
                     //edit existing data prep
-                    this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
+                    this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
                         (response: AxiosResponse<any>) => {
                             let instanceId = response.data.configuration.dataPrepInstanceId
-                            this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
+                            this.$http.get(import.meta.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
                                 (response: AxiosResponse<any>) => {
                                     let transformations = response.data.definition
                                     let processId = response.data.id
@@ -317,7 +317,7 @@
             },
             async getAllAvroDataSets() {
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/avro`)
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/avro`)
                     .then((response: AxiosResponse<any>) => {
                         this.avroDatasets = response.data
                     })
@@ -328,7 +328,7 @@
                 //  { 'Content-Type': 'application/x-www-form-urlencoded' }
                 await this.$http
                     .post(
-                        process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${dataset.id}/${format}`,
+                        import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${dataset.id}/${format}`,
                         {},
                         {
                             headers: {
@@ -365,7 +365,7 @@
                 const url = dataset.catTypeId ? `selfservicedataset/share/?catTypeId=${dataset.catTypeId}&id=${dataset.id}` : `selfservicedataset/share/?id=${dataset.id}`
 
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
                     .then(() => {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.updateTitle'),
@@ -384,7 +384,7 @@
             },
             async handleDatasetClone(dataset: any) {
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets`, dataset, { headers: { 'X-Disable-Errors': 'true' } })
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets`, dataset, { headers: { 'X-Disable-Errors': 'true' } })
                     .then(() => {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.deleteTitle'),
@@ -414,7 +414,7 @@
             async deleteDataset(dataset: any) {
                 this.loading = true
                 await this.$http
-                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
+                    .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
                     .then(() => {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.deleteTitle'),
@@ -434,7 +434,7 @@
                 this.loading = true
                 this.searchWord = ''
                 this.preparedDatasets = this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced`)
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced`)
                     .then((response: AxiosResponse<any>) => {
                         this.datasetList = [...response.data.root]
                         this.preparedDatasets = [...this.datasetList]
@@ -455,7 +455,7 @@
             async updateDatasetAndSave(newConfig) {
                 this.showMonitoring = false
 
-                await this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config }, { headers: { Accept: 'application/json, */*' } }).then(
+                await this.$http.patch(import.meta.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config }, { headers: { Accept: 'application/json, */*' } }).then(
                     () => {
                         this.loadDataset(this.selectedDataset.id)
                     },

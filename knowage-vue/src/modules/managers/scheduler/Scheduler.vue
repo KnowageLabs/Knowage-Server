@@ -56,7 +56,7 @@
                 this.loading = true
                 this.jobs = []
                 let tempJobs = [] as iPackage[]
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/listAllJobs/`).then((response: AxiosResponse<any>) => (tempJobs = response.data.root))
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/listAllJobs/`).then((response: AxiosResponse<any>) => (tempJobs = response.data.root))
                 tempJobs.forEach((el: iPackage) => {
                     if (el.jobGroup === 'BIObjectExecutions') {
                         this.jobs.push({ ...el, numberOfDocuments: el.documents.length })
@@ -89,7 +89,7 @@
                 this.loading = true
                 let tempResponse = null as any
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/deleteJob?jobGroup=BIObjectExecutions&jobName=${jobName}`)
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/deleteJob?jobGroup=BIObjectExecutions&jobName=${jobName}`)
                     .then((response: AxiosResponse<any>) => {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.deleteTitle'),

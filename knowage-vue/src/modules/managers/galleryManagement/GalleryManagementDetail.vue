@@ -165,7 +165,7 @@ export default defineComponent({
             this.loading = true
             if (id) {
                 this.$http
-                    .get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/' + (id || this.id))
+                    .get(import.meta.env.VUE_APP_API_PATH + '1.0/widgetgallery/' + (id || this.id))
                     .then((response: AxiosResponse<any>) => {
                         this.template = response.data
                     })
@@ -187,7 +187,7 @@ export default defineComponent({
             if (this.validateTags()) {
                 let postUrl = this.id ? '1.0/widgetgallery/' + this.id : '1.0/widgetgallery'
                 this.$http
-                    .post(process.env.VUE_APP_API_PATH + postUrl, this.template)
+                    .post(import.meta.env.VUE_APP_API_PATH + postUrl, this.template)
                     .then((response: AxiosResponse<any>) => {
                         this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.saveTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullySaved') })
                         this.$router.push('/gallery-management/' + response.data.id)
@@ -209,7 +209,7 @@ export default defineComponent({
                 },
                 false
             )
-            if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
+            if (event.srcElement.files[0] && event.srcElement.files[0].size < import.meta.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
                 reader.readAsDataURL(event.srcElement.files[0])
                 this.setDirty()
             } else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })

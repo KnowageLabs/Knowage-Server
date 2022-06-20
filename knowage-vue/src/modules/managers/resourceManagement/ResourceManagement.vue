@@ -83,7 +83,7 @@
                     obj['key'] = '' + this.selectedFolder.key
                     obj['folderName'] = folderName
                     this.$http
-                        .post(process.env.VUE_APP_API_PATH + `2.0/resources/folders`, obj, {
+                        .post(import.meta.env.VUE_APP_API_PATH + `2.0/resources/folders`, obj, {
                             responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
 
                             headers: {
@@ -129,7 +129,7 @@
                             obj['folderName'] = node.label
                             this.loading = true
                             this.$http
-                                .post(process.env.VUE_APP_API_PATH + `2.0/resources/folders/update`, obj, {
+                                .post(import.meta.env.VUE_APP_API_PATH + `2.0/resources/folders/update`, obj, {
                                     responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
 
                                     headers: {
@@ -170,7 +170,7 @@
                 this.showHint = showHint != undefined ? showHint : true
                 this.formVisible = formVisible != undefined ? formVisible : false
                 this.$http
-                    .get(process.env.VUE_APP_API_PATH + `2.0/resources/folders`)
+                    .get(import.meta.env.VUE_APP_API_PATH + `2.0/resources/folders`)
                     .then((response: AxiosResponse<any>) => {
                         let root = response.data.root[0]
                         root.label = 'HOME'
@@ -189,7 +189,7 @@
             deleteFolder(node) {
                 this.loading = true
                 this.$http
-                    .delete(process.env.VUE_APP_API_PATH + `2.0/resources/folders`, {
+                    .delete(import.meta.env.VUE_APP_API_PATH + `2.0/resources/folders`, {
                         headers: {
                             'Content-Type': 'application/json'
                         },
@@ -217,7 +217,7 @@
                 let obj = {} as JSON
                 obj['key'] = node.key
                 this.$http
-                    .post(process.env.VUE_APP_API_PATH + `2.0/resources/folders/download`, obj, {
+                    .post(import.meta.env.VUE_APP_API_PATH + `2.0/resources/folders/download`, obj, {
                         responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
 
                         headers: {

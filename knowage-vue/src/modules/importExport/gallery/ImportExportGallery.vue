@@ -102,7 +102,7 @@ export default defineComponent({
         loadAllTemplates(): void {
             this.$emit('update:loading', true)
             this.axios
-                .get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery')
+                .get(import.meta.env.VUE_APP_API_PATH + '1.0/widgetgallery')
                 .then((response: AxiosResponse<any>) => {
                     this.templates = response.data
                     if (this.selectedItems) {
@@ -119,7 +119,7 @@ export default defineComponent({
         togglePreview(event, id) {
             this.currentImage = ''
 
-            this.$http.get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/image/' + id).then(
+            this.$http.get(import.meta.env.VUE_APP_API_PATH + '1.0/widgetgallery/image/' + id).then(
                 (response: AxiosResponse<any>) => {
                     console.log(response)
                     this.currentImage = response.data

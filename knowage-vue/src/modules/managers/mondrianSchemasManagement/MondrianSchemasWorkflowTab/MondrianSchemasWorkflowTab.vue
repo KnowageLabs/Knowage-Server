@@ -143,7 +143,7 @@
             },
             async isWorkflowStarted() {
                 if (this.schema.id) {
-                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/isStarted/${this.schema.id}`).then((response: AxiosResponse<any>) => {
+                    await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/isStarted/${this.schema.id}`).then((response: AxiosResponse<any>) => {
                         if (response.data > 0) {
                             this.isStartedWf = true
                             this.userInProg = response.data
@@ -158,7 +158,7 @@
                 }
             },
             async startWorkflow() {
-                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/startWorkflow/${this.schema.id}`
+                let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/startWorkflow/${this.schema.id}`
                 await this.$http
                     .put(url)
                     .then((response: AxiosResponse<any>) => {

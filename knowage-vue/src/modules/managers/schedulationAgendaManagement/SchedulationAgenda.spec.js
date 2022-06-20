@@ -208,13 +208,13 @@ jest.mock('axios')
 const $http = {
     get: axios.get.mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `/2.0/documents`:
+            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `/2.0/documents`:
                 return Promise.resolve({ data: mockedDocumentList })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `/scheduleree/listAllJobs`:
+            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `/scheduleree/listAllJobs`:
                 return Promise.resolve({ data: mockedPackageList })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/nextExecutions?start=2021-11-06T00:11:00&end=2021-11-11T00:11:00`:
+            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/nextExecutions?start=2021-11-06T00:11:00&end=2021-11-11T00:11:00`:
                 return Promise.resolve({ data: mockedResultFiveDays })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/nextExecutions?start=2021-11-06T00:11:00&end=2025-11-11T00:11:00`:
+            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/nextExecutions?start=2021-11-06T00:11:00&end=2025-11-11T00:11:00`:
                 return Promise.resolve({ data: mockedResultList })
             default:
                 return Promise.resolve({ data: [] })

@@ -3,14 +3,14 @@ import axios from 'axios'
 import store from './App.store.js'
 import authHelper from '@/helpers/commons/authHelper'
 
-axios.defaults.baseURL = process.env.VUE_APP_BASE_URL
+axios.defaults.baseURL = import.meta.env.VUE_APP_BASE_URL
 
 axios.interceptors.request.use(
     (config) => {
         config.headers.common['Accept'] = 'application/json; charset=utf-8'
         config.headers.common['Content-Type'] = 'application/json; charset=utf-8'
         config.headers.common['Access-Control-Allow-Origin'] = '*'
-        if (localStorage.getItem('token')) config.headers.common[process.env.VUE_APP_DEFAULT_AUTH_HEADER] = 'Bearer ' + localStorage.getItem('token')
+        if (localStorage.getItem('token')) config.headers.common[import.meta.env.VUE_APP_DEFAULT_AUTH_HEADER] = 'Bearer ' + localStorage.getItem('token')
         return config
     },
     (error) => {

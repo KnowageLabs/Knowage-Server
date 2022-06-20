@@ -176,7 +176,7 @@
             async loadNavigation() {
                 this.loading = true
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/' + this.id + '/load/')
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/' + this.id + '/load/')
                     .then((response: AxiosResponse<any>) => {
                         this.navigation = response.data
                         if (this.navigation.simpleNavigation.type === 0) this.navigation.simpleNavigation.type = 3
@@ -205,7 +205,7 @@
                     this.navigation.simpleNavigation.type = 0
                 }
                 this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/save/', this.navigation, { headers: { 'X-Disable-Errors': 'true' } })
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/save/', this.navigation, { headers: { 'X-Disable-Errors': 'true' } })
                     .then(() => {
                         this.$store.commit('setInfo', {
                             title: this.$t(this.crossNavigationDescriptor.operation[this.operation].toastTitle),
@@ -265,7 +265,7 @@
             },
             async loadInputParams(label) {
                 let params = []
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/documents/' + label + '/parameters').then(
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/documents/' + label + '/parameters').then(
                     (response: AxiosResponse<any>) =>
                         (params = response.data.results.map((param: any) => {
                             return { id: param.id, name: param.label, type: 1, parType: param.parType }
@@ -275,7 +275,7 @@
             },
             async loadOutputParams(id) {
                 let params = []
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/' + id + '/listOutParams').then(
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/' + id + '/listOutParams').then(
                     (response: AxiosResponse<any>) =>
                         (params = response.data.map((param: any) => {
                             return { id: param.id, name: param.name, type: 0, parType: param.type.valueCd }

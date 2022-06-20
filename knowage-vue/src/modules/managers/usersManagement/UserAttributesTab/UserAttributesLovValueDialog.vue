@@ -78,7 +78,7 @@
         methods: {
             async loadAttributeValue() {
                 if (this.attribute?.lovId) {
-                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/${this.attribute.lovId}/preview`).then((response: AxiosResponse<any>) => {
+                    await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/${this.attribute.lovId}/preview`).then((response: AxiosResponse<any>) => {
                         this.lovValues = response.data.map((lovValue, index) => {
                             return { value: lovValue, id: index }
                         })

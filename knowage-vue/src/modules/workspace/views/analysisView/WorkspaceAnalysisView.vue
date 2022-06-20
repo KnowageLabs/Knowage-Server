@@ -140,7 +140,7 @@ export default defineComponent({
         getAnalysisDocs() {
             this.loading = true
             return this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/myAnalysisDocsList`)
+                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/myAnalysisDocsList`)
                 .then((response: AxiosResponse<any>) => {
                     this.analysisDocuments = [...response.data.root]
                     this.filteredAnalysisDocuments = [...this.analysisDocuments]
@@ -194,7 +194,7 @@ export default defineComponent({
                 updateFromWorkspace: true
             }
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/saveDocument/', formatedAnalysis, { headers: { 'X-Disable-Errors': 'true' } })
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/saveDocument/', formatedAnalysis, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
@@ -214,7 +214,7 @@ export default defineComponent({
             this.loading = true
             const shared = this.selectedAnalysis.functionalities.length > 1
             if (!shared) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/forsharing/${analysis.id}`).then((response: AxiosResponse<any>) => {
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/forsharing/${analysis.id}`).then((response: AxiosResponse<any>) => {
                     this.folders = response.data
                     this.shareDialogVisible = true
                 })
@@ -226,7 +226,7 @@ export default defineComponent({
         async handleAnalysShared(selectedFolders: any, shared: boolean) {
             this.loading = true
 
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/share?docId=${this.selectedAnalysis.id}&`
+            let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/share?docId=${this.selectedAnalysis.id}&`
             if (!shared) {
                 Object.keys(selectedFolders).forEach((id: any) => (url += `functs=${selectedFolders[id]}&`))
             }
@@ -256,7 +256,7 @@ export default defineComponent({
         async cloneAnalysisDocument(analysis: any) {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/clone?docId=${analysis.id}`)
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/clone?docId=${analysis.id}`)
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.createTitle'),
@@ -279,7 +279,7 @@ export default defineComponent({
         deleteAnalysis(analysis: any) {
             this.loading = true
             this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${analysis.label}`)
+                .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${analysis.label}`)
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
@@ -309,7 +309,7 @@ export default defineComponent({
             var formData = new FormData()
             formData.append('file', uploadedFile)
             this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analysis/${this.selectedAnalysis.id}`, formData, {
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analysis/${this.selectedAnalysis.id}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }

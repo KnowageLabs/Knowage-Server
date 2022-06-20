@@ -70,7 +70,7 @@
 			loadAllTemplates(): void {
 				this.loading = true
 				this.axios
-					.get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery')
+					.get(import.meta.env.VUE_APP_API_PATH + '1.0/widgetgallery')
 					.then((response: AxiosResponse<any>) => {
 						this.galleryTemplates = response.data.map((item) => {
 							// TODO remove after backend implementation
@@ -90,7 +90,7 @@
 					icon: 'pi pi-exclamation-triangle',
 					accept: () => {
 						this.axios
-							.delete(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/' + templateId)
+							.delete(import.meta.env.VUE_APP_API_PATH + '1.0/widgetgallery/' + templateId)
 							.then(() => {
 								this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.deleteTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyDeleted') })
 								this.loadAllTemplates()
@@ -136,7 +136,7 @@
 				}
 			},
 			importWidget(json: JSON) {
-				this.$http.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/import', json).then(() => {
+				this.$http.post(import.meta.env.VUE_APP_API_PATH + '1.0/widgetgallery/import', json).then(() => {
 					this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.uploadTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyUploaded') })
 
 					this.loadAllTemplates()

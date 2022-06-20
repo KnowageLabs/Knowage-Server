@@ -48,7 +48,7 @@
                 this.touched = false
                 this.loading = true
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all')
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all')
                     .then((response: AxiosResponse<any>) => {
                         this.lovsList = response.data
                         this.lovsList.sort((a: iLov, b: iLov) => (a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1))
@@ -84,7 +84,7 @@
             },
             async deleteLov(lovId: number) {
                 await this.$http
-                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/delete/${lovId}`)
+                    .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/delete/${lovId}`)
                     .then(() => {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.deleteTitle'),

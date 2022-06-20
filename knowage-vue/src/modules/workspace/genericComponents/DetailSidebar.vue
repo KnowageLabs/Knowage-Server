@@ -84,7 +84,7 @@ export default defineComponent({
             return category
         },
         documentImageSource(): any {
-            return process.env.VUE_APP_HOST_URL + descriptor.imgPath + this.document.previewFile
+            return import.meta.env.VUE_APP_HOST_URL + descriptor.imgPath + this.document.previewFile
         },
         documentFields(): any {
             switch (this.viewType) {

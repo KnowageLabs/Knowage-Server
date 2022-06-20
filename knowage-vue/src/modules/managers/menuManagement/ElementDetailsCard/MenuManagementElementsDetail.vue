@@ -207,7 +207,7 @@ export default defineComponent({
     data() {
         return {
             v$: useValidate() as any,
-            apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
+            apiUrl: import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
             menuNode: {} as iMenuNode,
             loading: false as Boolean,
             hideForm: false as Boolean,

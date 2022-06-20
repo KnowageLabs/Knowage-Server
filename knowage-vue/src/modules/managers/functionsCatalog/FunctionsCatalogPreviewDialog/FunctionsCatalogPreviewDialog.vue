@@ -131,7 +131,7 @@
                 const postBody = { aggregations: this.buildPreviewAggregations(), parameters: this.buildPreviewParameters(), selections: {}, indexes: [] }
 
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.selectedDataset?.label}/data`, postBody, { headers: { 'X-Disable-Errors': 'true' } })
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.selectedDataset?.label}/data`, postBody, { headers: { 'X-Disable-Errors': 'true' } })
                     .then((response: AxiosResponse<any>) => {
                         this.setPreviewColumns(response.data)
                         this.previewRows = response.data.rows

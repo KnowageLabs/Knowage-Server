@@ -117,7 +117,7 @@ export default defineComponent({
 
             this.mapCategories()
 
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/'
+            let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/'
             if (this.selectedRole.id) {
                 this.operation = 'update'
                 url += this.selectedRole.id
@@ -133,15 +133,15 @@ export default defineComponent({
             })
         },
         loadCategories(id: string) {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/categories/${id}`).finally(() => (this.loading = false))
+            return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/categories/${id}`).finally(() => (this.loading = false))
         },
         loadDomains(type: string) {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`).finally(() => (this.loading = false))
+            return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`).finally(() => (this.loading = false))
         },
         async loadAuthorizations() {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'authorizations')
+                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + 'authorizations')
                 .then((response: AxiosResponse<any>) => {
                     this.authorizationList = response.data.root
                     this.rolesManagementTabViewDescriptor.authorizations.forEach((authorization) => {
@@ -186,7 +186,7 @@ export default defineComponent({
         async loadSelectedRole() {
             this.loading = true
             if (this.id) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/${this.id}`).then((response: AxiosResponse<any>) => (this.selectedRole = response.data))
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/${this.id}`).then((response: AxiosResponse<any>) => (this.selectedRole = response.data))
 
                 await this.loadCategories(this.id).then((response: AxiosResponse<any>) => {
                     this.clearSelectedLists()

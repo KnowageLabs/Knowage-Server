@@ -101,7 +101,7 @@
             async selectedTenant() {
                 this.v$.$reset()
                 this.tenant = { ...this.selectedTenant } as iMultitenant
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant/image?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response: AxiosResponse<any>) => {
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant/image?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response: AxiosResponse<any>) => {
                     this.tenant.MULTITENANT_IMAGE = response.data
                 })
             },
@@ -123,7 +123,7 @@
                     },
                     false
                 )
-                if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
+                if (event.srcElement.files[0] && event.srcElement.files[0].size < import.meta.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
                     reader.readAsDataURL(event.srcElement.files[0])
                     this.v$.$touch()
                 } else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })

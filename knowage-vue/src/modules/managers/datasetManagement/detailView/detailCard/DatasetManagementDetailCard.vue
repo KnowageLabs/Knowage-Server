@@ -214,7 +214,7 @@ export default defineComponent({
         },
         async deleteSelectedVersion(event) {
             return this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.dsId}/version/${event.versNum}`)
+                .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.dsId}/version/${event.versNum}`)
                 .then(() => {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                     this.$emit('reloadVersions')
@@ -223,7 +223,7 @@ export default defineComponent({
         },
         async deleteAllVersions() {
             return this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.selectedDataset.id}/allversions/`)
+                .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.selectedDataset.id}/allversions/`)
                 .then(() => {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('managers.datasetManagement.deleteAllVersionsSuccess') })
                     this.$emit('reloadVersions')
@@ -243,7 +243,7 @@ export default defineComponent({
         },
         async restoreVersion(dsToRestore) {
             this.$emit('loadingOlderVersion')
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.dataset.id}/restore?versionId=${dsToRestore.versNum}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.dataset.id}/restore?versionId=${dsToRestore.versNum}`).then((response: AxiosResponse<any>) => {
                 this.dataset.dsTypeCd.toLowerCase() == 'file' ? this.refactorFileDatasetConfig(response.data[0]) : ''
                 this.$emit('olderVersionLoaded', response.data[0])
             })

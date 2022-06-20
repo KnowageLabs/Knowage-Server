@@ -170,7 +170,7 @@
         data() {
             return {
                 v$: useValidate() as any,
-                apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
+                apiUrl: import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
                 attribute: {} as iAttribute,
                 lovs: {} as iLov,
                 loading: false as Boolean,

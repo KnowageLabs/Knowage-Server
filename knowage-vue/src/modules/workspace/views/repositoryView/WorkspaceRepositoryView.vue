@@ -121,7 +121,7 @@ export default defineComponent({
         getFolderDocuments() {
             this.loading = true
             return this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.id}`)
+                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.id}`)
                 .then((response: AxiosResponse<any>) => {
                     this.documents = [...response.data]
                     this.filteredDocuments = [...this.documents]
@@ -163,7 +163,7 @@ export default defineComponent({
         async handleDocumentMove(folder: any) {
             this.loading = true
             await this.$http
-                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documentsee/${this.selectedDocument.biObjId}/${this.selectedDocument.functId}/${folder.id}`)
+                .put(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documentsee/${this.selectedDocument.biObjId}/${this.selectedDocument.functId}/${folder.id}`)
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
@@ -190,7 +190,7 @@ export default defineComponent({
         deleteDocument(document: IDocument) {
             this.loading = true
             this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${document.functId}/${document.biObjId}`)
+                .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${document.functId}/${document.biObjId}`)
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),

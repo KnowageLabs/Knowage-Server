@@ -50,7 +50,7 @@
 
         emits: ['update:visibility'],
         created() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/datasets/mydata/').then((response: AxiosResponse<any>) => (this.dataPreparation = response.data.root))
+            this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/datasets/mydata/').then((response: AxiosResponse<any>) => (this.dataPreparation = response.data.root))
         },
         methods: {
             search(e, item): void {

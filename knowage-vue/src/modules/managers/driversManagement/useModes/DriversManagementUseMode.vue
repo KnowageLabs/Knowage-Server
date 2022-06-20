@@ -128,7 +128,7 @@
             async deleteMode(useMode: any) {
                 if (useMode.useID != -1) {
                     await this.$http
-                        .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/' + useMode.useID)
+                        .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/' + useMode.useID)
                         .then(() => {
                             this.$store.commit('setInfo', {
                                 title: this.$t('common.toast.deleteTitle'),

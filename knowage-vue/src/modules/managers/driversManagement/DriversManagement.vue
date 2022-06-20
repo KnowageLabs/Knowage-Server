@@ -88,7 +88,7 @@
             async loadAllDrivers() {
                 this.loading = true
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers')
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers')
                     .then((response: AxiosResponse<any>) => (this.drivers = response.data))
                     .finally(() => (this.loading = false))
             },
@@ -143,7 +143,7 @@
             },
             async deleteDriver(id: number) {
                 await this.$http
-                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/' + id)
+                    .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/' + id)
                     .then(() => {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.deleteTitle'),

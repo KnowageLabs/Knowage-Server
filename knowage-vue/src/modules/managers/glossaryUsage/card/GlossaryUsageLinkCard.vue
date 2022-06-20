@@ -155,7 +155,7 @@
             async addAssociatedWord(linkItem: any, word: iWord, type: string, url: string, postData: any, itemType: string) {
                 this.loading = true
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
                     .then((response: AxiosResponse<any>) => {
                         if (response.data.Status !== 'NON OK') {
                             type === 'tree'
@@ -237,7 +237,7 @@
             },
             async deleteWord(linkItem: any, wordId: number, type: string, url: string, method: string) {
                 this.loading = true
-                await this.$http[method](process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
+                await this.$http[method](import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
                     .then(() => {
                         type === 'tree' ? this.removeWordFromTreeWords(wordId, linkItem.parent) : this.removeWordFromAssociatedWords(wordId, linkItem.id)
                         this.$store.commit('setInfo', {

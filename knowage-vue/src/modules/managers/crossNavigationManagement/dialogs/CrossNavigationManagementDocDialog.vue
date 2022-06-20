@@ -119,7 +119,7 @@
             async loadAllDoc() {
                 this.loading = true
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument')
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument')
                     .then((response: AxiosResponse<any>) => (this.documents = response.data))
                     .finally(() => (this.loading = false))
             },

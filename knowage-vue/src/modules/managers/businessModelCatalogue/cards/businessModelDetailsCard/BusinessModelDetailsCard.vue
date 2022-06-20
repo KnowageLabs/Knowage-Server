@@ -402,7 +402,7 @@ export default defineComponent({
         },
         async loadModelFromSession() {
             await this.$http
-                .get(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/model`)
+                .get(import.meta.env.VUE_APP_META_API_URL + `/1.0/metaWeb/model`)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = response.data
                     this.metawebDialogVisible = true
@@ -414,7 +414,7 @@ export default defineComponent({
             if (this.businessModel.tablePrefixLike) url += `&tablePrefixLike=${this.businessModel.tablePrefixLike}`
             if (this.businessModel.tablePrefixNotLike) url += `&tablePrefixNotLike=${this.businessModel.tablePrefixNotLike}`
             await this.$http
-                .get(process.env.VUE_APP_META_API_URL + url, {
+                .get(import.meta.env.VUE_APP_META_API_URL + url, {
                     headers: {
                         Accept: 'application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
                     }

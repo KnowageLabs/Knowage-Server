@@ -233,7 +233,7 @@
                 }
                 const postData = { data: tmpData, diff: [] }
                 await this.$http
-                    .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addBusinessView`, postData)
+                    .post(import.meta.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addBusinessView`, postData)
                     .then(async (response: AxiosResponse<any>) => {
                         this.metaObserve = applyPatch(this.metaObserve, response.data)
                         generate(this.observer)

@@ -75,7 +75,7 @@
                 this.loading = true
                 this.metadataList = []
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata')
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata')
                     .then((response: AxiosResponse<any>) =>
                         response.data.map((metadata: any) => {
                             this.metadataList.push({
@@ -113,7 +113,7 @@
                 })
             },
             async deleteMetadata(metadataId: number) {
-                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata/' + metadataId).then(() => {
+                await this.$http.delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata/' + metadataId).then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')

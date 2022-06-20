@@ -318,7 +318,7 @@ export default defineComponent({
             this.$emit('loading', true)
             const nodeSourceCode = targetNode.data[targetNode.data.aliasId]
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/getRelationsMasterTechnical?dimension=${this.selectedDimension.DIMENSION_NM}&hierSourceCode=${this.selectedHierarchy.HIER_CD}&hierSourceName=${this.selectedHierarchy.HIER_NM}&nodeSourceCode=${nodeSourceCode}`)
+                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/getRelationsMasterTechnical?dimension=${this.selectedDimension.DIMENSION_NM}&hierSourceCode=${this.selectedHierarchy.HIER_CD}&hierSourceName=${this.selectedHierarchy.HIER_NM}&nodeSourceCode=${nodeSourceCode}`)
                 .then((response: AxiosResponse<any>) => {
                     this.relations = response.data?.root
                     if (this.relations && this.relations.length === 0) {

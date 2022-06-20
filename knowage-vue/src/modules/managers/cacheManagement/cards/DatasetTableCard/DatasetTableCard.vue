@@ -86,7 +86,7 @@
                 })
             },
             async cleanAll() {
-                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee').then(() => this.emitDeleteSuccess())
+                await this.$http.delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee').then(() => this.emitDeleteSuccess())
             },
             deleteDatasetConfirm(signature: string) {
                 this.$confirm.require({
@@ -97,7 +97,7 @@
                 })
             },
             async deleteDataset(signature: string) {
-                await this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: [signature] }).then(() => this.emitDeleteSuccess())
+                await this.$http.put(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: [signature] }).then(() => this.emitDeleteSuccess())
             },
             emitDeleteSuccess() {
                 this.$store.commit('setInfo', {

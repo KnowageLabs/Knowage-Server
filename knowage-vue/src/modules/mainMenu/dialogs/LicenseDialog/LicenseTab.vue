@@ -127,7 +127,7 @@
             },
             async downloadLicence(productName) {
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license/download` + `/${this.selectedHost.hostName}/` + `${productName}`, {
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license/download` + `/${this.selectedHost.hostName}/` + `${productName}`, {
                         headers: {
                             Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
                         }
@@ -183,7 +183,7 @@
                 var formData = new FormData()
                 formData.append('file', uploadedFiles)
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license/upload` + `/${this.selectedHost.hostName}` + `?isForUpdate=${this.isForUpdate}`, formData, {
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license/upload` + `/${this.selectedHost.hostName}` + `?isForUpdate=${this.isForUpdate}`, formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                             'X-Disable-Errors': 'true'
@@ -225,7 +225,7 @@
             },
             async deleteLicense(licenseName) {
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license/delete` + `/${this.selectedHost.hostName}/` + licenseName, {
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license/delete` + `/${this.selectedHost.hostName}/` + licenseName, {
                         headers: {
                             Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
                         }

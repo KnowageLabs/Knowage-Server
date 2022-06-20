@@ -70,7 +70,7 @@
         methods: {
             async loadLogs() {
                 if (this.dataset && this.dataset.id) {
-                    await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + this.dataset.id).then((response: AxiosResponse<any>) => {
+                    await this.$http.get(import.meta.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + this.dataset.id).then((response: AxiosResponse<any>) => {
                         let instance = response.data.instance
                         if (instance) {
                             this.instanceId = instance.id
@@ -81,7 +81,7 @@
 
                             this.schedulationEnabled = this.currentCronExpression ? true : false
 
-                            this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/logs/' + instance.id).then((response: AxiosResponse<any>) => {
+                            this.$http.get(import.meta.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/logs/' + instance.id).then((response: AxiosResponse<any>) => {
                                 this.logs = response.data
                             })
                         }

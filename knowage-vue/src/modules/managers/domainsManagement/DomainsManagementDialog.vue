@@ -166,7 +166,7 @@
                     return
                 }
 
-                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains'
+                let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains'
                 if (this.domain.valueId) {
                     this.operation = 'update'
                     url += '/' + this.domain.valueId

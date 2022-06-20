@@ -245,7 +245,7 @@ export default defineComponent({
             this.messages = []
             this.loading = true
             return this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization/?currLanguage=' + selectedTab.languageTag)
+                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization/?currLanguage=' + selectedTab.languageTag)
                 .then((response: AxiosResponse<any>) => {
                     if (selectedTab.defaultLanguage) {
                         this.setDataForDefaultLanguage(response)
@@ -260,7 +260,7 @@ export default defineComponent({
         async getLanguages() {
             this.loading = true
             return this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/internationalization/languages')
+                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/internationalization/languages')
                 .then((response: AxiosResponse<any>) => {
                     this.languages = response.data.wrappedObject
                 })
@@ -280,7 +280,7 @@ export default defineComponent({
         },
 
         saveLabel(langObj, message) {
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages'
+            let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages'
             var toSave = { ...message } as iMessage
             delete toSave.dirty
             this.saveOrUpdateMessage(url, toSave, langObj).then((response: AxiosResponse<any>) => {
@@ -302,7 +302,7 @@ export default defineComponent({
             if (msgToDelete.id) {
                 let url = ''
                 if (msgToDelete.defaultMessageCode) {
-                    url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/'
+                    url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/'
                     this.$confirm.require({
                         message: this.$t('managers.internationalizationManagement.delete.deleteMessage'),
                         header: this.$t('managers.internationalizationManagement.delete.deleteMessageTitle'),
@@ -310,7 +310,7 @@ export default defineComponent({
                         accept: () => this.deleteLabel(url, msgToDelete.id, langObj)
                     })
                 } else {
-                    url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/deletedefault/'
+                    url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/deletedefault/'
                     this.$confirm.require({
                         message: this.$t('managers.internationalizationManagement.delete.deleteDefault'),
                         header: this.$t('managers.internationalizationManagement.delete.deleteDefaultTitle'),

@@ -122,7 +122,7 @@ export default defineComponent({
             const postData = { label: this.document.label ?? this.document.name, role: role, parameterId: this.parameter?.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
             let content = [] as any[]
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
                 .then((response: AxiosResponse<any>) =>
                     response.data.rows.forEach((el: any) => {
                         content.push(this.createNode(el, parent))

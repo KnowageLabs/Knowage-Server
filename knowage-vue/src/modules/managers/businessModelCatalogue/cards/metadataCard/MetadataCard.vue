@@ -56,7 +56,7 @@
             async importMetadata() {
                 this.importing = true
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metadata/${this.id}/bmExtract/`)
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metadata/${this.id}/bmExtract/`)
                     .then(() =>
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.createTitle'),

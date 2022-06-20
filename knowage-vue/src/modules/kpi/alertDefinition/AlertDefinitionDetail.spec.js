@@ -58,11 +58,11 @@ jest.mock('axios')
 const $http = {
     get: axios.get.mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/alert/listAction`:
+            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/alert/listAction`:
                 return Promise.resolve({ data: mockedActionList })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `'1.0/alert/25/load'`:
+            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `'1.0/alert/25/load'`:
                 return Promise.resolve({ data: mockedAlert })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `'2.0/documents/listDocument?includeType=ETL'`:
+            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `'2.0/documents/listDocument?includeType=ETL'`:
                 return Promise.resolve({ data: [] })
             default:
                 return Promise.resolve({ data: [] })

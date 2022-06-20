@@ -85,7 +85,7 @@
             },
             async loadDataSourceStructure() {
                 if (this.selectedRule.dataSource) {
-                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources/structure/${this.selectedRule.dataSource.DATASOURCE_ID}`).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
+                    await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources/structure/${this.selectedRule.dataSource.DATASOURCE_ID}`).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
                 }
                 this.$emit('touched')
 

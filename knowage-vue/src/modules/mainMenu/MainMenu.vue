@@ -140,7 +140,7 @@
                 this.hoverTimer = setTimeout(() => {
                     // @ts-ignore
                     this.$refs.menu.hide()
-                }, process.env.VUE_APP_MENU_FADE_TIMER)
+                }, import.meta.env.VUE_APP_MENU_FADE_TIMER)
             },
             newsSelection() {
                 console.log('ALLOWED: ', this.allowedUserFunctionalities)
@@ -164,7 +164,7 @@
                 if (to) {
                     to = to.replace(/\\\//g, '/')
                     if (to.startsWith('/')) to = to.substring(1)
-                    return process.env.VUE_APP_PUBLIC_PATH + to
+                    return import.meta.env.VUE_APP_PUBLIC_PATH + to
                 }
             },
             toggleProfile() {
@@ -257,7 +257,7 @@
                     localObject.locale = splittedLocale[0] + '-' + splittedLocale[2].replaceAll('#', '') + '-' + splittedLocale[1]
                 }
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
                     .then((response: AxiosResponse<any>) => {
                         this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
 

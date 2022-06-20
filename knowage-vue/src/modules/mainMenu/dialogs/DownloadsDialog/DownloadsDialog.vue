@@ -69,7 +69,7 @@
                 return formatDate(date, 'LLL')
             },
             getDownloads() {
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset?showAll=true').then(
+                this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset?showAll=true').then(
                     (response: AxiosResponse<any>) => {
                         this.downloadsList = response.data
                     },
@@ -77,7 +77,7 @@
                 )
             },
             async downloadContent(data) {
-                var encodedUri = encodeURI(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset/' + data.id)
+                var encodedUri = encodeURI(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset/' + data.id)
                 await this.$http
                     .get(encodedUri, {
                         responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
@@ -99,7 +99,7 @@
                 this.getDownloads()
             },
             deleteAllDownloads() {
-                this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export').then(
+                this.$http.delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export').then(
                     () => {
                         this.downloadsList = []
                         this.$store.commit('setDownloads', { count: { total: 0, unRead: 0 } })

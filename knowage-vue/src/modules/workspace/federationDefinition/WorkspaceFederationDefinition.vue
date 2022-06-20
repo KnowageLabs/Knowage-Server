@@ -89,11 +89,11 @@
                 this.loading = false
             },
             async loadFederatedDataset() {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/${this.id}/`).then((response: AxiosResponse<any>) => (this.federatedDataset = { ...response.data, relationships: JSON.parse(response.data.relationships) }))
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/${this.id}/`).then((response: AxiosResponse<any>) => (this.federatedDataset = { ...response.data, relationships: JSON.parse(response.data.relationships) }))
             },
             async loadDatasets() {
                 this.datasets = []
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/?includeDerived=no`).then((response: AxiosResponse<any>) => {
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/?includeDerived=no`).then((response: AxiosResponse<any>) => {
                     response.data.forEach((el: any) => {
                         if (el.pars.length === 0) {
                             this.formatDatasetMetaFields(el)
@@ -284,12 +284,12 @@
                 return formattedRelationships
             },
             async saveFederationDataset(federatedDataset: IFederatedDataset) {
-                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'federateddataset/post'
+                let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + 'federateddataset/post'
                 const tempDataset = { ...federatedDataset }
 
                 if (tempDataset.federation_id) {
                     this.operation = 'update'
-                    url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/${federatedDataset.federation_id}`
+                    url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `federateddataset/${federatedDataset.federation_id}`
                     delete tempDataset.federation_id
                 }
 

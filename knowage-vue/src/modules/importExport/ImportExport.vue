@@ -93,7 +93,7 @@
             },
             async startExport(fileName: string) {
                 await this.$http
-                    .post(process.env.VUE_APP_API_PATH + '1.0/export/bulk', this.streamlineSelectedItemsArray(fileName), {
+                    .post(import.meta.env.VUE_APP_API_PATH + '1.0/export/bulk', this.streamlineSelectedItemsArray(fileName), {
                         responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
 
                         headers: {

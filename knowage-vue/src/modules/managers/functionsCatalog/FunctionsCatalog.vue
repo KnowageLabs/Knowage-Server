@@ -69,7 +69,7 @@
                 this.loading = false
             },
             async loadFunctions(filterValue: string) {
-                const url = filterValue ? process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functions-catalog/` + filterValue : process.env.VUE_APP_API_PATH + `1.0/functioncatalog/completelist`
+                const url = filterValue ? import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functions-catalog/` + filterValue : import.meta.env.VUE_APP_API_PATH + `1.0/functioncatalog/completelist`
                 await this.$http.get(url).then((response: AxiosResponse<any>) => {
                     this.functions = filterValue
                         ? response.data.functions.map((el: any) => {
@@ -85,7 +85,7 @@
                 })
             },
             async loadFilters() {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/FUNCTION_TYPE`).then((response: AxiosResponse<any>) => (this.filters = response.data))
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/FUNCTION_TYPE`).then((response: AxiosResponse<any>) => (this.filters = response.data))
             },
             showForm(selectedFunction: iFunction | null) {
                 this.selectedFunction = selectedFunction
@@ -95,7 +95,7 @@
                 this.loading = true
                 let reponseOk = false as any
                 await this.$http
-                    .delete(process.env.VUE_APP_API_PATH + `1.0/functioncatalog/${functionId}`)
+                    .delete(import.meta.env.VUE_APP_API_PATH + `1.0/functioncatalog/${functionId}`)
                     .then(() => {
                         reponseOk = true
                         this.$store.commit('setInfo', {
@@ -148,7 +148,7 @@
                 this.loading = false
             },
             async loadDatasets() {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/`).then((response: AxiosResponse<any>) => (this.datasets = response.data.root))
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/`).then((response: AxiosResponse<any>) => (this.datasets = response.data.root))
             }
         }
     })

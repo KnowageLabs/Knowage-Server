@@ -136,7 +136,7 @@ describe('Measure Definition', () => {
 
         await wrapper.vm.deleteMeasure(mockedMeasures[0])
         expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/1/1/deleteRule')
+        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/1/1/deleteRule')
         expect($store.commit).toHaveBeenCalledTimes(1)
     })
     it('calls the correct route when clicking on the add button', async () => {

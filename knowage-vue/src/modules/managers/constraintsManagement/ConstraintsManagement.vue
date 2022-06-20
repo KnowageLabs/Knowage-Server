@@ -92,7 +92,7 @@
                 this.loadCheks()
             },
             async getAllPredefinedChecks() {
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/predefinedChecks`).then((response: AxiosResponse<any>) => {
+                return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/predefinedChecks`).then((response: AxiosResponse<any>) => {
                     this.predefinedChecks = response.data.map((check: any) => {
                         return {
                             checkId: check.checkId,
@@ -109,7 +109,7 @@
                 })
             },
             async getAllCustomChecks() {
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/customChecks`).then((response: AxiosResponse<any>) => {
+                return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/customChecks`).then((response: AxiosResponse<any>) => {
                     this.customChecks = response.data.map((check: any) => {
                         return {
                             checkId: check.checkId,
@@ -145,7 +145,7 @@
                 }
             },
             async getDomainTypes() {
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=CHECK`).then((response: AxiosResponse<any>) => {
+                return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=CHECK`).then((response: AxiosResponse<any>) => {
                     this.domains = response.data
                 })
             },
@@ -159,7 +159,7 @@
             },
             async deleteConstraint(id: number) {
                 await this.$http
-                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/customChecks/' + id)
+                    .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/customChecks/' + id)
                     .then(() => {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.deleteTitle'),

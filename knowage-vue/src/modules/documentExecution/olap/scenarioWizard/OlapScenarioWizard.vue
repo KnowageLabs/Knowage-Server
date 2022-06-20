@@ -149,7 +149,7 @@ export default defineComponent({
         async getAllCubes() {
             const currentContentId = this.hiddenFormDataProp.get('SBI_ARTIFACT_VERSION_ID')
             await this.$http
-                .get(process.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes/${currentContentId}?SBI_EXECUTION_ID=${this.sbiExecutionId}`)
+                .get(import.meta.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes/${currentContentId}?SBI_EXECUTION_ID=${this.sbiExecutionId}`)
                 .then((response: AxiosResponse<any>) => {
                     this.cubes = response.data.map((cube) => ({ name: cube }))
                 })
@@ -159,7 +159,7 @@ export default defineComponent({
         async getAllMeasures() {
             const currentContentId = this.hiddenFormDataProp.get('SBI_ARTIFACT_VERSION_ID')
             await this.$http
-                .get(process.env.VUE_APP_OLAP_PATH + `1.0/designer/measures/${currentContentId}/${this.selectedCube.name}?SBI_EXECUTION_ID=${this.sbiExecutionId}`)
+                .get(import.meta.env.VUE_APP_OLAP_PATH + `1.0/designer/measures/${currentContentId}/${this.selectedCube.name}?SBI_EXECUTION_ID=${this.sbiExecutionId}`)
                 .then((response: AxiosResponse<any>) => {
                     this.measures = response.data.map((cube) => ({ XML_TAG_TEXT_CONTENT: cube }))
                 })

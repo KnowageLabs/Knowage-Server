@@ -137,7 +137,7 @@
             },
             downloadFiles() {
                 this.$http
-                    .post(process.env.VUE_APP_API_PATH + `2.0/resources/files/download`, this.getKeyAndFilenamesObj(), {
+                    .post(import.meta.env.VUE_APP_API_PATH + `2.0/resources/files/download`, this.getKeyAndFilenamesObj(), {
                         responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
 
                         headers: {
@@ -195,7 +195,7 @@
                 this.selectedFiles = []
                 if (this.folder) {
                     await this.$http
-                        .get(process.env.VUE_APP_API_PATH + `2.0/resources/files` + '?key=' + this.folder.key)
+                        .get(import.meta.env.VUE_APP_API_PATH + `2.0/resources/files` + '?key=' + this.folder.key)
                         .then((response: AxiosResponse<any>) => {
                             this.files = response.data
                             this.getBreadcrumbs()
@@ -228,7 +228,7 @@
                 this.loading = true
 
                 this.$http
-                    .delete(process.env.VUE_APP_API_PATH + `2.0/resources/files`, {
+                    .delete(import.meta.env.VUE_APP_API_PATH + `2.0/resources/files`, {
                         headers: {
                             'Content-Type': 'application/json'
                         },

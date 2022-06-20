@@ -96,7 +96,7 @@
                 return formatDate(date, format)
             },
             downloadSnapshot(schedulation: any) {
-                this.url = process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?NEW_SESSION=TRUE&user_id=${this.user?.userUniqueIdentifier}&ACTION_NAME=GET_SNAPSHOT_CONTENT&SNAPSHOT_ID=${schedulation.id}&LIGHT_NAVIGATOR_DISABLED=TRUE&OBJECT_ID=${schedulation.biobjId}`
+                this.url = import.meta.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?NEW_SESSION=TRUE&user_id=${this.user?.userUniqueIdentifier}&ACTION_NAME=GET_SNAPSHOT_CONTENT&SNAPSHOT_ID=${schedulation.id}&LIGHT_NAVIGATOR_DISABLED=TRUE&OBJECT_ID=${schedulation.biobjId}`
                 this.snapshotDialogVisible = true
             },
             deleteSchedulationConfirm(schedulation: iSchedulation) {

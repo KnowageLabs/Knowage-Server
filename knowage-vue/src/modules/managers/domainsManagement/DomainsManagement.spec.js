@@ -103,7 +103,7 @@ describe('Domains Management', () => {
 
         await wrapper.vm.deleteDomain(1)
         expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/' + 1)
+        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/' + 1)
     })
     it("opens empty dialog when the '+' button is clicked", async () => {
         const wrapper = factory()

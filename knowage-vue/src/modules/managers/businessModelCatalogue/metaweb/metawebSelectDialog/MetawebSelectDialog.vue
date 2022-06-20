@@ -113,7 +113,7 @@ export default defineComponent({
                 const urlParams = {} as any
                 if (this.businessModel.tablePrefixLike) urlParams.tablePrefixLike = this.businessModel.tablePrefixLike
                 if (this.businessModel.tablePrefixNotLike) urlParams.tablePrefixNotLike = this.businessModel.tablePrefixNotLike
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, { params: urlParams }).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + url, { params: urlParams }).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
             }
         },
         loadRows() {
@@ -181,7 +181,7 @@ export default defineComponent({
             this.prepareDataForPost(physicalModels, businessModels)
 
             await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/create`, { datasourceId: '' + this.businessModel?.dataSourceId, physicalModels: physicalModels, businessModels: businessModels, modelName: this.businessModel?.name })
+                .post(import.meta.env.VUE_APP_META_API_URL + `/1.0/metaWeb/create`, { datasourceId: '' + this.businessModel?.dataSourceId, physicalModels: physicalModels, businessModels: businessModels, modelName: this.businessModel?.name })
                 .then((response: AxiosResponse<any>) => {
                     this.$emit('metaSelected', response.data)
                 })

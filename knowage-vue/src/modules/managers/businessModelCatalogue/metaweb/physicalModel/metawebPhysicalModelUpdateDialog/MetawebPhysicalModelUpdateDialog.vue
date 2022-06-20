@@ -75,7 +75,7 @@
             async updatePhysicalModel() {
                 this.loading = true
                 await this.$http
-                    .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/updatePhysicalModel`, { tables: this.tables })
+                    .post(import.meta.env.VUE_APP_META_API_URL + `/1.0/metaWeb/updatePhysicalModel`, { tables: this.tables })
                     .then((response: AxiosResponse<any>) => {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.updateTitle'),

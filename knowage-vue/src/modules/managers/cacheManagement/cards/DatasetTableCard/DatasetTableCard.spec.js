@@ -85,7 +85,7 @@ describe('Cache Management Dataset Table', () => {
         await wrapper.vm.cleanAll()
 
         expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee')
+        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee')
         expect($store.commit).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('deleted')
     })
@@ -99,7 +99,7 @@ describe('Cache Management Dataset Table', () => {
         await wrapper.vm.deleteDataset(mockedDatasetMetadata[0].signature)
 
         expect(axios.put).toHaveBeenCalledTimes(1)
-        expect(axios.put).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: ['0b78ecae01d62da1c1604f75086478f9332e1491c677d4353f8c27cee3800c79'] })
+        expect(axios.put).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: ['0b78ecae01d62da1c1604f75086478f9332e1491c677d4353f8c27cee3800c79'] })
         expect($store.commit).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('deleted')
     })

@@ -216,14 +216,14 @@
             },
 
             createGetTabViewDataUrl(dataType: string) {
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${dataType}`)
+                return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${dataType}`)
             },
             createGetKpiDataUrl(dataType: string) {
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${dataType}`)
+                return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${dataType}`)
             },
             async loadSelectedKpi() {
                 if (this.id) {
-                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.version}/loadKpi`).then((response: AxiosResponse<any>) => {
+                    await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.version}/loadKpi`).then((response: AxiosResponse<any>) => {
                         this.selectedKpi = { ...response.data }
                         let definitionFormula = JSON.parse(this.selectedKpi.definition)
                         this.formulaToSave = definitionFormula.formula
@@ -285,7 +285,7 @@
                 })
             },
             async cloneKpi(kpiId, kpiVersion) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/loadKpi`).then((response: AxiosResponse<any>) => {
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/loadKpi`).then((response: AxiosResponse<any>) => {
                     response.data.id = undefined
                     response.data.name = this.$t('kpi.kpiDefinition.copyOf') + response.data.name
 
@@ -320,7 +320,7 @@
                     this.kpiToSave.cardinality = JSON.stringify(this.kpiToSave.cardinality)
                 }
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveKpi', this.kpiToSave)
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveKpi', this.kpiToSave)
                     .then(() => {
                         this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
                         this.kpiToSave.id === undefined ? this.$emit('kpiCreated', this.kpiToSave.name) : this.$emit('kpiUpdated')

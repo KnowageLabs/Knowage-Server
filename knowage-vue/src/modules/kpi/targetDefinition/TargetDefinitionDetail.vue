@@ -98,7 +98,7 @@
             async loadTarget() {
                 this.loading = true
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + this.id + '/loadTarget')
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + this.id + '/loadTarget')
                     .then((response: AxiosResponse<any>) => {
                         this.target = {
                             id: this.clone == 'true' ? null : response.data.id,
@@ -127,7 +127,7 @@
                 this.loadingAllKpi = true
                 this.filteredKpi = []
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi')
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi')
                     .then(
                         (response: AxiosResponse<any>) =>
                             (this.filteredKpi = response.data
@@ -148,7 +148,7 @@
                     .finally(() => (this.loadingAllKpi = false))
             },
             async loadCategory() {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/listByCode/KPI_TARGET_CATEGORY').then((response: AxiosResponse<any>) => (this.categories = response.data))
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/listByCode/KPI_TARGET_CATEGORY').then((response: AxiosResponse<any>) => (this.categories = response.data))
             },
             async saveTemplate() {
                 if (this.kpi.length < 1) {
@@ -164,7 +164,7 @@
             },
             async handleSubmit() {
                 this.categoryDialogVisiable = false
-                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/saveTarget'
+                let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/saveTarget'
 
                 this.target.values = this.kpi.map((kpi: iValues) => {
                     return {

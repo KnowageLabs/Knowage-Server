@@ -92,9 +92,9 @@ jest.mock('axios')
 const $http = {
     get: axios.get.mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/internationalization/languages`:
+            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/internationalization/languages`:
                 return Promise.resolve({ data: mockedLanguages })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/i18nMessages/internationalization/?currLanguage=en-US`:
+            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/i18nMessages/internationalization/?currLanguage=en-US`:
                 return Promise.resolve({ data: mockedMessages })
             default:
                 return Promise.resolve({ data: [] })

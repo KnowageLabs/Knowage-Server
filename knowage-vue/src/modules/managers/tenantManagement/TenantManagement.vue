@@ -81,11 +81,11 @@
         },
         methods: {
             loadData(dataType: string) {
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`).finally(() => (this.loading = false))
+                return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`).finally(() => (this.loading = false))
             },
             async getLicences() {
                 return this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license`)
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license`)
                     .then((response: AxiosResponse<any>) => {
                         var host = response.data.hosts[0].hostName
                         var licenses = response.data.licenses[host]
@@ -109,7 +109,7 @@
                 })
             },
             async deleteTenant(selectedTenant: Object) {
-                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant'
+                let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant'
                 await this.$http.delete(url, { data: selectedTenant }).then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),

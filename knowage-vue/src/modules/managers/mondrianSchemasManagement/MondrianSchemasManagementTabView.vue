@@ -134,13 +134,13 @@
                 }
             },
             async loadAllUsers() {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/users`).then((response: AxiosResponse<any>) => (this.allUsers = response.data))
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/users`).then((response: AxiosResponse<any>) => (this.allUsers = response.data))
             },
             async loadSelectedSchema() {
                 this.loading = true
                 if (this.id) {
-                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.id}`).then((response: AxiosResponse<any>) => (this.selectedSchema = response.data))
-                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/${this.id}`).then((response: any) => (this.wfSelectedUserList = response.data.errors ? [] : response.data))
+                    await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.id}`).then((response: AxiosResponse<any>) => (this.selectedSchema = response.data))
+                    await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/${this.id}`).then((response: any) => (this.wfSelectedUserList = response.data.errors ? [] : response.data))
                 } else {
                     this.selectedSchema = {} as iSchema
                     this.wfSelectedUserList = []
@@ -166,7 +166,7 @@
                     return
                 }
                 this.selectedSchema.type = 'MONDRIAN_SCHEMA'
-                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/`
+                let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/`
                 if (this.selectedSchema.id) {
                     url += this.selectedSchema.id
                 }
@@ -202,7 +202,7 @@
                 this.touched = false
             },
             async updateWorkflow(schemaId) {
-                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/update`
+                let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/workflow/update`
                 await this.$http.put(url, { modelId: schemaId, workflowArr: this.availableUsersList[1] }, { headers: { Accept: 'application/json, text/plain, */*' } }).then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('managers.mondrianSchemasManagement.toast.workflow.updated'),
@@ -216,7 +216,7 @@
                 }
                 var formData = new FormData()
                 formData.append('file', this.versionToSave)
-                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.selectedSchema.id}` + '/versions'
+                let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.selectedSchema.id}` + '/versions'
                 await this.$http.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((response: AxiosResponse<any>) => {
                     if (response.data.errors) {
                         this.$store.commit('setError', { title: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.error'), msg: response.data.errors })

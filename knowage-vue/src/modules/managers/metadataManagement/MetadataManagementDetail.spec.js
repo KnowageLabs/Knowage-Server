@@ -61,7 +61,7 @@ describe('Metadata Management Detail', () => {
         wrapper.vm.handleSubmit()
         await flushPromises()
         expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata', mockedMetadata)
+        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata', mockedMetadata)
         expect($store.commit).toHaveBeenCalledTimes(1)
 
         const mockedMetadataUpdate = { ...mockedMetadata, id: 1 }
@@ -69,7 +69,7 @@ describe('Metadata Management Detail', () => {
         wrapper.vm.handleSubmit()
         await flushPromises()
         expect(axios.post).toHaveBeenCalledTimes(2)
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata', mockedMetadata)
+        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata', mockedMetadata)
         expect($store.commit).toHaveBeenCalledTimes(2)
     })
     it('shows three different metadata types', () => {

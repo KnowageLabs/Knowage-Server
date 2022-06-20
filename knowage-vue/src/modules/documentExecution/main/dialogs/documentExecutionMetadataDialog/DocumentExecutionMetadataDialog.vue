@@ -147,7 +147,7 @@ export default defineComponent({
                 formData.append('file', this.uploadedFiles[meta.id])
                 formData.append('fileName', this.uploadedFiles[meta.id].name)
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/uploadfilemetadata`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/uploadfilemetadata`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
                     .then(() => {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.uploadFile'),

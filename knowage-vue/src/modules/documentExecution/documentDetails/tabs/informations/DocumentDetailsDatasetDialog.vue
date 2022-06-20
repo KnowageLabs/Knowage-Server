@@ -60,7 +60,7 @@
             async getAllDatasets() {
                 this.loading = true
                 this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/basicinfo/all/`)
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/basicinfo/all/`)
                     .then((response: AxiosResponse<any>) => (this.datasets = response.data))
                     .finally(() => (this.loading = false))
             }

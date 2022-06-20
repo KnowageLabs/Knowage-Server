@@ -67,7 +67,7 @@
 			async loadSelectedNews() {
 				this.loading = true
 				if (this.id) {
-					await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/news/${this.id}?isTechnical=true`).then((response: AxiosResponse<any>) => (this.selectedNews = { ...response.data, expirationDate: new Date(response.data.expirationDate) }))
+					await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/news/${this.id}?isTechnical=true`).then((response: AxiosResponse<any>) => (this.selectedNews = { ...response.data, expirationDate: new Date(response.data.expirationDate) }))
 				} else {
 					this.selectedNews = {
 						type: 1,
@@ -79,7 +79,7 @@
 			async loadRoles() {
 				this.loading = true
 				await this.$http
-					.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles')
+					.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles')
 					.then((response: AxiosResponse<any>) => {
 						this.roleList = response.data
 					})
@@ -94,7 +94,7 @@
 					this.operation = 'update'
 				}
 
-				await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...this.selectedNews, expirationDate: new Date(this.selectedNews.expirationDate as string).valueOf() }).then(() => {
+				await this.$http.post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...this.selectedNews, expirationDate: new Date(this.selectedNews.expirationDate as string).valueOf() }).then(() => {
 					this.$store.commit('setInfo', {
 						title: this.$t(this.newsManagementDetailDescriptor.operation[this.operation].toastTitle),
 						msg: this.$t(this.newsManagementDetailDescriptor.operation.success)

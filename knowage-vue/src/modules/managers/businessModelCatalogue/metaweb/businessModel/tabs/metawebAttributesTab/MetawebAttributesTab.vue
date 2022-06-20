@@ -120,7 +120,7 @@ export default defineComponent({
             this.loading = true
             const postData = { data: { businessModelUniqueName: this.businessModel?.uniqueName, index: event.dragIndex, direction: event.dropIndex - event.dragIndex }, diff: generate(this.observer) }
             await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/moveBusinessColumn`, postData)
+                .post(import.meta.env.VUE_APP_META_API_URL + `/1.0/metaWeb/moveBusinessColumn`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = applyPatch(this.meta, response.data).newDocument
                 })
@@ -178,7 +178,7 @@ export default defineComponent({
             const postData = { data: { businessColumnUniqueName: attribute.uniqueName, businessModelUniqueName: this.businessModel?.uniqueName }, diff: generate(this.observer) }
 
             await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/deleteBusinessColumn`, postData)
+                .post(import.meta.env.VUE_APP_META_API_URL + `/1.0/metaWeb/deleteBusinessColumn`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = applyPatch(this.meta, response.data).newDocument
 
@@ -218,7 +218,7 @@ export default defineComponent({
             })
             const postData = { data: { columns: tempColumns }, diff: generate(this.observer) }
             await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/createBusinessColumn`, postData)
+                .post(import.meta.env.VUE_APP_META_API_URL + `/1.0/metaWeb/createBusinessColumn`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = applyPatch(this.meta, response.data).newDocument
                     this.unusedFieldDialogVisible = false

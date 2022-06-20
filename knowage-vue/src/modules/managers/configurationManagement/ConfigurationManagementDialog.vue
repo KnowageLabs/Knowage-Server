@@ -179,7 +179,7 @@
                 if (this.v$.$invalid) {
                     return
                 }
-                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs'
+                let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs'
                 if (this.configuration.id) {
                     this.operation = 'update'
                     url += '/' + this.configuration.id

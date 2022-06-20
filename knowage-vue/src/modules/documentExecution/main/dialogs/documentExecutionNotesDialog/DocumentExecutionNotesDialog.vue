@@ -111,7 +111,7 @@
                 this.loading = true
                 this.notes = []
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}`)
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}`)
                     .then((response: AxiosResponse<any>) => {
                         this.notes = response.data?.map((note: iNote) => {
                             return { ...note, type: note.public ? 'Public' : 'Private' }
@@ -128,7 +128,7 @@
             async saveNote() {
                 this.loading = true
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}`, { public: this.selectedNote.type === 'Public', content: this.selectedNote.content, id: this.selectedNote.id })
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}`, { public: this.selectedNote.type === 'Public', content: this.selectedNote.content, id: this.selectedNote.id })
                     .then(async (response: AxiosResponse<any>) => {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.createTitle'),
@@ -152,7 +152,7 @@
             async onDeleteNote(note: iNote) {
                 this.loading = true
                 await this.$http
-                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}/${note.id}`)
+                    .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}/${note.id}`)
                     .then(async () => {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.deleteTitle'),
@@ -173,7 +173,7 @@
             async exportNotes(type: string) {
                 this.loading = true
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}/download/${type}`, {
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}/download/${type}`, {
                         headers: {
                             Accept: 'application/json, text/plain, */*'
                         }

@@ -122,12 +122,12 @@ export default defineComponent({
         async getAllTemplates() {
             this.loading = true
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates`)
+                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates`)
                 .then((response: AxiosResponse<any>) => (this.listOfTemplates = response.data as iTemplate[]))
                 .finally(() => (this.loading = false))
         },
         async getSelectedTemplate(templateId) {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/selected/${templateId}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then((response: AxiosResponse<any>) => {
+            this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/selected/${templateId}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then((response: AxiosResponse<any>) => {
                 this.selectedTemplateFileType == 'sbicockpit' || this.selectedTemplateFileType == 'json' || this.selectedTemplateFileType == 'sbigeoreport' ? (this.selectedTemplateContent = JSON.stringify(response.data, null, 4)) : (this.selectedTemplateContent = response.data)
             })
         },
@@ -190,7 +190,7 @@ export default defineComponent({
             var formData = new FormData()
             formData.append('file', uploadedFile)
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates`, formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates`, formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
                     this.getAllTemplates()
@@ -200,7 +200,7 @@ export default defineComponent({
         },
         setActiveTemplate(template) {
             this.$http
-                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}`, { headers: { 'X-Disable-Errors': 'true' } })
+                .put(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}`, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.success'), msg: this.$t('documentExecution.documentDetails.history.activeOk') })
                     this.getAllTemplates()
@@ -210,7 +210,7 @@ export default defineComponent({
         async downloadTemplate(template) {
             let fileType = template.name.split('.')
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}/${fileType[fileType.length - 1]}/file`, {
+                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}/${fileType[fileType.length - 1]}/file`, {
                     headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9', 'X-Disable-Errors': 'true' }
                 })
                 .then((response: AxiosResponse<any>) => {
@@ -245,7 +245,7 @@ export default defineComponent({
         },
         async deleteTemplate(template) {
             await this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                     this.getAllTemplates()

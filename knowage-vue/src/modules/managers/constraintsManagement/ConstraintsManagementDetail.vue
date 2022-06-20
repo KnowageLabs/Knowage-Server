@@ -201,7 +201,7 @@
                 })
                 this.constraint.valueTypeId = selectedDomain[0].VALUE_ID
 
-                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/customChecks/'
+                let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/customChecks/'
                 if (this.constraint.checkId) {
                     this.operation = 'update'
                     url += this.constraint.checkId

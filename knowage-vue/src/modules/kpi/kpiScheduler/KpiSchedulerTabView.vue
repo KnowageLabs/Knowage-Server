@@ -146,7 +146,7 @@
                 this.loading = false
             },
             async loadSchedule() {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/loadSchedulerKPI`).then((response: AxiosResponse<any>) => (this.selectedSchedule = response.data))
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/loadSchedulerKPI`).then((response: AxiosResponse<any>) => (this.selectedSchedule = response.data))
                 if (this.selectedSchedule.frequency.cron) {
                     this.selectedSchedule.frequency.cron = JSON.parse(this.selectedSchedule.frequency.cron)
                     this.selectedSchedule.frequency.endTime = ''
@@ -157,13 +157,13 @@
                 await this.loadDomainsByCode('KPI_PLACEHOLDER_FUNC').then((response: AxiosResponse<any>) => (this.domainsKpiPlaceholderFunction = response.data))
             },
             loadDomainsByCode(code: string) {
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${code}`)
+                return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${code}`)
             },
             async loadLovs() {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all/').then((response: AxiosResponse<any>) => (this.lovs = response.data))
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all/').then((response: AxiosResponse<any>) => (this.lovs = response.data))
             },
             async loadKpiList() {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi').then((response: AxiosResponse<any>) => (this.kpiList = response.data))
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi').then((response: AxiosResponse<any>) => (this.kpiList = response.data))
             },
             setTouched() {
                 this.touched = true
@@ -210,7 +210,7 @@
                 }
             },
             async loadFilters() {
-                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listPlaceholderByKpi', this.kpiIds).then((response: AxiosResponse<any>) => (this.filters = response.data))
+                await this.$http.post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listPlaceholderByKpi', this.kpiIds).then((response: AxiosResponse<any>) => (this.filters = response.data))
             },
             addMissingPlaceholder() {
                 this.formatedFilters = []
@@ -330,7 +330,7 @@
                 }
 
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveSchedulerKPI', this.selectedSchedule)
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveSchedulerKPI', this.selectedSchedule)
                     .then((response: AxiosResponse<any>) => {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.' + this.operation + 'Title'),

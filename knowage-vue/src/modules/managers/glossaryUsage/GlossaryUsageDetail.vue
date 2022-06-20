@@ -89,7 +89,7 @@ export default defineComponent({
                 bness_cls: { selected: this.selectedBusinessClasses, search: '', item_number: 9223372036854775807, page: 1, GLOSSARY_ID: this.glossaryId }
             }
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/loadNavigationItem', postData)
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/loadNavigationItem', postData)
                 .then((response: AxiosResponse<any>) => {
                     this.formatNavigationItems(response.data)
                     if (response.data.word) {
@@ -147,10 +147,10 @@ export default defineComponent({
         async showDocumentInfo(document: iNavigationTableItem) {
             this.loading = true
             let tempDocument = null as any
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${document.label}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${document.label}`).then((response: AxiosResponse<any>) => (tempDocument = response.data))
 
             if (tempDocument) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${tempDocument.id}/roles`).then((response: AxiosResponse<any>) => (tempDocument.access = response.data))
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${tempDocument.id}/roles`).then((response: AxiosResponse<any>) => (tempDocument.access = response.data))
                 this.$emit('infoClicked', { data: tempDocument, type: 'document' })
             }
             this.loading = false
@@ -193,7 +193,7 @@ export default defineComponent({
             this.showModelColumn = false
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument?Page=1&ItemPerPage=&label=&scope=GLOSSARY')
+                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument?Page=1&ItemPerPage=&label=&scope=GLOSSARY')
                 .then((response: AxiosResponse<any>) => {
                     response.data.item.forEach((el: any) =>
                         this.linkTableItems.push({
@@ -214,7 +214,7 @@ export default defineComponent({
             this.showModelColumn = false
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasets/?asPagedList=true&Page=1&ItemPerPage=&label=')
+                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasets/?asPagedList=true&Page=1&ItemPerPage=&label=')
                 .then((response: AxiosResponse<any>) => {
                     response.data.item.forEach((el: any) => {
                         this.linkTableItems.push({
@@ -237,7 +237,7 @@ export default defineComponent({
             this.showModelColumn = true
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/metaBC/listMetaBC?Page=1&ItemPerPage=&label=')
+                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/metaBC/listMetaBC?Page=1&ItemPerPage=&label=')
                 .then((response: AxiosResponse<any>) => {
                     response.data.forEach((el: any) =>
                         this.linkTableItems.push({
@@ -259,7 +259,7 @@ export default defineComponent({
             this.showModelColumn = false
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/metaTable/listMetaTable?Page=1&ItemPerPage=&label=')
+                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/metaTable/listMetaTable?Page=1&ItemPerPage=&label=')
                 .then((response: AxiosResponse<any>) => {
                     response.data.forEach((el: any) =>
                         this.linkTableItems.push({
@@ -324,7 +324,7 @@ export default defineComponent({
         async loadDocumentWords(document: iLinkTableItem) {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getDocumentInfo?DOCUMENT_ID=${document.id}`)
+                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getDocumentInfo?DOCUMENT_ID=${document.id}`)
                 .then((response: AxiosResponse<any>) => (this.selectedLinkItemWords[document.id] = response.data.word))
                 .finally(() => (this.loading = false))
         },
@@ -377,13 +377,13 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         loadDatasetInfo(dataset: any) {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getDataSetInfo?DATASET_ID=${dataset.id}&ORGANIZATION=${dataset.organization}`)
+            return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getDataSetInfo?DATASET_ID=${dataset.id}&ORGANIZATION=${dataset.organization}`)
         },
         loadBusinessClassInfo(businessClass: any) {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getMetaBcInfo?META_BC_ID=${businessClass.id}`)
+            return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getMetaBcInfo?META_BC_ID=${businessClass.id}`)
         },
         loadTableInfo(table: any) {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getMetaTableInfo?META_TABLE_ID=${table.id}`)
+            return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getMetaTableInfo?META_TABLE_ID=${table.id}`)
         },
         async onLinkTableClose() {
             this.linkTableVisible = false

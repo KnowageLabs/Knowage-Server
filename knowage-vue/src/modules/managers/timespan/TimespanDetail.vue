@@ -63,7 +63,7 @@ export default defineComponent({
 
             if (this.id) {
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/loadTimespan?ID=${this.id}`)
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/loadTimespan?ID=${this.id}`)
                     .then((response: AxiosResponse<any>) => {
                         this.timespan = response.data
                         if (this.timespan?.type === 'temporal') this.formatIntervalDates()
@@ -128,7 +128,7 @@ export default defineComponent({
 
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/saveTimespan`, timespan)
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/saveTimespan`, timespan)
                 .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.' + this.operation + 'Title'),

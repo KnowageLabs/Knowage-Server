@@ -201,17 +201,17 @@
                 ]
 
                 await this.$http
-                    .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/conf', { configurations: configurations })
+                    .put(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/conf', { configurations: configurations })
                     .then()
                     .catch((error) => {
                         console.log(error)
                     })
             },
             async saveDatasource() {
-                await this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources', { ...this.datasource, writeDefault: true })
+                await this.$http.put(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources', { ...this.datasource, writeDefault: true })
             },
             async removeCache() {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/remove')
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/remove')
             },
             onInputNumberChange(field: string, value: number) {
                 this.settings[field] = value

@@ -80,7 +80,7 @@
             async loadAllSchedules() {
                 this.loading = true
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listSchedulerKPI')
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listSchedulerKPI')
                     .then((response: AxiosResponse<any>) => {
                         this.schedulerList = response.data
                         this.schedulerList.sort((a: iKpiSchedule, b: iKpiSchedule) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1))
@@ -136,7 +136,7 @@
                 }
                 const query = '?jobGroup=KPI_SCHEDULER_GROUP&triggerGroup=KPI_SCHEDULER_GROUP&jobName=' + schedule.id + '&triggerName=' + schedule.id
                 const action = schedule.jobStatus?.toUpperCase() === 'SUSPENDED' ? 'resumeTrigger' : 'pauseTrigger'
-                this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'scheduler/' + action + query).then((response: AxiosResponse<any>) => {
+                this.$http.post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + 'scheduler/' + action + query).then((response: AxiosResponse<any>) => {
                     if (response.data.resp === 'ok') {
                         schedule.jobStatus = schedule.jobStatus === 'SUSPENDED' ? 'ACTIVE' : 'SUSPENDED'
                     }
@@ -151,7 +151,7 @@
                 })
             },
             async deleteSchedule(scheduleId: number) {
-                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${scheduleId}/deleteKpiScheduler`).then(() => {
+                await this.$http.delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${scheduleId}/deleteKpiScheduler`).then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')

@@ -428,7 +428,7 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
                 .then((response: AxiosResponse<any>) => (this.parameterPopUpData = response.data))
                 .catch((error: any) => console.log('ERROR: ', error))
             this.loading = false
@@ -496,7 +496,7 @@ export default defineComponent({
             const postData = { ...viewpoint, OBJECT_LABEL: this.document?.label, ROLE: role, VIEWPOINT: this.getParameterValues() }
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/addViewpoint`, postData)
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/addViewpoint`, postData)
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.createTitle'),
@@ -511,7 +511,7 @@ export default defineComponent({
             const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
             if (!role) return
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/getViewpoints?label=${this.document?.label}&role=${role}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/getViewpoints?label=${this.document?.label}&role=${role}`).then((response: AxiosResponse<any>) => {
                 this.viewpoints = response.data.viewpoints
                 this.savedParametersDialogVisible = true
             })
@@ -569,7 +569,7 @@ export default defineComponent({
         async deleteViewpoint(viewpoint: any) {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/deleteViewpoint`, { VIEWPOINT: '' + viewpoint.vpId })
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/deleteViewpoint`, { VIEWPOINT: '' + viewpoint.vpId })
                 .then(async () => {
                     this.removeViewpoint(viewpoint)
                     this.$store.commit('setInfo', {

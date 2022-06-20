@@ -27,7 +27,7 @@
                 if (!this.url) {
                     this.$router.push('/')
                 } else {
-                    this.completeUrl = (this.externalLink ? '' : process.env.VUE_APP_HOST_URL || window.location.origin) + this.url
+                    this.completeUrl = (this.externalLink ? '' : import.meta.env.VUE_APP_HOST_URL || window.location.origin) + this.url
                 }
             },
             

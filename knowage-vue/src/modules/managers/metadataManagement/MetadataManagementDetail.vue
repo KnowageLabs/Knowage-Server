@@ -190,7 +190,7 @@
                     this.operation = 'update'
                 }
 
-                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata', this.metadata).then(() => {
+                await this.$http.post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata', this.metadata).then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t(this.metadataManagementDescriptor.operation[this.operation].toastTitle),
                         msg: this.$t(this.metadataManagementDescriptor.operation.success)

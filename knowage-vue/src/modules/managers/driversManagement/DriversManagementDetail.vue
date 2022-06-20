@@ -85,27 +85,27 @@ export default defineComponent({
 
     methods: {
         async getTypes() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'domains/listValueDescriptionByType?DOMAIN_TYPE=PAR_TYPE').then((response: AxiosResponse<any>) => (this.types = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + 'domains/listValueDescriptionByType?DOMAIN_TYPE=PAR_TYPE').then((response: AxiosResponse<any>) => (this.types = response.data))
         },
         async getModes() {
             if (this.driver.id) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/' + this.driver.id + '/modes/').then((response: AxiosResponse<any>) => (this.modes = response.data))
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/' + this.driver.id + '/modes/').then((response: AxiosResponse<any>) => (this.modes = response.data))
             } else this.modes = []
         },
         async getRoles() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles').then((response: AxiosResponse<any>) => (this.roles = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles').then((response: AxiosResponse<any>) => (this.roles = response.data))
         },
         async getConstraints() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/checks').then((response: AxiosResponse<any>) => (this.constraints = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/checks').then((response: AxiosResponse<any>) => (this.constraints = response.data))
         },
         async getselectionTypes() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'domains/listValueDescriptionByType?DOMAIN_TYPE=SELECTION_TYPE').then((response: AxiosResponse<any>) => (this.selectionTypes = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + 'domains/listValueDescriptionByType?DOMAIN_TYPE=SELECTION_TYPE').then((response: AxiosResponse<any>) => (this.selectionTypes = response.data))
         },
         async getLayers() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDriversee/layers').then((response: AxiosResponse<any>) => (this.layers = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDriversee/layers').then((response: AxiosResponse<any>) => (this.layers = response.data))
         },
         async getLovs() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all').then((response: AxiosResponse<any>) => (this.lovs = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all').then((response: AxiosResponse<any>) => (this.lovs = response.data))
         },
         loadAll() {
             this.getTypes()
@@ -152,7 +152,7 @@ export default defineComponent({
             this.formatDriver()
             this.formatUseMode()
 
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/'
+            let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/'
             if (this.driver.id) {
                 this.operation = 'update'
                 url += this.driver.id
@@ -176,7 +176,7 @@ export default defineComponent({
 
             for (let i = 0; i < this.modesToSave.length; i++) {
                 const mode = this.modesToSave[i]
-                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/'
+                let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/'
                 mode.id = this.driver.id
                 if (mode.useID != -1) {
                     this.useModeOperation = 'update'

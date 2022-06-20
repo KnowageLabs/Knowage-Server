@@ -53,7 +53,7 @@ describe('Domains Management Dialog', () => {
         formWrapper.vm.handleSubmit()
         await flushPromises()
         expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains', mockedDomain)
+        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains', mockedDomain)
         // shows success info if data is saved
         expect($store.commit).toHaveBeenCalledTimes(1)
 
@@ -62,7 +62,7 @@ describe('Domains Management Dialog', () => {
         formWrapper.vm.handleSubmit()
         await flushPromises()
         expect(axios.put).toHaveBeenCalledTimes(1)
-        expect(axios.put).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/1', mockedDomain)
+        expect(axios.put).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/1', mockedDomain)
         expect($store.commit).toHaveBeenCalledTimes(2)
     })
 })

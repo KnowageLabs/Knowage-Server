@@ -37,7 +37,7 @@
         methods: {
             async loadJobs() {
                 this.loading = true
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/listAllJobs`).then((response: AxiosResponse<any>) => (this.jobs = response.data.root))
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/listAllJobs`).then((response: AxiosResponse<any>) => (this.jobs = response.data.root))
                 this.loading = false
             },
             viewOldSchedulations(job: IPackage) {

@@ -129,7 +129,7 @@ export default defineComponent({
         },
         async getAllDatasets() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/mydatanoparams`).then((response: AxiosResponse<any>) => (this.availableDatasets = response.data.root))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/mydatanoparams`).then((response: AxiosResponse<any>) => (this.availableDatasets = response.data.root))
             this.loading = false
         },
         closeDialog() {

@@ -128,7 +128,7 @@ describe('Timespan Detail', () => {
         await flushPromises()
 
         expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/saveTimespan`, mockedTimespans[0])
+        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/saveTimespan`, mockedTimespans[0])
         expect($store.commit).toHaveBeenCalledTimes(1)
     })
 })

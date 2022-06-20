@@ -79,7 +79,7 @@
 				this.loading = true
 				this.newsList = []
 				await this.$http
-					.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news')
+					.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news')
 					.then((response: AxiosResponse<any>) => {
 						response.data.map((news: iNews) => {
 							this.newsList.push({ ...news, newsType: this.setNewsType(news.type) })
@@ -115,7 +115,7 @@
 				})
 			},
 			async deleteNews(news) {
-				await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/' + news.id).then(() => {
+				await this.$http.delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/' + news.id).then(() => {
 					this.$store.commit('setInfo', {
 						title: this.$t('common.toast.deleteTitle'),
 						msg: this.$t('common.toast.deleteSuccess')

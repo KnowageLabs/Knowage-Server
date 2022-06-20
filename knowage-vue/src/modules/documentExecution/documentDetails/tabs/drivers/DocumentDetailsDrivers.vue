@@ -216,7 +216,7 @@ export default defineComponent({
             this.loading = true
             if (this.selectedDocument?.id) {
                 this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/drivers`)
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/drivers`)
                     .then((response: AxiosResponse<any>) => (this.document.drivers = response.data))
                     .finally(() => (this.loading = false))
             }
@@ -275,7 +275,7 @@ export default defineComponent({
         async movePriority(driver, direction) {
             direction == 'up' ? (driver.priority -= 1) : (driver.priority += 1)
             await this.$http
-                .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${driver.id}`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                .put(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${driver.id}`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     this.$store.commit('setInfo', { title: 'Succes', msg: 'Driver priority changed' })
                     this.getDocumentDrivers()
@@ -293,7 +293,7 @@ export default defineComponent({
         async deleteDriver(driverToDelete) {
             if (driverToDelete.id) {
                 await this.$http
-                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.document.id}/drivers/${driverToDelete.id}`, { headers: { 'X-Disable-Errors': 'true' } })
+                    .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.document.id}/drivers/${driverToDelete.id}`, { headers: { 'X-Disable-Errors': 'true' } })
                     .then(() => {
                         let deletedDriver = this.document.drivers.findIndex((param) => param.id === driverToDelete.id)
                         this.document.drivers.splice(deletedDriver, 1)

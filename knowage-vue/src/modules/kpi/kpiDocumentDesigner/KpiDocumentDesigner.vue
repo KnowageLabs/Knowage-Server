@@ -84,16 +84,16 @@ export default defineComponent({
             this.loading = false
         },
         async loadKpiList() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpi`).then((response: AxiosResponse<any>) => (this.kpiList = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpi`).then((response: AxiosResponse<any>) => (this.kpiList = response.data))
         },
         async loadScorecards() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/listScorecard`).then((response: AxiosResponse<any>) => (this.scorecards = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/listScorecard`).then((response: AxiosResponse<any>) => (this.scorecards = response.data))
         },
         async loadKpi() {
             this.loading = true
             if (this.id) {
                 await this.$http
-                    .post(process.env.VUE_APP_KPI_ENGINE_API_URL + `1.0/kpisTemplate/getKpiTemplate`, { id: this.id })
+                    .post(import.meta.env.VUE_APP_KPI_ENGINE_API_URL + `1.0/kpisTemplate/getKpiTemplate`, { id: this.id })
                     .then((response: AxiosResponse<any>) => {
                         this.kpiDesigner = response.data.templateContent ? JSON.parse(response.data.templateContent) : response.data
 
@@ -190,7 +190,7 @@ export default defineComponent({
                 action: 'DOC_SAVE'
             }
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/saveDocument`, postData)
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/saveDocument`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.createTitle'),
@@ -208,7 +208,7 @@ export default defineComponent({
             postData.append('jsonTemplate', JSON.stringify(this.getFormattedKpiDesigner()))
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/saveKpiTemplate`, postData, {
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/saveKpiTemplate`, postData, {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                         Accept: 'application/json, text/plain, */*'

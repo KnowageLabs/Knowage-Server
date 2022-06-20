@@ -113,7 +113,7 @@ export default defineComponent({
             this.loading = true
             this.$emit('loading', true)
             await axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.documentLabel}/parameters/${this.parameter?.id}/values?role=${this.parameter?.role}`)
+                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.documentLabel}/parameters/${this.parameter?.id}/values?role=${this.parameter?.role}`)
                 .then((response) => (this.parameterValues = response.data))
                 .catch(() => {})
             this.$emit('loading', false)

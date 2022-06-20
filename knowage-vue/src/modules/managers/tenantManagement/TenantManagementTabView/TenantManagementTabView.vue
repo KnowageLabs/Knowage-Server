@@ -104,7 +104,7 @@ export default defineComponent({
     },
     methods: {
         loadData(dataType: string) {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`)
+            return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`)
         },
 
         async loadAllData() {
@@ -159,7 +159,7 @@ export default defineComponent({
             if (this.v$.$invalid) {
                 return
             }
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant/save'
+            let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant/save'
 
             await this.$http.post(url, this.createTenantToSave()).then((response: AxiosResponse<any>) => {
                 if (this.selectedTenant) {

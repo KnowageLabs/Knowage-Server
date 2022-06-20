@@ -93,7 +93,7 @@
                     let checkedAsString = this.checked ? 'true' : 'false'
                     formData.append('extract', checkedAsString)
                     await this.$http
-                        .post(process.env.VUE_APP_API_PATH + '2.0/resources/files/uploadFile', formData, {
+                        .post(import.meta.env.VUE_APP_API_PATH + '2.0/resources/files/uploadFile', formData, {
                             headers: {
                                 'Content-Type': 'multipart/form-data'
                             }

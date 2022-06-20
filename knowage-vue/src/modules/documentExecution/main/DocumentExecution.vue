@@ -189,7 +189,7 @@ export default defineComponent({
         url(): string {
             if (this.document) {
                 return (
-                    process.env.VUE_APP_HOST_URL +
+                    import.meta.env.VUE_APP_HOST_URL +
                     `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${this.document.id}&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=false&MENU_PARAMETERS=%7B%7D&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=${this.sbiExecutionId}&OBJECT_NAME=${this.document.name}&CROSS_PARAMETER=null`
                 )
             } else {
@@ -370,7 +370,7 @@ export default defineComponent({
         },
         async openMetadata() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecutionee/${this.document.id}/documentMetadata`).then((response: AxiosResponse<any>) => (this.metadata = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecutionee/${this.document.id}/documentMetadata`).then((response: AxiosResponse<any>) => (this.metadata = response.data))
             this.metadataDialogVisible = true
             this.loading = false
         },
@@ -385,7 +385,7 @@ export default defineComponent({
             this.loading = true
             this.parameterSidebarVisible = false
             this.schedulationsTableVisible = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshots?id=${this.document.id}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshots?id=${this.document.id}`).then((response: AxiosResponse<any>) => {
                 response.data?.schedulers.forEach((el: any) => this.schedulations.push({ ...el, urlPath: response.data.urlPath }))
             })
             this.loading = false
@@ -394,7 +394,7 @@ export default defineComponent({
             this.loading = true
             this.linkParameters = this.getFormattedParameters()
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/canHavePublicExecutionUrl`, { label: this.document.label })
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/canHavePublicExecutionUrl`, { label: this.document.label })
                 .then((response: AxiosResponse<any>) => {
                     this.embedHTML = embedHTML
                     this.linkInfo = response.data
@@ -452,7 +452,7 @@ export default defineComponent({
             }
         },
         async loadDocument() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.document?.label}`).then((response: AxiosResponse<any>) => (this.document = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.document?.label}`).then((response: AxiosResponse<any>) => (this.document = response.data))
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
 
@@ -484,7 +484,7 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.document.label, role: this.userRole, parameters: this.document.navigationParams ?? {} })
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.document.label, role: this.userRole, parameters: this.document.navigationParams ?? {} })
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
                 .catch((error: any) => {
                     if (error.response?.status === 500) {
@@ -586,7 +586,7 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData)
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.urlData = response.data
                     this.sbiExecutionId = this.urlData?.sbiExecutionId as string
@@ -605,7 +605,7 @@ export default defineComponent({
             await this.sendForm(documentLabel)
         },
         async loadExporters() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
         async sendForm(documentLabel: string | null = null) {
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label) as any
@@ -627,7 +627,7 @@ export default defineComponent({
                 postForm = document.createElement('form')
             }
             postForm.id = 'postForm_' + postObject.params.document
-            postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
+            postForm.action = import.meta.env.VUE_APP_HOST_URL + postObject.url
             postForm.method = 'post'
             postForm.target = tempIndex !== -1 ? 'documentFrame' + tempIndex : documentLabel
             postForm.acceptCharset = 'UTF-8'
@@ -715,7 +715,7 @@ export default defineComponent({
             const postData = { documentId: this.document.id, documentLabel: this.document.label, exportType: 'CSV', parameters: this.getFormattedParametersForCSVExport() }
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/cockpitData`, postData)
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/cockpitData`, postData)
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
@@ -792,7 +792,7 @@ export default defineComponent({
         async getRank() {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documentrating/getvote`, { obj: this.document.id })
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `documentrating/getvote`, { obj: this.document.id })
                 .then((response: AxiosResponse<any>) => (this.documentRank = response.data))
                 .catch((error: any) =>
                     this.$store.commit('setError', {
@@ -806,7 +806,7 @@ export default defineComponent({
             if (newRank) {
                 this.loading = true
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documentrating/vote`, { rating: newRank, obj: this.document.id })
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `documentrating/vote`, { rating: newRank, obj: this.document.id })
                     .then(() =>
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.updateTitle'),
@@ -836,7 +836,7 @@ export default defineComponent({
             )
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecutionee/saveDocumentMetadata`, { id: this.document.id, jsonMeta: jsonMeta })
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecutionee/saveDocumentMetadata`, { id: this.document.id, jsonMeta: jsonMeta })
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.createTitle'),
@@ -856,7 +856,7 @@ export default defineComponent({
             this.loading = true
             const postData = { ...mail, label: this.document.label, docId: this.document.id, userId: this.user.userId, parameters: this.getFormattedParameters() }
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecutionmail/sendMail`, postData)
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecutionmail/sendMail`, postData)
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.createTitle'),
@@ -875,7 +875,7 @@ export default defineComponent({
         async onDeleteSchedulation(schedulation: any) {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/deleteSnapshot`, { SNAPSHOT: '' + schedulation.id })
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/deleteSnapshot`, { SNAPSHOT: '' + schedulation.id })
                 .then(async () => {
                     this.removeSchedulation(schedulation)
                     this.$store.commit('setInfo', {
@@ -918,7 +918,7 @@ export default defineComponent({
             let temp = {} as any
 
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
             if (temp.length > 1) {
@@ -960,7 +960,7 @@ export default defineComponent({
             if (!crossNavigationDocument || !crossNavigationDocument.document) return
             const parameters = encodeURI(JSON.stringify(navigationParams))
             const url =
-                process.env.VUE_APP_HOST_URL +
+                import.meta.env.VUE_APP_HOST_URL +
                 `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${crossNavigationDocument.document.id}&OBJECT_LABEL=${crossNavigationDocument.document.label}&SELECTED_ROLE=${this.sessionRole}&SBI_EXECUTION_ID=null&OBJECT_NAME=${crossNavigationDocument.document.name}&CROSS_PARAMETER=${parameters}`
             window.open(url, '_blank', `toolbar=0,status=0,menubar=0,width=${popupOptions.width || '800'},height=${popupOptions.height || '600'}`)
         },
@@ -1017,7 +1017,7 @@ export default defineComponent({
         async executeOLAPCrossNavigation(crossNavigationParams: any) {
             let temp = {} as any
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
             if (!temp || temp.length === 0) {
@@ -1064,7 +1064,7 @@ export default defineComponent({
         async addToWorkspace() {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.document.id}`, {}, { headers: { 'X-Disable-Errors': 'true' } })
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.document.id}`, {}, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
@@ -1080,7 +1080,7 @@ export default defineComponent({
             this.loading = false
         },
         async loadUserConfig() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
                 if (response.data) {
                     this.sessionEnabled = response.data['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
                     this.dateFormat = response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === '%Y-%m-%d' ? 'dd/MM/yyyy' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']

@@ -78,7 +78,7 @@ export default defineComponent({
     },
     data() {
         return {
-            apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
+            apiUrl: import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
             load: false as Boolean,
             relatedDocumentsList: [] as iDocument[],
             filters: {

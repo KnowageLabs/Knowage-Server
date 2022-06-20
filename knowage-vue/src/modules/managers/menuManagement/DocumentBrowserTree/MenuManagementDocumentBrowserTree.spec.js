@@ -92,7 +92,7 @@ describe('Document browser tree', () => {
         await flushPromises()
 
         expect(axios.get).toHaveBeenCalled
-        expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/menu/functionalities')
+        expect(axios.get).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/menu/functionalities')
 
         expect(wrapper.vm.nodes).toStrictEqual([
             {

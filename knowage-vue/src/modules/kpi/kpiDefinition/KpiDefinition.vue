@@ -66,7 +66,7 @@
             async getKpiList() {
                 this.loading = true
                 return this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpi`)
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpi`)
                     .then((response: AxiosResponse<any>) => {
                         this.kpiList = [...response.data]
                     })
@@ -82,7 +82,7 @@
                 })
             },
             async deleteKpi(kpiId: number, kpiVersion: number) {
-                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/deleteKpi`).then(() => {
+                await this.$http.delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/deleteKpi`).then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')

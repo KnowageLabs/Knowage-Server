@@ -241,7 +241,7 @@ export default defineComponent({
             this.formatForTest()
             let listOfEmptyDependencies = [] as any[]
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/checkdependecies', { provider: this.x2js.js2xml(this.lov.lovProviderJSON) })
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/checkdependecies', { provider: this.x2js.js2xml(this.lov.lovProviderJSON) })
                 .then((response: AxiosResponse<any>) => {
                     listOfEmptyDependencies = response.data
                 })
@@ -281,7 +281,7 @@ export default defineComponent({
                 postData.dependencies = this.dependenciesList
             }
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/preview', postData)
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/preview', postData)
                 .then((response: AxiosResponse<any>) => {
                     if (response.status === 204) {
                         this.$store.commit('setError', {
@@ -515,10 +515,10 @@ export default defineComponent({
             }
         },
         async saveLov() {
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/save'
+            let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/save'
             if (this.lov.id) {
                 this.operation = 'update'
-                url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/'
+                url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/'
             }
             await this.sendRequest(url)
                 .then((response: AxiosResponse<any>) => {

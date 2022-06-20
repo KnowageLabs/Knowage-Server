@@ -223,7 +223,7 @@ export default defineComponent({
         this.loading++
         this.descriptorTransformations = Object.assign([], this.descriptor.transformations)
 
-        await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/dataset/id/' + this.id).then((response: AxiosResponse<any>) => {
+        await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/dataset/id/' + this.id).then((response: AxiosResponse<any>) => {
             this.dataset = response.data[0]
         })
         if (this.dataset) {
@@ -354,7 +354,7 @@ export default defineComponent({
             // launch avro export job
             this.$http
                 .post(
-                    process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${this.dataset.id}`,
+                    import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${this.dataset.id}`,
                     {},
                     {
                         headers: {
@@ -422,7 +422,7 @@ export default defineComponent({
         initWebsocket(): void {
             var url = new URL(window.location.origin)
             url.protocol = url.protocol.replace('http', 'ws')
-            var uri = url + 'knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+            var uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
             this.client = new Client({
                 brokerURL: uri,
                 connectHeaders: {},
@@ -440,7 +440,7 @@ export default defineComponent({
                 this.preparedDsMeta['name'] = dsMeta.name
                 this.preparedDsMeta['description'] = dsMeta.description
                 this.preparedDsMeta['id'] = dsMeta.id
-                await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.id).then((response: AxiosResponse<any>) => {
+                await this.$http.get(import.meta.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.id).then((response: AxiosResponse<any>) => {
                     let instance = response.data.instance
                     if (instance.config) {
                         this.preparedDsMeta['config'] = instance.config

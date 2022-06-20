@@ -216,7 +216,7 @@
             },
             async loadParentFolder() {
                 if (this.parentId) {
-                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/getParent/${this.parentId}`).then((response: AxiosResponse<any>) => (this.parentFolder = response.data))
+                    await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/getParent/${this.parentId}`).then((response: AxiosResponse<any>) => (this.parentFolder = response.data))
                 }
             },
             roleIsChecked(role: any, roles: [], roleField: string) {
@@ -269,7 +269,7 @@
                 functionality.createRoles = []
             },
             async createOrUpdate(functionalityToSend) {
-                return this.selectedFolder.id ? this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityToSend.id}`, functionalityToSend) : this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/', functionalityToSend)
+                return this.selectedFolder.id ? this.$http.put(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/${functionalityToSend.id}`, functionalityToSend) : this.$http.post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/', functionalityToSend)
             },
             async handleSubmit() {
                 if (this.v$.$invalid) {

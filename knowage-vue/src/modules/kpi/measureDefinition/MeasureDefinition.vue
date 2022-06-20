@@ -89,7 +89,7 @@
             },
             async loadMeasures() {
                 this.measuresList = []
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listMeasure').then((response: AxiosResponse<any>) =>
+                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listMeasure').then((response: AxiosResponse<any>) =>
                     response.data.forEach((measure) => {
                         if (measure.category) {
                             measure.categoryName = measure.translatedValueName
@@ -118,7 +118,7 @@
             },
             async deleteMeasure(measure: iMeasure) {
                 await this.$http
-                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${measure.ruleId}/${measure.ruleVersion}/deleteRule`)
+                    .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${measure.ruleId}/${measure.ruleVersion}/deleteRule`)
                     .then(() => {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.deleteTitle'),

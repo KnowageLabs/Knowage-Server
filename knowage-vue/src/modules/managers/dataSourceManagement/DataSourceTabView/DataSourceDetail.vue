@@ -413,7 +413,7 @@ export default defineComponent({
         },
 
         async testDataSource() {
-            var url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'datasourcestest/2.0/test/'
+            var url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + 'datasourcestest/2.0/test/'
             var dsToTest = {} as any
             dsToTest = { ...this.datasource }
             dsToTest.type = this.jdbcOrJndi.type
@@ -435,7 +435,7 @@ export default defineComponent({
             if (this.v$.$invalid) {
                 return
             }
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/'
+            let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/'
             let dsToSave = {} as any
             dsToSave = { ...this.datasource }
 

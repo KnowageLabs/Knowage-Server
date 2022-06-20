@@ -109,24 +109,24 @@ export default defineComponent({
                 }
                 if (this.filterData.filters.length > 0) url = url.concat('&optionalFilters=' + encodeURI(JSON.stringify(this.filterData.filters)))
             }
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.dimensionData = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.dimensionData = response.data))
             this.$emit('loading', false)
         },
         async loadDimensionMetadata() {
             this.$emit('loading', true)
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dimensions/dimensionMetadata?dimension=${this.selectedDimension?.DIMENSION_NM}`).then((response: AxiosResponse<any>) => (this.dimensionMetadata = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `dimensions/dimensionMetadata?dimension=${this.selectedDimension?.DIMENSION_NM}`).then((response: AxiosResponse<any>) => (this.dimensionMetadata = response.data))
             this.$emit('dimensionMetadataChanged', this.dimensionMetadata)
             this.$emit('loading', false)
         },
         async loadNodeMetadata() {
             this.$emit('loading', true)
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/nodeMetadata?dimension=${this.selectedDimension?.DIMENSION_NM}&excludeLeaf=false`).then((response: AxiosResponse<any>) => (this.nodeMetadata = response.data))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/nodeMetadata?dimension=${this.selectedDimension?.DIMENSION_NM}&excludeLeaf=false`).then((response: AxiosResponse<any>) => (this.nodeMetadata = response.data))
             this.$emit('nodeMetadataChanged', this.nodeMetadata)
             this.$emit('loading', false)
         },
         async loadDimensionFilters() {
             this.$emit('loading', true)
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dimensions/dimensionFilterMetadata?dimension=CDC`).then((response: AxiosResponse<any>) => (this.dimensionFilters = response.data?.DIM_FILTERS))
+            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `dimensions/dimensionFilterMetadata?dimension=CDC`).then((response: AxiosResponse<any>) => (this.dimensionFilters = response.data?.DIM_FILTERS))
             this.$emit('loading', false)
         },
         onApplyFilters(filtersData: { filters: iDimensionFilter[]; showMissingElements: boolean }) {
@@ -147,7 +147,7 @@ export default defineComponent({
                 optionalFilters: this.filterData ? this.filterData.filters : []
             }
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchiesMaster/syncronizeHierarchyMaster`, postData)
+                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchiesMaster/syncronizeHierarchyMaster`, postData)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.response === 'ok') {
                         this.$store.commit('setInfo', {

@@ -68,7 +68,7 @@ jest.mock('axios')
 const $http = {
     get: axios.get.mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/listDynTimespan`:
+            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/listDynTimespan`:
                 return Promise.resolve({ data: mockedTimespans })
             default:
                 return Promise.resolve({ data: [] })

@@ -84,7 +84,7 @@ export default defineComponent({
         loadAllFunctions(): void {
             this.$emit('update:loading', true)
             this.$http
-                .get(process.env.VUE_APP_API_PATH + '1.0/functioncatalog')
+                .get(import.meta.env.VUE_APP_API_PATH + '1.0/functioncatalog')
                 .then((response: AxiosResponse<any>) => {
                     this.functions = response.data
 

@@ -161,7 +161,7 @@
             async loadPackages() {
                 this.loading = true
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/scheduleree/listAllJobs')
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '/scheduleree/listAllJobs')
                     .then((response: AxiosResponse<any>) => {
                         let rawList = response.data.root
                         let filteredList = rawList.filter((x) => x.jobGroup == 'BIObjectExecutions')
@@ -179,7 +179,7 @@
             async loadDocuments() {
                 this.loading = true
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents')
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents')
                     .then((response: AxiosResponse<any>) => {
                         this.documentList = response.data
                     })
@@ -202,7 +202,7 @@
             runSearch() {
                 this.loading = true
 
-                let path = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/nextExecutions?start=${this.formatDateTime(this.startDateTime)}&end=${this.formatDateTime(this.endDateTime)}`
+                let path = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/nextExecutions?start=${this.formatDateTime(this.startDateTime)}&end=${this.formatDateTime(this.endDateTime)}`
                 if (this.selectedPackage) {
                     path += `&jobPackageName=${this.selectedPackage.id}`
                 }

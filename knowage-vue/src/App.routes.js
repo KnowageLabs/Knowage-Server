@@ -57,7 +57,7 @@ const baseRoutes = [
     {
         path: '/login',
         name: 'login',
-        redirect: process.env.VUE_APP_HOST_URL + '/knowage/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&NEW_SESSION=TRUE'
+        redirect: import.meta.env.VUE_APP_HOST_URL + '/knowage/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&NEW_SESSION=TRUE'
     },
     {
         path: '/:catchAll(.*)',
@@ -76,8 +76,8 @@ const routes = baseRoutes
     .concat(dataPreparationRoutes)
 
 const router = createRouter({
-    base: process.env.VUE_APP_PUBLIC_PATH,
-    history: createWebHistory(process.env.VUE_APP_PUBLIC_PATH),
+    base: import.meta.env.VUE_APP_PUBLIC_PATH,
+    history: createWebHistory(import.meta.env.VUE_APP_PUBLIC_PATH),
     routes
 })
 

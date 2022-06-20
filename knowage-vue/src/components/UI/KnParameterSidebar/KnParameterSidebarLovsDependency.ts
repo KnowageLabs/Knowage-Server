@@ -40,7 +40,7 @@ export async function lovDependencyCheck(loadedParameters: { filterStatus: iPara
         url = document.type === 'businessModel' ? `1.0/businessmodel/${document.name}/admissibleValues` : `/3.0/datasets/${document.label}/admissibleValues`
     }
 
-    await $http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData).then((response: AxiosResponse<any>) => {
+    await $http.post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData).then((response: AxiosResponse<any>) => {
         parameter.data = response.data.result.data
         parameter.metadata = response.data.result.metadata
         formatParameterAfterDataDependencyCheck(parameter)

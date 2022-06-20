@@ -185,13 +185,13 @@
                 this.loading = false
             },
             async getAllFolders() {
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`).then((response: AxiosResponse<any>) => {
+                return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`).then((response: AxiosResponse<any>) => {
                     this.allFolders = [...response.data]
                     this.displayMenu = true
                 })
             },
             async getAllDocuments() {
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/`).then((response: AxiosResponse<any>) => {
+                return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/`).then((response: AxiosResponse<any>) => {
                     this.allDocuments = [...response.data]
                 })
             },
@@ -210,7 +210,7 @@
             async deleteFolder(folder: any) {
                 this.loading = true
                 await this.$http
-                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/foldersee/${folder.id}`, { headers: { 'X-Disable-Errors': 'true' } })
+                    .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/foldersee/${folder.id}`, { headers: { 'X-Disable-Errors': 'true' } })
                     .then(() => {
                         this.$store.commit('setInfo', {
                             title: this.$t('common.toast.deleteTitle'),
@@ -236,7 +236,7 @@
                 newFolder.path = this.selectedFolder?.path + `/` + encodeURIComponent(newFolder.code)
                 newFolder.prog = this.selectedFolder?.prog
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/organizer/foldersee/', newFolder, { headers: { 'X-Disable-Errors': 'true' } })
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/organizer/foldersee/', newFolder, { headers: { 'X-Disable-Errors': 'true' } })
                     .then(() => {
                         this.$store.commit('setInfo', { title: this.$t('workspace.myRepository.folderCreatedMessage') })
                         this.getAllFolders()
@@ -329,7 +329,7 @@
             },
             async loadQBEDataset(dataset) {
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
                     .then((response: AxiosResponse<any>) => {
                         this.qbeDataset = response.data
                     })
@@ -337,7 +337,7 @@
             },
             async loadDatasetDrivers(dataset) {
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/businessmodel/${dataset.name}/filters`, { name: dataset.name, role: this.userRole })
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/businessmodel/${dataset.name}/filters`, { name: dataset.name, role: this.userRole })
                     .then((response: AxiosResponse<any>) => {
                         this.filtersData = response.data
                         this.formatDrivers()
@@ -405,7 +405,7 @@
                 let country = this.user.locale.split('_')[1]
                 let drivers = encodeURI(JSON.stringify(this.datasetDrivers))
                 initialUrl = `/knowageqbeengine/servlet/AdapterHTTP?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&SBI_SCRIPT=&user_id=${this.user.userUniqueIdentifier}&DEFAULT_DATASOURCE_FOR_WRITING_LABEL=CacheDS&SBI_COUNTRY=${country}&SBI_EXECUTION_ID=${this.uniqueID}&ACTION_NAME=QBE_ENGINE_START_ACTION_FROM_BM&MODEL_NAME=${dataset.name}&DATA_SOURCE_LABEL=${dataset.dataSourceLabel}&DATA_SOURCE_ID=${dataset.dataSourceId}&isTechnicalUser=true&DRIVERS=${drivers}`
-                this.qbeUrl = process.env.VUE_APP_HOST_URL + initialUrl
+                this.qbeUrl = import.meta.env.VUE_APP_HOST_URL + initialUrl
             },
             getFormattedParameters(loadedParameters: { filterStatus: any[]; isReadyForExecution: boolean }) {
                 let parameters = {} as any

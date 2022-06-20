@@ -158,7 +158,7 @@
                 var formData = new FormData()
                 formData.append('file', uploadedFile)
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `selfservicedatasetupload/fileupload`, formData, {
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `selfservicedatasetupload/fileupload`, formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryFYwjkDOpT85ZFN3L'
                         }
@@ -201,7 +201,7 @@
             async downloadDatasetFile() {
                 var encodedLabel = encodeURI(this.dataset.label)
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${encodedLabel}&type=${this.dataset.fileType}`, {
+                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${encodedLabel}&type=${this.dataset.fileType}`, {
                         headers: {
                             Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
                         }
@@ -234,7 +234,7 @@
                 this.loading = true
                 this.dataset.limit = 10
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, this.dataset, {
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, this.dataset, {
                         headers: {
                             Accept: 'application/json, text/plain, */*',
                             'Content-Type': 'application/json;charset=UTF-8',

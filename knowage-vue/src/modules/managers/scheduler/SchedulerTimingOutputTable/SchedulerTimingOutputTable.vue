@@ -142,7 +142,7 @@
                 this.$emit('loading', true)
                 if (trigger) {
                     await this.$http
-                        .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/getTriggerInfo?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
+                        .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/getTriggerInfo?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
                         .then((response) => {
                             this.triggerInfo = response.data
                         })
@@ -169,7 +169,7 @@
                 this.$emit('loading', true)
 
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/executeTrigger?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/executeTrigger?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
                     .then((response: AxiosResponse<any>) => {
                         if (response.data.resp === 'ok') {
                             this.$store.commit('setInfo', {
@@ -193,7 +193,7 @@
                 this.$emit('loading', true)
                 const action = trigger.triggerIsPaused ? 'resumeTrigger' : 'pauseTrigger'
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/${action}?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/${action}?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
                     .then((response: AxiosResponse<any>) => {
                         if (response.data.resp === 'ok') {
                             this.$store.commit('setInfo', {
@@ -217,7 +217,7 @@
             async deleteTrigger(trigger: any, index: number) {
                 this.$emit('loading', true)
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/deleteTrigger?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
+                    .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/deleteTrigger?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
                     .then((response: AxiosResponse<any>) => {
                         if (response.data.resp === 'ok') {
                             this.$store.commit('setInfo', {

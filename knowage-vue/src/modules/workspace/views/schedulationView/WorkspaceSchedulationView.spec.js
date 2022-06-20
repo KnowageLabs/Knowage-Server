@@ -48,7 +48,7 @@ jest.mock('axios')
 const $http = {
     get: axios.get.mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/listAllJobs`:
+            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/listAllJobs`:
                 return Promise.resolve({ data: { root: mockedJobs } })
             default:
                 return Promise.resolve({ data: [] })
