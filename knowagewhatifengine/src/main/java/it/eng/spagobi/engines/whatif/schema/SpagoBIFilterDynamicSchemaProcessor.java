@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 import mondrian.i18n.LocalizingDynamicSchemaProcessor;
@@ -63,7 +62,7 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 		// logger.error("UTF-8 encoding not supported!!!!!", e);
 		// value = new String(DECODER.decodeBuffer(attrValueBase64));
 		// }
-		// logger.debug("change attribute " + att + " with [" + value + "]");
+		// logger.debug("change attribute " + att + " with  [" + value + "]");
 		//
 		// modifiedSchema = modifiedSchema.replaceAll("\\$\\{" + att + "\\}", value);
 		// }
@@ -97,7 +96,8 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 	 * return the first profile attribute in schema
 	 *
 	 * @param schema
-	 * @param indexProgression . keeps track of the last found index to go always ahead in reading
+	 * @param indexProgression
+	 *            . keeps track of the last found index to go always ahead in reading
 	 * @return
 	 */
 	public String findProfileAttributeInSchema(String schema) {
@@ -117,7 +117,8 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 	 * return the first parameter in schema
 	 *
 	 * @param schema
-	 * @param indexProgression . keeps track of the last found index to go always ahead in reading
+	 * @param indexProgression
+	 *            . keeps track of the last found index to go always ahead in reading
 	 * @return
 	 */
 	public String findParameterInSchema(String schema) {
@@ -160,9 +161,7 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 				}
 				logger.debug("change attribute " + att + " with  [" + value + "]");
 
-				String escapedValue = StringEscapeUtils.escapeXml10(value);
-
-				modifiedSchema = modifiedSchema.replaceAll("\\$\\{" + att + "\\}", escapedValue);
+				modifiedSchema = modifiedSchema.replaceAll("\\$\\{" + att + "\\}", value);
 			}
 			att = findProfileAttributeInSchema(modifiedSchema);
 		}
@@ -196,9 +195,7 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 				}
 				logger.debug("change attribute " + att + " with  [" + value + "]");
 
-				String escapedValue = StringEscapeUtils.escapeXml10(value);
-
-				modifiedSchema = modifiedSchema.replaceAll("\\$P\\{" + att + "\\}", escapedValue);
+				modifiedSchema = modifiedSchema.replaceAll("\\$P\\{" + att + "\\}", value);
 			}
 			att = findParameterInSchema(modifiedSchema);
 		}
