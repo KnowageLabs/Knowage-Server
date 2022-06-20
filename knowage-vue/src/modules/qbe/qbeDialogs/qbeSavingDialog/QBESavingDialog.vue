@@ -33,7 +33,6 @@
         </TabView>
 
         <template #footer>
-            <Button class="kn-button kn-button--default" @click="logme"> LOG ME </Button>
             <Button class="kn-button kn-button--secondary" @click="$emit('close')"> {{ $t('common.cancel') }}</Button>
             <Button class="kn-button kn-button--primary" :disabled="buttonDisabled" @click="saveDataset"> {{ $t('common.save') }}</Button>
         </template>
@@ -137,7 +136,6 @@ export default defineComponent({
                 }
             })
 
-            console.log('METADATA TO SAVE', metaToSave)
             return metaToSave
         },
         async manageDatasetFieldMetadata1(fieldsColumns) {
@@ -244,18 +242,6 @@ export default defineComponent({
                 this.selectedDataset.scopeCd = userScope.VALUE_CD
                 this.selectedDataset.scopeId = userScope.VALUE_ID
             }
-            console.log('dataset --------------------', this.selectedDataset)
-            console.log('functionality --------------------', (this.$store.state as any).user.functionalities.includes('QbeAdvancedSaving'))
-            console.log(
-                'userScope  --------------------',
-                this.scopeTypes.find((scope) => scope.VALUE_CD === 'USER')
-            )
-            console.log('scopeCd  --------------------', this.selectedDataset.scopeCd)
-            console.log('scopeId --------------------', this.selectedDataset.scopeId)
-            console.log('whole dataset --------------------', this.selectedDataset)
-        },
-        logme() {
-            console.log(this.v$)
         }
     }
 })

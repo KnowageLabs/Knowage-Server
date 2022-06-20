@@ -100,7 +100,7 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue?.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
@@ -108,6 +108,7 @@
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
                     </div>
                     <Dropdown v-if="!parameter.multivalue && parameter.parameterValue" class="kn-material-input" v-model="parameter.parameterValue[0]" :options="parameter.data" optionLabel="description" @change="updateDependency(parameter)" />
+
                     <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" optionLabel="description" @change="updateDependency(parameter)" />
                 </div>
                 <div class="p-field p-my-1 p-p-2" v-if="parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true'">
@@ -115,7 +116,7 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue?.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
@@ -134,7 +135,7 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue?.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label

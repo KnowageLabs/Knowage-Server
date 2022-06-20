@@ -225,6 +225,14 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	                    }
 	                }
 	            }
+				// temporary section needed as a workaround to get vue instance
+				var hasVueParent = false
+				if(window.parent.document.getElementById('_KNOWAGE_VUE')){
+					hasVueParent = window.parent
+				}else if(window.parent.parent.document.getElementById('_KNOWAGE_VUE')){
+					hasVueParent = window.parent.parent
+				}
+				if(hasVueParent) hasVueParent.postMessage({"type":"cockpitExecuted"}, '*')
 	        }
 	    })
 		

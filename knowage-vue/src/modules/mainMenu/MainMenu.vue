@@ -73,6 +73,7 @@
     import { IMenuItem } from '@/modules/mainMenu/MainMenu'
     import TieredMenu from 'primevue/tieredmenu'
     import ScrollPanel from 'primevue/scrollpanel'
+
     export default defineComponent({
         name: 'Knmenu',
         components: {
@@ -239,60 +240,65 @@
             },
             cleanTo(item): any {
                 return item.to.replace(/\\\//g, '/')
+            },
+
+            async loadMenu(recursive: Boolean = false) {
+                window.addEventListener('resize', this.getDimensions)
+                this.$store.commit('setLoading', true)
+                let localObject = { locale: this.$i18n.fallbackLocale.toString() }
+                if (Object.keys(this.locale).length !== 0) localObject = { locale: this.locale }
+                if (localStorage.getItem('locale')) {
+                    localObject = { locale: localStorage.getItem('locale') || this.$i18n.fallbackLocale.toString() }
+                }
+                localObject.locale = localObject.locale.replaceAll('_', '-')
+                // script handling
+                let splittedLocale = localObject.locale.split('-')
+                if (splittedLocale.length > 2) {
+                    localObject.locale = splittedLocale[0] + '-' + splittedLocale[2].replaceAll('#', '') + '-' + splittedLocale[1]
+                }
+                await this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
+                    .then((response: AxiosResponse<any>) => {
+                        this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
+
+                        let responseAllowedUserFunctionalities = response.data.allowedUserFunctionalities
+                        for (var idx in responseAllowedUserFunctionalities) {
+                            let item = responseAllowedUserFunctionalities[idx]
+                            item.visible = this.isItemToDisplay(item)
+                            this.allowedUserFunctionalities.push(item)
+                        }
+                        this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
+                            return el1.prog - el2.prog
+                        })
+                        if (this.dynamicUserFunctionalities.length > 0) {
+                            let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
+                            if (homePage && Object.keys(homePage).length !== 0) {
+                                if (!this.stateHomePage.label) {
+                                    this.$store.commit('setHomePage', homePage)
+                                }
+                            }
+                        }
+                        let responseCommonUserFunctionalities = response.data.commonUserFunctionalities
+                        for (var index in responseCommonUserFunctionalities) {
+                            let item = responseCommonUserFunctionalities[index]
+                            item.visible = this.isItemToDisplay(item)
+                            if (parseInt(index) == 0 && this.stateHomePage?.to) item.to = this.stateHomePage.to.replaceAll('\\/', '/')
+                            this.commonUserFunctionalities.push(item)
+                        }
+                        this.updateNewsAndDownload()
+                    })
+                    .catch(() => {
+                        if (recursive) this.logout()
+                        else this.loadMenu(true)
+                    })
+                    .finally(() => {
+                        this.$store.commit('setLoading', false)
+                        this.getDimensions()
+                    })
             }
         },
         async mounted() {
-            window.addEventListener('resize', this.getDimensions)
-            this.$store.commit('setLoading', true)
-            let localObject = { locale: this.$i18n.fallbackLocale.toString() }
-            if (Object.keys(this.locale).length !== 0) localObject = { locale: this.locale }
-            if (localStorage.getItem('locale')) {
-                localObject = { locale: localStorage.getItem('locale') || this.$i18n.fallbackLocale.toString() }
-            }
-            localObject.locale = localObject.locale.replaceAll('_', '-')
-            // script handling
-            let splittedLocale = localObject.locale.split('-')
-            if (splittedLocale.length > 2) {
-                localObject.locale = splittedLocale[0] + '-' + splittedLocale[2].replaceAll('#', '') + '-' + splittedLocale[1]
-            }
-            await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
-                .then((response: AxiosResponse<any>) => {
-                    this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
-
-                    let responseAllowedUserFunctionalities = response.data.allowedUserFunctionalities
-                    for (var idx in responseAllowedUserFunctionalities) {
-                        let item = responseAllowedUserFunctionalities[idx]
-                        item.visible = this.isItemToDisplay(item)
-                        this.allowedUserFunctionalities.push(item)
-                    }
-                    this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
-                        return el1.prog - el2.prog
-                    })
-                    if (this.dynamicUserFunctionalities.length > 0) {
-                        let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
-                        if (homePage && Object.keys(homePage).length !== 0) {
-                            if (!this.stateHomePage.label) {
-                                this.$store.commit('setHomePage', homePage)
-                            }
-                        }
-                    }
-                    let responseCommonUserFunctionalities = response.data.commonUserFunctionalities
-                    for (var index in responseCommonUserFunctionalities) {
-                        let item = responseCommonUserFunctionalities[index]
-                        item.visible = this.isItemToDisplay(item)
-                        if (parseInt(index) == 0 && this.stateHomePage?.to) item.to = this.stateHomePage.to.replaceAll('\\/', '/')
-                        this.commonUserFunctionalities.push(item)
-                    }
-                    this.updateNewsAndDownload()
-                })
-                .catch((error) => {
-                    console.error(error)
-                })
-                .finally(() => {
-                    this.$store.commit('setLoading', false)
-                    this.getDimensions()
-                })
+            await this.loadMenu()
         },
         unmounted() {
             window.removeEventListener('resize', this.getDimensions)

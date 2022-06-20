@@ -179,6 +179,7 @@ export default defineComponent({
     },
     deactivated() {
         this.parameterSidebarVisible = false
+        window.removeEventListener('message', this.iframeEventsListener)
     },
     computed: {
         sessionRole(): string | null {
@@ -209,11 +210,7 @@ export default defineComponent({
         }
     },
     async created() {
-        window.addEventListener('message', (event) => {
-            if (event.data.type === 'crossNavigation') {
-                this.executeCrossNavigation(event)
-            }
-        })
+        window.addEventListener('message', this.iframeEventsListener)
 
         if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
 
@@ -238,6 +235,13 @@ export default defineComponent({
         }
     },
     methods: {
+        iframeEventsListener(event) {
+            if (event.data.type === 'crossNavigation') {
+                this.executeCrossNavigation(event)
+            } else if (event.data.type === 'cockpitExecuted') {
+                this.loading = false
+            }
+        },
         editCockpitDocumentConfirm() {
             if (this.documentMode === 'EDIT') {
                 this.$confirm.require({
@@ -255,7 +259,6 @@ export default defineComponent({
             this.documentMode = this.documentMode === 'EDIT' ? 'VIEW' : 'EDIT'
             this.hiddenFormData.set('documentMode', this.documentMode)
             await this.loadURL(null)
-            this.loading = false
         },
         openHelp() {
             this.helpDialogVisible = true
@@ -403,6 +406,7 @@ export default defineComponent({
         closeDocument() {
             const link = this.$route.path.includes('workspace') ? '/workspace' : '/document-browser'
             this.$router.push(link)
+            this.breadcrumbs = []
             this.$emit('close')
         },
         setMode() {
@@ -461,6 +465,7 @@ export default defineComponent({
         async loadFilters(initialLoading: boolean = false) {
             if (this.parameterValuesMap && this.parameterValuesMap[this.document.label + '-' + this.tabKey] && initialLoading) {
                 this.filtersData = this.parameterValuesMap[this.document.label + '-' + this.tabKey]
+                this.setFiltersForBreadcrumbItem()
                 return
             }
 
@@ -473,6 +478,7 @@ export default defineComponent({
                             filter.parameterValue[0].value = new Date(filter.parameterValue[0].value)
                         }
                     })
+                    this.setFiltersForBreadcrumbItem()
                     return
                 }
             }
@@ -533,6 +539,9 @@ export default defineComponent({
                 this.loadNavigationParamsInitialValue()
             }
 
+            this.setFiltersForBreadcrumbItem()
+        },
+        setFiltersForBreadcrumbItem() {
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
         },
@@ -616,13 +625,13 @@ export default defineComponent({
             let postForm = document.getElementById('postForm_' + postObject.params.document) as any
             if (!postForm) {
                 postForm = document.createElement('form')
-                postForm.id = 'postForm_' + postObject.params.document
-                postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
-                postForm.method = 'post'
-                postForm.target = tempIndex !== -1 ? 'documentFrame' + tempIndex : documentLabel
-                postForm.acceptCharset = 'UTF-8'
-                document.body.appendChild(postForm)
             }
+            postForm.id = 'postForm_' + postObject.params.document
+            postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
+            postForm.method = 'post'
+            postForm.target = tempIndex !== -1 ? 'documentFrame' + tempIndex : documentLabel
+            postForm.acceptCharset = 'UTF-8'
+            document.body.appendChild(postForm)
 
             this.hiddenFormData = new URLSearchParams()
 
@@ -921,7 +930,7 @@ export default defineComponent({
         },
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
             this.formatAngularOutputParameters(angularData.otherOutputParameters)
-            const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument.navigationParams)
+            const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument ? crossNavigationDocument.navigationParams : [])
 
             const popupOptions = crossNavigationDocument.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
 

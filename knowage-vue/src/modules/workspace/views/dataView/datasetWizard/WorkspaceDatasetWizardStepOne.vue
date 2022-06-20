@@ -60,137 +60,137 @@
 </template>
 
 <script lang="ts">
-import { AxiosResponse } from 'axios'
-import { defineComponent } from 'vue'
-import { downloadDirect } from '@/helpers/commons/fileHelper'
-import useValidate from '@vuelidate/core'
-import dataViewDescriptor from './WorkspaceDatasetWizardDescriptor.json'
-import Card from 'primevue/card'
-import Dropdown from 'primevue/dropdown'
-import KnInputFile from '@/components/UI/KnInputFile.vue'
+    import { AxiosResponse } from 'axios'
+    import { defineComponent } from 'vue'
+    import { downloadDirect } from '@/helpers/commons/fileHelper'
+    import useValidate from '@vuelidate/core'
+    import dataViewDescriptor from './WorkspaceDatasetWizardDescriptor.json'
+    import Card from 'primevue/card'
+    import Dropdown from 'primevue/dropdown'
+    import KnInputFile from '@/components/UI/KnInputFile.vue'
 
-export default defineComponent({
-    components: { Card, KnInputFile, Dropdown },
-    props: { selectedDataset: { type: Object as any } },
-    emits: ['touched', 'fileUploaded', 'closeDialog'],
-    data() {
-        return {
-            v$: useValidate() as any,
-            dataViewDescriptor,
-            dataset: {} as any,
-            triggerUpload: false,
-            uploading: false,
-            loading: false,
-            expandTableCard: true,
-            columns: [] as any,
-            rows: [] as any
-        }
-    },
-    created() {
-        this.dataset = this.selectedDataset
-    },
-    watch: {
-        selectedDataset() {
+    export default defineComponent({
+        components: { Card, KnInputFile, Dropdown },
+        props: { selectedDataset: { type: Object as any } },
+        emits: ['touched', 'fileUploaded', 'closeDialog'],
+        data() {
+            return {
+                v$: useValidate() as any,
+                dataViewDescriptor,
+                dataset: {} as any,
+                triggerUpload: false,
+                uploading: false,
+                loading: false,
+                expandTableCard: true,
+                columns: [] as any,
+                rows: [] as any
+            }
+        },
+        created() {
             this.dataset = this.selectedDataset
-        }
-    },
-    methods: {
-        //#region ===================== File Upload/Download ====================================================
-        setUploadType() {
-            this.triggerUpload = false
-            setTimeout(() => (this.triggerUpload = true), 200)
         },
-        uploadDatasetFile(event) {
-            this.uploading = true
-            let uploadedFile = event.target.files[0]
-            if (uploadedFile.name.includes(this.dataset.fileName)) {
-                this.$store.commit('setError', { title: 'Same File', msg: 'Cannot upload same file, is this warning ok?' })
+        watch: {
+            selectedDataset() {
+                this.dataset = this.selectedDataset
+            }
+        },
+        methods: {
+            //#region ===================== File Upload/Download ====================================================
+            setUploadType() {
                 this.triggerUpload = false
-            } else {
-                this.startUpload(uploadedFile)
-            }
-            this.triggerUpload = false
-            setTimeout(() => (this.uploading = false), 200)
-        },
-        async startUpload(uploadedFile) {
-            var formData = new FormData()
-            formData.append('file', uploadedFile)
-            await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `/selfservicedatasetupload/fileupload`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryFYwjkDOpT85ZFN3L'
-                    }
-                })
-                .then((response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', { title: this.$t('common.uploading'), msg: this.$t('importExport.import.successfullyCompleted') })
-                    this.dataset.fileType = response.data.fileType
-                    this.dataset.fileName = response.data.fileName
-                    this.$emit('fileUploaded')
-                    // this.resetFields()
-                })
-                .catch()
-                .finally(() => {
+                setTimeout(() => (this.triggerUpload = true), 200)
+            },
+            uploadDatasetFile(event) {
+                this.uploading = true
+                let uploadedFile = event.target.files[0]
+                if (uploadedFile.name.includes(this.dataset.fileName)) {
+                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('common.error.sameFileName') })
                     this.triggerUpload = false
-                })
-        },
-        async downloadDatasetFile() {
-            var encodedLabel = encodeURI(this.dataset.label)
-            await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${encodedLabel}&type=${this.dataset.fileType}`, {
-                    headers: {
-                        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-                        'X-Disable-Errors': 'true'
-                    }
-                })
-                .then(
-                    (response: AxiosResponse<any>) => {
-                        if (response.data.errors) {
-                            this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
-                        } else {
-                            this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
-                            if (response.headers) {
-                                downloadDirect(response.data, this.createCompleteFileName(response), response.headers['content-type'])
-                            }
+                } else {
+                    this.startUpload(uploadedFile)
+                }
+                this.triggerUpload = false
+                setTimeout(() => (this.uploading = false), 200)
+            },
+            async startUpload(uploadedFile) {
+                var formData = new FormData()
+                formData.append('file', uploadedFile)
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `/selfservicedatasetupload/fileupload`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryFYwjkDOpT85ZFN3L'
                         }
-                    },
-                    (error) =>
-                        this.$store.commit('setError', {
-                            title: this.$t('common.error.downloading'),
-                            msg: this.$t(error)
-                        })
-                )
-        },
-        createCompleteFileName(response) {
-            var contentDisposition = response.headers['content-disposition']
-            var fileAndExtension = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)[1]
-            var completeFileName = fileAndExtension.replaceAll('"', '')
-            return completeFileName
-        },
-        resetFields() {
-            this.dataset.csvEncoding = 'UTF-8'
-            this.dataset.csvDelimiter = ','
-            this.dataset.dateFormat = 'dd/MM/yyyy'
-            this.dataset.timestampFormat = 'dd/MM/yyyy HH:mm:ss'
-            this.dataset.csvQuote = '"'
-            this.dataset.skipRows = 0
-            this.dataset.limitRows = null
-            this.dataset.xslSheetNumber = 1
+                    })
+                    .then((response: AxiosResponse<any>) => {
+                        this.$store.commit('setInfo', { title: this.$t('common.uploading'), msg: this.$t('importExport.import.successfullyCompleted') })
+                        this.dataset.fileType = response.data.fileType
+                        this.dataset.fileName = response.data.fileName
+                        this.$emit('fileUploaded')
+                        // this.resetFields()
+                    })
+                    .catch()
+                    .finally(() => {
+                        this.triggerUpload = false
+                    })
+            },
+            async downloadDatasetFile() {
+                var encodedLabel = encodeURI(this.dataset.label)
+                await this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${encodedLabel}&type=${this.dataset.fileType}`, {
+                        headers: {
+                            Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                            'X-Disable-Errors': 'true'
+                        }
+                    })
+                    .then(
+                        (response: AxiosResponse<any>) => {
+                            if (response.data.errors) {
+                                this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
+                            } else {
+                                this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
+                                if (response.headers) {
+                                    downloadDirect(response.data, this.createCompleteFileName(response), response.headers['content-type'])
+                                }
+                            }
+                        },
+                        (error) =>
+                            this.$store.commit('setError', {
+                                title: this.$t('common.error.downloading'),
+                                msg: this.$t(error)
+                            })
+                    )
+            },
+            createCompleteFileName(response) {
+                var contentDisposition = response.headers['content-disposition']
+                var fileAndExtension = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)[1]
+                var completeFileName = fileAndExtension.replaceAll('"', '')
+                return completeFileName
+            },
+            resetFields() {
+                this.dataset.csvEncoding = 'UTF-8'
+                this.dataset.csvDelimiter = ','
+                this.dataset.dateFormat = 'dd/MM/yyyy'
+                this.dataset.timestampFormat = 'dd/MM/yyyy HH:mm:ss'
+                this.dataset.csvQuote = '"'
+                this.dataset.skipRows = 0
+                this.dataset.limitRows = null
+                this.dataset.xslSheetNumber = 1
 
-            if (this.dataset.fileType == 'XLS' || this.dataset.fileType == 'XLSX') {
-                this.dataset.limitRows = ''
-                this.dataset.csvDelimiter = ''
-                this.dataset.dateFormat = ''
-                this.dataset.timestampFormat = ''
-                this.dataset.csvQuote = ''
+                if (this.dataset.fileType == 'XLS' || this.dataset.fileType == 'XLSX') {
+                    this.dataset.limitRows = ''
+                    this.dataset.csvDelimiter = ''
+                    this.dataset.dateFormat = ''
+                    this.dataset.timestampFormat = ''
+                    this.dataset.csvQuote = ''
+                }
             }
+            //#endregion ================================================================================================
         }
-        //#endregion ================================================================================================
-    }
-})
+    })
 </script>
 
 <style lang="scss">
-.workspace-wizard-step-one-input {
-    min-width: 100px;
-}
+    .workspace-wizard-step-one-input {
+        min-width: 100px;
+    }
 </style>

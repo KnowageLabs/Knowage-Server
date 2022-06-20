@@ -13,9 +13,9 @@
                     class="p-ml-2"
                     v-model="selectedFilters"
                     :value="filterType === 'slicer' ? slotProps.node.id : slotProps.node.data"
-                    :disabled="treeLocked && !slotProps.node.data.visible"
-                    v-tooltip="{ value: $t('documentExecution.olap.filterDialog.parentDisabledTooltip'), disabled: !treeLocked || slotProps.node.data.visible }"
-                    @change="onFiltersSelected(slotProps.node)"
+                    :disabled="treeLocked && filterType !== 'visible' && !slotProps.node.data.visible"
+                    v-tooltip="{ value: $t('documentExecution.olap.filterDialog.parentDisabledTooltip'), disabled: !treeLocked || slotProps.node.data.visible || filterType === 'visible' }"
+                    @change="onFiltersSelected()"
                 />
                 <span>{{ slotProps.node.label }}</span>
             </template>
@@ -207,10 +207,10 @@ export default defineComponent({
             }, 500)
         },
         setSelectedFiltersForVisibleType() {
-            if (!this.nodes[0].children || this.nodes[0].children.length === 0) return
             this.$emit('lockTree')
-
-            this.setSelectedVisibleMembers(this.nodes[0])
+            for (let i = 0; i < this.nodes.length; i++) {
+                this.setSelectedVisibleMembers(this.nodes[i])
+            }
         },
         setSelectedVisibleMembers(node: iNode) {
             this.expandedKeys[node.key] = true
