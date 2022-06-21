@@ -57,7 +57,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import physDescriptor from './PhysicalModelDescriptor.json'
 
-const { applyPatch, generate } = require('fast-json-patch')
+import { applyPatch, generate } from 'fast-json-patch'
 
 export default defineComponent({
     name: 'metaweb-physical-model',

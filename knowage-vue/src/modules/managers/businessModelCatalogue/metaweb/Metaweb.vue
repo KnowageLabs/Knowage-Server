@@ -43,7 +43,7 @@ import BusinessModelTab from './businessModel/MetawebBusinessModel.vue'
 import MetawebPhysicalModel from './physicalModel/MetawebPhysicalModel.vue'
 import MetawebInvalidRelationshipsDialog from './invalidRelationshipsDialog/MetawebInvalidRelationshipsDialog.vue'
 
-const { observe, generate, applyPatch } = require('fast-json-patch')
+import { observe, generate, applyPatch } from 'fast-json-patch'
 
 export default defineComponent({
     name: 'metaweb',
