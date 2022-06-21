@@ -32,7 +32,7 @@ import Message from 'primevue/message'
 import olapFilterDialogDescriptor from './OlapFilterDialogDescriptor.json'
 import Tree from 'primevue/tree'
 
-const crypto = require('crypto')
+import crypto from 'crypto'
 
 export default defineComponent({
     name: 'olap-filter-tree',

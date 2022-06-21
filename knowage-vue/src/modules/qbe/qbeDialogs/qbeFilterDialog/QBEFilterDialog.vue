@@ -44,8 +44,8 @@ import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
 import QBETemporalFilterDialog from './QBETemporalFilterDialog.vue'
 import QBEFilterParameters from './QBEFilterParameters.vue'
 
-const crypto = require('crypto')
-const deepcopy = require('deepcopy')
+import crypto from 'crypto'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'qbe-filter-dialog',

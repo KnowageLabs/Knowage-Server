@@ -94,7 +94,7 @@ import MenuTab from './tabs/menu/GisDocumentDesignerMenu.vue'
 import Dialog from 'primevue/dialog'
 import Badge from 'primevue/badge'
 
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'gis-document-designer',

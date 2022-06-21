@@ -203,8 +203,8 @@ import calcFieldDescriptor from './QBECalcFieldDescriptor.json'
 import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
 import Dropdown from 'primevue/dropdown'
 
-const crypto = require('crypto')
-const deepcopy = require('deepcopy')
+import crypto from 'crypto'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'qbe',

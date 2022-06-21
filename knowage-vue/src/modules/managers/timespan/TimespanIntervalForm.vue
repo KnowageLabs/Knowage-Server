@@ -23,7 +23,7 @@ import { formatDate } from '@/helpers/commons/localeHelper'
 import { createDateFromIntervalTime } from './timespanHelpers'
 import Calendar from 'primevue/calendar'
 
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'timespan-interval-form',

@@ -1,4 +1,4 @@
-const crypto = require('crypto')
+import crypto from 'crypto'
 
 export function createNewField(editQueryObj, field) {
     var newField = {

@@ -39,7 +39,7 @@ import Message from 'primevue/message'
 import QBEHavingDialogDescriptor from './QBEHavingDialogDescriptor.json'
 import QBEHavingCard from './QBEHavingCard.vue'
 
-const crypto = require('crypto')
+import crypto from 'crypto'
 
 export default defineComponent({
     name: 'qbe-having-dialog',

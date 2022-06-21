@@ -18,8 +18,8 @@ import { addOrRemove, contains, isSelectable, isMovable } from './selectedOperan
 import { swap, move } from './advancedFilterService'
 import { getFilterTree } from './treeService'
 
-const crypto = require('crypto')
-const deepEqual = require('deep-equal')
+import crypto from 'crypto'
+import deepEqual  from 'deep-equal'
 
 export default defineComponent({
     name: 'qbe-group',

@@ -120,7 +120,7 @@
     import moment from 'moment'
     import { mapState } from 'vuex'
 
-    const crypto = require('crypto')
+    import crypto from 'crypto'
 
     export default defineComponent({
         name: 'dataset-management',

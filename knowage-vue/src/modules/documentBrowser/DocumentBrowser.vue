@@ -39,7 +39,7 @@ import Menu from 'primevue/menu'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
-const crypto = require('crypto')
+import crypto from 'crypto'
 
 export default defineComponent({
     name: 'document-browser',

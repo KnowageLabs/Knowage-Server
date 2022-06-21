@@ -35,7 +35,7 @@ import LayersManagementDetailView from './detailView/LayersManagementDetailView.
 import LayersManagementHint from './LayersManagementHint.vue'
 import LayersManagementDownloadDialog from './downloadDialog/LayersManagementDownloadDialog.vue'
 
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'roles-management',

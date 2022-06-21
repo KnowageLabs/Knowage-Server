@@ -23,7 +23,7 @@ import { createDateFromIntervalTime } from './timespanHelpers'
 import TimespanForm from './TimespanForm.vue'
 import TimespanIntervalTable from './TimespanIntervalTable.vue'
 
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'timespan-detail',

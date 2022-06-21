@@ -10,7 +10,7 @@ import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 const mockedPropData = {
     scorecard: {

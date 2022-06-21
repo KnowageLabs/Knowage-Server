@@ -51,9 +51,9 @@ import HierarchyManagementNodeDetailDialog from './HierarchyManagementNodeDetail
 import HierarchyManagementHierarchiesTargetDialog from './HierarchyManagementHierarchiesTargetDialog.vue'
 import Tree from 'primevue/tree'
 
-const deepEqual = require('deep-equal')
-const deepcopy = require('deepcopy')
-const crypto = require('crypto')
+import deepEqual  from 'deep-equal'
+import deepcopy from 'deepcopy'
+import crypto from 'crypto'
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchies-tree',

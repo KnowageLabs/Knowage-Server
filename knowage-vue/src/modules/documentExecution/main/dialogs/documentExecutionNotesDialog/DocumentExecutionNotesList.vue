@@ -37,7 +37,7 @@ import Editor from 'primevue/editor'
 import Message from 'primevue/message'
 import moment from 'moment'
 
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'document-execution-notes-list',

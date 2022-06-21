@@ -72,7 +72,7 @@ import KnCalculatedField from '@/components/functionalities/KnCalculatedField/Kn
 import Dropdown from 'primevue/dropdown'
 
 const { generate, applyPatch } = require('fast-json-patch')
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'metaweb-filter-tab',

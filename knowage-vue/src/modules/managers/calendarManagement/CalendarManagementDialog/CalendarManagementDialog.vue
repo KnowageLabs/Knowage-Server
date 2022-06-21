@@ -32,7 +32,7 @@ import CalendarManagementDetailForm from './CalendarManagementDetailForm/Calenda
 import CalendarManagementDetailTable from './CalendarManagementDetailTable/CalendarManagementDetailTable.vue'
 import moment from 'moment'
 
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'calendar-management-dialog',
