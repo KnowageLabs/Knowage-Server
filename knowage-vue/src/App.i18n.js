@@ -33,9 +33,8 @@ export function loadLanguageAsync(lang) {
     }
 
     // If the language hasn't been loaded yet
-    return import(`@/i18n/${lang}/messages.json`).then((messages) => {
-        import(`@/i18n/${lang}/helper-messages.json`)
-        import(`@/i18n/${lang}/helper-messages.json`).then((m) => {
+    return import(`./i18n/${lang}/messages.json`).then((messages) => {
+        import(`./i18n/${lang}/helper-messages.json`).then((m) => {
             // eslint-disable-next-line
             // @ts-ignore
             i18n.global.setLocaleMessage(lang, messages.default)
