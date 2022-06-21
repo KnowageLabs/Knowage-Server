@@ -44,7 +44,7 @@ import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
 import QBETemporalFilterDialog from './QBETemporalFilterDialog.vue'
 import QBEFilterParameters from './QBEFilterParameters.vue'
 
-import crypto from 'crypto'
+import cryptoRandomString from 'crypto-random-string';
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
@@ -56,7 +56,7 @@ export default defineComponent({
         return {
             QBEFilterDialogDescriptor,
             filters: [] as iFilter[],
-            nextFilterIndex: -1,
+            nextFilterIndex: '-1' as string,
             temporalFilters: [] as any[],
             temporalFilterDialogVisible: false,
             parameters: [] as any[],
@@ -94,7 +94,7 @@ export default defineComponent({
                     this.filters.push({ ...filter })
                 }
             })
-            this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
+            this.nextFilterIndex = cryptoRandomString({length: 16, type: 'base64'})
             if (this.filterDialogData.field.type === 'inline.calculated.field') {
                 this.setCalculatedFieldLongDescription(this.filterDialogData.field, this.filterDialogData.field.originalId as string)
             } else if (this.filterDialogData.field.attributes?.type === 'inLineCalculatedField') {
@@ -153,7 +153,7 @@ export default defineComponent({
             }
             if (field) {
                 this.filters.push(filter)
-                this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
+                this.nextFilterIndex = cryptoRandomString({length: 16, type: 'base64'})
             }
             this.push(filter)
         },
@@ -232,7 +232,7 @@ export default defineComponent({
                     } as any
                     this.filters.push(tempFilter)
                     this.push(tempFilter)
-                    this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
+                    this.nextFilterIndex = cryptoRandomString({length: 16, type: 'base64'})
                 }
             }
             this.temporalFilterDialogVisible = false
@@ -245,7 +245,7 @@ export default defineComponent({
         },
         closeDialog() {
             this.$emit('close')
-            this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
+            this.nextFilterIndex = cryptoRandomString({length: 16, type: 'base64'})
             this.updatedParameters = []
             this.parameterTableVisible = false
             this.removeFiltersOnCancel()

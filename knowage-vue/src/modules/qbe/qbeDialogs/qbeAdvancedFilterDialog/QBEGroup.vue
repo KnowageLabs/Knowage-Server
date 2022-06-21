@@ -18,7 +18,7 @@ import { addOrRemove, contains, isSelectable, isMovable } from './selectedOperan
 import { swap, move } from './advancedFilterService'
 import { getFilterTree } from './treeService'
 
-import crypto from 'crypto'
+import cryptoRandomString from 'crypto-random-string';
 import deepEqual  from 'deep-equal'
 
 export default defineComponent({
@@ -32,7 +32,7 @@ export default defineComponent({
             selected: false,
             dropzoneTopVisible: false,
             dropzoneBottomVisible: false,
-            groupId: crypto.randomBytes(16).toString('hex')
+            groupId: cryptoRandomString({length: 16, type: 'base64'})
         }
     },
     watch: {

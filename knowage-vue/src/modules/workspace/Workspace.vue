@@ -120,7 +120,8 @@
     import moment from 'moment'
     import { mapState } from 'vuex'
 
-    import crypto from 'crypto'
+
+import cryptoRandomString from 'crypto-random-string';
 
     export default defineComponent({
         name: 'dataset-management',
@@ -168,7 +169,7 @@
             }
         },
         created() {
-            this.uniqueID = crypto.randomBytes(16).toString('hex')
+            this.uniqueID = cryptoRandomString({length: 16, type: 'base64'})
             this.getAllRepositoryData()
         },
         mounted() {

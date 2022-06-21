@@ -19,7 +19,7 @@ import { swap, move } from './advancedFilterService'
 import { getFilterTree } from './treeService'
 import QBEFilterDetail from './QBEFilterDetail.vue'
 
-import crypto from 'crypto'
+import cryptoRandomString from 'crypto-random-string';
 import deepEqual  from 'deep-equal'
 
 export default defineComponent({
@@ -33,7 +33,7 @@ export default defineComponent({
             selected: false,
             dropzoneLeftVisible: false,
             dropzoneRightVisible: false,
-            filterId: crypto.randomBytes(16).toString('hex')
+            filterId: cryptoRandomString({length: 16, type: 'base64'})
         }
     },
     watch: {

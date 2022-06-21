@@ -99,7 +99,7 @@ export interface iNode {
     data: iFilterNode,
     style: any,
     leaf: boolean,
-    selectable: boolean,
+    selectable?: boolean,
     parent?: iNode,
     customIcon?: string
 }
