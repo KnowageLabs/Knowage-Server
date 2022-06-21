@@ -130,11 +130,12 @@ export default defineComponent({
             hiddenFormData.set('SBI_EXECUTION_ID', decodeURIComponent(this.sbiExecutionId))
             hiddenFormData.set('EDIT_MODE', decodeURIComponent('null'))
             hiddenFormData.set('timereloadurl', decodeURIComponent('' + new Date().getTime()))
+            hiddenFormData.set('ENGINE', 'knowageolapengine')
 
             this.$store.commit('setLoading', true)
             // et language = this.user.locale.split('_')[0]
             // let country = this.user.locale.split('_')[1]
-            await this.$http.post(process.env.VUE_APP_OLAP_PATH + `olap/startolap`, hiddenFormData, { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } }).then(() => {})
+            await this.$http.post(process.env.VUE_APP_OLAP_PATH + `olap/startolap/edit`, hiddenFormData, { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } }).then(() => {})
             this.$store.commit('setLoading', false)
         },
         async loadMondrianSchemaResources() {
