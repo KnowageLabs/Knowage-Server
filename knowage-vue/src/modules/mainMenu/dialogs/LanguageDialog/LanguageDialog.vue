@@ -3,7 +3,7 @@
         <Listbox class="countryList" :options="languages" optionDisabled="disabled">
             <template #option="slotProps">
                 <div :class="['p-d-flex', 'p-ai-center', 'countryItem', slotProps.option.locale]" class="p-my-1" @click="changeLanguage(slotProps.option)">
-                    <img :alt="slotProps.option.locale" :src="require('@/assets/images/flags/' + slotProps.option.locale.toLowerCase().substring(3, 5) + '.svg')" width="40" />
+                    <img :alt="slotProps.option.locale" :src="import('../../../../assets/images/flags/' + slotProps.option.locale.toLowerCase().substring(3, 5) + '.svg')" width="40" />
                     <div class="countryLabel">{{ $t(`language.${slotProps.option.locale}`) }}</div>
                     <span class="kn-flex"></span>
                     <i class="fas fa-check" v-if="slotProps.option.locale === $i18n.locale"></i>
