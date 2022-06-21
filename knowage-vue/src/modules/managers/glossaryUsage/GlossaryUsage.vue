@@ -232,10 +232,8 @@ export default defineComponent({
         },
         setFilteredWords(words: any) {
             this.loading = true
-            // setTimeout(() => {
             this.nodes = []
             words.forEach((el: any) => this.nodes.push(this.createNode(el)))
-            //}, 250)
 
             this.loading = false
         },

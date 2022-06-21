@@ -16,7 +16,7 @@
                     <template #header>
                         <span>{{ $t('metaweb.businessModel.title') }}</span>
                     </template>
-                    <BusinessModelTab :propMeta="meta" :observer="observer" :metaUpdated="metaUpdated" @metaUpdated="onMetaUpdated" />
+                    <BusinessModelTab :businessModelId="businessModel.dataSourceId" :propMeta="meta" :observer="observer" :metaUpdated="metaUpdated" @metaUpdated="onMetaUpdated" />
                 </TabPanel>
                 <TabPanel>
                     <template #header>

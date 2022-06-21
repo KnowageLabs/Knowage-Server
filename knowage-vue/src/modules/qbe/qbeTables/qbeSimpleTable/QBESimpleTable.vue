@@ -6,7 +6,7 @@
                 <span v-tooltip.top="getHeaderTooltip(column)">{{ $t(column.header) }}</span>
             </template>
             <template #body="slotProps">
-                <InputText v-if="column.field === 'alias'" class="kn-material-input p-inputtext-sm qbe-simple-table-input" v-model="slotProps.data[slotProps.column.props.field]"></InputText>
+                <InputText v-if="column.field === 'alias'" class="kn-material-input p-inputtext-sm qbe-simple-table-input" v-model="slotProps.data[slotProps.column.props.field]" @change="$emit('fieldAliasChanged', slotProps.data)"></InputText>
                 <Checkbox v-else-if="column.field === 'group'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="onGroupingChanged(slotProps.data)"></Checkbox>
                 <Dropdown v-else-if="column.field === 'order'" class="kn-material-input" v-model="slotProps.data[slotProps.column.props.field]" :options="QBESimpleTableDescriptor.orderingOptions" />
                 <Dropdown v-else-if="column.field === 'funct'" class="kn-material-input" v-model="slotProps.data[slotProps.column.props.field]" :options="getAttributeOptions(slotProps.data)" :disabled="slotProps.data['group']" />
@@ -38,7 +38,7 @@ export default defineComponent({
     name: 'qbe-simple-table',
     props: { query: { type: Object as PropType<iQuery> } },
     components: { Checkbox, Column, DataTable, Dropdown, Menu },
-    emits: ['columnVisibilityChanged', 'openFilterDialog', 'openHavingDialog', 'entityDropped', 'groupingChanged', 'openCalculatedFieldDialog'],
+    emits: ['columnVisibilityChanged', 'openFilterDialog', 'openHavingDialog', 'entityDropped', 'groupingChanged', 'openCalculatedFieldDialog', 'fieldDeleted'],
     data() {
         return {
             QBESimpleTableDescriptor,
@@ -118,6 +118,7 @@ export default defineComponent({
             this.$emit('groupingChanged', field)
         },
         deleteColumn(index: number) {
+            this.$emit('fieldDeleted', { ...this.rows[index] })
             this.rows.splice(index, 1)
         }
     }

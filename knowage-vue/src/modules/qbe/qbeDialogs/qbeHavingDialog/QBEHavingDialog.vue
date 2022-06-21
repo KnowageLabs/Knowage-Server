@@ -65,7 +65,12 @@ export default defineComponent({
         loadData() {
             if (!this.havingDialogData || !this.havingDialogData.field || !this.havingDialogData.query) return
 
-            this.havings = this.havingDialogData.query.havings ? [...this.havingDialogData.query.havings] : []
+            this.havings = []
+            this.havingDialogData.query.havings.forEach((having: iFilter) => {
+                if (having.leftOperandValue === this.havingDialogData?.field.id) {
+                    this.havings.push({ ...having })
+                }
+            })
             this.nextHavingIndex = crypto.randomBytes(16).toString('hex')
         },
         addNewHaving() {
@@ -80,7 +85,7 @@ export default defineComponent({
                     leftOperandValue: field.id,
                     leftOperandDescription: field.entity + ': ' + field.funct + ' (' + field.alias + ')',
                     leftOperandLongDescription: field.entity + ': ' + field.funct + ' (' + field.alias + ')',
-                    leftOperandType: 'Field Content',
+                    leftOperandType: field.type === 'inline.calculated.field' || field.attributes?.type === 'inLineCalculatedField' ? 'inline.calculated.field' : 'Field Content',
                     leftOperandDefaultValue: null,
                     leftOperandLastValue: null,
                     operator: 'EQUALS TO',

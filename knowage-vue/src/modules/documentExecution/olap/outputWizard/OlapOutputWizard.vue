@@ -54,6 +54,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
+import { AxiosResponse } from 'axios'
 import Dialog from 'primevue/dialog'
 import descriptor from './OlapOutputWizardDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -87,12 +89,24 @@ export default defineComponent({
     created() {},
     methods: {
         saveRequest() {
-            console.log(this.olapVersionsProp)
             if (this.selectedType === 'file') {
                 this.loading = true
                 this.$http
-                    .get(process.env.VUE_APP_OLAP_PATH + `1.0/analysis/csv/${this.selectedVersion.id}/${this.fieldDelimiter}?SBI_EXECUTION_ID=${this.sbiExecutionId}`, { headers: { Accept: 'application/zip' } })
-                    .catch(() => {})
+                    .get(process.env.VUE_APP_OLAP_PATH + `1.0/analysis/csv/${this.selectedVersion.id}/${this.fieldDelimiter}?SBI_EXECUTION_ID=${this.sbiExecutionId}`, {
+                        responseType: 'arraybuffer',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+                        }
+                    })
+                    .then((response: AxiosResponse<any>) => {
+                        console.log('DOWNLOAD RESPONSE ------------', response)
+                        downloadDirectFromResponse(response)
+                        this.$store.commit('setInfo', { title: this.$t('common.downloading'), msg: this.$t('managers.mondrianSchemasManagement.toast.downloadFile.downloaded') })
+                    })
+                    .catch(() => {
+                        this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.downloading') })
+                    })
                     .finally(() => (this.loading = false))
             } else {
                 this.loading = true

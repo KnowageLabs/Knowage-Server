@@ -625,7 +625,7 @@ export default defineComponent({
             }
 
             this.selectedCell = { cell: cell, event: event }
-            event.target.style.border = '1px solid red'
+            event.target.style.border = '2px solid red'
         },
         cellSelected() {
             this.olapSidebarVisible = true
@@ -929,7 +929,7 @@ export default defineComponent({
             }
         },
         removeFilterLevels(filter: any) {
-            if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER) {
+            if (this.olapDesigner && this.olapDesigner.template && this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER) {
                 for (let i = this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.length - 1; i >= 0; i--) {
                     if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER[i].HIERARCHY === filter.uniqueName) {
                         this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.splice(i, 1)
@@ -1175,8 +1175,6 @@ export default defineComponent({
                 text-align: left;
             }
             td {
-                border-top-width: 1px !important;
-                border-right-width: 1px !important;
                 text-align: right;
                 vertical-align: middle;
                 border-bottom: 1px solid #3b678c;

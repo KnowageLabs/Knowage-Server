@@ -2,17 +2,17 @@
     <Card class="p-m-2">
         <template #content>
             <form class="p-fluid p-formgrid p-grid">
-                <div class="p-field p-col-6">
+                <div class="p-field p-col-4">
                     <Button :label="$t('managers.datasetManagement.monitoring')" class="kn-button kn-button--primary" @click="showMonitoringDialog = true" />
                 </div>
-                <div class="p-field p-col-6">
+                <div class="p-field p-col-4">
                     <Button :label="$t('managers.datasetManagement.openDP')" class="kn-button kn-button--primary" @click="prepareForDataPreparation" />
                 </div>
             </form>
         </template>
     </Card>
 
-    <MonitoringDialog :visibility="showMonitoringDialog" :dataset="selectedDataset" @close="showMonitoringDialog = false" />
+    <MonitoringDialog :visibility="showMonitoringDialog" :dataset="selectedDataset" @close="showMonitoringDialog = false" @save="updateDatasetAndSave" />
 </template>
 
 <script lang="ts">
@@ -44,6 +44,14 @@ export default defineComponent({
         }
     },
     methods: {
+        async loadDataset(datasetId: Number) {
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`)
+                .then((response: AxiosResponse<any>) => {
+                    this.dataset = response.data[0]
+                })
+                .catch(() => {})
+        },
         routeToDataPreparation() {
             let path = ''
             this.$confirm.require({
@@ -70,25 +78,25 @@ export default defineComponent({
             await this.openDataPreparation(this.selectedDataset)
         },
 
-        isAvroReady(dsLabel: String) {
-            if (this.avroDatasets.indexOf(dsLabel) >= 0) return true
+        isAvroReady(dsId: Number) {
+            if (this.avroDatasets.indexOf(dsId) >= 0 || (dsId && this.avroDatasets.indexOf(dsId.toString())) >= 0) return true
             else return false
         },
 
         openDataPreparation(dataset: any) {
             if (dataset.dsTypeCd == 'Prepared') {
                 //edit existing data prep
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.label}`).then(
+                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
                     (response: AxiosResponse<any>) => {
                         let instanceId = response.data.configuration.dataPrepInstanceId
                         this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
                             (response: AxiosResponse<any>) => {
                                 let transformations = response.data.definition
                                 let processId = response.data.id
-                                let datasetLabel = response.data.instance.dataSetLabel
-                                if (this.isAvroReady(datasetLabel))
+                                let datasetId = response.data.instance.dataSetId
+                                if (this.isAvroReady(datasetId))
                                     // check if Avro file has been deleted or not
-                                    this.$router.push({ name: 'data-preparation', params: { id: datasetLabel, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
+                                    this.$router.push({ name: 'data-preparation', params: { id: datasetId, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
                                 else {
                                     this.$store.commit('setInfo', {
                                         title: 'Avro file is missing',
@@ -107,15 +115,27 @@ export default defineComponent({
                         })
                     }
                 )
-            } else if (this.isAvroReady(dataset.label)) {
+            } else if (this.isAvroReady(dataset.id)) {
                 // original dataset already exported in Avro
-                this.$router.push({ name: 'data-preparation', params: { id: dataset.label } })
+                this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
             } else {
                 this.$store.commit('setInfo', {
                     title: 'Avro file is missing',
                     msg: 'Generate it again and then retry'
                 })
             }
+        },
+        async updateDatasetAndSave(newConfig) {
+            this.showMonitoringDialog = false
+
+            await this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config }, { headers: { Accept: 'application/json, */*' } }).then(
+                () => {
+                    this.loadDataset(this.selectedDataset.id)
+                },
+                () => {
+                    this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })
+                }
+            )
         }
     }
 })

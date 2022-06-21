@@ -153,6 +153,7 @@ export default defineComponent({
                             title: this.$t('common.uploadFile'),
                             msg: this.$t('common.uploadFileSuccess')
                         })
+                        this.updateMetadataFile(meta.id, this.uploadedFiles[meta.id].name)
                     })
                     .catch((error: any) =>
                         this.$store.commit('setError', {
@@ -163,10 +164,17 @@ export default defineComponent({
                 this.loading = false
             }
         },
+        updateMetadataFile(fileId: number, fileName: string) {
+            if (!this.metadata) return
+            const index = this.metadata?.file.findIndex((tempFile: any) => tempFile.id === fileId)
+            if (index !== -1) this.metadata.file[index].fileToSave = { file: {}, fileName: fileName }
+        },
         cleanFile(meta: any) {
             const temp = this.$refs[meta.id] as any
-            if (temp) {
+            if (temp && this.metadata) {
                 temp.resetInput()
+                const index = this.metadata.file.findIndex((tempFile: any) => tempFile.id === meta.id)
+                if (index !== -1) delete this.metadata.file[index].fileToSave
             }
         },
         closeDialog() {

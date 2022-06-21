@@ -1,6 +1,17 @@
 <template>
     <div class="kn-page kn-data-preparation">
-        <KnCalculatedField v-model:visibility="showCFDialog" @save="saveCFDialog" @cancel="cancelCFDialog" :fields="columns" :descriptor="cfDescriptor" :readOnly="readOnly" @update:readOnly="updateReadOnly" v-model:template="selectedTransformation" :valid="cfType !== ''">
+        <KnCalculatedField
+            v-model:visibility="showCFDialog"
+            @save="saveCFDialog"
+            @cancel="cancelCFDialog"
+            :fields="columns"
+            :descriptor="cfDescriptor"
+            :propCalcFieldFunctions="cfDescriptor.availableFunctions"
+            :readOnly="readOnly"
+            @update:readOnly="updateReadOnly"
+            v-model:template="selectedTransformation"
+            :valid="cfType !== ''"
+        >
             <template #additionalInputs>
                 <div class="p-col-4">
                     <span v-if="cfDescriptor.availableTypes" class="p-float-label p-field p-ml-2 kn-flex">
@@ -278,7 +289,7 @@ export default defineComponent({
 
     methods: {
         getFormattedDate(date: any, format: any) {
-            return formatDateWithLocale(date, format)
+            return formatDateWithLocale(date, format, true)
         },
         getProgressValue() {
             if (this.dataset.config && this.dataset.config.transformations && this.dataset.config.transformations.length && this.dataset.config.transformations.length > 1) {
@@ -438,7 +449,7 @@ export default defineComponent({
             }
         },
         getColHeader(metadata: Array<any>, idx: Number): string {
-            let columnMapping = 'Column_' + idx
+            let columnMapping = 'column_' + idx
             let toReturn = metadata.filter((x) => x.mappedTo == columnMapping)[0].alias
             return toReturn
         },

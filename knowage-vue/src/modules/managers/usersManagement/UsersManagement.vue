@@ -17,7 +17,7 @@
             </div>
 
             <KnHint :title="'managers.usersManagement.title'" :hint="'managers.usersManagement.hint'" v-if="hiddenForm"></KnHint>
-            <div class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
+            <div v-show="!hiddenForm" class="p-col-8 p-sm-8 p-md-9 p-p-0 p-m-0 kn-page">
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
                     <template #start>
                         {{ userDetailsForm.userId }}
@@ -34,7 +34,7 @@
                             <template #header>
                                 <span>{{ $t('managers.usersManagement.detail') }}</span>
                             </template>
-                            <DetailFormTab :formInsert="formInsert" :formValues="userDetailsForm" :vobj="v$" :disabledUID="disableUsername" @dataChanged="onDataChange" @unlock="unlockUser($event)"></DetailFormTab>
+                            <DetailFormTab v-if="!hiddenForm" :formInsert="formInsert" :formValues="userDetailsForm" :vobj="v$" :disabledUID="disableUsername" @dataChanged="onDataChange" @unlock="unlockUser($event)"></DetailFormTab>
                         </TabPanel>
 
                         <TabPanel>
@@ -144,12 +144,10 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         setDefaultRoleValue(defaultRole: any) {
-            console.log('setDefaultRoleValue -----------------------')
             this.defaultRole = defaultRole
             this.dirty = true
         },
         setSelectedRoles(roles: iRole[]) {
-            console.log('setSelectedRoles -----------------------')
             this.selectedRoles = roles
             this.dirty = true
         },
@@ -176,12 +174,16 @@ export default defineComponent({
             const userToSave = { ...this.userDetailsForm }
             delete userToSave.passwordConfirm
             userToSave['defaultRoleId'] = this.defaultRole
+            for (var key in this.attributesForm) {
+                for (var key2 in this.attributesForm[key]) {
+                    this.attributesForm[key][key2] === '' ? delete this.attributesForm[key] : ''
+                }
+            }
             userToSave['sbiUserAttributeses'] = { ...this.attributesForm }
             userToSave['sbiExtUserRoleses'] = this.selectedRoles ? [...this.selectedRoles.map((selRole) => selRole.id)] : []
             return userToSave
         },
         onFormDirty() {
-            console.log('onFormDirty -----------------------')
             this.dirty = true
         },
         saveOrUpdateUser(user: iUser) {
@@ -311,7 +313,6 @@ export default defineComponent({
             }
         },
         onDataChange() {
-            console.log('onDataChange ---------------------')
             this.dirty = true
         }
     }

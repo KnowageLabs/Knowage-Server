@@ -4,7 +4,7 @@
 	<APPLICATION code="DocumentUserBrowser" 
 	             title="#menu.DocumentUserBrowser"  
 	             functionality="DocumentUserBrowser" 
-	             link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ANGULAR_ACTION" 
+	             link="/document-browser" 
 	             iconCls="fa fa-2x fa-folder-o"
 	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/bidocuments16.png">
 	</APPLICATION>

@@ -49,7 +49,7 @@
                         <MainMenuItem :item="item" @click="itemClick" :badge="getBadgeValue(item)" @mouseover="toggleMenu($event, item)"></MainMenuItem>
                     </template>
                     <template v-for="(item, i) of dynamicUserFunctionalities" :key="i">
-                        <MainMenuItem :item="item" @click="itemClick" @mouseover="toggleMenu($event, item)"></MainMenuItem>
+                        <MainMenuItem :item="item" @click="itemClick" @mouseover="toggleMenu($event, item)" :internationalize="true"></MainMenuItem>
                     </template>
                 </ul>
             </ScrollPanel>
@@ -66,7 +66,6 @@
     import LicenseDialog from '@/modules/mainMenu/dialogs/LicenseDialog/LicenseDialog.vue'
     import NewsDialog from '@/modules/mainMenu/dialogs/NewsDialog/NewsDialog.vue'
     import RoleDialog from '@/modules/mainMenu/dialogs/RoleDialog.vue'
-    import { getGravatar } from '@/helpers/commons/gravatarHelper'
     import { mapState } from 'vuex'
     import auth from '@/helpers/commons/authHelper'
     import { AxiosResponse } from 'axios'
@@ -109,7 +108,7 @@
                 hoverTimer: false as any
             }
         },
-        emits: ['update:visibility'],
+        emits: ['update:visibility', 'menuItemSelected'],
         methods: {
             info() {
                 this.display = !this.display
@@ -156,15 +155,14 @@
                     this[item.command]()
                 } else if (item.to && event.navigate) {
                     event.navigate(event.originalEvent)
+                    this.$emit('menuItemSelected', item)
                 } else if (item.url && (!item.target || item.target === 'insideKnowage')) this.$router.push({ name: 'externalUrl', params: { url: item.url } })
-
                 if (this.adminMenuOpened) this.adminMenuOpened = false
             },
             getHref(item) {
                 let to = item.to
                 if (to) {
                     to = to.replace(/\\\//g, '/')
-
                     if (to.startsWith('/')) to = to.substring(1)
                     return process.env.VUE_APP_PUBLIC_PATH + to
                 }
@@ -177,8 +175,7 @@
             },
             getProfileImage(user) {
                 if (user && user.organizationImageb64) return user.organizationImageb64
-                else if (user && user.attributes && user.attributes.email) return getGravatar(user.attributes.email)
-                else return getGravatar('knowage@eng.it')
+                return require('@/assets/images/commons/logo_knowage.svg')
             },
             updateNewsAndDownload() {
                 for (var idx in this.allowedUserFunctionalities) {
@@ -205,8 +202,9 @@
                 let toRet = undefined
                 for (var idx in dynMenu) {
                     let menu = dynMenu[idx]
-                    if (this.user.sessionRole && menu.roles.includes(this.user.sessionRole) && (menu.to || menu.url)) return menu
-                    if (!this.user.sessionRole) {
+                    if (this.user.sessionRole) {
+                        if (menu.roles.includes(this.user.sessionRole) && (menu.to || menu.url)) return menu
+                    } else {
                         for (var i = 0; i < this.user.roles.length; i++) {
                             let element = this.user.roles[i]
                             if (menu.roles.includes(element) && (menu.to || menu.url)) {
@@ -217,7 +215,6 @@
                 }
                 return toRet
             },
-
             toggleMenu(event, item) {
                 if (item.items) {
                     clearTimeout(this.hoverTimer)
@@ -243,62 +240,65 @@
             },
             cleanTo(item): any {
                 return item.to.replace(/\\\//g, '/')
+            },
+
+            async loadMenu(recursive: Boolean = false) {
+                window.addEventListener('resize', this.getDimensions)
+                this.$store.commit('setLoading', true)
+                let localObject = { locale: this.$i18n.fallbackLocale.toString() }
+                if (Object.keys(this.locale).length !== 0) localObject = { locale: this.locale }
+                if (localStorage.getItem('locale')) {
+                    localObject = { locale: localStorage.getItem('locale') || this.$i18n.fallbackLocale.toString() }
+                }
+                localObject.locale = localObject.locale.replaceAll('_', '-')
+                // script handling
+                let splittedLocale = localObject.locale.split('-')
+                if (splittedLocale.length > 2) {
+                    localObject.locale = splittedLocale[0] + '-' + splittedLocale[2].replaceAll('#', '') + '-' + splittedLocale[1]
+                }
+                await this.$http
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
+                    .then((response: AxiosResponse<any>) => {
+                        this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
+
+                        let responseAllowedUserFunctionalities = response.data.allowedUserFunctionalities
+                        for (var idx in responseAllowedUserFunctionalities) {
+                            let item = responseAllowedUserFunctionalities[idx]
+                            item.visible = this.isItemToDisplay(item)
+                            this.allowedUserFunctionalities.push(item)
+                        }
+                        this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
+                            return el1.prog - el2.prog
+                        })
+                        if (this.dynamicUserFunctionalities.length > 0) {
+                            let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
+                            if (homePage && Object.keys(homePage).length !== 0) {
+                                if (!this.stateHomePage.label) {
+                                    this.$store.commit('setHomePage', homePage)
+                                }
+                            }
+                        }
+                        let responseCommonUserFunctionalities = response.data.commonUserFunctionalities
+                        for (var index in responseCommonUserFunctionalities) {
+                            let item = responseCommonUserFunctionalities[index]
+                            item.visible = this.isItemToDisplay(item)
+                            if (parseInt(index) == 0 && this.stateHomePage?.to) item.to = this.stateHomePage.to.replaceAll('\\/', '/')
+                            this.commonUserFunctionalities.push(item)
+                        }
+                        this.updateNewsAndDownload()
+                    })
+                    .catch(() => {
+                        if (recursive) this.logout()
+                        else this.loadMenu(true)
+                    })
+                    .finally(() => {
+                        this.$store.commit('setLoading', false)
+                        this.getDimensions()
+                    })
             }
         },
         async mounted() {
-            window.addEventListener('resize', this.getDimensions)
-            this.$store.commit('setLoading', true)
-            let localObject = { locale: this.$i18n.fallbackLocale.toString() }
-            if (Object.keys(this.locale).length !== 0) localObject = { locale: this.locale }
-            if (localStorage.getItem('locale')) {
-                localObject = { locale: localStorage.getItem('locale') || this.$i18n.fallbackLocale.toString() }
-            }
-            localObject.locale = localObject.locale.replaceAll('_', '-')
-            // script handling
-            let splittedLocale = localObject.locale.split('-')
-            if (splittedLocale.length > 2) {
-                localObject.locale = splittedLocale[0] + '-' + splittedLocale[2].replaceAll('#', '') + '-' + splittedLocale[1]
-            }
-            await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
-                .then((response: AxiosResponse<any>) => {
-                    this.technicalUserFunctionalities = response.data.technicalUserFunctionalities.filter((groupItem: any) => {
-                        let childItems = groupItem.items.filter((x) => {
-                            let currentHostName = this.licenses.hosts[0] ? this.licenses.hosts[0].hostName : undefined
-                            return x.toBeLicensed && currentHostName && this.licenses[currentHostName] ? this.licenses.licenses[currentHostName].filter((lic) => lic.product === x.toBeLicensed).length == 1 : true
-                        })
-                        return childItems.length > 0
-                    })
-                    let responseCommonUserFunctionalities = response.data.commonUserFunctionalities
-                    for (var index in responseCommonUserFunctionalities) {
-                        let item = responseCommonUserFunctionalities[index]
-                        item.visible = this.isItemToDisplay(item)
-                        this.commonUserFunctionalities.push(item)
-                    }
-                    let responseAllowedUserFunctionalities = response.data.allowedUserFunctionalities
-                    for (var idx in responseAllowedUserFunctionalities) {
-                        let item = responseAllowedUserFunctionalities[idx]
-                        item.visible = this.isItemToDisplay(item)
-                        this.allowedUserFunctionalities.push(item)
-                    }
-                    this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
-                        return el1.prog - el2.prog
-                    })
-                    if (this.dynamicUserFunctionalities.length > 0) {
-                        let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
-                        if (homePage && Object.keys(homePage).length !== 0) {
-                            if (!this.stateHomePage.label) {
-                                this.$store.commit('setHomePage', homePage)
-                            }
-                        }
-                    }
-                    this.updateNewsAndDownload()
-                })
-                .catch((error) => console.error(error))
-                .finally(() => {
-                    this.$store.commit('setLoading', false)
-                    this.getDimensions()
-                })
+            await this.loadMenu()
         },
         unmounted() {
             window.removeEventListener('resize', this.getDimensions)
@@ -332,7 +332,7 @@
         padding: 0 0 18px 0;
     }
     .layout-menu-container {
-        z-index: 8000;
+        z-index: 9000;
         width: var(--kn-mainmenu-width);
         top: 0;
         background-color: var(--kn-mainmenu-background-color);

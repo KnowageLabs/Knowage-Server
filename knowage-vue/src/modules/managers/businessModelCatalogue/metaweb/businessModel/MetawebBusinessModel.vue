@@ -91,7 +91,7 @@
                             <span>{{ $t('metaweb.businessModel.tabView.calcField') }}</span>
                         </template>
                         <div :style="mainDescriptor.style.absoluteScroll">
-                            <CalculatedField :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" @metaUpdated="$emit('metaUpdated')" :observer="observer" />
+                            <CalculatedField :selectedBusinessModel="selectedBusinessModel" :propMeta="meta" :propCustomFunctions="customFunctions" @metaUpdated="$emit('metaUpdated')" :observer="observer" />
                         </div>
                     </TabPanel>
                     <TabPanel>
@@ -191,7 +191,7 @@ export default defineComponent({
         MetawebPhysicalTableTab,
         MetawebFilterTab
     },
-    props: { propMeta: { type: Object }, observer: { type: Object }, metaUpdated: { type: Boolean } },
+    props: { propMeta: { type: Object }, observer: { type: Object }, metaUpdated: { type: Boolean }, businessModelId: Number },
     emits: ['loading', 'metaUpdated'],
     computed: {},
     data() {
@@ -200,6 +200,7 @@ export default defineComponent({
             mainDescriptor,
             meta: null as any,
             menuButtons: [] as any,
+            customFunctions: [] as any,
             showBusinessClassDialog: false,
             showBusinessViewDialog: false,
             selectedBusinessModel: {} as iBusinessModel,
@@ -219,6 +220,7 @@ export default defineComponent({
         this.loadMeta()
         this.createMenuItems()
         this.loadRoles()
+        this.loadCustomFunctions()
     },
     methods: {
         showMenu(event) {
@@ -262,6 +264,15 @@ export default defineComponent({
         async loadRoles() {
             this.loading = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles').then((response: AxiosResponse<any>) => (this.roles = response.data))
+            this.loading = false
+        },
+        async loadCustomFunctions() {
+            this.loading = true
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${this.businessModelId}`).then((response: AxiosResponse<any>) => {
+                if (response.data.data && response.data.data.length > 0) {
+                    this.customFunctions = response.data.data.map((funct) => ({ category: 'CUSTOM', formula: funct.value, label: funct.label, name: funct.name, help: 'dataPreparation.custom' }))
+                } else this.customFunctions = null
+            })
             this.loading = false
         },
         async onRowReorder(event: any) {

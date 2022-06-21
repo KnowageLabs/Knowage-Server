@@ -3,6 +3,7 @@ import { DateTime } from 'luxon'
 import store from '@/App.store.js'
 
 import formats from '@/helpers/commons/localeDateFormats.json'
+import timezones from '@/helpers/commons/localeTimeZones.json'
 
 let fallbackLocale = 'en_US'
 
@@ -19,10 +20,17 @@ export function formatDate(dateString?: string, format?: string, incomingFormat?
         .format(format || 'L')
 }
 
-export function formatDateWithLocale(dateString?: string, format?: any) {
+export function formatDateWithLocale(dateString?: string|number, format?: any, keepNull?:boolean):string {
+    if(keepNull && !dateString) return ''
     let dateToFormat = new Date()
-    if (dateString) dateToFormat = new Date(dateString)
-    return Intl.DateTimeFormat(getLocale(true), format).format(dateToFormat)
+    if (dateString) {
+        if (typeof dateString == 'string') {
+            for (var key in timezones) dateString = dateString.replace(key, timezones[key]);
+        }
+        dateToFormat = new Date(dateString);
+    }
+   
+    return Intl.DateTimeFormat(getLocale(true), format).format(dateToFormat)  
 }
 
 export function formatNumberWithLocale(number: number, precision?: number, format?: any) {

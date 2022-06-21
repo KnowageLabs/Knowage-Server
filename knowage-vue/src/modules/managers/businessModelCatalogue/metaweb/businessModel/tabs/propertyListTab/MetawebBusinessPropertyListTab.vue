@@ -1,5 +1,5 @@
 <template>
-    <Accordion v-if="businessModel" :multiple="true" :activeIndex="[0]">
+    <Accordion v-if="businessModel" :multiple="true" :activeIndex="[0, 1]">
         <AccordionTab>
             <template #header>
                 <span>{{ $t('metaweb.physicalModel.misc') }}</span>

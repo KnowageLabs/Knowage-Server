@@ -1,5 +1,5 @@
 <template>
-    <div v-if="viewMode === 'document-detail'" id="document-details-container" class="p-d-flex p-flex-column kn-flex kn-height-full">
+    <div v-if="viewMode === 'document-detail' || $route.name === 'document-details-new-document' || $route.name === 'document-details-edit-document'" id="document-details-container" class="p-d-flex p-flex-column kn-flex kn-height-full">
         <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
             <template #start>
                 {{ $t('documentExecution.documentDetails.title') }}
@@ -85,7 +85,6 @@ import OutputParamsTab from './tabs/outputParams/DocumentDetailsOutputParameters
 import DataLineageTab from './tabs/dataLineage/DocumentDetailsDataLineage.vue'
 import HistoryTab from './tabs/history/DocumentDetailsHistory.vue'
 import SubreportsTab from './tabs/subreports/DocumentDetailsSubreports.vue'
-// import Dialog from 'primevue/dialog'
 import TabView from 'primevue/tabview'
 import Badge from 'primevue/badge'
 import TabPanel from 'primevue/tabpanel'
@@ -103,11 +102,10 @@ export default defineComponent({
         SubreportsTab,
         TabView,
         TabPanel,
-        // Dialog,
         Badge,
         ProgressSpinner
     },
-    props: { propDocId: { type: String }, propFolderId: { type: String }, propMode: { type: String }, viewMode: { type: String } },
+    props: { propDocId: { type: String }, propFolderId: { type: String }, propMode: { type: String }, viewMode: { type: String }, wholeItem: { type: Object } },
     emits: ['closeDetails', 'documentSaved'],
     data() {
         return {
@@ -154,29 +152,44 @@ export default defineComponent({
     },
     watch: {
         async propDocId() {
-            this.isForEdit()
-            await this.loadPage(this.docId)
+            await this.isForEdit()
         }
     },
     async created() {
-        if (this.viewMode !== 'document-detail') return
-        this.isForEdit()
-        await this.loadPage(this.docId)
+        if (this.viewMode !== 'document-detail' && this.$route.name !== 'document-details-new-document' && this.$route.name !== 'document-details-edit-document') return
+        await this.isForEdit()
+    },
+    activated() {
+        this.resetNewDocumentData()
+        if (this.propFolderId) {
+            this.getFunctionalities()
+            this.getAnalyticalDrivers()
+            this.getDatasources()
+            this.getTypes()
+            this.getEngines()
+            this.getAttributes()
+            this.getParTypes()
+            this.getDateFormats()
+            this.getSavedTablesByDocumentID()
+            this.getDataset()
+            this.getDataSources()
+        }
     },
     methods: {
-        isForEdit() {
+        async isForEdit() {
             if (this.propMode === 'execution') {
-                this.loadAsExecution()
+                this.docId = this.propDocId
+                this.folderId = this.propFolderId
             } else {
-                this.loadAsDetail()
+                this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
             }
+            await this.loadPage(this.docId)
         },
-        loadAsExecution() {
-            this.docId = this.propDocId
-            this.folderId = this.propFolderId
-        },
-        loadAsDetail() {
-            this.$route.params.docId ? (this.docId = this.$route.params.docId) : (this.folderId = this.$route.params.folderId)
+        resetNewDocumentData() {
+            if (this.wholeItem && !this.wholeItem.fromTab && this.propFolderId) {
+                this.selectedDocument = { ...this.mainDescriptor.newDocument }
+                this.selectedDocument.functionalities = []
+            }
         },
         async loadPage(id) {
             this.loading = true
@@ -209,7 +222,7 @@ export default defineComponent({
                 this.availableFolders = response.data
                 if (this.$route.params.folderId) {
                     let sourceFolder = this.availableFolders.find((folder) => folder.id == parseInt(this.folderId)) as iFolder
-                    this.selectedDocument.functionalities.push(sourceFolder.path)
+                    if (!this.selectedDocument.functionalities.includes(sourceFolder.path)) this.selectedDocument.functionalities.push(sourceFolder.path)
                 }
             })
         },
@@ -360,6 +373,7 @@ export default defineComponent({
         async saveDocument() {
             this.loading = true
             let docToSave = { ...this.selectedDocument }
+            const folderId = this.propFolderId
             delete docToSave.drivers
             delete docToSave.outputParameters
             delete docToSave.dataSetLabel
@@ -374,11 +388,13 @@ export default defineComponent({
                     setTimeout(() => {
                         const path = `/document-details/${response.data.id}`
                         !this.selectedDocument.id ? this.$router.push(path) : ''
-                        if (!docToSave.id) this.$emit('documentSaved', response.data)
+                        this.$emit('documentSaved', { ...response.data, folderId: folderId })
                         this.loadPage(response.data.id)
                     }, 200)
                 })
-                .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
+                .catch((error) => {
+                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }), (this.loading = false)
+                })
         },
         closeDocument() {
             this.$emit('closeDetails')

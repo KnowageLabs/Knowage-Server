@@ -1,6 +1,6 @@
-import { iFilter, iQBE, iQuery } from './QBE'
+import { iFilter, iQBE, iQuery, iField } from './QBE'
 
-export function onHavingsSaveCallback(havings: iFilter[], qbe: iQBE | null, selectedQuery: iQuery) {
+export function onHavingsSaveCallback(havings: iFilter[], qbe: iQBE | null, selectedQuery: iQuery, field: iField) {
     if (!qbe) return
 
     for (let i = 0; i < havings.length; i++) {
@@ -13,15 +13,17 @@ export function onHavingsSaveCallback(havings: iFilter[], qbe: iQBE | null, sele
         }
     }
 
-    removeDeletedHavings(havings, qbe, selectedQuery)
+    removeDeletedHavings(havings, qbe, selectedQuery, field)
 }
 
-export function removeDeletedHavings(havings: iFilter[], qbe: iQBE, selectedQuery: iQuery) {
+export function removeDeletedHavings(havings: iFilter[], qbe: iQBE, selectedQuery: iQuery, field: iField) {
     if (!qbe) return
 
     for (let i = selectedQuery.havings.length - 1; i >= 0; i--) {
         const tempHaving = selectedQuery.havings[i]
-        const index = havings.findIndex((el: iFilter) => el.filterId === tempHaving.filterId)
-        if (index === -1) selectedQuery.havings.splice(i, 1)
+        if (tempHaving.leftOperandValue === field.id) {
+            const index = havings.findIndex((el: iFilter) => el.filterId === tempHaving.filterId)
+            if (index === -1) selectedQuery.havings.splice(i, 1)
+        }
     }
 }

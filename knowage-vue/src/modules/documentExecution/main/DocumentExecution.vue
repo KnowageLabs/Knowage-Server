@@ -2,7 +2,7 @@
     <div class="kn-height-full detail-page-container">
         <Toolbar v-if="!embed && !olapDesignerMode" class="kn-toolbar kn-toolbar--primary p-col-12">
             <template #start>
-                <span>{{ document?.label }}</span>
+                <span>{{ document?.name }}</span>
             </template>
 
             <template #end>
@@ -26,7 +26,7 @@
 
             <template v-if="filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible">
                 <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reloadTrigger="reloadTrigger"></Registry>
-                <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger"></Dossier>
+                <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reloadTrigger="reloadTrigger" :filterData="filtersData"></Dossier>
                 <Olap
                     v-else-if="mode === 'olap'"
                     :id="urlData?.sbiExecutionId"
@@ -179,10 +179,12 @@ export default defineComponent({
     },
     deactivated() {
         this.parameterSidebarVisible = false
+        window.removeEventListener('message', this.iframeEventsListener)
     },
     computed: {
-        sessionRole(): string {
-            return this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
+        sessionRole(): string | null {
+            if (!this.user) return null
+            return this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
         },
         url(): string {
             if (this.document) {
@@ -208,16 +210,9 @@ export default defineComponent({
         }
     },
     async created() {
-        window.addEventListener('message', (event) => {
-            if (event.data.type === 'crossNavigation') {
-                this.executeCrossNavigation(event)
-            }
-        })
+        window.addEventListener('message', this.iframeEventsListener)
 
-        this.user = (this.$store.state as any).user
-        this.userRole = this.user.sessionRole !== 'No default role selected' ? this.user.sessionRole : null
-
-        if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer')) return
+        if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
 
         await this.loadUserConfig()
 
@@ -230,6 +225,9 @@ export default defineComponent({
 
         await this.loadDocument()
 
+        this.user = (this.$store.state as any).user
+        this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
+
         if (this.userRole) {
             await this.loadPage(true)
         } else {
@@ -237,6 +235,13 @@ export default defineComponent({
         }
     },
     methods: {
+        iframeEventsListener(event) {
+            if (event.data.type === 'crossNavigation') {
+                this.executeCrossNavigation(event)
+            } else if (event.data.type === 'cockpitExecuted') {
+                this.loading = false
+            }
+        },
         editCockpitDocumentConfirm() {
             if (this.documentMode === 'EDIT') {
                 this.$confirm.require({
@@ -254,7 +259,6 @@ export default defineComponent({
             this.documentMode = this.documentMode === 'EDIT' ? 'VIEW' : 'EDIT'
             this.hiddenFormData.set('documentMode', this.documentMode)
             await this.loadURL(null)
-            this.loading = false
         },
         openHelp() {
             this.helpDialogVisible = true
@@ -402,6 +406,7 @@ export default defineComponent({
         closeDocument() {
             const link = this.$route.path.includes('workspace') ? '/workspace' : '/document-browser'
             this.$router.push(link)
+            this.breadcrumbs = []
             this.$emit('close')
         },
         setMode() {
@@ -425,6 +430,7 @@ export default defineComponent({
 
             await this.loadFilters(initialLoading)
             if (this.filtersData?.isReadyForExecution) {
+                this.parameterSidebarVisible = false
                 await this.loadURL(null, documentLabel)
                 await this.loadExporters()
             } else if (this.filtersData?.filterStatus) {
@@ -459,6 +465,7 @@ export default defineComponent({
         async loadFilters(initialLoading: boolean = false) {
             if (this.parameterValuesMap && this.parameterValuesMap[this.document.label + '-' + this.tabKey] && initialLoading) {
                 this.filtersData = this.parameterValuesMap[this.document.label + '-' + this.tabKey]
+                this.setFiltersForBreadcrumbItem()
                 return
             }
 
@@ -471,6 +478,7 @@ export default defineComponent({
                             filter.parameterValue[0].value = new Date(filter.parameterValue[0].value)
                         }
                     })
+                    this.setFiltersForBreadcrumbItem()
                     return
                 }
             }
@@ -531,6 +539,9 @@ export default defineComponent({
                 this.loadNavigationParamsInitialValue()
             }
 
+            this.setFiltersForBreadcrumbItem()
+        },
+        setFiltersForBreadcrumbItem() {
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
         },
@@ -542,6 +553,9 @@ export default defineComponent({
                         tempParam.parameterValue[0].value = this.document.navigationParams[key]
                         if (this.document.navigationParams[key + '_field_visible_description']) tempParam.parameterValue[0].description = this.document.navigationParams[key + '_field_visible_description']
                         if (tempParam.selectionType === 'COMBOBOX') this.setCrossNavigationComboParameterDescription(tempParam)
+                        if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
+                            tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
+                        }
                     }
                 }
             })
@@ -572,7 +586,7 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData, { headers: { 'X-Disable-Interceptor': 'true' } })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.urlData = response.data
                     this.sbiExecutionId = this.urlData?.sbiExecutionId as string
@@ -611,13 +625,13 @@ export default defineComponent({
             let postForm = document.getElementById('postForm_' + postObject.params.document) as any
             if (!postForm) {
                 postForm = document.createElement('form')
-                postForm.id = 'postForm_' + postObject.params.document
-                postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
-                postForm.method = 'post'
-                postForm.target = tempIndex !== -1 ? 'documentFrame' + tempIndex : documentLabel
-                postForm.acceptCharset = 'UTF-8'
-                document.body.appendChild(postForm)
             }
+            postForm.id = 'postForm_' + postObject.params.document
+            postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
+            postForm.method = 'post'
+            postForm.target = tempIndex !== -1 ? 'documentFrame' + tempIndex : documentLabel
+            postForm.acceptCharset = 'UTF-8'
+            document.body.appendChild(postForm)
 
             this.hiddenFormData = new URLSearchParams()
 
@@ -812,10 +826,10 @@ export default defineComponent({
         async onMetadataSave(metadata: any) {
             this.loading = true
             const jsonMeta = [] as any[]
-            const properties = ['shortText', 'longText']
+            const properties = ['shortText', 'longText', 'file']
             properties.forEach((property: string) =>
                 metadata[property].forEach((el: any) => {
-                    if (el.value) {
+                    if (el.value || (property === 'file' && el.fileToSave)) {
                         jsonMeta.push(el)
                     }
                 })
@@ -877,7 +891,7 @@ export default defineComponent({
             if (index !== -1) this.schedulations.splice(index, 1)
         },
         getFormattedDate(date: any, useDefaultFormat?: boolean) {
-            const format = date instanceof Date ? undefined : process.env.VUE_APP_CROSS_NAVIGATION_DATE_FORMAT
+            const format = date instanceof Date ? undefined : 'dd/MM/yyyy'
             return luxonFormatDate(date, format, useDefaultFormat ? undefined : this.dateFormat)
         },
         onBreadcrumbClick(item: any) {
@@ -899,6 +913,8 @@ export default defineComponent({
             await this.loadCrossNavigationByDocument(event.data)
         },
         async loadCrossNavigationByDocument(angularData: any) {
+            if (!this.document) return
+
             let temp = {} as any
 
             this.loading = true
@@ -914,11 +930,13 @@ export default defineComponent({
         },
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
             this.formatAngularOutputParameters(angularData.otherOutputParameters)
-            const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument.navigationParams)
-
-            this.document = { ...crossNavigationDocument?.document, navigationParams: navigationParams }
+            const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument ? crossNavigationDocument.navigationParams : [])
 
             const popupOptions = crossNavigationDocument.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
+
+            if (crossNavigationDocument.crossType !== 2) {
+                this.document = { ...crossNavigationDocument?.document, navigationParams: navigationParams }
+            }
 
             if (crossNavigationDocument.crossType === 2) {
                 this.openCrossNavigationInNewWindow(popupOptions, crossNavigationDocument, navigationParams)
@@ -932,7 +950,7 @@ export default defineComponent({
                 if (index !== -1) {
                     this.breadcrumbs[index].document = this.document
                 } else {
-                    this.breadcrumbs.push({ label: this.document.label, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb })
+                    this.breadcrumbs.push({ label: this.document.label, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb ?? this.document.name })
                 }
 
                 await this.loadPage()

@@ -11,7 +11,7 @@
         </Toolbar>
 
         <div class="p-fluid kn-parameter-sidebar-content kn-alternated-rows">
-            <div class="p-field p-my-1 p-p-2" v-if="user && (!sessionRole || sessionRole === 'No default role selected')">
+            <div class="p-field p-my-1 p-p-2" v-if="user && (!sessionRole || sessionRole === $t('role.defaultRolePlaceholder')) && (mode === 'execution' || mode === 'qbeView' || (mode === 'workspaceView' && dataset?.drivers.length > 0))">
                 <div class="p-d-flex">
                     <label class="kn-material-input-label">{{ $t('common.roles') }}</label>
                 </div>
@@ -100,7 +100,7 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue?.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
@@ -108,6 +108,7 @@
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
                     </div>
                     <Dropdown v-if="!parameter.multivalue && parameter.parameterValue" class="kn-material-input" v-model="parameter.parameterValue[0]" :options="parameter.data" optionLabel="description" @change="updateDependency(parameter)" />
+
                     <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" optionLabel="description" @change="updateDependency(parameter)" />
                 </div>
                 <div class="p-field p-my-1 p-p-2" v-if="parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true'">
@@ -115,7 +116,7 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue?.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
@@ -125,7 +126,7 @@
                     <div class="p-d-flex p-flex-row">
                         <i class="pi pi-external-link kn-cursor-pointer p-mr-2" @click="openPopupDialog(parameter)"></i>
                         <ScrollPanel class="lookupScrollPanel">
-                            <Chip class="parameterValueChip" v-for="(parameterValue, index) in parameter.parameterValue" :key="index">{{ parameterValue.description }}</Chip>
+                            <Chip class="parameterValueChip" v-for="(parameterValue, index) in parameter.parameterValue" :key="index">{{ parameterValue.description ?? parameterValue.value }}</Chip>
                         </ScrollPanel>
                     </div>
                 </div>
@@ -134,7 +135,7 @@
                         <label
                             class="kn-material-input-label"
                             :class="{
-                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue.length === 0)),
+                                'kn-required-alert': parameter.mandatory && ((!parameter.multivalue && parameter.parameterValue && !parameter.parameterValue[0]?.value) || (parameter.multivalue && parameter.parameterValue?.length === 0)),
                                 'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
                             }"
                             >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
@@ -144,7 +145,7 @@
                     <div class="p-d-flex p-flex-row">
                         <i class="pi pi-external-link kn-cursor-pointer p-mr-2" @click="openTreeDialog(parameter)"></i>
                         <div>
-                            <Chip v-for="(parameterValue, index) in parameter.parameterValue" :key="index">{{ parameterValue.description }}</Chip>
+                            <Chip v-for="(parameterValue, index) in parameter.parameterValue" :key="index">{{ parameterValue.description ?? parameterValue.value }}</Chip>
                         </div>
                     </div>
                 </div>
@@ -152,17 +153,17 @@
         </div>
         <div v-if="(parameters && parameters.filterStatus.length > 0) || mode === 'qbeView' || mode === 'workspaceView' || mode === 'datasetManagement'" class="p-fluid p-d-flex p-flex-row p-m-2 kn-parameter-sidebar-buttons">
             <Button class="kn-button kn-button--primary" :disabled="buttonsDisabled" @click="$emit('execute', qbeParameters)"> {{ $t('common.execute') }}</Button>
-            <Button v-if="mode !== 'qbeView' && mode !== 'workspaceView'" class="kn-button kn-button--primary p-ml-1" icon="fa fa-chevron-down" :disabled="buttonsDisabled" @click="toggle($event)" />
+            <Button v-if="mode !== 'qbeView' && mode !== 'workspaceView' && mode !== 'datasetManagement'" class="kn-button kn-button--primary p-ml-1" icon="fa fa-chevron-down" :disabled="buttonsDisabled" @click="toggle($event)" />
             <Menu ref="executeButtonMenu" :model="executeMenuItems" :popup="true" />
         </div>
         <KnParameterPopupDialog v-if="popupDialogVisible" :visible="popupDialogVisible" :selectedParameter="selectedParameter" :propLoading="loading" :parameterPopUpData="parameterPopUpData" @close="popupDialogVisible = false" @save="onPopupSave"></KnParameterPopupDialog>
-        <KnParameterTreeDialog v-if="treeDialogVisible" :visible="treeDialogVisible" :selectedParameter="selectedParameter" :formatedParameterValues="formatedParameterValues" :document="document" :mode="mode" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
+        <KnParameterTreeDialog v-if="treeDialogVisible" :visible="treeDialogVisible" :selectedParameter="selectedParameter" :formatedParameterValues="formatedParameterValues" :document="document" :mode="mode" :selectedRole="role" @close="onTreeClose" @save="onTreeSave"></KnParameterTreeDialog>
         <KnParameterSaveDialog :visible="parameterSaveDialogVisible" :propLoading="loading" @close="parameterSaveDialogVisible = false" @saveViewpoint="saveViewpoint"></KnParameterSaveDialog>
         <KnParameterSavedParametersDialog :visible="savedParametersDialogVisible" :propViewpoints="viewpoints" @close="savedParametersDialogVisible = false" @fillForm="fillParameterForm" @executeViewpoint="executeViewpoint" @deleteViewpoint="deleteViewpoint"></KnParameterSavedParametersDialog>
     </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import { iDocument, iParameter, iAdmissibleValues } from './KnParameterSidebar'
@@ -186,7 +187,7 @@ import ScrollPanel from 'primevue/scrollpanel'
 export default defineComponent({
     name: 'kn-parameter-sidebar',
     components: { Calendar, Chip, Chips, Checkbox, Dropdown, KnParameterPopupDialog, KnParameterTreeDialog, KnParameterSaveDialog, KnParameterSavedParametersDialog, Menu, MultiSelect, RadioButton, ScrollPanel },
-    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: String }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String } },
+    props: { filtersData: { type: Object }, propDocument: { type: Object }, userRole: { type: Object as PropType<String | null> }, propMode: { type: String }, propQBEParameters: { type: Array }, dateFormat: { type: String }, dataset: { type: Object } },
     emits: ['execute', 'exportCSV', 'roleChanged', 'parametersChanged'],
     data() {
         return {
@@ -418,7 +419,8 @@ export default defineComponent({
         },
         async getParameterPopupInfo(parameter: iParameter) {
             this.loading = true
-            const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: this.sessionRole }
+            const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
+            const postData = { label: this.document?.label, parameters: this.getFormattedParameters(), paramId: parameter.urlName, role: role }
 
             let url = '2.0/documentExeParameters/admissibleValues'
             if (this.mode !== 'execution' && this.document) {
@@ -436,7 +438,7 @@ export default defineComponent({
             Object.keys(this.parameters.filterStatus).forEach((key: any) => {
                 const parameter = this.parameters.filterStatus[key]
                 if (!parameter.multivalue) {
-                    parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
+                    parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description ?? '' })
                 } else {
                     parameters.push({ label: parameter.label, value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription ?? '' })
                 }
@@ -477,16 +479,21 @@ export default defineComponent({
             this.treeDialogVisible = false
         },
         updateDependency(parameter: iParameter) {
+            const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
             this.updateVisualDependency(parameter)
-            updateDataDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode)
-            updateLovDependency(this.parameters, parameter, this.loading, this.document, this.sessionRole, this.$http, this.mode)
+            updateDataDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode)
+            updateLovDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode)
             this.$emit('parametersChanged', { parameters: this.parameters, document: this.propDocument })
         },
         openSaveParameterDialog() {
             this.parameterSaveDialogVisible = true
         },
         async saveViewpoint(viewpoint: any) {
-            const postData = { ...viewpoint, OBJECT_LABEL: this.document?.label, ROLE: this.sessionRole, VIEWPOINT: this.getParameterValues() }
+            const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
+
+            if (!role) return
+
+            const postData = { ...viewpoint, OBJECT_LABEL: this.document?.label, ROLE: role, VIEWPOINT: this.getParameterValues() }
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/addViewpoint`, postData)
@@ -501,8 +508,10 @@ export default defineComponent({
             this.loading = false
         },
         async openSavedParametersDialog() {
+            const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
+            if (!role) return
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/getViewpoints?label=${this.document?.label}&role=${this.sessionRole}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/getViewpoints?label=${this.document?.label}&role=${role}`).then((response: AxiosResponse<any>) => {
                 this.viewpoints = response.data.viewpoints
                 this.savedParametersDialogVisible = true
             })
@@ -510,12 +519,15 @@ export default defineComponent({
         },
         fillParameterForm(viewpoint: any) {
             const tempParameters = this.decodeViewpointPrameterValues(viewpoint.vpValueParams)
+
             Object.keys(tempParameters)?.forEach((key: any) => {
                 const index = this.parameters.filterStatus.findIndex((el: any) => el.urlName === key)
                 if (index !== -1) {
                     const parameter = this.parameters.filterStatus[index]
                     if (parameter.type === 'DATE') {
-                        parameter.parameterValue[0].value = this.getFormattedDate(tempParameters[key], 'MM/DD/YYYY')
+                        const temp = new Date(tempParameters[key])
+                        parameter.parameterValue[0].value = temp instanceof Date && !isNaN(temp as any) ? temp : this.getFormattedDate(tempParameters[key], 'DD/MM/YYYY')
+                        parameter.parameterValue[0].value = temp as any
                     } else if ((parameter.valueSelection === 'man_in' || parameter.selectionType === 'COMBOBOX') && !parameter.multivalue) {
                         parameter.parameterValue[0].value = tempParameters[key]
                         parameter.parameterValue[0].description = tempParameters[key + '_field_visible_description']
@@ -538,7 +550,7 @@ export default defineComponent({
             })
         },
         getFormattedDate(date: any, format: any) {
-            return formatDate(date, format)
+            return formatDate(date, 'l', format)
         },
         decodeViewpointPrameterValues(string: string) {
             const parametersJson = {}
