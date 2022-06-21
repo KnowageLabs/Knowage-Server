@@ -2,7 +2,7 @@ import { createI18n } from 'vue-i18n'
 import store from './App.store'
 
 const messages = {
-    en_US: require('@/i18n/en_US/messages.json')
+    en_US: import('@/i18n/en_US/messages.json')
 }
 
 let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.locale
@@ -34,7 +34,7 @@ export function loadLanguageAsync(lang) {
 
     // If the language hasn't been loaded yet
     return import(`@/i18n/${lang}/messages.json`).then((messages) => {
-        require(`@/i18n/${lang}/helper-messages.json`)
+        import(`@/i18n/${lang}/helper-messages.json`)
         import(`@/i18n/${lang}/helper-messages.json`).then((m) => {
             // eslint-disable-next-line
             // @ts-ignore
