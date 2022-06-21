@@ -49,116 +49,116 @@
     </div>
 </template>
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { iDriver } from './DriversManagement'
-    import { AxiosResponse } from 'axios'
-    import FabButton from '@/components/UI/KnFabButton.vue'
-    import Listbox from 'primevue/listbox'
-    import Avatar from 'primevue/avatar'
-    import DriversManagementDetail from './DriversManagementDetail.vue'
-    import driversManagementDescriptor from './DriversManagementDescriptor.json'
-    import KnHint from '@/components/UI/KnHint.vue'
-    import Tooltip from 'primevue/tooltip'
-    export default defineComponent({
-        name: 'constraint-management',
-        components: {
-            FabButton,
-            KnHint,
-            Listbox,
-            Avatar,
-            DriversManagementDetail
-        },
-        directives: {
-            tooltip: Tooltip
-        },
-        data() {
-            return {
-                loading: false,
-                touched: false,
-                formVisible: false,
-                driversManagementDescriptor,
-                drivers: [] as iDriver[],
-                selectedDriver: {} as iDriver
-            }
-        },
-        created() {
-            this.loadAllDrivers()
-        },
-        methods: {
-            async loadAllDrivers() {
-                this.loading = true
-                await this.$http
-                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers')
-                    .then((response: AxiosResponse<any>) => (this.drivers = response.data))
-                    .finally(() => (this.loading = false))
-            },
-            showForm(event: any) {
-                if (!this.touched) {
-                    this.setSelectedDriver(event)
-                } else {
-                    this.$confirm.require({
-                        message: this.$t('common.toast.unsavedChangesMessage'),
-                        header: this.$t('common.toast.unsavedChangesHeader'),
-                        icon: 'pi pi-exclamation-triangle',
-                        accept: () => {
-                            this.touched = false
-                            this.setSelectedDriver(event)
-                        }
-                    })
-                }
-            },
-            closeForm() {
-                if (!this.touched) {
-                    this.formVisible = false
-                } else {
-                    this.$confirm.require({
-                        message: this.$t('common.toast.unsavedChangesMessage'),
-                        header: this.$t('common.toast.unsavedChangesHeader'),
-                        icon: 'pi pi-exclamation-triangle',
-                        accept: () => {
-                            this.touched = false
-                            this.formVisible = false
-                        }
-                    })
-                }
-            },
-            setSelectedDriver(event: any) {
-                if (event) {
-                    this.selectedDriver = event.value
-                }
-                this.formVisible = true
-            },
-            handleSave(event: any) {
-                this.loadAllDrivers()
-                this.touched = false
-                this.selectedDriver = event
-            },
-            deleteDriverConfirm(id: number) {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.deleteDriver(id)
-                })
-            },
-            async deleteDriver(id: number) {
-                await this.$http
-                    .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/' + id)
-                    .then(() => {
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.deleteTitle'),
-                            msg: this.$t('common.toast.deleteSuccess')
-                        })
-                        this.loadAllDrivers()
-                        this.formVisible = false
-                    })
-                    .catch((error) => {
-                        this.$store.commit('setError', {
-                            title: this.$t('managers.driversManagement.deleteError'),
-                            msg: error.message
-                        })
-                    })
-            }
+import { defineComponent } from 'vue'
+import { iDriver } from './DriversManagement'
+import { AxiosResponse } from 'axios'
+import FabButton from '@/components/UI/KnFabButton.vue'
+import Listbox from 'primevue/listbox'
+import Avatar from 'primevue/avatar'
+import DriversManagementDetail from './DriversManagementDetail.vue'
+import driversManagementDescriptor from './DriversManagementDescriptor.json'
+import KnHint from '@/components/UI/KnHint.vue'
+import Tooltip from 'primevue/tooltip'
+export default defineComponent({
+    name: 'constraint-management',
+    components: {
+        FabButton,
+        KnHint,
+        Listbox,
+        Avatar,
+        DriversManagementDetail
+    },
+    directives: {
+        tooltip: Tooltip
+    },
+    data() {
+        return {
+            loading: false,
+            touched: false,
+            formVisible: false,
+            driversManagementDescriptor,
+            drivers: [] as iDriver[],
+            selectedDriver: {} as iDriver
         }
-    })
+    },
+    created() {
+        this.loadAllDrivers()
+    },
+    methods: {
+        async loadAllDrivers() {
+            this.loading = true
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers')
+                .then((response: AxiosResponse<any>) => (this.drivers = response.data))
+                .finally(() => (this.loading = false))
+        },
+        showForm(event: any) {
+            if (!this.touched) {
+                this.setSelectedDriver(event)
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.setSelectedDriver(event)
+                    }
+                })
+            }
+        },
+        closeForm() {
+            if (!this.touched) {
+                this.formVisible = false
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.formVisible = false
+                    }
+                })
+            }
+        },
+        setSelectedDriver(event: any) {
+            if (event) {
+                this.selectedDriver = event.value
+            }
+            this.formVisible = true
+        },
+        handleSave(event: any) {
+            this.loadAllDrivers()
+            this.touched = false
+            this.selectedDriver = event
+        },
+        deleteDriverConfirm(id: number) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteDriver(id)
+            })
+        },
+        async deleteDriver(id: number) {
+            await this.$http
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/' + id)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.loadAllDrivers()
+                    this.formVisible = false
+                })
+                .catch((error) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('managers.driversManagement.deleteError'),
+                        msg: error.message
+                    })
+                })
+        }
+    }
+})
 </script>

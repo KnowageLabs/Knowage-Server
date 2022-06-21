@@ -104,12 +104,12 @@ export default defineComponent({
     methods: {
         async loadCalendars() {
             this.loading = true
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/getCalendarList`).then((response: AxiosResponse<any>) => (this.calendars = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/getCalendarList`).then((response: AxiosResponse<any>) => (this.calendars = response.data))
             this.loading = false
         },
         async loadDomains() {
             this.loading = true
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/getDomains`).then((response: AxiosResponse<any>) => (this.domains = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/getDomains`).then((response: AxiosResponse<any>) => (this.domains = response.data))
             this.loading = false
         },
         showForm(event: any = null) {
@@ -130,7 +130,7 @@ export default defineComponent({
         },
         async deleteCalendar(calendar: iCalendar) {
             await this.$http
-                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/${calendar.calendarId}/deleteCalendar`)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/${calendar.calendarId}/deleteCalendar`)
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),

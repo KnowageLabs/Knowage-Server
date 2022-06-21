@@ -43,7 +43,7 @@ describe('LanguageDialog', () => {
 
     test('language service has been called with', async () => {
         await wrapper.setProps({ visibility: true })
-        expect(axios.get).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/languages')
+        expect(axios.get).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/languages')
     })
 
     test('languages array is populated', async () => {

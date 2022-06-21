@@ -116,7 +116,7 @@ export default defineComponent({
             this.loading = false
         },
         async loadLov() {
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/${this.id}`).then((response: AxiosResponse<any>) => (this.selectedLov = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/lovs/${this.id}`).then((response: AxiosResponse<any>) => (this.selectedLov = response.data))
             this.selectedLov.lovProviderJSON = JSON.parse(this.selectedLov.lovProviderJSON)
             this.decode()
             this.formatLov()
@@ -126,13 +126,13 @@ export default defineComponent({
             await this.loadDomainsByType('SCRIPT_TYPE').then((response: AxiosResponse<any>) => (this.listOfScriptTypes = response.data))
         },
         loadDomainsByType(type: string) {
-            return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
         },
         async loadDatasources() {
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources/`).then((response: AxiosResponse<any>) => (this.datasources = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasources/`).then((response: AxiosResponse<any>) => (this.datasources = response.data))
         },
         async loadProfileAttributes() {
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/attributes/`).then((response: AxiosResponse<any>) => (this.profileAttributes = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/attributes/`).then((response: AxiosResponse<any>) => (this.profileAttributes = response.data))
         },
         decode() {
             if (this.selectedLov.lovProviderJSON.SCRIPTLOV) {
@@ -158,7 +158,7 @@ export default defineComponent({
             } else if (lovProviderEnum.JAVA_CLASS in this.selectedLov.lovProviderJSON) {
                 this.selectedJavaClass.name = this.selectedLov.lovProviderJSON.JAVACLASSLOV.JAVA_CLASS_NAME
             } else if (lovProviderEnum.DATASET in this.selectedLov.lovProviderJSON) {
-                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.selectedLov.lovProviderJSON.DATASET.ID}`).then((response: AxiosResponse<any>) => {
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.selectedLov.lovProviderJSON.DATASET.ID}`).then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0]
                 })
             }

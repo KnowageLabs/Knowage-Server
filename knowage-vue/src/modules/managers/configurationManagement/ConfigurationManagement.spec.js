@@ -103,7 +103,7 @@ describe('Configuration Management', () => {
 
         await wrapper.vm.deleteConfiguration(1)
         expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/' + 1)
+        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/' + 1)
     })
     it("opens empty dialog when the '+' button is clicked", async () => {
         const wrapper = factory()

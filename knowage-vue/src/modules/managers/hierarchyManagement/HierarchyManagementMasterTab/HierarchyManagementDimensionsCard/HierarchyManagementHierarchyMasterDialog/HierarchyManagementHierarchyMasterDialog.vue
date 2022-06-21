@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary hierarchy-dialog " style="width:70%" :visible="visible" :modal="true" :closable="false" :draggable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary hierarchy-dialog" style="width: 70%" :visible="visible" :modal="true" :closable="false" :draggable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -116,7 +116,7 @@ export default defineComponent({
 
             this.loading = true
             await this.$http
-                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchiesMaster/createHierarchyMaster`, postData)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `hierarchiesMaster/createHierarchyMaster`, postData)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data?.response === 'ok') {
                         this.$emit('masterHierarchyCreated')

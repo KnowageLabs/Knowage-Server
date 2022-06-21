@@ -96,15 +96,15 @@ jest.mock('axios')
 const $http = {
     get: axios.get.mockImplementation((url) => {
         switch (url) {
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/documents/mockedDocument':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/documents/mockedDocument':
                 return Promise.resolve({ data: mockedDocumentInfo })
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/1/roles':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/documents/1/roles':
                 return Promise.resolve({ data: mockedRoles })
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/getDataSetInfo?DATASET_ID=1&ORGANIZATION=DEMO':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/getDataSetInfo?DATASET_ID=1&ORGANIZATION=DEMO':
                 return Promise.resolve({ data: mockedDatasetInfo })
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/getMetaBcInfo?META_BC_ID=1':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/getMetaBcInfo?META_BC_ID=1':
                 return Promise.resolve({ data: mockedBusinessClassInfo })
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/getMetaTableInfo?META_TABLE_ID=1':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/getMetaTableInfo?META_TABLE_ID=1':
                 return Promise.resolve({ data: mockedTableInfo })
             default:
                 return Promise.resolve({ data: [] })
@@ -112,7 +112,7 @@ const $http = {
     }),
     post: axios.post.mockImplementation((url) => {
         switch (url) {
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/loadNavigationItem':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/loadNavigationItem':
                 return Promise.resolve({ data: mockedFilteredResponse })
             default:
                 return Promise.resolve({ data: [] })

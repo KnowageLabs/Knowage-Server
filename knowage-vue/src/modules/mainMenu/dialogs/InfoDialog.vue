@@ -42,7 +42,7 @@ export default defineComponent({
     data() {
         return {
             currentYear: moment().year(),
-            currentVersion: import.meta.env.VUE_APP_VERSION
+            currentVersion: import.meta.env.VITE_VERSION
         }
     },
     methods: {

@@ -36,7 +36,7 @@ export default defineComponent({
 
     async beforeCreate() {
         await this.$http
-            .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/currentuser')
+            .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/currentuser')
             .then((response) => {
                 let currentUser = response.data
                 if (localStorage.getItem('sessionRole')) {
@@ -84,24 +84,24 @@ export default defineComponent({
                 )
                 this.$store.commit('setLoading', false)
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 if (error.response) {
                     console.log(error.response.data)
                     console.log(error.response.status)
                     console.log(error.response.headers)
                 }
             })
-        await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/user-configs').then((response) => {
+        await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/user-configs').then((response) => {
             store.commit('setConfigurations', response.data)
         })
         if (this.isEnterprise) {
             if (Object.keys(this.defaultTheme.length === 0)) store.commit('setDefaultTheme', await this.themeHelper.getDefaultKnowageTheme())
 
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
                 store.commit('setLicenses', response.data)
             })
             if (Object.keys(this.theme).length === 0) {
-                this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement/current`).then((response) => {
+                this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `thememanagement/current`).then((response) => {
                     store.commit('setTheme', response.data.config)
                     this.themeHelper.setTheme(response.data.config)
                 })
@@ -120,7 +120,7 @@ export default defineComponent({
         },
         async onLoad() {
             await this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/export/dataset')
                 .then((response) => {
                     let totalDownloads = response.data.length
                     let alreadyDownloaded = response.data.filter((x) => x.alreadyDownloaded).length
@@ -134,7 +134,7 @@ export default defineComponent({
                     this.newsDownloadHandler()
                     this.loadInternationalization()
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     if (error.response) {
                         console.log(error.response.data)
                         console.log(error.response.status)
@@ -153,12 +153,12 @@ export default defineComponent({
             if (splittedLanguage.length > 2) currLanguage += splittedLanguage[2].replaceAll('#', '') + '-'
             currLanguage += splittedLanguage[1].toUpperCase()
 
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization?currLanguage=' + currLanguage).then((response) => store.commit('setInternationalization', response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization?currLanguage=' + currLanguage).then((response) => store.commit('setInternationalization', response.data))
         },
         newsDownloadHandler() {
             console.log('Starting connection to WebSocket Server')
 
-            WEB_SOCKET.update = function(event) {
+            WEB_SOCKET.update = function (event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
@@ -169,7 +169,7 @@ export default defineComponent({
                     }
                 }
             }
-            WEB_SOCKET.onopen = function(event) {
+            WEB_SOCKET.onopen = function (event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
@@ -180,7 +180,7 @@ export default defineComponent({
                     }
                 }
             }
-            WEB_SOCKET.onmessage = function(event) {
+            WEB_SOCKET.onmessage = function (event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
@@ -216,7 +216,7 @@ export default defineComponent({
                 summary: newError.title ? this.$t(newError.title) : '',
                 detail: newError.msg ? this.$t(newError.msg) : '',
                 baseZIndex: typeof newError.baseZIndex == 'undefined' ? 0 : newError.baseZIndex,
-                life: typeof newError.duration == 'undefined' ? import.meta.env.VUE_APP_TOAST_DURATION : newError.duration
+                life: typeof newError.duration == 'undefined' ? import.meta.env.VITE_TOAST_DURATION : newError.duration
             })
         },
         info(newInfo) {
@@ -225,7 +225,7 @@ export default defineComponent({
                 summary: newInfo.title ? this.$t(newInfo.title) : '',
                 detail: newInfo.msg ? this.$t(newInfo.msg) : '',
                 baseZIndex: typeof newInfo.baseZIndex == 'undefined' ? 0 : newInfo.baseZIndex,
-                life: typeof newInfo.duration == 'undefined' ? import.meta.env.VUE_APP_TOAST_DURATION : newInfo.duration
+                life: typeof newInfo.duration == 'undefined' ? import.meta.env.VITE_TOAST_DURATION : newInfo.duration
             })
         },
         user() {

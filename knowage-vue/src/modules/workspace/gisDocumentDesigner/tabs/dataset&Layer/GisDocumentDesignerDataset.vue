@@ -15,7 +15,7 @@
                     {{ $t('workspace.gis.dnl.emptyInfo') }}
                 </template>
                 <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field">
-                    <template #body="{data}">
+                    <template #body="{ data }">
                         <span class="kn-truncated" v-tooltip.top="data[col.field]">{{ data[col.field] }}</span>
                     </template>
                 </Column>
@@ -59,7 +59,7 @@
                 {{ $t('workspace.gis.dnl.dialogEmptyInfo') }}
             </template>
             <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field">
-                <template #body="{data}">
+                <template #body="{ data }">
                     <span class="kn-truncated" v-tooltip.top="data[col.field]">{{ data[col.field] }}</span>
                 </template>
             </Column>
@@ -129,7 +129,7 @@ export default defineComponent({
         },
         async getAllDatasets() {
             this.loading = true
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/mydatanoparams`).then((response: AxiosResponse<any>) => (this.availableDatasets = response.data.root))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/mydatanoparams`).then((response: AxiosResponse<any>) => (this.availableDatasets = response.data.root))
             this.loading = false
         },
         closeDialog() {

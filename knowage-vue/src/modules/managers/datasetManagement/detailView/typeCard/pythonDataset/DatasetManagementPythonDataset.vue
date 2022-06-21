@@ -48,14 +48,14 @@
 
             <VCodeMirror class="p-mt-4" ref="codeMirrorPython" v-model:value="dataset.pythonScript" :autoHeight="true" :options="scriptOptions" @keyup="$emit('touched')" />
 
-            <Dialog :header="$t('managers.datasetManagement.availableLibraries')" style="width:60vw" :visible="libListVisible" :modal="false" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
+            <Dialog :header="$t('managers.datasetManagement.availableLibraries')" style="width: 60vw" :visible="libListVisible" :modal="false" class="p-fluid kn-dialog--toolbar--primary" :closable="false">
                 <div class="p-mt-3">
                     <DataTable class="p-datatable-sm kn-table" :value="pythonEnvLibs" :scrollable="true" responsiveLayout="stack" breakpoint="960px">
                         <Column field="name" :header="$t('kpi.alert.name')" :sortable="true">
-                            <template #body="{data}"> <span v-if="dataset.pythonDatasetType == 'python'"></span> {{ data.name }} <span v-if="dataset.pythonDatasetType == 'r'"></span> {{ data[0] }} </template>
+                            <template #body="{ data }"> <span v-if="dataset.pythonDatasetType == 'python'"></span> {{ data.name }} <span v-if="dataset.pythonDatasetType == 'r'"></span> {{ data[0] }} </template>
                         </Column>
                         <Column field="version" :header="$t('common.version')" :sortable="true">
-                            <template #body="{data}"> <span v-if="dataset.pythonDatasetType == 'python'"></span> {{ data.version }} <span v-if="dataset.pythonDatasetType == 'r'"></span> {{ data[1] }} </template>
+                            <template #body="{ data }"> <span v-if="dataset.pythonDatasetType == 'python'"></span> {{ data.version }} <span v-if="dataset.pythonDatasetType == 'r'"></span> {{ data[1] }} </template>
                         </Column>
                     </DataTable>
                 </div>
@@ -143,9 +143,9 @@ export default defineComponent({
         },
         getEnvLibraries() {
             if (this.dataset.pythonDatasetType == 'python') {
-                return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/python/libraries/${this.dataset.pythonEnvironment.label}`)
+                return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/python/libraries/${this.dataset.pythonEnvironment.label}`)
             } else {
-                return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/RWidget/libraries/${this.dataset.pythonEnvironment.label}`)
+                return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/backendservices/widgets/RWidget/libraries/${this.dataset.pythonEnvironment.label}`)
             }
         },
         async checkEnvironment() {

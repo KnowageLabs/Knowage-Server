@@ -74,7 +74,7 @@ export default defineComponent({
             const versionsToDelete = this.selectedVersions?.map((version: { id: number; name: string; description: string }) => version.id).join(',')
             if (!versionsToDelete || versionsToDelete.length === 0) return
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/version/delete/${versionsToDelete}?SBI_EXECUTION_ID=${this.id}`, {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/version/delete/${versionsToDelete}?SBI_EXECUTION_ID=${this.id}`, {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),

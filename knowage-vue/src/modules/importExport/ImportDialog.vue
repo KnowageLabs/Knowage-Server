@@ -48,7 +48,7 @@
                         </template>
 
                         <Column v-for="col in getData(functionality.type)" :field="col.field" :header="$t(col.header)" :key="col.field" :style="col.style" :selectionMode="col.field == 'selectionMode' ? 'multiple' : ''" :exportable="col.field == 'selectionMode' ? false : ''">
-                            <template #body="{data}" v-if="col.displayType">
+                            <template #body="{ data }" v-if="col.displayType">
                                 <span class="p-float-label kn-material-input">
                                     <div v-if="col.displayType == 'widgetTags'">
                                         <Tag class="importExportTags p-mr-1" v-for="(tag, index) in data.tags" v-bind:key="index" rounded :value="tag"> </Tag>
@@ -72,7 +72,7 @@
 
             <Button v-if="step == 0" v-bind:visible="visibility" class="kn-button kn-button--primary" v-t="'common.next'" :disabled="uploadedFiles && uploadedFiles.length == 0" @click="goToChooseElement(uploadedFiles)" />
             <span v-if="step == 1">
-                <Button v-bind:visible="visibility" class="kn-button kn-button--secondary" v-t="'common.back'" @click="resetToFirstStep"/>
+                <Button v-bind:visible="visibility" class="kn-button kn-button--secondary" v-t="'common.back'" @click="resetToFirstStep" />
                 <Button v-bind:visible="visibility" class="kn-button kn-button--primary" v-t="'common.import'" :disabled="isImportDisabled()" @click="startImport"
             /></span>
         </template>
@@ -136,7 +136,7 @@ export default defineComponent({
         async cleanTempDirectory() {
             if (this.token != '') {
                 this.uploadedFiles = []
-                await this.$http.get(import.meta.env.VUE_APP_API_PATH + '1.0/import/cleanup', { params: { token: this.token } }).then(
+                await this.$http.get(import.meta.env.VITE_API_PATH + '1.0/import/cleanup', { params: { token: this.token } }).then(
                     () => {
                         this.token = ''
                         this.packageItems = {
@@ -156,7 +156,7 @@ export default defineComponent({
         },
         getData(type): Array<ITableColumn> {
             let columns = this.importExportDescriptor['import'][type]['column']
-            columns.sort(function(a, b) {
+            columns.sort(function (a, b) {
                 if (a.position > b.position) return 1
                 if (a.position < b.position) return -1
                 return 0
@@ -180,7 +180,7 @@ export default defineComponent({
                 var formData = new FormData()
                 formData.append('file', uploadedFiles[0])
                 await this.$http
-                    .post(import.meta.env.VUE_APP_API_PATH + '1.0/import/upload', formData, {
+                    .post(import.meta.env.VITE_API_PATH + '1.0/import/upload', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data'
                         }
@@ -235,7 +235,7 @@ export default defineComponent({
         startImport() {
             this.$store.commit('setLoading', true)
             this.$http
-                .post(import.meta.env.VUE_APP_API_PATH + '1.0/import/bulk', this.streamlineSelectedItemsArray(), {
+                .post(import.meta.env.VITE_API_PATH + '1.0/import/bulk', this.streamlineSelectedItemsArray(), {
                     headers: {
                         // Overwrite Axios's automatically set Content-Type
                         'Content-Type': 'application/json'

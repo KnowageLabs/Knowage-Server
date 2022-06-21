@@ -134,7 +134,7 @@ export default defineComponent({
         async deleteParam(paramToDelete) {
             if (paramToDelete.id) {
                 await this.$http
-                    .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${paramToDelete.id}`, { headers: { 'X-Disable-Errors': 'true' } })
+                    .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${paramToDelete.id}`, { headers: { 'X-Disable-Errors': 'true' } })
                     .then(() => {
                         let deletedParam = this.document.outputParameters.findIndex((param) => param.id === paramToDelete.id)
                         this.document.outputParameters.splice(deletedParam, 1)

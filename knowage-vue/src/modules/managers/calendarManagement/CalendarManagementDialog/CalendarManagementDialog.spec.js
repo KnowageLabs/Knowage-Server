@@ -76,7 +76,7 @@ describe('Calendar Management Dialog', () => {
         await wrapper.vm.saveCalendar()
 
         expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + 'calendar/saveCalendar', { ...mockedCalendar, name: 'Test', calStartDay: 1498867200000, calEndDay: 1500336000000 })
+        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'calendar/saveCalendar', { ...mockedCalendar, name: 'Test', calStartDay: 1498867200000, calEndDay: 1500336000000 })
         expect($store.commit).toHaveBeenCalledTimes(1)
     })
 

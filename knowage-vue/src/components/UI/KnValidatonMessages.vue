@@ -25,7 +25,7 @@ export default defineComponent({
         specificTranslateKeys: Object,
         defaultMessageTranslateBasePath: {
             type: String,
-            default: import.meta.env.VUE_APP_VALIDATION_MESSAGES_BASE_KEY
+            default: import.meta.env.VITE_VALIDATION_MESSAGES_BASE_KEY
         }
     }
 })

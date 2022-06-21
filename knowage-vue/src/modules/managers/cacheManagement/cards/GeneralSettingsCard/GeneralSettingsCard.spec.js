@@ -156,12 +156,12 @@ describe('Cache Management General Settings', () => {
         wrapper.vm.datasource = mockedDatasets[0]
 
         await wrapper.find('[data-test="save-button"]').trigger('click')
-        expect(axios.get).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/cacheee/remove')
-        expect(axios.put).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources', { ...mockedDatasets[0], writeDefault: true })
+        expect(axios.get).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/cacheee/remove')
+        expect(axios.put).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/datasources', { ...mockedDatasets[0], writeDefault: true })
 
         await flushPromises()
 
-        expect(axios.put).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/configs/conf', { configurations: expectedConfiguration })
+        expect(axios.put).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/conf', { configurations: expectedConfiguration })
         expect($store.commit).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
     })

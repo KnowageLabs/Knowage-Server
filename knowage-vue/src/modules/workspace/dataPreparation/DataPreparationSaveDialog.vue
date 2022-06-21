@@ -1,7 +1,7 @@
 <template>
     <Dialog class="p-fluid kn-dialog--toolbar--primary dataPreparationSaveDialog" v-bind:visible="visibility" footer="footer" :header="$t('managers.workspaceManagement.dataPreparation.savePreparedDataset')" :closable="false" modal>
         <div class="p-grid p-m-0">
-            <div class="p-col-12 ">
+            <div class="p-col-12">
                 <div class="p-d-flex">
                     <span class="p-float-label kn-flex p-mr-2">
                         <InputText
@@ -150,12 +150,12 @@ export default defineComponent({
             this.resetAndClose()
         },
         saveOrUpdateProcess(processDefinition) {
-            if (this.processId && this.processId != '') return this.$http.put(import.meta.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/${this.processId}`, processDefinition)
-            else return this.$http.post(import.meta.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process', processDefinition)
+            if (this.processId && this.processId != '') return this.$http.put(import.meta.env.VITE_DATA_PREPARATION_PATH + `1.0/process/${this.processId}`, processDefinition)
+            else return this.$http.post(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process', processDefinition)
         },
         saveOrUpdateInstance(processId, datasetDefinition) {
-            if (this.instanceId && this.instanceId != '') return this.$http.post(import.meta.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/instance/${this.instanceId}`, datasetDefinition)
-            else return this.$http.post(import.meta.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/' + processId + '/instance', datasetDefinition)
+            if (this.instanceId && this.instanceId != '') return this.$http.post(import.meta.env.VITE_DATA_PREPARATION_PATH + `1.0/instance/${this.instanceId}`, datasetDefinition)
+            else return this.$http.post(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process/' + processId + '/instance', datasetDefinition)
         },
         createDatasetDefinition() {
             let toReturn = {}

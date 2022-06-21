@@ -27,7 +27,7 @@
                         />
                         <label for="jobName" class="kn-material-input-label"> {{ $t('managers.scheduler.packageName') }} *</label>
                     </span>
-                    <small v-if="job.jobName?.length === 0 && jobNameDirty" class="p-error ">
+                    <small v-if="job.jobName?.length === 0 && jobNameDirty" class="p-error">
                         {{ $t('common.validation.required', { fieldName: $t('managers.scheduler.packageName') }) }}
                     </small>
                 </div>
@@ -95,7 +95,7 @@ export default defineComponent({
             this.formatJob()
 
             await this.$http
-                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/saveJob`, this.job)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `scheduleree/saveJob`, this.job)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.resp === 'ok') {
                         this.$store.commit('setInfo', {

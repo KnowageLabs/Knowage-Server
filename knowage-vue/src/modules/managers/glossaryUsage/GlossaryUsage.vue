@@ -5,7 +5,7 @@
                 {{ $t('managers.glossary.glossaryUsage.title') }}
             </template>
         </Toolbar>
-        <div class=" p-grid p-m-0 kn-page-content">
+        <div class="p-grid p-m-0 kn-page-content">
             <div class="p-col-4 p-sm-4 p-md-3 p-p-0 kn-list">
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
                 <div class="p-d-flex p-flex-column p-m-3">
@@ -110,7 +110,7 @@ export default defineComponent({
         async loadGlossary() {
             this.loading = true
             await this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/listGlossary')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/listGlossary')
                 .then((response: AxiosResponse<any>) => (this.glossaryList = response.data))
                 .finally(() => (this.loading = false))
         },
@@ -131,7 +131,7 @@ export default defineComponent({
 
             const parentId = parent ? parent.id : null
             let content = [] as iNode[]
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listContents?GLOSSARY_ID=${glossaryId}&PARENT_ID=${parentId}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/listContents?GLOSSARY_ID=${glossaryId}&PARENT_ID=${parentId}`).then((response: AxiosResponse<any>) => {
                 response.data.forEach((el: any) => content.push(this.createNode(el)))
                 content.sort((a: iNode, b: iNode) => (a.label > b.label ? 1 : -1))
             })
@@ -152,7 +152,7 @@ export default defineComponent({
             this.loading = true
             const url = content.CONTENT_ID ? `1.0/glossary/getContent?CONTENT_ID=${content.CONTENT_ID}` : `1.0/glossary/getWord?WORD_ID=${content.WORD_ID}`
             await this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url)
                 .then((response: AxiosResponse<any>) => {
                     this.contentInfo = response.data
                     this.infoDialogVisible = true
@@ -168,7 +168,7 @@ export default defineComponent({
             this.timer = setTimeout(() => {
                 this.loading = true
                 this.$http
-                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/glosstreeLike?WORD=${this.searchWord}&GLOSSARY_ID=${this.selectedGlossaryId}`)
+                    .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/glosstreeLike?WORD=${this.searchWord}&GLOSSARY_ID=${this.selectedGlossaryId}`)
                     .then((response: AxiosResponse<any>) => (tempData = response.data))
                     .finally(() => {
                         this.createGlossaryTree(tempData)

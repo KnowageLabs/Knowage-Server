@@ -31,7 +31,7 @@ jest.mock('axios')
 const $http = {
     get: axios.get.mockImplementation((url) => {
         switch (url) {
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/license`:
                 return Promise.resolve({ data: { hosts: [{ hostName: 'host' }], licenses: { host: '' } } })
             default:
                 return Promise.resolve({ data: { root: mockedTenants } })
@@ -108,7 +108,7 @@ describe('Tenant Management', () => {
 
         await wrapper.vm.deleteTenant(1)
         expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant', { data: 1 })
+        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'multitenant', { data: 1 })
     })
     it('opens empty detail form when the ' + ' button is clicked', async () => {
         const wrapper = factory()

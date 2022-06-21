@@ -44,134 +44,134 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { createValidations } from '@/helpers/commons/validationHelper'
-    import Card from 'primevue/card'
-    import useValidate from '@vuelidate/core'
-    import tabViewDescriptor from '../TenantManagementTabViewDescriptor.json'
-    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-    import tenantDetailValidationDescriptor from './TenantDetailValidationDescriptor.json'
-    import { iMultitenant } from '../../TenantManagement'
-    import { AxiosResponse } from 'axios'
+import { defineComponent } from 'vue'
+import { createValidations } from '@/helpers/commons/validationHelper'
+import Card from 'primevue/card'
+import useValidate from '@vuelidate/core'
+import tabViewDescriptor from '../TenantManagementTabViewDescriptor.json'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import tenantDetailValidationDescriptor from './TenantDetailValidationDescriptor.json'
+import { iMultitenant } from '../../TenantManagement'
+import { AxiosResponse } from 'axios'
 
-    export default defineComponent({
-        name: 'detail-tab',
-        components: {
-            Card,
-            KnValidationMessages
+export default defineComponent({
+    name: 'detail-tab',
+    components: {
+        Card,
+        KnValidationMessages
+    },
+    props: {
+        selectedTenant: {
+            type: Object,
+            required: false
         },
-        props: {
-            selectedTenant: {
-                type: Object,
-                required: false
-            },
-            listOfThemes: Array
-        },
-        computed: {
-            disableField() {
-                if (this.tenant.MULTITENANT_ID) return true
-                return false
-            }
-        },
-        emits: ['fieldChanged', 'roleTypeChanged'],
-        data() {
-            return {
-                tabViewDescriptor,
-                tenantDetailValidationDescriptor,
-                v$: useValidate() as any,
-                tenant: {} as iMultitenant,
-                themes: [] as any
-            }
-        },
-        validations() {
-            return {
-                tenant: createValidations('tenant', tenantDetailValidationDescriptor.validations.tenant)
-            }
-        },
-        created() {
-            if (this.selectedTenant && Object.keys(this.selectedTenant).length > 0) {
-                this.tenant = { ...this.selectedTenant } as iMultitenant
-            } else {
-                this.tenant = {} as iMultitenant
-                this.tenant.MULTITENANT_THEME = 'sbi_default'
-            }
-            if (this.listOfThemes) this.themes = [...this.listOfThemes] as any
-        },
-        watch: {
-            async selectedTenant() {
-                this.v$.$reset()
-                this.tenant = { ...this.selectedTenant } as iMultitenant
-                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant/image?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response: AxiosResponse<any>) => {
-                    this.tenant.MULTITENANT_IMAGE = response.data
-                })
-            },
-            listOfThemes() {
-                this.themes = [...(this.listOfThemes as any[])]
-            }
-        },
-        methods: {
-            onFieldChange(fieldName: string, value: any) {
-                this.$emit('fieldChanged', { fieldName, value })
-            },
-            uploadFile(event): void {
-                const reader = new FileReader()
-                reader.addEventListener(
-                    'load',
-                    () => {
-                        this.tenant.MULTITENANT_IMAGE = reader.result || ''
-                        this.onFieldChange('MULTITENANT_IMAGE', this.tenant.MULTITENANT_IMAGE)
-                    },
-                    false
-                )
-                if (event.srcElement.files[0] && event.srcElement.files[0].size < import.meta.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
-                    reader.readAsDataURL(event.srcElement.files[0])
-                    this.v$.$touch()
-                } else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
-            }
+        listOfThemes: Array
+    },
+    computed: {
+        disableField() {
+            if (this.tenant.MULTITENANT_ID) return true
+            return false
         }
-    })
+    },
+    emits: ['fieldChanged', 'roleTypeChanged'],
+    data() {
+        return {
+            tabViewDescriptor,
+            tenantDetailValidationDescriptor,
+            v$: useValidate() as any,
+            tenant: {} as iMultitenant,
+            themes: [] as any
+        }
+    },
+    validations() {
+        return {
+            tenant: createValidations('tenant', tenantDetailValidationDescriptor.validations.tenant)
+        }
+    },
+    created() {
+        if (this.selectedTenant && Object.keys(this.selectedTenant).length > 0) {
+            this.tenant = { ...this.selectedTenant } as iMultitenant
+        } else {
+            this.tenant = {} as iMultitenant
+            this.tenant.MULTITENANT_THEME = 'sbi_default'
+        }
+        if (this.listOfThemes) this.themes = [...this.listOfThemes] as any
+    },
+    watch: {
+        async selectedTenant() {
+            this.v$.$reset()
+            this.tenant = { ...this.selectedTenant } as iMultitenant
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `multitenant/image?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response: AxiosResponse<any>) => {
+                this.tenant.MULTITENANT_IMAGE = response.data
+            })
+        },
+        listOfThemes() {
+            this.themes = [...(this.listOfThemes as any[])]
+        }
+    },
+    methods: {
+        onFieldChange(fieldName: string, value: any) {
+            this.$emit('fieldChanged', { fieldName, value })
+        },
+        uploadFile(event): void {
+            const reader = new FileReader()
+            reader.addEventListener(
+                'load',
+                () => {
+                    this.tenant.MULTITENANT_IMAGE = reader.result || ''
+                    this.onFieldChange('MULTITENANT_IMAGE', this.tenant.MULTITENANT_IMAGE)
+                },
+                false
+            )
+            if (event.srcElement.files[0] && event.srcElement.files[0].size < import.meta.env.VITE_MAX_UPLOAD_IMAGE_SIZE) {
+                reader.readAsDataURL(event.srcElement.files[0])
+                this.v$.$touch()
+            } else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
+        }
+    }
+})
 </script>
 
 <style lang="scss" scoped>
-    #organizationImage {
-        display: none;
+#organizationImage {
+    display: none;
+}
+label[for='organizationImage'] {
+    float: right;
+    transition: background-color 0.3s linear;
+    border-radius: 50%;
+    width: 2.25rem;
+    line-height: 1rem;
+    top: -5px;
+    height: 2.25rem;
+    padding: 0.571rem;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    &:hover {
+        background-color: var(--kn-color-secondary);
     }
-    label[for='organizationImage'] {
+}
+.imageUploader {
+    .p-fileupload {
+        display: inline-block;
         float: right;
-        transition: background-color 0.3s linear;
+        .p-button {
+            background-color: transparent;
+            color: black;
+        }
+    }
+}
+.imageContainer {
+    height: 100%;
+    .icon {
+        color: var(--kn-color-secondary);
+    }
+    img {
+        height: auto;
+        max-height: 80px;
+        max-width: 80px;
         border-radius: 50%;
-        width: 2.25rem;
-        line-height: 1rem;
-        top: -5px;
-        height: 2.25rem;
-        padding: 0.571rem;
-        position: relative;
-        cursor: pointer;
-        user-select: none;
-        &:hover {
-            background-color: var(--kn-color-secondary);
-        }
     }
-    .imageUploader {
-        .p-fileupload {
-            display: inline-block;
-            float: right;
-            .p-button {
-                background-color: transparent;
-                color: black;
-            }
-        }
-    }
-    .imageContainer {
-        height: 100%;
-        .icon {
-            color: var(--kn-color-secondary);
-        }
-        img {
-            height: auto;
-            max-height: 80px;
-            max-width: 80px;
-            border-radius: 50%;
-        }
-    }
+}
 </style>

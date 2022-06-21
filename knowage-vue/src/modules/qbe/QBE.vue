@@ -22,7 +22,7 @@
                             <span>{{ $t('qbe.entities.title') }}</span>
                         </template>
                         <template #end>
-                            <Chip style="background-color:white"> {{ entities?.entities?.length }} </Chip>
+                            <Chip style="background-color: white"> {{ entities?.entities?.length }} </Chip>
                         </template>
                     </Toolbar>
                     <div class="kn-flex kn-overflow-hidden">
@@ -38,7 +38,7 @@
                         </template>
                         <template #end>
                             <Button v-if="showEntitiesLists" icon="fas fa-plus-circle" class="p-button-text p-button-rounded p-button-plain" v-tooltip.top="$t('common.add')" @click="createSubquery" />
-                            <Chip style="background-color:white"> {{ mainQuery?.subqueries?.length }} </Chip>
+                            <Chip style="background-color: white"> {{ mainQuery?.subqueries?.length }} </Chip>
                             <Button v-if="showDerivedList" icon="pi pi-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
                             <Button v-else icon="pi pi-chevron-up" class="p-button-text p-button-rounded p-button-plain" @click="collapseDerivedList" />
                         </template>
@@ -135,13 +135,13 @@
         >
             <template #additionalInputs>
                 <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
-                    <span class="p-float-label ">
+                    <span class="p-float-label">
                         <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.type" :options="qbeDescriptor.types" optionLabel="label" optionValue="name" />
                         <label for="type" class="kn-material-input-label"> {{ $t('components.knCalculatedField.type') }} </label>
                     </span>
                 </div>
                 <div v-if="selectedCalcField.type === 'DATE'" class="p-field p-col-3">
-                    <span class="p-float-label ">
+                    <span class="p-float-label">
                         <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.format" :options="qbeDescriptor.admissibleDateFormats">
                             <template #value>
                                 <span>{{ selectedCalcField.format ? moment().format(selectedCalcField.format) : '' }}</span>
@@ -154,7 +154,7 @@
                     </span>
                 </div>
                 <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
-                    <span class="p-float-label ">
+                    <span class="p-float-label">
                         <Dropdown id="columnType" class="kn-material-input" v-model="selectedCalcField.nature" :options="qbeDescriptor.columnTypes" optionLabel="label" optionValue="name" />
                         <label for="columnType" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.columnType') }} </label>
                     </span>
@@ -334,7 +334,7 @@ export default defineComponent({
             if (!this.dataset) {
                 return
             }
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.dataset.label}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.dataset.label}`).then((response: AxiosResponse<any>) => {
                 this.qbe = response.data[0]
                 if (this.qbe && this.qbe.qbeJSONQuery) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
@@ -397,7 +397,7 @@ export default defineComponent({
             const url = this.qbe.label ? `3.0/datasets/${label}/filters` : `1.0/businessmodel/${this.qbe.qbeDatamarts}/filters`
 
             await this.$http
-                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + url, { role: this.userRole })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, { role: this.userRole })
                 .then((response: AxiosResponse<any>) => {
                     this.filtersData = response.data
                     if (this.filtersData.filterStatus) {
@@ -428,7 +428,7 @@ export default defineComponent({
             const drivers = encodeURI(JSON.stringify(temp))
             if (this.dataset) {
                 await this.$http
-                    .get(import.meta.env.VUE_APP_QBE_PATH + `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`)
+                    .get(import.meta.env.VITE_QBE_PATH + `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`)
                     .then(() => {
                         this.qbeLoaded = true
                     })
@@ -449,7 +449,7 @@ export default defineComponent({
         },
         async loadCustomizedDatasetFunctions() {
             const id = this.dataset?.dataSourceId ? this.dataset.dataSourceId : this.qbe?.qbeDataSourceId
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${id}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${id}`).then((response: AxiosResponse<any>) => {
                 this.customizedDatasetFunctions = response.data
                 if (response.data.data && response.data.data.length > 0) {
                     let customFunctions = response.data.data.map((funct) => ({ category: 'CUSTOM', formula: funct.value, label: funct.label, name: funct.name, help: 'dataPreparation.custom' }))
@@ -501,7 +501,7 @@ export default defineComponent({
 
             const postData = { catalogue: this.qbe?.qbeJSONQuery?.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
-                .post(import.meta.env.VUE_APP_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&start=${this.pagination.start}&limit=${this.pagination.limit}`, postData)
+                .post(import.meta.env.VITE_QBE_PATH + `qbequery/executeQuery/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&start=${this.pagination.start}&limit=${this.pagination.limit}`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.queryPreviewData = response.data
                     this.pagination.size = response.data.results
@@ -726,7 +726,7 @@ export default defineComponent({
 
             let conf = {} as any
             conf.headers = { 'Content-Type': 'application/x-www-form-urlencoded' } as any
-            conf.transformRequest = function(obj) {
+            conf.transformRequest = function (obj) {
                 var str = [] as any
                 for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                 return str.join('&')
@@ -748,7 +748,7 @@ export default defineComponent({
 
             let conf = {} as any
             conf.headers = { 'Content-Type': 'application/x-www-form-urlencoded' } as any
-            conf.transformRequest = function(obj) {
+            conf.transformRequest = function (obj) {
                 var str = [] as any
                 for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                 return str.join('&')
@@ -786,7 +786,7 @@ export default defineComponent({
 
             const postData = { catalogue: this.qbe?.qbeJSONQuery?.catalogue.queries, meta: this.formatQbeMeta(), pars: this.qbe?.pars, qbeJSONQuery: {}, schedulingCronLine: '0 * * * * ?' }
             await this.$http
-                .post(import.meta.env.VUE_APP_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
+                .post(import.meta.env.VITE_QBE_PATH + `qbequery/export/?SBI_EXECUTION_ID=${this.uniqueID}&currentQueryId=${this.selectedQuery.id}&outputType=${mimeType}`, postData, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
                 .then((response: AxiosResponse<any>) => {
                     downloadDirect(response.data, fileName, response.headers['content-type'])
                 })

@@ -52,7 +52,7 @@
                     </template>
 
                     <Column v-for="col of domainsManagementDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="domainsManagementDescriptor.table.column.style" :sortable="true" class="kn-truncated">
-                        <template #filter="{filterModel}">
+                        <template #filter="{ filterModel }">
                             <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                         </template>
                         <template #body="slotProps">
@@ -133,7 +133,7 @@ export default defineComponent({
         async loadAllDomains() {
             this.loading = true
             await this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/domains')
                 .then((response: AxiosResponse<any>) => {
                     this.domains = response.data
                 })
@@ -148,7 +148,7 @@ export default defineComponent({
             })
         },
         async deleteDomain(domainId: number) {
-            await this.$http.delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/' + domainId).then(() => {
+            await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/domains/' + domainId).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')

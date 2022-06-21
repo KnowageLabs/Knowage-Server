@@ -367,7 +367,7 @@ export default defineComponent({
         async loadDataDependencies() {
             this.conditions = []
             if (this.driver && this.driver.id) {
-                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies?driverId=${this.driver.id}`).then((response: AxiosResponse<any>) =>
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies?driverId=${this.driver.id}`).then((response: AxiosResponse<any>) =>
                     response.data.forEach((condition: any) => {
                         const index = this.conditions.findIndex((cond) => cond.parFatherId === condition.parFatherId && cond.filterOperation == condition.filterOperation && cond.logicOperator == condition.logicOperator)
                         condition.modalities = []
@@ -382,10 +382,10 @@ export default defineComponent({
             }
         },
         async loadModes() {
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver?.parameter?.id}/modes`).then((response: AxiosResponse<any>) => (this.modes = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver?.parameter?.id}/modes`).then((response: AxiosResponse<any>) => (this.modes = response.data))
         },
         async loadLovs() {
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver?.parameter?.id}/lovs`).then((response: AxiosResponse<any>) => (this.lovs = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${this.driver?.parameter?.id}/lovs`).then((response: AxiosResponse<any>) => (this.lovs = response.data))
         },
         getLovs(lovId: number) {
             const index = this.lovs.findIndex((lov) => lov.id === lovId)
@@ -422,7 +422,7 @@ export default defineComponent({
             }
         },
         async saveCondition(condition: any) {
-            await this.$http.post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, condition).finally(() => (this.conditionFormVisible = false))
+            await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, condition).finally(() => (this.conditionFormVisible = false))
         },
         async handleSubmit() {
             if (this.condition.id) {
@@ -457,7 +457,7 @@ export default defineComponent({
                         conditionForPost.prog++
                         delete conditionForPost.parFather
                         delete conditionForPost.modalities
-                        await this.sendRequest(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, conditionForPost).then((response: AxiosResponse<any>) => {
+                        await this.sendRequest(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies`, conditionForPost).then((response: AxiosResponse<any>) => {
                             if (response.data.errors) {
                                 this.errorMessage = response.data.errors[0].message
                                 this.displayWarning = true
@@ -538,7 +538,7 @@ export default defineComponent({
         async deleteCondition(condition: any) {
             delete condition.parFather
             delete condition.modalities
-            await this.$http.post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies/delete`, condition).then(() => {
+            await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies/delete`, condition).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')

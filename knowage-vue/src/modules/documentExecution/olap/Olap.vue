@@ -229,7 +229,7 @@ export default defineComponent({
         },
         async loadOlapDesigner() {
             await this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `olap/designer/${this.olapId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `olap/designer/${this.olapId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then(async (response: AxiosResponse<any>) => {
                     this.olapDesigner = response.data
                     this.whatIfMode = this.olapDesigner?.ENGINE === 'knowagewhatifengine'
@@ -246,7 +246,7 @@ export default defineComponent({
         async loadOlapCustomViews() {
             this.loading = true
             await this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `/1.0/olapsubobjects/getSubObjects?idObj=${this.olapId}`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `/1.0/olapsubobjects/getSubObjects?idObj=${this.olapId}`)
                 .then(async (response: AxiosResponse<any>) => (this.olapCustomViews = response.data.results))
                 .catch(() => {})
             this.loading = false
@@ -254,7 +254,7 @@ export default defineComponent({
         async loadOlapButtons() {
             this.loading = true
             await this.$http
-                .get(import.meta.env.VUE_APP_OLAP_PATH + `1.0/buttons`)
+                .get(import.meta.env.VITE_OLAP_PATH + `1.0/buttons`)
                 .then(async (response: AxiosResponse<any>) => {
                     this.buttons = response.data
                     this.buttons.splice(
@@ -268,7 +268,7 @@ export default defineComponent({
         async loadOlapModel() {
             this.loading = true
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/model/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/model/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then(async (response: AxiosResponse<any>) => {
                     this.olap = response.data
                     await this.loadOlapDesigner()
@@ -320,7 +320,7 @@ export default defineComponent({
         async loadModelConfig() {
             this.loading = true
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/modelconfig?SBI_EXECUTION_ID=${this.id}&NOLOADING=undefined`, this.olap.modelConfig, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/modelconfig?SBI_EXECUTION_ID=${this.id}&NOLOADING=undefined`, this.olap.modelConfig, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => {})
 
@@ -331,7 +331,7 @@ export default defineComponent({
             this.loading = true
             if (this.olapHasScenario) {
                 await this.$http
-                    .get(import.meta.env.VUE_APP_OLAP_PATH + `1.0/version?SBI_EXECUTION_ID=${this.id}`)
+                    .get(import.meta.env.VITE_OLAP_PATH + `1.0/version?SBI_EXECUTION_ID=${this.id}`)
                     .then((response: AxiosResponse<any>) => (this.olapVersions = response.data))
                     .catch(() => {})
             }
@@ -363,7 +363,7 @@ export default defineComponent({
                 positionUniqueName: event.target.parentNode.getAttribute('positionuniquename')
             })
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/member/drilldown/${axis}/${position}/${member}/?SBI_EXECUTION_ID=${this.id}`, postData, {
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/member/drilldown/${axis}/${position}/${member}/?SBI_EXECUTION_ID=${this.id}`, postData, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8'
@@ -379,7 +379,7 @@ export default defineComponent({
         async drillUp(event: any, replace: boolean) {
             this.loading = true
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/member/drillup?SBI_EXECUTION_ID=${this.id}`, this.formatDrillUpPostData(event, replace), {
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/member/drillup?SBI_EXECUTION_ID=${this.id}`, this.formatDrillUpPostData(event, replace), {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8'
@@ -446,7 +446,7 @@ export default defineComponent({
         async enableSorting() {
             this.loading = true
             await this.$http
-                .get(import.meta.env.VUE_APP_OLAP_PATH + `1.0/member/sort/disable?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .get(import.meta.env.VITE_OLAP_PATH + `1.0/member/sort/disable?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => {})
 
@@ -469,7 +469,7 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/member/sort/?SBI_EXECUTION_ID=${this.id}`, postData)
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/member/sort/?SBI_EXECUTION_ID=${this.id}`, postData)
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => {})
             this.formatOlapTable()
@@ -478,7 +478,7 @@ export default defineComponent({
         async reloadOlap() {
             this.loading = true
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/cache/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/cache/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => {})
             this.formatOlapTable()
@@ -489,7 +489,7 @@ export default defineComponent({
             var toSend = { fromAxis: fromAxis, hierarchy: filter.selectedHierarchyUniqueName, toAxis: filter.axis }
             this.loading = true
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/axis/moveDimensionToOtherAxis?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/axis/moveDimensionToOtherAxis?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => {
                     this.olap = response.data
                     if (this.olapDesigner) {
@@ -504,7 +504,7 @@ export default defineComponent({
         async swapAxis() {
             this.loading = true
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/axis/swap?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/axis/swap?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.swapAxisError') }))
             this.formatOlapTable()
@@ -514,7 +514,7 @@ export default defineComponent({
             var toSend = { axis: data.axis, hierarchy: data.selectedHierarchyUniqueName, newPosition: data.positionInAxis + 1, direction: 1 }
             this.loading = true
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/axis/moveHierarchy?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/axis/moveHierarchy?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => {
                     this.olap = response.data
                 })
@@ -537,7 +537,7 @@ export default defineComponent({
                 var toSend = { axis: this.multiHierFilter.axis, oldHierarchyUniqueName: oldHier, newHierarchyUniqueName: newHier, hierarchyPosition: this.multiHierFilter.positionInAxis }
                 this.loading = true
                 await this.$http
-                    .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/axis/updateHierarchyOnDimension?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                    .post(import.meta.env.VITE_OLAP_PATH + `1.0/axis/updateHierarchyOnDimension?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                     .then((response: AxiosResponse<any>) => (this.olap = response.data))
                     .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.hierarchyUpdateError') }))
                     .finally(() => {
@@ -566,7 +566,7 @@ export default defineComponent({
             this.loading = true
             this.olap.modelConfig.crossNavigation.buttonClicked = crossNavigation
             await this.$http
-                .get(import.meta.env.VUE_APP_OLAP_PATH + `1.0/crossnavigation/initialize/?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .get(import.meta.env.VITE_OLAP_PATH + `1.0/crossnavigation/initialize/?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => {})
             this.formatOlapTable()
@@ -585,7 +585,7 @@ export default defineComponent({
 
             let tempResponse = null
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/crossnavigation/getCrossNavigationUrl/${temp[0]},${temp[1]}?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/crossnavigation/getCrossNavigationUrl/${temp[0]},${temp[1]}?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (tempResponse = response.data))
                 .catch(() => {})
             await this.executeCrossnavigationFromCell(tempResponse)
@@ -638,7 +638,7 @@ export default defineComponent({
 
             await this.$http
                 .post(
-                    import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.olapName}/saveOlapTemplate`,
+                    import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documents/${this.olapName}/saveOlapTemplate`,
                     { olap: { ...this.olapDesigner.template.wrappedObject.olap, JSONTEMPLATE: { XML_TAG_TEXT_CONTENT: JSON.stringify(this.olapDesigner.template.wrappedObject) } } },
                     { headers: { Accept: 'application/json, text/plain, */*' } }
                 )
@@ -664,7 +664,7 @@ export default defineComponent({
                 let toSend = {} as any
                 toSend.ordinal = this.usedOrdinal
                 await this.$http
-                    .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/member/drilltrough?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                    .post(import.meta.env.VITE_OLAP_PATH + `1.0/member/drilltrough?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                     .then((response: AxiosResponse<any>) => {
                         this.dtData = []
                         this.dtColumns = []
@@ -688,7 +688,7 @@ export default defineComponent({
                 toSend.levels = JSON.stringify(this.dtAssociatedLevels)
                 toSend.max = this.dtMaxRows
                 await this.$http
-                    .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/member/drilltrough/full?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                    .post(import.meta.env.VITE_OLAP_PATH + `1.0/member/drilltrough/full?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                     .then((response: AxiosResponse<any>) => {
                         this.dtData = []
                         this.dtColumns = []
@@ -727,7 +727,7 @@ export default defineComponent({
             toSend.filters = JSON.stringify(this.olap.filters)
 
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/member/drilltrough/levels/?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/member/drilltrough/levels/?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => {
                     this.dtTree = response.data
                     setTimeout(() => {
@@ -848,7 +848,7 @@ export default defineComponent({
         },
         async sliceOLAP(payload) {
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/hierarchy/slice?SBI_EXECUTION_ID=${this.id}`, payload, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/hierarchy/slice?SBI_EXECUTION_ID=${this.id}`, payload, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => {})
         },
@@ -857,26 +857,26 @@ export default defineComponent({
                 return { id: member.id, leaf: member.leaf, name: member.name, uniqueName: member.uniqueName, visible: member.visible }
             })
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/axis/${payload.axis}/placeMembersOnAxis?SBI_EXECUTION_ID=${this.id}`, members, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/axis/${payload.axis}/placeMembersOnAxis?SBI_EXECUTION_ID=${this.id}`, members, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
                 .catch(() => {})
         },
         async loadParameters() {
             await this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.olapDesigner.DOCUMENT_LABEL}/parameters`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documents/${this.olapDesigner.DOCUMENT_LABEL}/parameters`)
                 .then((response: AxiosResponse<any>) => (this.parameters = response.data ? response.data.results : []))
                 .catch(() => {})
         },
         async loadProfileAttributes() {
             await this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/attributes`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/attributes`)
                 .then((response: AxiosResponse<any>) => (this.profileAttributes = response.data))
                 .catch(() => {})
         },
         async undo() {
             this.loading = true
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/model/undo/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/model/undo/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
@@ -917,7 +917,7 @@ export default defineComponent({
             if (this.checkIfVersionIsSet()) {
                 this.loading = true
                 this.$http
-                    .get(import.meta.env.VUE_APP_OLAP_PATH + `1.0/model/exceledit?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
+                    .get(import.meta.env.VITE_OLAP_PATH + `1.0/model/exceledit?SBI_EXECUTION_ID=${this.id}`, { headers: { Accept: 'application/json, text/plain, */*' }, responseType: 'blob' })
                     .then((response: AxiosResponse<any>) => {
                         let fileName = response.headers['content-disposition'].split('filename="')[1].split('"')[0]
                         downloadDirect(response.data, fileName, response.headers['content-type'])
@@ -971,7 +971,7 @@ export default defineComponent({
                 group = ''
 
             // separators
-            parts_local.forEach(function(i) {
+            parts_local.forEach(function (i) {
                 switch (i.type) {
                     case 'group':
                         group = i.value
@@ -1021,7 +1021,7 @@ export default defineComponent({
                 let postData = { expression: this.whatifInputNewValue }
                 this.loading = true
                 await this.$http
-                    .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/model/setValue/${this.whatifInputOrdinal}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                    .post(import.meta.env.VITE_OLAP_PATH + `1.0/model/setValue/${this.whatifInputOrdinal}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                     .then((response: AxiosResponse<any>) => {
                         this.olap = response.data
                         this.closeWhatifInput()

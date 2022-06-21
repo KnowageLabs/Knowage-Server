@@ -46,7 +46,7 @@ export default defineComponent({
     methods: {
         async loadDataset(datasetId: Number) {
             await this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`)
                 .then((response: AxiosResponse<any>) => {
                     this.dataset = response.data[0]
                 })
@@ -66,7 +66,7 @@ export default defineComponent({
 
         async getAllAvroDataSets() {
             await this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/avro`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/avro`)
                 .then((response: AxiosResponse<any>) => {
                     this.avroDatasets = response.data
                 })
@@ -86,10 +86,10 @@ export default defineComponent({
         openDataPreparation(dataset: any) {
             if (dataset.dsTypeCd == 'Prepared') {
                 //edit existing data prep
-                this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
+                this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
                     (response: AxiosResponse<any>) => {
                         let instanceId = response.data.configuration.dataPrepInstanceId
-                        this.$http.get(import.meta.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
+                        this.$http.get(import.meta.env.VITE_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
                             (response: AxiosResponse<any>) => {
                                 let transformations = response.data.definition
                                 let processId = response.data.id
@@ -128,7 +128,7 @@ export default defineComponent({
         async updateDatasetAndSave(newConfig) {
             this.showMonitoringDialog = false
 
-            await this.$http.patch(import.meta.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config }, { headers: { Accept: 'application/json, */*' } }).then(
+            await this.$http.patch(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config }, { headers: { Accept: 'application/json, */*' } }).then(
                 () => {
                     this.loadDataset(this.selectedDataset.id)
                 },

@@ -198,7 +198,7 @@ export default defineComponent({
             this.$emit('fieldChanged', { fieldName, value })
         },
         loadDomains(type: string) {
-            return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
         },
         onRoleTypeChange(roleTypeIDField: string, roleTypeCDField: string, event) {
             const selRoleType = this.roleTypes.find((roleType) => roleType.VALUE_ID === event.value)

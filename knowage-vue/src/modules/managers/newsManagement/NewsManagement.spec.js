@@ -107,7 +107,7 @@ describe('News Management', () => {
 
         await wrapper.vm.deleteNews(mockedNews[0])
         expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/' + 1)
+        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news/' + 1)
     })
     it('changes url when the "+" button is clicked', async () => {
         const wrapper = factory()

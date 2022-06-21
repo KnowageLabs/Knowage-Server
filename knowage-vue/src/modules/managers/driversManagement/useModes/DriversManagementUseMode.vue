@@ -36,117 +36,117 @@
     </Card>
 </template>
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import Badge from 'primevue/badge'
-    import driversManagemenDetailtDescriptor from '../DriversManagementDetailDescriptor.json'
-    import Listbox from 'primevue/listbox'
-    import UseModeDetail from './DriversManagementUseModeDetail.vue'
-    import Tooltip from 'primevue/tooltip'
-    export default defineComponent({
-        name: 'use-mode-card',
-        components: { Listbox, UseModeDetail, Badge },
-        directives: {
-            tooltip: Tooltip
+import { defineComponent } from 'vue'
+import Badge from 'primevue/badge'
+import driversManagemenDetailtDescriptor from '../DriversManagementDetailDescriptor.json'
+import Listbox from 'primevue/listbox'
+import UseModeDetail from './DriversManagementUseModeDetail.vue'
+import Tooltip from 'primevue/tooltip'
+export default defineComponent({
+    name: 'use-mode-card',
+    components: { Listbox, UseModeDetail, Badge },
+    directives: {
+        tooltip: Tooltip
+    },
+    props: {
+        propModes: {
+            type: Array,
+            required: false
         },
-        props: {
-            propModes: {
-                type: Array,
-                required: false
-            },
-            roles: {
-                type: Array,
-                requierd: true
-            },
-            constraints: {
-                type: Array,
-                requierd: true
-            },
-            selectionTypes: {
-                type: Array,
-                requierd: true
-            },
-            layers: {
-                type: Array,
-                requierd: true
-            },
-            lovs: {
-                type: Array,
-                requierd: true
-            },
-            isDate: {
-                type: Boolean,
-                requierd: true
-            },
-            showMapDriver: {
-                type: Boolean,
-                requierd: true
+        roles: {
+            type: Array,
+            requierd: true
+        },
+        constraints: {
+            type: Array,
+            requierd: true
+        },
+        selectionTypes: {
+            type: Array,
+            requierd: true
+        },
+        layers: {
+            type: Array,
+            requierd: true
+        },
+        lovs: {
+            type: Array,
+            requierd: true
+        },
+        isDate: {
+            type: Boolean,
+            requierd: true
+        },
+        showMapDriver: {
+            type: Boolean,
+            requierd: true
+        }
+    },
+    data() {
+        return {
+            driversManagemenDetailtDescriptor,
+            selectedUseMode: {} as any,
+            modes: [] as any[],
+            disabledRoles: [] as any[]
+        }
+    },
+    watch: {
+        propModes() {
+            //this.v$.$reset()
+            this.modes = this.propModes as any
+            this.selectedUseMode = {}
+        }
+    },
+    mounted() {
+        if (this.propModes) {
+            this.modes = this.propModes as any
+        }
+    },
+    methods: {
+        showForm(event: any) {
+            if (event.value) {
+                this.selectedUseMode = event.value
+            } else {
+                this.selectedUseMode = { useID: -1, idLov: null, defaultFormula: null, idLovForMax: null, idLovForDefault: null, associatedRoles: [], associatedChecks: [] }
+                this.modes.push(this.selectedUseMode)
             }
-        },
-        data() {
-            return {
-                driversManagemenDetailtDescriptor,
-                selectedUseMode: {} as any,
-                modes: [] as any[],
-                disabledRoles: [] as any[]
-            }
-        },
-        watch: {
-            propModes() {
-                //this.v$.$reset()
-                this.modes = this.propModes as any
-                this.selectedUseMode = {}
-            }
-        },
-        mounted() {
-            if (this.propModes) {
-                this.modes = this.propModes as any
-            }
-        },
-        methods: {
-            showForm(event: any) {
-                if (event.value) {
-                    this.selectedUseMode = event.value
-                } else {
-                    this.selectedUseMode = { useID: -1, idLov: null, defaultFormula: null, idLovForMax: null, idLovForDefault: null, associatedRoles: [], associatedChecks: [] }
-                    this.modes.push(this.selectedUseMode)
+            this.disabledRoles = []
+            this.modes.forEach((mode) => {
+                if (mode != this.selectedUseMode) {
+                    this.disabledRoles = this.disabledRoles.concat(mode.associatedRoles)
                 }
-                this.disabledRoles = []
-                this.modes.forEach((mode) => {
-                    if (mode != this.selectedUseMode) {
-                        this.disabledRoles = this.disabledRoles.concat(mode.associatedRoles)
-                    }
-                })
-            },
-            deleteModeConfirm(useMode: any) {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.deleteMode(useMode)
-                })
-            },
-            async deleteMode(useMode: any) {
-                if (useMode.useID != -1) {
-                    await this.$http
-                        .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/' + useMode.useID)
-                        .then(() => {
-                            this.$store.commit('setInfo', {
-                                title: this.$t('common.toast.deleteTitle'),
-                                msg: this.$t('common.toast.deleteSuccess')
-                            })
-                            this.modes.splice(this.modes.indexOf(useMode), 1)
+            })
+        },
+        deleteModeConfirm(useMode: any) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteMode(useMode)
+            })
+        },
+        async deleteMode(useMode: any) {
+            if (useMode.useID != -1) {
+                await this.$http
+                    .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/' + useMode.useID)
+                    .then(() => {
+                        this.$store.commit('setInfo', {
+                            title: this.$t('common.toast.deleteTitle'),
+                            msg: this.$t('common.toast.deleteSuccess')
                         })
-                        .catch((error) => {
-                            this.$store.commit('setError', {
-                                title: this.$t('managers.driversManagement.deleteError'),
-                                msg: error.message
-                            })
+                        this.modes.splice(this.modes.indexOf(useMode), 1)
+                    })
+                    .catch((error) => {
+                        this.$store.commit('setError', {
+                            title: this.$t('managers.driversManagement.deleteError'),
+                            msg: error.message
                         })
-                } else this.modes.splice(this.modes.indexOf(useMode))
-                if (this.selectedUseMode === useMode) {
-                    this.selectedUseMode.useID = null
-                }
+                    })
+            } else this.modes.splice(this.modes.indexOf(useMode))
+            if (this.selectedUseMode === useMode) {
+                this.selectedUseMode.useID = null
             }
         }
-    })
+    }
+})
 </script>

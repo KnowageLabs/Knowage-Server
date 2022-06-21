@@ -33,45 +33,45 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { AxiosResponse } from 'axios'
-    import KnFabButton from '@/components/UI/KnFabButton.vue'
-    import DataPreparationDescriptor from './DataPreparationDescriptor.json'
+import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
+import KnFabButton from '@/components/UI/KnFabButton.vue'
+import DataPreparationDescriptor from './DataPreparationDescriptor.json'
 
-    export default defineComponent({
-        name: 'data-preparation',
-        components: { KnFabButton },
-        props: {
-            visibility: Boolean
-        },
-        data() {
-            return { descriptor: DataPreparationDescriptor, dataPreparation: Array<any>() }
-        },
+export default defineComponent({
+    name: 'data-preparation',
+    components: { KnFabButton },
+    props: {
+        visibility: Boolean
+    },
+    data() {
+        return { descriptor: DataPreparationDescriptor, dataPreparation: Array<any>() }
+    },
 
-        emits: ['update:visibility'],
-        created() {
-            this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/datasets/mydata/').then((response: AxiosResponse<any>) => (this.dataPreparation = response.data.root))
+    emits: ['update:visibility'],
+    created() {
+        this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '3.0/datasets/mydata/').then((response: AxiosResponse<any>) => (this.dataPreparation = response.data.root))
+    },
+    methods: {
+        search(e, item): void {
+            console.log(e)
+            this.$router.push({ name: 'data-preparation-detail', params: { id: item.label } })
         },
-        methods: {
-            search(e, item): void {
-                console.log(e)
-                this.$router.push({ name: 'data-preparation-detail', params: { id: item.label } })
-            },
-            filter(e): void {
-                console.log(e)
-            }
+        filter(e): void {
+            console.log(e)
         }
-    })
+    }
+})
 </script>
 
 <style lang="scss" scoped>
-    .image {
-        position: relative;
-    }
-    .imageH2 {
-        position: absolute;
-        top: 10px;
-        left: 0;
-        width: 100%;
-    }
+.image {
+    position: relative;
+}
+.imageH2 {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 100%;
+}
 </style>

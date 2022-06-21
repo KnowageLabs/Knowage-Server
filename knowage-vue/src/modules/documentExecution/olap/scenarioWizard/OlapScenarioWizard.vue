@@ -38,8 +38,8 @@
             </Card>
             <Toolbar class="kn-toolbar kn-toolbar--secondary p-mx-2">
                 <template #start>
-                    <Button v-if="!expandParamsCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandParamsCard = true" />
-                    <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandParamsCard = false" />
+                    <Button v-if="!expandParamsCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandParamsCard = true" />
+                    <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandParamsCard = false" />
                     {{ $t('managers.datasetManagement.params') }}
                 </template>
                 <template #end>
@@ -54,12 +54,12 @@
                             {{ $t('managers.datasetManagement.tableEmpty') }}
                         </template>
                         <Column field="name" :header="$t('documentExecution.olap.scenarioWizard.parameterName')">
-                            <template #body="{data}">
+                            <template #body="{ data }">
                                 <InputText class="kn-material-input" v-model="data.name" :style="descriptor.style.columnStyle" />
                             </template>
                         </Column>
                         <Column field="value" :header="$t('documentExecution.olap.scenarioWizard.parameterValue')">
-                            <template #body="{data}">
+                            <template #body="{ data }">
                                 <InputText class="kn-material-input" v-model="data.value" :style="descriptor.style.columnStyle" />
                             </template>
                         </Column>
@@ -149,7 +149,7 @@ export default defineComponent({
         async getAllCubes() {
             const currentContentId = this.hiddenFormDataProp.get('SBI_ARTIFACT_VERSION_ID')
             await this.$http
-                .get(import.meta.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes/${currentContentId}?SBI_EXECUTION_ID=${this.sbiExecutionId}`)
+                .get(import.meta.env.VITE_OLAP_PATH + `1.0/designer/cubes/${currentContentId}?SBI_EXECUTION_ID=${this.sbiExecutionId}`)
                 .then((response: AxiosResponse<any>) => {
                     this.cubes = response.data.map((cube) => ({ name: cube }))
                 })
@@ -159,7 +159,7 @@ export default defineComponent({
         async getAllMeasures() {
             const currentContentId = this.hiddenFormDataProp.get('SBI_ARTIFACT_VERSION_ID')
             await this.$http
-                .get(import.meta.env.VUE_APP_OLAP_PATH + `1.0/designer/measures/${currentContentId}/${this.selectedCube.name}?SBI_EXECUTION_ID=${this.sbiExecutionId}`)
+                .get(import.meta.env.VITE_OLAP_PATH + `1.0/designer/measures/${currentContentId}/${this.selectedCube.name}?SBI_EXECUTION_ID=${this.sbiExecutionId}`)
                 .then((response: AxiosResponse<any>) => {
                     this.measures = response.data.map((cube) => ({ XML_TAG_TEXT_CONTENT: cube }))
                 })

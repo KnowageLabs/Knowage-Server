@@ -43,9 +43,9 @@ jest.mock('axios')
 const $http = {
     get: axios.get.mockImplementation((url) => {
         switch (url) {
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/listGlossary':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/listGlossary':
                 return Promise.resolve({ data: mockedGlossaryList })
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/listContents?GLOSSARY_ID=45&PARENT_ID=1':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/listContents?GLOSSARY_ID=45&PARENT_ID=1':
                 return Promise.resolve({ data: mockedContent })
             default:
                 return Promise.resolve({ data: [] })

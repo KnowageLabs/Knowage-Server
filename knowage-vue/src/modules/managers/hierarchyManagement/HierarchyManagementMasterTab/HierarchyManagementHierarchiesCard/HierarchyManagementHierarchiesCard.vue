@@ -114,7 +114,7 @@ export default defineComponent({
         async loadHierarchies() {
             this.$emit('loading', true)
             const url = this.hierarchyType === 'MASTER' ? `hierarchiesMaster/getHierarchiesMaster?dimension=${this.selectedDimension?.DIMENSION_NM}` : `hierarchiesTechnical/getHierarchiesTechnical?dimension=${this.selectedDimension?.DIMENSION_NM}`
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.hierarchies = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.hierarchies = response.data))
             this.relationsMasterTree = []
             this.$emit('loading', false)
         },
@@ -128,7 +128,7 @@ export default defineComponent({
                 if (this.filterData.afterDate) url = url.concat('&filterDate=' + moment(this.filterData.afterDate).format('YYYY-MM-DD'))
             }
             await this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url)
                 .then((response: AxiosResponse<any>) => (this.tree = response.data))
                 .catch(() => {})
             this.relationsMasterTree = []
@@ -201,7 +201,7 @@ export default defineComponent({
                 root: this.treeModel
             }
             await this.$http
-                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/saveHierarchy`, postData)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `hierarchies/saveHierarchy`, postData)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.response === 'ok') {
                         this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })

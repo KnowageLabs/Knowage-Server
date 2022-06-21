@@ -34,114 +34,114 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { AxiosResponse } from 'axios'
-    import FabButton from '@/components/UI/KnFabButton.vue'
-    import Listbox from 'primevue/listbox'
-    import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
+import FabButton from '@/components/UI/KnFabButton.vue'
+import Listbox from 'primevue/listbox'
+import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 
-    export default defineComponent({
-        name: 'tenant-management',
-        components: {
-            FabButton,
-            Listbox
-        },
-        data() {
-            return {
-                loading: false,
-                touched: false,
-                displayModal: false,
-                hintVisible: true,
-                cloneKpi: false,
-                kpiList: [] as any,
-                kpiToClone: {} as any,
-                cloneKpiId: Number,
-                cloneKpiVersion: Number
-            }
-        },
-        async created() {
-            await this.getKpiList()
-        },
-        methods: {
-            async getKpiList() {
-                this.loading = true
-                return this.$http
-                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpi`)
-                    .then((response: AxiosResponse<any>) => {
-                        this.kpiList = [...response.data]
-                    })
-                    .finally(() => (this.loading = false))
-            },
-
-            deleteKpiConfirm(kpiId: number, kpiVersion: number) {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.deleteKpi(kpiId, kpiVersion)
-                })
-            },
-            async deleteKpi(kpiId: number, kpiVersion: number) {
-                await this.$http.delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/deleteKpi`).then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.deleteTitle'),
-                        msg: this.$t('common.toast.deleteSuccess')
-                    })
-                    this.$router.push('/kpi-definition')
-                    this.getKpiList()
-                })
-            },
-            showForm(event: any) {
-                const path = event.value ? `/kpi-definition/${event.value.id}/${event.value.version}` : '/kpi-definition/new-kpi'
-                this.hintVisible = false
-                if (!this.touched) {
-                    this.$router.push(path)
-                } else {
-                    this.$confirm.require({
-                        message: this.$t('common.toast.unsavedChangesMessage'),
-                        header: this.$t('common.toast.unsavedChangesHeader'),
-                        icon: 'pi pi-exclamation-triangle',
-                        accept: () => {
-                            this.touched = false
-                            this.$router.push(path)
-                        }
-                    })
-                }
-            },
-            pageReload() {
-                this.touched = false
-                this.hintVisible = true
-            },
-            onFormClose() {
-                this.touched = false
-                this.hintVisible = true
-            },
-            formatDate(date) {
-                return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
-            },
-            async reloadAndReroute(event) {
-                await this.getKpiList()
-
-                let kpiToLoad = this.kpiList.find((kpi) => {
-                    if (kpi.name === event) return true
-                })
-                let path = ''
-                if (kpiToLoad) {
-                    path = `/kpi-definition/${kpiToLoad.id}/${kpiToLoad.version}`
-                }
-                this.$router.push(path)
-
-                this.touched = false
-                this.hintVisible = false
-            },
-            emitCopyKpi(kpiId, kpiVersion) {
-                this.$router.push('/kpi-definition/new-kpi')
-                this.hintVisible = false
-                setTimeout(() => {
-                    this.cloneKpiId = kpiId
-                    this.cloneKpiVersion = kpiVersion
-                }, 200)
-            }
+export default defineComponent({
+    name: 'tenant-management',
+    components: {
+        FabButton,
+        Listbox
+    },
+    data() {
+        return {
+            loading: false,
+            touched: false,
+            displayModal: false,
+            hintVisible: true,
+            cloneKpi: false,
+            kpiList: [] as any,
+            kpiToClone: {} as any,
+            cloneKpiId: Number,
+            cloneKpiVersion: Number
         }
-    })
+    },
+    async created() {
+        await this.getKpiList()
+    },
+    methods: {
+        async getKpiList() {
+            this.loading = true
+            return this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpi`)
+                .then((response: AxiosResponse<any>) => {
+                    this.kpiList = [...response.data]
+                })
+                .finally(() => (this.loading = false))
+        },
+
+        deleteKpiConfirm(kpiId: number, kpiVersion: number) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteKpi(kpiId, kpiVersion)
+            })
+        },
+        async deleteKpi(kpiId: number, kpiVersion: number) {
+            await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/deleteKpi`).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t('common.toast.deleteTitle'),
+                    msg: this.$t('common.toast.deleteSuccess')
+                })
+                this.$router.push('/kpi-definition')
+                this.getKpiList()
+            })
+        },
+        showForm(event: any) {
+            const path = event.value ? `/kpi-definition/${event.value.id}/${event.value.version}` : '/kpi-definition/new-kpi'
+            this.hintVisible = false
+            if (!this.touched) {
+                this.$router.push(path)
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.$router.push(path)
+                    }
+                })
+            }
+        },
+        pageReload() {
+            this.touched = false
+            this.hintVisible = true
+        },
+        onFormClose() {
+            this.touched = false
+            this.hintVisible = true
+        },
+        formatDate(date) {
+            return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
+        },
+        async reloadAndReroute(event) {
+            await this.getKpiList()
+
+            let kpiToLoad = this.kpiList.find((kpi) => {
+                if (kpi.name === event) return true
+            })
+            let path = ''
+            if (kpiToLoad) {
+                path = `/kpi-definition/${kpiToLoad.id}/${kpiToLoad.version}`
+            }
+            this.$router.push(path)
+
+            this.touched = false
+            this.hintVisible = false
+        },
+        emitCopyKpi(kpiId, kpiVersion) {
+            this.$router.push('/kpi-definition/new-kpi')
+            this.hintVisible = false
+            setTimeout(() => {
+                this.cloneKpiId = kpiId
+                this.cloneKpiVersion = kpiVersion
+            }, 200)
+        }
+    }
+})
 </script>

@@ -44,7 +44,7 @@ jest.mock('axios')
 const $http = {
     get: axios.get.mockImplementation((url) => {
         switch (url) {
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/getCalendarList`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/getCalendarList`:
                 return Promise.resolve({ data: mockedCalendars })
             default:
                 return Promise.resolve({ data: [] })
@@ -145,6 +145,6 @@ describe('Calendar Management loading', () => {
         wrapper.vm.deleteCalendar(mockedCalendars[2])
 
         expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + 'calendar/22/deleteCalendar')
+        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'calendar/22/deleteCalendar')
     })
 })

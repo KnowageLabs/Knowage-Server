@@ -38,7 +38,7 @@ export default defineComponent({
     methods: {
         async loadSelectedDataset(dataset: iDataset) {
             this.$emit('loading', true)
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${dataset.label}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/${dataset.label}`).then((response: AxiosResponse<any>) => {
                 if (response.data) {
                     this.selectedDataset = response.data[0]
                     this.$emit('selectedDataset', this.selectedDataset)
@@ -53,7 +53,7 @@ export default defineComponent({
             this.$emit('loading', false)
         },
         loadEnvironment(type: string) {
-            return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/category/${type}`)
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/configs/category/${type}`)
         },
         async onEnvironmentSelected(environment: string) {
             this.$emit('selectedEnvironment', environment)
@@ -64,7 +64,7 @@ export default defineComponent({
             this.$emit('loading', false)
         },
         async loadEnvironmentLibraries(url: string) {
-            return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `${url}`)
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `${url}`)
         }
     }
 })

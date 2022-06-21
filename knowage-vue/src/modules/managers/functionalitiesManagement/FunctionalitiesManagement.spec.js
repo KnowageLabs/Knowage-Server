@@ -113,7 +113,7 @@ describe('Functionalities', () => {
 
         expect(wrapper.vm.functionalities.length).toBe(5)
         expect(wrapper.vm.nodes.length).toBe(2)
-        expect(wrapper.vm.expandedKeys).toStrictEqual({ '1': true })
+        expect(wrapper.vm.expandedKeys).toStrictEqual({ 1: true })
         expect(tree.html()).toContain('Functionalities')
         expect(tree.html()).toContain('Test')
         expect(tree.html()).toContain('Other')
@@ -137,7 +137,7 @@ describe('Functionalities', () => {
 
         await wrapper.vm.deleteFunctionality(3)
         expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/' + 3)
+        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/functionalities/' + 3)
         expect($store.commit).toHaveBeenCalledTimes(1)
     })
     it('moves the item up in the tree if the move up button is clicked', async () => {
@@ -149,7 +149,7 @@ describe('Functionalities', () => {
 
         await wrapper.find('[data-test="move-up-button-3"]').trigger('click')
 
-        expect(axios.get).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/moveUp/' + 3)
+        expect(axios.get).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/functionalities/moveUp/' + 3)
     })
     it('moves the item down in the tree if the move down button is clicked', async () => {
         const wrapper = factory()
@@ -160,7 +160,7 @@ describe('Functionalities', () => {
 
         await wrapper.find('[data-test="move-down-button-3"]').trigger('click')
 
-        expect(axios.get).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/functionalities/moveDown/' + 3)
+        expect(axios.get).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/functionalities/moveDown/' + 3)
     })
     it('shows an empty detail if add new button is clicked', async () => {
         const wrapper = factory()

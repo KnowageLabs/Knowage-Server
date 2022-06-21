@@ -34,15 +34,15 @@ jest.mock('axios')
 const $http = {
     get: axios.get.mockImplementation((url) => {
         switch (url) {
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/1/loadSchedulerKPI':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/1/loadSchedulerKPI':
                 return Promise.resolve({ data: mockedScheduler })
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_PLACEHOLDER_TYPE`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_PLACEHOLDER_TYPE`:
                 return Promise.resolve({ data: [] })
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_PLACEHOLDER_FUNC`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_PLACEHOLDER_FUNC`:
                 return Promise.resolve({ data: [] })
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all/':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all/':
                 return Promise.resolve({ data: [] })
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi':
                 return Promise.resolve({ data: [] })
         }
     }),

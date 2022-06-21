@@ -112,7 +112,7 @@ describe('Metadata Management', () => {
 
         await wrapper.vm.deleteMetadata(1)
         expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata/' + 1)
+        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/objMetadata/' + 1)
     })
 
     it('adds empty card with inputs and tabs in detail when the "+" button is clicked', async () => {

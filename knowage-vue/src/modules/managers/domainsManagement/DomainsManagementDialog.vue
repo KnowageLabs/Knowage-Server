@@ -108,88 +108,88 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { iDomain } from './DomainsManagement'
-    import { createValidations } from '@/helpers/commons/validationHelper'
-    import Dialog from 'primevue/dialog'
-    import domainsManagementDescriptor from './DomainsManagementDescriptor.json'
-    import domainsManagementValidationDescriptor from './DomainsManagementValidationDescriptor.json'
-    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-    import useValidate from '@vuelidate/core'
+import { defineComponent } from 'vue'
+import { iDomain } from './DomainsManagement'
+import { createValidations } from '@/helpers/commons/validationHelper'
+import Dialog from 'primevue/dialog'
+import domainsManagementDescriptor from './DomainsManagementDescriptor.json'
+import domainsManagementValidationDescriptor from './DomainsManagementValidationDescriptor.json'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import useValidate from '@vuelidate/core'
 
-    export default defineComponent({
-        name: 'domain-management-dialog',
-        components: { Dialog, KnValidationMessages },
-        props: {
-            model: {
-                type: Object,
-                requried: false
-            }
-        },
-        emits: ['close', 'created'],
-        data() {
-            return {
-                domainsManagementDescriptor: domainsManagementDescriptor,
-                domainsManagementValidationDescriptor,
-                domain: {} as iDomain,
-                dirty: false,
-                v$: useValidate() as any,
-                operation: 'insert'
-            }
-        },
-        validations() {
-            return {
-                domain: createValidations('domain', domainsManagementValidationDescriptor.validations.domain)
-            }
-        },
-        computed: {
-            formHeader(): any {
-                return this.domain.valueId ? this.$t('common.edit') : this.$t('common.new')
-            },
-            buttonDisabled(): any {
-                return this.v$.$invalid
-            }
-        },
-        mounted() {
-            if (this.model) {
-                this.domain = { ...this.model } as iDomain
-            }
-        },
-        watch: {
-            model() {
-                this.domain = { ...this.model } as iDomain
-            }
-        },
-        methods: {
-            async handleSubmit() {
-                if (this.v$.$invalid) {
-                    return
-                }
-
-                let url = import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains'
-                if (this.domain.valueId) {
-                    this.operation = 'update'
-                    url += '/' + this.domain.valueId
-                }
-
-                await this.sendRequest(url).then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t(this.domainsManagementDescriptor.operation[this.operation].toastTitle),
-                        msg: this.$t(this.domainsManagementDescriptor.operation.success)
-                    })
-                    this.$emit('created')
-                })
-            },
-            sendRequest(url: string) {
-                if (this.operation === 'insert') {
-                    return this.$http.post(url, this.domain)
-                } else {
-                    return this.$http.put(url, this.domain)
-                }
-            },
-            closeTemplate() {
-                this.$emit('close')
-            }
+export default defineComponent({
+    name: 'domain-management-dialog',
+    components: { Dialog, KnValidationMessages },
+    props: {
+        model: {
+            type: Object,
+            requried: false
         }
-    })
+    },
+    emits: ['close', 'created'],
+    data() {
+        return {
+            domainsManagementDescriptor: domainsManagementDescriptor,
+            domainsManagementValidationDescriptor,
+            domain: {} as iDomain,
+            dirty: false,
+            v$: useValidate() as any,
+            operation: 'insert'
+        }
+    },
+    validations() {
+        return {
+            domain: createValidations('domain', domainsManagementValidationDescriptor.validations.domain)
+        }
+    },
+    computed: {
+        formHeader(): any {
+            return this.domain.valueId ? this.$t('common.edit') : this.$t('common.new')
+        },
+        buttonDisabled(): any {
+            return this.v$.$invalid
+        }
+    },
+    mounted() {
+        if (this.model) {
+            this.domain = { ...this.model } as iDomain
+        }
+    },
+    watch: {
+        model() {
+            this.domain = { ...this.model } as iDomain
+        }
+    },
+    methods: {
+        async handleSubmit() {
+            if (this.v$.$invalid) {
+                return
+            }
+
+            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/domains'
+            if (this.domain.valueId) {
+                this.operation = 'update'
+                url += '/' + this.domain.valueId
+            }
+
+            await this.sendRequest(url).then(() => {
+                this.$store.commit('setInfo', {
+                    title: this.$t(this.domainsManagementDescriptor.operation[this.operation].toastTitle),
+                    msg: this.$t(this.domainsManagementDescriptor.operation.success)
+                })
+                this.$emit('created')
+            })
+        },
+        sendRequest(url: string) {
+            if (this.operation === 'insert') {
+                return this.$http.post(url, this.domain)
+            } else {
+                return this.$http.put(url, this.domain)
+            }
+        },
+        closeTemplate() {
+            this.$emit('close')
+        }
+    }
+})
 </script>

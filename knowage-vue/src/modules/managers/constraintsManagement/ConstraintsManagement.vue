@@ -44,163 +44,163 @@
     </div>
 </template>
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { AxiosResponse } from 'axios'
-    import FabButton from '@/components/UI/KnFabButton.vue'
-    import Listbox from 'primevue/listbox'
-    import constraintManagementDescriptor from './ConstraintsManagementDescriptor.json'
-    import Avatar from 'primevue/avatar'
-    import { iConstraint } from './ConstraintsManagement'
-    import ConstraintsManagementDetail from './ConstraintsManagementDetail.vue'
-    import KnHint from '@/components/UI/KnHint.vue'
-    import Tooltip from 'primevue/tooltip'
+import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
+import FabButton from '@/components/UI/KnFabButton.vue'
+import Listbox from 'primevue/listbox'
+import constraintManagementDescriptor from './ConstraintsManagementDescriptor.json'
+import Avatar from 'primevue/avatar'
+import { iConstraint } from './ConstraintsManagement'
+import ConstraintsManagementDetail from './ConstraintsManagementDetail.vue'
+import KnHint from '@/components/UI/KnHint.vue'
+import Tooltip from 'primevue/tooltip'
 
-    export default defineComponent({
-        name: 'constraint-management',
-        components: {
-            FabButton,
-            KnHint,
-            Listbox,
-            Avatar,
-            ConstraintsManagementDetail
+export default defineComponent({
+    name: 'constraint-management',
+    components: {
+        FabButton,
+        KnHint,
+        Listbox,
+        Avatar,
+        ConstraintsManagementDetail
+    },
+    directives: {
+        tooltip: Tooltip
+    },
+    data() {
+        return {
+            loading: false,
+            touched: false,
+            formVisible: false,
+            predefinedChecks: [] as iConstraint[],
+            customChecks: [] as iConstraint[],
+            allCheks: [] as iConstraint[],
+            selectedCheck: {} as iConstraint,
+            domains: [] as any,
+            constraintManagementDescriptor
+        }
+    },
+    created() {
+        this.loadAll()
+    },
+    methods: {
+        async loadAll() {
+            this.loading = true
+            await this.getAllPredefinedChecks()
+            await this.getAllCustomChecks()
+            await this.getDomainTypes()
+            this.loadCheks()
         },
-        directives: {
-            tooltip: Tooltip
+        async getAllPredefinedChecks() {
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/predefinedChecks`).then((response: AxiosResponse<any>) => {
+                this.predefinedChecks = response.data.map((check: any) => {
+                    return {
+                        checkId: check.checkId,
+                        valueTypeId: check.valueTypeId,
+                        name: check.name,
+                        label: check.label,
+                        description: check.description,
+                        valueTypeCd: check.valueTypeCd,
+                        firstValue: check.firstValue,
+                        secondValue: check.secondValue,
+                        predifined: true
+                    }
+                })
+            })
         },
-        data() {
-            return {
-                loading: false,
-                touched: false,
-                formVisible: false,
-                predefinedChecks: [] as iConstraint[],
-                customChecks: [] as iConstraint[],
-                allCheks: [] as iConstraint[],
-                selectedCheck: {} as iConstraint,
-                domains: [] as any,
-                constraintManagementDescriptor
+        async getAllCustomChecks() {
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/customChecks`).then((response: AxiosResponse<any>) => {
+                this.customChecks = response.data.map((check: any) => {
+                    return {
+                        checkId: check.checkId,
+                        valueTypeId: check.valueTypeId,
+                        name: check.name,
+                        label: check.label,
+                        description: check.description,
+                        valueTypeCd: check.valueTypeCd,
+                        firstValue: check.firstValue,
+                        secondValue: check.secondValue,
+                        predifined: false
+                    }
+                })
+            })
+        },
+        loadCheks() {
+            this.allCheks = this.customChecks.concat(this.predefinedChecks)
+            this.loading = false
+        },
+        showForm(event: any) {
+            if (!this.touched) {
+                this.setSelectedCheck(event)
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.setSelectedCheck(event)
+                    }
+                })
             }
         },
-        created() {
-            this.loadAll()
+        async getDomainTypes() {
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=CHECK`).then((response: AxiosResponse<any>) => {
+                this.domains = response.data
+            })
         },
-        methods: {
-            async loadAll() {
-                this.loading = true
-                await this.getAllPredefinedChecks()
-                await this.getAllCustomChecks()
-                await this.getDomainTypes()
-                this.loadCheks()
-            },
-            async getAllPredefinedChecks() {
-                return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/predefinedChecks`).then((response: AxiosResponse<any>) => {
-                    this.predefinedChecks = response.data.map((check: any) => {
-                        return {
-                            checkId: check.checkId,
-                            valueTypeId: check.valueTypeId,
-                            name: check.name,
-                            label: check.label,
-                            description: check.description,
-                            valueTypeCd: check.valueTypeCd,
-                            firstValue: check.firstValue,
-                            secondValue: check.secondValue,
-                            predifined: true
-                        }
+        deleteConstraintConfirm(id: number) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteConstraint(id)
+            })
+        },
+        async deleteConstraint(id: number) {
+            await this.$http
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/customChecks/' + id)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
                     })
-                })
-            },
-            async getAllCustomChecks() {
-                return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/customChecks`).then((response: AxiosResponse<any>) => {
-                    this.customChecks = response.data.map((check: any) => {
-                        return {
-                            checkId: check.checkId,
-                            valueTypeId: check.valueTypeId,
-                            name: check.name,
-                            label: check.label,
-                            description: check.description,
-                            valueTypeCd: check.valueTypeCd,
-                            firstValue: check.firstValue,
-                            secondValue: check.secondValue,
-                            predifined: false
-                        }
-                    })
-                })
-            },
-            loadCheks() {
-                this.allCheks = this.customChecks.concat(this.predefinedChecks)
-                this.loading = false
-            },
-            showForm(event: any) {
-                if (!this.touched) {
-                    this.setSelectedCheck(event)
-                } else {
-                    this.$confirm.require({
-                        message: this.$t('common.toast.unsavedChangesMessage'),
-                        header: this.$t('common.toast.unsavedChangesHeader'),
-                        icon: 'pi pi-exclamation-triangle',
-                        accept: () => {
-                            this.touched = false
-                            this.setSelectedCheck(event)
-                        }
-                    })
-                }
-            },
-            async getDomainTypes() {
-                return this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=CHECK`).then((response: AxiosResponse<any>) => {
-                    this.domains = response.data
-                })
-            },
-            deleteConstraintConfirm(id: number) {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.deleteConstraint(id)
-                })
-            },
-            async deleteConstraint(id: number) {
-                await this.$http
-                    .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/customChecks/' + id)
-                    .then(() => {
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.deleteTitle'),
-                            msg: this.$t('common.toast.deleteSuccess')
-                        })
-                        this.loadAll()
-                        this.formVisible = false
-                    })
-                    .catch((error) => {
-                        this.$store.commit('setError', {
-                            title: this.$t('managers.constraintManagement.deleteError'),
-                            msg: error.message
-                        })
-                    })
-            },
-            setSelectedCheck(event: any) {
-                if (event) {
-                    this.selectedCheck = event.value
-                }
-                this.formVisible = true
-            },
-            handleSave(event: any) {
-                this.loadAll()
-                this.touched = false
-                this.selectedCheck = event
-            },
-            closeForm() {
-                if (!this.touched) {
+                    this.loadAll()
                     this.formVisible = false
-                } else {
-                    this.$confirm.require({
-                        message: this.$t('common.toast.unsavedChangesMessage'),
-                        header: this.$t('common.toast.unsavedChangesHeader'),
-                        icon: 'pi pi-exclamation-triangle',
-                        accept: () => {
-                            this.touched = false
-                            this.formVisible = false
-                        }
+                })
+                .catch((error) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('managers.constraintManagement.deleteError'),
+                        msg: error.message
                     })
-                }
+                })
+        },
+        setSelectedCheck(event: any) {
+            if (event) {
+                this.selectedCheck = event.value
+            }
+            this.formVisible = true
+        },
+        handleSave(event: any) {
+            this.loadAll()
+            this.touched = false
+            this.selectedCheck = event
+        },
+        closeForm() {
+            if (!this.touched) {
+                this.formVisible = false
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.formVisible = false
+                    }
+                })
             }
         }
-    })
+    }
+})
 </script>

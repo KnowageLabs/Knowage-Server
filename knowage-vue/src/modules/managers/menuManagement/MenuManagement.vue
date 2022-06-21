@@ -53,7 +53,7 @@ export default defineComponent({
     },
     data() {
         return {
-            apiUrl: import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
+            apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
             menuNodes: [] as iMenuNode[],
             staticPagesList: [] as iStaticPage[],
             selectedMenuNode: {} as any,
@@ -96,7 +96,15 @@ export default defineComponent({
             this.selectedMenuNode.level = 0
             this.selectedMenuNode.icon = {}
             this.selectedMenuNode.roles = []
-            this.selectedMenuNode.custIcon = this.selectedMenuNode.externalApplicationUrl = this.selectedMenuNode.functionality = this.selectedMenuNode.initialPath = this.selectedMenuNode.objId = this.selectedMenuNode.objParameters = this.selectedMenuNode.staticPage = this.selectedMenuNode.parentId = null
+            this.selectedMenuNode.custIcon =
+                this.selectedMenuNode.externalApplicationUrl =
+                this.selectedMenuNode.functionality =
+                this.selectedMenuNode.initialPath =
+                this.selectedMenuNode.objId =
+                this.selectedMenuNode.objParameters =
+                this.selectedMenuNode.staticPage =
+                this.selectedMenuNode.parentId =
+                    null
             this.selectedMenuNode.hideSliders = this.selectedMenuNode.hideToolbar = this.selectedMenuNode.viewIcons = false
         },
         closeForm() {

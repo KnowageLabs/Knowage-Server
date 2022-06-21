@@ -53,56 +53,56 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import Dialog from 'primevue/dialog'
-    import Dropdown from 'primevue/dropdown'
-    import olapCustomViewSaveDialogDescriptor from './OlapCustomViewSaveDialogDescriptor.json'
+import { defineComponent } from 'vue'
+import Dialog from 'primevue/dialog'
+import Dropdown from 'primevue/dropdown'
+import olapCustomViewSaveDialogDescriptor from './OlapCustomViewSaveDialogDescriptor.json'
 
-    export default defineComponent({
-        name: 'olap-custom-view-save-dialog',
-        components: { Dialog, Dropdown },
-        props: { sbiExecutionId: { type: String } },
-        data() {
-            return {
-                olapCustomViewSaveDialogDescriptor,
-                view: { name: '', description: '', scope: 'public' },
-                viewNameTouched: false,
-                loading: false
-            }
-        },
-        created() {},
-        methods: {
-            closeDialog() {
-                this.$emit('close')
-                this.viewNameTouched = false
-                this.view = { name: '', description: '', scope: 'public' }
-            },
-            async saveCustomizedView() {
-                this.loading = true
-                await this.$http
-                    .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/subobject?SBI_EXECUTION_ID=${this.sbiExecutionId}`, this.view)
-                    .then(() => {
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.createTitle'),
-                            msg: this.$t('common.toast.success')
-                        })
-                        this.closeDialog()
-                    })
-                    .catch(() => {})
-                this.loading = false
-            }
+export default defineComponent({
+    name: 'olap-custom-view-save-dialog',
+    components: { Dialog, Dropdown },
+    props: { sbiExecutionId: { type: String } },
+    data() {
+        return {
+            olapCustomViewSaveDialogDescriptor,
+            view: { name: '', description: '', scope: 'public' },
+            viewNameTouched: false,
+            loading: false
         }
-    })
+    },
+    created() {},
+    methods: {
+        closeDialog() {
+            this.$emit('close')
+            this.viewNameTouched = false
+            this.view = { name: '', description: '', scope: 'public' }
+        },
+        async saveCustomizedView() {
+            this.loading = true
+            await this.$http
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/subobject?SBI_EXECUTION_ID=${this.sbiExecutionId}`, this.view)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.createTitle'),
+                        msg: this.$t('common.toast.success')
+                    })
+                    this.closeDialog()
+                })
+                .catch(() => {})
+            this.loading = false
+        }
+    }
+})
 </script>
 
 <style lang="scss">
-    #olap-custom-view-save-dialog .p-dialog-header,
-    #olap-custom-view-save-dialog .p-dialog-content {
-        padding: 0;
-    }
-    #olap-custom-view-save-dialog .p-dialog-content {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-    }
+#olap-custom-view-save-dialog .p-dialog-header,
+#olap-custom-view-save-dialog .p-dialog-content {
+    padding: 0;
+}
+#olap-custom-view-save-dialog .p-dialog-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
 </style>

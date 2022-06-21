@@ -49,7 +49,7 @@ export default defineComponent({
     methods: {
         async getAvailableAlgorithms() {
             await this.$http
-                .get(import.meta.env.VUE_APP_OLAP_PATH + `1.0/allocationalgorithm/?SBI_EXECUTION_ID=${this.sbiExecutionId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .get(import.meta.env.VITE_OLAP_PATH + `1.0/allocationalgorithm/?SBI_EXECUTION_ID=${this.sbiExecutionId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) => {
                     this.availableAlgorithms = response.data
                 })
@@ -58,7 +58,7 @@ export default defineComponent({
         async changeAlgorithm() {
             console.log(this.selectedAlgorithm)
             await this.$http
-                .post(import.meta.env.VUE_APP_OLAP_PATH + `1.0/allocationalgorithm/${this.selectedAlgorithm.className}/?SBI_EXECUTION_ID=${this.sbiExecutionId}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/allocationalgorithm/${this.selectedAlgorithm.className}/?SBI_EXECUTION_ID=${this.sbiExecutionId}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then(async () => {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.updateSuccess') })
                 })

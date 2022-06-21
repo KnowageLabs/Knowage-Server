@@ -134,9 +134,9 @@ jest.mock('axios')
 const $http = {
     get: axios.get.mockImplementation((url) => {
         switch (url) {
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`:
                 return Promise.resolve({ data: mockedFolders })
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/1`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/1`:
                 return Promise.resolve({ data: mockedDocuments })
             default:
                 return Promise.resolve({ data: [] })

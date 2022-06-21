@@ -12,7 +12,7 @@
 
         <form class="p-fluid p-formgrid p-grid p-m-1">
             <InlineMessage class="p-m-1" severity="info" closable="false">{{ $t('documentExecution.olap.outputWizard.infoMsg') }}</InlineMessage>
-            <div id="type-container" class="p-field p-d-flex p-ai-center p-m-2  p-col-11">
+            <div id="type-container" class="p-field p-d-flex p-ai-center p-m-2 p-col-11">
                 <span>{{ $t('managers.workspaceManagement.dataPreparation.transformations.outputType') }}: </span>
                 <div class="p-mx-2">
                     <RadioButton id="fileType" name="file" value="file" v-model="selectedType" />
@@ -92,7 +92,7 @@ export default defineComponent({
             if (this.selectedType === 'file') {
                 this.loading = true
                 this.$http
-                    .get(import.meta.env.VUE_APP_OLAP_PATH + `1.0/analysis/csv/${this.selectedVersion.id}/${this.fieldDelimiter}?SBI_EXECUTION_ID=${this.sbiExecutionId}`, {
+                    .get(import.meta.env.VITE_OLAP_PATH + `1.0/analysis/csv/${this.selectedVersion.id}/${this.fieldDelimiter}?SBI_EXECUTION_ID=${this.sbiExecutionId}`, {
                         responseType: 'arraybuffer',
                         headers: {
                             'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ export default defineComponent({
             } else {
                 this.loading = true
                 this.$http
-                    .get(import.meta.env.VUE_APP_OLAP_PATH + `1.0/analysis/table/${this.selectedVersion.id}/${this.tableName}?SBI_EXECUTION_ID=${this.sbiExecutionId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
+                    .get(import.meta.env.VITE_OLAP_PATH + `1.0/analysis/table/${this.selectedVersion.id}/${this.tableName}?SBI_EXECUTION_ID=${this.sbiExecutionId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                     .then(async () => {
                         this.$store.commit('setInfo', { title: this.$t('common.information'), msg: this.$t('common.toast.updateSuccess') })
                     })

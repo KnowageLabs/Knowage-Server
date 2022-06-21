@@ -151,7 +151,7 @@ describe('Lovs Management', () => {
 
         await wrapper.vm.deleteLov(1)
         expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/delete/1')
+        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/lovs/delete/1')
         expect($router.push).toHaveBeenCalledWith('/lovs-management')
     })
     it("changes url when the when the ' + ' button is clicked", async () => {

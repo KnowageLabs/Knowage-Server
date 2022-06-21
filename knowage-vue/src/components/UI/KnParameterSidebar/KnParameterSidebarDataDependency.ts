@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios'
-import { iParameter, } from './KnParameterSidebar'
+import { iParameter } from './KnParameterSidebar'
 
-export function setDataDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter) {
+export function setDataDependency(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter) {
     if (parameter.dependencies?.data.length !== 0) {
         parameter.dependencies?.data.forEach((dependency: any) => {
             const index = loadedParameters.filterStatus.findIndex((param: any) => {
@@ -16,7 +16,7 @@ export function setDataDependency(loadedParameters: { filterStatus: iParameter[]
     }
 }
 
-export async function updateDataDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
+export async function updateDataDependency(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
     if (parameter && parameter.dataDependentParameters) {
         for (let i = 0; i < parameter.dataDependentParameters.length; i++) {
             await dataDependencyCheck(loadedParameters, parameter.dataDependentParameters[i], loading, document, sessionRole, $http, mode)
@@ -24,7 +24,7 @@ export async function updateDataDependency(loadedParameters: { filterStatus: iPa
     }
 }
 
-export async function dataDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
+export async function dataDependencyCheck(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
     loading = true
 
     const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters), paramId: parameter.urlName, role: sessionRole }
@@ -34,7 +34,7 @@ export async function dataDependencyCheck(loadedParameters: { filterStatus: iPar
         url = document.type === 'businessModel' ? `1.0/businessmodel/${document.name}/admissibleValues` : `/3.0/datasets/${document.label}/admissibleValues`
     }
 
-    await $http.post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData).then((response: AxiosResponse<any>) => {
+    await $http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData).then((response: AxiosResponse<any>) => {
         parameter.data = response.data.result.data
         parameter.metadata = response.data.result.metadata
         formatParameterAfterDataDependencyCheck(parameter)
@@ -75,7 +75,7 @@ export function formatParameterDataOptions(parameter: iParameter, data: any) {
     return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
 }
 
-export function getFormattedParameters(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }) {
+export function getFormattedParameters(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }) {
     let parameters = [] as any[]
 
     Object.keys(loadedParameters.filterStatus).forEach((key: any) => {
@@ -110,5 +110,5 @@ function checkIfParameterDataContainsNewValue(parameter: iParameter) {
             return parameter.parameterValue[0].value === option[valueIndex] && parameter.parameterValue[0].description === option[descriptionIndex]
         }
     })
-    return index !== -1;
+    return index !== -1
 }

@@ -50,7 +50,7 @@ export default defineComponent({
         async loadAllRoles() {
             this.loading = true
             await this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles')
                 .then((response: AxiosResponse<any>) => {
                     this.roles = response.data
                     this.checkAllRolesForPublicRole()
@@ -94,7 +94,7 @@ export default defineComponent({
         },
         async deleteRole(roleId: number) {
             await this.$http
-                .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId, { headers: { 'X-Disable-Errors': 'true' } })
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),

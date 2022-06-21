@@ -64,13 +64,13 @@ export default defineComponent({
             this.loading = false
         },
         async getAllLayers() {
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `layers`).then((response: AxiosResponse<any>) => (this.allLayers = response.data.root))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `layers`).then((response: AxiosResponse<any>) => (this.allLayers = response.data.root))
         },
         async getAllRoles() {
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `layers/getroles?`).then((response: AxiosResponse<any>) => (this.allRoles = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `layers/getroles?`).then((response: AxiosResponse<any>) => (this.allRoles = response.data))
         },
         async getAllCategories() {
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GEO_CATEGORY`).then((response: AxiosResponse<any>) => (this.allCategories = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=GEO_CATEGORY`).then((response: AxiosResponse<any>) => (this.allCategories = response.data))
         },
         showDetail(event) {
             if (!this.touched) {
@@ -96,7 +96,7 @@ export default defineComponent({
             })
         },
         async deleteLayer(layerId: number) {
-            await this.$http.post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `layers/deleteLayer?id=${layerId}`).then(() => {
+            await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `layers/deleteLayer?id=${layerId}`).then(() => {
                 this.$store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')

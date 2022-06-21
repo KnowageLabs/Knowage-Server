@@ -114,7 +114,7 @@ export default defineComponent({
             this.loading = true
             const postData = { data: { viewUniqueName: this.businessModel?.uniqueName, physicalTable: physicalTable.name } }
             await this.$http
-                .post(import.meta.env.VUE_APP_META_API_URL + `/1.0/metaWeb/deletePhysicalColumnfromBusinessView`, postData)
+                .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/deletePhysicalColumnfromBusinessView`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = applyPatch(this.meta, response.data).newDocument
                     this.loadData()
@@ -132,7 +132,7 @@ export default defineComponent({
             this.loading = true
             const postData = { data: { viewUniqueName: this.businessModel?.uniqueName, physicalTables: selectedTables.map((el: any) => el.name) }, diff: generate(this.observer) }
             await this.$http
-                .post(import.meta.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addPhysicalColumnToBusinessView`, postData)
+                .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/addPhysicalColumnToBusinessView`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = applyPatch(this.meta, response.data).newDocument
                     this.loadData()

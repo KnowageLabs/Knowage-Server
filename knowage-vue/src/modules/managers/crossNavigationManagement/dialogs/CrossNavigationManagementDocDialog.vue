@@ -61,72 +61,72 @@
     </Dialog>
 </template>
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { AxiosResponse } from 'axios'
-    import Column from 'primevue/column'
-    import DataTable from 'primevue/datatable'
-    import Dialog from 'primevue/dialog'
-    import { filterDefault } from '@/helpers/commons/filterHelper'
-    import { FilterOperator } from 'primevue/api'
-    import dialogDescriptor from './CrossNavigationManagementDialogDescriptor.json'
-    export default defineComponent({
-        name: 'doc-dialog',
-        components: {
-            DataTable,
-            Column,
-            Dialog
+import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import Dialog from 'primevue/dialog'
+import { filterDefault } from '@/helpers/commons/filterHelper'
+import { FilterOperator } from 'primevue/api'
+import dialogDescriptor from './CrossNavigationManagementDialogDescriptor.json'
+export default defineComponent({
+    name: 'doc-dialog',
+    components: {
+        DataTable,
+        Column,
+        Dialog
+    },
+    props: {
+        dialogVisible: {
+            type: Boolean,
+            default: false
         },
-        props: {
-            dialogVisible: {
-                type: Boolean,
-                default: false
-            },
-            selectedDoc: {
-                type: Object,
-                required: false
-            }
-        },
-        emits: ['close', 'apply'],
-        data() {
-            return {
-                dialogDescriptor,
-                loading: false,
-                selected: {} as any,
-                documents: [] as any,
-                filters: {
-                    global: [filterDefault],
-                    DOCUMENT_LABEL: {
-                        operator: FilterOperator.AND,
-                        constraints: [filterDefault]
-                    },
-                    DOCUMENT_NAME: {
-                        operator: FilterOperator.AND,
-                        constraints: [filterDefault]
-                    }
-                } as Object
-            }
-        },
-        watch: {
-            async selectedDoc() {
-                await this.loadAllDoc()
-                this.selected = this.documents.item.find((doc) => doc.DOCUMENT_ID === this.selectedDoc)
-            }
-        },
-        methods: {
-            closeDialog() {
-                this.$emit('close')
-            },
-            async loadAllDoc() {
-                this.loading = true
-                await this.$http
-                    .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument')
-                    .then((response: AxiosResponse<any>) => (this.documents = response.data))
-                    .finally(() => (this.loading = false))
-            },
-            hadleSelect() {
-                this.$emit('apply', this.selected)
-                this.selected = null
-            }
+        selectedDoc: {
+            type: Object,
+            required: false
         }
-    })
+    },
+    emits: ['close', 'apply'],
+    data() {
+        return {
+            dialogDescriptor,
+            loading: false,
+            selected: {} as any,
+            documents: [] as any,
+            filters: {
+                global: [filterDefault],
+                DOCUMENT_LABEL: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                },
+                DOCUMENT_NAME: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                }
+            } as Object
+        }
+    },
+    watch: {
+        async selectedDoc() {
+            await this.loadAllDoc()
+            this.selected = this.documents.item.find((doc) => doc.DOCUMENT_ID === this.selectedDoc)
+        }
+    },
+    methods: {
+        closeDialog() {
+            this.$emit('close')
+        },
+        async loadAllDoc() {
+            this.loading = true
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument')
+                .then((response: AxiosResponse<any>) => (this.documents = response.data))
+                .finally(() => (this.loading = false))
+        },
+        hadleSelect() {
+            this.$emit('apply', this.selected)
+            this.selected = null
+        }
+    }
+})
 </script>

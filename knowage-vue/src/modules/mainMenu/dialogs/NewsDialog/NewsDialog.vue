@@ -11,8 +11,8 @@
                                     <div class="kn-list-item-text">
                                         <span>{{ slotProps.option.title }}</span>
                                     </div>
-                                    <span v-if="slotProps.option.read"> <Avatar :icon="typeDescriptor.icons.read.icon" shape="circle" size="medium" :style="typeDescriptor.icons.read.style"/></span
-                                    ><span v-else><Avatar :icon="typeDescriptor.icons.unread.icon" shape="circle" size="medium" :style="typeDescriptor.icons.unread.style"/></span>
+                                    <span v-if="slotProps.option.read"> <Avatar :icon="typeDescriptor.icons.read.icon" shape="circle" size="medium" :style="typeDescriptor.icons.read.style" /></span
+                                    ><span v-else><Avatar :icon="typeDescriptor.icons.unread.icon" shape="circle" size="medium" :style="typeDescriptor.icons.unread.style" /></span>
                                 </div>
                             </template>
                         </Listbox>
@@ -94,7 +94,7 @@ export default defineComponent({
         async getNews(id) {
             if (id != this.selectedNews.id) {
                 this.loading = true
-                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/' + id + '?isTechnical=false').then(
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news/' + id + '?isTechnical=false').then(
                     (response: AxiosResponse<any>) => {
                         console.log(response)
                         if (response.data.errors) {
@@ -103,7 +103,7 @@ export default defineComponent({
                             this.selectedNews = response.data
                             this.loading = false
                             if (!this.selectedNews.read) {
-                                this.$http.post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/newsRead/' + id).then(
+                                this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/newsRead/' + id).then(
                                     () => {
                                         WS.send(JSON.stringify({ news: true }))
                                     },
@@ -144,7 +144,7 @@ export default defineComponent({
     watch: {
         visibility(newVisibility) {
             if (newVisibility) {
-                this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/newsRead').then(
+                this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/newsRead').then(
                     (response: AxiosResponse<any>) => {
                         this.newsReadArray = []
                         this.newsReadArray = response.data
@@ -152,11 +152,11 @@ export default defineComponent({
                     (error) => console.error(error)
                 )
 
-                this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news').then(
+                this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news').then(
                     (response: AxiosResponse<any>) => {
                         var jsonData = {}
                         let localNewsReadArray = this.newsReadArray
-                        response.data.forEach(function(column: SingleNews) {
+                        response.data.forEach(function (column: SingleNews) {
                             let type = column.type.toString()
                             if (!jsonData[type]) jsonData[type] = []
                             if (localNewsReadArray.indexOf(column.id) != -1) column.read = true

@@ -80,7 +80,7 @@ export default defineComponent({
     data() {
         return {
             v$: useValidate() as any,
-            apiUrl: import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
+            apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
             users: [] as iUser[],
             roles: [] as iRole[],
             detailFormTabValidationDescriptor: detailFormTabValidationDescriptor,
@@ -187,7 +187,7 @@ export default defineComponent({
             this.dirty = true
         },
         saveOrUpdateUser(user: iUser) {
-            const endpointPath = `${import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH}2.0/users`
+            const endpointPath = `${import.meta.env.VITE_RESTFUL_SERVICES_PATH}2.0/users`
             return this.userDetailsForm.id ? this.$http.put<any>(`${endpointPath}/${user.id}`, user) : this.$http.post<any>(endpointPath, user)
         },
         async saveUser() {
@@ -234,7 +234,7 @@ export default defineComponent({
         onUserDelete(id: number) {
             this.loading = true
             this.$http
-                .delete(`${import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH}2.0/users/${id}`)
+                .delete(`${import.meta.env.VITE_RESTFUL_SERVICES_PATH}2.0/users/${id}`)
                 .then(() => {
                     this.loadAllUsers()
                     this.$store.commit('setInfo', {

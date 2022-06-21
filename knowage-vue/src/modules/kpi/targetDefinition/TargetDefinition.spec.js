@@ -191,7 +191,7 @@ describe('Target Definition List', () => {
 
         await wrapper.vm.deleteTarget(88)
         expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + 88 + '/deleteTarget')
+        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + 88 + '/deleteTarget')
         expect($store.commit).toHaveBeenCalledTimes(1)
         expect($router.replace).toHaveBeenCalledWith('/target-definition')
     })

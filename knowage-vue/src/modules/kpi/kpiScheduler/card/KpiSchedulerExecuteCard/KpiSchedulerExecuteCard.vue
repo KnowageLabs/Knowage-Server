@@ -34,7 +34,7 @@
                 <template #header>
                     <div class="table-header">
                         <div class="p-d-flex p-ai-center">
-                            <span class="p-d-flex p-flex-column  p-mr-2">
+                            <span class="p-d-flex p-flex-column p-mr-2">
                                 <label for="numberOfLogs" class="kn-material-input-label"> {{ $t('kpi.kpiScheduler.numberOfExecutions') }}</label>
                                 <InputNumber id="numberOfLogs" inputClass="kn-material-input" v-model="numberOfLogs" />
                             </span>
@@ -59,75 +59,75 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { formatDate } from '@/helpers/commons/localeHelper'
-    import { downloadDirect } from '@/helpers/commons/fileHelper'
-    import { iKpiSchedule, iExecution } from '../../KpiScheduler'
-    import { AxiosResponse } from 'axios'
-    import Card from 'primevue/card'
-    import Column from 'primevue/column'
-    import DataTable from 'primevue/datatable'
-    import InputNumber from 'primevue/inputnumber'
-    import RadioButton from 'primevue/radiobutton'
-    import executeCardDescriptor from './KpiSchedulerExecuteCardDescriptor.json'
+import { defineComponent } from 'vue'
+import { formatDate } from '@/helpers/commons/localeHelper'
+import { downloadDirect } from '@/helpers/commons/fileHelper'
+import { iKpiSchedule, iExecution } from '../../KpiScheduler'
+import { AxiosResponse } from 'axios'
+import Card from 'primevue/card'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import InputNumber from 'primevue/inputnumber'
+import RadioButton from 'primevue/radiobutton'
+import executeCardDescriptor from './KpiSchedulerExecuteCardDescriptor.json'
 
-    export default defineComponent({
-        name: 'kpi-scheduler-execute-card',
-        components: { Card, Column, DataTable, InputNumber, RadioButton },
-        props: {
-            selectedSchedule: {
-                type: Object
-            }
-        },
-        emits: ['touched'],
-        data() {
-            return {
-                executeCardDescriptor,
-                schedule: {} as iKpiSchedule,
-                executionList: [] as iExecution[],
-                numberOfLogs: 10,
-                loading: false
-            }
-        },
-        created() {
-            this.loadSelectedSchedule()
-            this.loadLogExecutionList()
-        },
-        methods: {
-            loadSelectedSchedule() {
-                this.schedule = this.selectedSchedule as iKpiSchedule
-            },
-            loadLogExecutionList() {
-                if (this.schedule && this.schedule.id) {
-                    this.loading = true
-                    this.$http
-                        .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.schedule.id}/${this.numberOfLogs}/logExecutionList`)
-                        .then((response: AxiosResponse<any>) => (this.executionList = response.data))
-                        .finally(() => (this.loading = false))
-                }
-            },
-            getFormattedDate(date: any) {
-                return formatDate(date, 'YYYY-MM-DD HH:mm:ss')
-            },
-            async downloadFile(id: number) {
-                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${id}/logExecutionListOutputContent`).then((response: AxiosResponse<any>) => {
-                    if (response.data.errors) {
-                        this.$store.commit('setError', {
-                            title: this.$t('common.error.downloading'),
-                            msg: this.$t('common.error.downloading')
-                        })
-                    } else {
-                        downloadDirect(JSON.stringify(response.data.output), this.schedule.name + 'ErrorLog', 'text/plain')
-                        this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
-                    }
-                })
-            }
+export default defineComponent({
+    name: 'kpi-scheduler-execute-card',
+    components: { Card, Column, DataTable, InputNumber, RadioButton },
+    props: {
+        selectedSchedule: {
+            type: Object
         }
-    })
+    },
+    emits: ['touched'],
+    data() {
+        return {
+            executeCardDescriptor,
+            schedule: {} as iKpiSchedule,
+            executionList: [] as iExecution[],
+            numberOfLogs: 10,
+            loading: false
+        }
+    },
+    created() {
+        this.loadSelectedSchedule()
+        this.loadLogExecutionList()
+    },
+    methods: {
+        loadSelectedSchedule() {
+            this.schedule = this.selectedSchedule as iKpiSchedule
+        },
+        loadLogExecutionList() {
+            if (this.schedule && this.schedule.id) {
+                this.loading = true
+                this.$http
+                    .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.schedule.id}/${this.numberOfLogs}/logExecutionList`)
+                    .then((response: AxiosResponse<any>) => (this.executionList = response.data))
+                    .finally(() => (this.loading = false))
+            }
+        },
+        getFormattedDate(date: any) {
+            return formatDate(date, 'YYYY-MM-DD HH:mm:ss')
+        },
+        async downloadFile(id: number) {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/${id}/logExecutionListOutputContent`).then((response: AxiosResponse<any>) => {
+                if (response.data.errors) {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.downloading'),
+                        msg: this.$t('common.error.downloading')
+                    })
+                } else {
+                    downloadDirect(JSON.stringify(response.data.output), this.schedule.name + 'ErrorLog', 'text/plain')
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
+                }
+            })
+        }
+    }
+})
 </script>
 
 <style lang="scss" scoped>
-    #load-button {
-        height: 2.5rem;
-    }
+#load-button {
+    height: 2.5rem;
+}
 </style>

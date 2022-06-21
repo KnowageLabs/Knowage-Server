@@ -53,17 +53,17 @@ export default defineComponent({
             await Promise.all([this.loadAllLovs(), this.loadAllDrivers(), this.loadAllDocuments()]).then(() => (this.loading = false))
         },
         async loadAllLovs() {
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all/').then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all/').then((response: AxiosResponse<any>) => {
                 this.allLovs = response.data
             })
         },
         async loadAllDrivers() {
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers').then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers').then((response: AxiosResponse<any>) => {
                 this.allDrivers = response.data
             })
         },
         async loadAllDocuments() {
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents').then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/documents').then((response: AxiosResponse<any>) => {
                 this.allDocuments = response.data
             })
         },
@@ -86,20 +86,20 @@ export default defineComponent({
         },
         async filterByLovs(lov) {
             this.loading = true
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/${lov.id}/analyticalDrivers/`).then((response: AxiosResponse<any>) => (this.allDrivers = response.data))
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/${lov.id}/documents/`).then((response: AxiosResponse<any>) => (this.allDocuments = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/lovs/${lov.id}/analyticalDrivers/`).then((response: AxiosResponse<any>) => (this.allDrivers = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/lovs/${lov.id}/documents/`).then((response: AxiosResponse<any>) => (this.allDocuments = response.data))
             this.loading = false
         },
         async filterByDrivers(driver) {
             this.loading = true
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${driver.id}/lovs/`).then((response: AxiosResponse<any>) => (this.allLovs = response.data))
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${driver.id}/documents/`).then((response: AxiosResponse<any>) => (this.allDocuments = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${driver.id}/lovs/`).then((response: AxiosResponse<any>) => (this.allLovs = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers/${driver.id}/documents/`).then((response: AxiosResponse<any>) => (this.allDocuments = response.data))
             this.loading = false
         },
         async filterByDocuments(doc) {
             this.loading = true
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${doc.label}/lovs/`).then((response: AxiosResponse<any>) => (this.allLovs = response.data))
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${doc.label}/analyticalDrivers/`).then((response: AxiosResponse<any>) => (this.allDrivers = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documents/${doc.label}/lovs/`).then((response: AxiosResponse<any>) => (this.allLovs = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documents/${doc.label}/analyticalDrivers/`).then((response: AxiosResponse<any>) => (this.allDrivers = response.data))
             this.loading = false
         }
     }

@@ -200,7 +200,7 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addWord', this.word)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addWord', this.word)
                 .then((response: AxiosResponse<any>) => {
                     this.$emit('saved')
                     if (this.word.PARENT) {
@@ -222,14 +222,14 @@ export default defineComponent({
             this.$emit('close')
         },
         async loadWords(word: string) {
-            this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listWords?WORD=` + word).then((response: AxiosResponse<any>) => (this.filteredWords = response.data))
+            this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/listWords?WORD=` + word).then((response: AxiosResponse<any>) => (this.filteredWords = response.data))
         },
         searchWord(event) {
             this.loadWords(event.query)
         },
         async saveContent(wordId: number) {
             await this.$http
-                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addContents', { GLOSSARY_ID: this.selectedGlossaryId, PARENT_ID: this.word.PARENT.CONTENT_ID, WORD_ID: wordId })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addContents', { GLOSSARY_ID: this.selectedGlossaryId, PARENT_ID: this.word.PARENT.CONTENT_ID, WORD_ID: wordId })
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.Status !== 'NON OK') {
                         this.$emit('reloadTree')

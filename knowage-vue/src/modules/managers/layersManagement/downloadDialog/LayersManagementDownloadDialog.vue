@@ -54,7 +54,7 @@ export default defineComponent({
         },
         async download() {
             await this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `layers/getDownload?id=${this.layer.layerId}%2CtypeWFS=${this.downloadMode}`, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `layers/getDownload?id=${this.layer.layerId}%2CtypeWFS=${this.downloadMode}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) => {
                     if (this.downloadMode === 'geojson') {
                         downloadDirect(JSON.stringify(response.data), this.layer.name, 'application/json')

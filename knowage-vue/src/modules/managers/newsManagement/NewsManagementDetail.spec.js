@@ -35,9 +35,9 @@ jest.mock('axios')
 const $http = {
     get: axios.get.mockImplementation((url) => {
         switch (url) {
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news/1?isTechnical=true':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news/1?isTechnical=true':
                 return Promise.resolve({ data: mockedNews })
-            case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles':
                 return Promise.resolve({ data: mockedRoles })
         }
     }),
@@ -98,7 +98,7 @@ describe('News Management Detail', () => {
         wrapper.vm.handleSubmit()
 
         expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: new Date(mockedNews.expirationDate).valueOf() })
+        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: new Date(mockedNews.expirationDate).valueOf() })
     })
 
     it('shows success info if new data is saved', async () => {
@@ -110,7 +110,7 @@ describe('News Management Detail', () => {
         wrapper.vm.handleSubmit()
 
         expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: new Date(mockedNews.expirationDate).valueOf() })
+        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: new Date(mockedNews.expirationDate).valueOf() })
     })
     it('close button (X) closes the detail without saving data', async () => {
         const wrapper = factory()

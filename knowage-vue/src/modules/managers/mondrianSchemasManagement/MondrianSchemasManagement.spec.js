@@ -115,7 +115,7 @@ describe('Mondrian Schema Management', () => {
 
         await wrapper.vm.deleteSchema(1)
         expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/mondrianSchemasResource/' + 1)
+        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/mondrianSchemasResource/' + 1)
     })
     it('opens empty detail form when the ' + ' button is clicked', async () => {
         const wrapper = factory()

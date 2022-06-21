@@ -52,82 +52,82 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { iMeasure } from './MeasureDefinition'
-    import { filterDefault } from '@/helpers/commons/filterHelper'
-    import { AxiosResponse } from 'axios'
-    import Column from 'primevue/column'
-    import DataTable from 'primevue/datatable'
-    import KnFabButton from '@/components/UI/KnFabButton.vue'
-    import KnHint from '@/components/UI/KnHint.vue'
-    import measureDefinitionDescriptor from './MeasureDefinitionDescriptor.json'
+import { defineComponent } from 'vue'
+import { iMeasure } from './MeasureDefinition'
+import { filterDefault } from '@/helpers/commons/filterHelper'
+import { AxiosResponse } from 'axios'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import KnFabButton from '@/components/UI/KnFabButton.vue'
+import KnHint from '@/components/UI/KnHint.vue'
+import measureDefinitionDescriptor from './MeasureDefinitionDescriptor.json'
 
-    export default defineComponent({
-        name: 'measure-definition',
-        components: {
-            Column,
-            DataTable,
-            KnFabButton,
-            KnHint
-        },
-        data() {
-            return {
-                measureDefinitionDescriptor,
-                measuresList: [] as iMeasure[],
-                filters: { global: [filterDefault] } as Object,
-                loading: false
-            }
-        },
-        async created() {
-            await this.loadPage()
-        },
-        methods: {
-            async loadPage() {
-                this.loading = true
-                await this.loadMeasures()
-                this.loading = false
-            },
-            async loadMeasures() {
-                this.measuresList = []
-                await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listMeasure').then((response: AxiosResponse<any>) =>
-                    response.data.forEach((measure) => {
-                        if (measure.category) {
-                            measure.categoryName = measure.translatedValueName
-                        }
-                        this.measuresList.push(measure)
-                    })
-                )
-            },
-            showForm(measure: iMeasure, clone: Boolean) {
-                const path = measure ? `/measure-definition/edit?id=${measure.ruleId}&ruleVersion=${measure.ruleVersion}&clone=${clone}` : '/measure-definition/new-measure-definition'
-                this.$router.push(path)
-            },
-            cloneKpiConfirm(measure: iMeasure) {
-                this.$confirm.require({
-                    header: this.$t('common.toast.cloneConfirmTitle'),
-                    accept: () => this.showForm(measure, true)
-                })
-            },
-            deleteMeasureConfirm(measure: iMeasure) {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.deleteMeasure(measure)
-                })
-            },
-            async deleteMeasure(measure: iMeasure) {
-                await this.$http
-                    .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${measure.ruleId}/${measure.ruleVersion}/deleteRule`)
-                    .then(() => {
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.deleteTitle'),
-                            msg: this.$t('common.toast.deleteSuccess')
-                        })
-                        this.loadPage()
-                    })
-                    .catch(() => {})
-            }
+export default defineComponent({
+    name: 'measure-definition',
+    components: {
+        Column,
+        DataTable,
+        KnFabButton,
+        KnHint
+    },
+    data() {
+        return {
+            measureDefinitionDescriptor,
+            measuresList: [] as iMeasure[],
+            filters: { global: [filterDefault] } as Object,
+            loading: false
         }
-    })
+    },
+    async created() {
+        await this.loadPage()
+    },
+    methods: {
+        async loadPage() {
+            this.loading = true
+            await this.loadMeasures()
+            this.loading = false
+        },
+        async loadMeasures() {
+            this.measuresList = []
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/listMeasure').then((response: AxiosResponse<any>) =>
+                response.data.forEach((measure) => {
+                    if (measure.category) {
+                        measure.categoryName = measure.translatedValueName
+                    }
+                    this.measuresList.push(measure)
+                })
+            )
+        },
+        showForm(measure: iMeasure, clone: Boolean) {
+            const path = measure ? `/measure-definition/edit?id=${measure.ruleId}&ruleVersion=${measure.ruleVersion}&clone=${clone}` : '/measure-definition/new-measure-definition'
+            this.$router.push(path)
+        },
+        cloneKpiConfirm(measure: iMeasure) {
+            this.$confirm.require({
+                header: this.$t('common.toast.cloneConfirmTitle'),
+                accept: () => this.showForm(measure, true)
+            })
+        },
+        deleteMeasureConfirm(measure: iMeasure) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteMeasure(measure)
+            })
+        },
+        async deleteMeasure(measure: iMeasure) {
+            await this.$http
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/${measure.ruleId}/${measure.ruleVersion}/deleteRule`)
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.loadPage()
+                })
+                .catch(() => {})
+        }
+    }
+})
 </script>

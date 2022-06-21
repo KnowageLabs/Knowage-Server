@@ -45,7 +45,7 @@ export default defineComponent({
         async loadAll() {
             this.loading = true
             await this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/listNavigation/')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/listNavigation/')
                 .then((response: AxiosResponse<any>) => (this.navigations = response.data))
                 .finally(() => (this.loading = false))
         },
@@ -64,7 +64,7 @@ export default defineComponent({
         async deleteTemplate(itemId: string) {
             this.loading = true
             await this.$http
-                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/remove', "{'id':" + itemId + '}')
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/remove', "{'id':" + itemId + '}')
                 .then(async () => {
                     this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                     await this.loadAll()

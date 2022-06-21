@@ -119,7 +119,7 @@ describe('Template Pruning', () => {
     it('if no template is available the card below shows a no available template message', async () => {
         $http.get = axios.get.mockImplementation((url) => {
             switch (url) {
-                case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/folders?includeDocs=true':
+                case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/folders?includeDocs=true':
                     return Promise.resolve({ data: [] })
                 default:
                     return Promise.resolve({ data: [] })
@@ -147,7 +147,7 @@ describe('Template Pruning', () => {
     it('if one or more templates are available the folder tree appears with the search bar', async () => {
         $http.get = axios.get.mockImplementation((url) => {
             switch (url) {
-                case import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/folders?includeDocs=true':
+                case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/folders?includeDocs=true':
                     return Promise.resolve({ data: mockedFolders })
                 default:
                     return Promise.resolve({ data: mockedDocuments })
@@ -174,7 +174,7 @@ describe('Template Pruning', () => {
 
         await wrapper.find('[role="checkbox"]').trigger('click')
 
-        expect(wrapper.vm.selectedDocuments).toEqual(expect.objectContaining({ '20': { checked: true, partialChecked: false }, '25': { checked: true, partialChecked: false }, '30': { checked: true, partialChecked: false }, '32': { checked: true, partialChecked: false } }))
+        expect(wrapper.vm.selectedDocuments).toEqual(expect.objectContaining({ 20: { checked: true, partialChecked: false }, 25: { checked: true, partialChecked: false }, 30: { checked: true, partialChecked: false }, 32: { checked: true, partialChecked: false } }))
         expect(wrapper.vm.deleteDisabled).toBe(false)
         expect(wrapper.find('[data-test="delete-button"]').element.disabled).toBe(false)
     })
@@ -188,14 +188,14 @@ describe('Template Pruning', () => {
         await wrapper.find('[role="checkbox"]').trigger('click')
 
         expect(wrapper.vm.selectedDocuments).toEqual(
-            expect.objectContaining({ '20': { checked: true, partialChecked: false }, '25': { checked: true, partialChecked: false }, '30': { checked: true, partialChecked: false }, '31': { checked: true, partialChecked: false }, '32': { checked: true, partialChecked: false } })
+            expect.objectContaining({ 20: { checked: true, partialChecked: false }, 25: { checked: true, partialChecked: false }, 30: { checked: true, partialChecked: false }, 31: { checked: true, partialChecked: false }, 32: { checked: true, partialChecked: false } })
         )
 
         await wrapper.find('[data-test="delete-button"]').trigger('click')
 
         wrapper.vm.deleteDocuments()
 
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + 'template/deleteTemplate', [
+        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'template/deleteTemplate', [
             { id: 20, data: currentDate },
             { id: 25, data: currentDate },
             { id: 30, data: currentDate },

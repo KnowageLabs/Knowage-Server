@@ -6,7 +6,7 @@
             <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
         </template>
     </Toolbar>
-    <div class="p-grid p-m-0 p-jc-center" style="overflow:auto">
+    <div class="p-grid p-m-0 p-jc-center" style="overflow: auto">
         <Message class="p-m-2" v-if="expiredCard" severity="warn" :closable="true" :style="alertDescriptor.styles.message">
             {{ $t('kpi.alert.expiredWarning') }}
         </Message>
@@ -116,7 +116,7 @@ export default defineComponent({
     methods: {
         async loadAlert() {
             await this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/' + this.id + '/load')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/alert/' + this.id + '/load')
                 .then((response: AxiosResponse<any>) => {
                     this.selectedAlert = { ...response.data }
                     this.selectedAlert.jsonOptions = JSON.parse(this.selectedAlert.jsonOptions ? this.selectedAlert.jsonOptions : '{}')
@@ -138,17 +138,17 @@ export default defineComponent({
                 .finally(() => (this.expiredCard = this.selectedAlert.jobStatus == 'EXPIRED'))
         },
         async loadListener() {
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/listListener').then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/alert/listListener').then((response: AxiosResponse<any>) => {
                 this.listeners = response.data
             })
         },
         async loadKpiList() {
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi').then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi').then((response: AxiosResponse<any>) => {
                 this.kpiList = [...response.data]
             })
         },
         async loadActionList() {
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/listAction').then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/alert/listAction').then((response: AxiosResponse<any>) => {
                 this.actionList = [...response.data]
             })
         },
@@ -177,7 +177,7 @@ export default defineComponent({
             let operation = alertToSave.id ? 'update' : 'insert'
 
             await this.$http
-                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/alert/save', alertToSave)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/alert/save', alertToSave)
                 .then((response: AxiosResponse<any>) => {
                     this.touched = false
                     this.$store.commit('setInfo', {

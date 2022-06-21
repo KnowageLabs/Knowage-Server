@@ -127,21 +127,21 @@
                                 <Dropdown v-model="col.fieldType" :options="translateRoles()" optionLabel="label" optionValue="code" class="kn-material-input" />
                             </span>
                         </OverlayPanel>
-                        <div style="display: flex; flex-direction: column; flex:1;">
+                        <div style="display: flex; flex-direction: column; flex: 1">
                             <input class="kn-input-text-sm" type="text" v-model="col.fieldAlias" v-if="col.editing" @blur="changeAlias(col)" @keydown.enter="changeAlias(col)" />
                             <span v-else class="kn-clickable" @click="changeAlias(col)">{{ col.fieldAlias }}</span>
                             <span class="kn-list-item-text-secondary kn-truncated roleType">{{ $t(removePrefixFromType(col.Type)) }}</span>
                         </div>
                         <Button icon="pi pi-ellipsis-v" :class="descriptor.css.buttonClassHeader" @click="toggle($event, 'trOpType-' + colIndex)" />
                         <Menu :model="getTransformationsMenu(col)" :ref="'trOpType-' + colIndex" :popup="true">
-                            <template #item="{item}">
+                            <template #item="{ item }">
                                 <span :class="['p-menuitem-link', 'toolbarCustomConfig', descriptor.css.buttonClassHeader]" @click="callFunction(item, col)">
                                     <span :class="item.icon.class" class="menu-icon" v-if="item.icon.class">{{ item.icon.name }}</span>
                                     <i v-else :class="item.icon"></i> <span class="p-ml-2"> {{ $t(item.label) }}</span>
                                 </span>
                             </template>
                         </Menu> </template
-                    ><template #body="{data}">
+                    ><template #body="{ data }">
                         <span v-if="col.Type.toLowerCase().includes('time')"> {{ getFormattedDate(data[col.header], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }) }}</span>
                         <span v-else-if="col.Type.toLowerCase().includes('date')"> {{ getFormattedDate(data[col.header], { year: 'numeric', month: '2-digit', day: '2-digit' }) }}</span>
                         <span v-else> {{ data[col.header] }}</span>
@@ -223,7 +223,7 @@ export default defineComponent({
         this.loading++
         this.descriptorTransformations = Object.assign([], this.descriptor.transformations)
 
-        await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/dataset/id/' + this.id).then((response: AxiosResponse<any>) => {
+        await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/datasets/dataset/id/' + this.id).then((response: AxiosResponse<any>) => {
             this.dataset = response.data[0]
         })
         if (this.dataset) {
@@ -354,7 +354,7 @@ export default defineComponent({
             // launch avro export job
             this.$http
                 .post(
-                    import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${this.dataset.id}`,
+                    import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${this.dataset.id}`,
                     {},
                     {
                         headers: {
@@ -422,7 +422,7 @@ export default defineComponent({
         initWebsocket(): void {
             var url = new URL(window.location.origin)
             url.protocol = url.protocol.replace('http', 'ws')
-            var uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+            var uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VITE_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
             this.client = new Client({
                 brokerURL: uri,
                 connectHeaders: {},
@@ -440,7 +440,7 @@ export default defineComponent({
                 this.preparedDsMeta['name'] = dsMeta.name
                 this.preparedDsMeta['description'] = dsMeta.description
                 this.preparedDsMeta['id'] = dsMeta.id
-                await this.$http.get(import.meta.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.id).then((response: AxiosResponse<any>) => {
+                await this.$http.get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.id).then((response: AxiosResponse<any>) => {
                     let instance = response.data.instance
                     if (instance.config) {
                         this.preparedDsMeta['config'] = instance.config
@@ -522,7 +522,7 @@ export default defineComponent({
         getMenuForToolbar(): Array<any> {
             let tmp = this.descriptorTransformations
                 .filter((x) => x.toolbar && !x.hidden)
-                .sort(function(a, b) {
+                .sort(function (a, b) {
                     if (a.position > b.position) return 1
                     if (a.position < b.position) return -1
                     return 0

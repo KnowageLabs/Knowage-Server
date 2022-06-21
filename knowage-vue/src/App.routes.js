@@ -57,7 +57,7 @@ const baseRoutes = [
     {
         path: '/login',
         name: 'login',
-        redirect: import.meta.env.VUE_APP_HOST_URL + '/knowage/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&NEW_SESSION=TRUE'
+        redirect: import.meta.env.VITE_HOST_URL + '/knowage/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&NEW_SESSION=TRUE'
     },
     {
         path: '/:catchAll(.*)',
@@ -65,19 +65,11 @@ const baseRoutes = [
     }
 ]
 
-const routes = baseRoutes
-    .concat(managersRoutes)
-    .concat(importExportRoutes)
-    .concat(kpiRoutes)
-    .concat(documentExecutionRoutes)
-    .concat(documentBrowserRoutes)
-    .concat(workspaceRoutes)
-    .concat(overlayRoutes)
-    .concat(dataPreparationRoutes)
+const routes = baseRoutes.concat(managersRoutes).concat(importExportRoutes).concat(kpiRoutes).concat(documentExecutionRoutes).concat(documentBrowserRoutes).concat(workspaceRoutes).concat(overlayRoutes).concat(dataPreparationRoutes)
 
 const router = createRouter({
-    base: import.meta.env.VUE_APP_PUBLIC_PATH,
-    history: createWebHistory(import.meta.env.VUE_APP_PUBLIC_PATH),
+    base: import.meta.env.VITE_PUBLIC_PATH,
+    history: createWebHistory(import.meta.env.VITE_PUBLIC_PATH),
     routes
 })
 

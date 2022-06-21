@@ -31,7 +31,7 @@
                                 <span class="p-float-label">
                                     <InputText id="descr" type="text" v-model.trim="v$.menuNode.descr.$model" @blur="onDataChange(v$.menuNode.descr)" class="p-inputtext p-component kn-material-input" aria-describedby="descr-help" />
                                     <Button v-if="isIconSelectorShown(menuNode) && (menuNode.icon != null || menuNode.custIcon != null)" icon="pi pi-times" @click="clearSelectedIcon" />
-                                    <Button v-if="isCustomIconShown(menuNode)"><img style="max-height: 26px; max-width: 26px;" :src="selectedIcon"/></Button>
+                                    <Button v-if="isCustomIconShown(menuNode)"><img style="max-height: 26px; max-width: 26px" :src="selectedIcon" /></Button>
                                     <Button v-if="isFaIconShown(menuNode)"><i :class="selectedIcon"></i></Button>
                                     <Button v-if="isIconSelectorShown(menuNode)" class="p-button" @click="openFontAwesomeSelectionModal()">{{ $t('managers.menuManagement.chooseIcon').toUpperCase() }}</Button>
                                     <label for="descr">{{ $t('managers.menuManagement.description') }} *</label>
@@ -189,13 +189,13 @@ export default defineComponent({
     },
     watch: {
         selectedMenuNode: {
-            handler: function(node) {
+            handler: function (node) {
                 this.v$.$reset()
                 this.loadNode(node)
             }
         },
         selectedRoles: {
-            handler: function(roles) {
+            handler: function (roles) {
                 this.menuNode.roles = roles
             }
         },
@@ -207,7 +207,7 @@ export default defineComponent({
     data() {
         return {
             v$: useValidate() as any,
-            apiUrl: import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
+            apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
             menuNode: {} as iMenuNode,
             loading: false as Boolean,
             hideForm: false as Boolean,

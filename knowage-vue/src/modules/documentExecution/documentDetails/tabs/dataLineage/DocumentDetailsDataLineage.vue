@@ -17,7 +17,7 @@
                         <Card>
                             <template #content>
                                 <div class="p-field p-col-12">
-                                    <span class="p-float-label ">
+                                    <span class="p-float-label">
                                         <Dropdown id="dataSource" class="kn-material-input kn-width-full" v-model="dataSource" :options="metaSourceResource" @change="getTablesBySourceID" optionLabel="name" />
                                         <label for="dataSource" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.dataLineage.selectSource') }} </label>
                                     </span>
@@ -94,7 +94,7 @@ export default defineComponent({
         async getTablesBySourceID() {
             this.loading = true
             this.$http
-                .get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/${this.dataSource.sourceId}/metatables`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/${this.dataSource.sourceId}/metatables`)
                 .then((response: AxiosResponse<any>) => {
                     this.tablesList = response.data as iTableSmall[]
                     this.setCheckedTables()
@@ -112,7 +112,7 @@ export default defineComponent({
         },
         peristTable(event) {
             this.$http
-                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/${this.selectedDocument.id}`, event.data, {
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/${this.selectedDocument.id}`, event.data, {
                     headers: { 'X-Disable-Errors': 'true' }
                 })
                 .then(() => this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.dataLineage.persistOk') }))
@@ -120,7 +120,7 @@ export default defineComponent({
         },
         deleteTable(event) {
             this.$http
-                .delete(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/${this.selectedDocument.id}/${event.data.tableId}`, {
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/${this.selectedDocument.id}/${event.data.tableId}`, {
                     headers: { 'X-Disable-Errors': 'true' }
                 })
                 .then(() => this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.dataLineage.deleteOk') }))

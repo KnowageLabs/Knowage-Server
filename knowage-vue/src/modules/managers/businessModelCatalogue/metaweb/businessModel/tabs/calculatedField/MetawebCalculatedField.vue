@@ -30,13 +30,13 @@
     >
         <template #additionalInputs>
             <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
-                <span class="p-float-label ">
+                <span class="p-float-label">
                     <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.type" :options="descriptor.types" optionLabel="label" optionValue="name" />
                     <label for="type" class="kn-material-input-label"> {{ $t('components.knCalculatedField.type') }} </label>
                 </span>
             </div>
             <div v-if="selectedCalcField.type === 'DATE'" class="p-field p-col-3">
-                <span class="p-float-label ">
+                <span class="p-float-label">
                     <Dropdown id="type" class="kn-material-input" v-model="selectedCalcField.format" :options="descriptor.admissibleDateFormats">
                         <template #value>
                             <span>{{ selectedCalcField.format ? moment().format(selectedCalcField.format) : '' }}</span>
@@ -49,7 +49,7 @@
                 </span>
             </div>
             <div class="p-field" :class="[selectedCalcField.type === 'DATE' ? 'p-col-3' : 'p-col-4']">
-                <span class="p-float-label ">
+                <span class="p-float-label">
                     <Dropdown id="columnType" class="kn-material-input" v-model="selectedCalcField.nature" :options="descriptor.columnTypes" optionLabel="label" optionValue="name" />
                     <label for="columnType" class="kn-material-input-label"> {{ $t('managers.functionsCatalog.columnType') }} </label>
                 </span>
@@ -199,7 +199,7 @@ export default defineComponent({
         async createCalcField(calculatedField) {
             const postData = { data: calculatedField, diff: generate(this.observer) }
             await this.$http
-                .post(import.meta.env.VUE_APP_META_API_URL + `/1.0/metaWeb/setCalculatedField`, postData)
+                .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/setCalculatedField`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = applyPatch(this.meta, response.data).newDocument
                 })
@@ -211,7 +211,7 @@ export default defineComponent({
             let dataToSend = { name: calcField.name, sourceTableName: this.businessModel?.uniqueName }
             const postData = { data: dataToSend, diff: generate(this.observer) }
             await this.$http
-                .post(import.meta.env.VUE_APP_META_API_URL + `/1.0/metaWeb/deleteCalculatedField`, postData)
+                .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/deleteCalculatedField`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = applyPatch(this.meta, response.data).newDocument
                 })

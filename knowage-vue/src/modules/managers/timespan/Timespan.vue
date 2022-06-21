@@ -47,7 +47,7 @@ export default defineComponent({
     methods: {
         async loadTimespans() {
             this.loading = true
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/listDynTimespan`).then(
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/timespan/listDynTimespan`).then(
                 (response: AxiosResponse<any>) =>
                     (this.timespans = response.data?.map((timespan: iTimespan) => {
                         return { ...timespan, isCloneable: timespan.type === 'temporal' }
@@ -57,7 +57,7 @@ export default defineComponent({
         },
         async loadCategories() {
             this.loading = true
-            await this.$http.get(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=TIMESPAN_CATEGORY`).then((response: AxiosResponse<any>) => (this.categories = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=TIMESPAN_CATEGORY`).then((response: AxiosResponse<any>) => (this.categories = response.data))
             this.loading = false
         },
         showTimespanDetails(event: any, clone: boolean) {
@@ -77,7 +77,7 @@ export default defineComponent({
         async deleteTimespan(id: number) {
             this.loading = true
             await this.$http
-                .post(import.meta.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/deleteTimespan?ID=${id}`)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/timespan/deleteTimespan?ID=${id}`)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data?.Status === 'OK') {
                         this.$store.commit('setInfo', {
