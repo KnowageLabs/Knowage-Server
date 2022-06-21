@@ -78,13 +78,13 @@
 import { defineComponent } from 'vue'
 import { iDomain } from './DomainsManagement'
 import { FilterOperator } from 'primevue/api'
-import { filterDefault } from '@/helpers/commons/filterHelper'
+import { filterDefault } from '../../../helpers/commons/filterHelper'
 import { AxiosResponse } from 'axios'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import domainsManagementDescriptor from './DomainsManagementDescriptor.json'
 import DomainsManagementDialog from './DomainsManagementDialog.vue'
-import KnFabButton from '@/components/UI/KnFabButton.vue'
+import KnFabButton from '../../../components/UI/KnFabButton.vue'
 
 export default defineComponent({
     name: 'domains-management',

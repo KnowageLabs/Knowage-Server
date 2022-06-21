@@ -110,11 +110,11 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iDomain } from './DomainsManagement'
-import { createValidations } from '@/helpers/commons/validationHelper'
+import { createValidations } from '../../../helpers/commons/validationHelper'
 import Dialog from 'primevue/dialog'
 import domainsManagementDescriptor from './DomainsManagementDescriptor.json'
 import domainsManagementValidationDescriptor from './DomainsManagementValidationDescriptor.json'
-import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import KnValidationMessages from '../../../components/UI/KnValidatonMessages.vue'
 import useValidate from '@vuelidate/core'
 
 export default defineComponent({
