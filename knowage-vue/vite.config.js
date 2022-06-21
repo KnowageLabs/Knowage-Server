@@ -1,12 +1,15 @@
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import builtins from 'rollup-plugin-node-builtins';
 
 const path = require('path')
+
+const builtinsPlugin = { ...builtins({ crypto: true }), name: 'rollup-plugin-node-builtins' };
 
 export default defineConfig((command, mode) => {
     const env = loadEnv(mode, process.cwd())
     return {
-        plugins: [vue()],
+        plugins: [vue(), builtinsPlugin],
         resolve: {
             extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
             alias: {

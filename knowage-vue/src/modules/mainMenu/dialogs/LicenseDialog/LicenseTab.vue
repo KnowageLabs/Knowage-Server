@@ -21,7 +21,7 @@
         <template #empty>{{ $t('licenseDialog.noLicenses') }}</template>
         <template #option="slotProps">
             <div class="kn-list-item" data-test="list-item">
-                <Avatar :image="require(`@/assets/images/licenseImages/${slotProps.option.product}.png`)" size="medium" />
+                <Avatar :image="`../../../src/assets/images/licenseImages/${slotProps.option.product}.png`" size="medium" />
                 <div class="kn-list-item-text">
                     <span>{{ slotProps.option.product }}</span>
                     <span class="kn-list-item-text-secondary" :class="setLicenseClass(slotProps.option.status)">{{ licenseText(slotProps.option.status) }}</span>
