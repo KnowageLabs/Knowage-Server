@@ -168,7 +168,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Chip from 'primevue/chip'
 
-const { generate, applyPatch } = require('fast-json-patch')
+import { generate, applyPatch } from 'fast-json-patch'
 
 export default defineComponent({
     name: 'metaweb-business-model',

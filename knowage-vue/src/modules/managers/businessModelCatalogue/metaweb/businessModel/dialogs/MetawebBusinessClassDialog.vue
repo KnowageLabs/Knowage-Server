@@ -87,7 +87,7 @@ import Column from 'primevue/column'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import bsDescriptor from '../MetawebBusinessModelDescriptor.json'
 
-const { generate, applyPatch } = require('fast-json-patch')
+import { generate, applyPatch } from 'fast-json-patch'
 
 export default defineComponent({
     name: 'document-drivers',

@@ -47,7 +47,7 @@ import metawebAttributesTabDescriptor from './MetawebAttributesTabDescriptor.jso
 import MetawebAttributeDetailDialog from './dialogs/metawebAttributeDetail/MetawebAttributeDetailDialog.vue'
 import MetawebAttributeUnusedFieldDialog from './dialogs/metawebAttributeUnusedField/MetawebAttributeUnusedFieldDialog.vue'
 
-const { generate, applyPatch } = require('fast-json-patch')
+import { generate, applyPatch } from 'fast-json-patch'
 
 export default defineComponent({
     name: 'metaweb-attributes-tab',

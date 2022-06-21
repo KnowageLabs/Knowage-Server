@@ -81,7 +81,7 @@ import TableAssociator from '@/modules/managers/businessModelCatalogue/metaweb/b
 import Dropdown from 'primevue/dropdown'
 import Listbox from 'primevue/listbox'
 
-const { generate, applyPatch } = require('fast-json-patch')
+import { generate, applyPatch } from 'fast-json-patch'
 
 export default defineComponent({
     components: { Dialog, StepOne, TableAssociator, Dropdown, Listbox },

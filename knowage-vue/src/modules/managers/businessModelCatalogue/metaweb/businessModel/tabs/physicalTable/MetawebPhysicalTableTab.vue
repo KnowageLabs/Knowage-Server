@@ -44,7 +44,7 @@ import DataTable from 'primevue/datatable'
 import metawebPhysicalTableTabDescriptor from './MetawebPhysicalTableTabDescriptor.json'
 import MetawebAddPhysicalTableDialog from './metawebAddPhysicalTableDialog/MetawebAddPhysicalTableDialog.vue'
 
-const { generate, applyPatch } = require('fast-json-patch')
+import { generate, applyPatch } from 'fast-json-patch'
 
 export default defineComponent({
     name: 'metaweb-physical-table-tab',

@@ -114,7 +114,7 @@ import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 
-const { generate, applyPatch } = require('fast-json-patch')
+import { generate, applyPatch } from 'fast-json-patch'
 
 export default defineComponent({
     name: 'metaweb-attributes-tab',

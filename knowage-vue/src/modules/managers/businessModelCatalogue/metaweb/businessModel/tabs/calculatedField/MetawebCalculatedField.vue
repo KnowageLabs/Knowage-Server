@@ -71,7 +71,7 @@ import calcFieldDescriptor from './MetawebCalcFieldDescriptor.json'
 import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
 import Dropdown from 'primevue/dropdown'
 
-const { generate, applyPatch } = require('fast-json-patch')
+import { generate, applyPatch } from 'fast-json-patch'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
