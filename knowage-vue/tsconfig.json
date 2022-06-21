@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "esnext",
+        "target": "ESNext",
         "module": "esnext",
         "strict": true,
         "jsx": "preserve",
@@ -14,7 +14,7 @@
         "noImplicitAny": false,
         "sourceMap": true,
         "baseUrl": ".",
-        "types": ["webpack-env", "jest"],
+        "types": ["webpack-env", "jest", "vite/client"],
         "paths": {
             "@/*": ["src/*"]
         },
