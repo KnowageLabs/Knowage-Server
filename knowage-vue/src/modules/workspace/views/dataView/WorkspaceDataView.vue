@@ -66,8 +66,8 @@
                     @previewDataset="previewDataset"
                     @editDataset="editDataset"
                     @openDatasetInQBE="openDatasetInQBE($event)"
-                    @exportToXlsx="exportDataset($event, 'xls')"
-                    @exportToCsv="exportDataset($event, 'csv')"
+                    @exportToXlsx="prepareDatasetForExport($event, 'xls')"
+                    @exportToCsv="prepareDatasetForExport($event, 'csv')"
                     @downloadDatasetFile="downloadDatasetFile"
                     @shareDataset="shareDataset"
                     @cloneDataset="cloneDataset"
@@ -89,8 +89,8 @@
         @previewDataset="previewDataset"
         @editDataset="editDataset"
         @openDatasetInQBE="openDatasetInQBE($event)"
-        @exportToXlsx="exportDataset($event, 'xls')"
-        @exportToCsv="exportDataset($event, 'csv')"
+        @exportToXlsx="prepareDatasetForExport($event, 'xls')"
+        @exportToCsv="prepareDatasetForExport($event, 'csv')"
         @downloadDatasetFile="downloadDatasetFile"
         @shareDataset="shareDataset"
         @cloneDataset="cloneDataset"
@@ -99,6 +99,21 @@
         @close="showDetailSidebar = false"
         data-test="detail-sidebar"
         @monitoring="showMonitoring = !showMonitoring"
+    />
+
+    <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
+    <KnParameterSidebar
+        v-if="parameterSidebarVisible"
+        style="height:100%;top: 0 !important;"
+        class="workspace-parameter-sidebar kn-overflow-y"
+        :filtersData="filtersData"
+        :propDocument="selectedDataset"
+        :propMode="'workspaceView'"
+        :propQBEParameters="selectedDataset.pars"
+        :userRole="userRole"
+        :dataset="selectedDataset"
+        @execute="onExecute"
+        @roleChanged="onRoleChange"
     />
 
     <DatasetWizard v-if="showDatasetDialog" :selectedDataset="selectedDataset" :visible="showDatasetDialog" @closeDialog="showDatasetDialog = false" @closeDialogAndReload="closeWizardAndRealod" />
@@ -114,6 +129,7 @@
     <QBE v-if="qbeVisible" :visible="qbeVisible" :dataset="selectedQbeDataset" @close="closeQbe" />
     <DataPreparationMonitoringDialog v-model:visibility="showMonitoring" @close="showMonitoring = false" @save="updateDatasetWithNewCronExpression" :dataset="selectedDataset"></DataPreparationMonitoringDialog>
 </template>
+
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
@@ -139,6 +155,8 @@ import QBE from '@/modules/qbe/QBE.vue'
 import { Client } from '@stomp/stompjs'
 import DataPreparationMonitoringDialog from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDialog.vue'
 import MultiSelect from 'primevue/multiselect'
+import moment from 'moment'
+import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 
 export default defineComponent({
     components: {
@@ -159,7 +177,8 @@ export default defineComponent({
         WorkspaceDataShareDialog,
         WorkspaceDataPreviewDialog,
         SelectButton,
-        Message
+        Message,
+        KnParameterSidebar
     },
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
@@ -230,10 +249,15 @@ export default defineComponent({
             client: {} as any,
             selectedQbeDataset: null,
             user: null as any,
-            showMonitoring: false
+            showMonitoring: false,
+            filtersData: {} as any,
+            userRole: null,
+            parameterSidebarVisible: false,
+            exportFormat: ''
         }
     },
     async created() {
+        this.userRole = (this.$store.state as any).user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? (this.$store.state as any).user.sessionRole : null
         await this.getAllData()
         this.user = (this.$store.state as any).user
 
@@ -350,6 +374,107 @@ export default defineComponent({
                 .catch(() => {})
             this.loading = false
         },
+        async loadDatasetDrivers(dataset) {
+            let hasError = false
+            if (dataset.label && dataset.id && dataset.dsTypeCd !== 'Prepared') {
+                await this.$http
+                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${dataset.label}/filters`, { role: this.userRole })
+                    .then((response: AxiosResponse<any>) => {
+                        this.filtersData = response.data
+                        if (this.filtersData.filterStatus) {
+                            this.filtersData.filterStatus = this.filtersData.filterStatus.filter((filter: any) => filter.id)
+                        }
+                    })
+                    .catch(() => {
+                        hasError = true
+                    })
+                await this.formatDrivers()
+            }
+            return hasError
+        },
+        formatDrivers() {
+            this.filtersData?.filterStatus?.forEach((el: any) => {
+                el.parameterValue = el.multivalue ? [] : [{ value: '', description: '' }]
+                if (el.driverDefaultValue?.length > 0) {
+                    let valueIndex = '_col0'
+                    let descriptionIndex = 'col1'
+                    if (el.metadata?.colsMap) {
+                        valueIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.valueColumn) as any
+                        descriptionIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.descriptionColumn) as any
+                    }
+                    el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {
+                        return { value: defaultValue.value ?? defaultValue[valueIndex], description: defaultValue.desc ?? defaultValue[descriptionIndex] }
+                    })
+                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true') {
+                        el.parameterValue[0].value = moment(el.parameterValue[0].description?.split('#')[0]).toDate() as any
+                    }
+                }
+                if (el.data) {
+                    el.data = el.data.map((data: any) => {
+                        return this.formatParameterDataOptions(el, data)
+                    })
+                    if (el.data.length === 1) {
+                        el.parameterValue = [...el.data]
+                    }
+                }
+                if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
+                    el.showOnPanel = 'false'
+                }
+                if (!el.parameterValue) {
+                    el.parameterValue = [{ value: '', description: '' }]
+                }
+                if (el.parameterValue[0] && !el.parameterValue[0].description) {
+                    el.parameterValue[0].description = el.parameterDescription ? el.parameterDescription[0] : ''
+                }
+            })
+        },
+        formatParameterDataOptions(parameter: any, data: any) {
+            const valueColumn = parameter.metadata.valueColumn
+            const descriptionColumn = parameter.metadata.descriptionColumn
+            const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
+            const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
+            return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
+        },
+        getFormattedDrivers(parameters) {
+            let formattedParameters = {} as any
+            Object.keys(parameters.filterStatus).forEach((key: any) => {
+                const parameter = parameters.filterStatus[key]
+                if (!parameter.multivalue) {
+                    // formattedParameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description ?? '' })
+                    formattedParameters[parameter.urlName] = []
+                    formattedParameters[parameter.urlName].push({ value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description ?? parameter.parameterValue[0].value })
+                } else {
+                    // formattedParameters.push({ label: parameter.label, value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription ?? '' })
+                    formattedParameters[parameter.urlName] = []
+                    formattedParameters[parameter.urlName].push({ value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription ?? parameter.parameterValue[0].value })
+                }
+            })
+            return formattedParameters
+        },
+        async onExecute(parameters, drivers) {
+            const postData = { drivers: this.getFormattedDrivers(drivers), parameters: parameters }
+            this.exportDataset(postData)
+        },
+        async prepareDatasetForExport(dataset: any, format: string) {
+            this.exportFormat = format
+            await this.loadDataset(dataset.label)
+            await this.loadDatasetDrivers(this.selectedDataset)
+            if (this.selectedDataset.pars.length > 0 || this.filtersData.filterStatus.length > 0) {
+                this.parameterSidebarVisible = true
+            } else this.exportDataset()
+        },
+        async exportDataset(postData?) {
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${this.selectedDataset.id}/${this.exportFormat}`, postData ?? {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .then(() => {
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.updateTitle'),
+                        msg: this.$t('workspace.myData.exportSuccess')
+                    })
+                })
+                .catch(() => {})
+                .finally(() => (this.parameterSidebarVisible = false))
+        },
         toggleDisplayView() {
             this.$emit('toggleDisplayView')
         },
@@ -377,8 +502,8 @@ export default defineComponent({
         tmp.push(
             { key: '0', label: this.$t('workspace.myAnalysis.menuItems.showDsDetails'), icon: 'fas fa-pen', command: this.editDataset, visible: this.isDatasetOwner && (this.selectedDataset.dsTypeCd == 'File' || this.selectedDataset.dsTypeCd == 'Prepared') },
             { key: '1', label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-pen', command: () => this.openDatasetInQBE(clickedDocument), visible: this.showQbeEditButton },
-            { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.exportDataset(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
-            { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.exportDataset(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
+            { key: '2', label: this.$t('workspace.myData.xlsxExport'), icon: 'fas fa-file-excel', command: () => this.prepareDatasetForExport(clickedDocument, 'xls'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' && this.datasetIsIterable },
+            { key: '3', label: this.$t('workspace.myData.csvExport'), icon: 'fas fa-file-csv', command: () => this.prepareDatasetForExport(clickedDocument, 'csv'), visible: this.canLoadData && !this.datasetHasDrivers && !this.datasetHasParams && this.selectedDataset.dsTypeCd != 'File' },
             { key: '4', label: this.$t('workspace.myData.fileDownload'), icon: 'fas fa-download', command: () => this.downloadDatasetFile(clickedDocument), visible: this.selectedDataset.dsTypeCd == 'File' },
             { key: '5', label: this.$t('workspace.myData.shareDataset'), icon: 'fas fa-share-alt', command: () => this.shareDataset(), visible: this.canLoadData && this.isDatasetOwner && this.selectedDataset.dsTypeCd != 'Prepared' },
             { key: '6', label: this.$t('workspace.myData.cloneDataset'), icon: 'fas fa-clone', command: () => this.cloneDataset(clickedDocument), visible: this.canLoadData && this.selectedDataset.dsTypeCd == 'Qbe' },
@@ -481,29 +606,6 @@ export default defineComponent({
         openDatasetInQBE(dataset: any) {
             this.selectedQbeDataset = dataset
             this.qbeVisible = true
-        },
-        async exportDataset(dataset: any, format: string) {
-            this.loading = true
-
-            await this.$http
-                .post(
-                    process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${dataset.id}/${format}`,
-                    {},
-                    {
-                        headers: {
-                            Accept: 'application/json, text/plain, */*',
-                            'Content-Type': 'application/json;charset=UTF-8'
-                        }
-                    }
-                )
-                .then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.updateTitle'),
-                        msg: this.$t('workspace.myData.exportSuccess')
-                    })
-                })
-                .catch(() => {})
-            this.loading = false
         },
         async downloadDatasetFile(dataset: any) {
             await this.loadDataset(dataset.label)
@@ -718,5 +820,15 @@ export default defineComponent({
 <style lang="scss" scoped>
 .model-search {
     flex: 0.3;
+}
+#document-execution-backdrop {
+    background-color: rgba(33, 33, 33, 1);
+    opacity: 0.48;
+    z-index: 50;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
 }
 </style>
