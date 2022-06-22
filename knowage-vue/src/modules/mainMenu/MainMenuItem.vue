@@ -25,7 +25,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Badge from 'primevue/badge'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
+import store from '../../App.store.js'
 
 export default defineComponent({
     name: 'kn-menu-item',
@@ -69,7 +70,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(store, {
             locale: 'locale'
         }),
         cleanTo(): any {

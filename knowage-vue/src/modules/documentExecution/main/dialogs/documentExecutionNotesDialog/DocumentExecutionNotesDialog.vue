@@ -54,7 +54,7 @@ import DocumentExecutionNotesList from './DocumentExecutionNotesList.vue'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 
 export default defineComponent({
     name: 'document-execution-notes-dialog',

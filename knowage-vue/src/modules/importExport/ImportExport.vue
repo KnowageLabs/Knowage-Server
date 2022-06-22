@@ -32,7 +32,7 @@ import ImportDialog from './ImportDialog.vue'
 import ProgressBar from 'primevue/progressbar'
 import KnTabCard from '@/components/UI/KnTabCard.vue'
 import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 
 export default defineComponent({
     name: 'import-export',

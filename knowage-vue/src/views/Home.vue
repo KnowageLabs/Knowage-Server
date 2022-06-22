@@ -41,7 +41,7 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue'
-    import { mapState } from 'vuex'
+    import { mapState } from 'pinia'
 
     export default defineComponent({
         name: 'Home',

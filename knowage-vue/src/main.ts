@@ -3,6 +3,8 @@ import App from './App.vue'
 import PrimeVue from 'primevue/config'
 import router from './App.routes.js'
 import store from './App.store.js'
+import { createPinia } from 'pinia'
+
 
 import VueAxios from 'vue-axios'
 import interceptor from './axios.js'
@@ -48,17 +50,21 @@ import i18n from '@/App.i18n'
 
 import QBEOperator from './modules/qbe/qbeDialogs/qbeAdvancedFilterDialog/QBEOperator.vue'
 
-if(import.meta.env.NODE_ENV==='development') document.domain = 'localhost'
+if (import.meta.env.NODE_ENV === 'development') document.domain = 'localhost'
+
+const pinia = createPinia()
+
 
 createApp(App)
     .use(VueAxios, interceptor)
-    .use(store)
+    .use(pinia)
+    // .use(store)
     .use(router)
     .use(i18n)
     .use(PrimeVue)
     .use(ToastService)
     .use(ConfirmationService)
-    .use(internationalizationPlugin, store.state.internationalization)
+    // .use(internationalizationPlugin, store.state.internationalization)
 
     .directive('badge', BadgeDirective)
     .directive('tooltip', Tooltip)
@@ -71,3 +77,4 @@ createApp(App)
     .component('QBEOperator', QBEOperator)
 
     .mount('#app')
+

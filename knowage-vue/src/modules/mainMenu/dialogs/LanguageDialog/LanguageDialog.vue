@@ -20,7 +20,7 @@
 import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
 import Listbox from 'primevue/listbox'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import store from '@/App.store'
 
 import { AxiosResponse } from 'axios'
@@ -77,7 +77,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(store, {
             locale: 'locale'
         })
     },

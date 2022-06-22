@@ -46,13 +46,14 @@ import { defineComponent } from 'vue'
 import Avatar from 'primevue/avatar'
 import Dialog from 'primevue/dialog'
 import Listbox from 'primevue/listbox'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import { AxiosResponse } from 'axios'
 import newsDialogDescriptor from './NewsDialogDescriptor.json'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import WS from '@/services/webSocket'
+import store from '../../../../App.store.js'
 
 interface SingleNews {
     description?: string
@@ -137,7 +138,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(store, {
             locale: 'locale'
         })
     },

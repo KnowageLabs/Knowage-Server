@@ -18,7 +18,7 @@ import MainMenu from '@/modules/mainMenu/MainMenu'
 import Toast from 'primevue/toast'
 import { defineComponent } from 'vue'
 import store from '@/App.store'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import WEB_SOCKET from '@/services/webSocket.js'
 import themeHelper from '@/helpers/themeHelper/themeHelper'
 import { primeVueDate, getLocale } from '@/helpers/commons/localeHelper'
@@ -30,7 +30,8 @@ export default defineComponent({
         return {
             themeHelper: new themeHelper(),
             selectedMenuItem: null,
-            menuItemClickedTrigger: false
+            menuItemClickedTrigger: false,
+            store: null
         }
     },
 
@@ -111,6 +112,7 @@ export default defineComponent({
         }
     },
     mounted() {
+        this.store = store()
         this.onLoad()
     },
 
@@ -198,7 +200,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(store, {
             error: 'error',
             info: 'info',
             user: 'user',

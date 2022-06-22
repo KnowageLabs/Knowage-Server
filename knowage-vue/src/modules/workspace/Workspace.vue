@@ -118,7 +118,7 @@
     import Dialog from 'primevue/dialog'
     import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
     import moment from 'moment'
-    import { mapState } from 'vuex'
+    import { mapState } from 'pinia'
 
 
 import cryptoRandomString from 'crypto-random-string';

@@ -27,8 +27,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import moment from 'moment'
+import store from '../../../App.store.js'
 
 export default defineComponent({
     name: 'InfoDialog',
@@ -51,7 +52,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(store, {
             user: 'user'
         })
     }

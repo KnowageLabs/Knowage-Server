@@ -1,11 +1,6 @@
-import { createStore } from 'vuex'
-import overlayStore from './overlay/Overlay.store'
+import { defineStore } from 'pinia'
 
-// Create a new store instance.
-const store = createStore({
-    modules: {
-        overlayStore
-    },
+const store = defineStore('store', {
     state() {
         return {
             configurations: {},
@@ -31,13 +26,13 @@ const store = createStore({
         }
     },
     actions: {
-        initializeUser(context, user) {
-            context.commit('setUser', user)
-            context.commit('setEnterprise', user.enterprise)
+        initializeUser(user) {
+            this.commit('setUser', user)
+            this.commit('setEnterprise', user.enterprise)
         },
 
-        updateLicense(context, el) {
-            let licenses = context.state.licenses
+        updateLicense(el) {
+            let licenses = this.state.licenses
 
             let hostNameLicenses = licenses.licenses[el.hostName]
 
@@ -49,63 +44,61 @@ const store = createStore({
 
             hostNameLicenses.push(el.license)
 
-            context.commit('setLicenses', licenses)
-        }
-    },
-    mutations: {
-        setConfigurations(state, configs) {
-            state.configurations = configs
+            this.commit('setLicenses', licenses)
         },
-        setUser(state, user) {
-            state.user = user
+        setConfigurations(configs) {
+            this.configurations = configs
         },
-        setError(state, error) {
-            state.error = error
+        setUser(user) {
+            this.user = user
         },
-        setInfo(state, info) {
-            state.info = info
+        setError(error) {
+            this.error = error
         },
-        setLoading(state, loading) {
-            if (loading) state.loading++
-            else state.loading--
+        setInfo(info) {
+            this.info = info
+        },
+        setLoading(loading) {
+            if (loading) this.loading++
+            else this.loading--
 
-            if (state.loading < 0) state.loading = 0
+            if (this.loading < 0) this.loading = 0
         },
-        setWarning(state, warning) {
-            state.warning = warning
+        setWarning(warning) {
+            this.warning = warning
         },
-        setLocale(state, locale) {
-            state.locale = locale
+        setLocale(locale) {
+            this.locale = locale
         },
-        setDownloads(state, hasDownload) {
-            state.downloads = hasDownload
+        setDownloads(hasDownload) {
+            this.downloads = hasDownload
         },
-        updateAlreadyDownloadedFiles(state) {
-            if (state.downloads.count.total > state.downloads.count.alreadyDownloaded) state.downloads.count.alreadyDownloaded++
+        updateAlreadyDownloadedFiles() {
+            if (this.downloads.count.total > this.downloads.count.alreadyDownloaded) this.downloads.count.alreadyDownloaded++
         },
-        setNews(state, hasNews) {
-            state.news = hasNews
+        setNews(hasNews) {
+            this.news = hasNews
         },
-        setHomePage(state, homePage) {
-            state.homePage = homePage
+        setHomePage(homePage) {
+            this.homePage = homePage
         },
-        setInternationalization(state, internationalization) {
-            state.internationalization = internationalization
+        setInternationalization(internationalization) {
+            this.internationalization = internationalization
         },
-        setLicenses(state, licenses) {
-            state.licenses = licenses
+        setLicenses(licenses) {
+            this.licenses = licenses
         },
-        setEnterprise(state, enterprise) {
-            state.isEnterprise = enterprise
+        setEnterprise(enterprise) {
+            this.isEnterprise = enterprise
         },
-        setDocumentExecutionEmbed(state) {
-            state.documentExecution.embed = true
+        setDocumentExecutionEmbed() {
+            this.documentExecution.embed = true
         },
-        setTheme(state, theme) {
-            state.theme = theme
+        setTheme(theme) {
+            this.theme = theme
         },
-        setDefaultTheme(state, defaultTheme) {
-            state.defaultTheme = defaultTheme
+        setDefaultTheme(defaultTheme) {
+            this.defaultTheme = defaultTheme
         }
     }
 })

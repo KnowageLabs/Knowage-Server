@@ -406,7 +406,8 @@ import cronstrue from 'cronstrue/i18n'
 import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
 import { IDataPrepLog } from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoring'
 import { AxiosResponse } from 'axios'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
+    import store from '../../../App.store.js'
 
 export default defineComponent({
     name: 'kn-scheduler',
@@ -466,7 +467,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(store, {
             configuration: 'configuration'
         }),
         getCronstrueFormula(): String {
