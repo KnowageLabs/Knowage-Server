@@ -103,38 +103,20 @@ export default defineComponent({
 
             const hiddenFormData = new URLSearchParams()
             hiddenFormData.set('document', decodeURIComponent('' + this.document.id))
-            // hiddenFormData.set('documentMode', decodeURIComponent('VIEW'))
-            // hiddenFormData.set('DEFAULT_DATASOURCE_FOR_WRITING_LABEL', decodeURIComponent('CacheDS'))
             hiddenFormData.set('user_id', decodeURIComponent(uniqueID))
-            // hiddenFormData.set('SPAGOBI_AUDIT_ID', decodeURIComponent('39018'))
             hiddenFormData.set('DOCUMENT_LABEL', decodeURIComponent(this.document.label))
-            // hiddenFormData.set('SBI_ARTIFACT_ID', decodeURIComponent('25'))
-            // hiddenFormData.set('DOCUMENT_OUTPUT_PARAMETERS', decodeURIComponent('[]'))
-            // hiddenFormData.set('DOCUMENT_COMMUNITIES', decodeURIComponent('[]'))
-            // hiddenFormData.set('knowage_sys_country', decodeURIComponent('us'))
-            // hiddenFormData.set('DOCUMENT_IS_VISIBLE', decodeURIComponent('true'))
-            // hiddenFormData.set('SBI_EXECUTION_ROLE', decodeURIComponent('/demo/admin'))
-            // hiddenFormData.set('SBI_ARTIFACT_VERSION_ID', decodeURIComponent('231'))
-            // hiddenFormData.set('knowage_sys_language', decodeURIComponent('en'))
-            // hiddenFormData.set('DOCUMENT_FUNCTIONALITIES', decodeURIComponent('[726, 725, 727]'))
             hiddenFormData.set('SBI_COUNTRY', decodeURIComponent(country))
             hiddenFormData.set('DOCUMENT_AUTHOR', decodeURIComponent(this.document.creationUser))
             hiddenFormData.set('DOCUMENT_DESCRIPTION', decodeURIComponent(this.document.description))
-            // hiddenFormData.set('IS_TECHNICAL_USER', decodeURIComponent('true'))
             hiddenFormData.set('SBI_LANGUAGE', decodeURIComponent(language))
             hiddenFormData.set('DOCUMENT_NAME', decodeURIComponent(this.document.name))
             hiddenFormData.set('NEW_SESSION', decodeURIComponent('TRUE'))
-            // hiddenFormData.set('DOCUMENT_IS_PUBLIC', decodeURIComponent('true'))
-            // hiddenFormData.set('DOCUMENT_VERSION', decodeURIComponent('8189'))
-            // hiddenFormData.set('SBI_ENVIRONMENT', decodeURIComponent('DOCBROWSER'))
             hiddenFormData.set('SBI_EXECUTION_ID', decodeURIComponent(this.sbiExecutionId))
             hiddenFormData.set('EDIT_MODE', decodeURIComponent('null'))
             hiddenFormData.set('timereloadurl', decodeURIComponent('' + new Date().getTime()))
             hiddenFormData.set('ENGINE', 'knowageolapengine')
 
             this.$store.commit('setLoading', true)
-            // et language = this.user.locale.split('_')[0]
-            // let country = this.user.locale.split('_')[1]
             await this.$http.post(process.env.VUE_APP_OLAP_PATH + `olap/startolap/edit`, hiddenFormData, { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } }).then(() => {})
             this.$store.commit('setLoading', false)
         },
@@ -152,14 +134,13 @@ export default defineComponent({
         async start() {
             console.log(' >>> START xmlModel: ', this.xmlModel)
             console.log(' >>> START mondrianModel: ', this.mondrianModel)
-            // TODO - REMOVE HARCODED SBI_EXECUTION_ID
             const postData = this.type === 'xmla' ? { ...this.xmlModel } : { ...this.mondrianModel }
             this.$store.commit('setLoading', true)
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes?SBI_EXECUTION_ID=${this.sbiExecutionId}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) => {
                     console.log('RESPONSE DATA: ', response.data)
-                    this.$emit('designerStarted', this.selectedDocument)
+                    this.$emit('designerStarted', {...this.selectedDocument, sbiExecutionId: this.sbiExecutionId})
                 })
                 .catch(() => {})
             this.$store.commit('setLoading', false)

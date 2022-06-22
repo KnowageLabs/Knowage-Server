@@ -153,6 +153,8 @@ export default defineComponent({
     data() {
         return {
             olapDescriptor,
+            documentId: null as any,
+            documentName: null as any,
             olap: {} as iOlap,
             olapSidebarVisible: false,
             customViewVisible: false,
@@ -197,6 +199,9 @@ export default defineComponent({
         }
     },
     async created() {
+        this.documentId = this.olapId
+        this.documentName = this.olapName
+
         if (this.$route.name === 'olap-designer') {
             this.olapDesignerMode = true
         }
@@ -218,18 +223,23 @@ export default defineComponent({
         },
         olapCustomViewVisible() {
             this.loadCustomView()
-        }
+        },
+
     },
     methods: {
         async loadPage() {
             this.loading = true
+              if (this.$route.name === 'olap-designer') {
+            this.documentId = this.$route.query.olapId
+                 this.documentName =  this.$route.query.olapName
+        }
             await this.loadOlapModel()
             this.loadCustomView()
             this.loading = false
         },
         async loadOlapDesigner() {
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `olap/designer/${this.olapId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `olap/designer/${this.documentId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then(async (response: AxiosResponse<any>) => {
                     this.olapDesigner = response.data
                     this.whatIfMode = this.olapDesigner?.ENGINE === 'knowagewhatifengine'
@@ -246,7 +256,7 @@ export default defineComponent({
         async loadOlapCustomViews() {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `/1.0/olapsubobjects/getSubObjects?idObj=${this.olapId}`)
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `/1.0/olapsubobjects/getSubObjects?idObj=${this.documentId}`)
                 .then(async (response: AxiosResponse<any>) => (this.olapCustomViews = response.data.results))
                 .catch(() => {})
             this.loading = false
@@ -638,7 +648,7 @@ export default defineComponent({
 
             await this.$http
                 .post(
-                    process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.olapName}/saveOlapTemplate`,
+                    process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.documentName}/saveOlapTemplate`,
                     { olap: { ...this.olapDesigner.template.wrappedObject.olap, JSONTEMPLATE: { XML_TAG_TEXT_CONTENT: JSON.stringify(this.olapDesigner.template.wrappedObject) } } },
                     { headers: { Accept: 'application/json, text/plain, */*' } }
                 )

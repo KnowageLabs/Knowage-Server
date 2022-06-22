@@ -90,7 +90,7 @@ import TabView from 'primevue/tabview'
 import Badge from 'primevue/badge'
 import TabPanel from 'primevue/tabpanel'
 import ProgressSpinner from 'primevue/progressspinner'
-import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam, iDocumentType, iDocument } from '@/modules/documentExecution/documentDetails/DocumentDetails'
+import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam, iDocumentType } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import DocumentDetailOlapDesignerDialog from './dialogs/olapDesignerDialog/DocumentDetailOlapDesignerDialog.vue'
 
 export default defineComponent({
@@ -406,9 +406,9 @@ export default defineComponent({
         openDesignerDialog() {
             this.designerDialogVisible = true
         },
-        onDesignerStart(document: iDocument) {
+        onDesignerStart(document: any) {
             console.log('STTTTTTTTTTTTTTTTTART!')
-            this.$router.push(`/olap-designer/${document.id}`)
+            this.$router.push(`/olap-designer/${document.sbiExecutionId}?olapId=${document.id}&olapName=${document.name}`)
         }
     }
 })
