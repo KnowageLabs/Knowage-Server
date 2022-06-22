@@ -24,4 +24,5 @@ package it.eng.knowage.meta.generator.jpamapping.wrappers;
 public class JpaProperties {
 	public static final String MODEL_PACKAGE = "structural.package";
 	public static final String COLUMN_DATATYPE = "structural.datatype";
+	public static final String DECRYPTABLE = "structural.decrypt";
 }
