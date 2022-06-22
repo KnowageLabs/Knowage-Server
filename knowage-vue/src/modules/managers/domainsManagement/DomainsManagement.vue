@@ -70,6 +70,8 @@
             <div v-if="formVisible">
                 <DomainsManagementDialog :model="selectedDomain" @created="reloadDomains" @close="closeForm" data-test="domain-form"></DomainsManagementDialog>
             </div>
+
+            <Test></Test>
         </div>
     </div>
 </template>
@@ -85,6 +87,7 @@ import DataTable from 'primevue/datatable'
 import domainsManagementDescriptor from './DomainsManagementDescriptor.json'
 import DomainsManagementDialog from './DomainsManagementDialog.vue'
 import KnFabButton from '../../../components/UI/KnFabButton.vue'
+import Test from './Test.vue'
 
 export default defineComponent({
     name: 'domains-management',
@@ -92,7 +95,8 @@ export default defineComponent({
         Column,
         DataTable,
         DomainsManagementDialog,
-        KnFabButton
+        KnFabButton,
+        Test
     },
     data() {
         return {

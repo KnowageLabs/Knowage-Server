@@ -55,16 +55,18 @@ if (import.meta.env.NODE_ENV === 'development') document.domain = 'localhost'
 const pinia = createPinia()
 
 
-createApp(App)
-    .use(VueAxios, interceptor)
-    .use(pinia)
-    // .use(store)
+const app = createApp(App).use(pinia)
+
+const mainStore = store()
+
+app.use(VueAxios, interceptor)
+    .use(mainStore)
     .use(router)
     .use(i18n)
     .use(PrimeVue)
     .use(ToastService)
     .use(ConfirmationService)
-    // .use(internationalizationPlugin, store.state.internationalization)
+    .use(internationalizationPlugin, mainStore.$state.internationalization)
 
     .directive('badge', BadgeDirective)
     .directive('tooltip', Tooltip)
