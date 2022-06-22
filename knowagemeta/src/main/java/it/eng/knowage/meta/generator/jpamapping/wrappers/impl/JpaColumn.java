@@ -17,6 +17,11 @@
  */
 package it.eng.knowage.meta.generator.jpamapping.wrappers.impl;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaColumn;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.JpaProperties;
@@ -33,14 +38,9 @@ import it.eng.knowage.meta.model.physical.PhysicalColumn;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.util.JDBCTypeMapper;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class JpaColumn implements IJpaColumn {
 	SimpleBusinessColumn businessColumn;
@@ -50,7 +50,7 @@ public class JpaColumn implements IJpaColumn {
 	private static Logger logger = LoggerFactory.getLogger(JpaColumn.class);
 
 	/**
-	 * 
+	 *
 	 * @param parentTable
 	 *            the jpaTable that contains this column
 	 * @param businessColumn
@@ -70,7 +70,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaColumn#isIdentifier()
 	 */
 	@Override
@@ -80,7 +80,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaColumn#isPKReadOnly()
 	 */
 	@Override
@@ -93,7 +93,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaColumn#isColumnInRelationship()
 	 */
 	@Override
@@ -230,9 +230,14 @@ public class JpaColumn implements IJpaColumn {
 
 	}
 
+	public boolean isDecryptable() {
+		ModelProperty property = businessColumn.getProperties().get(JpaProperties.DECRYPTABLE);
+		return Boolean.parseBoolean(property.getValue());
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaColumn#getName()
 	 */
 	@Override
@@ -242,7 +247,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaColumn#getDescription()
 	 */
 	@Override
@@ -252,7 +257,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaColumn#getPropertyName()
 	 */
 	@Override
@@ -266,7 +271,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaColumn#getSimplePropertyType()
 	 */
 	@Override
@@ -278,7 +283,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaColumn#getPropertyType()
 	 */
 	@Override
@@ -289,7 +294,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaColumn#getPropertyType()
 	 */
 	@Override
@@ -301,7 +306,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaColumn#getJpaTable()
 	 */
 	@Override
@@ -311,7 +316,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaColumn#isDataTypeLOB()
 	 */
 	@Override
@@ -326,7 +331,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaColumn#getSqlName()
 	 */
 	@Override
@@ -358,7 +363,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaColumn#getColumnNameDoubleQuoted()
 	 */
 	@Override
@@ -374,7 +379,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaColumn#needMapTemporalType()
 	 */
 	@Override
@@ -387,7 +392,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaColumn#getMapTemporalType()
 	 */
 	@Override
@@ -404,7 +409,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaColumn#getPropertyNameGetter()
 	 */
 	@Override
@@ -414,7 +419,7 @@ public class JpaColumn implements IJpaColumn {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.impl.IJpaColumn#getPropertyNameSetter()
 	 */
 	@Override
