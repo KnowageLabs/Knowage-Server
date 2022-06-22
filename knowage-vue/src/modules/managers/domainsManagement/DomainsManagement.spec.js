@@ -58,7 +58,7 @@ const factory = () => {
         attachToDocument: true,
         global: {
             plugins: [PrimeVue],
-            stubs: { Button, InputText, ProgressBar, Toolbar },
+            stubs: { Button, InputText, ProgressBar, Toolbar, Test: true },
             mocks: {
                 $t: (msg) => msg,
                 $store,

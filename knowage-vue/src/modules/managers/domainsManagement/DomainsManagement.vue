@@ -70,8 +70,6 @@
             <div v-if="formVisible">
                 <DomainsManagementDialog :model="selectedDomain" @created="reloadDomains" @close="closeForm" data-test="domain-form"></DomainsManagementDialog>
             </div>
-
-            <Test></Test>
         </div>
     </div>
 </template>
