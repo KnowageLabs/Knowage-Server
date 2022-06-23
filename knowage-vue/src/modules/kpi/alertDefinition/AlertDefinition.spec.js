@@ -3,7 +3,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 import { createRouter, createWebHistory } from 'vue-router'
 import AlertHint from './AlertDefinitionHint.vue'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import flushPromises from 'flush-promises'
@@ -13,6 +12,7 @@ import ProgressBar from 'primevue/progressbar'
 import AlertDefinition from './AlertDefinition.vue'
 import Toolbar from 'primevue/toolbar'
 import KnHint from '@/components/UI/KnHint.vue'
+import mainStore from '../../../App.store'
 
 const mockedTarget = [
     {
@@ -98,9 +98,8 @@ const $confirm = {
 const $route = { path: '/alert' }
 
 const $router = {
-    push: jest.fn(),
-
-    replace: jest.fn()
+    push: vi.fn(),
+    replace: vi.fn()
 }
 const router = createRouter({
     history: createWebHistory(),
@@ -128,7 +127,7 @@ const router = createRouter({
 const factory = () => {
     return mount(AlertDefinition, {
         global: {
-            plugins: [router],
+            plugins: [router, createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -140,7 +139,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-
                 $confirm,
                 $route,
                 $router,
@@ -188,6 +186,7 @@ describe('Alert Definition loading', () => {
         })
         it('deletes alert when clicking on delete icon', async () => {
             const wrapper = factory()
+            const store = mainStore()
 
             await flushPromises()
 

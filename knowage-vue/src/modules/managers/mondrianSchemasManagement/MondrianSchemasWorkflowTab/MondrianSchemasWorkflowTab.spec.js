@@ -47,6 +47,7 @@ const factory = (usersList) => {
             usersList
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Toolbar

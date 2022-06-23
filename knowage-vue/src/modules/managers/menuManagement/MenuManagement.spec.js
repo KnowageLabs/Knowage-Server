@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import Button from 'primevue/button'
+import { createTestingPinia } from '@pinia/testing'
 import MenuConfiguration from './MenuManagement.vue'
 import InputText from 'primevue/inputtext'
 import ProgressBar from 'primevue/progressbar'

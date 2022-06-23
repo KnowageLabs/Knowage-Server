@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Card from 'primevue/card'
 import flushPromises from 'flush-promises'
 import InputText from 'primevue/inputtext'
@@ -31,6 +30,7 @@ const $http = {
 const factory = () => {
     return mount(MondrianSchemasDetailTab, {
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Card,
                 ProgressBar,
@@ -71,6 +71,6 @@ describe('Role Detail Tab', () => {
         expect(wrapper.emitted().fieldChanged[0][0].value).toBe('test name')
 
         await descriptionInput.setValue('test description')
-        expect(wrapper.emitted().fieldChanged[2][0].value).toBe('test description')
+        expect(wrapper.emitted().fieldChanged[1][0].value).toBe('test description')
     })
 })
