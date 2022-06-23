@@ -1,7 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { nextTick } from 'vue-demi'
 import PrimeVue from 'primevue/config'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -62,12 +61,6 @@ const $http = {
     })
 }
 
-const $store = {
-    state: {
-        user: {}
-    }
-}
-
 const $router = {
     push: vi.fn()
 }
@@ -109,8 +102,8 @@ const factory = (toggleCardDisplay) => {
     })
 }
 
-jest.useFakeTimers()
-jest.spyOn(global, 'setTimeout')
+vi.useFakeTimers()
+vi.spyOn(global, 'setTimeout')
 
 describe('Workspace Recent View', () => {
     it('should show an hint if no elements are present in the selected mode', async () => {
@@ -162,7 +155,7 @@ describe('Workspace Recent View', () => {
         await wrapper.find('[data-test="search-input"]').setValue('CHOCOLATE')
         wrapper.vm.searchItems()
 
-        jest.runAllTimers()
+        vi.runAllTimers()
         await nextTick()
 
         expect(wrapper.find('[data-test="recent-table"]').html()).toContain('CHOCOLATE_RATINGS')
@@ -171,7 +164,7 @@ describe('Workspace Recent View', () => {
         await wrapper.find('[data-test="search-input"]').setValue('Mocked')
         wrapper.vm.searchItems()
 
-        jest.runAllTimers()
+        vi.runAllTimers()
         await nextTick()
 
         expect(wrapper.find('[data-test="recent-table"]').html()).not.toContain('CHOCOLATE_RATINGS')

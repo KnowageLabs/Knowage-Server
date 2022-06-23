@@ -284,8 +284,8 @@ const factory = (cardDisplay) => {
     })
 }
 
-jest.useFakeTimers()
-jest.spyOn(global, 'setTimeout')
+vi.useFakeTimers()
+vi.spyOn(global, 'setTimeout')
 
 describe('Workspace Analysis View', () => {
     it('should show an hint if no elements are present in the selected mode', async () => {
@@ -346,7 +346,7 @@ describe('Workspace Analysis View', () => {
         await wrapper.find('[data-test="search-input"]').setValue('CHOCOLATE')
         wrapper.vm.searchItems()
 
-        jest.runAllTimers()
+        vi.runAllTimers()
         await nextTick()
 
         expect(wrapper.find('[data-test="analysis-table"]').html()).not.toContain('Mocked')
@@ -356,7 +356,7 @@ describe('Workspace Analysis View', () => {
         await wrapper.find('[data-test="search-input"]').setValue('Mocked')
         wrapper.vm.searchItems()
 
-        jest.runAllTimers()
+        vi.runAllTimers()
         await nextTick()
 
         expect(wrapper.find('[data-test="analysis-table"]').html()).not.toContain('CHOCOLATE_RATINGS')

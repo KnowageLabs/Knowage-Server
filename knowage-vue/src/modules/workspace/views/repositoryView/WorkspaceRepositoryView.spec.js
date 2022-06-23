@@ -1,7 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { nextTick } from 'vue-demi'
+import { createTestingPinia } from '@pinia/testing'
 import PrimeVue from 'primevue/config'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -144,12 +144,6 @@ const $http = {
     })
 }
 
-const $store = {
-    state: {
-        user: {}
-    }
-}
-
 const $router = {
     push: vi.fn()
 }
@@ -165,7 +159,7 @@ const factory = (toggleCardDisplay) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 DetailSidebar: true,
@@ -185,7 +179,6 @@ const factory = (toggleCardDisplay) => {
             },
             mocks: {
                 $t: (msg) => msg,
-
                 $http,
                 $router
             }
@@ -193,8 +186,8 @@ const factory = (toggleCardDisplay) => {
     })
 }
 
-jest.useFakeTimers()
-jest.spyOn(global, 'setTimeout')
+vi.useFakeTimers()
+vi.spyOn(global, 'setTimeout')
 
 describe('Workspace Repository View', () => {
     it('should show an hint if no elements are present in the selected mode', async () => {
@@ -246,7 +239,7 @@ describe('Workspace Repository View', () => {
         await wrapper.find('[data-test="search-input"]').setValue('CHOCOLATE')
         wrapper.vm.searchItems()
 
-        jest.runAllTimers()
+        vi.runAllTimers()
         await nextTick()
 
         expect(wrapper.find('[data-test="documents-table"]').html()).toContain('CHOCOLATE_RATINGS')
@@ -255,7 +248,7 @@ describe('Workspace Repository View', () => {
         await wrapper.find('[data-test="search-input"]').setValue('Mocked')
         wrapper.vm.searchItems()
 
-        jest.runAllTimers()
+        vi.runAllTimers()
         await nextTick()
 
         expect(wrapper.find('[data-test="documents-table"]').html()).not.toContain('CHOCOLATE_RATINGS')
