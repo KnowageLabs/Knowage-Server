@@ -27,6 +27,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -473,6 +476,29 @@ public class ExcelExporter extends AbstractFormatExporter {
 					if (column.has("aggregationSelected") && column.has("alias")) {
 						String col = column.getString("alias");
 						String aggregation = column.getString("aggregationSelected");
+						if (col.contains("$V")) {
+							if (body.has("COCKPIT_VARIABLES")) {
+								String columnAlias = "";
+								Pattern patt = Pattern.compile("(\\$V\\{)([\\w\\s]+)(\\})");
+								Matcher matcher = patt.matcher(col);
+								if (body.get("COCKPIT_VARIABLES") instanceof JSONObject) {
+									JSONObject variableOBJ = body.getJSONObject("COCKPIT_VARIABLES");
+									while (matcher.find()) {
+										columnAlias = matcher.group(2);
+									}
+									col = col.replace("$V{" + columnAlias + "}", variableOBJ.getString(columnAlias));
+								} else {
+									JSONArray arr = body.getJSONArray("COCKPIT_VARIABLES");
+									for (int j = 0; j < arr.length(); j++) {
+										JSONObject variableOBJ = arr.getJSONObject(j);
+										while (matcher.find()) {
+											columnAlias = matcher.group(2);
+										}
+										col = col.replace("$V{" + columnAlias + "}", variableOBJ.getString(columnAlias));
+									}
+								}
+							}
+						}
 						chartAggregationsMap.put(col, aggregation);
 					}
 				}

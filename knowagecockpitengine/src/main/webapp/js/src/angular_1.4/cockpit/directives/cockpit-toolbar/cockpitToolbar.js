@@ -353,6 +353,9 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 					var dsId = widget.dataset.dsId
 					var dataset = cockpitModule_datasetServices.getDatasetById(dsId);
 					var aggregation;
+					if (widget.type == "chart") {
+						widget = replaceStringVariables(widget);
+					}
 					if (widget.settings) {
 						aggregation = cockpitModule_widgetSelection.getAggregation(widget, dataset, widget.settings.sortingColumn,widget.settings.sortingOrder);
 					}
@@ -393,6 +396,16 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 		})
 	}
 
+	var replaceStringVariables = function (obj){
+		var objString = angular.copy(obj);
+		objString = JSON.stringify(objString);
+  		  objString = objString.replace(/\$V\{([a-zA-Z0-9\-\_]*){1}(?:.([a-zA-Z0-9\-\_]*){1})?\}/g,function(match,p1,p2){
+					return p2 ? cockpitModule_properties.VARIABLES[p1][p2] : cockpitModule_properties.VARIABLES[p1];
+				})
+				
+	return JSON.parse(objString);
+	}
+	
 	var getSpatialAttributesToFilter = function (layers) {
 		toReturn = {};
 		if (layers) {
