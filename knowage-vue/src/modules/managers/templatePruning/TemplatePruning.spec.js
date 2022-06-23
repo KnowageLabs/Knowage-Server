@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Calendar from 'primevue/calendar'
 import Card from 'primevue/card'
@@ -73,7 +72,7 @@ const $http = {
 const factory = () => {
     return mount(TemplatePruning, {
         global: {
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 Calendar,
@@ -115,7 +114,7 @@ describe('Template Pruning', () => {
         expect(filterButton.element.disabled).toBe(true)
     })
     it('if no template is available the card below shows a no available template message', async () => {
-        $http.get = axios.get.mockImplementation((url) => {
+        $http.get = vi.fn().mockImplementation((url) => {
             switch (url) {
                 case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/folders?includeDocs=true':
                     return Promise.resolve({ data: [] })
@@ -143,7 +142,7 @@ describe('Template Pruning', () => {
         expect(wrapper.find('[data-test="delete-button"]').exists()).toBe(false)
     })
     it('if one or more templates are available the folder tree appears with the search bar', async () => {
-        $http.get = axios.get.mockImplementation((url) => {
+        $http.get = vi.fn().mockImplementation((url) => {
             switch (url) {
                 case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/folders?includeDocs=true':
                     return Promise.resolve({ data: mockedFolders })
