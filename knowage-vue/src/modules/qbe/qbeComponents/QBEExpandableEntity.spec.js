@@ -7,7 +7,6 @@ import Menu from 'primevue/menu'
 import QBEExpandableEntity from './QBEExpandableEntity.vue'
 import PrimeVue from 'primevue/config'
 import Tooltip from 'primevue/tooltip'
-import { createTestingPinia } from '@pinia/testing'
 
 const mockedQuery = {
     id: 'q1',

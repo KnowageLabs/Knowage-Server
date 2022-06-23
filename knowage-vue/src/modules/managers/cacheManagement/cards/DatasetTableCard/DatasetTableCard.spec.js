@@ -28,7 +28,7 @@ const mockedDatasetMetadata = [
 vi.mock('axios')
 
 const $http = {
-    put: axios.put.mockImplementation(() => Promise.resolve()),
+    put: vi.fn().mockImplementation(() => Promise.resolve()),
     delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
@@ -96,8 +96,8 @@ describe('Cache Management Dataset Table', () => {
 
         await wrapper.vm.deleteDataset(mockedDatasetMetadata[0].signature)
 
-        expect(axios.put).toHaveBeenCalledTimes(1)
-        expect(axios.put).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: ['0b78ecae01d62da1c1604f75086478f9332e1491c677d4353f8c27cee3800c79'] })
+        expect($http.put).toHaveBeenCalledTimes(1)
+        expect($http.put).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: ['0b78ecae01d62da1c1604f75086478f9332e1491c677d4353f8c27cee3800c79'] })
         expect(store.setInfo).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('deleted')
     })

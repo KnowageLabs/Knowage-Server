@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
@@ -87,7 +86,7 @@ vi.mock('axios')
 
 const $http = {
     get: vi.fn().mockImplementation(() => Promise.resolve({ data: mockedDatasets })),
-    put: axios.put.mockImplementation(() => Promise.resolve()),
+    put: vi.fn().mockImplementation(() => Promise.resolve()),
     delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
@@ -155,11 +154,11 @@ describe('Cache Management General Settings', () => {
 
         await wrapper.find('[data-test="save-button"]').trigger('click')
         expect($http.get).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/cacheee/remove')
-        expect(axios.put).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/datasources', { ...mockedDatasets[0], writeDefault: true })
+        expect($http.put).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/datasources', { ...mockedDatasets[0], writeDefault: true })
 
         await flushPromises()
 
-        expect(axios.put).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/conf', { configurations: expectedConfiguration })
+        expect($http.put).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/conf', { configurations: expectedConfiguration })
         expect(store.setInfo).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
     })

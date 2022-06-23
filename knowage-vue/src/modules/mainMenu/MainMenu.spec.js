@@ -3,7 +3,7 @@ import MainMenu from './MainMenu.vue'
 import { createStore } from 'vuex'
 import flushPromises from 'flush-promises'
 import Tooltip from 'primevue/tooltip'
-import axios from 'axios'
+import { createTestingPinia } from '@pinia/testing'
 
 const mockedEnduserData = {
     technicalUserFunctionalities: [
@@ -117,7 +117,7 @@ const factory = () => {
             directives: {
                 tooltip: Tooltip
             },
-            plugins: [store],
+            plugins: [store, createTestingPinia()],
             stubs: {
                 'router-link': true
             },
