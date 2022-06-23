@@ -28,6 +28,7 @@ import { AxiosResponse } from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import schedulerDescriptor from './SchedulerDescriptor.json'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'scheduler',
@@ -39,6 +40,10 @@ export default defineComponent({
             selectedJob: null as iPackage | null,
             loading: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadPage()

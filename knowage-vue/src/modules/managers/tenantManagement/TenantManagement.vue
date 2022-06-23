@@ -53,6 +53,7 @@ import tenantsDescriptor from './TenantManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import KnHint from '@/components/UI/KnHint.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'tenant-management',
@@ -74,6 +75,10 @@ export default defineComponent({
             touched: false,
             hintVisible: true
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadTenants()

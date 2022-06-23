@@ -51,6 +51,7 @@ import Card from 'primevue/card'
 import SchedulerDocumentsTable from './SchedulerDocumentsTable/SchedulerDocumentsTable.vue'
 import SchedulerTimingOutputTable from './SchedulerTimingOutputTable/SchedulerTimingOutputTable.vue'
 import { AxiosResponse } from 'axios'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'scheduler-detail',
@@ -77,6 +78,10 @@ export default defineComponent({
         testReadonly(): any {
             return this.job && this.job.edit ? true : false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadJob()

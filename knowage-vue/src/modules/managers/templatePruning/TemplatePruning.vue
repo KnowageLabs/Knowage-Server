@@ -84,6 +84,7 @@ import Card from 'primevue/card'
 import Calendar from 'primevue/calendar'
 import ProgressSpinner from 'primevue/progressspinner'
 import Tree from 'primevue/tree'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'template-pruning',
@@ -120,6 +121,10 @@ export default defineComponent({
         deleteDisabled(): boolean {
             return Object.keys(this.selectedDocuments).length === 0
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     methods: {
         formatDate(date: Date) {

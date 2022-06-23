@@ -45,6 +45,7 @@ import tabViewDescriptor from './TenantManagementTabViewDescriptor.json'
 import TenantDetail from './DetailTab/TenantDetail.vue'
 import ProductTypes from './SelectionTableTab/SelectionTable.vue'
 import useValidate from '@vuelidate/core'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: {
@@ -84,6 +85,10 @@ export default defineComponent({
             }
             return false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     mounted() {
         if (this.selectedTenant) {

@@ -46,6 +46,7 @@ import SchedulerTimingOutputOutputTab from './tabs/SchedulerTimingOutputOutputTa
 import SchedulerTimingOutputWarningDialog from './SchedulerTimingOutputWarningDialog.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'scheduler-timing-output-detail-dialog',
@@ -94,6 +95,10 @@ export default defineComponent({
             this.loadTrigger()
             await this.loadJobInfo()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadTrigger()

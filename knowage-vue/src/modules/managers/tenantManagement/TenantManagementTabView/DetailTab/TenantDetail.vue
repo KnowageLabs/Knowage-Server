@@ -53,6 +53,7 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import tenantDetailValidationDescriptor from './TenantDetailValidationDescriptor.json'
 import { iMultitenant } from '../../TenantManagement'
 import { AxiosResponse } from 'axios'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'detail-tab',
@@ -87,6 +88,10 @@ export default defineComponent({
         return {
             tenant: createValidations('tenant', tenantDetailValidationDescriptor.validations.tenant)
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         if (this.selectedTenant && Object.keys(this.selectedTenant).length > 0) {

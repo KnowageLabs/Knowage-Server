@@ -74,6 +74,7 @@ import Menu from 'primevue/menu'
 import schedulerTimingOutputTableDescriptor from './SchedulerTimingOutputTableDescriptor.json'
 import SchedulerTimingOutputDetailDialog from './SchedulerTimingOutputDetailDialog/SchedulerTimingOutputDetailDialog.vue'
 import SchedulerTimingOutputInfoDialog from './SchedulerTimingOutputInfoDialog.vue'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'scheduler-timing-output-table',
@@ -94,6 +95,10 @@ export default defineComponent({
         job() {
             this.loadTriggers()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadTriggers()
