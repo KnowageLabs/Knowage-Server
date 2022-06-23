@@ -2,7 +2,6 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 import { formatDate } from '@/helpers/commons/localeHelper'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -60,6 +59,7 @@ const factory = () => {
             selectedSchedule: mockedSchedule
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,

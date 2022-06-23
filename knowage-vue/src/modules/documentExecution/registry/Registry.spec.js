@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Registry from './Registry.vue'
 import ProgressBar from 'primevue/progressbar'
@@ -118,7 +117,6 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $confirm,
-
                 $http
             }
         }

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -32,6 +32,7 @@ const factory = (items, words) => {
             words: words
         },
         global: {
+            plugins: [createTestingPinia()],
             directives: {
                 tooltip() {}
             },

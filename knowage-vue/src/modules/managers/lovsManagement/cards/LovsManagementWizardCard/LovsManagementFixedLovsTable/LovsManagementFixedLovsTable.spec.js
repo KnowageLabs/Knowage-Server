@@ -1,6 +1,5 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -32,7 +31,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-
                 $confirm
             }
         }

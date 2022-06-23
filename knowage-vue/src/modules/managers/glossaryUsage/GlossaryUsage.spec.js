@@ -2,7 +2,6 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 import { nextTick } from 'vue'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
@@ -62,6 +61,7 @@ afterEach(() => {
 const factory = () => {
     return mount(GlossaryUsage, {
         global: {
+            plugins: [createTestingPinia()],
             stubs: { Button, Card, Dropdown, InputText, GlossaryUsageDetail: true, GlossaryUsageHint, ProgressBar, Toolbar, Tree },
             mocks: {
                 $t: (msg) => msg,
@@ -71,8 +71,8 @@ const factory = () => {
     })
 }
 
-jest.useFakeTimers()
-jest.spyOn(global, 'setTimeout')
+vi.useFakeTimers()
+vi.spyOn(global, 'setTimeout')
 
 describe('Glossary Usage loading', () => {
     it('the list shows an hint component when loaded empty', () => {

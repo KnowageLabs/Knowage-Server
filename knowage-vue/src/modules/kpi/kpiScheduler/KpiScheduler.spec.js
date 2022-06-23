@@ -2,7 +2,6 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 import { createRouter, createWebHistory } from 'vue-router'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Chip from 'primevue/chip'
@@ -15,6 +14,7 @@ import Menu from 'primevue/menu'
 import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
+import mainStore from '../../../App.store'
 
 const mockedSchedulers = [
     {
@@ -88,7 +88,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [router, PrimeVue],
+            plugins: [router, PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -101,7 +101,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-
                 $confirm,
                 $router,
                 $http
@@ -151,6 +150,7 @@ describe('KPI Scheduler loading', () => {
 describe('KPI Scheduler list', () => {
     it('shows a prompt when user click on a rule delete button to delete it and deletes it', async () => {
         const wrapper = factory()
+        const store = mainStore()
 
         await flushPromises()
 

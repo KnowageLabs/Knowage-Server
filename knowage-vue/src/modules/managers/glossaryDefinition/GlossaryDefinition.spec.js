@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Dialog from 'primevue/dialog'
@@ -52,7 +51,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -68,7 +67,6 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $confirm,
-
                 $http
             }
         }

@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import GlossaryUsageDetail from './GlossaryUsageDetail.vue'
 import ProgressBar from 'primevue/progressbar'
 
@@ -129,6 +128,7 @@ afterEach(() => {
 const factory = () => {
     return mount(GlossaryUsageDetail, {
         global: {
+            plugins: [createTestingPinia()],
             stubs: { GlossaryUsageNavigationCard: true, GlossaryUsageLinkCard: true, ProgressBar },
             mocks: {
                 $t: (msg) => msg,

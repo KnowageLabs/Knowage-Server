@@ -2,7 +2,6 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 import { createRouter, createWebHistory } from 'vue-router'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import FabButton from '@/components/UI/KnFabButton.vue'
@@ -134,7 +133,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [router],
+            plugins: [router, createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -145,7 +144,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-
                 $confirm,
                 $router,
                 $route,

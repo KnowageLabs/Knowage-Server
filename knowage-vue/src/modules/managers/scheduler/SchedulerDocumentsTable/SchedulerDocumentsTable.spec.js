@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -58,7 +57,7 @@ const mockedDocuments = [
 
 vi.mock('axios')
 
-axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
+vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 
 const factory = () => {
     return mount(SchedulerDocumentsTable, {
