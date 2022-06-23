@@ -22,7 +22,7 @@ import { iTimespan, iInterval } from './Timespan'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import { createDateFromIntervalTime } from './timespanHelpers'
 import Calendar from 'primevue/calendar'
-
+import mainStore from '../../../App.store'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
@@ -51,6 +51,10 @@ export default defineComponent({
         timespanType(): any {
             return this.timespan?.type
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadTimespan()

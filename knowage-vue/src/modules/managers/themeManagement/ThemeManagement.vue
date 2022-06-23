@@ -75,6 +75,7 @@ import Fieldset from 'primevue/fieldset'
 import InputSwitch from 'primevue/inputswitch'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnHint from '@/components/UI/KnHint.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'theme-management',
@@ -89,6 +90,10 @@ export default defineComponent({
             loading: false,
             themeHelper: new themeHelper()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     mounted() {
         this.loading = true
@@ -159,7 +164,7 @@ export default defineComponent({
                 this.selectedTheme.active = newValues.active
                 this.selectedTheme.config = { ...this.currentTheme, ...newValues.config }
             } else {
-                this.store.commit('setTheme', {})
+                this.store.setTheme({})
                 this.themeHelper.setTheme((this.store.$state as any).defaultTheme)
             }
         },
@@ -168,7 +173,7 @@ export default defineComponent({
         },
         setActiveTheme(theme) {
             let newTheme = { ...(this.store.$state as any).defaultTheme, ...theme.config }
-            this.store.commit('setTheme', newTheme)
+            this.store.setTheme(newTheme)
             this.themeHelper.setTheme(newTheme)
         },
         updateModelToSend(key) {

@@ -73,6 +73,7 @@ import UsersListBox from './UsersListBox.vue'
 import UserAttributesForm from './UserAttributesTab/UserAttributesForm.vue'
 import detailFormTabValidationDescriptor from './UserDetailTab/DetailFormTabValidationDescriptor.json'
 import { sameAs } from '@vuelidate/validators'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'user-management',
@@ -109,6 +110,10 @@ export default defineComponent({
         }
 
         return validationObject
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadAllUsers()

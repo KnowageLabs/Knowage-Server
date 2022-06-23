@@ -28,6 +28,7 @@ import { AxiosResponse } from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import timespanDescriptor from './TimespanDescriptor.json'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'timespan',
@@ -39,6 +40,10 @@ export default defineComponent({
             categories: [] as iCategory[],
             loading: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadTimespans()

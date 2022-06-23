@@ -22,7 +22,7 @@ import { formatDate } from '@/helpers/commons/localeHelper'
 import { createDateFromIntervalTime } from './timespanHelpers'
 import TimespanForm from './TimespanForm.vue'
 import TimespanIntervalTable from './TimespanIntervalTable.vue'
-
+import mainStore from '../../../App.store'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
@@ -52,6 +52,10 @@ export default defineComponent({
                 this.loadTimespan()
             }
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadTimespan()
