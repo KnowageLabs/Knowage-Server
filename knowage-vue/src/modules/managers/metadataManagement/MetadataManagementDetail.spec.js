@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
@@ -9,6 +8,7 @@ import flushPromises from 'flush-promises'
 import InputText from 'primevue/inputtext'
 import MetadataManagementDetail from './MetadataManagementDetail.vue'
 import Toolbar from 'primevue/toolbar'
+import mainStore from '../../../App.store'
 
 const mockedMetadata = {
     label: 'metadata1',
@@ -23,13 +23,10 @@ const $http = {
     post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = () => {
     return mount(MetadataManagementDetail, {
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -39,7 +36,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $http
             }
         }
@@ -58,13 +54,14 @@ describe('Metadata Management Detail', () => {
     })
     it('shows success info if data is saved', async () => {
         const wrapper = factory()
+        const store = mainStore()
         wrapper.vm.metadata = mockedMetadata
         wrapper.vm.v$.$invalid = false
         wrapper.vm.handleSubmit()
         await flushPromises()
         expect($http.post).toHaveBeenCalledTimes(1)
         expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/objMetadata', mockedMetadata)
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
 
         const mockedMetadataUpdate = { ...mockedMetadata, id: 1 }
         wrapper.vm.domain = mockedMetadataUpdate
@@ -72,7 +69,7 @@ describe('Metadata Management Detail', () => {
         await flushPromises()
         expect($http.post).toHaveBeenCalledTimes(2)
         expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/objMetadata', mockedMetadata)
-        expect($store.commit).toHaveBeenCalledTimes(2)
+        expect(store.setInfo).toHaveBeenCalledTimes(2)
     })
     it('shows three different metadata types', () => {
         const wrapper = factory()

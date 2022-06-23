@@ -131,6 +131,7 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import metadataManagementDescriptor from './MetadataManagementDescriptor.json'
 import metadataManagementValidationDescriptor from './MetadataManagementValidationDescriptor.json'
 import useValidate from '@vuelidate/core'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'metadata-management-detail',
@@ -174,6 +175,10 @@ export default defineComponent({
             this.v$.$reset()
             this.metadata = { ...this.model } as iMetadata
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     mounted() {
         if (this.model) {
