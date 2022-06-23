@@ -25,6 +25,7 @@ import useValidate from '@vuelidate/core'
 import AddKpiDialog from './AddKpiDialog.vue'
 import TargetDefinitionForm from './TargetDefinitionForm.vue'
 import ApplyTargetCard from './ApplyTargetCard.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'target-definition-detail',
@@ -71,6 +72,10 @@ export default defineComponent({
         buttonDisabled(): any {
             return this.v$.$invalid || this.kpi.length < 1
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         if (this.id) {

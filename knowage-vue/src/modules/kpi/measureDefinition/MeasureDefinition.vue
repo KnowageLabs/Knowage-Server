@@ -61,6 +61,7 @@ import DataTable from 'primevue/datatable'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import KnHint from '@/components/UI/KnHint.vue'
 import measureDefinitionDescriptor from './MeasureDefinitionDescriptor.json'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'measure-definition',
@@ -77,6 +78,10 @@ export default defineComponent({
             filters: { global: [filterDefault] } as Object,
             loading: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadPage()

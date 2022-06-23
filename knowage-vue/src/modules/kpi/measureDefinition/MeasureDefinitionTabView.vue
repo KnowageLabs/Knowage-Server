@@ -73,6 +73,7 @@ import MeasureDefinitionQueryCard from './card/MeasureDefinitionQueryCard/Measur
 import MeasureDefinitionSubmitDialog from './MeasureDefinitionSubmitDialog.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'measure-definition-detail',
@@ -145,6 +146,10 @@ export default defineComponent({
         errorDialogVisible(): Boolean {
             return this.errorMessage ? true : false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loading = true

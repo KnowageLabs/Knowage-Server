@@ -51,6 +51,7 @@ import targetDefinitionDecriptor from './TargetDefinitionDescriptor.json'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import { AxiosResponse } from 'axios'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'target-definition',
@@ -63,6 +64,10 @@ export default defineComponent({
             targetDefinitionDecriptor: targetDefinitionDecriptor,
             formatDate: formatDate
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadAllMetadata()
