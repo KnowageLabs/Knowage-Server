@@ -30,6 +30,7 @@ import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
 import descriptor from './DownloadsDialogDescriptor.json'
 import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
+import mainStore from '../../../../App.store'
 
 interface Download {
     filename: string
@@ -52,6 +53,10 @@ export default defineComponent({
             downloadsList: new Array<Download>(),
             gridOptions: {}
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     beforeMount() {
         this.gridOptions = { headerHeight: 30 }
@@ -90,7 +95,7 @@ export default defineComponent({
                 .then(
                     (response: AxiosResponse<any>) => {
                         if (!data.alreadyDownloaded) {
-                            this.store.commit('updateAlreadyDownloadedFiles')
+                            this.store.updateAlreadyDownloadedFiles()
                         }
                         downloadDirectFromResponse(response)
                     },
@@ -102,7 +107,7 @@ export default defineComponent({
             this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/export').then(
                 () => {
                     this.downloadsList = []
-                    this.store.commit('setDownloads', { count: { total: 0, unRead: 0 } })
+                    this.store.setDownloads({ count: { total: 0, unRead: 0 } })
                     this.closeDialog()
                 },
                 (error) => console.error(error)

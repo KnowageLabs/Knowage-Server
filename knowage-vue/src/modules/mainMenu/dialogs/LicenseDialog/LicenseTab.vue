@@ -57,6 +57,7 @@ import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import Tooltip from 'primevue/tooltip'
 import auth from '@/helpers/commons/authHelper'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'license-tab',
@@ -104,6 +105,10 @@ export default defineComponent({
         host() {
             this.loadHost()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadLicenses()
@@ -195,7 +200,7 @@ export default defineComponent({
                         msg: this.$t('importExport.import.successfullyCompleted')
                     })
 
-                    this.store.dispatch('updateLicense', { hostName: this.selectedHost.hostName, license: response.data })
+                    this.store.updateLicense({ hostName: this.selectedHost.hostName, license: response.data })
 
                     this.$emit('reloadList')
                 })

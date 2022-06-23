@@ -53,7 +53,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import WS from '@/services/webSocket'
-import store from '../../../../App.store.js'
+import mainStore from '../../../../App.store.js'
 
 interface SingleNews {
     description?: string
@@ -82,6 +82,10 @@ export default defineComponent({
         visibility: Boolean
     },
     emits: ['update:visibility'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     methods: {
         emptySelectedNews() {
             this.selectedNews = {} as SingleNews
@@ -138,7 +142,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState(store, {
+        ...mapState(mainStore, {
             locale: 'locale'
         })
     },

@@ -13,7 +13,7 @@ import { defineComponent } from 'vue'
 import { mapState } from 'pinia'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
-import store from '../../../App.store.js'
+import mainStore from '../../../App.store.js'
 
 export default defineComponent({
     name: 'role-dialog',
@@ -25,6 +25,10 @@ export default defineComponent({
         visibility: Boolean
     },
     emits: ['update:visibility'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     methods: {
         formUrlEncoded(x) {
             return Object.keys(x)
@@ -38,7 +42,7 @@ export default defineComponent({
             let postUrl = '/knowage/servlet/AdapterHTTP'
 
             this.$http.post(postUrl, data, { headers: headers }).then(() => {
-                this.store.commit('setUser', this.user)
+                this.store.setUser(this.user)
                 localStorage.setItem('sessionRole', this.user.sessionRole)
                 this.closeDialog()
                 this.$router.go(0)
@@ -49,7 +53,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState(store, {
+        ...mapState(mainStore, {
             user: 'user'
         })
     }

@@ -21,7 +21,7 @@ import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
 import Listbox from 'primevue/listbox'
 import { mapState } from 'pinia'
-import store from '@/App.store'
+import mainStore from '@/App.store'
 
 import { AxiosResponse } from 'axios'
 
@@ -46,6 +46,10 @@ export default defineComponent({
         visibility: Boolean
     },
     emits: ['update:visibility', 'update:loading'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     methods: {
         changeLanguage(language) {
             let splittedLanguage = language.locale.split('_')
@@ -60,7 +64,7 @@ export default defineComponent({
             this.$emit('update:loading', true)
             this.$http.get(url).then(
                 () => {
-                    store.commit('setLocale', language.locale)
+                    this.store.setLocale(language.locale)
                     localStorage.setItem('locale', language.locale)
                     this.$i18n.locale = language.locale
 
@@ -77,7 +81,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState(store, {
+        ...mapState(mainStore, {
             locale: 'locale'
         })
     },

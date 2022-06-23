@@ -26,7 +26,7 @@ import LicenceTab from './LicenseTab.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import { mapState } from 'pinia'
-import store from '../../../../App.store.js'
+import mainStore from '../../../../App.store.js'
 
 export default defineComponent({
     name: 'license-dialog',
@@ -47,7 +47,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState(store, {
+        ...mapState(mainStore, {
             user: 'user',
             licenses: 'licenses'
         })
