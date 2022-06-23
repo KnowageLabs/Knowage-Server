@@ -30,6 +30,7 @@ import Dialog from 'primevue/dialog'
 import descriptor from './OlapAlgorithmDialog.json'
 import Dropdown from 'primevue/dropdown'
 import InlineMessage from 'primevue/inlinemessage'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'olap-algorithm',
@@ -42,6 +43,10 @@ export default defineComponent({
             selectedAlgorithm: {} as any,
             availableAlgorithms: [] as any
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.getAvailableAlgorithms()
@@ -60,7 +65,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_OLAP_PATH + `1.0/allocationalgorithm/${this.selectedAlgorithm.className}/?SBI_EXECUTION_ID=${this.sbiExecutionId}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then(async () => {
-                    this.store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.updateSuccess') })
+                    this.store.setInfo({ title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.updateSuccess') })
                 })
                 .catch(() => {})
         }

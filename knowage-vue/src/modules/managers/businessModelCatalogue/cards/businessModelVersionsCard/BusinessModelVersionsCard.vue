@@ -128,7 +128,7 @@ export default defineComponent({
                 })
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.errors) {
-                        this.store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.error.downloading'),
                             msg: this.$t('common.error.errorCreatingPackage')
                         })
@@ -142,7 +142,7 @@ export default defineComponent({
                                 downloadDirect(response.data, completeFileName, response.headers['content-type'])
                             }
                         }
-                        this.store.commit('setInfo', { title: this.$t('common.toast.success') })
+                        this.store.setInfo({ title: this.$t('common.toast.success') })
                     }
                 })
         },
@@ -158,7 +158,7 @@ export default defineComponent({
         },
         async deleteVersion(versionId: number) {
             await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/${versionId}/`).then(() => {
-                this.store.commit('setInfo', {
+                this.store.setInfo({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })

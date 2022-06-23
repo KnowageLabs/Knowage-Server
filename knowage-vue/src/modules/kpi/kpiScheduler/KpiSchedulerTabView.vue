@@ -332,7 +332,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/saveSchedulerKPI', this.selectedSchedule)
                 .then((response: AxiosResponse<any>) => {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.' + this.operation + 'Title'),
                         msg: this.$t('common.toast.success')
                     })

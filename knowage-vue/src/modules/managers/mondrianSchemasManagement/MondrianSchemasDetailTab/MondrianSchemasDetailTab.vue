@@ -223,9 +223,9 @@ export default defineComponent({
                 .then(
                     (response: AxiosResponse<any>) => {
                         if (response.data.errors) {
-                            this.store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
+                            this.store.setError({ title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
                         } else {
-                            this.store.commit('setInfo', { title: this.$t('managers.mondrianSchemasManagement.toast.downloadFile.downloaded'), msg: this.$t('managers.mondrianSchemasManagement.toast.downloadFile.ok') })
+                            this.store.setInfo({ title: this.$t('managers.mondrianSchemasManagement.toast.downloadFile.downloaded'), msg: this.$t('managers.mondrianSchemasManagement.toast.downloadFile.ok') })
                             var contentDisposition = response.headers['content-disposition']
 
                             var contentDispositionMatches = contentDisposition.match(/(?!([\b attachment;filename= \b])).*(?=)/g)
@@ -236,7 +236,7 @@ export default defineComponent({
                             }
                         }
                     },
-                    (error) => this.store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t(error) })
+                    (error) => this.store.setError({ title: this.$t('common.error.downloading'), msg: this.$t(error) })
                 )
         },
         showDeleteDialog(versionId: number) {
@@ -249,7 +249,7 @@ export default defineComponent({
         },
         async deleteVersion(versionId: number) {
             await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.schema.id}` + '/versions/' + versionId).then(() => {
-                this.store.commit('setInfo', {
+                this.store.setInfo({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })

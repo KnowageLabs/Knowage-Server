@@ -111,7 +111,7 @@ export default defineComponent({
         async deleteTheme(event) {
             this.loading = true
             await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `thememanagement/${event.item.id}`).then(() => {
-                this.store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
 
                 this.themeToSend = { config: {} }
                 this.selectedTheme = { config: {} }
@@ -138,7 +138,7 @@ export default defineComponent({
 
         async handleSave() {
             await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `thememanagement`, this.themeToSend).then((response) => {
-                this.store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.updateSuccess') })
+                this.store.setInfo({ title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.updateSuccess') })
                 if (!this.themeToSend.id) {
                     this.themeToSend.id = response.data
                     this.selectedTheme.id = response.data

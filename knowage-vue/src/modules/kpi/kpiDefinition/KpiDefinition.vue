@@ -83,7 +83,7 @@ export default defineComponent({
         },
         async deleteKpi(kpiId: number, kpiVersion: number) {
             await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/deleteKpi`).then(() => {
-                this.store.commit('setInfo', {
+                this.store.setInfo({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })

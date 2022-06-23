@@ -164,7 +164,7 @@ export default defineComponent({
         },
         async onContinue() {
             if (!this.checkIfPhysicalModelIsSelected()) {
-                this.store.commit('setError', {
+                this.store.setError({
                     title: this.$t('common.error.generic'),
                     msg: this.$t('metaweb.selectDialog.noPhysicalModelsSelectedError')
                 })

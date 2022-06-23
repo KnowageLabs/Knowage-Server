@@ -163,12 +163,12 @@ export default defineComponent({
 
             await this.$http.post(url, this.createTenantToSave()).then((response: AxiosResponse<any>) => {
                 if (this.selectedTenant) {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle),
                         msg: this.$t(this.tabViewDescriptor.operation.success)
                     })
                 } else {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle),
                         msg: this.$t(this.tabViewDescriptor.operation.success) + response.data.NEW_USER,
                         duration: 0

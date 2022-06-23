@@ -135,12 +135,12 @@ export default defineComponent({
                 .then(
                     (response: AxiosResponse<any>) => {
                         if (response.data.errors) {
-                            this.store.commit('setError', {
+                            this.store.setError({
                                 title: this.$t('common.error.downloading'),
                                 msg: this.$t('common.error.errorCreatingPackage')
                             })
                         } else {
-                            this.store.commit('setInfo', { title: this.$t('common.toast.success') })
+                            this.store.setInfo({ title: this.$t('common.toast.success') })
                             if (response.headers) {
                                 var contentDisposition = response.headers['content-disposition']
                                 var contentDispositionMatcher = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)
@@ -153,7 +153,7 @@ export default defineComponent({
                         }
                     },
                     (error) =>
-                        this.store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.error.downloading'),
                             msg: this.$t(error)
                         })
@@ -190,7 +190,7 @@ export default defineComponent({
                     }
                 })
                 .then((response: AxiosResponse<any>) => {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.uploading'),
                         msg: this.$t('importExport.import.successfullyCompleted')
                     })
@@ -201,12 +201,12 @@ export default defineComponent({
                 })
                 .catch((response) => {
                     if (response.message == 'error.message.license.exists') {
-                        this.store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.uploading'),
                             msg: this.$t('licenseDialog.errorExists')
                         })
                     } else {
-                        this.store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.uploading'),
                             msg: response.message
                         })
@@ -232,12 +232,12 @@ export default defineComponent({
                 })
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.errors) {
-                        this.store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('licenseDialog.errorLicense'),
                             msg: this.$t('licenseDialog.errorMessage')
                         })
                     } else {
-                        this.store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.toast.deleteTitle'),
                             msg: this.$t('common.toast.deleteSuccess')
                         })

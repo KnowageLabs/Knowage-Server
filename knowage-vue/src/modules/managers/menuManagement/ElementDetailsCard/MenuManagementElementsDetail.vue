@@ -381,7 +381,7 @@ export default defineComponent({
         },
         async save() {
             if (this.checkIfNodeExists()) {
-                this.store.commit('setError', { title: this.$t('managers.menuManagement.info.errorTitle'), msg: this.$t('managers.menuManagement.info.duplicateErrorMessage') })
+                this.store.setError({ title: this.$t('managers.menuManagement.info.errorTitle'), msg: this.$t('managers.menuManagement.info.duplicateErrorMessage') })
                 return
             }
 
@@ -395,9 +395,9 @@ export default defineComponent({
 
             if (response.status == 200) {
                 if (response.data.errors) {
-                    this.store.commit('setError', { title: this.$t('managers.menuManagement.info.errorTitle'), msg: this.$t('managers.menuManagement.info.errorMessage') })
+                    this.store.setError({ title: this.$t('managers.menuManagement.info.errorTitle'), msg: this.$t('managers.menuManagement.info.errorMessage') })
                 } else {
-                    this.store.commit('setInfo', { title: this.$t('managers.menuManagement.info.saveTitle'), msg: this.$t('managers.menuManagement.info.saveMessage') })
+                    this.store.setInfo({ title: this.$t('managers.menuManagement.info.saveTitle'), msg: this.$t('managers.menuManagement.info.saveMessage') })
                 }
             }
             this.$emit('refreshRecordSet')

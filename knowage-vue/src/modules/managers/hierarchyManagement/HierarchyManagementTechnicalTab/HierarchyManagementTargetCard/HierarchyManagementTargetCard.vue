@@ -218,7 +218,7 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `hierarchies/saveHierarchy`, postData)
                 .then(async (response: AxiosResponse<any>) => {
                     if (response.data.response === 'ok') {
-                        this.store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
+                        this.store.setInfo({ title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                         if (this.selectedHierarchy) {
                             this.loadHierarchyTree()
                         } else {

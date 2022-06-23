@@ -80,7 +80,7 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/timespan/deleteTimespan?ID=${id}`)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data?.Status === 'OK') {
-                        this.store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.toast.deleteTitle'),
                             msg: this.$t('common.toast.deleteSuccess')
                         })
@@ -89,7 +89,7 @@ export default defineComponent({
                     }
                 })
                 .catch((error) => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: error?.message
                     })

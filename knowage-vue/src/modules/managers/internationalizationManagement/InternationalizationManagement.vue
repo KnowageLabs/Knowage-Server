@@ -285,9 +285,9 @@ export default defineComponent({
             delete toSave.dirty
             this.saveOrUpdateMessage(url, toSave, langObj).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
-                    this.store.commit('setError', { msg: response.data.errors })
+                    this.store.setError({ msg: response.data.errors })
                 } else {
-                    this.store.commit('setInfo', { msg: this.$t('common.toast.updateSuccess') })
+                    this.store.setInfo({ msg: this.$t('common.toast.updateSuccess') })
                 }
                 this.getMessages(langObj)
             })
@@ -320,16 +320,16 @@ export default defineComponent({
                     })
                 }
             } else {
-                isDefault ? this.messages.splice(index, 1) : this.store.commit('setError', { title: this.$t('managers.internationalizationManagement.delete.deleteDefaultTitle'), msg: this.$t('managers.internationalizationManagement.delete.cantDelete') })
+                isDefault ? this.messages.splice(index, 1) : this.store.setError({ title: this.$t('managers.internationalizationManagement.delete.deleteDefaultTitle'), msg: this.$t('managers.internationalizationManagement.delete.cantDelete') })
             }
         },
 
         async deleteLabel(url, id, langObj) {
             await this.$http.delete(url + id).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
-                    this.store.commit('setError', { title: 'Error', msg: response.data.errors })
+                    this.store.setError({ title: 'Error', msg: response.data.errors })
                 } else {
-                    this.store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                    this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                     this.getMessages(langObj)
                 }
             })

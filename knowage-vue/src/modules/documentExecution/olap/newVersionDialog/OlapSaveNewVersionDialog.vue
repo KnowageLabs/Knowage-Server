@@ -39,6 +39,7 @@ import Dialog from 'primevue/dialog'
 import InlineMessage from 'primevue/inlinemessage'
 import olapSaveNewVersionDialogDescriptor from './OlapSaveNewVersionDialogDescriptor.json'
 import Textarea from 'primevue/textarea'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'olap-save-new-version-dialog',
@@ -54,6 +55,10 @@ export default defineComponent({
         }
     },
     watch: {},
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {},
     methods: {
         close() {
@@ -77,7 +82,7 @@ export default defineComponent({
                     this.close()
                 })
                 .catch((error: any) =>
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: error?.localizedMessage
                     })

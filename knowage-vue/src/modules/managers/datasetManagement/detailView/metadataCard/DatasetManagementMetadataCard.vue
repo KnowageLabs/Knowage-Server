@@ -123,7 +123,7 @@ export default defineComponent({
                 if (this.fieldsMetadata[i].fieldType == 'SPATIAL_ATTRIBUTE') {
                     numberOfSpatialAttribute++
                     if (numberOfSpatialAttribute > 1) {
-                        this.store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.datasetManagement.duplicateSpatialAttribute') })
+                        this.store.setError({ title: this.$t('common.error.saving'), msg: this.$t('managers.datasetManagement.duplicateSpatialAttribute') })
                         return
                     }
                 }

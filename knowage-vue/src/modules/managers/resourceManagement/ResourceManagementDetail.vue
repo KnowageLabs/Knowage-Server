@@ -150,7 +150,7 @@ export default defineComponent({
                     this.selectedFiles = []
                 })
                 .catch((error) => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.downloading'),
                         msg: this.$t(error)
                     })
@@ -201,7 +201,7 @@ export default defineComponent({
                         this.getBreadcrumbs()
                     })
                     .catch((error) => {
-                        this.store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.error.downloading'),
                             msg: this.$t(error)
                         })
@@ -243,7 +243,7 @@ export default defineComponent({
                     })
                 })
                 .catch(() => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.error.deleting')
                     })

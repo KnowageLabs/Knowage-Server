@@ -215,7 +215,7 @@ export default defineComponent({
                     }
                 })
                 .then(() => {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })

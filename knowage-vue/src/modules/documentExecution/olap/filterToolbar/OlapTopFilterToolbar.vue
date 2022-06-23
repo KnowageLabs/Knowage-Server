@@ -26,6 +26,7 @@
 import { defineComponent } from 'vue'
 import { iOlapFilter } from '@/modules/documentExecution/olap/Olap'
 import toolbarDescriptor from './OlapFilterToolbarDescriptor.json'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: {},
@@ -45,6 +46,10 @@ export default defineComponent({
         olapProp() {
             this.loadData()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadData()
@@ -98,7 +103,7 @@ export default defineComponent({
                 fromAxis = data.axis
                 if (fromAxis != 0) {
                     if (data.axis === 1 && leftLength == 1) {
-                        this.store.commit('setInfo', { title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.dragEmptyWarning') })
+                        this.store.setInfo({ title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.dragEmptyWarning') })
                     } else {
                         data.positionInAxis = topLength
                         data.axis = 0

@@ -98,7 +98,7 @@ export default defineComponent({
                     tempResponse = response.data
                 })
                 .catch((error) => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: error?.message
                     })

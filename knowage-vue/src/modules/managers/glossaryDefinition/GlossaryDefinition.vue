@@ -124,7 +124,7 @@ export default defineComponent({
         },
         async deleteWord(wordId: number) {
             await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/business/deleteWord?WORD_ID=${wordId}`).then(() => {
-                this.store.commit('setInfo', {
+                this.store.setInfo({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })

@@ -191,7 +191,7 @@ export default defineComponent({
                             this.token = response.data.token
                             this.step = 1
                         },
-                        () => this.store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
+                        () => this.store.setError({ title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
                     )
                 this.loading = false
             } else {
@@ -243,11 +243,11 @@ export default defineComponent({
                 })
                 .then(
                     () => {
-                        this.store.commit('setInfo', { title: this.$t('common.import'), msg: this.$t('importExport.import.successfullyCompleted') })
+                        this.store.setInfo({ title: this.$t('common.import'), msg: this.$t('importExport.import.successfullyCompleted') })
 
                         this.store.setLoading(false)
                     },
-                    () => this.store.commit('setError', { title: this.$t('common.error.import'), msg: this.$t('importExport.import.completedWithErrors') })
+                    () => this.store.setError({ title: this.$t('common.error.import'), msg: this.$t('importExport.import.completedWithErrors') })
                 )
             this.token = ''
             this.resetAndClose()

@@ -281,7 +281,7 @@ export default defineComponent({
                         this.warningVisible = true
                         this.missingFields.push(response.data.errrors[0].message)
                     } else {
-                        this.store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.toast.' + this.operation + 'Title'),
                             msg: this.$t('common.toast.success')
                         })

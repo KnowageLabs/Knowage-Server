@@ -185,7 +185,7 @@ export default defineComponent({
                 url += '/' + this.configuration.id
             }
             await this.sendRequest(url).then(() => {
-                this.store.commit('setInfo', {
+                this.store.setInfo({
                     title: this.$t(this.configurationManagementDescriptor.operation[this.operation].toastTitle),
                     msg: this.$t(this.configurationManagementDescriptor.operation.success)
                 })

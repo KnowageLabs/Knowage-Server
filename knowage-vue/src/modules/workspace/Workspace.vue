@@ -212,7 +212,7 @@ export default defineComponent({
             await this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/organizer/foldersee/${folder.id}`, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -220,7 +220,7 @@ export default defineComponent({
                     this.$router.push('/workspace')
                 })
                 .catch((response: any) => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: response.message === 'sbi.workspace.organizer.folder.error.delete' ? this.$t('workspace.myRepository.folderDeleteError') : response.message
                     })
@@ -238,11 +238,11 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/organizer/foldersee/', newFolder, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.store.commit('setInfo', { title: this.$t('workspace.myRepository.folderCreatedMessage') })
+                    this.store.setInfo({ title: this.$t('workspace.myRepository.folderCreatedMessage') })
                     this.getAllFolders()
                 })
                 .catch((response: any) => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: response
                     })

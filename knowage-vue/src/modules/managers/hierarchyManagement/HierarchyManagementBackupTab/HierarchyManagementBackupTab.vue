@@ -145,7 +145,7 @@ export default defineComponent({
             let postData = { dimension: this.selectedDimension?.DIMENSION_NM, name: hierarchy.HIER_NM }
             await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData).then((response: AxiosResponse<any>) => {
                 if (response.data.response === 'ok') {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('managers.hierarchyManagement.backupDeleted')
                     })
@@ -166,7 +166,7 @@ export default defineComponent({
             let postData = { HIER_DS: eventData.newData.HIER_DS, HIER_NM: eventData.newData.HIER_NM, HIER_NM_ORIG: eventData.data.HIER_NM, dimension: this.selectedDimension?.DIMENSION_NM }
             await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData).then((response: AxiosResponse<any>) => {
                 if (response.data.response === 'ok') {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -187,7 +187,7 @@ export default defineComponent({
             let postData = { code: backup.HIER_CD, name: backup.HIER_NM, dimension: this.selectedDimension?.DIMENSION_NM }
             await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData).then((response: AxiosResponse<any>) => {
                 if (response.data.response === 'ok') {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.restore'),
                         msg: this.$t('common.toast.success')
                     })

@@ -298,7 +298,7 @@ export default defineComponent({
 
             await this.sendRequest(url, tempDataset)
                 .then(() => {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.' + this.operation + 'Title'),
                         msg: this.$t('common.toast.success')
                     })

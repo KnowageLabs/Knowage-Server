@@ -420,9 +420,9 @@ export default defineComponent({
 
             await this.$http.post(url, dsToTest).then((response: AxiosResponse<any>) => {
                 if (response.data.error) {
-                    this.store.commit('setError', { title: this.$t('managers.dataSourceManagement.form.errorTitle'), msg: response.data.error })
+                    this.store.setError({ title: this.$t('managers.dataSourceManagement.form.errorTitle'), msg: response.data.error })
                 } else {
-                    this.store.commit('setInfo', { msg: this.$t('managers.dataSourceManagement.form.testOk') })
+                    this.store.setInfo({ msg: this.$t('managers.dataSourceManagement.form.testOk') })
                 }
             })
         },
@@ -445,9 +445,9 @@ export default defineComponent({
 
             await this.createOrUpdate(url, dsToSave).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
-                    this.store.commit('setError', { title: 'Error', msg: response.data.error })
+                    this.store.setError({ title: 'Error', msg: response.data.error })
                 } else {
-                    this.store.commit('setInfo', { title: 'Ok', msg: 'Saved OK' })
+                    this.store.setInfo({ title: 'Ok', msg: 'Saved OK' })
                 }
             })
             this.$emit('inserted')

@@ -64,7 +64,7 @@ export default defineComponent({
                     })
                 )
                 .catch((error) =>
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: error.message
                     })

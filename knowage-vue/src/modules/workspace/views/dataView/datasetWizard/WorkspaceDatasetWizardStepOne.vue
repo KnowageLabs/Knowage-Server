@@ -104,7 +104,7 @@ export default defineComponent({
             this.uploading = true
             let uploadedFile = event.target.files[0]
             if (uploadedFile.name.includes(this.dataset.fileName)) {
-                this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('common.error.sameFileName') })
+                this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('common.error.sameFileName') })
                 this.triggerUpload = false
             } else {
                 this.startUpload(uploadedFile)
@@ -122,7 +122,7 @@ export default defineComponent({
                     }
                 })
                 .then((response: AxiosResponse<any>) => {
-                    this.store.commit('setInfo', { title: this.$t('common.uploading'), msg: this.$t('importExport.import.successfullyCompleted') })
+                    this.store.setInfo({ title: this.$t('common.uploading'), msg: this.$t('importExport.import.successfullyCompleted') })
                     this.dataset.fileType = response.data.fileType
                     this.dataset.fileName = response.data.fileName
                     this.$emit('fileUploaded')
@@ -145,16 +145,16 @@ export default defineComponent({
                 .then(
                     (response: AxiosResponse<any>) => {
                         if (response.data.errors) {
-                            this.store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
+                            this.store.setError({ title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
                         } else {
-                            this.store.commit('setInfo', { title: this.$t('common.toast.success') })
+                            this.store.setInfo({ title: this.$t('common.toast.success') })
                             if (response.headers) {
                                 downloadDirect(response.data, this.createCompleteFileName(response), response.headers['content-type'])
                             }
                         }
                     },
                     (error) =>
-                        this.store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.error.downloading'),
                             msg: this.$t(error)
                         })

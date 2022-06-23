@@ -84,7 +84,7 @@ export default defineComponent({
     },
     methods: {
         changeTypeWarning() {
-            this.store.commit('setInfo', { title: this.$t('documentExecution.registry.warning'), msg: this.$t('managers.datasetManagement.changeTypeMsg') })
+            this.store.setInfo({ title: this.$t('documentExecution.registry.warning'), msg: this.$t('managers.datasetManagement.changeTypeMsg') })
         }
     }
 })

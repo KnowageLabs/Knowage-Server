@@ -180,14 +180,14 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/alert/save', alertToSave)
                 .then((response: AxiosResponse<any>) => {
                     this.touched = false
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t(this.alertDescriptor.operation[operation].toastTitle),
                         msg: this.$t(this.alertDescriptor.operation.success)
                     })
                     this.$emit('saved', response.data.id)
                 })
                 .catch((error) => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('kpi.alert.savingError'),
                         msg: error.message
                     })

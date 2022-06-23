@@ -105,7 +105,7 @@ export default defineComponent({
                 item.links = [param]
                 this.$emit('touched')
             } else {
-                this.store.commit('setInfo', {
+                this.store.setInfo({
                     title: this.$t('managers.crossNavigationManagement.incompatibleTypes'),
                     msg: this.$t('managers.crossNavigationManagement.incompatibleTypesMessage', { originParam: param.name, targetParam: item.name })
                 })

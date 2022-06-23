@@ -97,7 +97,7 @@ export default defineComponent({
                     }
                 })
                 .catch((response: AxiosResponse<any>) => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: response
                     })

@@ -99,7 +99,7 @@ export default defineComponent({
                     (response: AxiosResponse<any>) => {
                         console.log(response)
                         if (response.data.errors) {
-                            this.store.commit('setError', { title: this.$t('common.error.news'), msg: this.$t('news.errorGettingSelectedNews') })
+                            this.store.setError({ title: this.$t('common.error.news'), msg: this.$t('news.errorGettingSelectedNews') })
                         } else {
                             this.selectedNews = response.data
                             this.loading = false

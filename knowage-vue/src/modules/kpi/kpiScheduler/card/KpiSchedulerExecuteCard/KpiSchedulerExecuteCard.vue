@@ -112,13 +112,13 @@ export default defineComponent({
         async downloadFile(id: number) {
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/${id}/logExecutionListOutputContent`).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.downloading'),
                         msg: this.$t('common.error.downloading')
                     })
                 } else {
                     downloadDirect(JSON.stringify(response.data.output), this.schedule.name + 'ErrorLog', 'text/plain')
-                    this.store.commit('setInfo', { title: this.$t('common.toast.success') })
+                    this.store.setInfo({ title: this.$t('common.toast.success') })
                 }
             })
         }

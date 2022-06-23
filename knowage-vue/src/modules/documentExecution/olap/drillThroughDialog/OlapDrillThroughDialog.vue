@@ -62,6 +62,7 @@ import dtDescriptor from './OlapDrillThroughDialogDescriptor.json'
 import Menu from 'primevue/contextmenu'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: { Column, DataTable, Menu, Checkbox, Dropdown },
@@ -94,6 +95,10 @@ export default defineComponent({
         menuTree() {
             this.dtTree = this.menuTree
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadData()
@@ -149,7 +154,7 @@ export default defineComponent({
                 CSV += row + '\r\n'
             }
             if (CSV == '') {
-                this.store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.invalidData') })
+                this.store.setError({ title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.invalidData') })
                 return
             }
             var fileName = 'MyReport_'

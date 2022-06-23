@@ -279,9 +279,9 @@ export default defineComponent({
             this.prepareFunctionalityToSend(functionalityToSend)
             await this.createOrUpdate(functionalityToSend).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
-                    this.store.commit('setError', { title: 'Error', msg: response.data.error })
+                    this.store.setError({ title: 'Error', msg: response.data.error })
                 } else {
-                    this.store.commit('setInfo', { title: this.$t('common.toast.success') })
+                    this.store.setInfo({ title: this.$t('common.toast.success') })
                     this.$emit('inserted', response.data.id)
                 }
             })

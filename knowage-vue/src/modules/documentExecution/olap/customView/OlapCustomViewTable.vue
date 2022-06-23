@@ -51,6 +51,7 @@ import { filterDefault } from '@/helpers/commons/filterHelper'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import olapCustomViewTableDescriptor from './OlapCustomViewTableDescriptor.json'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'olap-custom-view-table',
@@ -69,6 +70,10 @@ export default defineComponent({
         olapCustomViews() {
             this.loadCustomViews()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadCustomViews()

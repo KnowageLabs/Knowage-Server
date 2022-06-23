@@ -153,7 +153,7 @@ export default defineComponent({
                     this.formVisible = false
                 })
                 .catch((error) => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('managers.driversManagement.deleteError'),
                         msg: error.message
                     })

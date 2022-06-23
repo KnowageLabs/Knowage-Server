@@ -438,7 +438,7 @@ export default defineComponent({
         setImagePreview(imageFile) {
             this.imagePreviewUrl = URL.createObjectURL(imageFile)
             this.imagePreview = true
-            this.store.commit('setInfo', { title: this.$t('common.uploadFileSuccess'), msg: this.$t('documentExecution.documentDetails.info.imageInfo') })
+            this.store.setInfo({ title: this.$t('common.uploadFileSuccess'), msg: this.$t('documentExecution.documentDetails.info.imageInfo') })
         },
         resetImagePreview() {
             this.imagePreviewUrl = null

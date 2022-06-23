@@ -98,19 +98,19 @@ export default defineComponent({
                                     // check if Avro file has been deleted or not
                                     this.$router.push({ name: 'data-preparation', params: { id: datasetId, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
                                 else {
-                                    this.store.commit('setInfo', {
+                                    this.store.setInfo({
                                         title: 'Avro file is missing',
                                         msg: 'Generate it again and then retry'
                                     })
                                 }
                             },
                             () => {
-                                this.store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
+                                this.store.setError({ title: 'Save error', msg: 'Cannot create process' })
                             }
                         )
                     },
                     () => {
-                        this.store.commit('setError', {
+                        this.store.setError({
                             title: 'Cannot open data preparation'
                         })
                     }
@@ -119,7 +119,7 @@ export default defineComponent({
                 // original dataset already exported in Avro
                 this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
             } else {
-                this.store.commit('setInfo', {
+                this.store.setInfo({
                     title: 'Avro file is missing',
                     msg: 'Generate it again and then retry'
                 })
@@ -133,7 +133,7 @@ export default defineComponent({
                     this.loadDataset(this.selectedDataset.id)
                 },
                 () => {
-                    this.store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })
+                    this.store.setError({ title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })
                 }
             )
         }

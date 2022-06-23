@@ -77,7 +77,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/updatePhysicalModel`, { tables: this.tables })
                 .then((response: AxiosResponse<any>) => {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.updateSuccess')
                     })

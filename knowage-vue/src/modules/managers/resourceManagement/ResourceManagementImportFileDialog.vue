@@ -101,12 +101,12 @@ export default defineComponent({
                     .then(
                         (response: AxiosResponse<any>) => {
                             if (response.data.errors) {
-                                this.store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('managers.resourceManagement.upload.completedWithErrors') })
+                                this.store.setError({ title: this.$t('common.error.uploading'), msg: this.$t('managers.resourceManagement.upload.completedWithErrors') })
                             } else {
-                                this.store.commit('setInfo', { title: this.$t('common.uploading'), msg: this.$t('common.toast.uploadSuccess') })
+                                this.store.setInfo({ title: this.$t('common.uploading'), msg: this.$t('common.toast.uploadSuccess') })
                             }
                         },
-                        (error) => this.store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t(error) })
+                        (error) => this.store.setError({ title: this.$t('common.error.uploading'), msg: this.$t(error) })
                     )
 
                     .finally(() => {

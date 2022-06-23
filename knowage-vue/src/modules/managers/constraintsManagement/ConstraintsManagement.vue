@@ -169,7 +169,7 @@ export default defineComponent({
                     this.formVisible = false
                 })
                 .catch((error) => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('managers.constraintManagement.deleteError'),
                         msg: error.message
                     })

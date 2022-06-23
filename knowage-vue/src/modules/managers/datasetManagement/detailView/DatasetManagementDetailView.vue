@@ -237,7 +237,7 @@ export default defineComponent({
                 })
                 .then(async (response: AxiosResponse<any>) => {
                     this.touched = false
-                    this.store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
+                    this.store.setInfo({ title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
                     await this.saveTags(dsToSave, response.data.id)
                     await this.saveSchedulation(dsToSave, response.data.id)
@@ -352,7 +352,7 @@ export default defineComponent({
         },
         checkFormulaForParams() {
             if (this.selectedDataset?.query?.includes('${') && this.selectedDataset?.isPersisted) {
-                this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.datasetManagement.formulaParamError') })
+                this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.datasetManagement.formulaParamError') })
             } else this.saveDataset()
         },
         removeDuplicates(array) {

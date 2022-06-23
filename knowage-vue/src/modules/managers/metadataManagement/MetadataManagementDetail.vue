@@ -191,7 +191,7 @@ export default defineComponent({
             }
 
             await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/objMetadata', this.metadata).then(() => {
-                this.store.commit('setInfo', {
+                this.store.setInfo({
                     title: this.$t(this.metadataManagementDescriptor.operation[this.operation].toastTitle),
                     msg: this.$t(this.metadataManagementDescriptor.operation.success)
                 })

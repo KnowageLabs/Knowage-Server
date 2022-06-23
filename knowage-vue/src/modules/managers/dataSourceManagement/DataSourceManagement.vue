@@ -161,7 +161,7 @@ export default defineComponent({
                     this.getAllDatasources()
                 })
                 .catch((error) => {
-                    this.store.commit('setError', { title: 'Delete error', msg: error.message })
+                    this.store.setError({ title: 'Delete error', msg: error.message })
                 })
         },
 

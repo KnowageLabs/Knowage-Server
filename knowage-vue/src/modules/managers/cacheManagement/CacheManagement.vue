@@ -125,7 +125,7 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
 
             if (this.selectedDatasource === null) {
-                this.store.commit('setError', {
+                this.store.setError({
                     title: this.$t('managers.cacheManagement.noDefaultDatasetTitle'),
                     msg: this.$t('managers.cacheManagement.noDefaultDataset')
                 })

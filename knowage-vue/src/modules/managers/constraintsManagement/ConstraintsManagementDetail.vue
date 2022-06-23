@@ -212,14 +212,14 @@ export default defineComponent({
             await this.sendRequest(url)
                 .then((response: AxiosResponse<any>) => {
                     this.constraint.checkId = response.data
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t(this.constraintsManagementDetailDescriptor.operation[this.operation].toastTitle),
                         msg: this.$t(this.constraintsManagementDetailDescriptor.operation.success)
                     })
                     this.$emit('created', this.constraint)
                 })
                 .catch((error) => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('managers.constraintManagement.saveError'),
                         msg: error.message
                     })

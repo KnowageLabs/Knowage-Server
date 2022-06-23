@@ -130,14 +130,14 @@ export default defineComponent({
                 await this.$http
                     .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/analyticalDrivers/modes/' + useMode.useID)
                     .then(() => {
-                        this.store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.toast.deleteTitle'),
                             msg: this.$t('common.toast.deleteSuccess')
                         })
                         this.modes.splice(this.modes.indexOf(useMode), 1)
                     })
                     .catch((error) => {
-                        this.store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('managers.driversManagement.deleteError'),
                             msg: error.message
                         })

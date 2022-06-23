@@ -114,7 +114,7 @@ export default defineComponent({
         },
         async deleteMetadata(metadataId: number) {
             await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/objMetadata/' + metadataId).then(() => {
-                this.store.commit('setInfo', {
+                this.store.setInfo({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })

@@ -248,7 +248,7 @@ export default defineComponent({
             delete node.parentNode
 
             if (deepEqual(node, originalNode)) {
-                this.store.commit('setError', {
+                this.store.setError({
                     title: this.$t('common.error.generic'),
                     msg: this.$t('managers.hierarchyManagement.nodeCloneError')
                 })
@@ -322,7 +322,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.relations = response.data?.root
                     if (this.relations && this.relations.length === 0) {
-                        this.store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.info.info'),
                             msg: this.$t('managers.hierarchyManagement.noHierarchiesForPropagation')
                         })

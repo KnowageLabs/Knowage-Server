@@ -94,7 +94,7 @@ export default defineComponent({
                         this.$emit('folderCreated', true)
                     })
                     .catch((error) => {
-                        this.store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.error.saving'),
                             msg: this.$t(error)
                         })
@@ -138,13 +138,13 @@ export default defineComponent({
                             })
                             .then(() => {
                                 delete node.edit
-                                this.store.commit('setInfo', {
+                                this.store.setInfo({
                                     title: this.$t('managers.resoruceManagement.renameFolder'),
                                     msg: this.$t('managers.resoruceManagement.folderRenamedSuccessfully')
                                 })
                             })
                             .catch((error) => {
-                                this.store.commit('setError', {
+                                this.store.setError({
                                     title: this.$t('managers.resoruceManagement.renameFolder'),
                                     msg: this.$t(error)
                                 })
@@ -205,7 +205,7 @@ export default defineComponent({
                     })
                 })
                 .catch(() => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteFailed')
                     })

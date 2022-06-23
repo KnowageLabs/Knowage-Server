@@ -112,7 +112,7 @@ export default defineComponent({
                     }
                 })
                 .then((response: AxiosResponse<any>) => {
-                    this.store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
+                    this.store.setInfo({ title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     this.selectedDataset.meta = response.data.meta
                     if (!this.selectedDataset.id) {
                         this.selectedDataset.id = response.data.id

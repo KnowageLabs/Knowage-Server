@@ -738,7 +738,7 @@ export default defineComponent({
                     this.getSQL()
                 })
                 .catch((error) => {
-                    this.store.commit('setError', { title: this.$t('common.toast.error'), msg: error.errors[0].message })
+                    this.store.setError({ title: this.$t('common.toast.error'), msg: error.errors[0].message })
                 })
         },
         async getSQL() {
@@ -761,7 +761,7 @@ export default defineComponent({
                     this.sqlDialogVisible = true
                 })
                 .catch((error) => {
-                    this.store.commit('setError', { title: this.$t('common.toast.error'), msg: error.errors[0].message })
+                    this.store.setError({ title: this.$t('common.toast.error'), msg: error.errors[0].message })
                 })
         },
         toggleDiscardRepetitions() {
@@ -877,7 +877,7 @@ export default defineComponent({
         },
         selectMainQuery() {
             if (this.selectedQuery.fields.length < 1) {
-                this.store.commit('setInfo', { title: this.$t('common.toast.error'), msg: 'Sub entities must have one and one only field' })
+                this.store.setInfo({ title: this.$t('common.toast.error'), msg: 'Sub entities must have one and one only field' })
             } else {
                 this.selectedQuery = this.mainQuery
             }

@@ -322,7 +322,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/saveKpi', this.kpiToSave)
                 .then(() => {
-                    this.store.commit('setInfo', { title: this.$t('common.toast.success') })
+                    this.store.setInfo({ title: this.$t('common.toast.success') })
                     this.kpiToSave.id === undefined ? this.$emit('kpiCreated', this.kpiToSave.name) : this.$emit('kpiUpdated')
                     this.reloadKpi = true
                     setTimeout(() => {
@@ -330,7 +330,7 @@ export default defineComponent({
                     }, 250)
                 })
                 .catch((response: AxiosResponse<any>) => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: response
                     })

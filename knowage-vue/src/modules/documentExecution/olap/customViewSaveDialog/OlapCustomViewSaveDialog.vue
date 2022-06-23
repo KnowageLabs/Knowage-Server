@@ -57,6 +57,7 @@ import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import olapCustomViewSaveDialogDescriptor from './OlapCustomViewSaveDialogDescriptor.json'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
@@ -69,6 +70,10 @@ export default defineComponent({
             viewNameTouched: false,
             loading: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {},
     methods: {

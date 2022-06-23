@@ -171,12 +171,12 @@ export default defineComponent({
                                   itemType: itemType
                               })
                             : this.associatedWords[linkItem.id].push(word)
-                        this.store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.toast.createTitle'),
                             msg: this.$t('common.toast.success')
                         })
                     } else {
-                        this.store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.error.generic'),
                             msg: response.data.Message === 'sbi.glossary.word.new.name.duplicate' ? this.$t('managers.glossary.glossaryUsage.duplicateWord') : response.data.Message
                         })
@@ -246,7 +246,7 @@ export default defineComponent({
                     })
                 })
                 .catch((response: AxiosResponse<any>) => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: response
                     })

@@ -233,7 +233,7 @@ export default defineComponent({
                 if (response.data.errors) {
                     console.log(response.data.errors)
                 } else {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('managers.profileAttributesManagement.info.saveTitle'),
                         msg: this.$t('managers.profileAttributesManagement.info.saveMessage')
                     })

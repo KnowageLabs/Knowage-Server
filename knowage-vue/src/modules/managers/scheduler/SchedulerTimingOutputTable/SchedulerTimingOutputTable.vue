@@ -172,7 +172,7 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `scheduleree/executeTrigger?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.resp === 'ok') {
-                        this.store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.information'),
                             msg: this.$t('managers.scheduler.schedulationExecuted')
                         })
@@ -196,7 +196,7 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `scheduleree/${action}?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.resp === 'ok') {
-                        this.store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.information'),
                             msg: trigger.triggerIsPaused ? this.$t('managers.scheduler.schedulationResumed') : this.$t('managers.scheduler.schedulationPaused')
                         })
@@ -220,7 +220,7 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `scheduleree/deleteTrigger?jobName=${trigger.jobName}&jobGroup=${trigger.jobGroup}&triggerName=${trigger.triggerName}&triggerGroup=${trigger.triggerGroup}`)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.resp === 'ok') {
-                        this.store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.toast.deleteTitle'),
                             msg: this.$t('common.toast.deleteSuccess')
                         })

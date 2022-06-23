@@ -94,7 +94,7 @@ export default defineComponent({
                     this.loadLovs()
                 })
                 .catch((error) => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: 'Server error',
                         msg: error.message
                     })

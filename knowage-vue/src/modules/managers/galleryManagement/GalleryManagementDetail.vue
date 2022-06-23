@@ -189,7 +189,7 @@ export default defineComponent({
                 this.$http
                     .post(import.meta.env.VITE_API_PATH + postUrl, this.template)
                     .then((response: AxiosResponse<any>) => {
-                        this.store.commit('setInfo', { title: this.$t('managers.widgetGallery.saveTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullySaved') })
+                        this.store.setInfo({ title: this.$t('managers.widgetGallery.saveTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullySaved') })
                         this.$router.push('/gallery-management/' + response.data.id)
                         this.$emit('saved')
                     })
@@ -212,7 +212,7 @@ export default defineComponent({
             if (event.srcElement.files[0] && event.srcElement.files[0].size < import.meta.env.VITE_MAX_UPLOAD_IMAGE_SIZE) {
                 reader.readAsDataURL(event.srcElement.files[0])
                 this.setDirty()
-            } else this.store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
+            } else this.store.setError({ title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
         },
         resizeHandler(): void {
             this.windowWidth = window.innerWidth
@@ -223,7 +223,7 @@ export default defineComponent({
                 let currentTag = this.template.tags[idx]
                 const valid = currentTag.match(validationRegex)
                 if (!valid) {
-                    this.store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.tags.tagIsNotValid', { tag: currentTag }) })
+                    this.store.setError({ title: this.$t('common.error.uploading'), msg: this.$t('common.error.tags.tagIsNotValid', { tag: currentTag }) })
                     return false
                 }
             }

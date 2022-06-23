@@ -105,7 +105,7 @@ export default defineComponent({
                 })
                 .catch((error) => {
                     if (error) {
-                        this.store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.toast.deleteTitle'),
                             msg: this.$t('common.error.deleting')
                         })

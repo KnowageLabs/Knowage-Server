@@ -252,9 +252,9 @@ export default defineComponent({
                     // called when the client receives a STOMP message from the server
                     if (error.body) {
                         let message = JSON.parse(error.body)
-                        this.store.commit('setError', { title: 'Error', msg: message.message })
+                        this.store.setError({ title: 'Error', msg: message.message })
                     } else {
-                        this.store.commit('setError', { title: 'Error' })
+                        this.store.setError({ title: 'Error' })
                     }
                     if (this.dataset.config && this.dataset.config.transformations?.length > 0) this.dataset.config.transformations.splice(-1)
                     this.loading--
@@ -266,11 +266,11 @@ export default defineComponent({
                         // called when the client receives a STOMP message from the server
                         if (message.body) {
                             let avroJobResponse = JSON.parse(message.body)
-                            if (avroJobResponse.statusOk) this.store.commit('setInfo', { title: 'Dataset prepared successfully' })
-                            else this.store.commit('setError', { title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
+                            if (avroJobResponse.statusOk) this.store.setInfo({ title: 'Dataset prepared successfully' })
+                            else this.store.setError({ title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
                             //TODO: refresh data?
                         } else {
-                            this.store.commit('setError', { title: 'Websocket error', msg: 'got empty message' })
+                            this.store.setError({ title: 'Websocket error', msg: 'got empty message' })
                         }
                     },
                     {
@@ -364,7 +364,7 @@ export default defineComponent({
                     }
                 )
                 .then(() => {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('workspace.myData.isPreparing')
                     })
                 })

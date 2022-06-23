@@ -98,7 +98,7 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `scheduleree/saveJob`, this.job)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.resp === 'ok') {
-                        this.store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.toast.' + this.operation + 'Title'),
                             msg: this.$t('common.toast.success')
                         })

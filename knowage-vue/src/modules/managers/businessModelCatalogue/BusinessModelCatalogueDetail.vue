@@ -212,7 +212,7 @@ export default defineComponent({
             })
 
             if (!this.uploadingError) {
-                this.store.commit('setInfo', {
+                this.store.setInfo({
                     title: this.$t('common.toast.updateTitle'),
                     msg: this.$t('common.toast.success')
                 })
@@ -226,7 +226,7 @@ export default defineComponent({
         },
         setUploadingError(title: string, message: string) {
             this.uploadingError = true
-            this.store.commit('setError', { title: this.$t('common.toast.' + title), msg: message })
+            this.store.setError({ title: this.$t('common.toast.' + title), msg: message })
         },
         async saveBusinessModel() {
             await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/businessmodels/', { ...this.selectedBusinessModel, modelLocker: this.user.userId }).then((response: AxiosResponse<any>) => {
@@ -264,9 +264,9 @@ export default defineComponent({
             formData.append('file', this.uploadedFile)
             await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.selectedBusinessModel.id}/versions`, formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
-                    this.store.commit('setError', { title: this.$t('managers.businessModelManager.toast.uploadFile'), msg: response.data.errors })
+                    this.store.setError({ title: this.$t('managers.businessModelManager.toast.uploadFile'), msg: response.data.errors })
                 } else {
-                    this.store.commit('setInfo', { title: this.$t('managers.businessModelManager.uploadFile'), msg: this.$t('managers.businessModelManager.uploadFileSuccess') })
+                    this.store.setInfo({ title: this.$t('managers.businessModelManager.uploadFile'), msg: this.$t('managers.businessModelManager.uploadFileSuccess') })
                     this.uploadedFile = null
                 }
             })

@@ -206,13 +206,13 @@ export default defineComponent({
                     if (this.word.PARENT) {
                         this.saveContent(response.data.id)
                     }
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t(this.glossaryDefinitionDialogDescriptor.operation[this.operation].toastTitle),
                         msg: this.$t(this.glossaryDefinitionDialogDescriptor.operation.success)
                     })
                 })
                 .catch((error) => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('managers.constraintManagment.saveError'),
                         msg: error.message
                     })
@@ -234,14 +234,14 @@ export default defineComponent({
                     if (response.data.Status !== 'NON OK') {
                         this.$emit('reloadTree')
                     } else {
-                        this.store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.error.generic'),
                             msg: this.$t(this.glossaryDefinitionDescriptor.translation[response.data.Message])
                         })
                     }
                 })
                 .catch((response: AxiosResponse<any>) => {
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: response
                     })
