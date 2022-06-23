@@ -23,6 +23,7 @@ import NewsDetailCard from './cards/NewsDetailCard/NewsDetailCard.vue'
 import newsManagementDetailDescriptor from './NewsManagementDetailDescriptor.json'
 import RolesCard from './cards/RolesCard/RolesCard.vue'
 import WEB_SOCKET from '@/services/webSocket.js'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     components: {
@@ -58,6 +59,10 @@ export default defineComponent({
         id() {
             this.loadSelectedNews()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadSelectedNews()

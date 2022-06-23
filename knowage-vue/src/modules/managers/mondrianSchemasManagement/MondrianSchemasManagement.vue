@@ -54,6 +54,7 @@ import mondrianDescriptor from './MondrianSchemasManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnHint from '@/components/UI/KnHint.vue'
 import Listbox from 'primevue/listbox'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'mondrian-schemas-management',
@@ -77,6 +78,10 @@ export default defineComponent({
             schemas: [] as iSchema[],
             mondrianDescriptor: mondrianDescriptor
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadAllSchemas()

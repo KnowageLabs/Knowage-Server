@@ -55,6 +55,7 @@ import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import newsManagementDescriptor from './NewsManagementDescriptor.json'
 import WEB_SOCKET from '@/services/webSocket.js'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'news-management',
@@ -70,6 +71,10 @@ export default defineComponent({
             touched: false,
             loading: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadAllNews()

@@ -43,6 +43,8 @@ import { iMenuNode } from './MenuManagement'
 import MenuNodesTree from './MenuNodesTree/MenuManagementNodesTree.vue'
 import MenuElementsDetail from './ElementDetailsCard/MenuManagementElementsDetail.vue'
 import { iRole, iStaticPage } from '../usersManagement/UsersManagement'
+import mainStore from '../../../App.store'
+
 export default defineComponent({
     name: 'menu-management',
     components: {
@@ -63,6 +65,10 @@ export default defineComponent({
             dirty: false as Boolean,
             roles: [] as iRole[]
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadMenuNodes()

@@ -128,6 +128,7 @@ import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'detail-tab',
@@ -169,6 +170,10 @@ export default defineComponent({
         return {
             schema: createValidations('schema', detailDescriptor.validations.schema)
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     mounted() {
         if (this.selectedSchema) {

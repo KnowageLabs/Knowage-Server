@@ -36,6 +36,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import MondrianSchemasDetailTab from './MondrianSchemasDetailTab/MondrianSchemasDetailTab.vue'
 import MondrianSchemasWorkflowTab from './MondrianSchemasWorkflowTab/MondrianSchemasWorkflowTab.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     components: {
@@ -65,6 +66,10 @@ export default defineComponent({
             touched: false,
             isWorkflowChanged: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadAllUsers()

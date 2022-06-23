@@ -173,11 +173,12 @@ import RelatedDocumentList from '../RelatedDocumentsList/MenuManagementRelatedDo
 import RolesCard from '../RolesCard/MenuManagementRolesCard.vue'
 import DocumentBrowserTree from '../DocumentBrowserTree/MenuManagementDocumentBrowserTree.vue'
 import FontAwesomePicker from '../IconPicker/IconPicker.vue'
-
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import MenuConfigurationDescriptor from '../MenuManagementDescriptor.json'
 import MenuConfigurationValidationDescriptor from './MenuManagementValidationDescriptor.json'
 import MenuManagementElementDetailDescriptor from './MenuManagementElementDetailDescriptor.json'
+import mainStore from '../../../../App.store'
+
 export default defineComponent({
     name: 'profile-attributes-detail',
     components: { Dropdown, DocumentBrowserTree, RelatedDocumentList, KnValidationMessages, Dialog, FontAwesomePicker, RolesCard },
@@ -235,6 +236,10 @@ export default defineComponent({
         return {
             menuNode: createValidations('menuNode', MenuConfigurationValidationDescriptor.validations.menuNode)
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadNodes()

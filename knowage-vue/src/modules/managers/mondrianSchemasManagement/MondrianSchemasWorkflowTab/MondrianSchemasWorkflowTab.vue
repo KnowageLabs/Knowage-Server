@@ -80,6 +80,7 @@ import workflowDescriptor from './MondrianSchemasWorkflowDescriptor.json'
 import Listbox from 'primevue/listbox'
 import { AxiosResponse } from 'axios'
 import Tooltip from 'primevue/tooltip'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'workflow-tab',
@@ -119,7 +120,10 @@ export default defineComponent({
             userInProg: null as any
         }
     },
-
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     mounted() {
         if (this.selectedSchema) {
             this.schema = { ...this.selectedSchema } as iSchema
