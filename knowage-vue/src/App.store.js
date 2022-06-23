@@ -27,8 +27,8 @@ const store = defineStore('store', {
     },
     actions: {
         initializeUser(user) {
-            this.commit('setUser', user)
-            this.commit('setEnterprise', user.enterprise)
+            this.setUser(user)
+            this.setEnterprise(user.enterprise)
         },
 
         updateLicense(el) {
@@ -44,7 +44,7 @@ const store = defineStore('store', {
 
             hostNameLicenses.push(el.license)
 
-            this.commit('setLicenses', licenses)
+            this.setLicenses(licenses)
         },
         setConfigurations(configs) {
             this.configurations = configs

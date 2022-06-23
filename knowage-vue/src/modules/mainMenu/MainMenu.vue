@@ -66,14 +66,14 @@ import LanguageDialog from '@/modules/mainMenu/dialogs/LanguageDialog/LanguageDi
 import LicenseDialog from '@/modules/mainMenu/dialogs/LicenseDialog/LicenseDialog.vue'
 import NewsDialog from '@/modules/mainMenu/dialogs/NewsDialog/NewsDialog.vue'
 import RoleDialog from '@/modules/mainMenu/dialogs/RoleDialog.vue'
-import { mapState } from 'pinia'
+import { mapState, mapActions } from 'pinia'
 import auth from '@/helpers/commons/authHelper'
 import { AxiosResponse } from 'axios'
 import DownloadsDialog from '@/modules/mainMenu/dialogs/DownloadsDialog/DownloadsDialog.vue'
 import { IMenuItem } from '@/modules/mainMenu/MainMenu'
 import TieredMenu from 'primevue/tieredmenu'
 import ScrollPanel from 'primevue/scrollpanel'
-import store from '../../App.store.js'
+import mainStore from '../../App.store.js'
 
 export default defineComponent({
     name: 'Knmenu',
@@ -110,6 +110,10 @@ export default defineComponent({
         }
     },
     emits: ['update:visibility', 'menuItemSelected'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     methods: {
         info() {
             this.display = !this.display
@@ -245,7 +249,7 @@ export default defineComponent({
 
         async loadMenu(recursive: Boolean = false) {
             window.addEventListener('resize', this.getDimensions)
-            this.$store.commit('setLoading', true)
+            this.store.setLoading(true)
             let localObject = { locale: this.$i18n.fallbackLocale.toString() }
             if (Object.keys(this.locale).length !== 0) localObject = { locale: this.locale }
             if (localStorage.getItem('locale')) {
@@ -275,7 +279,7 @@ export default defineComponent({
                         let homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
                         if (homePage && Object.keys(homePage).length !== 0) {
                             if (!this.stateHomePage.label) {
-                                this.$store.commit('setHomePage', homePage)
+                                this.store.setHomePage(homePage)
                             }
                         }
                     }
@@ -293,7 +297,7 @@ export default defineComponent({
                     else this.loadMenu(true)
                 })
                 .finally(() => {
-                    this.$store.commit('setLoading', false)
+                    this.store.setLoading(false)
                     this.getDimensions()
                 })
         }
@@ -305,7 +309,7 @@ export default defineComponent({
         window.removeEventListener('resize', this.getDimensions)
     },
     computed: {
-        ...mapState(store, {
+        ...mapState(mainStore, {
             user: 'user',
             downloads: 'downloads',
             locale: 'locale',

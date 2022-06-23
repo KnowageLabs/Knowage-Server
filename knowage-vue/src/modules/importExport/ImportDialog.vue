@@ -233,7 +233,7 @@ export default defineComponent({
         },
 
         startImport() {
-            this.$store.commit('setLoading', true)
+            this.$store.setLoading(true)
             this.$http
                 .post(import.meta.env.VITE_API_PATH + '1.0/import/bulk', this.streamlineSelectedItemsArray(), {
                     headers: {
@@ -245,7 +245,7 @@ export default defineComponent({
                     () => {
                         this.$store.commit('setInfo', { title: this.$t('common.import'), msg: this.$t('importExport.import.successfullyCompleted') })
 
-                        this.$store.commit('setLoading', false)
+                        this.$store.setLoading(false)
                     },
                     () => this.$store.commit('setError', { title: this.$t('common.error.import'), msg: this.$t('importExport.import.completedWithErrors') })
                 )
