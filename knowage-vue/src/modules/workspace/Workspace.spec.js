@@ -11,8 +11,15 @@ import InputText from 'primevue/inputtext'
 import ProgressBar from 'primevue/progressbar'
 import Workspace from './Workspace.vue'
 import Toolbar from 'primevue/toolbar'
-
 vi.mock('axios')
+
+const crypto = require('crypto')
+
+Object.defineProperty(global.self, 'crypto', {
+    value: {
+        getRandomValues: (arr) => crypto.randomBytes(arr.length)
+    }
+})
 
 const $http = { get: vi.fn().mockImplementation(() => Promise.resolve({ data: [] })) }
 
