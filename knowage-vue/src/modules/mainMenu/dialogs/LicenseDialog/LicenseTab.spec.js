@@ -69,7 +69,7 @@ const factory = (licenses, host) => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $http
             }

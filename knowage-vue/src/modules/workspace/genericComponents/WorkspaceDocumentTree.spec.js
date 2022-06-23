@@ -81,7 +81,7 @@ const $store = {
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = () => {
@@ -95,7 +95,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 InputText,
@@ -103,7 +103,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $router
             }
         }

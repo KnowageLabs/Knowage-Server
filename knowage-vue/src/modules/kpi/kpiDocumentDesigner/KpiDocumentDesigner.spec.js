@@ -64,7 +64,7 @@ const $store = {
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = () => {
@@ -77,7 +77,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 KpiDocumentDesignerDocumentTypeCard: true,
@@ -94,7 +94,7 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $http,
-                $store,
+
                 $confirm,
                 $router
             }

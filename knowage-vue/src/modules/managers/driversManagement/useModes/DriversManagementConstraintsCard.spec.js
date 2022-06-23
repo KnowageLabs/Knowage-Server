@@ -44,17 +44,13 @@ const $confirm = {
     require: vi.fn()
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = () => {
     return mount(ConstraintsCard, {
         props: {
             constraints: [...mockedConstraints]
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Column,
                 Card,
@@ -63,7 +59,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm
             }
         }

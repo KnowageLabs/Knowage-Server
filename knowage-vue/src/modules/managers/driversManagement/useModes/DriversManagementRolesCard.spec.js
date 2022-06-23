@@ -32,17 +32,13 @@ const $confirm = {
     require: vi.fn()
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = () => {
     return mount(RolesCard, {
         props: {
             roles: [...mockedRoles]
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Column,
                 Card,
@@ -51,7 +47,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm
             }
         }

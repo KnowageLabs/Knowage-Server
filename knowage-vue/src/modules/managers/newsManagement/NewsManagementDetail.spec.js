@@ -1,23 +1,12 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
 import NewsManagementDetail from './NewsManagementDetail.vue'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 
-const mockedNews = {
-    id: 1,
-    title: 'First news',
-    description: 'Description',
-    type: 1,
-    html: '<p>Test</p>',
-    roles: mockedRoles,
-    expirationDate: '2019-10-02 00:00:00.0',
-    active: true
-}
 const mockedRoles = [
     {
         id: 1,
@@ -32,6 +21,18 @@ const mockedRoles = [
         name: 'dev'
     }
 ]
+
+const mockedNews = {
+    id: 1,
+    title: 'First news',
+    description: 'Description',
+    type: 1,
+    html: '<p>Test</p>',
+    roles: mockedRoles,
+    expirationDate: '2019-10-02 00:00:00.0',
+    active: true
+}
+
 vi.mock('axios')
 
 const $http = {
@@ -46,18 +47,15 @@ const $http = {
     post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const $router = {
-    replace: jest.fn(),
-    push: jest.fn()
+    replace: vi.fn(),
+    push: vi.fn()
 }
 
 const factory = () => {
     return mount(NewsManagementDetail, {
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 ProgressBar,
@@ -66,7 +64,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $router,
                 $http
             }

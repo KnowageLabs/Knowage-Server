@@ -114,7 +114,7 @@ const factory = (documents) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 DocumentBrowserBreadcrumb: true,
                 DocumentBrowserTable: true,

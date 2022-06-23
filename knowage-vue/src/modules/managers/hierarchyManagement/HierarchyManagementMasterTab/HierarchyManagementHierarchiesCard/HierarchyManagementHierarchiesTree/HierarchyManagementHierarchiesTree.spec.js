@@ -555,10 +555,6 @@ const $http = {
     get: vi.fn().mockImplementation(() => Promise.resolve({ data: { root: [] } }))
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = (treeMode) => {
     return mount(HierarchyManagementHierarchiesTree, {
         props: {

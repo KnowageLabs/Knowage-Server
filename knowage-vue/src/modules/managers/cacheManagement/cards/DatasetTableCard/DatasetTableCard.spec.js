@@ -32,10 +32,6 @@ const $http = {
     delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const $confirm = {
     require: vi.fn()
 }
@@ -46,11 +42,11 @@ const factory = (datasetMetadataList) => {
             datasetMetadataList
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, Card, Column, DataTable, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $http
             }

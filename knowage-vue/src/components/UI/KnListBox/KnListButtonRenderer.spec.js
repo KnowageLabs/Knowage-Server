@@ -20,10 +20,6 @@ const $confirm = {
     require: vi.fn()
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = () => {
     return mount(KnListButtonRenderer, {
         props: {
@@ -41,7 +37,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm
             }
         }

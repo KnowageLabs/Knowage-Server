@@ -64,7 +64,7 @@ const factory = (folders) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Tree
             },

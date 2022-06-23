@@ -52,12 +52,8 @@ const $confirm = {
     require: vi.fn()
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const router = createRouter({
@@ -103,7 +99,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $router,
                 $http

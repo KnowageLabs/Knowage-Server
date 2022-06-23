@@ -117,7 +117,7 @@ const factory = (documents) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Column,

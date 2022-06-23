@@ -26,7 +26,7 @@ const factory = () => {
             stubs: { Button, InputText },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $http
             }
         }

@@ -58,19 +58,16 @@ const $http = {
 const $confirm = {
     require: vi.fn()
 }
-const $store = {
-    commit: jest.fn()
-}
 
 const factory = () => {
     return mount(ProfileAttributesManagement, {
         attachToDocument: true,
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, InputText, ProgressBar, Toolbar, Card },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $http
             }

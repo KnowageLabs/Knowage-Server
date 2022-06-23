@@ -101,17 +101,13 @@ const $confirm = {
     require: vi.fn()
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = () => {
     return mount(Registry, {
         props: {
             id: '1'
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 RegistryDatatable: true,
@@ -122,7 +118,7 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $confirm,
-                $store,
+
                 $http
             }
         }

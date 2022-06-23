@@ -269,7 +269,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $router,
                 $http

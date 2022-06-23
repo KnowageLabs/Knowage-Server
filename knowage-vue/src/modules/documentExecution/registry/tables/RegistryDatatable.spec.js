@@ -297,7 +297,7 @@ const factory = (rows) => {
             id: '1'
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Calendar: true,

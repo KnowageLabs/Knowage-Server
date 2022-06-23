@@ -46,7 +46,7 @@ const factory = () => {
             stubs: { Button, Dialog, InputText, CalendarManagementDetailForm: true, CalendarManagementDetailTable: true, ProgressBar, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $http,
                 $confirm
             }

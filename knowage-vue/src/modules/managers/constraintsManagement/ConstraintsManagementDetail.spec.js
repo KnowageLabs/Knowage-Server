@@ -58,9 +58,6 @@ const mockedDomains = [
         VALUE_CD: 'MINLENGTH'
     }
 ]
-const $store = {
-    commit: jest.fn()
-}
 
 const factory = () => {
     return mount(ConstraintsManagementDetail, {

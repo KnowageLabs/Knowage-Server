@@ -102,14 +102,10 @@ const $confirm = {
     require: vi.fn()
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = () => {
     return mount(ConstraintsManagement, {
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Avatar,
                 Button,
@@ -123,7 +119,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $http
             }

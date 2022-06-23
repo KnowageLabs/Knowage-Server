@@ -61,10 +61,6 @@ const $http = {
     })
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = () => {
     return mount(CrossNavigationManagementDetail, {
         global: {
@@ -77,7 +73,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $http
             }
         }

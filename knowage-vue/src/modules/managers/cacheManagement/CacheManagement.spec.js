@@ -1,11 +1,11 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import CacheManagement from './CacheManagement.vue'
 import flushPromises from 'flush-promises'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
+import mainStore from '../../../App.store'
 
 const mockedCache = { totalMemory: 1073741824, availableMemory: 1073709056, availableMemoryPercentage: 100, cachedObjectsCount: 2, cleaningEnabled: true, cleaningQuota: '90%' }
 const mockedDatasets = [
@@ -48,18 +48,13 @@ afterEach(() => {
     vi.clearAllMocks()
 })
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = () => {
     return mount(CacheManagement, {
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { DatasetTableCard: true, GeneralSettingsCard: true, ProgressBar, RuntimeInformationCard: true, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $http
             }
         }
@@ -99,11 +94,12 @@ describe('Cache Management loading', () => {
     it('shows error dialog if there is no selected dataset returned', async () => {
         mockedDatasets[0].writeDefault = false
         const wrapper = factory()
+        const store = mainStore()
 
         await flushPromises()
 
         expect(wrapper.vm.datasources).toStrictEqual(mockedDatasets.slice(0, 2))
-        expect(store.setInfo).toHaveBeenCalledTimes(1)
+        expect(store.setError).toHaveBeenCalledTimes(1)
         expect(wrapper.vm.selectedDatasource).toStrictEqual(null)
     })
 })

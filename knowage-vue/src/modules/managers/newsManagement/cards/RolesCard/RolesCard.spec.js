@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -39,6 +39,7 @@ const factory = (categoryList, selected) => {
             selected
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Column,
                 Card,

@@ -49,9 +49,6 @@ const $http = {
 const $confirm = {
     require: vi.fn()
 }
-const $store = {
-    commit: jest.fn()
-}
 
 const factory = () => {
     return mount(RelatedDocumentList, {
@@ -60,11 +57,11 @@ const factory = () => {
         },
         attachToDocument: true,
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, InputText, ProgressBar, Toolbar, Card },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $http
             }

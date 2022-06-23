@@ -85,9 +85,6 @@ const mockedNavigation = {
     ],
     newRecord: false
 }
-const $store = {
-    commit: jest.fn()
-}
 
 const factory = () => {
     return mount(DocParameters, {

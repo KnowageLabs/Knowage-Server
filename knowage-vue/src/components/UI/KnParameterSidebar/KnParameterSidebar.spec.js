@@ -397,7 +397,7 @@ const $store = {
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = () => {
@@ -432,7 +432,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $router
             }
         }

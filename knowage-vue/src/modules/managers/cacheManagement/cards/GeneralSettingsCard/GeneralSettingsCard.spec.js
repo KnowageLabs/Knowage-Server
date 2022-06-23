@@ -91,10 +91,6 @@ const $http = {
     delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = (item, datasources, selectedDatasource) => {
     return mount(GeneralSettingsCard, {
         props: {
@@ -103,11 +99,11 @@ const factory = (item, datasources, selectedDatasource) => {
             selectedDatasource
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, Card, Dropdown, InputNumber, InputText, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $http
             }
         }

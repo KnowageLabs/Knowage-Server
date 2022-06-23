@@ -1,6 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
-import { createTestingPinia } from '@pinia/testing'
+import { describe, expect, it, vi } from 'vitest'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'

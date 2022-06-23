@@ -81,19 +81,15 @@ const $confirm = {
     require: vi.fn()
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = () => {
     return mount(Dossier, {
         attachToDocument: true,
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, InputText, ProgressBar, DataTable, Column, Toolbar, Card, KnHint },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $http
             }

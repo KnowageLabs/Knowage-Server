@@ -39,7 +39,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Accordion,
@@ -53,7 +53,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $http,
                 $router
             }

@@ -125,9 +125,6 @@ const router = createRouter({
     ]
 })
 
-const $store = {
-    commit: jest.fn()
-}
 const factory = () => {
     return mount(AlertDefinition, {
         global: {
@@ -143,7 +140,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $route,
                 $router,

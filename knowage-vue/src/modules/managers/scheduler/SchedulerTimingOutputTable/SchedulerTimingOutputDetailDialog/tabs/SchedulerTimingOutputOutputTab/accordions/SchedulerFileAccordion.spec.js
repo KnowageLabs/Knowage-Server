@@ -30,7 +30,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Accordion,
                 AccordionTab,

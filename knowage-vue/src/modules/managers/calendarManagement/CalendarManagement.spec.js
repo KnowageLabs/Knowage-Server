@@ -72,7 +72,7 @@ const factory = () => {
             stubs: { Button, Column, DataTable, InputText, KnFabButton, KnOverlaySpinnerPanel, ProgressBar, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $http
             }
