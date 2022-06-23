@@ -70,6 +70,7 @@ import DataTable from 'primevue/datatable'
 import InputNumber from 'primevue/inputnumber'
 import RadioButton from 'primevue/radiobutton'
 import executeCardDescriptor from './KpiSchedulerExecuteCardDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'kpi-scheduler-execute-card',
@@ -88,6 +89,10 @@ export default defineComponent({
             numberOfLogs: 10,
             loading: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadSelectedSchedule()

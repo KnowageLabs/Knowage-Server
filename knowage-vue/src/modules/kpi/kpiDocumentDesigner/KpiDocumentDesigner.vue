@@ -43,7 +43,7 @@ import KpiDocumentDesignerStyleCard from './KpiDocumentDesignerStyleCard/KpiDocu
 import KpiDocumentDesignerTypeCard from './KpiDocumentDesignerTypeCard/KpiDocumentDesignerTypeCard.vue'
 import KpiDocumentDesignerSaveDialog from './KpiDocumentDesignerSaveDialog/KpiDocumentDesignerSaveDialog.vue'
 import KpiDocumentDesignerScorecardsListCard from './KpiDocumentDesignerScorecardsListCard/KpiDocumentDesignerScorecardsListCard.vue'
-
+import mainStore from '../../../App.store'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
@@ -71,6 +71,10 @@ export default defineComponent({
         saveButtonDisabled(): boolean {
             return this.kpiDesigner !== null && ((this.kpiDesigner.chart.type === 'kpi' && this.kpiTypeInvalid()) || (this.kpiDesigner.chart.type === 'scorecard' && this.scorecardTypeInvalid()))
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadPage()
@@ -224,6 +228,7 @@ export default defineComponent({
         },
         getFormattedKpiDesigner() {
             const tempDesigner = deepcopy(this.kpiDesigner)
+            if (!tempDesigner) return
 
             if (tempDesigner.chart.type === 'kpi') {
                 delete tempDesigner.chart.data.scorecard

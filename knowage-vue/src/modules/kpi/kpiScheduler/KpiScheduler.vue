@@ -59,6 +59,7 @@ import kpiSchedulerDescriptor from './KpiSchedulerDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import Menu from 'primevue/menu'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'kpi-scheduler',
@@ -72,7 +73,10 @@ export default defineComponent({
             touched: false
         }
     },
-
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         await this.loadPage()
     },

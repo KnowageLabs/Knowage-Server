@@ -66,6 +66,7 @@ import KpiSchedulerSaveDialog from './KpiSchedulerSaveDialog.vue'
 import kpiSchedulerTabViewDescriptor from './KpiSchedulerTabViewDescriptor.json'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'kpi-scheduler-tab-view',
@@ -109,6 +110,10 @@ export default defineComponent({
         async clone() {
             await this.loadPage()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadPage()
