@@ -1,9 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
-import flushPromises from 'flush-promises'
 import KpiDocumentDesigner from './KpiDocumentDesigner.vue'
 import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
@@ -77,7 +75,17 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [createTestingPinia()],
+            plugins: [
+                createTestingPinia({
+                    initialState: {
+                        store: {
+                            user: {
+                                functionalities: ['ScorecardsManagement']
+                            }
+                        }
+                    }
+                })
+            ],
             stubs: {
                 Button,
                 KpiDocumentDesignerDocumentTypeCard: true,
@@ -94,7 +102,6 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $http,
-
                 $confirm,
                 $router
             }
