@@ -50,6 +50,7 @@ import Column from 'primevue/column'
 import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
 import Card from 'primevue/card'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: { Card, Column, DataTable, Dropdown, Checkbox },
@@ -62,6 +63,10 @@ export default defineComponent({
             valueTypes: linkTabDescriptor.valueTypes,
             fieldsMetadata: [] as any
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.fieldsMetadata = this.propMetadata

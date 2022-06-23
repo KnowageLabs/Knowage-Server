@@ -43,7 +43,7 @@ import QBEFilterCard from './QBEFilterCard.vue'
 import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
 import QBETemporalFilterDialog from './QBETemporalFilterDialog.vue'
 import QBEFilterParameters from './QBEFilterParameters.vue'
-
+import mainStore from '../../../../App.store'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 
@@ -78,6 +78,10 @@ export default defineComponent({
         propExpression() {
             this.loadExpression()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadData()

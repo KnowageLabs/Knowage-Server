@@ -50,6 +50,7 @@ import PersistenceTab from './QBESavingDialogPersistence.vue'
 import MetadataCard from './QbeSavingDialogMetadata.vue'
 import useValidate from '@vuelidate/core'
 import descriptor from './QBESavingDialogDescriptor.json'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
@@ -73,6 +74,10 @@ export default defineComponent({
                 repeatInterval: null as String | null
             } as any
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.getDomainData()

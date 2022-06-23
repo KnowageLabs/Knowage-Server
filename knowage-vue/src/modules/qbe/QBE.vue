@@ -202,7 +202,7 @@ import ProgressSpinner from 'primevue/progressspinner'
 import calcFieldDescriptor from './QBECalcFieldDescriptor.json'
 import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
 import Dropdown from 'primevue/dropdown'
-
+import mainStore from '../../App.store'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 
@@ -298,6 +298,10 @@ export default defineComponent({
         async dataset() {
             await this.loadPage()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.uniqueID = cryptoRandomString({ length: 16, type: 'base64' })
