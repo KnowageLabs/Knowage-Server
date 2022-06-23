@@ -56,6 +56,7 @@ import glossaryDefinitionDescriptor from './GlossaryDefinitionDescriptor.json'
 import GlossaryDefinitionDetail from './GlossaryDefinitionDetail.vue'
 import GlossaryDefinitionInfoDialog from './dialogs/GlossaryDefinitionInfoDialog.vue'
 import GlossaryDefinitionWordEdit from './dialogs/GlossaryDefinitionWordEdit.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'glossary-definition',
@@ -80,6 +81,10 @@ export default defineComponent({
             loading: false,
             editWordDialogVisible: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadPage()

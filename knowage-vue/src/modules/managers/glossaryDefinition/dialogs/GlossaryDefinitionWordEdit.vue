@@ -84,6 +84,8 @@ import glossaryDefinitionDescriptor from '../GlossaryDefinitionDescriptor.json'
 import glossaryDefinitionDialogValidationDescriptor from './GlossaryDefinitionDialogValidationDescriptor.json'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import mainStore from '../../../../App.store'
+
 export default defineComponent({
     name: 'edit-word',
     components: {
@@ -168,6 +170,10 @@ export default defineComponent({
                 }
             })
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     mounted() {
         if (this.propWord) {

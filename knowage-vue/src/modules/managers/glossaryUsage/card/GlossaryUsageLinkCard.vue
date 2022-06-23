@@ -76,6 +76,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import glossaryUsageLinkCardDescriptor from './GlossaryUsageLinkCardDescriptor.json'
 import GlossaryUsageLinkTree from './GlossaryUsageLinkTree.vue'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'glossary-usage-link-card',
@@ -112,6 +113,10 @@ export default defineComponent({
             },
             deep: true
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadAssociatedWords()

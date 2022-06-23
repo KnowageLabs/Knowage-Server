@@ -26,6 +26,7 @@ import { AxiosResponse } from 'axios'
 import GlossaryUsageNavigationCard from './card/GlossaryUsageNavigationCard.vue'
 import GlossaryUsageLinkCard from './card/GlossaryUsageLinkCard.vue'
 import glossaryUsageDescriptor from './GlossaryUsageDescriptor.json'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'glossary-usage-detail',
@@ -65,6 +66,10 @@ export default defineComponent({
             },
             deep: true
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadNavigationItems('all', 'word')

@@ -120,6 +120,7 @@ import GlossaryDefinitionHint from './GlossaryDefinitionHint.vue'
 import GlossaryDefinitionNodeDialog from './dialogs/GlossaryDefinitionNodeDialog.vue'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Tree from 'primevue/tree'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'glossary-definition-detail',
@@ -160,6 +161,10 @@ export default defineComponent({
             this.updateParentNode('HAVE_WORD_CHILD', true)
             await this.listContents(this.selectedGlossaryId as number, this.selectedNode)
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadGlossaryList()

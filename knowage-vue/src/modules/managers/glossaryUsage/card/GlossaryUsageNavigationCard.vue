@@ -58,6 +58,7 @@ import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import glossaryUsageNavigationCardDescriptor from './GlossaryUsageNavigationCardDescriptor.json'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'glossary-usage-navigation-card',
@@ -103,6 +104,10 @@ export default defineComponent({
             }
             return index !== -1
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.user = (this.store.$state as any).user

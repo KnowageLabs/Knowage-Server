@@ -30,8 +30,8 @@ import KnInputFile from '@/components/UI/KnInputFile.vue'
 import { IGalleryTemplate } from './GalleryManagement'
 import Menu from 'primevue/menu'
 import galleryDescriptor from './GalleryManagementDescriptor.json'
-
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'gallery-management',
@@ -59,6 +59,10 @@ export default defineComponent({
             ],
             importingTemplate: {} as string | ArrayBuffer
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadAllTemplates()

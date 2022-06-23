@@ -109,6 +109,7 @@ import TabPanel from 'primevue/tabpanel'
 import Textarea from 'primevue/textarea'
 import galleryDescriptor from './GalleryManagementDescriptor.json'
 import { IGalleryTemplate } from './GalleryManagement'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'gallery-management-detail',
@@ -137,6 +138,10 @@ export default defineComponent({
             windowWidth: window.innerWidth,
             windowWidthBreakPoint: 1500
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadTemplate(this.id)
