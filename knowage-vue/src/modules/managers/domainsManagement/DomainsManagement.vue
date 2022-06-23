@@ -85,6 +85,7 @@ import DataTable from 'primevue/datatable'
 import domainsManagementDescriptor from './DomainsManagementDescriptor.json'
 import DomainsManagementDialog from './DomainsManagementDialog.vue'
 import KnFabButton from '../../../components/UI/KnFabButton.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'domains-management',
@@ -125,6 +126,10 @@ export default defineComponent({
             loading: false,
             selectedDomain: null as iDomain | null
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadAllDomains()
