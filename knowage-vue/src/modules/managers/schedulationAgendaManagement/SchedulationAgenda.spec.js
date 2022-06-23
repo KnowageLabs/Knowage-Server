@@ -2,7 +2,6 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 import { createRouter, createWebHistory } from 'vue-router'
-import axios from 'axios'
 import PrimeVue from 'primevue/config'
 import Card from 'primevue/card'
 import Toolbar from 'primevue/toolbar'
@@ -241,21 +240,17 @@ const router = createRouter({
 vi.mock('axios')
 
 const $confirm = {
-    require: jest.fn(() => {})
-}
-
-const $store = {
-    commit: jest.fn(() => {})
+    require: vi.fn(() => {})
 }
 
 const $router = {
-    push: jest.fn(() => {})
+    push: vi.fn(() => {})
 }
 
 const factory = () => {
     return mount(SchedulationAgenda, {
         global: {
-            plugins: [PrimeVue, router],
+            plugins: [PrimeVue, router, createTestingPinia()],
             stubs: {
                 Calendar,
                 Card,
@@ -269,7 +264,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-
                 $confirm,
                 $router,
                 $http

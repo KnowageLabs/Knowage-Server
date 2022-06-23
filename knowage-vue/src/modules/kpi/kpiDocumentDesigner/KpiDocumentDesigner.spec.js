@@ -53,14 +53,6 @@ const $confirm = {
     require: vi.fn()
 }
 
-const $store = {
-    state: {
-        user: {
-            functionalities: ['ScorecardsManagement']
-        }
-    }
-}
-
 const $router = {
     push: vi.fn()
 }

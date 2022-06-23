@@ -183,6 +183,7 @@ import Menu from 'primevue/menu'
 import MultiSelect from 'primevue/multiselect'
 import RadioButton from 'primevue/radiobutton'
 import ScrollPanel from 'primevue/scrollpanel'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'kn-parameter-sidebar',
@@ -245,6 +246,10 @@ export default defineComponent({
         positionClass(): string {
             return this.document?.parametersRegion ? 'kn-parameter-sidebar-' + this.document.parametersRegion : 'kn-parameter-sidebar'
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadMode()
