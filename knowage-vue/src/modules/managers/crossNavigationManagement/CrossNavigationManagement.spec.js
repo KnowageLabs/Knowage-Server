@@ -105,7 +105,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [router, PrimeVue],
+            plugins: [router, PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 Card,

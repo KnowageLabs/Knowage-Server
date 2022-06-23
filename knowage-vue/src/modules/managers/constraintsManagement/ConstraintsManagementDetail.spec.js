@@ -62,6 +62,7 @@ const mockedDomains = [
 const factory = () => {
     return mount(ConstraintsManagementDetail, {
         global: {
+            plugins: [createTestingPinia()],
             props: {
                 selectedConstraint: {},
                 domains: mockedDomains
@@ -74,8 +75,7 @@ const factory = () => {
                 Toolbar
             },
             mocks: {
-                $t: (msg) => msg,
-                $store
+                $t: (msg) => msg
             }
         }
     })
