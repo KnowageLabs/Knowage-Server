@@ -51,9 +51,13 @@
 				});
 		}
 
+	
+
 		objToReturn.exportWidgetToExcel = function (type, widget, options) {
-
-
+	
+		if (widget.type == "chart") {
+			widget = replaceStringVariables(widget);
+		}
 			/**
 			 * Last parameter is set to TRUE for exporting only one widget, rather than whole document (all table and chart widgets in cockpit)
 			 */
@@ -78,6 +82,16 @@
 						});
 				});
 		}
+		
+	var replaceStringVariables = function (obj){
+		var objString = angular.copy(obj);
+		objString = JSON.stringify(objString);
+  		  objString = objString.replace(/\$V\{([a-zA-Z0-9\-\_]*){1}(?:.([a-zA-Z0-9\-\_]*){1})?\}/g,function(match,p1,p2){
+					return p2 ? cockpitModule_properties.VARIABLES[p1][p2] : cockpitModule_properties.VARIABLES[p1];
+				})
+				
+	return JSON.parse(objString);
+	}
 
 
 		var createRequest = function (type, widget, exportWidget, options) {
