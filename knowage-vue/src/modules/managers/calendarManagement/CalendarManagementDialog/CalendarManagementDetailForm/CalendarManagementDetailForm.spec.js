@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import CalendarManagementDetailForm from './CalendarManagementDetailForm.vue'
 import Calendar from 'primevue/calendar'
@@ -26,15 +25,6 @@ const $http = {
     post: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 
-const $store = {
-    state: {
-        user: {
-            functionalities: ['ManageCalendar']
-        }
-    },
-    commit: jest.fn()
-}
-
 const $confirm = {
     require: vi.fn()
 }
@@ -43,7 +33,18 @@ const factory = () => {
     return mount(CalendarManagementDetailForm, {
         props: { propCalendar: mockedCalendar, generateButtonVisible: true, generateButtonDisabled: true },
         global: {
-            plugins: [PrimeVue],
+            plugins: [
+                PrimeVue,
+                createTestingPinia({
+                    initialState: {
+                        store: {
+                            user: {
+                                functionalities: ['ManageCalendar']
+                            }
+                        }
+                    }
+                })
+            ],
             stubs: { Button, Calendar, Dialog, InputText, CalendarManagementDetailForm: true, CalendarManagementDetailTable: true, ProgressBar, Toolbar },
             mocks: {
                 $t: (msg) => msg,

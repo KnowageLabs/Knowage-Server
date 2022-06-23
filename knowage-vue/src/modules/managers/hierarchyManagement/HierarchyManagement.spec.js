@@ -1,7 +1,5 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import HierarchyManagement from './HierarchyManagement.vue'
 import ProgressSpinner from 'primevue/progressspinner'

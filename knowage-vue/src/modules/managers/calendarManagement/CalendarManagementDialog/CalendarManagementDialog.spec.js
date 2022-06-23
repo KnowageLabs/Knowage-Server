@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import CalendarManagementDialog from './CalendarManagementDialog.vue'
 import Dialog from 'primevue/dialog'
@@ -9,6 +8,7 @@ import InputText from 'primevue/inputtext'
 import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
+import mainStore from '../../../../App.store'
 
 const mockedCalendar = {
     realDateGenerated: [],
@@ -25,15 +25,6 @@ const $http = {
     post: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 
-const $store = {
-    state: {
-        user: {
-            functionalities: ['ManageCalendar']
-        }
-    },
-    commit: jest.fn()
-}
-
 const $confirm = {
     require: vi.fn()
 }
@@ -42,11 +33,21 @@ const factory = () => {
     return mount(CalendarManagementDialog, {
         props: { visible: true, propCalendar: mockedCalendar, domains: [] },
         global: {
-            plugins: [PrimeVue],
+            plugins: [
+                PrimeVue,
+                createTestingPinia({
+                    initialState: {
+                        store: {
+                            user: {
+                                functionalities: ['ManageCalendar']
+                            }
+                        }
+                    }
+                })
+            ],
             stubs: { Button, Dialog, InputText, CalendarManagementDetailForm: true, CalendarManagementDetailTable: true, ProgressBar, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-
                 $http,
                 $confirm
             }
@@ -70,6 +71,7 @@ describe('Calendar Management Dialog', () => {
 
     it('Should show a message if the saving is succesful', async () => {
         const wrapper = factory()
+        const store = mainStore()
 
         wrapper.vm.calendar.name = 'Test'
         wrapper.vm.calendar.calStartDay = 1498867200000

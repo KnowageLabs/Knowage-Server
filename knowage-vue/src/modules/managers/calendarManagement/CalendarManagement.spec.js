@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
 import CalendarManagement from './CalendarManagement.vue'
@@ -58,21 +57,25 @@ const $http = {
 const $confirm = {
     require: vi.fn()
 }
-const $store = {
-    state: {
-        user: {
-            functionalities: ['ManageCalendar']
-        }
-    }
-}
+
 const factory = () => {
     return mount(CalendarManagement, {
         global: {
-            plugins: [PrimeVue],
+            plugins: [
+                PrimeVue,
+                createTestingPinia({
+                    initialState: {
+                        store: {
+                            user: {
+                                functionalities: ['ManageCalendar']
+                            }
+                        }
+                    }
+                })
+            ],
             stubs: { Button, Column, DataTable, InputText, KnFabButton, KnOverlaySpinnerPanel, ProgressBar, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-
                 $confirm,
                 $http
             }
