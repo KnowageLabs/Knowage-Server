@@ -113,7 +113,7 @@ export default defineComponent({
         }
     },
     async created() {
-        this.user = (this.store.state as any).user
+        this.user = (this.store.$state as any).user
         await this.getModelCategories()
         await this.loadBusinessModels()
         if (this.hasEnableFederatedDatasetFunctionality) {

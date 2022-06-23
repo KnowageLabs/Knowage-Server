@@ -117,7 +117,7 @@ export default defineComponent({
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
         isDatasetOwner(): any {
-            return (this.store.state as any).user.userId === this.selectedDataset.owner
+            return (this.store.$state as any).user.userId === this.selectedDataset.owner
         },
         canLoadData(): any {
             if (this.selectedDataset.actions) {
@@ -242,7 +242,7 @@ export default defineComponent({
                     { key: '4', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
                 )
 
-                if ((this.store.state as any).user?.functionalities.includes('DataPreparation')) {
+                if ((this.store.$state as any).user?.functionalities.includes('DataPreparation')) {
 
                     tmp.push(
                         { key: '2', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: true },

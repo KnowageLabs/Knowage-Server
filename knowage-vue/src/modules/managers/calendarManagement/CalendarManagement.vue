@@ -94,7 +94,7 @@ export default defineComponent({
     },
     computed: {
         canManageCalendar(): boolean {
-            return (this.store.state as any).user.functionalities.includes('ManageCalendar')
+            return (this.store.$state as any).user.functionalities.includes('ManageCalendar')
         }
     },
     async created() {
@@ -132,7 +132,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/${calendar.calendarId}/deleteCalendar`)
                 .then(() => {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })

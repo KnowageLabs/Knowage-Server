@@ -130,7 +130,7 @@ export default defineComponent({
         loadDataset() {
             if (this.propDataset) {
                 this.dataset = { ...this.propDataset, id: '', dsVersions: [], usedByNDocs: 0, name: 'CLONE_' + this.propDataset.name, label: 'CLONE_' + this.propDataset.label, description: this.propDataset.description ? 'CLONED ' + this.propDataset.description : '', scopeCd: 'USER' }
-                this.dataset.owner = (this.store.state as any).user.userId
+                this.dataset.owner = (this.store.$state as any).user.userId
                 if (this.dataset.catTypeId) {
                     delete this.dataset.catTypeId
                 }

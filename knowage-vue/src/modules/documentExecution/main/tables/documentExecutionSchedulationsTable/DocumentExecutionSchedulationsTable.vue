@@ -63,6 +63,7 @@ import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
 import documentExecutionSchedulationsTableDescriptor from './DocumentExecutionSchedulationsTableDescriptor.json'
 import DocumentExecutionSnapshotDialog from './DocumentExecutionSnapshotDialog.vue'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'document-execution-schedulations-table',
@@ -84,8 +85,12 @@ export default defineComponent({
             this.loadSchedulations()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
-        this.user = (this.store.state as any).user
+        this.user = (this.store.$state as any).user
         this.loadSchedulations()
     },
     methods: {

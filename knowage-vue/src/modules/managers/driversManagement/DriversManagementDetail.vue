@@ -79,7 +79,7 @@ export default defineComponent({
             this.driver = { ...this.selectedDriver } as any
             this.getModes()
         }
-        this.showMapDriver = (this.store.state as any).user.functionalities.indexOf('MapDriverManagement') > -1
+        this.showMapDriver = (this.store.$state as any).user.functionalities.indexOf('MapDriverManagement') > -1
         this.loadAll()
     },
 

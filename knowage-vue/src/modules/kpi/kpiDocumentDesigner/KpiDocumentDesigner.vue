@@ -66,7 +66,7 @@ export default defineComponent({
     },
     computed: {
         showScorecards(): boolean {
-            return (this.store.state as any).user.functionalities.includes('ScorecardsManagement')
+            return (this.store.$state as any).user.functionalities.includes('ScorecardsManagement')
         },
         saveButtonDisabled(): boolean {
             return this.kpiDesigner !== null && ((this.kpiDesigner.chart.type === 'kpi' && this.kpiTypeInvalid()) || (this.kpiDesigner.chart.type === 'scorecard' && this.scorecardTypeInvalid()))

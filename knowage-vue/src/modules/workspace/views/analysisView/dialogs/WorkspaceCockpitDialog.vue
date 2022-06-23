@@ -36,7 +36,7 @@ export default defineComponent({
     },
     methods: {
         createUrl() {
-            const user = (this.store.state as any).user
+            const user = (this.store.$state as any).user
             const language = user.locale.split('_')[0]
             const uniqueID = user.userUniqueIdentifier
             const country = user.locale.split('_')[1]

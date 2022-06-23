@@ -119,7 +119,7 @@ export default defineComponent({
                     this.meta = applyPatch(this.meta, response.data).newDocument
                     this.loadData()
 
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })

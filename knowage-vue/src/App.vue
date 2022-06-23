@@ -147,7 +147,7 @@ export default defineComponent({
                 })
         },
         async loadInternationalization() {
-            let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : this.store.state.locale
+            let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : this.store.$state.locale
             let currLanguage = ''
             if (currentLocale && Object.keys(currentLocale).length > 0) currentLocale = currentLocale.replaceAll('_', '-')
             else currentLocale = 'en-US'

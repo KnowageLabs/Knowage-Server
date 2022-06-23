@@ -64,7 +64,7 @@ export default defineComponent({
         }
     },
     created() {
-        this.user = (this.store.state as any).user
+        this.user = (this.store.$state as any).user
         this.loadTable()
     },
     methods: {

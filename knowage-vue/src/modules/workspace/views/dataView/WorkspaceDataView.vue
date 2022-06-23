@@ -165,13 +165,13 @@ export default defineComponent({
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
         isDatasetOwner(): any {
-            return (this.store.state as any).user.userId === this.selectedDataset.owner
+            return (this.store.$state as any).user.userId === this.selectedDataset.owner
         },
         showCkanIntegration(): any {
-            return (this.store.state as any).user.functionalities.indexOf('CkanIntegrationFunctionality') > -1
+            return (this.store.$state as any).user.functionalities.indexOf('CkanIntegrationFunctionality') > -1
         },
         showQbeEditButton(): any {
-            return (this.store.state as any).user.userId === this.selectedDataset.owner && (this.selectedDataset.dsTypeCd == 'Federated' || this.selectedDataset.dsTypeCd == 'Qbe')
+            return (this.store.$state as any).user.userId === this.selectedDataset.owner && (this.selectedDataset.dsTypeCd == 'Federated' || this.selectedDataset.dsTypeCd == 'Qbe')
         },
         datasetHasDrivers(): any {
             return this.selectedDataset.drivers && this.selectedDataset.length > 0
@@ -235,9 +235,9 @@ export default defineComponent({
     },
     async created() {
         await this.getAllData()
-        this.user = (this.store.state as any).user
+        this.user = (this.store.$state as any).user
 
-        if ((this.store.state as any).user?.functionalities.includes('DataPreparation')) {
+        if ((this.store.$state as any).user?.functionalities.includes('DataPreparation')) {
             var url = new URL(window.location.origin)
             url.protocol = url.protocol.replace('http', 'ws')
             let uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VITE_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
@@ -440,7 +440,7 @@ export default defineComponent({
                 .catch(() => {})
 
             // listen on websocket for avro export job to be finished
-            if ((this.store.state as any).user?.functionalities.includes('DataPreparation')) this.client.publish({ destination: '/app/prepare', body: dsId })
+            if ((this.store.$state as any).user?.functionalities.includes('DataPreparation')) this.client.publish({ destination: '/app/prepare', body: dsId })
         },
         openDataPreparation(dataset: any) {
             if (dataset.dsTypeCd == 'Prepared') {
@@ -711,7 +711,7 @@ export default defineComponent({
         }
     },
     unmounted() {
-        if ((this.store.state as any).user?.functionalities.includes('DataPreparation')) this.client.deactivate()
+        if ((this.store.$state as any).user?.functionalities.includes('DataPreparation')) this.client.deactivate()
     }
 })
 </script>

@@ -160,14 +160,14 @@ export default defineComponent({
                 this.selectedTheme.config = { ...this.currentTheme, ...newValues.config }
             } else {
                 this.store.commit('setTheme', {})
-                this.themeHelper.setTheme((this.store.state as any).defaultTheme)
+                this.themeHelper.setTheme((this.store.$state as any).defaultTheme)
             }
         },
         selectTheme(event) {
             this.overrideDefaultValues(event.item)
         },
         setActiveTheme(theme) {
-            let newTheme = { ...(this.store.state as any).defaultTheme, ...theme.config }
+            let newTheme = { ...(this.store.$state as any).defaultTheme, ...theme.config }
             this.store.commit('setTheme', newTheme)
             this.themeHelper.setTheme(newTheme)
         },
@@ -178,7 +178,7 @@ export default defineComponent({
     watch: {
         selectedTheme(newSelected, oldSelected) {
             if (newSelected != oldSelected) {
-                this.selectedTheme = { ...(this.store.state as any).defaultTheme, ...newSelected.config }
+                this.selectedTheme = { ...(this.store.$state as any).defaultTheme, ...newSelected.config }
             }
         }
     }

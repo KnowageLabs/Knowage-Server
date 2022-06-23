@@ -216,7 +216,7 @@ export default defineComponent({
             await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=DELETE_RECORDS_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then((response: AxiosResponse<any>) => {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })

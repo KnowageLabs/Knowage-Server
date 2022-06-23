@@ -240,7 +240,7 @@ export default defineComponent({
             await this.$http[method](import.meta.env.VITE_RESTFUL_SERVICES_PATH + url)
                 .then(() => {
                     type === 'tree' ? this.removeWordFromTreeWords(wordId, linkItem.parent) : this.removeWordFromAssociatedWords(wordId, linkItem.id)
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })

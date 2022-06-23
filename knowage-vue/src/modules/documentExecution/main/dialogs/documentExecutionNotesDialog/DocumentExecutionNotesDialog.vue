@@ -55,6 +55,7 @@ import FabButton from '@/components/UI/KnFabButton.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import { mapState } from 'pinia'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'document-execution-notes-dialog',
@@ -88,9 +89,13 @@ export default defineComponent({
         exportButtonDisabled(): boolean {
             return this.notes.length === 0
         },
-        ...mapState({
+        ...mapState(mainStore, {
             isEnterprise: 'isEnterprise'
         })
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async mounted() {
         await this.loadDocument()
@@ -118,7 +123,7 @@ export default defineComponent({
                     })
                 })
                 .catch((error: any) =>
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: error
                     })
@@ -138,7 +143,7 @@ export default defineComponent({
                     await this.loadNotes()
                 })
                 .catch((error: any) =>
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: error
                     })
@@ -154,7 +159,7 @@ export default defineComponent({
             await this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}/${note.id}`)
                 .then(async () => {
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
@@ -163,7 +168,7 @@ export default defineComponent({
                     await this.loadNotes()
                 })
                 .catch((error: any) =>
-                    this.store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: error
                     })

@@ -41,6 +41,7 @@ import Dialog from 'primevue/dialog'
 import documentExecutionLinkDialogDescriptor from './DocumentExecutionLinkDialogDescriptor.json'
 import Textarea from 'primevue/textarea'
 import qs from 'qs'
+import mainStore from '../.././../../../App.store'
 
 export default defineComponent({
     name: 'document-execution-link-dialog',
@@ -66,6 +67,10 @@ export default defineComponent({
             this.loadLink()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadLink()
     },
@@ -82,7 +87,7 @@ export default defineComponent({
             this.linkParameters = this.parameters as any[]
         },
         getPublicUrl() {
-            const tenet = (this.store.state as any).user.organization
+            const tenet = (this.store.$state as any).user.organization
 
             if (!this.document) return
 

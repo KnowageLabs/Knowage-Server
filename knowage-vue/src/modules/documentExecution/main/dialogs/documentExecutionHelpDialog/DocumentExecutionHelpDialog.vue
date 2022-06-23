@@ -32,6 +32,7 @@ import Dialog from 'primevue/dialog'
 import documentExecutionHelpDialogDescriptor from './DocumentExecutionHelpDialogDescriptor.json'
 import DocumentExecutionWordDetail from './DocumentExecutionWordDetail.vue'
 import Listbox from 'primevue/listbox'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'document-execution-help-dialog',
@@ -52,6 +53,10 @@ export default defineComponent({
         async propDocument() {
             await this.loadDocument()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadDocument()

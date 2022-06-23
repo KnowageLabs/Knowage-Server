@@ -301,7 +301,7 @@ export default defineComponent({
     },
     async created() {
         this.uniqueID = cryptoRandomString({ length: 16, type: 'base64' })
-        this.user = (this.store.state as any).user
+        this.user = (this.store.$state as any).user
         this.userRole = this.user.sessionRole && this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
         if (this.userRole) {
             await this.loadPage()

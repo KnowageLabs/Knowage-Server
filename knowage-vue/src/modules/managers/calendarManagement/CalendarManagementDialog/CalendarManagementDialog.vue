@@ -55,7 +55,7 @@ export default defineComponent({
             return this.calendar === null || !this.calendar.calendar || !this.calendar.calStartDay || !this.calendar.calEndDay
         },
         canManageCalendar(): boolean {
-            return (this.store.state as any).user.functionalities.includes('ManageCalendar')
+            return (this.store.$state as any).user.functionalities.includes('ManageCalendar')
         }
     },
     watch: {

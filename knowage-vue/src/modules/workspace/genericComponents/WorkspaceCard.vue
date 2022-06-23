@@ -37,17 +37,17 @@ export default defineComponent({
     props: { visible: Boolean, viewType: String, document: Object as any, isPrepared: Boolean },
     computed: {
         isOwner(): any {
-            return (this.store.state as any).user.fullName === this.document.creationUser
+            return (this.store.$state as any).user.fullName === this.document.creationUser
         },
 
         isAnalysisShared(): any {
             return this.document.functionalities.length > 1
         },
         isDatasetOwner(): any {
-            return (this.store.state as any).user.fullName === this.document.owner
+            return (this.store.$state as any).user.fullName === this.document.owner
         },
         showQbeEditButton(): any {
-            return (this.store.state as any).user.fullName === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
+            return (this.store.$state as any).user.fullName === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
         },
         datasetHasDrivers(): any {
             return this.document.drivers && this.document.length > 0
@@ -184,7 +184,7 @@ export default defineComponent({
                     { key: '9', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: this.emitEvent('deleteDataset'), visible: this.isDatasetOwner }
                 )
 
-                if ((this.store.state as any).user?.functionalities.includes('DataPreparation')) {
+                if ((this.store.$state as any).user?.functionalities.includes('DataPreparation')) {
                     tmp.push(
                         { key: '7', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: this.emitEvent('openDataPreparation'), visible: this.canLoadData && this.document.dsTypeCd != 'Qbe' && (this.document.pars && this.document.pars.length == 0) },
                         { key: '8', label: this.$t('workspace.myData.monitoring'), icon: 'fas fa-cogs', command: this.emitEvent('monitoring'), visible: this.canLoadData && this.document.dsTypeCd != 'Qbe' && (this.document.pars && this.document.pars.length == 0) }
@@ -197,7 +197,7 @@ export default defineComponent({
             } else if (this.viewType === 'federationDataset') {
                 this.menuButtons.push( 
                     { key: '0', icon: 'pi pi-pencil', label: this.$t('workspace.myModels.editDataset'), class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('editDataset') },
-                    { key: '1', icon: 'fas fa-trash-alt', label: this.$t('workspace.myModels.deleteDataset'), class: 'p-button-text p-button-rounded p-button-plain', visible: (this.store.state as any).user.isSuperadmin || (this.store.state as any).user.userId === this.document.owner, command: this.emitEvent('deleteDataset') })
+                    { key: '1', icon: 'fas fa-trash-alt', label: this.$t('workspace.myModels.deleteDataset'), class: 'p-button-text p-button-rounded p-button-plain', visible: (this.store.$state as any).user.isSuperadmin || (this.store.$state as any).user.userId === this.document.owner, command: this.emitEvent('deleteDataset') })
             } else if (this.viewType === 'repository') {
                 this.menuButtons.push(
                     { key: '3', label: this.$t('workspace.myRepository.moveDocument'), icon: 'fas fa-share', command:  this.emitEvent('moveDocumentToFolder') },

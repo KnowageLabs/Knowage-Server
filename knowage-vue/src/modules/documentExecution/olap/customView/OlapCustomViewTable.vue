@@ -94,7 +94,7 @@ export default defineComponent({
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `/1.0/olapsubobjects/removeOlapSubObject?idObj=${customView.id}`)
                 .then(() => {
                     this.removeCustomView(customView)
-                    this.store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })

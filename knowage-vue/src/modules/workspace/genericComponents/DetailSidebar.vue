@@ -38,16 +38,16 @@ export default defineComponent({
     props: { visible: Boolean, viewType: String, document: Object as any, isPrepared: Boolean, datasetCategories: Array as any },
     computed: {
         isOwner(): any {
-            return (this.store.state as any).user.userId === this.document.creationUser
+            return (this.store.$state as any).user.userId === this.document.creationUser
         },
         isAnalysisShared(): any {
             return this.document.functionalities.length > 1
         },
         isDatasetOwner(): any {
-            return (this.store.state as any).user.userId === this.document.owner
+            return (this.store.$state as any).user.userId === this.document.owner
         },
         showQbeEditButton(): any {
-            return (this.store.state as any).user.userId === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
+            return (this.store.$state as any).user.userId === this.document.owner && (this.document.dsTypeCd == 'Federated' || this.document.dsTypeCd == 'Qbe')
         },
         datasetHasDrivers(): any {
             return this.document.drivers && this.document.length > 0
@@ -132,7 +132,7 @@ export default defineComponent({
                     return [
                         { icon: 'fa fa-search', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('openDatasetInQBE') },
                         { icon: 'pi pi-pencil', class: 'p-button-text p-button-rounded p-button-plain', visible: true, command: this.emitEvent('editDataset') },
-                        { icon: 'fas fa-trash-alt', class: 'p-button-text p-button-rounded p-button-plain', visible: (this.store.state as any).user.isSuperadmin || (this.store.state as any).user.userId === this.document.owner, command: this.emitEvent('deleteDataset') }
+                        { icon: 'fas fa-trash-alt', class: 'p-button-text p-button-rounded p-button-plain', visible: (this.store.$state as any).user.isSuperadmin || (this.store.$state as any).user.userId === this.document.owner, command: this.emitEvent('deleteDataset') }
                     ]
                 default:
                     return []
@@ -186,7 +186,7 @@ export default defineComponent({
                     { key: '9', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: this.emitEvent('deleteDataset'), visible: this.isDatasetOwner }
                 )
 
-                if ((this.store.state as any).user?.functionalities.includes('DataPreparation')) {
+                if ((this.store.$state as any).user?.functionalities.includes('DataPreparation')) {
                     tmp.push({
                         key: '7',
                         label: this.$t('workspace.myData.openDataPreparation'),
