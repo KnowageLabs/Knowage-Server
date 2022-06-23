@@ -552,7 +552,7 @@ const mockedDimensionMetadata = {
 vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() => Promise.resolve({ data: { root: [] } }))
+    get: vi.fn().mockImplementation(() => Promise.resolve({ data: { root: [] } }))
 }
 
 const $store = {

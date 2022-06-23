@@ -34,7 +34,7 @@ const mockedScheduler = {
 vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
             case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/1/loadSchedulerKPI':
                 return Promise.resolve({ data: mockedScheduler })

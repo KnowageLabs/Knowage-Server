@@ -86,7 +86,7 @@ const expectedConfiguration = [
 vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() => Promise.resolve({ data: mockedDatasets })),
+    get: vi.fn().mockImplementation(() => Promise.resolve({ data: mockedDatasets })),
     put: axios.put.mockImplementation(() => Promise.resolve()),
     delete: vi.fn().mockImplementation(() => Promise.resolve())
 }

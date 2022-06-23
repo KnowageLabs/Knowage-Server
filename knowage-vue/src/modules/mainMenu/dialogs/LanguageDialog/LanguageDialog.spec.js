@@ -12,7 +12,7 @@ const defaultLocale = 'en_US'
 
 vi.mock('axios')
 
-const $http = { get: axios.get.mockImplementation(() => Promise.resolve({ data: mockedLanguagesArray })) }
+const $http = { get: vi.fn().mockImplementation(() => Promise.resolve({ data: mockedLanguagesArray })) }
 
 const wrapper = mount(LanguageDialog, {
     propsData: {
