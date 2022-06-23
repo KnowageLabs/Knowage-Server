@@ -53,6 +53,7 @@ import KnHint from '@/components/UI/KnHint.vue'
 import Listbox from 'primevue/listbox'
 import metadataManagementDescriptor from './MetadataManagementDescriptor.json'
 import MetadataManagementDetail from './MetadataManagementDetail.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'metadata-management',
@@ -66,6 +67,10 @@ export default defineComponent({
             touched: false,
             selectedMetadata: {} as iMetadata
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadAllMetadata()
