@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'

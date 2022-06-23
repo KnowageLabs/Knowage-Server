@@ -1,7 +1,5 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import FunctionsCatalogPreviewDialog from './FunctionsCatalogPreviewDialog.vue'
@@ -199,7 +197,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-
                 $http
             }
         }
