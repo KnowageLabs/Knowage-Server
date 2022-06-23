@@ -129,6 +129,7 @@ import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'configuration-management-dialog',
@@ -163,6 +164,10 @@ export default defineComponent({
         buttonDisabled(): any {
             return this.v$.$invalid
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     mounted() {
         if (this.model) {

@@ -84,6 +84,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import ConfigurationManagementDialog from './ConfigurationManagementDialog.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'configuration-management',
@@ -126,6 +127,10 @@ export default defineComponent({
                 }
             } as Object
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadConfigurations()

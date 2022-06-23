@@ -36,6 +36,7 @@ import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import datasetTableCardDescriptor from './DatasetTableCardDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'dataset-table-card',
@@ -69,6 +70,10 @@ export default defineComponent({
         datasetMetadataList() {
             this.loadDatasets()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadDatasets()

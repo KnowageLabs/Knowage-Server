@@ -43,6 +43,7 @@ import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import MultiSelect from 'primevue/multiselect'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'calendar-management-detail-table',
@@ -63,6 +64,10 @@ export default defineComponent({
         propCalendarInfo() {
             this.loadCalendarInfo()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadCalendarInfo()

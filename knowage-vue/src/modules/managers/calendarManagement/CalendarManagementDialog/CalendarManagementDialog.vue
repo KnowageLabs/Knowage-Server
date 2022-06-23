@@ -31,7 +31,7 @@ import calendarManagementDialogDescriptor from './CalendarManagementDialogDescri
 import CalendarManagementDetailForm from './CalendarManagementDetailForm/CalendarManagementDetailForm.vue'
 import CalendarManagementDetailTable from './CalendarManagementDetailTable/CalendarManagementDetailTable.vue'
 import moment from 'moment'
-
+import mainStore from '../../../../App.store'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
@@ -62,6 +62,10 @@ export default defineComponent({
         propCalendar() {
             if (this.visible) this.loadCalendar()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadCalendar()

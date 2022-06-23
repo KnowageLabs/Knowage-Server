@@ -82,6 +82,7 @@ import { defineComponent, PropType } from 'vue'
 import { iCalendar } from '../../CalendarManagement'
 import Calendar from 'primevue/calendar'
 import calendarManagementDetailFormDescriptor from './CalendarManagementDetailFormDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'calendar-management-detail-form',
@@ -115,6 +116,10 @@ export default defineComponent({
         propCalendar() {
             this.loadCalendar()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadCalendar()

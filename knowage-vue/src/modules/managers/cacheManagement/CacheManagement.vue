@@ -27,6 +27,7 @@ import { AxiosResponse } from 'axios'
 import DatasetTableCard from './cards/DatasetTableCard/DatasetTableCard.vue'
 import GeneralSettingsCard from './cards/GeneralSettingsCard/GeneralSettingsCard.vue'
 import RuntimeInformationCard from './cards/RuntimeInformationCard/RuntimeInformationCard.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'cache-management',
@@ -52,6 +53,10 @@ export default defineComponent({
         showProgressBar(): boolean {
             return this.loading || this.settingsPendingCount != 0
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadPage()

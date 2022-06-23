@@ -119,6 +119,7 @@ import { iSettings } from '../../CacheManagement'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
 import generalSettingsCardDescriptor from './GeneralSettingsCardDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'general-settings-card',
@@ -159,6 +160,10 @@ export default defineComponent({
         selectedDatasource() {
             this.loadDatasource()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadSettings()
