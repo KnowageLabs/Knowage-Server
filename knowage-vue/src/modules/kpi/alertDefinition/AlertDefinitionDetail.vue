@@ -31,6 +31,7 @@ import KpiCard from './cards/AlertDefinitionKpiCard.vue'
 import EventsCard from './cards/AlertDefinitionEventsCard.vue'
 import KnCron from '@/components/UI/KnCron/KnCron.vue'
 import AddActionDialog from './actions/AlertDefinitionActionDialog.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'alert-details',
@@ -66,6 +67,11 @@ export default defineComponent({
             return false
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+
     created() {
         if (this.id) {
             this.loadAlert()

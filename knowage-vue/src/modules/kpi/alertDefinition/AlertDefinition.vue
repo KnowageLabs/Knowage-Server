@@ -51,6 +51,7 @@ import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import { AxiosResponse } from 'axios'
 import alertDescriptor from './AlertDefinitionDescriptor.json'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'alert',
@@ -62,6 +63,10 @@ export default defineComponent({
             loading: false,
             touched: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadAllAlerts()
