@@ -12,9 +12,6 @@ import axios from 'axios'
 const $confirm = {
     require: vi.fn()
 }
-const $store = {
-    commit: jest.fn()
-}
 
 vi.mock('axios')
 
@@ -34,7 +31,7 @@ const factory = () => {
             stubs: { Button, InputText, MenuManagementDocumentBrowserTree: true, ProgressBar, Toolbar, Card, KnHint, Tree },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $http
             }

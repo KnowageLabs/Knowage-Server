@@ -177,10 +177,6 @@ const $http = {
     post: vi.fn().mockImplementation(() => Promise.reject({ message: '100' }))
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = () => {
     return mount(FunctionsCatalogPreviewDialog, {
         props: {
@@ -203,7 +199,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $http
             }
         }

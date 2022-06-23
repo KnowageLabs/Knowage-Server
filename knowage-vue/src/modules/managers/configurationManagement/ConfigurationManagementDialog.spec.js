@@ -15,9 +15,6 @@ const $http = {
     put: axios.put.mockImplementation(() => Promise.resolve())
 }
 
-const $store = {
-    commit: jest.fn()
-}
 const factory = () => {
     return mount(ConfigurationManagementDialog, {
         global: {
@@ -25,7 +22,7 @@ const factory = () => {
             stubs: { Button, InputText },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $http
             }
         }

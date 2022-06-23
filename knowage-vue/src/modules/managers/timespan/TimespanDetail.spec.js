@@ -72,10 +72,6 @@ const $confirm = {
     require: vi.fn()
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const $router = {
     push: vi.fn()
 }
@@ -104,7 +100,7 @@ const factory = (id) => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $router,
                 $http

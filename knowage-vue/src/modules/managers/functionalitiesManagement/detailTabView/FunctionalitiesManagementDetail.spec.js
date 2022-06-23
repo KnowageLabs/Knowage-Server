@@ -88,10 +88,6 @@ const $http = {
     )
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = () => {
     return mount(FunctionalitiesManagementDetail, {
         props: {
@@ -103,7 +99,7 @@ const factory = () => {
             stubs: { Button, Card, Checkbox, Column, DataTable, InputText, KnValidationMessages, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $http
             }
         }

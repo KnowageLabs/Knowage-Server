@@ -24,10 +24,6 @@ const $router = {
     replace: jest.fn()
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 vi.mock('axios')
 
 const $http = {
@@ -55,7 +51,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $route,
                 $router,

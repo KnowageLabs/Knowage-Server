@@ -101,7 +101,7 @@ const factory = (toggleCardDisplay) => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $http,
                 $router
             }

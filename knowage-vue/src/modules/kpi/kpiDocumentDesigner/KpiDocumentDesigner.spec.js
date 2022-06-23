@@ -94,7 +94,7 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $http,
-                $store,
+
                 $confirm,
                 $router
             }

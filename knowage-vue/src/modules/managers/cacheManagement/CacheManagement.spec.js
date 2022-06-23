@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import CacheManagement from './CacheManagement.vue'
 import flushPromises from 'flush-promises'
 import ProgressBar from 'primevue/progressbar'
@@ -48,10 +47,6 @@ afterEach(() => {
     vi.clearAllMocks()
 })
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = () => {
     return mount(CacheManagement, {
         global: {
@@ -59,7 +54,6 @@ const factory = () => {
             stubs: { DatasetTableCard: true, GeneralSettingsCard: true, ProgressBar, RuntimeInformationCard: true, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $http
             }
         }

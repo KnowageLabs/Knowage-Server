@@ -132,10 +132,6 @@ const $http = {
     post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const $router = {
     replace: vi.fn()
 }
@@ -154,7 +150,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $router,
                 $http
             }

@@ -276,7 +276,7 @@ const factory = (cardDisplay) => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $http,
                 $router
             }

@@ -59,10 +59,6 @@ const $confirm = {
     require: vi.fn()
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const factory = () => {
     return mount(FunctionalitiesManagement, {
         global: {
@@ -72,7 +68,7 @@ const factory = () => {
             stubs: { Button, Card, FabButton, FunctionalitiesManagementDetail: true, KnHint, ProgressBar, Toolbar, Tree },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $http
             }

@@ -76,7 +76,7 @@ const factory = (viewType, document) => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $router
             }
         }

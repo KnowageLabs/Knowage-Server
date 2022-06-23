@@ -80,7 +80,7 @@ const factory = (viewType) => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $router
             }
         }

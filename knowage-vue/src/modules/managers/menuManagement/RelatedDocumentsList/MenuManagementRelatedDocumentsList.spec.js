@@ -49,9 +49,6 @@ const $http = {
 const $confirm = {
     require: vi.fn()
 }
-const $store = {
-    commit: jest.fn()
-}
 
 const factory = () => {
     return mount(RelatedDocumentList, {
@@ -64,7 +61,7 @@ const factory = () => {
             stubs: { Button, InputText, ProgressBar, Toolbar, Card },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $http
             }
