@@ -17,6 +17,7 @@
 import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
 import workspaceCockpitDialogDescriptor from './WorkspaceCockpitDialogDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'workspace-cockpit-dialog',
@@ -31,6 +32,10 @@ export default defineComponent({
     },
     computed: {},
     watch: {},
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.createUrl()
     },

@@ -24,15 +24,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-
 import Dialog from 'primevue/dialog'
-
 import dataPreparationMonitoringDescriptor from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDescriptor.json'
 import KnScheduler from '@/components/UI/KnScheduler/KnScheduler.vue'
 import { IDataPrepLog } from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoring'
 import { AxiosResponse } from 'axios'
-
 import { filterDefault } from '@/helpers/commons/filterHelper'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'data-preparation-monitoring-dialog',
@@ -66,7 +64,10 @@ export default defineComponent({
             this.loadingLogs = false
         }
     },
-
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     methods: {
         async loadLogs() {
             if (this.dataset && this.dataset.id) {

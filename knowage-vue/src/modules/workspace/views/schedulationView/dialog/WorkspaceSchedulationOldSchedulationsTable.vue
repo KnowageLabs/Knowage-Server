@@ -51,6 +51,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
 import workspaceSchedulationOldSchedulationsTableDescriptor from './WorkspaceSchedulationOldSchedulationsTableDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'workspace-schedulation-old-schedulations-table',
@@ -68,6 +69,10 @@ export default defineComponent({
         propSchedulations() {
             this.loadSchedulations()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.user = (this.store.$state as any).user

@@ -98,6 +98,7 @@ import WorkspaceAnalysisViewShareDialog from './dialogs/WorkspaceAnalysisViewSha
 import { AxiosResponse } from 'axios'
 import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 import WorkspaceCockpitDialog from './dialogs/WorkspaceCockpitDialog.vue'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'workspace-analysis-view',
@@ -132,6 +133,10 @@ export default defineComponent({
             creationMenuButtons: [] as any,
             cockpitDialogVisible: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.getAnalysisDocs()

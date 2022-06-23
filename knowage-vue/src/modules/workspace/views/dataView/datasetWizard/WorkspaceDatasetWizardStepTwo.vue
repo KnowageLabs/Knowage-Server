@@ -31,6 +31,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Message from 'primevue/message'
 import Dropdown from 'primevue/dropdown'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     components: { Card, Column, DataTable, Message, Dropdown },
@@ -48,6 +49,10 @@ export default defineComponent({
             fieldsMetadata: [] as any
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.dataset = this.selectedDataset
         this.dataset.meta ? this.exctractFieldsMetadata(this.dataset.meta.columns) : ''
@@ -58,7 +63,6 @@ export default defineComponent({
             this.dataset.meta ? this.exctractFieldsMetadata(this.dataset.meta.columns) : ''
         }
     },
-
     methods: {
         exctractFieldsMetadata(array) {
             var object = {}

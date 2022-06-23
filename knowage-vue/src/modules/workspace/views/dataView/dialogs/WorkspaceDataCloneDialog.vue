@@ -86,6 +86,7 @@ import Dialog from 'primevue/dialog'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import workspaceDataCloneDialogDescriptor from './WorkspaceDataCloneDialogDescriptor.json'
 import useValidate from '@vuelidate/core'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'workspace-repository-move-dialog',
@@ -122,6 +123,10 @@ export default defineComponent({
         buttonDisabled(): any {
             return this.v$.$invalid
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadDataset()

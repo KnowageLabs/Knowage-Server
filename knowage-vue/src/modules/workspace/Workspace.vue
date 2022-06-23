@@ -119,14 +119,14 @@ import Dialog from 'primevue/dialog'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import moment from 'moment'
 import { mapState } from 'pinia'
-
 import cryptoRandomString from 'crypto-random-string'
+import mainStore from '../../App.store'
 
 export default defineComponent({
     name: 'dataset-management',
     components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree, WorkspaceNewFolderDialog, Dialog, KnParameterSidebar },
     computed: {
-        ...mapState({
+        ...mapState(mainStore, {
             user: 'user'
         }),
         showRepository(): any {
@@ -166,6 +166,10 @@ export default defineComponent({
             filtersData: null as any,
             qbeUrl: ''
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.uniqueID = cryptoRandomString({ length: 16, type: 'base64' })

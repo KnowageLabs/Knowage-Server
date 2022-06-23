@@ -33,6 +33,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Menu from 'primevue/menu'
 import workspaceModelsTableDescriptor from './WorkspaceModelsTableDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'workspace-models-table',
@@ -62,6 +63,10 @@ export default defineComponent({
         propItems() {
             this.loadTable()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.user = (this.store.$state as any).user

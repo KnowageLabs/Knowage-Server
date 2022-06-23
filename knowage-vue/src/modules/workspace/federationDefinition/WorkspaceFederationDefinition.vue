@@ -39,6 +39,7 @@ import WorkspaceFederationDatasetList from './WorkspaceFederationDatasetList.vue
 import WorkspaceFederationDefinitionAssociationsEditor from './WorkspaceFederationDefinitionAssociationsEditor.vue'
 import WorkspaceFederationDefinitionAssociationsList from './WorkspaceFederationDefinitionAssociationsList.vue'
 import { AxiosResponse } from 'axios'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'workspace-federation-definition',
@@ -70,6 +71,10 @@ export default defineComponent({
         async id() {
             await this.loadPage()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.user = (this.store.$state as any).user

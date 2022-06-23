@@ -47,6 +47,8 @@ import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import workspaceDataPreviewDialogDescriptor from './WorkspaceDataPreviewDialogDescriptor.json'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import moment from 'moment'
+import mainStore from '../../../../../App.store'
+
 export default defineComponent({
     name: 'kpi-scheduler-save-dialog',
     components: { Dialog, DatasetPreviewTable, Message, KnParameterSidebar },
@@ -104,6 +106,10 @@ export default defineComponent({
         previewType() {
             this.setSidebarMode()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.userRole = (this.store.$state as any).user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? (this.store.$state as any).user.sessionRole : null

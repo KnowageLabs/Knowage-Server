@@ -93,7 +93,7 @@ import IndicatorsTab from './tabs/indicator/GisDocumentDesignerIndicator.vue'
 import MenuTab from './tabs/menu/GisDocumentDesignerMenu.vue'
 import Dialog from 'primevue/dialog'
 import Badge from 'primevue/badge'
-
+import mainStore from '../../../App.store'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
@@ -129,6 +129,10 @@ export default defineComponent({
             },
             canOpenMap: true
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadPage()

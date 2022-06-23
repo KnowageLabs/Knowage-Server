@@ -80,9 +80,9 @@ import useValidate from '@vuelidate/core'
 import DataPreparationValidationDescriptor from './DataPreparationValidationDescriptor.json'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import { IDataPreparationDataset, IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
-
 import dataPreparationMonitoringDescriptor from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDescriptor.json'
 import KnScheduler from '@/components/UI/KnScheduler/KnScheduler.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'data-preparation-detail-save-dialog',
@@ -109,6 +109,10 @@ export default defineComponent({
             schedulationPaused: false,
             schedulationEnabled: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     updated() {
         if (this.processId && this.processId != '') this.isFirstSave = false

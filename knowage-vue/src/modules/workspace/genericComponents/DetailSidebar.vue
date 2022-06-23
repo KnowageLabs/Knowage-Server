@@ -29,6 +29,7 @@ import descriptor from './DetailSidebarDescriptor.json'
 import Sidebar from 'primevue/sidebar'
 import Menu from 'primevue/contextmenu'
 import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'workspace-sidebar',
@@ -146,6 +147,10 @@ export default defineComponent({
             sidebarVisible: false,
             menuButtons: [] as any
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.sidebarVisible = this.visible

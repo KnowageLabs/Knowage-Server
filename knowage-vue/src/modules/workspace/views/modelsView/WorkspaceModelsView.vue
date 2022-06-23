@@ -71,6 +71,7 @@ import WorkspaceModelsTable from './tables/WorkspaceModelsTable.vue'
 import { AxiosResponse } from 'axios'
 import QBE from '@/modules/qbe/QBE.vue'
 import MultiSelect from 'primevue/multiselect'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'workspace-models-view',
@@ -111,6 +112,10 @@ export default defineComponent({
             this.resetSearch()
             this.selectedModel = null
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.user = (this.store.$state as any).user

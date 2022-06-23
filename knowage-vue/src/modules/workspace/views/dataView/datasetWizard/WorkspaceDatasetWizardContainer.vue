@@ -32,6 +32,7 @@ import StepTwo from './WorkspaceDatasetWizardStepTwo.vue'
 import StepThree from './WorkspaceDatasetWizardStepThree.vue'
 import StepFour from './WorkspaceDatasetWizardStepFour.vue'
 import Dialog from 'primevue/dialog'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     components: { Dialog, StepOne, StepTwo, StepThree, StepFour },
@@ -64,6 +65,10 @@ export default defineComponent({
             fileUploaded: false,
             wizardStep: 1
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.dataset = this.selectedDataset

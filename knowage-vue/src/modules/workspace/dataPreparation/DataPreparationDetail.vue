@@ -175,9 +175,9 @@ import KnCalculatedField from '@/components/functionalities/KnCalculatedField/Kn
 import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
 import DataPreparationSplitDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationSplitDescriptor.json'
 import calculatedFieldDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCalculatedFieldDescriptor.json'
-
 import { Client } from '@stomp/stompjs'
 import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'data-preparation-detail',
@@ -218,7 +218,10 @@ export default defineComponent({
             cfType: ''
         }
     },
-
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         this.loading++
         this.descriptorTransformations = Object.assign([], this.descriptor.transformations)

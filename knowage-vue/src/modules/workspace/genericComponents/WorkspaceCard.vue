@@ -28,6 +28,7 @@ import { defineComponent } from 'vue'
 import descriptor from './DetailSidebarDescriptor.json'
 import cardDescriptor from './WorkspaceCardDescriptor.json'
 import Menu from 'primevue/contextmenu'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'workspace-sidebar',
@@ -141,13 +142,16 @@ export default defineComponent({
             }
         }
     },
-
     data() {
         return {
             cardDescriptor,
             sidebarVisible: false,
             menuButtons: [] as any
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     methods: {
         showMenu(event) {

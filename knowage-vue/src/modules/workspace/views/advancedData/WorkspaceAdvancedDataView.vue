@@ -110,6 +110,7 @@ import WorkspaceDataPreviewDialog from '@/modules/workspace/views/dataView/dialo
 import WorkspaceWarningDialog from '@/modules/workspace/genericComponents/WorkspaceWarningDialog.vue'
 import { AxiosResponse } from 'axios'
 import DataPreparationMonitoringDialog from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDialog.vue'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: { DataTable, KnDatasetList, Column, Chip, DataPreparationMonitoringDialog, EditPreparedDatasetDialog, DetailSidebar, WorkspaceCard, KnFabButton, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataPreviewDialog, Message, Menu },
@@ -158,11 +159,14 @@ export default defineComponent({
             showMonitoring: false
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         await this.getAllAvroDataSets()
         await this.getDatasets()
     },
-
     methods: {
         async updatePreparedDataset(newDataset) {
             this.showEditPreparedDatasetDialog = false

@@ -68,6 +68,7 @@ import dataViewDescriptor from './WorkspaceDatasetWizardDescriptor.json'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     components: { Card, KnInputFile, Dropdown },
@@ -85,6 +86,10 @@ export default defineComponent({
             columns: [] as any,
             rows: [] as any
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.dataset = this.selectedDataset
