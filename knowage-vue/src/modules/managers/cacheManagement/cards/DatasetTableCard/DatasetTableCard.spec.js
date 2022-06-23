@@ -42,7 +42,7 @@ const factory = (datasetMetadataList) => {
             datasetMetadataList
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, Card, Column, DataTable, Toolbar },
             mocks: {
                 $t: (msg) => msg,

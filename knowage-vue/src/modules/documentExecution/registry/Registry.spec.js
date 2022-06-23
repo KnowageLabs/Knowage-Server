@@ -107,7 +107,7 @@ const factory = () => {
             id: '1'
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 RegistryDatatable: true,

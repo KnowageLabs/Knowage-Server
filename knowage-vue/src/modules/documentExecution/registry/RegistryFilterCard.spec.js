@@ -31,7 +31,7 @@ const factory = (filter) => {
             id: '1'
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Dropdown,
                 InputText

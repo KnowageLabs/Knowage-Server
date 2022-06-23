@@ -54,7 +54,7 @@ const factory = () => {
     return mount(DocumentBrowserTree, {
         attachToDocument: true,
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, InputText, ProgressBar, Tree, Card },
             mocks: {
                 $t: (msg) => msg,

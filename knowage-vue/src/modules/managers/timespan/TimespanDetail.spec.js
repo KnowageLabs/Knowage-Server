@@ -89,7 +89,7 @@ const factory = (id) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 TimespanForm: true,

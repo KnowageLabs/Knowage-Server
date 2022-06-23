@@ -50,7 +50,7 @@ afterEach(() => {
 const factory = () => {
     return mount(CacheManagement, {
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { DatasetTableCard: true, GeneralSettingsCard: true, ProgressBar, RuntimeInformationCard: true, Toolbar },
             mocks: {
                 $t: (msg) => msg,

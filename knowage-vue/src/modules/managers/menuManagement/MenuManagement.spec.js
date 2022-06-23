@@ -27,7 +27,7 @@ const factory = () => {
     return mount(MenuConfiguration, {
         attachToDocument: true,
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, InputText, MenuManagementDocumentBrowserTree: true, ProgressBar, Toolbar, Card, KnHint, Tree },
             mocks: {
                 $t: (msg) => msg,

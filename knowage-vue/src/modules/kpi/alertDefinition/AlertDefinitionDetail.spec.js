@@ -78,7 +78,7 @@ const factory = () => {
             id: '33'
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,

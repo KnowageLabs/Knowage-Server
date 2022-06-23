@@ -57,7 +57,7 @@ const factory = () => {
         },
         attachToDocument: true,
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, InputText, ProgressBar, Toolbar, Card },
             mocks: {
                 $t: (msg) => msg,

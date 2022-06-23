@@ -52,7 +52,7 @@ const factory = (filters) => {
             id: '1'
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 InputText,

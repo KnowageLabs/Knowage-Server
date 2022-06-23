@@ -109,7 +109,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, InputText, ProgressBar, Toolbar, Message, Checkbox, DataTable, Column, TabPanel, TabView },
             mocks: {
                 $t: (msg) => msg,

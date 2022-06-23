@@ -50,7 +50,7 @@ const factory = () => {
             constraints: [...mockedConstraints]
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Column,
                 Card,

@@ -99,7 +99,7 @@ const factory = (item, datasources, selectedDatasource) => {
             selectedDatasource
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, Card, Dropdown, InputNumber, InputText, Toolbar },
             mocks: {
                 $t: (msg) => msg,

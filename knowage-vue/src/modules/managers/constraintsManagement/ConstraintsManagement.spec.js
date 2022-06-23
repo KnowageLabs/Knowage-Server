@@ -105,7 +105,7 @@ const $confirm = {
 const factory = () => {
     return mount(ConstraintsManagement, {
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Avatar,
                 Button,

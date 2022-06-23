@@ -141,7 +141,7 @@ const factory = () => {
             selectedAlert: mockedAlert
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,

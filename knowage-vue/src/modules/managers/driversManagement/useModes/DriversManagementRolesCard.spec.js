@@ -38,7 +38,7 @@ const factory = () => {
             roles: [...mockedRoles]
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Column,
                 Card,
