@@ -71,6 +71,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'internationalization-management',
@@ -113,12 +114,15 @@ export default defineComponent({
             } as Object
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         await this.getLanguages()
         this.setDefaultLanguage()
         this.getMessages(this.defaultLanguage)
     },
-
     methods: {
         filterEmptyMessages() {
             this.messages = this.showOnlyEmptyFields ? [...this.allMessages.filter((message) => !message.message)] : [...this.allMessages]

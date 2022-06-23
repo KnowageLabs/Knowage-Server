@@ -36,6 +36,7 @@ import TabPanel from 'primevue/tabpanel'
 import LayerTab from './layerTab/LayersManagementLayerTab.vue'
 import FilterTab from './filterTab/LayersManagementFilterTab.vue'
 import Toast from 'primevue/toast'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: { TabView, TabPanel, LayerTab, FilterTab, Toast },
@@ -55,6 +56,10 @@ export default defineComponent({
             activeIndex: 0,
             filters: [] as iFilter[]
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadLayer()

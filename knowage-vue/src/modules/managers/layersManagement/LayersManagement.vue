@@ -34,7 +34,7 @@ import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import LayersManagementDetailView from './detailView/LayersManagementDetailView.vue'
 import LayersManagementHint from './LayersManagementHint.vue'
 import LayersManagementDownloadDialog from './downloadDialog/LayersManagementDownloadDialog.vue'
-
+import mainStore from '../../../App.store'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
@@ -52,6 +52,10 @@ export default defineComponent({
             downloadDialogVisible: false,
             selectedLayerForDownload: null
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadPage()

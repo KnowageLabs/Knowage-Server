@@ -46,6 +46,7 @@ import LovsManagementProfileAttributesList from './LovsManagementProfileAttribut
 import LovsManagementTestDialog from './LovsManagementTestDialog/LovsManagementTestDialog.vue'
 import LovsManagementParamsDialog from './LovsManagementParamsDialog/LovsManagementParamsDialog.vue'
 import LovsManagementDataset from './LovsManagementDataset/LovsManagementDataset.vue'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'lovs-management-wizard-card',
@@ -133,6 +134,10 @@ export default defineComponent({
         lovType(): string {
             return this.selectedLov.itypeCd
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadLov()

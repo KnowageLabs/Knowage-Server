@@ -28,6 +28,7 @@ import { AxiosResponse } from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import lovsManagementDescriptor from './LovsManagementDescriptor.json'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'lovs-management',
@@ -39,6 +40,10 @@ export default defineComponent({
             loading: false,
             touched: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadLovs()
