@@ -97,6 +97,7 @@ import Message from 'primevue/message'
 import TabPanel from 'primevue/tabpanel'
 import TabView from 'primevue/tabview'
 import Tag from 'primevue/tag'
+import mainStore from '../../App.store'
 
 export default defineComponent({
     name: 'import-dialog',
@@ -124,6 +125,10 @@ export default defineComponent({
         }
     },
     emits: ['update:visibility', 'import'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.filters = {
             global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -195,7 +200,7 @@ export default defineComponent({
                     )
                 this.loading = false
             } else {
-                this.store.commit('setWarning', { title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.noFileProvided') })
+                this.store.setWarning({ title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.noFileProvided') })
             }
         },
         isImportDisabled(): Boolean {

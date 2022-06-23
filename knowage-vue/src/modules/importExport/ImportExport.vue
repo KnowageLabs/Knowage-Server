@@ -33,6 +33,7 @@ import ProgressBar from 'primevue/progressbar'
 import KnTabCard from '@/components/UI/KnTabCard.vue'
 import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
 import { mapState } from 'pinia'
+import mainStore from '../../App.store'
 
 export default defineComponent({
     name: 'import-export',
@@ -50,6 +51,10 @@ export default defineComponent({
             },
             functionalities: Array<any>()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     mounted() {
         if (this.isEnterprise) this.setFunctionalities()
