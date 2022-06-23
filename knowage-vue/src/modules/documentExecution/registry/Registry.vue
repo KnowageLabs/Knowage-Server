@@ -57,6 +57,7 @@ import registryDescriptor from './RegistryDescriptor.json'
 import RegistryDatatable from './tables/RegistryDatatable.vue'
 import RegistryPivotDatatable from './tables/RegistryPivotDatatable.vue'
 import RegistryFiltersCard from './RegistryFiltersCard.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'registry',
@@ -93,6 +94,10 @@ export default defineComponent({
             await this.loadPage()
             this.stopWarningsState = []
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadPage()
