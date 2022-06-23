@@ -86,7 +86,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [router],
+            plugins: [router, createTestingPinia()],
             stubs: {
                 Button,
                 InputText,

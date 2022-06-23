@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import TargetDefinitionDetail from './TargetDefinitionDetail.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -19,9 +18,8 @@ const $confirm = {
 const $route = { path: '/target-definition' }
 
 const $router = {
-    push: jest.fn(),
-
-    replace: jest.fn()
+    push: vi.fn(),
+    replace: vi.fn()
 }
 
 vi.mock('axios')
@@ -38,7 +36,7 @@ const $http = {
 const factory = () => {
     return mount(TargetDefinitionDetail, {
         global: {
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 Card,

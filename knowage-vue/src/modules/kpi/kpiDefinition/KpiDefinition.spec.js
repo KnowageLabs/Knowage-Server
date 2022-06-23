@@ -51,6 +51,7 @@ const $router = {
 
 const factory = () => {
     return mount(KpiDefinition, {
+        plugins: [createTestingPinia()],
         global: {
             stubs: {
                 Button,
