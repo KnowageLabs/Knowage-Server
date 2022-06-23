@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
@@ -32,7 +34,7 @@ const mockedTrigger = {
     endTimeTiming: null
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() =>

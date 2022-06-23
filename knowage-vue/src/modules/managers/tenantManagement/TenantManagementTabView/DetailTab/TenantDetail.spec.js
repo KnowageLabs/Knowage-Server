@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
@@ -18,7 +20,7 @@ const mockedTenantEnabled = {
     MULTITENANT_THEME: 'spagobi_bi'
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() => Promise.resolve({ data: [] }))

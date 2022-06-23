@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Card from 'primevue/card'
 import flushPromises from 'flush-promises'
@@ -16,7 +18,7 @@ const mockedSchema = {
     type: 'MONDRIAN_SCHEMA'
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() =>

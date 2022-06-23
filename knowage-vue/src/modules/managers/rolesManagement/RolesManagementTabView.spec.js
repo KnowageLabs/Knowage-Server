@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
@@ -106,7 +108,7 @@ const mockedRole = {
     ableToManageUsers: true
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation((url) => {
@@ -127,7 +129,7 @@ const $http = {
                 return Promise.resolve({ data: mockedRole })
         }
     }),
-    post: axios.post.mockImplementation(() => Promise.resolve())
+    post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $store = {
@@ -248,8 +250,8 @@ describe('Roles Management Tab View', () => {
 
         await flushPromises()
 
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles/1', { ...mockedRole, roleMetaModelCategories: [{ categoryId: 172 }, { categoryId: 152 }, { categoryId: 256 }] })
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles/1', { ...mockedRole, roleMetaModelCategories: [{ categoryId: 172 }, { categoryId: 152 }, { categoryId: 256 }] })
         expect($store.commit).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
         expect($router.replace).toHaveBeenCalledWith('/roles-management')
@@ -267,8 +269,8 @@ describe('Roles Management Tab View', () => {
 
         await flushPromises()
 
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles/', { ...mockedRole, roleMetaModelCategories: [{ categoryId: 172 }, { categoryId: 152 }, { categoryId: 256 }] })
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles/', { ...mockedRole, roleMetaModelCategories: [{ categoryId: 172 }, { categoryId: 152 }, { categoryId: 256 }] })
         expect($store.commit).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
         expect($router.replace).toHaveBeenCalledWith('/roles-management')

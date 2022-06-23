@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { nextTick } from 'vue'
 import axios from 'axios'
 import Button from 'primevue/button'
@@ -11,7 +13,7 @@ import ProgressBar from 'primevue/progressbar'
 import Workspace from './Workspace.vue'
 import Toolbar from 'primevue/toolbar'
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = { get: axios.get.mockImplementation(() => Promise.resolve({ data: [] })) }
 

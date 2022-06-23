@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -23,11 +25,11 @@ const mockedDatasetMetadata = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     put: axios.put.mockImplementation(() => Promise.resolve()),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $store = {
@@ -35,7 +37,7 @@ const $store = {
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const factory = (datasetMetadataList) => {
@@ -84,8 +86,8 @@ describe('Cache Management Dataset Table', () => {
 
         await wrapper.vm.cleanAll()
 
-        expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/cacheee')
+        expect($http.delete).toHaveBeenCalledTimes(1)
+        expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/cacheee')
         expect($store.commit).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('deleted')
     })

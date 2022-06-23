@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
@@ -18,7 +20,7 @@ const mockedRole = {
     isPublic: true
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() => Promise.resolve({ data: [] }))

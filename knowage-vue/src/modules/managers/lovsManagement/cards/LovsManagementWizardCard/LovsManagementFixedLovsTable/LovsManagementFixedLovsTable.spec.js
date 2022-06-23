@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -13,7 +15,7 @@ const mockedListForFixedLovs = [
 ]
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {

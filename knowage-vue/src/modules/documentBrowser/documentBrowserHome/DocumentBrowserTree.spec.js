@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import DocumentBrowserTree from './DocumentBrowserTree.vue'
 import Tree from 'primevue/tree'
 

@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
@@ -13,7 +15,7 @@ import TabPanel from 'primevue/tabpanel'
 import TabView from 'primevue/tabview'
 import Toolbar from 'primevue/toolbar'
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() =>
@@ -24,7 +26,7 @@ const $http = {
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {

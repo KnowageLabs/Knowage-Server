@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
@@ -32,7 +34,7 @@ const mockedRelatedDocumentsList = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() =>
@@ -40,12 +42,12 @@ const $http = {
             data: mockedRelatedDocumentsList
         })
     ),
-    post: axios.post.mockImplementation(() => Promise.resolve()),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    post: vi.fn().mockImplementation(() => Promise.resolve()),
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 const $store = {
     commit: jest.fn()

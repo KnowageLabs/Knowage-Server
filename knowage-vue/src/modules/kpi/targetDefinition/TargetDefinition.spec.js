@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { createRouter, createWebHistory } from 'vue-router'
 import TargetDefinitionHint from './TargetDefinitionHint.vue'
 import axios from 'axios'
@@ -69,7 +71,7 @@ const mockedTarget = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() =>
@@ -77,11 +79,11 @@ const $http = {
             data: mockedTarget
         })
     ),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $route = { path: '/target-definition' }
@@ -190,8 +192,8 @@ describe('Target Definition List', () => {
         expect($confirm.require).toHaveBeenCalledTimes(1)
 
         await wrapper.vm.deleteTarget(88)
-        expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + 88 + '/deleteTarget')
+        expect($http.delete).toHaveBeenCalledTimes(1)
+        expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + 88 + '/deleteTarget')
         expect($store.commit).toHaveBeenCalledTimes(1)
         expect($router.replace).toHaveBeenCalledWith('/target-definition')
     })

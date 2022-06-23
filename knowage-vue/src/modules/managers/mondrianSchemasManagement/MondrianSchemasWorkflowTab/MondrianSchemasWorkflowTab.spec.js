@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import MondrianSchemasWorkflowTab from './MondrianSchemasWorkflowTab.vue'
 import Toolbar from 'primevue/toolbar'
@@ -32,7 +34,7 @@ const mockedUsers = [
 ]
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {

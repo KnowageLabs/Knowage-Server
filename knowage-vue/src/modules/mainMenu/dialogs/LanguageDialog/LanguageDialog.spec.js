@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import PrimeVue from 'primevue/config'
 import LanguageDialog from './LanguageDialog.vue'
 import flushPromises from 'flush-promises'
@@ -8,7 +10,7 @@ import Button from 'primevue/button'
 
 const defaultLocale = 'en_US'
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = { get: axios.get.mockImplementation(() => Promise.resolve({ data: mockedLanguagesArray })) }
 
@@ -43,7 +45,7 @@ describe('LanguageDialog', () => {
 
     test('language service has been called with', async () => {
         await wrapper.setProps({ visibility: true })
-        expect(axios.get).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/languages')
+        expect($http.get).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/languages')
     })
 
     test('languages array is populated', async () => {

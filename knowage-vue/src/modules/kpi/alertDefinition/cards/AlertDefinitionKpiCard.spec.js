@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { nextTick } from 'vue'
 import axios from 'axios'
 import AlertDefinitionKpiCard from './AlertDefinitionKpiCard.vue'
@@ -122,7 +124,7 @@ const mockedAlert = {
     }
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() =>
@@ -130,7 +132,7 @@ const $http = {
             data: mockedKpi
         })
     ),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const factory = () => {

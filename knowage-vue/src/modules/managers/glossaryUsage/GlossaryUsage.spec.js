@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { nextTick } from 'vue'
 import axios from 'axios'
 import Button from 'primevue/button'
@@ -38,7 +40,7 @@ const mockedWords = [
     { WORD_ID: 3, WORD: 'Product Sales' }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation((url) => {

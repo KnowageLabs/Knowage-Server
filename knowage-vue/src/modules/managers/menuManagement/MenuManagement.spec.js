@@ -10,13 +10,13 @@ import Tree from 'primevue/tree'
 import axios from 'axios'
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 const $store = {
     commit: jest.fn()
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() =>

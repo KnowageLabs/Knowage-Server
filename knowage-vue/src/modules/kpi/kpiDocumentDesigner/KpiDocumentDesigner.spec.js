@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
@@ -26,7 +28,7 @@ const mockedKpiTemplate = {
     }
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation((url) => {
@@ -39,7 +41,7 @@ const $http = {
                 return Promise.resolve({ data: [] })
         }
     }),
-    post: axios.post.mockImplementation((url) => {
+    post: vi.fn().mockImplementation((url) => {
         switch (url) {
             case import.meta.env.VITE_KPI_ENGINE_API_URL + `1.0/kpisTemplate/getKpiTemplate`:
                 return Promise.resolve({ data: mockedKpiTemplate })
@@ -50,7 +52,7 @@ const $http = {
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {

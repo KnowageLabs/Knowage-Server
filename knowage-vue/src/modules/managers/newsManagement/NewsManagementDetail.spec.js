@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
@@ -30,7 +32,7 @@ const mockedRoles = [
         name: 'dev'
     }
 ]
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation((url) => {
@@ -41,7 +43,7 @@ const $http = {
                 return Promise.resolve({ data: mockedRoles })
         }
     }),
-    post: axios.post.mockImplementation(() => Promise.resolve())
+    post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $store = {
@@ -97,8 +99,8 @@ describe('News Management Detail', () => {
 
         wrapper.vm.handleSubmit()
 
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: new Date(mockedNews.expirationDate).valueOf() })
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: new Date(mockedNews.expirationDate).valueOf() })
     })
 
     it('shows success info if new data is saved', async () => {
@@ -109,8 +111,8 @@ describe('News Management Detail', () => {
 
         wrapper.vm.handleSubmit()
 
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: new Date(mockedNews.expirationDate).valueOf() })
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news', { ...mockedNews, expirationDate: new Date(mockedNews.expirationDate).valueOf() })
     })
     it('close button (X) closes the detail without saving data', async () => {
         const wrapper = factory()
@@ -118,7 +120,7 @@ describe('News Management Detail', () => {
 
         await wrapper.find('[data-test="close-button"]').trigger('click')
 
-        expect(axios.post).toHaveBeenCalledTimes(0)
+        expect($http.post).toHaveBeenCalledTimes(0)
         expect($router.push).toHaveBeenCalledWith('/news-management')
         expect(wrapper.emitted()).toHaveProperty('closed')
     })

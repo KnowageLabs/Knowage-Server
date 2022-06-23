@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import GlossaryUsageDetail from './GlossaryUsageDetail.vue'
 import ProgressBar from 'primevue/progressbar'
@@ -91,7 +93,7 @@ const mockedFilteredResponse = {
     Status: 'OK'
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation((url) => {
@@ -110,7 +112,7 @@ const $http = {
                 return Promise.resolve({ data: [] })
         }
     }),
-    post: axios.post.mockImplementation((url) => {
+    post: vi.fn().mockImplementation((url) => {
         switch (url) {
             case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/loadNavigationItem':
                 return Promise.resolve({ data: mockedFilteredResponse })

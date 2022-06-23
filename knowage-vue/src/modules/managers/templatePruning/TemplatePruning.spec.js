@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Calendar from 'primevue/calendar'
@@ -59,17 +61,17 @@ const mockedDocuments = [
 ]
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {
     commit: jest.fn()
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    post: axios.post.mockImplementation(() => Promise.resolve())
+    post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const factory = () => {
@@ -195,7 +197,7 @@ describe('Template Pruning', () => {
 
         wrapper.vm.deleteDocuments()
 
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'template/deleteTemplate', [
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'template/deleteTemplate', [
             { id: 20, data: currentDate },
             { id: 25, data: currentDate },
             { id: 30, data: currentDate },

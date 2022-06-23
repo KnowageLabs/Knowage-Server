@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Avatar from 'primevue/avatar'
 import Button from 'primevue/button'
@@ -32,11 +34,11 @@ const mockedHost = {
     hardwareId: '123456789qwertyuiopasdfghhjklzxcvbnm123456789qwertyuiopasdfghjkl'
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() => Promise.resolve({ data: [] })),
-    post: axios.post.mockImplementation(() => Promise.resolve({ data: [] }))
+    post: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 
 const $store = {
@@ -45,7 +47,7 @@ const $store = {
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const factory = (licenses, host) => {
@@ -117,7 +119,7 @@ describe('License management', () => {
         wrapper.vm.startUpload('KnowageSI')
         await flushPromises()
 
-        expect(axios.post).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/upload/DESKTOP-TEST12?isForUpdate=false', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
+        expect($http.post).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/upload/DESKTOP-TEST12?isForUpdate=false', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
         expect(wrapper.emitted().reloadList).toBeTruthy()
         expect($store.commit).toHaveBeenCalledTimes(1)
     })
@@ -131,7 +133,7 @@ describe('License management', () => {
         wrapper.vm.startUpload('KnowageSI')
         await flushPromises()
 
-        expect(axios.post).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/upload/DESKTOP-TEST12?isForUpdate=true', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
+        expect($http.post).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/upload/DESKTOP-TEST12?isForUpdate=true', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
         expect(wrapper.emitted().reloadList).toBeTruthy()
         expect($store.commit).toHaveBeenCalledTimes(1)
     })
@@ -140,7 +142,7 @@ describe('License management', () => {
 
         await wrapper.find('[data-test="download-button"]').trigger('click')
 
-        expect(axios.get).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/download/DESKTOP-TEST12/KnowageSI', { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } })
+        expect($http.get).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/download/DESKTOP-TEST12/KnowageSI', { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } })
     })
     it('clicking on the delete button a delete request is sent', async () => {
         const wrapper = factory(mockedLicenses, mockedHost)
@@ -151,6 +153,6 @@ describe('License management', () => {
 
         await wrapper.vm.deleteLicense('KnowageSI')
 
-        expect(axios.get).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/delete/DESKTOP-TEST12/KnowageSI', { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } })
+        expect($http.get).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/delete/DESKTOP-TEST12/KnowageSI', { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } })
     })
 })

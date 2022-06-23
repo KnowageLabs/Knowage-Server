@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -26,7 +28,7 @@ const mockedTenants = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation((url) => {
@@ -37,11 +39,11 @@ const $http = {
                 return Promise.resolve({ data: { root: mockedTenants } })
         }
     }),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {
@@ -107,8 +109,8 @@ describe('Tenant Management', () => {
         expect($confirm.require).toHaveBeenCalledTimes(1)
 
         await wrapper.vm.deleteTenant(1)
-        expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'multitenant', { data: 1 })
+        expect($http.delete).toHaveBeenCalledTimes(1)
+        expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'multitenant', { data: 1 })
     })
     it('opens empty detail form when the ' + ' button is clicked', async () => {
         const wrapper = factory()

@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -15,10 +17,10 @@ const mockedMetadata = {
     dataType: 'SHORT_TEXT'
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    post: axios.post.mockImplementation(() => Promise.resolve())
+    post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $store = {
@@ -60,16 +62,16 @@ describe('Metadata Management Detail', () => {
         wrapper.vm.v$.$invalid = false
         wrapper.vm.handleSubmit()
         await flushPromises()
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/objMetadata', mockedMetadata)
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/objMetadata', mockedMetadata)
         expect($store.commit).toHaveBeenCalledTimes(1)
 
         const mockedMetadataUpdate = { ...mockedMetadata, id: 1 }
         wrapper.vm.domain = mockedMetadataUpdate
         wrapper.vm.handleSubmit()
         await flushPromises()
-        expect(axios.post).toHaveBeenCalledTimes(2)
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/objMetadata', mockedMetadata)
+        expect($http.post).toHaveBeenCalledTimes(2)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/objMetadata', mockedMetadata)
         expect($store.commit).toHaveBeenCalledTimes(2)
     })
     it('shows three different metadata types', () => {

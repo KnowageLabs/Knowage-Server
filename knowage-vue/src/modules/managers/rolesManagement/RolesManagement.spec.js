@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
@@ -36,7 +38,7 @@ const mockedRoles = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() =>
@@ -44,11 +46,11 @@ const $http = {
             data: mockedRoles
         })
     ),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {

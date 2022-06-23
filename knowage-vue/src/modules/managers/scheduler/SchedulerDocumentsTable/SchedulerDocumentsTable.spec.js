@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
@@ -54,7 +56,7 @@ const mockedDocuments = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
 

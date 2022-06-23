@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Column from 'primevue/column'
 import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
@@ -27,7 +29,7 @@ const mockedRoles = [
 ]
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {

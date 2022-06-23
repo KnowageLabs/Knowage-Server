@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
@@ -60,14 +62,14 @@ const mockedTimespans = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 const $http = {
     get: axios.get.mockImplementation(() => Promise.resolve({ data: mockedTimespans[0] })),
-    post: axios.post.mockImplementation(() => Promise.resolve())
+    post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {
@@ -127,8 +129,8 @@ describe('Timespan Detail', () => {
 
         await flushPromises()
 
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/timespan/saveTimespan`, mockedTimespans[0])
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/timespan/saveTimespan`, mockedTimespans[0])
         expect($store.commit).toHaveBeenCalledTimes(1)
     })
 })

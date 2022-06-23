@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { createRouter, createWebHistory } from 'vue-router'
 import axios from 'axios'
 import Button from 'primevue/button'
@@ -35,7 +37,7 @@ const mockedLovs = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() =>
@@ -43,11 +45,11 @@ const $http = {
             data: mockedLovs
         })
     ),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {
@@ -150,8 +152,8 @@ describe('Lovs Management', () => {
         await flushPromises()
 
         await wrapper.vm.deleteLov(1)
-        expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/lovs/delete/1')
+        expect($http.delete).toHaveBeenCalledTimes(1)
+        expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/lovs/delete/1')
         expect($router.push).toHaveBeenCalledWith('/lovs-management')
     })
     it("changes url when the when the ' + ' button is clicked", async () => {

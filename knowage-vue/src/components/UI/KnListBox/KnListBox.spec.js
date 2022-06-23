@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Avatar from 'primevue/avatar'
 import Badge from 'primevue/badge'
 import Button from 'primevue/button'
@@ -60,7 +62,7 @@ const mockedSettings = {
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {

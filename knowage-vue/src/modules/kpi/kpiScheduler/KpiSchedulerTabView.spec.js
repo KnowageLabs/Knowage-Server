@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -29,7 +31,7 @@ const mockedScheduler = {
     }
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation((url) => {
@@ -46,11 +48,11 @@ const $http = {
                 return Promise.resolve({ data: [] })
         }
     }),
-    post: axios.post.mockImplementation(() => Promise.resolve({ data: [] }))
+    post: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {

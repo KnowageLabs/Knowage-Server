@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -91,7 +93,7 @@ const mockedKpiList = [
 ]
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $router = {

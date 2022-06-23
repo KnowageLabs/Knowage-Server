@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
@@ -29,7 +31,7 @@ const mockedSchemas = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $route = {
     fullPath: '/mondrian-schemas-management'
@@ -41,11 +43,11 @@ const $http = {
             data: mockedSchemas
         })
     ),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {
@@ -114,8 +116,8 @@ describe('Mondrian Schema Management', () => {
         expect($confirm.require).toHaveBeenCalledTimes(1)
 
         await wrapper.vm.deleteSchema(1)
-        expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/mondrianSchemasResource/' + 1)
+        expect($http.delete).toHaveBeenCalledTimes(1)
+        expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/mondrianSchemasResource/' + 1)
     })
     it('opens empty detail form when the ' + ' button is clicked', async () => {
         const wrapper = factory()

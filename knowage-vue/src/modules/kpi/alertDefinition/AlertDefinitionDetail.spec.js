@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import flushPromises from 'flush-promises'
 import AlertDetail from './AlertDefinitionDetail.vue'
 import axios from 'axios'
@@ -53,7 +55,7 @@ const mockedActionList = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation((url) => {

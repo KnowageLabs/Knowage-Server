@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import DocumentBrowserSidebar from './sidebar/DocumentBrowserSidebar.vue'
 import DocumentBrowserDetail from './DocumentBrowserDetail.vue'
 import Toolbar from 'primevue/toolbar'

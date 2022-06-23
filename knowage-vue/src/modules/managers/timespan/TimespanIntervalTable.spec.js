@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Calendar from 'primevue/calendar'
 import TimespanIntervalForm from './TimespanIntervalForm.vue'
@@ -35,7 +37,7 @@ const mockedTimespan = {
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {

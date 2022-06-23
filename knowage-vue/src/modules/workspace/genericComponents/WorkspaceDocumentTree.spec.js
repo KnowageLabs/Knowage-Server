@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Tree from 'primevue/tree'

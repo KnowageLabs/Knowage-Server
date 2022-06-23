@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -48,7 +50,7 @@ const mockedMeasures = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() =>
@@ -56,11 +58,11 @@ const $http = {
             data: mockedMeasures
         })
     ),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {
@@ -135,8 +137,8 @@ describe('Measure Definition', () => {
         expect($confirm.require).toHaveBeenCalledTimes(1)
 
         await wrapper.vm.deleteMeasure(mockedMeasures[0])
-        expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/1/1/deleteRule')
+        expect($http.delete).toHaveBeenCalledTimes(1)
+        expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/1/1/deleteRule')
         expect($store.commit).toHaveBeenCalledTimes(1)
     })
     it('calls the correct route when clicking on the add button', async () => {

@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
@@ -39,7 +41,7 @@ const mockedCalendars = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation((url) => {
@@ -50,11 +52,11 @@ const $http = {
                 return Promise.resolve({ data: [] })
         }
     }),
-    post: axios.post.mockImplementation(() => Promise.resolve({ data: [] }))
+    post: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 const $store = {
     state: {
@@ -144,7 +146,7 @@ describe('Calendar Management loading', () => {
 
         wrapper.vm.deleteCalendar(mockedCalendars[2])
 
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'calendar/22/deleteCalendar')
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'calendar/22/deleteCalendar')
     })
 })

@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import BusinessModelDriverDetail from './BusinessModelDriverDetail.vue'
 import Button from 'primevue/button'
@@ -21,7 +23,7 @@ const mockedDriver = {
     priority: 2
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() => Promise.resolve({ data: [] }))

@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { createRouter, createWebHistory } from 'vue-router'
 import axios from 'axios'
 import PrimeVue from 'primevue/config'
@@ -203,7 +205,7 @@ const mockedResultList = {
     ]
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation((url) => {
@@ -236,7 +238,7 @@ const router = createRouter({
     ]
 })
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $confirm = {
     require: jest.fn(() => {})

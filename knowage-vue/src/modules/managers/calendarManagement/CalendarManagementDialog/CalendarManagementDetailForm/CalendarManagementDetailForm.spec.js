@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import CalendarManagementDetailForm from './CalendarManagementDetailForm.vue'
@@ -18,10 +20,10 @@ const mockedCalendar = {
     recStatus: 'A'
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    post: axios.post.mockImplementation(() => Promise.resolve({ data: [] }))
+    post: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 
 const $store = {
@@ -34,7 +36,7 @@ const $store = {
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const factory = () => {

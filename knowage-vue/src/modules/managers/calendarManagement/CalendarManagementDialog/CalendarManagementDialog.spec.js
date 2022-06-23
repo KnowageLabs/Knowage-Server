@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import CalendarManagementDialog from './CalendarManagementDialog.vue'
@@ -17,10 +19,10 @@ const mockedCalendar = {
     calType: ''
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    post: axios.post.mockImplementation(() => Promise.resolve({ data: [] }))
+    post: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 
 const $store = {
@@ -33,7 +35,7 @@ const $store = {
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const factory = () => {
@@ -75,8 +77,8 @@ describe('Calendar Management Dialog', () => {
 
         await wrapper.vm.saveCalendar()
 
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'calendar/saveCalendar', { ...mockedCalendar, name: 'Test', calStartDay: 1498867200000, calEndDay: 1500336000000 })
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'calendar/saveCalendar', { ...mockedCalendar, name: 'Test', calStartDay: 1498867200000, calEndDay: 1500336000000 })
         expect($store.commit).toHaveBeenCalledTimes(1)
     })
 

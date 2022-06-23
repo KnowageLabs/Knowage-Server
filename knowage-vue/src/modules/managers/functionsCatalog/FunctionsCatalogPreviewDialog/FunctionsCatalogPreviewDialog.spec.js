@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
@@ -169,10 +171,10 @@ const mockedDataset = {
     ]
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    post: axios.post.mockImplementation(() => Promise.reject({ message: '100' }))
+    post: vi.fn().mockImplementation(() => Promise.reject({ message: '100' }))
 }
 
 const $store = {

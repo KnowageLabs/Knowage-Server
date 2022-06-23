@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import KnListButtonRenderer from './KnListButtonRenderer.vue'
 import Menu from 'primevue/menu'
@@ -15,7 +17,7 @@ const mockedButtons = [
 ]
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {

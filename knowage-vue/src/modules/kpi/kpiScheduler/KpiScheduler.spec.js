@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { createRouter, createWebHistory } from 'vue-router'
 import axios from 'axios'
 import Button from 'primevue/button'
@@ -35,7 +37,7 @@ const mockedSchedulers = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() =>
@@ -43,12 +45,12 @@ const $http = {
             data: mockedSchedulers
         })
     ),
-    post: axios.post.mockImplementation(() => Promise.resolve({ data: [] })),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    post: vi.fn().mockImplementation(() => Promise.resolve({ data: [] })),
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {
@@ -165,8 +167,8 @@ describe('KPI Scheduler list', () => {
         expect($confirm.require).toHaveBeenCalledTimes(1)
 
         await wrapper.vm.deleteSchedule(mockedSchedulers[0].id)
-        expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/2/deleteKpiScheduler')
+        expect($http.delete).toHaveBeenCalledTimes(1)
+        expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/2/deleteKpiScheduler')
         expect($store.commit).toHaveBeenCalledTimes(1)
     })
     it('shows an hint when no item is selected', async () => {

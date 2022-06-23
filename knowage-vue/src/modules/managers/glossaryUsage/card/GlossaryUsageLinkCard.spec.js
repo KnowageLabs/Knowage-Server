@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Chip from 'primevue/chip'
@@ -16,7 +18,7 @@ const mockedItems = [
 ]
 
 const mockedWords = {
-    '1': [
+    1: [
         { WORD_ID: 1, WORD: 'Customer' },
         { WORD_ID: 2, WORD: 'Product Store' },
         { WORD_ID: 3, WORD: 'Product Sales' }

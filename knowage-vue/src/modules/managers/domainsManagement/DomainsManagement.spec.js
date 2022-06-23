@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
 import DomainsManagement from './DomainsManagement.vue'
@@ -56,7 +58,7 @@ const factory = () => {
         attachToDocument: true,
         global: {
             plugins: [PrimeVue, createTestingPinia()],
-            stubs: { Button, InputText, ProgressBar, Toolbar, Test: true },
+            stubs: { Button, InputText, ProgressBar, Toolbar },
             mocks: {
                 $t: (msg) => msg,
                 $confirm,

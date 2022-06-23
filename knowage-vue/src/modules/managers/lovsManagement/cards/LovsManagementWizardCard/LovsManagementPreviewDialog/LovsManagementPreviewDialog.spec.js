@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import Dialog from 'primevue/dialog'
@@ -23,8 +25,9 @@ const factory = () => {
             pagination: {
                 paginationEnd: 20,
                 paginationLimit: 20,
-                paginationStart: 0}
-            },
+                paginationStart: 0
+            }
+        },
         global: {
             plugins: [PrimeVue],
             stubs: {
@@ -35,7 +38,7 @@ const factory = () => {
                 InputText
             },
             mocks: {
-                $t: (msg) => msg,
+                $t: (msg) => msg
             }
         }
     })
@@ -45,7 +48,7 @@ describe('Lovs Management preview dialog', () => {
     it('loads correct data for preview', () => {
         const wrapper = factory()
 
-        expect(wrapper.vm.columns).toStrictEqual([{ field: "education", header: 'education'}])
-        expect(wrapper.vm.rows).toStrictEqual([{ education: "Partial High School" }, { education: "Bachelors Degree" }, { education: "Partial College" }, { education: "High School Degree" }, { education: "Graduate Degree" }])
+        expect(wrapper.vm.columns).toStrictEqual([{ field: 'education', header: 'education' }])
+        expect(wrapper.vm.rows).toStrictEqual([{ education: 'Partial High School' }, { education: 'Bachelors Degree' }, { education: 'Partial College' }, { education: 'High School Degree' }, { education: 'Graduate Degree' }])
     })
 })

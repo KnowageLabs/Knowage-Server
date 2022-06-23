@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
@@ -482,7 +484,7 @@ const metaMock = {
     ]
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = { get: axios.get.mockImplementation(() => Promise.resolve({ data: [] })) }
 

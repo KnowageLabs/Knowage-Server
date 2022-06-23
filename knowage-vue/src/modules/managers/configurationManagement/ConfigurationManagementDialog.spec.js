@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import ConfigurationManagementDialog from './ConfigurationManagementDialog.vue'
@@ -6,10 +8,10 @@ import flushPromises from 'flush-promises'
 import InputText from 'primevue/inputtext'
 import PrimeVue from 'primevue/config'
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    post: axios.post.mockImplementation(() => Promise.resolve()),
+    post: vi.fn().mockImplementation(() => Promise.resolve()),
     put: axios.put.mockImplementation(() => Promise.resolve())
 }
 
@@ -50,8 +52,8 @@ describe('Domains Management Dialog', () => {
         formWrapper.vm.v$.$invalid = false
         formWrapper.vm.handleSubmit()
         await flushPromises()
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs', mockedConfiguration)
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs', mockedConfiguration)
         expect($store.commit).toHaveBeenCalledTimes(1)
 
         mockedConfiguration.id = 1

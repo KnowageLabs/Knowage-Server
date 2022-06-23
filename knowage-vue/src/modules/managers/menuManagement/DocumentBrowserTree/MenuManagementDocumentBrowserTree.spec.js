@@ -40,7 +40,7 @@ const mockedElements = {
     ]
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() =>
@@ -91,8 +91,8 @@ describe('Document browser tree', () => {
 
         await flushPromises()
 
-        expect(axios.get).toHaveBeenCalled
-        expect(axios.get).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/menu/functionalities')
+        expect($http.get).toHaveBeenCalled
+        expect($http.get).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/menu/functionalities')
 
         expect(wrapper.vm.nodes).toStrictEqual([
             {

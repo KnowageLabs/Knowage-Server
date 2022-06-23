@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { nextTick } from 'vue'
 import axios from 'axios'
 import KnHint from '@/components/UI/KnHint.vue'
@@ -59,7 +61,7 @@ const mockedActivities = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
     get: axios.get.mockImplementation(() =>
@@ -67,16 +69,16 @@ const $http = {
             data: mockedActivities
         })
     ),
-    post: axios.post.mockImplementation(() =>
+    post: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: []
         })
     ),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $store = {
