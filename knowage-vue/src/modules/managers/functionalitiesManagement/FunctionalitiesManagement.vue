@@ -62,6 +62,7 @@ import FabButton from '@/components/UI/KnFabButton.vue'
 import functionalitiesManagementDescriptor from './FunctionalitiesManagementDescriptor.json'
 import KnHint from '@/components/UI/KnHint.vue'
 import Tree from 'primevue/tree'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'functionalities-management',
@@ -86,6 +87,10 @@ export default defineComponent({
             buttonsVisible: [],
             formVisible: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadPage(null)

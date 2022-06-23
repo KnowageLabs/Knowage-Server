@@ -124,6 +124,7 @@ import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Checkbox from 'primevue/checkbox'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     emits: ['touched', 'close', 'inserted'],
@@ -162,6 +163,10 @@ export default defineComponent({
         return {
             selectedFolder: createValidations('selectedFolder', validationDescriptor.validations.selectedFolder)
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loading = true

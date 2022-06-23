@@ -65,6 +65,7 @@ import FunctionsCatalogOutputTab from './tabs/FunctionsCatalogOutputTab/Function
 import FunctionsCatalogWarningDialog from './FunctionsCatalogWarningDialog.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'functions-catalog-detail',
@@ -115,6 +116,10 @@ export default defineComponent({
         invalidOutput(): boolean {
             return !this.validateOutputColumns(false)
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadFunction()

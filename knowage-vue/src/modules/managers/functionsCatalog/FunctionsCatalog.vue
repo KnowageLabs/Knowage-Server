@@ -31,6 +31,7 @@ import FunctionsCatalogDetail from './FunctionsCatalogDetail.vue'
 import FunctionsCatalogFilterCards from './FunctionsCatalogFilterCards.vue'
 import FunctionsCatalogPreviewDialog from './FunctionsCatalogPreviewDialog/FunctionsCatalogPreviewDialog.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'functions-catalog',
@@ -53,6 +54,10 @@ export default defineComponent({
             previewDialogVisible: false,
             loading: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadUser()
