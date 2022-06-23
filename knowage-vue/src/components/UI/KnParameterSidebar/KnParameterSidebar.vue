@@ -237,7 +237,7 @@ export default defineComponent({
     },
     computed: {
         sessionRole(): string {
-            return (this.$store.state as any).user.sessionRole
+            return (this.store.state as any).user.sessionRole
         },
         buttonsDisabled(): boolean {
             return this.requiredFiledMissing()
@@ -250,7 +250,7 @@ export default defineComponent({
         this.loadMode()
         if (this.mode === 'qbeView' || this.mode === 'workspaceView' || this.mode === 'datasetManagement') this.loadQBEParameters()
 
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.state as any).user
         this.role = this.userRole as string
         this.loadDocument()
         this.loadParameters()
@@ -498,7 +498,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/addViewpoint`, postData)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -572,7 +572,7 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentviewpoint/deleteViewpoint`, { VIEWPOINT: '' + viewpoint.vpId })
                 .then(async () => {
                     this.removeViewpoint(viewpoint)
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })

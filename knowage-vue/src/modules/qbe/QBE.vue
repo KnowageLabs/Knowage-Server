@@ -203,7 +203,7 @@ import calcFieldDescriptor from './QBECalcFieldDescriptor.json'
 import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
 import Dropdown from 'primevue/dropdown'
 
-import cryptoRandomString from 'crypto-random-string';
+import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
@@ -300,8 +300,8 @@ export default defineComponent({
         }
     },
     async created() {
-        this.uniqueID = cryptoRandomString({length: 16, type: 'base64'})
-        this.user = (this.$store.state as any).user
+        this.uniqueID = cryptoRandomString({ length: 16, type: 'base64' })
+        this.user = (this.store.state as any).user
         this.userRole = this.user.sessionRole && this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
         if (this.userRole) {
             await this.loadPage()
@@ -385,7 +385,7 @@ export default defineComponent({
         },
         generateFieldsAndMetadataId() {
             this.selectedQuery.fields.forEach((field) => {
-                field.uniqueID = cryptoRandomString({length: 4, type: 'base64'})
+                field.uniqueID = cryptoRandomString({ length: 4, type: 'base64' })
                 this.qbeMetadata.find((metadata) => {
                     field.alias === metadata.column ? (metadata.uniqueID = field.uniqueID) : ''
                 })
@@ -630,7 +630,7 @@ export default defineComponent({
                 this.updateExistingCalculatedField(this.selectedCalcField)
             } else {
                 calculatedField = buildCalculatedField(this.selectedCalcField, this.selectedQuery.fields)
-                calculatedField.uniqueID = cryptoRandomString({length: 4, type: 'base64'})
+                calculatedField.uniqueID = cryptoRandomString({ length: 4, type: 'base64' })
                 this.selectedQuery.fields.push(calculatedField)
                 this.addEntityToMainQuery(calculatedField, true)
                 this.addCalculatedFieldMetadata(calculatedField)
@@ -738,7 +738,7 @@ export default defineComponent({
                     this.getSQL()
                 })
                 .catch((error) => {
-                    this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error.errors[0].message })
+                    this.store.commit('setError', { title: this.$t('common.toast.error'), msg: error.errors[0].message })
                 })
         },
         async getSQL() {
@@ -761,7 +761,7 @@ export default defineComponent({
                     this.sqlDialogVisible = true
                 })
                 .catch((error) => {
-                    this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error.errors[0].message })
+                    this.store.commit('setError', { title: this.$t('common.toast.error'), msg: error.errors[0].message })
                 })
         },
         toggleDiscardRepetitions() {
@@ -877,7 +877,7 @@ export default defineComponent({
         },
         selectMainQuery() {
             if (this.selectedQuery.fields.length < 1) {
-                this.$store.commit('setInfo', { title: this.$t('common.toast.error'), msg: 'Sub entities must have one and one only field' })
+                this.store.commit('setInfo', { title: this.$t('common.toast.error'), msg: 'Sub entities must have one and one only field' })
             } else {
                 this.selectedQuery = this.mainQuery
             }

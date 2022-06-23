@@ -112,7 +112,7 @@ export default defineComponent({
                     }
                 })
                 .then((response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
+                    this.store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     this.selectedDataset.meta = response.data.meta
                     if (!this.selectedDataset.id) {
                         this.selectedDataset.id = response.data.id
@@ -237,7 +237,7 @@ export default defineComponent({
             }
         },
         setEndUserScope() {
-            if (this.selectedDataset && !this.selectedDataset.id && !(this.$store.state as any).user.functionalities.includes('QbeAdvancedSaving')) {
+            if (this.selectedDataset && !this.selectedDataset.id && !(this.store.state as any).user.functionalities.includes('QbeAdvancedSaving')) {
                 let userScope = this.scopeTypes.find((scope) => scope.VALUE_CD === 'USER')
                 this.selectedDataset.scopeCd = userScope.VALUE_CD
                 this.selectedDataset.scopeId = userScope.VALUE_ID

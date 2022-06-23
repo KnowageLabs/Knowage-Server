@@ -40,7 +40,7 @@
             <div class="kn-flex p-mx-2">
                 <span class="p-float-label">
                     <Calendar
-                        class="calendar-management-detail-form-calendar-input "
+                        class="calendar-management-detail-form-calendar-input"
                         v-model="calendar.calStartDay"
                         :class="{
                             'p-invalid': startDateDirty && !calendar.calStartDay
@@ -99,7 +99,7 @@ export default defineComponent({
     },
     computed: {
         canManageCalendar(): boolean {
-            return (this.$store.state as any).user.functionalities.includes('ManageCalendar')
+            return (this.store.state as any).user.functionalities.includes('ManageCalendar')
         },
         readonly(): boolean {
             return this.calendar?.calendarId !== undefined

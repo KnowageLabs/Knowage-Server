@@ -93,7 +93,7 @@ export default defineComponent({
     },
     computed: {
         profileAttributes(): any[] {
-            return (this.$store.state as any).user.attributes ? Object.keys((this.$store.state as any).user.attributes) : []
+            return (this.store.state as any).user.attributes ? Object.keys((this.store.state as any).user.attributes) : []
         }
     },
     watch: {

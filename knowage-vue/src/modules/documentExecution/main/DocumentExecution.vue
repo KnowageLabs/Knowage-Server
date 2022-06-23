@@ -225,7 +225,7 @@ export default defineComponent({
 
         await this.loadDocument()
 
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.state as any).user
         this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
 
         if (this.userRole) {
@@ -412,7 +412,7 @@ export default defineComponent({
         setMode() {
             this.embed = this.$route.path.includes('embed')
             if (this.embed) {
-                this.$store.commit('setDocumentExecutionEmbed')
+                this.store.commit('setDocumentExecutionEmbed')
             }
 
             if (this.$route.path.includes('registry')) {
@@ -488,7 +488,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
                 .catch((error: any) => {
                     if (error.response?.status === 500) {
-                        this.$store.commit('setError', {
+                        this.store.commit('setError', {
                             title: this.$t('common.error.generic'),
                             msg: this.$t('documentExecution.main.userRoleError')
                         })
@@ -717,7 +717,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/export/cockpitData`, postData)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.exportSuccess')
                     })
@@ -795,7 +795,7 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `documentrating/getvote`, { obj: this.document.id })
                 .then((response: AxiosResponse<any>) => (this.documentRank = response.data))
                 .catch((error: any) =>
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: error
                     })
@@ -808,13 +808,13 @@ export default defineComponent({
                 await this.$http
                     .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `documentrating/vote`, { rating: newRank, obj: this.document.id })
                     .then(() =>
-                        this.$store.commit('setInfo', {
+                        this.store.commit('setInfo', {
                             title: this.$t('common.toast.updateTitle'),
                             msg: this.$t('documentExecution.main.rankSaveSucces')
                         })
                     )
                     .catch((error: any) =>
-                        this.$store.commit('setError', {
+                        this.store.commit('setError', {
                             title: this.$t('common.error.generic'),
                             msg: error
                         })
@@ -838,14 +838,14 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecutionee/saveDocumentMetadata`, { id: this.document.id, jsonMeta: jsonMeta })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
                     this.metadataDialogVisible = false
                 })
                 .catch((error: any) => {
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: error
                     })
@@ -858,14 +858,14 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecutionmail/sendMail`, postData)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.sendMailSuccess')
                     })
                     this.mailDialogVisible = false
                 })
                 .catch((error: any) => {
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: error
                     })
@@ -878,7 +878,7 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/deleteSnapshot`, { SNAPSHOT: '' + schedulation.id })
                 .then(async () => {
                     this.removeSchedulation(schedulation)
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
@@ -1021,7 +1021,7 @@ export default defineComponent({
             this.loading = false
 
             if (!temp || temp.length === 0) {
-                this.$store.commit('setError', {
+                this.store.commit('setError', {
                     title: this.$t('common.error.generic'),
                     msg: this.$t('documentExecution.main.crossNavigationNoTargetError')
                 })
@@ -1066,13 +1066,13 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.document.id}`, {}, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })
                 })
                 .catch((error) => {
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: error.message === 'sbi.workspace.organizer.document.addtoorganizer.error.duplicateentry' ? this.$t('documentExecution.main.addToWorkspaceError') : error.message
                     })

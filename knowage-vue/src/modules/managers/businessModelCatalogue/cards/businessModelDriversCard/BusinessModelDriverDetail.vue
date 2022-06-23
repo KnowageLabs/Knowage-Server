@@ -462,7 +462,7 @@ export default defineComponent({
                                 this.errorMessage = response.data.errors[0].message
                                 this.displayWarning = true
                             } else {
-                                this.$store.commit('setInfo', {
+                                this.store.commit('setInfo', {
                                     title: this.$t(this.businessModelDriverDetailDescriptor.operation[this.operation].toastTitle),
                                     msg: this.$t(this.businessModelDriverDetailDescriptor.operation.success)
                                 })
@@ -539,7 +539,7 @@ export default defineComponent({
             delete condition.parFather
             delete condition.modalities
             await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.businessModelId}/datadependencies/delete`, condition).then(() => {
-                this.$store.commit('setInfo', {
+                this.store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })

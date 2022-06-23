@@ -58,13 +58,13 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metadata/${this.id}/bmExtract/`)
                 .then(() =>
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
                 )
                 .catch((error) =>
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: error.message
                     })

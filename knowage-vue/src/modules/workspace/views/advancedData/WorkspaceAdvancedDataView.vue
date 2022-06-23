@@ -117,7 +117,7 @@ export default defineComponent({
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
         isDatasetOwner(): any {
-            return (this.$store.state as any).user.userId === this.selectedDataset.owner
+            return (this.store.state as any).user.userId === this.selectedDataset.owner
         },
         canLoadData(): any {
             if (this.selectedDataset.actions) {
@@ -183,10 +183,10 @@ export default defineComponent({
                 }
             })
                 .then(() => {
-                    this.$store.commit('setInfo', { title: 'Updated successfully' })
+                    this.store.commit('setInfo', { title: 'Updated successfully' })
                 })
                 .catch(() => {
-                    this.$store.commit('setError', { title: 'Save error', msg: 'Cannot update Prepared Dataset' })
+                    this.store.commit('setError', { title: 'Save error', msg: 'Cannot update Prepared Dataset' })
                 })
             await this.getDatasets()
         },
@@ -221,7 +221,7 @@ export default defineComponent({
                     this.showDatasetList = true
                 },
                 () => {
-                    this.$store.commit('setError', { title: 'Error', msg: 'Cannot load dataset list' })
+                    this.store.commit('setError', { title: 'Error', msg: 'Cannot load dataset list' })
                 }
             )
         },
@@ -242,7 +242,7 @@ export default defineComponent({
                     { key: '4', label: this.$t('workspace.myData.deleteDataset'), icon: 'fas fa-trash', command: () => this.deleteDatasetConfirm(clickedDocument), visible: this.isDatasetOwner }
                 )
 
-                if ((this.$store.state as any).user?.functionalities.includes('DataPreparation')) {
+                if ((this.store.state as any).user?.functionalities.includes('DataPreparation')) {
 
                     tmp.push(
                         { key: '2', label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: true },
@@ -284,19 +284,19 @@ export default defineComponent({
                                     // check if Avro file has been deleted or not
                                     this.$router.push({ name: 'data-preparation', params: { id: datasetId, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
                                 else {
-                                    this.$store.commit('setInfo', {
+                                    this.store.commit('setInfo', {
                                         title: 'Avro file is missing',
                                         msg: 'Generate it again and then retry'
                                     })
                                 }
                             },
                             () => {
-                                this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
+                                this.store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
                             }
                         )
                     },
                     () => {
-                        this.$store.commit('setError', {
+                        this.store.commit('setError', {
                             title: 'Cannot open data preparation'
                         })
                     }
@@ -305,7 +305,7 @@ export default defineComponent({
                 // original dataset already exported in Avro
                 this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
             } else {
-                this.$store.commit('setInfo', {
+                this.store.commit('setInfo', {
                     title: 'Avro file is missing',
                     msg: 'Generate it again and then retry'
                 })
@@ -338,7 +338,7 @@ export default defineComponent({
                     }
                 )
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('workspace.myData.exportSuccess')
                     })
@@ -367,7 +367,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -386,7 +386,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets`, dataset, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -416,7 +416,7 @@ export default defineComponent({
             await this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -460,7 +460,7 @@ export default defineComponent({
                     this.loadDataset(this.selectedDataset.id)
                 },
                 () => {
-                    this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })
+                    this.store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })
                 }
             )
         }

@@ -38,7 +38,7 @@ export default defineComponent({
             let postUrl = '/knowage/servlet/AdapterHTTP'
 
             this.$http.post(postUrl, data, { headers: headers }).then(() => {
-                this.$store.commit('setUser', this.user)
+                this.store.commit('setUser', this.user)
                 localStorage.setItem('sessionRole', this.user.sessionRole)
                 this.closeDialog()
                 this.$router.go(0)

@@ -82,7 +82,7 @@ export default defineComponent({
             this.linkParameters = this.parameters as any[]
         },
         getPublicUrl() {
-            const tenet = (this.$store.state as any).user.organization
+            const tenet = (this.store.state as any).user.organization
 
             if (!this.document) return
 

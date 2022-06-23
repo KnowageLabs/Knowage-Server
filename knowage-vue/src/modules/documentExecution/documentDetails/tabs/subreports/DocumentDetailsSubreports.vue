@@ -63,6 +63,7 @@ import mainDescriptor from '@/modules/documentExecution/documentDetails/Document
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InlineMessage from 'primevue/inlinemessage'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'data-lineage',
@@ -82,6 +83,10 @@ export default defineComponent({
             filters: { global: [filterDefault] } as Object,
             globalFilterFields: ['name']
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.getSelectedSubreports()
@@ -119,16 +124,16 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/subreports`, postData, {
                     headers: { 'X-Disable-Errors': 'true' }
                 })
-                .then(() => this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.subreports.persistOk') }))
-                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.subreports.persistError') }))
+                .then(() => this.store.setInfo({ title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.subreports.persistOk') }))
+                .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.subreports.persistError') }))
         },
         deleteTable(event) {
             this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/subreports/${event.data.id}`, {
                     headers: { 'X-Disable-Errors': 'true' }
                 })
-                .then(() => this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.subreports.deleteOk') }))
-                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.subreports.deleteError') }))
+                .then(() => this.store.setInfo({ title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.subreports.deleteOk') }))
+                .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.subreports.deleteError') }))
         }
     }
 })

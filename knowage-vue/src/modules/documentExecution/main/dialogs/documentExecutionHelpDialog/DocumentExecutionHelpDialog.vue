@@ -62,21 +62,21 @@ export default defineComponent({
             if (this.document.id) await this.loadDocumentWords()
         },
         async loadDocumentWords() {
-            this.$store.setLoading(true)
+            this.store.setLoading(true)
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/getDocumentInfo?DOCUMENT_ID=${this.document.id}`)
                 .then((response: AxiosResponse<any>) => (this.words = response.data.word))
-                .finally(() => this.$store.setLoading(false))
+                .finally(() => this.store.setLoading(false))
         },
         async loadWordDetail(word: { WORD_ID: number; WORD: string }) {
-            this.$store.setLoading(true)
+            this.store.setLoading(true)
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/getWord?WORD_ID=${word?.WORD_ID}`)
                 .then((response: AxiosResponse<any>) => {
                     this.selectedWordName = word.WORD
                     this.wordDetail = response.data
                 })
-                .finally(() => this.$store.setLoading(false))
+                .finally(() => this.store.setLoading(false))
         },
         closeDialog() {
             this.$emit('close')

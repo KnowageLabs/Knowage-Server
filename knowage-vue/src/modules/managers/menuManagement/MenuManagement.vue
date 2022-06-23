@@ -212,7 +212,7 @@ export default defineComponent({
                     this.axios
                         .delete(this.apiUrl + 'menu/' + id)
                         .then(() => {
-                            this.$store.commit('setInfo', {
+                            this.store.commit('setInfo', {
                                 title: this.$t('managers.menuManagement.info.deleteTitle'),
                                 msg: this.$t('managers.menuManagement.info.deleteMessage')
                             })

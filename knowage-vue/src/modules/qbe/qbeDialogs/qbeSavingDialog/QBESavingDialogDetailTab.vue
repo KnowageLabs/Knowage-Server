@@ -103,7 +103,7 @@ export default defineComponent({
     props: { propDataset: Object, scopeTypes: Array, categoryTypes: Array },
     computed: {
         qbeAdvancedSaving(): any {
-            return (this.$store.state as any).user.functionalities.includes('QbeAdvancedSaving')
+            return (this.store.state as any).user.functionalities.includes('QbeAdvancedSaving')
         }
     },
     data() {

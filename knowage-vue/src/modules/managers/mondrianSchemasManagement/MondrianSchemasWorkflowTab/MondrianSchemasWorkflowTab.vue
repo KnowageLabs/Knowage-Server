@@ -163,9 +163,9 @@ export default defineComponent({
                 .put(url)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.errors) {
-                        this.$store.commit('setError', { title: this.$t('managers.mondrianSchemasManagement.toast.workflow.startFailed'), msg: response.data.errors[0].message })
+                        this.store.commit('setError', { title: this.$t('managers.mondrianSchemasManagement.toast.workflow.startFailed'), msg: response.data.errors[0].message })
                     } else {
-                        this.$store.commit('setInfo', {
+                        this.store.commit('setInfo', {
                             title: this.$t('managers.mondrianSchemasManagement.toast.workflow.started'),
                             msg: this.$t('managers.mondrianSchemasManagement.toast.workflow.startedOk')
                         })

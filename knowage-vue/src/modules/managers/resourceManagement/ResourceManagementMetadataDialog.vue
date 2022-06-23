@@ -114,7 +114,7 @@ export default defineComponent({
                         this.metadata = response.data
                     })
                     .catch(() => {
-                        this.$store.commit('setError', {
+                        this.store.commit('setError', {
                             title: this.$t('common.toast.metadata'),
                             msg: this.$t('common.toast.metadataLoadingFailed')
                         })
@@ -138,13 +138,13 @@ export default defineComponent({
                         }
                     })
                     .then(() => {
-                        this.$store.commit('setInfo', {
+                        this.store.commit('setInfo', {
                             title: this.$t('common.toast.updateTitle'),
                             msg: this.$t('common.toast.updateSuccess')
                         })
                     })
                     .catch((error) => {
-                        this.$store.commit('setError', {
+                        this.store.commit('setError', {
                             title: this.$t('common.toast.updateTitle'),
                             msg: this.$t(error)
                         })
@@ -169,7 +169,7 @@ export default defineComponent({
             if (event.srcElement.files[0] && event.srcElement.files[0].size < import.meta.env.VITE_MAX_UPLOAD_IMAGE_SIZE) {
                 reader.readAsDataURL(event.srcElement.files[0])
                 this.setDirty()
-            } else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
+            } else this.store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
         }
     },
     computed: {

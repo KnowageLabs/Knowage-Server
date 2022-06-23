@@ -261,7 +261,7 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/locker/${this.olap.modelConfig.artifactId}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
                     if ((response.data.status === 'unlocked' || response.data.status === 'locked_by_user') && this.olap) {
-                        this.$store.commit('setInfo', {
+                        this.store.commit('setInfo', {
                             msg: this.$t('common.toast.success')
                         })
                         this.olapLocked = response.data.status === 'locked_by_user'

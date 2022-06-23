@@ -153,7 +153,7 @@ export default defineComponent({
             await this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/datasources/' + datasourceId)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
@@ -161,7 +161,7 @@ export default defineComponent({
                     this.getAllDatasources()
                 })
                 .catch((error) => {
-                    this.$store.commit('setError', { title: 'Delete error', msg: error.message })
+                    this.store.commit('setError', { title: 'Delete error', msg: error.message })
                 })
         },
 

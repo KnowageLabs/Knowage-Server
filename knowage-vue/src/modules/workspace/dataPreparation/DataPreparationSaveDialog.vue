@@ -136,15 +136,15 @@ export default defineComponent({
                     this.saveOrUpdateInstance(processId, datasetDefinition).then(
                         (response: AxiosResponse<any>) => {
                             this.$emit('update:instanceId', response.data.id)
-                            this.$store.commit('setInfo', { title: 'Saved successfully' })
+                            this.store.commit('setInfo', { title: 'Saved successfully' })
                         },
                         () => {
-                            this.$store.commit('setError', { title: 'Save error', msg: 'Cannot add process instance' })
+                            this.store.commit('setError', { title: 'Save error', msg: 'Cannot add process instance' })
                         }
                     )
                 },
                 () => {
-                    this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
+                    this.store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
                 }
             )
             this.resetAndClose()

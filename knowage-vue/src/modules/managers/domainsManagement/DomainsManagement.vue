@@ -149,7 +149,7 @@ export default defineComponent({
         },
         async deleteDomain(domainId: number) {
             await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/domains/' + domainId).then(() => {
-                this.$store.commit('setInfo', {
+                this.store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })

@@ -79,7 +79,7 @@ export default defineComponent({
             this.driver = { ...this.selectedDriver } as any
             this.getModes()
         }
-        this.showMapDriver = (this.$store.state as any).user.functionalities.indexOf('MapDriverManagement') > -1
+        this.showMapDriver = (this.store.state as any).user.functionalities.indexOf('MapDriverManagement') > -1
         this.loadAll()
     },
 
@@ -190,18 +190,18 @@ export default defineComponent({
             }
 
             if (driverSavedMessage === 'OK' && driverSavingErrors.length === 0) {
-                this.$store.commit('setInfo', {
+                this.store.commit('setInfo', {
                     title: this.$t(this.driversManagemenDetailtDescriptor.operation[this.operation].toastTitle),
                     msg: this.$t(this.driversManagemenDetailtDescriptor.operation.success)
                 })
             } else if (driverSavingErrors.length > 0) {
                 const message = driverSavedMessage === 'OK' ? this.$t('managers.driversManagement.partialSuccessMessage') + '\n\n' : ''
-                this.$store.commit('setError', {
+                this.store.commit('setError', {
                     title: this.$t('common.toast.errorTitle'),
                     msg: message.concat(driverSavingErrors.join('\n\n'))
                 })
             } else {
-                this.$store.commit('setError', {
+                this.store.commit('setError', {
                     title: this.$t('common.toast.errorTitle'),
                     msg: driverSavedMessage
                 })

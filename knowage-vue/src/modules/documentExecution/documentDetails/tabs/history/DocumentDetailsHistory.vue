@@ -60,6 +60,8 @@ import historyDescriptor from './DocumentDetailsHistory.json'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import InlineMessage from 'primevue/inlinemessage'
+import mainStore from '../../../../../App.store'
+
 export default defineComponent({
     name: 'document-drivers',
     components: { KnListBox, KnInputFile, VCodeMirror, InlineMessage },
@@ -113,6 +115,10 @@ export default defineComponent({
                 lineNumbers: true
             }
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.getAllTemplates()
@@ -192,20 +198,20 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates`, formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
+                    this.store.setInfo({ title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
                     this.getAllTemplates()
                 })
-                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') }))
+                .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') }))
                 .finally(() => (this.triggerUpload = false))
         },
         setActiveTemplate(template) {
             this.$http
                 .put(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}`, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.success'), msg: this.$t('documentExecution.documentDetails.history.activeOk') })
+                    this.store.commit('setInfo', { title: this.$t('common.toast.success'), msg: this.$t('documentExecution.documentDetails.history.activeOk') })
                     this.getAllTemplates()
                 })
-                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.activeError') }))
+                .catch(() => this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.activeError') }))
         },
         async downloadTemplate(template) {
             let fileType = template.name.split('.')
@@ -215,9 +221,9 @@ export default defineComponent({
                 })
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.errors) {
-                        this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
+                        this.store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
                     } else {
-                        this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
+                        this.store.commit('setInfo', { title: this.$t('common.toast.success') })
                         if (response.headers) {
                             var contentDisposition = response.headers['content-disposition']
                             var contentDispositionMatcher = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)
@@ -233,7 +239,7 @@ export default defineComponent({
                         }
                     }
                 })
-                .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
+                .catch((error) => this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         deleteTemplateConfirm(template) {
             this.$confirm.require({
@@ -247,10 +253,10 @@ export default defineComponent({
             await this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                    this.store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                     this.getAllTemplates()
                 })
-                .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
+                .catch((error) => this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         openDesignerConfirm() {
             console.log(this.selectedDocument.typeCode)

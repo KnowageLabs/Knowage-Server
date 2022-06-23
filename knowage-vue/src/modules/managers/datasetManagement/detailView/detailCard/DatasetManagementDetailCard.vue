@@ -216,19 +216,19 @@ export default defineComponent({
             return this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.dsId}/version/${event.versNum}`)
                 .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                    this.store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                     this.$emit('reloadVersions')
                 })
-                .catch((error) => this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: error.message }))
+                .catch((error) => this.store.commit('setError', { title: this.$t('common.error.generic'), msg: error.message }))
         },
         async deleteAllVersions() {
             return this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.selectedDataset.id}/allversions/`)
                 .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('managers.datasetManagement.deleteAllVersionsSuccess') })
+                    this.store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('managers.datasetManagement.deleteAllVersionsSuccess') })
                     this.$emit('reloadVersions')
                 })
-                .catch((error) => this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: error.message }))
+                .catch((error) => this.store.commit('setError', { title: this.$t('common.error.generic'), msg: error.message }))
         },
         //#endregion ================================================================================================
 

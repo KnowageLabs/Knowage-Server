@@ -133,7 +133,7 @@ export default defineComponent({
             this.layer.roles === null ? (this.layer.roles = []) : ''
             await this.saveOrUpdateMessage(this.layer)
                 .then((response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.success'),
                         msg: this.$t('common.toast.success')
                     })

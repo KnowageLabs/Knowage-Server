@@ -11,7 +11,7 @@
                         <div id="whitespace" :style="toolbarDescriptor.style.whitespace" />
                         <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" @click="openFilterDialog(column)" />
                     </div>
-                    <i v-if="column.positionInAxis < columns.length - 1" class="fas fa-arrows-alt-h p-as-center p-mx-2" style="cursor:pointer" @click="$emit('switchPosition', column)" />
+                    <i v-if="column.positionInAxis < columns.length - 1" class="fas fa-arrows-alt-h p-as-center p-mx-2" style="cursor: pointer" @click="$emit('switchPosition', column)" />
                 </div>
                 <div ref="axisDropzone" class="kn-flex kn-truncated p-mx-1" :style="toolbarDescriptor.style.topAxisDropzone">{{ $t('documentExecution.olap.filterToolbar.drop') }}</div>
             </div>
@@ -98,7 +98,7 @@ export default defineComponent({
                 fromAxis = data.axis
                 if (fromAxis != 0) {
                     if (data.axis === 1 && leftLength == 1) {
-                        this.$store.commit('setInfo', { title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.dragEmptyWarning') })
+                        this.store.commit('setInfo', { title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.dragEmptyWarning') })
                     } else {
                         data.positionInAxis = topLength
                         data.axis = 0

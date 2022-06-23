@@ -55,7 +55,7 @@ export default defineComponent({
             return this.calendar === null || !this.calendar.calendar || !this.calendar.calStartDay || !this.calendar.calEndDay
         },
         canManageCalendar(): boolean {
-            return (this.$store.state as any).user.functionalities.includes('ManageCalendar')
+            return (this.store.state as any).user.functionalities.includes('ManageCalendar')
         }
     },
     watch: {
@@ -123,7 +123,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/saveCalendar`, tempCalendar)
                 .then((response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.createSuccess')
                     })
@@ -142,7 +142,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/${this.calendar.calendarId}/updateDaysGenerated`, postData)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.updateSuccess')
                     })

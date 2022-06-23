@@ -69,7 +69,7 @@ export default defineComponent({
                     { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } }
                 )
                 .then((response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -77,7 +77,7 @@ export default defineComponent({
                     this.close()
                 })
                 .catch((error: any) =>
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: error?.localizedMessage
                     })

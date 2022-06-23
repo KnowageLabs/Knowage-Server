@@ -111,7 +111,7 @@ export default defineComponent({
                 return
             }
 
-            const sessionRole = (this.$store.state as any).user.sessionRole
+            const sessionRole = (this.store.state as any).user.sessionRole
             const role = sessionRole && sessionRole !== this.$t('role.defaultRolePlaceholder') ? sessionRole : this.selectedRole
 
             let url = '2.0/documentexecution/admissibleValuesTree'

@@ -53,90 +53,90 @@
     </div>
 </template>
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import Listbox from 'primevue/listbox'
-    import dialogDescriptor from './CrossNavigationManagementDialogDescriptor.json'
-    export default defineComponent({
-        name: 'cross-navigation-detail',
-        components: { Listbox },
-        props: {
-            selectedNavigation: {
-                type: Object
-            }
-        },
-        data() {
-            return {
-                navigation: {} as any,
-                dialogDescriptor,
-                fixedValue: '',
-                dropzoneActive: [] as boolean[]
-            }
-        },
-        created() {
+import { defineComponent } from 'vue'
+import Listbox from 'primevue/listbox'
+import dialogDescriptor from './CrossNavigationManagementDialogDescriptor.json'
+export default defineComponent({
+    name: 'cross-navigation-detail',
+    components: { Listbox },
+    props: {
+        selectedNavigation: {
+            type: Object
+        }
+    },
+    data() {
+        return {
+            navigation: {} as any,
+            dialogDescriptor,
+            fixedValue: '',
+            dropzoneActive: [] as boolean[]
+        }
+    },
+    created() {
+        if (this.selectedNavigation) {
+            this.navigation = this.selectedNavigation
+            this.dropzoneActive = []
+        }
+    },
+    watch: {
+        selectedNavigation() {
             if (this.selectedNavigation) {
                 this.navigation = this.selectedNavigation
                 this.dropzoneActive = []
             }
-        },
-        watch: {
-            selectedNavigation() {
-                if (this.selectedNavigation) {
-                    this.navigation = this.selectedNavigation
-                    this.dropzoneActive = []
-                }
+        }
+    },
+    methods: {
+        addFixedValue() {
+            if (this.fixedValue != '') {
+                if (!this.navigation.fromPars) this.navigation.fromPars = []
+                this.navigation.fromPars.push({ id: this.navigation.simpleNavigation.fromDocId, name: this.fixedValue, type: 2, fixedValue: this.fixedValue })
+                this.fixedValue = ''
             }
         },
-        methods: {
-            addFixedValue() {
-                if (this.fixedValue != '') {
-                    if (!this.navigation.fromPars) this.navigation.fromPars = []
-                    this.navigation.fromPars.push({ id: this.navigation.simpleNavigation.fromDocId, name: this.fixedValue, type: 2, fixedValue: this.fixedValue })
-                    this.fixedValue = ''
-                }
-            },
-            onDragStart(event: any, param: any) {
-                event.dataTransfer.setData('text/plain', JSON.stringify(param))
-                event.dataTransfer.dropEffect = 'move'
-                event.dataTransfer.effectAllowed = 'move'
-            },
-            link(event: any, item: any) {
-                const param = JSON.parse(event.dataTransfer.getData('text/plain'))
-                if (param.type === 2 || param.parType === item.parType) {
-                    item.links = [param]
-                    this.$emit('touched')
-                } else {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('managers.crossNavigationManagement.incompatibleTypes'),
-                        msg: this.$t('managers.crossNavigationManagement.incompatibleTypesMessage', { originParam: param.name, targetParam: item.name })
-                    })
-                }
-            },
-            removeLink(id) {
-                this.navigation.toPars.forEach((param) => {
-                    if (param.id === id) {
-                        param.links = []
-                        this.$emit('touched')
-                        this.setDropzoneClass(false, id)
-                    }
+        onDragStart(event: any, param: any) {
+            event.dataTransfer.setData('text/plain', JSON.stringify(param))
+            event.dataTransfer.dropEffect = 'move'
+            event.dataTransfer.effectAllowed = 'move'
+        },
+        link(event: any, item: any) {
+            const param = JSON.parse(event.dataTransfer.getData('text/plain'))
+            if (param.type === 2 || param.parType === item.parType) {
+                item.links = [param]
+                this.$emit('touched')
+            } else {
+                this.store.commit('setInfo', {
+                    title: this.$t('managers.crossNavigationManagement.incompatibleTypes'),
+                    msg: this.$t('managers.crossNavigationManagement.incompatibleTypesMessage', { originParam: param.name, targetParam: item.name })
                 })
-            },
-            setDropzoneClass(value: boolean, paramId: any) {
-                if (paramId) {
-                    this.dropzoneActive[paramId] = value
+            }
+        },
+        removeLink(id) {
+            this.navigation.toPars.forEach((param) => {
+                if (param.id === id) {
+                    param.links = []
+                    this.$emit('touched')
+                    this.setDropzoneClass(false, id)
                 }
+            })
+        },
+        setDropzoneClass(value: boolean, paramId: any) {
+            if (paramId) {
+                this.dropzoneActive[paramId] = value
             }
         }
-    })
+    }
+})
 </script>
 <style lang="scss" scoped>
-    ::v-deep(.p-listbox) {
-        .p-listbox-item {
-            padding: 0;
-        }
+::v-deep(.p-listbox) {
+    .p-listbox-item {
+        padding: 0;
     }
-    .dropzone {
-        background-color: #c2c2c2;
-        color: white;
-        border: 1px dashed;
-    }
+}
+.dropzone {
+    background-color: #c2c2c2;
+    color: white;
+    border: 1px dashed;
+}
 </style>

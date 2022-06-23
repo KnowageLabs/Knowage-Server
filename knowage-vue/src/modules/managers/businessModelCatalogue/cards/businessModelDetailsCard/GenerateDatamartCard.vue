@@ -116,7 +116,7 @@ export default defineComponent({
                 `/knowagemeta/restful-services/1.0/metaWeb/buildModel/${this.businessModel.id}?user_id=${this.user.userId}` +
                 `&model=${encodeURIComponent(this.modelName)}&schema=${this.schemaName}&catalog=${this.catalogName}&registry=${this.isGeneratedForRegistry}&includeSources=${this.includeSources}`
             this.$http.get(url).then(() => {
-                this.$store.commit('setInfo', {
+                this.store.commit('setInfo', {
                     title: this.$t('common.toast.createTitle'),
                     msg: this.$t('common.toast.success')
                 })

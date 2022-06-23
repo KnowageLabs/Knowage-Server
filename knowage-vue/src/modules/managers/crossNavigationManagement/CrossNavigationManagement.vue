@@ -66,12 +66,12 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/remove', "{'id':" + itemId + '}')
                 .then(async () => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                    this.store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                     await this.loadAll()
                     if (itemId == this.$route.params.id) this.$router.push('/cross-navigation-management')
                 })
                 .catch((error) =>
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: error.message
                     })

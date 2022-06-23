@@ -118,7 +118,7 @@ export default defineComponent({
                     })
                 })
                 .catch((error: any) =>
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: error
                     })
@@ -130,7 +130,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}`, { public: this.selectedNote.type === 'Public', content: this.selectedNote.content, id: this.selectedNote.id })
                 .then(async (response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -138,7 +138,7 @@ export default defineComponent({
                     await this.loadNotes()
                 })
                 .catch((error: any) =>
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: error
                     })
@@ -154,7 +154,7 @@ export default defineComponent({
             await this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}/${note.id}`)
                 .then(async () => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
@@ -163,7 +163,7 @@ export default defineComponent({
                     await this.loadNotes()
                 })
                 .catch((error: any) =>
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: error
                     })

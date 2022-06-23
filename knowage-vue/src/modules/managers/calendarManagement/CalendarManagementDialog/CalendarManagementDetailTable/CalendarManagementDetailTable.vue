@@ -56,7 +56,7 @@ export default defineComponent({
     },
     computed: {
         canManageCalendar(): boolean {
-            return (this.$store.state as any).user.functionalities.includes('ManageCalendar')
+            return (this.store.state as any).user.functionalities.includes('ManageCalendar')
         }
     },
     watch: {

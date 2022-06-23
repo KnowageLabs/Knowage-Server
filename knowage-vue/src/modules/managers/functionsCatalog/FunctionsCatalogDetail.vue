@@ -97,11 +97,11 @@ export default defineComponent({
     },
     computed: {
         canManageFunctionalities(): boolean {
-            const index = (this.$store.state as any).user?.functionalities?.findIndex((el: string) => el === 'FunctionsCatalogManagement')
+            const index = (this.store.state as any).user?.functionalities?.findIndex((el: string) => el === 'FunctionsCatalogManagement')
             return index !== -1
         },
         readonly(): boolean {
-            return !this.canManageFunctionalities || this.selectedFunction?.owner !== (this.$store.state as any).user.userId
+            return !this.canManageFunctionalities || this.selectedFunction?.owner !== (this.store.state as any).user.userId
         },
         invalidGeneral(): boolean {
             return !this.validateFunctionInfo(false)
@@ -138,7 +138,7 @@ export default defineComponent({
                 benchmark: '',
                 type: '',
                 label: '',
-                owner: (this.$store.state as any).user.userId,
+                owner: (this.store.state as any).user.userId,
                 language: 'Python',
                 inputColumns: [] as iInputColumn[],
                 inputVariables: [] as iInputVariable[],
@@ -281,7 +281,7 @@ export default defineComponent({
                         this.warningVisible = true
                         this.missingFields.push(response.data.errrors[0].message)
                     } else {
-                        this.$store.commit('setInfo', {
+                        this.store.commit('setInfo', {
                             title: this.$t('common.toast.' + this.operation + 'Title'),
                             msg: this.$t('common.toast.success')
                         })

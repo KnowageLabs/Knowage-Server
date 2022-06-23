@@ -120,7 +120,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     if (response.data?.response === 'ok') {
                         this.$emit('masterHierarchyCreated')
-                        this.$store.commit('setInfo', {
+                        this.store.commit('setInfo', {
                             title: this.$t('common.toast.createTitle'),
                             msg: this.$t('common.toast.success')
                         })

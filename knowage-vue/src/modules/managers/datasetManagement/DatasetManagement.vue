@@ -171,7 +171,7 @@ export default defineComponent({
                     this.$http
                         .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.item.label}/`)
                         .then(() => {
-                            this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                            this.store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                             this.loading = true
 
                             this.getDatasets()

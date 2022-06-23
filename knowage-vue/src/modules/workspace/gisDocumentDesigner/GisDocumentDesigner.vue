@@ -352,7 +352,7 @@ export default defineComponent({
                 await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documents/saveGeoReportTemplate`, postData).then(async () => {
                     this.saveDialogVisible = false
                     this.canOpenMap = true
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.updateSuccess')
                     })
@@ -371,7 +371,7 @@ export default defineComponent({
                     this.saveDialogVisible = false
                     this.canOpenMap = true
                     this.documentData.documentLabel = docLabel
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })

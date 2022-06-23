@@ -207,14 +207,14 @@ export default defineComponent({
             this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/save/', this.navigation, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t(this.crossNavigationDescriptor.operation[this.operation].toastTitle),
                         msg: this.$t(this.crossNavigationDescriptor.operation.success)
                     })
                     this.$emit('saved', this.operation, this.navigation.simpleNavigation.name)
                 })
                 .catch((error) => {
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.saving'),
                         msg: error.message
                     })

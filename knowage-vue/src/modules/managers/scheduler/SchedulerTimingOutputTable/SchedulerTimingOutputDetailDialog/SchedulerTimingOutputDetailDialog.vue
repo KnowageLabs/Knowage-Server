@@ -138,7 +138,7 @@ export default defineComponent({
                     if (response.data.Errors) {
                         this.setWarningMessage(response.data.Errors[0] ?? 'default error')
                     } else {
-                        this.$store.commit('setInfo', {
+                        this.store.commit('setInfo', {
                             title: this.$t('common.toast.' + this.operation + 'Title'),
                             msg: this.$t('common.toast.success')
                         })

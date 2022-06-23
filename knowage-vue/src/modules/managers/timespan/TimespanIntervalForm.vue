@@ -6,7 +6,7 @@
                 <label class="kn-material-input-label"> {{ $t('common.from') }}</label>
             </span>
         </div>
-        <div class="timespan-interval-calendar p-fluid  kn-flex p-mx-auto">
+        <div class="timespan-interval-calendar p-fluid kn-flex p-mx-auto">
             <span class="p-float-label">
                 <Calendar v-model="interval.to" :manualInput="true" :timeOnly="timespan.type === 'time'" hourFormat="24"></Calendar>
                 <label class="kn-material-input-label"> {{ $t('common.to') }}</label>
@@ -73,7 +73,7 @@ export default defineComponent({
         },
         createNewTimeInterval(interval: iInterval) {
             if (!(interval.from instanceof Date) || !(interval.to instanceof Date)) {
-                this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.invalidDatesError') })
+                this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.invalidDatesError') })
                 return
             }
 
@@ -84,7 +84,7 @@ export default defineComponent({
             const toTime = this.createDateFromHoursAndMinutes(to)
 
             if (fromTime > toTime) {
-                this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.startTimeGreaterError') })
+                this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.startTimeGreaterError') })
                 return
             }
 
@@ -96,7 +96,7 @@ export default defineComponent({
                     const tempStart = this.createDateFromHoursAndMinutes(this.timespan.definition[i].from)
                     const tempEnd = this.createDateFromHoursAndMinutes(this.timespan.definition[i].to)
                     if (fromTime <= tempEnd && toTime >= tempStart) {
-                        this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.timeOverlapError') })
+                        this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.timeOverlapError') })
                         return
                     }
                 }
@@ -115,7 +115,7 @@ export default defineComponent({
         },
         createNewTemporalInterval(interval: iInterval) {
             if (!(interval.from instanceof Date) || !(interval.to instanceof Date)) {
-                this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.invalidDatesError') })
+                this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.invalidDatesError') })
                 return
             }
 
@@ -123,7 +123,7 @@ export default defineComponent({
             const toDate = interval.to
 
             if (fromDate > toDate) {
-                this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.startDateGreaterError') })
+                this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.startDateGreaterError') })
                 return
             }
 
@@ -136,7 +136,7 @@ export default defineComponent({
                     const tempEnd = createDateFromIntervalTime(this.timespan.definition[i].to)
 
                     if (fromDate <= tempEnd && toDate >= tempStart) {
-                        this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.temporalOverlapError') })
+                        this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.temporalOverlapError') })
                         return
                     }
                 }

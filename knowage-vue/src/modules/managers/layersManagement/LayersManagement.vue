@@ -97,7 +97,7 @@ export default defineComponent({
         },
         async deleteLayer(layerId: number) {
             await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `layers/deleteLayer?id=${layerId}`).then(() => {
-                this.$store.commit('setInfo', {
+                this.store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })

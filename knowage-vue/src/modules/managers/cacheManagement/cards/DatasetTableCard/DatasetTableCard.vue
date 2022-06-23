@@ -100,7 +100,7 @@ export default defineComponent({
             await this.$http.put(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: [signature] }).then(() => this.emitDeleteSuccess())
         },
         emitDeleteSuccess() {
-            this.$store.commit('setInfo', {
+            this.store.commit('setInfo', {
                 title: this.$t('common.toast.deleteTitle'),
                 msg: this.$t('common.toast.deleteSuccess')
             })

@@ -97,7 +97,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news', { ...this.selectedNews, expirationDate: new Date(this.selectedNews.expirationDate as string).valueOf() })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t(this.newsManagementDetailDescriptor.operation[this.operation].toastTitle),
                         msg: this.$t(this.newsManagementDetailDescriptor.operation.success)
                     })

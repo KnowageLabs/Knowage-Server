@@ -111,7 +111,7 @@ export default defineComponent({
         async deleteTenant(selectedTenant: Object) {
             let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'multitenant'
             await this.$http.delete(url, { data: selectedTenant }).then(() => {
-                this.$store.commit('setInfo', {
+                this.store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })

@@ -92,7 +92,7 @@ export default defineComponent({
                     this.axios
                         .delete(import.meta.env.VITE_API_PATH + '1.0/widgetgallery/' + templateId)
                         .then(() => {
-                            this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.deleteTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyDeleted') })
+                            this.store.commit('setInfo', { title: this.$t('managers.widgetGallery.deleteTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyDeleted') })
                             this.loadAllTemplates()
                             if (templateId === this.$route.params.id) this.$router.push('/gallery-management')
                         })
@@ -137,7 +137,7 @@ export default defineComponent({
         },
         importWidget(json: JSON) {
             this.$http.post(import.meta.env.VITE_API_PATH + '1.0/widgetgallery/import', json).then(() => {
-                this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.uploadTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyUploaded') })
+                this.store.commit('setInfo', { title: this.$t('managers.widgetGallery.uploadTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyUploaded') })
 
                 this.loadAllTemplates()
             })

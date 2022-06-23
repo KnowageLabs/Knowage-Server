@@ -124,7 +124,7 @@ export default defineComponent({
             }
 
             await this.$http.post(url, this.selectedRole).then(() => {
-                this.$store.commit('setInfo', {
+                this.store.commit('setInfo', {
                     title: this.$t(this.rolesManagementTabViewDescriptor.operation[this.operation].toastTitle),
                     msg: this.$t(this.rolesManagementTabViewDescriptor.operation.success)
                 })

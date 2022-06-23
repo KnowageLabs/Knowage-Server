@@ -172,9 +172,9 @@ export default defineComponent({
             }
             await this.createOrUpdate(url).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
-                    this.$store.commit('setError', { title: this.$t('managers.mondrianSchemasManagement.toast.schema.error'), msg: response.data.errors })
+                    this.store.commit('setError', { title: this.$t('managers.mondrianSchemasManagement.toast.schema.error'), msg: response.data.errors })
                 } else {
-                    this.$store.commit('setInfo', { title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle), msg: this.$t(this.tabViewDescriptor.operation.success) })
+                    this.store.commit('setInfo', { title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle), msg: this.$t(this.tabViewDescriptor.operation.success) })
                     this.onSaveSuccess(response)
                 }
             })
@@ -204,7 +204,7 @@ export default defineComponent({
         async updateWorkflow(schemaId) {
             let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/workflow/update`
             await this.$http.put(url, { modelId: schemaId, workflowArr: this.availableUsersList[1] }, { headers: { Accept: 'application/json, text/plain, */*' } }).then(() => {
-                this.$store.commit('setInfo', {
+                this.store.commit('setInfo', {
                     title: this.$t('managers.mondrianSchemasManagement.toast.workflow.updated'),
                     msg: this.$t('managers.mondrianSchemasManagement.toast.workflow.ok')
                 })
@@ -219,9 +219,9 @@ export default defineComponent({
             let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/${this.selectedSchema.id}` + '/versions'
             await this.$http.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
-                    this.$store.commit('setError', { title: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.error'), msg: response.data.errors })
+                    this.store.commit('setError', { title: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.error'), msg: response.data.errors })
                 } else {
-                    this.$store.commit('setInfo', { title: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.uploaded'), msg: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.ok') })
+                    this.store.commit('setInfo', { title: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.uploaded'), msg: this.$t('managers.mondrianSchemasManagement.toast.uploadFile.ok') })
                 }
             })
         }

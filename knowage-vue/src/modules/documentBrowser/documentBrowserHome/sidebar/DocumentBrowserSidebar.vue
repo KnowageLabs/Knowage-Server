@@ -62,9 +62,12 @@
         </div>
     </div>
 </template>
+
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
+import mainStore from '../../../../App.store'
+
 export default defineComponent({
     name: 'document-browser-sidebar',
     props: { selectedDocument: { type: Object } },
@@ -104,9 +107,13 @@ export default defineComponent({
             }
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadDocument()
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.$state as any).user
     },
     methods: {
         loadDocument() {

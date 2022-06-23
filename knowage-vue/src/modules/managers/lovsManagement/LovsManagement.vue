@@ -86,7 +86,7 @@ export default defineComponent({
             await this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/lovs/delete/${lovId}`)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
@@ -94,7 +94,7 @@ export default defineComponent({
                     this.loadLovs()
                 })
                 .catch((error) => {
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: 'Server error',
                         msg: error.message
                     })

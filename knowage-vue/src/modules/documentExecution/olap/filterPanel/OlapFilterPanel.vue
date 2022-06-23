@@ -66,12 +66,12 @@ export default defineComponent({
             if (data != null) {
                 fromAxis = data.axis
                 if (data.measure) {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.noMeasure') })
+                    this.store.commit('setInfo', { title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.noMeasure') })
                     return null
                 }
                 if (fromAxis != -1) {
                     if ((fromAxis === 0 && topLength == 1) || (fromAxis === 1 && leftLength == 1)) {
-                        this.$store.commit('setInfo', { title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.dragEmptyWarning') })
+                        this.store.commit('setInfo', { title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.dragEmptyWarning') })
                     } else {
                         data.positionInAxis = this.filterCardList.length
                         data.axis = -1

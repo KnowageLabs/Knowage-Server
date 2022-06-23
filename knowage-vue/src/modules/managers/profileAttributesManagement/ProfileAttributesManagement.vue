@@ -122,12 +122,12 @@ export default defineComponent({
                         .delete(this.apiUrl + 'attributes/' + id, { headers: { 'X-Disable-Errors': 'true' } })
                         .then((response: AxiosResponse<any>) => {
                             if (response.data.errors) {
-                                this.$store.commit('setError', {
+                                this.store.commit('setError', {
                                     title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
                                     msg: this.$t('managers.profileAttributesManagement.error.profileAttributeDeletion')
                                 })
                             } else {
-                                this.$store.commit('setInfo', {
+                                this.store.commit('setInfo', {
                                     title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
                                     msg: this.$t('managers.profileAttributesManagement.info.deleteMessage')
                                 })
@@ -135,13 +135,13 @@ export default defineComponent({
                             }
                         })
                         .catch(() => {
-                            this.$store.commit('setError', {
+                            this.store.commit('setError', {
                                 title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
                                 msg: this.$t('managers.profileAttributesManagement.error.profileAttributeDeletion')
                             })
                         })
                         .catch((error) => {
-                            this.$store.commit('setError', {
+                            this.store.commit('setError', {
                                 title: this.$t('managers.profileAttributesManagement.info.deleteTitle'),
                                 msg: error.message
                             })

@@ -106,7 +106,7 @@ export default defineComponent({
         }
     },
     async created() {
-        this.userRole = (this.$store.state as any).user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? (this.$store.state as any).user.sessionRole : null
+        this.userRole = (this.store.state as any).user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? (this.store.state as any).user.sessionRole : null
         await this.loadPreview()
         this.setSidebarMode()
     },

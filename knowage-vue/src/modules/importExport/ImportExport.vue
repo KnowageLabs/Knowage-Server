@@ -104,10 +104,10 @@ export default defineComponent({
                 .then(
                     (response: AxiosResponse<any>) => {
                         if (response.data.errors) {
-                            this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('importExport.export.completedWithErrors') })
+                            this.store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('importExport.export.completedWithErrors') })
                         } else {
                             downloadDirectFromResponse(response)
-                            this.$store.commit('setInfo', { title: this.$t('common.downloading'), msg: this.$t('importExport.export.successfullyCompleted') })
+                            this.store.commit('setInfo', { title: this.$t('common.downloading'), msg: this.$t('importExport.export.successfullyCompleted') })
                         }
 
                         this.selectedItems = {
@@ -117,7 +117,7 @@ export default defineComponent({
                         /* closing dialog */
                         this.openExportDialog()
                     },
-                    () => this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('importExport.export.completedWithErrors') })
+                    () => this.store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('importExport.export.completedWithErrors') })
                 )
         },
 

@@ -171,12 +171,12 @@ export default defineComponent({
                                   itemType: itemType
                               })
                             : this.associatedWords[linkItem.id].push(word)
-                        this.$store.commit('setInfo', {
+                        this.store.commit('setInfo', {
                             title: this.$t('common.toast.createTitle'),
                             msg: this.$t('common.toast.success')
                         })
                     } else {
-                        this.$store.commit('setError', {
+                        this.store.commit('setError', {
                             title: this.$t('common.error.generic'),
                             msg: response.data.Message === 'sbi.glossary.word.new.name.duplicate' ? this.$t('managers.glossary.glossaryUsage.duplicateWord') : response.data.Message
                         })
@@ -240,13 +240,13 @@ export default defineComponent({
             await this.$http[method](import.meta.env.VITE_RESTFUL_SERVICES_PATH + url)
                 .then(() => {
                     type === 'tree' ? this.removeWordFromTreeWords(wordId, linkItem.parent) : this.removeWordFromAssociatedWords(wordId, linkItem.id)
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
                 })
                 .catch((response: AxiosResponse<any>) => {
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: response
                     })

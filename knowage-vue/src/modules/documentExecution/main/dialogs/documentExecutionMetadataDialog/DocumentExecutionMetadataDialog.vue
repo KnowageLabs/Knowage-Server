@@ -106,7 +106,7 @@ export default defineComponent({
     },
     computed: {
         canModify(): boolean {
-            return (this.$store.state as any).user.functionalities.includes('SaveMetadataFunctionality')
+            return (this.store.state as any).user.functionalities.includes('SaveMetadataFunctionality')
         }
     },
     created() {
@@ -136,7 +136,7 @@ export default defineComponent({
         },
         async uploadMetaFile(meta: any) {
             if (!this.uploadedFiles[meta.id]) {
-                this.$store.commit('setError', {
+                this.store.commit('setError', {
                     title: this.$t('common.error.generic'),
                     msg: this.$t('documentExecution.main.selectFileError')
                 })
@@ -149,14 +149,14 @@ export default defineComponent({
                 await this.$http
                     .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecution/uploadfilemetadata`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
                     .then(() => {
-                        this.$store.commit('setInfo', {
+                        this.store.commit('setInfo', {
                             title: this.$t('common.uploadFile'),
                             msg: this.$t('common.uploadFileSuccess')
                         })
                         this.updateMetadataFile(meta.id, this.uploadedFiles[meta.id].name)
                     })
                     .catch((error: any) =>
-                        this.$store.commit('setError', {
+                        this.store.commit('setError', {
                             title: this.$t('common.error.generic'),
                             msg: error
                         })

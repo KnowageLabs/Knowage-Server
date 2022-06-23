@@ -497,7 +497,7 @@ export default defineComponent({
                         this.olapDesigner.template.wrappedObject.olap.MDXQUERY.XML_TAG_TEXT_CONTENT = this.olap.MDXWITHOUTCF
                     }
                 })
-                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.putFilterOnAxisError') }))
+                .catch(() => this.store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.putFilterOnAxisError') }))
             this.formatOlapTable()
             this.loading = false
         },
@@ -506,7 +506,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_OLAP_PATH + `1.0/axis/swap?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => (this.olap = response.data))
-                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.swapAxisError') }))
+                .catch(() => this.store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.swapAxisError') }))
             this.formatOlapTable()
             this.loading = false
         },
@@ -518,7 +518,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.olap = response.data
                 })
-                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.hierarchyMoveError') }))
+                .catch(() => this.store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.hierarchyMoveError') }))
             this.formatOlapTable()
             this.loading = false
         },
@@ -539,7 +539,7 @@ export default defineComponent({
                 await this.$http
                     .post(import.meta.env.VITE_OLAP_PATH + `1.0/axis/updateHierarchyOnDimension?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                     .then((response: AxiosResponse<any>) => (this.olap = response.data))
-                    .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.hierarchyUpdateError') }))
+                    .catch(() => this.store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.filterToolbar.hierarchyUpdateError') }))
                     .finally(() => {
                         this.formatOlapTable()
                         this.loading = false
@@ -643,7 +643,7 @@ export default defineComponent({
                     { headers: { Accept: 'application/json, text/plain, */*' } }
                 )
                 .then(async () => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.updateSuccess') })
+                    this.store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.updateSuccess') })
                     await this.loadOlapDesigner()
                 })
                 .catch(() => {})
@@ -658,7 +658,7 @@ export default defineComponent({
         },
         async drillThrough(ordinal?: any) {
             ordinal ? (this.usedOrdinal = this.getOrdinalFromEvent(ordinal)) : ''
-            this.$store.commit('setInfo', { title: this.$t('documentExecution.olap.drillTru.loadingTitle'), msg: this.$t('documentExecution.olap.drillTru.loadingMsg') })
+            this.store.commit('setInfo', { title: this.$t('documentExecution.olap.drillTru.loadingTitle'), msg: this.$t('documentExecution.olap.drillTru.loadingMsg') })
             this.loading = true
             if (this.dtAssociatedLevels.length == 0 && this.dtMaxRows == 0) {
                 let toSend = {} as any
@@ -678,7 +678,7 @@ export default defineComponent({
                         this.drillTruDialogVisible = true
                     })
                     .catch(() => {
-                        this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.drillTruError') })
+                        this.store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.drillTruError') })
                         this.loading = false
                     })
                     .finally(() => (this.loading = false))
@@ -699,7 +699,7 @@ export default defineComponent({
                         this.formattedColumns = this.formatColumns(this.dtColumns)
                     })
                     .catch(() => {
-                        this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.drillTruError') })
+                        this.store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.drillTruError') })
                         this.loading = false
                     })
                     .finally(() => (this.loading = false))
@@ -735,7 +735,7 @@ export default defineComponent({
                     }, 500)
                 })
                 .catch(() => {
-                    this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.drillLevelsError') })
+                    this.store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.drillLevelsError') })
                 })
         },
 
@@ -755,7 +755,7 @@ export default defineComponent({
                     }
                 }
             } else {
-                this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.checkingLevelsError') })
+                this.store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.checkingLevelsError') })
             }
 
             for (i = 0; i < tempArr.length; i++) {
@@ -878,7 +878,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_OLAP_PATH + `1.0/model/undo/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -886,7 +886,7 @@ export default defineComponent({
                     this.formatOlapTable()
                 })
                 .catch((error: any) =>
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: error?.localizedMessage
                     })
@@ -896,7 +896,7 @@ export default defineComponent({
         saveScenario(scenario) {
             this.olapDesigner.template.wrappedObject.olap.SCENARIO = scenario
             this.scenarioWizardVisible = false
-            this.$store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('documentExecution.olap.scenarioWizard.scenarioUpdated') })
+            this.store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('documentExecution.olap.scenarioWizard.scenarioUpdated') })
         },
         deleteScenario() {
             delete this.olapDesigner.template.wrappedObject.olap.SCENARIO
@@ -925,7 +925,7 @@ export default defineComponent({
                     .catch(() => {})
                     .finally(() => (this.loading = false))
             } else {
-                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
+                return this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
             }
         },
         removeFilterLevels(filter: any) {
@@ -943,11 +943,11 @@ export default defineComponent({
             let clickLocation = event.target.getBoundingClientRect()
 
             if (!this.checkIfVersionIsSet()) {
-                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
+                return this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.sliceVersionError') })
             } else if (this.checkIfModelIsLocked()) {
-                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.editErrorLocked') })
+                return this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.editErrorLocked') })
             } else if (!this.checkIfMeasureIsEditable(event.target.getAttribute('measurename'))) {
-                return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.notEditable') })
+                return this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.notEditable') })
             } else {
                 // @ts-ignore
                 this.$refs.whatifInput.style.top = `${clickLocation.top}px`

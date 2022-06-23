@@ -191,11 +191,11 @@ export default defineComponent({
                             this.token = response.data.token
                             this.step = 1
                         },
-                        () => this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
+                        () => this.store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('importExport.import.completedWithErrors') })
                     )
                 this.loading = false
             } else {
-                this.$store.commit('setWarning', { title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.noFileProvided') })
+                this.store.commit('setWarning', { title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.noFileProvided') })
             }
         },
         isImportDisabled(): Boolean {
@@ -233,7 +233,7 @@ export default defineComponent({
         },
 
         startImport() {
-            this.$store.setLoading(true)
+            this.store.setLoading(true)
             this.$http
                 .post(import.meta.env.VITE_API_PATH + '1.0/import/bulk', this.streamlineSelectedItemsArray(), {
                     headers: {
@@ -243,11 +243,11 @@ export default defineComponent({
                 })
                 .then(
                     () => {
-                        this.$store.commit('setInfo', { title: this.$t('common.import'), msg: this.$t('importExport.import.successfullyCompleted') })
+                        this.store.commit('setInfo', { title: this.$t('common.import'), msg: this.$t('importExport.import.successfullyCompleted') })
 
-                        this.$store.setLoading(false)
+                        this.store.setLoading(false)
                     },
-                    () => this.$store.commit('setError', { title: this.$t('common.error.import'), msg: this.$t('importExport.import.completedWithErrors') })
+                    () => this.store.commit('setError', { title: this.$t('common.error.import'), msg: this.$t('importExport.import.completedWithErrors') })
                 )
             this.token = ''
             this.resetAndClose()

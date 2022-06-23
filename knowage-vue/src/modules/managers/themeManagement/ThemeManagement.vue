@@ -111,7 +111,7 @@ export default defineComponent({
         async deleteTheme(event) {
             this.loading = true
             await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `thememanagement/${event.item.id}`).then(() => {
-                this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                this.store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
 
                 this.themeToSend = { config: {} }
                 this.selectedTheme = { config: {} }
@@ -138,7 +138,7 @@ export default defineComponent({
 
         async handleSave() {
             await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `thememanagement`, this.themeToSend).then((response) => {
-                this.$store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.updateSuccess') })
+                this.store.commit('setInfo', { title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.updateSuccess') })
                 if (!this.themeToSend.id) {
                     this.themeToSend.id = response.data
                     this.selectedTheme.id = response.data
@@ -159,16 +159,16 @@ export default defineComponent({
                 this.selectedTheme.active = newValues.active
                 this.selectedTheme.config = { ...this.currentTheme, ...newValues.config }
             } else {
-                this.$store.commit('setTheme', {})
-                this.themeHelper.setTheme((this.$store.state as any).defaultTheme)
+                this.store.commit('setTheme', {})
+                this.themeHelper.setTheme((this.store.state as any).defaultTheme)
             }
         },
         selectTheme(event) {
             this.overrideDefaultValues(event.item)
         },
         setActiveTheme(theme) {
-            let newTheme = { ...(this.$store.state as any).defaultTheme, ...theme.config }
-            this.$store.commit('setTheme', newTheme)
+            let newTheme = { ...(this.store.state as any).defaultTheme, ...theme.config }
+            this.store.commit('setTheme', newTheme)
             this.themeHelper.setTheme(newTheme)
         },
         updateModelToSend(key) {
@@ -178,7 +178,7 @@ export default defineComponent({
     watch: {
         selectedTheme(newSelected, oldSelected) {
             if (newSelected != oldSelected) {
-                this.selectedTheme = { ...(this.$store.state as any).defaultTheme, ...newSelected.config }
+                this.selectedTheme = { ...(this.store.state as any).defaultTheme, ...newSelected.config }
             }
         }
     }

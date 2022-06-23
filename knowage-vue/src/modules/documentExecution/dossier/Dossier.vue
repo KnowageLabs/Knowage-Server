@@ -202,7 +202,7 @@ export default defineComponent({
                 await this.$http
                     .delete(url, { headers: { Accept: 'application/json, text/plain, */*' } })
                     .then(() => {
-                        this.$store.commit('setInfo', {
+                        this.store.commit('setInfo', {
                             title: this.$t('common.toast.deleteTitle'),
                             msg: this.$t('documentExecution.dossier.deleteSuccess')
                         })
@@ -210,14 +210,14 @@ export default defineComponent({
                     })
                     .catch((error) => {
                         if (error) {
-                            this.$store.commit('setError', {
+                            this.store.commit('setError', {
                                 title: this.$t('common.error.generic'),
                                 msg: error.message
                             })
                         }
                     })
             } else {
-                this.$store.commit('setError', {
+                this.store.commit('setError', {
                     title: this.$t('common.error.generic'),
                     msg: this.$t('documentExecution.dossier.progressNotFinished')
                 })
@@ -227,9 +227,9 @@ export default defineComponent({
             let url = `/knowagedossierengine/api/dossier/run?activityName=${this.activity.activityName}&documentId=${this.id}`
             await this.$http.post(url, this.jsonTemplate, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
-                    this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: response.data.errors })
+                    this.store.commit('setError', { title: this.$t('common.error.saving'), msg: response.data.errors })
                 } else {
-                    this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.dossier.saveSuccess') })
+                    this.store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.dossier.saveSuccess') })
                 }
             })
             this.getDossierActivities()
@@ -251,7 +251,7 @@ export default defineComponent({
                         }
                         link = import.meta.env.VITE_RESTFUL_SERVICES_PATH + url
                         window.open(link)
-                        response.data.errors ? this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: response.data.errors[0].message }) : ''
+                        response.data.errors ? this.store.commit('setError', { title: this.$t('common.error.generic'), msg: response.data.errors[0].message }) : ''
                     })
                 }
             } else if (selectedActivity.partial == selectedActivity.total) {
@@ -269,11 +269,11 @@ export default defineComponent({
                         } else {
                             this.storeDOC(selectedActivity.id, response.data, selectedActivity.activity)
                         }
-                        response.data.errors ? this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: response.data.errors[0].message }) : ''
+                        response.data.errors ? this.store.commit('setError', { title: this.$t('common.error.generic'), msg: response.data.errors[0].message }) : ''
                     })
                 }
             } else {
-                this.$store.commit('setError', {
+                this.store.commit('setError', {
                     title: this.$t('common.error.generic'),
                     msg: this.$t('documentExecution.dossier.progressNotFinished')
                 })

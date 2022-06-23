@@ -120,7 +120,7 @@ export default defineComponent({
             if (!timespan) return
 
             if (timespan.definition.length === 0) {
-                this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.noIntervalError') })
+                this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.noIntervalError') })
                 return
             }
 
@@ -130,7 +130,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/timespan/saveTimespan`, timespan)
                 .then((response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.' + this.operation + 'Title'),
                         msg: this.$t('common.toast.success')
                     })
@@ -172,7 +172,7 @@ export default defineComponent({
             let alreadyDefined = false
             for (let i = 0; i < this.timespans.length; i++) {
                 if (this.timespans[i].name === tempTimespan.name) {
-                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.cloneAlreadyDefined') })
+                    this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.timespan.cloneAlreadyDefined') })
                     this.$router.push('/timespan')
                     this.timespan = this.getDefautTimespan()
                     alreadyDefined = true

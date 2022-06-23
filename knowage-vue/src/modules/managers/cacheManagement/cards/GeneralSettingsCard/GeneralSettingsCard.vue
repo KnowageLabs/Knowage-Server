@@ -180,7 +180,7 @@ export default defineComponent({
             await this.saveDatasource()
             await this.saveConfigurationOptions()
 
-            this.$store.commit('setInfo', {
+            this.store.commit('setInfo', {
                 title: this.$t('common.toast.success'),
                 msg: this.$t('common.toast.updateTitle')
             })

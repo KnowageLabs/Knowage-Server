@@ -54,6 +54,7 @@ import DocumentBrowserTree from './DocumentBrowserTree.vue'
 import DocumentBrowserDetail from './DocumentBrowserDetail.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Menu from 'primevue/menu'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'document-browser-home',
@@ -106,11 +107,15 @@ export default defineComponent({
             this.loadDocumentsWithBreadcrumbs()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         window.addEventListener('resize', this.onResize)
 
         await this.loadFolders()
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.$state as any).user
     },
     beforeUnmount() {
         window.removeEventListener('resize', this.onResize)

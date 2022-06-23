@@ -276,21 +276,21 @@ export default defineComponent({
                 })
                 .then(async (response: AxiosResponse<any>) => {
                     if (response.data.Status !== 'NON OK') {
-                        this.$store.commit('setInfo', {
+                        this.store.commit('setInfo', {
                             title: this.$t('common.toast.createTitle'),
                             msg: this.$t('common.toast.success')
                         })
                         this.updateParentNode('HAVE_WORD_CHILD', true)
                         await this.listContents(this.selectedGlossaryId as number, item)
                     } else {
-                        this.$store.commit('setError', {
+                        this.store.commit('setError', {
                             title: this.$t('common.error.generic'),
                             msg: this.$t(this.glossaryDefinitionDescriptor.translation[response.data.Message])
                         })
                     }
                 })
                 .catch((response) => {
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: response
                     })
@@ -317,7 +317,7 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, {})
                 .then((response: AxiosResponse<any>) => (status = response.data.Status))
                 .catch((response) => {
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: response
                     })
@@ -384,7 +384,7 @@ export default defineComponent({
                         })
                 )
                 .catch((response) => {
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: response
                     })
@@ -395,12 +395,12 @@ export default defineComponent({
         },
         async updateTree(result: { status: string; message: string }, content: iContent) {
             if (result.status === 'NON OK') {
-                this.$store.commit('setError', {
+                this.store.commit('setError', {
                     title: this.$t('common.toast.createTitle'),
                     msg: this.$t(this.glossaryDefinitionDescriptor.translation[result.message])
                 })
             } else {
-                this.$store.commit('setInfo', {
+                this.store.commit('setInfo', {
                     title: this.$t('common.toast.createTitle'),
                     msg: this.$t('common.toast.success')
                 })
@@ -446,7 +446,7 @@ export default defineComponent({
         async deleteGlossary() {
             this.loading = true
             await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/business/deleteGlossary?GLOSSARY_ID=${this.selectedGlossaryId}`).then(() => {
-                this.$store.commit('setInfo', {
+                this.store.commit('setInfo', {
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })
@@ -512,7 +512,7 @@ export default defineComponent({
                     tempData = response.data
                 })
                 .catch((response) => {
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: response
                     })
@@ -523,7 +523,7 @@ export default defineComponent({
         },
         async updateGlossaryList(tempData: any) {
             if (tempData.Status && tempData.Status !== 'NON OK') {
-                this.$store.commit('setInfo', {
+                this.store.commit('setInfo', {
                     title: this.$t('common.toast.createTitle'),
                     msg: this.$t('common.toast.success')
                 })
@@ -543,7 +543,7 @@ export default defineComponent({
                 }
                 this.originalGlossary = { ...this.selectedGlossary } as iGlossary
             } else {
-                this.$store.commit('setError', {
+                this.store.commit('setError', {
                     title: this.$t('common.error.generic'),
                     msg: this.glossaryDefinitionDescriptor.translation[tempData.Message] ? this.$t(this.glossaryDefinitionDescriptor.translation[tempData.Message]) : ''
                 })

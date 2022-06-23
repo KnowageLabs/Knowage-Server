@@ -66,7 +66,7 @@ export default defineComponent({
             this.loading = true
 
             if (this.checkIfActiveVersionIsSelected()) {
-                this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.deleteVersion.errorMessage') })
+                this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.deleteVersion.errorMessage') })
                 this.loading = false
                 return
             }
@@ -76,14 +76,14 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_OLAP_PATH + `1.0/version/delete/${versionsToDelete}?SBI_EXECUTION_ID=${this.id}`, {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
                     })
                     this.close()
                 })
                 .catch((error: any) =>
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.error.generic'),
                         msg: error?.localizedMessage
                     })

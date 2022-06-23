@@ -161,8 +161,8 @@ export default defineComponent({
                 .catch((error: any) => {
                     this.dataset.meta = []
                     error.message == 'error.mesage.description.data.set.parsing.error'
-                        ? this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('workspace.myData.parseError') })
-                        : this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t(error.message) })
+                        ? this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('workspace.myData.parseError') })
+                        : this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t(error.message) })
                 })
         },
         submitStepTwo() {
@@ -234,13 +234,13 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     if (dsToSend.exportToHdfs) {
                         this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/hdfs/${response.data.id}`, { headers: { 'X-Disable-Errors': 'true' } }).catch((responseHDFS: any) => {
-                            this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: responseHDFS.data.errors[0].message })
+                            this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: responseHDFS.data.errors[0].message })
                         })
                     }
                     this.$emit('closeDialogAndReload')
                 })
                 .catch((response: any) => {
-                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: response.data.errors[0].message })
+                    this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: response.data.errors[0].message })
                 })
         }
     }

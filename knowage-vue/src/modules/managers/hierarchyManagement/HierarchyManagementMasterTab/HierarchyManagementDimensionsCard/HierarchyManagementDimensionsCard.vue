@@ -150,7 +150,7 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `hierarchiesMaster/syncronizeHierarchyMaster`, postData)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.response === 'ok') {
-                        this.$store.commit('setInfo', {
+                        this.store.commit('setInfo', {
                             title: this.$t('common.info.info'),
                             msg: this.$t('managers.hierarchyManagement.synchronizationSuccess')
                         })

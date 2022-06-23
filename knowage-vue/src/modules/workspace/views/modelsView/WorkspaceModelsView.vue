@@ -113,7 +113,7 @@ export default defineComponent({
         }
     },
     async created() {
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.state as any).user
         await this.getModelCategories()
         await this.loadBusinessModels()
         if (this.hasEnableFederatedDatasetFunctionality) {
@@ -216,7 +216,7 @@ export default defineComponent({
             await this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/federateddataset/${dataset.federation_id}`)
                 .then(async () => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
                     })

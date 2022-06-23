@@ -44,7 +44,7 @@ import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
 import QBETemporalFilterDialog from './QBETemporalFilterDialog.vue'
 import QBEFilterParameters from './QBEFilterParameters.vue'
 
-import cryptoRandomString from 'crypto-random-string';
+import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
@@ -94,7 +94,7 @@ export default defineComponent({
                     this.filters.push({ ...filter })
                 }
             })
-            this.nextFilterIndex = cryptoRandomString({length: 16, type: 'base64'})
+            this.nextFilterIndex = cryptoRandomString({ length: 16, type: 'base64' })
             if (this.filterDialogData.field.type === 'inline.calculated.field') {
                 this.setCalculatedFieldLongDescription(this.filterDialogData.field, this.filterDialogData.field.originalId as string)
             } else if (this.filterDialogData.field.attributes?.type === 'inLineCalculatedField') {
@@ -153,7 +153,7 @@ export default defineComponent({
             }
             if (field) {
                 this.filters.push(filter)
-                this.nextFilterIndex = cryptoRandomString({length: 16, type: 'base64'})
+                this.nextFilterIndex = cryptoRandomString({ length: 16, type: 'base64' })
             }
             this.push(filter)
         },
@@ -195,7 +195,7 @@ export default defineComponent({
             }
         },
         temporalFiltersEnabled() {
-            return (this.$store.state as any).user.functionalities.includes('Timespan') && (this.filterDialogData?.field.dataType?.toLowerCase() === 'java.sql.date' || this.filterDialogData?.field.dataType?.toLowerCase() === 'java.sql.timestamp')
+            return (this.store.state as any).user.functionalities.includes('Timespan') && (this.filterDialogData?.field.dataType?.toLowerCase() === 'java.sql.date' || this.filterDialogData?.field.dataType?.toLowerCase() === 'java.sql.timestamp')
         },
         async openTemporalFilterDialog() {
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/timespan/listTimespan/?types=DAY_OF_WEEK&types=DAY_OF_WEEK&types=DAY_OF_WEEK`).then((response: AxiosResponse<any>) => (this.temporalFilters = response.data.data))
@@ -232,7 +232,7 @@ export default defineComponent({
                     } as any
                     this.filters.push(tempFilter)
                     this.push(tempFilter)
-                    this.nextFilterIndex = cryptoRandomString({length: 16, type: 'base64'})
+                    this.nextFilterIndex = cryptoRandomString({ length: 16, type: 'base64' })
                 }
             }
             this.temporalFilterDialogVisible = false
@@ -245,7 +245,7 @@ export default defineComponent({
         },
         closeDialog() {
             this.$emit('close')
-            this.nextFilterIndex = cryptoRandomString({length: 16, type: 'base64'})
+            this.nextFilterIndex = cryptoRandomString({ length: 16, type: 'base64' })
             this.updatedParameters = []
             this.parameterTableVisible = false
             this.removeFiltersOnCancel()

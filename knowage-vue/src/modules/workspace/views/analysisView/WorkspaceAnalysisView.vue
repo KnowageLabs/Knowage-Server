@@ -106,7 +106,7 @@ export default defineComponent({
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
         isOwner(): any {
-            return (this.$store.state as any).user.userId === this.selectedAnalysis.creationUser
+            return (this.store.state as any).user.userId === this.selectedAnalysis.creationUser
         },
         isShared(): any {
             return this.selectedAnalysis.functionalities.length > 1
@@ -196,7 +196,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/saveDocument/', formatedAnalysis, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -235,7 +235,7 @@ export default defineComponent({
             await this.$http
                 .post(url)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -258,7 +258,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `documents/clone?docId=${analysis.id}`)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -281,7 +281,7 @@ export default defineComponent({
             this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documents/${analysis.label}`)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -315,7 +315,7 @@ export default defineComponent({
                     }
                 })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.uploading'),
                         msg: this.$t('common.toast.uploadSuccess')
                     })

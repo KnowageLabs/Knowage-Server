@@ -58,11 +58,11 @@ export default defineComponent({
 
     watch: {
         async visibility(newVisibility) {
-            this.$store.setLoading(true)
+            this.store.setLoading(true)
             this.logs = []
             this.loadingLogs = true
             if (newVisibility) await this.loadLogs()
-            this.$store.setLoading(false)
+            this.store.setLoading(false)
             this.loadingLogs = false
         }
     },
@@ -105,7 +105,7 @@ export default defineComponent({
             this.touched = false
             this.showHint = false
             this.$emit('close')
-            this.$store.setLoading(false)
+            this.store.setLoading(false)
         },
         setCronValid(event) {
             this.validSchedulation = event.item

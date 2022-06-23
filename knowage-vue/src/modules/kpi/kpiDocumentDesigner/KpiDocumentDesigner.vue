@@ -66,7 +66,7 @@ export default defineComponent({
     },
     computed: {
         showScorecards(): boolean {
-            return (this.$store.state as any).user.functionalities.includes('ScorecardsManagement')
+            return (this.store.state as any).user.functionalities.includes('ScorecardsManagement')
         },
         saveButtonDisabled(): boolean {
             return this.kpiDesigner !== null && ((this.kpiDesigner.chart.type === 'kpi' && this.kpiTypeInvalid()) || (this.kpiDesigner.chart.type === 'scorecard' && this.scorecardTypeInvalid()))
@@ -192,7 +192,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/saveDocument`, postData)
                 .then((response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -215,7 +215,7 @@ export default defineComponent({
                     }
                 })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })

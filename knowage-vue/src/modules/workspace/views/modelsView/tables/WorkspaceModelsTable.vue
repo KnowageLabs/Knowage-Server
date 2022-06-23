@@ -7,7 +7,7 @@
         </template>
 
         <Column class="kn-truncated" v-for="col of workspaceModelsTableDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true">
-            <template #filter="{filterModel}"> <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText> </template
+            <template #filter="{ filterModel }"> <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText> </template
         ></Column>
         <Column :style="workspaceModelsTableDescriptor.iconColumn.style">
             <template #body="slotProps">
@@ -64,7 +64,7 @@ export default defineComponent({
         }
     },
     created() {
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.state as any).user
         this.loadTable()
     },
     methods: {

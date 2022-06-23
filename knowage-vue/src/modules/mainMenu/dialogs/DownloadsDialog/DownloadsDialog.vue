@@ -90,7 +90,7 @@ export default defineComponent({
                 .then(
                     (response: AxiosResponse<any>) => {
                         if (!data.alreadyDownloaded) {
-                            this.$store.commit('updateAlreadyDownloadedFiles')
+                            this.store.commit('updateAlreadyDownloadedFiles')
                         }
                         downloadDirectFromResponse(response)
                     },
@@ -102,7 +102,7 @@ export default defineComponent({
             this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/export').then(
                 () => {
                     this.downloadsList = []
-                    this.$store.commit('setDownloads', { count: { total: 0, unRead: 0 } })
+                    this.store.commit('setDownloads', { count: { total: 0, unRead: 0 } })
                     this.closeDialog()
                 },
                 (error) => console.error(error)

@@ -60,7 +60,7 @@ export default defineComponent({
     },
     methods: {
         async loadUser() {
-            this.user = (this.$store.state as any).user
+            this.user = (this.store.state as any).user
         },
         async loadPage() {
             this.loading = true
@@ -98,13 +98,13 @@ export default defineComponent({
                 .delete(import.meta.env.VITE_API_PATH + `1.0/functioncatalog/${functionId}`)
                 .then(() => {
                     reponseOk = true
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
                 })
                 .catch(() => {
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('managers.functionsCatalog.deleteError')
                     })

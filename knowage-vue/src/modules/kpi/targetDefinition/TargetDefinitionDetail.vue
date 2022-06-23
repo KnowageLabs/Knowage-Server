@@ -152,7 +152,7 @@ export default defineComponent({
         },
         async saveTemplate() {
             if (this.kpi.length < 1) {
-                this.$store.commit('setError', {
+                this.store.commit('setError', {
                     title: this.$t('kpi.targetDefinition.noKpi'),
                     msg: this.$t('kpi.targetDefinition.noKpiMessage')
                 })
@@ -185,12 +185,12 @@ export default defineComponent({
             await this.$http.post(url, this.target).then((response: AxiosResponse<any>) => {
                 if (response.data.errors != undefined && response.data.errors.length > 0) {
                     this.categoryDialogVisiable = false
-                    this.$store.commit('setError', {
+                    this.store.commit('setError', {
                         title: this.$t('kpi.targetDefinition.savingError'),
                         msg: response.data.errors[0].message
                     })
                 } else {
-                    this.$store.commit('setInfo', {
+                    this.store.commit('setInfo', {
                         title: this.$t(this.targetDefinitionDetailDecriptor.operation[operation].toastTitle),
                         msg: this.$t(this.targetDefinitionDetailDecriptor.operation.success)
                     })
@@ -219,7 +219,7 @@ export default defineComponent({
             this.kpi = [...this.kpi, ...selectedKpi]
             this.kpiDialogVisible = false
             if (selectedKpi.length > 0) {
-                this.$store.commit('setInfo', {
+                this.store.commit('setInfo', {
                     title: this.$t('kpi.targetDefinition.kpiAddedTitile'),
                     msg: this.$t('kpi.targetDefinition.kpiAddedMessage')
                 })
