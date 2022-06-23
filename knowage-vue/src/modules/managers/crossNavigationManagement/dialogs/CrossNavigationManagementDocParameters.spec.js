@@ -1,9 +1,10 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Listbox from 'primevue/listbox'
+import InputText from 'primevue/inputtext'
 import ProgressBar from 'primevue/progressbar'
 import DocParameters from './CrossNavigationManagementDocParameters.vue'
 import Toolbar from 'primevue/toolbar'
@@ -92,16 +93,17 @@ const factory = () => {
             selectedNavigation: mockedNavigation
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,
+                InputText,
                 Listbox,
                 ProgressBar,
                 Toolbar
             },
             mocks: {
-                $t: (msg) => msg,
-                $store
+                $t: (msg) => msg
             }
         }
     })
