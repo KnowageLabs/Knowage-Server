@@ -101,6 +101,7 @@ import Dropdown from 'primevue/dropdown'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import mainStore from '../../../../../../App.store'
 
 export default defineComponent({
     components: { Card, KnValidationMessages, KnInputFile, Dropdown, DataTable, Column },
@@ -118,6 +119,10 @@ export default defineComponent({
             columns: [] as any,
             rows: [] as any
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.dataset = this.selectedDataset

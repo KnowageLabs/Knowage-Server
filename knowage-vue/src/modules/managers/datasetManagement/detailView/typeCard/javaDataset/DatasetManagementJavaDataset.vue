@@ -30,6 +30,7 @@ import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import javaDatasetDescriptor from './DatasetManagementJavaDatasetDescriptor.json'
 import Card from 'primevue/card'
+import mainStore from '../../../../../../App.store'
 
 export default defineComponent({
     components: { Card, KnValidationMessages },
@@ -41,6 +42,10 @@ export default defineComponent({
             javaDatasetDescriptor,
             v$: useValidate() as any
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.dataset = this.selectedDataset

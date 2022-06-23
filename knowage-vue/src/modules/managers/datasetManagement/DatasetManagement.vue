@@ -49,6 +49,7 @@ import mainDescriptor from './DatasetManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import ProgressSpinner from 'primevue/progressspinner'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'dataset-management',
@@ -75,6 +76,10 @@ export default defineComponent({
             tags: [] as any,
             datasetToCloneId: null
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.getAllPersistentData()

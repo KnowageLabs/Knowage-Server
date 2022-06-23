@@ -21,6 +21,7 @@ import { AxiosResponse } from 'axios'
 import descriptor from './DatasetManagementPreparedDataset.json'
 import Card from 'primevue/card'
 import MonitoringDialog from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDialog.vue'
+import mainStore from '../../../../../../App.store'
 
 export default defineComponent({
     components: { Card, MonitoringDialog },
@@ -34,6 +35,10 @@ export default defineComponent({
             avroDatasets: [] as any,
             showMonitoringDialog: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.dataset = this.selectedDataset

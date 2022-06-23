@@ -54,6 +54,7 @@ import Column from 'primevue/column'
 import Message from 'primevue/message'
 import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     components: { Card, Column, DataTable, Message, Dropdown, Checkbox },
@@ -70,6 +71,10 @@ export default defineComponent({
             dataset: {} as any,
             fieldsMetadata: [] as any
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.dataset = this.selectedDataset

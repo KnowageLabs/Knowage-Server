@@ -54,6 +54,7 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import flatTypeDescriptor from './DatasetManagementFlatDataset.json'
 import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
+import mainStore from '../../../../../../App.store'
 
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages },
@@ -65,6 +66,10 @@ export default defineComponent({
             dataset: {} as any,
             v$: useValidate() as any
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.dataset = this.selectedDataset

@@ -61,6 +61,7 @@ import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import linkTabDescriptor from './DatasetManagementLinkCardDescriptor.json'
 import Listbox from 'primevue/listbox'
+import mainStore from '../../App.store'
 
 export default defineComponent({
     components: { Listbox },
@@ -81,6 +82,10 @@ export default defineComponent({
             tablesToRemove: [] as any,
             tablesToAdd: [] as any
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.dataset = this.selectedDataset

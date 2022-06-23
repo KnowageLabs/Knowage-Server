@@ -149,6 +149,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import AutoComplete from 'primevue/autocomplete'
 import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages, DataTable, Column, AutoComplete },
@@ -180,6 +181,10 @@ export default defineComponent({
             selectedTagsNames: [] as any,
             filteredTagsNames: null as any
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.dataset = this.selectedDataset
