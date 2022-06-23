@@ -167,6 +167,7 @@ import CalculatedField from './tabs/calculatedField/MetawebCalculatedField.vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Chip from 'primevue/chip'
+import mainStore from '../../../../../App.store'
 
 import { generate, applyPatch } from 'fast-json-patch'
 
@@ -215,6 +216,10 @@ export default defineComponent({
         metaUpdated() {
             this.loadMeta()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadMeta()

@@ -267,6 +267,7 @@ import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import MetawebSelectDialog from '../../metaweb/metawebSelectDialog/MetawebSelectDialog.vue'
 import Metaweb from '@/modules/managers/businessModelCatalogue/metaweb/Metaweb.vue'
 import useValidate from '@vuelidate/core'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'business-model-details-card',
@@ -325,6 +326,10 @@ export default defineComponent({
         metaModelUrl(): any {
             return `/knowagemeta/restful-services/1.0/pages/edit?datasourceId=${this.businessModel.dataSourceId}&user_id=${(this.user as any)?.userUniqueIdentifier}&bmId=${this.businessModel.id}&bmName=${this.businessModel.name}`
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadBusinessModel()

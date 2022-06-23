@@ -39,6 +39,7 @@ import Card from 'primevue/card'
 import Listbox from 'primevue/listbox'
 import Menu from 'primevue/menu'
 import RadioButton from 'primevue/radiobutton'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'business-models-versions-card',
@@ -65,6 +66,10 @@ export default defineComponent({
         versions() {
             this.loadVersions()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadVersions()

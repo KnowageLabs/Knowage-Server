@@ -46,7 +46,7 @@ import Dropdown from 'primevue/dropdown'
 import metawebAttributesTabDescriptor from './MetawebAttributesTabDescriptor.json'
 import MetawebAttributeDetailDialog from './dialogs/metawebAttributeDetail/MetawebAttributeDetailDialog.vue'
 import MetawebAttributeUnusedFieldDialog from './dialogs/metawebAttributeUnusedField/MetawebAttributeUnusedFieldDialog.vue'
-
+import mainStore from '../../../../../../../App.store'
 import { generate, applyPatch } from 'fast-json-patch'
 
 export default defineComponent({
@@ -78,6 +78,10 @@ export default defineComponent({
             this.loadMeta()
             this.loadBusinessModel()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadMeta()

@@ -30,6 +30,7 @@ import Dialog from 'primevue/dialog'
 import metawebPhysicalModelUpdateDialogDescriptor from './MetawebPhysicalModelUpdateDialogDescriptor.json'
 import MetawebUpdateChangedLists from './MetawebUpdateChangedLists.vue'
 import MetawebUpdatePhysicalTablesSelect from './MetawebUpdatePhysicalTablesSelect.vue'
+import mainStore from '../../../../../../App.store'
 
 export default defineComponent({
     name: 'metaweb-physical-model-update-dialog',
@@ -49,6 +50,10 @@ export default defineComponent({
         changedItem() {
             this.loadData()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadData()

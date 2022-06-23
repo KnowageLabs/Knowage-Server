@@ -58,6 +58,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
 import metawebSelectDialogDescriptor from '@/modules/managers/businessModelCatalogue/metaweb/metawebSelectDialog/MetawebSelectDialogDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'metaweb-select-dialog',
@@ -92,6 +93,10 @@ export default defineComponent({
                 this.loading = false
             }
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadData()

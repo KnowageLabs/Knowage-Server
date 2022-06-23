@@ -30,6 +30,7 @@ import businessModelCatalogueDescriptor from './BusinessModelCatalogueDescriptor
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnHint from '@/components/UI/KnHint.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'business-model-catalogue',
@@ -46,6 +47,10 @@ export default defineComponent({
             touched: false,
             loading: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         if (this.$route.path !== '/business-model-catalogue') {

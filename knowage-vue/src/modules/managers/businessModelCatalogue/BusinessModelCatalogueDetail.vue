@@ -67,6 +67,7 @@ import MetadataCard from './cards/metadataCard/MetadataCard.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import useValidate from '@vuelidate/core'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'business-model-catalogue-detail',
@@ -119,6 +120,10 @@ export default defineComponent({
         async id() {
             await this.loadPage()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadUser()

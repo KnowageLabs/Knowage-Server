@@ -51,6 +51,7 @@ import Checkbox from 'primevue/checkbox'
 import Dialog from 'primevue/dialog'
 import InputSwitch from 'primevue/inputswitch'
 import generateDatamartCardDescriptor from './GenerateDatamartCardDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'generate-datamart-card',
@@ -74,6 +75,10 @@ export default defineComponent({
         businessModel() {
             this.loadBusinessModel()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadBusinessModel()

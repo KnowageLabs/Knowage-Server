@@ -140,6 +140,7 @@ import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import MultiSelect from 'primevue/multiselect'
 import metawebAttributeDetailDialogDescriptor from './MetawebAttributeDetailDialogDescriptor.json'
+import mainStore from '../../../../../../../../../App.store'
 
 export default defineComponent({
     name: 'metaweb-attribute-detail-dialog',
@@ -172,6 +173,10 @@ export default defineComponent({
             this.loadAttribute()
             this.loadRoleOptions()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadAttribute()

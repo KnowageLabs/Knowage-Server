@@ -26,6 +26,7 @@
 import { defineComponent } from 'vue'
 import Card from 'primevue/card'
 import ProgressSpinner from 'primevue/progressspinner'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'metadata-card',
@@ -43,6 +44,10 @@ export default defineComponent({
         return {
             importing: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     methods: {
         confirmImport() {

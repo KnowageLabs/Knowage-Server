@@ -43,8 +43,8 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import metawebPhysicalTableTabDescriptor from './MetawebPhysicalTableTabDescriptor.json'
 import MetawebAddPhysicalTableDialog from './metawebAddPhysicalTableDialog/MetawebAddPhysicalTableDialog.vue'
-
 import { generate, applyPatch } from 'fast-json-patch'
+import mainStore from '../../../../../../../App.store'
 
 export default defineComponent({
     name: 'metaweb-physical-table-tab',
@@ -68,6 +68,10 @@ export default defineComponent({
         selectedBusinessModel() {
             this.loadData()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadData()

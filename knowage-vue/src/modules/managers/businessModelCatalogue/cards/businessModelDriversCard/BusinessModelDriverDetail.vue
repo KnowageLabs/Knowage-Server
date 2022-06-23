@@ -240,6 +240,7 @@ import KnHint from '@/components/UI/KnHint.vue'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import Listbox from 'primevue/listbox'
 import useValidate from '@vuelidate/core'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'business-model-driver-detail-card',
@@ -294,6 +295,10 @@ export default defineComponent({
         businessModelDrivers() {
             this.loadBusinessModelDrivers()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadSelectedDriver()
