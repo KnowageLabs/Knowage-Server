@@ -95,6 +95,7 @@ import { formatDate } from '@/helpers/commons/localeHelper'
 import Breadcrumb from 'primevue/breadcrumb'
 import ResourceManagementImportFileDialog from './ResourceManagementImportFileDialog.vue'
 import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     components: { Breadcrumb, Column, DataTable, ResourceManagementImportFileDialog },
@@ -126,11 +127,14 @@ export default defineComponent({
     beforeRouteUpdate() {
         this.loadSelectedFolder()
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadSelectedFolder()
     },
     mounted() {},
-
     methods: {
         closeDetail() {
             this.$emit('closed')

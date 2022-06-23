@@ -33,6 +33,7 @@ import resourceManagementDescriptor from './ResourceManagementDescriptor.json'
 import { PropType } from 'vue'
 import { IFileTemplate } from './ResourceManagement'
 import Message from 'primevue/message'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'import-file-dialog',
@@ -46,6 +47,10 @@ export default defineComponent({
         return { checked: false, descriptor: resourceManagementDescriptor, uploadedFiles: [], loading: false }
     },
     emits: ['update:visibility', 'fileUploaded'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     methods: {
         isArchive() {
             // eslint-disable-next-line
@@ -116,7 +121,7 @@ export default defineComponent({
                         this.$emit('fileUploaded')
                     })
             } else {
-                this.store.commit('setWarning', { title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.noFileProvided') })
+                this.store.setWarning({ title: this.$t('common.uploading'), msg: this.$t('managers.widgetGallery.noFileProvided') })
             }
         }
     }

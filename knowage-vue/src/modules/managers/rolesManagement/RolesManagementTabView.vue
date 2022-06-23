@@ -60,6 +60,7 @@ import useValidate from '@vuelidate/core'
 import DomainCategoryTab from './tabs/DomainCategoryTab/DomainCategoryTab.vue'
 import RoleDetailTab from './tabs/RoleDetailTab/RoleDetailTab.vue'
 import RoleAuthorizationsTab from './tabs/RoleAuthorizationsTab/RoleAuthorizationsTab.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     components: {
@@ -100,6 +101,10 @@ export default defineComponent({
             this.loadSelectedRole()
             this.clearSelectedLists()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadAllDomainsData()

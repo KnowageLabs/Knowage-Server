@@ -31,6 +31,7 @@ import ProfileAttributesManagementDescriptor from './ProfileAttributesManagement
 import ProfileAttributesDetail from './ProfileAttributesDetail.vue'
 import AttributesListBox from './AttributesListBox.vue'
 import { iAttribute } from './ProfileAttributesManagement'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'profile-attributes',
@@ -52,6 +53,10 @@ export default defineComponent({
             hideForm: true as Boolean,
             dirty: false as Boolean
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadAllAttributes()

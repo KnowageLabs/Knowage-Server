@@ -51,6 +51,7 @@ import ResourceManagementMetadataDialog from '@/modules/managers/resourceManagem
 import ResourceManagementDetail from './ResourceManagementDetail.vue'
 import KnHint from '@/components/UI/KnHint.vue'
 import ResourceManagementCreateFolderDialog from './ResourceManagementCreateFolderDialog.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'resource-management',
@@ -72,6 +73,10 @@ export default defineComponent({
             folderCreation: false,
             formVisible: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadPage()

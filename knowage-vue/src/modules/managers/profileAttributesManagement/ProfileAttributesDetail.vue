@@ -134,6 +134,7 @@ import RadioButton from 'primevue/radiobutton'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import ProfileAttributesManagementDescriptor from './ProfileAttributesManagementDescriptor.json'
 import profileAttributesManagementValidationDescriptor from './ProfileAttributesManagementValidationDescriptor.json'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'profile-attributes-detail',
@@ -190,6 +191,10 @@ export default defineComponent({
         return {
             attribute: createValidations('attribute', profileAttributesManagementValidationDescriptor.validations.attribute, customValidators)
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadLovs()

@@ -28,6 +28,7 @@ import { AxiosResponse } from 'axios'
 import rolesDecriptor from './RolesManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'roles-management',
@@ -42,6 +43,10 @@ export default defineComponent({
             dirty: false,
             publicRole: null as any
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadAllRoles()

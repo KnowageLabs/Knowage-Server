@@ -72,6 +72,7 @@ import Textarea from 'primevue/textarea'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import { iModelMetadataTemplate } from './ResourceManagement'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'metadata-dialog',
@@ -85,6 +86,10 @@ export default defineComponent({
             descriptor: resourceManagementDescriptor,
             translatedOptions: Array<any>()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadMetadata()
@@ -173,7 +178,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(mainStore, {
             locale: 'locale'
         })
     },
