@@ -7,6 +7,7 @@ import ConfigurationManagementDialog from './ConfigurationManagementDialog.vue'
 import flushPromises from 'flush-promises'
 import InputText from 'primevue/inputtext'
 import PrimeVue from 'primevue/config'
+import mainStore from '../../../App.store'
 
 vi.mock('axios')
 
@@ -15,9 +16,6 @@ const $http = {
     put: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
-const $store = {
-    commit: vi.fn()
-}
 const factory = () => {
     return mount(ConfigurationManagementDialog, {
         global: {
@@ -25,7 +23,6 @@ const factory = () => {
             stubs: { Button, InputText },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $http
             }
         }
@@ -40,6 +37,9 @@ describe('Domains Management Dialog', () => {
     })
     it('close button returns to list without saving data', () => {})
     it('when save button is clicked data is passed', async () => {
+        const formWrapper = factory()
+        const store = mainStore()
+
         const mockedConfiguration = {
             label: 'changepwdmodule.number',
             name: 'Number',
@@ -47,7 +47,6 @@ describe('Domains Management Dialog', () => {
             category: 'SECURITY',
             active: false
         }
-        const formWrapper = factory()
         formWrapper.vm.configuration = mockedConfiguration
         formWrapper.vm.v$.$invalid = false
         formWrapper.vm.handleSubmit()
@@ -60,8 +59,8 @@ describe('Domains Management Dialog', () => {
         formWrapper.vm.configuration = mockedConfiguration
         formWrapper.vm.handleSubmit()
         await flushPromises()
-        expect(axios.put).toHaveBeenCalledTimes(1)
-        expect(axios.put).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/1', mockedConfiguration)
+        expect($http.put).toHaveBeenCalledTimes(1)
+        expect($http.put).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/1', mockedConfiguration)
         expect(store.setInfo).toHaveBeenCalledTimes(2)
     })
 })
