@@ -96,8 +96,6 @@ const $http = {
     post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
-axios.post.mockImplementation(() => Promise.resolve())
-
 const $confirm = {
     require: vi.fn()
 }
@@ -139,7 +137,7 @@ describe('Constraints Management loading', () => {
         expect(wrapper.find('[data-test="progress-bar"]').exists()).toBe(true)
     })
     it('the list shows an hint component when loaded empty', async () => {
-        axios.get
+        $http.get
             .mockReturnValueOnce(
                 Promise.resolve({
                     data: []
