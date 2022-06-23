@@ -208,10 +208,10 @@ export default defineComponent({
             this.$http
                 .put(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}`, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.store.commit('setInfo', { title: this.$t('common.toast.success'), msg: this.$t('documentExecution.documentDetails.history.activeOk') })
+                    this.store.setInfo({ title: this.$t('common.toast.success'), msg: this.$t('documentExecution.documentDetails.history.activeOk') })
                     this.getAllTemplates()
                 })
-                .catch(() => this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.activeError') }))
+                .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.activeError') }))
         },
         async downloadTemplate(template) {
             let fileType = template.name.split('.')
@@ -221,9 +221,9 @@ export default defineComponent({
                 })
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.errors) {
-                        this.store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
+                        this.store.setError({ title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
                     } else {
-                        this.store.commit('setInfo', { title: this.$t('common.toast.success') })
+                        this.store.setInfo({ title: this.$t('common.toast.success') })
                         if (response.headers) {
                             var contentDisposition = response.headers['content-disposition']
                             var contentDispositionMatcher = contentDisposition.match(/filename[^;\n=]*=((['"]).*?\2|[^;\n]*)/i)
@@ -239,7 +239,7 @@ export default defineComponent({
                         }
                     }
                 })
-                .catch((error) => this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
+                .catch((error) => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         deleteTemplateConfirm(template) {
             this.$confirm.require({
@@ -253,10 +253,10 @@ export default defineComponent({
             await this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/${template.id}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                    this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                     this.getAllTemplates()
                 })
-                .catch((error) => this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
+                .catch((error) => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         openDesignerConfirm() {
             console.log(this.selectedDocument.typeCode)

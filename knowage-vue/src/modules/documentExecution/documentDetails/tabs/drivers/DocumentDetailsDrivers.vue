@@ -160,6 +160,7 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import InputSwitch from 'primevue/inputswitch'
 import Dropdown from 'primevue/dropdown'
 import InlineMessage from 'primevue/inlinemessage'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'document-drivers',
@@ -183,6 +184,10 @@ export default defineComponent({
             document: {} as any,
             loading: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.getDocumentDrivers()
@@ -277,10 +282,10 @@ export default defineComponent({
             await this.$http
                 .put(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${driver.id}`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.store.commit('setInfo', { title: 'Succes', msg: 'Driver priority changed' })
+                    this.store.setInfo({ title: 'Succes', msg: 'Driver priority changed' })
                     this.getDocumentDrivers()
                 })
-                .catch(() => this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.priorityError') }))
+                .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.priorityError') }))
         },
         deleteDriverConfirm(event) {
             this.$confirm.require({
@@ -297,11 +302,11 @@ export default defineComponent({
                     .then(() => {
                         let deletedDriver = this.document.drivers.findIndex((param) => param.id === driverToDelete.id)
                         this.document.drivers.splice(deletedDriver, 1)
-                        this.store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                        this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                         this.selectedDriver = {} as iDriver
                     })
                     .catch((error) => {
-                        this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message })
+                        this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error.message })
                     })
             } else {
                 let deletedDriver = this.document.drivers.findIndex((param) => param.priority === driverToDelete.priority)

@@ -102,6 +102,7 @@ import Listbox from 'primevue/listbox'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import InlineMessage from 'primevue/inlinemessage'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'document-drivers',
@@ -124,6 +125,10 @@ export default defineComponent({
         selectedDriver() {
             this.selectedDriver.id ? this.getVisualDependenciesByDriverId() : ''
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.selectedDriver.id ? this.getVisualDependenciesByDriverId() : ''
@@ -158,12 +163,12 @@ export default defineComponent({
         async saveCondition() {
             await this.saveRequest()
                 .then(() => {
-                    this.store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.drivers.conditionSavedMsg') })
+                    this.store.setInfo({ title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.drivers.conditionSavedMsg') })
                     this.showVisibilityConditionDialog = false
                     this.getVisualDependenciesByDriverId()
                 })
                 .catch((error) => {
-                    this.store.commit('setError', { title: this.$t('common.error.saving'), msg: error })
+                    this.store.setError({ title: this.$t('common.error.saving'), msg: error })
                 })
         },
         saveRequest() {
@@ -177,11 +182,11 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/visualdependencies/delete`, conditionToDelete, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                    this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                     this.getVisualDependenciesByDriverId()
                 })
                 .catch((error) => {
-                    this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error })
+                    this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error })
                 })
         }
     }

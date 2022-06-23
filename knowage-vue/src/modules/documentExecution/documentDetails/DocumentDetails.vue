@@ -90,6 +90,7 @@ import Badge from 'primevue/badge'
 import TabPanel from 'primevue/tabpanel'
 import ProgressSpinner from 'primevue/progressspinner'
 import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam, iDocumentType } from '@/modules/documentExecution/documentDetails/DocumentDetails'
+import mainStore from '../../App.store'
 
 export default defineComponent({
     name: 'document-details',
@@ -154,6 +155,10 @@ export default defineComponent({
         async propDocId() {
             await this.isForEdit()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         if (this.viewMode !== 'document-detail' && this.$route.name !== 'document-details-new-document' && this.$route.name !== 'document-details-edit-document') return
@@ -273,7 +278,7 @@ export default defineComponent({
                         this.selectedDataset = response.data[0]
                     })
                     .catch((error) => {
-                        this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message })
+                        this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error.message })
                     })
             }
         },
@@ -295,7 +300,7 @@ export default defineComponent({
                     })
                     .then(() => (this.templateToUpload = null))
                     .catch(() => {
-                        this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') })
+                        this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') })
                     })
             }
         },
@@ -303,7 +308,7 @@ export default defineComponent({
             this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/image`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
                 .then(() => this.loadPage(this.docId))
-                .catch(() => this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.info.imageError') }))
+                .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.info.imageError') }))
         },
         setImageForUpload(event) {
             this.imageToUpload = event
@@ -319,7 +324,7 @@ export default defineComponent({
                     })
                     .then(() => (this.imageToUpload = null))
                     .catch(() => {
-                        this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.info.imageUploadError') })
+                        this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.info.imageUploadError') })
                     })
             }
         },
@@ -332,13 +337,13 @@ export default defineComponent({
                         delete parameter.isChanged
                         this.$http
                             .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                            .catch(() => this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
+                            .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
                     } else if (parameter.isChanged) {
                         delete parameter.numberOfErrors
                         delete parameter.isChanged
                         this.$http
                             .put(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${parameter.id}`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                            .catch(() => this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
+                            .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
                     }
                 })
             }
@@ -352,13 +357,13 @@ export default defineComponent({
                         delete driver.isChanged
                         this.$http
                             .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                            .catch(() => this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.persistError') }))
+                            .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.persistError') }))
                     } else if (driver.isChanged) {
                         delete driver.numberOfErrors
                         delete driver.isChanged
                         this.$http
                             .put(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${driver.id}`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                            .catch(() => this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.persistError') }))
+                            .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.persistError') }))
                     }
                 })
             }
@@ -384,7 +389,7 @@ export default defineComponent({
                     await this.saveDrivers()
                     await this.uploadTemplate(this.templateToUpload, response.data.id)
                     await this.uploadImage(this.imageToUpload, response.data.id)
-                    this.store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
+                    this.store.setInfo({ title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
                     setTimeout(() => {
                         const path = `/document-details/${response.data.id}`
                         !this.selectedDocument.id ? this.$router.push(path) : ''
@@ -393,7 +398,7 @@ export default defineComponent({
                     }, 200)
                 })
                 .catch((error) => {
-                    this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }), (this.loading = false)
+                    this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error.message }), (this.loading = false)
                 })
         },
         closeDocument() {

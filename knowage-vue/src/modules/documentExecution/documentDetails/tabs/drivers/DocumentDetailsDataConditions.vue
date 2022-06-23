@@ -101,6 +101,7 @@ import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
 import InlineMessage from 'primevue/inlinemessage'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'document-drivers',
@@ -140,6 +141,10 @@ export default defineComponent({
                 }
             }
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadSelectedDriver()
@@ -282,7 +287,7 @@ export default defineComponent({
                                 this.errorMessage = response.data.errors[0].message
                                 this.displayWarning = true
                             } else {
-                                this.store.commit('setInfo', {
+                                this.store.setInfo({
                                     title: this.$t('common.toast.success'),
                                     msg: this.$t('documentExecution.documentDetails.drivers.conditionSavedMsg')
                                 })
@@ -322,7 +327,7 @@ export default defineComponent({
             delete condition.parFather
             delete condition.modalities
             await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/datadependencies/delete`, condition, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then(() => {
-                this.store.commit('setInfo', {
+                this.store.setInfo({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })

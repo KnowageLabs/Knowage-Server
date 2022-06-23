@@ -71,6 +71,7 @@ import Dropdown from 'primevue/dropdown'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InlineMessage from 'primevue/inlinemessage'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'data-lineage',
@@ -88,8 +89,11 @@ export default defineComponent({
             globalFilterFields: ['name']
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {},
-
     methods: {
         async getTablesBySourceID() {
             this.loading = true
@@ -115,16 +119,16 @@ export default defineComponent({
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/${this.selectedDocument.id}`, event.data, {
                     headers: { 'X-Disable-Errors': 'true' }
                 })
-                .then(() => this.store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.dataLineage.persistOk') }))
-                .catch(() => this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.dataLineage.persistError') }))
+                .then(() => this.store.setInfo({ title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.dataLineage.persistOk') }))
+                .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.dataLineage.persistError') }))
         },
         deleteTable(event) {
             this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/${this.selectedDocument.id}/${event.data.tableId}`, {
                     headers: { 'X-Disable-Errors': 'true' }
                 })
-                .then(() => this.store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.dataLineage.deleteOk') }))
-                .catch(() => this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.dataLineage.deleteError') }))
+                .then(() => this.store.setInfo({ title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.dataLineage.deleteOk') }))
+                .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.dataLineage.deleteError') }))
         }
     }
 })

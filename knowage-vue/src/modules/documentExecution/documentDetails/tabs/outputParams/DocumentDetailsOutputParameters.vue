@@ -142,7 +142,7 @@ export default defineComponent({
                         this.selectedParam = {} as iOutputParam
                     })
                     .catch((error) => {
-                        this.store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message })
+                        this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error.message })
                     })
             } else {
                 let deletedParam = this.document.outputParameters.findIndex((param) => param.tempId === paramToDelete.tempId)
