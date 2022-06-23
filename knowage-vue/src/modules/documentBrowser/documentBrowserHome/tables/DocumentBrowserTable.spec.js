@@ -117,7 +117,18 @@ const factory = (documents) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [createTestingPinia()],
+            plugins: [
+                createTestingPinia({
+                    initialState: {
+                        store: {
+                            user: {
+                                isSuperadmin: true,
+                                functionalities: ['DocumentManagement']
+                            }
+                        }
+                    }
+                })
+            ],
             stubs: {
                 Button,
                 Column,

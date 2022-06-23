@@ -1,11 +1,11 @@
 import { flushPromises, mount } from '@vue/test-utils'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import DocumentBrowserTree from './MenuManagementDocumentBrowserTree.vue'
 import InputText from 'primevue/inputtext'
 import ProgressBar from 'primevue/progressbar'
 import Card from 'primevue/card'
 import Tree from 'primevue/tree'
-import axios from 'axios'
 
 const mockedElements = {
     functionality: [
