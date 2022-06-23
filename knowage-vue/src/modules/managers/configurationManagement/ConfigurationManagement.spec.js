@@ -37,7 +37,7 @@ const mockedConfigurations = [
 vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() =>
+    get: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: mockedConfigurations
         })
@@ -48,19 +48,15 @@ const $http = {
 const $confirm = {
     require: vi.fn()
 }
-const $store = {
-    commit: jest.fn()
-}
 
 const factory = () => {
     return mount(ConfigurationManagement, {
         attachToDocument: true,
         global: {
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: { Button, InputText, ProgressBar, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $confirm,
                 $http
             }

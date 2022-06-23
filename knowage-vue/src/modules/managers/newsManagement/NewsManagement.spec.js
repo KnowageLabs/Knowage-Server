@@ -33,7 +33,7 @@ const mockedNews = [
 vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() => Promise.resolve({ data: mockedNews })),
+    get: vi.fn().mockImplementation(() => Promise.resolve({ data: mockedNews })),
     delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 

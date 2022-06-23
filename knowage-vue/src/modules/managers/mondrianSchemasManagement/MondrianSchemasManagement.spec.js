@@ -38,7 +38,7 @@ const $route = {
 }
 
 const $http = {
-    get: axios.get.mockImplementation(() =>
+    get: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: mockedSchemas
         })

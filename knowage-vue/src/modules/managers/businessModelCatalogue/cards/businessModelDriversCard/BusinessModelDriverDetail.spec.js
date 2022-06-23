@@ -26,7 +26,7 @@ const mockedDriver = {
 vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
+    get: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 
 const factory = () => {

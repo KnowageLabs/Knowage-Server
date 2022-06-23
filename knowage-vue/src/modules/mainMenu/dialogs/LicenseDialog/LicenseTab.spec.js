@@ -37,7 +37,7 @@ const mockedHost = {
 vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() => Promise.resolve({ data: [] })),
+    get: vi.fn().mockImplementation(() => Promise.resolve({ data: [] })),
     post: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 

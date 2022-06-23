@@ -111,7 +111,7 @@ const mockedRole = {
 vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
             case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=BM_CATEGORY`:
                 return Promise.resolve({ data: mockedBuissnesModelList })

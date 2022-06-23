@@ -64,7 +64,7 @@ const mockedTimespans = [
 
 vi.mock('axios')
 const $http = {
-    get: axios.get.mockImplementation(() => Promise.resolve({ data: mockedTimespans[0] })),
+    get: vi.fn().mockImplementation(() => Promise.resolve({ data: mockedTimespans[0] })),
     post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 

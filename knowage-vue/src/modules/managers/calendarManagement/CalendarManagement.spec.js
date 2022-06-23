@@ -44,7 +44,7 @@ const mockedCalendars = [
 vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
             case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/getCalendarList`:
                 return Promise.resolve({ data: mockedCalendars })

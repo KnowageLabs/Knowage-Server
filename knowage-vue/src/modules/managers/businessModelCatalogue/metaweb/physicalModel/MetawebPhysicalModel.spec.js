@@ -282,7 +282,7 @@ const mockedPhysicalModel = {
 
 vi.mock('axios')
 
-const $http = { get: axios.get.mockImplementation(() => Promise.resolve({ data: [] })) }
+const $http = { get: vi.fn().mockImplementation(() => Promise.resolve({ data: [] })) }
 
 const factory = () => {
     return mount(MetawebPhysicalModel, {
