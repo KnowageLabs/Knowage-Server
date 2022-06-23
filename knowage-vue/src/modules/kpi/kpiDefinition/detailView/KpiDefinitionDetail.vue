@@ -136,6 +136,7 @@ import Listbox from 'primevue/listbox'
 import Dialog from 'primevue/dialog'
 import AutoComplete from 'primevue/autocomplete'
 import Checkbox from 'primevue/checkbox'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: { TabView, TabPanel, KnValidationMessages, Listbox, KpiDefinitionThresholdTab, KpiDefinitionFormulaTab, Dialog, AutoComplete, Checkbox, KpiDefinitionCardinalityTab },
@@ -180,6 +181,10 @@ export default defineComponent({
         return {
             selectedKpi: createValidations('selectedKpi', tabViewDescriptor.validations.selectedKpi)
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadPersistentData()

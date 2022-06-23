@@ -39,6 +39,7 @@ import { AxiosResponse } from 'axios'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'tenant-management',
@@ -58,6 +59,10 @@ export default defineComponent({
             cloneKpiId: Number,
             cloneKpiVersion: Number
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.getKpiList()

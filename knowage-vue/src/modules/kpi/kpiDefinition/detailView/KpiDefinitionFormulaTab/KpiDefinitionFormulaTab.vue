@@ -73,12 +73,12 @@ import tabViewDescriptor from '../KpiDefinitionDetailDescriptor.json'
 import CodeMirror from 'codemirror'
 import Dialog from 'primevue/dialog'
 import RadioButton from 'primevue/radiobutton'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     components: { VCodeMirror, Dialog, RadioButton, KnValidationMessages },
     props: { propKpi: Object as any, measures: { type: Array as any }, aliasToInput: { type: String }, checkFormula: { type: Boolean }, activeTab: { type: Number }, loading: Boolean, reloadKpi: Boolean },
     emits: ['touched', 'errorInFormula', 'updateFormulaToSave', 'onGuideClose'],
-
     data() {
         return {
             codeMirrorOptions: {
@@ -117,6 +117,10 @@ export default defineComponent({
         return {
             selectedKpi: createValidations('selectedKpi', tabViewDescriptor.validations.selectedKpi)
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         setMathematicaModified()
