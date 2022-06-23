@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import Card from 'primevue/card'
@@ -160,6 +159,7 @@ const factory = (scopeTypes, categoryTypes, selectedDataset, selectedDatasetVers
             loading
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Column,
