@@ -137,7 +137,7 @@ const $store = {
 }
 
 const $router = {
-    replace: jest.fn()
+    replace: vi.fn()
 }
 
 const factory = () => {

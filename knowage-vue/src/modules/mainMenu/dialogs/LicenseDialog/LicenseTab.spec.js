@@ -121,7 +121,7 @@ describe('License management', () => {
 
         expect($http.post).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/upload/DESKTOP-TEST12?isForUpdate=false', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
         expect(wrapper.emitted().reloadList).toBeTruthy()
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
     })
     it('clicking on the edit button a file input dialog appears', async () => {
         const wrapper = factory(mockedLicenses, mockedHost)
@@ -135,7 +135,7 @@ describe('License management', () => {
 
         expect($http.post).toHaveBeenCalledWith('/knowage/restful-services/1.0/license/upload/DESKTOP-TEST12?isForUpdate=true', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
         expect(wrapper.emitted().reloadList).toBeTruthy()
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
     })
     it('clicking on the download button a file download dialog appears', async () => {
         const wrapper = factory(mockedLicenses, mockedHost)

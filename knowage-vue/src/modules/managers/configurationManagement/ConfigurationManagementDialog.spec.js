@@ -54,7 +54,7 @@ describe('Domains Management Dialog', () => {
         await flushPromises()
         expect($http.post).toHaveBeenCalledTimes(1)
         expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs', mockedConfiguration)
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
 
         mockedConfiguration.id = 1
         formWrapper.vm.configuration = mockedConfiguration
@@ -62,6 +62,6 @@ describe('Domains Management Dialog', () => {
         await flushPromises()
         expect(axios.put).toHaveBeenCalledTimes(1)
         expect(axios.put).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/configs/1', mockedConfiguration)
-        expect($store.commit).toHaveBeenCalledTimes(2)
+        expect(store.setInfo).toHaveBeenCalledTimes(2)
     })
 })

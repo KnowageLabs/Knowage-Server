@@ -57,7 +57,7 @@ const $store = {
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const router = createRouter({

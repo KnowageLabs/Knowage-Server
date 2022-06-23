@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import Card from 'primevue/card'
@@ -16,6 +15,7 @@ import ProgressBar from 'primevue/progressbar'
 import TabPanel from 'primevue/tabpanel'
 import TabView from 'primevue/tabview'
 import Toolbar from 'primevue/toolbar'
+import mainStore from '../../../App.store'
 
 const mockedBuissnesModelList = [
     {
@@ -132,17 +132,14 @@ const $http = {
     post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const $router = {
-    replace: jest.fn()
+    replace: vi.fn()
 }
 
 const factory = () => {
     return mount(RolesManagementTabView, {
         global: {
+            plugins: [createTestingPinia],
             stubs: {
                 Button,
                 Column,
@@ -159,7 +156,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $router,
                 $http
             }
@@ -236,6 +232,7 @@ describe('Roles Management Tab View', () => {
 
     it('loads correct role and shows succes info if it is saved', async () => {
         const wrapper = factory()
+        const store = mainStore()
         wrapper.setProps({ id: '1' })
 
         await flushPromises()
@@ -252,13 +249,14 @@ describe('Roles Management Tab View', () => {
 
         expect($http.post).toHaveBeenCalledTimes(1)
         expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles/1', { ...mockedRole, roleMetaModelCategories: [{ categoryId: 172 }, { categoryId: 152 }, { categoryId: 256 }] })
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
         expect($router.replace).toHaveBeenCalledWith('/roles-management')
     })
 
     it('shows success info if new data is saved', async () => {
         const wrapper = factory()
+        const store = mainStore()
         wrapper.vm.selectedRole = mockedRole
         wrapper.vm.selectedBusinessModels = [{ categoryId: 172 }]
         wrapper.vm.selectedDataSets = [{ categoryId: 152 }]
@@ -271,7 +269,7 @@ describe('Roles Management Tab View', () => {
 
         expect($http.post).toHaveBeenCalledTimes(1)
         expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles/', { ...mockedRole, roleMetaModelCategories: [{ categoryId: 172 }, { categoryId: 152 }, { categoryId: 256 }] })
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
         expect($router.replace).toHaveBeenCalledWith('/roles-management')
     })

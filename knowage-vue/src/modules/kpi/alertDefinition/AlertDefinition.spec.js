@@ -203,7 +203,7 @@ describe('Alert Definition loading', () => {
             await wrapper.vm.deleteAlert(1)
             expect($http.delete).toHaveBeenCalledTimes(1)
             expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/alert/' + 1 + '/delete')
-            expect($store.commit).toHaveBeenCalledTimes(1)
+            expect(store.setInfo).toHaveBeenCalledTimes(1)
         })
         it("opens empty detail form when the '+' button is clicked", async () => {
             const wrapper = factory()

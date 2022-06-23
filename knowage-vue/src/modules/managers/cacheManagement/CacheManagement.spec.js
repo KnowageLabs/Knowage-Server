@@ -103,7 +103,7 @@ describe('Cache Management loading', () => {
         await flushPromises()
 
         expect(wrapper.vm.datasources).toStrictEqual(mockedDatasets.slice(0, 2))
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
         expect(wrapper.vm.selectedDatasource).toStrictEqual(null)
     })
 })

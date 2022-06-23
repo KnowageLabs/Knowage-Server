@@ -151,7 +151,7 @@ const $store = {
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = (scopeTypes, categoryTypes, selectedDataset, selectedDatasetVersions, loading) => {
