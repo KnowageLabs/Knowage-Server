@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import BusinessModelCatalogue from './BusinessModelCatalogue.vue'
@@ -44,8 +43,8 @@ const $confirm = {
 }
 
 const $router = {
-    push: jest.fn(),
-    replace: jest.fn()
+    push: vi.fn(),
+    replace: vi.fn()
 }
 
 const $route = { path: '/business-model-catalogue' }
@@ -53,6 +52,7 @@ const $route = { path: '/business-model-catalogue' }
 const factory = () => {
     return mount(BusinessModelCatalogue, {
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,

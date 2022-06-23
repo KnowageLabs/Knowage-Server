@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import BusinessModelDriverDetail from './BusinessModelDriverDetail.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -37,6 +36,7 @@ const factory = () => {
             businessModelDrivers: []
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Card,
                 Button,

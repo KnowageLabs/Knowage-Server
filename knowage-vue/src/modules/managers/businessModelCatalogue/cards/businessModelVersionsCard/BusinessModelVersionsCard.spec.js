@@ -29,8 +29,8 @@ const $confirm = {
 }
 
 const $router = {
-    push: jest.fn(),
-    replace: jest.fn()
+    push: vi.fn(),
+    replace: vi.fn()
 }
 
 const factory = () => {
@@ -40,6 +40,7 @@ const factory = () => {
             versions: []
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -51,7 +52,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-
                 $confirm,
                 $router
             }

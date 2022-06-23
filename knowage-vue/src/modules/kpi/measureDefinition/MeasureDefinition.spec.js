@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import FabButton from '@/components/UI/KnFabButton.vue'
@@ -13,6 +12,7 @@ import Listbox from 'primevue/listbox'
 import MeasureDefinition from './MeasureDefinition.vue'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
+import mainStore from '../../../App.store'
 
 const mockedMeasures = [
     {
@@ -66,13 +66,14 @@ const $confirm = {
 }
 
 const $router = {
-    push: jest.fn(),
-    replace: jest.fn()
+    push: vi.fn(),
+    replace: vi.fn()
 }
 
 const factory = () => {
     return mount(MeasureDefinition, {
         global: {
+            plugins: [createTestingPinia()],
             directives: {
                 tooltip() {}
             },
@@ -89,7 +90,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-
                 $confirm,
                 $router,
                 $http
@@ -123,6 +123,7 @@ describe('Measure Definition loading', () => {
 describe('Measure Definition', () => {
     it('shows a prompt when user click on a rule delete button to delete it and deletes it', async () => {
         const wrapper = factory()
+        const store = mainStore()
 
         await flushPromises()
 
