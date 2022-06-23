@@ -11,6 +11,7 @@ import KnInputFile from '@/components/UI/KnInputFile.vue'
 import Listbox from 'primevue/listbox'
 import LicenceTab from './LicenseTab.vue'
 import Toolbar from 'primevue/toolbar'
+import mainStore from '../../../../App.store'
 
 const mockedLicenses = [
     {
@@ -42,8 +43,8 @@ const $http = {
 }
 
 const $store = {
-    commit: jest.fn(),
-    dispatch: jest.fn()
+    commit: vi.fn(),
+    dispatch: vi.fn()
 }
 
 const $confirm = {
@@ -52,6 +53,7 @@ const $confirm = {
 
 const factory = (licenses, host) => {
     return mount(LicenceTab, {
+        plugins: [createTestingPinia()],
         props: {
             licenses,
             host
@@ -69,7 +71,6 @@ const factory = (licenses, host) => {
             },
             mocks: {
                 $t: (msg) => msg,
-
                 $confirm,
                 $http
             }
@@ -111,6 +112,8 @@ describe('License management', () => {
     })
     it('clicking on the + button a file input dialog appears', async () => {
         const wrapper = factory(mockedLicenses, mockedHost)
+        const store = mainStore()
+
         const formData = new FormData()
         formData.append('file', 'KnowageSI')
 
@@ -125,6 +128,7 @@ describe('License management', () => {
     })
     it('clicking on the edit button a file input dialog appears', async () => {
         const wrapper = factory(mockedLicenses, mockedHost)
+        const store = mainStore()
         const formData = new FormData()
         formData.append('file', 'KnowageSI')
 

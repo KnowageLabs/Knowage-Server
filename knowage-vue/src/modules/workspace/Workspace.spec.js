@@ -28,7 +28,7 @@ const $router = {
             fullPath: '/workspace/'
         }
     },
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = () => {
