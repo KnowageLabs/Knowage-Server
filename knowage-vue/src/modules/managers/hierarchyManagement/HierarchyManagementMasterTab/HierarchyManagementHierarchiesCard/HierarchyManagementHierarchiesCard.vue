@@ -63,6 +63,7 @@ import Dropdown from 'primevue/dropdown'
 import hierarchyManagementHierarchiesCardDescriptor from './HierarchyManagementHierarchiesCardDescriptor.json'
 import HierarchyManagementHierarchiesTree from './HierarchyManagementHierarchiesTree/HierarchyManagementHierarchiesTree.vue'
 import HierarchyManagementHierarchiesFilterCard from './HierarchyManagementHierarchiesFilterCard/HierarchyManagementHierarchiesFilterCard.vue'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchies-card',
@@ -102,6 +103,10 @@ export default defineComponent({
         reloadHierarchiesTrigger() {
             if (this.hierarchyType === 'MASTER') this.loadHierarchies()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadDimension()

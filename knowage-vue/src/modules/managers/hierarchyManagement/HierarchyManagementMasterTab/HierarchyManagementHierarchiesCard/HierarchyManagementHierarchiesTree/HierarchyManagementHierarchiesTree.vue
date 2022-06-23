@@ -50,10 +50,10 @@ import hierarchyManagementHierarchiesTreeDescriptor from './HierarchyManagementH
 import HierarchyManagementNodeDetailDialog from './HierarchyManagementNodeDetailDialog.vue'
 import HierarchyManagementHierarchiesTargetDialog from './HierarchyManagementHierarchiesTargetDialog.vue'
 import Tree from 'primevue/tree'
-
 import deepEqual from 'deep-equal'
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
+import mainStore from '../../../../../../App.store'
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchies-tree',
@@ -95,6 +95,10 @@ export default defineComponent({
         propRelationsMasterTree() {
             this.loadMasterTreeRelations()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadTree()

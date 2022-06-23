@@ -62,6 +62,7 @@ import HierarchyManagementHierarchiesFilterCard from '../../HierarchyManagementM
 import HierarchyManagementHierarchiesTree from '../../HierarchyManagementMasterTab/HierarchyManagementHierarchiesCard/HierarchyManagementHierarchiesTree/HierarchyManagementHierarchiesTree.vue'
 import HierarchyManagementNodeDetailDialog from '../../HierarchyManagementMasterTab/HierarchyManagementHierarchiesCard/HierarchyManagementHierarchiesTree/HierarchyManagementNodeDetailDialog.vue'
 import hierarchyManagementTargetCardDescriptor from './HierarchyManagementTargetCardDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'hierarchy-management-target-card',
@@ -94,6 +95,10 @@ export default defineComponent({
         async selectedDimension() {
             if (this.selectedDimension) await this.loadTechnicalHierarchies()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {},
     methods: {

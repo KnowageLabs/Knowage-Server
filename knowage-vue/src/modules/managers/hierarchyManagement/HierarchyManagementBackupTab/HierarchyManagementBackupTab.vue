@@ -76,6 +76,7 @@ import hierarchyManagementDimensionsTableDescriptor from '@/modules/managers/hie
 import Dropdown from 'primevue/dropdown'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'hierarchy-management-technical-tab',
@@ -98,6 +99,10 @@ export default defineComponent({
             filters: { global: [filterDefault] },
             loading: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {},
     methods: {

@@ -56,6 +56,7 @@ import Dropdown from 'primevue/dropdown'
 import HierarchyManagementDimensionsTable from './HierarchyManagementDimensionsTable/HierarchyManagementDimensionsTable.vue'
 import HierarchyManagementHierarchyMasterDialog from './HierarchyManagementHierarchyMasterDialog/HierarchyManagementHierarchyMasterDialog.vue'
 import HierarchyManagementDimensionsFilterCard from './HierarchyManagementDimensionsFilterCard/HierarchyManagementDimensionsFilterCard.vue'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'hierarchy-management-dimensions-card',
@@ -78,6 +79,10 @@ export default defineComponent({
         synchronizeButtonDisabled(): boolean {
             return !this.dimensionData || this.dimensionData.root.length === 0 || this.hierarchyType?.toUpperCase() !== 'MASTER' || !this.selectedHierarchy
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {},
     methods: {

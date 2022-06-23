@@ -27,6 +27,7 @@ import Dialog from 'primevue/dialog'
 import hierarchyManagementHierarchyMasterDialogDescriptor from './HierarchyManagementMasterDescriptor.json'
 import HierarchyManagementHierarchyMasterForm from './HierarchyManagementHierarchyMasterForm.vue'
 import HierarchyManagementHierarchyMasterSelectList from './HierarchyManagementHierarchyMasterSelectList.vue'
+import mainStore from '../../../../../../App.store'
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchy-master-dialog',
@@ -61,6 +62,10 @@ export default defineComponent({
         nodeMetadata() {
             this.loadNodeData()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadNodeData()
