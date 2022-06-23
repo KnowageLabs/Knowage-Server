@@ -72,7 +72,7 @@ describe('Role Detail Tab', () => {
         expect(wrapper.emitted().fieldChanged[0][0].value).toBe('test title')
 
         await descriptionInput.setValue('test description')
-        expect(wrapper.emitted().fieldChanged[2][0].value).toBe('test description')
+        expect(wrapper.emitted().fieldChanged[1][0].value).toBe('test description')
     })
 
     it('emits correct value on field and active change', async () => {

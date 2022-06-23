@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
 import Listbox from 'primevue/listbox'
@@ -41,10 +40,6 @@ const $confirm = {
     require: vi.fn()
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
 const $router = {
     push: vi.fn()
 }
@@ -52,7 +47,7 @@ const $router = {
 const factory = () => {
     return mount(NewsManagement, {
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Listbox,
@@ -62,7 +57,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $confirm,
                 $router,
                 $http
