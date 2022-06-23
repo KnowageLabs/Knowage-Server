@@ -59,7 +59,7 @@ const factory = (datasetMetadataList) => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Cache Management Dataset Table', () => {

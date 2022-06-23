@@ -52,7 +52,7 @@ const $http = {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 const $confirm = {
@@ -91,7 +91,7 @@ describe('Functionalities loading', () => {
 
 describe('Functionalities', () => {
     it('when loaded a tree with just the root is shown if no child are present', async () => {
-        axios.get.mockReturnValueOnce(
+        $http.get.mockReturnValueOnce(
             Promise.resolve({
                 data: [{ id: 1, parentId: null, name: 'Functionalities' }]
             })

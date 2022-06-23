@@ -159,7 +159,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 describe('Alert Definition Detail', () => {
     it('disables the save button if no kpi is selected', () => {

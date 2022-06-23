@@ -66,7 +66,7 @@ const factory = (usersList) => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Mondrian Schema Workflow Tab', () => {

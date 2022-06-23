@@ -198,7 +198,7 @@ jest.spyOn(global, 'setTimeout')
 
 describe('Workspace Repository View', () => {
     it('should show an hint if no elements are present in the selected mode', async () => {
-        axios.get.mockReturnValueOnce(
+        $http.get.mockReturnValueOnce(
             Promise.resolve({
                 data: []
             })

@@ -586,7 +586,7 @@ const factory = (treeMode) => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Hierarchy Management Hierarchies Tree', () => {

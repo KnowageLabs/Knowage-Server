@@ -114,7 +114,7 @@ const factory = (id) => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Timespan Detail', () => {

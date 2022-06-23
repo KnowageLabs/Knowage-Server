@@ -45,7 +45,7 @@ const $http = {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 const $store = {

@@ -228,7 +228,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Hierarchy Management Hierarchy Master Select List', () => {

@@ -115,7 +115,7 @@ const factory = (item, datasources, selectedDatasource) => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Cache Management General Settings', () => {

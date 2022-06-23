@@ -69,7 +69,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Configuration Management loading', () => {
@@ -83,7 +83,7 @@ describe('Configuration Management loading', () => {
         // not in this component
     })
     it('shows "no data" label when loaded empty', async () => {
-        axios.get.mockReturnValueOnce(
+        $http.get.mockReturnValueOnce(
             Promise.resolve({
                 data: []
             })

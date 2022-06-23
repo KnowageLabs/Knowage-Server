@@ -211,7 +211,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Functons Catalog Preview Dialog', () => {

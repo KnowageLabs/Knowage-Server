@@ -144,7 +144,7 @@ describe('Main Menu', () => {
 describe('Main Menu', () => {
     test('is loaded empty', () => {
         const wrapper = factory()
-        axios.get.mockReturnValueOnce(
+        $http.get.mockReturnValueOnce(
             Promise.resolve({
                 data: []
             })

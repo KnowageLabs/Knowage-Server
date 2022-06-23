@@ -78,7 +78,7 @@ const factory = (licenses, host) => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('License management', () => {

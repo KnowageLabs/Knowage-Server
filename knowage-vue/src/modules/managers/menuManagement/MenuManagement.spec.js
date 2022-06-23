@@ -43,7 +43,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('menu configuration management loading', () => {
@@ -56,7 +56,7 @@ describe('menu configuration management loading', () => {
 })
 
 it('when loaded a tree with just the root is shown if no child are present', async () => {
-    axios.get.mockReturnValueOnce(
+    $http.get.mockReturnValueOnce(
         Promise.resolve({
             data: [
                 {
