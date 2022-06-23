@@ -88,7 +88,7 @@ describe('Cache Management Dataset Table', () => {
 
         expect($http.delete).toHaveBeenCalledTimes(1)
         expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/cacheee')
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('deleted')
     })
     it('removes metadata and emits event when delete button is pressed', async () => {
@@ -102,7 +102,7 @@ describe('Cache Management Dataset Table', () => {
 
         expect(axios.put).toHaveBeenCalledTimes(1)
         expect(axios.put).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/cacheee/deleteItems', { namesArray: ['0b78ecae01d62da1c1604f75086478f9332e1491c677d4353f8c27cee3800c79'] })
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('deleted')
     })
 })

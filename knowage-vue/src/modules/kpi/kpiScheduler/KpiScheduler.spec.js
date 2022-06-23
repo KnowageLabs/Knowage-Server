@@ -169,7 +169,7 @@ describe('KPI Scheduler list', () => {
         await wrapper.vm.deleteSchedule(mockedSchedulers[0].id)
         expect($http.delete).toHaveBeenCalledTimes(1)
         expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/2/deleteKpiScheduler')
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
     })
     it('shows an hint when no item is selected', async () => {
         router.push('/kpi-scheduler')

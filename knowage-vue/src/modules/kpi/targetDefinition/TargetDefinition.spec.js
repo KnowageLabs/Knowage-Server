@@ -194,7 +194,7 @@ describe('Target Definition List', () => {
         await wrapper.vm.deleteTarget(88)
         expect($http.delete).toHaveBeenCalledTimes(1)
         expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + 88 + '/deleteTarget')
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
         expect($router.replace).toHaveBeenCalledWith('/target-definition')
     })
     it("opens empty detail form when the '+' button is clicked", async () => {

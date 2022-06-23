@@ -79,7 +79,7 @@ describe('Calendar Management Dialog', () => {
 
         expect($http.post).toHaveBeenCalledTimes(1)
         expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'calendar/saveCalendar', { ...mockedCalendar, name: 'Test', calStartDay: 1498867200000, calEndDay: 1500336000000 })
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
     })
 
     it('hould inform the user that the generation may take some time', async () => {

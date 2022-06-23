@@ -252,7 +252,7 @@ describe('Roles Management Tab View', () => {
 
         expect($http.post).toHaveBeenCalledTimes(1)
         expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles/1', { ...mockedRole, roleMetaModelCategories: [{ categoryId: 172 }, { categoryId: 152 }, { categoryId: 256 }] })
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
         expect($router.replace).toHaveBeenCalledWith('/roles-management')
     })
@@ -271,7 +271,7 @@ describe('Roles Management Tab View', () => {
 
         expect($http.post).toHaveBeenCalledTimes(1)
         expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles/', { ...mockedRole, roleMetaModelCategories: [{ categoryId: 172 }, { categoryId: 152 }, { categoryId: 256 }] })
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
         expect($router.replace).toHaveBeenCalledWith('/roles-management')
     })

@@ -140,7 +140,7 @@ describe('Functionalities', () => {
         await wrapper.vm.deleteFunctionality(3)
         expect($http.delete).toHaveBeenCalledTimes(1)
         expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/functionalities/' + 3)
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
     })
     it('moves the item up in the tree if the move up button is clicked', async () => {
         const wrapper = factory()

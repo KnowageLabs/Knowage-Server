@@ -139,7 +139,7 @@ describe('Measure Definition', () => {
         await wrapper.vm.deleteMeasure(mockedMeasures[0])
         expect($http.delete).toHaveBeenCalledTimes(1)
         expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/1/1/deleteRule')
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
     })
     it('calls the correct route when clicking on the add button', async () => {
         const wrapper = factory()

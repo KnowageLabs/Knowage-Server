@@ -57,7 +57,7 @@ describe('Domains Management Dialog', () => {
         expect($http.post).toHaveBeenCalledTimes(1)
         expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/domains', mockedDomain)
         // shows success info if data is saved
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
 
         mockedDomain.valueId = 1
         formWrapper.vm.domain = mockedDomain
@@ -65,6 +65,6 @@ describe('Domains Management Dialog', () => {
         await flushPromises()
         expect($http.put).toHaveBeenCalledTimes(1)
         expect($http.put).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/domains/1', mockedDomain)
-        expect($store.commit).toHaveBeenCalledTimes(2)
+        expect(store.setInfo).toHaveBeenCalledTimes(2)
     })
 })
