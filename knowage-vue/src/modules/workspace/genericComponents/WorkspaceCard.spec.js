@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import WorkspaceCard from './WorkspaceCard.vue'
@@ -44,12 +44,6 @@ const mockedFederationDataset = {
     owner: 'Federation Dataset Type'
 }
 
-const $store = {
-    state: {
-        user: {}
-    }
-}
-
 const $router = {
     push: vi.fn()
 }
@@ -66,7 +60,7 @@ const factory = (viewType, document) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 InputText,
@@ -76,7 +70,6 @@ const factory = (viewType, document) => {
             },
             mocks: {
                 $t: (msg) => msg,
-
                 $router
             }
         }

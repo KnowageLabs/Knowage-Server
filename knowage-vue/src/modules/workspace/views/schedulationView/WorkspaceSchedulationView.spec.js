@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
+import { createTestingPinia } from '@pinia/testing'
 import PrimeVue from 'primevue/config'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -56,12 +56,6 @@ const $http = {
     })
 }
 
-const $store = {
-    state: {
-        user: {}
-    }
-}
-
 const $router = {
     push: vi.fn()
 }
@@ -73,7 +67,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 Column,
@@ -91,7 +85,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-
                 $http,
                 $router
             }

@@ -76,11 +76,11 @@ export default defineComponent({
         documentImageSource(): any {
             if (this.document[this.documentFields.image]) {
                 return {
-                    'background-image': `url(${import.meta.env.VITE_HOST_URL}${descriptor.imgPath}${this.document[this.documentFields.image]}),url(${require('@/assets/images/workspace/documentTypes/' + cardDescriptor.defaultImages.missing)})`
+                    'background-image': `url(${import.meta.env.VITE_HOST_URL}${descriptor.imgPath}${this.document[this.documentFields.image]}),url(${'../../..//assets/images/workspace/documentTypes/' + cardDescriptor.defaultImages.missing})`
                 }
             }
             return {
-                'background-image': `url(${require('@/assets/images/workspace/documentTypes/' + (cardDescriptor.defaultImages[this.document.type] || cardDescriptor.defaultImages.missing))})`
+                'background-image': `url(${'../../..//assets/images/workspace/documentTypes/' + (cardDescriptor.defaultImages[this.document.type] || cardDescriptor.defaultImages.missing)})`
             }
         },
         documentFields(): any {
