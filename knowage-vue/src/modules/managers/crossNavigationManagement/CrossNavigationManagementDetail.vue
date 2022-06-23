@@ -105,6 +105,8 @@ import HintDialog from './dialogs/CrossNavigationManagementHintDialog.vue'
 import DocParameters from './dialogs/CrossNavigationManagementDocParameters.vue'
 import crossNavigationManagementValidator from './CrossNavigationManagementValidator.json'
 import crossNavigationDescriptor from './CrossNavigationManagementDescriptor.json'
+import mainStore from '../../../App.store'
+
 export default defineComponent({
     name: 'cross-navigation-detail',
     components: { Dropdown, DocDialog, DocParameters, HintDialog, KnValidationMessages, InputNumber },
@@ -139,6 +141,10 @@ export default defineComponent({
         buttonDisabled(): any {
             return this.v$.$invalid
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         if (this.id) {

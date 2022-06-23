@@ -56,6 +56,8 @@
 import { defineComponent } from 'vue'
 import Listbox from 'primevue/listbox'
 import dialogDescriptor from './CrossNavigationManagementDialogDescriptor.json'
+import mainStore from '../../../../App.store'
+
 export default defineComponent({
     name: 'cross-navigation-detail',
     components: { Listbox },
@@ -71,6 +73,10 @@ export default defineComponent({
             fixedValue: '',
             dropzoneActive: [] as boolean[]
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         if (this.selectedNavigation) {

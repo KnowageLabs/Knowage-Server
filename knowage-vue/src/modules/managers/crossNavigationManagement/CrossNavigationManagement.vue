@@ -26,6 +26,7 @@ import { AxiosResponse } from 'axios'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import crossNavigationDescriptor from './CrossNavigationManagementDescriptor.json'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'navigation-management',
@@ -37,6 +38,10 @@ export default defineComponent({
             touched: false,
             crossNavigationDescriptor
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadAll()

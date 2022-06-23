@@ -131,6 +131,8 @@ import InputNumber from 'primevue/inputnumber'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import constraintsManagementDetailDescriptor from './ConstraintsManagementDetailDescriptor.json'
 import constraintsManagementValidationDescriptor from './ConstraintsManagementValidationDescriptor.json'
+import mainStore from '../../../App.store'
+
 export default defineComponent({
     name: 'constraint-management-detail',
     components: { Dropdown, KnValidationMessages, InputNumber },
@@ -184,6 +186,10 @@ export default defineComponent({
             this.v$.$reset()
             this.constraint = { ...this.selectedConstraint } as iConstraint
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     mounted() {
         if (this.selectedConstraint) {

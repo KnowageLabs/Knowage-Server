@@ -54,6 +54,7 @@ import { iConstraint } from './ConstraintsManagement'
 import ConstraintsManagementDetail from './ConstraintsManagementDetail.vue'
 import KnHint from '@/components/UI/KnHint.vue'
 import Tooltip from 'primevue/tooltip'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'constraint-management',
@@ -79,6 +80,10 @@ export default defineComponent({
             domains: [] as any,
             constraintManagementDescriptor
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadAll()
