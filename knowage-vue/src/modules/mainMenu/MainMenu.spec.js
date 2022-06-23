@@ -110,10 +110,6 @@ const $http = {
     })
 }
 
-jest.mock('axios', () => ({
-    get: jest.fn(() => Promise.resolve({ data: { technicalUserFunctionalities: [{ items: [{ label: 'Data source' }] }] } }))
-}))
-
 const factory = () => {
     return shallowMount(MainMenu, {
         attachToDocument: true,

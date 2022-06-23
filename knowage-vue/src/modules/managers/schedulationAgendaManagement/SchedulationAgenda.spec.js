@@ -255,7 +255,7 @@ const $router = {
 const factory = () => {
     return mount(SchedulationAgenda, {
         global: {
-            plugins: [PrimeVue, router],
+            plugins: [PrimeVue, router, createTestingPinia()],
             stubs: {
                 Calendar,
                 Card,

@@ -21,7 +21,7 @@ const wrapper = mount(LanguageDialog, {
     },
     global: {
         components: { Button },
-        plugins: [PrimeVue],
+        plugins: [PrimeVue, createTestingPinia()],
         mocks: {
             $t: (msg) => msg,
             $router: router,
