@@ -286,8 +286,8 @@ export default defineComponent({
                 if (response.data.errors) {
                     this.store.setError({ title: 'Error', msg: response.data.error })
                 } else {
-                    this.store.setInfo({ title: this.$t('common.toast.success') })
                     this.$emit('inserted', response.data.id)
+                    this.store.setInfo({ title: this.$t('common.toast.success') })
                 }
             })
             this.dirty = false

@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import FunctionalitiesManagement from './FunctionalitiesManagement.vue'
@@ -11,6 +10,7 @@ import KnHint from '@/components/UI/KnHint.vue'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 import Tree from 'primevue/tree'
+import mainStore from '../../../App.store'
 
 const mockedFunctionalities = [
     { id: 1, parentId: null, name: 'Functionalities', prog: 1 },
@@ -62,13 +62,13 @@ const $confirm = {
 const factory = () => {
     return mount(FunctionalitiesManagement, {
         global: {
+            plugins: [createTestingPinia()],
             directives: {
                 tooltip() {}
             },
             stubs: { Button, Card, FabButton, FunctionalitiesManagementDetail: true, KnHint, ProgressBar, Toolbar, Tree },
             mocks: {
                 $t: (msg) => msg,
-
                 $confirm,
                 $http
             }
@@ -124,6 +124,7 @@ describe('Functionalities', () => {
     })
     it('ask a confirm if delete button is clicked', async () => {
         const wrapper = factory()
+        const store = mainStore()
 
         await flushPromises()
 

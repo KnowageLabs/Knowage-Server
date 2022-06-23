@@ -81,7 +81,7 @@ const $http = {
             data: mockedParentFunctionality
         })
     ),
-    put: axios.put.mockImplementation(() =>
+    put: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: mockedFunctionality
         })
@@ -96,10 +96,10 @@ const factory = () => {
             parentId: 1
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: { Button, Card, Checkbox, Column, DataTable, InputText, KnValidationMessages, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-
                 $http
             }
         }
@@ -292,8 +292,9 @@ describe('Functionalities Detail', () => {
 
         await flushPromises()
         await wrapper.find('[data-test="submit-button"]').trigger('click')
+        await flushPromises()
 
-        expect(axios.put).toHaveBeenCalledTimes(1)
+        expect($http.put).toHaveBeenCalledTimes(1)
         expect(wrapper.emitted()).toHaveProperty('inserted')
     })
 })
