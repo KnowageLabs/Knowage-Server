@@ -1,13 +1,13 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
 import TimespanDetail from './TimespanDetail.vue'
 import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
+import mainStore from '../../../App.store'
 
 const mockedTimespans = [
     {
@@ -100,7 +100,6 @@ const factory = (id) => {
             },
             mocks: {
                 $t: (msg) => msg,
-
                 $confirm,
                 $router,
                 $http
@@ -116,6 +115,7 @@ afterEach(() => {
 describe('Timespan Detail', () => {
     it('saves timespan', async () => {
         const wrapper = factory('81')
+        const store = mainStore()
 
         await flushPromises()
 
