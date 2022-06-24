@@ -115,20 +115,29 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
                     this.touched = false
-                    this.deleteNews(news)
+                    this.onDeleteNewsConfirm(news)
                 }
             })
         },
+        async onDeleteNewsConfirm(news) {
+            const response = await this.deleteNews(news)
+            if (response) this.deleteNewsWebSocket(news)
+        },
         async deleteNews(news) {
+            let responseOk = false
             await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/news/' + news.id).then(() => {
                 this.store.setInfo({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })
-                WEB_SOCKET.send(JSON.stringify(news))
+                responseOk = true
                 this.$router.push('/news-management')
                 this.loadAllNews()
             })
+            return responseOk
+        },
+        deleteNewsWebSocket(news) {
+            WEB_SOCKET.send(JSON.stringify(news))
         },
         pageReload() {
             this.touched = false
