@@ -90,7 +90,7 @@ import Badge from 'primevue/badge'
 import TabPanel from 'primevue/tabpanel'
 import ProgressSpinner from 'primevue/progressspinner'
 import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam, iDocumentType } from '@/modules/documentExecution/documentDetails/DocumentDetails'
-import mainStore from '../../App.store'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'document-details',
