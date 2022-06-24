@@ -186,7 +186,7 @@ describe('Workspace Recent View', () => {
 
         await wrapper.find('[data-test="info-button-Mocked Document"]').trigger('click')
 
-        expect(wrapper.vm.showDetailSidebar).toBe(true)
         expect(wrapper.find('[data-test="detail-sidebar"]').exists()).toBe(true)
+        expect(wrapper.vm.showDetailSidebar).toBe(true)
     })
 })
