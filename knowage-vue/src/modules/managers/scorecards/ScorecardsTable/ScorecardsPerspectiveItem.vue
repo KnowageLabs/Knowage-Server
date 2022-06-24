@@ -1,5 +1,7 @@
 <template>
     <div id="perspective" v-if="perspective">
+        {{ 'TODO' }}
+        {{ perspective.targets }}
         <div class="p-d-flex p-flex-row p-ai-center">
             <div class="p-d-flex p-ai-center" :style="descriptor.style.inputContainer">
                 <Button v-if="!expanded" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" @click="expanded = true" />
@@ -41,6 +43,7 @@ import SelectButton from 'primevue/selectbutton'
 import descriptor from './ScorecardsTableDescriptor.json'
 import ScorecardsTargetItem from './ScorecardsTargetItem.vue'
 import ScorecardsTableHint from './ScorecardsTableHint.vue'
+import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'scorecards-perspective-item',
@@ -72,7 +75,7 @@ export default defineComponent({
         },
         addTarget() {
             if (this.perspective) {
-                this.perspective.targets.push({ name: 'New Target', status: 'GRAY', criterion: getDefaultCriterion(this.criterias), options: { criterionPriority: [] }, kpis: [], groupedKpis: [] })
+                this.perspective.targets.push({ id: cryptoRandomString({ length: 16, type: 'base64' }), name: 'New Target', status: 'GRAY', criterion: getDefaultCriterion(this.criterias), options: { criterionPriority: [] }, kpis: [], groupedKpis: [] })
                 this.$emit('touched')
                 this.expanded = true
                 this.perspective.updated = true
@@ -101,6 +104,7 @@ export default defineComponent({
             })
         },
         deleteTarget(target: iScorecardTarget) {
+            console.log('TARGET: ', target)
             if (!this.perspective) return
             const index = this.perspective.targets.findIndex((tempTarget: iScorecardTarget) => tempTarget.id === target.id)
             if (index !== -1) {
