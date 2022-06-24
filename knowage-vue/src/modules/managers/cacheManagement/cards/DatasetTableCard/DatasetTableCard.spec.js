@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -9,6 +8,7 @@ import DataTable from 'primevue/datatable'
 import DatasetTableCard from './DatasetTableCard.vue'
 import flushPromises from 'flush-promises'
 import Toolbar from 'primevue/toolbar'
+import mainStore from '../../../../../App.store'
 
 const mockedDatasetMetadata = [
     {
@@ -74,6 +74,7 @@ describe('Cache Management Dataset Table', () => {
     })
     it('removes all present metadata and emits event when clean all button is pressed', async () => {
         const wrapper = factory(mockedDatasetMetadata)
+        const store = mainStore()
 
         expect(wrapper.vm.datasets.length).toBe(2)
 
@@ -89,6 +90,7 @@ describe('Cache Management Dataset Table', () => {
     })
     it('removes metadata and emits event when delete button is pressed', async () => {
         const wrapper = factory(mockedDatasetMetadata)
+        const store = mainStore()
         expect(wrapper.vm.datasets.length).toBe(2)
 
         await wrapper.find('[data-test="delete-button"]').trigger('click')
