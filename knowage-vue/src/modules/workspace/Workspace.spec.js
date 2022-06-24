@@ -11,6 +11,7 @@ import InputText from 'primevue/inputtext'
 import ProgressBar from 'primevue/progressbar'
 import Workspace from './Workspace.vue'
 import Toolbar from 'primevue/toolbar'
+
 vi.mock('axios')
 
 const crypto = require('crypto')
@@ -22,12 +23,6 @@ Object.defineProperty(global.self, 'crypto', {
 })
 
 const $http = { get: vi.fn().mockImplementation(() => Promise.resolve({ data: [] })) }
-
-const $store = {
-    state: {
-        user: { isSuperadmin: true, functionalities: ['SaveIntoFolderFunctionality', 'CreateDocument', 'BuildQbeQueriesFunctionality'] }
-    }
-}
 
 const $router = {
     currentRoute: {
@@ -45,7 +40,15 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [createTestingPinia()],
+            plugins: [
+                createTestingPinia({
+                    initialState: {
+                        store: {
+                            user: { isSuperadmin: true, functionalities: ['SaveIntoFolderFunctionality', 'CreateDocument', 'BuildQbeQueriesFunctionality'] }
+                        }
+                    }
+                })
+            ],
             stubs: {
                 Button,
                 Accordion,
