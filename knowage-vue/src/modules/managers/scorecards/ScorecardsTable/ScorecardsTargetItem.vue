@@ -17,7 +17,7 @@
             </div>
 
             <div class="p-ml-auto">
-                <Button icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" @click="openKpiDialog" />
+                <Button icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" v-tooltip.top="$t('managers.scorecards.addKpi')" @click="openKpiDialog" />
                 <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deleteTargetConfirm" />
             </div>
         </div>

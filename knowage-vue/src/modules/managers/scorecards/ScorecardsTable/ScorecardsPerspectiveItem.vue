@@ -17,7 +17,7 @@
             </div>
 
             <div class="p-d-flex p-ai-center">
-                <Button icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" @click="addTarget" />
+                <Button icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" v-tooltip.top="$t('managers.scorecards.addTarget')" @click="addTarget" />
                 <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deletePerspectiveConfirm" />
             </div>
         </div>
