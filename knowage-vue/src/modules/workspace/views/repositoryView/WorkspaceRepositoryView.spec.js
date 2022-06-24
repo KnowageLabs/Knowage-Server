@@ -237,7 +237,7 @@ describe('Workspace Repository View', () => {
         expect(wrapper.vm.filteredDocuments).toStrictEqual(mockedDocuments)
 
         await wrapper.find('[data-test="search-input"]').setValue('CHOCOLATE')
-        expect(wrapper.find('input[type="text"]').element.value).toBe('CHOCOLATE')
+        expect(wrapper.find('[data-test="search-input"]').element.value).toBe('CHOCOLATE')
         wrapper.vm.searchWord = 'CHOCOLATE'
         wrapper.vm.searchItems()
 
@@ -248,7 +248,7 @@ describe('Workspace Repository View', () => {
         expect(wrapper.find('[data-test="documents-table"]').html()).not.toContain('Mocked Document')
 
         await wrapper.find('[data-test="search-input"]').setValue('Mocked')
-        expect(wrapper.find('input[type="text"]').element.value).toBe('Mocked')
+        expect(wrapper.find('[data-test="search-input"]').element.value).toBe('Mocked')
         wrapper.vm.searchWord = 'Mocked'
         wrapper.vm.searchItems()
 

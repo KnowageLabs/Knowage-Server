@@ -338,7 +338,7 @@ describe('Workspace Analysis View', () => {
         expect(wrapper.vm.filteredAnalysisDocuments).toStrictEqual(mockedAnalysis)
 
         await wrapper.find('[data-test="search-input"]').setValue('CHOCOLATE')
-        expect(wrapper.find('input[type="text"]').element.value).toBe('CHOCOLATE')
+        expect(wrapper.find('[data-test="search-input"]').element.value).toBe('CHOCOLATE')
         wrapper.vm.searchWord = 'CHOCOLATE'
         wrapper.vm.searchItems()
 
@@ -350,8 +350,8 @@ describe('Workspace Analysis View', () => {
         expect(wrapper.find('[data-test="analysis-table"]').html()).toContain('Copy of CHOCOLATE_RATINGS(1)')
 
         await wrapper.find('[data-test="search-input"]').setValue('Mocked')
-        expect(wrapper.find('input[type="text"]').element.value).toBe('Mocked')
-        wrapper.vm.searchWord = 'CHOCOLATE'
+        expect(wrapper.find('[data-test="search-input"]').element.value).toBe('Mocked')
+        wrapper.vm.searchWord = 'Mocked'
         wrapper.vm.searchItems()
 
         vi.runAllTimers()
