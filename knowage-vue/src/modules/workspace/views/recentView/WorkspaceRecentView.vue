@@ -53,6 +53,7 @@ import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: { DataTable, Column, DetailSidebar, WorkspaceCard, Message },
@@ -68,6 +69,10 @@ export default defineComponent({
             selectedDocument: {} as IDocument,
             searchWord: '' as string
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.getRecentDocuments()

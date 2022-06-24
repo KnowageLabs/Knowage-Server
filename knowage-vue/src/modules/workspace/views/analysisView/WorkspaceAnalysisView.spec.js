@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
+import { createTestingPinia } from '@pinia/testing'
 import PrimeVue from 'primevue/config'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -234,12 +234,6 @@ const $http = {
     })
 }
 
-const $store = {
-    state: {
-        user: {}
-    }
-}
-
 const $router = {
     push: vi.fn()
 }
@@ -254,7 +248,7 @@ const factory = (cardDisplay) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 DetailSidebar: true,
@@ -344,6 +338,8 @@ describe('Workspace Analysis View', () => {
         expect(wrapper.vm.filteredAnalysisDocuments).toStrictEqual(mockedAnalysis)
 
         await wrapper.find('[data-test="search-input"]').setValue('CHOCOLATE')
+        expect(wrapper.find('input[type="text"]').element.value).toBe('CHOCOLATE')
+        wrapper.vm.searchWord = 'CHOCOLATE'
         wrapper.vm.searchItems()
 
         vi.runAllTimers()
@@ -354,6 +350,8 @@ describe('Workspace Analysis View', () => {
         expect(wrapper.find('[data-test="analysis-table"]').html()).toContain('Copy of CHOCOLATE_RATINGS(1)')
 
         await wrapper.find('[data-test="search-input"]').setValue('Mocked')
+        expect(wrapper.find('input[type="text"]').element.value).toBe('Mocked')
+        wrapper.vm.searchWord = 'CHOCOLATE'
         wrapper.vm.searchItems()
 
         vi.runAllTimers()

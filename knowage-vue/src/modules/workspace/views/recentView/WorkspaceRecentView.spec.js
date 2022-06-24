@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { nextTick } from 'vue-demi'
+import { createTestingPinia } from '@pinia/testing'
 import PrimeVue from 'primevue/config'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
@@ -75,7 +76,7 @@ const factory = (toggleCardDisplay) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 DetailSidebar: true,
@@ -153,6 +154,8 @@ describe('Workspace Recent View', () => {
         expect(wrapper.vm.filteredDocuments).toStrictEqual(mockedDocuments)
 
         await wrapper.find('[data-test="search-input"]').setValue('CHOCOLATE')
+        expect(wrapper.find('input[type="text"]').element.value).toBe('CHOCOLATE')
+        wrapper.vm.searchWord = 'CHOCOLATE'
         wrapper.vm.searchItems()
 
         vi.runAllTimers()
@@ -162,6 +165,8 @@ describe('Workspace Recent View', () => {
         expect(wrapper.find('[data-test="recent-table"]').html()).not.toContain('Mocked Document')
 
         await wrapper.find('[data-test="search-input"]').setValue('Mocked')
+        expect(wrapper.find('input[type="text"]').element.value).toBe('Mocked')
+        wrapper.vm.searchWord = 'CHOCOLATE'
         wrapper.vm.searchItems()
 
         vi.runAllTimers()

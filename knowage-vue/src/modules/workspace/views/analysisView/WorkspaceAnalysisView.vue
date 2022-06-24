@@ -337,6 +337,7 @@ export default defineComponent({
             this.warningDialogVisbile = false
         },
         searchItems() {
+            console.log("TEST SEARCHWORD BEFORE: ", this.searchWord)
             setTimeout(() => {
                 if (!this.searchWord.trim().length) {
                     this.filteredAnalysisDocuments = [...this.analysisDocuments] as any[]
@@ -345,6 +346,8 @@ export default defineComponent({
                         return el.name?.toLowerCase().includes(this.searchWord.toLowerCase()) || el.creationUser?.toLowerCase().includes(this.searchWord.toLowerCase())
                     })
                 }
+                console.log("searchWord: ", this.searchWord)
+                console.log("filteredAnalysisDocuments: ", this.filteredAnalysisDocuments)
             }, 250)
         },
         showCreationMenu(event) {
