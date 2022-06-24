@@ -373,6 +373,5 @@ describe('Workspace Analysis View', () => {
         await wrapper.find('[data-test="info-button-CHOCOLATE_RATINGS"]').trigger('click')
 
         expect(wrapper.find('[data-test="detail-sidebar"]').exists()).toBe(true)
-        expect(wrapper.vm.showDetailSidebar).toBe(true)
     })
 })
