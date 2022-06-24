@@ -210,8 +210,8 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 								);
 				});
 			}
-			if(event.data.format && event.data.format === 'pdf') {
-				$scope.exportExcel(message).then(function(){},
+			if(event.data.format && (event.data.format === 'xls' || event.data.format === 'xlsx')) {
+				$scope.exportExcel('xlsxExport').then(function(){},
 					function(error){
 						$mdDialog.show(
 						  $mdDialog.alert()
