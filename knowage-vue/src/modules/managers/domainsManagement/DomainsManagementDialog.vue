@@ -116,6 +116,7 @@ import domainsManagementDescriptor from './DomainsManagementDescriptor.json'
 import domainsManagementValidationDescriptor from './DomainsManagementValidationDescriptor.json'
 import KnValidationMessages from '../../../components/UI/KnValidatonMessages.vue'
 import useValidate from '@vuelidate/core'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'domain-management-dialog',
@@ -149,6 +150,10 @@ export default defineComponent({
         buttonDisabled(): any {
             return this.v$.$invalid
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     mounted() {
         if (this.model) {
