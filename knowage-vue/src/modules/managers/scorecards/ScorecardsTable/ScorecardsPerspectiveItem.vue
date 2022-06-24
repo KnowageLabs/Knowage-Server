@@ -1,13 +1,11 @@
 <template>
     <div id="perspective" v-if="perspective">
-        {{ 'TODO' }}
-        {{ perspective.targets }}
         <div class="p-d-flex p-flex-row p-ai-center">
             <div class="p-d-flex p-ai-center" :style="descriptor.style.inputContainer">
                 <Button v-if="!expanded" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" @click="expanded = true" />
                 <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="expanded = false" />
                 <i class="fa-solid fa-rectangle-list fa-lg p-mr-1 scorecard-blue-icon" />
-                <InputText class="kn-material-input scorecards-target-perspective-input" v-model="perspective.name" @input="$emit('touched')" />
+                <InputText class="kn-material-input scorecards-target-perspective-input" v-model="perspective.name" :maxLength="40" @input="$emit('touched')" />
             </div>
             <div class="p-d-flex p-flex-row p-ai-center kn-flex">
                 <SelectButton class="p-mr-1" v-model="selectedCriteria" :options="descriptor.criteriaOptions" @change="onCriteriaChange">

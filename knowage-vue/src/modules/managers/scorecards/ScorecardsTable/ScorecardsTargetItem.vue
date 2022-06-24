@@ -5,7 +5,7 @@
                 <Button v-if="!expanded" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" @click="expanded = true" />
                 <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="expanded = false" />
                 <i class="fa fa-bullseye fa-lg p-mr-1 scorecard-blue-icon" />
-                <InputText class="kn-material-input scorecards-target-name-input" v-model="target.name" @input="$emit('touched', false)" />
+                <InputText class="kn-material-input scorecards-target-name-input" v-model="target.name"  :maxLength="40" @input="$emit('touched', false)" />
             </div>
             <div class="p-d-flex p-flex-row p-ai-center">
                 <SelectButton class="p-mr-1" v-model="selectedCriteria" :options="descriptor.criteriaOptions" @change="onCriteriaChange">
