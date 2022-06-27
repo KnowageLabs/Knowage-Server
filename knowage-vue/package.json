@@ -68,7 +68,6 @@
         "eslint-plugin-vue": "^8.7.1",
         "flush-promises": "^1.0.2",
         "material-icons": "^1.10.0",
-        "node-sass": "^7.0.0",
         "pug": "^3.0.2",
         "pug-plain-loader": "^1.1.0",
         "rollup-plugin-node-builtins": "^2.1.2",
