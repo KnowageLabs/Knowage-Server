@@ -23,6 +23,8 @@ import { getDefaultCriterion } from '../ScorecardsHelpers'
 import ScorecardsPerspectiveItem from './ScorecardsPerspectiveItem.vue'
 import ScorecardsTableHint from './ScorecardsTableHint.vue'
 
+const crypto = require('crypto')
+
 export default defineComponent({
     name: 'scorecards-table',
     components: { ScorecardsPerspectiveItem, ScorecardsTableHint },
@@ -47,7 +49,7 @@ export default defineComponent({
         },
         addPerspective() {
             if (this.scorecard) {
-                this.scorecard.perspectives.push({ name: 'New Perspective', status: 'GRAY', criterion: getDefaultCriterion(this.criterias), options: { criterionPriority: [] }, targets: [], groupedKpis: [] })
+                this.scorecard.perspectives.push({ id: crypto.randomBytes(16).toString('hex'), name: 'New Perspective', status: 'GRAY', criterion: getDefaultCriterion(this.criterias), options: { criterionPriority: [] }, targets: [], groupedKpis: [] })
                 this.$emit('touched')
             }
         },

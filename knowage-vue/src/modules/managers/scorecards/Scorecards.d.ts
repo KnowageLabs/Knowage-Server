@@ -8,7 +8,7 @@ export interface iScorecard {
 }
 
 export interface iPerspective {
-    id?: number,
+    id?: number | string,
     name: string,
     criterion: iScorecardCriterion,
     options: {
@@ -50,7 +50,7 @@ export interface iKpi {
 }
 
 export interface iScorecardTarget {
-    id?: number,
+    id?: number | string,
     name: string,
     criterion: iScorecardCriterion,
     options: {

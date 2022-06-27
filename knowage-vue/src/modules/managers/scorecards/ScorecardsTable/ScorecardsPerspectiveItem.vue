@@ -5,7 +5,7 @@
                 <Button v-if="!expanded" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" @click="expanded = true" />
                 <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" @click="expanded = false" />
                 <i class="fa-solid fa-rectangle-list fa-lg p-mr-1 scorecard-blue-icon" />
-                <InputText class="kn-material-input scorecards-target-perspective-input" v-model="perspective.name" @input="$emit('touched')" />
+                <InputText class="kn-material-input scorecards-target-perspective-input" v-model="perspective.name" :maxLength="40" @input="$emit('touched')" />
             </div>
             <div class="p-d-flex p-flex-row p-ai-center kn-flex">
                 <SelectButton class="p-mr-1" v-model="selectedCriteria" :options="descriptor.criteriaOptions" @change="onCriteriaChange">
@@ -17,7 +17,7 @@
             </div>
 
             <div class="p-d-flex p-ai-center">
-                <Button icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" @click="addTarget" />
+                <Button icon="fa-solid fa-square-plus" class="p-button-text p-button-rounded p-button-plain" v-tooltip.top="$t('managers.scorecards.addTarget')" @click="addTarget" />
                 <Button icon="fas fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click="deletePerspectiveConfirm" />
             </div>
         </div>
@@ -41,6 +41,8 @@ import SelectButton from 'primevue/selectbutton'
 import descriptor from './ScorecardsTableDescriptor.json'
 import ScorecardsTargetItem from './ScorecardsTargetItem.vue'
 import ScorecardsTableHint from './ScorecardsTableHint.vue'
+
+const crypto = require('crypto')
 
 export default defineComponent({
     name: 'scorecards-perspective-item',
@@ -72,7 +74,7 @@ export default defineComponent({
         },
         addTarget() {
             if (this.perspective) {
-                this.perspective.targets.push({ name: 'New Target', status: 'GRAY', criterion: getDefaultCriterion(this.criterias), options: { criterionPriority: [] }, kpis: [], groupedKpis: [] })
+                this.perspective.targets.push({ id:crypto.randomBytes(16).toString('hex'), name: 'New Target', status: 'GRAY', criterion: getDefaultCriterion(this.criterias), options: { criterionPriority: [] }, kpis: [], groupedKpis: [] })
                 this.$emit('touched')
                 this.expanded = true
                 this.perspective.updated = true
@@ -101,6 +103,7 @@ export default defineComponent({
             })
         },
         deleteTarget(target: iScorecardTarget) {
+            console.log('TARGET: ', target)
             if (!this.perspective) return
             const index = this.perspective.targets.findIndex((tempTarget: iScorecardTarget) => tempTarget.id === target.id)
             if (index !== -1) {
