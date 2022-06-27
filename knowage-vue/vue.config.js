@@ -62,7 +62,10 @@ module.exports = {
         }
     },
     configureWebpack: {
-        devtool: 'source-map'
+        devtool: 'source-map',
+        devServer: {
+            headers: { 'Access-Control-Allow-Origin': '*' }
+        }
     },
     chainWebpack: (config) => {
         config.plugin('html').tap((args) => {
