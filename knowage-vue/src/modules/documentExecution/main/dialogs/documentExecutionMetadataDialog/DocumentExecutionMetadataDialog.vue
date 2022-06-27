@@ -201,7 +201,10 @@ export default defineComponent({
                 temp.resetInput()
                 delete this.uploadedFiles[meta.id]
                 const index = this.metadata.file.findIndex((tempFile: any) => tempFile.id === meta.id)
-                if (index !== -1) delete this.metadata.file[index].fileToSave
+                if (index !== -1) {
+                    delete this.metadata.file[index].fileToSave
+                    this.metadata.file[index].value = ''
+                }
             }
         },
         async downloadFile(meta: any) {

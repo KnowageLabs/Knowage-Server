@@ -138,8 +138,16 @@ export default defineComponent({
 
             const fieldToDelete = ['groupedKpis', 'statusColor', 'updated']
             tempScorecard.perspectives?.forEach((perspective: iPerspective) => {
+                if (perspective.new) {
+                    delete perspective.id
+                    delete perspective.new
+                }
                 fieldToDelete.forEach((field: string) => delete perspective[field])
                 perspective.targets?.forEach((target: iScorecardTarget) => {
+                    if (target.new) {
+                        delete target.id
+                        delete target.new
+                    }
                     fieldToDelete.forEach((field: string) => delete target[field])
                 })
             })
