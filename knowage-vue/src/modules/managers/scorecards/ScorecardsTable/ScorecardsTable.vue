@@ -49,7 +49,7 @@ export default defineComponent({
         },
         addPerspective() {
             if (this.scorecard) {
-                this.scorecard.perspectives.push({ id: crypto.randomBytes(16).toString('hex'), name: 'New Perspective', status: 'GRAY', criterion: getDefaultCriterion(this.criterias), options: { criterionPriority: [] }, targets: [], groupedKpis: [] })
+                this.scorecard.perspectives.push({ id: crypto.randomBytes(16).toString('hex'), name: 'New Perspective', status: 'GRAY', criterion: getDefaultCriterion(this.criterias), options: { criterionPriority: [] }, targets: [], groupedKpis: [], new: true  })
                 this.$emit('touched')
             }
         },
