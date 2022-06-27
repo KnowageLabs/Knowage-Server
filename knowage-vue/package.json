@@ -46,7 +46,6 @@
         "vue-class-component": "^8.0.0-0",
         "vue-i18n": "9.2.0-beta.32",
         "vue-router": "4.0.5",
-        "vue3-code-mirror": "1.0.3",
         "vuex": "4.0.0",
         "x2js": "^3.4.1"
     },
