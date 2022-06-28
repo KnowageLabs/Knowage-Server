@@ -2,6 +2,11 @@
     <div class="p-d-flex p-flex-column kn-flex">
         <ProgressSpinner class="kn-progress-spinner" v-if="loading" />
 
+        {{"TEST"}}
+        {{olap.table}}
+        {{customViewVisible}}
+        {{olap && olap.table && !customViewVisible}}
+
         <OlapCustomViewTable v-if="customViewVisible" class="olap-overlay-dialog" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)" />
 
         <DrillTruDialog
@@ -238,6 +243,7 @@ export default defineComponent({
             this.loading = false
         },
         async loadOlapDesigner() {
+            console.log(" >>> CALLED OLAP DESIGNER: ")
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `olap/designer/${this.documentId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then(async (response: AxiosResponse<any>) => {
@@ -281,7 +287,7 @@ export default defineComponent({
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then(async (response: AxiosResponse<any>) => {
                     this.olap = response.data
-                    await this.loadOlapDesigner()
+                    // await this.loadOlapDesigner()
                     if (this.olapDesigner) {
                         await this.loadParameters()
                         await this.loadProfileAttributes()
