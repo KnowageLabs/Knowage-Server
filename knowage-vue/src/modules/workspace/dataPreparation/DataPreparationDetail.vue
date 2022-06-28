@@ -125,7 +125,7 @@
                                 <Dropdown v-model="col.fieldType" :options="translateRoles()" optionLabel="label" optionValue="code" class="kn-material-input" />
                             </span>
                         </OverlayPanel>
-                        <div style="display: flex; flex-direction: column; flex:1;">
+                        <div class="aliasAndType p-ml-2">
                             <input class="kn-input-text-sm" type="text" v-model="col.fieldAlias" v-if="col.editing" @blur="changeAlias(col)" @keydown.enter="changeAlias(col)" />
                             <span v-else class="kn-clickable" @click="changeAlias(col)">{{ col.fieldAlias }}</span>
                             <span class="kn-list-item-text-secondary kn-truncated roleType">{{ $t(removePrefixFromType(col.Type)) }}</span>
@@ -666,6 +666,11 @@
             }
         }
     }
+    .p-column-header-content {
+        .p-button {
+            min-width: 0;
+        }
+    }
 
     .toolbarCustomConfig {
         background-color: white !important;
@@ -745,5 +750,11 @@
         display: flex;
         justify-content: center;
         width: 100%;
+    }
+
+    .aliasAndType {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
     }
 </style>
