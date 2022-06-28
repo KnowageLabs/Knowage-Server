@@ -1,11 +1,6 @@
 <template>
-    <div class="p-d-flex p-flex-column kn-flex">
+    <div class="p-d-flex p-flex-column kn-flex kn-height-full">
         <ProgressSpinner class="kn-progress-spinner" v-if="loading" />
-
-        {{"TEST"}}
-        {{olap.table}}
-        {{customViewVisible}}
-        {{olap && olap.table && !customViewVisible}}
 
         <OlapCustomViewTable v-if="customViewVisible" class="olap-overlay-dialog" :olapCustomViews="olapCustomViews" @close="$emit('closeOlapCustomView')" @applyCustomView="$emit('applyCustomView', $event)" />
 
@@ -30,7 +25,7 @@
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
             <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
             <div id="table-container" class="kn-flex" :style="olapDescriptor.style.tableContainer">
-                <div id="olap-table" class="kn-flex kn-olap-table" ref="olap-table" v-if="olap && olap.table && !customViewVisible" v-html="olap.table" @click="handleTableClick" @dblclick="handleTableDoubleClick"></div>
+                <div id="olap-table" class="kn-flex kn-olap-table" ref="olap-table"  v-html="olap.table" @click="handleTableClick" @dblclick="handleTableDoubleClick"></div>
             </div>
         </div>
 
@@ -297,11 +292,11 @@ export default defineComponent({
                     await this.loadModelConfig()
                     await this.loadVersions()
                 })
-                .catch(() => {})
+                .catch((error: any) => {console.log("EEEEEEEEEEEEEEEEEEEEEEEEROR: ", error )})
             this.loading = false
         },
         setClickedButtons() {
-            if (this.olapDesigner.template?.wrappedObject?.olap?.TOOLBAR) {
+            if (this.olapDesigner && this.olapDesigner.template?.wrappedObject?.olap?.TOOLBAR) {
                 const toolbarButtonKeys = Object.keys(this.olapDesigner.template?.wrappedObject?.olap?.TOOLBAR)
                 this.buttons.forEach((tempButton: iButton) => {
                     const index = toolbarButtonKeys.indexOf(tempButton.name)
@@ -334,6 +329,7 @@ export default defineComponent({
             }
         },
         async loadModelConfig() {
+            console.log("loadModelConfig() CALLLLLLLLLLLLLED ")
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/modelconfig?SBI_EXECUTION_ID=${this.id}&NOLOADING=undefined`, this.olap.modelConfig, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
