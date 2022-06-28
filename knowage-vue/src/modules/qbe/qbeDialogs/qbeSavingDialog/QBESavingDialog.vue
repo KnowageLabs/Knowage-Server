@@ -20,7 +20,7 @@
                 <template #header>
                     <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
                 </template>
-                <MetadataCard :selectedDataset="propDataset" @touched="$emit('touched')" />
+                <MetadataCard :propMetadata="propMetadata" @touched="$emit('touched')" />
             </TabPanel>
 
             <TabPanel>
@@ -47,14 +47,14 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import DetailTab from './QBESavingDialogDetailTab.vue'
 import PersistenceTab from './QBESavingDialogPersistence.vue'
-import MetadataCard from '@/modules/managers/datasetManagement/detailView/metadataCard/DatasetManagementMetadataCard.vue'
+import MetadataCard from './QbeSavingDialogMetadata.vue'
 import useValidate from '@vuelidate/core'
 import descriptor from './QBESavingDialogDescriptor.json'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
     components: { TabView, TabPanel, Dialog, DetailTab, PersistenceTab, MetadataCard },
-    props: { propDataset: { type: Object, required: true }, visible: Boolean },
+    props: { propDataset: { type: Object, required: true }, propMetadata: { type: Array, required: true }, visible: Boolean },
     computed: {
         buttonDisabled(): any {
             return this.v$.$invalid
@@ -68,6 +68,7 @@ export default defineComponent({
             selectedDataset: {} as any,
             selectedDatasetId: null as any,
             categoryTypes: [] as any,
+            fieldsMetadata: [] as any,
             scheduling: {
                 repeatInterval: null as String | null
             } as any
@@ -81,6 +82,7 @@ export default defineComponent({
         propDataset: {
             handler() {
                 this.selectedDataset = this.propDataset
+                this.setEndUserScope()
             },
             deep: true
         }
@@ -92,15 +94,13 @@ export default defineComponent({
         async getDomainData() {
             await this.getDomainByType('DS_SCOPE').then((response: AxiosResponse<any>) => (this.scopeTypes = response.data))
             await this.getDomainByType('CATEGORY_TYPE').then((response: AxiosResponse<any>) => (this.categoryTypes = response.data))
-            this.setEndUserScope()
         },
 
         async saveDataset() {
             let dsToSave = { ...this.selectedDataset } as any
             dsToSave.pars ? '' : (dsToSave.pars = [])
             dsToSave.pythonEnvironment ? (dsToSave.pythonEnvironment = JSON.stringify(dsToSave.pythonEnvironment)) : ''
-            dsToSave.meta ? (dsToSave.meta = await this.manageDatasetFieldMetadata(dsToSave.meta)) : (dsToSave.meta = [])
-            dsToSave.id ? '' : (dsToSave.meta = [])
+            dsToSave.meta ? (dsToSave.meta = await this.manageDatasetFieldMetadata(this.propMetadata)) : (dsToSave.meta = [])
 
             dsToSave.isScheduled ? (dsToSave.schedulingCronLine = await this.formatCronForSave()) : ''
 
@@ -123,7 +123,22 @@ export default defineComponent({
                 })
                 .catch()
         },
-        async manageDatasetFieldMetadata(fieldsColumns) {
+        async manageDatasetFieldMetadata(metadata) {
+            var metaToSave = metadata.map((meta: any) => {
+                return {
+                    name: meta.column,
+                    displayedName: meta.fieldAlias,
+                    type: meta.Type,
+                    fieldType: meta.fieldType,
+                    decript: meta.decript,
+                    personal: meta.personal,
+                    subjectId: meta.subjectId
+                }
+            })
+
+            return metaToSave
+        },
+        async manageDatasetFieldMetadata1(fieldsColumns) {
             if (fieldsColumns.columns != undefined && fieldsColumns.columns != null) {
                 var columnsArray = new Array()
 

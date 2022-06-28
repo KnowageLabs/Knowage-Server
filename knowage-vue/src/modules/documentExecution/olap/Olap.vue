@@ -504,7 +504,8 @@ export default defineComponent({
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/moveDimensionToOtherAxis?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => {
                     this.olap = response.data
-                    if (this.olapDesigner) {
+                    console.log(this.olapDesigner)
+                    if (this.olapDesigner && this.olapDesigner.template) {
                         this.olapDesigner.template.wrappedObject.olap.MDXMondrianQuery.XML_TAG_TEXT_CONTENT = this.olap.MDXWITHOUTCF
                         this.olapDesigner.template.wrappedObject.olap.MDXQUERY.XML_TAG_TEXT_CONTENT = this.olap.MDXWITHOUTCF
                     }
@@ -941,7 +942,7 @@ export default defineComponent({
             }
         },
         removeFilterLevels(filter: any) {
-            if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER) {
+            if (this.olapDesigner && this.olapDesigner.template && this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER) {
                 for (let i = this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.length - 1; i >= 0; i--) {
                     if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER[i].HIERARCHY === filter.uniqueName) {
                         this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.splice(i, 1)

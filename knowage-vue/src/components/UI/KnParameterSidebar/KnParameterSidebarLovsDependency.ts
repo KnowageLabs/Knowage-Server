@@ -17,7 +17,7 @@ export function setLovsDependency(loadedParameters: { filterStatus: iParameter[]
     }
 }
 
-export async function updateLovDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string) {
+export async function updateLovDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
     if (parameter && parameter.lovDependentParameters) {
         for (let i = 0; i < parameter.lovDependentParameters.length; i++) {
             await lovDependencyCheck(loadedParameters, parameter.lovDependentParameters[i], loading, document, sessionRole, $http, mode)
@@ -25,7 +25,7 @@ export async function updateLovDependency(loadedParameters: { filterStatus: iPar
     }
 }
 
-export async function lovDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string) {
+export async function lovDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
     loading = true
     if (parameter.parameterValue[0]) {
         parameter.parameterValue[0] = { value: '', description: '' }

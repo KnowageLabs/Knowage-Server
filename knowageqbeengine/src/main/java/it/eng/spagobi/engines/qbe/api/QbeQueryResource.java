@@ -618,28 +618,33 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			String fieldName = leftOperand.values[0];
 
 			int selectFieldIndex = query.getSelectFieldIndex(fieldName);
-			ISelectField selectedField = query.getSelectFieldByIndex(selectFieldIndex);
 
-			boolean simpleField = selectedField.isSimpleField();
+			if (selectFieldIndex != -1) {
+				ISelectField selectedField = query.getSelectFieldByIndex(selectFieldIndex);
 
-			if (simpleField) {
-				SimpleSelectField ssf = (SimpleSelectField) selectedField;
+				boolean simpleField = selectedField.isSimpleField();
 
-				Class<?> javaClass = ssf.getJavaClass();
+				if (simpleField) {
+					SimpleSelectField ssf = (SimpleSelectField) selectedField;
 
-				if (rightOperand.isStaticContent() && BigDecimal.class.equals(javaClass)) {
+					Class<?> javaClass = ssf.getJavaClass();
 
-					String[] values = rightOperand.values;
+					if (rightOperand.isStaticContent() && BigDecimal.class.equals(javaClass)) {
 
-					for (String value : values) {
-						try {
-							checkValueForBigDecimal(value);
-						} catch (Exception e) {
-							throw new SpagoBIRuntimeException("The value " + value + " for the having clause is not valid");
+						String[] values = rightOperand.values;
+
+						for (String value : values) {
+							try {
+								checkValueForBigDecimal(value);
+							} catch (Exception e) {
+								throw new SpagoBIRuntimeException("The value " + value + " for the having clause is not valid");
+							}
 						}
-					}
 
+					}
 				}
+			} else {
+				logger.debug("Cannot validate field " + fieldName + ": is it a calculated field?");
 			}
 
 		}

@@ -7,7 +7,7 @@
                         <i class="fa fa-folder-open"></i>
                     </template>
 
-                    <DocumentBrowserHome @itemSelected="onItemSelect($event)"></DocumentBrowserHome>
+                    <DocumentBrowserHome :documentSaved="documentSaved" :documentSavedTrigger="documentSavedTrigger" @itemSelected="onItemSelect($event)"></DocumentBrowserHome>
                 </TabPanel>
 
                 <TabPanel v-for="(tab, index) in tabs" :key="index">
@@ -54,6 +54,8 @@ export default defineComponent({
             id: 0,
             iFrameContainers: [] as any[],
             menuItem: null,
+            documentSaved: null,
+            documentSavedTrigger: false,
             getRouteDocumentType
         }
     },
@@ -76,6 +78,8 @@ export default defineComponent({
             window.addEventListener('message', (event) => {
                 if (event.data.type === 'saveCockpit' && this.$router.currentRoute.value.name === 'new-dashboard') {
                     this.loadSavedCockpit(event.data.model)
+                    this.documentSaved = event.data.model
+                     this.documentSavedTrigger = !this.documentSavedTrigger
                 }
             })
 
@@ -116,6 +120,7 @@ export default defineComponent({
             const id = this.tabs[this.activeIndex - 1].item ? this.tabs[this.activeIndex - 1].item.label : 'new-dashboard'
 
             this.selectedItem = this.tabs[this.activeIndex - 1]
+            this.selectedItem.item.fromTab = true
 
             if (this.selectedItem.mode === 'documentDetail') {
                 const path = this.selectedItem.functionalityId ? `/document-browser/document-details/new/${this.selectedItem.functionalityId}` : `/document-browser/document-details/${this.selectedItem.item.id}`
@@ -236,6 +241,8 @@ export default defineComponent({
             }
         },
         onDocumentSaved(document: any) {
+            this.documentSaved = document
+            this.documentSavedTrigger = !this.documentSavedTrigger
             this.selectedItem.functionalityId = null
             this.selectedItem.item = { name: document.name, label: document.id, routerId: crypto.randomBytes(16).toString('hex'), id: document.id, showMode: 'documentDetail' }
             this.$router.push(`/document-browser/document-details/${document.id}`)

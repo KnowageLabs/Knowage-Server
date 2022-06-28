@@ -57,6 +57,7 @@
             "exceededSize": "Uploaded file exceedes max size {size}",
             "generic": "Generic Error",
             "incompatibleType": "Incompatible file type",
+            "sameFileName": "It is not possible to upload a file with the same name",
             "saving": "Error saving",
             "tags": {
                 "tagIsNotValid": "Tag ({tag}) is not valid'"
@@ -1337,6 +1338,11 @@
                 "title": "Use modes"
             }
         },
+        "eventsManagement": {
+            "eventModel": "Select favourite type",
+            "title": "Events Management",
+            "user": "User"
+        },
         "functionalitiesManagement": {
             "creation": "Creation",
             "development": "Development",
@@ -1959,6 +1965,20 @@
             "zipFileDocument": "Save as Zip file",
             "zipFileName": "Zip file name",
             "zipMailDocument": "Send zipped file?"
+        },
+        "scorecards": {
+            "addKpi": "Add Kpi",
+            "addKpiHint": "A Target is a KPI container. It will show the trend for a specific KPI groups.",
+            "addPerspective": "Add Perspective",
+            "addPerspectiveHint": "To create a scorecard at least one perspective (card) should be present. Click on add perspective button to add the first one.",
+            "addTarget": "Add Target",
+            "addTargetHint": "A perspective is the \"card\" container. Add one or more target to assign them some KPIs.",
+            "majority": "Majority",
+            "majorityWithPriority": "Majority with priority",
+            "perspectives": "Perspectives",
+            "priority": "Priority",
+            "scorecardDesigner": "Scorecard Designer",
+            "title": "Scorecard List"
         },
         "templatePruning": {
             "documentSelection": "Document Selection",

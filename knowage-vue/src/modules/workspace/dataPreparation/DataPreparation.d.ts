@@ -23,7 +23,7 @@ export interface IDataPreparationColumn {
 }
 
 export interface IDataPreparationDataset {
-    id? : number
+    id?: number
     name: string
     label?: string
     description: string
@@ -38,6 +38,7 @@ export interface IFilterTransformationParameter {
     text?: string
     startDate?: Date
     endDate?: Date
+    number?: number
 }
 
 export interface ISplitTransformationParameter {

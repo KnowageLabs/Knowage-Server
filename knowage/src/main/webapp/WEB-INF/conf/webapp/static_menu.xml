@@ -142,7 +142,7 @@
 				to="/kpi-scheduler" />
 			<ITEM id="6005" label="menu.kpi.scorecard"
 				requiredFunctionality="ScorecardsManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=scorecardKpi" />
+				to="/scorecards" />
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="7000" label="menu.ServerSettings"
@@ -183,7 +183,7 @@
 				requiredFunctionality="LicenseManagement" command="licenseSelection"/>
 			<ITEM id="8006" label="menu.event"
 				requiredFunctionality="EventsManagement"
-				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=eventLogsApp" />
+				to="/events-management" />
 		</GROUP_ITEM>
 
 		<GROUP_ITEM id="9000" label="menu.i18n"

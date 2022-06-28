@@ -34,7 +34,7 @@
                             <template #header>
                                 <span>{{ $t('managers.usersManagement.detail') }}</span>
                             </template>
-                            <DetailFormTab :formInsert="formInsert" :formValues="userDetailsForm" :vobj="v$" :disabledUID="disableUsername" @dataChanged="onDataChange" @unlock="unlockUser($event)"></DetailFormTab>
+                            <DetailFormTab v-if="!hiddenForm" :formInsert="formInsert" :formValues="userDetailsForm" :vobj="v$" :disabledUID="disableUsername" @dataChanged="onDataChange" @unlock="unlockUser($event)"></DetailFormTab>
                         </TabPanel>
 
                         <TabPanel>
@@ -174,6 +174,11 @@ export default defineComponent({
             const userToSave = { ...this.userDetailsForm }
             delete userToSave.passwordConfirm
             userToSave['defaultRoleId'] = this.defaultRole
+            for (var key in this.attributesForm) {
+                for (var key2 in this.attributesForm[key]) {
+                    this.attributesForm[key][key2] === '' ? delete this.attributesForm[key] : ''
+                }
+            }
             userToSave['sbiUserAttributeses'] = { ...this.attributesForm }
             userToSave['sbiExtUserRoleses'] = this.selectedRoles ? [...this.selectedRoles.map((selRole) => selRole.id)] : []
             return userToSave
@@ -308,7 +313,6 @@ export default defineComponent({
             }
         },
         onDataChange() {
-            console.log('onDataChange ---------------------')
             this.dirty = true
         }
     }

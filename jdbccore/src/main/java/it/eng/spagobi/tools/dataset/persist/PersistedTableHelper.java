@@ -22,6 +22,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -97,6 +98,9 @@ public class PersistedTableHelper {
 					DateTime dateTime = new DateTime(fieldValue, DateTimeZone.getDefault());
 					java.sql.Date sqlDate = new java.sql.Date(dateTime.getMillis());
 					insertStatement.setDate(fieldIndex + 1, sqlDate);
+				} else if (fieldValue instanceof LocalDateTime) {
+					Timestamp timestamp = Timestamp.valueOf((LocalDateTime) fieldValue);
+					insertStatement.setTimestamp(fieldIndex + 1, timestamp);
 				} else {
 					java.util.Date date = new java.util.Date(fieldValue.toString());
 					// JDK 8 version

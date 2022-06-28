@@ -102,7 +102,8 @@ export default defineComponent({
     },
     computed: {
         hasEnableFederatedDatasetFunctionality(): boolean {
-            return this.user.functionalities.includes('EnableFederatedDataset')
+            if (this.user && this.user.functionalities) return this.user.functionalities.includes('EnableFederatedDataset')
+            else return false
         }
     },
     watch: {

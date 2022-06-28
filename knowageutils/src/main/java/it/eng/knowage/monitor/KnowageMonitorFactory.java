@@ -22,7 +22,6 @@ import java.util.Optional;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
-import com.jamonapi.KnowageJamonMonitor;
 import com.jamonapi.KnowageJamonMonitorFactory;
 import com.jamonapi.MonitorFactory;
 
@@ -49,7 +48,7 @@ public class KnowageMonitorFactory {
 
 	private void initFactory() {
 		String monitorFactoryClassName = Optional.ofNullable(System.getProperty("knowage.monitorfactory.class", System.getenv("knowage.monitorfactory.class")))
-				.orElse(KnowageJamonMonitor.class.getName());
+				.orElse(KnowageJamonMonitorFactory.class.getName());
 		logger.debug("Monitor factory class name is [" + monitorFactoryClassName + "]");
 		factory = instantiateMonitor(monitorFactoryClassName);
 	}

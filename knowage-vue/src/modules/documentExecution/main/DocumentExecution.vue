@@ -179,6 +179,7 @@ export default defineComponent({
     },
     deactivated() {
         this.parameterSidebarVisible = false
+        window.removeEventListener('message', this.iframeEventsListener)
     },
     computed: {
         sessionRole(): string | null {
@@ -209,13 +210,9 @@ export default defineComponent({
         }
     },
     async created() {
-        window.addEventListener('message', (event) => {
-            if (event.data.type === 'crossNavigation') {
-                this.executeCrossNavigation(event)
-            }
-        })
+        window.addEventListener('message', this.iframeEventsListener)
 
-        if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution') return
+        if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
 
         await this.loadUserConfig()
 
@@ -238,6 +235,13 @@ export default defineComponent({
         }
     },
     methods: {
+        iframeEventsListener(event) {
+            if (event.data.type === 'crossNavigation') {
+                this.executeCrossNavigation(event)
+            } else if (event.data.type === 'cockpitExecuted') {
+                this.loading = false
+            }
+        },
         editCockpitDocumentConfirm() {
             if (this.documentMode === 'EDIT') {
                 this.$confirm.require({
@@ -255,7 +259,6 @@ export default defineComponent({
             this.documentMode = this.documentMode === 'EDIT' ? 'VIEW' : 'EDIT'
             this.hiddenFormData.set('documentMode', this.documentMode)
             await this.loadURL(null)
-            this.loading = false
         },
         openHelp() {
             this.helpDialogVisible = true
@@ -403,6 +406,7 @@ export default defineComponent({
         closeDocument() {
             const link = this.$route.path.includes('workspace') ? '/workspace' : '/document-browser'
             this.$router.push(link)
+            this.breadcrumbs = []
             this.$emit('close')
         },
         setMode() {
@@ -426,6 +430,7 @@ export default defineComponent({
 
             await this.loadFilters(initialLoading)
             if (this.filtersData?.isReadyForExecution) {
+                this.parameterSidebarVisible = false
                 await this.loadURL(null, documentLabel)
                 await this.loadExporters()
             } else if (this.filtersData?.filterStatus) {
@@ -460,6 +465,7 @@ export default defineComponent({
         async loadFilters(initialLoading: boolean = false) {
             if (this.parameterValuesMap && this.parameterValuesMap[this.document.label + '-' + this.tabKey] && initialLoading) {
                 this.filtersData = this.parameterValuesMap[this.document.label + '-' + this.tabKey]
+                this.setFiltersForBreadcrumbItem()
                 return
             }
 
@@ -472,6 +478,7 @@ export default defineComponent({
                             filter.parameterValue[0].value = new Date(filter.parameterValue[0].value)
                         }
                     })
+                    this.setFiltersForBreadcrumbItem()
                     return
                 }
             }
@@ -532,6 +539,9 @@ export default defineComponent({
                 this.loadNavigationParamsInitialValue()
             }
 
+            this.setFiltersForBreadcrumbItem()
+        },
+        setFiltersForBreadcrumbItem() {
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
         },
@@ -543,6 +553,9 @@ export default defineComponent({
                         tempParam.parameterValue[0].value = this.document.navigationParams[key]
                         if (this.document.navigationParams[key + '_field_visible_description']) tempParam.parameterValue[0].description = this.document.navigationParams[key + '_field_visible_description']
                         if (tempParam.selectionType === 'COMBOBOX') this.setCrossNavigationComboParameterDescription(tempParam)
+                        if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
+                            tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
+                        }
                     }
                 }
             })
@@ -573,7 +586,7 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData, { headers: { 'X-Disable-Interceptor': 'true' } })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.urlData = response.data
                     this.sbiExecutionId = this.urlData?.sbiExecutionId as string
@@ -612,13 +625,13 @@ export default defineComponent({
             let postForm = document.getElementById('postForm_' + postObject.params.document) as any
             if (!postForm) {
                 postForm = document.createElement('form')
-                postForm.id = 'postForm_' + postObject.params.document
-                postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
-                postForm.method = 'post'
-                postForm.target = tempIndex !== -1 ? 'documentFrame' + tempIndex : documentLabel
-                postForm.acceptCharset = 'UTF-8'
-                document.body.appendChild(postForm)
             }
+            postForm.id = 'postForm_' + postObject.params.document
+            postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
+            postForm.method = 'post'
+            postForm.target = tempIndex !== -1 ? 'documentFrame' + tempIndex : documentLabel
+            postForm.acceptCharset = 'UTF-8'
+            document.body.appendChild(postForm)
 
             this.hiddenFormData = new URLSearchParams()
 
@@ -818,6 +831,7 @@ export default defineComponent({
             properties.forEach((property: string) =>
                 metadata[property].forEach((el: any) => {
                     if (el.value || (property === 'file' && el.fileToSave)) {
+                        if (property === 'file') el.value = JSON.stringify(el.value)
                         jsonMeta.push(el)
                     }
                 })
@@ -832,12 +846,7 @@ export default defineComponent({
                     })
                     this.metadataDialogVisible = false
                 })
-                .catch((error: any) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.error.generic'),
-                        msg: error
-                    })
-                })
+                .catch(() => {})
             this.loading = false
         },
         async onMailSave(mail: any) {
@@ -879,7 +888,7 @@ export default defineComponent({
             if (index !== -1) this.schedulations.splice(index, 1)
         },
         getFormattedDate(date: any, useDefaultFormat?: boolean) {
-            const format = date instanceof Date ? undefined : process.env.VUE_APP_CROSS_NAVIGATION_DATE_FORMAT
+            const format = date instanceof Date ? undefined : 'dd/MM/yyyy'
             return luxonFormatDate(date, format, useDefaultFormat ? undefined : this.dateFormat)
         },
         onBreadcrumbClick(item: any) {
@@ -901,6 +910,8 @@ export default defineComponent({
             await this.loadCrossNavigationByDocument(event.data)
         },
         async loadCrossNavigationByDocument(angularData: any) {
+            if (!this.document) return
+
             let temp = {} as any
 
             this.loading = true
@@ -916,11 +927,13 @@ export default defineComponent({
         },
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
             this.formatAngularOutputParameters(angularData.otherOutputParameters)
-            const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument.navigationParams)
-
-            this.document = { ...crossNavigationDocument?.document, navigationParams: navigationParams }
+            const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument ? crossNavigationDocument.navigationParams : [])
 
             const popupOptions = crossNavigationDocument.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
+
+            if (crossNavigationDocument.crossType !== 2) {
+                this.document = { ...crossNavigationDocument?.document, navigationParams: navigationParams }
+            }
 
             if (crossNavigationDocument.crossType === 2) {
                 this.openCrossNavigationInNewWindow(popupOptions, crossNavigationDocument, navigationParams)
@@ -934,7 +947,7 @@ export default defineComponent({
                 if (index !== -1) {
                     this.breadcrumbs[index].document = this.document
                 } else {
-                    this.breadcrumbs.push({ label: this.document.label, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb })
+                    this.breadcrumbs.push({ label: this.document.label, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb ?? this.document.name })
                 }
 
                 await this.loadPage()

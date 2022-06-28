@@ -414,6 +414,7 @@ export default defineComponent({
                     reject: () => this.resetDrodpwonValue()
                 })
             }
+            this.setChanged()
         },
         resetDrodpwonValue() {
             if (this.driver) {

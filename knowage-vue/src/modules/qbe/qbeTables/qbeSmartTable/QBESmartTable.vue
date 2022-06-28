@@ -178,7 +178,7 @@ export default defineComponent({
         changeAlias() {
             this.selectedField.alias = this.alias
             this.aliasDialogVisible = false
-            this.$emit('aliasChanged')
+            this.$emit('aliasChanged', this.selectedField)
         },
         onDrop(event) {
             var data = JSON.parse(event.dataTransfer.getData('text/plain'))

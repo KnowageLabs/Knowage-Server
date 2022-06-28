@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import it.eng.knowage.boot.error.KnowageRuntimeException;
+import it.eng.knowage.boot.filter.XSSUtils;
 import it.eng.knowage.knowageapi.dao.SbiWidgetGalleryDao;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTag;
@@ -41,7 +42,6 @@ import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTagId;
 import it.eng.knowage.knowageapi.resource.dto.Code;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
 import it.eng.knowage.knowageapi.service.WidgetGalleryAPI;
-import it.eng.spagobi.filters.XSSRequestWrapper;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 @Component
@@ -302,7 +302,8 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 
 	public static String stripXSSObject(String o) throws JSONException {
 		if (o instanceof String) {
-			o = XSSRequestWrapper.stripXSS(o);
+			XSSUtils xssUtils = new XSSUtils();
+			o = xssUtils.stripXSS(o);
 		}
 		return o;
 	}

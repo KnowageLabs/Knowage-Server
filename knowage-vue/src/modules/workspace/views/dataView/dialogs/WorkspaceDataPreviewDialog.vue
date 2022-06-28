@@ -3,7 +3,7 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-col-12" :style="mainDescriptor.style.maxWidth">
                 <template #start>
-                    <span>{{ dataset.label }}</span>
+                    <span>{{ dataset?.label }}</span>
                 </template>
                 <template #end>
                     <Button v-if="isParameterSidebarVisible" icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
@@ -20,7 +20,19 @@
             </Message>
 
             <DatasetPreviewTable v-else class="p-d-flex p-flex-column kn-flex p-m-2" :previewColumns="columns" :previewRows="rows" :pagination="pagination" :previewType="previewType" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
-            <KnParameterSidebar v-if="parameterSidebarVisible" style="height:calc(100% - 35px)" class="workspace-parameter-sidebar kn-overflow-y" :filtersData="filtersData" :propDocument="dataset" :propMode="sidebarMode" :propQBEParameters="dataset.pars" @execute="onExecute"></KnParameterSidebar>
+            <KnParameterSidebar
+                v-if="parameterSidebarVisible && dataset"
+                style="height:calc(100% - 35px)"
+                class="workspace-parameter-sidebar kn-overflow-y"
+                :filtersData="filtersData"
+                :propDocument="dataset"
+                :propMode="sidebarMode"
+                :propQBEParameters="dataset.pars"
+                :userRole="userRole"
+                :dataset="dataset"
+                @execute="onExecute"
+                @roleChanged="onRoleChange"
+            ></KnParameterSidebar>
         </div>
     </Dialog>
 </template>
@@ -101,7 +113,16 @@ export default defineComponent({
     methods: {
         async loadPreview() {
             this.loadDataset()
-            await this.loadDatasetDrivers()
+
+            if (this.dataset.drivers && this.dataset.drivers.length > 0) {
+                if (this.userRole) {
+                    await this.loadDatasetDrivers()
+                } else {
+                    this.parameterSidebarVisible = true
+                    return
+                }
+            }
+
             if (this.dataset.label && this.dataset.pars.length === 0 && (this.filtersData.isReadyForExecution === undefined || this.filtersData.isReadyForExecution)) {
                 this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
                 this.parameterSidebarVisible = false
@@ -161,6 +182,7 @@ export default defineComponent({
             this.loading = false
         },
         async loadDatasetDrivers() {
+            let hasError = false
             if (this.dataset.label && this.dataset.id && this.dataset.dsTypeCd !== 'Prepared') {
                 await this.$http
                     .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${this.dataset.label}/filters`, { role: this.userRole })
@@ -170,9 +192,12 @@ export default defineComponent({
                             this.filtersData.filterStatus = this.filtersData.filterStatus.filter((filter: any) => filter.id)
                         }
                     })
-                    .catch(() => {})
+                    .catch(() => {
+                        hasError = true
+                    })
                 this.formatDrivers()
             }
+            return hasError
         },
         formatDrivers() {
             this.filtersData?.filterStatus?.forEach((el: any) => {
@@ -265,6 +290,18 @@ export default defineComponent({
         },
         setSidebarMode() {
             this.sidebarMode = this.loadFromDatasetManagement ? 'datasetManagement' : 'workspaceView'
+        },
+        async onRoleChange(role: string) {
+            this.userRole = role as any
+            this.filtersData = {}
+            let hasError = false
+            if (this.dataset.drivers && this.dataset.drivers.length > 0) hasError = await this.loadDatasetDrivers()
+            if (!hasError && this.dataset.label && this.dataset.pars.length === 0 && (this.filtersData.isReadyForExecution === undefined || this.filtersData.isReadyForExecution)) {
+                this.loadFromDatasetManagement ? await this.loadPreSavePreview() : await this.loadPreviewData()
+                this.parameterSidebarVisible = false
+            } else {
+                this.parameterSidebarVisible = true
+            }
         }
     }
 })

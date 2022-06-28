@@ -21,7 +21,7 @@
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="userId" maxlength="100" type="text" :disabled="!formInsert" v-model.trim="userDetailsForm.userId" @input="onDataChange(vobj.userDetailsForm.userId)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="userId" maxlength="100" type="text" :disabled="!formInsert" v-model.trim="userDetailsForm.userId" @change="onDataChange(vobj.userDetailsForm.userId)" class="p-inputtext p-component kn-material-input" />
                                     <label for="userId">{{ $t('managers.usersManagement.form.userId') }} *</label>
                                 </span>
                             </div>
@@ -31,7 +31,7 @@
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="fullName" maxlength="250" type="text" v-model.trim="userDetailsForm.fullName" @input="onDataChange(vobj.userDetailsForm.fullName)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="fullName" maxlength="250" type="text" v-model.trim="userDetailsForm.fullName" @change="onDataChange(vobj.userDetailsForm.fullName)" class="p-inputtext p-component kn-material-input" />
                                     <label for="fullName">{{ $t('managers.usersManagement.fullName') }} *</label>
                                 </span>
                             </div>
@@ -41,7 +41,7 @@
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="password" type="password" v-model.trim="userDetailsForm.password" @input="onDataChange(vobj.userDetailsForm.password)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="password" type="password" v-model.trim="userDetailsForm.password" @change="onDataChange(vobj.userDetailsForm.password)" class="p-inputtext p-component kn-material-input" />
                                     <label for="password">{{ $t('managers.usersManagement.form.password') }} *</label>
                                 </span>
                             </div>
@@ -51,7 +51,7 @@
                         <div class="p-field">
                             <div class="p-inputgroup">
                                 <span class="p-float-label">
-                                    <InputText id="passwordConfirm" type="password" v-model.trim="userDetailsForm.passwordConfirm" @input="onDataChange(vobj.userDetailsForm.passwordConfirm)" class="p-inputtext p-component kn-material-input" />
+                                    <InputText id="passwordConfirm" type="password" v-model.trim="userDetailsForm.passwordConfirm" @change="onDataChange(vobj.userDetailsForm.passwordConfirm)" class="p-inputtext p-component kn-material-input" />
                                     <label for="passwordConfirm">{{ $t('managers.usersManagement.form.passwordConfirm') }} *</label>
                                 </span>
                             </div>
@@ -113,6 +113,10 @@
                 disableUsername: true as Boolean,
                 loading: false as Boolean
             }
+        },
+        created() {
+            this.userDetailsForm = this.formValues
+            this.disableUsername = this.disabledUID
         },
         methods: {
             unlockUser() {

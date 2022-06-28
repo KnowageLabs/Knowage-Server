@@ -16,6 +16,7 @@
             :propMode="'execution'"
             :viewMode="mode"
             :propDocId="item?.id"
+            :wholeItem="item"
             :propFolderId="functionalityId"
             @closeDetails="$emit('closeDetails', item)"
             @documentSaved="onDocumentsSaved"

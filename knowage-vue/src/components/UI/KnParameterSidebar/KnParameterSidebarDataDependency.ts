@@ -16,7 +16,7 @@ export function setDataDependency(loadedParameters: { filterStatus: iParameter[]
     }
 }
 
-export async function updateDataDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string) {
+export async function updateDataDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
     if (parameter && parameter.dataDependentParameters) {
         for (let i = 0; i < parameter.dataDependentParameters.length; i++) {
             await dataDependencyCheck(loadedParameters, parameter.dataDependentParameters[i], loading, document, sessionRole, $http, mode)
@@ -24,7 +24,7 @@ export async function updateDataDependency(loadedParameters: { filterStatus: iPa
     }
 }
 
-export async function dataDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string, $http: any, mode: string) {
+export async function dataDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
     loading = true
 
     const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters), paramId: parameter.urlName, role: sessionRole }

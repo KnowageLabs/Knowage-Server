@@ -58,6 +58,7 @@ import Menu from 'primevue/menu'
 export default defineComponent({
     name: 'document-browser-home',
     components: { DocumentBrowserHint, DocumentBrowserTree, DocumentBrowserDetail, KnFabButton, Menu },
+    props: { documentSaved: { type: Object }, documentSavedTrigger: { type: Boolean } },
     emits: ['itemSelected'],
     data() {
         return {
@@ -95,6 +96,14 @@ export default defineComponent({
             } else {
                 return this.windowWidth < 1024
             }
+        }
+    },
+    watch: {
+        documentSavedTrigger() {
+            if (!this.documentSaved) return
+
+            if (this.documentSaved.folderId) this.selectedFolder.id = this.documentSaved.folderId
+            this.loadDocumentsWithBreadcrumbs()
         }
     },
     async created() {

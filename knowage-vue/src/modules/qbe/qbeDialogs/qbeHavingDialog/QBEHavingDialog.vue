@@ -65,7 +65,12 @@ export default defineComponent({
         loadData() {
             if (!this.havingDialogData || !this.havingDialogData.field || !this.havingDialogData.query) return
 
-            this.havings = this.havingDialogData.query.havings ? [...this.havingDialogData.query.havings] : []
+            this.havings = []
+            this.havingDialogData.query.havings.forEach((having: iFilter) => {
+                if (having.leftOperandValue === this.havingDialogData?.field.id) {
+                    this.havings.push({ ...having })
+                }
+            })
             this.nextHavingIndex = crypto.randomBytes(16).toString('hex')
         },
         addNewHaving() {

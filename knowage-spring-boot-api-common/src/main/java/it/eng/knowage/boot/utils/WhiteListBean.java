@@ -15,16 +15,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.utilities;
+package it.eng.knowage.boot.utils;
 
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import java.util.List;
 
-public class Service {
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-	@XStreamAsAttribute
-	public String baseurl;
+@XStreamAlias("WHITELIST")
+public class WhiteListBean {
 
-	@XStreamAsAttribute
-	public String relativepath;
+	@XStreamImplicit(itemFieldName = "service")
+	public List<Service> service;
 
 }
