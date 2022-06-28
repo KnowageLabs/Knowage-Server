@@ -68,18 +68,16 @@
             <Sidebar v-model:visible="visibleRight" position="right" class="kn-data-preparation-sidenav">
                 <div class="info-container">
                     <div class="original-dataset">
-                        <i class="fa fa-database"></i><span>{{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}</span
+                        <i class="fa fa-database p-mr-2"></i><span>{{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}</span
                         >: {{ dataset.label }}
                     </div>
-                    <div class="original-dataset" v-if="dataset.refreshRate">
-                        <i class="fas fa-stopwatch"></i><span>{{ $t('managers.workspaceManagement.dataPreparation.dataset.refreshRate.label') }}</span
-                        >: {{ dataset.refreshRate }}
-                    </div>
+                </div>
+
+                <div class="titleContainer">
+                    <h4 class="kn-truncated">{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</h4>
                 </div>
                 <Divider class="p-m-0 p-p-0 dividerCustomConfig" />
-                <div class="kn-truncated">{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</div>
-
-                <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="reverseTransformations()" optionLabel="type" listStyle="max-height:200px"
+                <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="reverseTransformations()" optionLabel="type"
                     ><template #option="slotProps">
                         <div class="p-text-uppercase kn-list-item transformationSidebarElement">
                             <div v-if="slotProps.option.type != 'calculatedField'">{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].columns[0] }}</div>
@@ -741,5 +739,11 @@
     }
     .sidebarClass {
         flex-direction: column-reverse;
+    }
+
+    .titleContainer {
+        display: flex;
+        justify-content: center;
+        width: 100%;
     }
 </style>
