@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import Button from 'primevue/button'
-import flushPromises from 'flush-promises'
 import KpiDocumentDesigner from './KpiDocumentDesigner.vue'
 import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
@@ -56,7 +55,8 @@ const $confirm = {
 const $store = {
     state: {
         user: {
-            functionalities: ['ScorecardsManagement']
+            functionalities: ['ScorecardsManagement'],
+            locale: 'en_US'
         }
     }
 }

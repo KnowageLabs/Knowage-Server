@@ -81,6 +81,7 @@
         },
         methods: {
             async loadPage() {
+                this.loading = true
                 let config = {
                     headers: { Accept: 'application/json, text/plain, */*' }
                 }
@@ -89,7 +90,6 @@
                 let country = this.user.locale.split('_')[1]
                 await this.$http.get(process.env.VUE_APP_KPI_ENGINE_API_URL + `1.0/pages/edit?SBI_LANGUAGE=${language}&SBI_COUNTRY=${country}&user_id=${this.user.userUniqueIdentifier}&document=${this.id}`, config).then(() => {})
 
-                this.loading = true
                 await this.loadKpi()
                 await this.loadKpiList()
                 await this.loadScorecards()
