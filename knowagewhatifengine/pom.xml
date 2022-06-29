@@ -138,7 +138,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.10-beta2</version>
+			<version>4.1.1</version>
 		</dependency>
 
 		<dependency>
