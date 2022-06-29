@@ -140,7 +140,7 @@ export default defineComponent({
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes?SBI_EXECUTION_ID=${this.sbiExecutionId}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) => {
                     console.log('RESPONSE DATA: ', response.data)
-                    this.$emit('designerStarted', {...this.selectedDocument, sbiExecutionId: this.sbiExecutionId})
+                    this.$emit('designerStarted', {...this.selectedDocument, sbiExecutionId: this.sbiExecutionId, reference: this.mondrianModel?.mondrianSchema  })
                 })
                 .catch(() => {})
             this.$store.commit('setLoading', false)

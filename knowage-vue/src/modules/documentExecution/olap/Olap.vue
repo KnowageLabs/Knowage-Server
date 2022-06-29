@@ -25,7 +25,7 @@
         <div id="left-and-table-container" class="p-d-flex p-flex-row kn-flex">
             <FilterLeftToolbar :olapProp="olap" @openSidebar="olapSidebarVisible = true" @putFilterOnAxis="putFilterOnAxis" @switchPosition="moveHierarchies" @showMultiHierarchy="showMultiHierarchy" @openFilterDialog="openFilterDialog" />
             <div id="table-container" class="kn-flex" :style="olapDescriptor.style.tableContainer">
-                <div id="olap-table" class="kn-flex kn-olap-table" ref="olap-table"  v-html="olap.table" @click="handleTableClick" @dblclick="handleTableDoubleClick"></div>
+                <div id="olap-table" class="kn-flex kn-olap-table" ref="olap-table" v-html="olap.table" @click="handleTableClick" @dblclick="handleTableDoubleClick"></div>
             </div>
         </div>
 
@@ -195,7 +195,10 @@ export default defineComponent({
             whatIfMode: false,
             whatifInputNewValue: 0 as Number,
             whatifInputOldValue: 0 as Number,
-            whatifInputOrdinal: 0 as Number
+            whatifInputOrdinal: 0 as Number,
+            noTemplate: '' as string,
+            reference: '' as string,
+            documentLabel: null as any
         }
     },
     async created() {
@@ -223,22 +226,22 @@ export default defineComponent({
         },
         olapCustomViewVisible() {
             this.loadCustomView()
-        },
-
+        }
     },
     methods: {
         async loadPage() {
             this.loading = true
-              if (this.$route.name === 'olap-designer') {
-            this.documentId = this.$route.query.olapId
-                 this.documentName =  this.$route.query.olapName
-        }
+            if (this.$route.name === 'olap-designer') {
+                this.documentId = this.$route.query.olapId
+                this.documentName = this.$route.query.olapName
+                this.documentLabel = this.$route.query.olapLabel
+            }
             await this.loadOlapModel()
             this.loadCustomView()
             this.loading = false
         },
         async loadOlapDesigner() {
-            console.log(" >>> CALLED OLAP DESIGNER: ")
+            console.log(' >>> CALLED OLAP DESIGNER: ')
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `olap/designer/${this.documentId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then(async (response: AxiosResponse<any>) => {
@@ -277,12 +280,50 @@ export default defineComponent({
             this.loading = false
         },
         async loadOlapModel() {
+            console.log('CAAAAAAAAAAAAAAAAAAAALING loadOlapModel()')
+            this.noTemplate = this.$route.query.noTemplate as string
+            this.reference = this.$route.query.reference as string
+
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then(async (response: AxiosResponse<any>) => {
                     this.olap = response.data
+                    // TODO
                     // await this.loadOlapDesigner()
+                    console.log('ROUTE: ', this.$route)
+                    console.log('noTemplate ', this.noTemplate)
+                    console.log('reference: ', this.reference)
+                    if (this.noTemplate === 'true') {
+                        this.olapDesigner = {
+                            template: {
+                                wrappedObject: {
+                                    olap: {
+                                        cube: {
+                                            reference: this.reference
+                                        },
+                                        MDXMondrianQuery: {
+                                            XML_TAG_TEXT_CONTENT: this.olap.MDXWITHOUTCF
+                                        },
+                                        MDXQUERY: {
+                                            XML_TAG_TEXT_CONTENT: this.olap.MDXWITHOUTCF,
+                                            parameter: []
+                                        },
+                                        JSONTEMPLATE: {
+                                            XML_TAG_TEXT_CONTENT: ''
+                                        },
+                                        calculated_fields: {
+                                            calculated_field: []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        this.olapDesigner.template.wrappedObject.olap.JSONTEMPLATE.XML_TAG_TEXT_CONTENT = JSON.stringify(this.olapDesigner.template.wrappedObject)
+                    }
+
+                    console.log('CREATED OLAP DESINGER: ', this.olapDesigner)
+
                     if (this.olapDesigner) {
                         await this.loadParameters()
                         await this.loadProfileAttributes()
@@ -292,7 +333,9 @@ export default defineComponent({
                     await this.loadModelConfig()
                     await this.loadVersions()
                 })
-                .catch((error: any) => {console.log("EEEEEEEEEEEEEEEEEEEEEEEEROR: ", error )})
+                .catch((error: any) => {
+                    console.log('EEEEEEEEEEEEEEEEEEEEEEEEROR: ', error)
+                })
             this.loading = false
         },
         setClickedButtons() {
@@ -329,7 +372,7 @@ export default defineComponent({
             }
         },
         async loadModelConfig() {
-            console.log("loadModelConfig() CALLLLLLLLLLLLLED ")
+            console.log('loadModelConfig() CALLLLLLLLLLLLLED ')
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/modelconfig?SBI_EXECUTION_ID=${this.id}&NOLOADING=undefined`, this.olap.modelConfig, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
@@ -649,6 +692,8 @@ export default defineComponent({
         async saveOlapDesigner() {
             this.loading = true
 
+            console.log('OLAP DESINGER ON SAVE: ', this.olapDesigner)
+
             await this.$http
                 .post(
                     process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.documentName}/saveOlapTemplate`,
@@ -846,6 +891,7 @@ export default defineComponent({
             this.selectedFilter = null
         },
         async applyFilters(payload: any) {
+            console.log(' --- applyFilters() - payload: ', payload)
             this.filterDialogVisible = false
             this.loading = true
             if (payload.type === 'slicer') {
@@ -875,10 +921,12 @@ export default defineComponent({
                 .catch(() => {})
         },
         async loadParameters() {
+            const documentLabel = this.olapDesigner.DOCUMENT_LABEL ?? this.documentLabel
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.olapDesigner.DOCUMENT_LABEL}/parameters`)
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${documentLabel}/parameters`)
                 .then((response: AxiosResponse<any>) => (this.parameters = response.data ? response.data.results : []))
                 .catch(() => {})
+            console.log(' --- LOADED PARAMETERS: ', this.parameters)
         },
         async loadProfileAttributes() {
             await this.$http

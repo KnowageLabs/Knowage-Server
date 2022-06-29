@@ -137,6 +137,7 @@ export default defineComponent({
         apply() {
             let payload = {}
             if (this.propFilter?.type === 'slicer') {
+                console.log('--- PROP FILTER: ', this.propFilter)
                 payload = { hierarchy: this.propFilter?.filter.selectedHierarchyUniqueName, members: this.selectedFilters, multi: false, type: 'slicer', DYNAMIC_SLICER: this.levels }
             } else {
                 payload = { members: this.selectedFilters, type: 'visible', axis: this.propFilter?.filter.axis, levels: this.levels }

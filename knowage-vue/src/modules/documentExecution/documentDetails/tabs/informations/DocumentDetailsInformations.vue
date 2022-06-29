@@ -292,6 +292,8 @@ import InputSwitch from 'primevue/inputswitch'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import DocumentDetailsTree from './DocumentDetailsTree.vue'
 
+const crypto = require('crypto')
+
 export default defineComponent({
     name: 'document-details-informations',
     components: { DatasetDialog, Card, Textarea, Dropdown, InputSwitch, KnValidationMessages, KnInputFile, DocumentDetailsTree },
@@ -481,7 +483,9 @@ export default defineComponent({
             if (this.listOfTemplates.length === 0) {
                 this.$emit('openDesignerDialog')
             } else {
-                this.$router.push(`/olap-designer/${this.document.id}`)
+               // this.$router.push(`/olap-designer/${this.document.id}`)
+                const sbiExecutionId = crypto.randomBytes(16).toString('hex')
+                 this.$router.push(`/olap-designer/${sbiExecutionId}?olapId=${this.document.id}&olapName=${this.document.name}&olapLabel=${this.document.label}`)
             }
         },
         translatedLabel(a) {

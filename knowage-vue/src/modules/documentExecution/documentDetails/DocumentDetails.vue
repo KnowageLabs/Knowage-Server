@@ -411,7 +411,7 @@ export default defineComponent({
         },
         onDesignerStart(document: any) {
             console.log('STTTTTTTTTTTTTTTTTART!')
-            this.$router.push(`/olap-designer/${document.sbiExecutionId}?olapId=${document.id}&olapName=${document.name}`)
+            this.$router.push(`/olap-designer/${document.sbiExecutionId}?olapId=${document.id}&olapName=${document.name}&olapLabel=${document.label}&noTemplate=${true}&reference=${document.reference}`)
         }
     }
 })
