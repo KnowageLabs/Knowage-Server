@@ -3,6 +3,7 @@ package it.eng.knowage.boot.filter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import it.eng.knowage.boot.error.InvalidHtmlPayloadException;
 import it.eng.knowage.boot.utils.WhiteList;
 
 public class XSSUtils {
@@ -33,9 +34,23 @@ public class XSSUtils {
 
 		String output = sanitizer.sanitize(input);
 
-		LOGGER.debug("Sanitized as: {}", input);
+		LOGGER.debug("Sanitized as: {}", output);
 
 		return output;
+
+	}
+
+	public void checkXSS(String input) {
+
+		LOGGER.debug("Checking: {}", input);
+
+		String output = sanitizer.sanitize(input);
+
+		LOGGER.debug("With: {}", output);
+
+		if (!input.equals(output)) {
+			throw new InvalidHtmlPayloadException(input);
+		}
 
 	}
 

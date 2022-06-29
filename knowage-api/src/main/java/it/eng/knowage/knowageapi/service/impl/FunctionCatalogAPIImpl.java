@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.eng.knowage.boot.error.KnowageBusinessException;
 import it.eng.knowage.boot.error.KnowageRuntimeException;
+import it.eng.knowage.boot.filter.XSSUtils;
 import it.eng.knowage.knowageapi.dao.dto.SbiCatalogFunction;
 import it.eng.knowage.knowageapi.mapper.FunctionCompleteDTO2SbiCatalogFunction;
 import it.eng.knowage.knowageapi.mapper.SbiFunctionCatalog2FunctionCompleteDTO;
@@ -66,6 +67,15 @@ public class FunctionCatalogAPIImpl implements FunctionCatalogAPI {
 
 	@Override
 	public FunctionCompleteDTO create(FunctionCompleteDTO function) {
+
+		String description = function.getDescription();
+		String benchmark = function.getBenchmark();
+
+		XSSUtils xssUtils = new XSSUtils();
+
+		xssUtils.checkXSS(description);
+		xssUtils.checkXSS(benchmark);
+
 		SbiCatalogFunction beFunction = Optional.ofNullable(function).map(TO_SBI_CATALOG_FUNCTION)
 				.orElseThrow(() -> new KnowageRuntimeException("Function cannot be null"));
 
@@ -74,6 +84,15 @@ public class FunctionCatalogAPIImpl implements FunctionCatalogAPI {
 
 	@Override
 	public FunctionCompleteDTO update(FunctionCompleteDTO function) {
+
+		String description = function.getDescription();
+		String benchmark = function.getBenchmark();
+
+		XSSUtils xssUtils = new XSSUtils();
+
+		xssUtils.checkXSS(description);
+		xssUtils.checkXSS(benchmark);
+
 		SbiCatalogFunction beFunction = Optional.ofNullable(function).map(TO_SBI_CATALOG_FUNCTION)
 				.orElseThrow(() -> new KnowageRuntimeException("Function cannot be null"));
 

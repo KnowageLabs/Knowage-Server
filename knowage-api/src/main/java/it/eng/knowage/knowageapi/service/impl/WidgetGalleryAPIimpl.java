@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import it.eng.knowage.boot.error.KnowageRuntimeException;
-import it.eng.knowage.boot.filter.XSSRequestWrapper;
+import it.eng.knowage.boot.filter.XSSUtils;
 import it.eng.knowage.knowageapi.dao.SbiWidgetGalleryDao;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTag;
@@ -102,7 +102,11 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			// Validating CODES with whitelist
 			Code code = widgetGalleryDTO.getCode();
 			try {
-				String htmlCode = stripXSSObject(code.getHtml());
+				String html = code.getHtml();
+
+				checkXSS(html);
+
+				String htmlCode = html;
 				JSONObject jsonBody = new JSONObject(new String(widgetGalleryDTO.getTemplate()));
 				JSONObject jsonCode = jsonBody.optJSONObject("code");
 				jsonCode.put("html", htmlCode);
@@ -153,7 +157,11 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			// Validating CODES with whitelist
 			Code code = widgetGalleryDTO.getCode();
 			try {
-				String htmlCode = stripXSSObject(code.getHtml());
+				String html = code.getHtml();
+
+				checkXSS(html);
+
+				String htmlCode = html;
 				JSONObject jsonBody = new JSONObject(new String(widgetGalleryDTO.getTemplate()));
 				JSONObject jsonCode = jsonBody.optJSONObject("code");
 				jsonCode.put("html", htmlCode);
@@ -300,10 +308,9 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		return newSbiWidgetGallery;
 	}
 
-	public static String stripXSSObject(String o) throws JSONException {
-		if (o instanceof String) {
-			o = XSSRequestWrapper.stripXSS(o);
-		}
+	public static String checkXSS(String o) throws JSONException {
+		XSSUtils xssUtils = new XSSUtils();
+		xssUtils.checkXSS(o);
 		return o;
 	}
 }
