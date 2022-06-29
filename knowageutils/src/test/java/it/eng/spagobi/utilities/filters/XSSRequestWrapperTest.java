@@ -61,6 +61,7 @@ public class XSSRequestWrapperTest {
 			"<audio src=\"https://www.youtube.com/image.png\"></audio>",
 			"<video src=\"https://www.youtube.com/image.png\"></video>",
 			"<a href=\"https://www.youtube.com/mylink\">anchor</a>","<a href=\"/knowage/icons/test.ico\">anchor</a>",
+			"<p>\"'=</p>",
 			"");
 
 	private static final String NOT_OK_1 = Joiner.on('\n').join(

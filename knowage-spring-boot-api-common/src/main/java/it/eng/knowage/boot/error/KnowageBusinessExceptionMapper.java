@@ -16,7 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.knowage.knowageapi.error;
+package it.eng.knowage.boot.error;
+
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,24 +33,24 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
-import it.eng.knowage.boot.error.KnowageServiceException;
-
 /**
  *
- * @author Alberto Ghedin (alberto.ghedin@eng.it)
+ * @author Matteo Massarotto
  *
  *         Updates the audit log for the services that throw exceptions
  *
  */
 @Component
 @Provider
-public class KnowageExceptionMapper implements ExceptionMapper<RuntimeException> {
+public class KnowageBusinessExceptionMapper implements ExceptionMapper<KnowageBusinessException> {
 	private static final String LOCALIZED_MESSAGE = "localizedMessage";
 	private static final String ERROR_MESSAGE = "message";
 	private static final String ERROR_SERVICE = "service";
 	private static final String ERROR_MESSAGES = "errors";
+	private static final String ERROR_CODE = "code";
+	private static final String ERROR_HINTS = "hints";
 
-	static private Logger logger = Logger.getLogger(KnowageExceptionMapper.class);
+	static private Logger logger = Logger.getLogger(KnowageBusinessExceptionMapper.class);
 
 	@Context
 	private HttpServletRequest servletRequest;
@@ -56,51 +58,30 @@ public class KnowageExceptionMapper implements ExceptionMapper<RuntimeException>
 	private HttpServletResponse servletResponse;
 
 	@Override
-	public Response toResponse(RuntimeException t) {
+	public Response toResponse(KnowageBusinessException t) {
 		logger.error("Catched service error: ", t);
 		return toResponseFromGenericException(t);
 	}
 
-	private Response toResponseFromGenericException(RuntimeException t) {
+	private Response toResponseFromGenericException(KnowageBusinessException t) {
 		JSONObject serializedMessages = serializeException(t);
-		return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(serializedMessages.toString()).build();
+		return Response.status(t.getStatus()).entity(serializedMessages.toString()).build();
 	}
 
-	private JSONObject serializeException(RuntimeException t) {
-		// TODO manage localized messages ASAP
+	private JSONObject serializeException(KnowageBusinessException t) {
 		String localizedMessage = t.getLocalizedMessage();
-
-		String errorMessage = t.getMessage();
-		String errorService = "";
-
-		if (t instanceof KnowageServiceException) {
-			KnowageServiceException exception = (KnowageServiceException) t;
-			errorService = exception.getServiceName();
-
-			String rootCause = exception.getRootException().getMessage();
-			if (rootCause == null) {
-				rootCause = "An unexpected [" + exception.getRootException().getClass().getName() + "] exception has been trown during service execution";
-			}
-
-			String rootCauseLoaclized = exception.getRootException().getLocalizedMessage();
-			if (rootCause != null) {
-				localizedMessage = rootCauseLoaclized;
-			}
-
-			errorMessage = localizedMessage;
-		} else {
-			errorMessage = localizedMessage;
-		}
-
+		String errorMessage = isBlankString(localizedMessage) ? localizedMessage : t.getDescription();
+		String errorCode = t.getCode();
+		List<String> hints = t.getHints();
 		JSONObject error = new JSONObject();
 		JSONObject serializedMessages = new JSONObject();
 		JSONArray errors = new JSONArray();
-
 		try {
+			error.put(ERROR_CODE, errorCode);
 			error.put(ERROR_MESSAGE, errorMessage);
 			errors.put(error);
-			if (errorService != null) {
-				serializedMessages.put(ERROR_SERVICE, errorService);
+			if (hints != null && !hints.isEmpty()) {
+				error.put("hints", hints);
 			}
 			serializedMessages.put(ERROR_MESSAGES, errors);
 		} catch (JSONException e1) {
@@ -110,4 +91,7 @@ public class KnowageExceptionMapper implements ExceptionMapper<RuntimeException>
 		return serializedMessages;
 	}
 
+	boolean isBlankString(String string) {
+		return string == null || string.trim().isEmpty();
+	}
 }

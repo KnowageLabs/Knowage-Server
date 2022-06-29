@@ -136,6 +136,12 @@
 			<artifactId>owasp-java-html-sanitizer</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.1.4</version>
+		</dependency>
+
 		<!-- 
 			   ____        _          __             _            _       
 			  / __ \      | |        / _|           | |          | |      
