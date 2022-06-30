@@ -74,11 +74,13 @@
 				to="/layers-management" />
 			<ITEM id="4007" label="menu.glossary.technical"
 				requiredFunctionality="ManageGlossaryTechnical"
+				toBeAuthorized="MANAGE_GLOSSARY_TECHNICAL"
 				to="/glossary-usage"
 				iconCls="fa fa-2x fa-book" />
 			<ITEM id="4008" label="menu.glossary.business"
 				requiredFunctionality="ManageGlossaryBusiness"
 				to="/glossary-definition"
+				toBeAuthorized="MANAGE_GLOSSARY_BUSINESS"
 				iconCls="fa fa-2x fa-building" />
 			<ITEM id="4009" label="menu.timespan"
 				requiredFunctionality="Timespan"
@@ -278,10 +280,12 @@
 		<ITEM id="11007" label="menu.glossary.technical"
 			requiredFunctionality="ManageGlossaryTechnical"
 			to="/glossary-definition"
+			toBeAuthorized="MANAGE_GLOSSARY_TECHNICAL"
 			iconCls="fas fa-book" />
 		<ITEM id="11008" label="menu.glossary.business"
 			requiredFunctionality="ManageGlossaryBusiness"
 			to="/glossary-usage"
+			toBeAuthorized="MANAGE_GLOSSARY_BUSINESS"
 			iconCls="fas fa-building" />
 		<ITEM id="11009" label="menu.cross.definition"
 			requiredFunctionality="ManageCrossNavigation"
