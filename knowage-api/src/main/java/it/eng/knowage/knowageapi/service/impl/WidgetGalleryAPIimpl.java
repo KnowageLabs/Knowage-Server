@@ -33,6 +33,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import it.eng.knowage.boot.error.InvalidHtmlPayloadException;
 import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.knowage.boot.filter.XSSUtils;
 import it.eng.knowage.knowageapi.dao.SbiWidgetGalleryDao;
@@ -308,8 +309,15 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		return newSbiWidgetGallery;
 	}
 
-	private String stripXSS(String o) throws JSONException {
+	private String stripXSS(String input) {
 		XSSUtils xssUtils = new XSSUtils();
-		return xssUtils.stripXSS(o);
+
+		boolean isSafe = xssUtils.isSafe(input);
+
+		if (!isSafe) {
+			throw new InvalidHtmlPayloadException(input);
+		}
+
+		return xssUtils.stripXSS(input);
 	}
 }

@@ -25,6 +25,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import it.eng.knowage.boot.error.InvalidHtmlPayloadException;
 import it.eng.knowage.boot.error.KnowageBusinessException;
 import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.knowage.boot.filter.XSSUtils;
@@ -73,6 +74,9 @@ public class FunctionCatalogAPIImpl implements FunctionCatalogAPI {
 
 		XSSUtils xssUtils = new XSSUtils();
 
+		xssUtils.isSafe(description);
+		xssUtils.isSafe(benchmark);
+
 		description = xssUtils.stripXSS(description);
 		benchmark = xssUtils.stripXSS(benchmark);
 
@@ -88,10 +92,8 @@ public class FunctionCatalogAPIImpl implements FunctionCatalogAPI {
 		String description = function.getDescription();
 		String benchmark = function.getBenchmark();
 
-		XSSUtils xssUtils = new XSSUtils();
-
-		description = xssUtils.stripXSS(description);
-		benchmark = xssUtils.stripXSS(benchmark);
+		description = stripXSS(description);
+		benchmark = stripXSS(benchmark);
 
 		SbiCatalogFunction beFunction = Optional.ofNullable(function).map(TO_SBI_CATALOG_FUNCTION)
 				.orElseThrow(() -> new KnowageRuntimeException("Function cannot be null"));
@@ -102,6 +104,18 @@ public class FunctionCatalogAPIImpl implements FunctionCatalogAPI {
 	@Override
 	public void delete(UUID id) throws KnowageBusinessException {
 		repository.delete(id.toString());
+	}
+
+	private String stripXSS(String input) {
+		XSSUtils xssUtils = new XSSUtils();
+
+		boolean isSafe = xssUtils.isSafe(input);
+
+		if (!isSafe) {
+			throw new InvalidHtmlPayloadException(input);
+		}
+
+		return xssUtils.stripXSS(input);
 	}
 
 }
