@@ -261,12 +261,8 @@
                     .then((response: AxiosResponse<any>) => {
                         this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
 
-                        let responseAllowedUserFunctionalities = response.data.allowedUserFunctionalities
-                        for (var idx in responseAllowedUserFunctionalities) {
-                            let item = responseAllowedUserFunctionalities[idx]
-                            item.visible = this.isItemToDisplay(item)
-                            this.allowedUserFunctionalities.push(item)
-                        }
+                        this.setConditionedVisibility(response.data.allowedUserFunctionalities)
+
                         this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
                             return el1.prog - el2.prog
                         })
@@ -295,8 +291,17 @@
                         this.$store.commit('setLoading', false)
                         this.getDimensions()
                     })
+            },
+            setConditionedVisibility(responseAllowedUserFunctionalities) {
+                this.allowedUserFunctionalities = []
+                for (var idx in responseAllowedUserFunctionalities) {
+                    let item = responseAllowedUserFunctionalities[idx]
+                    item.visible = this.isItemToDisplay(item)
+                    this.allowedUserFunctionalities.push(item)
+                }
             }
         },
+
         async mounted() {
             await this.loadMenu()
         },
@@ -313,6 +318,12 @@
                 isEnterprise: 'isEnterprise',
                 licenses: 'licenses'
             })
+        },
+        watch: {
+            news() {
+                let orig = JSON.parse(JSON.stringify(this.allowedUserFunctionalities))
+                this.setConditionedVisibility(orig)
+            }
         }
     })
 </script>

@@ -46,17 +46,24 @@
 
             <div v-show="metadata.file.length > 0">
                 <h2>{{ $t('common.attachments') }}</h2>
-                <div class="p-grid p-ai-center">
-                    <template v-for="(meta, index) in metadata.file" :key="index">
-                        <div class="p-col-6">
+
+                <div v-for="(meta, index) in metadata.file" :key="index" class="p-d-flex p-flex-row p-ai-center">
+                    <div class="kn-flex p-d-flex p-flex-row p-m-2">
+                        <div v-if="meta.value" class="kn-flex p-d-flex p-flex-row p-m-1">
+                            <InputText class="kn-material-input p-inputtext-sm" v-model="meta.value.fileName" :disabled="true" />
+                            <InputText class="kn-material-input p-inputtext-sm" v-model="meta.value.saveDate" :disabled="true" />
+                        </div>
+                        <div class="p-m-1">
                             <label class="kn-material-input-label">{{ meta.name }}</label>
-                            <KnInputFile :ref="'' + meta.id" :id="meta.id" :changeFunction="uploadFile" :visibility="true" />
+                            <KnInputFile :ref="'' + meta.id" :id="'' + meta.id" :changeFunction="uploadFile" :visibility="true" />
                         </div>
-                        <div class="p-col-6 p-d-flex p-flex-row p-jc-around">
-                            <Button v-if="canModify" class="kn-button kn-button--primary document-execution-metadata-dialog-upload-button" @click="uploadMetaFile(meta)"> {{ $t('common.upload') }}</Button>
-                            <Button v-if="canModify" class="kn-button kn-button--primary document-execution-metadata-dialog-upload-button" @click="cleanFile(meta)"> {{ $t('common.clean') }}</Button>
-                        </div>
-                    </template>
+                    </div>
+
+                    <div class="kn-flex p-d-flex p-flex-row p-jc-between p-ml-auto">
+                        <Button v-if="canModify" class="kn-button kn-button--primary document-execution-metadata-dialog-upload-button" @click="uploadMetaFile(meta)"> {{ $t('common.upload') }}</Button>
+                        <Button v-show="canModify && meta.value" class="kn-button kn-button--primary document-execution-metadata-dialog-upload-button" @click="downloadFile(meta)"> {{ $t('common.download') }}</Button>
+                        <Button v-if="canModify" class="kn-button kn-button--primary document-execution-metadata-dialog-upload-button" @click="cleanFile(meta)"> {{ $t('common.clean') }}</Button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -73,6 +80,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iMetadata } from '../../DocumentExecution'
+import { AxiosResponse } from 'axios'
+import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
 import Dialog from 'primevue/dialog'
 import Editor from 'primevue/editor'
 import documentExecutionMetadataDialogDescriptor from './DocumentExecutionMetadataDialogDescriptor.json'
@@ -84,7 +93,12 @@ import Textarea from 'primevue/textarea'
 export default defineComponent({
     name: 'document-execution-metadata-dialog',
     components: { Dialog, Editor, KnInputFile, TabView, TabPanel, Textarea },
-    props: { visible: { type: Boolean }, propDocument: { type: Object }, propMetadata: { type: Object, required: true }, propLoading: { type: Boolean } },
+    props: {
+        visible: { type: Boolean },
+        propDocument: { type: Object },
+        propMetadata: { type: Object, required: true },
+        propLoading: { type: Boolean }
+    },
     emits: ['close', 'saveMetadata'],
     data() {
         return {
@@ -126,7 +140,16 @@ export default defineComponent({
                     longText: this.propMetadata.LONG_TEXT ? [...this.propMetadata.LONG_TEXT] : [],
                     file: this.propMetadata.FILE ? [...this.propMetadata.FILE] : []
                 }
+
+                if (this.metadata.file.length > 0) this.formatMetadataFileValues()
             }
+        },
+        formatMetadataFileValues() {
+            if (!this.metadata) return
+            this.metadata.file = this.metadata.file.map((file: any) => {
+                if (file.value) file.value = JSON.parse(file.value)
+                return file
+            })
         },
         setLoading() {
             this.loading = this.propLoading
@@ -167,22 +190,54 @@ export default defineComponent({
         updateMetadataFile(fileId: number, fileName: string) {
             if (!this.metadata) return
             const index = this.metadata?.file.findIndex((tempFile: any) => tempFile.id === fileId)
-            if (index !== -1) this.metadata.file[index].fileToSave = { file: {}, fileName: fileName }
+            if (index !== -1) {
+                this.metadata.file[index].fileToSave = { file: {}, fileName: fileName }
+                if (this.metadata.file[index].value) this.metadata.file[index].value = ''
+            }
         },
         cleanFile(meta: any) {
             const temp = this.$refs[meta.id] as any
             if (temp && this.metadata) {
                 temp.resetInput()
+                delete this.uploadedFiles[meta.id]
                 const index = this.metadata.file.findIndex((tempFile: any) => tempFile.id === meta.id)
-                if (index !== -1) delete this.metadata.file[index].fileToSave
+                if (index !== -1) {
+                    delete this.metadata.file[index].fileToSave
+                    this.metadata.file[index].value = ''
+                }
             }
+        },
+        async downloadFile(meta: any) {
+            if (!meta.value) return
+
+            await this.$http
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/${this.document.id}/${meta.id}/documentfilemetadata`, {
+                    headers: {
+                        Accept: 'application/json, text/plain, */*'
+                    },
+                    responseType: 'blob'
+                })
+                .then((response: AxiosResponse<any>) => {
+                    downloadDirectFromResponse(response)
+                    this.$store.commit('setInfo', {
+                        title: this.$t('common.toast.success')
+                    })
+                })
+                .catch((error: any) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: error
+                    })
+                })
         },
         closeDialog() {
             this.metadata = null
             this.$emit('close')
+            this.uploadedFiles = {}
         },
         save() {
             this.$emit('saveMetadata', this.metadata)
+            this.uploadedFiles = {}
         }
     }
 })

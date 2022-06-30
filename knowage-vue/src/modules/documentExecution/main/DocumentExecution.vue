@@ -179,7 +179,7 @@ export default defineComponent({
     },
     deactivated() {
         this.parameterSidebarVisible = false
-        window.removeEventListener('message', this.crossNavigationListener)
+        window.removeEventListener('message', this.iframeEventsListener)
     },
     computed: {
         sessionRole(): string | null {
@@ -210,7 +210,7 @@ export default defineComponent({
         }
     },
     async created() {
-        window.addEventListener('message', this.crossNavigationListener)
+        window.addEventListener('message', this.iframeEventsListener)
 
         if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
 
@@ -235,9 +235,11 @@ export default defineComponent({
         }
     },
     methods: {
-        crossNavigationListener(event) {
+        iframeEventsListener(event) {
             if (event.data.type === 'crossNavigation') {
                 this.executeCrossNavigation(event)
+            } else if (event.data.type === 'cockpitExecuted') {
+                this.loading = false
             }
         },
         editCockpitDocumentConfirm() {
@@ -257,7 +259,6 @@ export default defineComponent({
             this.documentMode = this.documentMode === 'EDIT' ? 'VIEW' : 'EDIT'
             this.hiddenFormData.set('documentMode', this.documentMode)
             await this.loadURL(null)
-            this.loading = false
         },
         openHelp() {
             this.helpDialogVisible = true
@@ -829,6 +830,7 @@ export default defineComponent({
             properties.forEach((property: string) =>
                 metadata[property].forEach((el: any) => {
                     if (el.value || (property === 'file' && el.fileToSave)) {
+                        if (property === 'file') el.value = JSON.stringify(el.value)
                         jsonMeta.push(el)
                     }
                 })
@@ -843,12 +845,7 @@ export default defineComponent({
                     })
                     this.metadataDialogVisible = false
                 })
-                .catch((error: any) => {
-                    this.$store.commit('setError', {
-                        title: this.$t('common.error.generic'),
-                        msg: error
-                    })
-                })
+                .catch(() => {})
             this.loading = false
         },
         async onMailSave(mail: any) {

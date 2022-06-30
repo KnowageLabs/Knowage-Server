@@ -44,5 +44,5 @@ export interface iMetadata {
     generalMetadata: { name: string, value: string }[],
     shortText: { id: number, name: string, value: string }[],
     longText: { id: number, name: string, value: string }[],
-    file: { id: number, name: string, value: string, fileToSave?: { file: {}, fileName: string } }[],
+    file: { id: number, name: string, value: any, fileToSave?: { file: {}, fileName: string } }[],
 }

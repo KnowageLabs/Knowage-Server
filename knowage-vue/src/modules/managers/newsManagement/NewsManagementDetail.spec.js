@@ -6,16 +6,6 @@ import NewsManagementDetail from './NewsManagementDetail.vue'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 
-const mockedNews = {
-    id: 1,
-    title: 'First news',
-    description: 'Description',
-    type: 1,
-    html: '<p>Test</p>',
-    roles: mockedRoles,
-    expirationDate: '2019-10-02 00:00:00.0',
-    active: true
-}
 const mockedRoles = [
     {
         id: 1,
@@ -30,6 +20,18 @@ const mockedRoles = [
         name: 'dev'
     }
 ]
+
+const mockedNews = {
+    id: 1,
+    title: 'First news',
+    description: 'Description',
+    type: 1,
+    html: '<p>Test</p>',
+    roles: mockedRoles,
+    expirationDate: '2019-10-02 00:00:00.0',
+    active: true
+}
+
 jest.mock('axios')
 
 const $http = {

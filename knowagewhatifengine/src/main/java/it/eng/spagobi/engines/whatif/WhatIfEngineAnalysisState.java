@@ -165,7 +165,7 @@ public class WhatIfEngineAnalysisState extends EngineAnalysisState {
 	}
 
 	protected Object[] fromJSONArray2ObjectsArray(JSONArray jsonArray) throws JSONException {
-		Object[] array = new Object[] { jsonArray.length() };
+		Object[] array = new Object[jsonArray.length()];
 		for (int i = 0; i < jsonArray.length(); i++) {
 			array[i] = jsonArray.get(i);
 		}

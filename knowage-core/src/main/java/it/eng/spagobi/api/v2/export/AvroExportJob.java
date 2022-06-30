@@ -155,6 +155,9 @@ public class AvroExportJob extends AbstractExportJob {
 			} else if (String.class.isAssignableFrom(type)) {
 				value = String.valueOf(value);
 			} else {
+				if (value instanceof java.util.Date) {
+					value = dateFormatter.format(value);
+				}
 				value = value.toString();
 			}
 		} catch (Exception e) {

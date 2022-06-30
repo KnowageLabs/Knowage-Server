@@ -315,7 +315,8 @@
                                 </div>
                             </div>
                             <div v-else-if="selectedRefreshRate === 'custom'">
-                                <span class="p-float-label p-col-12"> <InputText :id="name" type="text" v-model="localCronExpression" v-bind="$attrs" :class="[cssClass ? cssClass + ' kn-truncated' : 'kn-material-input kn-truncated', required && !modelValue ? 'p-invalid' : '']"/></span>
+                                <span class="p-float-label p-col-12"> <InputText :id="name" type="text" 
+                                v-model="localCronExpression" v-bind="$attrs" :class="[cssClass ? cssClass + ' kn-truncated' : 'kn-material-input kn-truncated', required && !modelValue ? 'p-invalid' : '']" @change="$emit('update:currentCronExpression', localCronExpression)"/></span>
                                 <small id="custom-cron-hint" v-html="$t('knScheduler.customCronHint')"></small>
                             </div>
                         </div>
@@ -555,7 +556,7 @@
                 return tmp
             },
             isSet(cronExpressionToken): Boolean {
-                return cronExpressionToken !== this.allValues && cronExpressionToken !== this.noSpecificValue
+                return cronExpressionToken && cronExpressionToken !== this.allValues && cronExpressionToken !== this.noSpecificValue
             },
             async loadUserConfig() {
                 await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {

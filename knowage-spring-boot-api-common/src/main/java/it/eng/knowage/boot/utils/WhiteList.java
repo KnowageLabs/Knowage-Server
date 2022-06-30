@@ -1,6 +1,6 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2022 Engineering Ingegneria Informatica S.p.A.
  *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.utilities;
+package it.eng.knowage.boot.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,13 +29,18 @@ import org.apache.log4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
 
-import it.eng.knowage.boot.utils.ContextPropertiesConfig;
+import it.eng.knowage.boot.filter.IWhiteList;
 
-public class WhiteList {
+public class WhiteList implements IWhiteList {
+
+	private static final Logger LOGGER = Logger.getLogger(WhiteList.class);
 
 	private static final WhiteList INSTANCE = new WhiteList();
 
-	private static Logger logger = Logger.getLogger(WhiteList.class);
+	public static WhiteList getInstance() {
+		return INSTANCE;
+	}
+
 	private final String WHITELIST_FILE = "services-whitelist.xml";
 
 	private WhiteList() {
@@ -43,7 +48,7 @@ public class WhiteList {
 	}
 
 	private List<String> getProperties(String property) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		List<String> services = new ArrayList<String>();
 		FileInputStream stream = null;
 		try {
@@ -67,18 +72,18 @@ public class WhiteList {
 				stream.close();
 			}
 		} catch (Exception e) {
-			logger.error("Can not read white-list services from configuration file ", e);
+			LOGGER.error("Can not read white-list services from configuration file ", e);
 			return services;
 		} finally {
 			try {
 				if (stream != null)
 					stream.close();
 			} catch (IOException e) {
-				logger.error("Can not close the stream resources ", e);
+				LOGGER.error("Can not close the stream resources ", e);
 			}
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return services;
 	}
 
@@ -94,14 +99,12 @@ public class WhiteList {
 		}
 	}
 
-	public static WhiteList getInstance() {
-		return INSTANCE;
-	}
-
+	@Override
 	public List<String> getRelativePaths() {
 		return getProperties("relativepath");
 	}
 
+	@Override
 	public List<String> getExternalServices() {
 		return getProperties("baseurl");
 	}

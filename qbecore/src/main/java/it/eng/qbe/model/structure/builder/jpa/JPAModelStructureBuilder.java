@@ -59,8 +59,8 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 
 	private EntityManager entityManager;
 	private int maxRecursionLevel;
-	IModelStructurePropertiesInitializer propertiesInitializer;
 	public static final String VIEWS_INNER_JOINS_RELATION_NAME = "VIEWS_INNER_JOINS";
+	IModelStructurePropertiesInitializer propertiesInitializer;
 
 	private static int DEFAULT_MAX_RECURSION_LEVEL = 0;
 
