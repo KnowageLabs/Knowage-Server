@@ -104,7 +104,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			try {
 				String html = code.getHtml();
 
-				checkXSS(html);
+				html = stripXSS(html);
 
 				String htmlCode = html;
 				JSONObject jsonBody = new JSONObject(new String(widgetGalleryDTO.getTemplate()));
@@ -159,7 +159,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			try {
 				String html = code.getHtml();
 
-				checkXSS(html);
+				html = stripXSS(html);
 
 				String htmlCode = html;
 				JSONObject jsonBody = new JSONObject(new String(widgetGalleryDTO.getTemplate()));
@@ -308,9 +308,8 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		return newSbiWidgetGallery;
 	}
 
-	public static String checkXSS(String o) throws JSONException {
+	private String stripXSS(String o) throws JSONException {
 		XSSUtils xssUtils = new XSSUtils();
-		xssUtils.checkXSS(o);
-		return o;
+		return xssUtils.stripXSS(o);
 	}
 }

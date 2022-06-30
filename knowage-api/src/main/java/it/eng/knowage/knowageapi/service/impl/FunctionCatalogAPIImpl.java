@@ -73,8 +73,8 @@ public class FunctionCatalogAPIImpl implements FunctionCatalogAPI {
 
 		XSSUtils xssUtils = new XSSUtils();
 
-		xssUtils.checkXSS(description);
-		xssUtils.checkXSS(benchmark);
+		description = xssUtils.stripXSS(description);
+		benchmark = xssUtils.stripXSS(benchmark);
 
 		SbiCatalogFunction beFunction = Optional.ofNullable(function).map(TO_SBI_CATALOG_FUNCTION)
 				.orElseThrow(() -> new KnowageRuntimeException("Function cannot be null"));
@@ -90,8 +90,8 @@ public class FunctionCatalogAPIImpl implements FunctionCatalogAPI {
 
 		XSSUtils xssUtils = new XSSUtils();
 
-		xssUtils.checkXSS(description);
-		xssUtils.checkXSS(benchmark);
+		description = xssUtils.stripXSS(description);
+		benchmark = xssUtils.stripXSS(benchmark);
 
 		SbiCatalogFunction beFunction = Optional.ofNullable(function).map(TO_SBI_CATALOG_FUNCTION)
 				.orElseThrow(() -> new KnowageRuntimeException("Function cannot be null"));

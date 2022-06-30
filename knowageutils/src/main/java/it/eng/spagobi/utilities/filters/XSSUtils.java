@@ -3,7 +3,6 @@ package it.eng.spagobi.utilities.filters;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import it.eng.spagobi.utilities.exceptions.InvalidHtmlPayloadException;
 import it.eng.spagobi.utilities.filters.utils.HtmlSanitizer;
 import it.eng.spagobi.utilities.whitelist.WhiteList;
 
@@ -41,17 +40,12 @@ public class XSSUtils {
 
 	}
 
-	public void checkXSS(String input) {
+	public boolean isSafe(String input) {
 
 		LOGGER.debug("Checking: {}", input);
 
-		String output = sanitizer.sanitize(input);
-
-		LOGGER.debug("With: {}", output);
-
-		if (!input.equals(output)) {
-			throw new InvalidHtmlPayloadException(input);
-		}
+		return sanitizer.isSafe(input);
 
 	}
+
 }

@@ -153,7 +153,7 @@ public class AlertService {
 
 			if (actParamsAsJsonObject.has("body")) {
 				XSSUtils xssUtils = new XSSUtils();
-				xssUtils.checkXSS(actParamsAsJsonObject.getString("body"));
+				xssUtils.isSafe(actParamsAsJsonObject.getString("body"));
 			}
 
 		}
