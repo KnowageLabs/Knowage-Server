@@ -143,6 +143,8 @@ export default defineComponent({
                 if (this.mode === 'selectFields') {
                     this.levels = []
                 } else {
+                    console.log('this.checkIfLevelsAreValid()')
+                    if (!this.checkIfLevelsAreValid()) return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.filterDialog.filterLevelsError') })
                     this.selectedFilters = this.rootNode ? [this.rootNode.id] : []
                 }
                 payload = { hierarchy: this.propFilter?.filter.selectedHierarchyUniqueName, members: this.selectedFilters, multi: false, type: 'slicer' }
@@ -155,6 +157,20 @@ export default defineComponent({
             }
             this.$emit('applyFilters', payload)
             this.mode = 'selectFields'
+        },
+        checkIfLevelsAreValid() {
+            console.log('LEVELS: ', this.levels)
+            let valid = true
+            let foundEmpty = false
+            for (let i = 0; i < this.levels.length; i++) {
+                if (!this.levels[i].value) foundEmpty = true
+                if (foundEmpty && this.levels[i].value) {
+                    valid = false
+                    break
+                }
+            }
+
+            return valid
         },
         onFiltersChange(values: string[]) {
             this.selectedFilters = values

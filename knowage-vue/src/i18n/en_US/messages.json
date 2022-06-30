@@ -521,6 +521,7 @@
             "filterDialog": {
                 "ancestorDescendantWarning": "Warning: You selected some members that are in ancestor-descendant relationship: measures will be aggregated over both of them. Are you sure this is what you want?",
                 "driverProfileAttribute": "Driver/ProfileAttribute",
+                "filterLevelsError": "Multiple values must be filled consecutively. Some levels in between are missing values.",
                 "filterUsingDrivers": "Filter using drivers",
                 "infoMessage": "Selected items will be used as filters in the main table.",
                 "level": "Level",
