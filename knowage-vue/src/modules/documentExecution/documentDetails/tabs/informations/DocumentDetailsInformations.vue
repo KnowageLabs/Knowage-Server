@@ -291,6 +291,7 @@ import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import DocumentDetailsTree from './DocumentDetailsTree.vue'
+import { startOlap } from '../../dialogs/olapDesignerDialog/DocumentDetailOlapHelpers'
 
 const crypto = require('crypto')
 
@@ -370,11 +371,13 @@ export default defineComponent({
             driversPositions: infoDescriptor.driversPositions,
             listOfTemplates: [] as iTemplate[],
             imagePreviewUrl: null as any,
-            imagePreview: false
+            imagePreview: false,
+            user: null as any
         }
     },
     async created() {
         this.setData()
+        this.user = (this.$store.state as any).user
         await this.getAllTemplates()
     },
     watch: {
@@ -483,10 +486,22 @@ export default defineComponent({
             if (this.listOfTemplates.length === 0) {
                 this.$emit('openDesignerDialog')
             } else {
-               // this.$router.push(`/olap-designer/${this.document.id}`)
+                // this.$router.push(`/olap-designer/${this.document.id}`)
+                const activeTemplate = this.findActiveTemplate()
                 const sbiExecutionId = crypto.randomBytes(16).toString('hex')
-                 this.$router.push(`/olap-designer/${sbiExecutionId}?olapId=${this.document.id}&olapName=${this.document.name}&olapLabel=${this.document.label}`)
+                await startOlap(this.$http, this.user, sbiExecutionId, this.document, activeTemplate)
+                this.$router.push(`/olap-designer/${sbiExecutionId}?olapId=${this.document.id}&olapName=${this.document.name}&olapLabel=${this.document.label}`)
             }
+        },
+        findActiveTemplate() {
+            let activeTemplate = null as any
+            for (let i = 0; i < this.listOfTemplates.length; i++) {
+                if (this.listOfTemplates[i].active) {
+                    activeTemplate = this.listOfTemplates[i]
+                    break
+                }
+            }
+            return activeTemplate
         },
         translatedLabel(a) {
             return this.$t(a.label)

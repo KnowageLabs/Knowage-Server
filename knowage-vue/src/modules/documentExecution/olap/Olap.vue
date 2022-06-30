@@ -198,7 +198,8 @@ export default defineComponent({
             whatifInputOrdinal: 0 as Number,
             noTemplate: '' as string,
             reference: '' as string,
-            documentLabel: null as any
+            documentLabel: null as any,
+            filterLevels: {} as any
         }
     },
     async created() {
@@ -241,7 +242,6 @@ export default defineComponent({
             this.loading = false
         },
         async loadOlapDesigner() {
-            console.log(' >>> CALLED OLAP DESIGNER: ')
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `olap/designer/${this.documentId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then(async (response: AxiosResponse<any>) => {
@@ -280,7 +280,6 @@ export default defineComponent({
             this.loading = false
         },
         async loadOlapModel() {
-            console.log('CAAAAAAAAAAAAAAAAAAAALING loadOlapModel()')
             this.noTemplate = this.$route.query.noTemplate as string
             this.reference = this.$route.query.reference as string
 
@@ -291,9 +290,6 @@ export default defineComponent({
                     this.olap = response.data
                     // TODO
                     // await this.loadOlapDesigner()
-                    console.log('ROUTE: ', this.$route)
-                    console.log('noTemplate ', this.noTemplate)
-                    console.log('reference: ', this.reference)
                     if (this.noTemplate === 'true') {
                         this.olapDesigner = {
                             template: {
@@ -321,8 +317,6 @@ export default defineComponent({
                         }
                         this.olapDesigner.template.wrappedObject.olap.JSONTEMPLATE.XML_TAG_TEXT_CONTENT = JSON.stringify(this.olapDesigner.template.wrappedObject)
                     }
-
-                    console.log('CREATED OLAP DESINGER: ', this.olapDesigner)
 
                     if (this.olapDesigner) {
                         await this.loadParameters()
@@ -372,7 +366,6 @@ export default defineComponent({
             }
         },
         async loadModelConfig() {
-            console.log('loadModelConfig() CALLLLLLLLLLLLLED ')
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/modelconfig?SBI_EXECUTION_ID=${this.id}&NOLOADING=undefined`, this.olap.modelConfig, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
@@ -547,7 +540,6 @@ export default defineComponent({
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/axis/moveDimensionToOtherAxis?SBI_EXECUTION_ID=${this.id}`, toSend, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then((response: AxiosResponse<any>) => {
                     this.olap = response.data
-                    console.log(this.olapDesigner)
                     if (this.olapDesigner && this.olapDesigner.template) {
                         this.olapDesigner.template.wrappedObject.olap.MDXMondrianQuery.XML_TAG_TEXT_CONTENT = this.olap.MDXWITHOUTCF
                         this.olapDesigner.template.wrappedObject.olap.MDXQUERY.XML_TAG_TEXT_CONTENT = this.olap.MDXWITHOUTCF
@@ -891,19 +883,57 @@ export default defineComponent({
             this.selectedFilter = null
         },
         async applyFilters(payload: any) {
-            console.log(' --- applyFilters() - payload: ', payload)
             this.filterDialogVisible = false
             this.loading = true
             if (payload.type === 'slicer') {
                 delete payload.type
-                if (this.olapDesignerMode) this.updateDynamicSlicer(payload)
+                if (this.olapDesignerMode) {
+                    this.updateDynamicSlicer(payload)
+                }
                 await this.sliceOLAP(payload)
+                if (this.olapDesignerMode && payload.DYNAMIC_SLICER) {
+                    this.filterLevels[payload.hierarchy] = payload
+                    this.updateOlapDesignerMDXQueryParameters()
+                } else {
+                    delete this.filterLevels[payload.hierarchy]
+                }
             } else {
                 await this.placeMembersOnAxis(payload)
             }
 
             this.formatOlapTable()
+            this.olapDesigner.template.wrappedObject.olap.MDXMondrianQuery.XML_TAG_TEXT_CONTENT = this.olap.MDXWITHOUTCF
             this.loading = false
+        },
+        updateOlapDesignerMDXQueryParameters() {
+            console.log('--- --- FILTER LEVELS: ', this.filterLevels)
+            if (!this.olapDesigner) return
+            let query = this.olap.MDXWITHOUTCF
+            this.olapDesigner.template.wrappedObject.olap.MDXMondrianQuery.XML_TAG_TEXT_CONTENT = query
+            this.olapDesigner.template.wrappedObject.olap.MDXQUERY.parameter = []
+
+            Object.keys(this.filterLevels).forEach((key: string) => {
+                const payload = this.filterLevels[key]
+
+                const uniqueName = payload.rootNode?.id
+                let replaceValue = ''
+                for (let i = 0; i < payload.DYNAMIC_SLICER.length; i++) {
+                    const slicer = payload.DYNAMIC_SLICER[i]
+                    if (!slicer.value) break
+                    console.log('SLICER: ', slicer)
+                    const paramName = slicer.url ? '$P{' + slicer.value + '}' : '${' + slicer.value + '}'
+
+                    if (i === 0) {
+                        replaceValue = payload.hierarchy
+                    }
+                    replaceValue += `.[${paramName}]`
+
+                    if (slicer.url) this.olapDesigner.template.wrappedObject.olap.MDXQUERY.parameter.push({ name: slicer.url, as: slicer.url })
+                }
+                query = query.replaceAll(uniqueName, replaceValue)
+            })
+            this.olapDesigner.template.wrappedObject.olap.MDXQUERY.XML_TAG_TEXT_CONTENT = query
+            console.log('OLAP DESIGNER: ', this.olapDesigner)
         },
         async sliceOLAP(payload) {
             await this.$http
@@ -926,7 +956,6 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${documentLabel}/parameters`)
                 .then((response: AxiosResponse<any>) => (this.parameters = response.data ? response.data.results : []))
                 .catch(() => {})
-            console.log(' --- LOADED PARAMETERS: ', this.parameters)
         },
         async loadProfileAttributes() {
             await this.$http
@@ -964,7 +993,8 @@ export default defineComponent({
             this.scenarioWizardVisible = false
         },
         updateDynamicSlicer(payload: any) {
-            this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER = payload.DYNAMIC_SLICER?.filter((level: any) => level.DRIVER || level.PROFILE_ATTRIBUTE).map((level: any) => {
+            if (!this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER) this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER = []
+            const temp = payload.DYNAMIC_SLICER?.filter((level: any) => level.DRIVER || level.PROFILE_ATTRIBUTE).map((level: any) => {
                 return {
                     HIERARCHY: level.HIERARCHY,
                     LEVEL: level.LEVEL,
@@ -972,6 +1002,25 @@ export default defineComponent({
                     PROFILE_ATTRIBUTE: level.PROFILE_ATTRIBUTE
                 }
             })
+
+            console.log('TEMP: ', temp)
+            if (!temp) {
+                for (let i = this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.length - 1; i >= 0; i--) {
+                    if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER[i].HIERARCHY === payload.hierarchy) this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.splice(i, 1)
+                }
+            } else {
+                temp?.forEach((el: any) => {
+                    console.log(' --- !!! ---: ', el)
+                    const index = this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.findIndex((tempEl: any) => tempEl.HIERARCHY === el.HIERARCHY && tempEl.LEVEL === el.LEVEL)
+                    console.log(' --- !!! ---: index ', index)
+                    if (index !== -1) {
+                        this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER[index] = el
+                    } else {
+                        this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.push(el)
+                    }
+                })
+            }
+
             if (!this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER || this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.length === 0) delete this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER
         },
         exportExcel() {
