@@ -94,11 +94,8 @@ public class FunctionCatalogAPIImpl implements FunctionCatalogAPI {
 		String description = function.getDescription();
 		String benchmark = function.getBenchmark();
 
-		xssUtils.isSafe(description);
-		xssUtils.isSafe(benchmark);
-
-		description = xssUtils.sanitize(description);
-		benchmark = xssUtils.sanitize(benchmark);
+		description = sanitizeXSS(description);
+		benchmark = sanitizeXSS(benchmark);
 
 		function.setDescription(description);
 		function.setBenchmark(benchmark);
