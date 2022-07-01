@@ -248,10 +248,6 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="CreateCockpitFunctionality" roleType="MODEL_ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="HierarchiesManagement" roleType="ADMIN" />
-	<ROLE_TYPE_USER_FUNCTIONALITY
-		userFunctionality="HierarchiesManagement" roleType="DEV_ROLE" />	
-	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="CreateSocialAnalysis" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ViewSocialAnalysis" roleType="ADMIN" />

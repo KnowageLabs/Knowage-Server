@@ -2,6 +2,7 @@ package it.eng.knowage.boot.filter;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
@@ -67,6 +68,33 @@ public class HtmlSanitizer {
 		LOGGER.debug("End of sanitizing!");
 
 		return output;
+	}
+
+	public boolean isSafe(String input) {
+
+		LOGGER.debug("Checking: {}", input);
+
+		AtomicBoolean valid = new AtomicBoolean(true);
+
+		policy.sanitize(input, new HtmlChangeListener<AtomicBoolean>() {
+
+			@Override
+			public void discardedTag(AtomicBoolean valid, String elementName) {
+				LOGGER.debug("Discarded element: {}", elementName);
+				valid.set(false);
+			}
+
+			@Override
+			public void discardedAttributes(AtomicBoolean valid, String tagName, String... attributeNames) {
+				LOGGER.debug("In tag {}, discarded attributes: {}", tagName, Joiner.on(", ").join(attributeNames));
+				valid.set(false);
+			}
+
+		}, valid);
+
+		LOGGER.debug("End of checking!");
+
+		return valid.get();
 	}
 
 	private boolean isSrcAttributeInWhitelist(String url) {

@@ -36,7 +36,8 @@ import it.eng.spagobi.utilities.whitelist.WhiteList;
 public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
 	private static final Logger LOGGER = Logger.getLogger(XSSRequestWrapper.class);
-	private static WhiteList whitelist = WhiteList.getInstance();
+	private static final WhiteList whitelist = WhiteList.getInstance();
+	private static final XSSUtils xssUtils = new XSSUtils();
 
 	public XSSRequestWrapper(HttpServletRequest servletRequest) {
 		super(servletRequest);
@@ -188,7 +189,9 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 			objectPattern = Pattern.compile("&lt;object(.*?/)&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 			value = objectPattern.matcher(value).replaceAll("");
 
-			if (!value.equalsIgnoreCase(initialValue)) {
+			boolean isValid = xssUtils.isSafe(value);
+
+			if (!value.equalsIgnoreCase(initialValue) || !isValid) {
 				LOGGER.warn("Message: detected a web attack through injection");
 				throw new InvalidHtmlPayloadException(initialValue);
 			}
