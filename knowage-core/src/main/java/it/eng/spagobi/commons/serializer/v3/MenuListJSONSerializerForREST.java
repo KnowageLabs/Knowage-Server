@@ -467,14 +467,14 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						List<SbiAuthorizationsRoles> associatedAuthRoles = DAOFactory.getRoleDAO().LoadAuthorizationsRolesAssociatedToRole(role.getId());
 
 						isAuthorized = associatedAuthRoles.stream().anyMatch(x -> x.getSbiAuthorizations().getName().equals(lic));
-
-						if (isAuthorized)
-							break;
 					}
+					if (isAuthorized)
+						break;
 				}
+				if (isAuthorized)
+					break;
 
 			}
-			;
 		}
 
 		return isAuthorized;
