@@ -198,6 +198,7 @@ export default defineComponent({
             whatifInputOrdinal: 0 as Number,
             noTemplate: '' as string,
             reference: '' as string,
+            olapEngine: '' as any,
             documentLabel: null as any,
             filterLevels: {} as any
         }
@@ -236,6 +237,7 @@ export default defineComponent({
                 this.documentId = this.$route.query.olapId
                 this.documentName = this.$route.query.olapName
                 this.documentLabel = this.$route.query.olapLabel
+                this.olapEngine = this.$route.query.engine
             }
             await this.loadOlapModel()
             this.loadCustomView()
@@ -282,6 +284,7 @@ export default defineComponent({
         async loadOlapModel() {
             this.noTemplate = this.$route.query.noTemplate as string
             this.reference = this.$route.query.reference as string
+            this.reference = this.$route.query.engine as string
 
             this.loading = true
             await this.$http
@@ -292,6 +295,7 @@ export default defineComponent({
                     // await this.loadOlapDesigner()
                     if (this.noTemplate === 'true') {
                         this.olapDesigner = {
+                            ENGINE: this.olapEngine,
                             template: {
                                 wrappedObject: {
                                     olap: {

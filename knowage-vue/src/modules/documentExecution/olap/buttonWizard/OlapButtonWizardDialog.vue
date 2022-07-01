@@ -45,131 +45,138 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent, PropType } from 'vue'
-    import { iButton } from '../Olap'
-    import Checkbox from 'primevue/checkbox'
-    import Column from 'primevue/column'
-    import DataTable from 'primevue/datatable'
-    import Dialog from 'primevue/dialog'
-    import olapButtonWizardDialogDescriptor from './OlapButtonWizardDialogDescriptor.json'
+import { defineComponent, PropType } from 'vue'
+import { iButton } from '../Olap'
+import Checkbox from 'primevue/checkbox'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import Dialog from 'primevue/dialog'
+import olapButtonWizardDialogDescriptor from './OlapButtonWizardDialogDescriptor.json'
 
-    export default defineComponent({
-        name: 'olap-button-wizard-dialog',
-        components: { Checkbox, Column, DataTable, Dialog },
-        props: { visible: { type: Boolean }, sbiExecutionId: { type: String }, propButtons: { type: Array as PropType<iButton[]> }, propOlapDesigner: { type: Object } },
-        data() {
-            return {
-                olapButtonWizardDialogDescriptor,
-                buttons: [] as iButton[],
-                wizardButtons: [] as any[],
-                selected: {} as any,
-                allVisibleSelected: false,
-                allClickedSelected: false,
-                olapDesigner: null as any
-            }
-        },
-        watch: {
-            propButtons() {
-                this.loadButtons()
-            },
-            propOlapDesigner() {
-                this.loadDesigner()
-            },
-            visible(value: boolean) {
-                if (value) {
-                    this.loadButtons()
-                    this.loadDesigner()
-                }
-            }
-        },
-        created() {
+export default defineComponent({
+    name: 'olap-button-wizard-dialog',
+    components: { Checkbox, Column, DataTable, Dialog },
+    props: { visible: { type: Boolean }, sbiExecutionId: { type: String }, propButtons: { type: Array as PropType<iButton[]> }, propOlapDesigner: { type: Object } },
+    data() {
+        return {
+            olapButtonWizardDialogDescriptor,
+            buttons: [] as iButton[],
+            wizardButtons: [] as any[],
+            selected: {} as any,
+            allVisibleSelected: false,
+            allClickedSelected: false,
+            olapDesigner: null as any
+        }
+    },
+    watch: {
+        propButtons() {
             this.loadButtons()
+        },
+        propOlapDesigner() {
             this.loadDesigner()
         },
-        methods: {
-            loadButtons() {
-                this.buttons = this.propButtons as iButton[]
-            },
-            loadDesigner() {
-                this.olapDesigner = this.propOlapDesigner as any
-                if (this.olapDesigner) {
-                    this.loadWizardButtons()
-                }
-            },
-            loadWizardButtons() {
-                this.wizardButtons = this.buttons.filter((el: iButton) => el.category !== 'OLAP_DESIGNER')
-
-                if (this.olapDesigner?.ENGINE === 'knowageolapengine') {
-                    this.wizardButtons = this.wizardButtons.filter((el: iButton) => el.category !== 'WHAT_IF')
-                }
-
-                this.checkIfAllSelected()
-            },
-            checkIfColumnSelected(property: string) {
-                let allChecked = true
-                for (let i = 0; i < this.wizardButtons.length; i++) {
-                    if ((property === 'visible' || (property === 'clicked' && this.wizardButtons[i].clickable)) && !this.wizardButtons[i][property]) {
-                        allChecked = false
-                        break
-                    }
-                }
-                return allChecked
-            },
-            checkIfAllSelected() {
-                this.allVisibleSelected = this.checkIfColumnSelected('visible')
-                this.allClickedSelected = this.checkIfColumnSelected('clicked')
-            },
-            setAllChecked(type: string) {
-                this.wizardButtons.forEach((button: iButton) => {
-                    if (type === 'clicked' && button.clickable) {
-                        button.clicked = this.allClickedSelected
-                    } else if (type === 'visible') {
-                        button.visible = this.allVisibleSelected
-                    }
-                    this.changeCheckedValue(button, type)
-                })
-
-                this.checkIfAllSelected()
-            },
-            setChecked(button: any, type: string) {
-                this.changeCheckedValue(button, type)
-                this.checkIfAllSelected()
-            },
-            changeCheckedValue(button: any, type: string) {
-                if (type === 'clicked' && button.clicked) {
-                    button.visible = true
-                } else if (type === 'visible' && !button.visible) {
-                    button.clicked = false
-                }
-            },
-            closeDialog() {
-                this.$emit('close')
-                this.wizardButtons = []
-            },
-            save() {
-                const toolbarButtonKeys = Object.keys(this.olapDesigner.template.wrappedObject.olap.TOOLBAR)
-
-                this.wizardButtons.forEach((tempButton: iButton) => {
-                    const index = toolbarButtonKeys.indexOf(tempButton.name)
-                    if (index >= 0) {
-                        this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].visible = tempButton.visible
-                        this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].clicked = tempButton.clicked
-                    }
-                })
-                this.$emit('close')
+        visible(value: boolean) {
+            if (value) {
+                this.loadButtons()
+                this.loadDesigner()
             }
         }
-    })
+    },
+    created() {
+        this.loadButtons()
+        this.loadDesigner()
+    },
+    methods: {
+        loadButtons() {
+            this.buttons = this.propButtons as iButton[]
+        },
+        loadDesigner() {
+            this.olapDesigner = this.propOlapDesigner as any
+            if (this.olapDesigner) {
+                this.loadWizardButtons()
+            }
+        },
+        loadWizardButtons() {
+            this.wizardButtons = this.buttons.filter((el: iButton) => el.category !== 'OLAP_DESIGNER')
+
+            console.log('OLAP DESIGNER: ', this.olapDesigner)
+            if (this.olapDesigner?.ENGINE === 'knowageolapengine') {
+                this.wizardButtons = this.wizardButtons.filter((el: iButton) => el.category !== 'WHAT_IF')
+            }
+
+            this.checkIfAllSelected()
+        },
+        checkIfColumnSelected(property: string) {
+            let allChecked = true
+            for (let i = 0; i < this.wizardButtons.length; i++) {
+                if ((property === 'visible' || (property === 'clicked' && this.wizardButtons[i].clickable)) && !this.wizardButtons[i][property]) {
+                    allChecked = false
+                    break
+                }
+            }
+            return allChecked
+        },
+        checkIfAllSelected() {
+            this.allVisibleSelected = this.checkIfColumnSelected('visible')
+            this.allClickedSelected = this.checkIfColumnSelected('clicked')
+        },
+        setAllChecked(type: string) {
+            this.wizardButtons.forEach((button: iButton) => {
+                if (type === 'clicked' && button.clickable) {
+                    button.clicked = this.allClickedSelected
+                } else if (type === 'visible') {
+                    button.visible = this.allVisibleSelected
+                }
+                this.changeCheckedValue(button, type)
+            })
+
+            this.checkIfAllSelected()
+        },
+        setChecked(button: any, type: string) {
+            this.changeCheckedValue(button, type)
+            this.checkIfAllSelected()
+        },
+        changeCheckedValue(button: any, type: string) {
+            if (type === 'clicked' && button.clicked) {
+                button.visible = true
+            } else if (type === 'visible' && !button.visible) {
+                button.clicked = false
+            }
+        },
+        closeDialog() {
+            this.$emit('close')
+            this.wizardButtons = []
+        },
+        save() {
+            console.log('save:', this.wizardButtons)
+            if (!this.olapDesigner.template.wrappedObject.olap.TOOLBAR) this.olapDesigner.template.wrappedObject.olap.TOOLBAR = {}
+            const toolbarButtonKeys = Object.keys(this.olapDesigner.template.wrappedObject.olap.TOOLBAR)
+            console.log('WIZARD BUTTONSD:', this.wizardButtons)
+
+            this.wizardButtons.forEach((tempButton: iButton) => {
+                console.log('TEMP BUTTON: ', tempButton)
+                const index = toolbarButtonKeys.indexOf(tempButton.name)
+                if (index >= 0) {
+                    this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].visible = tempButton.visible
+                    this.olapDesigner.template.wrappedObject.olap.TOOLBAR[toolbarButtonKeys[index]].clicked = tempButton.clicked
+                } else {
+                    this.olapDesigner.template.wrappedObject.olap.TOOLBAR[tempButton.name] = { visible: tempButton.visible, clicked: tempButton.clicked }
+                }
+            })
+            this.$emit('close')
+        }
+    }
+})
 </script>
 
 <style lang="scss">
-    #olap-button-wizard-dialog .p-dialog-header,
-    #olap-button-wizard-dialog .p-dialog-content {
-        padding: 0;
-    }
-    #olap-button-wizard-dialog .p-dialog-content {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-    }
+#olap-button-wizard-dialog .p-dialog-header,
+#olap-button-wizard-dialog .p-dialog-content {
+    padding: 0;
+}
+#olap-button-wizard-dialog .p-dialog-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
 </style>

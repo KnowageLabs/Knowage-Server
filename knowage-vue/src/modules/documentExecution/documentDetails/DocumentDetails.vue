@@ -410,8 +410,8 @@ export default defineComponent({
             this.designerDialogVisible = true
         },
         onDesignerStart(document: any) {
-            console.log('STTTTTTTTTTTTTTTTTART!')
-            this.$router.push(`/olap-designer/${document.sbiExecutionId}?olapId=${document.id}&olapName=${document.name}&olapLabel=${document.label}&noTemplate=${true}&reference=${document.reference}`)
+            console.log('STTTTTTTTTTTTTTTTTART!', document)
+            this.$router.push(`/olap-designer/${document.sbiExecutionId}?olapId=${document.id}&olapName=${document.name}&olapLabel=${document.label}&noTemplate=${true}&reference=${document.reference}&engine=${document.engine}`)
         }
     }
 })
