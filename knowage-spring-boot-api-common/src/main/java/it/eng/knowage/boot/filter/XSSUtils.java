@@ -27,7 +27,7 @@ public class XSSUtils {
 		this.whitelist = whitelist;
 	}
 
-	public String stripXSS(String input) {
+	public String sanitize(String input) {
 
 		LOGGER.debug("Sanitizing: {}", input);
 

@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.UnaryOperator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -47,17 +48,38 @@ public class FunctionCatalogAPIImpl implements FunctionCatalogAPI {
 	private static final SbiFunctionCatalog2FunctionCompleteDTO TO_FUNCTION_COMPLETE_DTO = new SbiFunctionCatalog2FunctionCompleteDTO();
 	private static final FunctionCompleteDTO2SbiCatalogFunction TO_SBI_CATALOG_FUNCTION = new FunctionCompleteDTO2SbiCatalogFunction();
 
+	private XSSUtils xssUtils = new XSSUtils();
+	private final UnaryOperator<FunctionCompleteDTO> sanitizeFunctionCompleteDTO = e -> {
+		String description = e.getDescription();
+		String benchmark = e.getBenchmark();
+
+		description = xssUtils.sanitize(description);
+		benchmark = xssUtils.sanitize(benchmark);
+
+		e.setDescription(description);
+		e.setBenchmark(benchmark);
+
+		return e;
+	};
+
 	@Autowired
 	private SbiCatalogFunctionRepository repository;
 
 	@Override
 	public List<FunctionDTO> find(String searchStr) {
-		return repository.findAll(searchStr).stream().map(TO_FUNCTION_DTO).collect(toList());
+		return repository.findAll(searchStr)
+				.stream()
+				.map(TO_FUNCTION_DTO)
+				.collect(toList());
 	}
 
 	@Override
 	public List<FunctionCompleteDTO> findComplete(String searchStr) {
-		return repository.findAll(searchStr).stream().map(TO_FUNCTION_COMPLETE_DTO).collect(toList());
+		return repository.findAll(searchStr)
+				.stream()
+				.map(TO_FUNCTION_COMPLETE_DTO)
+				.map(sanitizeFunctionCompleteDTO)
+				.collect(toList());
 	}
 
 	@Override
@@ -72,18 +94,22 @@ public class FunctionCatalogAPIImpl implements FunctionCatalogAPI {
 		String description = function.getDescription();
 		String benchmark = function.getBenchmark();
 
-		XSSUtils xssUtils = new XSSUtils();
-
 		xssUtils.isSafe(description);
 		xssUtils.isSafe(benchmark);
 
-		description = xssUtils.stripXSS(description);
-		benchmark = xssUtils.stripXSS(benchmark);
+		description = xssUtils.sanitize(description);
+		benchmark = xssUtils.sanitize(benchmark);
 
-		SbiCatalogFunction beFunction = Optional.ofNullable(function).map(TO_SBI_CATALOG_FUNCTION)
+		function.setDescription(description);
+		function.setBenchmark(benchmark);
+
+		SbiCatalogFunction beFunction = Optional.ofNullable(function)
+				.map(TO_SBI_CATALOG_FUNCTION)
 				.orElseThrow(() -> new KnowageRuntimeException("Function cannot be null"));
 
-		return Optional.ofNullable(repository.create(beFunction)).map(TO_FUNCTION_COMPLETE_DTO).get();
+		return Optional.ofNullable(repository.create(beFunction))
+				.map(TO_FUNCTION_COMPLETE_DTO)
+				.get();
 	}
 
 	@Override
@@ -92,13 +118,19 @@ public class FunctionCatalogAPIImpl implements FunctionCatalogAPI {
 		String description = function.getDescription();
 		String benchmark = function.getBenchmark();
 
-		description = stripXSS(description);
-		benchmark = stripXSS(benchmark);
+		description = sanitizeXSS(description);
+		benchmark = sanitizeXSS(benchmark);
 
-		SbiCatalogFunction beFunction = Optional.ofNullable(function).map(TO_SBI_CATALOG_FUNCTION)
+		function.setDescription(description);
+		function.setBenchmark(benchmark);
+
+		SbiCatalogFunction beFunction = Optional.ofNullable(function)
+				.map(TO_SBI_CATALOG_FUNCTION)
 				.orElseThrow(() -> new KnowageRuntimeException("Function cannot be null"));
 
-		return Optional.ofNullable(repository.update(beFunction)).map(TO_FUNCTION_COMPLETE_DTO).get();
+		return Optional.ofNullable(repository.update(beFunction))
+				.map(TO_FUNCTION_COMPLETE_DTO)
+				.get();
 	}
 
 	@Override
@@ -106,16 +138,14 @@ public class FunctionCatalogAPIImpl implements FunctionCatalogAPI {
 		repository.delete(id.toString());
 	}
 
-	private String stripXSS(String input) {
-		XSSUtils xssUtils = new XSSUtils();
-
+	private String sanitizeXSS(String input) {
 		boolean isSafe = xssUtils.isSafe(input);
 
 		if (!isSafe) {
 			throw new InvalidHtmlPayloadException(input);
 		}
 
-		return xssUtils.stripXSS(input);
+		return xssUtils.sanitize(input);
 	}
 
 }

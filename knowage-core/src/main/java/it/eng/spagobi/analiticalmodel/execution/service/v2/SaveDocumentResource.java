@@ -98,13 +98,16 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 				String action = saveDocumentDTO.getAction();
 				logger.debug("Action type is equal to [" + action + "]");
 				if (DOC_SAVE.equalsIgnoreCase(action)) {
+
+					checkAndSanitizeXSS(saveDocumentDTO);
+
 					id = doInsertDocument(saveDocumentDTO, error);
 				} else if (DOC_UPDATE.equalsIgnoreCase(action)) {
 					logger.error("DOC_UPDATE action is no more supported");
 					throw new SpagoBIServiceException(saveDocumentDTO.getPathInfo(), "sbi.document.unsupported.udpateaction");
 				} else if (MODIFY_COCKPIT.equalsIgnoreCase(action) || MODIFY_KPI.equalsIgnoreCase(action)) {
 
-					checkAndSanitizeForXSS(saveDocumentDTO);
+					checkAndSanitizeXSS(saveDocumentDTO);
 
 					id = doModifyDocument(saveDocumentDTO, action, error);
 				} else {
@@ -126,7 +129,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	private void checkAndSanitizeForXSS(SaveDocumentDTO saveDocumentDTO) {
+	private void checkAndSanitizeXSS(SaveDocumentDTO saveDocumentDTO) {
 		XSSUtils xssUtils = new XSSUtils();
 
 		CustomDataDTO customDataDTO = saveDocumentDTO.getCustomDataDTO();
@@ -150,7 +153,20 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 						throw new InvalidHtmlPayloadException(html);
 					}
 
-					widget.put("htmlToRender", xssUtils.stripXSS(html));
+					widget.put("htmlToRender", xssUtils.sanitize(html));
+				} else if ("customchart".equals(type)) {
+
+					Map<String, Object> html = (Map<String, Object>) widget.get("html");
+
+					String code = (String) html.get("code");
+
+					boolean isSafe = xssUtils.isSafe(code);
+
+					if (!isSafe) {
+						throw new InvalidHtmlPayloadException(code);
+					}
+
+					html.put("code", xssUtils.sanitize(code));
 				}
 			}
 
