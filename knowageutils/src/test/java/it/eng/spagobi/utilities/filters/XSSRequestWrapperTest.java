@@ -61,6 +61,8 @@ public class XSSRequestWrapperTest {
 			"<audio src=\"https://www.youtube.com/image.png\"></audio>",
 			"<video src=\"https://www.youtube.com/image.png\"></video>",
 			"<a href=\"https://www.youtube.com/mylink\">anchor</a>","<a href=\"/knowage/icons/test.ico\">anchor</a>",
+			"<div kn-repeat=\"true\" limit=\"1\"></div>",
+			"<div>[kn-column=\"ciccio\" format]</div>",
 			"");
 
 	private static final String VALID_BUT_NOT_SANITIZED = Joiner.on('\n').join(
