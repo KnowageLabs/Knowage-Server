@@ -291,8 +291,6 @@ export default defineComponent({
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/model/?SBI_EXECUTION_ID=${this.id}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then(async (response: AxiosResponse<any>) => {
                     this.olap = response.data
-                    // TODO
-                    await this.loadOlapDesigner()
                     if (this.noTemplate === 'true') {
                         this.olapDesigner = {
                             ENGINE: this.olapEngine,
