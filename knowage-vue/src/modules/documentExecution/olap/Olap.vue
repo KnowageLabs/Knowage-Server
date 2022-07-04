@@ -898,6 +898,7 @@ export default defineComponent({
                 }
             } else {
                 await this.placeMembersOnAxis(payload)
+                this.updateOlapDesignerMDXQueryParameters()
             }
 
             this.formatOlapTable()
@@ -907,6 +908,7 @@ export default defineComponent({
         updateOlapDesignerMDXQueryParameters() {
             if (!this.olapDesigner) return
             let query = this.olap.MDXWITHOUTCF
+
             this.olapDesigner.template.wrappedObject.olap.MDXMondrianQuery.XML_TAG_TEXT_CONTENT = query
             this.olapDesigner.template.wrappedObject.olap.MDXQUERY.parameter = []
 
