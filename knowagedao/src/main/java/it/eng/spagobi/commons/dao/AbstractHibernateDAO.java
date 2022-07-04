@@ -21,10 +21,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -36,12 +32,10 @@ import org.hibernate.Transaction;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
-import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -585,32 +579,6 @@ public class AbstractHibernateDAO {
 		int total = results.getRowNumber() + 1;
 		results.close();
 		return total;
-	}
-
-	protected final JsonObjectBuilder createCommonDataForEvent() {
-
-		UserProfile userProfile = UserProfileManager.getProfile();
-
-		JsonObject userProfileAsJson = Json.createObjectBuilder()
-				.add("id", userProfile.getUserId().toString())
-				.add("username", userProfile.getUserName().toString())
-				.build();
-
-		return Json.createObjectBuilder()
-			.add("userProfile", userProfileAsJson);
-	}
-
-	protected final JsonObject fromSbiDomainsToJsonObject(SbiDomains e) {
-		JsonObject ret = Json.createObjectBuilder()
-				.add("domainCd", e.getDomainCd())
-				.add("domainNm", e.getDomainNm())
-				.add("valueCd", e.getValueCd())
-				.add("valueDs", e.getValueDs())
-				.add("valueNm", e.getValueNm())
-				.add("valueId", e.getValueId())
-				.build();
-
-		return ret;
 	}
 
 }

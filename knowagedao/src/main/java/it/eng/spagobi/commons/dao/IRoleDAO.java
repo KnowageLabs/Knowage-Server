@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.dao.es.RoleEventsEmittingCommand;
 import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
@@ -238,5 +239,9 @@ public interface IRoleDAO extends ISpagoBIDao {
 	 *             If an Exception occurred
 	 */
 	public void modifyRole(Role aRole) throws EMFUserError;
+
+	// Utils
+
+	void setEventEmittingCommand(RoleEventsEmittingCommand command);
 
 }
