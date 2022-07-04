@@ -706,6 +706,7 @@
         "everyWeek": "Every {week} week/s",
         "everyYear": "Every {year} year/s",
         "in": "In",
+        "invalidCronExpression": "Invalid cron expression",
         "pauseSchedulation": "Pause schedulation",
         "resumeSchedulation": "Resume schedulation",
         "schedulationPaused": "Schedulation paused",

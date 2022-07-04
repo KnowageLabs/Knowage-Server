@@ -225,7 +225,7 @@
                 this.dataset = response.data[0]
             })
             if (this.dataset) {
-                this.initDsMetadata()
+                await this.initDsMetadata()
                 this.initTransformations()
                 this.initWebsocket()
 
@@ -433,17 +433,19 @@
                 if (this.existingInstanceId) this.instanceId = this.existingInstanceId
                 if (this.existingDataset) {
                     let dsMeta = JSON.parse(this.existingDataset)
-                    this.preparedDsMeta = {}
-                    this.preparedDsMeta['label'] = dsMeta.label
-                    this.preparedDsMeta['name'] = dsMeta.name
-                    this.preparedDsMeta['description'] = dsMeta.description
-                    this.preparedDsMeta['id'] = dsMeta.id
+                    let tmp = {}
+                    tmp['label'] = dsMeta.label
+                    tmp['name'] = dsMeta.name
+                    tmp['description'] = dsMeta.description
+                    tmp['id'] = dsMeta.id
                     await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.id).then((response: AxiosResponse<any>) => {
                         let instance = response.data.instance
                         if (instance.config) {
-                            this.preparedDsMeta['config'] = instance.config
+                            tmp['config'] = instance.config
                         }
                     })
+
+                    this.preparedDsMeta = tmp
                 }
             },
             getColHeader(metadata: Array<any>, idx: Number): string {
