@@ -41,6 +41,7 @@ public class HtmlSanitizer {
 				.allowAttributes("href").matching(this::isHrefAttributeInWhitelist).onElements("a")
 				.allowAttributes("id").onElements("div")
 				.allowAttributes("src").matching(this::isSrcAttributeInWhitelist).onElements("audio", "iframe", "img", "video")
+				.allowAttributes("kn-cross", "kn-if", "kn-import", "kn-repeat", "kn-preview", "kn-selection-column", "kn-selection-value", "limit").globally()
 				.allowElements("a", "audio", "article", "figure", "footer", "header", "iframe", "img", "pre", "span", "tbody", "tfoot", "thead", "table", "td", "th", "tr", "video")
 				.allowUrlProtocols("data")
 				.allowWithoutAttributes("figure", "span")

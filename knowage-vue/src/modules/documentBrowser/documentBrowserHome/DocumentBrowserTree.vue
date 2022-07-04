@@ -49,9 +49,15 @@ export default defineComponent({
             this.selectedFolderKey[this.selectedFolder.key] = true
             let temp = null as any
             for (let i = 0; i < this.nodes.length; i++) {
-                temp = this.findNode(this.nodes[i], this.selectedFolder.id)
+                temp = this.findNode(this.nodes[i], this.selectedFolder.id, 'id')
                 if (temp) {
                     this.selectedFolderKey[temp.key] = true
+                    this.expandedKeys[temp.key] = true
+                    const tempPath = this.selectedFolder.path?.substring(1)?.split('/')
+                    tempPath?.forEach((el: string) => {
+                        const tempFolderByCode = this.findNode(this.nodes[i], el, 'code')
+                        if (tempFolderByCode) this.expandedKeys[tempFolderByCode.key] = true
+                    })
                     break
                 }
             }
@@ -171,13 +177,13 @@ export default defineComponent({
                 }
             }
         },
-        findNode(node: iNode, folderId: number) {
-            if (node.data.id === folderId) {
+        findNode(node: iNode, value: number | string, property: string) {
+            if (node.data[property] === value) {
                 return node
             } else if (node.children != null) {
                 let result = null as any
                 for (let i = 0; result == null && i < node.children.length; i++) {
-                    result = this.findNode(node.children[i], folderId)
+                    result = this.findNode(node.children[i], value, property)
                 }
                 return result
             }
