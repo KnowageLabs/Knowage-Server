@@ -37,7 +37,7 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 				.add("id", attribute.getId().getId())
 				.add("attributeId", attribute.getSbiAttribute().getAttributeId())
 				.add("name", attribute.getSbiAttribute().getAttributeName())
-				.add("value", attribute.getAttributeValue())
+				.add("value", Optional.ofNullable(attribute.getAttributeValue()).orElse(""))
 				.build();
 
 		SbiEs event = createUserEvent(attribute.getSbiUser())
@@ -56,7 +56,7 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 				.add("id", attribute.getId().getId())
 				.add("attributeId", attribute.getId().getAttributeId())
 				.add("name", attribute.getSbiAttribute().getAttributeName())
-				.add("value", attribute.getAttributeValue())
+				.add("value", Optional.ofNullable(attribute.getAttributeValue()).orElse(""))
 				.build();
 
 		SbiEs event = createUserEvent(attribute.getSbiUser())
@@ -262,7 +262,7 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 				.add("id", attribute.getId().getId())
 				.add("attributeId", attribute.getSbiAttribute().getAttributeId())
 				.add("name", attribute.getSbiAttribute().getAttributeName())
-				.add("value", attribute.getAttributeValue())
+				.add("value", Optional.ofNullable(attribute.getAttributeValue()).orElse(""))
 				.build();
 
 		SbiEs event = createUserEvent(attribute.getSbiUser())
