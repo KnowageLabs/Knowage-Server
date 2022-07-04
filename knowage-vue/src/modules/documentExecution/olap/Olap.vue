@@ -192,7 +192,6 @@ export default defineComponent({
             profileAttributes: [] as iProfileAttribute[],
             saveVersionDialogVisible: false,
             deleteVersionDialogVisible: false,
-            whatIfMode: false,
             whatifInputNewValue: 0 as Number,
             whatifInputOldValue: 0 as Number,
             whatifInputOrdinal: 0 as Number,
@@ -216,6 +215,11 @@ export default defineComponent({
     computed: {
         olapHasScenario() {
             if (this.olapDesigner?.template?.wrappedObject?.olap?.SCENARIO) {
+                return true
+            } else return false
+        },
+        whatIfMode(){
+            if (this.olapDesigner?.ENGINE === 'knowagewhatifengine') {
                 return true
             } else return false
         }
@@ -248,7 +252,6 @@ export default defineComponent({
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `olap/designer/${this.documentId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then(async (response: AxiosResponse<any>) => {
                     this.olapDesigner = response.data
-                    this.whatIfMode = this.olapDesigner?.ENGINE === 'knowagewhatifengine'
                 })
                 .catch(() => {})
         },
