@@ -242,6 +242,7 @@
                         }
                     })
                     .then((response: AxiosResponse<any>) => {
+                        this.columns = []
                         let previewColumns = response.data.metaData.fields
                         previewColumns.forEach((el: any) => {
                             typeof el != 'object' ? '' : this.columns.push(el)
