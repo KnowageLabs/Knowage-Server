@@ -4,6 +4,7 @@
     },
     "typeOptions": [
         {
+            "disabled": true,
             "label": "documentExecution.documentDetails.designerDialog.xmla",
             "value": "xmla"
         },

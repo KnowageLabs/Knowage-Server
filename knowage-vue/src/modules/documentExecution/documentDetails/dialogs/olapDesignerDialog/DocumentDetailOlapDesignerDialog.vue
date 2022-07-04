@@ -16,7 +16,7 @@
         <div class="p-fluid p-formgrid p-grid p-m-4">
             <div class="p-field p-col-4">
                 <span class="p-float-label">
-                    <Dropdown id="type" class="kn-material-input" v-model="type" :options="descriptor.typeOptions" optionValue="value">
+                    <Dropdown id="type" class="kn-material-input" v-model="type" :options="descriptor.typeOptions" optionValue="value" optionDisabled="disabled">
                         <template #value="slotProps">
                             <div v-if="slotProps.value">
                                 <span>{{ $t(`documentExecution.documentDetails.designerDialog.${slotProps.value}`) }}</span>
@@ -61,7 +61,7 @@ export default defineComponent({
             descriptor,
             document: null as iDocument | null,
             mondrianSchemas: [] as iMondrianSchema[],
-            type: 'xmla' as string,
+            type: 'mondrian' as string,
             xmlModel: { address: '', parameters: [] } as iXMLATemplate,
             mondrianModel: {} as iMondrianTemplate,
             user: null as any,
@@ -135,8 +135,7 @@ export default defineComponent({
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes?SBI_EXECUTION_ID=${this.sbiExecutionId}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then(() => {
-                    console.log(this.mondrianModel)
-                    this.$emit('designerStarted', { ...this.selectedDocument, sbiExecutionId: this.sbiExecutionId, reference: this.mondrianModel?.mondrianSchema, artifactId:this.mondrianModel.mondrianSchemaId  })
+                    this.$emit('designerStarted', { ...this.selectedDocument, sbiExecutionId: this.sbiExecutionId, reference: this.mondrianModel?.mondrianSchema, artifactId: this.mondrianModel.mondrianSchemaId })
                 })
                 .catch(() => {})
             this.$store.commit('setLoading', false)

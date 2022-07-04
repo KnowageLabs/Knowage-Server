@@ -259,7 +259,6 @@ export default defineComponent({
                 .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         openDesignerConfirm() {
-            console.log(this.selectedDocument.typeCode)
             this.$confirm.require({
                 header: this.$t('common.toast.warning'),
                 message: this.$t('documentExecution.olap.openDesignerMsg'),
