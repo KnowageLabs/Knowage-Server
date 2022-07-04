@@ -489,8 +489,10 @@ export default defineComponent({
                 // this.$router.push(`/olap-designer/${this.document.id}`)
                 const activeTemplate = this.findActiveTemplate()
                 const sbiExecutionId = crypto.randomBytes(16).toString('hex')
-                await startOlap(this.$http, this.user, sbiExecutionId, this.document, activeTemplate)
-                this.$router.push(`/olap-designer/${sbiExecutionId}?olapId=${this.document.id}&olapName=${this.document.name}&olapLabel=${this.document.label}`)
+                await startOlap(this.$http, this.user, sbiExecutionId, this.document, activeTemplate, this.$router).then(() => {
+                    //this.$router.push(`/olap-designer/${sbiExecutionId}?olapId=${this.document.id}&olapName=${this.document.name}&olapLabel=${this.document.label}`)
+                })
+                // this.$router.push(`/olap-designer/${sbiExecutionId}?olapId=${this.document.id}&olapName=${this.document.name}&olapLabel=${this.document.label}`)
             }
         },
         findActiveTemplate() {

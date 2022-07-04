@@ -292,7 +292,7 @@ export default defineComponent({
                 .then(async (response: AxiosResponse<any>) => {
                     this.olap = response.data
                     // TODO
-                    // await this.loadOlapDesigner()
+                    await this.loadOlapDesigner()
                     if (this.noTemplate === 'true') {
                         this.olapDesigner = {
                             ENGINE: this.olapEngine,
@@ -320,6 +320,8 @@ export default defineComponent({
                             }
                         }
                         this.olapDesigner.template.wrappedObject.olap.JSONTEMPLATE.XML_TAG_TEXT_CONTENT = JSON.stringify(this.olapDesigner.template.wrappedObject)
+                    } else {
+                        await this.loadOlapDesigner()
                     }
 
                     if (this.olapDesigner) {
