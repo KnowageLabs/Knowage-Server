@@ -99,8 +99,6 @@ export default defineComponent({
             const uniqueID = this.user.userUniqueIdentifier
             const country = this.user.locale?.split('_')[1]
 
-            console.log('DOCUMENT: ', this.document)
-
             const hiddenFormData = new URLSearchParams()
             hiddenFormData.set('document', decodeURIComponent('' + this.document.id))
             hiddenFormData.set('user_id', decodeURIComponent(uniqueID))
@@ -132,14 +130,11 @@ export default defineComponent({
             this.mondrianModel = {} as iMondrianTemplate
         },
         async start() {
-            console.log(' >>> START xmlModel: ', this.xmlModel)
-            console.log(' >>> START mondrianModel: ', this.mondrianModel)
             const postData = this.type === 'xmla' ? { ...this.xmlModel } : { ...this.mondrianModel }
             this.$store.commit('setLoading', true)
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes?SBI_EXECUTION_ID=${this.sbiExecutionId}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
-                .then((response: AxiosResponse<any>) => {
-                    console.log('RESPONSE DATA: ', response.data)
+                .then(() => {
                     this.$emit('designerStarted', { ...this.selectedDocument, sbiExecutionId: this.sbiExecutionId, reference: this.mondrianModel?.mondrianSchema })
                 })
                 .catch(() => {})

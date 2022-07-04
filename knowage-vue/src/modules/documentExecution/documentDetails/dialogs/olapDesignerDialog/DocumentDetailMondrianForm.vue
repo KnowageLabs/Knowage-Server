@@ -50,7 +50,6 @@ export default defineComponent({
             this.model = this.mondrianModel as iMondrianTemplate
         },
         onMondrianSchemaSelected() {
-            console.log('SELECTED MONDRIAN SCHEMA: ', this.selectedMondrianSchema)
             if (!this.selectedMondrianSchema) return
 
             this.model.mondrianSchema = this.selectedMondrianSchema.name
@@ -62,13 +61,10 @@ export default defineComponent({
             if (!this.selectedMondrianSchema) return
 
             this.$store.commit('setLoading', true)
-            // TODO - REMOVE HARCODED SBI_EXECUTION_ID
             await this.$http.get(process.env.VUE_APP_OLAP_PATH + `1.0/designer/allcubes/${this.selectedMondrianSchema.currentContentId}?SBI_EXECUTION_ID=${this.sbiExecutionId}`).then((response: AxiosResponse<any>) => (this.cubes = response.data))
             this.$store.commit('setLoading', false)
-            console.log('LOADED CUBES: ', this.cubes)
         },
         onCubeSelected() {
-            console.log('SELECTED CUBE: ', this.selectedCube)
             if (!this.selectedCube) return
 
             this.loadMDX()
@@ -77,7 +73,6 @@ export default defineComponent({
             if (!this.selectedMondrianSchema || !this.selectedCube) return
 
             this.$store.commit('setLoading', true)
-            // TODO - REMOVE HARCODED SBI_EXECUTION_ID
             await this.$http
                 .get(process.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes/getMDX/${this.selectedMondrianSchema.currentContentId}/${this.selectedCube}?SBI_EXECUTION_ID=${this.sbiExecutionId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) => {
@@ -85,7 +80,6 @@ export default defineComponent({
                     this.model.mondrianMdxQuery = response.data
                 })
             this.$store.commit('setLoading', false)
-            console.log('LOADED QUERY FOR MODEL: ', this.model)
         }
     }
 })

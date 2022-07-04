@@ -109,7 +109,6 @@ export default defineComponent({
         },
         loadLevelValues() {
             const dynamicSlicers = this.olapDesigner?.template.wrappedObject.olap.DYNAMIC_SLICER
-            console.log('DYNAMIC SICERS: ', dynamicSlicers)
 
             dynamicSlicers?.forEach((slicer: any) => {
                 const index = this.levels.findIndex((level: any) => level.LEVEL === slicer.LEVEL && level.HIERARCHY === slicer.HIERARCHY)
@@ -143,7 +142,6 @@ export default defineComponent({
                 if (this.mode === 'selectFields') {
                     this.levels = []
                 } else {
-                    console.log('this.checkIfLevelsAreValid()')
                     if (!this.checkIfLevelsAreValid()) return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.filterDialog.filterLevelsError') })
                     this.selectedFilters = this.rootNode ? [this.rootNode.id] : []
                 }
@@ -159,7 +157,6 @@ export default defineComponent({
             this.mode = 'selectFields'
         },
         checkIfLevelsAreValid() {
-            console.log('LEVELS: ', this.levels)
             let valid = true
             let foundEmpty = false
             for (let i = 0; i < this.levels.length; i++) {

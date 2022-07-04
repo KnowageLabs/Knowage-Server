@@ -333,9 +333,7 @@ export default defineComponent({
                     await this.loadModelConfig()
                     await this.loadVersions()
                 })
-                .catch((error: any) => {
-                    console.log('EEEEEEEEEEEEEEEEEEEEEEEEROR: ', error)
-                })
+                .catch(() => {})
             this.loading = false
         },
         setClickedButtons() {
@@ -690,8 +688,6 @@ export default defineComponent({
         async saveOlapDesigner() {
             this.loading = true
 
-            console.log('OLAP DESINGER ON SAVE: ', this.olapDesigner)
-
             await this.$http
                 .post(
                     process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.documentName}/saveOlapTemplate`,
@@ -912,7 +908,6 @@ export default defineComponent({
             this.loading = false
         },
         updateOlapDesignerMDXQueryParameters() {
-            console.log('--- --- FILTER LEVELS: ', this.filterLevels)
             if (!this.olapDesigner) return
             let query = this.olap.MDXWITHOUTCF
             this.olapDesigner.template.wrappedObject.olap.MDXMondrianQuery.XML_TAG_TEXT_CONTENT = query
@@ -926,7 +921,6 @@ export default defineComponent({
                 for (let i = 0; i < payload.DYNAMIC_SLICER.length; i++) {
                     const slicer = payload.DYNAMIC_SLICER[i]
                     if (!slicer.value) break
-                    console.log('SLICER: ', slicer)
                     const paramName = slicer.url ? '$P{' + slicer.value + '}' : '${' + slicer.value + '}'
 
                     if (i === 0) {
@@ -939,7 +933,6 @@ export default defineComponent({
                 query = query.replaceAll(uniqueName, replaceValue)
             })
             this.olapDesigner.template.wrappedObject.olap.MDXQUERY.XML_TAG_TEXT_CONTENT = query
-            console.log('OLAP DESIGNER: ', this.olapDesigner)
         },
         async sliceOLAP(payload) {
             await this.$http
@@ -1009,16 +1002,13 @@ export default defineComponent({
                 }
             })
 
-            console.log('TEMP: ', temp)
             if (!temp) {
                 for (let i = this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.length - 1; i >= 0; i--) {
                     if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER[i].HIERARCHY === payload.hierarchy) this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.splice(i, 1)
                 }
             } else {
                 temp?.forEach((el: any) => {
-                    console.log(' --- !!! ---: ', el)
                     const index = this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.findIndex((tempEl: any) => tempEl.HIERARCHY === el.HIERARCHY && tempEl.LEVEL === el.LEVEL)
-                    console.log(' --- !!! ---: index ', index)
                     if (index !== -1) {
                         this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER[index] = el
                     } else {

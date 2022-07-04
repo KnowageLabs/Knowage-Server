@@ -2,7 +2,6 @@ import { AxiosResponse } from "axios"
 import X2JS from 'x2js'
 
 export async function startOlap($http: any, user: any, sbiExecutionId: string, document: any, template: any, router: any) {
-    console.log("--- startOlap() - document: ", document)
     const language = user.locale?.split('_')[0]
     const uniqueID = user.userUniqueIdentifier
     const country = user.locale?.split('_')[1]
