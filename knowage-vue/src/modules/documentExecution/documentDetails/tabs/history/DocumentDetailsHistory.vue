@@ -60,6 +60,10 @@ import historyDescriptor from './DocumentDetailsHistory.json'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import InlineMessage from 'primevue/inlinemessage'
+import { startOlap } from '../../dialogs/olapDesignerDialog/DocumentDetailOlapHelpers'
+
+const crypto = require('crypto')
+
 export default defineComponent({
     name: 'document-drivers',
     components: { KnListBox, KnInputFile, VCodeMirror, InlineMessage },
@@ -111,12 +115,14 @@ export default defineComponent({
                 autofocus: true,
                 theme: 'eclipse',
                 lineNumbers: true
-            }
+            },
+            user: null as any
         }
     },
     created() {
         this.getAllTemplates()
         this.setupCodeMirror()
+        this.user = (this.$store.state as any).user
     },
     methods: {
         async getAllTemplates() {
@@ -273,8 +279,24 @@ export default defineComponent({
                 }
             })
         },
-        openDesigner() {
-            this.$router.push(`/olap-designer/${this.selectedDocument.id}`)
+        async openDesigner() {
+            if (this.listOfTemplates.length === 0) {
+                this.$emit('openDesignerDialog')
+            } else {
+                const activeTemplate = this.findActiveTemplate()
+                const sbiExecutionId = crypto.randomBytes(16).toString('hex')
+                await startOlap(this.$http, this.user, sbiExecutionId, this.selectedDocument, activeTemplate, this.$router)
+            }
+        },
+        findActiveTemplate() {
+            let activeTemplate = null as any
+            for (let i = 0; i < this.listOfTemplates.length; i++) {
+                if (this.listOfTemplates[i].active) {
+                    activeTemplate = this.listOfTemplates[i]
+                    break
+                }
+            }
+            return activeTemplate
         },
         openGis() {
             this.$router.push(`/gis/edit?documentId=${this.selectedDocument.id}`)

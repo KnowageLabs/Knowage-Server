@@ -59,7 +59,7 @@
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.history.title') }}</span>
                     </template>
-                    <HistoryTab :selectedDocument="selectedDocument" />
+                    <HistoryTab :selectedDocument="selectedDocument" @openDesignerDialog="openDesignerDialog" />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id && this.selectedDocument?.typeCode == 'REPORT' && this.selectedDocument?.engine == 'knowagejasperreporte'">
                     <template #header>
