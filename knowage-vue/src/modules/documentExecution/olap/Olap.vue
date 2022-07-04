@@ -237,7 +237,6 @@ export default defineComponent({
                 this.documentId = this.$route.query.olapId
                 this.documentName = this.$route.query.olapName
                 this.documentLabel = this.$route.query.olapLabel
-                this.olapEngine = this.$route.query.engine
             }
             await this.loadOlapModel()
             this.loadCustomView()
@@ -284,7 +283,7 @@ export default defineComponent({
         async loadOlapModel() {
             this.noTemplate = this.$route.query.noTemplate as string
             this.reference = this.$route.query.reference as string
-            this.reference = this.$route.query.engine as string
+            this.olapEngine = this.$route.query.engine as string
 
             this.loading = true
             await this.$http
