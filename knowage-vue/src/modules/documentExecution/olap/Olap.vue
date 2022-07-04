@@ -218,7 +218,7 @@ export default defineComponent({
                 return true
             } else return false
         },
-        whatIfMode(){
+        whatIfMode() {
             if (this.olapDesigner?.ENGINE === 'knowagewhatifengine') {
                 return true
             } else return false
@@ -1006,9 +1006,9 @@ export default defineComponent({
                 }
             })
 
-            if (!temp) {
+            if (!temp || temp.length === 0) {
                 for (let i = this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.length - 1; i >= 0; i--) {
-                    if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER[i].HIERARCHY === payload.hierarchy) this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.splice(i, 1)
+                    if (this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER[i].HIERARCHY === payload.filterUniqueName) this.olapDesigner.template.wrappedObject.olap.DYNAMIC_SLICER.splice(i, 1)
                 }
             } else {
                 temp?.forEach((el: any) => {

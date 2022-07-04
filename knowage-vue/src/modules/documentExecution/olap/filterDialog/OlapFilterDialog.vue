@@ -145,7 +145,7 @@ export default defineComponent({
                     if (!this.checkIfLevelsAreValid()) return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.filterDialog.filterLevelsError') })
                     this.selectedFilters = this.rootNode ? [this.rootNode.id] : []
                 }
-                payload = { hierarchy: this.propFilter?.filter.selectedHierarchyUniqueName, members: this.selectedFilters, multi: false, type: 'slicer' }
+                payload = { hierarchy: this.propFilter?.filter.selectedHierarchyUniqueName, members: this.selectedFilters, multi: false, type: 'slicer', filterUniqueName: this.propFilter?.filter.uniqueName }
                 if (this.mode !== 'selectFields') {
                     payload.DYNAMIC_SLICER = this.levels
                     payload.rootNode = this.rootNode
