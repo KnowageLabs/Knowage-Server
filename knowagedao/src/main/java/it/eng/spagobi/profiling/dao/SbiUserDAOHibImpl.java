@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.curator.shaded.com.google.common.base.Objects;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -618,7 +619,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 								}
 							}
 
-							if (currUserAttr != null && !currUserAttr.getAttributeValue().equals(temp.getAttributeValue())) {
+							if (currUserAttr != null && !Objects.equal(currUserAttr.getAttributeValue(), temp.getAttributeValue())) {
 								temp.setAttributeValue(currUserAttr.getAttributeValue());
 								updateSbiCommonInfo4Update(temp);
 								aSession.saveOrUpdate(temp);
