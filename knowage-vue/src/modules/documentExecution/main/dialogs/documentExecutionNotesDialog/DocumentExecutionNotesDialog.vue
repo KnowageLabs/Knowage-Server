@@ -187,6 +187,7 @@
             },
             createNewNote() {
                 this.selectedNote = {} as iNote
+                this.activeTab = 0
             }
         }
     })
