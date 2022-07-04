@@ -200,7 +200,8 @@ export default defineComponent({
             reference: '' as string,
             olapEngine: '' as any,
             documentLabel: null as any,
-            filterLevels: {} as any
+            filterLevels: {} as any,
+            artifactId: '' as string
         }
     },
     async created() {
@@ -284,6 +285,7 @@ export default defineComponent({
             this.noTemplate = this.$route.query.noTemplate as string
             this.reference = this.$route.query.reference as string
             this.olapEngine = this.$route.query.engine as string
+            this.artifactId = this.$route.query.artifactId as string
 
             this.loading = true
             await this.$http
