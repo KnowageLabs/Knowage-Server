@@ -135,7 +135,8 @@ export default defineComponent({
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes?SBI_EXECUTION_ID=${this.sbiExecutionId}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then(() => {
-                    this.$emit('designerStarted', { ...this.selectedDocument, sbiExecutionId: this.sbiExecutionId, reference: this.mondrianModel?.mondrianSchema })
+                    console.log(this.mondrianModel)
+                    this.$emit('designerStarted', { ...this.selectedDocument, sbiExecutionId: this.sbiExecutionId, reference: this.mondrianModel?.mondrianSchema, artifactId:this.mondrianModel.mondrianSchemaId  })
                 })
                 .catch(() => {})
             this.$store.commit('setLoading', false)

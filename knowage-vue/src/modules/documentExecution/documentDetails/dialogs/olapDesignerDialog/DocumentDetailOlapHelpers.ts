@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios"
+import { AxiosResponse } from 'axios'
 import X2JS from 'x2js'
 
 export async function startOlap($http: any, user: any, sbiExecutionId: string, document: any, template: any, router: any) {
@@ -9,13 +9,13 @@ export async function startOlap($http: any, user: any, sbiExecutionId: string, d
     const selectedTemplateFileType = fileType[fileType.length - 1]
     let selectedTemplateContent = await getSelectedTemplate($http, selectedTemplateFileType, document, template)
     const schemaName = selectedTemplateContent.olap.cube._reference
-    let schema = await getSchema($http, schemaName) as any
+    let schema = (await getSchema($http, schemaName)) as any
     if (!schema) return
 
     const params = createUrlParameters(uniqueID, language, country, sbiExecutionId, document, selectedTemplateContent, schema)
 
     $http.get(process.env.VUE_APP_OLAP_PATH + `olap/startolap`, { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' }, params: params }).then(() => {
-        router.push(`/olap-designer/${sbiExecutionId}?olapId=${document.id}&olapName=${document.name}&olapLabel=${document.label}&artifactId=${schema.id}`)
+        router.push(`/olap-designer/${sbiExecutionId}?olapId=${document.id}&olapName=${document.name}&olapLabel=${document.label}&artifactId=${schema.currentContentId}`)
     })
 }
 
@@ -31,7 +31,7 @@ async function getSelectedTemplate($http: any, selectedTemplateFileType: string,
 
 async function getSchema($http: any, schemaName: string) {
     let schema = null
-    await $http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/name=${schemaName}`).then((response: AxiosResponse<any>) => schema = response.data)
+    await $http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/name=${schemaName}`).then((response: AxiosResponse<any>) => (schema = response.data))
     return schema
 }
 
@@ -44,12 +44,11 @@ function createUrlParameters(uniqueID: string, language: string, country: string
     params.set('SBI_EXECUTION_ID', decodeURIComponent(sbiExecutionId))
     params.set('DOCUMENT_LABEL', decodeURIComponent(document.label))
     params.set('document', decodeURIComponent('' + document.id))
-    params.set('template', (selectedTemplateContent.olap.JSONTEMPLATE))
+    params.set('template', selectedTemplateContent.olap.JSONTEMPLATE)
     params.set('SBI_ARTIFACT_ID', decodeURIComponent('' + schema.id))
     params.set('schemaID', decodeURIComponent('' + schema.id))
     params.set('SBI_ARTIFACT_VERSION_ID', decodeURIComponent('' + schema.currentContentId))
     params.set('schemaName', decodeURIComponent(schema.name))
     params.set('onEditMode', decodeURIComponent(''))
-    return params;
-
+    return params
 }

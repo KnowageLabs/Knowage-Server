@@ -92,7 +92,7 @@
     <MultiHierarchyDialog :selectedFilter="multiHierFilter" :multiHierUN="selecetedMultiHierUN" :visible="multiHierarchyDialogVisible" @setMultiHierUN="setMultiHierUN" @updateHierarchy="updateHierarchy" @close="multiHierarchyDialogVisible = false" />
     <KnOverlaySpinnerPanel :visibility="loading" />
     <OutputWizard v-if="outputWizardVisible" :visible="outputWizardVisible" :olapVersionsProp="olapVersions" :sbiExecutionId="id" @close="outputWizardVisible = false" />
-    <ScenarioWizard v-if="scenarioWizardVisible" :visible="scenarioWizardVisible" :hiddenFormDataProp="hiddenFormDataProp" :sbiExecutionId="id" :olapDesignerProp="olapDesigner" @saveScenario="saveScenario" @deleteScenario="deleteScenario" @close="scenarioWizardVisible = false" />
+    <ScenarioWizard v-if="scenarioWizardVisible" :visible="scenarioWizardVisible" :artifactIdProp="artifactId" :sbiExecutionId="id" :olapDesignerProp="olapDesigner" @saveScenario="saveScenario" @deleteScenario="deleteScenario" @close="scenarioWizardVisible = false" />
     <AlgorithmDialog v-if="algorithmDialogVisible" :visible="algorithmDialogVisible" :sbiExecutionId="id" @close="algorithmDialogVisible = false" />
     <OlapFilterDialog :visible="filterDialogVisible" :propFilter="selectedFilter" :id="id" :olapDesignerMode="olapDesignerMode" :parameters="parameters" :profileAttributes="profileAttributes" :olapDesigner="olapDesigner" @close="closeFilterDialog" @applyFilters="applyFilters"></OlapFilterDialog>
     <OlapSaveNewVersionDialog :visible="saveVersionDialogVisible" :id="id" @close="saveVersionDialogVisible = false" @newVersionSaved="onNewVersionSaved"></OlapSaveNewVersionDialog>
