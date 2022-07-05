@@ -266,6 +266,8 @@ public abstract class AbstractNodeJSBasedExporter {
 		ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), url.toString(), encodedUserId, outputDir.toString(),
 				Integer.toString(sheetCount), Integer.toString(sheetWidth), Integer.toString(sheetHeight), Double.toString(deviceScaleFactor));
 
+		logger.info("Node complete command line: " + processBuilder.command());
+
 		logger.info("Starting export script");
 		Process exec = processBuilder.start();
 

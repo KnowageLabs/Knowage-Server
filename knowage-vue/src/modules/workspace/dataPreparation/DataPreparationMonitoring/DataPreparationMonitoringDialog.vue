@@ -3,6 +3,7 @@
         <KnScheduler
             class="p-m-1"
             :cronExpression="currentCronExpression"
+            :cronExpressionType="cronExpressionType"
             :descriptor="schedulerDescriptor"
             @touched="touched = true"
             :readOnly="false"
@@ -12,6 +13,7 @@
             @update:schedulationPaused="updateSchedulationPaused"
             @update:schedulationEnabled="updateSchedulationEnabled"
             @update:currentCronExpression="updateCurrentCronExpression"
+            @update:cronExpressionType="updateCronExpressionType"
             :loadingLogs="loadingLogs"
         />
         <template #footer>
@@ -48,6 +50,7 @@
                 validSchedulation: Boolean,
                 showHint: false,
                 currentCronExpression: '',
+                cronExpressionType: '',
                 touched: false,
                 schedulationPaused: false,
                 schedulationEnabled: false,
@@ -77,6 +80,8 @@
                             this.currentCronExpression = instance.config.cron
                             if (!this.currentCronExpression) this.showHint
 
+                            this.cronExpressionType = instance.config.type
+
                             this.schedulationPaused = instance.config.paused || false
 
                             this.schedulationEnabled = this.currentCronExpression ? true : false
@@ -102,6 +107,7 @@
             },
             resetAndClose() {
                 this.currentCronExpression = ''
+                this.cronExpressionType = ''
                 this.touched = false
                 this.showHint = false
                 this.$emit('close')
@@ -116,6 +122,7 @@
                 if (this.schedulationEnabled) {
                     obj['config']['cron'] = this.currentCronExpression
                     obj['config']['paused'] = this.schedulationPaused
+                    obj['config']['type'] = this.cronExpressionType
                 }
                 this.$emit('save', obj)
                 this.resetAndClose()
@@ -128,6 +135,9 @@
             },
             updateCurrentCronExpression(newCronExpression) {
                 this.currentCronExpression = newCronExpression
+            },
+            updateCronExpressionType(cronExpressionType) {
+                this.cronExpressionType = cronExpressionType
             }
         }
     })

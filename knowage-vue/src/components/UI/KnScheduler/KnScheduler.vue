@@ -105,44 +105,13 @@
                             <div v-else-if="selectedRefreshRate === 'monthly'">
                                 <i18n-t keypath="knScheduler.everyMonth" tag="div" class="p-d-flex p-ai-center p-mr-2">
                                     <template #month>
-                                        <Dropdown
-                                            id="selectedMonth"
-                                            :class="descriptor.style.dropdown"
-                                            v-model="selectedMonth"
-                                            optionLabel="name"
-                                            optionValue="id"
-                                            :options="getNumberOptions(5)"
-                                            maxLength="100"
-                                            @change="
-                                                () => {
-                                                    updateFormula()
-                                                    $emit('touched')
-                                                }
-                                            "
-                                            :disabled="isDisabled"
-                                        />
+                                        <Dropdown id="selectedMonth" :class="descriptor.style.dropdown" v-model="selectedMonth" optionLabel="name" optionValue="id" :options="getNumberOptions(5)" maxLength="100" :disabled="isDisabled" />
                                     </template>
                                 </i18n-t>
 
                                 <div class="p-d-flex p-ai-center">
                                     {{ $t('knScheduler.startingIn') }}
-                                    <Dropdown
-                                        id="selectedMonthExtended"
-                                        :class="descriptor.style.dropdown"
-                                        v-model="selectedMonthExtended"
-                                        dataKey="id"
-                                        optionLabel="name"
-                                        optionValue="id"
-                                        :options="months"
-                                        maxLength="100"
-                                        @change="
-                                            () => {
-                                                updateFormula()
-                                                $emit('touched')
-                                            }
-                                        "
-                                        :disabled="isDisabled"
-                                    />
+                                    <Dropdown id="selectedMonthExtended" :class="descriptor.style.dropdown" v-model="selectedMonthExtended" dataKey="id" optionLabel="name" optionValue="id" :options="months" maxLength="100" :disabled="isDisabled" />
                                 </div>
 
                                 <div class="p-d-flex p-ai-center p-flex-wrap itemClass">
@@ -160,7 +129,6 @@
                                         @change="
                                             () => {
                                                 monthConf = 'theDay'
-                                                $emit('touched')
                                             }
                                         "
                                         :disabled="isDisabled"
@@ -182,7 +150,6 @@
                                         @change="
                                             () => {
                                                 monthConf = 'theOrdinalDay'
-                                                $emit('touched')
                                             }
                                         "
                                         :disabled="isDisabled"
@@ -200,7 +167,6 @@
                                         @change="
                                             () => {
                                                 monthConf = 'theOrdinalDay'
-                                                $emit('touched')
                                             }
                                         "
                                         :disabled="isDisabled"
@@ -210,46 +176,14 @@
                             <div v-else-if="selectedRefreshRate === 'yearly'">
                                 <i18n-t keypath="knScheduler.everyYear" tag="div" class="p-d-flex p-ai-center p-mr-2">
                                     <template #year>
-                                        <Dropdown
-                                            id="selectedYear"
-                                            :class="descriptor.style.dropdown"
-                                            v-model="selectedYear"
-                                            dataKey="id"
-                                            optionLabel="name"
-                                            optionValue="code"
-                                            :options="getNumberOptions(5)"
-                                            maxLength="100"
-                                            @change="
-                                                () => {
-                                                    updateFormula()
-                                                    $emit('touched')
-                                                }
-                                            "
-                                            :disabled="isDisabled"
-                                        />
+                                        <Dropdown id="selectedYear" :class="descriptor.style.dropdown" v-model="selectedYear" dataKey="id" optionLabel="name" optionValue="code" :options="getNumberOptions(5)" maxLength="100" :disabled="isDisabled" />
                                     </template>
                                 </i18n-t>
 
                                 <div class="p-d-flex p-ai-center">
                                     {{ $t('knScheduler.in') }}
 
-                                    <Dropdown
-                                        id="selectedMonth"
-                                        :class="descriptor.style.dropdown"
-                                        v-model="selectedMonth"
-                                        dataKey="id"
-                                        optionLabel="name"
-                                        optionValue="code"
-                                        :options="months"
-                                        maxLength="100"
-                                        @change="
-                                            () => {
-                                                updateFormula()
-                                                $emit('touched')
-                                            }
-                                        "
-                                        :disabled="isDisabled"
-                                    />
+                                    <Dropdown id="selectedMonth" :class="descriptor.style.dropdown" v-model="selectedMonth" dataKey="id" optionLabel="name" optionValue="code" :options="months" maxLength="100" :disabled="isDisabled" />
                                 </div>
 
                                 <div class="p-d-flex p-ai-center p-flex-wrap itemClass">
@@ -267,7 +201,6 @@
                                         @change="
                                             () => {
                                                 yearConf = 'theDay'
-                                                $emit('touched')
                                             }
                                         "
                                         :disabled="isDisabled"
@@ -289,7 +222,6 @@
                                         @change="
                                             () => {
                                                 yearConf = 'theOrdinalDay'
-                                                $emit('touched')
                                             }
                                         "
                                         :disabled="isDisabled"
@@ -307,7 +239,6 @@
                                         @change="
                                             () => {
                                                 yearConf = 'theOrdinalDay'
-                                                $emit('touched')
                                             }
                                         "
                                         :disabled="isDisabled"
@@ -315,8 +246,16 @@
                                 </div>
                             </div>
                             <div v-else-if="selectedRefreshRate === 'custom'">
-                                <span class="p-float-label p-col-12"> <InputText :id="name" type="text" 
-                                v-model="localCronExpression" v-bind="$attrs" :class="[cssClass ? cssClass + ' kn-truncated' : 'kn-material-input kn-truncated', required && !modelValue ? 'p-invalid' : '']" @change="$emit('update:currentCronExpression', localCronExpression)"/></span>
+                                <span class="p-float-label p-col-12">
+                                    <InputText
+                                        :id="name"
+                                        type="text"
+                                        v-model="localCronExpression"
+                                        v-bind="$attrs"
+                                        :class="[cssClass ? cssClass + ' kn-truncated' : 'kn-material-input kn-truncated', required && !modelValue ? 'p-invalid' : '']"
+                                        @change="$emit('update:currentCronExpression', localCronExpression)"
+                                        :disabled="isDisabled"
+                                /></span>
                                 <small id="custom-cron-hint" v-html="$t('knScheduler.customCronHint')"></small>
                             </div>
                         </div>
@@ -326,7 +265,7 @@
                             <label for="endDate" class="kn-material-input-label"> {{ $t('kpi.targetDefinition.endDate') }} </label>
                         </div>
 
-                        <Message v-if="!readOnly" :class="['p-col-12 messageClass', readOnly ? 'p-message-disabled' : '']" severity="info" :closable="false">
+                        <Message v-if="!readOnly" :class="['p-col-12 messageClass', readOnly ? 'p-message-disabled' : '']" :severity="'info'">
                             <template v-if="paused">{{ $t('knScheduler.schedulationPaused') }} </template><template v-else>{{ getCronstrueFormula }} </template></Message
                         >
                     </div></template
@@ -426,6 +365,7 @@
             descriptor: Object,
             readOnly: { type: Boolean, default: false },
             cronExpression: String,
+            cronExpressionType: String,
             logs: [] as any,
             schedulerVisible: { type: Boolean, default: true },
             logsVisible: { type: Boolean, default: true },
@@ -433,12 +373,12 @@
             schedulationPaused: Boolean,
             loadingLogs: { type: Boolean, default: false }
         },
-        emits: ['touched', 'update:schedulationPaused', 'update:schedulationEnabled', 'update:currentCronExpression'],
+        emits: ['touched', 'update:schedulationPaused', 'update:schedulationEnabled', 'update:currentCronExpression', 'update:cronExpressionType'],
         data() {
             return {
                 startDate: null as Date | null,
                 endDate: null as Date | null,
-                selectedRefreshRate: null,
+                selectedRefreshRate: '',
                 selectedMonth: null,
                 selectedYear: null,
                 selectedDay: null,
@@ -463,13 +403,15 @@
                 allValues: '*',
                 noSpecificValue: '?',
                 enableSchedulation: true,
-                paused: false
+                paused: false,
+                validCronExpression: true
             }
         },
         computed: {
             ...mapState({
                 configuration: 'configuration'
             }),
+
             getCronstrueFormula(): String {
                 let locale = localStorage.getItem('locale')
                 let cronLocale = ''
@@ -478,8 +420,13 @@
 
                     cronLocale = locale.includes('#') ? (cronLocale = splitted[0] + '_' + splitted[2]) : (cronLocale = splitted[0])
                 }
-                return cronstrue.toString(this.localCronExpression, { locale: cronLocale })
+                let verboseDescription = cronstrue.toString(this.localCronExpression, { locale: cronLocale })
+
+                if (verboseDescription.includes('undefined')) verboseDescription = this.$t('knScheduler.invalidCronExpression')
+
+                return verboseDescription
             },
+
             getSchedulerClass(): String {
                 if (this.logsVisible) {
                     if (this.schedulerVisible) {
@@ -488,7 +435,7 @@
                         return 'p-col-0'
                     }
                 } else {
-                    return 'p-col-12'
+                    return 'p-col'
                 }
             },
             getLogsTableClass(): String {
@@ -532,9 +479,12 @@
 
             this.localCronExpression = this.cronExpression || '0 0 0 * * ? *'
 
-            this.selectedRefreshRate = this.descriptor?.refreshRate.options[0].code
-
             if (this.schedulationEnabled) this.enableSchedulation = this.schedulationEnabled
+
+            this.selectedRefreshRate = this.descriptor?.refreshRate.options[0].code
+            if (this.cronExpressionType) {
+                this.selectedRefreshRate = this.cronExpressionType
+            }
         },
         updated() {
             this.enableSchedulation = this.schedulationEnabled
@@ -566,9 +516,10 @@
                 })
             },
             parseFormula(cronExpression) {
+                if (this.selectedRefreshRate == 'custom') {
+                    return
+                }
                 if (cronExpression === '0 0 0 ? * MON,TUE,WED,THU,FRI *') {
-                    // @ts-ignore
-                    this.selectedRefreshRate = 'daily'
                     // @ts-ignore
                     this.dayConf = 'everyNotWorkingDays'
                 } else {
@@ -619,26 +570,16 @@
                     }
 
                     if (this.selectedYear) {
-                        // @ts-ignore
-                        this.selectedRefreshRate = 'yearly'
-
                         if (this.selectedDayExtended)
                             // @ts-ignore
                             this.yearConf = 'theOrdinalDay'
                         // @ts-ignore
                         else this.yearConf = 'theDay'
-                    } else if (Object.keys(this.selectedWeekdays).length > 0) {
-                        // @ts-ignore
-                        this.selectedRefreshRate = 'weekly'
                     } else {
                         if (this.selectedDay) {
                             // @ts-ignore
-                            this.selectedRefreshRate = 'daily'
-                            // @ts-ignore
                             this.dayConf = 'everyDay'
                         } else if (this.selectedMonth) {
-                            // @ts-ignore
-                            this.selectedRefreshRate = 'monthly'
                             if (this.selectedDayNumber) {
                                 // @ts-ignore
                                 this.monthConf = 'theDay'
@@ -664,8 +605,13 @@
                 this.yearConf = null
 
                 this.$emit('update:currentCronExpression', this.localCronExpression)
+                this.$emit('update:cronExpressionType', this.selectedRefreshRate)
             },
             updateFormula() {
+                if (this.selectedRefreshRate === 'custom') {
+                    return
+                }
+
                 let cronExpressionArr = this.localCronExpression.split(' ')
                 cronExpressionArr[0] = cronExpressionArr[1] = cronExpressionArr[2] = '0'
                 if (this.selectedRefreshRate === 'daily') {
@@ -750,8 +696,8 @@
             }
         },
         watch: {
-            selectedRefreshRate() {
-                this.updateFormula()
+            selectedRefreshRate(newValue) {
+                this.$emit('update:cronExpressionType', newValue)
             },
 
             selectedMonth() {
@@ -785,12 +731,15 @@
                 deep: true
             },
             cronExpression(newFormula) {
-                if (newFormula) {
-                    this.localCronExpression = newFormula
-                    this.parseFormula(this.localCronExpression)
-                }
+                this.localCronExpression = newFormula
+                this.parseFormula(this.localCronExpression)
+            },
+            cronExpressionType(newCronExpressionType) {
+                this.selectedRefreshRate = newCronExpressionType
+                this.parseFormula(this.localCronExpression)
             },
             localCronExpression() {
+                if (this.localCronExpression !== this.cronExpression) this.$emit('touched')
                 this.parseFormula(this.localCronExpression)
             },
             schedulationPaused(newSchedulationPaused) {
@@ -803,7 +752,7 @@
     })
 </script>
 
-<style lang="css">
+<style lang="css" scoped>
     .knScheduler {
         min-width: 200px;
         min-height: 100px;
