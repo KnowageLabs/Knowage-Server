@@ -210,7 +210,7 @@ export default defineComponent({
         },
         isButtonVisible(buttonName: string) {
             let isVisible = false
-            const index = this.olap?.modelConfig.toolbarVisibleButtons.findIndex((el: any) => el === buttonName)
+            const index = this.olap?.modelConfig.toolbarVisibleButtons?.findIndex((el: any) => el === buttonName)
             if (index !== -1) isVisible = true
 
             return isVisible

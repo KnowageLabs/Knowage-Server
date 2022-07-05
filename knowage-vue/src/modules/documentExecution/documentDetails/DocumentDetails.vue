@@ -31,6 +31,7 @@
                         @setTemplateForUpload="setTemplateForUpload"
                         @setImageForUpload="setImageForUpload"
                         @deleteImage="deleteImage"
+                        @openDesignerDialog="openDesignerDialog"
                     />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id">
@@ -58,7 +59,7 @@
                     <template #header>
                         <span>{{ $t('documentExecution.documentDetails.history.title') }}</span>
                     </template>
-                    <HistoryTab :selectedDocument="selectedDocument" />
+                    <HistoryTab :selectedDocument="selectedDocument" @openDesignerDialog="openDesignerDialog" />
                 </TabPanel>
                 <TabPanel v-if="this.selectedDocument?.id && this.selectedDocument?.typeCode == 'REPORT' && this.selectedDocument?.engine == 'knowagejasperreporte'">
                     <template #header>
@@ -69,9 +70,9 @@
                 </TabPanel>
             </TabView>
         </div>
-    </div>
 
-    <!-- </Dialog> -->
+        <DocumentDetailOlapDesignerDialog v-if="designerDialogVisible" :visible="designerDialogVisible" :selectedDocument="selectedDocument" @close="designerDialogVisible = false" @designerStarted="onDesignerStart"></DocumentDetailOlapDesignerDialog>
+    </div>
 </template>
 
 <script lang="ts">
@@ -90,6 +91,7 @@ import Badge from 'primevue/badge'
 import TabPanel from 'primevue/tabpanel'
 import ProgressSpinner from 'primevue/progressspinner'
 import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam, iDocumentType } from '@/modules/documentExecution/documentDetails/DocumentDetails'
+import DocumentDetailOlapDesignerDialog from './dialogs/olapDesignerDialog/DocumentDetailOlapDesignerDialog.vue'
 
 export default defineComponent({
     name: 'document-details',
@@ -103,7 +105,8 @@ export default defineComponent({
         TabView,
         TabPanel,
         Badge,
-        ProgressSpinner
+        ProgressSpinner,
+        DocumentDetailOlapDesignerDialog
     },
     props: { propDocId: { type: String }, propFolderId: { type: String }, propMode: { type: String }, viewMode: { type: String }, wholeItem: { type: Object } },
     emits: ['closeDetails', 'documentSaved'],
@@ -133,7 +136,8 @@ export default defineComponent({
             types: [] as iDocumentType[],
             allDocumentDetails: [] as any,
             savedSubreports: [] as any,
-            selectedSubreports: [] as any
+            selectedSubreports: [] as any,
+            designerDialogVisible: false
         }
     },
     computed: {
@@ -401,6 +405,12 @@ export default defineComponent({
         },
         onTabChange(event) {
             event.index === 5 ? this.getAllSubreports() : ''
+        },
+        openDesignerDialog() {
+            this.designerDialogVisible = true
+        },
+        onDesignerStart(document: any) {
+            this.$router.push(`/olap-designer/${document.sbiExecutionId}?olapId=${document.id}&olapName=${document.name}&olapLabel=${document.label}&noTemplate=${true}&reference=${document.reference}&engine=${document.engine}&artifactId=${document.artifactId}`)
         }
     }
 })
