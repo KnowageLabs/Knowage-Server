@@ -34,6 +34,24 @@ import MeasureDefinitionPreviewDialog from './MeasureDefinitionPreviewDialog.vue
 
 import "codemirror/theme/dracula.css";
 
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/theme/monokai.css'
+import 'codemirror/theme/eclipse.css'
+import 'codemirror/addon/hint/show-hint.css'
+import 'codemirror/addon/hint/show-hint.js'
+import 'codemirror/addon/hint/sql-hint.js'
+import 'codemirror/addon/lint/lint.js'
+import 'codemirror/addon/selection/mark-selection.js'
+import 'codemirror/mode/htmlmixed/htmlmixed.js'
+import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/mode/python/python.js'
+import 'codemirror/mode/xml/xml.js'
+import 'codemirror/mode/sql/sql.js'
+import 'codemirror/mode/groovy/groovy.js'
+import 'codemirror/mode/clike/clike.js'
+import 'codemirror/mode/mathematica/mathematica.js'
+
+
 export default defineComponent({
     name: 'measure-definition-query-card',
     components: { Card, Dropdown, 
@@ -104,7 +122,7 @@ export default defineComponent({
             const interval = setInterval(() => {
                 if (!this.$refs.codeMirror) return
                 console.log("this.$refs.codeMirror: ", this.$refs.codeMirror)
-               //  this.codeMirror = (this.$refs.codeMirror as any).editor as any
+               //  this.codeMirror =  (this.$refs.codeMirror as any).cminstance as any
                 this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
                 console.log("CODE MIRROR: ", this.codeMirror)
                 setTimeout(() => {

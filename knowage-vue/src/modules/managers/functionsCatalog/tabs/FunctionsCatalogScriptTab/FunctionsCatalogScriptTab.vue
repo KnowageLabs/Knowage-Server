@@ -26,7 +26,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iFunction } from '../../FunctionsCatalog'
-import { VCodeMirror } from 'vue3-code-mirror'
+import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
 import Dropdown from 'primevue/dropdown'
 import functionsCatalogScriptTabDescriptor from './FunctionsCatalogScriptTabDescriptor.json'
 
@@ -69,7 +69,7 @@ export default defineComponent({
         setupCodeMirror() {
             const interval = setInterval(() => {
                 if (!this.$refs.codeMirror) return
-                this.codeMirror = (this.$refs.codeMirror as any).editor as any
+                this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
                 this.codeMirror.setOption('readOnly', this.readonly)
                 setTimeout(() => {
                     this.codeMirror.refresh()

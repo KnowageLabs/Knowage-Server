@@ -64,7 +64,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { VCodeMirror } from 'vue3-code-mirror'
+import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
 import { setMathematicaModified } from '@/helpers/commons/codeMirrorMathematicaModifiedHelper'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
@@ -275,7 +275,7 @@ export default defineComponent({
         loadKPI() {
             const interval = setInterval(() => {
                 if (!this.$refs.codeMirror) return
-                this.codeMirror = (this.$refs.codeMirror as any).editor as any
+                this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
 
                 setTimeout(() => {
                     this.codeMirror.refresh()
@@ -341,7 +341,7 @@ export default defineComponent({
             this.reset()
             var countOpenBracket = 0
             var countCloseBracket = 0
-            var codeMirror = (this.$refs.codeMirror as any).editor as any
+            var codeMirror =  (this.$refs.codeMirror as any).cminstance as any
             var flag = true
             var numMeasures = 0
 

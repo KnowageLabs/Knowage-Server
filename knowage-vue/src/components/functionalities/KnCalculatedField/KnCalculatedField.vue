@@ -90,7 +90,7 @@ import { AxiosResponse } from 'axios'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import { defineComponent } from 'vue'
 import { IKnCalculatedField, IKnCalculatedFieldFunction } from '@/components/functionalities/KnCalculatedField/KnCalculatedField'
-import { VCodeMirror } from 'vue3-code-mirror'
+import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
 
 import Dropdown from 'primevue/dropdown'
 import Dialog from 'primevue/dialog'

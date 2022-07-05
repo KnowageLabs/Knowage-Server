@@ -98,7 +98,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { VCodeMirror } from 'vue3-code-mirror'
+import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
 import { AxiosResponse } from 'axios'
 import Chips from 'primevue/chips'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
