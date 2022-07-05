@@ -54,13 +54,14 @@ import { AxiosResponse } from 'axios'
 import { iDocument } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
 import { VCodeMirror } from 'vue3-code-mirror'
+import { mapState } from 'vuex'
+import { startOlap } from '../../dialogs/olapDesignerDialog/DocumentDetailOlapHelpers'
 import mainDescriptor from '@/modules/documentExecution/documentDetails/DocumentDetailsDescriptor.json'
 import driversDescriptor from '@/modules/documentExecution/documentDetails/tabs/drivers/DocumentDetailsDriversDescriptor.json'
 import historyDescriptor from './DocumentDetailsHistory.json'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import InlineMessage from 'primevue/inlinemessage'
-import { startOlap } from '../../dialogs/olapDesignerDialog/DocumentDetailOlapHelpers'
 
 const crypto = require('crypto')
 
@@ -89,7 +90,10 @@ export default defineComponent({
         },
         designerButtonVisible(): boolean {
             return this.selectedDocument.typeCode == 'OLAP' || this.selectedDocument.typeCode == 'KPI' || this.selectedDocument.engine == 'knowagegisengine'
-        }
+        },
+        ...mapState({
+            user: 'user'
+        })
     },
     data() {
         return {
@@ -115,14 +119,12 @@ export default defineComponent({
                 autofocus: true,
                 theme: 'eclipse',
                 lineNumbers: true
-            },
-            user: null as any
+            }
         }
     },
     created() {
         this.getAllTemplates()
         this.setupCodeMirror()
-        this.user = (this.$store.state as any).user
     },
     methods: {
         async getAllTemplates() {

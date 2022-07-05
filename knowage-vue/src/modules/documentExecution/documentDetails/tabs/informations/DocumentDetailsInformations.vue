@@ -280,6 +280,8 @@ import { iDocument, iDataSource, iEngine, iTemplate, iAttribute, iFolder } from 
 import { defineComponent, PropType } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import { AxiosResponse } from 'axios'
+import { mapState } from 'vuex'
+import { startOlap } from '../../dialogs/olapDesignerDialog/DocumentDetailOlapHelpers'
 import mainDescriptor from '../../DocumentDetailsDescriptor.json'
 import infoDescriptor from './DocumentDetailsInformationsDescriptor.json'
 import useValidate from '@vuelidate/core'
@@ -291,7 +293,6 @@ import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import DocumentDetailsTree from './DocumentDetailsTree.vue'
-import { startOlap } from '../../dialogs/olapDesignerDialog/DocumentDetailOlapHelpers'
 
 const crypto = require('crypto')
 
@@ -348,7 +349,10 @@ export default defineComponent({
         },
         designerButtonVisible(): boolean {
             return this.document.typeCode == 'OLAP' || this.document.typeCode == 'KPI' || this.document.engine == 'knowagegisengine'
-        }
+        },
+        ...mapState({
+            user: 'user'
+        })
     },
     data() {
         return {
@@ -371,13 +375,11 @@ export default defineComponent({
             driversPositions: infoDescriptor.driversPositions,
             listOfTemplates: [] as iTemplate[],
             imagePreviewUrl: null as any,
-            imagePreview: false,
-            user: null as any
+            imagePreview: false
         }
     },
     async created() {
         this.setData()
-        this.user = (this.$store.state as any).user
         await this.getAllTemplates()
     },
     watch: {
