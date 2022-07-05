@@ -656,20 +656,29 @@ public class Signup {
 	@Path("/prepare")
 	@PublicService
 	public View prepare(@Context HttpServletRequest req) {
-		String themeName = (String) req.getAttribute(ChangeTheme.THEME_NAME);
-		logger.debug("theme selected: " + themeName);
+		String theme_name = (String) req.getAttribute(ChangeTheme.THEME_NAME);
+		logger.debug("theme selected: " + theme_name);
 
 		String currTheme = (String) req.getAttribute("currTheme");
-		if (currTheme == null) {
+		if (currTheme == null)
 			currTheme = ThemesManager.getDefaultTheme();
-		}
 		logger.debug("currTheme: " + currTheme);
 
 		String url = "/themes/" + currTheme + "/jsp/signup/signup.jsp";
 		logger.debug("url for signup: " + url);
 
-		req.setAttribute("currTheme", currTheme);
-		return new View(url);
+		MessageBuilder msgBuilder = new MessageBuilder();
+		Locale locale = msgBuilder.getLocale(req);
+		logger.debug("locale for signup: " + locale);
+		try {
+			List communities = DAOFactory.getCommunityDAO().loadAllSbiCommunities();
+			req.setAttribute("communities", communities);
+			req.setAttribute("currTheme", currTheme);
+			req.setAttribute("locale", locale);
+			return new View(url);
+		} catch (Exception e) {
+			throw new SpagoBIServiceException("An unexpected error occurred while executing the subscribe action", e);
+		}
 	}
 
 	private void sendMail(String emailAddress, String subject, String emailContent) throws Exception {
