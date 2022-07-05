@@ -55,7 +55,6 @@ import FabButton from '@/components/UI/KnFabButton.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import { mapState } from 'vuex'
-
 export default defineComponent({
     name: 'document-execution-notes-dialog',
     components: { Dialog, DocumentExecutionNotesForm, DocumentExecutionNotesList, FabButton, TabView, TabPanel },
@@ -98,7 +97,6 @@ export default defineComponent({
     methods: {
         async loadDocument() {
             this.document = this.propDocument
-
             if (this.isEnterprise && this.document && this.document.id) {
                 await this.loadNotes()
             }
@@ -128,7 +126,7 @@ export default defineComponent({
         async saveNote() {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}`, { public: this.selectedNote.type === 'Public', content: this.selectedNote.content, id: this.selectedNote.id }, { headers: { 'X-Disable-Errors': 'true' } })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}`, { public: this.selectedNote.type === 'Public', content: this.selectedNote.content, id: this.selectedNote.id })
                 .then(async (response: AxiosResponse<any>) => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.createTitle'),
@@ -137,24 +135,13 @@ export default defineComponent({
                     this.selectedNote = { ...response.data, type: response.data.public ? 'Public' : 'Private' }
                     await this.loadNotes()
                 })
-                .catch((error: any) => {
-                    const errorMessage = this.createSeaveErrorMessage(error.response.data)
+                .catch((error: any) =>
                     this.$store.commit('setError', {
                         title: this.$t('common.error.generic'),
-                        msg: errorMessage
+                        msg: error
                     })
-                })
+                )
             this.loading = false
-        },
-        createSeaveErrorMessage(error: any) {
-            const properties = ['classViolations', 'fieldViolations', 'parameterViolations', 'propertyViolations', 'returnValueViolations']
-            let errorMessage = ''
-            properties.forEach((prop: string) => {
-                for (let i = 0; i < error[prop].length; i++) {
-                    if (error[prop][i].message) errorMessage += error[prop][i].message + '\n\n'
-                }
-            })
-            return errorMessage
         },
         onEditNote(note: iNote) {
             this.selectedNote = { ...note }
@@ -169,7 +156,6 @@ export default defineComponent({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
-
                     if (this.selectedNote.id === note.id) this.selectedNote = {} as iNote
                     await this.loadNotes()
                 })
