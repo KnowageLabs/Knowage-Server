@@ -64,7 +64,6 @@ export default defineComponent({
             type: 'mondrian' as string,
             xmlModel: { address: '', parameters: [] } as iXMLATemplate,
             mondrianModel: {} as iMondrianTemplate,
-            user: null as any,
             sbiExecutionId: '',
             loading: false
         }
@@ -81,7 +80,6 @@ export default defineComponent({
     },
     async created() {
         this.sbiExecutionId = crypto.randomBytes(16).toString('hex')
-        this.user = (this.$store.state as any).user
         this.loadDocument()
     },
     methods: {
@@ -148,7 +146,7 @@ export default defineComponent({
 .full-screen-dialog.p-dialog {
     max-height: 100%;
     height: 100vh;
-    width: calc(100vw - #{54px});
+    width: calc(100vw - #{var(--kn-mainmenu-width)});
     margin: 0;
     .p-dialog-content {
         padding: 0;
