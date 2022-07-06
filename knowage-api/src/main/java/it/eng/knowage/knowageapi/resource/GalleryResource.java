@@ -39,10 +39,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
+import it.eng.knowage.boot.error.KnowageRuntimeException;
+import it.eng.knowage.boot.utils.JsonConverter;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
 import it.eng.knowage.knowageapi.service.WidgetGalleryAPI;
-import it.eng.knowage.knowageapi.utils.JsonConverter;
 import it.eng.spagobi.services.security.SecurityServiceService;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
@@ -128,6 +128,9 @@ public class GalleryResource {
 			String template = JsonConverter.objectToJson(newSbiWidgetGallery, WidgetGalleryDTO.class);
 			newSbiWidgetGallery.setTemplate(template);
 			newSbiWidgetGallery = widgetGalleryService.makeNewWidget(newSbiWidgetGallery, profile, true);
+		} catch (KnowageRuntimeException e) {
+			// TODO : I did this because catching Exception is not right
+			throw e;
 		} catch (Exception e) {
 			throw new KnowageRuntimeException("Cannot create widget " + Optional.ofNullable(newSbiWidgetGallery).map(WidgetGalleryDTO::getName).orElse("null"), e);
 		}
@@ -151,6 +154,9 @@ public class GalleryResource {
 
 				newSbiWidgetGalleryToUpdate = widgetGalleryService.updateWidget(newSbiWidgetGallery, profile);
 			}
+		} catch (KnowageRuntimeException e) {
+			// TODO : I did this because catching Exception is not right
+			throw e;
 		} catch (Exception e) {
 			throw new KnowageRuntimeException("Error updating widget with id " + String.valueOf(widgetId), e);
 		}

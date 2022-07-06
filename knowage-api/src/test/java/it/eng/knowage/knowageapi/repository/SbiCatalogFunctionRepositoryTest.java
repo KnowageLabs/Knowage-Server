@@ -28,12 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import it.eng.knowage.boot.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.dao.dto.SbiCatalogFunction;
 import it.eng.knowage.knowageapi.dao.dto.SbiFunctionInputColumn;
 import it.eng.knowage.knowageapi.dao.dto.SbiFunctionInputVariable;
 import it.eng.knowage.knowageapi.dao.dto.SbiFunctionOutputColumn;
 import it.eng.knowage.knowageapi.dao.dto.SbiObjFunction;
-import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 
 /**
  * @author Marco Libanori

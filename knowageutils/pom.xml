@@ -120,14 +120,14 @@
 		<!-- is it a runtime dependency?? <dependency> <groupId>commons-httpclient</groupId> 
 			<artifactId>commons-httpclient</artifactId> <version>3.0.1</version> </dependency> -->
 
-		<dependency>
+  		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
 			<scope>compile</scope>
 		</dependency>
-
-		<dependency>
+		
+  		<dependency>
 			<groupId>it.eng.spago</groupId>
 			<artifactId>spago-core</artifactId>
 			<version>2.3.0</version>
@@ -392,7 +392,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>4.13.1</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -636,7 +636,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.amazon.redshift/redshift-jdbc42 -->
 		<dependency>
 			<groupId>com.amazon.redshift</groupId>
 			<artifactId>redshift-jdbc42</artifactId>
@@ -644,22 +643,23 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.amazon.redshift/redshift-jdbc4 -->
 		<dependency>
 			<groupId>com.amazon.redshift</groupId>
 			<artifactId>redshift-jdbc4</artifactId>
 			<version>1.2.10.1009</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.oracle.jdbc/ojdbc7 -->
+
 		<dependency>
-			<!-- Could not find the original Oracle JDBC driver on Maven Central, using this one with BSD license -->
-			<groupId>com.github.noraui</groupId>
-			<artifactId>ojdbc7</artifactId>
-			<version>12.1.0.2</version>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+			<artifactId>owasp-java-html-sanitizer</artifactId>
+		</dependency>
 
 	</dependencies>
 

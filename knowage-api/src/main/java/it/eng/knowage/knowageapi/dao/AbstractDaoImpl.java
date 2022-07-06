@@ -22,7 +22,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import it.eng.knowage.knowageapi.context.BusinessRequestContext;
+import it.eng.knowage.boot.context.BusinessRequestContext;
 import it.eng.knowage.knowageapi.dao.dto.AbstractEntity;
 
 /**

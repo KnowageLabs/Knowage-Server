@@ -19,8 +19,8 @@ package it.eng.knowage.knowageapi.dao;
 
 import java.util.List;
 
+import it.eng.knowage.boot.error.KnowageBusinessException;
 import it.eng.knowage.knowageapi.dao.dto.SbiCatalogFunction;
-import it.eng.knowage.knowageapi.error.KnowageBusinessException;
 
 /**
  * @author Marco Libanori

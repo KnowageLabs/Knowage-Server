@@ -39,7 +39,8 @@ import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import it.eng.knowage.knowageapi.context.BusinessRequestContext;
+import it.eng.knowage.boot.context.BusinessRequestContext;
+import it.eng.knowage.boot.factory.SecurityServiceFactory;
 import it.eng.knowage.knowageapi.service.FunctionCatalogAPI;
 import it.eng.knowage.knowageapi.service.impl.FunctionCatalogAPIImplTest;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;

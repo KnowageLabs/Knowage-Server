@@ -38,9 +38,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
-import it.eng.knowage.knowageapi.context.BusinessRequestContext;
-import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
-import it.eng.knowage.knowageapi.utils.ConfigSingleton;
+import it.eng.knowage.boot.context.BusinessRequestContext;
+import it.eng.knowage.boot.error.KnowageRuntimeException;
+import it.eng.knowage.boot.utils.ConfigSingleton;
 import it.eng.spagobi.services.security.SecurityServiceService;
 import it.eng.spagobi.services.security.SpagoBIUserProfile;
 

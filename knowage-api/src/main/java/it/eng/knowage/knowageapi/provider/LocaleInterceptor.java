@@ -20,10 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import it.eng.knowage.knowageapi.context.BusinessRequestContext;
-import it.eng.knowage.knowageapi.dao.SbiConfigDao;
-import it.eng.knowage.knowageapi.dao.dto.SbiConfig;
-import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
+import it.eng.knowage.boot.context.BusinessRequestContext;
+import it.eng.knowage.boot.dao.SbiConfigDao;
+import it.eng.knowage.boot.dao.dto.SbiConfig;
+import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.spagobi.services.security.SecurityServiceService;
 
 @Provider

@@ -35,9 +35,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
+import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGalleryTag;
-import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.resource.dto.Code;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
 
@@ -112,7 +112,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 	}
 
 	@Override
-	public Collection<WidgetGalleryDTO> findAll() {
+	public List<WidgetGalleryDTO> findAll() {
 		Query query = em.createQuery("SELECT e FROM SbiWidgetGallery e");
 		Collection<SbiWidgetGallery> galleryss = query.getResultList();
 		List<WidgetGalleryDTO> galeryDtoss = new ArrayList<WidgetGalleryDTO>();
@@ -164,7 +164,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 
 	@Override
 	@Transactional(value = TxType.REQUIRED)
-	public Collection<WidgetGalleryDTO> findAllByTenant(String tenant) {
+	public List<WidgetGalleryDTO> findAllByTenant(String tenant) {
 		logger.debug("IN");
 
 		List<WidgetGalleryDTO> galeryDtoss = new ArrayList<WidgetGalleryDTO>();
@@ -204,7 +204,7 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 
 	@Override
 	@Transactional(value = TxType.REQUIRED)
-	public Collection<WidgetGalleryDTO> findAllByTenantAndType(String tenant, String type) {
+	public List<WidgetGalleryDTO> findAllByTenantAndType(String tenant, String type) {
 		logger.debug("IN");
 
 		Collection<SbiWidgetGallery> results = em

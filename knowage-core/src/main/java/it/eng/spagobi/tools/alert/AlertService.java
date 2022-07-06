@@ -1,19 +1,5 @@
 package it.eng.spagobi.tools.alert;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tools.alert.bo.Alert;
-import it.eng.spagobi.tools.alert.bo.AlertAction;
-import it.eng.spagobi.tools.alert.bo.AlertListener;
-import it.eng.spagobi.tools.alert.dao.IAlertDAO;
-import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
-import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
-import it.eng.spagobi.utilities.JSError;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -27,12 +13,28 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.alert.bo.Alert;
+import it.eng.spagobi.tools.alert.bo.AlertAction;
+import it.eng.spagobi.tools.alert.bo.AlertListener;
+import it.eng.spagobi.tools.alert.dao.IAlertDAO;
+import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.utilities.JSError;
+import it.eng.spagobi.utilities.filters.XSSUtils;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
- * 
+ *
  */
 @Path("/1.0/alert")
 @ManageAuthorization
@@ -106,6 +108,9 @@ public class AlertService {
 		try {
 			String str = RestUtilities.readBodyAsJSONObject(req).toString();
 			Alert alert = (Alert) JsonConverter.jsonToObject(str, Alert.class);
+
+			checkHtmlPayloads(alert);
+
 			JSError jsError = new JSError();
 			check(alert, jsError);
 			if (!jsError.hasErrors()) {
@@ -132,6 +137,26 @@ public class AlertService {
 		IAlertDAO dao = getDao(req);
 		dao.remove(id);
 		return Response.ok().build();
+	}
+
+	private void checkHtmlPayloads(Alert alert) throws JSONException {
+		String jsonOptions = alert.getJsonOptions();
+		JSONObject jsonOptionsAsJsonObject = new JSONObject(jsonOptions);
+
+		JSONArray actionsAsJsonArray = jsonOptionsAsJsonObject.getJSONArray("actions");
+
+		for (int i = 0; i < actionsAsJsonArray.length(); i++) {
+			JSONObject currentActionAsJsonObject = actionsAsJsonArray.getJSONObject(i);
+
+			String string = currentActionAsJsonObject.getString("jsonActionParameters");
+			JSONObject actParamsAsJsonObject = new JSONObject(string);
+
+			if (actParamsAsJsonObject.has("body")) {
+				XSSUtils xssUtils = new XSSUtils();
+				xssUtils.isSafe(actParamsAsJsonObject.getString("body"));
+			}
+
+		}
 	}
 
 	private void check(Alert alert, JSError jsError) {

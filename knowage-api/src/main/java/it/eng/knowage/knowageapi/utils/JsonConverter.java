@@ -19,7 +19,7 @@ package it.eng.knowage.knowageapi.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.eng.knowage.knowageapi.error.KnowageRuntimeException;
+import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.spagobi.services.validation.ObjectValidator;
 
 public class JsonConverter {
