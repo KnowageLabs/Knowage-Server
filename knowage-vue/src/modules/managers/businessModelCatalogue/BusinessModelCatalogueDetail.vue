@@ -33,7 +33,7 @@
                 <span>{{ $t('managers.businessModelManager.metadata') }}</span>
             </template>
 
-            <MetadataCard v-if="businessModelVersions.length > 0 && !readonly" :id="selectedBusinessModel.id"></MetadataCard>
+            <MetadataCard v-if="businessModelVersions?.length > 0 && !readonly" :id="selectedBusinessModel.id"></MetadataCard>
         </TabPanel>
 
         <TabPanel>
@@ -148,7 +148,9 @@ export default defineComponent({
             }
         },
         async loadSelectedBusinessModel() {
+            console.log("CAAAAAAAAAAAAAAAAAALED: ",import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}`)
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}`).then((response: AxiosResponse<any>) => (this.selectedBusinessModel = response.data))
+            console.log("SELECTED BM: ", this.selectedBusinessModel )
         },
         async loadVersions() {
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/`).then((response: AxiosResponse<any>) => {
