@@ -17,10 +17,10 @@
                     <Listbox v-if="!loading" class="kn-list kn-height-full" :options="modes" optionLabel="label" @change="showForm" data-test="usemodes-list">
                         <template #empty>{{ $t('common.info.noDataFound') }}</template>
                         <template #option="slotProps">
-                            <div class="kn-list-item" data-test="list-item">
+                            <div class="kn-list-item" >
                                 <Badge value="!" class="p-ml-2" severity="danger" v-if="slotProps.option.numberOfErrors > 0 || slotProps.option.associatedRoles.length === 0"></Badge>
                                 <div class="kn-list-item-text" v-tooltip.top="slotProps.option.description">
-                                    <span>{{ slotProps.option.label }}</span>
+                                    <span data-test="list-item">{{ slotProps.option.label }}</span>
                                     <span class="kn-list-item-text-secondary">{{ slotProps.option.name }}</span>
                                 </div>
                                 <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteModeConfirm(slotProps.option)" data-test="delete-button" />
@@ -29,7 +29,7 @@
                     </Listbox>
                 </div>
                 <div class="p-col-8 p-sm-8 p-md-9 p-p-0">
-                    <UseModeDetail :selectedMode="selectedUseMode" :selectionTypes="selectionTypes" :roles="roles" :constraints="constraints" :lovs="lovs" :disabledRoles="disabledRoles" :layers="layers" :isDate="isDate" :showMapDriver="showMapDriver"></UseModeDetail>
+                    <UseModeDetail data-test="modes-form" :selectedMode="selectedUseMode" :selectionTypes="selectionTypes" :roles="roles" :constraints="constraints" :lovs="lovs" :disabledRoles="disabledRoles" :layers="layers" :isDate="isDate" :showMapDriver="showMapDriver"></UseModeDetail>
                 </div>
             </div>
         </template>
@@ -42,6 +42,8 @@ import driversManagemenDetailtDescriptor from '../DriversManagementDetailDescrip
 import Listbox from 'primevue/listbox'
 import UseModeDetail from './DriversManagementUseModeDetail.vue'
 import Tooltip from 'primevue/tooltip'
+import mainStore from '../../../../App.store'
+
 export default defineComponent({
     name: 'use-mode-card',
     components: { Listbox, UseModeDetail, Badge },
@@ -96,6 +98,10 @@ export default defineComponent({
             this.modes = this.propModes as any
             this.selectedUseMode = {}
         }
+    },
+      setup() {
+        const store = mainStore()
+        return { store }
     },
     mounted() {
         if (this.propModes) {

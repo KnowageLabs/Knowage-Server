@@ -18,7 +18,8 @@ import DriversDetailCard from './DriversDetailCard.vue'
 import UseMode from './useModes/DriversManagementUseMode.vue'
 import { AxiosResponse } from 'axios'
 import driversManagemenDetailtDescriptor from './DriversManagementDetailDescriptor.json'
-
+import mainStore from '../../../App.store'
+	
 export default defineComponent({
     name: 'metadata-management-detail',
     components: { DriversDetailCard, UseMode },
@@ -73,6 +74,10 @@ export default defineComponent({
             this.driver = { ...this.selectedDriver } as any
             this.getModes()
         }
+    },
+      setup() {
+        const store = mainStore()
+        return { store }
     },
     mounted() {
         if (this.driver) {
