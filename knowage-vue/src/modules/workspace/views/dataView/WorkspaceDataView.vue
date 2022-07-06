@@ -139,6 +139,7 @@ import QBE from '@/modules/qbe/QBE.vue'
 import { Client } from '@stomp/stompjs'
 import DataPreparationMonitoringDialog from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDialog.vue'
 import MultiSelect from 'primevue/multiselect'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: {
@@ -232,6 +233,10 @@ export default defineComponent({
             user: null as any,
             showMonitoring: false
         }
+    },
+      setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.getAllData()
