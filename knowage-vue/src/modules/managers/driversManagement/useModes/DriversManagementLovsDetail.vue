@@ -27,7 +27,7 @@
                 <label for="desc" class="kn-material-input-label">{{ $t('common.description') }} </label>
             </span>
         </div>
-        <!-- <VCodeMirror v-if="codeMirrorVisiable" ref="codeMirror" class="p-mt-2" :options="options" v-model:value="code" :autoHeight="true" /> -->
+        <VCodeMirror v-if="codeMirrorVisiable" ref="codeMirror" class="p-mt-2" :options="options" v-model:value="code" :autoHeight="true" />
         <DataTable v-if="this.selectedLov.itypeCd === 'FIX_LOV'" :value="rows" class="p-datatable-sm kn-table" responsiveLayout="stack">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
@@ -53,14 +53,14 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import useModeDescriptor from './UseModesDescriptor.json'
-// import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
+import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
 import { decode } from 'js-base64'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 export default defineComponent({
     name: 'lovs-detail',
     components: { 
-        // VCodeMirror, 
+    VCodeMirror, 
     Column, DataTable },
     props: {
         lov: {
