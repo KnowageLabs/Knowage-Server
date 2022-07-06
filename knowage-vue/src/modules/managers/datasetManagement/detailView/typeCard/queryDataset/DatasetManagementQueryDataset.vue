@@ -25,10 +25,10 @@
                     }"
                 />
             </div>
-            <Toolbar class="kn-toolbar kn-toolbar--secondary ">
+            <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #start>
-                    <Button v-if="!expandQueryCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandQueryCard = true" />
-                    <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandQueryCard = false" />
+                    <Button v-if="!expandQueryCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandQueryCard = true" />
+                    <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandQueryCard = false" />
                     {{ $t('managers.datasetManagement.editQuery') }}
                 </template>
                 <template #end>
@@ -43,8 +43,8 @@
 
             <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-2">
                 <template #start>
-                    <Button v-if="!expandScriptCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandScriptCard = true" />
-                    <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandScriptCard = false" />
+                    <Button v-if="!expandScriptCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandScriptCard = true" />
+                    <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandScriptCard = false" />
                     {{ $t('managers.datasetManagement.editScript') }}
                 </template>
             </Toolbar>
@@ -66,13 +66,20 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
+import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import queryDescriptor from './DatasetManagementQueryDataset.json'
 import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
 import HelpDialog from './DatasetManagementQueryHelpDialog.vue'
+
+// language
+import 'codemirror/mode/javascript/javascript.js'
+import '@/helpers/commons/sql.js'
+
+// theme
+import 'codemirror/theme/dracula.css'
 
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages, VCodeMirror, HelpDialog },
@@ -89,13 +96,13 @@ export default defineComponent({
             helpDialogVisible: false,
             expandScriptCard: false,
             codemirrorOptions: {
-                mode: 'text/x-sql',
-                lineWrapping: true,
-                indentWithTabs: true,
-                smartIndent: true,
-                matchBrackets: true,
-                theme: 'eclipse',
-                lineNumbers: true
+                mode: 'text/x-sql', // Language mode
+                theme: 'dracula', // Theme
+                lineNumbers: true, // Show line number
+                smartIndent: true, // Smart indent
+                indentUnit: 2, // The smart indent unit is 2 spaces in length
+                foldGutter: true, // Code folding
+                styleActiveLine: true // Display the style of the selected row
             },
             scriptOptions: {
                 mode: '',

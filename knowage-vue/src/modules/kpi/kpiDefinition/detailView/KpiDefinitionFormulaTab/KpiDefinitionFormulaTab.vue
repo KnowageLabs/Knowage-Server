@@ -64,13 +64,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
+import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import { setMathematicaModified } from '@/helpers/commons/codeMirrorMathematicaModifiedHelper'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import useValidate from '@vuelidate/core'
 import tabViewDescriptor from '../KpiDefinitionDetailDescriptor.json'
-import CodeMirror from 'codemirror'
 import Dialog from 'primevue/dialog'
 import RadioButton from 'primevue/radiobutton'
 import mainStore from '../../../../../App.store'
@@ -341,7 +340,7 @@ export default defineComponent({
             this.reset()
             var countOpenBracket = 0
             var countCloseBracket = 0
-            var codeMirror =  (this.$refs.codeMirror as any).cminstance as any
+            var codeMirror = (this.$refs.codeMirror as any).cminstance as any
             var flag = true
             var numMeasures = 0
 
