@@ -86,10 +86,10 @@ export default defineComponent({
             return this.user?.isSuperadmin
         },
         canAddNewDocument(): boolean {
-            return this.user?.functionalities.includes('DocumentManagement')
+            return this.user?.functionalities?.includes('DocumentManagement')
         },
         hasCreateCockpitFunctionality(): boolean {
-            return this.user.functionalities.includes('CreateCockpitFunctionality')
+            return this.user.functionalities?.includes('CreateCockpitFunctionality')
         },
         isSidebarHidden(): boolean {
             if (this.sidebarVisible) {
