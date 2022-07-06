@@ -117,9 +117,6 @@
                     <div class="p-col-4">
                         <Button icon="far fa-check-square" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.configureButtonsVisiblity')" @click="$emit('openButtonWizardDialog')" />
                     </div>
-                    <div class="p-col-4">
-                        <Button icon="fas fa-calculator" class="p-button-plain kn-button--secondary" v-tooltip.top="$t('documentExecution.olap.sidebar.calculatedField')" />
-                    </div>
                 </div>
             </div>
 
