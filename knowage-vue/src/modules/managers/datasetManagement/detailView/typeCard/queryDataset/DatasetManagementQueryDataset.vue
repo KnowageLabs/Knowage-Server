@@ -35,10 +35,10 @@
                     <Button icon="fas fa-info-circle" class="p-button-text p-button-rounded p-button-plain p-col-1" @click="helpDialogVisible = true" />
                 </template>
             </Toolbar>
-            <Card v-show="expandQueryCard">
+            <Card v-if="expandQueryCard">
                 <template #content>
-                    {{ dataset.query }}
-                    <VCodeMirror ref="codeMirror" v-model:value="dataset.query" :autoHeight="true" :options="codemirrorOptions" @keyup="$emit('touched')" />
+                    {{ query }}
+                    <VCodeMirror ref="codeMirror" :autoHeight="true" :options="codemirrorOptions" @keyup="$emit('touched')" />
                 </template>
             </Card>
 
@@ -55,7 +55,8 @@
                         <Dropdown id="queryScriptLanguage" class="kn-material-input" :style="queryDescriptor.style.maxWidth" :options="scriptTypes" optionLabel="VALUE_NM" optionValue="VALUE_CD" v-model="dataset.queryScriptLanguage" @change="onLanguageChanged($event.value)" />
                         <label for="queryScriptLanguage" class="kn-material-input-label"> {{ $t('managers.lovsManagement.placeholderScript') }} </label>
                     </span>
-                    <VCodeMirror class="p-mt-2" ref="codeMirrorScript" v-model:value="dataset.queryScript" :autoHeight="true" :options="scriptOptions" @keyup="$emit('touched')" />
+                    {{ dataset.queryScript }}
+                    <!-- <VCodeMirror class="p-mt-2" ref="codeMirrorScript" v-model:value="dataset.queryScript" :autoHeight="true" :options="scriptOptions" @keyup="$emit('touched')" /> -->
                 </template>
             </Card>
         </template>
@@ -98,35 +99,40 @@ export default defineComponent({
             helpDialogVisible: false,
             expandScriptCard: false,
             codemirrorOptions: {
-                mode: 'text/javascript', // Language mode
-                theme: 'dracula', // Theme
-                lineNumbers: true, // Show line number
-                smartIndent: true, // Smart indent
-                indentUnit: 2, // The smart indent unit is 2 spaces in length
-                foldGutter: true, // Code folding
-                styleActiveLine: true // Display the style of the selected row
+                value: '',
+                mode: 'text/x-mysql',
+                indentWithTabs: true,
+                smartIndent: true,
+                lineWrapping: true,
+                matchBrackets: true,
+                autofocus: true,
+                theme: 'dracula',
+                lineNumbers: true
             },
-            scriptOptions: {
-                mode: 'text/javascript', // Language mode
-                theme: 'dracula', // Theme
-                lineNumbers: true, // Show line number
-                smartIndent: true, // Smart indent
-                indentUnit: 2, // The smart indent unit is 2 spaces in length
-                foldGutter: true, // Code folding
-                styleActiveLine: true // Display the style of the selected row
-            }
+            // scriptOptions: {
+            //     mode: 'text/javascript', // Language mode
+            //     theme: 'dracula', // Theme
+            //     lineNumbers: true, // Show line number
+            //     smartIndent: true, // Smart indent
+            //     indentUnit: 2, // The smart indent unit is 2 spaces in length
+            //     foldGutter: true, // Code folding
+            //     styleActiveLine: true // Display the style of the selected row
+            // },
+            query: ''
         }
     },
     created() {
         console.log('CREATED ------------------')
-        this.loadDataset()
-        this.setupCodeMirror()
-        this.loadScriptMode()
+        setTimeout(() => {
+            this.setupQueryCM()
+            this.loadDataset()
+            // this.loadScriptMode()
+        }, 2500)
     },
     watch: {
         selectedDataset() {
             this.loadDataset()
-            this.loadScriptMode()
+            // this.loadScriptMode()
         }
     },
     validations() {
@@ -138,35 +144,30 @@ export default defineComponent({
         return validationObject
     },
     methods: {
-        setupCodeMirror() {
-            // const interval = setInterval(() => {
-            //     if (!this.$refs.codeMirror || !this.$refs.codeMirrorScript) return
-            //     this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
-            //     this.codeMirrorScript = (this.$refs.codeMirrorScript as any).cminstance as any
-            //     clearInterval(interval)
-            // }, 200)
-            // setTimeout(() => {
-            if (!this.$refs.codeMirror || !this.$refs.codeMirrorScript) return
-            this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
-            this.codeMirrorScript = (this.$refs.codeMirrorScript as any).cminstance as any
-            // }, 250)
-        },
         loadDataset() {
             this.dataset = this.selectedDataset
-            this.dataset.query ? '' : (this.dataset.query = '')
+            this.query = this.dataset.query ? this.dataset.query : ''
+            console.log('has ref', this.$refs.codeMirror)
             this.dataset.queryScript ? '' : (this.dataset.queryScript = '')
+            this.codemirrorOptions.value = this.query
         },
-        loadScriptMode() {
-            if (this.dataset.queryScriptLanguage) {
-                this.scriptOptions.mode = this.dataset.queryScriptLanguage === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
-            }
+        setupQueryCM() {
+            if (!this.$refs.codeMirror) return
+            this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
         },
+        // setupScriptCM(scriptMode?) {
+        //     if (!this.$refs.codeMirrorScript) return
+        //     this.codeMirrorScript = (this.$refs.codeMirrorScript as any).cminstance as any
+        //     scriptMode ? this.codeMirrorScript.setOption('mode', scriptMode) : ''
+        // },
+        // loadScriptMode() {
+        //     if (this.dataset.queryScriptLanguage) {
+        //         this.scriptOptions.mode = this.dataset.queryScriptLanguage === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
+        //     }
+        // },
         onLanguageChanged(value: string) {
-            const mode = value === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
-            setTimeout(() => {
-                this.setupCodeMirror()
-                this.codeMirrorScript.setOption('mode', mode)
-            }, 250)
+            const scriptMode = value === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
+            // this.setupScriptCM(scriptMode)
             this.$emit('touched')
         }
     }
