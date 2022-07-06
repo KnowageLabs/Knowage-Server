@@ -37,6 +37,7 @@
             </Toolbar>
             <Card v-show="expandQueryCard">
                 <template #content>
+                    {{ dataset.query }}
                     <VCodeMirror ref="codeMirror" v-model:value="dataset.query" :autoHeight="true" :options="codemirrorOptions" @keyup="$emit('touched')" />
                 </template>
             </Card>
@@ -66,7 +67,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
+import VCodeMirror from 'codemirror-editor-vue3'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import queryDescriptor from './DatasetManagementQueryDataset.json'
@@ -75,8 +76,9 @@ import Card from 'primevue/card'
 import HelpDialog from './DatasetManagementQueryHelpDialog.vue'
 
 // language
-import 'codemirror/mode/javascript/javascript.js'
-import '@/helpers/commons/sql.js'
+// import 'codemirror/mode/javascript/javascript.js'
+// import '/node_modules/codemirror/mode/javascript/javascript.js'
+// import '@/helpers/commons/sql.js'
 
 // theme
 import 'codemirror/theme/dracula.css'
@@ -96,7 +98,7 @@ export default defineComponent({
             helpDialogVisible: false,
             expandScriptCard: false,
             codemirrorOptions: {
-                mode: 'text/x-sql', // Language mode
+                mode: 'text/javascript', // Language mode
                 theme: 'dracula', // Theme
                 lineNumbers: true, // Show line number
                 smartIndent: true, // Smart indent
@@ -105,18 +107,18 @@ export default defineComponent({
                 styleActiveLine: true // Display the style of the selected row
             },
             scriptOptions: {
-                mode: '',
-                indentWithTabs: true,
-                smartIndent: true,
-                lineWrapping: true,
-                matchBrackets: true,
-                autofocus: true,
-                theme: 'eclipse',
-                lineNumbers: true
+                mode: 'text/javascript', // Language mode
+                theme: 'dracula', // Theme
+                lineNumbers: true, // Show line number
+                smartIndent: true, // Smart indent
+                indentUnit: 2, // The smart indent unit is 2 spaces in length
+                foldGutter: true, // Code folding
+                styleActiveLine: true // Display the style of the selected row
             }
         }
     },
     created() {
+        console.log('CREATED ------------------')
         this.loadDataset()
         this.setupCodeMirror()
         this.loadScriptMode()
@@ -137,12 +139,17 @@ export default defineComponent({
     },
     methods: {
         setupCodeMirror() {
-            const interval = setInterval(() => {
-                if (!this.$refs.codeMirror || !this.$refs.codeMirrorScript) return
-                this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
-                this.codeMirrorScript = (this.$refs.codeMirrorScript as any).editor as any
-                clearInterval(interval)
-            }, 200)
+            // const interval = setInterval(() => {
+            //     if (!this.$refs.codeMirror || !this.$refs.codeMirrorScript) return
+            //     this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
+            //     this.codeMirrorScript = (this.$refs.codeMirrorScript as any).cminstance as any
+            //     clearInterval(interval)
+            // }, 200)
+            // setTimeout(() => {
+            if (!this.$refs.codeMirror || !this.$refs.codeMirrorScript) return
+            this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
+            this.codeMirrorScript = (this.$refs.codeMirrorScript as any).cminstance as any
+            // }, 250)
         },
         loadDataset() {
             this.dataset = this.selectedDataset

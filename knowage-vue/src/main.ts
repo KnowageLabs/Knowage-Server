@@ -4,7 +4,7 @@ import PrimeVue from 'primevue/config'
 import router from './App.routes.js'
 import store from './App.store.js'
 import { createPinia } from 'pinia'
-
+import { GlobalCmComponent } from 'codemirror-editor-vue3'
 
 import VueAxios from 'vue-axios'
 import interceptor from './axios.js'
@@ -17,14 +17,14 @@ import 'codemirror/addon/hint/show-hint.js'
 import 'codemirror/addon/hint/sql-hint.js'
 import 'codemirror/addon/lint/lint.js'
 import 'codemirror/addon/selection/mark-selection.js'
-import 'codemirror/mode/htmlmixed/htmlmixed.js'
-import 'codemirror/mode/javascript/javascript.js'
-import 'codemirror/mode/python/python.js'
-import 'codemirror/mode/xml/xml.js'
-import 'codemirror/mode/sql/sql.js'
-import 'codemirror/mode/groovy/groovy.js'
-import 'codemirror/mode/clike/clike.js'
-import 'codemirror/mode/mathematica/mathematica.js'
+import '/node_modules/codemirror/mode/htmlmixed/htmlmixed.js'
+import '/node_modules/codemirror/mode/javascript/javascript.js'
+import '/node_modules/codemirror/mode/python/python.js'
+import '/node_modules/codemirror/mode/xml/xml.js'
+import '/node_modules/codemirror/mode/sql/sql.js'
+import '/node_modules/codemirror/mode/groovy/groovy.js'
+import '/node_modules/codemirror/mode/clike/clike.js'
+import '/node_modules/codemirror/mode/mathematica/mathematica.js'
 
 import 'primevue/resources/themes/mdc-light-indigo/theme.css'
 import 'primevue/resources/primevue.min.css'
@@ -54,7 +54,6 @@ if (import.meta.env.NODE_ENV === 'development') document.domain = 'localhost'
 
 const pinia = createPinia()
 
-
 const app = createApp(App).use(pinia)
 
 const mainStore = store()
@@ -67,6 +66,7 @@ app.use(VueAxios, interceptor)
     .use(ToastService)
     .use(ConfirmationService)
     .use(internationalizationPlugin, mainStore.$state.internationalization)
+    .use(GlobalCmComponent)
 
     .directive('badge', BadgeDirective)
     .directive('tooltip', Tooltip)
@@ -79,4 +79,3 @@ app.use(VueAxios, interceptor)
     .component('QBEOperator', QBEOperator)
 
     .mount('#app')
-
