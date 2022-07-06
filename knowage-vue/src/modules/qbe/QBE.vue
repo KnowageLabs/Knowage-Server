@@ -919,7 +919,7 @@ export default defineComponent({
                 }
                 await this.loadQBE()
                 this.loadQuery()
-                this.qbeMetadata = this.extractFieldsMetadata(this.qbe?.meta.columns)
+                this.qbeMetadata = this.extractFieldsMetadata(this.qbe?.meta?.columns)
                 this.generateFieldsAndMetadataId()
                 this.parameterSidebarVisible = false
             }
