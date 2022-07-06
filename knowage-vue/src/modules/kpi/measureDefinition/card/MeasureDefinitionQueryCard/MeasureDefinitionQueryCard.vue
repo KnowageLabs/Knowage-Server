@@ -17,8 +17,6 @@
             </div>
         </template>
     </Card>
-    {{'TODO'}}
-    {{options}}
     <MeasureDefinitionPreviewDialog v-if="preview" :currentRule="selectedRule" :placeholders="placeholders" :columns="columns" :propRows="rows" @close="$emit('closePreview')" @loadPreview="$emit('loadPreview')"></MeasureDefinitionPreviewDialog>
 </template>
 
@@ -31,26 +29,6 @@ import queryCardDescriptor from './MeasureDefinitionQueryCardDescriptor.json'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import MeasureDefinitionPreviewDialog from './MeasureDefinitionPreviewDialog.vue'
-
-import "codemirror/theme/dracula.css";
-
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/monokai.css'
-import 'codemirror/theme/eclipse.css'
-import 'codemirror/addon/hint/show-hint.css'
-import 'codemirror/addon/hint/show-hint.js'
-import 'codemirror/addon/hint/sql-hint.js'
-import 'codemirror/addon/lint/lint.js'
-import 'codemirror/addon/selection/mark-selection.js'
-import 'codemirror/mode/htmlmixed/htmlmixed.js'
-import 'codemirror/mode/javascript/javascript.js'
-import 'codemirror/mode/python/python.js'
-import 'codemirror/mode/xml/xml.js'
-import 'codemirror/mode/sql/sql.js'
-import 'codemirror/mode/groovy/groovy.js'
-import 'codemirror/mode/clike/clike.js'
-import 'codemirror/mode/mathematica/mathematica.js'
-
 
 export default defineComponent({
     name: 'measure-definition-query-card',
@@ -74,7 +52,7 @@ export default defineComponent({
                 lineWrapping: true,
                 matchBrackets: true,
                 autofocus: true,
-                theme: 'dracula',
+                theme: 'eclipse',
                 lineNumbers: true,
                 extraKeys: {
                     'Ctrl-Space': this.keyAssistFunc
@@ -121,10 +99,7 @@ export default defineComponent({
         setupCodeMirror() {
             const interval = setInterval(() => {
                 if (!this.$refs.codeMirror) return
-                console.log("this.$refs.codeMirror: ", this.$refs.codeMirror)
-               //  this.codeMirror =  (this.$refs.codeMirror as any).cminstance as any
                 this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
-                console.log("CODE MIRROR: ", this.codeMirror)
                 setTimeout(() => {
                     this.codeMirror.refresh()
                 }, 0)
@@ -165,7 +140,6 @@ export default defineComponent({
             })
         },
         keyAssistFunc() {
-            console.log("CODE MIRROR STATIC: ", CodeMirror)
             if (this.isAlias()) {
                 CodeMirror.showHint(this.codeMirror, CodeMirror.hint.alias)
             } else if (this.isPlaceholder()) {
