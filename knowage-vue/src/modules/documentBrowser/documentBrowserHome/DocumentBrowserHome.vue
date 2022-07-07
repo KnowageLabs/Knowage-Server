@@ -115,7 +115,7 @@ export default defineComponent({
         window.addEventListener('resize', this.onResize)
 
         await this.loadFolders()
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.$state as any).user
 
         if (this.$route.name === 'document-browser-functionality') {
             this.setFolderFromRoute()

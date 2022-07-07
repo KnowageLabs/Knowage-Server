@@ -63,6 +63,7 @@ import DataTable from 'primevue/datatable'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import moment from 'moment'
 import scorecardsDescriptor from './ScorecardsDescriptor.json'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'scorecards',
@@ -75,14 +76,18 @@ export default defineComponent({
         }
     },
     computed: {},
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         await this.loadScorecards()
     },
     methods: {
         async loadScorecards() {
-            this.$store.commit('setLoading', true)
+            this.store.setLoading(true)
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpiee/listScorecard`).then((response: AxiosResponse<any>) => (this.scorecards = response.data))
-            this.$store.commit('setLoading', false)
+            this.store.setLoading(false)
         },
         getFormattedDate(date: number) {
             const tempDate = moment(date).format('DD/MM/YYYY')
@@ -104,7 +109,7 @@ export default defineComponent({
             await this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpiee/${scorecard.id}/deleteScorecard`)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })

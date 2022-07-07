@@ -102,7 +102,7 @@ export default defineComponent({
             return index !== -1
         },
         readonly(): boolean {
-            return !this.canManageFunctionalities && this.selectedFunction?.owner !== (this.store.state as any).user.userId
+            return !this.canManageFunctionalities && this.selectedFunction?.owner !== (this.store.$state as any).user.userId
         },
         invalidGeneral(): boolean {
             return !this.validateFunctionInfo(false)

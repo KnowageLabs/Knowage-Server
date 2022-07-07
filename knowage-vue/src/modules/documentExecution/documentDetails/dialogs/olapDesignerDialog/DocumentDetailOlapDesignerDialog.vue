@@ -112,14 +112,14 @@ export default defineComponent({
             hiddenFormData.set('timereloadurl', decodeURIComponent('' + new Date().getTime()))
             hiddenFormData.set('ENGINE', 'knowageolapengine')
 
-            this.$store.commit('setLoading', true)
+            this.store.setLoading(true)
             await this.$http.post(process.env.VUE_APP_OLAP_PATH + `olap/startolap/edit`, hiddenFormData, { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } }).then(() => {})
-            this.$store.commit('setLoading', false)
+            this.store.setLoading(false)
         },
         async loadMondrianSchemaResources() {
-            this.$store.commit('setLoading', true)
+            this.store.setLoading(true)
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource`).then((response: AxiosResponse<any>) => (this.mondrianSchemas = response.data))
-            this.$store.commit('setLoading', false)
+            this.store.setLoading(false)
         },
         closeDialog() {
             this.$emit('close')
@@ -129,14 +129,14 @@ export default defineComponent({
         },
         async start() {
             const postData = this.type === 'xmla' ? { ...this.xmlModel } : { ...this.mondrianModel }
-            this.$store.commit('setLoading', true)
+            this.store.setLoading(true)
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes?SBI_EXECUTION_ID=${this.sbiExecutionId}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then(() => {
                     this.$emit('designerStarted', { ...this.selectedDocument, sbiExecutionId: this.sbiExecutionId, reference: this.mondrianModel?.mondrianSchema, artifactId: this.mondrianModel.mondrianSchemaId })
                 })
                 .catch(() => {})
-            this.$store.commit('setLoading', false)
+            this.store.setLoading(false)
         }
     }
 })

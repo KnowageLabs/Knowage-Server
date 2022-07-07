@@ -46,7 +46,7 @@ import KpiDocumentDesignerScorecardsListCard from './KpiDocumentDesignerScorecar
 import { mapState } from 'vite'
 import mainStore from '../../../App.store'
 
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'kpi-document-designer',

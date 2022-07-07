@@ -224,12 +224,12 @@ export default defineComponent({
                 })
                 .then((response: AxiosResponse<any>) => {
                     downloadDirectFromResponse(response)
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.success')
                     })
                 })
                 .catch((error: any) => {
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: error
                     })
