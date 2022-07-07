@@ -35,10 +35,9 @@
                     <Button icon="fas fa-info-circle" class="p-button-text p-button-rounded p-button-plain p-col-1" @click="helpDialogVisible = true" />
                 </template>
             </Toolbar>
-            <Card v-if="expandQueryCard">
+            <Card v-show="expandQueryCard">
                 <template #content>
-                    {{ query }}
-                    <VCodeMirror ref="codeMirror" :autoHeight="true" :options="codemirrorOptions" @keyup="$emit('touched')" />
+                    <VCodeMirror ref="codeMirror" v-model:value="dataset.query" :autoHeight="true" :options="codemirrorOptions" @keyup="$emit('touched')" />
                 </template>
             </Card>
 
@@ -55,8 +54,7 @@
                         <Dropdown id="queryScriptLanguage" class="kn-material-input" :style="queryDescriptor.style.maxWidth" :options="scriptTypes" optionLabel="VALUE_NM" optionValue="VALUE_CD" v-model="dataset.queryScriptLanguage" @change="onLanguageChanged($event.value)" />
                         <label for="queryScriptLanguage" class="kn-material-input-label"> {{ $t('managers.lovsManagement.placeholderScript') }} </label>
                     </span>
-                    {{ dataset.queryScript }}
-                    <!-- <VCodeMirror class="p-mt-2" ref="codeMirrorScript" v-model:value="dataset.queryScript" :autoHeight="true" :options="scriptOptions" @keyup="$emit('touched')" /> -->
+                    <VCodeMirror class="p-mt-2" ref="codeMirrorScript" v-model:value="dataset.queryScript" :autoHeight="true" :options="scriptOptions" @keyup="$emit('touched')" />
                 </template>
             </Card>
         </template>
@@ -76,17 +74,9 @@ import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
 import HelpDialog from './DatasetManagementQueryHelpDialog.vue'
 
-// language
-// import 'codemirror/mode/javascript/javascript.js'
-// import '/node_modules/codemirror/mode/javascript/javascript.js'
-// import '@/helpers/commons/sql.js'
-
-// theme
-import 'codemirror/theme/dracula.css'
-
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages, VCodeMirror, HelpDialog },
-    props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, scriptTypes: { type: Array as any } },
+    props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, scriptTypes: { type: Array as any }, activeTab: { type: Number as any } },
     emits: ['touched'],
     data() {
         return {
@@ -96,43 +86,54 @@ export default defineComponent({
             codeMirrorScript: {} as any,
             v$: useValidate() as any,
             expandQueryCard: true,
+            expandScriptCard: true,
             helpDialogVisible: false,
-            expandScriptCard: false,
             codemirrorOptions: {
-                value: '',
-                mode: 'text/x-mysql',
+                mode: 'text/x-sql',
+                lineWrapping: true,
+                indentWithTabs: true,
+                smartIndent: true,
+                matchBrackets: true,
+                theme: 'eclipse',
+                lineNumbers: true
+            },
+            scriptOptions: {
+                mode: '',
                 indentWithTabs: true,
                 smartIndent: true,
                 lineWrapping: true,
                 matchBrackets: true,
                 autofocus: true,
-                theme: 'dracula',
+                theme: 'eclipse',
                 lineNumbers: true
-            },
-            // scriptOptions: {
-            //     mode: 'text/javascript', // Language mode
-            //     theme: 'dracula', // Theme
-            //     lineNumbers: true, // Show line number
-            //     smartIndent: true, // Smart indent
-            //     indentUnit: 2, // The smart indent unit is 2 spaces in length
-            //     foldGutter: true, // Code folding
-            //     styleActiveLine: true // Display the style of the selected row
-            // },
-            query: ''
+            }
         }
     },
     created() {
-        console.log('CREATED ------------------')
-        setTimeout(() => {
-            this.setupQueryCM()
+        const interval = setInterval(() => {
+            if (!this.$refs.codeMirror) return
+            this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
+            if (!this.$refs.codeMirrorScript) return
+            this.codeMirrorScript = (this.$refs.codeMirrorScript as any).cminstance as any
+
             this.loadDataset()
-            // this.loadScriptMode()
-        }, 2500)
+            this.loadScriptMode()
+
+            clearInterval(interval)
+        }, 200)
     },
     watch: {
         selectedDataset() {
             this.loadDataset()
-            // this.loadScriptMode()
+            this.loadScriptMode()
+        },
+        activeTab() {
+            if (this.activeTab === 1 && this.codeMirror && this.codeMirrorScript) {
+                setTimeout(() => {
+                    this.codeMirror.refresh()
+                    this.codeMirrorScript.refresh()
+                }, 0)
+            }
         }
     },
     validations() {
@@ -146,28 +147,18 @@ export default defineComponent({
     methods: {
         loadDataset() {
             this.dataset = this.selectedDataset
-            this.query = this.dataset.query ? this.dataset.query : ''
-            console.log('has ref', this.$refs.codeMirror)
+            this.dataset.query ? '' : (this.dataset.query = '')
             this.dataset.queryScript ? '' : (this.dataset.queryScript = '')
-            this.codemirrorOptions.value = this.query
         },
-        setupQueryCM() {
-            if (!this.$refs.codeMirror) return
-            this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
+        loadScriptMode() {
+            if (this.dataset.queryScriptLanguage) {
+                this.scriptOptions.mode = this.dataset.queryScriptLanguage === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
+                this.codeMirrorScript.setOption('mode', this.dataset.queryScriptLanguage === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy')
+            }
         },
-        // setupScriptCM(scriptMode?) {
-        //     if (!this.$refs.codeMirrorScript) return
-        //     this.codeMirrorScript = (this.$refs.codeMirrorScript as any).cminstance as any
-        //     scriptMode ? this.codeMirrorScript.setOption('mode', scriptMode) : ''
-        // },
-        // loadScriptMode() {
-        //     if (this.dataset.queryScriptLanguage) {
-        //         this.scriptOptions.mode = this.dataset.queryScriptLanguage === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
-        //     }
-        // },
         onLanguageChanged(value: string) {
             const scriptMode = value === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
-            // this.setupScriptCM(scriptMode)
+            this.codeMirrorScript.setOption('mode', scriptMode)
             this.$emit('touched')
         }
     }

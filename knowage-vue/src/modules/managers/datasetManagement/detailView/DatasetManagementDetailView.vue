@@ -32,6 +32,7 @@
                     <span>{{ $t('kpi.alert.type') }}</span>
                 </template>
                 <TypeCard
+                    :activeTab="activeTab"
                     :selectedDataset="selectedDataset"
                     :datasetTypes="filteredDatasetTypes"
                     :dataSources="dataSources"
