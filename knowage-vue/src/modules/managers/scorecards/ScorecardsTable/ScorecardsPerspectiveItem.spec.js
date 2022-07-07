@@ -1,5 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
@@ -23,15 +25,11 @@ const mockedPerspective = {
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = () => {
@@ -46,7 +44,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -58,7 +56,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $confirm,
                 $router
             }
@@ -67,7 +64,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Scorecards Perpsective Item', () => {
