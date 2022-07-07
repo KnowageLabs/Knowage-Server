@@ -160,12 +160,12 @@ export default defineComponent({
             this.resetAndClose()
         },
         saveOrUpdateProcess(processDefinition) {
-            if (this.processId && this.processId != '') return this.$http.put(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/${this.processId}`, processDefinition)
-            else return this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process', processDefinition)
+            if (this.processId && this.processId != '') return this.$http.put(import.meta.env.VITE_DATA_PREPARATION_PATH + `1.0/process/${this.processId}`, processDefinition)
+            else return this.$http.post(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process', processDefinition)
         },
         saveOrUpdateInstance(processId, datasetDefinition) {
-            if (this.instanceId && this.instanceId != '') return this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/instance/${this.instanceId}`, datasetDefinition)
-            else return this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/' + processId + '/instance', datasetDefinition)
+            if (this.instanceId && this.instanceId != '') return this.$http.post(import.meta.env.VITE_DATA_PREPARATION_PATH + `1.0/instance/${this.instanceId}`, datasetDefinition)
+            else return this.$http.post(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process/' + processId + '/instance', datasetDefinition)
         },
         createDatasetDefinition() {
             let toReturn = {}

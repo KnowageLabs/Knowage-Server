@@ -61,7 +61,7 @@ export default defineComponent({
             if (!this.selectedMondrianSchema) return
 
             this.store.setLoading(true)
-            await this.$http.get(process.env.VUE_APP_OLAP_PATH + `1.0/designer/allcubes/${this.selectedMondrianSchema.currentContentId}?SBI_EXECUTION_ID=${this.sbiExecutionId}`).then((response: AxiosResponse<any>) => (this.cubes = response.data))
+            await this.$http.get(import.meta.env.VITE_OLAP_PATH + `1.0/designer/allcubes/${this.selectedMondrianSchema.currentContentId}?SBI_EXECUTION_ID=${this.sbiExecutionId}`).then((response: AxiosResponse<any>) => (this.cubes = response.data))
             this.store.setLoading(false)
         },
         onCubeSelected() {
@@ -74,7 +74,7 @@ export default defineComponent({
 
             this.store.setLoading(true)
             await this.$http
-                .get(process.env.VUE_APP_OLAP_PATH + `1.0/designer/cubes/getMDX/${this.selectedMondrianSchema.currentContentId}/${this.selectedCube}?SBI_EXECUTION_ID=${this.sbiExecutionId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .get(import.meta.env.VITE_OLAP_PATH + `1.0/designer/cubes/getMDX/${this.selectedMondrianSchema.currentContentId}/${this.selectedCube}?SBI_EXECUTION_ID=${this.sbiExecutionId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) => {
                     this.model.mdxQuery = response.data
                     this.model.mondrianMdxQuery = response.data

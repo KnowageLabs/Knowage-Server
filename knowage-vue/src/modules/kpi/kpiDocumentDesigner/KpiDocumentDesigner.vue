@@ -93,7 +93,7 @@ export default defineComponent({
 
             let language = this.user.locale?.split('_')[0]
             let country = this.user.locale?.split('_')[1]
-            await this.$http.get(process.env.VUE_APP_KPI_ENGINE_API_URL + `1.0/pages/edit?SBI_LANGUAGE=${language}&SBI_COUNTRY=${country}&user_id=${this.user.userUniqueIdentifier}&document=${this.id}`, config).then(() => {})
+            await this.$http.get(import.meta.env.VITE_KPI_ENGINE_API_URL + `1.0/pages/edit?SBI_LANGUAGE=${language}&SBI_COUNTRY=${country}&user_id=${this.user.userUniqueIdentifier}&document=${this.id}`, config).then(() => {})
 
             await this.loadKpi()
             await this.loadKpiList()
@@ -110,7 +110,7 @@ export default defineComponent({
             this.loading = true
             if (this.id) {
                 await this.$http
-                    .post(process.env.VUE_APP_KPI_ENGINE_API_URL + `1.0/kpisTemplate/getKpiTemplate`, { id: this.id })
+                    .post(import.meta.env.VITE_KPI_ENGINE_API_URL + `1.0/kpisTemplate/getKpiTemplate`, { id: this.id })
                     .then((response: AxiosResponse<any>) => {
                         this.kpiDesigner = response.data.templateContent ? JSON.parse(response.data.templateContent) : response.data
 

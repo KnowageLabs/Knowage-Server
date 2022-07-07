@@ -479,7 +479,7 @@ export default defineComponent({
     },
     methods: {
         async downloadLog(item: IDataPrepLog) {
-            await this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/' + item.id + '/log/download').then((response: AxiosResponse<any>) => {
+            await this.$http.post(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process/' + item.id + '/log/download').then((response: AxiosResponse<any>) => {
                 downloadDirectFromResponse(response)
             })
         },
@@ -495,7 +495,7 @@ export default defineComponent({
             return cronExpressionToken && cronExpressionToken !== this.allValues && cronExpressionToken !== this.noSpecificValue
         },
         async loadUserConfig() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
                 if (response.data) {
                     this.dateFormat = response.data['SPAGOBI.TIMESTAMP-FORMAT.format'] ? response.data['SPAGOBI.TIMESTAMP-FORMAT.format'] : response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === '%Y-%m-%d' ? 'dd/MM/yyyy' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
                 }

@@ -188,7 +188,7 @@ export default defineComponent({
                     temp += `/${this.folders[index].id}`
                 }
             }
-            history.pushState({}, '', process.env.VUE_APP_PUBLIC_PATH + 'document-browser' + temp)
+            history.pushState({}, '', import.meta.env.VITE_PUBLIC_PATH + 'document-browser' + temp)
         },
         async loadDocumentsWithBreadcrumbs() {
             if (this.selectedFolder && this.selectedFolder.id !== -1) {

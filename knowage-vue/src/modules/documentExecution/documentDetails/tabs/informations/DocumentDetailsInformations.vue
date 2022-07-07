@@ -512,7 +512,7 @@ export default defineComponent({
             this.$router.push(`/gis/edit?documentId=${this.document.id}`)
         },
         async getAllTemplates() {
-            if (this.document && this.document.id) this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.document.id}/templates`).then((response: AxiosResponse<any>) => (this.listOfTemplates = response.data as iTemplate[]))
+            if (this.document && this.document.id) this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.document.id}/templates`).then((response: AxiosResponse<any>) => (this.listOfTemplates = response.data as iTemplate[]))
         }
     }
 })

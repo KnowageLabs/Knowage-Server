@@ -67,7 +67,7 @@ export default defineComponent({
                 if (this.homePage.to) {
                     let to = this.homePage.to?.replaceAll('\\/', '/')
                     if (this.isFunctionality(to) || this.isADocument(to)) this.$router.push(to)
-                    else this.completeUrl = process.env.VUE_APP_HOST_URL + this.homePage.to.replaceAll('\\/', '/')
+                    else this.completeUrl = import.meta.env.VITE_HOST_URL + this.homePage.to.replaceAll('\\/', '/')
                 }
             } else {
                 this.completeUrl = false

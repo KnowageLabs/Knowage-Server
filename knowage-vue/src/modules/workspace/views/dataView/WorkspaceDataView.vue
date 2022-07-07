@@ -269,7 +269,7 @@ export default defineComponent({
         if ((this.store.$state as any).user?.functionalities.includes('DataPreparation')) {
             var url = new URL(window.location.origin)
             url.protocol = url.protocol.replace('http', 'ws')
-            let uri = url + 'knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+            let uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VITE_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
             this.client = new Client({
                 brokerURL: uri,
                 connectHeaders: {},
@@ -578,7 +578,7 @@ export default defineComponent({
                 this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
                     (response: AxiosResponse<any>) => {
                         let instanceId = response.data.configuration.dataPrepInstanceId
-                        this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
+                        this.$http.get(import.meta.env.VITE_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
                             (response: AxiosResponse<any>) => {
                                 let transformations = response.data.definition
                                 let processId = response.data.id
@@ -807,7 +807,7 @@ export default defineComponent({
         async updateDatasetWithNewCronExpression(newCron) {
             this.showMonitoring = false
 
-            await this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process', newCron).then(
+            await this.$http.post(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process', newCron).then(
                 () => {
                     this.loadDataset(this.selectedDataset.label)
                     this.store.setInfo({ title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })

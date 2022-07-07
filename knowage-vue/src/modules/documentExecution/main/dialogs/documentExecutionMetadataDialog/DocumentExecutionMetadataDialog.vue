@@ -216,7 +216,7 @@ export default defineComponent({
             if (!meta.value) return
 
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/${this.document.id}/${meta.id}/documentfilemetadata`, {
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecution/${this.document.id}/${meta.id}/documentfilemetadata`, {
                     headers: {
                         Accept: 'application/json, text/plain, */*'
                     },

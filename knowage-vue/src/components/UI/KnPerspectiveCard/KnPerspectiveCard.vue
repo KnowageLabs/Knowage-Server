@@ -90,7 +90,7 @@ export default defineComponent({
         async evaluateCriteria(criterionId: number, statusArray: any[], target: iScorecardTarget | null) {
             this.store.setLoading(true)
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/${criterionId}/evaluateCriterion`, statusArray)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpiee/${criterionId}/evaluateCriterion`, statusArray)
                 .then((response: AxiosResponse<any>) => {
                     if (!target && this.perspective) {
                         this.perspective.statusColor = response.data ? response.data.status : null

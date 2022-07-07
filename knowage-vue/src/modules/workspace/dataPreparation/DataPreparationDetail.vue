@@ -424,7 +424,7 @@ export default defineComponent({
         initWebsocket(): void {
             var url = new URL(window.location.origin)
             url.protocol = url.protocol.replace('http', 'ws')
-            var uri = url + 'knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+            var uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VITE_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
             this.client = new Client({
                 brokerURL: uri,
                 connectHeaders: {},
@@ -442,7 +442,7 @@ export default defineComponent({
                 tmp['name'] = dsMeta.name
                 tmp['description'] = dsMeta.description
                 tmp['id'] = dsMeta.id
-                await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.id).then((response: AxiosResponse<any>) => {
+                await this.$http.get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.id).then((response: AxiosResponse<any>) => {
                     let instance = response.data.instance
                     if (instance.config) {
                         tmp['config'] = instance.config
