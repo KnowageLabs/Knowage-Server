@@ -1,4 +1,3 @@
-
 import { flushPromises, mount } from '@vue/test-utils'
 import { vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
@@ -9,7 +8,6 @@ import DocumentBrowserHint from './DocumentBrowserHint.vue'
 import ProgressBar from 'primevue/progressbar'
 import DocumentBrowserHome from './DocumentBrowserHome.vue'
 import Toolbar from 'primevue/toolbar'
-
 
 const mockedFolder = {
     id: 725,
@@ -58,7 +56,7 @@ vi.mock('axios')
 
 const $http = { get: vi.fn().mockImplementation(() => Promise.resolve({ data: [] })) }
 
-
+const $route = { name: '', params: [] }
 
 const factory = () => {
     return mount(DocumentBrowserHome, {
@@ -67,15 +65,16 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [  createTestingPinia({
-                initialState: {
-                    store: {
-                        user: {
-                            fucntionalities: ['DocumentManagement', 'CreateCockpitFunctionality']
+            plugins: [
+                createTestingPinia({
+                    initialState: {
+                        store: {
+                            user: {
+                                fucntionalities: ['DocumentManagement', 'CreateCockpitFunctionality']
+                            }
                         }
                     }
-                }
-            })
+                })
             ],
             stubs: {
                 Button,
@@ -90,7 +89,8 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $http
+                $http,
+                $route
             }
         }
     })
