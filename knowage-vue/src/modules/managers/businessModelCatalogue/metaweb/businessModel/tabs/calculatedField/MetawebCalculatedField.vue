@@ -184,7 +184,6 @@ export default defineComponent({
                 editMode: false
             } as any
 
-            console.log(calculatedField.dataType, event)
             calculatedField.dataType == 'DATE' ? (calculatedField.format = this.selectedCalcField.format) : ''
 
             if (this.selectedCalcField.uniqueName) {

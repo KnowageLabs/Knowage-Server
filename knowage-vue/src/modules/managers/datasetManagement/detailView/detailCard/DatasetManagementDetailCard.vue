@@ -205,7 +205,6 @@ export default defineComponent({
     methods: {
         //#region ===================== Delete Versions Functionality ====================================================
         deleteConfirm(deletetype, event) {
-            console.log(event)
             let msgDesc = ''
             deletetype === 'deleteOne' ? (msgDesc = 'managers.datasetManagement.deleteOneVersionMsg') : (msgDesc = 'managers.datasetManagement.deleteAllVersionsMsg')
             this.$confirm.require({

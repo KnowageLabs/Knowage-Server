@@ -61,7 +61,7 @@ export default defineComponent({
         async importMetadata() {
             this.importing = true
             await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metadata/${this.id}/bmExtract/`)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metadata/${this.id}/bmExtract/`, undefined, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() =>
                     this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),

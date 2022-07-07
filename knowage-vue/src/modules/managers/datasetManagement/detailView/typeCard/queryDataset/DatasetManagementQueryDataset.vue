@@ -118,7 +118,6 @@ export default defineComponent({
         }
     },
     created() {
-        console.log('CREATED ------------------')
         this.loadDataset()
         this.setupCodeMirror()
         this.loadScriptMode()
