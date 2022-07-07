@@ -241,7 +241,6 @@ export default defineComponent({
             this.selectedDriver.isChanged = true
             this.selectedDriver.numberOfErrors = this.v$.$errors.length
             this.setParId(event.value.id)
-            console.log(this.selectedDriver)
         },
         setParameterInfo(driver) {
             if (this.availableAnalyticalDrivers) {

@@ -47,21 +47,25 @@
                     ></KnValidationMessages>
                 </span>
             </div>
-            <KnScheduler
-                class="p-m-1"
-                :cronExpression="currentCronExpression"
-                :descriptor="schedulerDescriptor"
-                @touched="touched = true"
-                :logsVisible="false"
-                :schedulationEnabled="schedulationEnabled"
-                :schedulationPaused="schedulationPaused"
-                @update:schedulationPaused="updateSchedulationPaused"
-                @update:schedulationEnabled="updateSchedulationEnabled"
-                @update:currentCronExpression="updateCurrentCronExpression"
-            />
+            <div class="schedulerContainer">
+                <KnScheduler
+                    class="p-m-1"
+                    :cronExpression="currentCronExpression"
+                    :cronExpressionType="cronExpressionType"
+                    :descriptor="schedulerDescriptor"
+                    @touched="touched = true"
+                    :logsVisible="false"
+                    :schedulationEnabled="schedulationEnabled"
+                    :schedulationPaused="schedulationPaused"
+                    @update:schedulationPaused="updateSchedulationPaused"
+                    @update:schedulationEnabled="updateSchedulationEnabled"
+                    @update:currentCronExpression="updateCurrentCronExpression"
+                    @update:cronExpressionType="updateCronExpressionType"
+                />
+            </div>
         </div>
         <template #footer>
-            <Button class="kn-button--secondary" :label="$t('common.cancel')" @click="resetAndClose" />
+            <Button class="kn-button--secondary" :label="$t('common.cancel')" @click="cancel" />
 
             <Button class="kn-button--primary" v-t="'common.save'" :disabled="saveButtonDisabled" @click="savePreparedDataset()" />
         </template>
@@ -80,6 +84,7 @@ import useValidate from '@vuelidate/core'
 import DataPreparationValidationDescriptor from './DataPreparationValidationDescriptor.json'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import { IDataPreparationDataset, IDataPreparationColumn } from '@/modules/workspace/dataPreparation/DataPreparation'
+
 import dataPreparationMonitoringDescriptor from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDescriptor.json'
 import KnScheduler from '@/components/UI/KnScheduler/KnScheduler.vue'
 import mainStore from '../../../App.store'
@@ -107,7 +112,8 @@ export default defineComponent({
             isFirstSave: true,
             touched: false,
             schedulationPaused: false,
-            schedulationEnabled: false
+            schedulationEnabled: false,
+            cronExpressionType: ''
         }
     },
     setup() {
@@ -154,19 +160,22 @@ export default defineComponent({
             this.resetAndClose()
         },
         saveOrUpdateProcess(processDefinition) {
-            if (this.processId && this.processId != '') return this.$http.put(import.meta.env.VITE_DATA_PREPARATION_PATH + `1.0/process/${this.processId}`, processDefinition)
-            else return this.$http.post(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process', processDefinition)
+            if (this.processId && this.processId != '') return this.$http.put(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/${this.processId}`, processDefinition)
+            else return this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process', processDefinition)
         },
         saveOrUpdateInstance(processId, datasetDefinition) {
-            if (this.instanceId && this.instanceId != '') return this.$http.post(import.meta.env.VITE_DATA_PREPARATION_PATH + `1.0/instance/${this.instanceId}`, datasetDefinition)
-            else return this.$http.post(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process/' + processId + '/instance', datasetDefinition)
+            if (this.instanceId && this.instanceId != '') return this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/instance/${this.instanceId}`, datasetDefinition)
+            else return this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/' + processId + '/instance', datasetDefinition)
         },
         createDatasetDefinition() {
             let toReturn = {}
             toReturn['config'] = {}
             toReturn['config']['paused'] = this.schedulationPaused
 
-            if (this.schedulationEnabled) toReturn['config']['cron'] = this.currentCronExpression
+            if (this.schedulationEnabled) {
+                toReturn['config']['cron'] = this.currentCronExpression
+                toReturn['config']['type'] = this.cronExpressionType
+            }
 
             toReturn['dataSetLabel'] = this.originalDataset.label
             toReturn['dataSetId'] = this.originalDataset.id
@@ -199,7 +208,25 @@ export default defineComponent({
             if (this.config && this.config.transformations) toReturn['definition'] = this.config.transformations
             return toReturn
         },
+        cancel() {
+            if (this.touched) {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesHeader'),
+                    header: this.$t('common.toast.unsavedChangesMessage'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.resetAndClose()
+                })
+            } else {
+                this.resetAndClose()
+            }
+        },
         resetAndClose(): void {
+            this.cronExpressionType = this.preparedDsMeta.config?.type
+            this.currentCronExpression = this.preparedDsMeta.config?.cron ? this.preparedDsMeta.config.cron : ''
+
+            this.schedulationPaused = this.preparedDsMeta.config?.schedulationPaused || false
+
+            this.schedulationEnabled = this.preparedDsMeta.config?.cron ? true : false
             this.closeDialog()
         },
         closeDialog(): void {
@@ -210,6 +237,7 @@ export default defineComponent({
                 element.name = this.$t(element.name)
             })
         },
+
         updateSchedulationPaused(newSchedulationPaused) {
             this.schedulationPaused = newSchedulationPaused
         },
@@ -218,6 +246,9 @@ export default defineComponent({
         },
         updateCurrentCronExpression(newCronExpression) {
             this.currentCronExpression = newCronExpression
+        },
+        updateCronExpressionType(newCronExpressionType) {
+            this.cronExpressionType = newCronExpressionType
         }
     },
 
@@ -226,6 +257,7 @@ export default defineComponent({
             handler() {
                 if (Object.keys(this.preparedDsMeta).length > 0) {
                     this.preparedDataset = this.preparedDsMeta
+                    this.cronExpressionType = this.preparedDsMeta.config?.type
                     this.currentCronExpression = this.preparedDsMeta.config?.cron ? this.preparedDsMeta.config.cron : ''
 
                     this.schedulationPaused = this.preparedDsMeta.config?.schedulationPaused || false
@@ -248,5 +280,9 @@ export default defineComponent({
     min-width: 600px !important;
     width: 600px !important;
     max-width: 600px !important;
+}
+
+.schedulerContainer {
+    width: 100%;
 }
 </style>

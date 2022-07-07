@@ -38,7 +38,7 @@ export default defineComponent({
     name: 'olap-filter-tree',
     components: { Checkbox, Message, Tree },
     props: { propFilter: { type: Object }, id: { type: String }, clearTrigger: { type: Boolean }, treeLocked: { type: Boolean } },
-    emits: ['close', 'loading', 'filtersChanged', 'lockTree'],
+    emits: ['close', 'loading', 'filtersChanged', 'lockTree', 'rootNode'],
     data() {
         return {
             olapFilterDialogDescriptor,
@@ -116,6 +116,7 @@ export default defineComponent({
 
             this.attachContentToTree(parent, content)
             if (this.filterType === 'visible' && !parent) this.setSelectedFiltersForVisibleType()
+            this.$emit('rootNode', this.nodes[0])
             this.$emit('loading', false)
         },
         createNode(el: iFilterNode) {

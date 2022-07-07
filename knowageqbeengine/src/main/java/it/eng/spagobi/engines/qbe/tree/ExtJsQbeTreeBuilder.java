@@ -367,6 +367,9 @@ public class ExtJsQbeTreeBuilder {
 		String iconCls = field.getPropertyAsString("type");
 		String aggtype = field.getPropertyAsString("aggtype");
 		String format = field.getPropertyAsString("format");
+		boolean personal = Boolean.parseBoolean(field.getPropertyAsString("personal"));
+		boolean decrypt = Boolean.parseBoolean(field.getPropertyAsString("decrypt"));
+		boolean subjectId = Boolean.parseBoolean(field.getPropertyAsString("subjectId"));
 		String fieldLabel = getFieldLabel(field);
 		String longDescription = QueryJSONSerializer.getFieldLongDescription(field, getDatamartLabels(), null);
 		String fieldTooltip = getFieldTooltip(field);
@@ -395,6 +398,9 @@ public class ExtJsQbeTreeBuilder {
 			nodeAttributes.put("entity", entityLabel);
 			nodeAttributes.put("field", fieldLabel);
 			nodeAttributes.put("longDescription", longDescription);
+			nodeAttributes.put("personal", personal);
+			nodeAttributes.put("decrypt", decrypt);
+			nodeAttributes.put("subjectId", subjectId);
 			fieldNode.put("attributes", nodeAttributes);
 		} catch (JSONException e) {
 			e.printStackTrace();

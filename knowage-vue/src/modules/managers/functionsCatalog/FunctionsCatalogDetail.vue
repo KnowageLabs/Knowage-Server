@@ -102,7 +102,7 @@ export default defineComponent({
             return index !== -1
         },
         readonly(): boolean {
-            return !this.canManageFunctionalities || this.selectedFunction?.owner !== (this.store.$state as any).user.userId
+            return !this.canManageFunctionalities && this.selectedFunction?.owner !== (this.store.state as any).user.userId
         },
         invalidGeneral(): boolean {
             return !this.validateFunctionInfo(false)
@@ -271,11 +271,11 @@ export default defineComponent({
                 return
             }
 
-            let url = import.meta.env.VITE_API_PATH + '1.0/functioncatalog/new'
+            let url = process.env.VUE_APP_API_PATH + '1.0/functioncatalog/new'
 
             if (this.selectedFunction.id) {
                 this.operation = 'update'
-                url = import.meta.env.VITE_API_PATH + `1.0/functioncatalog`
+                url = process.env.VUE_APP_API_PATH + `1.0/functioncatalog`
             } else {
                 this.operation = 'create'
             }

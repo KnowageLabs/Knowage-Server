@@ -43,8 +43,10 @@ import KpiDocumentDesignerStyleCard from './KpiDocumentDesignerStyleCard/KpiDocu
 import KpiDocumentDesignerTypeCard from './KpiDocumentDesignerTypeCard/KpiDocumentDesignerTypeCard.vue'
 import KpiDocumentDesignerSaveDialog from './KpiDocumentDesignerSaveDialog/KpiDocumentDesignerSaveDialog.vue'
 import KpiDocumentDesignerScorecardsListCard from './KpiDocumentDesignerScorecardsListCard/KpiDocumentDesignerScorecardsListCard.vue'
+import { mapState } from 'vite'
 import mainStore from '../../../App.store'
-import deepcopy from 'deepcopy'
+
+const deepcopy = require('deepcopy')
 
 export default defineComponent({
     name: 'kpi-document-designer',
@@ -65,6 +67,9 @@ export default defineComponent({
         }
     },
     computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        }),
         showScorecards(): boolean {
             return (this.store.$state as any).user.functionalities.includes('ScorecardsManagement')
         },
@@ -82,22 +87,30 @@ export default defineComponent({
     methods: {
         async loadPage() {
             this.loading = true
+            let config = {
+                headers: { Accept: 'application/json, text/plain, */*' }
+            }
+
+            let language = this.user.locale.split('_')[0]
+            let country = this.user.locale.split('_')[1]
+            await this.$http.get(process.env.VUE_APP_KPI_ENGINE_API_URL + `1.0/pages/edit?SBI_LANGUAGE=${language}&SBI_COUNTRY=${country}&user_id=${this.user.userUniqueIdentifier}&document=${this.id}`, config).then(() => {})
+
             await this.loadKpi()
             await this.loadKpiList()
             await this.loadScorecards()
             this.loading = false
         },
         async loadKpiList() {
-            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpi`).then((response: AxiosResponse<any>) => (this.kpiList = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpi`).then((response: AxiosResponse<any>) => (this.kpiList = response.data))
         },
         async loadScorecards() {
-            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpiee/listScorecard`).then((response: AxiosResponse<any>) => (this.scorecards = response.data))
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/listScorecard`).then((response: AxiosResponse<any>) => (this.scorecards = response.data))
         },
         async loadKpi() {
             this.loading = true
             if (this.id) {
                 await this.$http
-                    .post(import.meta.env.VITE_KPI_ENGINE_API_URL + `1.0/kpisTemplate/getKpiTemplate`, { id: this.id })
+                    .post(process.env.VUE_APP_KPI_ENGINE_API_URL + `1.0/kpisTemplate/getKpiTemplate`, { id: this.id })
                     .then((response: AxiosResponse<any>) => {
                         this.kpiDesigner = response.data.templateContent ? JSON.parse(response.data.templateContent) : response.data
 
@@ -194,7 +207,7 @@ export default defineComponent({
                 action: 'DOC_SAVE'
             }
             await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/saveDocument`, postData)
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/saveDocument`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
@@ -212,7 +225,7 @@ export default defineComponent({
             postData.append('jsonTemplate', JSON.stringify(this.getFormattedKpiDesigner()))
 
             await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documents/saveKpiTemplate`, postData, {
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/saveKpiTemplate`, postData, {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                         Accept: 'application/json, text/plain, */*'
@@ -228,7 +241,6 @@ export default defineComponent({
         },
         getFormattedKpiDesigner() {
             const tempDesigner = deepcopy(this.kpiDesigner)
-            if (!tempDesigner) return
 
             if (tempDesigner.chart.type === 'kpi') {
                 delete tempDesigner.chart.data.scorecard

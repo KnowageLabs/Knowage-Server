@@ -26,7 +26,7 @@
         <div v-if="sidebarVisible && windowWidth < 1024" id="document-browser-sidebar-backdrop" @click="sidebarVisible = false"></div>
 
         <div v-show="!searchMode" class="document-sidebar kn-flex" style="width: 350px" :class="{ 'sidebar-hidden': isSidebarHidden, 'document-sidebar-absolute': sidebarVisible && windowWidth < 1024 }">
-            <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
+            <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" :selectedFolderProp="selectedFolder" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
         </div>
 
         <div id="detail-container" class="p-d-flex p-flex-column">
@@ -115,14 +115,41 @@ export default defineComponent({
         window.addEventListener('resize', this.onResize)
 
         await this.loadFolders()
-        this.user = (this.store.$state as any).user
+        this.user = (this.$store.state as any).user
+
+        if (this.$route.name === 'document-browser-functionality') {
+            this.setFolderFromRoute()
+        }
+
+        this.setRouterWatcher()
     },
     beforeUnmount() {
         window.removeEventListener('resize', this.onResize)
     },
     methods: {
+        setRouterWatcher() {
+            this.$watch(
+                () => this.$route.params.pathMatch,
+                (toParams) => {
+                    if (this.$route.name === 'document-browser-functionality' && toParams.length > 0) this.setFolderFromRoute()
+                }
+            )
+        },
         onResize() {
             this.windowWidth = window.innerWidth
+        },
+        async setFolderFromRoute() {
+            if (this.$route.params.pathMatch.length > 0) {
+                this.selectedFolder = this.findSelectedFolder()
+                if (!this.selectedFolder) return
+                localStorage.setItem('documentSelectedFolderId', JSON.stringify(this.selectedFolder.id))
+                await this.loadDocumentsWithBreadcrumbs()
+            }
+        },
+        findSelectedFolder() {
+            const id = this.$route.params.pathMatch[this.$route.params.pathMatch.length - 1]
+            const index = this.folders.findIndex((folder: any) => folder.id == id)
+            return index !== -1 ? this.folders[index] : null
         },
         async loadFolders() {
             this.loading = true
@@ -147,9 +174,21 @@ export default defineComponent({
             if (this.selectedFolder?.id === folder.id) {
                 return
             }
-
             this.selectedFolder = folder
+            this.changeFolderRotue()
             await this.loadDocumentsWithBreadcrumbs()
+        },
+        changeFolderRotue() {
+            const tempPath = this.selectedFolder.path?.substring(1)?.split('/')
+            if (!tempPath) return
+            let temp = ''
+            for (let i = 0; i < tempPath.length; i++) {
+                const index = this.folders.findIndex((folder: any) => folder.code == tempPath[i])
+                if (index !== -1) {
+                    temp += `/${this.folders[index].id}`
+                }
+            }
+            history.pushState({}, '', process.env.VUE_APP_PUBLIC_PATH + 'document-browser' + temp)
         },
         async loadDocumentsWithBreadcrumbs() {
             if (this.selectedFolder && this.selectedFolder.id !== -1) {
@@ -193,14 +232,10 @@ export default defineComponent({
         },
         createNewDocument() {
             this.documentId = null
-            // const path = `/document-browser/document-details/new/${this.selectedFolder.id}`
-            // this.$router.push(path)
             this.$emit('itemSelected', { item: null, mode: 'documentDetail', functionalityId: this.selectedFolder.id })
         },
         async openDocumentDetails(event) {
             this.documentId = event.id
-            // const path = `/document-browser/document-details/${event.id}`
-            // this.$router.push(path)
             this.$emit('itemSelected', { item: event, mode: 'documentDetail', functionalityId: null })
         },
         createNewCockpit() {

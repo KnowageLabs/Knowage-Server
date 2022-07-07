@@ -102,7 +102,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 			if (jobGroupExists(jobGroupName) == false)
 				return false;
 
-			jobGroupName = this.applyTenant(jobGroupName);
+			jobGroupName = global ? jobGroupName : this.applyTenant(jobGroupName);
 			List<String> jobNames = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(jobGroupName)).stream().map(e -> e.getName()).collect(toList());
 			for (String currJobName : jobNames) {
 				if (jobName.equalsIgnoreCase(currJobName)) {
@@ -249,7 +249,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 		try {
 			Assert.assertTrue(StringUtilities.isNotEmpty(jobGroupName), "Input parameter [jobGroupName] cannot be empty");
 
-			String actualJobGroupName = this.applyTenant(jobGroupName);
+			String actualJobGroupName = global ? jobGroupName : this.applyTenant(jobGroupName);
 			List<String> jobNames = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(actualJobGroupName)).stream().map(e -> e.getName()).collect(toList());
 
 			if (jobNames != null) {
@@ -290,7 +290,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 			Assert.assertTrue(StringUtilities.isNotEmpty(jobGroupName), "Input parameter [jobGroupName] cannot be empty");
 			Assert.assertTrue(StringUtilities.isNotEmpty(jobName), "Input parameter [jobName] cannot be empty");
 
-			String actualJobGroupName = this.applyTenant(jobGroupName);
+			String actualJobGroupName = global ? jobGroupName : this.applyTenant(jobGroupName);
 			JobKey jobKey = JobKey.jobKey(jobName, actualJobGroupName);
 			JobDetail jobDetail = scheduler.getJobDetail(jobKey);
 			if (jobDetail != null) {
@@ -327,7 +327,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 			// TODO delete trigger associated to the job first (?)
 			// Reply: no need to delete trigger because deleteJob(...) loops through all the triggers having a reference to this job,
 			// to unschedule them and removes the job from the jobstore
-			String actualJobGroupName = this.applyTenant(jobGroupName);
+			String actualJobGroupName = global ? jobGroupName : this.applyTenant(jobGroupName);
 			JobKey jobKey = JobKey.jobKey(jobName, actualJobGroupName);
 			scheduler.deleteJob(jobKey);
 		} catch (Throwable t) {
@@ -420,7 +420,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 
 		spagobiTriggers = new ArrayList<Trigger>();
 		try {
-			String actualJobGroupName = this.applyTenant(jobGroupName);
+			String actualJobGroupName = global ? jobGroupName : this.applyTenant(jobGroupName);
 			JobKey jobKey = JobKey.jobKey(jobName, actualJobGroupName);
 			List<? extends org.quartz.Trigger> quartzTriggers = scheduler.getTriggersOfJob(jobKey);
 			for (org.quartz.Trigger quartzTrigger : quartzTriggers) {

@@ -103,7 +103,6 @@ export default defineComponent({
     methods: {
         async loadDocument() {
             this.document = this.propDocument
-
             if (this.isEnterprise && this.document && this.document.id) {
                 await this.loadNotes()
             }
@@ -116,7 +115,7 @@ export default defineComponent({
             this.loading = true
             this.notes = []
             await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}`)
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}`)
                 .then((response: AxiosResponse<any>) => {
                     this.notes = response.data?.map((note: iNote) => {
                         return { ...note, type: note.public ? 'Public' : 'Private' }
@@ -133,7 +132,7 @@ export default defineComponent({
         async saveNote() {
             this.loading = true
             await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}`, { public: this.selectedNote.type === 'Public', content: this.selectedNote.content, id: this.selectedNote.id })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}`, { public: this.selectedNote.type === 'Public', content: this.selectedNote.content, id: this.selectedNote.id })
                 .then(async (response: AxiosResponse<any>) => {
                     this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
@@ -157,13 +156,12 @@ export default defineComponent({
         async onDeleteNote(note: iNote) {
             this.loading = true
             await this.$http
-                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}/${note.id}`)
+                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}/${note.id}`)
                 .then(async () => {
                     this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
-
                     if (this.selectedNote.id === note.id) this.selectedNote = {} as iNote
                     await this.loadNotes()
                 })
@@ -178,7 +176,7 @@ export default defineComponent({
         async exportNotes(type: string) {
             this.loading = true
             await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}/download/${type}`, {
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `document-notes/${this.document.id}/download/${type}`, {
                     headers: {
                         Accept: 'application/json, text/plain, */*'
                     }
@@ -192,6 +190,7 @@ export default defineComponent({
         },
         createNewNote() {
             this.selectedNote = {} as iNote
+            this.activeTab = 0
         }
     }
 })

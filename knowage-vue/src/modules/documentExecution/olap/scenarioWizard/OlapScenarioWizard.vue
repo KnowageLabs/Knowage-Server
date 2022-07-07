@@ -97,7 +97,7 @@ import deepcopy from 'deepcopy'
 export default defineComponent({
     name: 'olap-scenario-wizard',
     components: { Dialog, InlineMessage, Dropdown, Card, Column, DataTable },
-    props: { hiddenFormDataProp: { type: Object, required: true }, sbiExecutionId: { type: String }, olapDesignerProp: { type: Object, required: true } },
+    props: { artifactIdProp: { type: String }, sbiExecutionId: { type: String }, olapDesignerProp: { type: Object, required: true } },
     emits: ['close', 'saveScenario', 'deleteScenario'],
     computed: {
         saveButtonDisabled() {
@@ -147,7 +147,7 @@ export default defineComponent({
             }
         },
         async getAllCubes() {
-            const currentContentId = this.hiddenFormDataProp.get('SBI_ARTIFACT_VERSION_ID')
+            const currentContentId = this.artifactIdProp
             await this.$http
                 .get(import.meta.env.VITE_OLAP_PATH + `1.0/designer/cubes/${currentContentId}?SBI_EXECUTION_ID=${this.sbiExecutionId}`)
                 .then((response: AxiosResponse<any>) => {
@@ -157,7 +157,7 @@ export default defineComponent({
                 .finally(() => (this.loading = false))
         },
         async getAllMeasures() {
-            const currentContentId = this.hiddenFormDataProp.get('SBI_ARTIFACT_VERSION_ID')
+            const currentContentId = this.artifactIdProp
             await this.$http
                 .get(import.meta.env.VITE_OLAP_PATH + `1.0/designer/measures/${currentContentId}/${this.selectedCube.name}?SBI_EXECUTION_ID=${this.sbiExecutionId}`)
                 .then((response: AxiosResponse<any>) => {

@@ -3,6 +3,7 @@
         <KnScheduler
             class="p-m-1"
             :cronExpression="currentCronExpression"
+            :cronExpressionType="cronExpressionType"
             :descriptor="schedulerDescriptor"
             @touched="touched = true"
             :readOnly="false"
@@ -12,6 +13,7 @@
             @update:schedulationPaused="updateSchedulationPaused"
             @update:schedulationEnabled="updateSchedulationEnabled"
             @update:currentCronExpression="updateCurrentCronExpression"
+            @update:cronExpressionType="updateCronExpressionType"
             :loadingLogs="loadingLogs"
         />
         <template #footer>
@@ -41,11 +43,11 @@ export default defineComponent({
         return {
             schedulerDescriptor: dataPreparationMonitoringDescriptor,
             logs: Array<IDataPrepLog>(),
-
             filters: { global: [filterDefault] } as Object,
             validSchedulation: Boolean,
             showHint: false,
             currentCronExpression: '',
+            cronExpressionType: '',
             touched: false,
             schedulationPaused: false,
             schedulationEnabled: false,
@@ -53,7 +55,6 @@ export default defineComponent({
             loadingLogs: false
         }
     },
-
     watch: {
         async visibility(newVisibility) {
             this.store.setLoading(true)
@@ -71,18 +72,16 @@ export default defineComponent({
     methods: {
         async loadLogs() {
             if (this.dataset && this.dataset.id) {
-                await this.$http.get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + this.dataset.id).then((response: AxiosResponse<any>) => {
+                await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + this.dataset.id).then((response: AxiosResponse<any>) => {
                     let instance = response.data.instance
                     if (instance) {
                         this.instanceId = instance.id
                         this.currentCronExpression = instance.config.cron
                         if (!this.currentCronExpression) this.showHint
-
+                        this.cronExpressionType = instance.config.type
                         this.schedulationPaused = instance.config.paused || false
-
                         this.schedulationEnabled = this.currentCronExpression ? true : false
-
-                        this.$http.get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process/logs/' + instance.id).then((response: AxiosResponse<any>) => {
+                        this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/logs/' + instance.id).then((response: AxiosResponse<any>) => {
                             this.logs = response.data
                         })
                     }
@@ -103,6 +102,7 @@ export default defineComponent({
         },
         resetAndClose() {
             this.currentCronExpression = ''
+            this.cronExpressionType = ''
             this.touched = false
             this.showHint = false
             this.$emit('close')
@@ -113,10 +113,10 @@ export default defineComponent({
         },
         saveSchedulation() {
             let obj = { instanceId: this.instanceId, config: {} }
-
             if (this.schedulationEnabled) {
                 obj['config']['cron'] = this.currentCronExpression
                 obj['config']['paused'] = this.schedulationPaused
+                obj['config']['type'] = this.cronExpressionType
             }
             this.$emit('save', obj)
             this.resetAndClose()
@@ -129,6 +129,9 @@ export default defineComponent({
         },
         updateCurrentCronExpression(newCronExpression) {
             this.currentCronExpression = newCronExpression
+        },
+        updateCronExpressionType(cronExpressionType) {
+            this.cronExpressionType = cronExpressionType
         }
     }
 })
@@ -139,7 +142,6 @@ export default defineComponent({
     min-width: 600px;
     width: 1200px;
     max-width: 1400px;
-
     .p-datatable.p-datatable-sm.data-prep-table {
         min-height: 300px;
     }

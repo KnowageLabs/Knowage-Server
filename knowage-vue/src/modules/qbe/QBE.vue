@@ -76,7 +76,7 @@
                 </Toolbar>
                 <div class="kn-relative kn-flex p-mt-2">
                     <div class="kn-height-full kn-width-full kn-absolute">
-                        <QBESimpleTable
+                         <QBESimpleTable
                             v-if="!smartView"
                             :query="selectedQuery"
                             @columnVisibilityChanged="checkIfHiddenColumnsExist"
@@ -568,7 +568,7 @@ export default defineComponent({
             this.selectedQuery.fields = []
             this.selectedQuery.havings = []
             this.qbeMetadata = []
-            if (this.smartView) this.executeQBEQuery(false)
+            this.updateSmartView()
         },
         deleteFieldFromQuery(fieldID) {
             let indexOfFieldToDelete = this.selectedQuery.fields.findIndex((field) => {
@@ -929,7 +929,12 @@ export default defineComponent({
             await this.executeQBEQuery(true)
         },
         updateSmartView() {
-            this.smartView ? this.executeQBEQuery(false) : ''
+            this.smartView && this.selectedQuery.fields.length > 0 ? this.executeQBEQuery(false) : this.resetQueryPreviewAndPagination()
+        },
+        resetQueryPreviewAndPagination() {
+            console.log('called')
+            this.pagination = { start: 0, limit: 25, size: 0 }
+            this.queryPreviewData = {} as any
         },
         smartViewFieldHidden() {
             this.checkIfHiddenColumnsExist()

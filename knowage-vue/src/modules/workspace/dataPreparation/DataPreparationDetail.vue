@@ -34,7 +34,7 @@
         <DataPreparationDialog v-model:transformation="selectedTransformation" @send-transformation="handleTransformation" :columns="columns" v-model:col="col" :readOnly="readOnly" @update:readOnly="updateReadOnly" />
         <DataPreparationSaveDialog v-model:visibility="showSaveDialog" :originalDataset="dataset" :config="dataset.config" :columns="columns" :instanceId="instanceId" @update:instanceId="updateInstanceId" :processId="processId" @update:processId="updateprocessId" :preparedDsMeta="preparedDsMeta" />
         <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0">
-            <template #start> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.label }})</template>
+            <template #start> {{ $t('managers.workspaceManagement.dataPreparation.label') }} ({{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}: {{ dataset.name }})</template>
             <template #end>
                 <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.refresh')" @click="refreshOriginalDataset" :disabled="loading > 0" />
                 <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="saveDataset" :disabled="loading > 0" />
@@ -68,18 +68,16 @@
             <Sidebar v-model:visible="visibleRight" position="right" class="kn-data-preparation-sidenav">
                 <div class="info-container">
                     <div class="original-dataset">
-                        <i class="fa fa-database"></i><span>{{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}</span
+                        <i class="fa fa-database p-mr-2"></i><span>{{ $t('managers.workspaceManagement.dataPreparation.originalDataset') }}</span
                         >: {{ dataset.label }}
                     </div>
-                    <div class="original-dataset" v-if="dataset.refreshRate">
-                        <i class="fas fa-stopwatch"></i><span>{{ $t('managers.workspaceManagement.dataPreparation.dataset.refreshRate.label') }}</span
-                        >: {{ dataset.refreshRate }}
-                    </div>
+                </div>
+
+                <div class="titleContainer">
+                    <h4 class="kn-truncated">{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</h4>
                 </div>
                 <Divider class="p-m-0 p-p-0 dividerCustomConfig" />
-                <div class="kn-truncated">{{ $t('managers.workspaceManagement.dataPreparation.transformations.label') }}</div>
-
-                <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="reverseTransformations()" optionLabel="type" listStyle="max-height:200px"
+                <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="reverseTransformations()" optionLabel="type"
                     ><template #option="slotProps">
                         <div class="p-text-uppercase kn-list-item transformationSidebarElement">
                             <div v-if="slotProps.option.type != 'calculatedField'">{{ slotProps.option.type }} - {{ slotProps.option.parameters[0].columns[0] }}</div>
@@ -127,7 +125,7 @@
                                 <Dropdown v-model="col.fieldType" :options="translateRoles()" optionLabel="label" optionValue="code" class="kn-material-input" />
                             </span>
                         </OverlayPanel>
-                        <div style="display: flex; flex-direction: column; flex: 1">
+                        <div class="aliasAndType p-ml-2">
                             <input class="kn-input-text-sm" type="text" v-model="col.fieldAlias" v-if="col.editing" @blur="changeAlias(col)" @keydown.enter="changeAlias(col)" />
                             <span v-else class="kn-clickable" @click="changeAlias(col)">{{ col.fieldAlias }}</span>
                             <span class="kn-list-item-text-secondary kn-truncated roleType">{{ $t(removePrefixFromType(col.Type)) }}</span>
@@ -175,6 +173,7 @@ import KnCalculatedField from '@/components/functionalities/KnCalculatedField/Kn
 import DataPreparationSimpleDescriptor from '@/modules/workspace/dataPreparation/DataPreparationSimple/DataPreparationSimpleDescriptor.json'
 import DataPreparationSplitDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCustom/DataPreparationSplitDescriptor.json'
 import calculatedFieldDescriptor from '@/modules/workspace/dataPreparation/DataPreparationCalculatedFieldDescriptor.json'
+
 import { Client } from '@stomp/stompjs'
 import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 import mainStore from '../../../App.store'
@@ -226,11 +225,11 @@ export default defineComponent({
         this.loading++
         this.descriptorTransformations = Object.assign([], this.descriptor.transformations)
 
-        await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/datasets/dataset/id/' + this.id).then((response: AxiosResponse<any>) => {
+        await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/dataset/id/' + this.id).then((response: AxiosResponse<any>) => {
             this.dataset = response.data[0]
         })
         if (this.dataset) {
-            this.initDsMetadata()
+            await this.initDsMetadata()
             this.initTransformations()
             this.initWebsocket()
 
@@ -357,7 +356,7 @@ export default defineComponent({
             // launch avro export job
             this.$http
                 .post(
-                    import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${this.dataset.id}`,
+                    process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${this.dataset.id}`,
                     {},
                     {
                         headers: {
@@ -425,7 +424,7 @@ export default defineComponent({
         initWebsocket(): void {
             var url = new URL(window.location.origin)
             url.protocol = url.protocol.replace('http', 'ws')
-            var uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VITE_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+            var uri = url + 'knowage-data-preparation/ws?' + process.env.VUE_APP_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
             this.client = new Client({
                 brokerURL: uri,
                 connectHeaders: {},
@@ -438,17 +437,19 @@ export default defineComponent({
             if (this.existingInstanceId) this.instanceId = this.existingInstanceId
             if (this.existingDataset) {
                 let dsMeta = JSON.parse(this.existingDataset)
-                this.preparedDsMeta = {}
-                this.preparedDsMeta['label'] = dsMeta.label
-                this.preparedDsMeta['name'] = dsMeta.name
-                this.preparedDsMeta['description'] = dsMeta.description
-                this.preparedDsMeta['id'] = dsMeta.id
-                await this.$http.get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.id).then((response: AxiosResponse<any>) => {
+                let tmp = {}
+                tmp['label'] = dsMeta.label
+                tmp['name'] = dsMeta.name
+                tmp['description'] = dsMeta.description
+                tmp['id'] = dsMeta.id
+                await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/by-destination-data-set/' + dsMeta.id).then((response: AxiosResponse<any>) => {
                     let instance = response.data.instance
                     if (instance.config) {
-                        this.preparedDsMeta['config'] = instance.config
+                        tmp['config'] = instance.config
                     }
                 })
+
+                this.preparedDsMeta = tmp
             }
         },
         getColHeader(metadata: Array<any>, idx: Number): string {
@@ -671,6 +672,11 @@ export default defineComponent({
         }
     }
 }
+.p-column-header-content {
+    .p-button {
+        min-width: 0;
+    }
+}
 
 .toolbarCustomConfig {
     background-color: white !important;
@@ -744,5 +750,17 @@ export default defineComponent({
 }
 .sidebarClass {
     flex-direction: column-reverse;
+}
+
+.titleContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.aliasAndType {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 </style>

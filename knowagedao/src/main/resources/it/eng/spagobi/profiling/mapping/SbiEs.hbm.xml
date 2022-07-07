@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="it.eng.spagobi.profiling.bean.SbiEs" table="SBI_ES">
+	
+		<id name="prog">
+			<column name="prog" not-null="true" unique="true"/>
+			
+			<generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_ES</param>
+				<param name="initial_value">1</param>
+			</generator>
+		</id>
+
+		<property name="organization">
+			<column name="organization" not-null="true" />
+		</property>
+		<property name="timestamp">
+			<column name="timestamp" not-null="true" />
+		</property>
+		<property name="type">
+			<column name="type" not-null="true" />
+		</property>
+		<property name="id">
+			<column name="id" not-null="true" />
+		</property>
+		<property name="eventId">
+			<column name="event_id" not-null="true" unique="true" />
+		</property>
+		<property name="event" type="string">
+			<column name="EVENT" length="100" not-null="true" unique="false" />
+		</property>
+		<property name="data" type="string">
+			<column name="DATA" not-null="true" unique="false" />
+		</property>
+
+		<filter name="tenantFilter" condition="organization=:tenant" />
+	</class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string" />
+	</filter-def>
+
+</hibernate-mapping>

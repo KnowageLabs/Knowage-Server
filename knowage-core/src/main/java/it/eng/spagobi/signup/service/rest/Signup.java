@@ -667,8 +667,8 @@ public class Signup {
 		String url = "/themes/" + currTheme + "/jsp/signup/signup.jsp";
 		logger.debug("url for signup: " + url);
 
-		MessageBuilder msgBuilder = new MessageBuilder();
-		Locale locale = msgBuilder.getLocale(req);
+		// TODO : do we need to use the request locale?
+		Locale locale = Locale.getDefault();
 		logger.debug("locale for signup: " + locale);
 		try {
 			List communities = DAOFactory.getCommunityDAO().loadAllSbiCommunities();

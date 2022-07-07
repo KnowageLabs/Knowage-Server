@@ -8,7 +8,7 @@ const store = defineStore('store', {
             error: {},
             info: {},
             warning: {},
-            downloads: { count: { total: 0, unRead: 0 } },
+            downloads: { count: { total: 0, alreadyDownloaded: 0 } },
             locale: 'en_US',
             news: { count: { total: 0, unRead: 0 } },
             loading: 0,

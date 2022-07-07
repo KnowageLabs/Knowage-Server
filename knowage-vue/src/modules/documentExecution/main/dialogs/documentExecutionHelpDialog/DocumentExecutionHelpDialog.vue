@@ -28,6 +28,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
+import { mapState } from 'vuex'
 import Dialog from 'primevue/dialog'
 import documentExecutionHelpDialogDescriptor from './DocumentExecutionHelpDialogDescriptor.json'
 import DocumentExecutionWordDetail from './DocumentExecutionWordDetail.vue'
@@ -48,7 +49,11 @@ export default defineComponent({
             selectedWordName: '' as string
         }
     },
-    computed: {},
+    computed: {
+        ...mapState({
+            isEnterprise: 'isEnterprise'
+        })
+    },
     watch: {
         async propDocument() {
             await this.loadDocument()
@@ -64,19 +69,19 @@ export default defineComponent({
     methods: {
         async loadDocument() {
             this.document = this.propDocument ? { ...this.propDocument } : {}
-            if (this.document.id) await this.loadDocumentWords()
+            if (this.isEnterprise && this.document.id) await this.loadDocumentWords()
         },
         async loadDocumentWords() {
             this.store.setLoading(true)
             await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/getDocumentInfo?DOCUMENT_ID=${this.document.id}`)
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getDocumentInfo?DOCUMENT_ID=${this.document.id}`)
                 .then((response: AxiosResponse<any>) => (this.words = response.data.word))
                 .finally(() => this.store.setLoading(false))
         },
         async loadWordDetail(word: { WORD_ID: number; WORD: string }) {
             this.store.setLoading(true)
             await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/getWord?WORD_ID=${word?.WORD_ID}`)
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getWord?WORD_ID=${word?.WORD_ID}`)
                 .then((response: AxiosResponse<any>) => {
                     this.selectedWordName = word.WORD
                     this.wordDetail = response.data

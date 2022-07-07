@@ -1,6 +1,6 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2021 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2022 Engineering Ingegneria Informatica S.p.A.
  *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.utilities;
+package it.eng.knowage.boot.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,61 +24,58 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
 import com.thoughtworks.xstream.XStream;
 
-import it.eng.knowage.boot.utils.ContextPropertiesConfig;
+import it.eng.knowage.boot.filter.IWhiteList;
 
-public class WhiteList {
+public class WhiteList implements IWhiteList {
+
+	private static final Logger LOGGER = Logger.getLogger(WhiteList.class);
 
 	private static final WhiteList INSTANCE = new WhiteList();
 
-	private static Logger logger = Logger.getLogger(WhiteList.class);
+	public static WhiteList getInstance() {
+		return INSTANCE;
+	}
+
 	private final String WHITELIST_FILE = "services-whitelist.xml";
 
 	private WhiteList() {
 
 	}
 
-	private List<String> getProperties(String property) {
-		logger.debug("IN");
-		List<String> services = new ArrayList<String>();
-		FileInputStream stream = null;
-		try {
-			String servicesWhitelist = ContextPropertiesConfig.getResourcePath() + "/" + WHITELIST_FILE;
-			File file = new File(servicesWhitelist);
-			stream = new FileInputStream(file);
+	private List<Service> getProperties() {
+		LOGGER.debug("IN");
+		List<Service> services = new ArrayList<>();
+		String servicesWhitelist = ContextPropertiesConfig.getResourcePath() + "/" + WHITELIST_FILE;
+		File file = new File(servicesWhitelist);
+
+		try (FileInputStream stream = new FileInputStream(file)) {
 			XStream xstream = new XStream();
 			xstream.alias("WHITELIST", WhiteListBean.class);
 			xstream.autodetectAnnotations(true);
 			xstream.registerConverter(new ServiceConverter());
 			xstream.addImplicitCollection(WhiteListBean.class, "service", Service.class);
+			xstream.allowTypes(new Class[] { it.eng.knowage.boot.utils.WhiteListBean.class });
 			String fileString = getFileContent(stream, "UTF-8");
 			if (!file.exists() || file.isDirectory()) {
 				return services;
 			} else {
 				WhiteListBean bean = (WhiteListBean) xstream.fromXML(fileString);
 				for (Service ser : bean.service) {
-					services.add(ser.baseurl);
+					services.add(ser);
 				}
-
-				stream.close();
 			}
 		} catch (Exception e) {
-			logger.error("Can not read white-list services from configuration file ", e);
+			LOGGER.error("Can not read white-list services from configuration file ", e);
 			return services;
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-				logger.error("Can not close the stream resources ", e);
-			}
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return services;
 	}
 
@@ -94,16 +91,22 @@ public class WhiteList {
 		}
 	}
 
-	public static WhiteList getInstance() {
-		return INSTANCE;
-	}
-
+	@Override
 	public List<String> getRelativePaths() {
-		return getProperties("relativepath");
+		return getProperties()
+				.stream()
+				.filter(e -> e.relativepath != null)
+				.map(e -> e.relativepath)
+				.collect(Collectors.toList());
 	}
 
+	@Override
 	public List<String> getExternalServices() {
-		return getProperties("baseurl");
+		return getProperties()
+				.stream()
+				.filter(e -> e.baseurl != null)
+				.map(e -> e.baseurl)
+				.collect(Collectors.toList());
 	}
 
 }

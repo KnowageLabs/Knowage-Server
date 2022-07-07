@@ -78,6 +78,8 @@ export default defineComponent({
             window.addEventListener('message', (event) => {
                 if (event.data.type === 'saveCockpit' && this.$router.currentRoute.value.name === 'new-dashboard') {
                     this.loadSavedCockpit(event.data.model)
+                    this.documentSaved = event.data.model
+                    this.documentSavedTrigger = !this.documentSavedTrigger
                 }
             })
 

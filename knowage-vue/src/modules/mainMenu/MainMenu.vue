@@ -66,14 +66,14 @@ import LanguageDialog from '@/modules/mainMenu/dialogs/LanguageDialog/LanguageDi
 import LicenseDialog from '@/modules/mainMenu/dialogs/LicenseDialog/LicenseDialog.vue'
 import NewsDialog from '@/modules/mainMenu/dialogs/NewsDialog/NewsDialog.vue'
 import RoleDialog from '@/modules/mainMenu/dialogs/RoleDialog.vue'
-import { mapState, mapActions } from 'pinia'
+import { mapState } from 'vuex'
 import auth from '@/helpers/commons/authHelper'
 import { AxiosResponse } from 'axios'
 import DownloadsDialog from '@/modules/mainMenu/dialogs/DownloadsDialog/DownloadsDialog.vue'
 import { IMenuItem } from '@/modules/mainMenu/MainMenu'
 import TieredMenu from 'primevue/tieredmenu'
 import ScrollPanel from 'primevue/scrollpanel'
-import mainStore from '../../App.store.js'
+import mainStore from '../../App.store'
 
 export default defineComponent({
     name: 'Knmenu',
@@ -145,7 +145,7 @@ export default defineComponent({
             this.hoverTimer = setTimeout(() => {
                 // @ts-ignore
                 this.$refs.menu.hide()
-            }, import.meta.env.VITE_MENU_FADE_TIMER)
+            }, process.env.VUE_APP_MENU_FADE_TIMER)
         },
         newsSelection() {
             console.log('ALLOWED: ', this.allowedUserFunctionalities)
@@ -169,7 +169,7 @@ export default defineComponent({
             if (to) {
                 to = to.replace(/\\\//g, '/')
                 if (to.startsWith('/')) to = to.substring(1)
-                return import.meta.env.VITE_PUBLIC_PATH + to
+                return process.env.VUE_APP_PUBLIC_PATH + to
             }
         },
         toggleProfile() {
@@ -180,7 +180,7 @@ export default defineComponent({
         },
         getProfileImage(user) {
             if (user && user.organizationImageb64) return user.organizationImageb64
-            return import('../../assets/images/commons/logo_knowage.svg')
+            return require('@/assets/images/commons/logo_knowage.svg')
         },
         updateNewsAndDownload() {
             for (var idx in this.allowedUserFunctionalities) {
@@ -246,7 +246,6 @@ export default defineComponent({
         cleanTo(item): any {
             return item.to.replace(/\\\//g, '/')
         },
-
         async loadMenu(recursive: Boolean = false) {
             window.addEventListener('resize', this.getDimensions)
             this.store.setLoading(true)
@@ -262,16 +261,10 @@ export default defineComponent({
                 localObject.locale = splittedLocale[0] + '-' + splittedLocale[2].replaceAll('#', '') + '-' + splittedLocale[1]
             }
             await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
+                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/menu/enduser?locale=' + encodeURIComponent(localObject.locale))
                 .then((response: AxiosResponse<any>) => {
                     this.technicalUserFunctionalities = response.data.technicalUserFunctionalities
-
-                    let responseAllowedUserFunctionalities = response.data.allowedUserFunctionalities
-                    for (var idx in responseAllowedUserFunctionalities) {
-                        let item = responseAllowedUserFunctionalities[idx]
-                        item.visible = this.isItemToDisplay(item)
-                        this.allowedUserFunctionalities.push(item)
-                    }
+                    this.setConditionedVisibility(response.data.allowedUserFunctionalities)
                     this.dynamicUserFunctionalities = response.data.dynamicUserFunctionalities.sort((el1, el2) => {
                         return el1.prog - el2.prog
                     })
@@ -300,6 +293,14 @@ export default defineComponent({
                     this.store.setLoading(false)
                     this.getDimensions()
                 })
+        },
+        setConditionedVisibility(responseAllowedUserFunctionalities) {
+            this.allowedUserFunctionalities = []
+            for (var idx in responseAllowedUserFunctionalities) {
+                let item = responseAllowedUserFunctionalities[idx]
+                item.visible = this.isItemToDisplay(item)
+                this.allowedUserFunctionalities.push(item)
+            }
         }
     },
     async mounted() {
@@ -309,7 +310,7 @@ export default defineComponent({
         window.removeEventListener('resize', this.getDimensions)
     },
     computed: {
-        ...mapState(mainStore, {
+        ...mapState({
             user: 'user',
             downloads: 'downloads',
             locale: 'locale',
@@ -318,6 +319,12 @@ export default defineComponent({
             isEnterprise: 'isEnterprise',
             licenses: 'licenses'
         })
+    },
+    watch: {
+        news() {
+            let orig = JSON.parse(JSON.stringify(this.allowedUserFunctionalities))
+            this.setConditionedVisibility(orig)
+        }
     }
 })
 </script>

@@ -279,6 +279,9 @@
 import { iDocument, iDataSource, iEngine, iTemplate, iAttribute, iFolder } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import { defineComponent, PropType } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
+import { AxiosResponse } from 'axios'
+import { mapState } from 'vuex'
+import { startOlap } from '../../dialogs/olapDesignerDialog/DocumentDetailOlapHelpers'
 import mainDescriptor from '../../DocumentDetailsDescriptor.json'
 import infoDescriptor from './DocumentDetailsInformationsDescriptor.json'
 import useValidate from '@vuelidate/core'
@@ -290,6 +293,8 @@ import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import DocumentDetailsTree from './DocumentDetailsTree.vue'
+
+const crypto = require('crypto')
 
 export default defineComponent({
     name: 'document-details-informations',
@@ -305,7 +310,7 @@ export default defineComponent({
         availableTemplates: { type: Array as PropType<iTemplate[]> },
         availableAttributes: { type: Array as PropType<iAttribute[]> }
     },
-    emits: ['setTemplateForUpload', 'setImageForUpload', 'deleteImage', 'touched'],
+    emits: ['setTemplateForUpload', 'setImageForUpload', 'deleteImage', 'touched', 'openDesignerDialog'],
     computed: {
         filteredEngines(): any {
             if (this.document.typeCode) {
@@ -344,7 +349,10 @@ export default defineComponent({
         },
         designerButtonVisible(): boolean {
             return this.document.typeCode == 'OLAP' || this.document.typeCode == 'KPI' || this.document.engine == 'knowagegisengine'
-        }
+        },
+        ...mapState({
+            user: 'user'
+        })
     },
     data() {
         return {
@@ -365,16 +373,19 @@ export default defineComponent({
             visibilityAttribute: '',
             restrictionValue: '',
             driversPositions: infoDescriptor.driversPositions,
+            listOfTemplates: [] as iTemplate[],
             imagePreviewUrl: null as any,
             imagePreview: false
         }
     },
-    created() {
+    async created() {
         this.setData()
+        await this.getAllTemplates()
     },
     watch: {
-        selectedDocument() {
+        async selectedDocument() {
             this.setData()
+            await this.getAllTemplates()
         }
     },
     validations() {
@@ -471,8 +482,24 @@ export default defineComponent({
                 }
             })
         },
-        openDesigner() {
-            this.$router.push(`/olap-designer/${this.document.id}`)
+        async openDesigner() {
+            if (this.listOfTemplates.length === 0) {
+                this.$emit('openDesignerDialog')
+            } else {
+                const activeTemplate = this.findActiveTemplate()
+                const sbiExecutionId = crypto.randomBytes(16).toString('hex')
+                await startOlap(this.$http, this.user, sbiExecutionId, this.document, activeTemplate, this.$router)
+            }
+        },
+        findActiveTemplate() {
+            let activeTemplate = null as any
+            for (let i = 0; i < this.listOfTemplates.length; i++) {
+                if (this.listOfTemplates[i].active) {
+                    activeTemplate = this.listOfTemplates[i]
+                    break
+                }
+            }
+            return activeTemplate
         },
         translatedLabel(a) {
             return this.$t(a.label)
@@ -482,6 +509,9 @@ export default defineComponent({
         },
         openGis() {
             this.$router.push(`/gis/edit?documentId=${this.document.id}`)
+        },
+        async getAllTemplates() {
+            if (this.document && this.document.id) this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.document.id}/templates`).then((response: AxiosResponse<any>) => (this.listOfTemplates = response.data as iTemplate[]))
         }
     }
 })

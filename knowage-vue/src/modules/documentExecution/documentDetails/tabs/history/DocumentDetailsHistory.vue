@@ -53,7 +53,9 @@ import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iDocument } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
-import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
+import { VCodeMirror } from 'vue3-code-mirror'
+import { mapState } from 'vuex'
+import { startOlap } from '../../dialogs/olapDesignerDialog/DocumentDetailOlapHelpers'
 import mainDescriptor from '@/modules/documentExecution/documentDetails/DocumentDetailsDescriptor.json'
 import driversDescriptor from '@/modules/documentExecution/documentDetails/tabs/drivers/DocumentDetailsDriversDescriptor.json'
 import historyDescriptor from './DocumentDetailsHistory.json'
@@ -61,6 +63,8 @@ import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import InlineMessage from 'primevue/inlinemessage'
 import mainStore from '../../../../../App.store'
+
+const crypto = require('crypto')
 
 export default defineComponent({
     name: 'document-drivers',
@@ -87,7 +91,10 @@ export default defineComponent({
         },
         designerButtonVisible(): boolean {
             return this.selectedDocument.typeCode == 'OLAP' || this.selectedDocument.typeCode == 'KPI' || this.selectedDocument.engine == 'knowagegisengine'
-        }
+        },
+        ...mapState({
+            user: 'user'
+        })
     },
     data() {
         return {
@@ -259,7 +266,6 @@ export default defineComponent({
                 .catch((error) => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error.message }))
         },
         openDesignerConfirm() {
-            console.log(this.selectedDocument.typeCode)
             this.$confirm.require({
                 header: this.$t('common.toast.warning'),
                 message: this.$t('documentExecution.olap.openDesignerMsg'),
@@ -279,8 +285,24 @@ export default defineComponent({
                 }
             })
         },
-        openDesigner() {
-            this.$router.push(`/olap-designer/${this.selectedDocument.id}`)
+        async openDesigner() {
+            if (this.listOfTemplates.length === 0) {
+                this.$emit('openDesignerDialog')
+            } else {
+                const activeTemplate = this.findActiveTemplate()
+                const sbiExecutionId = crypto.randomBytes(16).toString('hex')
+                await startOlap(this.$http, this.user, sbiExecutionId, this.selectedDocument, activeTemplate, this.$router)
+            }
+        },
+        findActiveTemplate() {
+            let activeTemplate = null as any
+            for (let i = 0; i < this.listOfTemplates.length; i++) {
+                if (this.listOfTemplates[i].active) {
+                    activeTemplate = this.listOfTemplates[i]
+                    break
+                }
+            }
+            return activeTemplate
         },
         openGis() {
             this.$router.push(`/gis/edit?documentId=${this.selectedDocument.id}`)

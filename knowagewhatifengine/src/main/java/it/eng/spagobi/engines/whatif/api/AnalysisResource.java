@@ -19,7 +19,6 @@ package it.eng.spagobi.engines.whatif.api;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Date;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -47,7 +46,7 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(AnalysisResource.class);
 
-	private static final String EXPORT_FILE_NAME = "SpagoBIOlapExport";
+	private static final String EXPORT_FILE_NAME = "KnowageWhatIfExport";
 	private static final String CSV_ROWS_SEPARATOR = "\r\n";
 
 	@GET
@@ -60,7 +59,7 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 		// csv = text.getBytes();
 		Connection connection;
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		String fileName = EXPORT_FILE_NAME + "-" + (new Date()).toLocaleString() + ".csv";
+		String fileName = EXPORT_FILE_NAME + ".csv";
 
 		PivotModel model = ei.getPivotModel();
 
@@ -91,7 +90,7 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 			}
 			logger.debug("Closed the connection used to export the output table");
 		}
-		fileName = EXPORT_FILE_NAME + "-" + (new Date()).toLocaleString() + ".zip";
+		fileName = EXPORT_FILE_NAME + ".zip";
 		ResponseBuilder response = Response.ok(csv);
 		response.header("Content-Disposition", "attachment; filename=" + fileName);
 		response.header("Content-Transfer-Encoding", "binary");

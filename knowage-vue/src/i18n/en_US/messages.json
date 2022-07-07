@@ -165,6 +165,7 @@
         "sort": "sort",
         "source": "Source",
         "sqlExpression": "SQL expression",
+        "start": "Start",
         "state": "State",
         "status": "Status",
         "style": "Style",
@@ -340,6 +341,17 @@
                 "selectSource": "Select Source",
                 "title": "Data Lineage"
             },
+            "designerDialog": {
+                "addParameter": "Add Parameter",
+                "mondrian": "Mondrian",
+                "olapDesigner": "Olap Designer",
+                "selectCube": "Select Cube",
+                "selectMondrianSchema": "Select Mondrian Schema",
+                "templateType": "Select type of Template",
+                "xmla": "XMLA Server",
+                "xmlaAddress": "XMLA Address",
+                "xmlaParameters": "XMLA Parameters"
+            },
             "drivers": {
                 "ad": "Driver AD",
                 "adDepends": "depends from the AD",
@@ -509,6 +521,7 @@
             "filterDialog": {
                 "ancestorDescendantWarning": "Warning: You selected some members that are in ancestor-descendant relationship: measures will be aggregated over both of them. Are you sure this is what you want?",
                 "driverProfileAttribute": "Driver/ProfileAttribute",
+                "filterLevelsError": "Multiple values must be filled consecutively. Some levels in between are missing values.",
                 "filterUsingDrivers": "Filter using drivers",
                 "infoMessage": "Selected items will be used as filters in the main table.",
                 "level": "Level",
@@ -706,6 +719,7 @@
         "everyWeek": "Every {week} week/s",
         "everyYear": "Every {year} year/s",
         "in": "In",
+        "invalidCronExpression": "Invalid cron expression",
         "pauseSchedulation": "Pause schedulation",
         "resumeSchedulation": "Resume schedulation",
         "schedulationPaused": "Schedulation paused",
@@ -1325,6 +1339,11 @@
                 "selectLov": "Select LOV",
                 "title": "Use modes"
             }
+        },
+        "eventsManagement": {
+            "eventModel": "Select favourite type",
+            "title": "Events Management",
+            "user": "User"
         },
         "functionalitiesManagement": {
             "creation": "Creation",
@@ -1948,6 +1967,20 @@
             "zipFileDocument": "Save as Zip file",
             "zipFileName": "Zip file name",
             "zipMailDocument": "Send zipped file?"
+        },
+        "scorecards": {
+            "addKpi": "Add Kpi",
+            "addKpiHint": "A Target is a KPI container. It will show the trend for a specific KPI groups.",
+            "addPerspective": "Add Perspective",
+            "addPerspectiveHint": "To create a scorecard at least one perspective (card) should be present. Click on add perspective button to add the first one.",
+            "addTarget": "Add Target",
+            "addTargetHint": "A perspective is the \"card\" container. Add one or more target to assign them some KPIs.",
+            "majority": "Majority",
+            "majorityWithPriority": "Majority with priority",
+            "perspectives": "Perspectives",
+            "priority": "Priority",
+            "scorecardDesigner": "Scorecard Designer",
+            "title": "Scorecard List"
         },
         "templatePruning": {
             "documentSelection": "Document Selection",

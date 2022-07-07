@@ -63,8 +63,10 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.InvalidHtmlPayloadException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.filters.XSSUtils;
 
 @Path("/2.0/saveDocument")
 @ManageAuthorization
@@ -96,11 +98,17 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 				String action = saveDocumentDTO.getAction();
 				logger.debug("Action type is equal to [" + action + "]");
 				if (DOC_SAVE.equalsIgnoreCase(action)) {
+
+					checkAndSanitizeXSS(saveDocumentDTO);
+
 					id = doInsertDocument(saveDocumentDTO, error);
 				} else if (DOC_UPDATE.equalsIgnoreCase(action)) {
 					logger.error("DOC_UPDATE action is no more supported");
 					throw new SpagoBIServiceException(saveDocumentDTO.getPathInfo(), "sbi.document.unsupported.udpateaction");
 				} else if (MODIFY_COCKPIT.equalsIgnoreCase(action) || MODIFY_KPI.equalsIgnoreCase(action)) {
+
+					checkAndSanitizeXSS(saveDocumentDTO);
+
 					id = doModifyDocument(saveDocumentDTO, action, error);
 				} else {
 					throw new SpagoBIServiceException(saveDocumentDTO.getPathInfo(), "sbi.document.unsupported.action");
@@ -118,6 +126,50 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIServiceException(saveDocumentDTO.getPathInfo(), "sbi.document.saveError", e);
 		} finally {
 			logger.debug("OUT");
+		}
+	}
+
+	private void checkAndSanitizeXSS(SaveDocumentDTO saveDocumentDTO) {
+		XSSUtils xssUtils = new XSSUtils();
+
+		CustomDataDTO customDataDTO = saveDocumentDTO.getCustomDataDTO();
+		Map<String, Object> templateContent = customDataDTO.getTemplateContent();
+		ArrayList<Map<String, Object>> sheets = (ArrayList<Map<String, Object>>) templateContent.get("sheets");
+
+		for (Map<String, Object> sheet : sheets) {
+			ArrayList<Map<String, Object>> widgets = (ArrayList<Map<String, Object>>) sheet.get("widgets");
+
+			for (Map<String, Object> widget : widgets) {
+
+				String type = (String) widget.get("type");
+
+				if ("html".equals(type)) {
+
+					String html = (String) widget.get("htmlToRender");
+
+					boolean isSafe = xssUtils.isSafe(html);
+
+					if (!isSafe) {
+						throw new InvalidHtmlPayloadException(html);
+					}
+
+					widget.put("htmlToRender", xssUtils.sanitize(html));
+				} else if ("customchart".equals(type)) {
+
+					Map<String, Object> html = (Map<String, Object>) widget.get("html");
+
+					String code = (String) html.get("code");
+
+					boolean isSafe = xssUtils.isSafe(code);
+
+					if (!isSafe) {
+						throw new InvalidHtmlPayloadException(code);
+					}
+
+					html.put("code", xssUtils.sanitize(code));
+				}
+			}
+
 		}
 	}
 
