@@ -72,6 +72,7 @@ const factory = () => {
                     initialState: {
                         store: {
                             user: {
+                                loacle: 'en_US',
                                 functionalities: ['ScorecardsManagement']
                             }
                         }

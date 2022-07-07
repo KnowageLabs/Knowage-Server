@@ -43,7 +43,7 @@ import KpiDocumentDesignerStyleCard from './KpiDocumentDesignerStyleCard/KpiDocu
 import KpiDocumentDesignerTypeCard from './KpiDocumentDesignerTypeCard/KpiDocumentDesignerTypeCard.vue'
 import KpiDocumentDesignerSaveDialog from './KpiDocumentDesignerSaveDialog/KpiDocumentDesignerSaveDialog.vue'
 import KpiDocumentDesignerScorecardsListCard from './KpiDocumentDesignerScorecardsListCard/KpiDocumentDesignerScorecardsListCard.vue'
-import { mapState } from 'vite'
+import { mapState } from 'pinia'
 import mainStore from '../../../App.store'
 
 import deepcopy from 'deepcopy'
@@ -91,8 +91,8 @@ export default defineComponent({
                 headers: { Accept: 'application/json, text/plain, */*' }
             }
 
-            let language = this.user.locale.split('_')[0]
-            let country = this.user.locale.split('_')[1]
+            let language = this.user.locale?.split('_')[0]
+            let country = this.user.locale?.split('_')[1]
             await this.$http.get(process.env.VUE_APP_KPI_ENGINE_API_URL + `1.0/pages/edit?SBI_LANGUAGE=${language}&SBI_COUNTRY=${country}&user_id=${this.user.userUniqueIdentifier}&document=${this.id}`, config).then(() => {})
 
             await this.loadKpi()

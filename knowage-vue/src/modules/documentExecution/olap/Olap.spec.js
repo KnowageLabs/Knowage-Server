@@ -115,7 +115,7 @@ vi.mock('axios')
 const $http = {
     get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case import.meta.env.VITE_RESTFUL_SERVICES_PATH  + `olap/designer/1`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `olap/designer/1`:
                 return Promise.resolve({ data: [] })
             default:
                 return Promise.resolve({ data: [] })
@@ -132,7 +132,7 @@ const $http = {
     })
 }
 
-const $route = { name: '' }
+const $route = { name: '', query: { noTemplate: 'false', refrence: '', olapEngine: 'knowagewhatifengine', artifactId: '1' } }
 
 const factory = () => {
     return mount(Olap, {
