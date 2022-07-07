@@ -36,13 +36,13 @@ public class MetadataInitializer extends SpagoBIInitializer {
 
 	protected List<SpagoBIInitializer> metadataInitializers;
 
-	static private boolean disposed = false;
-	static private Logger logger = Logger.getLogger(MetadataInitializer.class);
+	private static boolean disposed = false;
+	private static Logger logger = Logger.getLogger(MetadataInitializer.class);
 
 	public MetadataInitializer() {
 		targetComponentName = "SpagoBI Metadata Database";
 
-		metadataInitializers = new ArrayList<SpagoBIInitializer>();
+		metadataInitializers = new ArrayList<>();
 		metadataInitializers.add(new DomainsInitializer());
 		metadataInitializers.add(new EnginesInitializer());
 		metadataInitializers.add(new ProductTypesInitializer());
@@ -56,6 +56,7 @@ public class MetadataInitializer extends SpagoBIInitializer {
 		metadataInitializers.add(new AlertListenerInitializer());
 		metadataInitializers.add(new AlertActionInitializer());
 		metadataInitializers.add(new WsEventCleanJobInitializer());
+		metadataInitializers.add(new CategoriesInitializer());
 
 	}
 
