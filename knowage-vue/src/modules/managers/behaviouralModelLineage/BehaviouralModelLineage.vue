@@ -81,7 +81,6 @@ export default defineComponent({
             }
         },
         onRowUnselect() {
-            console.log('UNSELECTED -----------------')
             this.loadAllData()
         },
         async filterByLovs(lov) {
