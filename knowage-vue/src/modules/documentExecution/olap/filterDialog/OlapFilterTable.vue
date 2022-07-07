@@ -71,7 +71,7 @@ export default defineComponent({
         },
         loadParameters() {
             this.options[0].items = this.parameters?.map((parameter: iParameter) => {
-                return { ...parameter, value: parameter.label, label: parameter.label, type: 'driver' }
+                return { ...parameter, value: parameter.label, label: parameter.label, url: parameter.url, type: 'driver' }
             })
         },
         loadProfileAttributes() {
@@ -92,12 +92,14 @@ export default defineComponent({
         },
         onLevelUpdate(level: any) {
             const index = this.parameters?.findIndex((parameter: iParameter) => parameter.label === level.value)
-            if (index !== -1) {
+            if (index !== -1 && this.parameters) {
                 level.DRIVER = level.value
                 level.PROFILE_ATTRIBUTE = null
+                level.url = this.parameters[index as any].url
             } else {
                 level.DRIVER = null
                 level.PROFILE_ATTRIBUTE = level.value
+                delete level.url
             }
         }
     }

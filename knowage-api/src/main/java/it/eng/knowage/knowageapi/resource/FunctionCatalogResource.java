@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
+import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.resource.dto.FunctionCompleteDTO;
 import it.eng.knowage.knowageapi.resource.dto.FunctionDTO;
 import it.eng.knowage.knowageapi.service.FunctionCatalogAPI;
@@ -115,6 +116,9 @@ public class FunctionCatalogResource {
 			function.setId(UUID.randomUUID());
 			FunctionCompleteDTO create = api.create(function);
 			return Response.ok(create).build();
+		} catch (KnowageRuntimeException e) {
+			// TODO : I did this because catching Exception is not right
+			throw e;
 		} catch (Exception e) {
 			LOGGER.error("Error getting function with id " + Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
 			return Response.serverError().build();

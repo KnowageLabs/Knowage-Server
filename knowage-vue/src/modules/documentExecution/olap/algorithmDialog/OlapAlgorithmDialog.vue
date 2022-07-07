@@ -56,7 +56,6 @@ export default defineComponent({
                 .catch(() => {})
         },
         async changeAlgorithm() {
-            console.log(this.selectedAlgorithm)
             await this.$http
                 .post(process.env.VUE_APP_OLAP_PATH + `1.0/allocationalgorithm/${this.selectedAlgorithm.className}/?SBI_EXECUTION_ID=${this.sbiExecutionId}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then(async () => {

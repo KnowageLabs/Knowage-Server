@@ -8,7 +8,7 @@ export interface iScorecard {
 }
 
 export interface iPerspective {
-    id?: number,
+    id?: number | string,
     name: string,
     criterion: iScorecardCriterion,
     options: {
@@ -19,7 +19,8 @@ export interface iPerspective {
     groupedKpis?: { status: null, count: number }[]
     groupedTargets?: any[],
     statusColor?: string | null,
-    updated?: boolean
+    updated?: boolean,
+    new?: boolean
 }
 
 export interface iScorecardCriterion {
@@ -50,7 +51,7 @@ export interface iKpi {
 }
 
 export interface iScorecardTarget {
-    id?: number,
+    id?: number | string,
     name: string,
     criterion: iScorecardCriterion,
     options: {
@@ -60,7 +61,8 @@ export interface iScorecardTarget {
     kpis: iKpi[],
     groupedKpis?: { status: null, count: number }[],
     statusColor?: string | null,
-    updated?: boolean
+    updated?: boolean,
+    new?: boolean
 }
 
 export interface iCategory {

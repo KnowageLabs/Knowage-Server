@@ -628,5 +628,10 @@
 		isActive="true" valueCheck="180" valueType="NUM"
 		category="GENERIC_CONFIGURATION" />
 
+	<CONFIG label="KNOWAGE.EMIT_AUTHORIZATION_EVENTS" name="KNOWAGE.EMIT_AUTHORIZATION_EVENTS"
+		description="Enable or disable events emission for authorization changes"
+		isActive="true" valueCheck="false" valueType="STRING"
+		category="GENERIC_CONFIGURATION" />
+
 </CONFIGS>
 

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.knowage.knowageapi.error;
+package it.eng.knowage.boot.error;
 
 import java.util.List;
 
@@ -33,18 +33,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
-import it.eng.knowage.boot.error.KnowageBusinessException;
-
 /**
- *
- * @author Matteo Massarotto
- *
- *         Updates the audit log for the services that throw exceptions
- *
+ * @author Marco Libanori
  */
 @Component
 @Provider
-public class KnowageBusinessExceptionMapper implements ExceptionMapper<KnowageBusinessException> {
+public class KnowageRuntimeExceptionMapper implements ExceptionMapper<KnowageRuntimeException> {
 	private static final String LOCALIZED_MESSAGE = "localizedMessage";
 	private static final String ERROR_MESSAGE = "message";
 	private static final String ERROR_SERVICE = "service";
@@ -52,7 +46,7 @@ public class KnowageBusinessExceptionMapper implements ExceptionMapper<KnowageBu
 	private static final String ERROR_CODE = "code";
 	private static final String ERROR_HINTS = "hints";
 
-	static private Logger logger = Logger.getLogger(KnowageBusinessExceptionMapper.class);
+	private static Logger logger = Logger.getLogger(KnowageRuntimeExceptionMapper.class);
 
 	@Context
 	private HttpServletRequest servletRequest;
@@ -60,19 +54,19 @@ public class KnowageBusinessExceptionMapper implements ExceptionMapper<KnowageBu
 	private HttpServletResponse servletResponse;
 
 	@Override
-	public Response toResponse(KnowageBusinessException t) {
+	public Response toResponse(KnowageRuntimeException t) {
 		logger.error("Catched service error: ", t);
 		return toResponseFromGenericException(t);
 	}
 
-	private Response toResponseFromGenericException(KnowageBusinessException t) {
+	private Response toResponseFromGenericException(KnowageRuntimeException t) {
 		JSONObject serializedMessages = serializeException(t);
 		return Response.status(t.getStatus()).entity(serializedMessages.toString()).build();
 	}
 
-	private JSONObject serializeException(KnowageBusinessException t) {
+	private JSONObject serializeException(KnowageRuntimeException t) {
 		String localizedMessage = t.getLocalizedMessage();
-		String errorMessage = isBlankString(localizedMessage) ? localizedMessage : t.getDescription();
+		String errorMessage = !isBlankString(localizedMessage) ? localizedMessage : t.getDescription();
 		String errorCode = t.getCode();
 		List<String> hints = t.getHints();
 		JSONObject error = new JSONObject();

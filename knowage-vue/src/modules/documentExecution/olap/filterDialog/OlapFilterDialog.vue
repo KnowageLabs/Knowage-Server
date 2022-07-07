@@ -25,7 +25,7 @@
         </SelectButton>
 
         <div v-show="!loading">
-            <OlapFilterTree v-if="mode === 'selectFields'" :propFilter="filter" :id="id" :clearTrigger="clearTrigger" :treeLocked="treeLocked" @loading="loading = $event" @filtersChanged="onFiltersChange" @lockTree="treeLocked = true"></OlapFilterTree>
+            <OlapFilterTree v-if="mode === 'selectFields'" :propFilter="filter" :id="id" :clearTrigger="clearTrigger" :treeLocked="treeLocked" @loading="loading = $event" @filtersChanged="onFiltersChange" @lockTree="treeLocked = true" @rootNode="setRootNode"></OlapFilterTree>
             <OlapFilterTable v-else :propFilter="filter" :propLevels="levels" :parameters="parameters" :profileAttributes="profileAttributes"></OlapFilterTable>
         </div>
 
@@ -72,6 +72,7 @@ export default defineComponent({
             treeLocked: false,
             mode: 'selectFields',
             levels: [] as any[],
+            rootNode: null as any,
             loading: false
         }
     },
@@ -112,6 +113,7 @@ export default defineComponent({
             dynamicSlicers?.forEach((slicer: any) => {
                 const index = this.levels.findIndex((level: any) => level.LEVEL === slicer.LEVEL && level.HIERARCHY === slicer.HIERARCHY)
                 if (index !== -1) {
+                    this.mode = 'filterUsingDrivers'
                     if (slicer.DRIVER) {
                         this.levels[index].value = slicer.DRIVER
                         this.levels[index].DRIVER = slicer.DRIVER
@@ -135,17 +137,43 @@ export default defineComponent({
             this.mode = 'selectFields'
         },
         apply() {
-            let payload = {}
+            let payload = {} as any
             if (this.propFilter?.type === 'slicer') {
-                payload = { hierarchy: this.propFilter?.filter.selectedHierarchyUniqueName, members: this.selectedFilters, multi: false, type: 'slicer', DYNAMIC_SLICER: this.levels }
+                if (this.mode === 'selectFields') {
+                    this.levels = []
+                } else {
+                    if (!this.checkIfLevelsAreValid()) return this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.filterDialog.filterLevelsError') })
+                    this.selectedFilters = this.rootNode ? [this.rootNode.id] : []
+                }
+                payload = { hierarchy: this.propFilter?.filter.selectedHierarchyUniqueName, members: this.selectedFilters, multi: false, type: 'slicer', filterUniqueName: this.propFilter?.filter.uniqueName }
+                if (this.mode !== 'selectFields') {
+                    payload.DYNAMIC_SLICER = this.levels
+                    payload.rootNode = this.rootNode
+                }
             } else {
                 payload = { members: this.selectedFilters, type: 'visible', axis: this.propFilter?.filter.axis, levels: this.levels }
             }
             this.$emit('applyFilters', payload)
             this.mode = 'selectFields'
         },
+        checkIfLevelsAreValid() {
+            let valid = true
+            let foundEmpty = false
+            for (let i = 0; i < this.levels.length; i++) {
+                if (!this.levels[i].value) foundEmpty = true
+                if (foundEmpty && this.levels[i].value) {
+                    valid = false
+                    break
+                }
+            }
+
+            return valid
+        },
         onFiltersChange(values: string[]) {
             this.selectedFilters = values
+        },
+        setRootNode(rootNode: any) {
+            this.rootNode = rootNode
         }
     }
 })

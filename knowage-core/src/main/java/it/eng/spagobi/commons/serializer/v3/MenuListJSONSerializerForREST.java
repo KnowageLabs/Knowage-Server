@@ -18,6 +18,7 @@
 package it.eng.spagobi.commons.serializer.v3;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,16 +36,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.knowage.commons.security.KnowageSystemConfiguration;
+import it.eng.knowage.security.ProductProfiler;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.dao.ITenantsDAO;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.Serializer;
 import it.eng.spagobi.commons.utilities.DocumentUtilities;
@@ -70,6 +78,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 	private static final String ID = "id";
 	private static final String TO_BE_LICENSED = "toBeLicensed";
+	private static final String TO_BE_AUTHORIZED = "toBeAuthorized";
 	private static final String STATIC_MENU = "STATIC_MENU";
 	private static final String URL = "url";
 
@@ -193,7 +202,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private JSONArray createAllowedUserFunctionalitiesMenu(SourceBean menuDefinitionFile, JSONArray technicalUserMenuJSONArray, Locale locale)
-			throws JSONException, EMFInternalError {
+			throws JSONException, EMFInternalError, EMFUserError {
 
 		logger.debug("IN");
 
@@ -205,7 +214,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private JSONArray createCommonUserFunctionalitiesMenu(SourceBean menuDefinitionFile, JSONArray technicalUserMenuJSONArray, Locale locale)
-			throws JSONException, EMFInternalError {
+			throws JSONException, EMFInternalError, EMFUserError {
 
 		logger.debug("IN");
 
@@ -217,7 +226,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private JSONArray createTechnicalUserMenu(SourceBean menuDefinitionFile, JSONArray technicalUserMenuJSONArray, Locale locale)
-			throws JSONException, EMFInternalError {
+			throws JSONException, EMFInternalError, EMFUserError {
 
 		logger.debug("IN");
 
@@ -309,14 +318,14 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private JSONArray createMenu(SourceBean menuDefinitionFile, Locale locale, JSONArray technicalUserMenuJSONArray, MenuType menuType)
-			throws JSONException, EMFInternalError {
+			throws JSONException, EMFInternalError, EMFUserError {
 		MessageBuilder messageBuilder = new MessageBuilder();
 		List attributeList = menuDefinitionFile.getAttributeAsList(menuType.name());
 		return buildMenuTreeBranch(locale, messageBuilder, attributeList, technicalUserMenuJSONArray, menuType);
 	}
 
 	private JSONArray buildMenuTreeBranch(Locale locale, MessageBuilder messageBuilder, List attributeList, JSONArray technicalUserMenuJSONArray,
-			MenuType menuType) throws JSONException, EMFInternalError {
+			MenuType menuType) throws JSONException, EMFInternalError, EMFUserError {
 		JSONArray tempMenuList = new JSONArray();
 		List funcs = (List) userProfile.getFunctionalities();
 
@@ -378,7 +387,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private JSONArray createItemsArray(Locale locale, MessageBuilder messageBuilder, List funcs, JSONArray technicalUserMenuJSONArray, List itemsSBList,
-			MenuType menuType) throws JSONException, EMFInternalError {
+			MenuType menuType) throws JSONException, EMFInternalError, EMFUserError {
 		JSONArray items = new JSONArray();
 		for (Object item : itemsSBList) {
 
@@ -409,6 +418,9 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				}
 
 				if (addElement)
+					addElement &= isUserMenuAuthorized(menuType, itemSB);
+
+				if (addElement)
 					addElement &= isUserMenuForNotAdmin(menuType, itemSB);
 
 				if (addElement)
@@ -425,6 +437,48 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		}
 
 		return items;
+	}
+
+	private boolean isUserMenuAuthorized(MenuType menuType, SourceBean itemSB) throws EMFUserError, EMFInternalError {
+
+		boolean isAuthorized = true;
+
+		String requiredAuthorizationsString = (String) itemSB.getAttribute(TO_BE_AUTHORIZED);
+		if (requiredAuthorizationsString != null) {
+			isAuthorized = false;
+			UserProfile spagoBIUserProfile = (UserProfile) userProfile;
+			String organization = spagoBIUserProfile.getOrganization();
+
+			ITenantsDAO tenantsDAO = DAOFactory.getTenantsDAO();
+			List<Integer> productTypeIds = tenantsDAO.loadSelectedProductTypesIds(organization);
+			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+			List<String> authorizationsWithDuplicates = roleDAO.loadAllAuthorizationsNamesByProductTypes(productTypeIds);
+			Set<String> authorizations = ProductProfiler.filterAuthorizationsByProduct(authorizationsWithDuplicates);
+
+			Collection userRoles = userProfile.getRoles();
+
+			for (Object roleName : userRoles) {
+
+				String[] requiredAuthorizations = requiredAuthorizationsString.split(",", -1);
+				for (String lic : requiredAuthorizations) {
+					if (authorizations.contains(lic)) {
+
+						Role role = DAOFactory.getRoleDAO().loadByName((String) roleName);
+						List<SbiAuthorizationsRoles> associatedAuthRoles = DAOFactory.getRoleDAO().LoadAuthorizationsRolesAssociatedToRole(role.getId());
+
+						isAuthorized = associatedAuthRoles.stream().anyMatch(x -> x.getSbiAuthorizations().getName().equals(lic));
+					}
+					if (isAuthorized)
+						break;
+				}
+				if (isAuthorized)
+					break;
+
+			}
+		}
+
+		return isAuthorized;
+
 	}
 
 	/**

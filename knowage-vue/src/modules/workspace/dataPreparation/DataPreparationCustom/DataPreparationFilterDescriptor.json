@@ -26,22 +26,22 @@
             "label": "="
         },
         {
-            "availableForTypes": "string|number",
+            "availableForTypes": "number",
             "code": "minorThan",
             "label": "< "
         },
         {
-            "availableForTypes": "string|number",
+            "availableForTypes": "number",
             "code": "greaterThan",
             "label": "> "
         },
         {
-            "availableForTypes": "string|number",
+            "availableForTypes": "number",
             "code": "minorOrEqualsThan<=",
             "label": "<= "
         },
         {
-            "availableForTypes": "string|number",
+            "availableForTypes": "number",
             "code": "greaterOrEqualsThan",
             "label": ">= "
         },

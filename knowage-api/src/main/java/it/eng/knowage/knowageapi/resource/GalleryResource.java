@@ -128,6 +128,9 @@ public class GalleryResource {
 			String template = JsonConverter.objectToJson(newSbiWidgetGallery, WidgetGalleryDTO.class);
 			newSbiWidgetGallery.setTemplate(template);
 			newSbiWidgetGallery = widgetGalleryService.makeNewWidget(newSbiWidgetGallery, profile, true);
+		} catch (KnowageRuntimeException e) {
+			// TODO : I did this because catching Exception is not right
+			throw e;
 		} catch (Exception e) {
 			throw new KnowageRuntimeException("Cannot create widget " + Optional.ofNullable(newSbiWidgetGallery).map(WidgetGalleryDTO::getName).orElse("null"), e);
 		}
@@ -151,6 +154,9 @@ public class GalleryResource {
 
 				newSbiWidgetGalleryToUpdate = widgetGalleryService.updateWidget(newSbiWidgetGallery, profile);
 			}
+		} catch (KnowageRuntimeException e) {
+			// TODO : I did this because catching Exception is not right
+			throw e;
 		} catch (Exception e) {
 			throw new KnowageRuntimeException("Error updating widget with id " + String.valueOf(widgetId), e);
 		}

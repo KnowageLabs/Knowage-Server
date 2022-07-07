@@ -17,7 +17,7 @@
  */
 package it.eng.knowage.knowageapi.dao;
 
-import java.util.Collection;
+import java.util.List;
 
 import it.eng.knowage.knowageapi.dao.dto.SbiWidgetGallery;
 import it.eng.knowage.knowageapi.resource.dto.WidgetGalleryDTO;
@@ -32,15 +32,15 @@ public interface SbiWidgetGalleryDao {
 
 	WidgetGalleryDTO findById(String id);
 
-	Collection<WidgetGalleryDTO> findAll();
+	List<WidgetGalleryDTO> findAll();
 
 	WidgetGalleryDTO findByIdTenant(String id, String tenant);
 
 	SbiWidgetGallery findByIdTenantSbiWidgetGallery(String id, String tenant);
 
-	Collection<WidgetGalleryDTO> findAllByTenant(String tenant);
+	List<WidgetGalleryDTO> findAllByTenant(String tenant);
 
-	Collection<WidgetGalleryDTO> findAllByTenantAndType(String tenant, String type);
+	List<WidgetGalleryDTO> findAllByTenantAndType(String tenant, String type);
 
 	int deleteByIdTenant(String id, String tenant);
 
