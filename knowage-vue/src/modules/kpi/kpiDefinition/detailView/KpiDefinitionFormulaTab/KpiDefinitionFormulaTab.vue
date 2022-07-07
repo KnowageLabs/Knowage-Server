@@ -243,7 +243,9 @@ export default defineComponent({
             }
         },
 
-        onMouseDown(event) {
+        onMouseDown(event, event2) {
+            console.log('MOUSEDOWN EVENT -----------', event)
+            console.log('MOUSEDOWN EVENT 2 -----------', event2)
             for (var i = 0; i < event.srcElement.classList.length; i++) {
                 this.token = event.srcElement.innerHTML
                 if (event.srcElement.classList[i] == 'cm-m-max') {
