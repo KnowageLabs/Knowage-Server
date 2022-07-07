@@ -27,6 +27,7 @@
                             :rows="rows"
                             :codeInput="codeInput"
                             :preview="preview"
+                            :activeTab="activeTab"
                             @queryChanged="queryChanged = true"
                             @loadPreview="previewQuery(false, true, true)"
                             @closePreview="preview = false"
@@ -53,7 +54,7 @@
 
     <MeasureDefinitionSubmitDialog v-if="showSaveDialog" :ruleName="rule.name" :newAlias="newAlias" :reusedAlias="reusedAlias" :newPlaceholder="newPlaceholder" :reusedPlaceholder="reusedPlaceholder" @close="showSaveDialog = false" @save="saveRule($event)"></MeasureDefinitionSubmitDialog>
 
-    <Dialog :autoZIndex="false" :style="metadataDefinitionTabViewDescriptor.errorDialog.style" :modal="true" :visible="errorDialogVisible" :header="errorTitle" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
+    <Dialog :autoZIndex="false" :style="metadataDefinitionTabViewDescriptor.errorDialog.style" :contentStyle="metadataDefinitionTabViewDescriptor.errorDialog.contentStyle"  :modal="true" :visible="errorDialogVisible" :header="errorTitle" class="p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
         <p>{{ errorMessage }}</p>
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="closeErrorMessageDialog"></Button>
@@ -527,6 +528,7 @@ export default defineComponent({
 .error-dialog {
     width: 60vw;
 }
+
 .listbox {
     width: 320px;
 }

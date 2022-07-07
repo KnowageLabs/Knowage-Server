@@ -35,7 +35,7 @@ export default defineComponent({
     components: { Card, Dropdown, 
     VCodeMirror, 
     MeasureDefinitionPreviewDialog },
-    props: { rule: { type: Object, required: true }, datasourcesList: { type: Array, required: true }, aliases: { type: Array }, placeholders: { type: Array }, columns: { type: Array }, rows: { type: Array }, codeInput: { type: String }, preview: { type: Boolean } },
+    props: { rule: { type: Object, required: true }, datasourcesList: { type: Array, required: true }, aliases: { type: Array }, placeholders: { type: Array }, columns: { type: Array }, rows: { type: Array }, codeInput: { type: String }, preview: { type: Boolean }, activeTab: {type: Number} },
     emits: ['touched', 'queryChanged', 'loadPreview', 'closePreview'],
     data() {
         return {
@@ -43,7 +43,7 @@ export default defineComponent({
             selectedRule: {} as iRule,
             code: '',
             datasourceStructure: {},
-            codeMirror: {} as any,
+            codeMirror: null as any,
             hintList: [] as any,
             options: {
                 mode: 'text/x-mysql',
@@ -73,6 +73,9 @@ export default defineComponent({
             this.codeMirror.replaceRange(this.codeInput, this.cursorPosition)
             this.selectedRule.definition = this.code
             this.$emit('queryChanged')
+        },
+        activeTab(value: number) {
+            if (value === 0 && this.codeMirror) setTimeout(() => this.codeMirror.refresh(), 100)
         }
     },
     async mounted() {
