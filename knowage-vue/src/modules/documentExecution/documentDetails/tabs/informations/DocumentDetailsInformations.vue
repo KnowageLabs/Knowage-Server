@@ -293,8 +293,9 @@ import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import DocumentDetailsTree from './DocumentDetailsTree.vue'
+import mainStore from '../../../../../App.store'
 
-const crypto = require('crypto')
+import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'document-details-informations',
@@ -350,7 +351,7 @@ export default defineComponent({
         designerButtonVisible(): boolean {
             return this.document.typeCode == 'OLAP' || this.document.typeCode == 'KPI' || this.document.engine == 'knowagegisengine'
         },
-        ...mapState({
+        ...mapState(mainStore, {
             user: 'user'
         })
     },

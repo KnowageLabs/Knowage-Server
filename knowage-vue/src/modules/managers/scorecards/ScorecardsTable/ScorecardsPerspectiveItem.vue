@@ -42,7 +42,7 @@ import descriptor from './ScorecardsTableDescriptor.json'
 import ScorecardsTargetItem from './ScorecardsTargetItem.vue'
 import ScorecardsTableHint from './ScorecardsTableHint.vue'
 
-const crypto = require('crypto')
+import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'scorecards-perspective-item',
@@ -74,7 +74,7 @@ export default defineComponent({
         },
         addTarget() {
             if (this.perspective) {
-                this.perspective.targets.push({ id:crypto.randomBytes(16).toString('hex'), name: 'New Target', status: 'GRAY', criterion: getDefaultCriterion(this.criterias), options: { criterionPriority: [] }, kpis: [], groupedKpis: [], new: true })
+                this.perspective.targets.push({ id: crypto.randomBytes(16).toString('hex'), name: 'New Target', status: 'GRAY', criterion: getDefaultCriterion(this.criterias), options: { criterionPriority: [] }, kpis: [], groupedKpis: [], new: true })
                 this.$emit('touched')
                 this.expanded = true
                 this.perspective.updated = true

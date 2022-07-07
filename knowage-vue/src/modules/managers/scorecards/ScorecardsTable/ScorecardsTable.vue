@@ -1,5 +1,5 @@
 <template>
-    <div class=" p-d-flex p-flex-column kn-flex kn-overflow" v-if="scorecard">
+    <div class="p-d-flex p-flex-column kn-flex kn-overflow" v-if="scorecard">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
             <template #start>
                 {{ $t('managers.scorecards.perspectives') }}
@@ -23,7 +23,7 @@ import { getDefaultCriterion } from '../ScorecardsHelpers'
 import ScorecardsPerspectiveItem from './ScorecardsPerspectiveItem.vue'
 import ScorecardsTableHint from './ScorecardsTableHint.vue'
 
-const crypto = require('crypto')
+import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'scorecards-table',
@@ -49,7 +49,7 @@ export default defineComponent({
         },
         addPerspective() {
             if (this.scorecard) {
-                this.scorecard.perspectives.push({ id: crypto.randomBytes(16).toString('hex'), name: 'New Perspective', status: 'GRAY', criterion: getDefaultCriterion(this.criterias), options: { criterionPriority: [] }, targets: [], groupedKpis: [], new: true  })
+                this.scorecard.perspectives.push({ id: crypto.randomBytes(16).toString('hex'), name: 'New Perspective', status: 'GRAY', criterion: getDefaultCriterion(this.criterias), options: { criterionPriority: [] }, targets: [], groupedKpis: [], new: true })
                 this.$emit('touched')
             }
         },

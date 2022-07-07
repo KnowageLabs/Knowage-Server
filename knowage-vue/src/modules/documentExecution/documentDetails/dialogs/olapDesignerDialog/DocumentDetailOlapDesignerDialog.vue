@@ -48,8 +48,8 @@ import DocumentDetailXMLAForm from './DocumentDetailXMLAForm.vue'
 import DocumentDetailMondrianForm from './DocumentDetailMondrianForm.vue'
 import Dropdown from 'primevue/dropdown'
 import ProgressSpinner from 'primevue/progressspinner'
-
-const crypto = require('crypto')
+import mainStore from '../../../../../App.store'
+import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'document-detail-olap-designer-dialog',
@@ -69,7 +69,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(mainStore, {
             user: 'user'
         })
     },
@@ -79,13 +79,13 @@ export default defineComponent({
         }
     },
     async created() {
-        this.sbiExecutionId = crypto.randomBytes(16).toString('hex')
+        this.sbiExecutionId = cryptoRandomString({ length: 16, type: 'base64' })
         this.loadDocument()
     },
     methods: {
         async loadDocument() {
             this.document = this.selectedDocument ? { ...this.selectedDocument } : ({} as iDocument)
-            this.sbiExecutionId = crypto.randomBytes(16).toString('hex')
+            this.sbiExecutionId = cryptoRandomString({ length: 16, type: 'base64' })
 
             this.initialize()
             this.loadMondrianSchemaResources()

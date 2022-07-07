@@ -64,7 +64,7 @@ import KnInputFile from '@/components/UI/KnInputFile.vue'
 import InlineMessage from 'primevue/inlinemessage'
 import mainStore from '../../../../../App.store'
 
-const crypto = require('crypto')
+import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'document-drivers',

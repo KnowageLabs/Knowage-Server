@@ -50,7 +50,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(mainStore, {
             isEnterprise: 'isEnterprise'
         })
     },

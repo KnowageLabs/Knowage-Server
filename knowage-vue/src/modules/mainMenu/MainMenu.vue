@@ -145,7 +145,7 @@ export default defineComponent({
             this.hoverTimer = setTimeout(() => {
                 // @ts-ignore
                 this.$refs.menu.hide()
-            }, process.env.VUE_APP_MENU_FADE_TIMER)
+            }, import.meta.env.VITE_MENU_FADE_TIMER)
         },
         newsSelection() {
             console.log('ALLOWED: ', this.allowedUserFunctionalities)
@@ -169,7 +169,7 @@ export default defineComponent({
             if (to) {
                 to = to.replace(/\\\//g, '/')
                 if (to.startsWith('/')) to = to.substring(1)
-                return process.env.VUE_APP_PUBLIC_PATH + to
+                return import.meta.env.VITE_PUBLIC_PATH + to
             }
         },
         toggleProfile() {
@@ -310,7 +310,7 @@ export default defineComponent({
         window.removeEventListener('resize', this.getDimensions)
     },
     computed: {
-        ...mapState({
+        ...mapState(mainStore, {
             user: 'user',
             downloads: 'downloads',
             locale: 'locale',
