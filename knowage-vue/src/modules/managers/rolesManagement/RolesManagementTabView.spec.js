@@ -113,7 +113,7 @@ const $http = {
         switch (url) {
             case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=BM_CATEGORY`:
                 return Promise.resolve({ data: mockedBuissnesModelList })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=CATEGORY_TYPE`:
+            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=DATASET_CATEGORY`:
                 return Promise.resolve({ data: mockedDataSetList })
             case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=KPI_KPI_CATEGORY`:
                 return Promise.resolve({ data: mockedKpiCategoriesList })
