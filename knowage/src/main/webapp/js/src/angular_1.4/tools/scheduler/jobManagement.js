@@ -1314,7 +1314,8 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					sbiModule_restServices.post("scheduleree", "saveTrigger", cloneData)
 						.success(function(data) {
 							if (data.hasOwnProperty("errors")) {
-								console.error(sbiModule_translate.load("sbi.glossary.error.save"));
+								console.error("errori salvataggio",data.errors[0].message);
+								ctrl.showToastError(sbiModule_translate.load(data.errors[0].message));
 							} else if (data.Status == "NON OK") {
 								console.error("errori salvataggio",data.Errors[0]);
 								ctrl.showToastError(sbiModule_translate.load("sbi.glossary.error.save") + " " + sbiModule_translate.load(data.Errors[0]));
