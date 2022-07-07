@@ -61,8 +61,8 @@ jest.mock('axios')
 const $http = {
     get: axios.get.mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=20&offset=0&startDate=${encodeURIComponent(moment(new Date(2019, 10, 30)).format('YYYY-MM-DD+HH:mm:ss'))}&endDate=${encodeURIComponent(moment(new Date(2023, 10, 30)).format('YYYY-MM-DD+HH:mm:ss'))}`:
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/events/?fetchsize=20&offset=0&type=Mocked Event Model':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=20&offset=0&startDate=${encodeURIComponent(moment(new Date(2019, 10, 30)).format('YYYY-MM-DD+HH:mm:ss'))}&endDate=${encodeURIComponent(moment(new Date(2023, 10, 30)).format('YYYY-MM-DD+HH:mm:ss'))}`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/events/?fetchsize=20&offset=0&type=Mocked Event Model':
                 return Promise.resolve({ data: { results: filteredMockedEvents, start: 1, total: 1 } })
             default:
                 return Promise.resolve({ data: { results: mockedEvents, start: 1, total: 2 } })
@@ -124,7 +124,7 @@ describe('Events Management', () => {
 
         expect(axios.get).toHaveBeenNthCalledWith(
             2,
-            process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=20&offset=0&startDate=${encodeURIComponent(moment(wrapper.vm.startDate).format('YYYY-MM-DD+HH:mm:ss'))}&endDate=${encodeURIComponent(moment(wrapper.vm.endDate).format('YYYY-MM-DD+HH:mm:ss'))}`
+            import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=20&offset=0&startDate=${encodeURIComponent(moment(wrapper.vm.startDate).format('YYYY-MM-DD+HH:mm:ss'))}&endDate=${encodeURIComponent(moment(wrapper.vm.endDate).format('YYYY-MM-DD+HH:mm:ss'))}`
         )
         expect(wrapper.html()).toContain('${scheduler.startexecsched} Mocked One')
         expect(wrapper.html()).not.toContain('${scheduler.endexecsched} Mocked Two')
@@ -142,7 +142,7 @@ describe('Events Management', () => {
         await wrapper.find('[data-test="search-button"]').trigger('click')
         await flushPromises()
 
-        expect(axios.get).toHaveBeenNthCalledWith(2, process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=20&offset=0&type=Mocked Event Model`)
+        expect(axios.get).toHaveBeenNthCalledWith(2, import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=20&offset=0&type=Mocked Event Model`)
         expect(wrapper.html()).toContain('${scheduler.startexecsched} Mocked One')
         expect(wrapper.html()).not.toContain('${scheduler.endexecsched} Mocked Two')
     })

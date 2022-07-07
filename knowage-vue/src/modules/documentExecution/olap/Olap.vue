@@ -254,7 +254,7 @@ export default defineComponent({
         },
         async loadOlapDesigner() {
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `olap/designer/${this.documentId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `olap/designer/${this.documentId}`, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then(async (response: AxiosResponse<any>) => {
                     this.olapDesigner = response.data
                 })
@@ -270,7 +270,7 @@ export default defineComponent({
         async loadOlapCustomViews() {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `/1.0/olapsubobjects/getSubObjects?idObj=${this.documentId}`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `/1.0/olapsubobjects/getSubObjects?idObj=${this.documentId}`)
                 .then(async (response: AxiosResponse<any>) => (this.olapCustomViews = response.data.results))
                 .catch(() => {})
             this.loading = false
@@ -697,7 +697,7 @@ export default defineComponent({
 
             await this.$http
                 .post(
-                    process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${this.documentName}/saveOlapTemplate`,
+                    import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documents/${this.documentName}/saveOlapTemplate`,
                     { olap: { ...this.olapDesigner.template.wrappedObject.olap, JSONTEMPLATE: { XML_TAG_TEXT_CONTENT: JSON.stringify(this.olapDesigner.template.wrappedObject) } } },
                     { headers: { Accept: 'application/json, text/plain, */*' } }
                 )
@@ -961,7 +961,7 @@ export default defineComponent({
         async loadParameters() {
             const documentLabel = this.olapDesigner.DOCUMENT_LABEL ?? this.documentLabel
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${documentLabel}/parameters`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documents/${documentLabel}/parameters`)
                 .then((response: AxiosResponse<any>) => (this.parameters = response.data ? response.data.results : []))
                 .catch(() => {})
         },

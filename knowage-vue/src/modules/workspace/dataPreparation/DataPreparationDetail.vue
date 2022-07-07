@@ -225,7 +225,7 @@ export default defineComponent({
         this.loading++
         this.descriptorTransformations = Object.assign([], this.descriptor.transformations)
 
-        await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/datasets/dataset/id/' + this.id).then((response: AxiosResponse<any>) => {
+        await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/datasets/dataset/id/' + this.id).then((response: AxiosResponse<any>) => {
             this.dataset = response.data[0]
         })
         if (this.dataset) {
@@ -356,7 +356,7 @@ export default defineComponent({
             // launch avro export job
             this.$http
                 .post(
-                    process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${this.dataset.id}`,
+                    import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${this.dataset.id}`,
                     {},
                     {
                         headers: {
