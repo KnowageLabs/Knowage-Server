@@ -96,7 +96,7 @@ export default defineComponent({
         },
         async getDomainData() {
             this.getDomainByType('DS_SCOPE').then((response: AxiosResponse<any>) => (this.scopeTypes = response.data))
-            this.getDomainByType('CATEGORY_TYPE').then((response: AxiosResponse<any>) => (this.categoryTypes = response.data))
+            this.getDomainByType('DATASET_CATEGORY').then((response: AxiosResponse<any>) => (this.categoryTypes = response.data))
             this.getDomainByType('DATA_SET_TYPE').then(
                 (response: AxiosResponse<any>) =>
                     (this.datasetTypes = response.data.filter((cd) => {
