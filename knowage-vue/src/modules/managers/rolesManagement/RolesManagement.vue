@@ -61,7 +61,6 @@ export default defineComponent({
                     this.checkAllRolesForPublicRole()
                 })
                 .finally(() => (this.loading = false))
-            console.log('LOADED ROLES: ', this.roles)
         },
         checkAllRolesForPublicRole() {
             this.publicRole = null
