@@ -66,7 +66,7 @@ import LanguageDialog from '@/modules/mainMenu/dialogs/LanguageDialog/LanguageDi
 import LicenseDialog from '@/modules/mainMenu/dialogs/LicenseDialog/LicenseDialog.vue'
 import NewsDialog from '@/modules/mainMenu/dialogs/NewsDialog/NewsDialog.vue'
 import RoleDialog from '@/modules/mainMenu/dialogs/RoleDialog.vue'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import auth from '@/helpers/commons/authHelper'
 import { AxiosResponse } from 'axios'
 import DownloadsDialog from '@/modules/mainMenu/dialogs/DownloadsDialog/DownloadsDialog.vue'

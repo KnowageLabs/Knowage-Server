@@ -28,7 +28,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import Dialog from 'primevue/dialog'
 import documentExecutionHelpDialogDescriptor from './DocumentExecutionHelpDialogDescriptor.json'
 import DocumentExecutionWordDetail from './DocumentExecutionWordDetail.vue'

@@ -280,7 +280,7 @@ import { iDocument, iDataSource, iEngine, iTemplate, iAttribute, iFolder } from 
 import { defineComponent, PropType } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import { AxiosResponse } from 'axios'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import { startOlap } from '../../dialogs/olapDesignerDialog/DocumentDetailOlapHelpers'
 import mainDescriptor from '../../DocumentDetailsDescriptor.json'
 import infoDescriptor from './DocumentDetailsInformationsDescriptor.json'

@@ -41,7 +41,7 @@
 import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iDocument, iMondrianSchema, iXMLATemplate, iMondrianTemplate } from '../../DocumentDetails'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import Dialog from 'primevue/dialog'
 import descriptor from './DocumentDetailOlapDesignerDialogDescriptor.json'
 import DocumentDetailXMLAForm from './DocumentDetailXMLAForm.vue'
