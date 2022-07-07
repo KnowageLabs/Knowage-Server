@@ -317,7 +317,7 @@ export default defineComponent({
             this.selectedDataset.type = 'PreparedDataset'
             await this.$http({
                 method: 'POST',
-                url: process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'selfservicedataset/update',
+                url: import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'selfservicedataset/update',
                 data: this.selectedDataset,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Disable-Errors': 'true' },
                 transformRequest: function (obj) {
@@ -342,11 +342,11 @@ export default defineComponent({
         },
         getDatasets(filter: string) {
             this.loading = true
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${filter}/`)
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/${filter}/`)
         },
         async getAllAvroDataSets() {
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/avro`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/avro`)
                 .then((response: AxiosResponse<any>) => {
                     this.avroDatasets = response.data
                 })
@@ -359,14 +359,14 @@ export default defineComponent({
         },
         async getDatasetCategories() {
             this.loading = true
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domainsforfinaluser/ds-categories`).then((response: AxiosResponse<any>) => {
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domainsforfinaluser/ds-categories`).then((response: AxiosResponse<any>) => {
                 this.datasetCategories = [...response.data]
             })
         },
         async loadDataset(datasetLabel: string) {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${datasetLabel}`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${datasetLabel}`)
                 .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0]
                 })
@@ -377,7 +377,7 @@ export default defineComponent({
             let hasError = false
             if (dataset.label && dataset.id && dataset.dsTypeCd !== 'Prepared') {
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${dataset.label}/filters`, { role: this.userRole })
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/${dataset.label}/filters`, { role: this.userRole })
                     .then((response: AxiosResponse<any>) => {
                         this.filtersData = response.data
                         if (this.filtersData.filterStatus) {
@@ -464,7 +464,7 @@ export default defineComponent({
         },
         async exportDataset(postData?) {
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${this.selectedDataset.id}/${this.exportFormat}`, postData ?? {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${this.selectedDataset.id}/${this.exportFormat}`, postData ?? {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then(() => {
                     this.store.setInfo({
                         title: this.$t('common.toast.updateTitle'),
@@ -538,7 +538,7 @@ export default defineComponent({
             // launch avro export job
             this.$http
                 .post(
-                    process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${dsId}`,
+                    import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/data-preparation/prepare/${dsId}`,
                     {},
                     {
                         headers: {
@@ -562,7 +562,7 @@ export default defineComponent({
         openDataPreparation(dataset: any) {
             if (dataset.dsTypeCd == 'Prepared') {
                 //edit existing data prep
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
+                this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
                     (response: AxiosResponse<any>) => {
                         let instanceId = response.data.configuration.dataPrepInstanceId
                         this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
@@ -602,7 +602,7 @@ export default defineComponent({
         async downloadDatasetFile(dataset: any) {
             await this.loadDataset(dataset.label)
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${this.selectedDataset.label}&type=${this.selectedDataset.fileType.toLowerCase()}`, {
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${this.selectedDataset.label}&type=${this.selectedDataset.fileType.toLowerCase()}`, {
                     headers: {
                         Accept: 'application/json, text/plain, */*'
                     },
@@ -638,7 +638,7 @@ export default defineComponent({
             this.loading = true
             const url = dataset.catTypeId ? `selfservicedataset/share/?catTypeId=${dataset.catTypeId}&id=${dataset.id}` : `selfservicedataset/share/?id=${dataset.id}`
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url)
                 .then(() => {
                     this.store.setInfo({
                         title: this.$t('common.toast.updateTitle'),
@@ -657,7 +657,7 @@ export default defineComponent({
         },
         async handleDatasetClone(dataset: any) {
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets`, dataset, { headers: { 'X-Disable-Errors': 'true' } })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets`, dataset, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
@@ -686,7 +686,7 @@ export default defineComponent({
         async deleteDataset(dataset: any) {
             this.loading = true
             await this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
                 .then(() => {
                     this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),

@@ -81,7 +81,7 @@ export default defineComponent({
     methods: {
         async loadScorecards() {
             this.$store.commit('setLoading', true)
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/listScorecard`).then((response: AxiosResponse<any>) => (this.scorecards = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpiee/listScorecard`).then((response: AxiosResponse<any>) => (this.scorecards = response.data))
             this.$store.commit('setLoading', false)
         },
         getFormattedDate(date: number) {
@@ -102,7 +102,7 @@ export default defineComponent({
         },
         async deleteScorecard(scorecard: iScorecard) {
             await this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/${scorecard.id}/deleteScorecard`)
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpiee/${scorecard.id}/deleteScorecard`)
                 .then(() => {
                     this.$store.commit('setInfo', {
                         title: this.$t('common.toast.deleteTitle'),

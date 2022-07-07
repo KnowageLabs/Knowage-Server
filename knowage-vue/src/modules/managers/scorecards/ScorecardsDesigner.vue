@@ -94,7 +94,7 @@ export default defineComponent({
         async loadScorecard() {
             this.$store.commit('setLoading', true)
             if (this.id) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/${this.id}/loadScorecard`).then((response: AxiosResponse<any>) => (this.scorecard = response.data))
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpiee/${this.id}/loadScorecard`).then((response: AxiosResponse<any>) => (this.scorecard = response.data))
             } else {
                 this.scorecard = { name: '', description: '', perspectives: [] }
             }
@@ -102,12 +102,12 @@ export default defineComponent({
         },
         async loadCriterias() {
             this.$store.commit('setLoading', true)
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_SCORECARD_CRITE`).then((response: AxiosResponse<any>) => (this.criterias = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_SCORECARD_CRITE`).then((response: AxiosResponse<any>) => (this.criterias = response.data))
             this.$store.commit('setLoading', false)
         },
         async loadKpis() {
             this.$store.commit('setLoading', true)
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpiWithResult`).then((response: AxiosResponse<any>) => (this.kpis = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpiWithResult`).then((response: AxiosResponse<any>) => (this.kpis = response.data))
             this.$store.commit('setLoading', false)
         },
         async saveScorecard() {
@@ -116,7 +116,7 @@ export default defineComponent({
             const operation = tempScorecard.id ? 'update' : 'create'
             this.$store.commit('setLoading', true)
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/saveScorecard`, tempScorecard)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpiee/saveScorecard`, tempScorecard)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.id && this.scorecard) {
                         this.$store.commit('setInfo', {
