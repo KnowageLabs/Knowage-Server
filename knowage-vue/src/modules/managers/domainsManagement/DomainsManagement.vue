@@ -19,7 +19,7 @@
                     v-model:selection="selectedDomain"
                     selectionMode="single"
                     class="p-datatable-sm kn-table"
-                    dataKey="id"
+                    dataKey="valueId"
                     v-model:filters="filters"
                     filterDisplay="menu"
                     :globalFilterFields="domainsManagementDescriptor.globalFilterFields"
