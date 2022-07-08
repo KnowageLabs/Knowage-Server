@@ -92,7 +92,7 @@ export default defineComponent({
         designerButtonVisible(): boolean {
             return this.selectedDocument.typeCode == 'OLAP' || this.selectedDocument.typeCode == 'KPI' || this.selectedDocument.engine == 'knowagegisengine'
         },
-        ...mapState({
+        ...mapState(mainStore, {
             user: 'user'
         })
     },
@@ -290,7 +290,7 @@ export default defineComponent({
                 this.$emit('openDesignerDialog')
             } else {
                 const activeTemplate = this.findActiveTemplate()
-                const sbiExecutionId = crypto.randomBytes(16).toString('hex')
+                const sbiExecutionId = cryptoRandomString({ length: 16, type: 'base64' })
                 await startOlap(this.$http, this.user, sbiExecutionId, this.selectedDocument, activeTemplate, this.$router)
             }
         },

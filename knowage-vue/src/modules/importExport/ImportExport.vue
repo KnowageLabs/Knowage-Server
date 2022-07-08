@@ -143,7 +143,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(mainStore, {
             user: 'user',
             isEnterprise: 'isEnterprise',
             licenses: 'licenses'
