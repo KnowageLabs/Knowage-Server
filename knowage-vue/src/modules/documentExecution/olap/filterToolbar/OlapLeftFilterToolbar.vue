@@ -74,23 +74,23 @@ export default defineComponent({
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
             // @ts-ignore
-            this.$refs[`${filterId}`].classList.add('filter-dragging')
+            this.$refs[`${filterId}`].classList?.add('filter-dragging')
         },
         removeDragClass(filterId) {
             // @ts-ignore
-            this.$refs[`${filterId}`].classList.remove('filter-dragging')
+            this.$refs[`${filterId}`].classList?.remove('filter-dragging')
         },
         displayDropzone() {
             // @ts-ignore
-            this.$refs.axisDropzone.classList.add('display-axis-dropzone')
+            this.$refs.axisDropzone.classList?.add('display-axis-dropzone')
         },
         hideDropzone() {
             // @ts-ignore
-            this.$refs.axisDropzone.classList.remove('display-axis-dropzone')
+            this.$refs.axisDropzone.classList?.remove('display-axis-dropzone')
         },
         onDrop(event) {
             // @ts-ignore
-            this.$refs.axisDropzone.classList.remove('display-axis-dropzone')
+            this.$refs.axisDropzone.classList?.remove('display-axis-dropzone')
             var data = JSON.parse(event.dataTransfer.getData('text/plain'))
 
             var leftLength = this.rows.length

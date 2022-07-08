@@ -54,15 +54,15 @@ export default defineComponent({
         },
         displayDropzone() {
             // @ts-ignore
-            this.$refs.axisDropzone.classList.add('display-axis-dropzone')
+            this.$refs.axisDropzone.classList?.add('display-axis-dropzone')
         },
         hideDropzone() {
             // @ts-ignore
-            this.$refs.axisDropzone.classList.remove('display-axis-dropzone')
+            this.$refs.axisDropzone.classList?.remove('display-axis-dropzone')
         },
         onDrop(event) {
             // @ts-ignore
-            this.$refs.axisDropzone.classList.remove('display-axis-dropzone')
+            this.$refs.axisDropzone.classList?.remove('display-axis-dropzone')
             var data = JSON.parse(event.dataTransfer.getData('text/plain'))
             var topLength = this.olapProp?.columns.length
             var leftLength = this.olapProp?.rows.length
