@@ -24,7 +24,9 @@ export default defineConfig((command, mode) => {
             }
         },
         publicPath: env.VITE_PUBLIC_PATH,
-        outputDir: './src/main/webapp',
+        build: {
+            outDir: './src/main/webapp'
+        },
         server: {
             https: env.VITE_HOST_HTTPS === 'true',
             proxy: {
