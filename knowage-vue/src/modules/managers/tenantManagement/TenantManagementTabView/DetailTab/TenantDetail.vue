@@ -27,7 +27,6 @@
                         }"
                     />
                 </div>
-
                 <div class="p-col-3 kn-height-full">
                     <input id="organizationImage" type="file" @change="uploadFile" accept="image/png, image/jpeg" />
                     <label for="organizationImage" v-tooltip.bottom="$t('common.upload')">

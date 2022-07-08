@@ -221,6 +221,7 @@ import Checkbox from 'primevue/checkbox'
 import Card from 'primevue/card'
 import Tooltip from 'primevue/tooltip'
 import Message from 'primevue/message'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     emits: ['touched', 'closed', 'inserted'],
@@ -250,6 +251,11 @@ export default defineComponent({
         },
         databases: Array,
         id: String
+    },
+
+    setup() {
+        const store = mainStore()
+        return { store }
     },
 
     mounted() {
@@ -479,7 +485,7 @@ export default defineComponent({
             this.$emit('touched')
         },
         closeTemplate() {
-            this.$router.push('/datasource')
+            this.$router.push('/datasource-management')
             this.$emit('closed')
         }
     }

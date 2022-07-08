@@ -56,6 +56,7 @@ import dataSourceDescriptor from './DataSourceDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Listbox from 'primevue/listbox'
 import Avatar from 'primevue/avatar'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'datasources-management',
@@ -74,6 +75,10 @@ export default defineComponent({
             loading: false,
             touched: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.getAllDatasources()
