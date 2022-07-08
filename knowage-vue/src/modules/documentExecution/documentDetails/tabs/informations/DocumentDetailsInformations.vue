@@ -379,6 +379,10 @@ export default defineComponent({
             imagePreview: false
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         this.setData()
         await this.getAllTemplates()
@@ -488,7 +492,7 @@ export default defineComponent({
                 this.$emit('openDesignerDialog')
             } else {
                 const activeTemplate = this.findActiveTemplate()
-                const sbiExecutionId = crypto.randomBytes(16).toString('hex')
+                const sbiExecutionId = cryptoRandomString({ length: 16, type: 'base64' })
                 await startOlap(this.$http, this.user, sbiExecutionId, this.document, activeTemplate, this.$router)
             }
         },

@@ -36,7 +36,8 @@
                 </template>
             </Toolbar>
             <div id="driver-details-container" class="kn-flex kn-relative">
-                <div :style="mainDescriptor.style.absoluteScroll">
+                <div id="codemirror-container" :style="mainDescriptor.style.absoluteScroll">
+                    {{ this.scriptOptions.mode }}
                     <VCodeMirror v-if="showTemplateContent" ref="codeMirrorScriptType" class="kn-height-full" v-model:value="selectedTemplateContent" :options="scriptOptions" @keyup="$emit('touched')" />
                     <div v-else>
                         <InlineMessage severity="info" class="p-m-2 kn-width-full"> {{ $t('documentExecution.documentDetails.history.templateHint') }}</InlineMessage>
@@ -53,7 +54,7 @@ import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iDocument } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import { downloadDirect } from '@/helpers/commons/fileHelper'
-import { VCodeMirror } from 'vue3-code-mirror'
+import VCodeMirror from 'codemirror-editor-vue3'
 import { mapState } from 'pinia'
 import { startOlap } from '../../dialogs/olapDesignerDialog/DocumentDetailOlapHelpers'
 import mainDescriptor from '@/modules/documentExecution/documentDetails/DocumentDetailsDescriptor.json'
@@ -92,7 +93,7 @@ export default defineComponent({
         designerButtonVisible(): boolean {
             return this.selectedDocument.typeCode == 'OLAP' || this.selectedDocument.typeCode == 'KPI' || this.selectedDocument.engine == 'knowagegisengine'
         },
-        ...mapState({
+        ...mapState(mainStore, {
             user: 'user'
         })
     },
@@ -109,10 +110,9 @@ export default defineComponent({
             triggerUpload: false,
             uploading: false,
             codeMirrorScriptType: {} as any,
-            tst: '',
             scriptOptions: {
                 readOnly: true,
-                mode: 'text/javascript',
+                mode: '',
                 indentWithTabs: true,
                 smartIndent: true,
                 lineWrapping: true,
@@ -128,8 +128,12 @@ export default defineComponent({
         return { store }
     },
     created() {
+        const interval = setInterval(() => {
+            if (!this.$refs.codeMirrorScriptType) return
+            this.codeMirrorScriptType = (this.$refs.codeMirrorScriptType as any).cminstance as any
+            clearInterval(interval)
+        }, 200)
         this.getAllTemplates()
-        this.setupCodeMirror()
     },
     methods: {
         async getAllTemplates() {
@@ -143,13 +147,6 @@ export default defineComponent({
             this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates/selected/${templateId}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then((response: AxiosResponse<any>) => {
                 this.selectedTemplateFileType == 'sbicockpit' || this.selectedTemplateFileType == 'json' || this.selectedTemplateFileType == 'sbigeoreport' ? (this.selectedTemplateContent = JSON.stringify(response.data, null, 4)) : (this.selectedTemplateContent = response.data)
             })
-        },
-        setupCodeMirror() {
-            const interval = setInterval(() => {
-                if (!this.$refs.codeMirrorScriptType) return
-                this.codeMirrorScriptType = (this.$refs.codeMirrorScriptType as any).editor as any
-                clearInterval(interval)
-            }, 200)
         },
         changeCodemirrorMode() {
             let mode = ''
@@ -173,7 +170,6 @@ export default defineComponent({
                     mode = 'text/javascript'
             }
             setTimeout(() => {
-                this.setupCodeMirror()
                 this.codeMirrorScriptType.setOption('mode', mode)
             }, 250)
         },
@@ -290,7 +286,7 @@ export default defineComponent({
                 this.$emit('openDesignerDialog')
             } else {
                 const activeTemplate = this.findActiveTemplate()
-                const sbiExecutionId = crypto.randomBytes(16).toString('hex')
+                const sbiExecutionId = cryptoRandomString({ length: 16, type: 'base64' })
                 await startOlap(this.$http, this.user, sbiExecutionId, this.selectedDocument, activeTemplate, this.$router)
             }
         },
@@ -313,3 +309,8 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss">
+#codemirror-container {
+    overflow: hidden !important;
+}
+</style>
