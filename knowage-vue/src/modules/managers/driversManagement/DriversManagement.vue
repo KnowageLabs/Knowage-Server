@@ -44,7 +44,7 @@
         </div>
         <div class="kn-list--column p-col-8 p-sm-8 p-md-9 p-p-0">
             <KnHint :title="'managers.driversManagement.title'" :hint="'managers.driversManagement.hint'" v-if="!formVisible"></KnHint>
-            <DriversManagementDetail  v-else :selectedDriver="selectedDriver" @created="handleSave" @close="closeForm" @touched="touched = true" data-test="drivers-form"></DriversManagementDetail>
+            <DriversManagementDetail v-else :selectedDriver="selectedDriver" @created="handleSave" @close="closeForm" @touched="touched = true" data-test="drivers-form"></DriversManagementDetail>
         </div>
     </div>
 </template>
@@ -59,8 +59,7 @@ import DriversManagementDetail from './DriversManagementDetail.vue'
 import driversManagementDescriptor from './DriversManagementDescriptor.json'
 import KnHint from '@/components/UI/KnHint.vue'
 import Tooltip from 'primevue/tooltip'
-	import mainStore from '../../../App.store'
-
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'constraint-management',
@@ -84,7 +83,7 @@ export default defineComponent({
             selectedDriver: {} as iDriver
         }
     },
-      setup() {
+    setup() {
         const store = mainStore()
         return { store }
     },
