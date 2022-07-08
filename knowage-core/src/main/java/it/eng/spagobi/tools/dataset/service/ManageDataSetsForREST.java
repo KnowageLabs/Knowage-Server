@@ -22,6 +22,8 @@
 
 package it.eng.spagobi.tools.dataset.service;
 
+import static it.eng.spagobi.commons.dao.ICategoryDAO.DATASET_CATEGORY;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -561,7 +563,7 @@ public class ManageDataSetsForREST {
 					String roleName = itRoles.next();
 					role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
-					List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+					List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType(DATASET_CATEGORY);
 					for (RoleMetaModelCategory r : ds) {
 						for (Domain dom : array) {
 							if (r.getCategoryId().equals(dom.getValueId())) {
@@ -572,7 +574,7 @@ public class ManageDataSetsForREST {
 				}
 				return categoriesDev;
 			} else {
-				return DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+				return DAOFactory.getDomainDAO().loadListDomainsByType(DATASET_CATEGORY);
 			}
 		} catch (Exception e) {
 			logger.error("Role with selected id: " + role.getId() + " doesn't exists", e);

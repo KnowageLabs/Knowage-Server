@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,23 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.catalogue.service;
+
+import static it.eng.spagobi.commons.dao.ICategoryDAO.BUSINESS_MODEL_CATEGORY;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
@@ -32,15 +44,6 @@ import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 
@@ -128,7 +131,7 @@ public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 		try {
 			// NO CATEGORY IN THE DOMAINS
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
-			List<Domain> dialects = domaindao.loadListDomainsByType("BM_CATEGORY");
+			List<Domain> dialects = domaindao.loadListDomainsByType(BUSINESS_MODEL_CATEGORY);
 			if (dialects == null || dialects.size() == 0) {
 				return null;
 			}

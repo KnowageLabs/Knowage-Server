@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api;
 
+import static it.eng.spagobi.commons.dao.ICategoryDAO.DATASET_CATEGORY;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -1790,7 +1792,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 			List<Domain> categories = null;
 
 			try {
-				categories = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+				categories = DAOFactory.getDomainDAO().loadListDomainsByType(DATASET_CATEGORY);
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("An unexpected error occured while loading categories types from database", t);
 			}
@@ -2162,7 +2164,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 		try {
 			// NO CATEGORY IN THE DOMAINS
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
-			List<Domain> dialects = domaindao.loadListDomainsByType("CATEGORY_TYPE");
+			List<Domain> dialects = domaindao.loadListDomainsByType(DATASET_CATEGORY);
 			if (dialects == null || dialects.size() == 0) {
 				return null;
 			}
@@ -2176,7 +2178,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 
 				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
 				List<RoleMetaModelCategory> resp = new ArrayList<>();
-				List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+				List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType(DATASET_CATEGORY);
 				for (RoleMetaModelCategory r : aRoleCategories) {
 					for (Domain dom : array) {
 						if (r.getCategoryId().equals(dom.getValueId())) {

@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api;
 
+import static it.eng.spagobi.commons.dao.ICategoryDAO.DATASET_CATEGORY;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -314,7 +316,7 @@ public class GetCertificatedDatasets {
 		try {
 			// NO CATEGORY IN THE DOMAINS
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
-			List<Domain> dialects = domaindao.loadListDomainsByType("CATEGORY_TYPE");
+			List<Domain> dialects = domaindao.loadListDomainsByType(DATASET_CATEGORY);
 			if (dialects == null || dialects.size() == 0) {
 				return null;
 			}
@@ -328,7 +330,7 @@ public class GetCertificatedDatasets {
 
 				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
 				List<RoleMetaModelCategory> resp = new ArrayList<>();
-				List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+				List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType(DATASET_CATEGORY);
 				for (RoleMetaModelCategory r : aRoleCategories) {
 					for (Domain dom : array) {
 						if (r.getCategoryId().equals(dom.getValueId())) {

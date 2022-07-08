@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,23 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.catalogue.service;
-
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.serializer.SerializationException;
-import it.eng.spagobi.commons.serializer.SerializerFactory;
-import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
-import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,6 +26,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.serializer.SerializationException;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONSuccess;
+
 public class GetMetaModelsAction extends AbstractSpagoBIAction {
 
 	// logger component
@@ -46,7 +47,7 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	public static String FILTERS = "Filters";
-	public static String DOMAIN_TYPE = "BM_CATEGORY";
+	public static String DOMAIN_TYPE = ICategoryDAO.BUSINESS_MODEL_CATEGORY;
 
 	public static Integer START_DEFAULT = 0;
 	public static Integer LIMIT_DEFAULT = 15;

@@ -68,6 +68,7 @@ import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
@@ -139,9 +140,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	private static final String NEW_KPI_ALIAS_NOT_AVAILABLE_AS_MEASURE = "newKpi.aliasNotAvailableAsMeasure";
 	private static final String NEW_KPI_ALIAS_NOT_AVAILABLE = "newKpi.aliasNotAvailable";
 	private static final String NEW_KPI_KPI_NOT_FOUND = "newKpi.kpiNotFound";
-	private static final String KPI_MEASURE_CATEGORY = "KPI_MEASURE_CATEGORY";
-	private static final String KPI_KPI_CATEGORY = "KPI_KPI_CATEGORY";
-	private static final String KPI_TARGET_CATEGORY = "KPI_TARGET_CATEGORY";
+	private static final String KPI_MEASURE_CATEGORY = ICategoryDAO.KPI_MEASURE_CATEGORY;
+	private static final String KPI_KPI_CATEGORY = ICategoryDAO.KPI_CATEGORY;
+	private static final String KPI_TARGET_CATEGORY = ICategoryDAO.KPI_TARGET_CATEGORY;
 	private static final String MEASURE = "MEASURE";
 
 	private static final String KPI_SCHEDULER_GROUP = "KPI_SCHEDULER_GROUP";

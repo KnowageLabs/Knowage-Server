@@ -30,7 +30,7 @@ import it.eng.spagobi.commons.dao.dto.SbiCategory;
 public interface ICategoryDAO extends ISpagoBIDao {
 
 	String BUSINESS_MODEL_CATEGORY = "BM_CATEGORY";
-	String DATASET_CATEGORY = "CATEGORY_TYPE";
+	String DATASET_CATEGORY = "DATASET_CATEGORY";
 	String GEO_CATEGORY = "GEO_CATEGORY";
 	String KPI_CATEGORY = "KPI_KPI_CATEGORY";
 	String KPI_MEASURE_CATEGORY = "KPI_MEASURE_CATEGORY";

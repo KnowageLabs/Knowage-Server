@@ -17,6 +17,10 @@
  */
 package it.eng.spagobi.api.v2;
 
+import static it.eng.spagobi.commons.dao.ICategoryDAO.BUSINESS_MODEL_CATEGORY;
+import static it.eng.spagobi.commons.dao.ICategoryDAO.DATASET_CATEGORY;
+import static it.eng.spagobi.commons.dao.ICategoryDAO.KPI_CATEGORY;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -55,7 +59,6 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 @Path("/2.0/roles")
@@ -180,7 +183,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 			UserProfile up = getUserProfile();
 			Collection<String> roles = up.getRoles();
 
-			List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+			List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType(DATASET_CATEGORY);
 			if (UserUtilities.isAdministrator(up)) {
 				resp = array;
 
@@ -222,7 +225,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 			role = rolesDao.loadByID(id);
 			List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
 			List<RoleMetaModelCategory> resp = new ArrayList<>();
-			List<SbiDomains> array = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+			List<SbiDomains> array = DAOFactory.getDomainDAO().loadListDomainsByType(DATASET_CATEGORY);
 			for (RoleMetaModelCategory r : ds) {
 				for (SbiDomains dom : array) {
 					if (r.getCategoryId().equals(dom.getValueId())) {
@@ -284,15 +287,15 @@ public class RolesResource extends AbstractSpagoBIResource {
 			rolesDao.modifyRole(role);
 
 			// update Business Model categories
-			listAll = domainsDao.loadListDomainsByType("BM_CATEGORY");
+			listAll = domainsDao.loadListDomainsByType(BUSINESS_MODEL_CATEGORY);
 			for (Domain domain : listAll) {
 				rolesDao.removeRoleMetaModelCategory(role.getId(), domain.getValueId());
 			}
-			listAll = domainsDao.loadListDomainsByType("KPI_KPI_CATEGORY");
+			listAll = domainsDao.loadListDomainsByType(KPI_CATEGORY);
 			for (Domain domain : listAll) {
 				rolesDao.removeRoleMetaModelCategory(role.getId(), domain.getValueId());
 			}
-			listAll = domainsDao.loadListDomainsByType("CATEGORY_TYPE");
+			listAll = domainsDao.loadListDomainsByType(DATASET_CATEGORY);
 			for (Domain domain : listAll) {
 				rolesDao.removeRoleMetaModelCategory(role.getId(), domain.getValueId());
 			}
@@ -302,7 +305,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 				}
 			}
 			// update Data Set categories
-			listAll = domainsDao.loadListDomainsByType("CATEGORY_TYPE");
+			listAll = domainsDao.loadListDomainsByType(DATASET_CATEGORY);
 			for (Domain domain : listAll) {
 				rolesDao.removeRoleDataSetCategory(role.getId(), domain.getValueId());
 			}

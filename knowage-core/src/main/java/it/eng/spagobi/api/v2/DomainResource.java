@@ -17,14 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import static it.eng.spagobi.commons.dao.ICategoryDAO.BUSINESS_MODEL_CATEGORY;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -46,6 +39,15 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/2.0/domains")
 @ManageAuthorization
@@ -304,7 +306,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 					}
 				}
 			}
-			metaModelCategories = domainsDao.loadListDomainsByType("BM_CATEGORY");
+			metaModelCategories = domainsDao.loadListDomainsByType(BUSINESS_MODEL_CATEGORY);
 			Integer[] arrayAllRolesCategories = new Integer[allRolesCategories.size()];
 			allRolesCategories.toArray(arrayAllRolesCategories);
 			for (int i = 0; i < arrayAllRolesCategories.length; i++) {

@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.sdk.documents.impl;
 
+import static it.eng.spagobi.commons.dao.ICategoryDAO.BUSINESS_MODEL_CATEGORY;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -962,7 +964,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 					}
 
 					// retrieve Category Id
-					Domain domain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("BM_CATEGORY", categoryLabel);
+					Domain domain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(BUSINESS_MODEL_CATEGORY, categoryLabel);
 					if (domain != null) {
 						Integer id = domain.getValueId();
 						logger.debug("Associate domain with id: " + id + " and name " + categoryLabel);

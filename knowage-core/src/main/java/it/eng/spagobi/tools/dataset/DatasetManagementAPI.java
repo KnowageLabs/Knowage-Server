@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.tools.dataset;
 
+import static it.eng.spagobi.commons.dao.ICategoryDAO.DATASET_CATEGORY;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -521,7 +523,7 @@ public class DatasetManagementAPI {
 		try {
 			// NO CATEGORY IN THE DOMAINS
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
-			List<Domain> dialects = domaindao.loadListDomainsByType("CATEGORY_TYPE");
+			List<Domain> dialects = domaindao.loadListDomainsByType(DATASET_CATEGORY);
 			if (dialects == null || dialects.size() == 0) {
 				return null;
 			}
