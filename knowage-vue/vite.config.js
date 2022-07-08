@@ -54,7 +54,8 @@ export default defineConfig((command, mode) => {
                 },
                 '^/knowage/webSocket': {
                     target: env.VITE_HOST_URL,
-                    changeOrigin: true
+                    changeOrigin: true,
+                    ws: true
                 },
                 '^/knowage/servlet': {
                     target: env.VITE_HOST_URL,
