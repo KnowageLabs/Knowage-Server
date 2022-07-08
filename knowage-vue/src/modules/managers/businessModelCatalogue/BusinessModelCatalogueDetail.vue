@@ -68,6 +68,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import useValidate from '@vuelidate/core'
 import mainStore from '../../../App.store'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'business-model-catalogue-detail',
@@ -175,6 +176,7 @@ export default defineComponent({
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/datasources/?type=meta').then((response: AxiosResponse<any>) => response.data.forEach((datasource) => this.datasources.push(datasource.label)))
         },
         formatBusinessModelAnalyticalDriver() {
+            if (this.selectedBusinessModel.category.VALUE_NM) return
             const index = this.categories.findIndex((category) => category.VALUE_ID === this.selectedBusinessModel.category)
             this.selectedBusinessModel = { ...this.selectedBusinessModel, category: this.categories[index] }
         },
@@ -239,6 +241,7 @@ export default defineComponent({
                     this.setUploadingError('createTitle', response.data.errors[0].message)
                 } else {
                     this.selectedBusinessModel = response.data
+                    this.formatBusinessModelAnalyticalDriver()
                 }
             })
         },
