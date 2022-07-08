@@ -96,6 +96,7 @@ describe('Business Model Catalogue Detail', () => {
         const wrapper = factory(1)
         
         await flushPromises()
+        console.log(' >>>>>>>>>>>> ', wrapper.find('.p-tabview-nav'))
         await wrapper.find('.p-tabview-nav li:nth-child(2) a').trigger('click')
 
         expect(wrapper.vm.selectedBusinessModel).toStrictEqual({ ...mockedBusinessModel, category: undefined })

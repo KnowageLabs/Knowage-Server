@@ -23,7 +23,10 @@ export default defineConfig((command, mode) => {
                 }
             }
         },
+        publicPath: env.VITE_PUBLIC_PATH,
+        outputDir: './src/main/webapp',
         server: {
+            https: env.VITE_HOST_HTTPS === 'true',
             proxy: {
                 '^/knowagedossierengine/api': {
                     target: env.VITE_HOST_URL,
