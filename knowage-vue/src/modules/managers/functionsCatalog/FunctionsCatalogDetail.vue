@@ -13,7 +13,7 @@
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         </template>
 
-        <TabView>
+        <TabView v-model:activeIndex="activeTab" >
             <TabPanel>
                 <template #header>
                     <span>{{ $t('common.general') }}</span>
@@ -35,7 +35,7 @@
                     <span>{{ $t('common.script') }}</span>
                     <Badge class="p-ml-2" severity="danger" v-if="invalidCode"></Badge>
                 </template>
-                <FunctionsCatalogScriptTab :propFunction="selectedFunction" :readonly="readonly"></FunctionsCatalogScriptTab>
+                <FunctionsCatalogScriptTab :activeTab="activeTab" :propFunction="selectedFunction" :readonly="readonly"></FunctionsCatalogScriptTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
@@ -85,6 +85,7 @@ export default defineComponent({
             warningTitle: '',
             operation: 'create',
             warningVisible: false,
+            activeTab: 0,
             loading: false
         }
     },
@@ -135,6 +136,7 @@ export default defineComponent({
         closeFunctionDetail() {
             this.selectedFunction = this.getFunctionDefaultValues()
             this.$emit('close')
+            this.activeTab =0 
         },
         getFunctionDefaultValues() {
             return {

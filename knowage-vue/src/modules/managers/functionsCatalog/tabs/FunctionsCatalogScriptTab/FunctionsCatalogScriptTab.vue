@@ -33,7 +33,7 @@ import functionsCatalogScriptTabDescriptor from './FunctionsCatalogScriptTabDesc
 export default defineComponent({
     name: 'function-catalog-script-tab',
     components: { Dropdown, VCodeMirror },
-    props: { propFunction: { type: Object }, readonly: { type: Boolean } },
+    props: { propFunction: { type: Object }, readonly: { type: Boolean }, activeTab: {type: Number} },
     data() {
         return {
             functionsCatalogScriptTabDescriptor,
@@ -49,6 +49,11 @@ export default defineComponent({
                 lineNumbers: true,
                 autoRefresh: true
             }
+        }
+    },
+    watch: {
+         activeTab(value: number) {
+            if (value === 2 && this.codeMirror) setTimeout(() => this.codeMirror.refresh(), 100)
         }
     },
     created() {
