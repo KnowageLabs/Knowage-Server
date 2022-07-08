@@ -111,7 +111,6 @@ export default defineComponent({
     },
     setup() {
         const store = mainStore()
-        console.log("STORE: ", store)
         return { store }
     },
     mounted() {
