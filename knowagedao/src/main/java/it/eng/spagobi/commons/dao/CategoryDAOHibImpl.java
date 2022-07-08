@@ -60,29 +60,56 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 	@Override
 	public SbiCategory getCategory(String type, int id) {
 
-	Session aSession = null;
+		Session aSession = null;
 
-	aSession = getSession();
+		aSession = getSession();
 
-	Criteria criteria = aSession.createCriteria(SbiCategory.class);
+		Criteria criteria = aSession.createCriteria(SbiCategory.class);
 
-	Criterion restrictionOnId = Restrictions.eq("id", id);
-	Criterion restrictionOnType = Restrictions.eq("type", type);
+		Criterion restrictionOnId = Restrictions.eq("id", id);
+		Criterion restrictionOnType = Restrictions.eq("type", type);
 
-	Criterion andOfRestrictions = Restrictions.and(restrictionOnId, restrictionOnType);
+		Criterion andOfRestrictions = Restrictions.and(restrictionOnId, restrictionOnType);
 
-	criteria.add(andOfRestrictions);
+		criteria.add(andOfRestrictions);
 
-	SbiCategory ret = null;
+		SbiCategory ret = null;
 
-	try {
-		ret = (SbiCategory) criteria.uniqueResult();
-	} catch (HibernateException e) {
-		throw new SpagoBIRuntimeException("Expected one category for type " + type + " and id " + id, e);
+		try {
+			ret = (SbiCategory) criteria.uniqueResult();
+		} catch (HibernateException e) {
+			throw new SpagoBIRuntimeException("Expected one category for type " + type + " and id " + id, e);
+		}
+
+		return ret;
 	}
 
-	return ret;
-}
+	@Override
+	public SbiCategory getCategory(String type, String name) {
+
+		Session aSession = null;
+
+		aSession = getSession();
+
+		Criteria criteria = aSession.createCriteria(SbiCategory.class);
+
+		Criterion restrictionOnId = Restrictions.eq("name", name);
+		Criterion restrictionOnType = Restrictions.eq("type", type);
+
+		Criterion andOfRestrictions = Restrictions.and(restrictionOnId, restrictionOnType);
+
+		criteria.add(andOfRestrictions);
+
+		SbiCategory ret = null;
+
+		try {
+			ret = (SbiCategory) criteria.uniqueResult();
+		} catch (HibernateException e) {
+			throw new SpagoBIRuntimeException("Expected one category for type " + type + " and name " + name, e);
+		}
+
+		return ret;
+	}
 
 	@Override
 	public SbiCategory create(SbiCategory category) throws EMFUserError {

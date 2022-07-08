@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
-import static it.eng.spagobi.commons.dao.ICategoryDAO.DATASET_CATEGORY;
 import static java.util.stream.Collectors.toList;
 
 import java.io.File;
@@ -56,6 +55,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
@@ -2665,7 +2665,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					String roleName = itRoles.next();
 					Role role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
-					List<Domain> categories = DAOFactory.getDomainDAO().loadListDomainsByType(DATASET_CATEGORY);
+					ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+					List<Domain> categories = categoryDao.getCategoriesForDataset()
+						.stream()
+						.map(Domain::fromCategory)
+						.collect(toList());
 					for (RoleMetaModelCategory r : ds) {
 						Iterator itCategories = categories.iterator();
 						while (itCategories.hasNext()) {

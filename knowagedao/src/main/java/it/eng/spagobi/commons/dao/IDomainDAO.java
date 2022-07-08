@@ -58,7 +58,7 @@ public interface IDomainDAO extends ISpagoBIDao {
 	 *             If an Exception occurred
 	 */
 
-	public List loadListDomainsByType(String domainType) throws EMFUserError;
+	public List<Domain> loadListDomainsByType(String domainType) throws EMFUserError;
 
 	public List<Integer> loadListMetaModelDomainsByRole(Integer roleId) throws SpagoBIRuntimeException;
 

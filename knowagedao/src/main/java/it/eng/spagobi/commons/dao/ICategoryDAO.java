@@ -42,6 +42,8 @@ public interface ICategoryDAO extends ISpagoBIDao {
 
 	SbiCategory getCategory(String type, int id);
 
+	SbiCategory getCategory(String type, String value);
+
 	// Commands
 
 	SbiCategory create(SbiCategory category) throws EMFUserError;

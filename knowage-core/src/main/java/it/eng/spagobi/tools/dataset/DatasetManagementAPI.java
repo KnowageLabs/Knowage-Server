@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset;
 
-import static it.eng.spagobi.commons.dao.ICategoryDAO.DATASET_CATEGORY;
+import static java.util.stream.Collectors.toList;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,7 +57,7 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -522,8 +522,13 @@ public class DatasetManagementAPI {
 		List<Integer> categories = new ArrayList<>();
 		try {
 			// NO CATEGORY IN THE DOMAINS
-			IDomainDAO domaindao = DAOFactory.getDomainDAO();
-			List<Domain> dialects = domaindao.loadListDomainsByType(DATASET_CATEGORY);
+			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+
+			// TODO : Makes sense?
+			List<Domain> dialects = categoryDao.getCategoriesForDataset()
+				.stream()
+				.map(Domain::fromCategory)
+				.collect(toList());
 			if (dialects == null || dialects.size() == 0) {
 				return null;
 			}

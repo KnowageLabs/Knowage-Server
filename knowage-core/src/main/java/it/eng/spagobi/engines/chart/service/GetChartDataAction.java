@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.engines.chart.service;
 
-import static it.eng.spagobi.commons.dao.ICategoryDAO.DATASET_CATEGORY;
+import static java.util.stream.Collectors.toList;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,11 +42,14 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
+import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
@@ -222,23 +225,28 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
             }
         } else if (serviceType == null) {
             try {
-                List dsTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.DATA_SET_TYPE);
-                getSessionContainer().setAttribute("dsTypesList", dsTypesList);
-                List catTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DATASET_CATEGORY);
-                getSessionContainer().setAttribute("catTypesList", catTypesList);
-                List dataSourceList = DAOFactory.getDataSourceDAO().loadAllDataSources();
-                getSessionContainer().setAttribute("dataSourceList", dataSourceList);
-                List scriptLanguageList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.SCRIPT_TYPE);
-                getSessionContainer().setAttribute("scriptLanguageList", scriptLanguageList);
-                List trasfTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.TRANSFORMER_TYPE);
-                getSessionContainer().setAttribute("trasfTypesList", trasfTypesList);
-                List sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
-                getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);
-                String filePath = SpagoBIUtilities.getResourcePath();
-                filePath += File.separatorChar + "dataset" + File.separatorChar + "files";
-                File dir = new File(filePath);
-                String[] fileNames = dir.list();
-                getSessionContainer().setAttribute("fileNames", fileNames);
+				IDomainDAO domainDao = DAOFactory.getDomainDAO();
+				ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+				List<Domain> dsTypesList = domainDao.loadListDomainsByType(DataSetConstants.DATA_SET_TYPE);
+				getSessionContainer().setAttribute("dsTypesList", dsTypesList);
+				List<Domain> catTypesList = categoryDao.getCategoriesForDataset()
+					.stream()
+					.map(Domain::fromCategory)
+					.collect(toList());
+				getSessionContainer().setAttribute("catTypesList", catTypesList);
+				List<IDataSource> dataSourceList = DAOFactory.getDataSourceDAO().loadAllDataSources();
+				getSessionContainer().setAttribute("dataSourceList", dataSourceList);
+				List<Domain> scriptLanguageList = domainDao.loadListDomainsByType(DataSetConstants.SCRIPT_TYPE);
+				getSessionContainer().setAttribute("scriptLanguageList", scriptLanguageList);
+				List<Domain> trasfTypesList = domainDao.loadListDomainsByType(DataSetConstants.TRANSFORMER_TYPE);
+				getSessionContainer().setAttribute("trasfTypesList", trasfTypesList);
+				List<SbiAttribute> sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
+				getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);
+				String filePath = SpagoBIUtilities.getResourcePath();
+				filePath += File.separatorChar + "dataset" + File.separatorChar + "files";
+				File dir = new File(filePath);
+				String[] fileNames = dir.list();
+				getSessionContainer().setAttribute("fileNames", fileNames);
             } catch (EMFUserError e) {
                 logger.error(e.getMessage(), e);
                 throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsTypesRetrieve", e);
