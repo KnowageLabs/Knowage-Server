@@ -17,7 +17,7 @@ import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import MainMenu from '@/modules/mainMenu/MainMenu'
 import Toast from 'primevue/toast'
 import { defineComponent } from 'vue'
-import createStore from '@/App.store'
+import mainStore from '@/App.store'
 import { mapState, mapActions } from 'pinia'
 import WEB_SOCKET from '@/services/webSocket.js'
 import themeHelper from '@/helpers/themeHelper/themeHelper'
@@ -110,8 +110,8 @@ export default defineComponent({
         }
     },
     setup() {
-        const store = createStore()
-
+        const store = mainStore()
+        console.log("STORE: ", store)
         return { store }
     },
     mounted() {
@@ -161,15 +161,16 @@ export default defineComponent({
         },
         newsDownloadHandler() {
             console.log('Starting connection to WebSocket Server')
+            const store = this.store
 
             WEB_SOCKET.update = function (event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
-                        this.store.setNews(json.news)
+                        store.setNews(json.news)
                     }
                     if (json.downloads) {
-                        this.store.setDownloads(json.downloads)
+                        store.setDownloads(json.downloads)
                     }
                 }
             }
@@ -188,10 +189,10 @@ export default defineComponent({
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
-                        this.store.setNews(json.news)
+                        store.setNews(json.news)
                     }
                     if (json.downloads) {
-                        this.store.setDownloads(json.downloads)
+                        store.setDownloads(json.downloads)
                     }
                 }
             }
@@ -202,7 +203,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState(createStore, {
+        ...mapState(mainStore, {
             error: 'error',
             info: 'info',
             user: 'user',
