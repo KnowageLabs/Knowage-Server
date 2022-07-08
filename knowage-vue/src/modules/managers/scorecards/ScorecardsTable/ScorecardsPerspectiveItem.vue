@@ -102,7 +102,6 @@ export default defineComponent({
             })
         },
         deleteTarget(target: iScorecardTarget) {
-            console.log('TARGET: ', target)
             if (!this.perspective) return
             const index = this.perspective.targets.findIndex((tempTarget: iScorecardTarget) => tempTarget.id === target.id)
             if (index !== -1) {
