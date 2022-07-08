@@ -4,7 +4,7 @@
             <div
                 class="p-d-flex p-flex-column p-ai-center filter-container p-p-0"
                 :class="{ 'functions-filter-card-active': filter.active }"
-                :style="{ 'background-image': 'url(' + require('@/assets/images/functionCatalog/' + filter.valueDescription + '.png') + ')' }"
+                :style="{ 'background-image': 'url(/src/assets/images/functionCatalog/' + filter.valueDescription + '.png' + ')' }"
                 @click="$emit('selected', filter)"
             >
                 <span class="filter-value">{{ filter.valueCd }}</span>
