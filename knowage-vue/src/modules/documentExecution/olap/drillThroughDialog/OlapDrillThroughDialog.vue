@@ -43,7 +43,7 @@
         </div>
 
         <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons">
-            <template #item="{item}">
+            <template #item="{ item }">
                 <span class="p-m-2">
                     <Checkbox v-model="item.checked" :binary="true" @click="$emit('checkCheckboxes', item, dtAssociatedLevels)" />
                     <text class="p-ml-2">{{ item.caption }}</text>
@@ -54,115 +54,120 @@
 </template>
 
 <script lang="ts">
-    import { filterDefault } from '@/helpers/commons/filterHelper'
-    import { defineComponent } from 'vue'
-    import Column from 'primevue/column'
-    import DataTable from 'primevue/datatable'
-    import dtDescriptor from './OlapDrillThroughDialogDescriptor.json'
-    import Menu from 'primevue/contextmenu'
-    import Checkbox from 'primevue/checkbox'
-    import Dropdown from 'primevue/dropdown'
+import { filterDefault } from '@/helpers/commons/filterHelper'
+import { defineComponent } from 'vue'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import dtDescriptor from './OlapDrillThroughDialogDescriptor.json'
+import Menu from 'primevue/contextmenu'
+import Checkbox from 'primevue/checkbox'
+import Dropdown from 'primevue/dropdown'
+import mainStore from '../../../../App.store'
 
-    export default defineComponent({
-        components: { Column, DataTable, Menu, Checkbox, Dropdown },
-        props: { drillData: { type: Array, required: true }, tableColumns: { type: Array, required: true }, dtLevels: { type: Array, required: true }, menuTree: { type: Array, required: true }, dtMaxRows: { type: Number, required: true } },
-        emits: ['close', 'applyCustomView', 'checkCheckboxes', 'clearLevels', 'drill', 'rowsChanged'],
-        data() {
-            return {
-                dtDescriptor,
-                dtData: [] as any,
-                formattedColumns: [] as any,
-                dtAssociatedLevels: [] as any,
-                dtTree: [] as any,
-                menuButtons: [] as any,
-                filters: { global: [filterDefault] } as Object,
-                maxRowsOptions: [0, 10, 25, 50, 100, 250, 500, 1000],
-                maxRows: 0
-            }
-        },
-        watch: {
-            drillData() {
-                this.dtData = this.drillData
-                this.maxRows = this.dtMaxRows
-            },
-            tableColumns() {
-                this.formattedColumns = this.tableColumns
-            },
-            dtLevels() {
-                this.dtAssociatedLevels = this.dtLevels
-            },
-            menuTree() {
-                this.dtTree = this.menuTree
-            }
-        },
-        created() {
-            this.loadData()
-        },
-        methods: {
-            loadData() {
-                this.dtData = this.drillData
-                this.formattedColumns = this.tableColumns
-                this.dtAssociatedLevels = this.dtLevels
-                this.dtTree = this.menuTree
-            },
-            closeDialog() {
-                this.$emit('close')
-            },
-            showMenu(event, parent) {
-                this.createMenuItems(parent.children)
-                // eslint-disable-next-line
-                // @ts-ignore
-                this.$refs.optionsMenu.toggle(event)
-            },
-            createMenuItems(items) {
-                this.menuButtons = []
-                items.forEach((item) => {
-                    this.menuButtons.push(item)
-                })
-            },
-            clearLevels() {
-                this.$emit('clearLevels')
-                this.dtTree.forEach((parent) => {
-                    parent.children.forEach((child) => {
-                        child.checked = false
-                    })
-                })
-            },
-            exportDrill(JSONData, ReportTitle, ShowLabel) {
-                var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData
-                var CSV = ''
-                CSV += ReportTitle + '\r\n\n'
-                if (ShowLabel) {
-                    var row = ''
-                    for (var index in arrData[0]) {
-                        row += index + ','
-                    }
-                    row = row.slice(0, -1)
-                    CSV += row + '\r\n'
-                }
-                for (var i = 0; i < arrData.length; i++) {
-                    row = ''
-                    for (index in arrData[i]) {
-                        row += '"' + arrData[i][index] + '",'
-                    }
-                    row.slice(0, row.length - 1)
-                    CSV += row + '\r\n'
-                }
-                if (CSV == '') {
-                    this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.invalidData') })
-                    return
-                }
-                var fileName = 'MyReport_'
-                fileName += ReportTitle.replace(/ /g, '_')
-                var uri = 'data:text/csv;charset=utf-8,' + escape(CSV)
-                var link = document.createElement('a') as any
-                link.href = uri
-                link.style = 'visibility:hidden'
-                link.download = fileName + '.csv'
-                document.body.appendChild(link)
-                link.click()
-                document.body.removeChild(link)
-            }
+export default defineComponent({
+    components: { Column, DataTable, Menu, Checkbox, Dropdown },
+    props: { drillData: { type: Array, required: true }, tableColumns: { type: Array, required: true }, dtLevels: { type: Array, required: true }, menuTree: { type: Array, required: true }, dtMaxRows: { type: Number, required: true } },
+    emits: ['close', 'applyCustomView', 'checkCheckboxes', 'clearLevels', 'drill', 'rowsChanged'],
+    data() {
+        return {
+            dtDescriptor,
+            dtData: [] as any,
+            formattedColumns: [] as any,
+            dtAssociatedLevels: [] as any,
+            dtTree: [] as any,
+            menuButtons: [] as any,
+            filters: { global: [filterDefault] } as Object,
+            maxRowsOptions: [0, 10, 25, 50, 100, 250, 500, 1000],
+            maxRows: 0
         }
-    })
+    },
+    watch: {
+        drillData() {
+            this.dtData = this.drillData
+            this.maxRows = this.dtMaxRows
+        },
+        tableColumns() {
+            this.formattedColumns = this.tableColumns
+        },
+        dtLevels() {
+            this.dtAssociatedLevels = this.dtLevels
+        },
+        menuTree() {
+            this.dtTree = this.menuTree
+        }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    created() {
+        this.loadData()
+    },
+    methods: {
+        loadData() {
+            this.dtData = this.drillData
+            this.formattedColumns = this.tableColumns
+            this.dtAssociatedLevels = this.dtLevels
+            this.dtTree = this.menuTree
+        },
+        closeDialog() {
+            this.$emit('close')
+        },
+        showMenu(event, parent) {
+            this.createMenuItems(parent.children)
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.optionsMenu.toggle(event)
+        },
+        createMenuItems(items) {
+            this.menuButtons = []
+            items.forEach((item) => {
+                this.menuButtons.push(item)
+            })
+        },
+        clearLevels() {
+            this.$emit('clearLevels')
+            this.dtTree.forEach((parent) => {
+                parent.children.forEach((child) => {
+                    child.checked = false
+                })
+            })
+        },
+        exportDrill(JSONData, ReportTitle, ShowLabel) {
+            var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData
+            var CSV = ''
+            CSV += ReportTitle + '\r\n\n'
+            if (ShowLabel) {
+                var row = ''
+                for (var index in arrData[0]) {
+                    row += index + ','
+                }
+                row = row.slice(0, -1)
+                CSV += row + '\r\n'
+            }
+            for (var i = 0; i < arrData.length; i++) {
+                row = ''
+                for (index in arrData[i]) {
+                    row += '"' + arrData[i][index] + '",'
+                }
+                row.slice(0, row.length - 1)
+                CSV += row + '\r\n'
+            }
+            if (CSV == '') {
+                this.store.setError({ title: this.$t('common.toast.error'), msg: this.$t('documentExecution.olap.drillTru.invalidData') })
+                return
+            }
+            var fileName = 'MyReport_'
+            fileName += ReportTitle.replace(/ /g, '_')
+            var uri = 'data:text/csv;charset=utf-8,' + escape(CSV)
+            var link = document.createElement('a') as any
+            link.href = uri
+            link.style = 'visibility:hidden'
+            link.download = fileName + '.csv'
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+        }
+    }
+})
 </script>

@@ -26,6 +26,7 @@ import { AxiosResponse } from 'axios'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import crossNavigationDescriptor from './CrossNavigationManagementDescriptor.json'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'navigation-management',
@@ -38,6 +39,10 @@ export default defineComponent({
             crossNavigationDescriptor
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadAll()
     },
@@ -45,7 +50,7 @@ export default defineComponent({
         async loadAll() {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/listNavigation/')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/listNavigation/')
                 .then((response: AxiosResponse<any>) => (this.navigations = response.data))
                 .finally(() => (this.loading = false))
         },
@@ -64,14 +69,14 @@ export default defineComponent({
         async deleteTemplate(itemId: string) {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/remove', "{'id':" + itemId + '}')
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/crossNavigation/remove', "{'id':" + itemId + '}')
                 .then(async () => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                    this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                     await this.loadAll()
                     if (itemId == this.$route.params.id) this.$router.push('/cross-navigation-management')
                 })
                 .catch((error) =>
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: error.message
                     })

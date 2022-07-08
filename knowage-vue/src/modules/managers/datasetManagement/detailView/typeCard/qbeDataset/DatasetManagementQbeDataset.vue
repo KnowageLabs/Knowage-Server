@@ -76,7 +76,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import { VCodeMirror } from 'vue3-code-mirror'
+import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
 import useValidate from '@vuelidate/core'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import qbeDescriptor from './DatasetManagementQbeDatasetDescriptor.json'
@@ -133,7 +133,7 @@ export default defineComponent({
         setupCodeMirror() {
             const interval = setInterval(() => {
                 if (!this.$refs.codeMirror) return
-                this.codeMirror = (this.$refs.codeMirror as any).editor as any
+                this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
                 setTimeout(() => {
                     this.codeMirror.refresh()
                 }, 0)

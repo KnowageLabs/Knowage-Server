@@ -129,7 +129,7 @@ export default defineComponent({
                 definition[i] = meas
             }
 
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/buildCardinalityMatrix', definition).then((response: AxiosResponse<any>) => {
+            await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/buildCardinalityMatrix', definition).then((response: AxiosResponse<any>) => {
                 if (this.formulaChanged) {
                     this.kpi.cardinality.measureList = [...response.data]
                     this.formulaChanged = false

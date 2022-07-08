@@ -31,7 +31,7 @@
                                 <span class="p-float-label">
                                     <InputText id="descr" type="text" v-model.trim="v$.menuNode.descr.$model" @blur="onDataChange(v$.menuNode.descr)" class="p-inputtext p-component kn-material-input" aria-describedby="descr-help" />
                                     <Button v-if="isIconSelectorShown(menuNode) && (menuNode.icon != null || menuNode.custIcon != null)" icon="pi pi-times" @click="clearSelectedIcon" />
-                                    <Button v-if="isCustomIconShown(menuNode)"><img style="max-height: 26px; max-width: 26px;" :src="selectedIcon"/></Button>
+                                    <Button v-if="isCustomIconShown(menuNode)"><img style="max-height: 26px; max-width: 26px" :src="selectedIcon" /></Button>
                                     <Button v-if="isFaIconShown(menuNode)"><i :class="selectedIcon"></i></Button>
                                     <Button v-if="isIconSelectorShown(menuNode)" class="p-button" @click="openFontAwesomeSelectionModal()">{{ $t('managers.menuManagement.chooseIcon').toUpperCase() }}</Button>
                                     <label for="descr">{{ $t('managers.menuManagement.description') }} *</label>
@@ -173,11 +173,12 @@ import RelatedDocumentList from '../RelatedDocumentsList/MenuManagementRelatedDo
 import RolesCard from '../RolesCard/MenuManagementRolesCard.vue'
 import DocumentBrowserTree from '../DocumentBrowserTree/MenuManagementDocumentBrowserTree.vue'
 import FontAwesomePicker from '../IconPicker/IconPicker.vue'
-
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import MenuConfigurationDescriptor from '../MenuManagementDescriptor.json'
 import MenuConfigurationValidationDescriptor from './MenuManagementValidationDescriptor.json'
 import MenuManagementElementDetailDescriptor from './MenuManagementElementDetailDescriptor.json'
+import mainStore from '../../../../App.store'
+
 export default defineComponent({
     name: 'profile-attributes-detail',
     components: { Dropdown, DocumentBrowserTree, RelatedDocumentList, KnValidationMessages, Dialog, FontAwesomePicker, RolesCard },
@@ -189,13 +190,13 @@ export default defineComponent({
     },
     watch: {
         selectedMenuNode: {
-            handler: function(node) {
+            handler: function (node) {
                 this.v$.$reset()
                 this.loadNode(node)
             }
         },
         selectedRoles: {
-            handler: function(roles) {
+            handler: function (roles) {
                 this.menuNode.roles = roles
             }
         },
@@ -207,7 +208,7 @@ export default defineComponent({
     data() {
         return {
             v$: useValidate() as any,
-            apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
+            apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
             menuNode: {} as iMenuNode,
             loading: false as Boolean,
             hideForm: false as Boolean,
@@ -235,6 +236,10 @@ export default defineComponent({
         return {
             menuNode: createValidations('menuNode', MenuConfigurationValidationDescriptor.validations.menuNode)
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadNodes()
@@ -381,7 +386,7 @@ export default defineComponent({
         },
         async save() {
             if (this.checkIfNodeExists()) {
-                this.$store.commit('setError', { title: this.$t('managers.menuManagement.info.errorTitle'), msg: this.$t('managers.menuManagement.info.duplicateErrorMessage') })
+                this.store.setError({ title: this.$t('managers.menuManagement.info.errorTitle'), msg: this.$t('managers.menuManagement.info.duplicateErrorMessage') })
                 return
             }
 
@@ -395,9 +400,9 @@ export default defineComponent({
 
             if (response.status == 200) {
                 if (response.data.errors) {
-                    this.$store.commit('setError', { title: this.$t('managers.menuManagement.info.errorTitle'), msg: this.$t('managers.menuManagement.info.errorMessage') })
+                    this.store.setError({ title: this.$t('managers.menuManagement.info.errorTitle'), msg: this.$t('managers.menuManagement.info.errorMessage') })
                 } else {
-                    this.$store.commit('setInfo', { title: this.$t('managers.menuManagement.info.saveTitle'), msg: this.$t('managers.menuManagement.info.saveMessage') })
+                    this.store.setInfo({ title: this.$t('managers.menuManagement.info.saveTitle'), msg: this.$t('managers.menuManagement.info.saveMessage') })
                 }
             }
             this.$emit('refreshRecordSet')

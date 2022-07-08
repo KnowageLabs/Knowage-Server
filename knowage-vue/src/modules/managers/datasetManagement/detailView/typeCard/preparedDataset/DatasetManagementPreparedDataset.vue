@@ -21,6 +21,7 @@ import { AxiosResponse } from 'axios'
 import descriptor from './DatasetManagementPreparedDataset.json'
 import Card from 'primevue/card'
 import MonitoringDialog from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDialog.vue'
+import mainStore from '../../../../../../App.store'
 
 export default defineComponent({
     components: { Card, MonitoringDialog },
@@ -35,6 +36,10 @@ export default defineComponent({
             showMonitoringDialog: false
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.dataset = this.selectedDataset
     },
@@ -46,7 +51,7 @@ export default defineComponent({
     methods: {
         async loadDataset(datasetId: Number) {
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`)
                 .then((response: AxiosResponse<any>) => {
                     this.dataset = response.data[0]
                 })
@@ -66,7 +71,7 @@ export default defineComponent({
 
         async getAllAvroDataSets() {
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/avro`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/avro`)
                 .then((response: AxiosResponse<any>) => {
                     this.avroDatasets = response.data
                 })
@@ -86,10 +91,10 @@ export default defineComponent({
         openDataPreparation(dataset: any) {
             if (dataset.dsTypeCd == 'Prepared') {
                 //edit existing data prep
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
+                this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/advanced/${dataset.id}`).then(
                     (response: AxiosResponse<any>) => {
                         let instanceId = response.data.configuration.dataPrepInstanceId
-                        this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
+                        this.$http.get(import.meta.env.VITE_DATA_PREPARATION_PATH + `1.0/process/by-instance-id/${instanceId}`).then(
                             (response: AxiosResponse<any>) => {
                                 let transformations = response.data.definition
                                 let processId = response.data.id
@@ -98,19 +103,19 @@ export default defineComponent({
                                     // check if Avro file has been deleted or not
                                     this.$router.push({ name: 'data-preparation', params: { id: datasetId, transformations: JSON.stringify(transformations), processId: processId, instanceId: instanceId, dataset: JSON.stringify(dataset) } })
                                 else {
-                                    this.$store.commit('setInfo', {
+                                    this.store.setInfo({
                                         title: 'Avro file is missing',
                                         msg: 'Generate it again and then retry'
                                     })
                                 }
                             },
                             () => {
-                                this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
+                                this.store.setError({ title: 'Save error', msg: 'Cannot create process' })
                             }
                         )
                     },
                     () => {
-                        this.$store.commit('setError', {
+                        this.store.setError({
                             title: 'Cannot open data preparation'
                         })
                     }
@@ -119,7 +124,7 @@ export default defineComponent({
                 // original dataset already exported in Avro
                 this.$router.push({ name: 'data-preparation', params: { id: dataset.id } })
             } else {
-                this.$store.commit('setInfo', {
+                this.store.setInfo({
                     title: 'Avro file is missing',
                     msg: 'Generate it again and then retry'
                 })
@@ -128,12 +133,12 @@ export default defineComponent({
         async updateDatasetAndSave(newConfig) {
             this.showMonitoringDialog = false
 
-            await this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config }, { headers: { Accept: 'application/json, */*' } }).then(
+            await this.$http.patch(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config }, { headers: { Accept: 'application/json, */*' } }).then(
                 () => {
                     this.loadDataset(this.selectedDataset.id)
                 },
                 () => {
-                    this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })
+                    this.store.setError({ title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })
                 }
             )
         }

@@ -10,7 +10,7 @@
                         <div id="whitespace" class="p-mt-auto" :style="toolbarDescriptor.style.whitespaceLeft" />
                         <Button icon="fas fa-filter" class="p-button-text p-button-rounded p-button-plain p-mt-auto p-m-0" :style="toolbarDescriptor.style.whiteColor" @click="openFilterDialog(row)" />
                     </div>
-                    <i v-if="row.positionInAxis < rows.length - 1" class="fas fa-arrows-alt-v p-my-2" style="cursor:pointer" @click="$emit('switchPosition', row)" />
+                    <i v-if="row.positionInAxis < rows.length - 1" class="fas fa-arrows-alt-v p-my-2" style="cursor: pointer" @click="$emit('switchPosition', row)" />
                 </div>
                 <div ref="axisDropzone" class="kn-flex kn-truncated olap-rotate-text p-my-1" :style="toolbarDescriptor.style.leftAxisDropzone">{{ $t('documentExecution.olap.filterToolbar.drop') }}</div>
             </div>
@@ -23,6 +23,7 @@
 import { defineComponent } from 'vue'
 import { iOlapFilter } from '@/modules/documentExecution/olap/Olap'
 import toolbarDescriptor from './OlapFilterToolbarDescriptor.json'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: {},
@@ -42,6 +43,10 @@ export default defineComponent({
         olapProp() {
             this.loadData()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadData()
@@ -69,23 +74,23 @@ export default defineComponent({
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
             // @ts-ignore
-            this.$refs[`${filterId}`].classList.add('filter-dragging')
+            this.$refs[`${filterId}`].classList?.add('filter-dragging')
         },
         removeDragClass(filterId) {
             // @ts-ignore
-            this.$refs[`${filterId}`].classList.remove('filter-dragging')
+            this.$refs[`${filterId}`].classList?.remove('filter-dragging')
         },
         displayDropzone() {
             // @ts-ignore
-            this.$refs.axisDropzone.classList.add('display-axis-dropzone')
+            this.$refs.axisDropzone.classList?.add('display-axis-dropzone')
         },
         hideDropzone() {
             // @ts-ignore
-            this.$refs.axisDropzone.classList.remove('display-axis-dropzone')
+            this.$refs.axisDropzone.classList?.remove('display-axis-dropzone')
         },
         onDrop(event) {
             // @ts-ignore
-            this.$refs.axisDropzone.classList.remove('display-axis-dropzone')
+            this.$refs.axisDropzone.classList?.remove('display-axis-dropzone')
             var data = JSON.parse(event.dataTransfer.getData('text/plain'))
 
             var leftLength = this.rows.length
@@ -95,7 +100,7 @@ export default defineComponent({
                 fromAxis = data.axis
                 if (fromAxis != 1) {
                     if (data.axis === 0 && topLength == 1) {
-                        this.$store.commit('setInfo', { title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.dragEmptyWarning') })
+                        this.store.setInfo({ title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.dragEmptyWarning') })
                     } else {
                         data.positionInAxis = leftLength
                         data.axis = 1

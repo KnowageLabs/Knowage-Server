@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { formatDate } from '@/helpers/commons/localeHelper'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -42,10 +43,10 @@ const mockedExecutionList = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() =>
+    get: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: mockedExecutionList
         })
@@ -58,6 +59,7 @@ const factory = () => {
             selectedSchedule: mockedSchedule
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -76,7 +78,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('KPI Scheduler Detail', () => {

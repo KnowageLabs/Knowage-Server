@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import Menu from 'primevue/menu'
@@ -650,7 +652,7 @@ const factory = (query, entities) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 InputText,

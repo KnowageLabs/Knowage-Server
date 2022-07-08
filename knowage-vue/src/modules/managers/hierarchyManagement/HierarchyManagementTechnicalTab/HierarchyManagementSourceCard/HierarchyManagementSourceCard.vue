@@ -102,14 +102,14 @@ export default defineComponent({
         },
         async loadNodeMetadata() {
             this.$emit('loading', true)
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/nodeMetadata?dimension=${this.selectedDimension?.DIMENSION_NM}&excludeLeaf=false`).then((response: AxiosResponse<any>) => (this.nodeMetadata = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `hierarchies/nodeMetadata?dimension=${this.selectedDimension?.DIMENSION_NM}&excludeLeaf=false`).then((response: AxiosResponse<any>) => (this.nodeMetadata = response.data))
             this.$emit('nodeMetadataChanged', this.nodeMetadata)
             this.$emit('loading', false)
         },
         async loadHierarchies() {
             this.$emit('loading', true)
             const url = this.hierarchyType === 'MASTER' ? `hierarchiesMaster/getHierarchiesMaster?dimension=${this.selectedDimension?.DIMENSION_NM}` : `hierarchiesTechnical/getHierarchiesTechnical?dimension=${this.selectedDimension?.DIMENSION_NM}`
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.hierarchies = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => (this.hierarchies = response.data))
             this.$emit('loading', false)
         },
         async loadHierarchyTree() {
@@ -123,7 +123,7 @@ export default defineComponent({
                 if (this.filterData.afterDate) url = url.concat('&filterDate=' + moment(this.filterData.afterDate).format('YYYY-MM-DD'))
             }
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url)
                 .then((response: AxiosResponse<any>) => {
                     this.tree = response.status === 200 ? response.data : null
                 })

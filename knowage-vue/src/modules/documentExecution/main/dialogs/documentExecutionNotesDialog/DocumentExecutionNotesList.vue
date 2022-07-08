@@ -24,62 +24,61 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { formatDate } from '@/helpers/commons/localeHelper'
-    import { iNote } from '../../DocumentExecution'
-    import documentExecutionNotesDialogDescriptor from './DocumentExecutionNotesDialogDescriptor.json'
-    import Message from 'primevue/message'
-    import moment from 'moment'
+import { defineComponent } from 'vue'
+import { formatDate } from '@/helpers/commons/localeHelper'
+import { iNote } from '../../DocumentExecution'
+import documentExecutionNotesDialogDescriptor from './DocumentExecutionNotesDialogDescriptor.json'
+import Message from 'primevue/message'
+import moment from 'moment'
+import deepcopy from 'deepcopy'
 
-    const deepcopy = require('deepcopy')
-
-    export default defineComponent({
-        name: 'document-execution-notes-list',
-        components: { Message },
-        props: { propNotes: { type: Array }, document: { type: Object } },
-        emits: ['editNote', 'deleteNote'],
-        data() {
-            return {
-                documentExecutionNotesDialogDescriptor,
-                notes: [] as any[]
-            }
-        },
-        watch: {
-            propNotes() {
-                this.loadNotes()
-            }
-        },
-        created() {
-            this.loadNotes()
-        },
-        methods: {
-            loadNotes() {
-                this.notes = this.propNotes as any[]
-            },
-            deleteNoteConfirm(note: iNote) {
-                this.$confirm.require({
-                    message: this.$t('documentExecution.dossier.deleteConfirm'),
-                    header: this.$t('documentExecution.dossier.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.$emit('deleteNote', note)
-                })
-            },
-            getFormattedDate(date: number) {
-                const tempDate = moment(date).format('DD/MM/YYYY')
-                return formatDate(tempDate, '', 'DD/MM/YYYY')
-            },
-            onNoteEdit(note: iNote) {
-                this.$emit('editNote', deepcopy(note))
-            }
+export default defineComponent({
+    name: 'document-execution-notes-list',
+    components: { Message },
+    props: { propNotes: { type: Array }, document: { type: Object } },
+    emits: ['editNote', 'deleteNote'],
+    data() {
+        return {
+            documentExecutionNotesDialogDescriptor,
+            notes: [] as any[]
         }
-    })
+    },
+    watch: {
+        propNotes() {
+            this.loadNotes()
+        }
+    },
+    created() {
+        this.loadNotes()
+    },
+    methods: {
+        loadNotes() {
+            this.notes = this.propNotes as any[]
+        },
+        deleteNoteConfirm(note: iNote) {
+            this.$confirm.require({
+                message: this.$t('documentExecution.dossier.deleteConfirm'),
+                header: this.$t('documentExecution.dossier.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.$emit('deleteNote', note)
+            })
+        },
+        getFormattedDate(date: number) {
+            const tempDate = moment(date).format('DD/MM/YYYY')
+            return formatDate(tempDate, '', 'DD/MM/YYYY')
+        },
+        onNoteEdit(note: iNote) {
+            this.$emit('editNote', deepcopy(note))
+        }
+    }
+})
 </script>
 
 <style lang="scss" scoped>
-    .noteContent {
-        border: 1px solid var(--kn-color-borders);
+.noteContent {
+    border: 1px solid var(--kn-color-borders);
 
-        padding-top: 0px !important;
-        margin-top: 0px !important;
-    }
+    padding-top: 0px !important;
+    margin-top: 0px !important;
+}
 </style>

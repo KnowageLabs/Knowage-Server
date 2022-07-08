@@ -61,6 +61,7 @@ import { AxiosResponse } from 'axios'
 import { defineComponent } from 'vue'
 import linkTabDescriptor from './DatasetManagementLinkCardDescriptor.json'
 import Listbox from 'primevue/listbox'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     components: { Listbox },
@@ -82,6 +83,10 @@ export default defineComponent({
             tablesToAdd: [] as any
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.dataset = this.selectedDataset
         this.getSelectedTables()
@@ -102,35 +107,35 @@ export default defineComponent({
         async getSelectedTables() {
             if (this.dataset.id) {
                 this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/dataset/${this.dataset.id}/`)
+                    .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/dataset/${this.dataset.id}/`)
                     .then((response: AxiosResponse<any>) => (this.selectedTables = response.data))
-                    .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
+                    .catch((error) => this.store.setError({ title: this.$t('common.toast.error'), msg: error }))
             }
         },
         async getAvailableSources() {
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.length > 0) {
                         this.availableResources = [...response.data]
                         this.availableResources.filter((resource) => (resource.name === this.dataset.dataSource.toLowerCase() ? this.getAvailableSourceTables(resource.sourceId) : ''))
                     } else {
-                        this.$store.commit('setInfo', { title: this.$t('importExport.gallery.column.info'), msg: this.$t('managers.datasetManagement.noSourceTables') })
+                        this.store.setInfo({ title: this.$t('importExport.gallery.column.info'), msg: this.$t('managers.datasetManagement.noSourceTables') })
                     }
                 })
-                .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
+                .catch((error) => this.store.setError({ title: this.$t('common.toast.error'), msg: error }))
         },
         async getAvailableSourceTables(sourceId) {
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/${sourceId}/metatables/`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/${sourceId}/metatables/`)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.length > 0) {
                         this.availableTables = this.removeSelectedTablesFromAvailable(response.data, this.selectedTables)
                     } else {
-                        this.$store.commit('setInfo', { title: this.$t('importExport.gallery.column.info'), msg: this.$t('managers.datasetManagement.noTablesToLink') })
+                        this.store.setInfo({ title: this.$t('importExport.gallery.column.info'), msg: this.$t('managers.datasetManagement.noTablesToLink') })
                     }
                 })
-                .catch((error) => this.$store.commit('setError', { title: this.$t('common.toast.error'), msg: error }))
+                .catch((error) => this.store.setError({ title: this.$t('common.toast.error'), msg: error }))
         },
         removeSelectedTablesFromAvailable(availableTablesArray, selectedTablesArray) {
             let filteredSelected = selectedTablesArray.map((selectedTable) => {

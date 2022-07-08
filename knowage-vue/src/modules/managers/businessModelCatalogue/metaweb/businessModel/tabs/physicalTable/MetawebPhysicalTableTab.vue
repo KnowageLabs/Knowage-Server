@@ -43,8 +43,8 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import metawebPhysicalTableTabDescriptor from './MetawebPhysicalTableTabDescriptor.json'
 import MetawebAddPhysicalTableDialog from './metawebAddPhysicalTableDialog/MetawebAddPhysicalTableDialog.vue'
-
-const { generate, applyPatch } = require('fast-json-patch')
+import { generate, applyPatch } from 'fast-json-patch'
+import mainStore from '../../../../../../../App.store'
 
 export default defineComponent({
     name: 'metaweb-physical-table-tab',
@@ -68,6 +68,10 @@ export default defineComponent({
         selectedBusinessModel() {
             this.loadData()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadData()
@@ -114,12 +118,12 @@ export default defineComponent({
             this.loading = true
             const postData = { data: { viewUniqueName: this.businessModel?.uniqueName, physicalTable: physicalTable.name } }
             await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/deletePhysicalColumnfromBusinessView`, postData)
+                .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/deletePhysicalColumnfromBusinessView`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = applyPatch(this.meta, response.data).newDocument
                     this.loadData()
 
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
@@ -132,12 +136,12 @@ export default defineComponent({
             this.loading = true
             const postData = { data: { viewUniqueName: this.businessModel?.uniqueName, physicalTables: selectedTables.map((el: any) => el.name) }, diff: generate(this.observer) }
             await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addPhysicalColumnToBusinessView`, postData)
+                .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/addPhysicalColumnToBusinessView`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = applyPatch(this.meta, response.data).newDocument
                     this.loadData()
 
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.createSuccess')
                     })

@@ -58,8 +58,8 @@ import Card from 'primevue/card'
 import ScorecardsTable from './ScorecardsTable/ScorecardsTable.vue'
 import KnPerspectiveCard from '@/components/UI/KnPerspectiveCard/KnPerspectiveCard.vue'
 import descriptor from './ScorecardsDescriptor.json'
-
-const deepcopy = require('deepcopy')
+import mainStore from '../../../App.store'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'scorecards-designer',
@@ -85,6 +85,10 @@ export default defineComponent({
             await this.loadScorecard()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         await this.loadScorecard()
         await this.loadCriterias()
@@ -92,34 +96,34 @@ export default defineComponent({
     },
     methods: {
         async loadScorecard() {
-            this.$store.commit('setLoading', true)
+            this.store.setLoading(true)
             if (this.id) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/${this.id}/loadScorecard`).then((response: AxiosResponse<any>) => (this.scorecard = response.data))
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpiee/${this.id}/loadScorecard`).then((response: AxiosResponse<any>) => (this.scorecard = response.data))
             } else {
                 this.scorecard = { name: '', description: '', perspectives: [] }
             }
-            this.$store.commit('setLoading', false)
+            this.store.setLoading(false)
         },
         async loadCriterias() {
-            this.$store.commit('setLoading', true)
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_SCORECARD_CRITE`).then((response: AxiosResponse<any>) => (this.criterias = response.data))
-            this.$store.commit('setLoading', false)
+            this.store.setLoading(true)
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/KPI_SCORECARD_CRITE`).then((response: AxiosResponse<any>) => (this.criterias = response.data))
+            this.store.setLoading(false)
         },
         async loadKpis() {
-            this.$store.commit('setLoading', true)
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpiWithResult`).then((response: AxiosResponse<any>) => (this.kpis = response.data))
-            this.$store.commit('setLoading', false)
+            this.store.setLoading(true)
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/listKpiWithResult`).then((response: AxiosResponse<any>) => (this.kpis = response.data))
+            this.store.setLoading(false)
         },
         async saveScorecard() {
             const tempScorecard = this.getFormattedScorecard()
 
-            const operation = tempScorecard.id ? 'update' : 'create'
-            this.$store.commit('setLoading', true)
+            const operation = tempScorecard && tempScorecard.id ? 'update' : 'create'
+            this.store.setLoading(true)
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/saveScorecard`, tempScorecard)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpiee/saveScorecard`, tempScorecard)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.id && this.scorecard) {
-                        this.$store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.toast.' + operation + 'Title'),
                             msg: this.$t('common.toast.success')
                         })
@@ -129,10 +133,11 @@ export default defineComponent({
                     }
                 })
                 .catch(() => {})
-            this.$store.commit('setLoading', false)
+            this.store.setLoading(false)
         },
         getFormattedScorecard() {
             const tempScorecard = deepcopy(this.scorecard)
+            if (!tempScorecard) return
             // TODO - BE needs to be changed for description
             delete tempScorecard.description
 

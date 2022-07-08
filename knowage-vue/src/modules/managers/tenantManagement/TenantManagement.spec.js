@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import flushPromises from 'flush-promises'
@@ -26,35 +27,32 @@ const mockedTenants = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/license`:
                 return Promise.resolve({ data: { hosts: [{ hostName: 'host' }], licenses: { host: '' } } })
             default:
                 return Promise.resolve({ data: { root: mockedTenants } })
         }
     }),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = () => {
     return mount(TenantManagement, {
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -65,7 +63,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $confirm,
                 $router,
                 $http
@@ -75,7 +72,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Tenant management loading', () => {
@@ -86,7 +83,7 @@ describe('Tenant management loading', () => {
         expect(wrapper.find('[data-test="progress-bar"]').exists()).toBe(true)
     })
     it('shows "no data" label when loaded empty', async () => {
-        $http.get = axios.get.mockReturnValueOnce(Promise.resolve({ data: { hosts: [{ hostName: '' }] } }))
+        $http.get = $http.get.mockReturnValueOnce(Promise.resolve({ data: { hosts: [{ hostName: '' }] } }))
         const wrapper = factory()
 
         await flushPromises()
@@ -107,8 +104,8 @@ describe('Tenant Management', () => {
         expect($confirm.require).toHaveBeenCalledTimes(1)
 
         await wrapper.vm.deleteTenant(1)
-        expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant', { data: 1 })
+        expect($http.delete).toHaveBeenCalledTimes(1)
+        expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'multitenant', { data: 1 })
     })
     it('opens empty detail form when the ' + ' button is clicked', async () => {
         const wrapper = factory()

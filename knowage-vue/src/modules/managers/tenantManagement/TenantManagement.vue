@@ -46,108 +46,113 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { iMultitenant } from './TenantManagement'
-    import { AxiosResponse } from 'axios'
-    import tenantsDescriptor from './TenantManagementDescriptor.json'
-    import FabButton from '@/components/UI/KnFabButton.vue'
-    import Listbox from 'primevue/listbox'
-    import KnHint from '@/components/UI/KnHint.vue'
+import { defineComponent } from 'vue'
+import { iMultitenant } from './TenantManagement'
+import { AxiosResponse } from 'axios'
+import tenantsDescriptor from './TenantManagementDescriptor.json'
+import FabButton from '@/components/UI/KnFabButton.vue'
+import Listbox from 'primevue/listbox'
+import KnHint from '@/components/UI/KnHint.vue'
+import mainStore from '../../../App.store'
 
-    export default defineComponent({
-        name: 'tenant-management',
-        components: {
-            FabButton,
-            Listbox,
-            KnHint
-        },
-        data() {
-            return {
-                multitenants: [] as iMultitenant[],
-                selTenant: {} as iMultitenant,
-                listOfThemes: [] as any,
-                listOfDataSources: [] as any,
-                listOfProductTypes: [] as any,
-                listOfavailableLicenses: [] as any,
-                tenantsDescriptor,
-                loading: false,
-                touched: false,
-                hintVisible: true
-            }
-        },
-        async created() {
-            await this.loadTenants()
-            await this.getLicences()
-        },
-        methods: {
-            loadData(dataType: string) {
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant${dataType}`).finally(() => (this.loading = false))
-            },
-            async getLicences() {
-                return this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/license`)
-                    .then((response: AxiosResponse<any>) => {
-                        var host = response.data.hosts[0].hostName
-                        var licenses = response.data.licenses[host]
-                        this.listOfavailableLicenses = licenses
-                    })
-                    .finally(() => (this.loading = false))
-            },
-            async loadTenants() {
-                this.loading = true
-                await this.loadData('').then((response: AxiosResponse<any>) => {
-                    this.multitenants = response.data.root
-                })
-                this.loading = false
-            },
-            deleteTenantConfirm(selectedTenant: Object) {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.deleteTenant(selectedTenant)
-                })
-            },
-            async deleteTenant(selectedTenant: Object) {
-                let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'multitenant'
-                await this.$http.delete(url, { data: selectedTenant }).then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t('common.toast.deleteTitle'),
-                        msg: this.$t('common.toast.deleteSuccess')
-                    })
-                    this.$router.push('/tenants-management')
-                    this.pageReload()
-                })
-            },
-            showForm(event: any) {
-                const path = event.value ? `/tenants-management/${event.value.MULTITENANT_ID}` : '/tenants-management/new-tenant'
-                this.hintVisible = false
-
-                if (!this.touched) {
-                    this.$router.push(path)
-                    this.selTenant = event.value
-                } else {
-                    this.$confirm.require({
-                        message: this.$t('common.toast.unsavedChangesMessage'),
-                        header: this.$t('common.toast.unsavedChangesHeader'),
-                        icon: 'pi pi-exclamation-triangle',
-                        accept: () => {
-                            this.touched = false
-                            this.$router.push(path)
-                            this.selTenant = event.value
-                        }
-                    })
-                }
-            },
-            pageReload() {
-                this.touched = false
-                this.hintVisible = true
-                this.loadTenants()
-            },
-            onFormClose() {
-                this.touched = false
-                this.hintVisible = true
-            }
+export default defineComponent({
+    name: 'tenant-management',
+    components: {
+        FabButton,
+        Listbox,
+        KnHint
+    },
+    data() {
+        return {
+            multitenants: [] as iMultitenant[],
+            selTenant: {} as iMultitenant,
+            listOfThemes: [] as any,
+            listOfDataSources: [] as any,
+            listOfProductTypes: [] as any,
+            listOfavailableLicenses: [] as any,
+            tenantsDescriptor,
+            loading: false,
+            touched: false,
+            hintVisible: true
         }
-    })
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    async created() {
+        await this.loadTenants()
+        await this.getLicences()
+    },
+    methods: {
+        loadData(dataType: string) {
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `multitenant${dataType}`).finally(() => (this.loading = false))
+        },
+        async getLicences() {
+            return this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/license`)
+                .then((response: AxiosResponse<any>) => {
+                    var host = response.data.hosts[0].hostName
+                    var licenses = response.data.licenses[host]
+                    this.listOfavailableLicenses = licenses
+                })
+                .finally(() => (this.loading = false))
+        },
+        async loadTenants() {
+            this.loading = true
+            await this.loadData('').then((response: AxiosResponse<any>) => {
+                this.multitenants = response.data.root
+            })
+            this.loading = false
+        },
+        deleteTenantConfirm(selectedTenant: Object) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteTenant(selectedTenant)
+            })
+        },
+        async deleteTenant(selectedTenant: Object) {
+            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'multitenant'
+            await this.$http.delete(url, { data: selectedTenant }).then(() => {
+                this.store.setInfo({
+                    title: this.$t('common.toast.deleteTitle'),
+                    msg: this.$t('common.toast.deleteSuccess')
+                })
+                this.$router.push('/tenants-management')
+                this.pageReload()
+            })
+        },
+        showForm(event: any) {
+            const path = event.value ? `/tenants-management/${event.value.MULTITENANT_ID}` : '/tenants-management/new-tenant'
+            this.hintVisible = false
+
+            if (!this.touched) {
+                this.$router.push(path)
+                this.selTenant = event.value
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.$router.push(path)
+                        this.selTenant = event.value
+                    }
+                })
+            }
+        },
+        pageReload() {
+            this.touched = false
+            this.hintVisible = true
+            this.loadTenants()
+        },
+        onFormClose() {
+            this.touched = false
+            this.hintVisible = true
+        }
+    }
+})
 </script>

@@ -89,6 +89,7 @@ import KnInputFile from '@/components/UI/KnInputFile.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import Textarea from 'primevue/textarea'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'document-execution-metadata-dialog',
@@ -120,8 +121,12 @@ export default defineComponent({
     },
     computed: {
         canModify(): boolean {
-            return (this.$store.state as any).user.functionalities.includes('SaveMetadataFunctionality')
+            return (this.store.$state as any).user.functionalities.includes('SaveMetadataFunctionality')
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.setLoading()
@@ -159,7 +164,7 @@ export default defineComponent({
         },
         async uploadMetaFile(meta: any) {
             if (!this.uploadedFiles[meta.id]) {
-                this.$store.commit('setError', {
+                this.store.setError({
                     title: this.$t('common.error.generic'),
                     msg: this.$t('documentExecution.main.selectFileError')
                 })
@@ -170,16 +175,16 @@ export default defineComponent({
                 formData.append('file', this.uploadedFiles[meta.id])
                 formData.append('fileName', this.uploadedFiles[meta.id].name)
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/uploadfilemetadata`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecution/uploadfilemetadata`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
                     .then(() => {
-                        this.$store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.uploadFile'),
                             msg: this.$t('common.uploadFileSuccess')
                         })
                         this.updateMetadataFile(meta.id, this.uploadedFiles[meta.id].name)
                     })
                     .catch((error: any) =>
-                        this.$store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.error.generic'),
                             msg: error
                         })
@@ -211,7 +216,7 @@ export default defineComponent({
             if (!meta.value) return
 
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/${this.document.id}/${meta.id}/documentfilemetadata`, {
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecution/${this.document.id}/${meta.id}/documentfilemetadata`, {
                     headers: {
                         Accept: 'application/json, text/plain, */*'
                     },
@@ -219,12 +224,12 @@ export default defineComponent({
                 })
                 .then((response: AxiosResponse<any>) => {
                     downloadDirectFromResponse(response)
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.success')
                     })
                 })
                 .catch((error: any) => {
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: error
                     })

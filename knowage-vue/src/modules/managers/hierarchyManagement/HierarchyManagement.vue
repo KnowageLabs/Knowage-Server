@@ -59,7 +59,7 @@ export default defineComponent({
         async loadDimensions() {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `dimensions/getDimensions`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dimensions/getDimensions`)
                 .then((response: AxiosResponse<any>) => (this.dimensions = response.data))
                 .catch(() => {})
             this.loading = false

@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
@@ -23,16 +25,16 @@ const mockedUsers = [
         blockedByFailedLoginAttempts: false,
         sbiExtUserRoleses: [4],
         sbiUserAttributeses: {
-            '1': {
+            1: {
                 name: 'Knowage Administrator'
             },
-            '5': {
+            5: {
                 email: 'admin@eng.it'
             },
-            '7': {
+            7: {
                 pr_ruolo: '%'
             },
-            '8': {
+            8: {
                 pr_userid: '%'
             }
         }
@@ -51,13 +53,13 @@ const mockedUsers = [
         blockedByFailedLoginAttempts: false,
         sbiExtUserRoleses: [6],
         sbiUserAttributeses: {
-            '1': {
+            1: {
                 name: 'Knowage Demo User'
             },
-            '7': {
+            7: {
                 pr_ruolo: '%'
             },
-            '8': {
+            8: {
                 pr_userid: '%'
             }
         }
@@ -76,47 +78,44 @@ const mockedUsers = [
         blockedByFailedLoginAttempts: false,
         sbiExtUserRoleses: [1, 2, 3, 4, 20, 5, 6, 25, 26, 28, 13, 14],
         sbiUserAttributeses: {
-            '1': {
+            1: {
                 name: 'Knowage Developer'
             },
-            '7': {
+            7: {
                 pr_ruolo: '%'
             },
-            '8': {
+            8: {
                 pr_userid: '%'
             }
         }
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() =>
+    get: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: mockedUsers
         })
     ),
-    post: axios.post.mockImplementation(() => Promise.resolve()),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    post: vi.fn().mockImplementation(() => Promise.resolve()),
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const factory = () => {
     return mount(UsersManagement, {
         attachToDocument: true,
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, InputText, ProgressBar, Toolbar, Card },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $http
             }
@@ -125,7 +124,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Users Management loading', () => {
@@ -137,7 +136,7 @@ describe('Users Management loading', () => {
     })
 
     it('shows "no data" label when loaded empty', async () => {
-        axios.get.mockReturnValueOnce(
+        $http.get.mockReturnValueOnce(
             Promise.resolve({
                 data: []
             })
@@ -189,16 +188,16 @@ describe('Users Management', () => {
             blockedByFailedLoginAttempts: false,
             sbiExtUserRoleses: [4],
             sbiUserAttributeses: {
-                '1': {
+                1: {
                     name: 'Knowage Administrator'
                 },
-                '5': {
+                5: {
                     email: 'admin@eng.it'
                 },
-                '7': {
+                7: {
                     pr_ruolo: '%'
                 },
-                '8': {
+                8: {
                     pr_userid: '%'
                 }
             }

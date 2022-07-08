@@ -134,15 +134,15 @@ export default defineComponent({
         async deleteParam(paramToDelete) {
             if (paramToDelete.id) {
                 await this.$http
-                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${paramToDelete.id}`, { headers: { 'X-Disable-Errors': 'true' } })
+                    .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${paramToDelete.id}`, { headers: { 'X-Disable-Errors': 'true' } })
                     .then(() => {
                         let deletedParam = this.document.outputParameters.findIndex((param) => param.id === paramToDelete.id)
                         this.document.outputParameters.splice(deletedParam, 1)
-                        this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                        this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                         this.selectedParam = {} as iOutputParam
                     })
                     .catch((error) => {
-                        this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message })
+                        this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error.message })
                     })
             } else {
                 let deletedParam = this.document.outputParameters.findIndex((param) => param.tempId === paramToDelete.tempId)

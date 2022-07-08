@@ -1,5 +1,5 @@
-import { mount, flushPromises } from '@vue/test-utils'
-import axios from 'axios'
+import { mount } from '@vue/test-utils'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
@@ -549,15 +549,19 @@ const mockedDimensionMetadata = {
     }
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() => Promise.resolve({ data: { root: [] } }))
+    get: vi.fn().mockImplementation(() => Promise.resolve({ data: { root: [] } }))
 }
 
-const $store = {
-    commit: jest.fn()
-}
+const crypto = require('crypto')
+
+Object.defineProperty(global.self, 'crypto', {
+    value: {
+        getRandomValues: (arr) => crypto.randomBytes(arr.length)
+    }
+})
 
 const factory = (treeMode) => {
     return mount(HierarchyManagementHierarchiesTree, {
@@ -574,19 +578,18 @@ const factory = (treeMode) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: { Button, Dropdown, InputText, HierarchyManagementNodeDetailDialog: true, HierarchyManagementHierarchiesTargetDialog: true, Toolbar, Tree },
             mocks: {
                 $t: (msg) => msg,
-                $http,
-                $store
+                $http
             }
         }
     })
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Hierarchy Management Hierarchies Tree', () => {

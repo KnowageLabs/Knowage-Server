@@ -27,8 +27,8 @@ import { defineComponent, PropType } from 'vue'
 import { iPerspective, iScorecardTarget } from '@/modules/managers/scorecards/Scorecards'
 import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
-
-const deepEqual = require('deep-equal')
+import mainStore from '../../../App.store'
+import deepEqual from 'deep-equal'
 
 export default defineComponent({
     name: 'kn-perspective-card',
@@ -57,6 +57,10 @@ export default defineComponent({
             }
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadPerspective()
     },
@@ -84,9 +88,9 @@ export default defineComponent({
             }
         },
         async evaluateCriteria(criterionId: number, statusArray: any[], target: iScorecardTarget | null) {
-            this.$store.commit('setLoading', true)
+            this.store.setLoading(true)
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/${criterionId}/evaluateCriterion`, statusArray)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpiee/${criterionId}/evaluateCriterion`, statusArray)
                 .then((response: AxiosResponse<any>) => {
                     if (!target && this.perspective) {
                         this.perspective.statusColor = response.data ? response.data.status : null
@@ -96,7 +100,7 @@ export default defineComponent({
                     }
                 })
                 .catch(() => {})
-            this.$store.commit('setLoading', false)
+            this.store.setLoading(false)
         },
         async evaluatePerspective() {
             if (!this.perspective) return

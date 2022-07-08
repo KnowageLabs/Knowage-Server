@@ -1,11 +1,11 @@
 import { flushPromises, mount } from '@vue/test-utils'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import DocumentBrowserTree from './MenuManagementDocumentBrowserTree.vue'
 import InputText from 'primevue/inputtext'
 import ProgressBar from 'primevue/progressbar'
 import Card from 'primevue/card'
 import Tree from 'primevue/tree'
-import axios from 'axios'
 
 const mockedElements = {
     functionality: [
@@ -40,10 +40,10 @@ const mockedElements = {
     ]
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() =>
+    get: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: mockedElements
         })
@@ -54,7 +54,7 @@ const factory = () => {
     return mount(DocumentBrowserTree, {
         attachToDocument: true,
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, InputText, ProgressBar, Tree, Card },
             mocks: {
                 $t: (msg) => msg,
@@ -65,7 +65,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Document browser tree', () => {
@@ -91,8 +91,8 @@ describe('Document browser tree', () => {
 
         await flushPromises()
 
-        expect(axios.get).toHaveBeenCalled
-        expect(axios.get).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/menu/functionalities')
+        expect($http.get).toHaveBeenCalled
+        expect($http.get).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/menu/functionalities')
 
         expect(wrapper.vm.nodes).toStrictEqual([
             {

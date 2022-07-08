@@ -3,7 +3,7 @@ import MainMenu from './MainMenu.vue'
 import { createStore } from 'vuex'
 import flushPromises from 'flush-promises'
 import Tooltip from 'primevue/tooltip'
-import axios from 'axios'
+import { createTestingPinia } from '@pinia/testing'
 
 const mockedEnduserData = {
     technicalUserFunctionalities: [
@@ -97,22 +97,18 @@ const store = createStore({
     }
 })
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/menu/enduser?locale=en-US`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/menu/enduser?locale=en-US`:
                 return Promise.resolve({ data: mockedEnduserData })
             default:
                 return Promise.resolve({ data: [] })
         }
     })
 }
-
-jest.mock('axios', () => ({
-    get: jest.fn(() => Promise.resolve({ data: { technicalUserFunctionalities: [{ items: [{ label: 'Data source' }] }] } }))
-}))
 
 const factory = () => {
     return shallowMount(MainMenu, {
@@ -121,7 +117,7 @@ const factory = () => {
             directives: {
                 tooltip: Tooltip
             },
-            plugins: [store],
+            plugins: [store, createTestingPinia()],
             stubs: {
                 'router-link': true
             },
@@ -144,7 +140,7 @@ describe('Main Menu', () => {
 describe('Main Menu', () => {
     test('is loaded empty', () => {
         const wrapper = factory()
-        axios.get.mockReturnValueOnce(
+        $http.get.mockReturnValueOnce(
             Promise.resolve({
                 data: []
             })

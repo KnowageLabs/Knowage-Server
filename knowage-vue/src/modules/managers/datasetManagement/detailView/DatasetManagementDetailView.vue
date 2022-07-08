@@ -32,6 +32,7 @@
                     <span>{{ $t('kpi.alert.type') }}</span>
                 </template>
                 <TypeCard
+                    :activeTab="activeTab"
                     :selectedDataset="selectedDataset"
                     :datasetTypes="filteredDatasetTypes"
                     :dataSources="dataSources"
@@ -85,6 +86,7 @@ import MetadataCard from './metadataCard/DatasetManagementMetadataCard.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import WorkspaceDataPreviewDialog from '@/modules/workspace/views/dataView/dialogs/WorkspaceDataPreviewDialog.vue'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard, WorkspaceDataPreviewDialog },
@@ -129,6 +131,10 @@ export default defineComponent({
             activeTab: 0
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.getAllDatasetData()
     },
@@ -146,7 +152,7 @@ export default defineComponent({
         //#region ===================== Get All Data ====================================================
         async getSelectedDataset() {
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`)
                 .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0] ? { ...response.data[0] } : {}
                     this.selectedDataset.pythonEnvironment ? (this.selectedDataset.pythonEnvironment = JSON.parse(this.selectedDataset.pythonEnvironment ? this.selectedDataset.pythonEnvironment : '{}')) : ''
@@ -155,7 +161,7 @@ export default defineComponent({
         },
         async getSelectedDatasetVersions() {
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/olderversions/${this.id}`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/olderversions/${this.id}`)
                 .then((response: AxiosResponse<any>) => {
                     response.data.root ? (this.selectedDatasetVersions = response.data.root) : (this.selectedDatasetVersions = [])
                 })
@@ -195,9 +201,9 @@ export default defineComponent({
             })
         },
         async cloneDataset(datasetId) {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`).then(async (response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${datasetId}`).then(async (response: AxiosResponse<any>) => {
                 if (response.data[0].dsTypeCd === 'File') {
-                    await this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/clone-file?fileName=${response.data[0].fileName}`)
+                    await this.$http.put(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/clone-file?fileName=${response.data[0].fileName}`)
                 }
                 delete response.data[0].id
                 response.data[0].label = '...'
@@ -229,7 +235,7 @@ export default defineComponent({
             dsToSave.isScheduled ? (dsToSave.schedulingCronLine = await this.formatCronForSave()) : ''
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/`, dsToSave, {
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/`, dsToSave, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8'
@@ -237,7 +243,7 @@ export default defineComponent({
                 })
                 .then(async (response: AxiosResponse<any>) => {
                     this.touched = false
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
+                    this.store.setInfo({ title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
                     await this.saveTags(dsToSave, response.data.id)
                     await this.saveSchedulation(dsToSave, response.data.id)
@@ -254,7 +260,7 @@ export default defineComponent({
             tags.tagsToAdd = dsToSave.tags
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${id}/dstags/`, tags, {
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/${id}/dstags/`, tags, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8'
@@ -265,7 +271,7 @@ export default defineComponent({
         async saveSchedulation(dsToSave, id) {
             if (dsToSave.isScheduled) {
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/persistence/dataset/id/${id}`, dsToSave, {
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `scheduleree/persistence/dataset/id/${id}`, dsToSave, {
                         headers: {
                             Accept: 'application/json, text/plain, */*',
                             'Content-Type': 'application/json;charset=UTF-8'
@@ -273,7 +279,7 @@ export default defineComponent({
                     })
                     .catch()
             } else {
-                await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/persistence/dataset/label/${dsToSave.label}`).catch()
+                await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `scheduleree/persistence/dataset/label/${dsToSave.label}`).catch()
             }
         },
         async saveLinks(id) {
@@ -282,7 +288,7 @@ export default defineComponent({
                     if (link.added === true) {
                         delete link.added
                         await this.$http
-                            .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/${id}`, link, {
+                            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/${id}`, link, {
                                 headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' }
                             })
                             .catch()
@@ -295,7 +301,7 @@ export default defineComponent({
                 this.tablesToRemove.forEach(async (link) => {
                     if (link.deleted === true) {
                         await this.$http
-                            .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/${id}/${link.tableId}`, {
+                            .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaDsRelationResource/${id}/${link.tableId}`, {
                                 headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' }
                             })
                             .catch()
@@ -352,7 +358,7 @@ export default defineComponent({
         },
         checkFormulaForParams() {
             if (this.selectedDataset?.query?.includes('${') && this.selectedDataset?.isPersisted) {
-                this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.datasetManagement.formulaParamError') })
+                this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('managers.datasetManagement.formulaParamError') })
             } else this.saveDataset()
         },
         removeDuplicates(array) {

@@ -1,11 +1,13 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
 import TimespanDetail from './TimespanDetail.vue'
 import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
+import mainStore from '../../../App.store'
 
 const mockedTimespans = [
     {
@@ -60,22 +62,18 @@ const mockedTimespans = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 const $http = {
-    get: axios.get.mockImplementation(() => Promise.resolve({ data: mockedTimespans[0] })),
-    post: axios.post.mockImplementation(() => Promise.resolve())
+    get: vi.fn().mockImplementation(() => Promise.resolve({ data: mockedTimespans[0] })),
+    post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = (id) => {
@@ -91,7 +89,7 @@ const factory = (id) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 TimespanForm: true,
@@ -102,7 +100,6 @@ const factory = (id) => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $confirm,
                 $router,
                 $http
@@ -112,12 +109,13 @@ const factory = (id) => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Timespan Detail', () => {
     it('saves timespan', async () => {
         const wrapper = factory('81')
+        const store = mainStore()
 
         await flushPromises()
 
@@ -127,8 +125,8 @@ describe('Timespan Detail', () => {
 
         await flushPromises()
 
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/saveTimespan`, mockedTimespans[0])
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/timespan/saveTimespan`, mockedTimespans[0])
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
     })
 })

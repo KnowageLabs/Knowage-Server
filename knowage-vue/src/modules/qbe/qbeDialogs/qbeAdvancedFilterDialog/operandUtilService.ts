@@ -1,9 +1,9 @@
-const operatorUtilService = require('./operatorUtilService')
-const treeService = require('./treeService')
-const filterTreeFactoryService = require('./filterTreeFactoryService')
-const groupUtilService = require('./groupUtilService')
+import * as treeService  from './treeService'
+import * as operatorUtilService  from './operatorUtilService'
+import * as filterTreeFactoryService  from './filterTreeFactoryService'
+import * as groupUtilService  from './groupUtilService'
 
-const deepcopy = require('deepcopy');
+import deepcopy from 'deepcopy'
 
 export function getSibilng(filterTree, operand) {
     const operator = getExpressionOperator(filterTree, operand)

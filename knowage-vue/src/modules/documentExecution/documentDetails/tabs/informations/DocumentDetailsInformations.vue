@@ -280,7 +280,7 @@ import { iDocument, iDataSource, iEngine, iTemplate, iAttribute, iFolder } from 
 import { defineComponent, PropType } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import { AxiosResponse } from 'axios'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import { startOlap } from '../../dialogs/olapDesignerDialog/DocumentDetailOlapHelpers'
 import mainDescriptor from '../../DocumentDetailsDescriptor.json'
 import infoDescriptor from './DocumentDetailsInformationsDescriptor.json'
@@ -293,8 +293,9 @@ import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import DocumentDetailsTree from './DocumentDetailsTree.vue'
+import mainStore from '../../../../../App.store'
 
-const crypto = require('crypto')
+import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'document-details-informations',
@@ -345,12 +346,12 @@ export default defineComponent({
             }
         },
         getImageUrl(): string {
-            return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
+            return import.meta.env.VITE_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
         },
         designerButtonVisible(): boolean {
             return this.document.typeCode == 'OLAP' || this.document.typeCode == 'KPI' || this.document.engine == 'knowagegisengine'
         },
-        ...mapState({
+        ...mapState(mainStore, {
             user: 'user'
         })
     },
@@ -377,6 +378,10 @@ export default defineComponent({
             imagePreviewUrl: null as any,
             imagePreview: false
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.setData()
@@ -449,7 +454,7 @@ export default defineComponent({
         setImagePreview(imageFile) {
             this.imagePreviewUrl = URL.createObjectURL(imageFile)
             this.imagePreview = true
-            this.$store.commit('setInfo', { title: this.$t('common.uploadFileSuccess'), msg: this.$t('documentExecution.documentDetails.info.imageInfo') })
+            this.store.setInfo({ title: this.$t('common.uploadFileSuccess'), msg: this.$t('documentExecution.documentDetails.info.imageInfo') })
         },
         resetImagePreview() {
             this.imagePreviewUrl = null
@@ -487,7 +492,7 @@ export default defineComponent({
                 this.$emit('openDesignerDialog')
             } else {
                 const activeTemplate = this.findActiveTemplate()
-                const sbiExecutionId = crypto.randomBytes(16).toString('hex')
+                const sbiExecutionId = cryptoRandomString({ length: 16, type: 'base64' })
                 await startOlap(this.$http, this.user, sbiExecutionId, this.document, activeTemplate, this.$router)
             }
         },
@@ -511,7 +516,7 @@ export default defineComponent({
             this.$router.push(`/gis/edit?documentId=${this.document.id}`)
         },
         async getAllTemplates() {
-            if (this.document && this.document.id) this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.document.id}/templates`).then((response: AxiosResponse<any>) => (this.listOfTemplates = response.data as iTemplate[]))
+            if (this.document && this.document.id) this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.document.id}/templates`).then((response: AxiosResponse<any>) => (this.listOfTemplates = response.data as iTemplate[]))
         }
     }
 })

@@ -3,7 +3,7 @@
         <div v-if="parameter && !loading">
             <h2>{{ parameter.name }}</h2>
             <div class="p-grid p-ai-center">
-                <div class="p-m-0  p-col-12 p-md-12 p-lg-4 p-xl-4">
+                <div class="p-m-0 p-col-12 p-md-12 p-lg-4 p-xl-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.parameterValueType') }}</label>
                         <Dropdown class="kn-material-input" v-model="parameter.type" :options="parameter.temporal ? triggerStrategies : triggerStrategies.slice(0, 2)" optionLabel="label" optionValue="value" @change="onParameterTypeChange" />
@@ -25,13 +25,13 @@
                         <Dropdown class="kn-material-input" v-model="parameter.value" :options="rolesOptions" optionLabel="role" optionValue="userAndRole" />
                     </span>
                 </div>
-                <div class="p-m-0  p-col-12 p-md-12 p-lg-4 p-xl-4" v-else-if="parameter.type === 'formula'">
+                <div class="p-m-0 p-col-12 p-md-12 p-lg-4 p-xl-4" v-else-if="parameter.type === 'formula'">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.selectFormula') }}</label>
                         <Dropdown class="kn-material-input" v-model="parameter.value" :options="formulaOptions" optionLabel="description" optionValue="name" />
                     </span>
                 </div>
-                <div class="p-m-0  p-col-12 p-md-12 p-lg-4 p-xl-4">
+                <div class="p-m-0 p-col-12 p-md-12 p-lg-4 p-xl-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.iterations') }}</label>
                         <Dropdown class="kn-material-input" v-model="parameter.iterative" :options="triggerIterations" optionLabel="label" optionValue="value" />
@@ -113,7 +113,7 @@ export default defineComponent({
             this.loading = true
             this.$emit('loading', true)
             await axios
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.documentLabel}/parameters/${this.parameter?.id}/values?role=${this.parameter?.role}`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documents/${this.documentLabel}/parameters/${this.parameter?.id}/values?role=${this.parameter?.role}`)
                 .then((response) => (this.parameterValues = response.data))
                 .catch(() => {})
             this.$emit('loading', false)

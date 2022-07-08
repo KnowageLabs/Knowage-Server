@@ -60,6 +60,7 @@ import useValidate from '@vuelidate/core'
 import DomainCategoryTab from './tabs/DomainCategoryTab/DomainCategoryTab.vue'
 import RoleDetailTab from './tabs/RoleDetailTab/RoleDetailTab.vue'
 import RoleAuthorizationsTab from './tabs/RoleAuthorizationsTab/RoleAuthorizationsTab.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     components: {
@@ -101,6 +102,10 @@ export default defineComponent({
             this.clearSelectedLists()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         await this.loadAllDomainsData()
         await this.loadSelectedRole()
@@ -117,14 +122,14 @@ export default defineComponent({
 
             this.mapCategories()
 
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/'
+            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles/'
             if (this.selectedRole.id) {
                 this.operation = 'update'
                 url += this.selectedRole.id
             }
 
             await this.$http.post(url, this.selectedRole).then(() => {
-                this.$store.commit('setInfo', {
+                this.store.setInfo({
                     title: this.$t(this.rolesManagementTabViewDescriptor.operation[this.operation].toastTitle),
                     msg: this.$t(this.rolesManagementTabViewDescriptor.operation.success)
                 })
@@ -133,15 +138,15 @@ export default defineComponent({
             })
         },
         loadCategories(id: string) {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/categories/${id}`).finally(() => (this.loading = false))
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/roles/categories/${id}`).finally(() => (this.loading = false))
         },
         loadDomains(type: string) {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`).finally(() => (this.loading = false))
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`).finally(() => (this.loading = false))
         },
         async loadAuthorizations() {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'authorizations')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'authorizations')
                 .then((response: AxiosResponse<any>) => {
                     this.authorizationList = response.data.root
                     this.rolesManagementTabViewDescriptor.authorizations.forEach((authorization) => {
@@ -186,7 +191,7 @@ export default defineComponent({
         async loadSelectedRole() {
             this.loading = true
             if (this.id) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/roles/${this.id}`).then((response: AxiosResponse<any>) => (this.selectedRole = response.data))
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/roles/${this.id}`).then((response: AxiosResponse<any>) => (this.selectedRole = response.data))
 
                 await this.loadCategories(this.id).then((response: AxiosResponse<any>) => {
                     this.clearSelectedLists()

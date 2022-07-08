@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Calendar from 'primevue/calendar'
@@ -56,13 +56,13 @@ const filteredMockedEvents = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=20&offset=0&startDate=${encodeURIComponent(moment(new Date(2019, 10, 30)).format('YYYY-MM-DD+HH:mm:ss'))}&endDate=${encodeURIComponent(moment(new Date(2023, 10, 30)).format('YYYY-MM-DD+HH:mm:ss'))}`:
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/events/?fetchsize=20&offset=0&type=Mocked Event Model':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=20&offset=0&startDate=${encodeURIComponent(moment(new Date(2019, 10, 30)).format('YYYY-MM-DD+HH:mm:ss'))}&endDate=${encodeURIComponent(moment(new Date(2023, 10, 30)).format('YYYY-MM-DD+HH:mm:ss'))}`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/events/?fetchsize=20&offset=0&type=Mocked Event Model':
                 return Promise.resolve({ data: { results: filteredMockedEvents, start: 1, total: 1 } })
             default:
                 return Promise.resolve({ data: { results: mockedEvents, start: 1, total: 2 } })
@@ -71,10 +71,7 @@ const $http = {
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const factory = () => {
@@ -88,7 +85,6 @@ const factory = () => {
             stubs: { Button, Card, Calendar, Column, InputText, DataTable, Dropdown, ProgressSpinner, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $confirm,
                 $http
             }
@@ -97,7 +93,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Events Management', () => {
@@ -122,9 +118,9 @@ describe('Events Management', () => {
         await wrapper.find('[data-test="search-button"]').trigger('click')
         await flushPromises()
 
-        expect(axios.get).toHaveBeenNthCalledWith(
+        expect($http.get).toHaveBeenNthCalledWith(
             2,
-            process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=20&offset=0&startDate=${encodeURIComponent(moment(wrapper.vm.startDate).format('YYYY-MM-DD+HH:mm:ss'))}&endDate=${encodeURIComponent(moment(wrapper.vm.endDate).format('YYYY-MM-DD+HH:mm:ss'))}`
+            import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=20&offset=0&startDate=${encodeURIComponent(moment(wrapper.vm.startDate).format('YYYY-MM-DD+HH:mm:ss'))}&endDate=${encodeURIComponent(moment(wrapper.vm.endDate).format('YYYY-MM-DD+HH:mm:ss'))}`
         )
         expect(wrapper.html()).toContain('${scheduler.startexecsched} Mocked One')
         expect(wrapper.html()).not.toContain('${scheduler.endexecsched} Mocked Two')
@@ -142,7 +138,7 @@ describe('Events Management', () => {
         await wrapper.find('[data-test="search-button"]').trigger('click')
         await flushPromises()
 
-        expect(axios.get).toHaveBeenNthCalledWith(2, process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=20&offset=0&type=Mocked Event Model`)
+        expect($http.get).toHaveBeenNthCalledWith(2, import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/events/?fetchsize=20&offset=0&type=Mocked Event Model`)
         expect(wrapper.html()).toContain('${scheduler.startexecsched} Mocked One')
         expect(wrapper.html()).not.toContain('${scheduler.endexecsched} Mocked Two')
     })

@@ -49,130 +49,135 @@
 </template>
 
 <script lang="ts">
-    /* eslint-disable no-prototype-builtins */
-    import { defineComponent } from 'vue'
-    import { AxiosResponse } from 'axios'
-    import dataSourceDescriptor from './DataSourceDescriptor.json'
-    import FabButton from '@/components/UI/KnFabButton.vue'
-    import Listbox from 'primevue/listbox'
-    import Avatar from 'primevue/avatar'
+/* eslint-disable no-prototype-builtins */
+import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
+import dataSourceDescriptor from './DataSourceDescriptor.json'
+import FabButton from '@/components/UI/KnFabButton.vue'
+import Listbox from 'primevue/listbox'
+import Avatar from 'primevue/avatar'
+import mainStore from '../../../App.store'
 
-    export default defineComponent({
-        name: 'datasources-management',
-        components: {
-            FabButton,
-            Listbox,
-            Avatar
+export default defineComponent({
+    name: 'datasources-management',
+    components: {
+        FabButton,
+        Listbox,
+        Avatar
+    },
+    data() {
+        return {
+            dataSourceDescriptor,
+            datasources: [] as any[],
+            selDatasource: {} as any,
+            listOfAvailableDatabases: [] as any,
+            user: {} as any,
+            loading: false,
+            touched: false
+        }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    async created() {
+        await this.getAllDatasources()
+        await this.getAllDatabases()
+        await this.getCurrentUser()
+    },
+    methods: {
+        async getAllDatabases() {
+            return this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/databases`)
+                .then((response: AxiosResponse<any>) => {
+                    this.listOfAvailableDatabases = response.data
+                })
+                .finally(() => (this.loading = false))
         },
-        data() {
-            return {
-                dataSourceDescriptor,
-                datasources: [] as any[],
-                selDatasource: {} as any,
-                listOfAvailableDatabases: [] as any,
-                user: {} as any,
-                loading: false,
-                touched: false
-            }
-        },
-        async created() {
-            await this.getAllDatasources()
-            await this.getAllDatabases()
-            await this.getCurrentUser()
-        },
-        methods: {
-            async getAllDatabases() {
-                return this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/databases`)
-                    .then((response: AxiosResponse<any>) => {
-                        this.listOfAvailableDatabases = response.data
-                    })
-                    .finally(() => (this.loading = false))
-            },
 
-            async getCurrentUser() {
-                return this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/currentuser`)
-                    .then((response: AxiosResponse<any>) => {
-                        this.user = response.data
-                    })
-                    .finally(() => (this.loading = false))
-            },
+        async getCurrentUser() {
+            return this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/currentuser`)
+                .then((response: AxiosResponse<any>) => {
+                    this.user = response.data
+                })
+                .finally(() => (this.loading = false))
+        },
 
-            async getAllDatasources() {
-                this.loading = true
-                await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources')
-                    .then((response: AxiosResponse<any>) => {
-                        this.datasources = response.data
-                        this.convertToSeconds(this.datasources)
-                    })
-                    .finally(() => (this.loading = false))
-            },
-            convertToSeconds(dataSourceArr) {
-                Array.prototype.forEach.call(dataSourceArr, (dataSource) => {
-                    if (dataSource.hasOwnProperty('jdbcPoolConfiguration')) {
-                        dataSource.jdbcPoolConfiguration.maxWait /= 1000
-                        dataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns /= 1000
-                        dataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis /= 1000
-                        if (dataSource.jdbcPoolConfiguration.maxIdle === null) dataSource.jdbcPoolConfiguration.maxIdle = dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration.maxIdle
-                        if (dataSource.jdbcPoolConfiguration.validationQueryTimeout === null) dataSource.jdbcPoolConfiguration.validationQueryTimeout = dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration.validationQueryTimeout
+        async getAllDatasources() {
+            this.loading = true
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/datasources')
+                .then((response: AxiosResponse<any>) => {
+                    this.datasources = response.data
+                    this.convertToSeconds(this.datasources)
+                })
+                .finally(() => (this.loading = false))
+        },
+        convertToSeconds(dataSourceArr) {
+            Array.prototype.forEach.call(dataSourceArr, (dataSource) => {
+                if (dataSource.hasOwnProperty('jdbcPoolConfiguration')) {
+                    dataSource.jdbcPoolConfiguration.maxWait /= 1000
+                    dataSource.jdbcPoolConfiguration.timeBetweenEvictionRuns /= 1000
+                    dataSource.jdbcPoolConfiguration.minEvictableIdleTimeMillis /= 1000
+                    if (dataSource.jdbcPoolConfiguration.maxIdle === null) dataSource.jdbcPoolConfiguration.maxIdle = dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration.maxIdle
+                    if (dataSource.jdbcPoolConfiguration.validationQueryTimeout === null) dataSource.jdbcPoolConfiguration.validationQueryTimeout = dataSourceDescriptor.newDataSourceValues.jdbcPoolConfiguration.validationQueryTimeout
+                }
+            })
+        },
+
+        showForm(event: any) {
+            const path = event.value ? `/datasource-management/${event.value.dsId}` : '/datasource-management/new-datasource'
+
+            if (!this.touched) {
+                this.$router.push(path)
+                this.selDatasource = event.value
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.$router.push(path)
+                        this.selDatasource = event.value
                     }
                 })
-            },
-
-            showForm(event: any) {
-                const path = event.value ? `/datasource-management/${event.value.dsId}` : '/datasource-management/new-datasource'
-
-                if (!this.touched) {
-                    this.$router.push(path)
-                    this.selDatasource = event.value
-                } else {
-                    this.$confirm.require({
-                        message: this.$t('common.toast.unsavedChangesMessage'),
-                        header: this.$t('common.toast.unsavedChangesHeader'),
-                        icon: 'pi pi-exclamation-triangle',
-                        accept: () => {
-                            this.touched = false
-                            this.$router.push(path)
-                            this.selDatasource = event.value
-                        }
-                    })
-                }
-            },
-
-            deleteDatasourceConfirm(datasourceId: number) {
-                this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteTitle'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.deleteDatasource(datasourceId)
-                })
-            },
-            async deleteDatasource(datasourceId: number) {
-                await this.$http
-                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/' + datasourceId)
-                    .then(() => {
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.deleteTitle'),
-                            msg: this.$t('common.toast.deleteSuccess')
-                        })
-                        this.$router.push('/datasource-management')
-                        this.getAllDatasources()
-                    })
-                    .catch((error) => {
-                        this.$store.commit('setError', { title: 'Delete error', msg: error.message })
-                    })
-            },
-
-            reloadPage() {
-                this.touched = false
-                this.$router.push('/datasource-management')
-                this.getAllDatasources()
-            },
-            onFormClose() {
-                this.touched = false
             }
+        },
+
+        deleteDatasourceConfirm(datasourceId: number) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => this.deleteDatasource(datasourceId)
+            })
+        },
+        async deleteDatasource(datasourceId: number) {
+            await this.$http
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/datasources/' + datasourceId)
+                .then(() => {
+                    this.store.setInfo({
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.$router.push('/datasource-management')
+                    this.getAllDatasources()
+                })
+                .catch((error) => {
+                    this.store.setError({ title: 'Delete error', msg: error.message })
+                })
+        },
+
+        reloadPage() {
+            this.touched = false
+            this.$router.push('/datasource-management')
+            this.getAllDatasources()
+        },
+        onFormClose() {
+            this.touched = false
         }
-    })
+    }
+})
 </script>

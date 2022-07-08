@@ -123,7 +123,7 @@ import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
 import RegistryDatatableEditableField from './RegistryDatatableEditableField.vue'
 import RegistryDatatableWarningDialog from './RegistryDatatableWarningDialog.vue'
 
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'registry-datatable',

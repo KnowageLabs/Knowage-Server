@@ -7,7 +7,7 @@
         </template>
 
         <Column class="kn-truncated" v-for="col of workspaceModelsTableDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true">
-            <template #filter="{filterModel}"> <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText> </template
+            <template #filter="{ filterModel }"> <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText> </template
         ></Column>
         <Column :style="workspaceModelsTableDescriptor.iconColumn.style">
             <template #body="slotProps">
@@ -33,6 +33,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Menu from 'primevue/menu'
 import workspaceModelsTableDescriptor from './WorkspaceModelsTableDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'workspace-models-table',
@@ -63,8 +64,12 @@ export default defineComponent({
             this.loadTable()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.$state as any).user
         this.loadTable()
     },
     methods: {

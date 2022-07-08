@@ -51,6 +51,7 @@ import Checkbox from 'primevue/checkbox'
 import Dialog from 'primevue/dialog'
 import InputSwitch from 'primevue/inputswitch'
 import generateDatamartCardDescriptor from './GenerateDatamartCardDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'generate-datamart-card',
@@ -74,6 +75,10 @@ export default defineComponent({
         businessModel() {
             this.loadBusinessModel()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadBusinessModel()
@@ -116,7 +121,7 @@ export default defineComponent({
                 `/knowagemeta/restful-services/1.0/metaWeb/buildModel/${this.businessModel.id}?user_id=${this.user.userId}` +
                 `&model=${encodeURIComponent(this.modelName)}&schema=${this.schemaName}&catalog=${this.catalogName}&registry=${this.isGeneratedForRegistry}&includeSources=${this.includeSources}`
             this.$http.get(url).then(() => {
-                this.$store.commit('setInfo', {
+                this.store.setInfo({
                     title: this.$t('common.toast.createTitle'),
                     msg: this.$t('common.toast.success')
                 })

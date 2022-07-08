@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import flushPromises from 'flush-promises'
 import AlertDetail from './AlertDefinitionDetail.vue'
 import axios from 'axios'
@@ -53,16 +55,16 @@ const mockedActionList = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/alert/listAction`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/alert/listAction`:
                 return Promise.resolve({ data: mockedActionList })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `'1.0/alert/25/load'`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `'1.0/alert/25/load'`:
                 return Promise.resolve({ data: mockedAlert })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `'2.0/documents/listDocument?includeType=ETL'`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `'2.0/documents/listDocument?includeType=ETL'`:
                 return Promise.resolve({ data: [] })
             default:
                 return Promise.resolve({ data: [] })
@@ -76,7 +78,7 @@ const factory = () => {
             id: '33'
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -100,7 +102,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 describe('Alert Definition Detail', () => {
     it('disables the save button if one required input is empty', async () => {

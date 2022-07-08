@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import RegistryFilterCard from './RegistryFilterCard.vue'
@@ -29,7 +31,7 @@ const factory = (filter) => {
             id: '1'
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Dropdown,
                 InputText

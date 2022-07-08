@@ -43,9 +43,9 @@ import QBEFilterCard from './QBEFilterCard.vue'
 import QBEFilterDialogDescriptor from './QBEFilterDialogDescriptor.json'
 import QBETemporalFilterDialog from './QBETemporalFilterDialog.vue'
 import QBEFilterParameters from './QBEFilterParameters.vue'
-
-const crypto = require('crypto')
-const deepcopy = require('deepcopy')
+import mainStore from '../../../../App.store'
+import cryptoRandomString from 'crypto-random-string'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'qbe-filter-dialog',
@@ -56,7 +56,7 @@ export default defineComponent({
         return {
             QBEFilterDialogDescriptor,
             filters: [] as iFilter[],
-            nextFilterIndex: -1,
+            nextFilterIndex: '-1' as string,
             temporalFilters: [] as any[],
             temporalFilterDialogVisible: false,
             parameters: [] as any[],
@@ -79,6 +79,10 @@ export default defineComponent({
             this.loadExpression()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadData()
         this.loadParameters()
@@ -94,7 +98,7 @@ export default defineComponent({
                     this.filters.push({ ...filter })
                 }
             })
-            this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
+            this.nextFilterIndex = cryptoRandomString({ length: 16, type: 'base64' })
             if (this.filterDialogData.field.type === 'inline.calculated.field') {
                 this.setCalculatedFieldLongDescription(this.filterDialogData.field, this.filterDialogData.field.originalId as string)
             } else if (this.filterDialogData.field.attributes?.type === 'inLineCalculatedField') {
@@ -153,7 +157,7 @@ export default defineComponent({
             }
             if (field) {
                 this.filters.push(filter)
-                this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
+                this.nextFilterIndex = cryptoRandomString({ length: 16, type: 'base64' })
             }
             this.push(filter)
         },
@@ -195,10 +199,10 @@ export default defineComponent({
             }
         },
         temporalFiltersEnabled() {
-            return (this.$store.state as any).user.functionalities.includes('Timespan') && (this.filterDialogData?.field.dataType?.toLowerCase() === 'java.sql.date' || this.filterDialogData?.field.dataType?.toLowerCase() === 'java.sql.timestamp')
+            return (this.store.$state as any).user.functionalities.includes('Timespan') && (this.filterDialogData?.field.dataType?.toLowerCase() === 'java.sql.date' || this.filterDialogData?.field.dataType?.toLowerCase() === 'java.sql.timestamp')
         },
         async openTemporalFilterDialog() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/listTimespan/?types=DAY_OF_WEEK&types=DAY_OF_WEEK&types=DAY_OF_WEEK`).then((response: AxiosResponse<any>) => (this.temporalFilters = response.data.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/timespan/listTimespan/?types=DAY_OF_WEEK&types=DAY_OF_WEEK&types=DAY_OF_WEEK`).then((response: AxiosResponse<any>) => (this.temporalFilters = response.data.data))
             this.temporalFilterDialogVisible = true
         },
         addTemporalFilter(temporalFilter: any) {
@@ -232,7 +236,7 @@ export default defineComponent({
                     } as any
                     this.filters.push(tempFilter)
                     this.push(tempFilter)
-                    this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
+                    this.nextFilterIndex = cryptoRandomString({ length: 16, type: 'base64' })
                 }
             }
             this.temporalFilterDialogVisible = false
@@ -245,7 +249,7 @@ export default defineComponent({
         },
         closeDialog() {
             this.$emit('close')
-            this.nextFilterIndex = crypto.randomBytes(16).toString('hex')
+            this.nextFilterIndex = cryptoRandomString({ length: 16, type: 'base64' })
             this.updatedParameters = []
             this.parameterTableVisible = false
             this.removeFiltersOnCancel()

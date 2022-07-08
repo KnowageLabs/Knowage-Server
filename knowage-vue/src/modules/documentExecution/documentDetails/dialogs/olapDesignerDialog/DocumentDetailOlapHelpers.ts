@@ -14,14 +14,14 @@ export async function startOlap($http: any, user: any, sbiExecutionId: string, d
 
     const params = createUrlParameters(uniqueID, language, country, sbiExecutionId, document, selectedTemplateContent, schema)
 
-    $http.get(process.env.VUE_APP_OLAP_PATH + `olap/startolap`, { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' }, params: params }).then(() => {
+    $http.get(import.meta.env.VITE_OLAP_PATH + `olap/startolap`, { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' }, params: params }).then(() => {
         router.push(`/olap-designer/${sbiExecutionId}?olapId=${document.id}&olapName=${document.name}&olapLabel=${document.label}&artifactId=${schema.currentContentId}`)
     })
 }
 
 async function getSelectedTemplate($http: any, selectedTemplateFileType: string, document: any, template: any) {
     let selectedTemplateContent = {} as any
-    await $http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${document.id}/templates/selected/${template.id}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then((response: AxiosResponse<any>) => {
+    await $http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${document.id}/templates/selected/${template.id}`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } }).then((response: AxiosResponse<any>) => {
         selectedTemplateFileType == 'sbicockpit' || selectedTemplateFileType == 'json' || selectedTemplateFileType == 'sbigeoreport' ? (selectedTemplateContent = JSON.stringify(response.data, null, 4)) : (selectedTemplateContent = response.data)
         const x2js = new X2JS()
         selectedTemplateContent = x2js.xml2js(selectedTemplateContent)
@@ -31,7 +31,7 @@ async function getSelectedTemplate($http: any, selectedTemplateFileType: string,
 
 async function getSchema($http: any, schemaName: string) {
     let schema = null
-    await $http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/name=${schemaName}`).then((response: AxiosResponse<any>) => (schema = response.data))
+    await $http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource/name=${schemaName}`).then((response: AxiosResponse<any>) => (schema = response.data))
     return schema
 }
 

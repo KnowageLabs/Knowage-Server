@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { createRouter, createWebHistory } from 'vue-router'
-import axios from 'axios'
 import Button from 'primevue/button'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import flushPromises from 'flush-promises'
@@ -63,12 +64,12 @@ const mockedTimespans = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/listDynTimespan`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/timespan/listDynTimespan`:
                 return Promise.resolve({ data: mockedTimespans })
             default:
                 return Promise.resolve({ data: [] })
@@ -77,15 +78,11 @@ const $http = {
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const router = createRouter({
@@ -118,7 +115,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [router],
+            plugins: [router, createTestingPinia()],
             stubs: {
                 Button,
                 FabButton,
@@ -130,7 +127,6 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $http,
-                $store,
                 $confirm,
                 $router
             }
@@ -139,7 +135,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Timespan loading', () => {

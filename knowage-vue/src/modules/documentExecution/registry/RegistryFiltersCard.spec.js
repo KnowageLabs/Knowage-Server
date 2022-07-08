@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import RegistryFiltersCard from './RegistryFiltersCard.vue'
@@ -50,7 +52,7 @@ const factory = (filters) => {
             id: '1'
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 InputText,

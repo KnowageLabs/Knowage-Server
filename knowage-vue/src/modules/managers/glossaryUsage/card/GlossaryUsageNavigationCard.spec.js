@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -13,21 +15,16 @@ const mockedItems = [
     { id: 3, label: 'HR VIEW' }
 ]
 
-const $store = {
-    state: { user: {} },
-    commit: jest.fn()
-}
-
 const factory = (items) => {
     return mount(GlossaryUsageNavigationCard, {
         props: {
             items: items
         },
         global: {
+            pplugins: [createTestingPinia()],
             stubs: { Button, Card, Column, DataTable, InputText, Toolbar },
             mocks: {
-                $t: (msg) => msg,
-                $store
+                $t: (msg) => msg
             }
         }
     })

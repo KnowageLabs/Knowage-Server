@@ -57,7 +57,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import physDescriptor from './PhysicalModelDescriptor.json'
 
-const { applyPatch, generate } = require('fast-json-patch')
+import { applyPatch, generate } from 'fast-json-patch'
 
 export default defineComponent({
     name: 'metaweb-physical-model',
@@ -90,7 +90,7 @@ export default defineComponent({
         },
         async openUpdateDialog() {
             this.$emit('loading', true)
-            await this.$http.get(process.env.VUE_APP_META_API_URL + '/1.0/metaWeb/updatePhysicalModel').then((response: AxiosResponse<any>) => (this.changedItem = response.data))
+            await this.$http.get(import.meta.env.VITE_META_API_URL + '/1.0/metaWeb/updatePhysicalModel').then((response: AxiosResponse<any>) => (this.changedItem = response.data))
             this.updateDialogVisible = true
             this.$emit('loading', false)
         },

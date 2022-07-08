@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
@@ -18,15 +19,11 @@ const mockedPerspective = {
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = () => {
@@ -53,7 +50,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $confirm,
                 $router
             }
@@ -61,8 +57,16 @@ const factory = () => {
     })
 }
 
+const crypto = require('crypto')
+
+Object.defineProperty(global.self, 'crypto', {
+    value: {
+        getRandomValues: (arr) => crypto.randomBytes(arr.length)
+    }
+})
+
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Scorecards Table', () => {

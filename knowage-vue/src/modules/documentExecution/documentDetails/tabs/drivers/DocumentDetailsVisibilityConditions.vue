@@ -43,7 +43,7 @@
                 <KnValidationMessages class="p-mt-1" :vComp="v$.selectedCondition.viewLabel" :additionalTranslateParams="{ fieldName: $t('common.title') }" />
             </div>
             <div class="p-field p-col-12 p-md-4">
-                <span class="p-float-label ">
+                <span class="p-float-label">
                     <Dropdown
                         id="driver"
                         class="kn-material-input"
@@ -90,106 +90,111 @@
 </template>
 
 <script lang="ts">
-    import { iDriver, iDocument, iVisualDependency } from '@/modules/documentExecution/documentDetails/DocumentDetails'
-    import { defineComponent, PropType } from 'vue'
-    import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-    import { AxiosResponse } from 'axios'
-    import useValidate from '@vuelidate/core'
-    import mainDescriptor from '@/modules/documentExecution/documentDetails/DocumentDetailsDescriptor.json'
-    import driversDescriptor from './DocumentDetailsDriversDescriptor.json'
-    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-    import Listbox from 'primevue/listbox'
-    import Dialog from 'primevue/dialog'
-    import Dropdown from 'primevue/dropdown'
-    import InlineMessage from 'primevue/inlinemessage'
+import { iDriver, iDocument, iVisualDependency } from '@/modules/documentExecution/documentDetails/DocumentDetails'
+import { defineComponent, PropType } from 'vue'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+import { AxiosResponse } from 'axios'
+import useValidate from '@vuelidate/core'
+import mainDescriptor from '@/modules/documentExecution/documentDetails/DocumentDetailsDescriptor.json'
+import driversDescriptor from './DocumentDetailsDriversDescriptor.json'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import Listbox from 'primevue/listbox'
+import Dialog from 'primevue/dialog'
+import Dropdown from 'primevue/dropdown'
+import InlineMessage from 'primevue/inlinemessage'
+import mainStore from '../../../../../App.store'
 
-    export default defineComponent({
-        name: 'document-drivers',
-        components: { Listbox, Dialog, Dropdown, KnValidationMessages, InlineMessage },
-        props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, availableDrivers: { type: Array as PropType<iDriver[]>, required: true }, selectedDriver: { type: Object as PropType<iDriver>, required: true } },
-        emits: ['driversChanged'],
-        data() {
-            return {
-                v$: useValidate() as any,
-                mainDescriptor,
-                driversDescriptor,
-                selectedCondition: {} as iVisualDependency,
-                visusalDependencyObjects: [] as iVisualDependency[],
-                availableOperators: driversDescriptor.availableOperators,
-                showVisibilityConditionDialog: false,
-                loading: false
-            }
-        },
-        watch: {
-            selectedDriver() {
-                this.selectedDriver.id ? this.getVisualDependenciesByDriverId() : ''
-            }
-        },
-        created() {
-            this.selectedDriver.id ? this.getVisualDependenciesByDriverId() : ''
-        },
-        validations() {
-            const visibilityValidator = (value) => {
-                return Object.keys(this.selectedCondition).length === 0 || value
-            }
-            const customValidators: ICustomValidatorMap = { 'visibility-validator': visibilityValidator }
-            const validationObject = { selectedCondition: createValidations('selectedCondition', driversDescriptor.validations.selectedCondition, customValidators) }
-            return validationObject
-        },
-        methods: {
-            async getVisualDependenciesByDriverId() {
-                this.loading = true
-                this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/visualdependencies?driverId=${this.selectedDriver.id}`)
-                    .then((response: AxiosResponse<any>) => {
-                        this.visusalDependencyObjects = response.data
-                    })
-                    .finally(() => (this.loading = false))
-            },
-            openVisibilityConditionDialog(condition?) {
-                condition != 'newCondition' ? (this.selectedCondition = { ...condition }) : (this.selectedCondition = { parId: this.selectedDriver.id, prog: this.visusalDependencyObjects.length + 1 } as iVisualDependency)
-                this.showVisibilityConditionDialog = true
-            },
-            setParFatherUrlName(event) {
-                this.availableDrivers.filter((driver) => {
-                    driver.id === event.value ? (this.selectedCondition.parFatherUrlName = driver.parameterUrlName) : ''
-                })
-            },
-            async saveCondition() {
-                await this.saveRequest()
-                    .then(() => {
-                        this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.drivers.conditionSavedMsg') })
-                        this.showVisibilityConditionDialog = false
-                        this.getVisualDependenciesByDriverId()
-                    })
-                    .catch((error) => {
-                        this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: error })
-                    })
-            },
-            saveRequest() {
-                if (!this.selectedCondition.id) {
-                    return this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/visualdependencies`, this.selectedCondition, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                } else {
-                    return this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/visualdependencies`, this.selectedCondition, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                }
-            },
-            async deleteCondition(conditionToDelete) {
-                await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/visualdependencies/delete`, conditionToDelete, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                    .then(() => {
-                        this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
-                        this.getVisualDependenciesByDriverId()
-                    })
-                    .catch((error) => {
-                        this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error })
-                    })
-            }
+export default defineComponent({
+    name: 'document-drivers',
+    components: { Listbox, Dialog, Dropdown, KnValidationMessages, InlineMessage },
+    props: { selectedDocument: { type: Object as PropType<iDocument>, required: true }, availableDrivers: { type: Array as PropType<iDriver[]>, required: true }, selectedDriver: { type: Object as PropType<iDriver>, required: true } },
+    emits: ['driversChanged'],
+    data() {
+        return {
+            v$: useValidate() as any,
+            mainDescriptor,
+            driversDescriptor,
+            selectedCondition: {} as iVisualDependency,
+            visusalDependencyObjects: [] as iVisualDependency[],
+            availableOperators: driversDescriptor.availableOperators,
+            showVisibilityConditionDialog: false,
+            loading: false
         }
-    })
+    },
+    watch: {
+        selectedDriver() {
+            this.selectedDriver.id ? this.getVisualDependenciesByDriverId() : ''
+        }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    created() {
+        this.selectedDriver.id ? this.getVisualDependenciesByDriverId() : ''
+    },
+    validations() {
+        const visibilityValidator = (value) => {
+            return Object.keys(this.selectedCondition).length === 0 || value
+        }
+        const customValidators: ICustomValidatorMap = { 'visibility-validator': visibilityValidator }
+        const validationObject = { selectedCondition: createValidations('selectedCondition', driversDescriptor.validations.selectedCondition, customValidators) }
+        return validationObject
+    },
+    methods: {
+        async getVisualDependenciesByDriverId() {
+            this.loading = true
+            this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/visualdependencies?driverId=${this.selectedDriver.id}`)
+                .then((response: AxiosResponse<any>) => {
+                    this.visusalDependencyObjects = response.data
+                })
+                .finally(() => (this.loading = false))
+        },
+        openVisibilityConditionDialog(condition?) {
+            condition != 'newCondition' ? (this.selectedCondition = { ...condition }) : (this.selectedCondition = { parId: this.selectedDriver.id, prog: this.visusalDependencyObjects.length + 1 } as iVisualDependency)
+            this.showVisibilityConditionDialog = true
+        },
+        setParFatherUrlName(event) {
+            this.availableDrivers.filter((driver) => {
+                driver.id === event.value ? (this.selectedCondition.parFatherUrlName = driver.parameterUrlName) : ''
+            })
+        },
+        async saveCondition() {
+            await this.saveRequest()
+                .then(() => {
+                    this.store.setInfo({ title: this.$t('common.save'), msg: this.$t('documentExecution.documentDetails.drivers.conditionSavedMsg') })
+                    this.showVisibilityConditionDialog = false
+                    this.getVisualDependenciesByDriverId()
+                })
+                .catch((error) => {
+                    this.store.setError({ title: this.$t('common.error.saving'), msg: error })
+                })
+        },
+        saveRequest() {
+            if (!this.selectedCondition.id) {
+                return this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/visualdependencies`, this.selectedCondition, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+            } else {
+                return this.$http.put(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/visualdependencies`, this.selectedCondition, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+            }
+        },
+        async deleteCondition(conditionToDelete) {
+            await this.$http
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/visualdependencies/delete`, conditionToDelete, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                .then(() => {
+                    this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                    this.getVisualDependenciesByDriverId()
+                })
+                .catch((error) => {
+                    this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error })
+                })
+        }
+    }
+})
 </script>
 <style lang="scss" scoped>
-    .kn-remove-card-padding .data-condition-list {
-        border: 1px solid var(--kn-color-borders);
-        border-top: none;
-    }
+.kn-remove-card-padding .data-condition-list {
+    border: 1px solid var(--kn-color-borders);
+    border-top: none;
+}
 </style>

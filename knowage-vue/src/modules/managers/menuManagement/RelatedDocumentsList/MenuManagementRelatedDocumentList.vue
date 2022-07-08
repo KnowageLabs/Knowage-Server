@@ -71,14 +71,14 @@ export default defineComponent({
     },
     watch: {
         loading: {
-            handler: function(l) {
+            handler: function (l) {
                 this.load = l
             }
         }
     },
     data() {
         return {
-            apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
+            apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
             load: false as Boolean,
             relatedDocumentsList: [] as iDocument[],
             filters: {

@@ -49,6 +49,7 @@ import mainDescriptor from './DatasetManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import ProgressSpinner from 'primevue/progressspinner'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'dataset-management',
@@ -76,13 +77,17 @@ export default defineComponent({
             datasetToCloneId: null
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.getAllPersistentData()
     },
     methods: {
         //#region ===================== Get All Data and Format ====================================================
         getEnvironmentByConfiguration(configuration: string) {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/category/${configuration}`)
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/configs/category/${configuration}`)
         },
         buildEnvironments(environmentsArray) {
             return environmentsArray.map((environment) => ({ label: environment.label, value: environment.valueCheck }))
@@ -92,7 +97,7 @@ export default defineComponent({
             this.getEnvironmentByConfiguration('R_CONFIGURATION').then((response: AxiosResponse<any>) => (this.rEnvironments = this.buildEnvironments(response.data)))
         },
         getDomainByType(type: string) {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
         },
         async getDomainData() {
             this.getDomainByType('DS_SCOPE').then((response: AxiosResponse<any>) => (this.scopeTypes = response.data))
@@ -107,21 +112,21 @@ export default defineComponent({
             this.getDomainByType('SCRIPT_TYPE').then((response: AxiosResponse<any>) => (this.scriptTypes = response.data))
         },
         async getDatasources() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources`).then((response: AxiosResponse<any>) => (this.dataSources = response.data))
+            this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasources`).then((response: AxiosResponse<any>) => (this.dataSources = response.data))
         },
         async getBusinessModels() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels`).then((response: AxiosResponse<any>) => (this.businessModels = response.data))
+            this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels`).then((response: AxiosResponse<any>) => (this.businessModels = response.data))
         },
         async getMetaSourceResource() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`).then((response: AxiosResponse<any>) => (this.metaSourceResource = response.data))
+            this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`).then((response: AxiosResponse<any>) => (this.metaSourceResource = response.data))
         },
         async getTags() {
-            this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/tags/`).then((response: AxiosResponse<any>) => (this.tags = response.data))
+            this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/tags/`).then((response: AxiosResponse<any>) => (this.tags = response.data))
         },
         async getDatasets() {
             let url = '{"reverseOrdering":false,"columnOrdering":""}'
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/catalog?offset=0&fetchSize=0&ordering=` + encodeURI(url))
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/catalog?offset=0&fetchSize=0&ordering=` + encodeURI(url))
                 .then((response: AxiosResponse<any>) => (this.listOfDatasets = [...response.data.root]))
                 .finally(() => (this.loading = false))
         },
@@ -169,9 +174,9 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
                     this.$http
-                        .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.item.label}/`)
+                        .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.item.label}/`)
                         .then(() => {
-                            this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                            this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                             this.loading = true
 
                             this.getDatasets()

@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { createRouter, createWebHistory } from 'vue-router'
-import axios from 'axios'
 import PrimeVue from 'primevue/config'
 import Card from 'primevue/card'
 import Toolbar from 'primevue/toolbar'
@@ -203,18 +204,18 @@ const mockedResultList = {
     ]
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `/2.0/documents`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `/2.0/documents`:
                 return Promise.resolve({ data: mockedDocumentList })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `/scheduleree/listAllJobs`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `/scheduleree/listAllJobs`:
                 return Promise.resolve({ data: mockedPackageList })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/nextExecutions?start=2021-11-06T00:11:00&end=2021-11-11T00:11:00`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `scheduleree/nextExecutions?start=2021-11-06T00:11:00&end=2021-11-11T00:11:00`:
                 return Promise.resolve({ data: mockedResultFiveDays })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `scheduleree/nextExecutions?start=2021-11-06T00:11:00&end=2025-11-11T00:11:00`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `scheduleree/nextExecutions?start=2021-11-06T00:11:00&end=2025-11-11T00:11:00`:
                 return Promise.resolve({ data: mockedResultList })
             default:
                 return Promise.resolve({ data: [] })
@@ -236,24 +237,20 @@ const router = createRouter({
     ]
 })
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $confirm = {
-    require: jest.fn(() => {})
-}
-
-const $store = {
-    commit: jest.fn(() => {})
+    require: vi.fn(() => {})
 }
 
 const $router = {
-    push: jest.fn(() => {})
+    push: vi.fn(() => {})
 }
 
 const factory = () => {
     return mount(SchedulationAgenda, {
         global: {
-            plugins: [PrimeVue, router],
+            plugins: [PrimeVue, router, createTestingPinia()],
             stubs: {
                 Calendar,
                 Card,
@@ -267,7 +264,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $confirm,
                 $router,
                 $http
@@ -277,7 +273,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 beforeEach(() => {})
