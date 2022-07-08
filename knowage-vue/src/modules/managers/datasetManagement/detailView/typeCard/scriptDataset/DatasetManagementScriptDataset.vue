@@ -36,7 +36,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
+import VCodeMirror from 'codemirror-editor-vue3'
 import useValidate from '@vuelidate/core'
 import queryDescriptor from './DatasetManagementScriptDataset.json'
 import Dropdown from 'primevue/dropdown'
@@ -45,7 +45,7 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 
 export default defineComponent({
     components: { Card, Dropdown, VCodeMirror, KnValidationMessages },
-    props: { selectedDataset: { type: Object as any }, scriptTypes: { type: Array as any } },
+    props: { selectedDataset: { type: Object as any }, scriptTypes: { type: Array as any }, activeTab: { type: Number as any } },
     emits: ['touched'],
     data() {
         return {
@@ -67,13 +67,27 @@ export default defineComponent({
     },
     created() {
         this.loadDataset()
-        this.setupCodeMirror()
-        this.loadScriptMode()
+        const interval = setInterval(() => {
+            if (!this.$refs.codeMirrorScriptType) return
+            this.codeMirrorScriptType = (this.$refs.codeMirrorScriptType as any).cminstance as any
+
+            this.loadDataset()
+            this.loadScriptMode()
+
+            clearInterval(interval)
+        }, 200)
     },
     watch: {
         selectedDataset() {
             this.loadDataset()
             this.loadScriptMode()
+        },
+        activeTab() {
+            if (this.activeTab === 1 && this.codeMirrorScriptType) {
+                setTimeout(() => {
+                    this.codeMirrorScriptType.refresh()
+                }, 0)
+            }
         }
     },
     validations() {
@@ -90,24 +104,15 @@ export default defineComponent({
             this.dataset.script ? '' : (this.dataset.script = '')
             this.dataset.scriptLanguage ? '' : (this.dataset.scriptLanguage = 'ECMAScript')
         },
-        setupCodeMirror() {
-            const interval = setInterval(() => {
-                if (!this.$refs.codeMirrorScriptType) return
-                this.codeMirrorScriptType = (this.$refs.codeMirrorScriptType as any).editor as any
-                clearInterval(interval)
-            }, 200)
-        },
         loadScriptMode() {
             if (this.dataset.scriptLanguage) {
                 this.scriptOptions.mode = this.dataset.scriptLanguage === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
+                this.codeMirrorScriptType.setOption('mode', this.dataset.queryScriptLanguage === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy')
             }
         },
         onLanguageChanged(value: string) {
             const mode = value === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
-            setTimeout(() => {
-                this.setupCodeMirror()
-                this.codeMirrorScriptType.setOption('mode', mode)
-            }, 250)
+            this.codeMirrorScriptType.setOption('mode', mode)
             this.$emit('touched')
         }
     }

@@ -145,6 +145,9 @@ export default defineComponent({
             this.$emit('touched')
         },
         activeTab() {
+            setTimeout(() => {
+                this.codeMirror.refresh()
+            }, 0)
             if (this.previousTabIndex === 0 && this.activeTab != 0) {
                 this.checkFormulaForErrors()
             }
@@ -244,26 +247,28 @@ export default defineComponent({
         },
 
         onMouseDown(event) {
-            for (var i = 0; i < event.srcElement.classList.length; i++) {
-                this.token = event.srcElement.innerHTML
-                if (event.srcElement.classList[i] == 'cm-m-max') {
-                    this.selectedFunctionalities = 'MAX'
-                    break
-                } else if (event.srcElement.classList[i] == 'cm-m-min') {
-                    this.selectedFunctionalities = 'MIN'
-                    break
-                } else if (event.srcElement.classList[i] == 'cm-m-count') {
-                    this.selectedFunctionalities = 'COUNT'
-                    break
-                } else if (event.srcElement.classList[i] == 'cm-m-sum') {
-                    this.selectedFunctionalities = 'SUM'
-                    break
+            if ('srcElement' in event) {
+                for (var i = 0; i < event.srcElement.classList.length; i++) {
+                    this.token = event.srcElement.innerHTML
+                    if (event.srcElement.classList[i] == 'cm-m-max') {
+                        this.selectedFunctionalities = 'MAX'
+                        break
+                    } else if (event.srcElement.classList[i] == 'cm-m-min') {
+                        this.selectedFunctionalities = 'MIN'
+                        break
+                    } else if (event.srcElement.classList[i] == 'cm-m-count') {
+                        this.selectedFunctionalities = 'COUNT'
+                        break
+                    } else if (event.srcElement.classList[i] == 'cm-m-sum') {
+                        this.selectedFunctionalities = 'SUM'
+                        break
+                    }
                 }
-            }
-            var className = event.srcElement.className
-            if (className.startsWith('cm-keyword') || className.startsWith('cm-variable-2')) {
-                this.dialogHeaderInfo.functionName = event.srcElement.innerHTML
-                this.functionDialogVisible = true
+                var className = event.srcElement.className
+                if (className.startsWith('cm-keyword') || className.startsWith('cm-variable-2')) {
+                    this.dialogHeaderInfo.functionName = event.srcElement.innerHTML
+                    this.functionDialogVisible = true
+                }
             }
         },
 
@@ -275,7 +280,6 @@ export default defineComponent({
             const interval = setInterval(() => {
                 if (!this.$refs.codeMirror) return
                 this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
-
                 setTimeout(() => {
                     this.codeMirror.refresh()
                 }, 0)

@@ -37,7 +37,6 @@
             </Toolbar>
             <Card v-show="expandQueryCard">
                 <template #content>
-                    {{ dataset.query }}
                     <VCodeMirror ref="codeMirror" v-model:value="dataset.query" :autoHeight="true" :options="codemirrorOptions" @keyup="$emit('touched')" />
                 </template>
             </Card>
@@ -75,17 +74,9 @@ import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
 import HelpDialog from './DatasetManagementQueryHelpDialog.vue'
 
-// language
-// import 'codemirror/mode/javascript/javascript.js'
-// import '/node_modules/codemirror/mode/javascript/javascript.js'
-// import '@/helpers/commons/sql.js'
-
-// theme
-import 'codemirror/theme/dracula.css'
-
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages, VCodeMirror, HelpDialog },
-    props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, scriptTypes: { type: Array as any } },
+    props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, scriptTypes: { type: Array as any }, activeTab: { type: Number as any } },
     emits: ['touched'],
     data() {
         return {
@@ -95,37 +86,54 @@ export default defineComponent({
             codeMirrorScript: {} as any,
             v$: useValidate() as any,
             expandQueryCard: true,
+            expandScriptCard: true,
             helpDialogVisible: false,
-            expandScriptCard: false,
             codemirrorOptions: {
-                mode: 'text/javascript', // Language mode
-                theme: 'dracula', // Theme
-                lineNumbers: true, // Show line number
-                smartIndent: true, // Smart indent
-                indentUnit: 2, // The smart indent unit is 2 spaces in length
-                foldGutter: true, // Code folding
-                styleActiveLine: true // Display the style of the selected row
+                mode: 'text/x-sql',
+                lineWrapping: true,
+                indentWithTabs: true,
+                smartIndent: true,
+                matchBrackets: true,
+                theme: 'eclipse',
+                lineNumbers: true
             },
             scriptOptions: {
-                mode: 'text/javascript', // Language mode
-                theme: 'dracula', // Theme
-                lineNumbers: true, // Show line number
-                smartIndent: true, // Smart indent
-                indentUnit: 2, // The smart indent unit is 2 spaces in length
-                foldGutter: true, // Code folding
-                styleActiveLine: true // Display the style of the selected row
+                mode: '',
+                indentWithTabs: true,
+                smartIndent: true,
+                lineWrapping: true,
+                matchBrackets: true,
+                autofocus: true,
+                theme: 'eclipse',
+                lineNumbers: true
             }
         }
     },
     created() {
-        this.loadDataset()
-        this.setupCodeMirror()
-        this.loadScriptMode()
+        const interval = setInterval(() => {
+            if (!this.$refs.codeMirror) return
+            this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
+            if (!this.$refs.codeMirrorScript) return
+            this.codeMirrorScript = (this.$refs.codeMirrorScript as any).cminstance as any
+
+            this.loadDataset()
+            this.loadScriptMode()
+
+            clearInterval(interval)
+        }, 200)
     },
     watch: {
         selectedDataset() {
             this.loadDataset()
             this.loadScriptMode()
+        },
+        activeTab() {
+            if (this.activeTab === 1 && this.codeMirror && this.codeMirrorScript) {
+                setTimeout(() => {
+                    this.codeMirror.refresh()
+                    this.codeMirrorScript.refresh()
+                }, 0)
+            }
         }
     },
     validations() {
@@ -137,19 +145,6 @@ export default defineComponent({
         return validationObject
     },
     methods: {
-        setupCodeMirror() {
-            // const interval = setInterval(() => {
-            //     if (!this.$refs.codeMirror || !this.$refs.codeMirrorScript) return
-            //     this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
-            //     this.codeMirrorScript = (this.$refs.codeMirrorScript as any).cminstance as any
-            //     clearInterval(interval)
-            // }, 200)
-            // setTimeout(() => {
-            if (!this.$refs.codeMirror || !this.$refs.codeMirrorScript) return
-            this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
-            this.codeMirrorScript = (this.$refs.codeMirrorScript as any).cminstance as any
-            // }, 250)
-        },
         loadDataset() {
             this.dataset = this.selectedDataset
             this.dataset.query ? '' : (this.dataset.query = '')
@@ -158,14 +153,12 @@ export default defineComponent({
         loadScriptMode() {
             if (this.dataset.queryScriptLanguage) {
                 this.scriptOptions.mode = this.dataset.queryScriptLanguage === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
+                this.codeMirrorScript.setOption('mode', this.dataset.queryScriptLanguage === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy')
             }
         },
         onLanguageChanged(value: string) {
-            const mode = value === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
-            setTimeout(() => {
-                this.setupCodeMirror()
-                this.codeMirrorScript.setOption('mode', mode)
-            }, 250)
+            const scriptMode = value === 'ECMAScript' ? 'text/javascript' : 'text/x-groovy'
+            this.codeMirrorScript.setOption('mode', scriptMode)
             this.$emit('touched')
         }
     }
