@@ -23,7 +23,7 @@ export default defineConfig((command, mode) => {
                 }
             }
         },
-        publicPath: env.VITE_PUBLIC_PATH,
+        base: env.VITE_PUBLIC_PATH,
         build: {
             outDir: './src/main/webapp'
         },
