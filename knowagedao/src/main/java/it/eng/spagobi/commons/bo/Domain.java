@@ -27,6 +27,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 
@@ -37,6 +38,27 @@ import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 public class Domain implements Serializable {
 
 	private static final long serialVersionUID = 3795397248242537831L;
+
+	/**
+	 *
+	 * @param category
+	 * @return
+	 * @deprecated Introduced for compatibility between {@link SbiCategory} and {@link Domain}.
+	 *   All the code referencing this should be changed to use {@link SbiCategory}.
+	 */
+	@Deprecated
+	public static Domain fromCategory(SbiCategory category) {
+		Domain ret = new Domain();
+
+		ret.setValueCd(category.getName());
+		ret.setValueName(category.getName());
+		ret.setDomainCode(category.getType());
+		ret.setDomainName(category.getType());
+		ret.setValueDescription(category.getName());
+		ret.setValueId(category.getId());
+
+		return ret;
+	}
 
 	private Integer valueId;
 

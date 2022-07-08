@@ -52,7 +52,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	private static Logger logger = Logger.getLogger(DomainDAOHibImpl.class);
 
 	@Override
-	public List loadListMetaModelDomainsByRole(Integer roleId) throws SpagoBIRuntimeException {
+	public List<Integer> loadListMetaModelDomainsByRole(Integer roleId) throws SpagoBIRuntimeException {
 
 		Session aSession = null;
 		Transaction tx = null;
@@ -67,7 +67,6 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			Iterator it = hibList.iterator();
 
 			while (it.hasNext()) {
-				// realResult.add(toDomain((SbiDomains) it.next()));
 				Integer categoryId = Integer.getInteger(it.next().toString());
 				realResult.add(categoryId);
 			}

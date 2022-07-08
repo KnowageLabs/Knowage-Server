@@ -17,14 +17,14 @@
  */
 package it.eng.spagobi.commons.dao;
 
+import java.util.List;
+
+import org.hibernate.Session;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.List;
-
-import org.hibernate.Session;
 
 /**
  * Defines the interfaces for all methods needed to operate with a domain.
@@ -60,7 +60,7 @@ public interface IDomainDAO extends ISpagoBIDao {
 
 	public List loadListDomainsByType(String domainType) throws EMFUserError;
 
-	public List loadListMetaModelDomainsByRole(Integer roleId) throws SpagoBIRuntimeException;
+	public List<Integer> loadListMetaModelDomainsByRole(Integer roleId) throws SpagoBIRuntimeException;
 
 	/**
 	 * Returns the domain identified by the input parameter <code>id</code>, storing it in a <code>Domain</code> object.
