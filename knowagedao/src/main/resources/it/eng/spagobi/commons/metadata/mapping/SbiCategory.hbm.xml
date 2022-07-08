@@ -51,7 +51,7 @@
 			<column name="NAME" length="100" />
 		</property>
 		<property name="type" type="string">
-			<column name="TYPE" length="100" />
+			<column name="CATEGORY_TYPE" length="100" />
 		</property>
 	</class>
 </hibernate-mapping>
