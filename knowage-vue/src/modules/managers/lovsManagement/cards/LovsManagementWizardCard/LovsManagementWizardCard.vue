@@ -546,7 +546,7 @@ export default defineComponent({
                 .catch((response: AxiosResponse<any>) => {
                     this.store.setError({
                         title: this.$t('common.toast.' + this.operation + 'Title'),
-                        msg: response
+                        msg: typeof response === 'string' ? response : ''
                     })
                 })
         },
