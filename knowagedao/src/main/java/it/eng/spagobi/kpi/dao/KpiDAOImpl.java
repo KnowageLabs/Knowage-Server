@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -44,6 +45,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Junction;
@@ -797,12 +799,25 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			if (category.getValueId() != null) {
 				cat = (SbiCategory) session.load(SbiCategory.class, category.getValueId());
 			} else if (category.getValueCd() != null && !category.getValueCd().isEmpty()) {
-				cat = (SbiCategory) session.createCriteria(SbiCategory.class).add(Restrictions.eq("name", category.getValueName()))
-						.add(Restrictions.eq("code", category.getValueCd())).uniqueResult();
+
+				String valueName = StringUtils.isNotBlank(category.getValueName()) ? category.getValueName() : category.getValueCd();
+
+				Criteria criteria = session.createCriteria(SbiCategory.class);
+
+				Criterion restrictionOnName = Restrictions.eq("name", valueName);
+				Criterion restrictionOnCode = Restrictions.eq("code", category.getValueCd());
+				Criterion restrictionOnType = Restrictions.eq("type", categoryName);
+
+				Criterion andOfRestrictions = Restrictions.and(Restrictions.and(restrictionOnName, restrictionOnCode), restrictionOnType);
+
+				criteria.add(andOfRestrictions);
+
+				cat = (SbiCategory) criteria.uniqueResult();
+
 				if (cat == null) {
 					cat = new SbiCategory();
 					cat.setCode(category.getValueCd());
-					cat.setName(category.getValueName());
+					cat.setName(StringUtils.isNotBlank(category.getValueName()) ? category.getValueName() : category.getValueCd());
 					cat.setType(categoryName);
 
 					updateSbiCommonInfo4Insert(cat);
