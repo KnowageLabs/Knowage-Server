@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.tools.catalogue.service;
 
-import static it.eng.spagobi.commons.dao.ICategoryDAO.BUSINESS_MODEL_CATEGORY;
+import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,6 +33,7 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.SerializationException;
@@ -131,7 +132,13 @@ public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 		try {
 			// NO CATEGORY IN THE DOMAINS
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
-			List<Domain> dialects = domaindao.loadListDomainsByType(BUSINESS_MODEL_CATEGORY);
+			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+
+			// TODO : Makes sense?
+			List<Domain> dialects = categoryDao.getCategoriesForBusinessModel()
+				.stream()
+				.map(Domain::fromCategory)
+				.collect(toList());
 			if (dialects == null || dialects.size() == 0) {
 				return null;
 			}

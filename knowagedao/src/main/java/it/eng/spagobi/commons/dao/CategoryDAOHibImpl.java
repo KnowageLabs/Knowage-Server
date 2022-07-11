@@ -58,29 +58,32 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 	}
 
 	@Override
-	public SbiCategory getCategory(String type, int id) {
+	public SbiCategory getCategory(int id) {
 
 		Session aSession = null;
 
 		aSession = getSession();
 
+		SbiCategory ret = getCategory(aSession, id);
+
+		return ret;
+	}
+
+	@Override
+	public SbiCategory getCategory(Session aSession, int id) {
 		Criteria criteria = aSession.createCriteria(SbiCategory.class);
 
 		Criterion restrictionOnId = Restrictions.eq("id", id);
-		Criterion restrictionOnType = Restrictions.eq("type", type);
 
-		Criterion andOfRestrictions = Restrictions.and(restrictionOnId, restrictionOnType);
-
-		criteria.add(andOfRestrictions);
+		criteria.add(restrictionOnId);
 
 		SbiCategory ret = null;
 
 		try {
 			ret = (SbiCategory) criteria.uniqueResult();
 		} catch (HibernateException e) {
-			throw new SpagoBIRuntimeException("Expected one category for type " + type + " and id " + id, e);
+			throw new SpagoBIRuntimeException("Expected one category for id " + id, e);
 		}
-
 		return ret;
 	}
 

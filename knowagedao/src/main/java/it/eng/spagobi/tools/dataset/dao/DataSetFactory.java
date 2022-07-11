@@ -491,8 +491,8 @@ public class DataSetFactory {
 			try {
 
 				if (sbiDataSet.getCategory() != null) {
-					ds.setCategoryCd(sbiDataSet.getCategory().getValueCd());
-					ds.setCategoryId(sbiDataSet.getCategory().getValueId());
+					ds.setCategoryCd(sbiDataSet.getCategory().getCode());
+					ds.setCategoryId(sbiDataSet.getCategory().getId());
 				}
 				// ds.setConfiguration(sbiDataSet.getConfiguration());
 				if (sbiDataSet.getId().getDsId() != null)
@@ -1094,8 +1094,8 @@ public class DataSetFactory {
 			try {
 
 				if (sbiDataSet.getCategory() != null) {
-					ds.setCategoryCd(sbiDataSet.getCategory().getValueCd());
-					ds.setCategoryId(sbiDataSet.getCategory().getValueId());
+					ds.setCategoryCd(sbiDataSet.getCategory().getCode());
+					ds.setCategoryId(sbiDataSet.getCategory().getId());
 				}
 				// ds.setConfiguration(sbiDataSet.getConfiguration());
 				if (sbiDataSet.getId().getDsId() != null)

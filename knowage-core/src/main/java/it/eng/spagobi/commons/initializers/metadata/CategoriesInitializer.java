@@ -70,8 +70,9 @@ public class CategoriesInitializer extends SpagoBIInitializer {
 			element.put("code", code);
 			element.put("name", name);
 
-			configurationAsMap.putIfAbsent(type, new ArrayList<Map<String, String>>())
-				.add(element);
+			configurationAsMap.putIfAbsent(type, new ArrayList<Map<String, String>>());
+
+			configurationAsMap.get(type).add(element);
 		}
 	}
 

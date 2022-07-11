@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.tools.catalogue.service;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +28,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
-import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
@@ -47,7 +47,6 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	public static String FILTERS = "Filters";
-	public static String DOMAIN_TYPE = ICategoryDAO.BUSINESS_MODEL_CATEGORY;
 
 	public static Integer START_DEFAULT = 0;
 	public static Integer LIMIT_DEFAULT = 15;
@@ -146,38 +145,37 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 	}
 
 	protected Integer getCategoryIdbyName(String categoryName) {
-		IDomainDAO domaindao;
-		try {
+		ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+		List<Domain> domains = categoryDao.getCategoriesForBusinessModel()
+			.stream()
+			.map(Domain::fromCategory)
+			.collect(toList());
 
-			domaindao = DAOFactory.getDomainDAO();
-			List<Domain> domains = domaindao.loadListDomainsByType(DOMAIN_TYPE);
-			for (Domain domainElement : domains) {
-				if (domainElement.getValueName().equals(categoryName)) {
-					return domainElement.getValueId();
-				}
+		for (Domain domainElement : domains) {
+			if (domainElement.getValueName().equals(categoryName)) {
+				return domainElement.getValueId();
 			}
-		} catch (EMFUserError e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot get Business Model Category Id", e);
 		}
+
 		return null;
 
 	}
 
 	protected List<Integer> getCategoryIdbyContainsName(String categoryName) {
-		IDomainDAO domaindao;
 		List<Integer> categoryIds = new ArrayList<Integer>();
-		try {
 
-			domaindao = DAOFactory.getDomainDAO();
-			List<Domain> domains = domaindao.loadListDomainsByType(DOMAIN_TYPE);
-			for (Domain domainElement : domains) {
-				if (domainElement.getValueName().contains(categoryName)) {
-					categoryIds.add(domainElement.getValueId());
-				}
+		ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+		List<Domain> domains = categoryDao.getCategoriesForBusinessModel()
+			.stream()
+			.map(Domain::fromCategory)
+			.collect(toList());
+
+		for (Domain domainElement : domains) {
+			if (domainElement.getValueName().contains(categoryName)) {
+				categoryIds.add(domainElement.getValueId());
 			}
-		} catch (EMFUserError e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot get Business Model Category Id", e);
 		}
+
 		return categoryIds;
 
 	}

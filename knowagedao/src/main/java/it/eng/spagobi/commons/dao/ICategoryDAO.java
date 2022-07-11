@@ -19,6 +19,8 @@ package it.eng.spagobi.commons.dao;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.dto.SbiCategory;
 
@@ -40,7 +42,9 @@ public interface ICategoryDAO extends ISpagoBIDao {
 
 	List<SbiCategory> getCategories(String type);
 
-	SbiCategory getCategory(String type, int id);
+	SbiCategory getCategory(int id);
+
+	SbiCategory getCategory(Session aSession, int id);
 
 	SbiCategory getCategory(String type, String value);
 
@@ -53,6 +57,14 @@ public interface ICategoryDAO extends ISpagoBIDao {
 	void delete(SbiCategory category) throws EMFUserError;
 
 	// Defaults
+
+	default SbiCategory getCategoryForBusinessModel(String value) {
+		return getCategory(BUSINESS_MODEL_CATEGORY, value);
+	}
+
+	default SbiCategory getCategoryForDataSet(String value) {
+		return getCategory(DATASET_CATEGORY, value);
+	}
 
 	default List<SbiCategory> getCategoriesForBusinessModel() {
 		return getCategories(BUSINESS_MODEL_CATEGORY);

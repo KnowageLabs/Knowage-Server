@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.sdk.utilities;
 
-import static it.eng.spagobi.commons.dao.ICategoryDAO.DATASET_CATEGORY;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -659,7 +657,7 @@ public class SDKObjectsConverter {
 			// sets dataset's category domain
 			if (dataset.getCategory() != null) {
 
-				SbiCategory c = categoryDao.getCategory(DATASET_CATEGORY, dataset.getCategory());
+				SbiCategory c = categoryDao.getCategoryForDataSet(dataset.getCategory());
 
 				Domain category = Optional.of(c)
 					.map(Domain::fromCategory)

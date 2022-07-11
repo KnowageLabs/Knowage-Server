@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
@@ -77,7 +78,7 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	private boolean active = true;
 
-	private SbiDomains category = null;
+	private SbiCategory category = null;
 	private String parameters = null;
 	private String dsMetadata = null;
 	private String type = null;
@@ -342,23 +343,23 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	@JsonIgnore
-	public SbiDomains getCategory() {
+	public SbiCategory getCategory() {
 		return category;
 	}
 
-	public void setCategory(SbiDomains category) {
+	public void setCategory(SbiCategory category) {
 		this.category = category;
 	}
 
 	public Integer getCategoryId() {
 		if (category != null)
-			return category.getValueId();
+			return category.getId();
 		else
 			return null;
 	}
 
 	public void setCategoryId(Integer id) {
-		category = getDomain(id);
+		category = getCategory(id);
 	}
 
 	/**
@@ -628,6 +629,17 @@ public class SbiDataSet extends SbiHibernateModel {
 			}
 		} else
 			return null;
+	}
+
+	private SbiCategory getCategory(Integer id) {
+		if (id != null) {
+			SbiCategory sbiDomain = new SbiCategory();
+			sbiDomain.setId(id);
+
+			return sbiDomain;
+		} else {
+			return null;
+		}
 	}
 
 	public SbiFederationDefinition getFederation() {

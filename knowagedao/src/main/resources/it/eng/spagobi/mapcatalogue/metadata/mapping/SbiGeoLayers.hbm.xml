@@ -94,7 +94,7 @@
 		<property name="category_id" type="integer">
             <column name="GEO_CATEGORY" not-null="false" />
         </property>
-		<many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" update="false" insert="false" fetch="select">
+		<many-to-one name="category" class="it.eng.spagobi.commons.dao.dto.SbiCategory" lazy="false" update="false" insert="false" fetch="select">
             <column name="GEO_CATEGORY" not-null="false" />
         </many-to-one>
 		<filter name="tenantFilter" condition="organization=:tenant" />

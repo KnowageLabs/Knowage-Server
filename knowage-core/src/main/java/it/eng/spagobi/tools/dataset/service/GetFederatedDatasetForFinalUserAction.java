@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.service;
 
-import static it.eng.spagobi.commons.dao.ICategoryDAO.BUSINESS_MODEL_CATEGORY;
+import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +36,6 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
-import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -55,7 +54,6 @@ public class GetFederatedDatasetForFinalUserAction extends AbstractSpagoBIAction
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	public static String FILTERS = "Filters";
-	public static String DOMAIN_TYPE = ICategoryDAO.BUSINESS_MODEL_CATEGORY;
 
 	public static Integer START_DEFAULT = 0;
 	public static Integer LIMIT_DEFAULT = 15;
@@ -118,8 +116,13 @@ public class GetFederatedDatasetForFinalUserAction extends AbstractSpagoBIAction
 		List<Integer> categories = new ArrayList<Integer>();
 		try {
 			// NO CATEGORY IN THE DOMAINS
-			IDomainDAO domaindao = DAOFactory.getDomainDAO();
-			List<Domain> dialects = domaindao.loadListDomainsByType(BUSINESS_MODEL_CATEGORY);
+			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+
+			// TODO : Makes sense?
+			List<Domain> dialects = categoryDao.getCategoriesForBusinessModel()
+				.stream()
+				.map(Domain::fromCategory)
+				.collect(toList());
 			if (dialects == null || dialects.size() == 0) {
 				return null;
 			}

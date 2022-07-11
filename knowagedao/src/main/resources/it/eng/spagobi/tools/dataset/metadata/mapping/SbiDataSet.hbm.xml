@@ -26,7 +26,7 @@
             </key-property>
         </composite-id>
 
-        <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains">
+        <many-to-one name="category" class="it.eng.spagobi.commons.dao.dto.SbiCategory">
             <column name="CATEGORY_ID" not-null="false"/>
         </many-to-one>
          <many-to-one name="transformer" class="it.eng.spagobi.commons.metadata.SbiDomains">
