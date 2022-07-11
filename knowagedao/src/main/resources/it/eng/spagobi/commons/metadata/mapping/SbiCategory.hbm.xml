@@ -3,7 +3,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="it.eng.spagobi.commons.dao.dto.SbiCategory" table="SBI_CATEGORY">
+	<class name="it.eng.spagobi.commons.dao.dto.SbiCategory"
+		table="SBI_CATEGORY">
 		<id name="id" type="integer">
 			<column name="ID" />
 			<generator class="org.hibernate.id.enhanced.TableGenerator">
@@ -12,7 +13,8 @@
 				<param name="initial_value">1</param>
 			</generator>
 		</id>
-		<component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+		<component name="commonInfo" insert="true" update="true"
+			class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 			<property name="userIn" type="string">
 				<column name="USER_IN" length="100" not-null="true" />
 			</property>
@@ -53,5 +55,9 @@
 		<property name="type" type="string">
 			<column name="CATEGORY_TYPE" length="100" />
 		</property>
+		<filter name="tenantFilter" condition="organization=:tenant" />
 	</class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string" />
+	</filter-def>
 </hibernate-mapping>

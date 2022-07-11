@@ -121,230 +121,233 @@
 </template>
 
 <script lang="ts">
-    import { AxiosResponse } from 'axios'
-    import { defineComponent } from 'vue'
-    import { createValidations } from '@/helpers/commons/validationHelper'
-    import useValidate from '@vuelidate/core'
-    import tabViewDescriptor from './KpiDefinitionDetailDescriptor.json'
-    import KpiDefinitionFormulaTab from './KpiDefinitionFormulaTab/KpiDefinitionFormulaTab.vue'
-    import KpiDefinitionCardinalityTab from './KpiDefinitionCardinalityTab/KpiDefinitionCardinalityTab.vue'
-    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-    import KpiDefinitionThresholdTab from './KpiDefinitionThresholdTab/KpiDefinitionThresholdTab.vue'
-    import TabView from 'primevue/tabview'
-    import TabPanel from 'primevue/tabpanel'
-    import Listbox from 'primevue/listbox'
-    import Dialog from 'primevue/dialog'
-    import AutoComplete from 'primevue/autocomplete'
-    import Checkbox from 'primevue/checkbox'
+import { AxiosResponse } from 'axios'
+import { defineComponent } from 'vue'
+import { createValidations } from '@/helpers/commons/validationHelper'
+import useValidate from '@vuelidate/core'
+import tabViewDescriptor from './KpiDefinitionDetailDescriptor.json'
+import KpiDefinitionFormulaTab from './KpiDefinitionFormulaTab/KpiDefinitionFormulaTab.vue'
+import KpiDefinitionCardinalityTab from './KpiDefinitionCardinalityTab/KpiDefinitionCardinalityTab.vue'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import KpiDefinitionThresholdTab from './KpiDefinitionThresholdTab/KpiDefinitionThresholdTab.vue'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
+import Listbox from 'primevue/listbox'
+import Dialog from 'primevue/dialog'
+import AutoComplete from 'primevue/autocomplete'
+import Checkbox from 'primevue/checkbox'
 
-    export default defineComponent({
-        components: { TabView, TabPanel, KnValidationMessages, Listbox, KpiDefinitionThresholdTab, KpiDefinitionFormulaTab, Dialog, AutoComplete, Checkbox, KpiDefinitionCardinalityTab },
-        props: { id: { type: String, required: false }, version: { type: String, required: false }, cloneKpiVersion: { type: Number }, cloneKpiId: { type: Number } },
-        computed: {
-            buttonDisabled(): any {
-                if (this.selectedKpi.threshold) {
-                    if (this.formulaHasErrors === true || !this.selectedKpi.threshold.name) {
-                        return true
-                    }
+export default defineComponent({
+    components: { TabView, TabPanel, KnValidationMessages, Listbox, KpiDefinitionThresholdTab, KpiDefinitionFormulaTab, Dialog, AutoComplete, Checkbox, KpiDefinitionCardinalityTab },
+    props: { id: { type: String, required: false }, version: { type: String, required: false }, cloneKpiVersion: { type: Number }, cloneKpiId: { type: Number } },
+    computed: {
+        buttonDisabled(): any {
+            if (this.selectedKpi.threshold) {
+                if (this.formulaHasErrors === true || !this.selectedKpi.threshold.name) {
+                    return true
                 }
-                return false
             }
-        },
-        emits: ['touched', 'closed', 'kpiCreated', 'kpiUpdated'],
-        data() {
-            return {
-                v$: useValidate() as any,
-                tabViewDescriptor,
-                touched: false,
-                loading: false,
-                isAliasVisible: false,
-                reloadKpi: false,
-                updateMeasureList: false,
-                showSaveDialog: false,
-                aliasToInput: null as string | null,
-                activeTab: 0,
-                previousActiveTab: -1,
-                selectedKpi: {} as any,
-                kpiToSave: {} as any,
-                measureList: [] as any,
-                tresholdList: [] as any,
-                severityOptions: [] as any,
-                thresholdTypeList: [] as any,
-                kpiCategoryList: [] as any,
-                filteredCategories: [] as any,
-                formulaToSave: '',
-                formulaHasErrors: false
-            }
-        },
-        validations() {
-            return {
-                selectedKpi: createValidations('selectedKpi', tabViewDescriptor.validations.selectedKpi)
-            }
-        },
-        async created() {
-            this.loadPersistentData()
-        },
-        watch: {
-            id() {
-                this.loadSelectedKpi()
-                this.activeTab = 0
-            },
-            cloneKpiId() {
-                this.cloneKpiConfirm(this.cloneKpiId, this.cloneKpiVersion)
-            }
-        },
-        methods: {
-            async loadPersistentData() {
-                this.loading = true
-                await this.createGetKpiDataUrl('listMeasure').then((response: AxiosResponse<any>) => {
-                    this.measureList = [...response.data]
-                })
-                await this.createGetKpiDataUrl('listThreshold').then((response: AxiosResponse<any>) => {
-                    this.tresholdList = [...response.data]
-                })
-                await this.createGetTabViewDataUrl('SEVERITY').then((response: AxiosResponse<any>) => {
-                    this.severityOptions = [...response.data]
-                })
-                await this.createGetTabViewDataUrl('THRESHOLD_TYPE').then((response: AxiosResponse<any>) => {
-                    this.thresholdTypeList = [...response.data]
-                })
-                await this.createGetTabViewDataUrl('KPI_KPI_CATEGORY').then((response: AxiosResponse<any>) => {
-                    this.kpiCategoryList = [...response.data]
-                })
-                await this.loadSelectedKpi()
-                this.loading = false
-            },
-
-            createGetTabViewDataUrl(dataType: string) {
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${dataType}`)
-            },
-            createGetKpiDataUrl(dataType: string) {
-                return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${dataType}`)
-            },
-            async loadSelectedKpi() {
-                if (this.id) {
-                    await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.version}/loadKpi`).then((response: AxiosResponse<any>) => {
-                        this.selectedKpi = { ...response.data }
-                        let definitionFormula = JSON.parse(this.selectedKpi.definition)
-                        this.formulaToSave = definitionFormula.formula
-                    })
-                } else {
-                    this.selectedKpi = { ...tabViewDescriptor.emptyKpi }
-                }
-            },
-            onUpdateFormulaToSave(event) {
-                this.formulaToSave = event
-            },
-            setTouched() {
-                this.touched = true
-            },
-            toggleAlias() {
-                this.isAliasVisible = this.isAliasVisible ? false : true
-            },
-            insertAlias(selectedAlias: string) {
-                if (this.activeTab === 0) {
-                    this.aliasToInput = selectedAlias
-                }
-            },
-            ifErrorInFormula(event) {
-                if (event) {
-                    this.activeTab = 0
-                    this.formulaHasErrors = true
-                } else {
-                    this.updateMeasureList = true
-                    this.formulaHasErrors = false
-                }
-            },
-
-            closeTemplateConfirm() {
-                if (!this.touched) {
-                    this.closeTemplate()
-                } else {
-                    this.$confirm.require({
-                        message: this.$t('common.toast.unsavedChangesMessage'),
-                        header: this.$t('common.toast.unsavedChangesHeader'),
-                        icon: 'pi pi-exclamation-triangle',
-                        accept: () => {
-                            this.touched = false
-                            this.closeTemplate()
-                        }
-                    })
-                }
-            },
-            closeTemplate() {
-                this.$router.push('/kpi-definition')
-                this.$emit('closed')
-            },
-
-            cloneKpiConfirm(kpiId, kpiVersion) {
-                this.$confirm.require({
-                    icon: 'pi pi-exclamation-triangle',
-                    message: this.$t('kpi.kpiDefinition.confirmClone'),
-                    header: this.$t(' '),
-                    accept: () => this.cloneKpi(kpiId, kpiVersion)
-                })
-            },
-            async cloneKpi(kpiId, kpiVersion) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/loadKpi`).then((response: AxiosResponse<any>) => {
-                    response.data.id = undefined
-                    response.data.name = this.$t('kpi.kpiDefinition.copyOf') + response.data.name
-
-                    this.selectedKpi = { ...response.data }
-                })
-            },
-            setAutocompleteCategory(event) {
-                setTimeout(() => {
-                    if (!event.query.trim().length) {
-                        this.filteredCategories = [...this.kpiCategoryList] as any[]
-                    } else {
-                        this.filteredCategories = this.kpiCategoryList.filter((category: any) => {
-                            return category.valueCd.toLowerCase().startsWith(event.query.toLowerCase())
-                        })
-                    }
-                }, 250)
-            },
-
-            async saveKpi() {
-                this.showSaveDialog = false
-                this.touched = false
-                this.kpiToSave = { ...this.selectedKpi }
-
-                if (typeof this.kpiToSave.category !== 'object') this.kpiToSave.category = { valueCd: this.kpiToSave.category }
-
-                this.correctColors(this.kpiToSave.threshold.thresholdValues)
-                if (typeof this.kpiToSave.definition === 'object') {
-                    this.kpiToSave.definition.formula = this.formulaToSave
-                    this.kpiToSave.definition = JSON.stringify(this.kpiToSave.definition)
-                }
-                if (typeof this.kpiToSave.cardinality === 'object') {
-                    this.kpiToSave.cardinality = JSON.stringify(this.kpiToSave.cardinality)
-                }
-                await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveKpi', this.kpiToSave)
-                    .then(() => {
-                        this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
-                        this.kpiToSave.id === undefined ? this.$emit('kpiCreated', this.kpiToSave.name) : this.$emit('kpiUpdated')
-                        this.reloadKpi = true
-                        setTimeout(() => {
-                            this.reloadKpi = false
-                        }, 250)
-                    })
-                    .catch((response: AxiosResponse<any>) => {
-                        this.$store.commit('setError', {
-                            title: this.$t('common.error.generic'),
-                            msg: response
-                        })
-                    })
-            },
-
-            correctColors(thresholdValues) {
-                thresholdValues.forEach((value: any) => {
-                    if (!value.color.includes('#')) {
-                        let fixedColor = '#' + value.color
-                        value.color = fixedColor
-                    }
-                })
-            }
+            return false
         }
-    })
+    },
+    emits: ['touched', 'closed', 'kpiCreated', 'kpiUpdated'],
+    data() {
+        return {
+            v$: useValidate() as any,
+            tabViewDescriptor,
+            touched: false,
+            loading: false,
+            isAliasVisible: false,
+            reloadKpi: false,
+            updateMeasureList: false,
+            showSaveDialog: false,
+            aliasToInput: null as string | null,
+            activeTab: 0,
+            previousActiveTab: -1,
+            selectedKpi: {} as any,
+            kpiToSave: {} as any,
+            measureList: [] as any,
+            tresholdList: [] as any,
+            severityOptions: [] as any,
+            thresholdTypeList: [] as any,
+            kpiCategoryList: [] as any,
+            filteredCategories: [] as any,
+            formulaToSave: '',
+            formulaHasErrors: false
+        }
+    },
+    validations() {
+        return {
+            selectedKpi: createValidations('selectedKpi', tabViewDescriptor.validations.selectedKpi)
+        }
+    },
+    async created() {
+        this.loadPersistentData()
+    },
+    watch: {
+        id() {
+            this.loadSelectedKpi()
+            this.activeTab = 0
+        },
+        cloneKpiId() {
+            this.cloneKpiConfirm(this.cloneKpiId, this.cloneKpiVersion)
+        }
+    },
+    methods: {
+        async loadPersistentData() {
+            this.loading = true
+            await this.createGetKpiDataUrl('listMeasure').then((response: AxiosResponse<any>) => {
+                this.measureList = [...response.data]
+            })
+            await this.createGetKpiDataUrl('listThreshold').then((response: AxiosResponse<any>) => {
+                this.tresholdList = [...response.data]
+            })
+            await this.createGetTabViewDataUrl('SEVERITY').then((response: AxiosResponse<any>) => {
+                this.severityOptions = [...response.data]
+            })
+            await this.createGetTabViewDataUrl('THRESHOLD_TYPE').then((response: AxiosResponse<any>) => {
+                this.thresholdTypeList = [...response.data]
+            })
+            await this.createCategories('KPI_KPI_CATEGORY').then((response: AxiosResponse<any>) => {
+                this.kpiCategoryList = [...response.data]
+            })
+            await this.loadSelectedKpi()
+            this.loading = false
+        },
+
+        createGetTabViewDataUrl(dataType: string) {
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${dataType}`)
+        },
+        createCategories(dataType: string) {
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/category/listByCode/${dataType}`)
+        },
+        createGetKpiDataUrl(dataType: string) {
+            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${dataType}`)
+        },
+        async loadSelectedKpi() {
+            if (this.id) {
+                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.version}/loadKpi`).then((response: AxiosResponse<any>) => {
+                    this.selectedKpi = { ...response.data }
+                    let definitionFormula = JSON.parse(this.selectedKpi.definition)
+                    this.formulaToSave = definitionFormula.formula
+                })
+            } else {
+                this.selectedKpi = { ...tabViewDescriptor.emptyKpi }
+            }
+        },
+        onUpdateFormulaToSave(event) {
+            this.formulaToSave = event
+        },
+        setTouched() {
+            this.touched = true
+        },
+        toggleAlias() {
+            this.isAliasVisible = this.isAliasVisible ? false : true
+        },
+        insertAlias(selectedAlias: string) {
+            if (this.activeTab === 0) {
+                this.aliasToInput = selectedAlias
+            }
+        },
+        ifErrorInFormula(event) {
+            if (event) {
+                this.activeTab = 0
+                this.formulaHasErrors = true
+            } else {
+                this.updateMeasureList = true
+                this.formulaHasErrors = false
+            }
+        },
+
+        closeTemplateConfirm() {
+            if (!this.touched) {
+                this.closeTemplate()
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.closeTemplate()
+                    }
+                })
+            }
+        },
+        closeTemplate() {
+            this.$router.push('/kpi-definition')
+            this.$emit('closed')
+        },
+
+        cloneKpiConfirm(kpiId, kpiVersion) {
+            this.$confirm.require({
+                icon: 'pi pi-exclamation-triangle',
+                message: this.$t('kpi.kpiDefinition.confirmClone'),
+                header: this.$t(' '),
+                accept: () => this.cloneKpi(kpiId, kpiVersion)
+            })
+        },
+        async cloneKpi(kpiId, kpiVersion) {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${kpiId}/${kpiVersion}/loadKpi`).then((response: AxiosResponse<any>) => {
+                response.data.id = undefined
+                response.data.name = this.$t('kpi.kpiDefinition.copyOf') + response.data.name
+
+                this.selectedKpi = { ...response.data }
+            })
+        },
+        setAutocompleteCategory(event) {
+            setTimeout(() => {
+                if (!event.query.trim().length) {
+                    this.filteredCategories = [...this.kpiCategoryList] as any[]
+                } else {
+                    this.filteredCategories = this.kpiCategoryList.filter((category: any) => {
+                        return category.valueCd.toLowerCase().startsWith(event.query.toLowerCase())
+                    })
+                }
+            }, 250)
+        },
+
+        async saveKpi() {
+            this.showSaveDialog = false
+            this.touched = false
+            this.kpiToSave = { ...this.selectedKpi }
+
+            if (typeof this.kpiToSave.category !== 'object') this.kpiToSave.category = { valueCd: this.kpiToSave.category }
+
+            this.correctColors(this.kpiToSave.threshold.thresholdValues)
+            if (typeof this.kpiToSave.definition === 'object') {
+                this.kpiToSave.definition.formula = this.formulaToSave
+                this.kpiToSave.definition = JSON.stringify(this.kpiToSave.definition)
+            }
+            if (typeof this.kpiToSave.cardinality === 'object') {
+                this.kpiToSave.cardinality = JSON.stringify(this.kpiToSave.cardinality)
+            }
+            await this.$http
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveKpi', this.kpiToSave)
+                .then(() => {
+                    this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
+                    this.kpiToSave.id === undefined ? this.$emit('kpiCreated', this.kpiToSave.name) : this.$emit('kpiUpdated')
+                    this.reloadKpi = true
+                    setTimeout(() => {
+                        this.reloadKpi = false
+                    }, 250)
+                })
+                .catch((response: AxiosResponse<any>) => {
+                    this.$store.commit('setError', {
+                        title: this.$t('common.error.generic'),
+                        msg: response
+                    })
+                })
+        },
+
+        correctColors(thresholdValues) {
+            thresholdValues.forEach((value: any) => {
+                if (!value.color.includes('#')) {
+                    let fixedColor = '#' + value.color
+                    value.color = fixedColor
+                }
+            })
+        }
+    }
+})
 </script>
