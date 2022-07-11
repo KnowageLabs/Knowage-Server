@@ -1195,7 +1195,7 @@ export default defineComponent({
 }
 
 .drill-up {
-    background-image: url('../../../assets/images/olap/minus.gif');
+    background-image: url('/images/olap/minus.gif');
     background-position: center;
     background-repeat: no-repeat;
     height: 0.8rem;
@@ -1204,7 +1204,7 @@ export default defineComponent({
 }
 
 .drill-down {
-    background-image: url('../../../assets/images/olap/plus.gif');
+    background-image: url('/images/olap/plus.gif');
     background-position: center;
     background-repeat: no-repeat;
     height: 0.8rem;
@@ -1213,7 +1213,7 @@ export default defineComponent({
 }
 
 .drill-up-replace {
-    background-image: url('../../../assets/images/olap/arrow-up.png');
+    background-image: url('/images/olap/arrow-up.png');
     background-position: center;
     background-repeat: no-repeat;
     height: 0.8rem;
@@ -1222,7 +1222,7 @@ export default defineComponent({
 }
 
 .sort-basic {
-    background-image: url('../../../assets/images/olap/noSortRows.png');
+    background-image: url('/images/olap/noSortRows.png');
     background-position: center;
     background-repeat: no-repeat;
     height: 0.8rem;
@@ -1231,7 +1231,7 @@ export default defineComponent({
 }
 
 .sort-asc {
-    background-image: url('../../../assets/images/olap/ASC-rows.png');
+    background-image: url('/images/olap/ASC-rows.png');
     background-position: center;
     background-repeat: no-repeat;
     height: 0.8rem;
@@ -1240,7 +1240,7 @@ export default defineComponent({
 }
 
 .sort-desc {
-    background-image: url('../../../assets/images/olap/DESC-rows.png');
+    background-image: url('/images/olap/DESC-rows.png');
     background-position: center;
     background-repeat: no-repeat;
     height: 0.8rem;
@@ -1249,7 +1249,7 @@ export default defineComponent({
 }
 
 .cell-cross-navigation {
-    background-image: url('../../../assets/images/olap/cross-navigation.png');
+    background-image: url('/images/olap/cross-navigation.png');
     background-position: center;
     background-repeat: no-repeat;
     height: 0.8rem;
@@ -1258,7 +1258,7 @@ export default defineComponent({
 }
 
 .drillthrough {
-    background-image: url('../../../assets/images/olap/ico_search.gif');
+    background-image: url('/images/olap/ico_search.gif');
     background-position: center;
     background-repeat: no-repeat;
     height: 0.8rem;

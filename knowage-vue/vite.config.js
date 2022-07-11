@@ -1,4 +1,5 @@
 import { defineConfig, loadEnv } from 'vite'
+const { resolve } = require('path')
 import vue from '@vitejs/plugin-vue'
 import builtins from 'rollup-plugin-node-builtins'
 
@@ -25,7 +26,20 @@ export default defineConfig((command, mode) => {
         },
         base: env.VITE_PUBLIC_PATH,
         build: {
-            outDir: './src/main/webapp'
+            outDir: './src/main/webapp',
+            rollupOptions: {
+                output: {
+                    assetFileNames: (assetInfo) => {
+                        let extType = assetInfo.name.split('.').at(1)
+                        if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
+                            extType = 'img'
+                        }
+                        return `assets/${extType}/[name]-[hash][extname]`
+                    },
+                    chunkFileNames: 'assets/js/[name]-[hash].js',
+                    entryFileNames: 'assets/js/[name]-[hash].js'
+                }
+            }
         },
         server: {
             https: env.VITE_HOST_HTTPS === 'true',
@@ -85,6 +99,9 @@ export default defineConfig((command, mode) => {
                     changeOrigin: true
                 }
             }
+        },
+        preview: {
+            port: 3000
         }
     }
 })

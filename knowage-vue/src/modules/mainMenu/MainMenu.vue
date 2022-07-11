@@ -106,7 +106,8 @@ export default defineComponent({
             newsDisplay: false,
             licenseDisplay: false,
             selectedCustomMenu: {},
-            hoverTimer: false as any
+            hoverTimer: false as any,
+            publicPath: import.meta.env.VITE_PUBLIC_PATH
         }
     },
     emits: ['update:visibility', 'menuItemSelected'],
@@ -180,7 +181,7 @@ export default defineComponent({
         },
         getProfileImage(user) {
             if (user && user.organizationImageb64) return user.organizationImageb64
-            return import('@/assets/images/commons/logo_knowage.svg')
+            return this.publicPath + '/images/commons/logo_knowage.svg'
         },
         updateNewsAndDownload() {
             for (var idx in this.allowedUserFunctionalities) {

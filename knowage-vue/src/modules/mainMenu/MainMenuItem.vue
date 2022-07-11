@@ -14,7 +14,7 @@
             <Badge v-if="badge > 0" :value="badge" severity="danger"></Badge>
             <span v-if="item.iconCls && item.command != 'languageSelection'" :class="['p-menuitem-icon', item.iconCls]"></span>
             <img v-if="item.custIcon" :src="item.custIcon" />
-            <img v-if="item.iconCls && item.command === 'languageSelection'" :src="import('../../assets/images/flags/' + locale.toLowerCase().substring(3, 5) + '.svg')" />
+            <img v-if="item.iconCls && item.command === 'languageSelection'" :src="publicPath + '/images/flags/' + locale.toLowerCase().substring(3, 5) + '.svg'" />
             <span v-if="!item.iconCls && !item.custIcon" class="p-menuitem-icon fas fa-file"></span>
             <span class="p-menuitem-text">{{ getInternationalizedValue() }}</span>
             <i v-if="item.items" class="pi pi-fw pi-angle-right"></i>
@@ -39,7 +39,8 @@ export default defineComponent({
     },
     data() {
         return {
-            openedLi: false
+            openedLi: false,
+            publicPath: import.meta.env.VITE_PUBLIC_PATH
         }
     },
     methods: {
