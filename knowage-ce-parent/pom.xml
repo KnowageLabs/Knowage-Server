@@ -83,6 +83,8 @@
 		
 		<apache.poi>4.1.2</apache.poi>
 		<resteasy.version>3.6.2.Final</resteasy.version>
+		<ojdbc.version>12.2.0.1</ojdbc.version>
+		<owasp-java-html-sanitizer.version>20220608.1</owasp-java-html-sanitizer.version>
 	</properties>
 
   	<modules>
@@ -338,6 +340,12 @@
 	<dependencyManagement>
 
 		<dependencies>
+
+			<dependency>
+				<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+				<artifactId>owasp-java-html-sanitizer</artifactId>
+				<version>${owasp-java-html-sanitizer.version}</version>
+			</dependency>
 
 		</dependencies>
 
