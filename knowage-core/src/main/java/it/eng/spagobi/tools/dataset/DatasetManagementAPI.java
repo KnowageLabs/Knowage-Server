@@ -542,7 +542,12 @@ public class DatasetManagementAPI {
 
 				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
 				List<RoleMetaModelCategory> resp = new ArrayList<>();
-				List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+
+				List<Domain> array = categoryDao.getCategoriesForDataset()
+					.stream()
+					.map(Domain::fromCategory)
+					.collect(toList());
+
 				for (RoleMetaModelCategory r : aRoleCategories) {
 					for (Domain dom : array) {
 						if (r.getCategoryId().equals(dom.getValueId())) {
