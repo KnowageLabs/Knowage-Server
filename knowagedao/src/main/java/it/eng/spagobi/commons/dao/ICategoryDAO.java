@@ -46,7 +46,7 @@ public interface ICategoryDAO extends ISpagoBIDao {
 
 	SbiCategory getCategory(Session aSession, int id);
 
-	SbiCategory getCategory(String type, String value);
+	SbiCategory getCategory(String type, String name);
 
 	// Commands
 
@@ -58,12 +58,12 @@ public interface ICategoryDAO extends ISpagoBIDao {
 
 	// Defaults
 
-	default SbiCategory getCategoryForBusinessModel(String value) {
-		return getCategory(BUSINESS_MODEL_CATEGORY, value);
+	default SbiCategory getCategoryForBusinessModel(String name) {
+		return getCategory(BUSINESS_MODEL_CATEGORY, name);
 	}
 
-	default SbiCategory getCategoryForDataSet(String value) {
-		return getCategory(DATASET_CATEGORY, value);
+	default SbiCategory getCategoryForDataSet(String name) {
+		return getCategory(DATASET_CATEGORY, name);
 	}
 
 	default List<SbiCategory> getCategoriesForBusinessModel() {
@@ -80,6 +80,10 @@ public interface ICategoryDAO extends ISpagoBIDao {
 
 	default List<SbiCategory> getCategoriesForKpiTarget() {
 		return getCategories(KPI_TARGET_CATEGORY);
+	}
+
+	default SbiCategory getCategoryForGeoReport(String name) {
+		return getCategory(GEO_CATEGORY, name);
 	}
 
 	default List<SbiCategory> getCategoriesForGeoReport() {

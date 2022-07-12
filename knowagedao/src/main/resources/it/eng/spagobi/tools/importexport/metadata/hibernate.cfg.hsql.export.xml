@@ -17,6 +17,7 @@
 		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiEvents.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiEventsLog.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiDomains.hbm.xml" />
+		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiCategory.hbm.xml" />
 
 		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiExtRoles.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiMenuRole.hbm.xml" />
