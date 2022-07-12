@@ -207,12 +207,16 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 
 	private SbiCategory create(Session aSession, SbiCategory category) {
 
+		updateSbiCommonInfo4Insert(category);
+
 		aSession.persist(category);
 
 		return category;
 	}
 
 	private SbiCategory update(Session aSession, SbiCategory category) {
+
+		updateSbiCommonInfo4Update(category);
 
 		aSession.update(category);
 

@@ -15,6 +15,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
+import it.eng.spagobi.commons.dao.ITenantsDAO;
 import it.eng.spagobi.commons.dao.dto.SbiCategory;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.tenant.Tenant;
@@ -27,6 +28,8 @@ public class CategoriesInitializer extends SpagoBIInitializer {
 
 	private SourceBean configuration = null;
 
+	private final List<SbiTenant> tenants = new ArrayList<>();
+
 	private final Map<String, List<Map<String, String>>> configurationAsMap = new LinkedHashMap<>();
 
 	public CategoriesInitializer() {
@@ -34,15 +37,25 @@ public class CategoriesInitializer extends SpagoBIInitializer {
 		configurationFileName = "it/eng/spagobi/commons/initializers/metadata/config/categories.xml";
 	}
 
+	/**
+	 * @return the tenants
+	 */
+	public List<SbiTenant> getTenants() {
+		return tenants;
+	}
+
 	@Override
 	public void init(SourceBean config, Session hibernateSession) {
 
-		List<SbiTenant> allTenants = DAOFactory.getTenantsDAO().loadAllTenants();
+		if (tenants.isEmpty()) {
+			ITenantsDAO tenantsDAO = DAOFactory.getTenantsDAO();
+			tenants.addAll(tenantsDAO.loadAllTenants());
+		}
 
 		try {
 			readConfiguration();
 
-			for (SbiTenant sbiTenant : allTenants) {
+			for (SbiTenant sbiTenant : tenants) {
 				initTenant(sbiTenant);
 			}
 
