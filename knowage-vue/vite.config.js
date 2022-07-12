@@ -27,6 +27,7 @@ export default defineConfig((command, mode) => {
         base: env.VITE_PUBLIC_PATH,
         build: {
             outDir: './src/main/webapp',
+            sourcemap: true,
             rollupOptions: {
                 output: {
                     chunkFileNames: 'assets/js/[name]-[hash].js',
