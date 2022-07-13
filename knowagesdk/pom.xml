@@ -129,7 +129,6 @@
 						<configuration>
 							<excludes>
 								<exclude>**/*.css</exclude>
-								<exclude>**/cometd/*.js</exclude>
 							</excludes>
 							<aggregations>
 								<aggregation>

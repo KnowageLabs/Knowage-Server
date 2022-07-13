@@ -104,18 +104,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/functionsCatalog/functionsCatalog.js")%>"></script>
 
 <!-- Codemirror  -->
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.css")%>">
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/theme/eclipse.css")%>">  
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.js")%>"></script>  
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/ui-codemirror.js")%>"></script> 
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/lib/codemirror.css")%>">
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/theme/eclipse.css")%>">  
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/lib/codemirror.js")%>"></script>  
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/angular-ui-codemirror/src/")%>"></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/mathematicaModified.js")%>"></script>  
-<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.css")%>" />
-<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.js")%>"></script>
-<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/hint/sql-hint.js")%>"></script>
-<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/python/python.js")%>"></script>
-<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/r/r.js")%>"></script>
-<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js")%>"></script>
-<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/display/autorefresh.js")%>"></script>
+<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/hint/show-hint.css")%>" />
+<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/hint/show-hint.js")%>"></script>
+<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/hint/sql-hint.js")%>"></script>
+<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/mode/python/python.js")%>"></script>
+<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/mode/r/r.js")%>"></script>
+<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/selection/mark-selection.js")%>"></script>
+<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/display/autorefresh.js")%>"></script>
 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/ng-wysiwyg/dist/wysiwyg.min.js")%>"></script>	
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "node_modules/ng-wysiwyg/dist/editor.min.css")%>"> 

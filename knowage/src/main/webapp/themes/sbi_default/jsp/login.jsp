@@ -277,18 +277,7 @@
 				<div class="version"><span>Version:</span> <%=it.eng.knowage.wapp.Version.getVersionForDatabase()%></div>
 			</div><!-- /container -->
 		</div>
- 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/jquery-1.11.3/jquery-1.11.3.min.js")%>"></script>
- 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/bootstrap.min.js")%>"></script>
+ 		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/jquery/dist/jquery.min.js")%>"></script>
 	
-		<script>
-			$(document).ready(function(){
-				// Select all elements with data-toggle="tooltips" in the document
-				$('[data-toggle="tooltip"]').tooltip(); 
-				
-				// Select a specified element
-				$('#myTooltip').tooltip();
-			});
-		</script>
-		
 	</body>
 </html>

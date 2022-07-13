@@ -168,18 +168,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          <spagobi:error/>
       </div>
       <!-- /container -->
-      <!-- Include all compiled plugins (below), or include individual files as needed -->
-      <script src="<%=urlBuilder.getResourceLink(request, "js/lib/jquery-1.11.3/jquery-1.11.3.min.js")%>"></script>
-      <script src="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/bootstrap.min.js")%>"></script>
-      <script>
-         $(document).ready(function(){
-            // Select all elements with data-toggle="tooltips" in the document
-         $('[data-toggle="tooltip"]').tooltip(); 
-         
-         // Select a specified element
-         $('#myTooltip').tooltip();
-         });
-      </script>		
       <!-- END NEW FORM -->
    </body>
 </html>

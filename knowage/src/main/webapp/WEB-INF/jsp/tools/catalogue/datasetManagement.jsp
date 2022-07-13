@@ -77,26 +77,26 @@ div.lower i  {
 		</script>
 		
 		<!-- Codemirror -->
-		<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.css")%>">
-		<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/theme/eclipse.css")%>">  
-		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.js")%>"></script>  
-		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/ui-codemirror.js")%>"></script> 
-		<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.css")%>" />
-		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.js")%>"></script>
-		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/hint/sql-hint.js")%>"></script>
-		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/javascript/javascript.js")%>"></script>
-		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/groovy/groovy.js")%>"></script>
-		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/sql/sql.js")%>"></script>
-		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/sparql/sparql.js")%>"></script>
-		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js")%>"></script>
-		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/display/autorefresh.js")%>"></script>
+		<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/lib/codemirror.css")%>">
+		<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/theme/eclipse.css")%>">  
+		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/lib/codemirror.js")%>"></script>  
+		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/angular-ui-codemirror/src/ui-codemirror.js")%>"></script> 
+		<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/hint/show-hint.css")%>" />
+		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/hint/show-hint.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/hint/sql-hint.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/mode/javascript/javascript.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/mode/groovy/groovy.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/mode/sql/sql.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/mode/sparql/sparql.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/selection/mark-selection.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/display/autorefresh.js")%>"></script>
 		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/mode/python/python.js")%>"></script>
 		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/mode/r/r.js")%>"></script>
 		
 		<!-- CRON for Dataset Scheduling -->
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/prettyCron/prettycron.js")%>"></script>
 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/prettyCron/later.js")%>"></script> 	
-		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/prettyCron/moment-with-locales.js")%>"></script>
+		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/moment/min/moment-with-locales.min.js")%>"></script>
 
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		
