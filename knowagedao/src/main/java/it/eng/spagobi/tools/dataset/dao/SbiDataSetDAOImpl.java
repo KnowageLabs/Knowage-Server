@@ -465,7 +465,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 					} else {
 						List<String> collect = categoryList.stream().map(e -> e.getValueCd()).collect(Collectors.toList());
 						cr.createAlias("category", "c");
-						cr.add(Restrictions.in("c.valueCd", collect));
+						cr.add(Restrictions.in("c.code", collect));
 					}
 				} else {
 					logger.debug("No categories for the user so we take just it's own datasets");
