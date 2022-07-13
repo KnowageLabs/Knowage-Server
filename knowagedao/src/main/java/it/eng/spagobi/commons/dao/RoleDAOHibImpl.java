@@ -1433,7 +1433,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				Criteria c = session.createCriteria(SbiExtRoles.class);
 				c.add(Restrictions.in("name", roles));
 				c.createAlias("sbiMetaModelCategories", "_sbiMetaModelCategories");
-				c.setProjection(Property.forName("_sbiMetaModelCategories.valueId"));
+				c.setProjection(Property.forName("_sbiMetaModelCategories.id"));
 				return c.list();
 			}
 		});
