@@ -28,56 +28,48 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-/**
- * @author Andrea Gioia (andrea.gioia@eng.it)
- */
-public class JDBCRedShiftDataProxy extends JDBCDataProxy {
+public class JDBCPostgreSQLDataProxy extends JDBCDataProxy {
 
-	IDataSource dataSource;
-	String statement;
-	String schema;
-	int fetchSize;
-	int offset;
+	private static transient Logger logger = Logger.getLogger(JDBCPostgreSQLDataProxy.class);
 
-	private static transient Logger logger = Logger.getLogger(JDBCRedShiftDataProxy.class);
+	private String statement;
 
-	public JDBCRedShiftDataProxy(int offsetParam, int fetchSizeParam) {
+	@Override
+	public String getStatement() {
+		return statement;
+	}
+
+	@Override
+	public void setStatement(String statement) {
+		this.statement = statement;
+	}
+
+	public JDBCPostgreSQLDataProxy(int offsetParam, int fetchSizeParam) {
 		this.setCalculateResultNumberOnLoad(true);
 		this.offset = offsetParam;
 		this.fetchSize = fetchSizeParam;
 	}
 
-	public JDBCRedShiftDataProxy() {
+	public JDBCPostgreSQLDataProxy() {
 		this.setCalculateResultNumberOnLoad(true);
 	}
 
-	public JDBCRedShiftDataProxy(IDataSource dataSource, String statement, int offsetParam, int fetchSizeParam) {
+	public JDBCPostgreSQLDataProxy(IDataSource dataSource, String statement, int offsetParam, int fetchSizeParam) {
 		this(offsetParam, fetchSizeParam);
 		setDataSource(dataSource);
 		setStatement(statement);
 	}
 
-	public JDBCRedShiftDataProxy(IDataSource dataSource, int offsetParam, int fetchSizeParam) {
+	public JDBCPostgreSQLDataProxy(IDataSource dataSource, int offsetParam, int fetchSizeParam) {
 		this(offsetParam, fetchSizeParam);
 		setDataSource(dataSource);
 		setStatement(statement);
 	}
 
-	public JDBCRedShiftDataProxy(IDataSource dataSource) {
+	public JDBCPostgreSQLDataProxy(IDataSource dataSource) {
 		setDataSource(dataSource);
-	}
-
-	@Override
-	public String getSchema() {
-		return schema;
-	}
-
-	@Override
-	public void setSchema(String schema) {
-		this.schema = schema;
 	}
 
 	@Override
@@ -109,12 +101,8 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection", t);
 			}
-			String dialect = dataSource.getHibDialectClass();
-			Assert.assertNotNull(dialect, "Database dialect cannot be null");
 			try {
-
 				stmt = connection.createStatement();
-
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
 			}
@@ -124,10 +112,9 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 				if (getMaxResults() > 0) {
 					stmt.setMaxRows(getMaxResults());
 				}
-				sqlQuery = getStatement();
+				sqlQuery = getFinalStatement();
 				logger.info("Executing query " + sqlQuery + " ...");
 				resultSet = stmt.executeQuery(sqlQuery);
-
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement: " + sqlQuery, t);
 			}
@@ -144,16 +131,8 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 					dataReader.setCalculateResultNumberEnabled(false);
 
 				} catch (Exception t) {
-					logger.debug("KO Calculation of result set total number using inlineview", t);
-					try {
-						logger.debug("Loading data using scrollable resultset tecnique");
-						resultNumber = getResultNumber(resultSet);
-						logger.debug("OK data loaded using scrollable resultset tecnique : resultNumber = " + resultNumber);
-						dataReader.setCalculateResultNumberEnabled(false);
-					} catch (SQLException e) {
-						logger.debug("KO data loaded using scrollable resultset tecnique", e);
-						dataReader.setCalculateResultNumberEnabled(true);
-					}
+					logger.error("KO Calculation of result set total number using inlineview", t);
+					throw new SpagoBIRuntimeException("An error occurred while getting total result number: " + sqlQuery, t);
 				}
 			} else {
 				logger.debug("Calculation of result set total number is NOT enabled");
@@ -192,18 +171,9 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 
 		ResultSet rs = null;
 
-		String statement = getStatement();
-		// if db is SQL server the query nees to be modified in case it contains ORDER BY clause
-
-		String dialect = dataSource.getHibDialectClass();
-		logger.debug("Dialect is " + dialect);
-
 		try {
-			String tableAlias = "";
-			if (!dialect.toLowerCase().contains("orient")) {
-				tableAlias = "temptable";
-			}
-			String sqlQuery = "SELECT COUNT(*) FROM (" + getOldStatement() + ") " + tableAlias;
+			String tableAlias = "temptable";
+			String sqlQuery = "SELECT COUNT(*) FROM (" + getStatement() + ") " + tableAlias;
 			logger.info("Executing query " + sqlQuery + " ...");
 			stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 			rs = stmt.executeQuery(sqlQuery);
@@ -218,63 +188,6 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 		return resultNumber;
 	}
 
-	private String modifySQLServerQuery(String statement) {
-		logger.debug("IN");
-		int selectIndex = statement.toUpperCase().indexOf("SELECT");
-		String noSelect = statement.substring(selectIndex + 6);
-		logger.debug("No Select Query " + noSelect);
-		// remove spaces
-		noSelect = noSelect.trim();
-		logger.debug("No Select trimmed query " + noSelect);
-
-		int distinctIndex = noSelect.toUpperCase().indexOf("DISTINCT ");
-		boolean distinct = false;
-		if (distinctIndex == 0) {
-			logger.debug("Remove distinct clause");
-			distinct = true;
-			noSelect = noSelect.substring(distinctIndex + 8);
-			noSelect = noSelect.trim();
-			logger.debug("No dstinct trimmetd query " + noSelect);
-		}
-
-		// remove also distinct if present
-		String prefix = "";
-		if (distinct) {
-			prefix = "select distinct TOP(100) PERCENT ";
-		} else {
-			prefix = "select TOP(100) PERCENT ";
-
-		}
-		statement = prefix + noSelect;
-		logger.debug("Statement for SQL SERVER " + statement);
-		return statement;
-	}
-
-	@Override
-	protected int getResultNumber(ResultSet resultSet) throws SQLException {
-		logger.debug("IN");
-
-		int rowcount = 0;
-		if (resultSet.last()) {
-			rowcount = resultSet.getRow();
-			resultSet.beforeFirst(); // not rs.first() because the rs.next()
-			// below will move on, missing the first
-			// element
-		}
-
-		return rowcount;
-	}
-
-	@Override
-	public IDataSource getDataSource() {
-		return dataSource;
-	}
-
-	@Override
-	public void setDataSource(IDataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
 	@Override
 	public ResultSet getData(IDataReader dataReader, Object... resources) {
 		logger.debug("IN");
@@ -284,7 +197,7 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 			if (getMaxResults() > 0) {
 				stmt.setMaxRows(getMaxResults());
 			}
-			String sqlQuery = getStatement();
+			String sqlQuery = getFinalStatement();
 			logger.info("Executing query " + sqlQuery + " ...");
 			resultSet = stmt.executeQuery(sqlQuery);
 			return resultSet;
@@ -305,8 +218,7 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 		return true;
 	}
 
-	@Override
-	public String getStatement() {
+	private String getFinalStatement() {
 
 		if (fetchSize == -1) {
 			if (!this.statement.isEmpty()) {
@@ -315,43 +227,23 @@ public class JDBCRedShiftDataProxy extends JDBCDataProxy {
 			}
 		}
 
-		String newStatement = "";
+		StringBuilder newStatement = new StringBuilder();
 		if (!this.statement.isEmpty()) {
 			this.statement = removeLastSemicolon(this.statement);
 
-			String preQuery = "SELECT * FROM (";
-			newStatement = preQuery.concat(this.statement).concat(") OFFSET " + offset + " LIMIT " + fetchSize);
+			newStatement.append("SELECT * FROM (").append(this.statement).append(") t");
+
+			if (offset > 0) {
+				newStatement.append(" OFFSET " + offset);
+			}
+
+			if (fetchSize > 0) {
+				newStatement.append(" FETCH NEXT " + fetchSize + " ROWS ONLY");
+			}
+
 		}
 
-		return newStatement;
+		return newStatement.toString();
 	}
 
-	public String getOldStatement() {
-		return statement;
-	}
-
-	@Override
-	public void setStatement(String statement) {
-		this.statement = statement;
-	}
-
-	@Override
-	public int getFetchSize() {
-		return fetchSize;
-	}
-
-	@Override
-	public void setFetchSize(int fetchSize) {
-		this.fetchSize = fetchSize;
-	}
-
-	@Override
-	public int getOffset() {
-		return offset;
-	}
-
-	@Override
-	public void setOffset(int offset) {
-		this.offset = offset;
-	}
 }

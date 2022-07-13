@@ -309,7 +309,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		this.dataSource = dataSource;
 	}
 
-	private void releaseResources(Connection connection, Statement statement, ResultSet resultSet) {
+	protected void releaseResources(Connection connection, Statement statement, ResultSet resultSet) {
 
 		logger.debug("IN");
 

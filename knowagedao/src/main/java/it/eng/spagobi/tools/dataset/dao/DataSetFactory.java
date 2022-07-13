@@ -60,6 +60,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCPostgreSQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCRedShiftDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCSpannerDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCSynapseDataSet;
@@ -551,7 +552,6 @@ public class DataSetFactory {
 				throw new SpagoBIRuntimeException("Error while defining dataset configuration.", e);
 			}
 
-
 			managePersistedDataset(ds);
 		}
 		logger.debug("OUT");
@@ -827,6 +827,8 @@ public class DataSetFactory {
 				ds = new JDBCSynapseDataSet();
 			} else if (dialectToLowerCase.contains("Spanner")) {
 				ds = new JDBCSpannerDataSet();
+			} else if (dialectToLowerCase.contains("postgres")) {
+				ds = new JDBCPostgreSQLDataSet();
 			}
 		}
 		return (ds != null) ? ds : new JDBCDataSet();
