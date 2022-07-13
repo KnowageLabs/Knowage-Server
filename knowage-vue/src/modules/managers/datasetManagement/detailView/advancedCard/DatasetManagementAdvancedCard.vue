@@ -109,7 +109,7 @@
                         <span>{{ $t('managers.datasetManagement.isScheduled') }}</span>
                     </template>
                 </Toolbar>
-                <DatasetScheduler v-if="dataset.isPersisted && dataset.isScheduled" :selectedDataset="dataset" :schedulingData="schedulingData" />
+                <DatasetScheduler v-if="isSchedulerVisible" :selectedDataset="dataset" :schedulingData="schedulingData" />
             </template>
         </Card>
     </div>
@@ -125,6 +125,7 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import InputSwitch from 'primevue/inputswitch'
+import { mapState } from 'vuex'
 
 export default defineComponent({
     components: { Card, InputSwitch, Checkbox, KnValidationMessages, DatasetScheduler },
@@ -134,11 +135,17 @@ export default defineComponent({
         schedulingData: { type: Object as any }
     },
     computed: {
+        ...mapState({
+            user: 'user'
+        }),
         disablePersist() {
             if (this.dataset['pars'] && this.dataset['pars'].length > 0) {
                 return true
             }
             return false
+        },
+        isSchedulerVisible(): Boolean {
+            return this.user.functionalities.includes('SchedulingDatasetManagement') && this.dataset.isPersisted && this.dataset.isScheduled
         }
     },
     emits: ['touched'],
