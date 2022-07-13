@@ -89,11 +89,9 @@
 				requiredFunctionality="Calendar"
 				to="/calendar-management" />
 			<ITEM id="4011" label="menu.FunctionsCatalog"
-				toBeLicensed="KnowagePA"
 				requiredFunctionality="FunctionsCatalogManagement"
 				to="/functions-catalog" />
 			<ITEM id="4012" label="menu.WidgetGalleryManagement"
-				toBeLicensed="KnowageSI"
 				requiredFunctionality="WidgetGalleryManagement"
 				to="/gallery-management" />
 		</GROUP_ITEM>
