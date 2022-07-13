@@ -103,13 +103,13 @@
                         <KnValidationMessages class="p-mt-1" :vComp="v$.dataset.persistTableName" :additionalTranslateParams="{ fieldName: $t('managers.datasetManagement.persistTableName') }" />
                     </div>
                 </form>
-                <Toolbar class="kn-toolbar kn-toolbar--default p-mt-3" v-if="dataset.isPersisted">
+                <Toolbar class="kn-toolbar kn-toolbar--default p-mt-3" v-if="isAbleToSeeIsScheduledToolbar">
                     <template #start>
                         <InputSwitch v-model="dataset.isScheduled" class="p-mr-2" @change="$emit('touched')" />
                         <span>{{ $t('managers.datasetManagement.isScheduled') }}</span>
                     </template>
                 </Toolbar>
-                <DatasetScheduler v-if="isSchedulerVisible" :selectedDataset="dataset" :schedulingData="schedulingData" />
+                <DatasetScheduler v-if="isAbleToSeeDatasetScheduler" :selectedDataset="dataset" :schedulingData="schedulingData" />
             </template>
         </Card>
     </div>
@@ -144,7 +144,10 @@ export default defineComponent({
             }
             return false
         },
-        isSchedulerVisible(): Boolean {
+        isAbleToSeeIsScheduledToolbar(): Boolean {
+            return this.user.functionalities.includes('SchedulingDatasetManagement') && this.dataset.isPersisted
+        },
+        isAbleToSeeDatasetScheduler(): Boolean {
             return this.user.functionalities.includes('SchedulingDatasetManagement') && this.dataset.isPersisted && this.dataset.isScheduled
         }
     },
