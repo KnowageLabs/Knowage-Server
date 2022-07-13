@@ -63,6 +63,9 @@ public class JDBCDatasetFactory {
 		case BIGQUERY:
 			dataSet = new JDBCBigQueryDataSet();
 			break;
+		case POSTGRESQL:
+			dataSet = new JDBCPostgreSQLDataSet();
+			break;
 		default:
 			dataSet = new JDBCDataSet();
 		}

@@ -60,6 +60,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCPostgreSQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCRedShiftDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCVerticaDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
@@ -448,8 +449,8 @@ public class DataSetFactory {
 				if (userProfile != null)
 					dataSourceDao.setUserProfile(userProfile);
 
-				/* WORKAROUND : in the past the datasource attribute was
-				 * dataSource and not dataSourceFlat.
+				/*
+				 * WORKAROUND : in the past the datasource attribute was dataSource and not dataSourceFlat.
 				 */
 				String dataSourceName = null;
 				if (jsonConf.has(DataSetConstants.DATA_SOURCE)) {
@@ -548,7 +549,6 @@ public class DataSetFactory {
 			} catch (Exception e) {
 				throw new SpagoBIRuntimeException("Error while defining dataset configuration.", e);
 			}
-
 
 			managePersistedDataset(ds);
 		}
@@ -821,6 +821,8 @@ public class DataSetFactory {
 				ds = new JDBCRedShiftDataSet();
 			} else if (dialectToLowerCase.contains("BigQuery")) {
 				ds = new JDBCBigQueryDataSet();
+			} else if (dialectToLowerCase.contains("postgres")) {
+				ds = new JDBCPostgreSQLDataSet();
 			}
 		}
 		return (ds != null) ? ds : new JDBCDataSet();
