@@ -55,8 +55,10 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -802,13 +804,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				}
 			}
 
-			SbiDomains category = null;
+			SbiCategory category = null;
 			if (dataSet.getCategoryId() != null) {
-				Criterion aCriterion = Expression.eq("valueId", dataSet.getCategoryId());
-				Criteria criteria = session.createCriteria(SbiDomains.class);
-				criteria.add(aCriterion);
+				ICategoryDAO categoryDAO = DAOFactory.getCategoryDAO();
 
-				category = (SbiDomains) criteria.uniqueResult();
+				category = categoryDAO.getCategory(session, dataSet.getCategoryId());
 
 				if (category == null) {
 					throw new SpagoBIDAOException("The Domain with value_id= " + dataSet.getCategoryId() + " does not exist");
@@ -2329,12 +2329,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					}
 				}
 
-				SbiDomains category = null;
+				SbiCategory category = null;
 				if (dataSet.getCategoryId() != null) {
-					Criterion aCriterion = Expression.eq("valueId", dataSet.getCategoryId());
-					Criteria criteria = session.createCriteria(SbiDomains.class);
-					criteria.add(aCriterion);
-					category = (SbiDomains) criteria.uniqueResult();
+					ICategoryDAO categoryDAO = DAOFactory.getCategoryDAO();
+					category = categoryDAO.getCategory(session, dataSet.getCategoryId());
 					if (category == null) {
 						throw new SpagoBIDAOException("The Domain with value_id= " + dataSet.getCategoryId() + " does not exist");
 					}
@@ -2664,7 +2662,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					String roleName = itRoles.next();
 					Role role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
-					List<Domain> categories = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+					ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+					List<Domain> categories = categoryDao.getCategoriesForDataset()
+						.stream()
+						.map(Domain::fromCategory)
+						.collect(toList());
 					for (RoleMetaModelCategory r : ds) {
 						Iterator itCategories = categories.iterator();
 						while (itCategories.hasNext()) {

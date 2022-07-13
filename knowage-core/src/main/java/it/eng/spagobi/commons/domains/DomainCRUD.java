@@ -17,6 +17,14 @@
  */
 package it.eng.spagobi.commons.domains;
 
+import static it.eng.spagobi.commons.dao.ICategoryDAO.BUSINESS_MODEL_CATEGORY;
+import static it.eng.spagobi.commons.dao.ICategoryDAO.DATASET_CATEGORY;
+import static it.eng.spagobi.commons.dao.ICategoryDAO.GEO_CATEGORY;
+import static it.eng.spagobi.commons.dao.ICategoryDAO.KPI_CATEGORY;
+import static it.eng.spagobi.commons.dao.ICategoryDAO.KPI_MEASURE_CATEGORY;
+import static it.eng.spagobi.commons.dao.ICategoryDAO.KPI_TARGET_CATEGORY;
+import static java.util.stream.Collectors.toList;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +49,7 @@ import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.DomainJSONSerializer;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -64,7 +73,6 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 	@Path("/listValueDescriptionByType")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getListDomainsByType(@Context HttpServletRequest req) {
-		IDomainDAO domaindao = null;
 		List<Domain> domains = null;
 
 		JSONArray domainsJSONArray = new JSONArray();
@@ -75,15 +83,53 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 
 		String result = null;
 		try {
-			domaindao = DAOFactory.getDomainDAO();
-			domains = domaindao.loadListDomainsByType(type);
 
-			if (type.equals("DIALECT_HIB")) {
-				filterDataSourceDomains(domains);
+			ICategoryDAO categoryDAO = DAOFactory.getCategoryDAO();
+
+			// TODO : Following IFs are here for retrocompatibility. See /3.0/category
+			if (BUSINESS_MODEL_CATEGORY.equals(type)) {
+				domains = categoryDAO.getCategories(BUSINESS_MODEL_CATEGORY)
+					.stream()
+					.map(Domain::fromCategory)
+					.collect(toList());
+			} else if (DATASET_CATEGORY.equals(type) || "CATEGORY_TYPE".equals(type)) {
+				domains = categoryDAO.getCategories(DATASET_CATEGORY)
+						.stream()
+						.map(Domain::fromCategory)
+						.collect(toList());
+			} else if (GEO_CATEGORY.equals(type)) {
+				domains = categoryDAO.getCategories(GEO_CATEGORY)
+						.stream()
+						.map(Domain::fromCategory)
+						.collect(toList());
+			} else if (KPI_CATEGORY.equals(type)) {
+				domains = categoryDAO.getCategories(KPI_CATEGORY)
+						.stream()
+						.map(Domain::fromCategory)
+						.collect(toList());
+			} else if (KPI_MEASURE_CATEGORY.equals(type)) {
+				domains = categoryDAO.getCategories(KPI_MEASURE_CATEGORY)
+						.stream()
+						.map(Domain::fromCategory)
+						.collect(toList());
+			} else if (KPI_TARGET_CATEGORY.equals(type)) {
+				domains = categoryDAO.getCategories(KPI_TARGET_CATEGORY)
+						.stream()
+						.map(Domain::fromCategory)
+						.collect(toList());
+			} else {
+
+				IDomainDAO domaindao = DAOFactory.getDomainDAO();
+				domains = domaindao.loadListDomainsByType(type);
+
+				if (type.equals("DIALECT_HIB")) {
+					filterDataSourceDomains(domains);
+				}
+				if (type.equals("DATA_SET_TYPE")) {
+					filterDataSetDomains(domains);
+				}
 			}
-			if (type.equals("DATA_SET_TYPE")) {
-				filterDataSetDomains(domains);
-			}
+
 			domainsJSONArray = translate(domains, getLocale(req));
 			domainsJSONObject.put("domains", domainsJSONArray);
 

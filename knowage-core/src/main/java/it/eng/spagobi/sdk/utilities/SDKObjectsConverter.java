@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.activation.DataHandler;
 
@@ -45,7 +46,9 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.container.ObjectUtils;
@@ -643,16 +646,23 @@ public class SDKObjectsConverter {
 			}
 			ds.setParameters(parameters);
 
-			IDomainDAO domainDAO = DAOFactory.getDomainDAO();
+			IDomainDAO domainDao = DAOFactory.getDomainDAO();
+			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 			// sets dataset's transformer type domain
 			if (dataset.getTransformer() != null) {
-				Domain transformer = domainDAO.loadDomainByCodeAndValue("TRANSFORMER_TYPE", dataset.getTransformer());
+				Domain transformer = domainDao.loadDomainByCodeAndValue("TRANSFORMER_TYPE", dataset.getTransformer());
 				ds.setTransformerCd(transformer.getValueCd());
 				ds.setTransformerId(transformer.getValueId());
 			}
 			// sets dataset's category domain
 			if (dataset.getCategory() != null) {
-				Domain category = domainDAO.loadDomainByCodeAndValue("CATEGORY_TYPE", dataset.getCategory());
+
+				SbiCategory c = categoryDao.getCategoryForDataSet(dataset.getCategory());
+
+				Domain category = Optional.of(c)
+					.map(Domain::fromCategory)
+					.get();
+
 				// ds.setCategoryValueName(category.getValueCd());
 				ds.setCategoryId(category.getValueId());
 				ds.setCategoryCd(category.getValueCd());

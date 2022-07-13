@@ -355,7 +355,6 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 	 */
 	$scope.loadRole = function (item) {
 		$scope.getCategoriesByID(item);
-	//	$scope.getDsCategoriesByID(item);
 
 		$scope.categoriesSelected = [];
 		$scope.ds_category = [];
@@ -610,22 +609,6 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, kn
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 
 		});
-	}
-
-	/*
-	 * 	service that gets loaded data set categories
-	 *  for selected role @GET
-	 */
-	$scope.getDsCategoriesByID = function(item){
-
-	/*	sbiModule_restServices.promiseGet("2.0/roles/ds_categories", item.id)
-		.then(function(response) {
-			$scope.setDsCategories(response.data);
-
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-
-		});*/
 	}
 
 	/*

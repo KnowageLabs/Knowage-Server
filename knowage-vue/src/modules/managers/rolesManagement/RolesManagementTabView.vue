@@ -165,7 +165,7 @@ export default defineComponent({
                     } as iCategory)
                 })
             })
-            await this.loadDomains('CATEGORY_TYPE').then((response: AxiosResponse<any>) => {
+            await this.loadDomains('DATASET_CATEGORY').then((response: AxiosResponse<any>) => {
                 response.data.map((category: any) => {
                     this.dataSetList.push({
                         categoryId: category.VALUE_ID,

@@ -12,6 +12,7 @@
 		<DAO name="ParameterDAO"
 			implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ParameterDAOHibImpl" />
 		<DAO name="DomainDAO" implementation="it.eng.spagobi.commons.dao.DomainDAOHibImpl" />
+		<DAO name="CategoryDAO" implementation="it.eng.spagobi.commons.dao.CategoryDAOHibImpl" />
 		<DAO name="BIObjectParameterDAO"
 			implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIObjectParameterDAOHibImpl" />
 		<DAO name="RoleDAO" implementation="it.eng.spagobi.commons.dao.RoleDAOHibImpl" />

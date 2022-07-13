@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -44,6 +45,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Junction;
@@ -68,10 +70,12 @@ import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.dao.SpagoBIDAOObjectNotExistingException;
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
@@ -139,9 +143,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	private static final String NEW_KPI_ALIAS_NOT_AVAILABLE_AS_MEASURE = "newKpi.aliasNotAvailableAsMeasure";
 	private static final String NEW_KPI_ALIAS_NOT_AVAILABLE = "newKpi.aliasNotAvailable";
 	private static final String NEW_KPI_KPI_NOT_FOUND = "newKpi.kpiNotFound";
-	private static final String KPI_MEASURE_CATEGORY = "KPI_MEASURE_CATEGORY";
-	private static final String KPI_KPI_CATEGORY = "KPI_KPI_CATEGORY";
-	private static final String KPI_TARGET_CATEGORY = "KPI_TARGET_CATEGORY";
+	private static final String KPI_MEASURE_CATEGORY = ICategoryDAO.KPI_MEASURE_CATEGORY;
+	private static final String KPI_KPI_CATEGORY = ICategoryDAO.KPI_CATEGORY;
+	private static final String KPI_TARGET_CATEGORY = ICategoryDAO.KPI_TARGET_CATEGORY;
 	private static final String MEASURE = "MEASURE";
 
 	private static final String KPI_SCHEDULER_GROUP = "KPI_SCHEDULER_GROUP";
@@ -307,7 +311,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					SbiKpiAlias sbiAlias = manageAlias(session, ruleOutput.getAliasId(), ruleOutput.getAlias());
 					sbiRuleOutput.setSbiKpiAlias(sbiAlias);
 					// handling Category
-					SbiDomains category = insertOrUpdateCategory(session, ruleOutput.getCategory(), KPI_MEASURE_CATEGORY);
+					SbiCategory category = insertOrUpdateCategory(session, ruleOutput.getCategory(), KPI_MEASURE_CATEGORY);
 					sbiRuleOutput.setCategory(category);
 
 					updateSbiCommonInfo4Insert(sbiRuleOutput);
@@ -393,7 +397,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 					sbiRuleOutput.setSbiKpiAlias(sbiAlias);
 					// handling Category
-					SbiDomains category = insertOrUpdateCategory(session, ruleOutput.getCategory(), KPI_MEASURE_CATEGORY);
+					SbiCategory category = insertOrUpdateCategory(session, ruleOutput.getCategory(), KPI_MEASURE_CATEGORY);
 					sbiRuleOutput.setCategory(category);
 
 					sbiRule.getSbiKpiRuleOutputs().add(sbiRuleOutput);
@@ -582,10 +586,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return kpis;
 	}
 
-	private boolean userIsAbilited(List<RoleMetaModelCategory> lstCategory, SbiDomains domain) {
+	private boolean userIsAbilited(List<RoleMetaModelCategory> lstCategory, SbiCategory category) {
 
 		for (RoleMetaModelCategory cat : lstCategory) {
-			if (cat.getCategoryId().equals(domain.getValueId())) {
+			if (cat.getCategoryId().equals(category.getId())) {
 				return true;
 			}
 		}
@@ -696,7 +700,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			sbiKpi.setThresholdId(kpi.getThreshold().getId());
 		}
 		// handling Category
-		SbiDomains category = insertOrUpdateCategory(session, kpi.getCategory(), KPI_KPI_CATEGORY);
+		SbiCategory category = insertOrUpdateCategory(session, kpi.getCategory(), KPI_KPI_CATEGORY);
 		sbiKpi.setCategory(category);
 		// Updating relations with RuleOutput and KpiScheduler
 		refreshKpiRuleOutputRel(session, sbiKpi);
@@ -788,21 +792,34 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return sbiKpiPlaceholder;
 	}
 
-	private SbiDomains insertOrUpdateCategory(Session session, Domain category, String categoryName) {
-		SbiDomains cat = null;
+	private SbiCategory insertOrUpdateCategory(Session session, Domain category, String categoryName) {
+		SbiCategory cat = null;
 		if (category != null) {
+
 			if (category.getValueId() != null) {
-				cat = (SbiDomains) session.load(SbiDomains.class, category.getValueId());
+				cat = (SbiCategory) session.load(SbiCategory.class, category.getValueId());
 			} else if (category.getValueCd() != null && !category.getValueCd().isEmpty()) {
-				cat = (SbiDomains) session.createCriteria(SbiDomains.class).add(Restrictions.eq("domainCd", categoryName))
-						.add(Restrictions.eq("valueCd", category.getValueCd())).uniqueResult();
+
+				String valueName = StringUtils.isNotBlank(category.getValueName()) ? category.getValueName() : category.getValueCd();
+
+				Criteria criteria = session.createCriteria(SbiCategory.class);
+
+				Criterion restrictionOnName = Restrictions.eq("name", valueName);
+				Criterion restrictionOnCode = Restrictions.eq("code", category.getValueCd());
+				Criterion restrictionOnType = Restrictions.eq("type", categoryName);
+
+				Criterion andOfRestrictions = Restrictions.and(Restrictions.and(restrictionOnName, restrictionOnCode), restrictionOnType);
+
+				criteria.add(andOfRestrictions);
+
+				cat = (SbiCategory) criteria.uniqueResult();
+
 				if (cat == null) {
-					cat = new SbiDomains();
-					cat.setDomainCd(categoryName);
-					cat.setDomainNm(categoryName);
-					cat.setValueCd(category.getValueCd());
-					cat.setValueNm(category.getValueCd());
-					cat.setValueDs(category.getValueCd());
+					cat = new SbiCategory();
+					cat.setCode(category.getValueCd());
+					cat.setName(StringUtils.isNotBlank(category.getValueName()) ? category.getValueName() : category.getValueCd());
+					cat.setType(categoryName);
+
 					updateSbiCommonInfo4Insert(cat);
 					session.save(cat);
 				}
@@ -1213,6 +1230,20 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		type.setValueDescription(sbiType.getValueDs());
 		type.setValueName(sbiType.getValueNm());
 		type.setValueId(sbiType.getValueId());
+		logger.debug(type);
+		logger.debug("OUT");
+		return type;
+	}
+
+	private Domain from(SbiCategory sbiCategory) {
+		logger.debug("IN");
+		Domain type = new Domain();
+		type.setDomainCode(sbiCategory.getCode());
+		type.setDomainName(sbiCategory.getName());
+		type.setValueCd(sbiCategory.getCode());
+		type.setValueDescription(sbiCategory.getName());
+		type.setValueName(sbiCategory.getName());
+		type.setValueId(sbiCategory.getId());
 		logger.debug(type);
 		logger.debug("OUT");
 		return type;
@@ -1746,7 +1777,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		sbiTarget.setStartValidity(target.getStartValidity());
 		sbiTarget.setEndValidity(target.getEndValidity());
 		// handling Category
-		SbiDomains category = insertOrUpdateCategory(session, target.getCategory(), KPI_TARGET_CATEGORY);
+		SbiCategory category = insertOrUpdateCategory(session, target.getCategory(), KPI_TARGET_CATEGORY);
 		sbiTarget.setCategory(category);
 		return sbiTarget;
 	}

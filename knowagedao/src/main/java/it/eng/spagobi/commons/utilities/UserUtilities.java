@@ -18,6 +18,7 @@
 package it.eng.spagobi.commons.utilities;
 
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DOCUMENT_WIDGET_USE;
+import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -58,6 +59,7 @@ import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.metadata.SbiTenant;
@@ -1129,7 +1131,11 @@ public class UserUtilities {
 			if (!roleNames.isEmpty()) {
 				rolesDao = DAOFactory.getRoleDAO();
 				rolesDao.setUserProfile(profile);
-				List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+				ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+				List<Domain> array = categoryDao.getCategoriesForDataset()
+					.stream()
+					.map(Domain::fromCategory)
+					.collect(toList());
 				for (String roleName : roleNames) {
 					Role role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
@@ -1162,7 +1168,12 @@ public class UserUtilities {
 			if (!roleNames.isEmpty()) {
 				rolesDao = DAOFactory.getRoleDAO();
 				rolesDao.setUserProfile(profile);
-				List<Domain> allCategories = DAOFactory.getDomainDAO().loadListDomainsByType("BM_CATEGORY");
+				IDomainDAO domainDao = DAOFactory.getDomainDAO();
+				ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+				List<Domain> allCategories = categoryDao.getCategoriesForBusinessModel()
+					.stream()
+					.map(Domain::fromCategory)
+					.collect(toList());
 				for (String roleName : roleNames) {
 					Role role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> roles = rolesDao.getMetaModelCategoriesForRole(role.getId());

@@ -49,7 +49,6 @@ public class DataSetConstants {
 
 	public static final String DATASETS_FOR_KPI_LIST = "DATASETS_FOR_KPI_LIST";
 
-	public static final String CATEGORY_DOMAIN_TYPE = "CATEGORY_TYPE";
 	public static final String SCRIPT_TYPE = "SCRIPT_TYPE";
 	public static final String DATA_SET_TYPE = "DATA_SET_TYPE";
 	public static final String TRANSFORMER_TYPE = "TRANSFORMER_TYPE";

@@ -17,12 +17,6 @@
  */
 package it.eng.spagobi.mapcatalogue.bo;
 
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
-
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +24,12 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
 
 public class GeoLayer {
 
@@ -50,7 +50,7 @@ public class GeoLayer {
 	private String layerParams;
 	private Integer layerOrder;
 	private Integer category_id;
-	private SbiDomains category;
+	private SbiCategory category;
 	private List<SbiExtRoles> roles;
 	private List<String> properties;
 
@@ -245,11 +245,11 @@ public class GeoLayer {
 		this.layerOrder = layerOrder;
 	}
 
-	public SbiDomains getCategory() {
+	public SbiCategory getCategory() {
 		return category;
 	}
 
-	public void setCategory(SbiDomains category) {
+	public void setCategory(SbiCategory category) {
 		this.category = category;
 	}
 

@@ -17,6 +17,21 @@
  */
 package it.eng.spagobi.engines.chart.service;
 
+import static java.util.stream.Collectors.toList;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -27,12 +42,24 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
+import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.container.ObjectUtils;
-import it.eng.spagobi.tools.dataset.bo.*;
+import it.eng.spagobi.profiling.bean.SbiAttribute;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
+import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
+import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
+import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
@@ -45,14 +72,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
 
 public class GetChartDataAction extends AbstractSpagoBIAction {
 
@@ -206,23 +225,28 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
             }
         } else if (serviceType == null) {
             try {
-                List dsTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.DATA_SET_TYPE);
-                getSessionContainer().setAttribute("dsTypesList", dsTypesList);
-                List catTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
-                getSessionContainer().setAttribute("catTypesList", catTypesList);
-                List dataSourceList = DAOFactory.getDataSourceDAO().loadAllDataSources();
-                getSessionContainer().setAttribute("dataSourceList", dataSourceList);
-                List scriptLanguageList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.SCRIPT_TYPE);
-                getSessionContainer().setAttribute("scriptLanguageList", scriptLanguageList);
-                List trasfTypesList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.TRANSFORMER_TYPE);
-                getSessionContainer().setAttribute("trasfTypesList", trasfTypesList);
-                List sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
-                getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);
-                String filePath = SpagoBIUtilities.getResourcePath();
-                filePath += File.separatorChar + "dataset" + File.separatorChar + "files";
-                File dir = new File(filePath);
-                String[] fileNames = dir.list();
-                getSessionContainer().setAttribute("fileNames", fileNames);
+				IDomainDAO domainDao = DAOFactory.getDomainDAO();
+				ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+				List<Domain> dsTypesList = domainDao.loadListDomainsByType(DataSetConstants.DATA_SET_TYPE);
+				getSessionContainer().setAttribute("dsTypesList", dsTypesList);
+				List<Domain> catTypesList = categoryDao.getCategoriesForDataset()
+					.stream()
+					.map(Domain::fromCategory)
+					.collect(toList());
+				getSessionContainer().setAttribute("catTypesList", catTypesList);
+				List<IDataSource> dataSourceList = DAOFactory.getDataSourceDAO().loadAllDataSources();
+				getSessionContainer().setAttribute("dataSourceList", dataSourceList);
+				List<Domain> scriptLanguageList = domainDao.loadListDomainsByType(DataSetConstants.SCRIPT_TYPE);
+				getSessionContainer().setAttribute("scriptLanguageList", scriptLanguageList);
+				List<Domain> trasfTypesList = domainDao.loadListDomainsByType(DataSetConstants.TRANSFORMER_TYPE);
+				getSessionContainer().setAttribute("trasfTypesList", trasfTypesList);
+				List<SbiAttribute> sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
+				getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);
+				String filePath = SpagoBIUtilities.getResourcePath();
+				filePath += File.separatorChar + "dataset" + File.separatorChar + "files";
+				File dir = new File(filePath);
+				String[] fileNames = dir.list();
+				getSessionContainer().setAttribute("fileNames", fileNames);
             } catch (EMFUserError e) {
                 logger.error(e.getMessage(), e);
                 throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsTypesRetrieve", e);
