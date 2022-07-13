@@ -223,7 +223,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					countQuery.setString("owner", owner);
 				} else {
 					countQuery = session
-							.createQuery("select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.valueId IN (:idsCat) or owner = :owner)");
+							.createQuery("select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.id IN (:idsCat) or owner = :owner)");
 					countQuery.setBoolean(0, true);
 					countQuery.setParameterList("idsCat", idsCat);
 					countQuery.setString("owner", owner);
@@ -1184,11 +1184,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					if (owner != null && includeOwned) {
 						logger.debug("The owner can see all it's datasets");
 						// the owner of the dataset can see dataste even if category is null
-						// statement.append(" and (h.category.valueCd is null or ");
 					} else {
 						statement.append("and (");
 
-						statement.append("  h.category.valueCd in (");
+						statement.append("  h.category.code in (");
 						for (int i = 0; i < categoryList.size(); i++) {
 							statement.append("?,");
 						}
@@ -1348,7 +1347,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 				categoryList = UserUtilities.getDataSetCategoriesByUser(user);
 				if (categoryList != null && !categoryList.isEmpty()) {
-					statement.append("and dst.dataSet.category.valueCd in (:categories) ");
+					statement.append("and dst.dataSet.category.code in (:categories) ");
 				}
 			}
 
@@ -1512,7 +1511,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				if (idsCat == null || idsCat.size() == 0) {
 					sb.append("and ").append(entityName).append("owner = :owner ");
 				} else {
-					sb.append("and (").append(entityName).append("category.valueId in (:idsCat) or ").append(entityName).append("owner = :owner) ");
+					sb.append("and (").append(entityName).append("category.id in (:idsCat) or ").append(entityName).append("owner = :owner) ");
 				}
 			}
 
@@ -1721,7 +1720,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				if (idsCat == null || idsCat.size() == 0) {
 					hsql = hsql + " and h.owner = :owner";
 				} else {
-					hsql = hsql + " and (h.category.valueId IN (:idsCat) or h.owner = :owner)";
+					hsql = hsql + " and (h.category.id IN (:idsCat) or h.owner = :owner)";
 				}
 			}
 
@@ -1792,7 +1791,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				if (idsCat == null || idsCat.size() == 0) {
 					statement.append(" and h.owner = :owner");
 				} else {
-					statement.append(" and (h.category.valueId IN (:idsCat) or h.owner = :owner)");
+					statement.append(" and (h.category.id IN (:idsCat) or h.owner = :owner)");
 				}
 			}
 			if (dsType != null)
@@ -1852,10 +1851,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			session = getSession();
 			categoryList = UserUtilities.getDataSetCategoriesByUser(userProfile);
 			if (categoryList.isEmpty()) {
-				statement.append("ds.category.valueId is null ");
+				statement.append("ds.category.id is null ");
 			} else {
 				categoryIds = extractCategoryIds(categoryList);
-				statement.append("(ds.category.valueId is null or ds.category.valueId in (:categories)) ");
+				statement.append("(ds.category.id is null or ds.category.id in (:categories)) ");
 			}
 
 			statement.append(
@@ -1979,8 +1978,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				String owner = ((UserProfile) getUserProfile()).getUserId().toString();
 				Query countQuery = null;
 				if (idsCat != null && idsCat.size() > 0) {
-					countQuery = session.createQuery(
-							"select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.valueId  IN (:idsCat) or sb.owner = :owner) ");
+					countQuery = session
+							.createQuery("select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.id  IN (:idsCat) or sb.owner = :owner) ");
 					countQuery.setBoolean(0, true);
 					countQuery.setParameterList("idsCat", idsCat);
 					countQuery.setString("owner", owner);
@@ -1997,8 +1996,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					fetchSize = (fetchSize > 0) ? Math.min(fetchSize, resultNumber.intValue()) : resultNumber.intValue();
 				}
 
-				listQuery = session
-						.createQuery("from SbiDataSet h where h.active = ? and (h.category.valueId IN (:idsCat) or h.owner = :owner) order by h.name");
+				listQuery = session.createQuery("from SbiDataSet h where h.active = ? and (h.category.id IN (:idsCat) or h.owner = :owner) order by h.name");
 				listQuery.setBoolean(0, true);
 				listQuery.setParameterList("idsCat", idsCat);
 				listQuery.setString("owner", owner);
@@ -2663,10 +2661,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					Role role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
 					ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
-					List<Domain> categories = categoryDao.getCategoriesForDataset()
-						.stream()
-						.map(Domain::fromCategory)
-						.collect(toList());
+					List<Domain> categories = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 					for (RoleMetaModelCategory r : ds) {
 						Iterator itCategories = categories.iterator();
 						while (itCategories.hasNext()) {

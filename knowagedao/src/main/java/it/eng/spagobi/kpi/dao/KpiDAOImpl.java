@@ -451,10 +451,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 					// Deleting unused categories
 					DetachedCriteria usedCategories = DetachedCriteria.forClass(SbiKpiRuleOutput.class).createAlias("category", "category")
-							.add(Restrictions.isNotNull("category")).setProjection(Property.forName("category.valueId"));
-					List<SbiDomains> categoriesToDelete = session.createCriteria(SbiDomains.class).add(Restrictions.eq("domainCd", KPI_MEASURE_CATEGORY))
-							.add(Property.forName("valueId").notIn(usedCategories)).list();
-					for (SbiDomains cat : categoriesToDelete) {
+							.add(Restrictions.isNotNull("category")).setProjection(Property.forName("category.id"));
+					List<SbiCategory> categoriesToDelete = session.createCriteria(SbiCategory.class).add(Restrictions.eq("type", KPI_MEASURE_CATEGORY))
+							.add(Property.forName("id").notIn(usedCategories)).list();
+					for (SbiCategory cat : categoriesToDelete) {
 						session.delete(cat);
 					}
 
@@ -872,7 +872,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	 */
 	private void removeKpiCategory(Session session, Integer categoryId, Integer kpiId) {
 		// check if no other objects are using this category
-		if (session.createCriteria(SbiKpiKpi.class).createAlias("category", "category").add(Restrictions.eq("category.valueId", categoryId))
+		if (session.createCriteria(SbiKpiKpi.class).createAlias("category", "category").add(Restrictions.eq("category.id", categoryId))
 				.add(Restrictions.ne("sbiKpiKpiId.id", kpiId)).setMaxResults(1).uniqueResult() == null) {
 			// category is not used so can be deleted
 			SbiDomains category = (SbiDomains) session.get(SbiDomains.class, categoryId);

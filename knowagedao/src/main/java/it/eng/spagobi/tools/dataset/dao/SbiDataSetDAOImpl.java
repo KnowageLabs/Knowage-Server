@@ -272,7 +272,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			if (type != null)
 				statement += " and h.scope.valueCd = ? ";
 			if (category != null)
-				statement += " and h.category.valueCd = ? ";
+				statement += " and h.category.code = ? ";
 			if (implementation != null)
 				statement += " and h.type = ? ";
 			if (showDerivedDatasets == null || showDerivedDatasets.equals(false))
@@ -509,10 +509,10 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			session = getSession();
 			categoryList = UserUtilities.getDataSetCategoriesByUser(userProfile);
 			if (categoryList.isEmpty()) {
-				statement.append("ds.category.valueId is null");
+				statement.append("ds.category.id is null");
 			} else {
 				categoryIds = extractCategoryIds(categoryList);
-				statement.append("(ds.category.valueId is null or ds.category.valueId in (:categories))");
+				statement.append("(ds.category.id is null or ds.category.id in (:categories))");
 			}
 
 			statement.append(
