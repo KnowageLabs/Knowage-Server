@@ -1238,8 +1238,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	private Domain from(SbiCategory sbiCategory) {
 		logger.debug("IN");
 		Domain type = new Domain();
-		type.setDomainCode(sbiCategory.getCode());
-		type.setDomainName(sbiCategory.getName());
+		type.setDomainCode(sbiCategory.getType());
+		type.setDomainName(sbiCategory.getType());
 		type.setValueCd(sbiCategory.getCode());
 		type.setValueDescription(sbiCategory.getName());
 		type.setValueName(sbiCategory.getName());
