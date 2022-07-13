@@ -80,7 +80,7 @@
         </set>
         <set name="sbiMetaModelCategories" table="SBI_EXT_ROLES_CATEGORY">
 			<key column="EXT_ROLE_ID"/>
-			<many-to-many column="CATEGORY_ID"  class="it.eng.spagobi.commons.metadata.SbiDomains"/>
+			<many-to-many column="CATEGORY_ID"  class="it.eng.spagobi.commons.dao.dto.SbiCategory"/>
 		</set>
 		<set name="sbiAuthorizationsRoleses" table="SBI_AUTHORIZATIONS_ROLES">
             <key>
