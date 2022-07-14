@@ -794,36 +794,32 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	private SbiCategory insertOrUpdateCategory(Session session, Domain category, String categoryName) {
 		SbiCategory cat = null;
-		if (category != null) {
+		if (category != null && category.getValueCd() != null && !category.getValueCd().isEmpty()) {
 
-			if (category.getValueId() != null) {
-				cat = (SbiCategory) session.load(SbiCategory.class, category.getValueId());
-			} else if (category.getValueCd() != null && !category.getValueCd().isEmpty()) {
+			String valueName = StringUtils.isNotBlank(category.getValueName()) ? category.getValueName() : category.getValueCd();
 
-				String valueName = StringUtils.isNotBlank(category.getValueName()) ? category.getValueName() : category.getValueCd();
+			Criteria criteria = session.createCriteria(SbiCategory.class);
 
-				Criteria criteria = session.createCriteria(SbiCategory.class);
+			Criterion restrictionOnName = Restrictions.eq("name", valueName);
+			Criterion restrictionOnCode = Restrictions.eq("code", category.getValueCd());
+			Criterion restrictionOnType = Restrictions.eq("type", categoryName);
 
-				Criterion restrictionOnName = Restrictions.eq("name", valueName);
-				Criterion restrictionOnCode = Restrictions.eq("code", category.getValueCd());
-				Criterion restrictionOnType = Restrictions.eq("type", categoryName);
+			Criterion andOfRestrictions = Restrictions.and(Restrictions.and(restrictionOnName, restrictionOnCode), restrictionOnType);
 
-				Criterion andOfRestrictions = Restrictions.and(Restrictions.and(restrictionOnName, restrictionOnCode), restrictionOnType);
+			criteria.add(andOfRestrictions);
 
-				criteria.add(andOfRestrictions);
+			cat = (SbiCategory) criteria.uniqueResult();
 
-				cat = (SbiCategory) criteria.uniqueResult();
+			if (cat == null) {
+				cat = new SbiCategory();
+				cat.setCode(category.getValueCd());
+				cat.setName(StringUtils.isNotBlank(category.getValueName()) ? category.getValueName() : category.getValueCd());
+				cat.setType(categoryName);
 
-				if (cat == null) {
-					cat = new SbiCategory();
-					cat.setCode(category.getValueCd());
-					cat.setName(StringUtils.isNotBlank(category.getValueName()) ? category.getValueName() : category.getValueCd());
-					cat.setType(categoryName);
-
-					updateSbiCommonInfo4Insert(cat);
-					session.save(cat);
-				}
+				updateSbiCommonInfo4Insert(cat);
+				session.save(cat);
 			}
+
 		}
 		return cat;
 	}
