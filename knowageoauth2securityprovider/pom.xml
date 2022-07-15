@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.0.15</version>
+		<version>8.0.16-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 
@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-core</artifactId>
-			<version>8.0.15</version>
+			<version>8.0.16-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		
