@@ -189,7 +189,7 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 			objectPattern = Pattern.compile("&lt;object(.*?/)&gt;", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 			value = objectPattern.matcher(value).replaceAll("");
 
-			boolean isValid = false; // xssUtils.isSafe(value);
+			boolean isValid = true; // xssUtils.isSafe(value);
 
 			if (!value.equalsIgnoreCase(initialValue) || !isValid) {
 				LOGGER.warn("Message: detected a web attack through injection");
