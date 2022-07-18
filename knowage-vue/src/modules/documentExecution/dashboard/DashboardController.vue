@@ -12,6 +12,7 @@ import { defineComponent } from 'vue'
 import DashboardRenderer from './DashboardRenderer.vue'
 import mock from './DashboardMock.json'
 import { v4 as uuidv4 } from 'uuid'
+import dashboardStore from './Dashboard.store'
 
 export default defineComponent({
     name: 'dashboard-manager',
@@ -21,14 +22,17 @@ export default defineComponent({
             model: mock
         }
     },
+    setup() {
+        const store = dashboardStore()
+        return { store }
+    },
     provide() {
         return {
             dHash: uuidv4()
         }
     },
     unmounted() {
-        // @ts-ignore
-        this.$store.commit('dashboard/removeDashboard', { id: this.dHash as any })
+        this.store.removeDashboard({ id: (this as any).dHash as any })
     }
 })
 </script>

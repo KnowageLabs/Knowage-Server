@@ -25,10 +25,11 @@
  * ! this component will be in charge of creating the dashboard visualizazion, specifically to manage responsive structure and sheets.
  */
 import { defineComponent } from 'vue'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import WidgetController from './widget/WidgetController.vue'
 import KnDashboardTabsPanel from '@/components/UI/KnDashboardTabs/KnDashboardTabsPanel.vue'
 import KnDashboardTab from '@/components/UI/KnDashboardTabs/KnDashboardTab.vue'
+import dashboardStore from './Dashboard.store'
 
 export default defineComponent({
     name: 'dashboard-manager',
@@ -41,12 +42,16 @@ export default defineComponent({
             startingBreakpoint: '' as string
         }
     },
+      setup() {
+        const store = dashboardStore()
+        return { store }
+    },
     mounted() {
         this.dashboardModel = this.model
     },
     computed: {
-        ...mapState({
-            dashboard: (state: any) => state.dashboard.dashboards
+        ...mapState(dashboardStore, {
+            dashboard: 'dashboards'
         })
     },
     methods: {
@@ -62,8 +67,7 @@ export default defineComponent({
             return this.dashboardModel.widgets.find((item) => item.id === id)
         },
         sheetChange(index) {
-            // @ts-ignore
-            this.$store.commit('dashboard/setDashboardSheet', { id: this.dHash as any, sheet: index })
+            this.store.setDashboardSheet({ id: (this as any).dHash as any, sheet: index })
         }
     }
 })
