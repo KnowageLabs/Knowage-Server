@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1450,7 +1451,7 @@ public class ManageDataSetsForREST {
 		MetaData toReturn = new MetaData();
 
 		List<IFieldMetaData> fieldsMeta = new ArrayList<IFieldMetaData>();
-		Map<String, IFieldMetaData> m = new HashMap<String, IFieldMetaData>();
+		Map<String, IFieldMetaData> m = new LinkedHashMap<String, IFieldMetaData>();
 
 		for (int i = 0; i < dsMeta.length() - 1; i++) {
 			JSONObject currMetaType = dsMeta.getJSONObject(i);
