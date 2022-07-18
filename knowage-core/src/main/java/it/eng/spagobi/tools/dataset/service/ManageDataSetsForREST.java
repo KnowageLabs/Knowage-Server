@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -565,10 +566,7 @@ public class ManageDataSetsForREST {
 					String roleName = itRoles.next();
 					role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
-					List<Domain> array = categoryDao.getCategoriesForDataset()
-						.stream()
-						.map(Domain::fromCategory)
-						.collect(toList());
+					List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 					for (RoleMetaModelCategory r : ds) {
 						for (Domain dom : array) {
 							if (r.getCategoryId().equals(dom.getValueId())) {
@@ -579,10 +577,7 @@ public class ManageDataSetsForREST {
 				}
 				return categoriesDev;
 			} else {
-				return categoryDao.getCategoriesForDataset()
-					.stream()
-					.map(Domain::fromCategory)
-					.collect(toList());
+				return categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 			}
 		} catch (Exception e) {
 			logger.error("Role with selected id: " + role.getId() + " doesn't exists", e);
@@ -1438,7 +1433,7 @@ public class ManageDataSetsForREST {
 		MetaData toReturn = new MetaData();
 
 		List<IFieldMetaData> fieldsMeta = new ArrayList<IFieldMetaData>();
-		Map<String, IFieldMetaData> m = new HashMap<String, IFieldMetaData>();
+		Map<String, IFieldMetaData> m = new LinkedHashMap<String, IFieldMetaData>();
 
 		for (int i = 0; i < dsMeta.length() - 1; i++) {
 			JSONObject currMetaType = dsMeta.getJSONObject(i);
