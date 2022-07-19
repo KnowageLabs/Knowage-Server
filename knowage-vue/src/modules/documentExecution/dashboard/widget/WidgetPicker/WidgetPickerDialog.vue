@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="dialog-no-padding" :visible="visible" :modal="true" :closable="false">
+    <Dialog class="dialog-no-padding" :visible="visible" style="width: 60%" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
                 <template #start>
@@ -11,24 +11,25 @@
             </Toolbar>
         </template>
 
-        <div class="widget-card-container" v-for="(widget, index) in widgetTypes" :key="index">
-            <Button :label="widget.type" class="p-button-link" @click="openWidgetEditor(widget)" />
+        <div id="widget-card-container" class="p-grid p-m-2">
+            <WidgetCard v-for="(widget, index) in widgetTypes" :key="index" :widget="widget" @click="openWidgetEditor(widget)" />
         </div>
     </Dialog>
 </template>
 
 <script lang="ts">
 /**
- * ! this component will be in charge of managing the widget behaviour related to data and interactions, not related to view elements.
+ * ! this component is in charge of opening the correct widget editor and containing all the cards
  */
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { IWidgetPickerType } from '../../Dashboard'
 import Dialog from 'primevue/dialog'
+import WidgetCard from './WidgetPickerCard.vue'
 
 export default defineComponent({
     name: 'widget-picker-dialog',
-    components: { Dialog },
+    components: { Dialog, WidgetCard },
     emits: ['closeWidgetPicker'],
     inject: [],
     props: {},
