@@ -11,6 +11,20 @@
             <label class="kn-material-input-label"> {{ $t('common.columns') }} </label>
             <Button class="kn-button kn-button--primary" @click="showCalculatedFieldDialog"> {{ $t('common.addColumn') }}</Button>
         </div>
+
+        <div>
+            <Listbox v-if="selectedDataset" class="kn-list--column" :options="selectedDatasetColumns" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="[]" :emptyFilterMessage="$t('common.info.noDataFound')">
+                <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                <template #option="slotProps">
+                    <div class="kn-list-item kn-draggable" draggable="true" @dragstart="onDragStart($event, slotProps.option)" data-test="list-item">
+                        <i class="pi pi-bars"></i>
+                        <div class="kn-list-item-text">
+                            <span>{{ slotProps.option }}</span>
+                        </div>
+                    </div>
+                </template>
+            </Listbox>
+        </div>
     </div>
 </template>
 
@@ -21,10 +35,11 @@ import { IWidgetEditorDataset } from '../../../../Dashboard'
 import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import mainStore from '../../../../../../../App.store'
+import Listbox from 'primevue/listbox'
 
 export default defineComponent({
     name: 'widget-editor-data-list',
-    components: { Dropdown },
+    components: { Dropdown, Listbox },
     props: { datasets: { type: Array }, modelDatasets: { type: Array } },
     emits: ['datasetSelected'],
     data() {
@@ -69,21 +84,23 @@ export default defineComponent({
         },
         onDatasetSelected() {
             console.log('onDatasetSelected() - selectedDataset: ', this.selectedDataset)
-            this.loadDatasetColumns()
+            this.getDatasetColumns()
             this.$emit('datasetSelected', this.selectedDataset)
             console.log('onDatasetSelected() - allDatasets: ', this.datasets)
         },
         showCalculatedFieldDialog() {
             console.log('showCalculatedFieldDialog() - TODO!')
         },
-        async loadDatasetColumns() {
-            this.store.setLoading(true)
-            await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.selectedDataset?.id}`)
-                .then((response: AxiosResponse<any>) => (this.selectedDatasetColumns = response.data))
-                .catch(() => {})
-            this.store.setLoading(false)
+        getDatasetColumns() {
+            this.selectedDatasetColumns = []
+            if (!this.datasets || this.datasets.length === 0) return
+
             console.log('loadDatasetColumns() - selectedDatasetColumns: ', this.selectedDatasetColumns)
+        },
+        onDragStart(event: any, datasetColumn: any) {
+            event.dataTransfer.setData('text/plain', JSON.stringify(datasetColumn))
+            event.dataTransfer.dropEffect = 'move'
+            event.dataTransfer.effectAllowed = 'move'
         }
     }
 })

@@ -50,7 +50,7 @@ export default defineComponent({
             this.appStore.setLoading(true)
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/?asPagedList=true&seeTechnical=true`)
-                .then((response: AxiosResponse<any>) => (this.datasets = response.data))
+                .then((response: AxiosResponse<any>) => (this.datasets = response.data ? response.data.items : []))
                 .catch(() => {})
             this.appStore.setLoading(false)
             console.log('DASHBOARD CONTROLLER - loadDatasets() - datasets: ', this.datasets)
