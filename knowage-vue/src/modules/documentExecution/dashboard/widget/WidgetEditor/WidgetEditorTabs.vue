@@ -2,7 +2,7 @@
     <div class="widgetEditor-tabs">
         <TabView>
             <TabPanel header="Data">
-                Content I
+                <WidgetEditorDataTab :datasets="datasets"></WidgetEditorDataTab>
             </TabPanel>
             <TabPanel header="Settings">
                 Content II
@@ -18,16 +18,23 @@
 import { defineComponent } from 'vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import WidgetEditorDataTab from './WidgetEditorDataTab/WidgetEditorDataTab.vue'
+
 
 export default defineComponent({
     name: 'widget-editor-tabs',
-    components: { TabView, TabPanel },
+    components: { TabView, TabPanel, WidgetEditorDataTab },
     props: {
         widget: {
             required: true,
             type: Object
         }
-    }
+    },
+       data() {
+        return {
+            datasets: [] as any[]
+        }
+    },
 })
 </script>
 <style lang="scss">

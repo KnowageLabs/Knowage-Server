@@ -15,3 +15,10 @@ export interface IWidget {
 export interface IInteraction {
     type: string
 }
+
+export interface IWidgetEditorDataset {
+    id: number,
+    label: string,
+    cache: boolean,
+    parameters: any[],
+}
