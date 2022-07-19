@@ -2,6 +2,7 @@
     "common": {
         "active": "Active",
         "add": "Add",
+        "addColumn": "Add column",
         "addNew": "Add new",
         "advanced": "Advanced",
         "alias": "Alias",
@@ -30,6 +31,7 @@
             "python": "python"
         },
         "collapse": "collapse",
+        "columns": "Columns",
         "comment": "Comment",
         "continue": "Continue",
         "copyOf": "Copy of",
@@ -306,6 +308,11 @@
         "weekly": "Weekly",
         "year": "Year",
         "yearly": "Yearly"
+    },
+    "dashboard": {
+        "widgetEditor": {
+            "selectDataset": "Select Dataset"
+        }
     },
     "documentBrowser": {
         "changeStateMessage": "Are you sure you want to change the state for this document?",

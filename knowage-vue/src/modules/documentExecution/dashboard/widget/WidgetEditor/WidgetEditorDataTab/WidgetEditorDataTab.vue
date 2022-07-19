@@ -1,6 +1,7 @@
 <template>
-    <div>
-        <WidgetEditorDataList :datasets="datasets"></WidgetEditorDataList>
+    <div class="p-d-flex">
+        <WidgetEditorDataList class="kn-flex" :datasets="datasets" :modelDatasets="modelDatasets" @datasetSelected="$emit('datasetSelected', $event)"></WidgetEditorDataList>
+        <div class="kn-flex">Other Content</div>
     </div>
 </template>
 
@@ -10,8 +11,9 @@ import WidgetEditorDataList from './WidgetEditorDataList/WidgetEditorDataList.vu
 
 export default defineComponent({
     name: 'widget-editor-data-tab',
-    components: {WidgetEditorDataList},
-        props: {datasets: {type: Array} },
+    components: { WidgetEditorDataList },
+    props: { datasets: { type: Array }, modelDatasets: { type: Array } },
+    emits: ['datasetSelected'],
     data() {
         return {}
     },

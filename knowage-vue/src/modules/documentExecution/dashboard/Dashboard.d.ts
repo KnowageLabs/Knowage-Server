@@ -30,3 +30,22 @@ export interface IWidgetPickerType {
     tags: Array<string>
     type: string
 }
+
+export interface IDatasetOptions {
+    aggregations: {
+        measures: any[],
+        categories: IDatasetOptionCategory[],
+        dataset: string
+    },
+    parameters: any,
+    selections: any,
+    indexes: any[]
+}
+
+interface IDatasetOptionCategory {
+    id: string,
+    alias: string,
+    columnName: string,
+    orderType: string,
+    funct: string
+}

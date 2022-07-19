@@ -14,7 +14,7 @@
                 :margin="[2, 2]"
                 @breakpoint-changed="breakpointChangedEvent"
             >
-                <WidgetController :activeSheet="activeSheet(index)" :widget="currentWidget(item.id)" :item="item" v-for="item in sheet.widgets['lg']" :key="item.i"></WidgetController>
+                <WidgetController :activeSheet="activeSheet(index)" :widget="currentWidget(item.id)" :item="item" v-for="item in sheet.widgets['lg']" :key="item.i" :datasets="datasets"></WidgetController>
             </grid-layout>
         </KnDashboardTab>
     </KnDashboardTabsPanel>
@@ -34,7 +34,7 @@ import dashboardStore from './Dashboard.store'
 export default defineComponent({
     name: 'dashboard-manager',
     components: { KnDashboardTab, KnDashboardTabsPanel, WidgetController },
-    props: ['model'],
+    props: { model: { type: Object }, datasets: { type: Array } },
     inject: ['dHash'],
     data() {
         return {
@@ -42,7 +42,7 @@ export default defineComponent({
             startingBreakpoint: '' as string
         }
     },
-      setup() {
+    setup() {
         const store = dashboardStore()
         return { store }
     },
@@ -60,7 +60,7 @@ export default defineComponent({
             if ((!this.dashboard[this.dHash] && index === 0) || this.dashboard[this.dHash] === index) return true
             return false
         },
-        breakpointChangedEvent: function(newBreakpoint, newLayout) {
+        breakpointChangedEvent: function (newBreakpoint, newLayout) {
             console.log('BREAKPOINT CHANGED breakpoint=', newBreakpoint, ', layout: ', newLayout)
         },
         currentWidget(id) {

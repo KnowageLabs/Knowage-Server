@@ -2,11 +2,9 @@
     <div class="widgetEditor-tabs">
         <TabView>
             <TabPanel header="Data">
-                <WidgetEditorDataTab :datasets="datasets"></WidgetEditorDataTab>
+                <WidgetEditorDataTab :datasets="datasets" :modelDatasets="modelDatasets" @datasetSelected="$emit('datasetSelected', $event)"></WidgetEditorDataTab>
             </TabPanel>
-            <TabPanel header="Settings">
-                Content II
-            </TabPanel>
+            <TabPanel header="Settings"> Content II </TabPanel>
         </TabView>
     </div>
 </template>
@@ -20,7 +18,6 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import WidgetEditorDataTab from './WidgetEditorDataTab/WidgetEditorDataTab.vue'
 
-
 export default defineComponent({
     name: 'widget-editor-tabs',
     components: { TabView, TabPanel, WidgetEditorDataTab },
@@ -28,13 +25,15 @@ export default defineComponent({
         widget: {
             required: true,
             type: Object
-        }
+        },
+        datasets: { type: Array }
     },
-       data() {
+    emits: ['datasetSelected'],
+    data() {
         return {
-            datasets: [] as any[]
+            modelDatasets: [] as any[]
         }
-    },
+    }
 })
 </script>
 <style lang="scss">

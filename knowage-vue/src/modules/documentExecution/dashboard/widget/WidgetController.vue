@@ -6,7 +6,7 @@
         <WidgetRenderer :widget="widget" :data="widgetData" v-if="initialized" @interaction="manageInteraction"></WidgetRenderer>
         <WidgetButtonBar @edit-widget="toggleEditMode"></WidgetButtonBar>
         <Transition name="editorEnter" appear>
-            <WidgetEditor :widget="widget" @close="toggleEditMode" v-if="editMode"></WidgetEditor>
+            <WidgetEditor :widget="widget" @close="toggleEditMode" v-if="editMode" :datasets="datasets"></WidgetEditor>
         </Transition>
     </grid-item>
 </template>
@@ -41,7 +41,8 @@ export default defineComponent({
         widget: {
             required: true,
             type: Object
-        }
+        },
+        datasets: { type: Array }
     },
     data() {
         return {
