@@ -15,3 +15,12 @@ export interface IWidget {
 export interface IInteraction {
     type: string
 }
+
+export interface IWidgetPickerType {
+    cssClass: string
+    descKey: string
+    img: string
+    name: string
+    tags: Array<string>
+    type: string
+}
