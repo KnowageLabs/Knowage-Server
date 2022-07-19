@@ -41,7 +41,6 @@ export default defineComponent({
     },
     methods: {
         onDatasetSelected(dataset: IWidgetEditorDataset) {
-            console.log('WIDGET EDITOR - onDatasetSelected() - dataset: ', dataset)
             this.loadPreviewData(dataset)
             this.loadAvailableFunctions(dataset)
         },
@@ -72,7 +71,6 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.datasetFunctions = response.data))
                 .catch(() => {})
             this.store.setLoading(false)
-            console.log('loadAvailableFunctions() - previewData: ', this.datasetFunctions)
         },
         close() {
             this.$emit('close')

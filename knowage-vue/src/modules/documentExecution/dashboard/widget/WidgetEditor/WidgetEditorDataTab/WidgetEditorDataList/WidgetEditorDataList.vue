@@ -80,21 +80,21 @@ export default defineComponent({
                     parameters: dataset.parameters
                 }
             })
-            console.log('loadDatasets() - datasetOptions: ', this.datasetOptions)
         },
         onDatasetSelected() {
-            console.log('onDatasetSelected() - selectedDataset: ', this.selectedDataset)
-            this.getDatasetColumns()
+            this.loadDatasetColumns()
             this.$emit('datasetSelected', this.selectedDataset)
             console.log('onDatasetSelected() - allDatasets: ', this.datasets)
         },
         showCalculatedFieldDialog() {
             console.log('showCalculatedFieldDialog() - TODO!')
         },
-        getDatasetColumns() {
+        loadDatasetColumns() {
             this.selectedDatasetColumns = []
             if (!this.datasets || this.datasets.length === 0) return
 
+            const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
+            if (index !== -1) this.selectedDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta
             console.log('loadDatasetColumns() - selectedDatasetColumns: ', this.selectedDatasetColumns)
         },
         onDragStart(event: any, datasetColumn: any) {
