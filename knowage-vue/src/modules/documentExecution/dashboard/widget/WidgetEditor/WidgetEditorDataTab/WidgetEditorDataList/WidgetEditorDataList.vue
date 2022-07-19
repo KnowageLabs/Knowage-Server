@@ -16,10 +16,11 @@
             <Listbox v-if="selectedDataset" class="kn-list--column" :options="selectedDatasetColumns" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="[]" :emptyFilterMessage="$t('common.info.noDataFound')">
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
-                    <div class="kn-list-item kn-draggable" draggable="true" @dragstart="onDragStart($event, slotProps.option)" data-test="list-item">
+                    <div class="kn-list-item kn-draggable" draggable="true" @dragstart="onDragStart($event, slotProps.option)">
                         <i class="pi pi-bars"></i>
+                        <i :class="slotProps.option.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'" class="p-ml-2"></i>
                         <div class="kn-list-item-text">
-                            <span>{{ slotProps.option }}</span>
+                            <span>{{ slotProps.option.alias }}</span>
                         </div>
                     </div>
                 </template>
@@ -31,7 +32,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
-import { IWidgetEditorDataset } from '../../../../Dashboard'
+import { IWidgetEditorDataset, IDatasetColumn } from '../../../../Dashboard'
 import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import mainStore from '../../../../../../../App.store'
@@ -54,7 +55,7 @@ export default defineComponent({
                 }
             ] as IWidgetEditorDataset[],
             selectedDataset: null as IWidgetEditorDataset | null,
-            selectedDatasetColumns: [] as any[]
+            selectedDatasetColumns: [] as IDatasetColumn[]
         }
     },
     setup() {
@@ -97,7 +98,7 @@ export default defineComponent({
             if (index !== -1) this.selectedDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta
             console.log('loadDatasetColumns() - selectedDatasetColumns: ', this.selectedDatasetColumns)
         },
-        onDragStart(event: any, datasetColumn: any) {
+        onDragStart(event: any, datasetColumn: IDatasetColumn) {
             event.dataTransfer.setData('text/plain', JSON.stringify(datasetColumn))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'

@@ -1,6 +1,5 @@
 {
     "default": {
         "paginationOption": true
-    },
-    "tableWidget": [{"type": "input", property: 'model.name...',}, {"type: 'drodpown", options: , daLiHocesZastavu? }]
+    }
 }

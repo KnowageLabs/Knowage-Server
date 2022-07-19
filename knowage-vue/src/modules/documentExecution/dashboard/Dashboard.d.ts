@@ -49,3 +49,29 @@ interface IDatasetOptionCategory {
     orderType: string,
     funct: string
 }
+
+interface IDatasetColumn {
+    name: string,
+    alias: string,
+    type: string,
+    properties: any,
+    fieldType: string,
+    multiValue: boolean,
+    precision: number,
+    scale: number,
+    personal: boolean,
+    decript: boolean,
+    subjectId: boolean
+}
+
+interface IWidget {
+    id?: string,
+    type: string,
+    columns: IDatasetColumn[],
+    conditionalStyles: any[],
+    datasets: any[],
+    interactions: any[],
+    theme: string,
+    styles: any,
+    settings: any
+}
