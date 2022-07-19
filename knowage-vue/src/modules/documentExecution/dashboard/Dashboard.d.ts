@@ -16,6 +16,12 @@ export interface IInteraction {
     type: string
 }
 
+export interface IWidgetEditorDataset {
+    id: number,
+    label: string,
+    cache: boolean,
+    parameters: any[],
+}
 export interface IWidgetPickerType {
     cssClass: string
     descKey: string
@@ -23,4 +29,23 @@ export interface IWidgetPickerType {
     name: string
     tags: Array<string>
     type: string
+}
+
+export interface IDatasetOptions {
+    aggregations: {
+        measures: any[],
+        categories: IDatasetOptionCategory[],
+        dataset: string
+    },
+    parameters: any,
+    selections: any,
+    indexes: any[]
+}
+
+interface IDatasetOptionCategory {
+    id: string,
+    alias: string,
+    columnName: string,
+    orderType: string,
+    funct: string
 }
