@@ -482,7 +482,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		var checkForSavedSelections = function(nature){
 			var datasetLabel = $scope.ngModel.dataset.label;
 			var columnName = $scope.ngModel.content.selectedColumn.aliasToShow;
-			var selections = $scope.cockpitModule_widgetSelection.getSelectionValues(datasetLabel,columnName);
+			var selections = $scope.cockpitModule_widgetSelection.getSelectionValues(datasetLabel,columnName,true);
 
 			$scope.hasDefaultValues = !selections || selections.length==0;
 
@@ -519,16 +519,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						break;
 					}
 				}
-
-				if(applyDefaultValues){
 					var item = {};
 					item.aggregated=$scope.aggregated;
 					item.columnName=$scope.ngModel.content.selectedColumn.aliasToShow;
 					item.columnAlias=$scope.ngModel.content.selectedColumn.aliasToShow;
 					item.ds=$scope.ngModel.dataset.label;
-
-					if (nature == "init")
-						$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.defaultValues);
+				if(applyDefaultValues && nature == "init"){
+					$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.defaultValues);
 				}else{
 					if(selections && !angular.equals($scope.defaultValues, selections)){
 						$scope.defaultValues = angular.copy(selections);
@@ -537,6 +534,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$scope.selectedValues = angular.copy($scope.defaultValues);
 					}
 				}
+			}
+			if (nature == "init" && selections && !angular.equals($scope.defaultValues, selections)) {
+				$scope.defaultValues = angular.copy(selections);
+				$scope.doSelection($scope.ngModel.content.selectedColumn.aliasToShow, $scope.defaultValues);
 			}
 		}
 
