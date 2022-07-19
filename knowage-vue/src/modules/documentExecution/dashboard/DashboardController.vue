@@ -49,20 +49,25 @@ export default defineComponent({
     },
     created() {
         this.loadDatasets()
+        this.loadModel()
     },
 
     unmounted() {
         this.store.removeDashboard({ id: (this as any).dHash as any })
     },
     methods: {
+        loadModel() {
+            // TODO
+            this.model = mock
+            this.store.setDashboard(mock)
+        },
         async loadDatasets() {
             this.appStore.setLoading(true)
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/?asPagedList=true&seeTechnical=true`)
-                .then((response: AxiosResponse<any>) => (this.datasets = response.data))
+                .then((response: AxiosResponse<any>) => (this.datasets = response.data ? response.data.item : []))
                 .catch(() => {})
             this.appStore.setLoading(false)
-            console.log('DASHBOARD CONTROLLER - loadDatasets() - datasets: ', this.datasets)
         }
     }
 })

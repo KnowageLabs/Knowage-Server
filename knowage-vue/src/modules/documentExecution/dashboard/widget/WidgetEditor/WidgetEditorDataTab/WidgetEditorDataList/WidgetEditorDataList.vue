@@ -11,20 +11,36 @@
             <label class="kn-material-input-label"> {{ $t('common.columns') }} </label>
             <Button class="kn-button kn-button--primary" @click="showCalculatedFieldDialog"> {{ $t('common.addColumn') }}</Button>
         </div>
+
+        <div>
+            <Listbox v-if="selectedDataset" class="kn-list--column" :options="selectedDatasetColumns" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="[]" :emptyFilterMessage="$t('common.info.noDataFound')">
+                <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                <template #option="slotProps">
+                    <div class="kn-list-item kn-draggable" draggable="true" @dragstart="onDragStart($event, slotProps.option)">
+                        <i class="pi pi-bars"></i>
+                        <i :class="slotProps.option.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'" class="p-ml-2"></i>
+                        <div class="kn-list-item-text">
+                            <span>{{ slotProps.option.alias }}</span>
+                        </div>
+                    </div>
+                </template>
+            </Listbox>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
-import { IWidgetEditorDataset } from '../../../../Dashboard'
+import { IWidgetEditorDataset, IDatasetColumn } from '../../../../Dashboard'
 import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import mainStore from '../../../../../../../App.store'
+import Listbox from 'primevue/listbox'
 
 export default defineComponent({
     name: 'widget-editor-data-list',
-    components: { Dropdown },
+    components: { Dropdown, Listbox },
     props: { datasets: { type: Array }, modelDatasets: { type: Array } },
     emits: ['datasetSelected'],
     data() {
@@ -39,7 +55,7 @@ export default defineComponent({
                 }
             ] as IWidgetEditorDataset[],
             selectedDataset: null as IWidgetEditorDataset | null,
-            selectedDatasetColumns: [] as any[]
+            selectedDatasetColumns: [] as IDatasetColumn[]
         }
     },
     setup() {
@@ -65,10 +81,8 @@ export default defineComponent({
                     parameters: dataset.parameters
                 }
             })
-            console.log('loadDatasets() - datasetOptions: ', this.datasetOptions)
         },
         onDatasetSelected() {
-            console.log('onDatasetSelected() - selectedDataset: ', this.selectedDataset)
             this.loadDatasetColumns()
             this.$emit('datasetSelected', this.selectedDataset)
             console.log('onDatasetSelected() - allDatasets: ', this.datasets)
@@ -76,14 +90,18 @@ export default defineComponent({
         showCalculatedFieldDialog() {
             console.log('showCalculatedFieldDialog() - TODO!')
         },
-        async loadDatasetColumns() {
-            this.store.setLoading(true)
-            await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.selectedDataset?.id}`)
-                .then((response: AxiosResponse<any>) => (this.selectedDatasetColumns = response.data))
-                .catch(() => {})
-            this.store.setLoading(false)
+        loadDatasetColumns() {
+            this.selectedDatasetColumns = []
+            if (!this.datasets || this.datasets.length === 0) return
+
+            const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
+            if (index !== -1) this.selectedDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta
             console.log('loadDatasetColumns() - selectedDatasetColumns: ', this.selectedDatasetColumns)
+        },
+        onDragStart(event: any, datasetColumn: IDatasetColumn) {
+            event.dataTransfer.setData('text/plain', JSON.stringify(datasetColumn))
+            event.dataTransfer.dropEffect = 'move'
+            event.dataTransfer.effectAllowed = 'move'
         }
     }
 })

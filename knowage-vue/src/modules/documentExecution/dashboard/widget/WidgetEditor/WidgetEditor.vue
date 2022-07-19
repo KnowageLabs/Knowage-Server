@@ -6,8 +6,8 @@
                 <template #end> <Button @click="close">Close</Button> </template>
             </Toolbar>
             <div class="widgetEditor-container">
-                <WidgetEditorTabs :datasets="datasets" @datasetSelected="onDatasetSelected" />
-                <WidgetEditorPreview :widget="widget" />
+                <WidgetEditorTabs :propWidget="widget" :datasets="datasets" @datasetSelected="onDatasetSelected" />
+                <WidgetEditorPreview :propWidget="widget" />
             </div>
         </div>
     </Teleport>
@@ -23,25 +23,53 @@ import { AxiosResponse } from 'axios'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
 import WidgetEditorTabs from './WidgetEditorTabs.vue'
 import mainStore from '../../../../../App.store'
+import dashStore from '../../Dashboard.store'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'widget-editor',
     components: { WidgetEditorPreview, WidgetEditorTabs },
     emits: ['close'],
-    props: { widget: { required: true, type: Object }, datasets: { type: Array } },
+    props: { propWidget: { required: true, type: Object }, datasets: { type: Array } },
     data() {
         return {
+            widget: {} as any,
             previewData: null as any,
             datasetFunctions: {} as { availableFunctions: string[]; nullifFunction: string[] }
         }
     },
+    watch: {
+        propWidget() {
+            this.loadWidget()
+        }
+    },
     setup() {
         const store = mainStore()
-        return { store }
+        const dashboardStore = dashStore()
+        return { store, dashboardStore }
+    },
+    created() {
+        this.loadWidget()
+        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!! STORE MODEL, ', this.dashboardStore.$state)
     },
     methods: {
+        loadWidget() {
+            this.widget = this.propWidget ? deepcopy(this.propWidget) : this.createNewWidget()
+        },
+        createNewWidget() {
+            // TODO - remove hardcoded
+            return {
+                type: 'default',
+                columns: [],
+                conditionalStyles: [],
+                datasets: [],
+                interactions: [],
+                theme: '',
+                styles: {},
+                settings: {}
+            }
+        },
         onDatasetSelected(dataset: IWidgetEditorDataset) {
-            console.log('WIDGET EDITOR - onDatasetSelected() - dataset: ', dataset)
             this.loadPreviewData(dataset)
             this.loadAvailableFunctions(dataset)
         },
@@ -72,7 +100,6 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.datasetFunctions = response.data))
                 .catch(() => {})
             this.store.setLoading(false)
-            console.log('loadAvailableFunctions() - previewData: ', this.datasetFunctions)
         },
         close() {
             this.$emit('close')

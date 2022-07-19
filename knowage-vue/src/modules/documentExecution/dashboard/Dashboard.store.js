@@ -3,15 +3,20 @@ import { defineStore } from 'pinia'
 const store = defineStore('dashboardStore', {
     state() {
         return {
-            dashboards: {},
+            dashboards: {}
         }
     },
     actions: {
         removeDashboard(state, dashboard) {
             delete state.dashboards[dashboard.id]
         },
-        setDashboardSheet(state, dashboard) {
-            state.dashboards[dashboard.id].sheet = dashboard.sheet
+        setDashboard(dashboard) {
+            console.log('DASHBOARD: ', dashboard)
+            this.dashboards[dashboard.id] = dashboard
+        },
+
+        setDashboardSheet(dashboard) {
+            this.dashboardModel[dashboard.id].sheet = dashboard.sheet
         }
     }
 })
