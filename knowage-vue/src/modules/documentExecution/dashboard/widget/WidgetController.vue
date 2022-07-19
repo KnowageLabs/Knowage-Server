@@ -17,10 +17,10 @@
  */
 import { defineComponent } from 'vue'
 import { mapState } from 'vuex'
+import { getData } from '../DataProxyHelper'
 import WidgetEditor from './WidgetEditor/WidgetEditor.vue'
 import WidgetRenderer from './WidgetRenderer.vue'
 import WidgetButtonBar from './WidgetButtonBar.vue'
-import { getData } from '../DataProxyHelper'
 import Skeleton from 'primevue/skeleton'
 import ProgressBar from 'primevue/progressbar'
 import mitt from 'mitt'

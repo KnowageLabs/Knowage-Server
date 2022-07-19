@@ -22,3 +22,11 @@ export interface IWidgetEditorDataset {
     cache: boolean,
     parameters: any[],
 }
+export interface IWidgetPickerType {
+    cssClass: string
+    descKey: string
+    img: string
+    name: string
+    tags: Array<string>
+    type: string
+}
