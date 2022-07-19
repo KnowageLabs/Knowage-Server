@@ -1,6 +1,13 @@
 <template>
     <div class="dashboard-container" :id="`dashboard_${model.configuration.id}`">
+        <Button label="DATASET" @click="datasetEditorVisible = true" />
+        <Button label="WIDGET" @click="widgetPickerVisible = true" />
         <DashboardRenderer :model="model" :datasets="datasets"></DashboardRenderer>
+
+        <Transition name="editorEnter" appear>
+            <DatasetEditor v-if="datasetEditorVisible" @closeDatasetEditor="datasetEditorVisible = false" />
+        </Transition>
+
         <WidgetPickerDialog v-if="widgetPickerVisible" :visible="widgetPickerVisible" @closeWidgetPicker="widgetPickerVisible = false" />
     </div>
 </template>
@@ -17,14 +24,16 @@ import WidgetPickerDialog from './widget/WidgetPicker/WidgetPickerDialog.vue'
 import mock from './DashboardMock.json'
 import dashboardStore from './Dashboard.store'
 import mainStore from '../../../App.store'
+import DatasetEditor from './dataset/DatasetEditor.vue'
 
 export default defineComponent({
     name: 'dashboard-manager',
-    components: { DashboardRenderer, WidgetPickerDialog },
+    components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor },
     data() {
         return {
             model: mock,
-            widgetPickerVisible: true,
+            widgetPickerVisible: false,
+            datasetEditorVisible: false,
             datasets: [] as any[]
         }
     },
