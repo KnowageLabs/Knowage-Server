@@ -126,6 +126,7 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
 	$scope.imageBackgroundUrl=cockpitModule_template.configuration.style.imageBackgroundUrl;
 	cockpitModule_template = cockpitModule_backwardCompatibility.updateCockpitModel(cockpitModule_template);
+	cockpitModule_template.getSelections();
 	
 	function getAssociatedDatasetIds(label){
 		var tempIds = [];

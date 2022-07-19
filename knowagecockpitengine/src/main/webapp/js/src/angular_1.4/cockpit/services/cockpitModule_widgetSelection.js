@@ -1070,7 +1070,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}, 0);
 	}
 
-	this.getSelectionValues = function(datasetLabel, columnName){
+	this.getSelectionValues = function(datasetLabel, columnName,templateSelections){
 		var result = null;
 
 		var aggregations = cockpitModule_template.configuration.aggregations;
@@ -1096,6 +1096,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					result = selections[datasetLabel][columnName];
 				}
 			}
+		}
+		
+		if(templateSelections && result == undefined){
+			selections = cockpitModule_template.selections.filter((item)=>{
+				return item.ds === datasetLabel && item.columnName === columnName
+			});
+			if(selections && selections.length > 0)result = selections[0].value;
 		}
 
 		if(result){
