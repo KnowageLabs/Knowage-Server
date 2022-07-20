@@ -313,10 +313,11 @@
         "datasetEditor": {
             "associationsTabTitle": "Associations",
             "dataTabTitle": "Data",
-            "itemsPerPage": "Items per page",
             "title": "Dataset Manageent"
         },
         "widgetEditor": {
+            "itemsPerPage": "Items per page",
+            "pagination": "Pagination",
             "selectDataset": "Select Dataset"
         }
     },

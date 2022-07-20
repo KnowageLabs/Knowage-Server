@@ -58,7 +58,7 @@ export default defineComponent({
         createNewWidget() {
             // TODO - remove hardcoded
             const widget = {
-                type: 'table',
+                type: 'tableWidget',
                 columns: [],
                 conditionalStyles: [],
                 datasets: [],
@@ -67,7 +67,7 @@ export default defineComponent({
                 styles: {},
                 settings: {}
             } as IWidget
-            if (widget.type === 'table') {
+            if (widget.type === 'tableWidget') {
                 widget.settings.pagination = { enabled: false, itemsNumber: 0 }
             }
             return widget

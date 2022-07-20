@@ -1,19 +1,22 @@
 {
-    "chartWidget": [
+    "tableWidget": [
         {
             "components": [
                 {
+                    "cssClass": "kn-material-input p-d-flex p-flex-row kn-flex p-m-2",
+                    "label": "dashboard.widgetEditor.pagination",
+                    "property": "settings.pagination.enabled",
+                    "type": "inputSwitch"
                 },
                 {
-                    "callback": "functionRef/Name",
-                    "property": "something.something",
-                    "type": "inputText",
-                    "cssClasses": "kn-material-input",
-                    "labelText": "dashboard.datasetEditor.itemsPerPage",
-                    "labelCssClasses": "kn-material-input-label"
+                    "cssClass": "kn-flex p-m-2",
+                    "inputClass": "kn-material-input",
+                    "label": "dashboard.widgetEditor.itemsPerPage",
+                    "property": "settings.pagination.itemsNumber",
+                    "type": "inputText"
                 }
             ],
-            "cssClasses": "p-d-flex p-flex-row"
+            "cssClasses": "p-d-flex p-flex-row p-ai-center"
         }
     ]
 }
