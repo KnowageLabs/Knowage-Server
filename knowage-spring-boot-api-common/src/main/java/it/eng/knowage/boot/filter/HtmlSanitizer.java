@@ -35,7 +35,7 @@ public class HtmlSanitizer {
 				.allowStyling()
 				.allowAttributes("alt").onElements("img")
 				.allowAttributes("height", "width").matching(Pattern.compile(".*")).onElements("img")
-				.allowAttributes("class").onElements("div", "figure", "img", "p", "span")
+				.allowAttributes("class").globally()
 				.allowAttributes("href").matching(this::isHrefAttributeInWhitelist).onElements("a")
 				.allowAttributes("id").onElements("div")
 				.allowAttributes("src").matching(this::isSrcAttributeInWhitelist).onElements("audio", "iframe", "img", "video")
