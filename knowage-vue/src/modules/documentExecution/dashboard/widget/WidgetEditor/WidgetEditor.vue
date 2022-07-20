@@ -17,20 +17,19 @@
 /**
  * ! this component will be in charge of managing the widget editing.
  */
-import { defineComponent } from 'vue'
-import { IWidgetEditorDataset, IDatasetOptions } from '../../Dashboard'
+import { defineComponent, PropType } from 'vue'
+import { IWidgetEditorDataset, IDatasetOptions, IWidget } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
 import WidgetEditorTabs from './WidgetEditorTabs.vue'
 import mainStore from '../../../../../App.store'
-import dashStore from '../../Dashboard.store'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'widget-editor',
     components: { WidgetEditorPreview, WidgetEditorTabs },
     emits: ['close'],
-    props: { propWidget: { required: true, type: Object }, datasets: { type: Array } },
+    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array } },
     data() {
         return {
             widget: {} as any,
@@ -45,29 +44,63 @@ export default defineComponent({
     },
     setup() {
         const store = mainStore()
-        const dashboardStore = dashStore()
-        return { store, dashboardStore }
+        return { store }
     },
     created() {
         this.loadWidget()
-        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!! STORE MODEL, ', this.dashboardStore.$state)
     },
     methods: {
         loadWidget() {
-            this.widget = this.propWidget ? deepcopy(this.propWidget) : this.createNewWidget()
+            // TODO - uncomment this, remove mock
+            // this.widget = this.propWidget ? deepcopy(this.propWidget) : this.createNewWidget()
+            this.widget = this.createNewWidget()
         },
         createNewWidget() {
             // TODO - remove hardcoded
-            return {
-                type: 'default',
-                columns: [],
+            const widget = {
+                type: 'tableWidget',
+                columns: [
+                    {
+                        dataset: 1,
+                        name: 'column1',
+                        alias: 'column1 alias',
+                        type: 'java.math.BigDecimal',
+                        fieldType: 'MEASURE',
+                        aggregation: 'SUM'
+                    },
+                    {
+                        dataset: 2,
+                        name: 'column2',
+                        alias: 'column2 alias',
+                        type: 'java.math.BigDecimal',
+                        fieldType: 'ATTRIBUTE',
+                        aggregation: 'SUM'
+                    }
+                ],
                 conditionalStyles: [],
                 datasets: [],
                 interactions: [],
                 theme: '',
                 styles: {},
                 settings: {}
+            } as any
+            if (widget.type === 'tableWidget') {
+                widget.settings.pagination = { enabled: false, itemsNumber: 0 }
+                widget.functions = {
+                    disabledTest: () => {
+                        console.log('DISABLED TEST CALLED! ')
+                        return !widget.settings.pagination.enabled
+                    },
+                    getColumnIcons(column: any) {
+                        console.log('getColumnIcons TEST CALLED! ', column)
+                        return column.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'
+                    },
+                    onColumnDrop(column: any) {
+                        console.log('onColumnDrop  CALLED! ', column)
+                    }
+                }
             }
+            return widget
         },
         onDatasetSelected(dataset: IWidgetEditorDataset) {
             this.loadPreviewData(dataset)
