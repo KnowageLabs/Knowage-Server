@@ -59,16 +59,46 @@ export default defineComponent({
             // TODO - remove hardcoded
             const widget = {
                 type: 'tableWidget',
-                columns: [],
+                columns: [
+                    {
+                        dataset: 1,
+                        name: 'column1',
+                        alias: 'column1 alias',
+                        type: 'java.math.BigDecimal',
+                        fieldType: 'MEASURE',
+                        aggregation: 'SUM'
+                    },
+                    {
+                        dataset: 2,
+                        name: 'column2',
+                        alias: 'column2 alias',
+                        type: 'java.math.BigDecimal',
+                        fieldType: 'ATTRIBUTE',
+                        aggregation: 'SUM'
+                    }
+                ],
                 conditionalStyles: [],
                 datasets: [],
                 interactions: [],
                 theme: '',
                 styles: {},
                 settings: {}
-            } as IWidget
+            } as any
             if (widget.type === 'tableWidget') {
                 widget.settings.pagination = { enabled: false, itemsNumber: 0 }
+                widget.functions = {
+                    disabledTest: () => {
+                        console.log('DISABLED TEST CALLED! ')
+                        return !widget.settings.pagination.enabled
+                    },
+                    getColumnIcons(column: any) {
+                        console.log('getColumnIcons TEST CALLED! ', column)
+                        return column.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'
+                    },
+                    onColumnDrop(column: any) {
+                        console.log('onColumnDrop  CALLED! ', column)
+                    }
+                }
             }
             return widget
         },

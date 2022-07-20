@@ -1,7 +1,7 @@
 <template>
     <div :class="class">
         <label v-if="label" class="kn-material-input-label p-mr-2"> {{ $t(label) }}</label>
-        <InputText :class="inputClass" :type="type" v-model="modelValue" :maxLength="maxLength" @input="onInput" @change="onChange" @blur="$emit('blur')" />
+        <InputText :class="inputClass" :type="type" v-model="modelValue" :maxLength="maxLength" :disabled="disabled" @input="onInput" @change="onChange" @blur="$emit('blur')" />
     </div>
 </template>
 
@@ -11,7 +11,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
     name: 'widget-editor-input-text',
     components: {},
-    props: { value: { type: String }, label: { type: String }, class: { type: String }, inputClass: { type: String }, type: { type: String }, maxLength: { type: String } },
+    props: { value: { type: String }, label: { type: String }, class: { type: String }, inputClass: { type: String }, type: { type: String }, maxLength: { type: String }, disabled: { type: Boolean } },
     emits: ['input', 'change', 'blur'],
     data() {
         return {
