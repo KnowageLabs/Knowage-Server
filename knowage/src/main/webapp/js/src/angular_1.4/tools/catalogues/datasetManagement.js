@@ -1917,6 +1917,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					item.dsVersions = response;
 					item.selected = true;
 					$scope.selectedDataSetInit = angular.copy(item);
+					
+					$scope.fixData(item);
+					
 					$scope.selectedDataSet = angular.copy(item);
 					defer.resolve(response);
 				}, function(error){
@@ -2052,6 +2055,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	var selectDataset = function(item,index) {
 
 		$scope.selectedDataSetInit = angular.copy(item);
+		
+		$scope.fixData(item);
+		
 		$scope.selectedDataSet = angular.copy(item);
 		$scope.showSaveAndCancelButtons = true;
 		getTagsForDataset(item);
@@ -4098,6 +4104,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				function(responseDS) {
 
 					var savedDataset = responseDS.data[0];
+					
+					$scope.fixData(savedDataset);
+					
 					$scope.selectedDataSet = angular.copy(savedDataset);
 
 					$scope.getDatasetParametersFromBusinessModel($scope.selectedDataSet);
@@ -4961,5 +4970,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 $scope.tags = dataset.tags;
 	 }
 
+	$scope.fixData = function(dataset) {
+		if (dataset.startDate) {
+			try { dataset.startDate = new Date(dataset.startDate); } catch(e) {}
+		}
+		if (dataset.endDate) {
+			try { dataset.endDate = new Date(dataset.endDate); } catch(e) {}
+		}
+	}
 
 };
