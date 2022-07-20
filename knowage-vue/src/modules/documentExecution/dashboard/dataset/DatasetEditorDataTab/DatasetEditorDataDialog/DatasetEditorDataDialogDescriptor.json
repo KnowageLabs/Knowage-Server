@@ -1,0 +1,45 @@
+{
+    "breakpoint": "960px",
+    "columns": [
+        {
+            "field": "label",
+            "header": "common.label",
+            "style": {}
+        },
+        {
+            "field": "name",
+            "header": "common.name",
+            "style": {}
+        },
+        {
+            "field": "type",
+            "header": "common.type",
+            "style": {}
+        }
+    ],
+    "datasetTypes": {
+        "SbiCkanDataSet": "Ckan",
+        "SbiCustomDataSet": "Custom",
+        "SbiFederatedDataSet": "Federated",
+        "SbiFileDataSet": "File",
+        "SbiFlatDataSet": "Flat",
+        "SbiJClassDataSet": "Java Class",
+        "SbiPreparedDataSet": "Prepared",
+        "SbiPythonDataSet": "Python/R",
+        "SbiQbeDataSet": "Qbe",
+        "SbiQueryDataSet": "Query",
+        "SbiRESTDataSet": "REST",
+        "SbiSPARQLDataSet": "SPARQL",
+        "SbiScriptDataSet": "Script",
+        "SbiSolrDataSet": "Solr"
+    },
+    "responsiveLayout": "stack",
+    "rows": 15,
+    "table": {
+        "iconColumn": {
+            "style": {
+                "text-align": "end"
+            }
+        }
+    }
+}

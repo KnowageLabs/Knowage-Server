@@ -1,7 +1,7 @@
 <template>
     <div class="p-d-flex">
-        <DataList class="kn-flex p-my-2 p-ml-2 p-mr-1" />
-        <DataDetail class="kn-flex p-my-2 p-mr-2 p-ml-1" />
+        <DataList :dashboardDatasetsProp="dashboardDatasetsProp" class="kn-flex p-my-2 p-ml-2 p-mr-1" />
+        <DataDetail :dashboardDatasetsProp="dashboardDatasetsProp" class="kn-flex p-my-2 p-mr-2 p-ml-1" />
     </div>
 </template>
 
@@ -13,7 +13,7 @@ import DataDetail from './DatasetEditorDataDetail/DatasetEditorDataDetail.vue'
 export default defineComponent({
     name: 'dataset-editor-data-tab',
     components: { DataList, DataDetail },
-    props: {},
+    props: { dashboardDatasetsProp: { required: true, type: Array } },
     emits: [],
     data() {
         return {}

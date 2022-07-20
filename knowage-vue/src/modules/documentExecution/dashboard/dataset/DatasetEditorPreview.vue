@@ -1,5 +1,5 @@
 <template>
-    <div class="datasetEditor-preview">Preview</div>
+    <div class="datasetEditor-preview">{{ dashboardDatasetsProp }}</div>
 </template>
 
 <script lang="ts">
@@ -11,10 +11,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
     name: 'dataset-editor-preview',
     props: {
-        dataset: {
-            required: true,
-            type: Object
-        }
+        dashboardDatasetsProp: { required: true, type: Array }
     }
 })
 </script>

@@ -25,7 +25,8 @@
                         "name": "parameter",
                         "type": "single"
                     }
-                ]
+                ],
+                "type": "SbiQueryDataSet"
             }
         ],
         "description": "a long description that could be used in some places",

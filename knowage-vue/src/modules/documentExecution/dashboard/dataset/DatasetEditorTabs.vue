@@ -2,7 +2,7 @@
     <div class="datasetEditor-tabs">
         <TabView>
             <TabPanel :header="$t('dashboard.datasetEditor.dataTabTitle')">
-                <DataTab id="dataset-editor-list-card" />
+                <DataTab :dashboardDatasetsProp="dashboardDatasetsProp" id="dataset-editor-list-card" />
             </TabPanel>
             <TabPanel :header="$t('dashboard.datasetEditor.associationsTabTitle')"> Content II </TabPanel>
         </TabView>
@@ -11,7 +11,7 @@
 
 <script lang="ts">
 /**
- * ! this component will be in charge of managing the widget editing sections.
+ * ! this component is in charge of controlling the tabview of the dataset
  */
 import { defineComponent } from 'vue'
 import TabView from 'primevue/tabview'
@@ -21,7 +21,7 @@ import DataTab from './DatasetEditorDataTab/DatasetEditorDataTab.vue'
 export default defineComponent({
     name: 'widget-editor-tabs',
     components: { TabView, TabPanel, DataTab },
-    props: {},
+    props: { dashboardDatasetsProp: { required: true, type: Array } },
     emits: [],
     data() {
         return {}

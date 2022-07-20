@@ -1,7 +1,7 @@
 <template>
     <div class="dashboard-container" :id="`dashboard_${model.configuration.id}`">
-        <Button label="DATASET" @click="datasetEditorVisible = true" />
-        <Button label="WIDGET" @click="widgetPickerVisible = true" />
+        <Button label="DATASET" style="position: absolute; margin-left: 250px; z-index: 999" @click="datasetEditorVisible = true" />
+        <Button label="WIDGET" style="position: absolute; margin-left: 400px; z-index: 999" @click="widgetPickerVisible = true" />
         <DashboardRenderer :model="model" :datasets="datasets"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>

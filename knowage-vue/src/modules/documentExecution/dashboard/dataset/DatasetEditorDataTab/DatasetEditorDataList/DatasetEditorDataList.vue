@@ -1,34 +1,88 @@
 <template>
-    <Card id="dataset-editor-list-card">
-        <template #title>
-            <Button label="Add Dataset" icon="pi pi-plus-circle" class="p-button-outlined" @click="showCalculatedFieldDialog"></Button>
-        </template>
-        <template #content> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque quas! </template>
-    </Card>
+    <div id="dataset-editor-list-card-container">
+        <Card class="dataset-editor-list-card">
+            <template #title>
+                <Button label="Add Dataset" icon="pi pi-plus-circle" class="p-button-outlined p-mt-2 p-mr-2" @click="toggleDataDialog"></Button>
+            </template>
+            <template #content>
+                <Listbox class="kn-list kn-list-no-border-right" :options="selectedDatasets" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="label" filterMatchMode="contains" :filterFields="['label']" :emptyFilterMessage="$t('common.info.noDataFound')" @change="selectDataset">
+                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                    <template #option="slotProps">
+                        <div class="kn-list-item" style="height: 30px">
+                            <div class="kn-list-item-icon p-mx-2">
+                                <i style="color: #929292" :class="dataListDescriptor.listboxSettings.avatar.values[slotProps.option.type].icon"></i>
+                            </div>
+                            <div class="kn-list-item-text">
+                                <span>{{ slotProps.option.label }}</span>
+                            </div>
+                            <div class="kn-list-item-buttons">
+                                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteDatasetFromModel" />
+                            </div>
+                        </div>
+                    </template>
+                </Listbox>
+            </template>
+        </Card>
+
+        <DataDialog v-if="dataDialogVisible" :dashboardDatasetsProp="selectedDatasets" :visible="dataDialogVisible" @addSelectedDatasets="addSelectedDatasetsToModel" @close="toggleDataDialog" />
+    </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-// import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
+import Listbox from 'primevue/listbox'
+import DataDialog from '../DatasetEditorDataDialog/DatasetEditorDataDialog.vue'
+import dashStore from '../../../Dashboard.store'
+import dataListDescriptor from './DatasetEditorDataListDescriptor.json'
 
 export default defineComponent({
     name: 'dataset-editor-data-list',
-    components: { Card },
-    props: {},
+    components: { Card, Listbox, DataDialog },
+    props: { dashboardDatasetsProp: { required: true, type: Array } },
     emits: [],
     data() {
-        return {}
+        return {
+            dataListDescriptor,
+            selectedDatasets: [] as any,
+            dataDialogVisible: false
+        }
     },
-    setup() {},
-    async created() {},
-    methods: {}
+    setup() {
+        const dashboardStore = dashStore()
+        return { dashboardStore }
+    },
+    created() {
+        this.selectedDatasets = this.dashboardDatasetsProp
+    },
+    methods: {
+        toggleDataDialog() {
+            this.dataDialogVisible = !this.dataDialogVisible
+        },
+        addSelectedDatasetsToModel(datasetsToAdd) {
+            datasetsToAdd.forEach((dataset) => {
+                this.selectedDatasets.push(dataset)
+            })
+            console.log('SelectedDatasets -------', this.selectedDatasets)
+            this.dataDialogVisible = false
+        },
+        deleteDatasetFromModel(datasetToDelete) {
+            console.log(datasetToDelete)
+        },
+        selectDataset(event) {
+            console.log('SELECTED -------------', event.value)
+        }
+    }
 })
 </script>
 
 <style lang="scss">
-#dataset-editor-list-card .p-card-body .p-card-title {
+.dataset-editor-list-card .p-card-title {
     display: flex;
     justify-content: end;
+}
+.dataset-editor-list-card .p-card-body,
+.dataset-editor-list-card .p-card-content {
+    padding: 0;
 }
 </style>

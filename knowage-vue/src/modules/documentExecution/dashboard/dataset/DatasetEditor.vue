@@ -9,8 +9,8 @@
                 </template>
             </Toolbar>
             <div class="datasetEditor-container">
-                <DatasetEditorTabs :datasets="datasets" @datasetSelected="onDatasetSelected" />
-                <DatasetEditorPreview :dataset="dataset" />
+                <DatasetEditorTabs :dashboardDatasetsProp="dashboardDatasets" />
+                <DatasetEditorPreview :dashboardDatasetsProp="dashboardDatasets" />
             </div>
         </div>
     </Teleport>
@@ -23,15 +23,30 @@
 import { defineComponent } from 'vue'
 import DatasetEditorTabs from './DatasetEditorTabs.vue'
 import DatasetEditorPreview from './DatasetEditorPreview.vue'
+import mainStore from '../../../../App.store'
+import dashStore from '../Dashboard.store'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'dataset-editor',
     components: { DatasetEditorTabs, DatasetEditorPreview },
-    emits: ['closeDatasetEditor'],
     props: {},
+    emits: ['closeDatasetEditor'],
     data() {
-        return {}
+        return {
+            dashboardDatasets: {} as any
+        }
     },
+    setup() {
+        const store = mainStore()
+        const dashboardStore = dashStore()
+        return { store, dashboardStore }
+    },
+    created() {
+        console.log('STORE MODEL', this.dashboardStore.$state.dashboards[1])
+        this.dashboardDatasets = deepcopy(this.dashboardStore.$state.dashboards[1].configuration.datasets)
+    },
+
     methods: {}
 })
 </script>
