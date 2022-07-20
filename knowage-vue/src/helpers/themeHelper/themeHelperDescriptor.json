@@ -83,6 +83,11 @@
                 "type": "color"
             },
             {
+                "key": "--kn-mainmenu-hover-background-color",
+                "label": "Menu Background Hover Color",
+                "type": "color"
+            },
+            {
                 "key": "--kn-mainmenu-highlight-color",
                 "label": "Menu Highlight Color",
                 "type": "color"
