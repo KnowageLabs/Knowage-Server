@@ -5,11 +5,15 @@ export interface ISheet {
 }
 
 export interface IWidget {
-    id: string
-    type: string
-    theme: string
-    settings: object
-    interactions?: Array<object>
+    id?: string,
+    type: string,
+    columns: IDatasetColumn[],
+    conditionalStyles: any[],
+    datasets: any[],
+    interactions: any[],
+    theme: string,
+    styles: any,
+    settings: any
 }
 
 export interface IInteraction {
@@ -62,16 +66,4 @@ interface IDatasetColumn {
     personal: boolean,
     decript: boolean,
     subjectId: boolean
-}
-
-interface IWidget {
-    id?: string,
-    type: string,
-    columns: IDatasetColumn[],
-    conditionalStyles: any[],
-    datasets: any[],
-    interactions: any[],
-    theme: string,
-    styles: any,
-    settings: any
 }

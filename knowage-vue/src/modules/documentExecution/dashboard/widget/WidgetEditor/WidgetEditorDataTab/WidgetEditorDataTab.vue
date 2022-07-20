@@ -7,22 +7,23 @@
         </Card>
         <Card class="kn-flex p-m-2">
             <template #content>
-                <WidgetEditorDataOptions></WidgetEditorDataOptions>
+                <WidgetEditorGeneric :widgetModel="propWidget"></WidgetEditorGeneric>
             </template>
         </Card>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { IWidget } from '../../../Dashboard'
 import Card from 'primevue/card'
 import WidgetEditorDataList from './WidgetEditorDataList/WidgetEditorDataList.vue'
-import WidgetEditorDataOptions from './WidgetEditorDataOptions/WidgetEditorDataOptions.vue'
+import WidgetEditorGeneric from '../WidgetEditorGeneric/WidgetEditorGeneric.vue'
 
 export default defineComponent({
     name: 'widget-editor-data-tab',
-    components: { Card, WidgetEditorDataList, WidgetEditorDataOptions },
-    props: { datasets: { type: Array }, modelDatasets: { type: Array } },
+    components: { Card, WidgetEditorDataList, WidgetEditorGeneric },
+    props: { propWidget: { type: Object as PropType<IWidget> }, datasets: { type: Array }, modelDatasets: { type: Array } },
     emits: ['datasetSelected'],
     data() {
         return {}

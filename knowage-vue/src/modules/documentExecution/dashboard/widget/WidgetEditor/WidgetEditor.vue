@@ -17,20 +17,19 @@
 /**
  * ! this component will be in charge of managing the widget editing.
  */
-import { defineComponent } from 'vue'
-import { IWidgetEditorDataset, IDatasetOptions } from '../../Dashboard'
+import { defineComponent, PropType } from 'vue'
+import { IWidgetEditorDataset, IDatasetOptions, IWidget } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
 import WidgetEditorTabs from './WidgetEditorTabs.vue'
 import mainStore from '../../../../../App.store'
-import dashStore from '../../Dashboard.store'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'widget-editor',
     components: { WidgetEditorPreview, WidgetEditorTabs },
     emits: ['close'],
-    props: { propWidget: { required: true, type: Object }, datasets: { type: Array } },
+    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array } },
     data() {
         return {
             widget: {} as any,
@@ -45,21 +44,21 @@ export default defineComponent({
     },
     setup() {
         const store = mainStore()
-        const dashboardStore = dashStore()
-        return { store, dashboardStore }
+        return { store }
     },
     created() {
         this.loadWidget()
-        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!! STORE MODEL, ', this.dashboardStore.$state)
     },
     methods: {
         loadWidget() {
-            this.widget = this.propWidget ? deepcopy(this.propWidget) : this.createNewWidget()
+            // TODO - uncomment this, remove mock
+            // this.widget = this.propWidget ? deepcopy(this.propWidget) : this.createNewWidget()
+            this.widget = this.createNewWidget()
         },
         createNewWidget() {
             // TODO - remove hardcoded
-            return {
-                type: 'default',
+            const widget = {
+                type: 'table',
                 columns: [],
                 conditionalStyles: [],
                 datasets: [],
@@ -67,7 +66,11 @@ export default defineComponent({
                 theme: '',
                 styles: {},
                 settings: {}
+            } as IWidget
+            if (widget.type === 'table') {
+                widget.settings.pagination = { enabled: false, itemsNumber: 0 }
             }
+            return widget
         },
         onDatasetSelected(dataset: IWidgetEditorDataset) {
             this.loadPreviewData(dataset)

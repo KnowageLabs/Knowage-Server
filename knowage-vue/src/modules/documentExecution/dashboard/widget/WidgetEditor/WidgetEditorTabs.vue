@@ -2,7 +2,7 @@
     <div class="widgetEditor-tabs">
         <TabView>
             <TabPanel header="Data">
-                <WidgetEditorDataTab :datasets="datasets" :modelDatasets="modelDatasets" @datasetSelected="$emit('datasetSelected', $event)"></WidgetEditorDataTab>
+                <WidgetEditorDataTab :propWidget="propWidget" :datasets="datasets" :modelDatasets="modelDatasets" @datasetSelected="$emit('datasetSelected', $event)"></WidgetEditorDataTab>
             </TabPanel>
             <TabPanel header="Settings"> Content II </TabPanel>
         </TabView>
@@ -13,7 +13,8 @@
 /**
  * ! this component will be in charge of managing the widget editing sections.
  */
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
+import { IWidget } from '../../Dashboard'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import WidgetEditorDataTab from './WidgetEditorDataTab/WidgetEditorDataTab.vue'
@@ -21,13 +22,7 @@ import WidgetEditorDataTab from './WidgetEditorDataTab/WidgetEditorDataTab.vue'
 export default defineComponent({
     name: 'widget-editor-tabs',
     components: { TabView, TabPanel, WidgetEditorDataTab },
-    props: {
-        widget: {
-            required: true,
-            type: Object
-        },
-        datasets: { type: Array }
-    },
+    props: { propWidget: { type: Object as PropType<IWidget> }, datasets: { type: Array } },
     emits: ['datasetSelected'],
     data() {
         return {

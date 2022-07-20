@@ -1,0 +1,19 @@
+{
+    "chartWidget": [
+        {
+            "components": [
+                {
+                },
+                {
+                    "callback": "functionRef/Name",
+                    "property": "something.something",
+                    "type": "inputText",
+                    "cssClasses": "kn-material-input",
+                    "labelText": "dashboard.datasetEditor.itemsPerPage",
+                    "labelCssClasses": "kn-material-input-label"
+                }
+            ],
+            "cssClasses": "p-d-flex p-flex-row"
+        }
+    ]
+}
