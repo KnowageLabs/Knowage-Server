@@ -95,8 +95,12 @@ export default defineComponent({
                         console.log('getColumnIcons TEST CALLED! ', column)
                         return column.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'
                     },
-                    onColumnDrop(column: any) {
-                        console.log('onColumnDrop  CALLED! ', column)
+                    onColumnDrop(event: any, model: IWidget) {
+                        console.log('onColumnDrop  CALLED MODEL! ', model)
+                        const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
+                        // TODO - Add dataset key
+                        model.columns.push({ dataset: 1, name: eventData.name, alias: eventData.alias, type: eventData.type, fieldType: eventData.fieldType, aggregation: eventData.aggregation, style: { hiddenColumn: false, 'white-space': 'nowrap' } })
+                        console.log('onColumnDrop  CALLED! ', eventData)
                     }
                 }
             }

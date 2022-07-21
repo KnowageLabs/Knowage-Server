@@ -1,5 +1,5 @@
 <template>
-    <div :class="{ 'dropzone-active': settings.dropIsActive }" @drop.stop="onDropComplete($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent>
+    <div :class="{ 'dropzone-active': settings.dropIsActive }" @drop.stop="onDropComplete($event, widgetModel)" @dragover.prevent @dragenter.prevent @dragleave.prevent>
         <DataTable :value="rows" class="p-datatable-sm kn-table" :dataKey="settings.dataKey" v-model:filters="filters" :globalFilterFields="settings.globalFilterFields" :responsiveLayout="settings.responsiveLayout ?? 'stack'" :breakpoint="settings.breakpoint ?? '600px'" @rowReorder="onRowReorder">
             <template #header>
                 <div v-if="settings.globalFilterFields?.length > 0" class="table-header p-d-flex p-ai-center">
@@ -34,6 +34,7 @@
 import { defineComponent, PropType } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { IWidget } from '../../../../Dashboard'
+import { getModelProperty } from '../WidgetEditorGenericHelper'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import deepcopy from 'deepcopy'
@@ -55,8 +56,10 @@ export default defineComponent({
         }
     },
     created() {
+        console.log('>>>> TEST: ', 'widgetModel.' + this.settings.property)
         this.loadItems()
         this.setFilters()
+        this.$watch('widgetModel.' + this.settings.property, () => this.loadItems())
     },
     methods: {
         loadItems() {
@@ -69,37 +72,15 @@ export default defineComponent({
             this.$emit('buttonClicked', { button: button, item: item })
         },
         getIcon(item: any) {
-            if (!this.widgetModel) return
-            const stack = this.settings.iconColumn?.split('.')
-            if (!stack || stack.length === 0) return
-
-            let property = null as any
-            let tempModel = this.widgetModel
-            while (stack.length > 1) {
-                property = stack.shift()
-                if (property && this.widgetModel) tempModel = tempModel[property]
-            }
-            property = stack.shift()
-            return tempModel[property](item)
+            return getModelProperty(this.widgetModel, this.settings.iconColumn, 'getValue', null)(item)
         },
         onRowReorder(event: any) {
             console.log('ON ROW REORDER CALLED: ', event)
             this.rows = event.value
             this.$emit('rowReorder', event.value)
         },
-        onDropComplete(event: any) {
-            if (!this.widgetModel) return
-            const stack = this.settings.dropIsActive?.dropFunction?.split('.')
-            if (!stack || stack.length === 0) return
-
-            let property = null as any
-            let tempModel = this.widgetModel
-            while (stack.length > 1) {
-                property = stack.shift()
-                if (property && this.widgetModel) tempModel = tempModel[property]
-            }
-            property = stack.shift()
-            return tempModel[property](event)
+        onDropComplete(event: any, widgetModel: IWidget) {
+            getModelProperty(this.widgetModel, this.settings.dropIsActive?.dropFunction, 'getValue', null)(event, widgetModel)
         }
     }
 })
@@ -107,6 +88,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .dropzone-active {
-    background-color: red !important;
+    border: 1.5px blue dotted;
+    padding: 0.5rem;
 }
 </style>

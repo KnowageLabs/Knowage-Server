@@ -30,7 +30,6 @@
                     ],
                     "cssClass": "kn-material-input p-d-flex p-flex-row kn-flex p-m-2",
                     "label": "dashboard.widgetEditor.pagination",
-                    "property": "columns",
                     "settings": {
                         "buttons": [
                             {
@@ -51,6 +50,7 @@
                             "dropFunction": "functions.onColumnDrop"
                         },
                         "iconColumn": "functions.getColumnIcons",
+                        "property": "columns",
                         "responsiveLayout": "stack",
                         "rowReorder": {
                             "rowReorderColumnStyle": "width: 3rem"

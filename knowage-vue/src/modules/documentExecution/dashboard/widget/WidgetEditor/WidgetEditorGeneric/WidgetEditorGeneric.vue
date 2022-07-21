@@ -4,15 +4,17 @@
             <template v-for="(component, tempIndex) in row.components" :key="tempIndex">
                 <WidgetEditorInputText v-if="component.type === 'inputText'" :label="component.label" :class="component.cssClass" :disabled="isDisabled(component)" @input="onInputTextInput($event, component)" @change="onInputTextChange($event, component)"></WidgetEditorInputText>
                 <WidgetEditorInputSwitch v-else-if="component.type === 'inputSwitch'" :class="component.cssClass" :inputClass="component.inputClass" :label="component.label" @change="onInputSwitchChange($event, component)"></WidgetEditorInputSwitch>
-                <WidgetEditorDataTable v-else-if="component.type === 'dataTable'" :widgetModel="widgetModel" :items="getItems(component.property)" :columns="component.columns" :settings="component.settings" @rowReorder="onRowReorder($event, component)"></WidgetEditorDataTable>
+                <WidgetEditorDataTable v-else-if="component.type === 'dataTable'" :widgetModel="widgetModel" :items="getItems(component.settings.property)" :columns="component.columns" :settings="component.settings" @rowReorder="onRowReorder($event, component)"></WidgetEditorDataTable>
             </template>
         </div>
+        {{ model.columns }}
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '../../../Dashboard'
+import { getModelProperty } from './WidgetEditorGenericHelper'
 import descriptor from './WidgetEditorGenericDescriptor.json'
 import WidgetEditorInputSwitch from './components/WidgetEditorInputSwitch.vue'
 import WidgetEditorInputText from './components/WidgetEditorInputText.vue'
@@ -54,33 +56,32 @@ export default defineComponent({
             if (component.property) this.updateModelProperty(value, component.property)
         },
         updateModelProperty(value: any, propertyPath: string) {
-            this.getModelProperty(propertyPath, 'updateValue', value)
+            getModelProperty(this.widgetModel, propertyPath, 'updateValue', value)
 
             console.log('UPDATED MODEL: ', this.model)
         },
         isDisabled(component: any) {
-            console.log('TEEEEEEEEEST: ', this.getModelProperty(component.disabled, 'callFunction', null))
-            return this.getModelProperty(component.disabled, 'callFunction', null)
+            console.log('TEEEEEEEEEST: ', getModelProperty(this.widgetModel, component.disabled, 'callFunction', null))
+            return getModelProperty(this.widgetModel, component.disabled, 'getValue', null)()
         },
         getItems(propertyPath: string): any[] {
-            return this.getModelProperty(propertyPath, 'getValue', null)
-        },
-        getModelProperty(propertyPath: string, action: string, newValue: any) {
-            if (!this.model) return
-            const stack = propertyPath?.split('.')
-            if (!stack || stack.length === 0) return
-
-            let property = null as any
-            let tempModel = this.model
-            while (stack.length > 1) {
-                property = stack.shift()
-                if (property && this.model) tempModel = tempModel[property]
-            }
-            property = stack.shift()
-            if (action === 'updateValue') tempModel[property] = newValue
-            else if (action === 'callFunction') return tempModel[property]()
-            else if (action === 'getValue') return tempModel[property]
+            return getModelProperty(this.widgetModel, propertyPath, 'getValue', null)
         }
+        // getModelProperty(propertyPath: string, action: string, newValue: any) {
+        //     if (!this.model) return
+        //     const stack = propertyPath?.split('.')
+        //     if (!stack || stack.length === 0) return
+
+        //     let property = null as any
+        //     let tempModel = this.model
+        //     while (stack.length > 1) {
+        //         property = stack.shift()
+        //         if (property && this.model) tempModel = tempModel[property]
+        //     }
+        //     property = stack.shift()
+        //     if (action === 'updateValue') tempModel[property] = newValue
+        //     else if (action === 'getValue') return tempModel[property]
+        // }
     }
 })
 </script>

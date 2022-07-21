@@ -31,7 +31,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { AxiosResponse } from 'axios'
 import { IWidgetEditorDataset, IDatasetColumn } from '../../../../Dashboard'
 import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
