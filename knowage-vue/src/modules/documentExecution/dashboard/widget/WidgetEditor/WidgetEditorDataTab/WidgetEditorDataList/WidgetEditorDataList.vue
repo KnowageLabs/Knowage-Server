@@ -31,7 +31,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { IWidgetEditorDataset, IDatasetColumn } from '../../../../Dashboard'
+import { IWidgetEditorDataset, IDatasetColumn, IWidgetColumn } from '../../../../Dashboard'
+import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import mainStore from '../../../../../../../App.store'
@@ -63,6 +64,13 @@ export default defineComponent({
     },
     async created() {
         this.loadDatasets()
+        console.log('EVENT BUS IN DATALIST: ', emitter)
+        emitter.on('collumnAdded', (event) => {
+            this.removeColumn(event)
+        })
+        emitter.on('collumnRemoved', (event) => {
+            this.addColumn(event)
+        })
     },
     methods: {
         loadDatasets() {
@@ -90,6 +98,7 @@ export default defineComponent({
             console.log('showCalculatedFieldDialog() - TODO!')
         },
         loadDatasetColumns() {
+            // TODO - ADD Condition to ignore already selected columns
             this.selectedDatasetColumns = []
             if (!this.datasets || this.datasets.length === 0) return
 
@@ -101,6 +110,24 @@ export default defineComponent({
             event.dataTransfer.setData('text/plain', JSON.stringify(datasetColumn))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
+        },
+        addColumn(column: IWidgetColumn) {
+            console.log('>>> ADD COLUMN: ', column)
+            if (this.selectedDataset && column.dataset === this.selectedDataset.id && this.datasets) {
+                let tempDataset = null as any
+                const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
+                if (index !== -1) tempDataset = (this.datasets[index] as any).metadata.fieldsMeta
+                console.log('TEMP DATASET: ', tempDataset)
+                if (!tempDataset) return
+                const columnIndex = tempDataset.metadata.fieldsMeta?.findIndex((tempColumn: any) => column.name === tempColumn.name)
+                console.log('COLUMN INDEX: ', columnIndex)
+                if (columnIndex !== -1) this.selectedDatasetColumns.push(tempDataset.metadata.fieldsMeta[columnIndex])
+            }
+        },
+        removeColumn(column: IDatasetColumn) {
+            console.log('REMOVE COLUMN: ', column)
+            const index = this.selectedDatasetColumns.findIndex((tempColumn: IDatasetColumn) => tempColumn.name === column.name && tempColumn.alias === column.alias)
+            if (index !== -1) this.selectedDatasetColumns.splice(index, 1)
         }
     }
 })
