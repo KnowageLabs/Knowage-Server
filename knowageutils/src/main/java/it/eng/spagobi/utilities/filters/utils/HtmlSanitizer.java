@@ -7,8 +7,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 import org.owasp.html.CssSchema;
 import org.owasp.html.CssSchema.Property;
 import org.owasp.html.HtmlChangeListener;
@@ -23,7 +22,7 @@ import it.eng.spagobi.utilities.whitelist.IWhiteList;
 
 public class HtmlSanitizer {
 
-	private static final Logger LOGGER = LogManager.getLogger(HtmlSanitizer.class);
+	private static final Logger LOGGER = Logger.getLogger(HtmlSanitizer.class);
 
 	private static final Pattern IMG_SRC_DATA = Pattern.compile("^data:image/.*$");
 
@@ -99,19 +98,19 @@ public class HtmlSanitizer {
 
 	public String sanitize(String input) {
 
-		LOGGER.debug("Sanitizing: {}", input);
+		LOGGER.debug("Sanitizing: " + input);
 
 		String output = policy.sanitize(input, new HtmlChangeListener<Void>() {
 
 			@Override
 			public void discardedTag(Void context, String elementName) {
-				LOGGER.debug("Discarded element: {}", elementName);
+				LOGGER.debug("Discarded element: " + elementName);
 
 			}
 
 			@Override
 			public void discardedAttributes(Void context, String tagName, String... attributeNames) {
-				LOGGER.debug("In tag {}, discarded attributes: {}", tagName, Joiner.on(", ").join(attributeNames));
+				LOGGER.debug("In tag " + tagName + ", discarded attributes: " + Joiner.on(", ").join(attributeNames));
 			}
 		}, null);
 
@@ -122,7 +121,7 @@ public class HtmlSanitizer {
 
 	public boolean isSafe(String input) {
 
-		LOGGER.debug("Checking: {}", input);
+		LOGGER.debug("Checking: " + input);
 
 		AtomicBoolean valid = new AtomicBoolean(true);
 
@@ -130,13 +129,13 @@ public class HtmlSanitizer {
 
 			@Override
 			public void discardedTag(AtomicBoolean valid, String elementName) {
-				LOGGER.debug("Discarded element: {}", elementName);
+				LOGGER.debug("Discarded element: " + elementName);
 				valid.set(false);
 			}
 
 			@Override
 			public void discardedAttributes(AtomicBoolean valid, String tagName, String... attributeNames) {
-				LOGGER.debug("In tag {}, discarded attributes: {}", tagName, Joiner.on(", ").join(attributeNames));
+				LOGGER.debug("In tag " + tagName + ", discarded attributes: " + Joiner.on(", ").join(attributeNames));
 				valid.set(false);
 			}
 
@@ -157,7 +156,7 @@ public class HtmlSanitizer {
 				|| isInWhiteListAsExternalService
 				|| isInWhiteListAsRelativePath;
 
-		LOGGER.debug("Checking if {} in src is in whitelist: {} ", url, ret);
+		LOGGER.debug("Checking if " + url + " in src is in whitelist: " + ret);
 
 		return ret;
 	}
@@ -170,7 +169,7 @@ public class HtmlSanitizer {
 		boolean ret = isInWhiteListAsExternalService
 				|| isInWhiteListAsRelativePath;
 
-		LOGGER.debug("Checking if {} in href is in whitelist: {} ", url, ret);
+		LOGGER.debug("Checking if " + url + " in href is in whitelist: " + ret);
 
 		return ret;
 	}
@@ -180,7 +179,7 @@ public class HtmlSanitizer {
 		boolean ret = IMG_SRC_DATA.matcher(url)
 				.matches();
 
-		LOGGER.debug("Checking if {} is a data URL: {} ", url, ret);
+		LOGGER.debug("Checking if " + url + " is a data URL: " + ret);
 
 		return ret;
 	}
@@ -191,7 +190,7 @@ public class HtmlSanitizer {
 		boolean ret = validValues.stream()
 				.anyMatch(url::startsWith);
 
-		LOGGER.debug("Checking if {} is in whitelist as external service giving the following {}: {} ", url, validValues, ret);
+		LOGGER.debug("Checking if " + url + " is in whitelist as external service giving the following " + validValues + ": " + ret);
 
 		return ret;
 	}
@@ -202,7 +201,7 @@ public class HtmlSanitizer {
 		boolean ret = validValues.stream()
 				.anyMatch(url::startsWith);
 
-		LOGGER.debug("Checking if {} is in whitelist as relative path giving the following {}: {} ", url, validValues, ret);
+		LOGGER.debug("Checking if " + url + " is in whitelist as relative path giving the following " + validValues + ": " + ret);
 
 		return ret;
 	}
