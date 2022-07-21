@@ -289,10 +289,7 @@
                                             msg: 'Generate it again and then retry'
                                         })
                                     }
-                                },
-                                () => {
-                                    this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
-                                }
+                                },  
                             )
                         },
                         () => {
