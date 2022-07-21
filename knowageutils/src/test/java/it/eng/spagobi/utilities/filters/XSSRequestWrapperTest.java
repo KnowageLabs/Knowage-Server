@@ -1,7 +1,14 @@
 package it.eng.spagobi.utilities.filters;
 
+import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -63,6 +70,7 @@ public class XSSRequestWrapperTest {
 			"<a href=\"https://www.youtube.com/mylink\">anchor</a>","<a href=\"/knowage/icons/test.ico\">anchor</a>",
 			"<div kn-repeat=\"true\" limit=\"1\"></div>",
 			"<img height=\"10px\" width=\"10px\" alt=\"text\" />",
+			"<img src=\"data:image/png;base64,iVBORw0KGg\" />",
 			"");
 
 	private static final String VALID_BUT_NOT_SANITIZED = Joiner.on('\n').join(
@@ -137,6 +145,27 @@ public class XSSRequestWrapperTest {
 		String output = sanitizer.sanitize(input);
 
 		assertEquals(input, output);
+
+	}
+
+	@Test
+	public void testXXX() throws IOException {
+
+		Path resourceDirectory = Paths.get("src","test","resources", "html-test-snippets");
+
+		List<Path> paths = Files.list(resourceDirectory)
+			.collect(toList());
+
+		for (Path path : paths) {
+
+			String input = new String(Files.readAllBytes(path));
+
+			String output = sanitizer.sanitize(input);
+
+			boolean safe = sanitizer.isSafe(input);
+
+			assertEquals("File " + path + " doesn't pass the sanitization", true, safe);
+		}
 
 	}
 
