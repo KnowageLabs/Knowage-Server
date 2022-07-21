@@ -256,7 +256,7 @@ body {
     height: 0px;
 }
 .layout-main {
-    margin-left: 58px;
+    margin-left: var(--kn-mainmenu-width);
     flex: 1;
 }
 </style>
