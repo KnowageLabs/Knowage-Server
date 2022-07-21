@@ -18,12 +18,12 @@
  * ! this component will be in charge of managing the widget editing.
  */
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IDatasetOptions, IWidget } from '../../Dashboard'
+import { IWidgetEditorDataset, IDatasetOptions, IWidget, IWidgetColumn } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
+import { emitter } from '../../DashboardHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
 import WidgetEditorTabs from './WidgetEditorTabs.vue'
 import mainStore from '../../../../../App.store'
-import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'widget-editor',
@@ -91,16 +91,25 @@ export default defineComponent({
                         console.log('DISABLED TEST CALLED! ')
                         return !widget.settings.pagination.enabled
                     },
-                    getColumnIcons(column: any) {
-                        console.log('getColumnIcons TEST CALLED! ', column)
+                    getColumnIcons: (column: any) => {
                         return column.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'
                     },
-                    onColumnDrop(event: any, model: IWidget) {
-                        console.log('onColumnDrop  CALLED MODEL! ', model)
+                    onColumnDrop: (event: any, model: IWidget) => {
+                        console.log('!!! TEST: ', event.dataTransfer.getData('text/plain'))
+                        if (event.dataTransfer.getData('text/plain') === 'b') return
                         const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
                         // TODO - Add dataset key
                         model.columns.push({ dataset: 1, name: eventData.name, alias: eventData.alias, type: eventData.type, fieldType: eventData.fieldType, aggregation: eventData.aggregation, style: { hiddenColumn: false, 'white-space': 'nowrap' } })
                         console.log('onColumnDrop  CALLED! ', eventData)
+                        emitter.emit('collumnAdded', eventData)
+                    },
+                    removeColumn: (column: IWidgetColumn, model: IWidget) => {
+                        console.log('REMOVE COLUMN: ', column)
+                        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name && tempColumn.alias === column.alias)
+                        if (index !== -1) {
+                            model.columns.splice(index, 1)
+                            emitter.emit('collumnRemoved', column)
+                        }
                     }
                 }
             }

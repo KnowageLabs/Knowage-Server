@@ -57,31 +57,14 @@ export default defineComponent({
         },
         updateModelProperty(value: any, propertyPath: string) {
             getModelProperty(this.widgetModel, propertyPath, 'updateValue', value)
-
             console.log('UPDATED MODEL: ', this.model)
         },
         isDisabled(component: any) {
-            console.log('TEEEEEEEEEST: ', getModelProperty(this.widgetModel, component.disabled, 'callFunction', null))
             return getModelProperty(this.widgetModel, component.disabled, 'getValue', null)()
         },
         getItems(propertyPath: string): any[] {
             return getModelProperty(this.widgetModel, propertyPath, 'getValue', null)
         }
-        // getModelProperty(propertyPath: string, action: string, newValue: any) {
-        //     if (!this.model) return
-        //     const stack = propertyPath?.split('.')
-        //     if (!stack || stack.length === 0) return
-
-        //     let property = null as any
-        //     let tempModel = this.model
-        //     while (stack.length > 1) {
-        //         property = stack.shift()
-        //         if (property && this.model) tempModel = tempModel[property]
-        //     }
-        //     property = stack.shift()
-        //     if (action === 'updateValue') tempModel[property] = newValue
-        //     else if (action === 'getValue') return tempModel[property]
-        // }
     }
 })
 </script>

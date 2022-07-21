@@ -1,5 +1,5 @@
 <template>
-    <div :class="{ 'dropzone-active': settings.dropIsActive }" @drop.stop="onDropComplete($event, widgetModel)" @dragover.prevent @dragenter.prevent @dragleave.prevent>
+    <div :class="{ 'dropzone-active': settings.dropIsActive }" @drop.stop="onDropComplete($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent>
         <DataTable :value="rows" class="p-datatable-sm kn-table" :dataKey="settings.dataKey" v-model:filters="filters" :globalFilterFields="settings.globalFilterFields" :responsiveLayout="settings.responsiveLayout ?? 'stack'" :breakpoint="settings.breakpoint ?? '600px'" @rowReorder="onRowReorder">
             <template #header>
                 <div v-if="settings.globalFilterFields?.length > 0" class="table-header p-d-flex p-ai-center">
@@ -56,10 +56,9 @@ export default defineComponent({
         }
     },
     created() {
-        console.log('>>>> TEST: ', 'widgetModel.' + this.settings.property)
         this.loadItems()
         this.setFilters()
-        this.$watch('widgetModel.' + this.settings.property, () => this.loadItems())
+        this.$watch('widgetModel.' + this.settings.property, () => this.loadItems(), { deep: true })
     },
     methods: {
         loadItems() {
@@ -69,18 +68,20 @@ export default defineComponent({
             if (this.settings.globalFilterFields?.length) this.filters.global = [filterDefault]
         },
         buttonClicked(button: any, item: any) {
-            this.$emit('buttonClicked', { button: button, item: item })
+            console.log('BUTTON ', button)
+            const tempFunction = getModelProperty(this.widgetModel, button.function, 'getValue', null)
+            if (tempFunction && typeof tempFunction === 'function') tempFunction(item, this.widgetModel)
         },
         getIcon(item: any) {
             return getModelProperty(this.widgetModel, this.settings.iconColumn, 'getValue', null)(item)
         },
         onRowReorder(event: any) {
-            console.log('ON ROW REORDER CALLED: ', event)
             this.rows = event.value
             this.$emit('rowReorder', event.value)
         },
-        onDropComplete(event: any, widgetModel: IWidget) {
-            getModelProperty(this.widgetModel, this.settings.dropIsActive?.dropFunction, 'getValue', null)(event, widgetModel)
+        onDropComplete(event: any) {
+            const tempFunction = getModelProperty(this.widgetModel, this.settings.dropIsActive?.dropFunction, 'getValue', null)
+            if (tempFunction && typeof tempFunction === 'function') tempFunction(event, this.widgetModel)
         }
     }
 })

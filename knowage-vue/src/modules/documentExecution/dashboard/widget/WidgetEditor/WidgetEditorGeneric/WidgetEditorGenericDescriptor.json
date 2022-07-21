@@ -42,7 +42,8 @@
                             },
                             {
                                 "icon": "pi pi-trash",
-                                "tooltip": "common.delete"
+                                "tooltip": "common.delete",
+                                "function": "functions.removeColumn"
                             }
                         ],
                         "dataKey": "alias",
