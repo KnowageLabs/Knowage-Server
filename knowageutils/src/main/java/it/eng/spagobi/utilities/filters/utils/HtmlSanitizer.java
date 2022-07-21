@@ -1,17 +1,23 @@
 package it.eng.spagobi.utilities.filters.utils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.owasp.html.CssSchema;
+import org.owasp.html.CssSchema.Property;
 import org.owasp.html.HtmlChangeListener;
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import it.eng.spagobi.utilities.whitelist.IWhiteList;
 
@@ -30,21 +36,61 @@ public class HtmlSanitizer {
 
 		Objects.requireNonNull(whiteList);
 
+		Map<String, Property> stylePropertiesInSVGMap = new HashMap<>();
+
+		Property allValsProperty = new Property(258, ImmutableSet.of(), ImmutableMap.<String, String>of());
+		Property fillOpacityProperty = new Property(1, ImmutableSet.of(), ImmutableMap.of());
+		Property opacityProperty = new Property(1, ImmutableSet.of(), ImmutableMap.of());
+		Property paintOrderProperty = new Property(23, ImmutableSet.of("markers", "fill", "stroke"), ImmutableMap.of());
+		Property strokeProperty = new Property(1, ImmutableSet.of("none"), ImmutableMap.of());
+		Property strokeLineCapProperty = new Property(1, ImmutableSet.of("butt"), ImmutableMap.of());
+		Property strokeLineJoinProperty = new Property(1, ImmutableSet.of("miter"), ImmutableMap.of());
+		Property strokeOpacityProperty = new Property(1, ImmutableSet.of(), ImmutableMap.of());
+		Property strokeWidthProperty = new Property(1, ImmutableSet.of("auto", "inherit"), ImmutableMap.of());
+
+		stylePropertiesInSVGMap.put("fill", allValsProperty);
+		stylePropertiesInSVGMap.put("fill-opacity", fillOpacityProperty);
+		stylePropertiesInSVGMap.put("opacity", opacityProperty);
+		stylePropertiesInSVGMap.put("paint-order", paintOrderProperty);
+		stylePropertiesInSVGMap.put("stroke", strokeProperty);
+		stylePropertiesInSVGMap.put("stroke-linecap", strokeLineCapProperty);
+		stylePropertiesInSVGMap.put("stroke-linejoin", strokeLineJoinProperty);
+		stylePropertiesInSVGMap.put("stroke-opacity", strokeOpacityProperty);
+		stylePropertiesInSVGMap.put("stroke-width", strokeWidthProperty);
+
+		CssSchema stylePropertiesInSVG = CssSchema.withProperties(stylePropertiesInSVGMap);
+
 		policy = new HtmlPolicyBuilder()
 				.allowCommonBlockElements()
 				.allowCommonInlineFormattingElements()
 				.allowStandardUrlProtocols()
-				.allowStyling()
-				.allowAttributes("alt").onElements("img")
-				.allowAttributes("height", "width").matching(Pattern.compile(".*")).onElements("img")
-				.allowAttributes("class").globally()
-				.allowAttributes("href").matching(this::isHrefAttributeInWhitelist).onElements("a")
-				.allowAttributes("id").onElements("div")
-				.allowAttributes("src").matching(this::isSrcAttributeInWhitelist).onElements("audio", "iframe", "img", "video")
-				.allowAttributes("kn-cross", "kn-if", "kn-import", "kn-repeat", "kn-preview", "kn-selection-column", "kn-selection-value", "limit").globally()
+				.allowStyling(CssSchema.union(CssSchema.DEFAULT, stylePropertiesInSVG))
 				.allowElements("a", "audio", "article", "figure", "footer", "header", "iframe", "img", "pre", "span", "tbody", "tfoot", "thead", "table", "td", "th", "tr", "video")
-				.allowUrlProtocols("data")
+				.allowAttributes("alt").onElements("img")
+				.allowAttributes("height", "width").globally()
+				.allowAttributes("class").globally()
+				.allowAttributes("id").onElements("div")
+				.allowAttributes("href").matching(this::isHrefAttributeInWhitelist).onElements("a")
+				.allowAttributes("src").matching(this::isSrcAttributeInWhitelist).onElements("audio", "iframe", "img", "video")
+				.allowAttributes("title").globally()
 				.allowWithoutAttributes("figure", "span")
+				.allowUrlProtocols("data")
+				// Knowage
+				.allowAttributes("kn-cross", "kn-if", "kn-import", "kn-repeat", "kn-preview", "kn-selection-column", "kn-selection-value", "limit").globally()
+				// SVG
+				.allowElements("g", "metadata", "path", "svg", "text", "tspan")
+				.allowElements("dc:format", "dc:title", "dc:type")
+				.allowElements("cc:Work")
+				.allowElements("rdf:RDF")
+				.allowAttributes("d", "id", "transform", "viewBox", "version", "x", "y").globally()
+				.allowAttributes("rdf:about", "rdf:resource").globally()
+				.allowAttributes("sodipodi:docname").globally()
+				.allowAttributes("xml:space").globally()
+				.allowAttributes("xmlns", "xmlns:dc", "xmlns:cc", "xmlns:inkscape", "xmlns:rdf", "xmlns:sodipodi", "xmlns:svg").globally()
+				// Inkscape
+				.allowAttributes("inkscape:connector-curvature", "inkscape:label", "inkscape:groupmode", "inkscape:version").globally()
+				.allowAttributes("sodipodi:nodetypes", "sodipodi:role").globally()
+				//
 				.toFactory();
 
 		this.whiteList = whiteList;
