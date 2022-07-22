@@ -103,7 +103,10 @@ export default defineComponent({
             if (!this.datasets || this.datasets.length === 0) return
 
             const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
-            if (index !== -1) this.selectedDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta.map((column: IDatasetColumn) => {return {...column, dataset: this.selectedDataset?.id}})
+            if (index !== -1)
+                this.selectedDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta.map((column: IDatasetColumn) => {
+                    return { ...column, dataset: this.selectedDataset?.id }
+                })
             console.log('loadDatasetColumns() - selectedDatasetColumns: ', this.selectedDatasetColumns)
         },
         onDragStart(event: any, datasetColumn: IDatasetColumn) {
@@ -112,22 +115,17 @@ export default defineComponent({
             event.dataTransfer.effectAllowed = 'move'
         },
         addColumn(column: IWidgetColumn) {
-            console.log('>>> ADD COLUMN: ', column)
-            console.log('>>> SELECTED DATASET: ', this.selectedDataset)
             if (this.selectedDataset && column.dataset === this.selectedDataset.id && this.datasets) {
                 let tempDatasetColumns = null as IDatasetColumn[] | null
                 const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
                 if (index !== -1) tempDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta
-                console.log('TEMP DATASET COLUMNS: ', tempDatasetColumns)
                 if (!tempDatasetColumns) return
                 const columnIndex = tempDatasetColumns.findIndex((tempColumn: any) => column.name === tempColumn.name)
-                console.log('COLUMN INDEX: ', columnIndex)
-                if (columnIndex !== -1) this.selectedDatasetColumns.push({...tempDatasetColumns[columnIndex], dataset: this.selectedDataset.id})
+                if (columnIndex !== -1) this.selectedDatasetColumns.push({ ...tempDatasetColumns[columnIndex], dataset: this.selectedDataset.id })
             }
         },
         removeColumn(column: IDatasetColumn) {
-            console.log('REMOVE COLUMN: ', column)
-            const index = this.selectedDatasetColumns.findIndex((tempColumn: IDatasetColumn) => tempColumn.name === column.name && tempColumn.alias === column.alias)
+            const index = this.selectedDatasetColumns.findIndex((tempColumn: IDatasetColumn) => tempColumn.name === column.name)
             if (index !== -1) this.selectedDatasetColumns.splice(index, 1)
         }
     }

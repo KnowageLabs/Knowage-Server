@@ -24,6 +24,7 @@ import { emitter } from '../../DashboardHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
 import WidgetEditorTabs from './WidgetEditorTabs.vue'
 import mainStore from '../../../../../App.store'
+import descriptor from './WidgetEditorDescriptor.json'
 
 export default defineComponent({
     name: 'widget-editor',
@@ -32,6 +33,7 @@ export default defineComponent({
     props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array } },
     data() {
         return {
+            descriptor,
             widget: {} as any,
             previewData: null as any,
             datasetFunctions: {} as { availableFunctions: string[]; nullifFunction: string[] }
@@ -88,28 +90,53 @@ export default defineComponent({
                 widget.settings.pagination = { enabled: false, itemsNumber: 0 }
                 widget.functions = {
                     disabledTest: () => {
-                        console.log('DISABLED TEST CALLED! ')
                         return !widget.settings.pagination.enabled
                     },
                     getColumnIcons: (column: any) => {
                         return column.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'
                     },
                     onColumnDrop: (event: any, model: IWidget) => {
-                        console.log('!!! TEST: ', event.dataTransfer.getData('text/plain'))
                         if (event.dataTransfer.getData('text/plain') === 'b') return
                         const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
-                        // TODO - Add dataset key
-                        model.columns.push({ dataset: eventData.dataset, name: eventData.name, alias: eventData.alias, type: eventData.type, fieldType: eventData.fieldType, aggregation: eventData.aggregation, style: { hiddenColumn: false, 'white-space': 'nowrap' } })
-                        console.log('onColumnDrop  CALLED! ', eventData)
+
+                        model.columns.push({ dataset: eventData.dataset, name: '(' + eventData.name + ')', alias: eventData.alias, type: eventData.type, fieldType: eventData.fieldType, aggregation: eventData.aggregation, style: { hiddenColumn: false, 'white-space': 'nowrap' } })
                         emitter.emit('collumnAdded', eventData)
                     },
+                    updateColumnVisibility: (column: IWidgetColumn, model: IWidget) => {
+                        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
+                        if (index !== -1) {
+                            if (!model.columns[index].style) {
+                                model.columns[index].style = {
+                                    hiddenColumn: false,
+                                    'white-space': 'nowrap'
+                                }
+                            }
+                            model.columns[index].style.hiddenColumn = !model.columns[index].style.hiddenColumn
+                        }
+                        console.log('updateColumnVisibility() - ', model.columns[index])
+                    },
                     removeColumn: (column: IWidgetColumn, model: IWidget) => {
-                        console.log('REMOVE COLUMN: ', column)
-                        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name && tempColumn.alias === column.alias)
+                        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
                         if (index !== -1) {
                             model.columns.splice(index, 1)
                             emitter.emit('collumnRemoved', column)
                         }
+                    },
+                    updateColumnValue: (column: IWidgetColumn, model: IWidget, field: string) => {
+                        if (!model || !model.columns) return
+                        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
+                        if (index !== -1) {
+                            model.columns[index][field] = column[field]
+                            if (model.columns[index][field].fieldType === 'ATTRIBUTE') model.columns[index][field].aggregation = 'NONE'
+                        }
+                        console.log('updateColumnValues() - ', model.columns[index])
+                    },
+                    getColumnAggregationOptions: () => {
+                        return this.descriptor.columnAggregationOptions
+                    },
+                    showAggregationDropdown: (column: IWidgetColumn) => {
+                        console.log('showAggregationDropdown', column.fieldType === 'MEASURE')
+                        return column.fieldType === 'MEASURE'
                     }
                 }
             }

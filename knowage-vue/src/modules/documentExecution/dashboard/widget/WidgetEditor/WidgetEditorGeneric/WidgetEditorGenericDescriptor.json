@@ -25,7 +25,15 @@
                 {
                     "columns": [
                         {
+                            "field": "alias",
+                            "editableField": {"type": "inputText", "function": "functions.updateColumnValue"}
+                        },
+                        {
                             "field": "name"
+                        },
+                        {
+                            "field": "aggregation",
+                            "editableField": {"type": "dropdown", "options": "functions.getColumnAggregationOptions", "function": "functions.updateColumnValue", "visibilityCondition": "functions.showAggregationDropdown"}
                         }
                     ],
                     "cssClass": "kn-material-input p-d-flex p-flex-row kn-flex p-m-2",
@@ -34,7 +42,8 @@
                         "buttons": [
                             {
                                 "icon": "fa fa-eye",
-                                "tooltip": "workspaceManagement.visibility"
+                                "tooltip": "common.visibility",
+                                "function": "functions.updateColumnVisibility"
                             },
                             {
                                 "icon": "fas fa-cog",
@@ -46,13 +55,14 @@
                                 "function": "functions.removeColumn"
                             }
                         ],
-                        "dataKey": "alias",
+                        "dataKey": "name",
                         "dropIsActive": {
                             "dropFunction": "functions.onColumnDrop"
                         },
                         "iconColumn": "functions.getColumnIcons",
                         "property": "columns",
                         "responsiveLayout": "stack",
+                        "buttonColumnStyle": {"text-align": "end"},
                         "rowReorder": {
                             "rowReorderColumnStyle": "width: 3rem"
                         }

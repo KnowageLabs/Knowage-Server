@@ -18,7 +18,29 @@
                     <i :class="getIcon(slotProps.data)"></i>
                 </template>
             </Column>
-            <Column class="kn-truncated" v-for="column in columns" :key="column.field" :field="column.field" :header="column.header ? $t(column.header) : ''" :sortable="column.sortable"></Column>
+            <Column class="kn-truncated" v-for="column in columns" :key="column.field" :field="column.field" :header="column.header ? $t(column.header) : ''" :sortable="column.sortable">
+                <template #body="slotProps">
+                    <div>
+                        <span class="kn-truncated" v-if="!column.editableField">{{ slotProps.data[column.field] }}</span>
+                        <InputText
+                            v-else-if="column.editableField.type === 'inputNumber' || column.editableField.type === 'inputText'"
+                            class="kn-material-input"
+                            :type="column.editableField.type === 'inputNumber' ? 'number' : 'text'"
+                            v-model="slotProps.data[column.field]"
+                            @change="onEditableInput(slotProps.data, column)"
+                        />
+                        <Dropdown
+                            v-else-if="column.editableField.type === 'dropdown' && showEditableField(column.editableField.visibilityCondition, slotProps.data)"
+                            class="kn-material-input"
+                            v-model="slotProps.data[column.field]"
+                            :options="getDropdownOptions(column)"
+                            :optionLabel="column.editableField.optionLabel ?? 'label'"
+                            :optionValue="column.editableField.optionValue ?? 'value'"
+                            @change="onEditableInput(slotProps.data, column)"
+                        />
+                    </div>
+                </template>
+            </Column>
             <Column v-if="settings.buttons?.length > 0" :style="settings.buttonColumnStyle">
                 <template #body="slotProps">
                     <div>
@@ -37,17 +59,19 @@ import { IWidget } from '../../../../Dashboard'
 import { getModelProperty } from '../WidgetEditorGenericHelper'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
+import Dropdown from 'primevue/dropdown'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'widget-editor-datatable',
-    components: { Column, DataTable },
+    components: { Column, DataTable, Dropdown },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, items: { type: Array, required: true }, settings: { type: Object, required: true }, columns: { type: Array as PropType<any[]>, required: true } },
     emits: ['buttonClicked', 'rowReorder'],
     data() {
         return {
             rows: [] as any[],
-            filters: {} as any
+            filters: {} as any,
+            inputValuesMap: {}
         }
     },
     watch: {
@@ -70,6 +94,7 @@ export default defineComponent({
         buttonClicked(button: any, item: any) {
             console.log('BUTTON ', button)
             const tempFunction = getModelProperty(this.widgetModel, button.function, 'getValue', null)
+            console.log('TEMP FUNCTION ', tempFunction)
             if (tempFunction && typeof tempFunction === 'function') tempFunction(item, this.widgetModel)
         },
         getIcon(item: any) {
@@ -82,6 +107,23 @@ export default defineComponent({
         onDropComplete(event: any) {
             const tempFunction = getModelProperty(this.widgetModel, this.settings.dropIsActive?.dropFunction, 'getValue', null)
             if (tempFunction && typeof tempFunction === 'function') tempFunction(event, this.widgetModel)
+        },
+        onEditableInput(row: any, column: any) {
+            const tempFunction = getModelProperty(this.widgetModel, column.editableField.function, 'getValue', null)
+            if (tempFunction && typeof tempFunction === 'function') tempFunction(row, this.widgetModel, column.field)
+        },
+        getDropdownOptions(column: any) {
+            let temp = []
+            const tempFunction = getModelProperty(this.widgetModel, column.editableField.options, 'getValue', null)
+            if (tempFunction && typeof tempFunction === 'function') temp = tempFunction()
+            return temp
+        },
+        showEditableField(visibilityCondition: string | null, row: any) {
+            console.log(' --- showEditableField 1')
+            if (!visibilityCondition) return true
+            console.log(' --- showEditableField 2')
+            const tempFunction = getModelProperty(this.widgetModel, visibilityCondition, 'getValue', null)
+            if (tempFunction && typeof tempFunction === 'function') return tempFunction(row)
         }
     }
 })
