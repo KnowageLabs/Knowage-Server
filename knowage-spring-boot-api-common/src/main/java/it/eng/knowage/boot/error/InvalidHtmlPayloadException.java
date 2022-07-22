@@ -1,7 +1,5 @@
 package it.eng.knowage.boot.error;
 
-import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -81,7 +79,7 @@ public class InvalidHtmlPayloadException extends KnowageRuntimeException {
 
 	@Override
 	public String getLocalizedMessage() {
-		String localizedMessage = EngineMessageBundle.getMessage(getCode(), getLocale(), new String[] { escapeHtml4(payload) });
+		String localizedMessage = EngineMessageBundle.getMessage(getCode(), getLocale(), new String[] { payload });
 		return localizedMessage;
 	}
 
