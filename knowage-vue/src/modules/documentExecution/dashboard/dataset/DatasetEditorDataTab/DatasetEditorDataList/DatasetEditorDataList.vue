@@ -8,9 +8,9 @@
                 <Listbox class="kn-list kn-list-no-border-right" :options="selectedDatasets" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="label" filterMatchMode="contains" :filterFields="['label']" :emptyFilterMessage="$t('common.info.noDataFound')" @change="selectDataset">
                     <template #empty>{{ $t('common.info.noDataFound') }}</template>
                     <template #option="slotProps">
-                        <div class="kn-list-item" style="height: 30px">
+                        <div class="kn-list-item" :style="dataListDescriptor.style.list.listItem">
                             <div class="kn-list-item-icon p-mx-2">
-                                <i style="color: #929292" :class="dataListDescriptor.listboxSettings.avatar.values[slotProps.option.type].icon"></i>
+                                <i :style="dataListDescriptor.style.list.listIcon" :class="dataListDescriptor.listboxSettings.avatar.values[slotProps.option.type].icon"></i>
                             </div>
                             <div class="kn-list-item-text">
                                 <span>{{ slotProps.option.label }}</span>
@@ -24,7 +24,7 @@
             </template>
         </Card>
 
-        <DataDialog v-if="dataDialogVisible" :dashboardDatasetsProp="selectedDatasets" :visible="dataDialogVisible" @addSelectedDatasets="addSelectedDatasetsToModel" @close="toggleDataDialog" />
+        <DataDialog v-if="dataDialogVisible" :visible="dataDialogVisible" :selectedDatasetsProp="selectedDatasets" :availableDatasetsProp="availableDatasetsProp" @addSelectedDatasets="addSelectedDatasetsToModel" @close="toggleDataDialog" />
     </div>
 </template>
 
@@ -39,8 +39,8 @@ import dataListDescriptor from './DatasetEditorDataListDescriptor.json'
 export default defineComponent({
     name: 'dataset-editor-data-list',
     components: { Card, Listbox, DataDialog },
-    props: { dashboardDatasetsProp: { required: true, type: Array } },
-    emits: [],
+    props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any } },
+    emits: ['datasetSelected'],
     data() {
         return {
             dataListDescriptor,
@@ -53,9 +53,19 @@ export default defineComponent({
         return { dashboardStore }
     },
     created() {
-        this.selectedDatasets = this.dashboardDatasetsProp
+        this.selectedDatasets = this.filterSelectedFromAvailableDatasets()
+        console.log('availableDatasets', this.availableDatasetsProp)
+        console.log('dashboardDatasets', this.dashboardDatasetsProp)
+        console.log('selectedDatasets', this.selectedDatasets)
     },
     methods: {
+        filterSelectedFromAvailableDatasets() {
+            return this.availableDatasetsProp?.filter((responseDataset) => {
+                return this.dashboardDatasetsProp?.find((dashboardDataset) => {
+                    return responseDataset.id.dsId === dashboardDataset.id
+                })
+            })
+        },
         toggleDataDialog() {
             this.dataDialogVisible = !this.dataDialogVisible
         },
@@ -63,14 +73,14 @@ export default defineComponent({
             datasetsToAdd.forEach((dataset) => {
                 this.selectedDatasets.push(dataset)
             })
-            console.log('SelectedDatasets -------', this.selectedDatasets)
+            console.log('dataset Added -------', this.selectedDatasets)
             this.dataDialogVisible = false
         },
         deleteDatasetFromModel(datasetToDelete) {
             console.log(datasetToDelete)
         },
         selectDataset(event) {
-            console.log('SELECTED -------------', event.value)
+            this.$emit('datasetSelected', event.value.id.dsId)
         }
     }
 })

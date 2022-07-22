@@ -2,9 +2,9 @@
     <div class="datasetEditor-tabs">
         <TabView>
             <TabPanel :header="$t('dashboard.datasetEditor.dataTabTitle')">
-                <DataTab :dashboardDatasetsProp="dashboardDatasetsProp" id="dataset-editor-list-card" />
+                <DataTab id="dataset-editor-list-card" :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" />
             </TabPanel>
-            <TabPanel :header="$t('dashboard.datasetEditor.associationsTabTitle')"> Content II </TabPanel>
+            <TabPanel :header="$t('dashboard.datasetEditor.associationsTabTitle')"> Associations </TabPanel>
         </TabView>
     </div>
 </template>
@@ -21,7 +21,7 @@ import DataTab from './DatasetEditorDataTab/DatasetEditorDataTab.vue'
 export default defineComponent({
     name: 'widget-editor-tabs',
     components: { TabView, TabPanel, DataTab },
-    props: { dashboardDatasetsProp: { required: true, type: Array } },
+    props: { dashboardDatasetsProp: { required: true, type: Array }, availableDatasetsProp: { required: true, type: Array } },
     emits: [],
     data() {
         return {}

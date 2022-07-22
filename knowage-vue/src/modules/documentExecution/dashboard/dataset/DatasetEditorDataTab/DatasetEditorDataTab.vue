@@ -1,7 +1,7 @@
 <template>
     <div class="p-d-flex">
-        <DataList :dashboardDatasetsProp="dashboardDatasetsProp" class="kn-flex p-my-2 p-ml-2 p-mr-1" />
-        <DataDetail :dashboardDatasetsProp="dashboardDatasetsProp" class="kn-flex p-my-2 p-mr-2 p-ml-1" />
+        <DataList class="kn-flex p-my-2 p-ml-2 p-mr-1" :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" @datasetSelected="selectDataset" />
+        <DataDetail class="kn-flex p-my-2 p-mr-2 p-ml-1" :dashboardDatasetsProp="dashboardDatasetsProp" :selectedDatasetProp="selectedDataset" />
     </div>
 </template>
 
@@ -13,12 +13,19 @@ import DataDetail from './DatasetEditorDataDetail/DatasetEditorDataDetail.vue'
 export default defineComponent({
     name: 'dataset-editor-data-tab',
     components: { DataList, DataDetail },
-    props: { dashboardDatasetsProp: { required: true, type: Array } },
+    props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any } },
     emits: [],
     data() {
-        return {}
+        return {
+            selectedDataset: {} as any
+        }
     },
     async created() {},
-    methods: {}
+    methods: {
+        selectDataset(datasetId) {
+            this.selectedDataset = this.availableDatasetsProp.find((dataset) => dataset.id.dsId === datasetId)
+            console.log('selectedDataset', this.selectedDataset)
+        }
+    }
 })
 </script>

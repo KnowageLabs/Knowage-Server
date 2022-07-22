@@ -61,7 +61,7 @@ export default defineComponent({
             return false
         },
         breakpointChangedEvent: function (newBreakpoint, newLayout) {
-            console.log('BREAKPOINT CHANGED breakpoint=', newBreakpoint, ', layout: ', newLayout)
+            // console.log('BREAKPOINT CHANGED breakpoint=', newBreakpoint, ', layout: ', newLayout)
         },
         currentWidget(id) {
             return this.dashboardModel.widgets.find((item) => item.id === id)

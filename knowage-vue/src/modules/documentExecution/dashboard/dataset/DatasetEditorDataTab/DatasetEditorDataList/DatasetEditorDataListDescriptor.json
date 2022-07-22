@@ -103,5 +103,15 @@
                 }
             }
         }
+    },
+    "style": {
+        "list": {
+            "listIcon": {
+                "color": "#929292"
+            },
+            "listItem": {
+                "height": "30px"
+            }
+        }
     }
 }

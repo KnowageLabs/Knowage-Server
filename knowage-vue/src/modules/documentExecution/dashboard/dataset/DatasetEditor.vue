@@ -8,9 +8,9 @@
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('closeDatasetEditor')" />
                 </template>
             </Toolbar>
-            <div class="datasetEditor-container">
-                <DatasetEditorTabs :dashboardDatasetsProp="dashboardDatasets" />
-                <DatasetEditorPreview :dashboardDatasetsProp="dashboardDatasets" />
+            <div v-if="!loading" class="datasetEditor-container">
+                <DatasetEditorTabs :dashboardDatasetsProp="dashboardDatasets" :availableDatasetsProp="availableDatasets" />
+                <DatasetEditorPreview v-if="!loading" :dashboardDatasetsProp="dashboardDatasets" />
             </div>
         </div>
     </Teleport>
@@ -21,6 +21,7 @@
  * ! this component will be in charge of managing the dataset.
  */
 import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
 import DatasetEditorTabs from './DatasetEditorTabs.vue'
 import DatasetEditorPreview from './DatasetEditorPreview.vue'
 import mainStore from '../../../../App.store'
@@ -34,7 +35,9 @@ export default defineComponent({
     emits: ['closeDatasetEditor'],
     data() {
         return {
-            dashboardDatasets: {} as any
+            loading: false,
+            dashboardDatasets: {} as any,
+            availableDatasets: {} as any
         }
     },
     setup() {
@@ -45,9 +48,24 @@ export default defineComponent({
     created() {
         console.log('STORE MODEL', this.dashboardStore.$state.dashboards[1])
         this.dashboardDatasets = deepcopy(this.dashboardStore.$state.dashboards[1].configuration.datasets)
+        this.getDatasets()
     },
 
-    methods: {}
+    methods: {
+        async getDatasets() {
+            this.store.setLoading(true)
+            this.loading = true
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/?asPagedList=true&seeTechnical=true`)
+                .then((response: AxiosResponse<any>) => {
+                    this.availableDatasets = response.data.item
+                })
+                .finally(() => {
+                    this.store.setLoading(false)
+                    this.loading = false
+                })
+        }
+    }
 })
 </script>
 <style lang="scss">

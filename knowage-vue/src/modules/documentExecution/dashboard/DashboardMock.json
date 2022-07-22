@@ -18,15 +18,15 @@
         "datasets": [
             {
                 "cache": true,
-                "id": 1,
-                "label": "test_dataset",
+                "id": 186,
+                "label": "Cacl Meta Save Old",
                 "parameters": [
                     {
                         "name": "parameter",
                         "type": "single"
                     }
                 ],
-                "type": "SbiQueryDataSet"
+                "type": "SbiQbeDataSet"
             }
         ],
         "description": "a long description that could be used in some places",

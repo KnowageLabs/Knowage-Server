@@ -1,21 +1,25 @@
 <template>
-    <div id="dataset-editor-data-detail-container">
-        <Card>
-            <template #title> Advanced Card </template>
-            <template #content> {{ dashboardDatasetsProp }}</template>
-        </Card>
+    <div v-if="selectedDatasetProp.id" id="dataset-editor-data-detail-container">
+        <InfoCard :selectedDatasetProp="selectedDatasetProp" />
+        <ParamsCard class="p-my-2" :selectedDatasetProp="selectedDatasetProp" :dashboardDatasetsProp="dashboardDatasetsProp" />
+        <IndexesCard :selectedDatasetProp="selectedDatasetProp" />
+    </div>
+    <div v-else>
+        <KnHint class="p-as-center" :title="'documentExecution.dossier.title'" :hint="'documentExecution.dossier.hint'"></KnHint>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-// import Dropdown from 'primevue/dropdown'
-import Card from 'primevue/card'
+import InfoCard from './DatasetEditorDataDetailInfo.vue'
+import ParamsCard from './DatasetEditorDataDetailPrameters.vue'
+import IndexesCard from './DatasetEditorDataDetailIndexes.vue'
+import KnHint from '@/components/UI/KnHint.vue'
 
 export default defineComponent({
     name: 'dataset-editor-data-detail',
-    components: { Card },
-    props: { dashboardDatasetsProp: { required: true, type: Array } },
+    components: { InfoCard, ParamsCard, IndexesCard, KnHint },
+    props: { selectedDatasetProp: { required: true, type: Object }, dashboardDatasetsProp: { required: true, type: Array as any } },
     emits: [],
     data() {
         return {}

@@ -313,7 +313,8 @@
         "datasetEditor": {
             "associationsTabTitle": "Associations",
             "dataTabTitle": "Data",
-            "title": "Dataset Manageent"
+            "title": "Dataset Manageent",
+            "cached": "Cached"
         },
         "widgetEditor": {
             "itemsPerPage": "Items per page",
