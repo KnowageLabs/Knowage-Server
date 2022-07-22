@@ -56,7 +56,7 @@ export interface IDatasetOptions {
     indexes: any[]
 }
 
-interface IDatasetOptionCategory {
+export interface IDatasetOptionCategory {
     id: string,
     alias: string,
     columnName: string,
@@ -64,7 +64,8 @@ interface IDatasetOptionCategory {
     funct: string
 }
 
-interface IDatasetColumn {
+export interface IDatasetColumn {
+    dataset?: number,
     name: string,
     alias: string,
     type: string,

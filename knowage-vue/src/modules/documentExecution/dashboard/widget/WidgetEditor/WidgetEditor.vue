@@ -99,7 +99,7 @@ export default defineComponent({
                         if (event.dataTransfer.getData('text/plain') === 'b') return
                         const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
                         // TODO - Add dataset key
-                        model.columns.push({ dataset: 1, name: eventData.name, alias: eventData.alias, type: eventData.type, fieldType: eventData.fieldType, aggregation: eventData.aggregation, style: { hiddenColumn: false, 'white-space': 'nowrap' } })
+                        model.columns.push({ dataset: eventData.dataset, name: eventData.name, alias: eventData.alias, type: eventData.type, fieldType: eventData.fieldType, aggregation: eventData.aggregation, style: { hiddenColumn: false, 'white-space': 'nowrap' } })
                         console.log('onColumnDrop  CALLED! ', eventData)
                         emitter.emit('collumnAdded', eventData)
                     },
