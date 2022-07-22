@@ -153,7 +153,6 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 						throw new InvalidHtmlPayloadException(html);
 					}
 
-					widget.put("htmlToRender", xssUtils.sanitize(html));
 				} else if ("customchart".equals(type)) {
 
 					Map<String, Object> html = (Map<String, Object>) widget.get("html");
@@ -166,7 +165,6 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 						throw new InvalidHtmlPayloadException(code);
 					}
 
-					html.put("code", xssUtils.sanitize(code));
 				}
 			}
 
