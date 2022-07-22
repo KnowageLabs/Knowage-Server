@@ -316,6 +316,7 @@
             "title": "Dataset Manageent"
         },
         "widgetEditor": {
+            "dragColumnsHint": "Drag columns here",
             "itemsPerPage": "Items per page",
             "pagination": "Pagination",
             "selectDataset": "Select Dataset"

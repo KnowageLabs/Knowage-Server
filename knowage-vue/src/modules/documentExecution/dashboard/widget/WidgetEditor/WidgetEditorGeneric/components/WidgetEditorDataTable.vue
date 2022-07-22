@@ -1,6 +1,10 @@
 <template>
     <div :class="{ 'dropzone-active': settings.dropIsActive }" @drop.stop="onDropComplete($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent>
+        <div v-if="settings.dropIsActive && rows.length === 0">
+            <div id="drag-columns-hint" class="p-d-flex p-flex-row p-jc-center p-ai-center">{{ $t('dashboard.widgetEditor.dragColumnsHint') }}</div>
+        </div>
         <DataTable
+            v-else
             :value="rows"
             class="p-datatable-sm kn-table"
             :class="{ 'table-headers-hidden': settings.hideHeaders }"
@@ -149,5 +153,10 @@ export default defineComponent({
     ::v-deep(.p-datatable-header) {
         display: none;
     }
+}
+
+#drag-columns-hint {
+    min-height: 200px;
+    min-width: 200px;
 }
 </style>
