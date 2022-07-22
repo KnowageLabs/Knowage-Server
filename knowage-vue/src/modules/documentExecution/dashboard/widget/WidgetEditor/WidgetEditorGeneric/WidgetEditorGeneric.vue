@@ -7,7 +7,6 @@
                 <WidgetEditorDataTable v-else-if="component.type === 'dataTable'" :widgetModel="widgetModel" :items="getItems(component.settings.property)" :columns="component.columns" :settings="component.settings" @rowReorder="onRowReorder($event, component)"></WidgetEditorDataTable>
             </template>
         </div>
-        {{ model.columns }}
     </div>
 </template>
 

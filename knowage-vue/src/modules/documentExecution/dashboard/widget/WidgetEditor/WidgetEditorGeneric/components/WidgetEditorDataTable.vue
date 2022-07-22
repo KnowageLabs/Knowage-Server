@@ -1,6 +1,16 @@
 <template>
     <div :class="{ 'dropzone-active': settings.dropIsActive }" @drop.stop="onDropComplete($event)" @dragover.prevent @dragenter.prevent @dragleave.prevent>
-        <DataTable :value="rows" class="p-datatable-sm kn-table" :dataKey="settings.dataKey" v-model:filters="filters" :globalFilterFields="settings.globalFilterFields" :responsiveLayout="settings.responsiveLayout ?? 'stack'" :breakpoint="settings.breakpoint ?? '600px'" @rowReorder="onRowReorder">
+        <DataTable
+            :value="rows"
+            class="p-datatable-sm kn-table"
+            :class="{ 'table-headers-hidden': settings.hideHeaders }"
+            :dataKey="settings.dataKey"
+            v-model:filters="filters"
+            :globalFilterFields="settings.globalFilterFields"
+            :responsiveLayout="settings.responsiveLayout ?? 'stack'"
+            :breakpoint="settings.breakpoint ?? '600px'"
+            @rowReorder="onRowReorder"
+        >
             <template #header>
                 <div v-if="settings.globalFilterFields?.length > 0" class="table-header p-d-flex p-ai-center">
                     <span id="search-container" class="p-input-icon-left p-mr-3">
@@ -20,7 +30,7 @@
             </Column>
             <Column class="kn-truncated" v-for="column in columns" :key="column.field" :field="column.field" :header="column.header ? $t(column.header) : ''" :sortable="column.sortable">
                 <template #body="slotProps">
-                    <div>
+                    <div :style="column.columnBodyStyle ?? ''">
                         <span class="kn-truncated" v-if="!column.editableField">{{ slotProps.data[column.field] }}</span>
                         <InputText
                             v-else-if="column.editableField.type === 'inputNumber' || column.editableField.type === 'inputText'"
@@ -133,5 +143,11 @@ export default defineComponent({
 .dropzone-active {
     border: 1.5px blue dotted;
     padding: 0.5rem;
+}
+
+.table-headers-hidden {
+    ::v-deep(.p-datatable-header) {
+        display: none;
+    }
 }
 </style>

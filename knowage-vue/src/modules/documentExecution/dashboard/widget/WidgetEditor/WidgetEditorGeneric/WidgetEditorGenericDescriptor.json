@@ -26,19 +26,22 @@
                     "columns": [
                         {
                             "field": "alias",
-                            "editableField": {"type": "inputText", "function": "functions.updateColumnValue"}
+                            "editableField": {"type": "inputText", "function": "functions.updateColumnValue"},
+                            "columnBodyStyle": "max-width: 200px"
                         },
                         {
                             "field": "name"
                         },
                         {
                             "field": "aggregation",
-                            "editableField": {"type": "dropdown", "options": "functions.getColumnAggregationOptions", "function": "functions.updateColumnValue", "visibilityCondition": "functions.showAggregationDropdown"}
+                            "editableField": {"type": "dropdown", "options": "functions.getColumnAggregationOptions", "function": "functions.updateColumnValue", "visibilityCondition": "functions.showAggregationDropdown"},
+                            "columnBodyStyle": "max-width: 100px"
                         }
                     ],
                     "cssClass": "kn-material-input p-d-flex p-flex-row kn-flex p-m-2",
                     "label": "dashboard.widgetEditor.pagination",
                     "settings": {
+                        "hideHeaders": true,
                         "buttons": [
                             {
                                 "icon": "fa fa-eye",
@@ -62,7 +65,7 @@
                         "iconColumn": "functions.getColumnIcons",
                         "property": "columns",
                         "responsiveLayout": "stack",
-                        "buttonColumnStyle": {"text-align": "end"},
+                        "buttonColumnStyle": {"text-align": "end", "min-width": "125px"},
                         "rowReorder": {
                             "rowReorderColumnStyle": "width: 3rem"
                         }

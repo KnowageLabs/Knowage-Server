@@ -1,6 +1,7 @@
 <template>
     <div class="widgetEditor-preview">
         Preview
+        {{ propWidget }}
     </div>
 </template>
 
@@ -13,7 +14,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
     name: 'widget-editor-preview',
     props: {
-        widget: {
+        propWidget: {
             required: true,
             type: Object
         }
