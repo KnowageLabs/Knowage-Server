@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.utilities.exceptions;
 
-import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
-
 import java.util.Locale;
 
 import it.eng.spagobi.utilities.messages.EngineMessageBundle;
@@ -61,7 +59,7 @@ public class InvalidHtmlPayloadException extends SpagoBIRuntimeException {
 
 	@Override
 	public String getLocalizedMessage() {
-		String localizedMessage = EngineMessageBundle.getMessage(getLocalizationCode(), getMessageBundle(), getLocale(), new String[] { escapeHtml4(payload) });
+		String localizedMessage = EngineMessageBundle.getMessage(getLocalizationCode(), getMessageBundle(), getLocale(), new String[] { payload });
 		return localizedMessage;
 	}
 
