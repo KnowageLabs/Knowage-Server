@@ -1088,6 +1088,9 @@ public class ObjectsAccessVerifier {
 		if (SpagoBIConstants.DOC_STATE_TEST.equals(documentState)) {
 			return SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST;
 		}
+		if (SpagoBIConstants.DOC_STATE_SUSP.equals(documentState)) {
+			return SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP;
+		}
 		throw new SpagoBIRuntimeException("Document state [" + documentState + "] not valid!!");
 	}
 
