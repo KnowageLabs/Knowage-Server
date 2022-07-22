@@ -155,7 +155,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 			 {value:'llll',hint:moment().locale(sbiModule_config.curr_language).format('llll')},
 			 {value:'LLL',hint:moment().locale(sbiModule_config.curr_language).format('LLL')},
 			 {value:'lll',hint:moment().locale(sbiModule_config.curr_language).format('lll')},
-			 {value:'DD/MM/YYYY HH:mm:SS',hint:moment().locale(sbiModule_config.curr_language).format('DD/MM/YYYY HH:mm:SS')},
+			 {value:'DD/MM/YYYY HH:mm:ss',hint:moment().locale(sbiModule_config.curr_language).format('DD/MM/YYYY HH:mm:ss')},
 			 {value:'DD/MM/YYYY HH:mm',hint:moment().locale(sbiModule_config.curr_language).format('DD/MM/YYYY HH:mm')},
 			 {value:'LL',hint:moment().locale(sbiModule_config.curr_language).format('LL')},
 			 {value:'ll',hint:moment().locale(sbiModule_config.curr_language).format('ll')},
