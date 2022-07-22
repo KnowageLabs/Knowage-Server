@@ -32,6 +32,7 @@ import javax.ws.rs.core.Response;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngine;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.api.AbstractQbeEngineResource;
@@ -41,6 +42,7 @@ import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
 import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -124,7 +126,7 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 		return Response.ok().build();
 	}
 
-	public SourceBean getTemplateAsSourceBean(String modelName) {
+	private SourceBean getTemplateAsSourceBean(String modelName) {
 		try {
 			SourceBean qbeSB = new SourceBean("QBE");
 			SourceBean datamartSB = new SourceBean("DATAMART");
@@ -145,6 +147,20 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 	public Map getEnv() {
 		Map env = new HashMap();
 
+		IDataSource dataSource = getEnvFromSuperTODO(env);
+
+		if (dataSource == null || dataSource.checkIsReadOnly()) {
+			logger.debug("Getting datasource for writing, since the datasource is not defined or it is read-only");
+			IDataSource datasourceForWriting = this.getDataSourceForWriting();
+			env.put(EngineConstants.DATASOURCE_FOR_WRITING, datasourceForWriting);
+		} else {
+			env.put(EngineConstants.DATASOURCE_FOR_WRITING, dataSource);
+		}
+
+		return env;
+	}
+
+	private IDataSource getEnvFromSuperTODO(Map env) {
 		IDataSource dataSource = getDataSource();
 		try {
 			env.put(EngineConstants.ENV_DATASOURCE, dataSource);
@@ -167,19 +183,10 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 			logger.warn("Impossible to instatiate the metamodel proxy", t);
 		}
 		env.put(EngineConstants.ENV_LOCALE, Locale.getDefault());
-
-		if (dataSource == null || dataSource.checkIsReadOnly()) {
-			logger.debug("Getting datasource for writing, since the datasource is not defined or it is read-only");
-			IDataSource datasourceForWriting = this.getDataSourceForWriting();
-			env.put(EngineConstants.DATASOURCE_FOR_WRITING, datasourceForWriting);
-		} else {
-			env.put(EngineConstants.DATASOURCE_FOR_WRITING, dataSource);
-		}
-
-		return env;
+		return dataSource;
 	}
 
-	private String decodeParameterValue(String parValue) {
+	protected String decodeParameterValue(String parValue) {
 		String newParValue;
 
 		ParametersDecoder decoder = new ParametersDecoder();
@@ -271,4 +278,12 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 		return null;
 	}
 
+	protected String getUserIdentifier() {
+		return String.valueOf(getUserProfile().getUserUniqueIdentifier());
+	}
+
+	@Override
+	protected UserProfile getUserProfile() {
+		return UserProfileManager.getProfile();
+	}
 }

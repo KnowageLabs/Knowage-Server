@@ -139,7 +139,11 @@ public class BusinessModelResource {
 
 		ret.put("filterStatus", parametersArrayList);
 
-		getDriversFromQbeDataSet(role, ret, qbeDatamart);
+		try {
+			getDriversFromQbeDataSet(role, ret, qbeDatamart);
+		} catch(Exception ex) {
+			// TODO : Remove this
+		}
 
 		return Response.ok(ret).build();
 	}
