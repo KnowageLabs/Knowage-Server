@@ -48,6 +48,7 @@ import it.eng.spagobi.analiticalmodel.execution.service.v2.dto.FolderDTO;
 import it.eng.spagobi.analiticalmodel.execution.service.v2.dto.MetadataDTO;
 import it.eng.spagobi.analiticalmodel.execution.service.v2.dto.SaveDocumentDTO;
 import it.eng.spagobi.analiticalmodel.execution.service.v2.dto.SourceDatasetDTO;
+import it.eng.spagobi.analiticalmodel.execution.service.v2.exception.InvalidHtmlPayloadInCockpitException;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
@@ -63,7 +64,6 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.InvalidHtmlPayloadException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.filters.XSSUtils;
@@ -137,6 +137,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		ArrayList<Map<String, Object>> sheets = (ArrayList<Map<String, Object>>) templateContent.get("sheets");
 
 		for (Map<String, Object> sheet : sheets) {
+			String label = (String) sheet.get("label");
 			ArrayList<Map<String, Object>> widgets = (ArrayList<Map<String, Object>>) sheet.get("widgets");
 
 			for (Map<String, Object> widget : widgets) {
@@ -150,7 +151,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 					boolean isSafe = xssUtils.isSafe(html);
 
 					if (!isSafe) {
-						throw new InvalidHtmlPayloadException(html);
+						throw new InvalidHtmlPayloadInCockpitException(label, html);
 					}
 
 				} else if ("customchart".equals(type)) {
@@ -162,7 +163,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 					boolean isSafe = xssUtils.isSafe(code);
 
 					if (!isSafe) {
-						throw new InvalidHtmlPayloadException(code);
+						throw new InvalidHtmlPayloadInCockpitException(label, code);
 					}
 
 				}
