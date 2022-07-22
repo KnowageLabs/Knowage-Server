@@ -33,6 +33,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -52,7 +53,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	private static Logger logger = Logger.getLogger(DomainDAOHibImpl.class);
 
 	@Override
-	public List loadListMetaModelDomainsByRole(Integer roleId) throws SpagoBIRuntimeException {
+	public List<Integer> loadListMetaModelDomainsByRole(Integer roleId) throws SpagoBIRuntimeException {
 
 		Session aSession = null;
 		Transaction tx = null;
@@ -67,7 +68,6 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			Iterator it = hibList.iterator();
 
 			while (it.hasNext()) {
-				// realResult.add(toDomain((SbiDomains) it.next()));
 				Integer categoryId = Integer.getInteger(it.next().toString());
 				realResult.add(categoryId);
 			}
@@ -105,7 +105,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadListDomainsByType(java.lang.String)
 	 */
 	@Override
-	public List loadListDomainsByType(String domainType) throws EMFUserError {
+	public List<Domain> loadListDomainsByType(String domainType) throws EMFUserError {
 		/*
 		 * <STATEMENT name="SELECT_LIST_DOMAINS" query="SELECT T.VALUE_NM AS VALUE_NAME, T.VALUE_ID AS VALUE_ID, T.VALUE_CD AS VALUE_CD FROM SBI_DOMAINS T WHERE
 		 * DOMAIN_CD = ? "/>
@@ -113,7 +113,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 		Session aSession = null;
 		Transaction tx = null;
 
-		List realResult = new ArrayList();
+		List<Domain> realResult = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -124,12 +124,12 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			criteria.add(domainCdCriterrion);
 			criteria.addOrder(valueIdOrder);
 
-			List hibList = criteria.list();
+			List<SbiDomains> hibList = criteria.list();
 
-			Iterator it = hibList.iterator();
+			Iterator<SbiDomains> it = hibList.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(toDomain((SbiDomains) it.next()));
+				realResult.add(toDomain(it.next()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -282,13 +282,16 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 		if (aSession == null) {
 			return loadDomainByCodeAndValue(codeDomain, codeValue);
 		} else {
-			Criterion aCriterion = Expression.and(Expression.eq("domainCd", codeDomain), Expression.eq("valueCd", codeValue));
+			Criterion restrictionOnDomainCd = Restrictions.eq("domainCd", codeDomain);
+			Criterion restructionOnValueCd = Restrictions.eq("valueCd", codeValue);
+			Criterion aCriterion = Restrictions.and(restrictionOnDomainCd, restructionOnValueCd);
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(aCriterion);
 
 			SbiDomains aSbiDomains = (SbiDomains) criteria.uniqueResult();
-			if (aSbiDomains == null)
+			if (aSbiDomains == null) {
 				return null;
+			}
 
 			return toDomain(aSbiDomains);
 		}

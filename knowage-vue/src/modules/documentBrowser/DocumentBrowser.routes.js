@@ -29,6 +29,12 @@ const routes = [
                 props: true
             }
         ]
+    },
+    {
+        path: '/document-browser/:pathMatch(.*)*',
+        name: 'document-browser-functionality',
+        component: () => import('@/modules/documentBrowser/DocumentBrowser.vue'),
+        props: true
     }
 ]
 

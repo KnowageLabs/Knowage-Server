@@ -29,7 +29,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.context.request.RequestAttributes;
@@ -47,7 +48,7 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 public class JWTSecurityFilter implements Filter {
 
-	private static final Logger LOGGER = Logger.getLogger(JWTSecurityFilter.class);
+	private static final Logger LOGGER = LogManager.getLogger(JWTSecurityFilter.class);
 
 	@Lazy
 	@Autowired

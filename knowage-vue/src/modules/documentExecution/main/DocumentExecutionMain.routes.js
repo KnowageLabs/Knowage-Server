@@ -20,7 +20,7 @@ const routes = [
     {
         path: '/olap-designer/:id',
         name: 'olap-designer',
-        component: () => import('@/modules/documentExecution/main/DocumentExecution.vue'),
+        component: () => import('@/modules/documentExecution/olap/Olap.vue'),
         props: true
     }
 ]

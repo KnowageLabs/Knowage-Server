@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -47,40 +48,31 @@ public class WhiteList implements IWhiteList {
 
 	}
 
-	private List<String> getProperties(String property) {
+	private List<Service> getProperties() {
 		LOGGER.debug("IN");
-		List<String> services = new ArrayList<String>();
-		FileInputStream stream = null;
-		try {
-			String servicesWhitelist = ContextPropertiesConfig.getResourcePath() + "/" + WHITELIST_FILE;
-			File file = new File(servicesWhitelist);
-			stream = new FileInputStream(file);
+		List<Service> services = new ArrayList<>();
+		String servicesWhitelist = ContextPropertiesConfig.getResourcePath() + "/" + WHITELIST_FILE;
+		File file = new File(servicesWhitelist);
+
+		try (FileInputStream stream = new FileInputStream(file)) {
 			XStream xstream = new XStream();
 			xstream.alias("WHITELIST", WhiteListBean.class);
 			xstream.autodetectAnnotations(true);
 			xstream.registerConverter(new ServiceConverter());
 			xstream.addImplicitCollection(WhiteListBean.class, "service", Service.class);
+			xstream.allowTypes(new Class[] { it.eng.knowage.boot.utils.WhiteListBean.class });
 			String fileString = getFileContent(stream, "UTF-8");
 			if (!file.exists() || file.isDirectory()) {
 				return services;
 			} else {
 				WhiteListBean bean = (WhiteListBean) xstream.fromXML(fileString);
 				for (Service ser : bean.service) {
-					services.add(ser.baseurl);
+					services.add(ser);
 				}
-
-				stream.close();
 			}
 		} catch (Exception e) {
 			LOGGER.error("Can not read white-list services from configuration file ", e);
 			return services;
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-				LOGGER.error("Can not close the stream resources ", e);
-			}
 		}
 
 		LOGGER.debug("OUT");
@@ -101,12 +93,40 @@ public class WhiteList implements IWhiteList {
 
 	@Override
 	public List<String> getRelativePaths() {
-		return getProperties("relativepath");
+		List<String> ret = getProperties()
+				.stream()
+				.filter(e -> e.relativepath != null)
+				.map(e -> e.relativepath)
+				.collect(Collectors.toList());
+
+		ret.add("/knowage");
+		ret.add("/knowage-api");
+		ret.add("/knowagebirtreportengine");
+		ret.add("/knowagecockpitengine");
+		ret.add("/knowagecommonjengine");
+		ret.add("/knowage-data-preparation");
+		ret.add("/knowagedossierengine");
+		ret.add("/knowagegeoreportengine");
+		ret.add("/knowagejasperreportengine");
+		ret.add("/knowagekpiengine");
+		ret.add("/knowagemeta");
+		ret.add("/knowageqbeengine");
+		ret.add("/knowagesdk");
+		ret.add("/knowagesvgviewerengine");
+		ret.add("/knowagetalendengine");
+		ret.add("/knowage-vue");
+		ret.add("/knowagewhatifengine");
+
+		return ret;
 	}
 
 	@Override
 	public List<String> getExternalServices() {
-		return getProperties("baseurl");
+		return getProperties()
+				.stream()
+				.filter(e -> e.baseurl != null)
+				.map(e -> e.baseurl)
+				.collect(Collectors.toList());
 	}
 
 }

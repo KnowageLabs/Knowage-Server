@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CATEGORIES>
+	<CATEGORY code="Default Model Category"   name="Default Model Category"   type="BM_CATEGORY" />
+	<CATEGORY code="Default Dataset Category" name="Default Dataset Category" type="DATASET_CATEGORY" />
+	<CATEGORY code="Default Layer Category"   name="Default Layer Category"   type="GEO_CATEGORY" />
+</CATEGORIES>

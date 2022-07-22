@@ -100,7 +100,6 @@ export default defineComponent({
                         }
                     })
                     .then((response: AxiosResponse<any>) => {
-                        console.log('DOWNLOAD RESPONSE ------------', response)
                         downloadDirectFromResponse(response)
                         this.$store.commit('setInfo', { title: this.$t('common.downloading'), msg: this.$t('managers.mondrianSchemasManagement.toast.downloadFile.downloaded') })
                     })

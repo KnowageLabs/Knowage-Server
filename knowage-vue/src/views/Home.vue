@@ -71,7 +71,7 @@
                 }
             },
             isFunctionality(to: String): Boolean {
-                return to === '/document-browser' || to.startsWith('/workspace')
+                return to.startsWith('/document-browser') || to.startsWith('/workspace')
             },
             isADocument(to: String): Boolean {
                 return to.startsWith('/dossier/') || to.startsWith('/map/') || to.startsWith('/kpi/') || to.startsWith('/office-doc/') || to.startsWith('/document-composite/')

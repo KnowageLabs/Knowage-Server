@@ -20,8 +20,8 @@
                 breakpoint="960px"
                 @rowSelect="setDirty"
                 @rowUnselect="setDirty"
-                @rowSelectAll="setDirty"
-                @rowUnselectAll="setDirty"
+                @rowSelectAll="onSelectAll"
+                @rowUnselectAll="onUnselectAll"
                 data-test="data-table"
             >
                 <template #empty>
@@ -35,46 +35,54 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { iRole } from '../../NewsManagement'
-    import Card from 'primevue/card'
-    import Column from 'primevue/column'
-    import DataTable from 'primevue/datatable'
-    import rolesCardDescriptor from './RolesCardDescriptor.json'
+import { defineComponent } from 'vue'
+import { iRole } from '../../NewsManagement'
+import Card from 'primevue/card'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import rolesCardDescriptor from './RolesCardDescriptor.json'
 
-    export default defineComponent({
-        name: 'roles-card',
-        components: {
-            Card,
-            Column,
-            DataTable
-        },
-        props: {
-            categoryList: Array,
-            selected: Array
-        },
-        emits: ['changed'],
-        data() {
-            return {
-                rolesCardDescriptor,
-                selectedCategories: [] as iRole[]
-            }
-        },
-        watch: {
-            selected() {
-                this.loadSelectedCategories()
-            }
-        },
-        created() {
-            this.loadSelectedCategories()
-        },
-        methods: {
-            setDirty() {
-                this.$emit('changed', this.selectedCategories)
-            },
-            loadSelectedCategories() {
-                this.selectedCategories = this.selected as iRole[]
-            }
+export default defineComponent({
+    name: 'roles-card',
+    components: {
+        Card,
+        Column,
+        DataTable
+    },
+    props: {
+        categoryList: Array,
+        selected: Array
+    },
+    emits: ['changed'],
+    data() {
+        return {
+            rolesCardDescriptor,
+            selectedCategories: [] as iRole[]
         }
-    })
+    },
+    watch: {
+        selected() {
+            this.loadSelectedCategories()
+        }
+    },
+    created() {
+        this.loadSelectedCategories()
+    },
+    methods: {
+        setDirty() {
+            this.$emit('changed', this.selectedCategories)
+        },
+        onSelectAll(event: any) {
+            this.selectedCategories = event.data
+            this.$emit('changed', this.selectedCategories)
+        },
+        onUnselectAll() {
+            this.selectedCategories = []
+            this.$emit('changed', this.selectedCategories)
+        },
+        loadSelectedCategories() {
+            this.selectedCategories = this.selected as iRole[]
+        }
+    }
+})
 </script>

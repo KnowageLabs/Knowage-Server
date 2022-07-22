@@ -79,7 +79,7 @@ describe('Scorecards Table', () => {
         await wrapper.find('[data-test="add-perspective-button"]').trigger('click')
 
         expect(wrapper.vm.scorecard.perspectives.length).toBe(1)
-        expect(wrapper.vm.scorecard.perspectives[0]).toStrictEqual(mockedPerspective)
+        expect(wrapper.vm.scorecard.perspectives[0].name).toBe('New Perspective')
         expect(wrapper.emitted()).toHaveProperty('touched')
     })
     it('deletes perspective on delete event', async () => {

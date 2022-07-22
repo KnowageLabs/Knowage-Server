@@ -37,6 +37,7 @@
 		<mapping resource="it/eng/spagobi/events/metadata/mapping/SbiEvents.hbm.xml" />
 		<mapping resource="it/eng/spagobi/events/metadata/mapping/SbiEventsLog.hbm.xml" />
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiDomains.hbm.xml" />
+		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiCategory.hbm.xml" />
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiConfig.hbm.xml" />
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiProductType.hbm.xml" />
 
@@ -122,6 +123,7 @@
 		<mapping resource="it/eng/spagobi/profiling/mapping/SbiUser.hbm.xml" />
 		<mapping resource="it/eng/spagobi/profiling/mapping/SbiUserAttributes.hbm.xml" />
 		<mapping resource="it/eng/spagobi/profiling/mapping/SbiAccessibilityPreferences.hbm.xml"/>
+		<mapping resource="it/eng/spagobi/profiling/mapping/SbiEs.hbm.xml" />
 
 		<!-- User Defined Attributes -->
 		<mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdp.hbm.xml" />

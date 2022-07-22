@@ -19,6 +19,7 @@
 package it.eng.spagobi.federateddataset.dao;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -102,7 +103,9 @@ public class SbiFederationUtils {
 		sbiFederationDefinition.setRelationships(federationDefinition.getRelationships());
 		sbiFederationDefinition.setSourceDatasets(toSbiDataSet(federationDefinition.getSourceDatasets()));
 		sbiFederationDefinition.setDegenerated(federationDefinition.isDegenerated());
-		sbiFederationDefinition.setOwner(federationDefinition.getOwner());
+		if (Objects.isNull(sbiFederationDefinition.getOwner())) {
+			sbiFederationDefinition.setOwner(federationDefinition.getOwner());
+		}
 
 		logger.debug("OUT");
 

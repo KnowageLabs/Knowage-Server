@@ -14,6 +14,7 @@
         "cancel": "cancel",
         "category": "Category",
         "cc": "CC",
+        "chipsHint": "Press Enter to confirm the input value",
         "choose": "choose",
         "clean": "Clean",
         "clear": "Clear",
@@ -165,6 +166,7 @@
         "sort": "sort",
         "source": "Source",
         "sqlExpression": "SQL expression",
+        "start": "Start",
         "state": "State",
         "status": "Status",
         "style": "Style",
@@ -340,6 +342,17 @@
                 "selectSource": "Select Source",
                 "title": "Data Lineage"
             },
+            "designerDialog": {
+                "addParameter": "Add Parameter",
+                "mondrian": "Mondrian",
+                "olapDesigner": "Olap Designer",
+                "selectCube": "Select Cube",
+                "selectMondrianSchema": "Select Mondrian Schema",
+                "templateType": "Select type of Template",
+                "xmla": "XMLA Server",
+                "xmlaAddress": "XMLA Address",
+                "xmlaParameters": "XMLA Parameters"
+            },
             "drivers": {
                 "ad": "Driver AD",
                 "adDepends": "depends from the AD",
@@ -509,6 +522,7 @@
             "filterDialog": {
                 "ancestorDescendantWarning": "Warning: You selected some members that are in ancestor-descendant relationship: measures will be aggregated over both of them. Are you sure this is what you want?",
                 "driverProfileAttribute": "Driver/ProfileAttribute",
+                "filterLevelsError": "Multiple values must be filled consecutively. Some levels in between are missing values.",
                 "filterUsingDrivers": "Filter using drivers",
                 "infoMessage": "Selected items will be used as filters in the main table.",
                 "level": "Level",
@@ -706,6 +720,7 @@
         "everyWeek": "Every {week} week/s",
         "everyYear": "Every {year} year/s",
         "in": "In",
+        "invalidCronExpression": "Invalid cron expression",
         "pauseSchedulation": "Pause schedulation",
         "resumeSchedulation": "Resume schedulation",
         "schedulationPaused": "Schedulation paused",

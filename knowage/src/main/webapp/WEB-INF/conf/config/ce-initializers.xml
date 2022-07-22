@@ -46,4 +46,6 @@
 		<!-- Initializer for Audit Cleaning -->
 	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.CleanAuditQuartzInitializer" config="" />
 	
+	<INITIALIZER class="it.eng.spagobi.commons.initializers.metadata.CategoriesInitializer" config="" />
+	
 </INITIALIZERS>

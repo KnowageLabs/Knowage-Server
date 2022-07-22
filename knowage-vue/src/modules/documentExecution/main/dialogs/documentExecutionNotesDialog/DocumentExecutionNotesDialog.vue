@@ -55,7 +55,6 @@
     import TabView from 'primevue/tabview'
     import TabPanel from 'primevue/tabpanel'
     import { mapState } from 'vuex'
-
     export default defineComponent({
         name: 'document-execution-notes-dialog',
         components: { Dialog, DocumentExecutionNotesForm, DocumentExecutionNotesList, FabButton, TabView, TabPanel },
@@ -98,7 +97,6 @@
         methods: {
             async loadDocument() {
                 this.document = this.propDocument
-
                 if (this.isEnterprise && this.document && this.document.id) {
                     await this.loadNotes()
                 }
@@ -158,7 +156,6 @@
                             title: this.$t('common.toast.deleteTitle'),
                             msg: this.$t('common.toast.deleteSuccess')
                         })
-
                         if (this.selectedNote.id === note.id) this.selectedNote = {} as iNote
                         await this.loadNotes()
                     })
@@ -187,6 +184,7 @@
             },
             createNewNote() {
                 this.selectedNote = {} as iNote
+                this.activeTab = 0
             }
         }
     })

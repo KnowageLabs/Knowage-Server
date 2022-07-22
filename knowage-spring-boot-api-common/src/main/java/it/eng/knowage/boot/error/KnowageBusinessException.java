@@ -17,7 +17,6 @@
  */
 package it.eng.knowage.boot.error;
 
-import java.util.List;
 import java.util.Locale;
 
 import javax.ws.rs.core.Response;
@@ -51,11 +50,6 @@ public class KnowageBusinessException extends KnowageException {
 	 */
 	private String description = "";
 
-	/*
-	 * A list of possible solutions to the problem that have caused the exception
-	 */
-	private List hints;
-
 	private static final long serialVersionUID = 2696409463468997530L;
 
 	public KnowageBusinessException(String message, Throwable ex) {
@@ -67,9 +61,8 @@ public class KnowageBusinessException extends KnowageException {
 		this.code = ex.getCode();
 		this.status = ex.getStatus();
 		this.description = ex.getDescription();
-		this.hints = ex.getHints();
 		this.locale = locale;
-
+		getHints().addAll(ex.getHints());
 	}
 
 	public KnowageBusinessException(String message) {
@@ -92,19 +85,6 @@ public class KnowageBusinessException extends KnowageException {
 	@Override
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	@Override
-	public List getHints() {
-		return hints;
-	}
-
-	public void setHints(List hints) {
-		this.hints = hints;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
 	}
 
 	public Status getStatus() {

@@ -1,6 +1,6 @@
 /*
  * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ * Copyright (C) 2022 Engineering Ingegneria Informatica S.p.A.
  *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -32,7 +32,7 @@ public class KnowageException extends Exception {
 	/*
 	 * A list of possible solutions to the problem that have caused the exception
 	 */
-	private List hints;
+	private final List<String> hints = new ArrayList<>();
 
 	/**
 	 * Builds a <code>SpagoBIException</code>.
@@ -45,7 +45,7 @@ public class KnowageException extends Exception {
 
 	/**
 	 * Builds a <code>SpagoBIException</code>.
-	 * 
+	 *
 	 * @param message Text of the exception
 	 * @param ex      previous Throwable object
 	 */
@@ -80,14 +80,11 @@ public class KnowageException extends Exception {
 		this.description = description;
 	}
 
-	public List getHints() {
-		if (hints == null) {
-			hints = new ArrayList();
-		}
+	public final List<String> getHints() {
 		return hints;
 	}
 
-	public void addHint(String hint) {
+	public final void addHint(String hint) {
 		getHints().add(hint);
 	}
 

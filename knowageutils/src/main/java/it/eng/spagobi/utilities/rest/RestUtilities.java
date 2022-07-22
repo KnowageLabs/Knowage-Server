@@ -68,7 +68,7 @@ import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
 import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.filters.XSSUtils;
+import it.eng.spagobi.utilities.filters.XSSRequestWrapper;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 public class RestUtilities {
@@ -213,8 +213,7 @@ public class RestUtilities {
 				final String key = keys.next();
 				final Object object = inJsonObject.get(key);
 				if (object instanceof String) {
-					XSSUtils xssUtils = new XSSUtils();
-					inJsonObject.put(key, xssUtils.stripXSS((String) object));
+					inJsonObject.put(key, XSSRequestWrapper.stripXSS((String) object));
 				} else if (object instanceof JSONObject) {
 					stripXSSJsonObject(object);
 				} else if (object instanceof JSONArray) {
@@ -225,8 +224,7 @@ public class RestUtilities {
 				}
 			}
 		} else if (o instanceof JSONObject) {
-			XSSUtils xssUtils = new XSSUtils();
-			o = xssUtils.stripXSS((String) o);
+			o = XSSRequestWrapper.stripXSS((String) o);
 		} else if (o instanceof JSONArray) {
 			JSONArray ja = (JSONArray) o;
 			for (int i = 0; i < ja.length(); i++) {

@@ -289,10 +289,7 @@
                                             msg: 'Generate it again and then retry'
                                         })
                                     }
-                                },
-                                () => {
-                                    this.$store.commit('setError', { title: 'Save error', msg: 'Cannot create process' })
-                                }
+                                },  
                             )
                         },
                         () => {
@@ -458,6 +455,7 @@
                 await this.$http.patch(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/' + newConfig.instanceId, { config: newConfig.config }, { headers: { Accept: 'application/json, */*' } }).then(
                     () => {
                         this.loadDataset(this.selectedDataset.id)
+                        this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
                     },
                     () => {
                         this.$store.commit('setError', { title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })

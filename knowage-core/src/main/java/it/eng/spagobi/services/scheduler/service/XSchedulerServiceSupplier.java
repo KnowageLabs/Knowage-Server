@@ -212,7 +212,27 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 
 	@Override
 	public String scheduleJob(String xmlRequest) {
-		// StringBuilder servreponse = new StringBuilder();
+		JSONObject ret = scheduleJob2(xmlRequest);
+
+		StringBuilder servreponse = new StringBuilder();
+
+		try {
+			String status = ret.getString("Status");
+
+			if (status.equalsIgnoreCase("ok")) {
+				servreponse.append("<EXECUTION_OUTCOME outcome=\"perform\"/>");
+			} else {
+				servreponse.append("<EXECUTION_OUTCOME outcome=\"fault\"/>");
+			}
+		} catch (JSONException ex) {
+			throw new SpagoBIRuntimeException("Cannot get Status attribute from: " + ret, ex);
+		}
+
+		return servreponse.toString();
+	}
+
+	@Override
+	public JSONObject scheduleJob2(String xmlRequest) {
 		JSONObject resp = new JSONObject();
 		Trigger trigger = null;
 		try {
@@ -223,7 +243,6 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 
 			// all has been done
 			resp.put("Status", "OK");
-			// servreponse.append("<EXECUTION_OUTCOME outcome=\"perform\"/>");
 		} catch (Exception e) {
 			// something wrong
 			LOGGER.error("Cannot save trigger", e);
@@ -241,9 +260,8 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 				LOGGER.error("Error showing the saving trigger error", e1);
 			}
 
-			// servreponse.append("<EXECUTION_OUTCOME outcome=\"fault\"/>");
 		}
-		return resp.toString();
+		return resp;
 	}
 
 	@Override

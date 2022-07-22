@@ -30,6 +30,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -74,6 +75,7 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -962,7 +964,10 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 					}
 
 					// retrieve Category Id
-					Domain domain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("BM_CATEGORY", categoryLabel);
+					ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+					Domain domain = Optional.ofNullable(categoryDao.getCategoryForBusinessModel(categoryLabel))
+						.map(Domain::fromCategory)
+						.orElse(null);
 					if (domain != null) {
 						Integer id = domain.getValueId();
 						logger.debug("Associate domain with id: " + id + " and name " + categoryLabel);

@@ -647,7 +647,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 							String idsPath = convertPathInIds(initialPath);
 //							url += "&" + BIObjectsModule.MODALITY + "=" + BIObjectsModule.FILTER_TREE + "&" + TreeObjectsModule.PATH_SUBTREE + "=" + initialPath
 //									+ idsPath;
-
+							url = String.format("%s/%s", url, idsPath);
 						}
 					} else if (functionality.equals(SpagoBIConstants.WORKSPACE_MANAGEMENT)) {
 						String initialPath = menu.getInitialPath();
@@ -704,7 +704,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 		}
 		logger.debug("OUT");
 
-		String value = functIds.stream().map(x -> x.toString()).collect(Collectors.joining("&defaultFoldersId="));
+		String value = functIds.stream().map(x -> x.toString()).collect(Collectors.joining("/"));
 
 		return value;
 	}

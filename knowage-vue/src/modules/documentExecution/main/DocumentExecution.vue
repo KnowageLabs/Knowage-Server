@@ -123,7 +123,7 @@ export default defineComponent({
         DocumentExecutionSelectCrossNavigationDialog,
         DocumentExecutionCNContainerDialog
     },
-    props: { id: { type: String }, parameterValuesMap: { type: Object }, tabKey: { type: String }, propMode: { type: String } },
+    props: { id: { type: String }, parameterValuesMap: { type: Object }, tabKey: { type: String }, propMode: { type: String }, selectedMenuItem: { type: Object }, menuItemClickedTrigger: { type: Boolean } },
     emits: ['close', 'updateDocumentName', 'parametersChanged'],
     data() {
         return {
@@ -166,6 +166,26 @@ export default defineComponent({
             angularData: null as any,
             crossNavigationContainerVisible: false,
             crossNavigationContainerData: null as any
+        }
+    },
+    watch: {
+        async menuItemClickedTrigger() {
+            if (!this.selectedMenuItem) return
+            const routes = ['registry', 'document-composite', 'report', 'office-doc', 'olap', 'map', 'report', 'kpi', 'dossier', 'etl']
+            const test = routes.some((el) => this.selectedMenuItem?.to.includes(el))
+            if (!test) return
+            const label = this.selectedMenuItem.to.substring(this.selectedMenuItem.to.lastIndexOf('/') + 1)
+            this.document = { label: label }
+            if (!this.document.label) return
+            this.breadcrumbs = []
+            this.filtersData = {} as any
+            await this.loadDocument()
+
+            if (this.userRole) {
+                await this.loadPage(true)
+            } else {
+                this.parameterSidebarVisible = true
+            }
         }
     },
     async activated() {
@@ -614,7 +634,7 @@ export default defineComponent({
             const postObject = { params: { document: null } as any, url: documentUrl.split('?')[0] }
             postObject.params.documentMode = this.documentMode
             this.hiddenFormUrl = postObject.url
-            const paramsFromUrl = documentUrl.split('?')[1].split('&')
+            const paramsFromUrl = documentUrl?.split('?')[1]?.split('&')
 
             for (let i in paramsFromUrl) {
                 if (typeof paramsFromUrl !== 'function') {

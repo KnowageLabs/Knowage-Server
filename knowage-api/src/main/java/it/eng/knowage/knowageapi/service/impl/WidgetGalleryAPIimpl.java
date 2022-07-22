@@ -17,15 +17,17 @@
  */
 package it.eng.knowage.knowageapi.service.impl;
 
+import static java.util.stream.Collectors.toList;
+
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
@@ -33,6 +35,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import it.eng.knowage.boot.error.InvalidHtmlPayloadException;
 import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.knowage.boot.filter.XSSUtils;
 import it.eng.knowage.knowageapi.dao.SbiWidgetGalleryDao;
@@ -50,17 +53,30 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	@Autowired
 	private SbiWidgetGalleryDao sbiWidgetGalleryDao;
 
-	private static String GALLERY_FUNCTION = "WidgetGalleryManagement";
+	private static final String GALLERY_FUNCTION = "WidgetGalleryManagement";
+
+	private XSSUtils xssUtils = new XSSUtils();
+	private final UnaryOperator<WidgetGalleryDTO> sanitize = e -> {
+		Code code = e.getCode();
+
+		String html = code.getHtml();
+
+		html = xssUtils.sanitize(html);
+
+		code.setHtml(html);
+
+		return e;
+	};
 
 	/**
 	 * This method gets all widgets within all tenants
 	 */
 	@Override
 	public List<WidgetGalleryDTO> getWidgets() throws JSONException {
-		List<WidgetGalleryDTO> ret = null;
-		ret = (List<WidgetGalleryDTO>) sbiWidgetGalleryDao.findAll();
-
-		return ret;
+		return sbiWidgetGalleryDao.findAll()
+				.stream()
+				.map(sanitize)
+				.collect(toList());
 	}
 
 	/**
@@ -70,7 +86,10 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	public List<WidgetGalleryDTO> getWidgetsByTenant(SpagoBIUserProfile profile) throws JSONException {
 		List<WidgetGalleryDTO> ret = null;
 		if (this.canSeeGallery(profile)) {
-			ret = (List<WidgetGalleryDTO>) sbiWidgetGalleryDao.findAllByTenant(profile.getOrganization());
+			ret = sbiWidgetGalleryDao.findAllByTenant(profile.getOrganization())
+					.stream()
+					.map(sanitize)
+					.collect(toList());
 		}
 
 		return ret;
@@ -84,9 +103,6 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		WidgetGalleryDTO widget = null;
 		if (this.canSeeGallery(profile)) {
 			widget = sbiWidgetGalleryDao.findByIdTenant(id, profile.getOrganization());
-//			if (widget != null) {
-//				return updateGalleryCounter(widget);
-//			}
 		}
 
 		return widget;
@@ -102,7 +118,11 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			// Validating CODES with whitelist
 			Code code = widgetGalleryDTO.getCode();
 			try {
-				String htmlCode = stripXSSObject(code.getHtml());
+				String html = code.getHtml();
+
+				html = sanitizeXSS(html);
+
+				String htmlCode = html;
 				JSONObject jsonBody = new JSONObject(new String(widgetGalleryDTO.getTemplate()));
 				JSONObject jsonCode = jsonBody.optJSONObject("code");
 				jsonCode.put("html", htmlCode);
@@ -153,7 +173,11 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			// Validating CODES with whitelist
 			Code code = widgetGalleryDTO.getCode();
 			try {
-				String htmlCode = stripXSSObject(code.getHtml());
+				String html = code.getHtml();
+
+				html = sanitizeXSS(html);
+
+				String htmlCode = html;
 				JSONObject jsonBody = new JSONObject(new String(widgetGalleryDTO.getTemplate()));
 				JSONObject jsonCode = jsonBody.optJSONObject("code");
 				jsonCode.put("html", htmlCode);
@@ -191,11 +215,6 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		}
 		return widgetGalleryDTO;
 	}
-
-//	@Override
-//	public WidgetGalleryDTO updateGalleryCounter(SbiWidgetGallery newSbiWidgetGallery) {
-//		return sbiWidgetGalleryDao.updateCounter(newSbiWidgetGallery);
-//	}
 
 	@Override
 	public int deleteGallery(String id, SpagoBIUserProfile profile) {
@@ -281,10 +300,13 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 
 	@Override
 	public List<WidgetGalleryDTO> getWidgetsByTenantType(SpagoBIUserProfile profile, String type) throws JSONException {
-		Collection<WidgetGalleryDTO> ret = null;
+		List<WidgetGalleryDTO> ret = null;
 		// TODO: add a check for widget type permissions (functionality)
-		ret = sbiWidgetGalleryDao.findAllByTenantAndType(profile.getOrganization(), type);
-		return (List<WidgetGalleryDTO>) ret;
+		ret = sbiWidgetGalleryDao.findAllByTenantAndType(profile.getOrganization(), type)
+				.stream()
+				.map(sanitize)
+				.collect(toList());
+		return ret;
 	}
 
 	@Override
@@ -300,11 +322,13 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		return newSbiWidgetGallery;
 	}
 
-	public static String stripXSSObject(String o) throws JSONException {
-		if (o instanceof String) {
-			XSSUtils xssUtils = new XSSUtils();
-			o = xssUtils.stripXSS(o);
+	private String sanitizeXSS(String input) {
+		boolean isSafe = xssUtils.isSafe(input);
+
+		if (!isSafe) {
+			throw new InvalidHtmlPayloadException(input);
 		}
-		return o;
+
+		return xssUtils.sanitize(input);
 	}
 }

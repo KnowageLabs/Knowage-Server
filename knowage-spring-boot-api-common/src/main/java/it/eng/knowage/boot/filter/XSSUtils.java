@@ -27,15 +27,23 @@ public class XSSUtils {
 		this.whitelist = whitelist;
 	}
 
-	public String stripXSS(String input) {
+	public String sanitize(String input) {
 
 		LOGGER.debug("Sanitizing: {}", input);
 
 		String output = sanitizer.sanitize(input);
 
-		LOGGER.debug("Sanitized as: {}", input);
+		LOGGER.debug("Sanitized as: {}", output);
 
 		return output;
+
+	}
+
+	public boolean isSafe(String input) {
+
+		LOGGER.debug("Checking: {}", input);
+
+		return sanitizer.isSafe(input);
 
 	}
 
