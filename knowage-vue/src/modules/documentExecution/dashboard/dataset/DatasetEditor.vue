@@ -9,7 +9,7 @@
                 </template>
             </Toolbar>
             <div v-if="!loading" class="datasetEditor-container">
-                <DatasetEditorTabs :dashboardDatasetsProp="dashboardDatasets" :availableDatasetsProp="availableDatasets" />
+                <DatasetEditorTabs :dashboardDatasetsProp="dashboardDatasets" :dashboardAssociationsProp="dashboardAssociations" :availableDatasetsProp="availableDatasets" />
                 <DatasetEditorPreview v-if="!loading" :dashboardDatasetsProp="dashboardDatasets" />
             </div>
         </div>
@@ -37,6 +37,7 @@ export default defineComponent({
         return {
             loading: false,
             dashboardDatasets: {} as any,
+            dashboardAssociations: {} as any,
             availableDatasets: {} as any
         }
     },
@@ -48,6 +49,7 @@ export default defineComponent({
     created() {
         console.log('STORE MODEL', this.dashboardStore.$state.dashboards[1])
         this.dashboardDatasets = deepcopy(this.dashboardStore.$state.dashboards[1].configuration.datasets)
+        this.dashboardAssociations = deepcopy(this.dashboardStore.$state.dashboards[1].configuration.associations)
         this.getDatasets()
     },
 

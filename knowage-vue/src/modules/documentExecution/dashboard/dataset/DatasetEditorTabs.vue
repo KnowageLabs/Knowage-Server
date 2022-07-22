@@ -2,9 +2,11 @@
     <div class="datasetEditor-tabs">
         <TabView>
             <TabPanel :header="$t('dashboard.datasetEditor.dataTabTitle')">
-                <DataTab id="dataset-editor-list-card" :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" />
+                <DataTab :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" />
             </TabPanel>
-            <TabPanel :header="$t('dashboard.datasetEditor.associationsTabTitle')"> Associations </TabPanel>
+            <TabPanel :header="$t('dashboard.datasetEditor.associationsTabTitle')">
+                <AssociationsTab :dashboardAssociationsProp="dashboardAssociationsProp" />
+            </TabPanel>
         </TabView>
     </div>
 </template>
@@ -17,11 +19,12 @@ import { defineComponent } from 'vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import DataTab from './DatasetEditorDataTab/DatasetEditorDataTab.vue'
+import AssociationsTab from './DatasetEditorAssociations/DatasetEditorAssociations.vue'
 
 export default defineComponent({
     name: 'widget-editor-tabs',
-    components: { TabView, TabPanel, DataTab },
-    props: { dashboardDatasetsProp: { required: true, type: Array }, availableDatasetsProp: { required: true, type: Array } },
+    components: { TabView, TabPanel, DataTab, AssociationsTab },
+    props: { dashboardDatasetsProp: { required: true, type: Array }, dashboardAssociationsProp: { required: true, type: Array }, availableDatasetsProp: { required: true, type: Array } },
     emits: [],
     data() {
         return {}
