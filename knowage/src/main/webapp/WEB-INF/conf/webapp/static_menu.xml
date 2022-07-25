@@ -90,11 +90,9 @@
 				requiredFunctionality="Calendar"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=calendarTemplate" />
 			<ITEM id="4011" label="menu.FunctionsCatalog"
-				toBeLicensed="KnowagePA"
 				requiredFunctionality="FunctionsCatalogManagement"
 				to="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=functionsCatalog" />
 			<ITEM id="4012" label="menu.WidgetGalleryManagement"
-				toBeLicensed="KnowageSI"
 				requiredFunctionality="WidgetGalleryManagement"
 				to="/gallery-management" />
 		</GROUP_ITEM>
