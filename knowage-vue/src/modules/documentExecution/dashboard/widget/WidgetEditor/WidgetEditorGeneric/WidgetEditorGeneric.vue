@@ -14,7 +14,6 @@
                                         :property="component.property"
                                         :label="component.label"
                                         :class="component.cssClass"
-                                        :disabled="isDisabled(component)"
                                         :settings="component.settings"
                                         @input="onInputTextInput($event, component)"
                                         @change="onInputTextChange($event, component)"
@@ -121,18 +120,13 @@ export default defineComponent({
             }
         },
         onRowReorder(value: any[], component: any) {
-            console.log(' >>>>> onRowReorder')
-            if (component.property) this.updateModelProperty(value, component.property)
+            console.log(' >>>>> onRowReorder', value, component.settings.property)
+            if (component.settings.property) this.updateModelProperty(value, component.settings.property)
         },
         updateModelProperty(value: any, propertyPath: string) {
             console.log(' >>>>> updateModelProperty')
             getModelProperty(this.widgetModel, propertyPath, 'updateValue', value)
             console.log('UPDATED MODEL: ', this.model)
-        },
-        isDisabled(component: any) {
-            console.log(' >>>>> isDisabled')
-            if (component.isDisabled === undefined) return false
-            return getModelProperty(this.widgetModel, component.disabled, 'getValue', null)()
         },
         getItems(propertyPath: string): any[] {
             console.log(' >>>>> getItems')

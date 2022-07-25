@@ -73,7 +73,7 @@ export default defineComponent({
             if (widget.type === 'tableWidget') {
                 widget.settings.pagination = { enabled: false, itemsNumber: 0 }
                 widget.functions = {
-                    disabledTest: () => {
+                    itemsPerPageIsDisabled: () => {
                         return !widget.settings.pagination.enabled
                     },
                     getColumnIcons: (column: any) => {

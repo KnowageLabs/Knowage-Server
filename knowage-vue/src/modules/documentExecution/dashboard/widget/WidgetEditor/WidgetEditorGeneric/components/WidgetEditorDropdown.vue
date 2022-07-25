@@ -28,15 +28,12 @@ export default defineComponent({
         this.$watch(
             'widgetModel.' + this.property,
             () => {
-                this.loadValue()
-                this.fieldIsVisible()
+                this.loadValue()           
             },
             { deep: true }
         )
-        console.log('TEMP: ', this.settings)
         if (this.settings.watchers) {
             for (let i = 0; i < this.settings.watchers.length; i++) {
-                console.log('TEMP: ', this.settings.watchers[i])
                 this.$watch('widgetModel.' + this.settings.watchers[i], () => this.fieldIsVisible(), { deep: true })
             }
         }
@@ -44,15 +41,17 @@ export default defineComponent({
     methods: {
         loadValue() {
             this.modelValue = getModelProperty(this.widgetModel, this.property, 'getValue', null) ?? ''
+
+            this.fieldIsVisible()
         },
         onChange() {
             this.$emit('change', this.modelValue)
         },
         fieldIsVisible() {
-            console.log(' >>>>>> fieldIsVisible DROPDOWN 1', this.settings.visibilityCondition)
+            // console.log(' >>>>>> fieldIsVisible DROPDOWN 1', this.settings.visibilityCondition)
             if (!this.settings.visibilityCondition) return (this.visible = true)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.visibilityCondition, 'getValue', null)
-            console.log(' >>>>>> fieldIsVisible DROPDOWN 2', tempFunction(this.widgetModel))
+            // console.log(' >>>>>> fieldIsVisible DROPDOWN 2', tempFunction(this.widgetModel))
             if (tempFunction && typeof tempFunction === 'function') return (this.visible = tempFunction(this.widgetModel))
         }
     }

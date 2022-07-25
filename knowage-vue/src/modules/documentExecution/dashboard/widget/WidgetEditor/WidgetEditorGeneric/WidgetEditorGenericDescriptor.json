@@ -9,6 +9,7 @@
                             "cssClass": "kn-material-input p-d-flex p-flex-row kn-flex p-m-2",
                             "label": "dashboard.widgetEditor.pagination",
                             "property": "settings.pagination.enabled",
+                            "settings": {},
                             "type": "inputSwitch"
                         },
                         {
@@ -17,7 +18,7 @@
                             "inputClass": "kn-material-input",
                             "label": "dashboard.widgetEditor.itemsPerPage",
                             "property": "settings.pagination.itemsNumber",
-                            "relatedTo": "dashboard.widgetEditor.pagination",
+                            "settings": {"type": "number", "watchers": ["settings.pagination.enabled"],  "disabledCondition": "functions.itemsPerPageIsDisabled"},
                             "type": "inputText"
                         }
                     ],
