@@ -30,7 +30,7 @@
                                         @change="onInputSwitchChange($event, component)"
                                     ></WidgetEditorInputSwitch>
                                     <WidgetEditorDropdown
-                                        v-else-if="component.type === 'dropdown' && fieldIsVisible(component)"
+                                        v-else-if="component.type === 'dropdown'"
                                         :widgetModel="widgetModel"
                                         :class="component.cssClass"
                                         :label="component.label"

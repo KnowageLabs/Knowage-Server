@@ -61,24 +61,7 @@ export default defineComponent({
             // TODO - remove hardcoded
             const widget = {
                 type: 'tableWidget',
-                columns: [
-                    {
-                        dataset: 1,
-                        name: 'column1',
-                        alias: 'column1 alias',
-                        type: 'java.math.BigDecimal',
-                        fieldType: 'MEASURE',
-                        aggregation: 'SUM'
-                    },
-                    {
-                        dataset: 2,
-                        name: 'column2',
-                        alias: 'column2 alias',
-                        type: 'java.math.BigDecimal',
-                        fieldType: 'ATTRIBUTE',
-                        aggregation: 'SUM'
-                    }
-                ],
+                columns: [],
                 conditionalStyles: [],
                 datasets: [],
                 interactions: [],
@@ -168,7 +151,7 @@ export default defineComponent({
                     },
                     visualizationTypeDropdownIsVisible: (model: IWidget) => {
                         console.log(' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! visualizationTypeDropdownIsVisible')
-                        return model?.temp.selectedColumn?.hiddenColumn === true
+                        return model?.temp.selectedColumn?.fieldType === 'MEASURE'
                     }
                 }
             }

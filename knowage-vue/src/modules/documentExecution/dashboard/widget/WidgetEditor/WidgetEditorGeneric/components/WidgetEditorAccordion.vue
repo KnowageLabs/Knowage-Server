@@ -22,7 +22,7 @@
                                 @change="$emit('accordionInputSwitchChanged', { value: $event, component: component })"
                             ></WidgetEditorInputSwitch>
                             <WidgetEditorDropdown
-                                v-else-if="component.type === 'dropdown' && fieldIsVisible(component)"
+                                v-else-if="component.type === 'dropdown'"
                                 :widgetModel="widgetModel"
                                 :class="component.cssClass"
                                 :label="component.label"
@@ -63,13 +63,6 @@ export default defineComponent({
             const tempFunction = getModelProperty(this.widgetModel, component.options, 'getValue', null)
             if (tempFunction && typeof tempFunction === 'function') temp = tempFunction()
             return temp
-        },
-        fieldIsVisible(component: any) {
-            console.log(' >>>>>> fieldIsVisible 1')
-            if (!component.visibilityCondition) return true
-            const tempFunction = getModelProperty(this.widgetModel, component.visibilityCondition, 'getValue', null)
-            console.log(' >>>>>> fieldIsVisible 2', tempFunction(this.widgetModel))
-            if (tempFunction && typeof tempFunction === 'function') return tempFunction(this.widgetModel)
         }
     }
 })

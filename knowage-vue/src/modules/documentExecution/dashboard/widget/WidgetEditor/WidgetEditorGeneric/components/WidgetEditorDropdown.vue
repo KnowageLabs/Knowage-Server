@@ -1,5 +1,5 @@
 <template>
-    <div :class="class">
+    <div v-if="visible" :class="class">
         <label v-if="label" class="kn-material-input-label p-mr-2"> {{ $t(label) }}</label>
         <Dropdown class="kn-material-input" v-model="modelValue" :options="options" :optionLabel="settings.optionLabel ?? 'label'" :optionValue="settings.optionValue ?? 'value'" @change="onChange"></Dropdown>
     </div>
@@ -14,17 +14,32 @@ import Dropdown from 'primevue/dropdown'
 export default defineComponent({
     name: 'widget-editor-dropdown',
     components: { Dropdown },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, property: { type: String, required: true }, label: { type: String }, options: { type: Array }, settings: { type: Object, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, property: { type: String, required: true }, class: { type: String }, label: { type: String }, options: { type: Array }, settings: { type: Object, required: true }, visibilityCondition: { type: String } },
     emits: ['change'],
     data() {
         return {
-            modelValue: '' as any
+            modelValue: '' as any,
+            visible: false
         }
     },
     watch: {},
     async created() {
         this.loadValue()
-        this.$watch('widgetModel.' + this.property, () => this.loadValue(), { deep: true })
+        this.$watch(
+            'widgetModel.' + this.property,
+            () => {
+                this.loadValue()
+                this.fieldIsVisible()
+            },
+            { deep: true }
+        )
+        console.log('TEMP: ', this.settings)
+        if (this.settings.watchers) {
+            for (let i = 0; i < this.settings.watchers.length; i++) {
+                console.log('TEMP: ', this.settings.watchers[i])
+                this.$watch('widgetModel.' + this.settings.watchers[i], () => this.fieldIsVisible(), { deep: true })
+            }
+        }
     },
     methods: {
         loadValue() {
@@ -32,6 +47,13 @@ export default defineComponent({
         },
         onChange() {
             this.$emit('change', this.modelValue)
+        },
+        fieldIsVisible() {
+            console.log(' >>>>>> fieldIsVisible DROPDOWN 1', this.settings.visibilityCondition)
+            if (!this.settings.visibilityCondition) return (this.visible = true)
+            const tempFunction = getModelProperty(this.widgetModel, this.settings.visibilityCondition, 'getValue', null)
+            console.log(' >>>>>> fieldIsVisible DROPDOWN 2', tempFunction(this.widgetModel))
+            if (tempFunction && typeof tempFunction === 'function') return (this.visible = tempFunction(this.widgetModel))
         }
     }
 })

@@ -118,10 +118,10 @@
                             "options": "functions.getColumnAggregationOptions",
                             "property": "temp.selectedColumn.aggregation",
                             "settings": {
-                                "onUpdate": "functions.updateSelectedColumn"
+                                "onUpdate": "functions.updateSelectedColumn",
+                                "visibilityCondition": "functions.selectedColumnDropdownIsVisible"
                             },
-                            "type": "dropdown",
-                            "visibilityCondition": "functions.selectedColumnDropdownIsVisible"
+                            "type": "dropdown"
                         }
                     ],
                     "containerClasess": "p-d-flex p-flex-row"
@@ -149,10 +149,11 @@
                                                     "options": "functions.getVisualizationTypeOptions",
                                                     "property": "temp.selectedColumn.visType",
                                                     "settings": {
-                                                        "onUpdate": "functions.updateSelectedColumn"
+                                                        "onUpdate": "functions.updateSelectedColumn",
+                                                        "watchers": ["temp.selectedColumn.style.hiddenColumn"],
+                                                        "visibilityCondition": "functions.visualizationTypeDropdownIsVisible"
                                                     },
-                                                    "type": "dropdown",
-                                                    "visibilityCondition": "functions.visualizationTypeDropdownIsVisible"
+                                                    "type": "dropdown"
                                                 }
                                             ],
                                             "cssClasses": "p-d-flex p-flex-rows"
