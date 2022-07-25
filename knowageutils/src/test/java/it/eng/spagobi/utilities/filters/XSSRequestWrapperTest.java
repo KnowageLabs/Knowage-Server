@@ -149,7 +149,7 @@ public class XSSRequestWrapperTest {
 	}
 
 	@Test
-	public void testXXX() throws IOException {
+	public void testTemplatesOnFileSystem() throws IOException {
 
 		Path resourceDirectory = Paths.get("src","test","resources", "html-test-snippets");
 
@@ -164,6 +164,9 @@ public class XSSRequestWrapperTest {
 
 			boolean safe = sanitizer.isSafe(input);
 
+			System.out.println(output);
+
+			assertEquals("File " + path + " doesn't pass the sanitization", input, output);
 			assertEquals("File " + path + " doesn't pass the sanitization", true, safe);
 		}
 
