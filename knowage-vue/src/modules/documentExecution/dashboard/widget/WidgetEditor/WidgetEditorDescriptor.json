@@ -28,5 +28,23 @@
             "label": "COUNT_DISTINCT",
             "value": "COUNT_DISTINCT"
         }
+    ],
+    "visualizationTypeOptions": [
+        {
+            "label": "Chart",
+            "value": "Chart"
+        },
+        {
+            "label": "Text",
+            "value": "Text"
+        },
+        {
+            "label": "Text & Chart",
+            "value": "Text & Chart"
+        },
+        {
+            "label": "Icon only",
+            "value": "Icon only"
+        }
     ]
 }

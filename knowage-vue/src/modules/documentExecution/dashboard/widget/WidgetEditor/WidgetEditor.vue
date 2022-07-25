@@ -99,8 +99,10 @@ export default defineComponent({
                     onColumnDrop: (event: any, model: IWidget) => {
                         if (event.dataTransfer.getData('text/plain') === 'b') return
                         const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
+                        const tempColumn = { dataset: eventData.dataset, name: '(' + eventData.name + ')', alias: eventData.alias, type: eventData.type, fieldType: eventData.fieldType, aggregation: eventData.aggregation, style: { hiddenColumn: false, 'white-space': 'nowrap' }, visType: '' }
+                        tempColumn.aggregation = 'NONE'
 
-                        model.columns.push({ dataset: eventData.dataset, name: '(' + eventData.name + ')', alias: eventData.alias, type: eventData.type, fieldType: eventData.fieldType, aggregation: eventData.aggregation, style: { hiddenColumn: false, 'white-space': 'nowrap' } })
+                        model.columns.push(tempColumn)
                         emitter.emit('collumnAdded', eventData)
                     },
                     updateColumnVisibility: (column: IWidgetColumn, model: IWidget) => {
@@ -139,17 +141,17 @@ export default defineComponent({
                     showAggregationDropdown: (column: IWidgetColumn) => {
                         return column.fieldType === 'MEASURE'
                     },
-                    setSelectedColumn(column: IWidgetColumn, model: IWidget) {
+                    setSelectedColumn: (column: IWidgetColumn, model: IWidget) => {
                         console.log('setSelectedColumn', column)
                         if (!model || !model.temp) return
                         model.temp.selectedColumn = { ...column }
                         console.log('SELECTED COLUMN: ', model.temp)
                     },
-                    columnIsSelected(model: IWidget) {
+                    columnIsSelected: (model: IWidget) => {
                         console.log('columnIsSelected', model)
                         return model && model.temp.selectedColumn
                     },
-                    updateSelectedColumn(model: IWidget) {
+                    updateSelectedColumn: (model: IWidget) => {
                         console.log('!!!!!!!!!!!!!!!!! updateSelectedColumn !!!!!!!!!!!!!!!!!!!!!!!!!!!!', model)
                         const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === model.temp.selectedColumn.name)
                         console.log('!!!!!!!!!!!!!!!!! index !!!!!!!!!!!!!!!!!!!!!!!!!!!!', index)
@@ -158,8 +160,15 @@ export default defineComponent({
                             console.log('!!!!!!!!!!!!!!!!! updateSelectedColumn !!!!!!!!!!!!!!!!!!!!!!!!!!!! updated', model.columns[index])
                         }
                     },
-                    selectedColumnDropdownIsVisible(model: IWidget) {
+                    selectedColumnDropdownIsVisible: (model: IWidget) => {
                         return model?.temp.selectedColumn?.fieldType === 'MEASURE'
+                    },
+                    getVisualizationTypeOptions: () => {
+                        return this.descriptor.visualizationTypeOptions
+                    },
+                    visualizationTypeDropdownIsVisible: (model: IWidget) => {
+                        console.log(' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! visualizationTypeDropdownIsVisible')
+                        return model?.temp.selectedColumn?.hiddenColumn === true
                     }
                 }
             }

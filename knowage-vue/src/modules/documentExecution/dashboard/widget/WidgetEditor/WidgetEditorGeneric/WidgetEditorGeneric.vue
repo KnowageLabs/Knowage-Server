@@ -5,30 +5,58 @@
                 <div v-if="showCardContent(card)">
                     <span> {{ card.title ? $t(card.title) : '' }}</span>
                     <div :class="card.cardClasses">
-                        <template v-for="(component, tempIndex) in card.components" :key="tempIndex">
-                            <WidgetEditorInputText
-                                v-if="component.type === 'inputText'"
-                                :widgetModel="widgetModel"
-                                :property="component.property"
-                                :label="component.label"
-                                :class="component.cssClass"
-                                :disabled="isDisabled(component)"
-                                :settings="component.settings"
-                                @input="onInputTextInput($event, component)"
-                                @change="onInputTextChange($event, component)"
-                            ></WidgetEditorInputText>
-                            <WidgetEditorInputSwitch v-else-if="component.type === 'inputSwitch'" :class="component.cssClass" :inputClass="component.inputClass" :label="component.label" @change="onInputSwitchChange($event, component)"></WidgetEditorInputSwitch>
-                            <WidgetEditorDropdown
-                                v-else-if="component.type === 'dropdown' && fieldIsVisible(component)"
-                                :widgetModel="widgetModel"
-                                :class="component.cssClass"
-                                :label="component.label"
-                                :property="component.property"
-                                :options="getDropdownOptions(component)"
-                                :settings="component.settings"
-                                @change="onDropdownChange($event, component)"
-                            ></WidgetEditorDropdown>
-                            <WidgetEditorDataTable v-else-if="component.type === 'dataTable'" :widgetModel="widgetModel" :items="getItems(component.settings.property)" :columns="component.columns" :settings="component.settings" @rowReorder="onRowReorder($event, component)"></WidgetEditorDataTable>
+                        <template v-for="(container, containerIndex) in card.containers" :key="containerIndex">
+                            <div :class="container.containerClasess">
+                                <template v-for="(component, componentIndex) in container.components" :key="componentIndex">
+                                    <WidgetEditorInputText
+                                        v-if="component.type === 'inputText'"
+                                        :widgetModel="widgetModel"
+                                        :property="component.property"
+                                        :label="component.label"
+                                        :class="component.cssClass"
+                                        :disabled="isDisabled(component)"
+                                        :settings="component.settings"
+                                        @input="onInputTextInput($event, component)"
+                                        @change="onInputTextChange($event, component)"
+                                    ></WidgetEditorInputText>
+                                    <WidgetEditorInputSwitch
+                                        v-else-if="component.type === 'inputSwitch'"
+                                        :widgetModel="widgetModel"
+                                        :property="component.property"
+                                        :class="component.cssClass"
+                                        :inputClass="component.inputClass"
+                                        :label="component.label"
+                                        :settings="component.settings"
+                                        @change="onInputSwitchChange($event, component)"
+                                    ></WidgetEditorInputSwitch>
+                                    <WidgetEditorDropdown
+                                        v-else-if="component.type === 'dropdown' && fieldIsVisible(component)"
+                                        :widgetModel="widgetModel"
+                                        :class="component.cssClass"
+                                        :label="component.label"
+                                        :property="component.property"
+                                        :options="getDropdownOptions(component)"
+                                        :settings="component.settings"
+                                        @change="onDropdownChange($event, component)"
+                                    ></WidgetEditorDropdown>
+                                    <WidgetEditorAccordion
+                                        v-else-if="component.type === 'accordion'"
+                                        :widgetModel="widgetModel"
+                                        :settings="component.settings"
+                                        :accordions="component.accordions"
+                                        @accordionInputSwitchChanged="onInputSwitchChange($event.value, $event.component)"
+                                        @accordionDropdownChanged="onDropdownChange($event.value, $event.component)"
+                                    ></WidgetEditorAccordion>
+                                    <WidgetEditorDataTable
+                                        v-else-if="component.type === 'dataTable'"
+                                        :widgetModel="widgetModel"
+                                        :items="getItems(component.settings.property)"
+                                        :columns="component.columns"
+                                        :settings="component.settings"
+                                        @rowReorder="onRowReorder($event, component)"
+                                    ></WidgetEditorDataTable>
+                                </template>
+                            </div>
                         </template>
                     </div>
                 </div>
@@ -47,10 +75,11 @@ import WidgetEditorInputSwitch from './components/WidgetEditorInputSwitch.vue'
 import WidgetEditorInputText from './components/WidgetEditorInputText.vue'
 import WidgetEditorDataTable from './components/WidgetEditorDataTable.vue'
 import WidgetEditorDropdown from './components/WidgetEditorDropdown.vue'
+import WidgetEditorAccordion from './components/WidgetEditorAccordion.vue'
 
 export default defineComponent({
     name: 'widget-editor-generic',
-    components: { Card, WidgetEditorInputSwitch, WidgetEditorInputText, WidgetEditorDataTable, WidgetEditorDropdown },
+    components: { Card, WidgetEditorInputSwitch, WidgetEditorInputText, WidgetEditorDataTable, WidgetEditorDropdown, WidgetEditorAccordion },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
