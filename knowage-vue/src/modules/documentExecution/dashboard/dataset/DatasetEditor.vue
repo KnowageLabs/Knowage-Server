@@ -9,8 +9,17 @@
                 </template>
             </Toolbar>
             <div v-if="!loading" class="datasetEditor-container">
-                <DatasetEditorTabs :dashboardDatasetsProp="dashboardDatasets" :dashboardAssociationsProp="dashboardAssociations" :availableDatasetsProp="availableDatasets" />
-                <DatasetEditorPreview v-if="!loading" :dashboardDatasetsProp="dashboardDatasets" />
+                <div class="datasetEditor-tabs">
+                    <TabView>
+                        <TabPanel :header="$t('dashboard.datasetEditor.dataTabTitle')">
+                            <DataTab :dashboardDatasetsProp="dashboardDatasets" :availableDatasetsProp="availableDatasets" :selectedDatasetsProp="selectedDatasets" @addSelectedDatasets="addSelectedDatasets" />
+                            <DatasetEditorPreview v-if="!loading" :dashboardDatasetsProp="dashboardDatasets" />
+                        </TabPanel>
+                        <TabPanel :header="$t('dashboard.datasetEditor.associationsTabTitle')">
+                            <AssociationsTab :dashboardAssociationsProp="dashboardAssociations" :selectedDatasetsProp="selectedDatasets" />
+                        </TabPanel>
+                    </TabView>
+                </div>
             </div>
         </div>
     </Teleport>
@@ -22,15 +31,18 @@
  */
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
-import DatasetEditorTabs from './DatasetEditorTabs.vue'
 import DatasetEditorPreview from './DatasetEditorPreview.vue'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
+import DataTab from './DatasetEditorDataTab/DatasetEditorDataTab.vue'
+import AssociationsTab from './DatasetEditorAssociations/DatasetEditorAssociations.vue'
 import mainStore from '../../../../App.store'
 import dashStore from '../Dashboard.store'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'dataset-editor',
-    components: { DatasetEditorTabs, DatasetEditorPreview },
+    components: { TabView, TabPanel, DataTab, AssociationsTab, DatasetEditorPreview },
     props: {},
     emits: ['closeDatasetEditor'],
     data() {
@@ -38,7 +50,8 @@ export default defineComponent({
             loading: false,
             dashboardDatasets: {} as any,
             dashboardAssociations: {} as any,
-            availableDatasets: {} as any
+            availableDatasets: {} as any,
+            selectedDatasets: [] as any
         }
     },
     setup() {
@@ -61,11 +74,25 @@ export default defineComponent({
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/?asPagedList=true&seeTechnical=true`)
                 .then((response: AxiosResponse<any>) => {
                     this.availableDatasets = response.data.item
+                    this.selectedDatasets = this.filterSelectedFromAvailableDatasets()
                 })
                 .finally(() => {
                     this.store.setLoading(false)
                     this.loading = false
                 })
+        },
+        filterSelectedFromAvailableDatasets() {
+            return this.availableDatasets?.filter((responseDataset) => {
+                return this.dashboardDatasets?.find((dashboardDataset) => {
+                    return responseDataset.id.dsId === dashboardDataset.id
+                })
+            })
+        },
+        addSelectedDatasets(datasetsToAdd) {
+            datasetsToAdd.forEach((dataset) => {
+                this.selectedDatasets.push(dataset)
+            })
+            console.log('dataset Added -------', this.selectedDatasets)
         }
     }
 })
@@ -84,6 +111,23 @@ export default defineComponent({
     .datasetEditor-container {
         flex: 1;
         display: flex;
+    }
+}
+.datasetEditor-tabs {
+    flex: 1;
+    .p-tabview {
+        width: 100%;
+        height: 100%;
+        .p-tabview-panels {
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 36px);
+            .p-tabview-panel {
+                display: flex;
+                flex: 1;
+            }
+        }
     }
 }
 </style>

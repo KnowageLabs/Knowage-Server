@@ -2,7 +2,7 @@
     <div v-if="selectedDatasetProp.id" id="dataset-editor-data-detail-container">
         <InfoCard :selectedDatasetProp="selectedDatasetProp" />
         <ParamsCard class="p-my-2" :selectedDatasetProp="selectedDatasetProp" :dashboardDatasetsProp="dashboardDatasetsProp" />
-        <IndexesCard :selectedDatasetProp="selectedDatasetProp" />
+        <IndexesCard v-if="selectedDatasetProp.cache" :selectedDatasetProp="selectedDatasetProp" />
     </div>
     <div v-else>
         <KnHint class="p-as-center" :title="'documentExecution.dossier.title'" :hint="'documentExecution.dossier.hint'"></KnHint>

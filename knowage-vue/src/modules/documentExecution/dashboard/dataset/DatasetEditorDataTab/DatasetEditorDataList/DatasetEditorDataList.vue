@@ -24,7 +24,7 @@
             </template>
         </Card>
 
-        <DataDialog v-if="dataDialogVisible" :visible="dataDialogVisible" :selectedDatasetsProp="selectedDatasets" :availableDatasetsProp="availableDatasetsProp" @addSelectedDatasets="addSelectedDatasetsToModel" @close="toggleDataDialog" />
+        <DataDialog v-if="dataDialogVisible" :visible="dataDialogVisible" :selectedDatasetsProp="selectedDatasets" :availableDatasetsProp="availableDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @close="toggleDataDialog" />
     </div>
 </template>
 
@@ -39,8 +39,8 @@ import dataListDescriptor from './DatasetEditorDataListDescriptor.json'
 export default defineComponent({
     name: 'dataset-editor-data-list',
     components: { Card, Listbox, DataDialog },
-    props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any } },
-    emits: ['datasetSelected'],
+    props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any }, selectedDatasetsProp: { required: true, type: Array as any } },
+    emits: ['datasetSelected', 'addSelectedDatasets'],
     data() {
         return {
             dataListDescriptor,
@@ -53,27 +53,17 @@ export default defineComponent({
         return { dashboardStore }
     },
     created() {
-        this.selectedDatasets = this.filterSelectedFromAvailableDatasets()
+        this.selectedDatasets = this.selectedDatasetsProp
         console.log('availableDatasets', this.availableDatasetsProp)
         console.log('dashboardDatasets', this.dashboardDatasetsProp)
         console.log('selectedDatasets', this.selectedDatasets)
     },
     methods: {
-        filterSelectedFromAvailableDatasets() {
-            return this.availableDatasetsProp?.filter((responseDataset) => {
-                return this.dashboardDatasetsProp?.find((dashboardDataset) => {
-                    return responseDataset.id.dsId === dashboardDataset.id
-                })
-            })
-        },
         toggleDataDialog() {
             this.dataDialogVisible = !this.dataDialogVisible
         },
-        addSelectedDatasetsToModel(datasetsToAdd) {
-            datasetsToAdd.forEach((dataset) => {
-                this.selectedDatasets.push(dataset)
-            })
-            console.log('dataset Added -------', this.selectedDatasets)
+        addSelectedDatasets(datasetsToAdd) {
+            this.$emit('addSelectedDatasets', datasetsToAdd)
             this.dataDialogVisible = false
         },
         deleteDatasetFromModel(datasetToDelete) {

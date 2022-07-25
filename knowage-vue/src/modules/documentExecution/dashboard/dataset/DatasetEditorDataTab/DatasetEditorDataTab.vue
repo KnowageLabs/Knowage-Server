@@ -1,6 +1,6 @@
 <template>
     <div class="p-d-flex">
-        <DataList class="kn-flex p-my-2 p-ml-2 p-mr-1" :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" @datasetSelected="selectDataset" />
+        <DataList class="kn-flex p-my-2 p-ml-2 p-mr-1" :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" :selectedDatasetsProp="selectedDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @datasetSelected="selectDataset" />
         <DataDetail class="kn-flex p-my-2 p-mr-2 p-ml-1" :dashboardDatasetsProp="dashboardDatasetsProp" :selectedDatasetProp="selectedDataset" />
     </div>
 </template>
@@ -13,8 +13,8 @@ import DataDetail from './DatasetEditorDataDetail/DatasetEditorDataDetail.vue'
 export default defineComponent({
     name: 'dataset-editor-data-tab',
     components: { DataList, DataDetail },
-    props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any } },
-    emits: [],
+    props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any }, selectedDatasetsProp: { required: true, type: Array as any } },
+    emits: ['addSelectedDatasets'],
     data() {
         return {
             selectedDataset: {} as any
@@ -25,6 +25,9 @@ export default defineComponent({
         selectDataset(datasetId) {
             this.selectedDataset = this.availableDatasetsProp.find((dataset) => dataset.id.dsId === datasetId)
             console.log('selectedDataset', this.selectedDataset)
+        },
+        addSelectedDatasets(datasetsToAdd) {
+            this.$emit('addSelectedDatasets', datasetsToAdd)
         }
     }
 })

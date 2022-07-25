@@ -18,7 +18,6 @@ export default defineComponent({
 <style lang="scss">
 .datasetEditor-preview {
     border-left: 1px solid #ccc;
-    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;

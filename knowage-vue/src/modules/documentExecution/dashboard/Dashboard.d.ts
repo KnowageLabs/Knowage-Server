@@ -5,14 +5,14 @@ export interface ISheet {
 }
 
 export interface IWidget {
-    id?: string,
-    type: string,
-    columns: IDatasetColumn[],
-    conditionalStyles: any[],
-    datasets: any[],
-    interactions: any[],
-    theme: string,
-    styles: any,
+    id?: string
+    type: string
+    columns: IDatasetColumn[]
+    conditionalStyles: any[]
+    datasets: any[]
+    interactions: any[]
+    theme: string
+    styles: any
     settings: any
 }
 
@@ -21,10 +21,10 @@ export interface IInteraction {
 }
 
 export interface IWidgetEditorDataset {
-    id: number,
-    label: string,
-    cache: boolean,
-    parameters: any[],
+    id: number
+    label: string
+    cache: boolean
+    parameters: any[]
 }
 export interface IWidgetPickerType {
     cssClass: string
@@ -37,33 +37,87 @@ export interface IWidgetPickerType {
 
 export interface IDatasetOptions {
     aggregations: {
-        measures: any[],
-        categories: IDatasetOptionCategory[],
+        measures: any[]
+        categories: IDatasetOptionCategory[]
         dataset: string
-    },
-    parameters: any,
-    selections: any,
+    }
+    parameters: any
+    selections: any
     indexes: any[]
 }
 
 interface IDatasetOptionCategory {
-    id: string,
-    alias: string,
-    columnName: string,
-    orderType: string,
+    id: string
+    alias: string
+    columnName: string
+    orderType: string
     funct: string
 }
 
 interface IDatasetColumn {
-    name: string,
-    alias: string,
-    type: string,
-    properties: any,
-    fieldType: string,
-    multiValue: boolean,
-    precision: number,
-    scale: number,
-    personal: boolean,
-    decript: boolean,
+    name: string
+    alias: string
+    type: string
+    properties: any
+    fieldType: string
+    multiValue: boolean
+    precision: number
+    scale: number
+    personal: boolean
+    decript: boolean
     subjectId: boolean
+}
+
+export interface IDataset {
+    id: {
+        dsId: number
+        versionNum: number
+        organization: string
+    }
+    name: string
+    description: string
+    label: string
+    active: boolean
+    type: string
+    configuration: any
+    pivotColumnName: string
+    pivotRowName: string
+    pivotColumnValue: string
+    numRows: boolean
+    persisted: boolean
+    persistedHDFS: boolean
+    persistTableName: string
+    owner: string
+    userIn: any
+    userUp: any
+    userDe: any
+    sbiVersionIn: any
+    sbiVersionUp: any
+    sbiVersionDe: any
+    metaVersion: any
+    timeIn: any
+    timeUp: any
+    timeDe: any
+    scope: any
+    federation: any
+    tags: any[]
+    scopeId: number
+    transformerId: number
+    metadata: {
+        fieldsMetadata: any[]
+        properties: any
+    }
+    categoryId: number
+    parameters: IDatasetParameters[]
+    isRealtime: boolean
+    isCachingSupported: boolean
+    isIterable: boolean
+    isNearRealtimeSupported: boolean
+}
+
+interface IDatasetParameters {
+    name: string
+    type: string
+    defaultValue: string
+    multiValue: boolean
 }
