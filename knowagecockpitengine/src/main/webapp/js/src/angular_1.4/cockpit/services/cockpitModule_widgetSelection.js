@@ -175,8 +175,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					//it is measure
 					if(col.aggregationColumn) obj.functColumn = col.aggregationColumn;
 					obj["orderColumn"] = col.name;
-					if(obj.orderType!=undefined){
-						obj.orderType  = col.orderType;
+					if(obj.orderType==undefined && obj.columnName==ngModel.settings.sortingColumn){
+						obj.orderType  = ngModel.settings.sortingOrder;
 					}
 					measures.push(obj);
 				}
