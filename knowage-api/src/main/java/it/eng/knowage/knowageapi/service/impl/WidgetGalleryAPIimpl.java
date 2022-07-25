@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.function.UnaryOperator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
@@ -56,17 +55,6 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	private static final String GALLERY_FUNCTION = "WidgetGalleryManagement";
 
 	private XSSUtils xssUtils = new XSSUtils();
-	private final UnaryOperator<WidgetGalleryDTO> sanitize = e -> {
-		Code code = e.getCode();
-
-		String html = code.getHtml();
-
-		html = xssUtils.sanitize(html);
-
-		code.setHtml(html);
-
-		return e;
-	};
 
 	/**
 	 * This method gets all widgets within all tenants
@@ -75,7 +63,6 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	public List<WidgetGalleryDTO> getWidgets() throws JSONException {
 		return sbiWidgetGalleryDao.findAll()
 				.stream()
-				.map(sanitize)
 				.collect(toList());
 	}
 
@@ -88,7 +75,6 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		if (this.canSeeGallery(profile)) {
 			ret = sbiWidgetGalleryDao.findAllByTenant(profile.getOrganization())
 					.stream()
-					.map(sanitize)
 					.collect(toList());
 		}
 
@@ -120,7 +106,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			try {
 				String html = code.getHtml();
 
-				html = sanitizeXSS(html);
+				checkXSS(html);
 
 				String htmlCode = html;
 				JSONObject jsonBody = new JSONObject(new String(widgetGalleryDTO.getTemplate()));
@@ -174,7 +160,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			try {
 				String html = code.getHtml();
 
-				html = sanitizeXSS(html);
+				checkXSS(html);
 
 				String htmlCode = html;
 				JSONObject jsonBody = new JSONObject(new String(widgetGalleryDTO.getTemplate()));
@@ -302,7 +288,6 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		// TODO: add a check for widget type permissions (functionality)
 		ret = sbiWidgetGalleryDao.findAllByTenantAndType(profile.getOrganization(), type)
 				.stream()
-				.map(sanitize)
 				.collect(toList());
 		return ret;
 	}
@@ -320,13 +305,12 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		return newSbiWidgetGallery;
 	}
 
-	private String sanitizeXSS(String input) {
+	private void checkXSS(String input) {
 		boolean isSafe = xssUtils.isSafe(input);
 
 		if (!isSafe) {
 			throw new InvalidHtmlPayloadException(input);
 		}
 
-		return xssUtils.sanitize(input);
 	}
 }
