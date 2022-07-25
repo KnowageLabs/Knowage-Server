@@ -15,20 +15,22 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.utilities.exceptions;
+package it.eng.spagobi.analiticalmodel.execution.service.v2.exception;
 
 import java.util.Locale;
 
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 
-public class InvalidHtmlPayloadException extends SpagoBIRuntimeException {
+public class InvalidHtmlPayloadInCockpitException extends SpagoBIRuntimeException {
 
 	private static final long serialVersionUID = 7238971352468593356L;
 
 	private final String serviceName = "";
-	private final String localizationCode = "10000";
+	private final String localizationCode = "10001";
 	private final String messageBundle = "MessageFiles.messages";
 	private final String payload;
+	private final String sheetName;
 
 	public String getServiceName() {
 		return serviceName;
@@ -36,20 +38,9 @@ public class InvalidHtmlPayloadException extends SpagoBIRuntimeException {
 
 	private Locale locale = Locale.US;
 
-	public InvalidHtmlPayloadException(String payload) {
+	public InvalidHtmlPayloadInCockpitException(String sheetName, String payload) {
 		super((Throwable) null);
-		this.payload = payload;
-	}
-
-	public InvalidHtmlPayloadException(Locale locale, String payload) {
-		super((Throwable) null);
-		this.locale = locale;
-		this.payload = payload;
-	}
-
-	public InvalidHtmlPayloadException(Locale locale, String payload, Throwable ex) {
-		super(ex);
-		this.locale = locale;
+		this.sheetName = sheetName;
 		this.payload = payload;
 	}
 
@@ -59,7 +50,7 @@ public class InvalidHtmlPayloadException extends SpagoBIRuntimeException {
 
 	@Override
 	public String getLocalizedMessage() {
-		String localizedMessage = EngineMessageBundle.getMessage(getLocalizationCode(), getMessageBundle(), getLocale(), new String[] { payload });
+		String localizedMessage = EngineMessageBundle.getMessage(getLocalizationCode(), getMessageBundle(), getLocale(), new String[] { sheetName, payload });
 		return localizedMessage;
 	}
 
