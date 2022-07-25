@@ -13,7 +13,9 @@ export interface IWidget {
     interactions: any[],
     theme: string,
     styles: any,
-    settings: any
+    settings: any,
+    temp?: any,
+    functions?: any
 }
 
 export interface IWidgetColumn {

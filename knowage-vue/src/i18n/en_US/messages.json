@@ -316,10 +316,12 @@
             "title": "Dataset Manageent"
         },
         "widgetEditor": {
+            "columnDetails": "Column Details",
             "dragColumnsHint": "Drag columns here",
             "itemsPerPage": "Items per page",
             "pagination": "Pagination",
-            "selectDataset": "Select Dataset"
+            "selectDataset": "Select Dataset",
+            "selectedColumns": "Selected Columns"
         }
     },
     "documentBrowser": {

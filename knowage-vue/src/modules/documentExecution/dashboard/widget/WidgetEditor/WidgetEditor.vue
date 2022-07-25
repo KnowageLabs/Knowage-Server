@@ -84,7 +84,8 @@ export default defineComponent({
                 interactions: [],
                 theme: '',
                 styles: {},
-                settings: {}
+                settings: {},
+                temp: {}
             } as any
             if (widget.type === 'tableWidget') {
                 widget.settings.pagination = { enabled: false, itemsNumber: 0 }
@@ -128,6 +129,7 @@ export default defineComponent({
                         if (index !== -1) {
                             model.columns[index][field] = column[field]
                             if (model.columns[index][field].fieldType === 'ATTRIBUTE') model.columns[index][field].aggregation = 'NONE'
+                            if (model.temp.selectedColumn.name === model.columns[index].name) model.temp.selectedColumn = { ...model.columns[index] }
                         }
                         console.log('updateColumnValues() - ', model.columns[index])
                     },
@@ -135,8 +137,25 @@ export default defineComponent({
                         return this.descriptor.columnAggregationOptions
                     },
                     showAggregationDropdown: (column: IWidgetColumn) => {
-                        console.log('showAggregationDropdown', column.fieldType === 'MEASURE')
                         return column.fieldType === 'MEASURE'
+                    },
+                    setSelectedColumn(column: IWidgetColumn, model: IWidget) {
+                        console.log('setSelectedColumn', column)
+                        if (!model || !model.temp) return
+                        model.temp.selectedColumn = { ...column }
+                        console.log('SELECTED COLUMN: ', model.temp)
+                    },
+                    columnIsSelected(model: IWidget) {
+                        console.log('columnIsSelected', model)
+                        return model && model.temp.selectedColumn
+                    },
+                    updateSelectedColumn(model: IWidget) {
+                        console.log('!!!!!!!!!!!!!!!!! updateSelectedColumn !!!!!!!!!!!!!!!!!!!!!!!!!!!!', model)
+                        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === model.temp.selectedColumn.name)
+                        if (index !== -1) {
+                            model.columns[index] = { ...model.temp.selectedColumn }
+                            console.log('!!!!!!!!!!!!!!!!! updateSelectedColumn !!!!!!!!!!!!!!!!!!!!!!!!!!!! updated', model.columns[index])
+                        }
                     }
                 }
             }

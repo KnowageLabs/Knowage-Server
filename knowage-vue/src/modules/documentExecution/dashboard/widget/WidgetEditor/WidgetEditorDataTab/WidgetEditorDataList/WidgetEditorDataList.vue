@@ -120,6 +120,7 @@ export default defineComponent({
                 const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
                 if (index !== -1) tempDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta
                 if (!tempDatasetColumns) return
+                if (column.name.startsWith('(')) column.name = column.name.slice(1, -1)
                 const columnIndex = tempDatasetColumns.findIndex((tempColumn: any) => column.name === tempColumn.name)
                 if (columnIndex !== -1) this.selectedDatasetColumns.push({ ...tempDatasetColumns[columnIndex], dataset: this.selectedDataset.id })
             }
