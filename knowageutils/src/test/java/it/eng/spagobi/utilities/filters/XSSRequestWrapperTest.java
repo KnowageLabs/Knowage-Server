@@ -9,10 +9,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 
 import it.eng.spagobi.utilities.filters.utils.HtmlSanitizer;
@@ -164,6 +166,36 @@ public class XSSRequestWrapperTest {
 
 			boolean safe = sanitizer.isSafe(input);
 
+			assertEquals("File " + path + " doesn't pass the sanitization", true, safe);
+		}
+
+	}
+
+	@Test
+	public void testWidgets() throws IOException {
+
+		ObjectMapper bm = new ObjectMapper();
+
+		Path resourceDirectory = Paths.get("src","test","resources", "widgets");
+
+		List<Path> paths = Files.list(resourceDirectory)
+			.collect(toList());
+
+		for (Path path : paths) {
+
+			Map<String, Object> readedValue = bm.readValue(Files.newInputStream(path), Map.class);
+
+			Map<String, String> code = (Map<String, String>) readedValue.get("code");
+
+			String input = code.get("html");
+
+			String output = sanitizer.sanitize(input);
+
+			boolean safe = sanitizer.isSafe(input);
+
+			System.out.println(output);
+
+//			assertEquals("File " + path + " doesn't pass the sanitization", input, output);
 			assertEquals("File " + path + " doesn't pass the sanitization", true, safe);
 		}
 
