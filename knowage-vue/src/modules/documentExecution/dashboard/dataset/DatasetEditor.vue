@@ -13,7 +13,6 @@
                     <TabView>
                         <TabPanel :header="$t('dashboard.datasetEditor.dataTabTitle')">
                             <DataTab :dashboardDatasetsProp="dashboardDatasets" :availableDatasetsProp="availableDatasets" :selectedDatasetsProp="selectedDatasets" @addSelectedDatasets="addSelectedDatasets" />
-                            <DatasetEditorPreview v-if="!loading" :dashboardDatasetsProp="dashboardDatasets" />
                         </TabPanel>
                         <TabPanel :header="$t('dashboard.datasetEditor.associationsTabTitle')">
                             <AssociationsTab :dashboardAssociationsProp="dashboardAssociations" :selectedDatasetsProp="selectedDatasets" />
@@ -31,7 +30,6 @@
  */
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
-import DatasetEditorPreview from './DatasetEditorPreview.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import DataTab from './DatasetEditorDataTab/DatasetEditorDataTab.vue'
@@ -42,7 +40,7 @@ import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'dataset-editor',
-    components: { TabView, TabPanel, DataTab, AssociationsTab, DatasetEditorPreview },
+    components: { TabView, TabPanel, DataTab, AssociationsTab },
     props: {},
     emits: ['closeDatasetEditor'],
     data() {
