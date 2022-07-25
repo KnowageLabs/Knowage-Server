@@ -92,12 +92,25 @@
             "cardClasses": "p-d-flex p-flex-row p-ai-center",
             "components": [
                 {
-                    "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
+                    "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
                     "inputClass": "kn-material-input",
                     "label": "common.alias",
                     "property": "temp.selectedColumn.alias",
-                    "type": "inputText",
-                    "settings": {  "onUpdate": "functions.updateSelectedColumn"}
+                    "settings": {
+                        "onUpdate": "functions.updateSelectedColumn"
+                    },
+                    "type": "inputText"
+                },
+                {
+                    "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
+                    "label": "qbe.simpleTable.aggregation",
+                    "options": "functions.getColumnAggregationOptions",
+                    "property": "temp.selectedColumn.aggregation",
+                    "settings": {
+                        "onUpdate": "functions.updateSelectedColumn"
+                    },
+                    "type": "dropdown",
+                    "visibilityCondition": "functions.selectedColumnDropdownIsVisible"
                 }
             ],
             "title": "dashboard.widgetEditor.columnDetails",

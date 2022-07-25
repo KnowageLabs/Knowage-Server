@@ -30,14 +30,7 @@ export default defineComponent({
             modelValue: '' as string
         }
     },
-    watch: {
-        value: {
-            handler() {
-                this.loadValue()
-            },
-            deep: true
-        }
-    },
+    watch: {},
     async created() {
         this.loadValue()
         this.$watch('widgetModel.' + this.property, () => this.loadValue(), { deep: true })

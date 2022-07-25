@@ -152,10 +152,14 @@ export default defineComponent({
                     updateSelectedColumn(model: IWidget) {
                         console.log('!!!!!!!!!!!!!!!!! updateSelectedColumn !!!!!!!!!!!!!!!!!!!!!!!!!!!!', model)
                         const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === model.temp.selectedColumn.name)
+                        console.log('!!!!!!!!!!!!!!!!! index !!!!!!!!!!!!!!!!!!!!!!!!!!!!', index)
                         if (index !== -1) {
                             model.columns[index] = { ...model.temp.selectedColumn }
                             console.log('!!!!!!!!!!!!!!!!! updateSelectedColumn !!!!!!!!!!!!!!!!!!!!!!!!!!!! updated', model.columns[index])
                         }
+                    },
+                    selectedColumnDropdownIsVisible(model: IWidget) {
+                        return model?.temp.selectedColumn?.fieldType === 'MEASURE'
                     }
                 }
             }

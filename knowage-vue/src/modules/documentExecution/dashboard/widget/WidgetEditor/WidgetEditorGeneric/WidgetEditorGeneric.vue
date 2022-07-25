@@ -18,6 +18,16 @@
                                 @change="onInputTextChange($event, component)"
                             ></WidgetEditorInputText>
                             <WidgetEditorInputSwitch v-else-if="component.type === 'inputSwitch'" :class="component.cssClass" :inputClass="component.inputClass" :label="component.label" @change="onInputSwitchChange($event, component)"></WidgetEditorInputSwitch>
+                            <WidgetEditorDropdown
+                                v-else-if="component.type === 'dropdown' && fieldIsVisible(component)"
+                                :widgetModel="widgetModel"
+                                :class="component.cssClass"
+                                :label="component.label"
+                                :property="component.property"
+                                :options="getDropdownOptions(component)"
+                                :settings="component.settings"
+                                @change="onDropdownChange($event, component)"
+                            ></WidgetEditorDropdown>
                             <WidgetEditorDataTable v-else-if="component.type === 'dataTable'" :widgetModel="widgetModel" :items="getItems(component.settings.property)" :columns="component.columns" :settings="component.settings" @rowReorder="onRowReorder($event, component)"></WidgetEditorDataTable>
                         </template>
                     </div>
@@ -36,10 +46,11 @@ import descriptor from './WidgetEditorGenericDescriptor.json'
 import WidgetEditorInputSwitch from './components/WidgetEditorInputSwitch.vue'
 import WidgetEditorInputText from './components/WidgetEditorInputText.vue'
 import WidgetEditorDataTable from './components/WidgetEditorDataTable.vue'
+import WidgetEditorDropdown from './components/WidgetEditorDropdown.vue'
 
 export default defineComponent({
     name: 'widget-editor-generic',
-    components: { Card, WidgetEditorInputSwitch, WidgetEditorInputText, WidgetEditorDataTable },
+    components: { Card, WidgetEditorInputSwitch, WidgetEditorInputText, WidgetEditorDataTable, WidgetEditorDropdown },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
@@ -72,6 +83,14 @@ export default defineComponent({
             console.log(' >>>>> onInputSwitchChange')
             if (component.property) this.updateModelProperty(value, component.property)
         },
+        onDropdownChange(value: string, component: any) {
+            console.log(' >>>>> onDropdownChange')
+            if (component.property) this.updateModelProperty(value, component.property)
+            if (component.settings.onUpdate) {
+                const tempFunction = getModelProperty(this.widgetModel, component.settings.onUpdate, 'getValue', null)
+                if (tempFunction && typeof tempFunction === 'function') tempFunction(this.widgetModel)
+            }
+        },
         onRowReorder(value: any[], component: any) {
             console.log(' >>>>> onRowReorder')
             if (component.property) this.updateModelProperty(value, component.property)
@@ -89,6 +108,19 @@ export default defineComponent({
         getItems(propertyPath: string): any[] {
             console.log(' >>>>> getItems')
             return getModelProperty(this.widgetModel, propertyPath, 'getValue', null)
+        },
+        getDropdownOptions(component: any) {
+            let temp = []
+            const tempFunction = getModelProperty(this.widgetModel, component.options, 'getValue', null)
+            if (tempFunction && typeof tempFunction === 'function') temp = tempFunction()
+            return temp
+        },
+        fieldIsVisible(component: any) {
+            console.log(' >>>>>> fieldIsVisible 1')
+            if (!component.visibilityCondition) return true
+            const tempFunction = getModelProperty(this.widgetModel, component.visibilityCondition, 'getValue', null)
+            console.log(' >>>>>> fieldIsVisible 2', tempFunction(this.widgetModel))
+            if (tempFunction && typeof tempFunction === 'function') return tempFunction(this.widgetModel)
         },
         showCardContent(card: any) {
             console.log(' >>>>> showCardContent')
