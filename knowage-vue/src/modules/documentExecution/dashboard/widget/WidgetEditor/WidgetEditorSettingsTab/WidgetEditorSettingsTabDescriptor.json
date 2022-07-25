@@ -1,0 +1,22 @@
+{
+    "tableWidget": {
+        "listOptions": [
+            {
+                "icon": "fa fa-table",
+                "label": "dashboard.widgetEditor.settingsListOptions.tooltip",
+                "value": "Tooltip"
+            },
+            {
+                "icon": "fa fa-table",
+                "label": "common.value",
+                "value": "TODO"
+            }
+        ],
+        "listSettings": {
+            "filter": true,
+            "filterFields": ["label"],
+            "label": "common.settings",
+            "translatedTitleField": "label"
+        }
+    }
+}

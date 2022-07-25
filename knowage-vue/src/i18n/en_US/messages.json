@@ -323,6 +323,9 @@
             "pagination": "Pagination",
             "selectDataset": "Select Dataset",
             "selectedColumns": "Selected Columns",
+            "settingsListOptions": {
+                "tooltip": "Tooltip"
+            },
             "visualizationType": "Visualization Type"
         }
     },

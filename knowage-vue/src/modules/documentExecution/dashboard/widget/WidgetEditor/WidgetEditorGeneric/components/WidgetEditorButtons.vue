@@ -5,13 +5,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 
 export default defineComponent({
     name: 'kn-list-button-renderer',
     components: {},
     props: {
-        buttons: { type: Array }
+        buttons: { type: Array as PropType<any[]> }
     },
     data() {
         return {
@@ -20,7 +20,7 @@ export default defineComponent({
     },
     emits: ['click'],
     mounted() {
-        this.filteredButtons = this.buttons!.filter((button: any) => !button.condition)
+        this.filteredButtons = this.buttons ? this.buttons.filter((button: any) => !button.condition) : []
     },
     methods: {
         clickedButton(button: any) {

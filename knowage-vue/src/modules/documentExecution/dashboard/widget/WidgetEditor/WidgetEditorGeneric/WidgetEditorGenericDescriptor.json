@@ -22,7 +22,7 @@
                             "type": "inputText"
                         }
                     ],
-                    "containerClasess": "p-d-flex p-flex-row"
+                    "containerClasess": "p-d-flex p-flex-row p-ai-center"
                 }
             ]
         },
@@ -125,7 +125,7 @@
                             "type": "dropdown"
                         }
                     ],
-                    "containerClasess": "p-d-flex p-flex-row"
+                    "containerClasess": "p-d-flex p-flex-row p-ai-center"
                 },
                 {
                     "components": [
@@ -157,7 +157,7 @@
                                                     "type": "dropdown"
                                                 }
                                             ],
-                                            "cssClasses": "p-d-flex p-flex-rows"
+                                            "cssClasses": "p-d-flex p-flex-rows p-ai-center"
                                         }
                                     ],
                                     "icon": "fa fa-table",
