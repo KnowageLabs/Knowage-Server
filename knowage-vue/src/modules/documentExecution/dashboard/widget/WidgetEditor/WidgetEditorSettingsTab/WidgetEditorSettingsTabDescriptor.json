@@ -2,14 +2,60 @@
     "tableWidget": {
         "listOptions": [
             {
-                "icon": "fa fa-table",
+                "icon": "fa fa-comment",
                 "label": "dashboard.widgetEditor.settingsListOptions.tooltip",
-                "value": "Tooltip"
+                "value": "Tooltip",
+                "descriptor": [
+                    {
+                        "cardClasses": "p-d-flex p-flex-column",
+                        "containers": [
+                            {
+                                "components": [
+                                    {
+                                        "accordions": [
+                                            {
+                                                "containers": [
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "cssClass": "kn-material-input p-d-flex p-flex-row kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.enableTooltip",
+                                                                "property": "temp.selectedColumn.enableTooltip",
+                                                                "settings": {
+                                                                    "onUpdate": "functions.updateSelectedColumn"
+                                                                },
+                                                                "type": "inputSwitch"
+                                                            },
+                                                            {
+                                                                "cssClass": "kn-flex-2 p-m-2",
+                                                                "inputClass": "kn-material-input",
+                                                                "label": "dashboard.widgetEditor.itemsPerPage",
+                                                                "property": "temp.selectedColumn.style.prefix",
+                                                                "settings": {  "onUpdate": "functions.updateSelectedColumn"},
+                                                                "type": "inputText"
+                                                            }
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-rows p-ai-center"
+                                                    }
+                                                ],
+                                                "title": "dashboard.widgetEditor.settingsListOptions.tooltip"
+                                            }
+                                        ],
+                                        "activeIndex": [0],
+                                        "settings": {},
+                                        "type": "accordion"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]      
             },
             {
                 "icon": "fa fa-table",
                 "label": "common.value",
-                "value": "TODO"
+                "value": "TODO",
+                "descriptor": {}
             }
         ],
         "listSettings": {

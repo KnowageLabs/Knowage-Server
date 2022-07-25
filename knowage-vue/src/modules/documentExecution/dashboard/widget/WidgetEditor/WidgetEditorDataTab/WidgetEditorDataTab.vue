@@ -5,7 +5,7 @@
                 <WidgetEditorDataList :datasets="datasets" :modelDatasets="modelDatasets" @datasetSelected="$emit('datasetSelected', $event)"></WidgetEditorDataList>
             </template>
         </Card>
-        <WidgetEditorGeneric class="kn-flex p-m-2" :widgetModel="propWidget"></WidgetEditorGeneric>
+        <WidgetEditorGeneric class="kn-flex p-m-2" :widgetModel="propWidget" :propDescriptor="dataDescriptor"></WidgetEditorGeneric>
     </div>
 </template>
 
@@ -13,6 +13,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '../../../Dashboard'
 import Card from 'primevue/card'
+import dataDescriptor from './WidgetEditorGenericDescriptor.json'
 import WidgetEditorDataList from './WidgetEditorDataList/WidgetEditorDataList.vue'
 import WidgetEditorGeneric from '../WidgetEditorGeneric/WidgetEditorGeneric.vue'
 
@@ -22,7 +23,9 @@ export default defineComponent({
     props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array }, modelDatasets: { type: Array } },
     emits: ['datasetSelected'],
     data() {
-        return {}
+        return {
+            dataDescriptor
+        }
     },
     async created() {},
     methods: {}

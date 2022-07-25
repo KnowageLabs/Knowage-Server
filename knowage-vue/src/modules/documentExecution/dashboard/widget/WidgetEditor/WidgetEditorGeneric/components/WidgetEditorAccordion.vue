@@ -1,5 +1,5 @@
 <template>
-    <Accordion :multiple="settings.multiple" :activeIndex="settings.activeIndex ?? []">
+    <Accordion class="widget-editor-accordion" :multiple="settings.multiple" :activeIndex="settings.activeIndex ?? []">
         <AccordionTab v-for="(accordion, index) in accordions" :key="index">
             <template #header>
                 <div>
@@ -21,6 +21,15 @@
                                 :settings="component.settings"
                                 @change="$emit('accordionInputSwitchChanged', { value: $event, component: component })"
                             ></WidgetEditorInputSwitch>
+                            <WidgetEditorInputText
+                                v-if="component.type === 'inputText'"
+                                :widgetModel="widgetModel"
+                                :property="component.property"
+                                :label="component.label"
+                                :class="component.cssClass"
+                                :settings="component.settings"
+                                @change="$emit('accordionInputTextChanged', { value: $event, component: component })"
+                            ></WidgetEditorInputText>
                             <WidgetEditorDropdown
                                 v-else-if="component.type === 'dropdown'"
                                 :widgetModel="widgetModel"
@@ -47,12 +56,13 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import WidgetEditorInputSwitch from './WidgetEditorInputSwitch.vue'
 import WidgetEditorDropdown from './WidgetEditorDropdown.vue'
+import WidgetEditorInputText from './WidgetEditorInputText.vue'
 
 export default defineComponent({
     name: 'widget-editor-accordion',
-    components: { Accordion, AccordionTab, WidgetEditorInputSwitch, WidgetEditorDropdown },
+    components: { Accordion, AccordionTab, WidgetEditorInputSwitch, WidgetEditorDropdown, WidgetEditorInputText },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Object, required: true }, accordions: { type: Array as PropType<any[]>, requried: true } },
-    emits: ['accordionInputSwitchChanged', 'accordionDropdownChanged'],
+    emits: ['accordionInputSwitchChanged', 'accordionDropdownChanged', 'accordionInputTextChanged'],
     data() {
         return {}
     },
@@ -67,3 +77,11 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.widget-editor-accordion {
+    ::v-deep(.p-accordion-tab-active) {
+        margin: 0;
+    }
+}
+</style>

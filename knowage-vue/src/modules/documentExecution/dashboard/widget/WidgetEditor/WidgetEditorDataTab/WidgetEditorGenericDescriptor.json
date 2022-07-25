@@ -14,11 +14,14 @@
                         },
                         {
                             "cssClass": "kn-flex p-m-2",
-                            "disabled": "functions.disabledTest",
                             "inputClass": "kn-material-input",
                             "label": "dashboard.widgetEditor.itemsPerPage",
                             "property": "settings.pagination.itemsNumber",
-                            "settings": {"type": "number", "watchers": ["settings.pagination.enabled"],  "disabledCondition": "functions.itemsPerPageIsDisabled"},
+                            "settings": {
+                                "disabledCondition": "functions.itemsPerPageIsDisabled",
+                                "type": "number",
+                                "watchers": ["settings.pagination.enabled"]
+                            },
                             "type": "inputText"
                         }
                     ],
@@ -151,8 +154,8 @@
                                                     "property": "temp.selectedColumn.visType",
                                                     "settings": {
                                                         "onUpdate": "functions.updateSelectedColumn",
-                                                        "watchers": ["temp.selectedColumn.style.hiddenColumn"],
-                                                        "visibilityCondition": "functions.visualizationTypeDropdownIsVisible"
+                                                        "visibilityCondition": "functions.visualizationTypeDropdownIsVisible",
+                                                        "watchers": ["temp.selectedColumn.style.hiddenColumn"]
                                                     },
                                                     "type": "dropdown"
                                                 }

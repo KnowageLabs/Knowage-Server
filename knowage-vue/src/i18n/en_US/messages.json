@@ -318,6 +318,7 @@
         "widgetEditor": {
             "columnDetails": "Column Details",
             "dragColumnsHint": "Drag columns here",
+            "enableTooltip": "Enable Tooltip",
             "hidden": "Hidden",
             "itemsPerPage": "Items per page",
             "pagination": "Pagination",

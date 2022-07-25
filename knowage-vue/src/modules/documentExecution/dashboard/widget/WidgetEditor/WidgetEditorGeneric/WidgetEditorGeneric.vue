@@ -1,6 +1,6 @@
 <template>
     <div v-if="model">
-        <Card v-for="(card, index) in descriptor[model.type]" :key="index">
+        <Card class="widget-editor-card" v-for="(card, index) in descriptor[model.type]" :key="index">
             <template #content>
                 <div v-if="showCardContent(card)">
                     <span> {{ card.title ? $t(card.title) : '' }}</span>
@@ -45,6 +45,7 @@
                                         :accordions="component.accordions"
                                         @accordionInputSwitchChanged="onInputSwitchChange($event.value, $event.component)"
                                         @accordionDropdownChanged="onDropdownChange($event.value, $event.component)"
+                                        @accordionInputTextChanged="onInputTextChange($event.value, $event.component)"
                                     ></WidgetEditorAccordion>
                                     <WidgetEditorDataTable
                                         v-else-if="component.type === 'dataTable'"
@@ -69,7 +70,6 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget } from '../../../Dashboard'
 import { getModelProperty } from './WidgetEditorGenericHelper'
 import Card from 'primevue/card'
-import descriptor from './WidgetEditorGenericDescriptor.json'
 import WidgetEditorInputSwitch from './components/WidgetEditorInputSwitch.vue'
 import WidgetEditorInputText from './components/WidgetEditorInputText.vue'
 import WidgetEditorDataTable from './components/WidgetEditorDataTable.vue'
@@ -79,22 +79,29 @@ import WidgetEditorAccordion from './components/WidgetEditorAccordion.vue'
 export default defineComponent({
     name: 'widget-editor-generic',
     components: { Card, WidgetEditorInputSwitch, WidgetEditorInputText, WidgetEditorDataTable, WidgetEditorDropdown, WidgetEditorAccordion },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, propDescriptor: { type: Object, required: true } },
     data() {
         return {
-            descriptor,
+            descriptor: {},
             model: null as IWidget | null
         }
     },
     watch: {
+        propDescriptor() {
+            this.loadDescriptor()
+        },
         widgetModel() {
             this.loadModel()
         }
     },
     async created() {
+        this.loadDescriptor()
         this.loadModel()
     },
     methods: {
+        loadDescriptor() {
+            this.descriptor = this.propDescriptor as any
+        },
         loadModel() {
             this.model = this.widgetModel
             console.log('LOADED MODEL: ', this.model)
@@ -154,3 +161,31 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.dropzone-active {
+    border: 1.5px blue dotted;
+    padding: 0.5rem;
+}
+
+.table-headers-hidden {
+    ::v-deep(.p-datatable-header) {
+        display: none;
+    }
+}
+
+#drag-columns-hint {
+    min-height: 200px;
+    min-width: 200px;
+}
+
+.widget-editor-card {
+    ::v-deep(.p-card-body) {
+        padding: 0;
+
+        .p-card-content {
+            padding: 0;
+        }
+    }
+}
+</style>

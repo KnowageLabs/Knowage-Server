@@ -82,7 +82,17 @@ export default defineComponent({
                     onColumnDrop: (event: any, model: IWidget) => {
                         if (event.dataTransfer.getData('text/plain') === 'b') return
                         const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
-                        const tempColumn = { dataset: eventData.dataset, name: '(' + eventData.name + ')', alias: eventData.alias, type: eventData.type, fieldType: eventData.fieldType, aggregation: eventData.aggregation, style: { hiddenColumn: false, 'white-space': 'nowrap' }, visType: '' }
+                        const tempColumn = {
+                            dataset: eventData.dataset,
+                            name: '(' + eventData.name + ')',
+                            alias: eventData.alias,
+                            type: eventData.type,
+                            fieldType: eventData.fieldType,
+                            aggregation: eventData.aggregation,
+                            style: { hiddenColumn: false, 'white-space': 'nowrap', tooltip: { prefix: '', suffix: '', precision: 5 }, enableCustomHeaderTooltip: false, customHeaderTooltip: '' },
+                            enableTooltip: false,
+                            visType: ''
+                        }
                         tempColumn.aggregation = 'NONE'
 
                         model.columns.push(tempColumn)
@@ -92,11 +102,9 @@ export default defineComponent({
                         const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
                         if (index !== -1) {
                             if (!model.columns[index].style) {
-                                model.columns[index].style = {
-                                    hiddenColumn: false,
-                                    'white-space': 'nowrap'
-                                }
+                                model.columns[index].style = {}
                             }
+                            ;(model.columns[index].style.hiddenColumn = false), (model.columns[index].style['white-space'] = 'nowrap')
                             model.columns[index].style.hiddenColumn = !model.columns[index].style.hiddenColumn
                         }
                         console.log('updateColumnVisibility() - ', model.columns[index])
