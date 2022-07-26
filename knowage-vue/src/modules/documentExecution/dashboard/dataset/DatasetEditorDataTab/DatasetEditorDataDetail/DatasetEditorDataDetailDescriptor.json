@@ -10,11 +10,11 @@
         }
     ],
     "style": {
-        "indexMultiselect": {
-            "width": "100%"
-        },
         "indexInfoIcon": {
             "color": "#929292"
+        },
+        "indexMultiselect": {
+            "max-width": "250px"
         }
     }
 }
