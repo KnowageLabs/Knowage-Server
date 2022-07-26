@@ -29,6 +29,40 @@
             "value": "COUNT_DISTINCT"
         }
     ],
+    "fontSizeOptions": [
+        {
+            "label": "dashboard.widgetEditor.manualInput",
+            "value": "input"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.xsmall",
+            "value": "8px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.small",
+            "value": "10px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.medium",
+            "value": "14px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.extended",
+            "value": "16px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.large",
+            "value": "18px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.xlarge",
+            "value": "24px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.xxlarge",
+            "value": "40px"
+        }
+    ],
     "visualizationTypeOptions": [
         {
             "label": "Chart",

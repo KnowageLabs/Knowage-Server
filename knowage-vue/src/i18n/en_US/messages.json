@@ -331,6 +331,7 @@
             },
             "hidden": "Hidden",
             "itemsPerPage": "Items per page",
+            "manualInput": "Manual input",
             "pagination": "Pagination",
             "precision": "Precision",
             "prefix": "Prefix",

@@ -53,31 +53,44 @@
                                                                     {
                                                                         "class": "fas fa-bold",
                                                                         "function": "functions.updateFontWeight",
-                                                                        "watchers": ["styles.th.font-weight"],
-                                                                        "isActiveFunction": "functions.boldIconIsActive"
+                                                                        "isActiveFunction": "functions.boldIconIsActive",
+                                                                        "watchers": ["styles.th.font-weight"]
                                                                     },
                                                                     {
                                                                         "class": "fas fa-italic",
                                                                         "function": "functions.updateFontStyle",
-                                                                        "watchers": ["styles.th.font-style"],
-                                                                        "isActiveFunction": "functions.fontStyleIconIsActive"
+                                                                        "isActiveFunction": "functions.fontStyleIconIsActive",
+                                                                        "watchers": ["styles.th.font-style"]
                                                                     },
                                                                     {
-                                                                        "class": "fas fa-text-height"
+                                                                        "arrowDownIcon": true,
+                                                                        "class": "fas fa-text-height",
+                                                                        "contextMenuSettings": {
+                                                                            "options": "functions.getFontSizeOptions",
+                                                                            "translateLabels": true,
+                                                                            "onUpdate": "functions.updateFontSize"
+                                                                        }
                                                                     },
                                                                     {
+                                                                        "arrowDownIcon": true,
                                                                         "class": "fas fa-align-left"
                                                                     },
                                                                     {
+                                                                        "arrowDownIcon": true,
                                                                         "class": "fas fa-font"
                                                                     },
                                                                     {
-                                                                        "class": "fas fa-fill-drip"
+                                                                        "arrowDownIcon": true,
+                                                                        "class": "fas fa-fill-drip",
+                                                                        "colorCircleIcon": true
                                                                     },
                                                                     {
-                                                                        "class": "fas fa-paint-roller"
+                                                                        "arrowDownIcon": true,
+                                                                        "class": "fas fa-paint-roller",
+                                                                        "colorCircleIcon": true
                                                                     },
                                                                     {
+                                                                        "arrowDownIcon": true,
                                                                         "class": "fas fa-icons"
                                                                     }
                                                                 ],

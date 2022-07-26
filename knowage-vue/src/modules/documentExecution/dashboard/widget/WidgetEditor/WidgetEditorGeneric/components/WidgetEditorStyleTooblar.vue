@@ -1,6 +1,6 @@
 <template>
     <div class="widget-editor-toolbar p-d-flex p-flex-row p-ai-center">
-        <WidgetEditorStyleIcon v-for="(icon, index) in icons" :key="index" :widgetModel="widgetModel" :icon="icon"> </WidgetEditorStyleIcon>
+        <WidgetEditorStyleIcon v-for="(icon, index) in icons" :key="index" :widgetModel="widgetModel" :icon="icon" class="kn-flex"> </WidgetEditorStyleIcon>
     </div>
 </template>
 
@@ -9,6 +9,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { getModelProperty } from '../WidgetEditorGenericHelper'
 import WidgetEditorStyleIcon from './WidgetEditorStyleIcon.vue'
+import WidgetEditorToolbarDropdown from './WidgetEditorToolbarContextMenu.vue'
 
 export default defineComponent({
     name: 'widget-editor-style-toolbar',
@@ -34,6 +35,6 @@ export default defineComponent({
     border: 1px solid #c2c2c2;
     border-radius: 3px;
     width: 100%;
-    min-height: 30px;
+    min-height: 40px;
 }
 </style>

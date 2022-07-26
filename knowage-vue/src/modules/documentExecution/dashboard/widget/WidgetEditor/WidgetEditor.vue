@@ -192,8 +192,17 @@ export default defineComponent({
                         model.styles.th['font-style'] = model.styles.th['font-style'] === 'italic' ? '' : 'italic'
                     },
                     fontStyleIconIsActive: (model: IWidget) => {
-                        console.log('>>> fontStyleIconIsActive: ', model?.styles.th['font-style'] === 'italic')
                         return model?.styles.th['font-style'] === 'italic'
+                    },
+                    getFontSizeOptions: () => {
+                        console.log('>>> getFontSizeOptions: ', this.descriptor.fontSizeOptions)
+
+                        return this.descriptor.fontSizeOptions
+                    },
+                    updateFontSize: (newValue: string, model: IWidget) => {
+                        console.log('>>> updateFontSize: ', model)
+                        if (!model) return
+                        model.styles.th['font-size'] = newValue
                     }
                 }
             }
