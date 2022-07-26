@@ -1,5 +1,5 @@
 <template>
-    <div class="associations-meta-card" :style="descriptor.style.metaCard.card">
+    <div class="associations-meta-card">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
             <template #start> {{ datasetProp.name }} - Index: {{ indexProp }} </template>
         </Toolbar>

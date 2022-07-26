@@ -10,8 +10,7 @@
             </Toolbar>
             <TabView v-if="!loading" class="datasetEditor-tabs">
                 <TabPanel :header="$t('dashboard.datasetEditor.dataTabTitle')">
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="logModel" />
-
+                    <!-- <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="logModel" /> -->
                     <DataTab :dashboardDatasetsProp="dashboardDatasets" :availableDatasetsProp="availableDatasets" :selectedDatasetsProp="selectedDatasets" @addSelectedDatasets="addSelectedDatasets" />
                 </TabPanel>
                 <TabPanel :header="$t('dashboard.datasetEditor.associationsTabTitle')">
@@ -112,20 +111,21 @@ export default defineComponent({
         display: flex;
     }
 }
-.datasetEditor-tabs {
+.datasetEditor-tabs.p-tabview {
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
     flex: 1;
-    .p-tabview {
-        width: 100%;
-        height: 100%;
-        .p-tabview-panels {
-            padding: 0;
+    .p-tabview-panels {
+        overflow: auto;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        .p-tabview-panel {
+            overflow: auto;
             display: flex;
-            flex-direction: column;
-            height: calc(100% - 36px);
-            .p-tabview-panel {
-                display: flex;
-                flex: 1;
-            }
+            flex: 1;
         }
     }
 }

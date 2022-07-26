@@ -1,28 +1,28 @@
 <template>
-    <div id="dataset-editor-list-card-container">
-        <Card class="dataset-editor-list-card">
-            <template #title>
-                <Button label="Add Dataset" icon="pi pi-plus-circle" class="p-button-outlined p-mt-2 p-mr-2" @click="toggleDataDialog"></Button>
-            </template>
-            <template #content>
-                <Listbox class="kn-list kn-list-no-border-right" :options="selectedDatasets" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="label" filterMatchMode="contains" :filterFields="['label']" :emptyFilterMessage="$t('common.info.noDataFound')" @change="selectDataset">
-                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                    <template #option="slotProps">
-                        <div class="kn-list-item" :style="dataListDescriptor.style.list.listItem">
-                            <div class="kn-list-item-icon p-mx-2">
-                                <i :style="dataListDescriptor.style.list.listIcon" :class="dataListDescriptor.listboxSettings.avatar.values[slotProps.option.type].icon"></i>
-                            </div>
-                            <div class="kn-list-item-text">
-                                <span>{{ slotProps.option.label }}</span>
-                            </div>
-                            <div class="kn-list-item-buttons">
-                                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteDatasetFromModel" />
-                            </div>
-                        </div>
-                    </template>
-                </Listbox>
-            </template>
-        </Card>
+    <div class="dataset-editor-list-card-container p-m-2">
+        <div class="dataset-editor-list-card">
+            <Button label="Add Dataset" icon="pi pi-plus-circle" class="p-button-outlined p-mt-2 p-mx-2" @click="toggleDataDialog"></Button>
+            <Listbox
+                class="kn-list kn-list-no-border-right dataset-editor-list"
+                :options="selectedDatasets"
+                :filter="true"
+                :filterPlaceholder="$t('common.search')"
+                optionLabel="label"
+                filterMatchMode="contains"
+                :filterFields="['label']"
+                :emptyFilterMessage="$t('common.info.noDataFound')"
+                @change="selectDataset"
+            >
+                <template #empty>{{ $t('common.info.noDataFound') }}</template>
+                <template #option="slotProps">
+                    <div class="kn-list-item" :style="dataListDescriptor.style.list.listItem" v-tooltip.left="slotProps.option.label">
+                        <i class="p-mx-2" :style="dataListDescriptor.style.list.listIcon" :class="dataListDescriptor.listboxSettings.avatar.values[slotProps.option.type].icon"></i>
+                        <span class="kn-list-item-text">{{ slotProps.option.label }}</span>
+                        <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click.stop="deleteDatasetFromModel" />
+                    </div>
+                </template>
+            </Listbox>
+        </div>
 
         <DataDialog v-if="dataDialogVisible" :visible="dataDialogVisible" :selectedDatasetsProp="selectedDatasets" :availableDatasetsProp="availableDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @close="toggleDataDialog" />
     </div>
@@ -77,12 +77,26 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.dataset-editor-list-card .p-card-title {
+.dataset-editor-list-card-container {
     display: flex;
-    justify-content: end;
-}
-.dataset-editor-list-card .p-card-body,
-.dataset-editor-list-card .p-card-content {
-    padding: 0;
+    width: 300px;
+    background: #ffffff;
+    color: rgba(0, 0, 0, 0.87);
+    box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+    border-radius: 4px;
+    .dataset-editor-list-card,
+    .dataset-editor-list {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+        border-radius: 4px !important;
+        .kn-list-item-text {
+            text-overflow: ellipsis;
+            max-width: 190px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+    }
 }
 </style>

@@ -1,8 +1,6 @@
 <template>
-    <div class="p-d-flex">
-        <AssociationsList class="kn-flex p-m-2" :dashboardAssociationsProp="dashboardAssociationsProp" />
-        <AssociationsDetail class="p-m-2" :dashboardAssociationsProp="dashboardAssociationsProp" :selectedDatasetsProp="selectedDatasetsProp" />
-    </div>
+    <AssociationsList :dashboardAssociationsProp="dashboardAssociationsProp" />
+    <AssociationsDetail class="p-my-2" :dashboardAssociationsProp="dashboardAssociationsProp" :selectedDatasetsProp="selectedDatasetsProp" />
 </template>
 
 <script lang="ts">
