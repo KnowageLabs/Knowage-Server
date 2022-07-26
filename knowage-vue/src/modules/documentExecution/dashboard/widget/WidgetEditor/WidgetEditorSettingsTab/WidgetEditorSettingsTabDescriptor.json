@@ -15,73 +15,54 @@
                                                     {
                                                         "components": [
                                                             {
-                                                                "cssClass": "kn-material-input p-d-flex p-flex-row p-ai-center kn-flex p-m-2",
-                                                                "label": "dashboard.widgetEditor.enableTooltip",
-                                                                "property": "temp.selectedColumn.enableTooltip",
-                                                                "settings": {
-                                                                    "onUpdate": "functions.updateSelectedColumn"
-                                                                },
+                                                                "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.header.enableHeader",
+                                                                "property": "styles.th.enabled",
+                                                                "settings": {},
                                                                 "type": "inputSwitch"
                                                             },
                                                             {
-                                                                "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
-                                                                "inputClass": "kn-material-input",
-                                                                "label": "dashboard.widgetEditor.prefix",
-                                                                "property": "temp.selectedColumn.style.tooltip.prefix",
-                                                                "settings": {
-                                                                    "onUpdate": "functions.updateSelectedColumn"
-                                                                },
-                                                                "type": "inputText"
-                                                            }
-                                                        ],
-                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
-                                                    },
-                                                    {
-                                                        "components": [
-                                                            {
-                                                                "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
-                                                                "inputClass": "kn-material-input",
-                                                                "label": "dashboard.widgetEditor.sufix",
-                                                                "property": "temp.selectedColumn.style.tooltip.sufix",
-                                                                "settings": {
-                                                                    "onUpdate": "functions.updateSelectedColumn"
-                                                                },
-                                                                "type": "inputText"
-                                                            },
-                                                            {
-                                                                "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
-                                                                "inputClass": "kn-material-input",
-                                                                "label": "dashboard.widgetEditor.precision",
-                                                                "property": "temp.selectedColumn.style.tooltip.precision",
-                                                                "settings": {
-                                                                    "onUpdate": "functions.updateSelectedColumn",
-                                                                    "type": "number",
-                                                                    "visibilityCondition": "functions.tooltipPrecisionIsVisible"
-                                                                },
-                                                                "type": "inputText"
-                                                            }
-                                                        ],
-                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
-                                                    },
-                                                    {
-                                                        "components": [
-                                                            {
                                                                 "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
-                                                                "label": "dashboard.widgetEditor.customHeaderTooltip",
-                                                                "property": "temp.selectedColumn.style.enableCustomHeaderTooltip",
+                                                                "label": "dashboard.widgetEditor.header.allowMultiline",
+                                                                "property": "styles.th.multiline",
                                                                 "settings": {
-                                                                    "onUpdate": "functions.updateSelectedColumn"
+                                                                    "disabledCondition": "functions.headerIsDisabled",
+                                                                    "watchers": ["styles.th.enabled"],
+                                                                    "binary": true
                                                                 },
                                                                 "type": "checkbox"
+                                                            },
+                                                            {
+                                                                "cssClass": "kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.header.headerHeight",
+                                                                "property": "styles.th.height",
+                                                                "settings": {
+                                                                    "disabledCondition": "functions.headerIsDisabled",
+                                                                    "hint": "dashboard.widgetEditor.header.headerHeightHint",
+                                                                    "watchers": ["styles.th.enabled"]
+                                                                },
+                                                                "type": "inputText"
                                                             }
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                                    },
+                                                    {
+                                                        "components": [
+                                                          
+                                                            
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                                    },
+                                                    {
+                                                        "components": [
+                                                          
                                                         ],
                                                         "cssClasses": "p-d-flex p-flex-row p-ai-center"
                                                     }
                                                 ],
-                                                "title": "dashboard.widgetEditor.settingsListOptions.tooltip"
+                                                "title": "dashboard.widgetEditor.header.title"
                                             }
                                         ],
-                                        "activeIndex": [0],
                                         "settings": {},
                                         "type": "accordion"
                                     }
@@ -90,14 +71,14 @@
                         ]
                     }
                 ],
-                "icon": "fa fa-comment",
-                "label": "dashboard.widgetEditor.settingsListOptions.tooltip",
-                "value": "Tooltip"
+                "icon": "fa fa-table",
+                "label": "common.style",
+                "value": "Style"
             },
             {
                 "descriptor": {},
                 "icon": "fa fa-table",
-                "label": "common.value",
+                "label": "TODO",
                 "value": "TODO"
             }
         ],

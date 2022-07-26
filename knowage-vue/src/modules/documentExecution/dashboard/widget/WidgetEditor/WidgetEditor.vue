@@ -66,7 +66,20 @@ export default defineComponent({
                 datasets: [],
                 interactions: [],
                 theme: '',
-                styles: {},
+                styles: {
+                    th: {
+                        enabled: true,
+                        'background-color': 'rgb(255, 255, 255)',
+                        color: 'rgb(137, 158, 175)',
+                        'justify-content': 'flex-start',
+                        'font-size': '14px',
+                        multiline: false,
+                        height: 25,
+                        'font-style': '',
+                        'font-weight': '',
+                        'font-family': ''
+                    }
+                },
                 settings: {},
                 temp: {}
             } as any
@@ -89,7 +102,13 @@ export default defineComponent({
                             type: eventData.type,
                             fieldType: eventData.fieldType,
                             aggregation: eventData.aggregation,
-                            style: { hiddenColumn: false, 'white-space': 'nowrap', tooltip: { prefix: '', suffix: '', precision: 0 }, enableCustomHeaderTooltip: false, customHeaderTooltip: '' },
+                            style: {
+                                hiddenColumn: false,
+                                'white-space': 'nowrap',
+                                tooltip: { prefix: '', suffix: '', precision: 0 },
+                                enableCustomHeaderTooltip: false,
+                                customHeaderTooltip: ''
+                            },
                             enableTooltip: false,
                             visType: ''
                         }
@@ -156,6 +175,9 @@ export default defineComponent({
                     tooltipCustomHeaderTextIsDisabled: (model: IWidget) => {
                         console.log('tooltipCustomHeaderTextIsDisabled()', model?.temp.selectedColumn?.style.enableCustomHeaderTooltip)
                         return !model?.temp.selectedColumn?.style.enableCustomHeaderTooltip
+                    },
+                    headerIsDisabled: (model: IWidget) => {
+                        return !model?.styles.th.enabled
                     }
                 }
             }

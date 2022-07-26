@@ -62,10 +62,10 @@ export default defineComponent({
             }
         },
         fieldIsDisabled() {
-            // console.log(' >>>>>> fieldIsDisabled  1', this.settings.visibilityCondition)
+            console.log(' >>>>>> fieldIsDisabled  1', this.settings.visibilityCondition)
             if (!this.settings.disabledCondition) return (this.disabled = false)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.disabledCondition, 'getValue', null)
-            // console.log(' >>>>>> fieldIsDisabled  2', tempFunction)
+            console.log(' >>>>>> fieldIsDisabled  2', tempFunction())
             if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel))
         },
         fieldIsVisible() {

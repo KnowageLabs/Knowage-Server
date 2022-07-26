@@ -52,6 +52,7 @@
         "dragAndDropFileHere": "Drag and drop file here.",
         "driver": "Driver",
         "edit": "edit",
+        "enable": "Enable",
         "environment": "Environment",
         "error": {
             "allowedFileTypes": "File type allowed are {types}",
@@ -321,10 +322,16 @@
             "customHeaderTooltip": "Custom Header Tooltip",
             "dragColumnsHint": "Drag columns here",
             "enableTooltip": "Enable Tooltip",
+            "header": {
+                "allowMultiline": "Allow Multiline",
+                "enableHeader": "Enable Header",
+                "headerHeight": "Header height",
+                "headerHeightHint": "Header height in px (default is 25px)",
+                "title": "header"
+            },
             "hidden": "Hidden",
             "itemsPerPage": "Items per page",
             "pagination": "Pagination",
-            "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{..} and $P{..}) are available.",
             "precision": "Precision",
             "prefix": "Prefix",
             "selectDataset": "Select Dataset",
@@ -333,6 +340,7 @@
                 "tooltip": "Tooltip"
             },
             "sufix": "Sufix",
+            "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
             "visualizationType": "Visualization Type"
         }
     },

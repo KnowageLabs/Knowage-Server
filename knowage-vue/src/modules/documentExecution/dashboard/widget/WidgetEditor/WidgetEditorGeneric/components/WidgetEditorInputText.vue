@@ -2,6 +2,7 @@
     <div v-if="visible" :class="class">
         <label v-if="label" class="kn-material-input-label p-mr-2"> {{ $t(label) }}</label>
         <InputText :class="inputClass" class="kn-material-input p-inputtext-sm" :type="settings.type ?? 'text'" v-model="modelValue" :maxLength="settings.maxLength" :disabled="disabled" @input="onInput" @change="onChange" @blur="$emit('blur')" />
+        <small v-if="settings.hint">{{ $t(settings.hint, { placeholder: settings.hintPlaceholder }) }}</small>
     </div>
 </template>
 
