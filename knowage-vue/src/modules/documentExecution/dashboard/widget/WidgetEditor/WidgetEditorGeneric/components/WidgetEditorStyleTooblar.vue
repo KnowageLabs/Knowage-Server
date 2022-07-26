@@ -1,10 +1,6 @@
 <template>
     <div class="widget-editor-toolbar p-d-flex p-flex-row p-ai-center">
-        <template v-for="(icon, index) in icons" :key="index">
-            <div class="widget-editor-toolbar-icon-container kn-flex">
-                <i :class="icon.class" class="kn-cursor-pointer" @click="onIconClicked(icon)"></i>
-            </div>
-        </template>
+        <WidgetEditorStyleIcon v-for="(icon, index) in icons" :key="index" :widgetModel="widgetModel" :icon="icon"> </WidgetEditorStyleIcon>
     </div>
 </template>
 
@@ -12,10 +8,11 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { getModelProperty } from '../WidgetEditorGenericHelper'
+import WidgetEditorStyleIcon from './WidgetEditorStyleIcon.vue'
 
 export default defineComponent({
     name: 'widget-editor-style-toolbar',
-    components: {},
+    components: { WidgetEditorStyleIcon },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, icons: { type: Array as PropType<any[]>, required: true }, settings: { type: Object, required: true } },
     data() {
         return {}
@@ -38,9 +35,5 @@ export default defineComponent({
     border-radius: 3px;
     width: 100%;
     min-height: 30px;
-}
-
-.widget-editor-toolbar-icon-container {
-    text-align: center;
 }
 </style>

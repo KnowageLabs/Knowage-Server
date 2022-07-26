@@ -52,7 +52,9 @@
                                                                 "icons": [
                                                                     {
                                                                         "class": "fas fa-bold",
-                                                                        "function": "functions.updateFontWeight"
+                                                                        "function": "functions.updateFontWeight",
+                                                                        "watchers": ["styles.th.font-weight"],
+                                                                        "isActiveFunction": "functions.boldIconIsActive"
                                                                     },
                                                                     {
                                                                         "class": "fas fa-italic"

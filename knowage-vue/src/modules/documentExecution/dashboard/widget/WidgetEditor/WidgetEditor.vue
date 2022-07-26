@@ -181,6 +181,12 @@ export default defineComponent({
                     },
                     updateFontWeight: (model: IWidget) => {
                         if (!model) return
+
+                        model.styles.th['font-weight'] = model.styles.th['font-weight'] === 'bold' ? '' : 'bold'
+                    },
+                    boldIconIsActive: (model: IWidget) => {
+                        console.log('>>> boldIconIsActive: ', model?.styles.th['font-weight'] === 'bold')
+                        return model?.styles.th['font-weight'] === 'bold'
                     }
                 }
             }
