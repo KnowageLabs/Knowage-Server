@@ -4,7 +4,7 @@
             <template #header>
                 <div>
                     <i v-if="accordion.icon" :class="accordion.icon" class="p-mr-2"></i>
-                    <span>{{ accordion.title ? $t(accordion.title) : '' }}</span>
+                    <label class="kn-material-input-label">{{ accordion.title ? $t(accordion.title) : '' }}</label>
                 </div>
             </template>
 
@@ -40,6 +40,15 @@
                                 :settings="component.settings"
                                 @change="$emit('accordionDropdownChanged', { value: $event, component: component })"
                             ></WidgetEditorDropdown>
+                            <WidgetEditorCheckbox
+                                v-else-if="component.type === 'checkbox'"
+                                :widgetModel="widgetModel"
+                                :class="component.cssClass"
+                                :label="component.label"
+                                :property="component.property"
+                                :settings="component.settings"
+                                @change="$emit('accordionCheckboxChanged', { value: $event, component: component })"
+                            ></WidgetEditorCheckbox>
                         </template>
                     </div>
                 </template>
@@ -57,12 +66,13 @@ import AccordionTab from 'primevue/accordiontab'
 import WidgetEditorInputSwitch from './WidgetEditorInputSwitch.vue'
 import WidgetEditorDropdown from './WidgetEditorDropdown.vue'
 import WidgetEditorInputText from './WidgetEditorInputText.vue'
+import WidgetEditorCheckbox from './WidgetEditorCheckbox.vue'
 
 export default defineComponent({
     name: 'widget-editor-accordion',
-    components: { Accordion, AccordionTab, WidgetEditorInputSwitch, WidgetEditorDropdown, WidgetEditorInputText },
+    components: { Accordion, AccordionTab, WidgetEditorInputSwitch, WidgetEditorDropdown, WidgetEditorInputText, WidgetEditorCheckbox },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Object, required: true }, accordions: { type: Array as PropType<any[]>, requried: true } },
-    emits: ['accordionInputSwitchChanged', 'accordionDropdownChanged', 'accordionInputTextChanged'],
+    emits: ['accordionInputSwitchChanged', 'accordionDropdownChanged', 'accordionInputTextChanged', 'accordionCheckboxChanged'],
     data() {
         return {}
     },

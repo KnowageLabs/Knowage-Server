@@ -2,9 +2,6 @@
     "tableWidget": {
         "listOptions": [
             {
-                "icon": "fa fa-comment",
-                "label": "dashboard.widgetEditor.settingsListOptions.tooltip",
-                "value": "Tooltip",
                 "descriptor": [
                     {
                         "cardClasses": "p-d-flex p-flex-column",
@@ -31,30 +28,52 @@
                                                                 "inputClass": "kn-material-input",
                                                                 "label": "dashboard.widgetEditor.prefix",
                                                                 "property": "temp.selectedColumn.style.tooltip.prefix",
-                                                                "settings": {  "onUpdate": "functions.updateSelectedColumn"},
+                                                                "settings": {
+                                                                    "onUpdate": "functions.updateSelectedColumn"
+                                                                },
                                                                 "type": "inputText"
-                                                            }                                       
+                                                            }
                                                         ],
                                                         "cssClasses": "p-d-flex p-flex-row p-ai-center"
                                                     },
                                                     {
-                                                        "components": [                                                       
+                                                        "components": [
                                                             {
-                                                                "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                                                                "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
                                                                 "inputClass": "kn-material-input",
                                                                 "label": "dashboard.widgetEditor.sufix",
                                                                 "property": "temp.selectedColumn.style.tooltip.sufix",
-                                                                "settings": {  "onUpdate": "functions.updateSelectedColumn"},
+                                                                "settings": {
+                                                                    "onUpdate": "functions.updateSelectedColumn"
+                                                                },
                                                                 "type": "inputText"
                                                             },
                                                             {
-                                                                "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                                                                "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
                                                                 "inputClass": "kn-material-input",
                                                                 "label": "dashboard.widgetEditor.precision",
                                                                 "property": "temp.selectedColumn.style.tooltip.precision",
-                                                                "settings": {  "type": "number","onUpdate": "functions.updateSelectedColumn",     "visibilityCondition": "functions.tooltipPrecisionIsVisible"},
+                                                                "settings": {
+                                                                    "onUpdate": "functions.updateSelectedColumn",
+                                                                    "type": "number",
+                                                                    "visibilityCondition": "functions.tooltipPrecisionIsVisible"
+                                                                },
                                                                 "type": "inputText"
-                                                            }      
+                                                            }
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                                    },
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.customHeaderTooltip",
+                                                                "property": "temp.selectedColumn.style.enableCustomHeaderTooltip",
+                                                                "settings": {
+                                                                    "onUpdate": "functions.updateSelectedColumn"
+                                                                },
+                                                                "type": "checkbox"
+                                                            }
                                                         ],
                                                         "cssClasses": "p-d-flex p-flex-row p-ai-center"
                                                     }
@@ -70,13 +89,16 @@
                             }
                         ]
                     }
-                ]      
+                ],
+                "icon": "fa fa-comment",
+                "label": "dashboard.widgetEditor.settingsListOptions.tooltip",
+                "value": "Tooltip"
             },
             {
+                "descriptor": {},
                 "icon": "fa fa-table",
                 "label": "common.value",
-                "value": "TODO",
-                "descriptor": {}
+                "value": "TODO"
             }
         ],
         "listSettings": {

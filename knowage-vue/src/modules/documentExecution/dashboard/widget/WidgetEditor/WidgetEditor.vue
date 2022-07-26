@@ -107,7 +107,6 @@ export default defineComponent({
                             ;(model.columns[index].style.hiddenColumn = false), (model.columns[index].style['white-space'] = 'nowrap')
                             model.columns[index].style.hiddenColumn = !model.columns[index].style.hiddenColumn
                         }
-                        console.log('updateColumnVisibility() - ', model.columns[index])
                     },
                     removeColumn: (column: IWidgetColumn, model: IWidget) => {
                         const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
@@ -124,7 +123,6 @@ export default defineComponent({
                             if (model.columns[index][field].fieldType === 'ATTRIBUTE') model.columns[index][field].aggregation = 'NONE'
                             if (model.temp.selectedColumn.name === model.columns[index].name) model.temp.selectedColumn = { ...model.columns[index] }
                         }
-                        console.log('updateColumnValues() - ', model.columns[index])
                     },
                     getColumnAggregationOptions: () => {
                         return this.descriptor.columnAggregationOptions
@@ -133,23 +131,15 @@ export default defineComponent({
                         return column.fieldType === 'MEASURE'
                     },
                     setSelectedColumn: (column: IWidgetColumn, model: IWidget) => {
-                        console.log('setSelectedColumn', column)
                         if (!model || !model.temp) return
                         model.temp.selectedColumn = { ...column }
-                        console.log('SELECTED COLUMN: ', model.temp)
                     },
                     columnIsSelected: (model: IWidget) => {
-                        console.log('columnIsSelected', model)
                         return model && model.temp.selectedColumn
                     },
                     updateSelectedColumn: (model: IWidget) => {
-                        console.log('!!!!!!!!!!!!!!!!! updateSelectedColumn !!!!!!!!!!!!!!!!!!!!!!!!!!!!', model)
                         const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === model.temp.selectedColumn.name)
-                        console.log('!!!!!!!!!!!!!!!!! index !!!!!!!!!!!!!!!!!!!!!!!!!!!!', index)
-                        if (index !== -1) {
-                            model.columns[index] = { ...model.temp.selectedColumn }
-                            console.log('!!!!!!!!!!!!!!!!! updateSelectedColumn !!!!!!!!!!!!!!!!!!!!!!!!!!!! updated', model.columns[index])
-                        }
+                        if (index !== -1) model.columns[index] = { ...model.temp.selectedColumn }
                     },
                     selectedColumnDropdownIsVisible: (model: IWidget) => {
                         return model?.temp.selectedColumn?.fieldType === 'MEASURE'
@@ -158,11 +148,14 @@ export default defineComponent({
                         return this.descriptor.visualizationTypeOptions
                     },
                     visualizationTypeDropdownIsVisible: (model: IWidget) => {
-                        console.log(' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! visualizationTypeDropdownIsVisible')
                         return model?.temp.selectedColumn?.fieldType === 'MEASURE'
                     },
                     tooltipPrecisionIsVisible: (model: IWidget) => {
                         return model?.temp.selectedColumn?.fieldType === 'MEASURE'
+                    },
+                    tooltipCustomHeaderTextIsDisabled: (model: IWidget) => {
+                        console.log('tooltipCustomHeaderTextIsDisabled()', model?.temp.selectedColumn?.style.enableCustomHeaderTooltip)
+                        return !model?.temp.selectedColumn?.style.enableCustomHeaderTooltip
                     }
                 }
             }

@@ -45,7 +45,7 @@
                                         :label="component.label"
                                         :property="component.property"
                                         :settings="component.settings"
-                                        @change="onDropdownChange($event, component)"
+                                        @change="onCheckboxChanged($event, component)"
                                     ></WidgetEditorCheckbox>
                                     <WidgetEditorAccordion
                                         v-else-if="component.type === 'accordion'"
@@ -55,6 +55,7 @@
                                         @accordionInputSwitchChanged="onInputSwitchChange($event.value, $event.component)"
                                         @accordionDropdownChanged="onDropdownChange($event.value, $event.component)"
                                         @accordionInputTextChanged="onInputTextChange($event.value, $event.component)"
+                                        @accordionCheckboxChanged="onCheckboxChanged($event.value, $event.component)"
                                     ></WidgetEditorAccordion>
                                     <WidgetEditorDataTable
                                         v-else-if="component.type === 'dataTable'"
@@ -114,39 +115,30 @@ export default defineComponent({
         },
         loadModel() {
             this.model = this.widgetModel
-            console.log('LOADED MODEL: ', this.model)
         },
         onInputTextInput(value: string, component: any) {
-            console.log(' >>>>> onInputTextInput')
             if (component.property) this.updateModelProperty(value, component.property)
         },
         onInputTextChange(value: string, component: any) {
-            console.log(' >>>>> onInputTextChange')
             if (component.property) this.updateModelProperty(value, component.property)
         },
         onInputSwitchChange(value: string, component: any) {
-            console.log(' >>>>> onInputSwitchChange')
             if (component.property) this.updateModelProperty(value, component.property)
         },
         onDropdownChange(value: string, component: any) {
-            console.log(' >>>>> onDropdownChange')
             if (component.property) this.updateModelProperty(value, component.property)
-            if (component.settings.onUpdate) {
-                const tempFunction = getModelProperty(this.widgetModel, component.settings.onUpdate, 'getValue', null)
-                if (tempFunction && typeof tempFunction === 'function') tempFunction(this.widgetModel)
-            }
+        },
+        onCheckboxChanged(value: string, component: any) {
+            if (component.property) this.updateModelProperty(value, component.property)
         },
         onRowReorder(value: any[], component: any) {
-            console.log(' >>>>> onRowReorder', value, component.settings.property)
             if (component.settings.property) this.updateModelProperty(value, component.settings.property)
         },
         updateModelProperty(value: any, propertyPath: string) {
-            console.log(' >>>>> updateModelProperty')
             getModelProperty(this.widgetModel, propertyPath, 'updateValue', value)
             console.log('UPDATED MODEL: ', this.model)
         },
         getItems(propertyPath: string): any[] {
-            console.log(' >>>>> getItems')
             return getModelProperty(this.widgetModel, propertyPath, 'getValue', null)
         },
         getDropdownOptions(component: any) {
@@ -155,15 +147,7 @@ export default defineComponent({
             if (tempFunction && typeof tempFunction === 'function') temp = tempFunction()
             return temp
         },
-        fieldIsVisible(component: any) {
-            console.log(' >>>>>> fieldIsVisible 1')
-            if (!component.visibilityCondition) return true
-            const tempFunction = getModelProperty(this.widgetModel, component.visibilityCondition, 'getValue', null)
-            console.log(' >>>>>> fieldIsVisible 2', tempFunction(this.widgetModel))
-            if (tempFunction && typeof tempFunction === 'function') return tempFunction(this.widgetModel)
-        },
         showCardContent(card: any) {
-            console.log(' >>>>> showCardContent')
             if (!card.visibilityCondition) return true
             const tempFunction = getModelProperty(this.widgetModel, card.visibilityCondition, 'getValue', null)
             if (tempFunction && typeof tempFunction === 'function') return tempFunction(this.widgetModel)

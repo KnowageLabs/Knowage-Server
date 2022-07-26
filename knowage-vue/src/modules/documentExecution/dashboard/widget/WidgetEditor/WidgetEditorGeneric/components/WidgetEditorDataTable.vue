@@ -110,9 +110,7 @@ export default defineComponent({
             if (this.settings.globalFilterFields?.length) this.filters.global = [filterDefault]
         },
         buttonClicked(button: any, item: any) {
-            console.log('BUTTON ', button)
             const tempFunction = getModelProperty(this.widgetModel, button.function, 'getValue', null)
-            console.log('TEMP FUNCTION ', tempFunction)
             if (tempFunction && typeof tempFunction === 'function') tempFunction(item, this.widgetModel)
         },
         getIcon(item: any) {
@@ -137,9 +135,7 @@ export default defineComponent({
             return temp
         },
         showEditableField(visibilityCondition: string | null, row: any) {
-            console.log(' --- showEditableField 1')
             if (!visibilityCondition) return true
-            console.log(' --- showEditableField 2')
             const tempFunction = getModelProperty(this.widgetModel, visibilityCondition, 'getValue', null)
             if (tempFunction && typeof tempFunction === 'function') return tempFunction(row)
         }

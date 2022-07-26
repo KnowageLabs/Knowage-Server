@@ -1,7 +1,7 @@
 <template>
     <div v-if="visible" :class="class">
         <label v-if="label" class="kn-material-input-label p-mr-2"> {{ $t(label) }}</label>
-        <InputText :class="inputClass" class="p-inputtext-sm" :type="settings.type ?? 'text'" v-model="modelValue" :maxLength="settings.maxLength" :disabled="disabled" @input="onInput" @change="onChange" @blur="$emit('blur')" />
+        <InputText :class="inputClass" class="kn-material-input p-inputtext-sm" :type="settings.type ?? 'text'" v-model="modelValue" :maxLength="settings.maxLength" :disabled="disabled" @input="onInput" @change="onChange" @blur="$emit('blur')" />
     </div>
 </template>
 
@@ -63,17 +63,17 @@ export default defineComponent({
             this.callOnUpdateFunction()
         },
         fieldIsDisabled() {
-            // console.log(' >>>>>> fieldIsDisabled  1', this.settings.visibilityCondition)
+            console.log(' >>>>>> fieldIsDisabled  1', this.settings.visibilityCondition)
             if (!this.settings.disabledCondition) return (this.disabled = false)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.disabledCondition, 'getValue', null)
-            // console.log(' >>>>>> fieldIsDisabled  2', tempFunction)
+            console.log(' >>>>>> fieldIsDisabled  2', tempFunction)
             if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel))
         },
         fieldIsVisible() {
-            console.log(' >>>>>> fieldIsVisible INPUT 1', this.settings.visibilityCondition)
+            // console.log(' >>>>>> fieldIsVisible INPUT 1', this.settings.visibilityCondition)
             if (!this.settings.visibilityCondition) return (this.visible = true)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.visibilityCondition, 'getValue', null)
-            console.log(' >>>>>> fieldIsVisible INPUT 2', tempFunction(this.widgetModel))
+            // console.log(' >>>>>> fieldIsVisible INPUT 2', tempFunction(this.widgetModel))
             if (tempFunction && typeof tempFunction === 'function') return (this.visible = tempFunction(this.widgetModel))
         },
         callOnUpdateFunction() {
