@@ -89,7 +89,7 @@ export default defineComponent({
                             type: eventData.type,
                             fieldType: eventData.fieldType,
                             aggregation: eventData.aggregation,
-                            style: { hiddenColumn: false, 'white-space': 'nowrap', tooltip: { prefix: '', suffix: '', precision: 5 }, enableCustomHeaderTooltip: false, customHeaderTooltip: '' },
+                            style: { hiddenColumn: false, 'white-space': 'nowrap', tooltip: { prefix: '', suffix: '', precision: 0 }, enableCustomHeaderTooltip: false, customHeaderTooltip: '' },
                             enableTooltip: false,
                             visType: ''
                         }
@@ -159,6 +159,9 @@ export default defineComponent({
                     },
                     visualizationTypeDropdownIsVisible: (model: IWidget) => {
                         console.log(' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! visualizationTypeDropdownIsVisible')
+                        return model?.temp.selectedColumn?.fieldType === 'MEASURE'
+                    },
+                    tooltipPrecisionIsVisible: (model: IWidget) => {
                         return model?.temp.selectedColumn?.fieldType === 'MEASURE'
                     }
                 }

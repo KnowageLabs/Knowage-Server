@@ -38,6 +38,15 @@
                                         :settings="component.settings"
                                         @change="onDropdownChange($event, component)"
                                     ></WidgetEditorDropdown>
+                                    <WidgetEditorCheckbox
+                                        v-else-if="component.type === 'checkbox'"
+                                        :widgetModel="widgetModel"
+                                        :class="component.cssClass"
+                                        :label="component.label"
+                                        :property="component.property"
+                                        :settings="component.settings"
+                                        @change="onDropdownChange($event, component)"
+                                    ></WidgetEditorCheckbox>
                                     <WidgetEditorAccordion
                                         v-else-if="component.type === 'accordion'"
                                         :widgetModel="widgetModel"
@@ -75,10 +84,11 @@ import WidgetEditorInputText from './components/WidgetEditorInputText.vue'
 import WidgetEditorDataTable from './components/WidgetEditorDataTable.vue'
 import WidgetEditorDropdown from './components/WidgetEditorDropdown.vue'
 import WidgetEditorAccordion from './components/WidgetEditorAccordion.vue'
+import WidgetEditorCheckbox from './components/WidgetEditorCheckbox.vue'
 
 export default defineComponent({
     name: 'widget-editor-generic',
-    components: { Card, WidgetEditorInputSwitch, WidgetEditorInputText, WidgetEditorDataTable, WidgetEditorDropdown, WidgetEditorAccordion },
+    components: { Card, WidgetEditorInputSwitch, WidgetEditorInputText, WidgetEditorDataTable, WidgetEditorDropdown, WidgetEditorAccordion, WidgetEditorCheckbox },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, propDescriptor: { type: Object, required: true } },
     data() {
         return {

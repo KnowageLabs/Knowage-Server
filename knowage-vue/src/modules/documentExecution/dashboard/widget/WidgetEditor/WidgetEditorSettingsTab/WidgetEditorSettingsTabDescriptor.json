@@ -18,7 +18,7 @@
                                                     {
                                                         "components": [
                                                             {
-                                                                "cssClass": "kn-material-input p-d-flex p-flex-row kn-flex p-m-2",
+                                                                "cssClass": "kn-material-input p-d-flex p-flex-row p-ai-center kn-flex p-m-2",
                                                                 "label": "dashboard.widgetEditor.enableTooltip",
                                                                 "property": "temp.selectedColumn.enableTooltip",
                                                                 "settings": {
@@ -27,15 +27,36 @@
                                                                 "type": "inputSwitch"
                                                             },
                                                             {
-                                                                "cssClass": "kn-flex-2 p-m-2",
+                                                                "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
                                                                 "inputClass": "kn-material-input",
-                                                                "label": "dashboard.widgetEditor.itemsPerPage",
-                                                                "property": "temp.selectedColumn.style.prefix",
+                                                                "label": "dashboard.widgetEditor.prefix",
+                                                                "property": "temp.selectedColumn.style.tooltip.prefix",
                                                                 "settings": {  "onUpdate": "functions.updateSelectedColumn"},
                                                                 "type": "inputText"
-                                                            }
+                                                            }                                       
                                                         ],
-                                                        "cssClasses": "p-d-flex p-flex-rows p-ai-center"
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                                    },
+                                                    {
+                                                        "components": [                                                       
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                                                                "inputClass": "kn-material-input",
+                                                                "label": "dashboard.widgetEditor.sufix",
+                                                                "property": "temp.selectedColumn.style.tooltip.sufix",
+                                                                "settings": {  "onUpdate": "functions.updateSelectedColumn"},
+                                                                "type": "inputText"
+                                                            },
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                                                                "inputClass": "kn-material-input",
+                                                                "label": "dashboard.widgetEditor.precision",
+                                                                "property": "temp.selectedColumn.style.tooltip.precision",
+                                                                "settings": {  "type": "number","onUpdate": "functions.updateSelectedColumn",     "visibilityCondition": "functions.tooltipPrecisionIsVisible"},
+                                                                "type": "inputText"
+                                                            }      
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
                                                     }
                                                 ],
                                                 "title": "dashboard.widgetEditor.settingsListOptions.tooltip"
