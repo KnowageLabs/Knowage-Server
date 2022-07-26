@@ -26,9 +26,9 @@
                                                                 "label": "dashboard.widgetEditor.header.allowMultiline",
                                                                 "property": "styles.th.multiline",
                                                                 "settings": {
+                                                                    "binary": true,
                                                                     "disabledCondition": "functions.headerIsDisabled",
-                                                                    "watchers": ["styles.th.enabled"],
-                                                                    "binary": true
+                                                                    "watchers": ["styles.th.enabled"]
                                                                 },
                                                                 "type": "checkbox"
                                                             },
@@ -48,14 +48,37 @@
                                                     },
                                                     {
                                                         "components": [
-                                                          
-                                                            
-                                                        ],
-                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
-                                                    },
-                                                    {
-                                                        "components": [
-                                                          
+                                                            {
+                                                                "icons": [
+                                                                    {
+                                                                        "class": "fas fa-bold",
+                                                                        "function": "functions.updateFontWeight"
+                                                                    },
+                                                                    {
+                                                                        "class": "fas fa-italic"
+                                                                    },
+                                                                    {
+                                                                        "class": "fas fa-text-height"
+                                                                    },
+                                                                    {
+                                                                        "class": "fas fa-align-left"
+                                                                    },
+                                                                    {
+                                                                        "class": "fas fa-font"
+                                                                    },
+                                                                    {
+                                                                        "class": "fas fa-fill-drip"
+                                                                    },
+                                                                    {
+                                                                        "class": "fas fa-paint-roller"
+                                                                    },
+                                                                    {
+                                                                        "class": "fas fa-icons"
+                                                                    }
+                                                                ],
+                                                                "settings": {},
+                                                                "type": "styleToolbar"
+                                                            }
                                                         ],
                                                         "cssClasses": "p-d-flex p-flex-row p-ai-center"
                                                     }

@@ -178,6 +178,9 @@ export default defineComponent({
                     },
                     headerIsDisabled: (model: IWidget) => {
                         return !model?.styles.th.enabled
+                    },
+                    updateFontWeight: (model: IWidget) => {
+                        if (!model) return
                     }
                 }
             }

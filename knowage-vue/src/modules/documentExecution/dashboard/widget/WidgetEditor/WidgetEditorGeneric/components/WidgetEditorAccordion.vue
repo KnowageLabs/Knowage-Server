@@ -49,6 +49,7 @@
                                 :settings="component.settings"
                                 @change="$emit('accordionCheckboxChanged', { value: $event, component: component })"
                             ></WidgetEditorCheckbox>
+                            <WidgetEditorStyleTooblar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings"></WidgetEditorStyleTooblar>
                         </template>
                     </div>
                 </template>
@@ -67,10 +68,11 @@ import WidgetEditorInputSwitch from './WidgetEditorInputSwitch.vue'
 import WidgetEditorDropdown from './WidgetEditorDropdown.vue'
 import WidgetEditorInputText from './WidgetEditorInputText.vue'
 import WidgetEditorCheckbox from './WidgetEditorCheckbox.vue'
+import WidgetEditorStyleTooblar from './WidgetEditorStyleTooblar.vue'
 
 export default defineComponent({
     name: 'widget-editor-accordion',
-    components: { Accordion, AccordionTab, WidgetEditorInputSwitch, WidgetEditorDropdown, WidgetEditorInputText, WidgetEditorCheckbox },
+    components: { Accordion, AccordionTab, WidgetEditorInputSwitch, WidgetEditorDropdown, WidgetEditorInputText, WidgetEditorCheckbox, WidgetEditorStyleTooblar },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Object, required: true }, accordions: { type: Array as PropType<any[]>, requried: true } },
     emits: ['accordionInputSwitchChanged', 'accordionDropdownChanged', 'accordionInputTextChanged', 'accordionCheckboxChanged'],
     data() {
