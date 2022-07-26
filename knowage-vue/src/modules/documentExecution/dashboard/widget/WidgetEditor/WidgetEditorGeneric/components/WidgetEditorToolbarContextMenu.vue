@@ -29,11 +29,7 @@ export default defineComponent({
     },
     async created() {},
     methods: {
-        onChange() {
-            console.log('ON CHANGE:')
-        },
         setSelectedValue(value: string) {
-            console.log('setSelectedValue:')
             if (value === 'input') {
                 this.inputVisible = !this.inputVisible
             } else {

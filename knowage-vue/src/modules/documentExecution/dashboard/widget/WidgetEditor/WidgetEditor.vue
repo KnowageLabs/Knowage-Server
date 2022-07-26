@@ -203,6 +203,26 @@ export default defineComponent({
                         console.log('>>> updateFontSize: ', model)
                         if (!model) return
                         model.styles.th['font-size'] = newValue
+                    },
+                    getCellAlignmentOptions: () => {
+                        console.log('>>> getcellAlignmentOptions: ', this.descriptor.cellAlignmentOptions)
+
+                        return this.descriptor.cellAlignmentOptions
+                    },
+                    updateCellAlignment: (newValue: string, model: IWidget) => {
+                        console.log('>>> updateCellAlignment: ', model)
+                        if (!model) return
+                        model.styles.th['justify-content'] = newValue
+                    },
+                    getFontFamilyOptions: () => {
+                        console.log('>>> getFontFamilyOptions: ', this.descriptor.fontFamilyOptions)
+
+                        return this.descriptor.fontFamilyOptions
+                    },
+                    updateFontFamily: (newValue: string, model: IWidget) => {
+                        console.log('>>> updateFontFamily: ', model)
+                        if (!model) return
+                        model.styles.th['font-family'] = newValue
                     }
                 }
             }

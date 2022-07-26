@@ -1,4 +1,22 @@
 {
+    "cellAlignmentOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "common.left",
+            "value": "flex-start"
+        },
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.right",
+            "value": "flex-end"
+        }
+    ],
     "columnAggregationOptions": [
         {
             "label": "NONE",
@@ -27,6 +45,36 @@
         {
             "label": "COUNT_DISTINCT",
             "value": "COUNT_DISTINCT"
+        }
+    ],
+    "fontFamilyOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.roboto",
+            "value": "roboto"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.arial",
+            "value": "arial"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.courierNew",
+            "value": "courier-new"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.tahoma",
+            "value": "tahoma"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.timesNewRoman",
+            "value": "times-new-roman"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.verdana",
+            "value": "verdana"
         }
     ],
     "fontSizeOptions": [

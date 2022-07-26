@@ -73,11 +73,21 @@
                                                                     },
                                                                     {
                                                                         "arrowDownIcon": true,
-                                                                        "class": "fas fa-align-left"
+                                                                        "class": "fas fa-align-left",
+                                                                        "contextMenuSettings": {
+                                                                            "options": "functions.getCellAlignmentOptions",
+                                                                            "translateLabels": true,
+                                                                            "onUpdate": "functions.updateCellAlignment"
+                                                                        }
                                                                     },
                                                                     {
                                                                         "arrowDownIcon": true,
-                                                                        "class": "fas fa-font"
+                                                                        "class": "fas fa-font",
+                                                                        "contextMenuSettings": {
+                                                                            "options": "functions.getFontFamilyOptions",
+                                                                            "translateLabels": true,
+                                                                            "onUpdate": "functions.updateFontFamily"
+                                                                        }
                                                                     },
                                                                     {
                                                                         "arrowDownIcon": true,

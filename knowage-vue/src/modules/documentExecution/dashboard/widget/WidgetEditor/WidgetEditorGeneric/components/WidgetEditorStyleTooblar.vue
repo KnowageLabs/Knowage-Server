@@ -9,7 +9,6 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { getModelProperty } from '../WidgetEditorGenericHelper'
 import WidgetEditorStyleIcon from './WidgetEditorStyleIcon.vue'
-import WidgetEditorToolbarDropdown from './WidgetEditorToolbarContextMenu.vue'
 
 export default defineComponent({
     name: 'widget-editor-style-toolbar',

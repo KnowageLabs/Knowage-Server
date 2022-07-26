@@ -54,7 +54,6 @@ export default defineComponent({
             if (tempFunction && typeof tempFunction === 'function') return tempFunction(this.widgetModel)
         },
         iconIsActive() {
-            console.log('iconIsActive')
             if (!this.icon.isActiveFunction) return (this.active = false)
 
             const tempFunction = getModelProperty(this.widgetModel, this.icon.isActiveFunction, 'getValue', null)
@@ -79,9 +78,9 @@ export default defineComponent({
             }
         },
         onContextItemSelected(item: string) {
-            console.log('onContextItemSelected: ', item)
             if (item === 'input') return
             this.contextMenuInput = ''
+            this.contextMenuVisible = false
             this.callUpdateFunction(item)
         },
         callUpdateFunction(newValue: string) {
@@ -91,11 +90,9 @@ export default defineComponent({
             }
         },
         onContextInputChanged(item: string) {
-            console.log('onContextInputChanged: ', item)
             this.contextMenuInput = item
         },
         getContextMenuOptions() {
-            console.log('getContextMenuOptions: ', this.icon.contextMenuSettings.options)
             let temp = []
             const tempFunction = getModelProperty(this.widgetModel, this.icon.contextMenuSettings.options, 'getValue', null)
             if (tempFunction && typeof tempFunction === 'function') temp = tempFunction()
