@@ -765,7 +765,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				 */
 				evt.map.forEachFeatureAtPixel(evt.pixel,
 					function(feature, layer) {
-						if (!featureFounded) {
+						
+						if (!layer.get("originalLayer").isStatic && !featureFounded) {
 							$scope.selectedLayer = layer;
 							$scope.selectedFeature = (Array.isArray(feature.get('features')) && feature.get('features').length == 1) ? feature.get('features')[0] : feature;
 							$scope.props = $scope.selectedFeature.getProperties();
