@@ -181,12 +181,19 @@ export default defineComponent({
                     },
                     updateFontWeight: (model: IWidget) => {
                         if (!model) return
-
                         model.styles.th['font-weight'] = model.styles.th['font-weight'] === 'bold' ? '' : 'bold'
                     },
                     boldIconIsActive: (model: IWidget) => {
                         console.log('>>> boldIconIsActive: ', model?.styles.th['font-weight'] === 'bold')
                         return model?.styles.th['font-weight'] === 'bold'
+                    },
+                    updateFontStyle: (model: IWidget) => {
+                        if (!model) return
+                        model.styles.th['font-style'] = model.styles.th['font-style'] === 'italic' ? '' : 'italic'
+                    },
+                    fontStyleIconIsActive: (model: IWidget) => {
+                        console.log('>>> fontStyleIconIsActive: ', model?.styles.th['font-style'] === 'italic')
+                        return model?.styles.th['font-style'] === 'italic'
                     }
                 }
             }

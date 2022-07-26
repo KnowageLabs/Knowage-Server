@@ -55,6 +55,6 @@ export default defineComponent({
 }
 
 .active-icon {
-    color: red;
+    color: blue;
 }
 </style>

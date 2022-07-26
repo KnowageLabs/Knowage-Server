@@ -57,7 +57,10 @@
                                                                         "isActiveFunction": "functions.boldIconIsActive"
                                                                     },
                                                                     {
-                                                                        "class": "fas fa-italic"
+                                                                        "class": "fas fa-italic",
+                                                                        "function": "functions.updateFontStyle",
+                                                                        "watchers": ["styles.th.font-style"],
+                                                                        "isActiveFunction": "functions.fontStyleIconIsActive"
                                                                     },
                                                                     {
                                                                         "class": "fas fa-text-height"
