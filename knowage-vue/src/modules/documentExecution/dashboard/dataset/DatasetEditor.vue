@@ -8,18 +8,16 @@
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('closeDatasetEditor')" />
                 </template>
             </Toolbar>
-            <div v-if="!loading" class="datasetEditor-container">
-                <div class="datasetEditor-tabs">
-                    <TabView>
-                        <TabPanel :header="$t('dashboard.datasetEditor.dataTabTitle')">
-                            <DataTab :dashboardDatasetsProp="dashboardDatasets" :availableDatasetsProp="availableDatasets" :selectedDatasetsProp="selectedDatasets" @addSelectedDatasets="addSelectedDatasets" />
-                        </TabPanel>
-                        <TabPanel :header="$t('dashboard.datasetEditor.associationsTabTitle')">
-                            <AssociationsTab :dashboardAssociationsProp="dashboardAssociations" :selectedDatasetsProp="selectedDatasets" />
-                        </TabPanel>
-                    </TabView>
-                </div>
-            </div>
+            <TabView v-if="!loading" class="datasetEditor-tabs">
+                <TabPanel :header="$t('dashboard.datasetEditor.dataTabTitle')">
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="logModel" />
+
+                    <DataTab :dashboardDatasetsProp="dashboardDatasets" :availableDatasetsProp="availableDatasets" :selectedDatasetsProp="selectedDatasets" @addSelectedDatasets="addSelectedDatasets" />
+                </TabPanel>
+                <TabPanel :header="$t('dashboard.datasetEditor.associationsTabTitle')">
+                    <AssociationsTab :dashboardAssociationsProp="dashboardAssociations" :selectedDatasetsProp="selectedDatasets" />
+                </TabPanel>
+            </TabView>
         </div>
     </Teleport>
 </template>
@@ -91,6 +89,9 @@ export default defineComponent({
                 this.selectedDatasets.push(dataset)
             })
             console.log('dataset Added -------', this.selectedDatasets)
+        },
+        logModel() {
+            console.log('MODEL --------------------', this.dashboardDatasets[0])
         }
     }
 })

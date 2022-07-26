@@ -2,7 +2,7 @@
     <div class="p-d-flex">
         <DataList class="p-my-2 p-ml-2 p-mr-1" style="flex: 0.5" :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" :selectedDatasetsProp="selectedDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @datasetSelected="selectDataset" />
         <DataDetail class="kn-flex p-my-2 p-mr-2 p-ml-1" :dashboardDatasetsProp="dashboardDatasetsProp" :selectedDatasetProp="selectedDataset" />
-        <!-- <DatasetEditorPreview class="kn-flex" :dashboardDatasetsProp="dashboardDatasetsProp" /> -->
+        <DatasetEditorPreview class="kn-flex" :dashboardDatasetsProp="dashboardDatasetsProp" />
     </div>
 </template>
 

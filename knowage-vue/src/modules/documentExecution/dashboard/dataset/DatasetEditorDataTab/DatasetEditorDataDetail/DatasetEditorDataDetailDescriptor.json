@@ -1,0 +1,20 @@
+{
+    "indexFields": [
+        {
+            "label": "dashboard.datasetEditor.dynamic",
+            "value": "dynamic"
+        },
+        {
+            "label": "dashboard.datasetEditor.static",
+            "value": "static"
+        }
+    ],
+    "style": {
+        "indexMultiselect": {
+            "width": "100%"
+        },
+        "indexInfoIcon": {
+            "color": "#929292"
+        }
+    }
+}
