@@ -15,6 +15,7 @@
         "cancel": "cancel",
         "category": "Category",
         "cc": "CC",
+        "center": "Center",
         "chipsHint": "Press Enter to confirm the input value",
         "choose": "choose",
         "clean": "Clean",
@@ -52,6 +53,7 @@
         "dragAndDropFileHere": "Drag and drop file here.",
         "driver": "Driver",
         "edit": "edit",
+        "enable": "Enable",
         "environment": "Environment",
         "error": {
             "allowedFileTypes": "File type allowed are {types}",
@@ -100,7 +102,7 @@
         "label": "label",
         "language": "Language",
         "lastChangeDate": "Last change date",
-        "left": "left",
+        "left": "Left",
         "library": "Library",
         "list": "List",
         "load": "Load",
@@ -145,7 +147,7 @@
         "required": "Required",
         "restore": "restore",
         "reused": "Reused",
-        "right": "right",
+        "right": "Right",
         "role": "Role",
         "roles": "Roles",
         "run": "Run",
@@ -183,6 +185,7 @@
         "temporal": "Temporal",
         "tenant": "tenant",
         "test": "test",
+        "text": "Text",
         "time": "Time",
         "title": "Title",
         "to": "to",
@@ -321,9 +324,31 @@
             "indexHint": "Indexes will be created on single selected columns."
         },
         "widgetEditor": {
+            "columnDetails": "Column Details",
+            "customHeaderTooltip": "Custom Header Tooltip",
+            "dragColumnsHint": "Drag columns here",
+            "enableTooltip": "Enable Tooltip",
+            "header": {
+                "allowMultiline": "Allow Multiline",
+                "enableHeader": "Enable Header",
+                "headerHeight": "Header height",
+                "headerHeightHint": "Header height in px (default is 25px)",
+                "title": "header"
+            },
+            "hidden": "Hidden",
             "itemsPerPage": "Items per page",
+            "manualInput": "Manual input",
             "pagination": "Pagination",
-            "selectDataset": "Select Dataset"
+            "precision": "Precision",
+            "prefix": "Prefix",
+            "selectDataset": "Select Dataset",
+            "selectedColumns": "Selected Columns",
+            "settingsListOptions": {
+                "tooltip": "Tooltip"
+            },
+            "sufix": "Sufix",
+            "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
+            "visualizationType": "Visualization Type"
         }
     },
     "documentBrowser": {

@@ -1,8 +1,7 @@
 <template>
-    <div v-if="visible" :class="class">
+    <div v-if="visible" :class="class" class="p-field-checkbox">
         <label v-if="label" class="kn-material-input-label p-mr-2"> {{ $t(label) }}</label>
-        <InputText :class="inputClass" class="kn-material-input p-inputtext-sm" :type="settings.type ?? 'text'" v-model="modelValue" :maxLength="settings.maxLength" :disabled="disabled" @input="onInput" @change="onChange" @blur="$emit('blur')" />
-        <small v-if="settings.hint">{{ $t(settings.hint, { placeholder: settings.hintPlaceholder }) }}</small>
+        <Checkbox v-model="modelValue" :binary="settings.binary" :disabled="disabled" @change="onChange" />
     </div>
 </template>
 
@@ -10,22 +9,22 @@
 import { defineComponent, PropType } from 'vue'
 import { getModelProperty } from '../WidgetEditorGenericHelper'
 import { IWidget } from '../../../../Dashboard'
+import Checkbox from 'primevue/checkbox'
 
 export default defineComponent({
-    name: 'widget-editor-input-text',
-    components: {},
+    name: 'widget-editor-checkbox',
+    components: { Checkbox },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         property: { type: String, required: true },
         label: { type: String },
         class: { type: String },
-        inputClass: { type: String },
         settings: { type: Object, required: true }
     },
-    emits: ['input', 'change', 'blur'],
+    emits: ['change'],
     data() {
         return {
-            modelValue: '' as string,
+            modelValue: '' as any,
             disabled: false,
             visible: false
         }
@@ -55,33 +54,26 @@ export default defineComponent({
             this.fieldIsDisabled()
             this.fieldIsVisible()
         },
-        onInput() {
-            this.$emit('input', this.modelValue)
-            this.callOnUpdateFunction()
-        },
         onChange() {
             this.$emit('change', this.modelValue)
-            this.callOnUpdateFunction()
+            if (this.settings.onUpdate) {
+                const tempFunction = getModelProperty(this.widgetModel, this.settings.onUpdate, 'getValue', null)
+                if (tempFunction && typeof tempFunction === 'function') tempFunction(this.widgetModel)
+            }
         },
         fieldIsDisabled() {
             console.log(' >>>>>> fieldIsDisabled  1', this.settings.visibilityCondition)
             if (!this.settings.disabledCondition) return (this.disabled = false)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.disabledCondition, 'getValue', null)
-            console.log(' >>>>>> fieldIsDisabled  2', tempFunction)
+            console.log(' >>>>>> fieldIsDisabled  2', tempFunction())
             if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel))
         },
         fieldIsVisible() {
-            // console.log(' >>>>>> fieldIsVisible INPUT 1', this.settings.visibilityCondition)
+            console.log(' >>>>>> fieldIsVisible INPUT 1', this.settings.visibilityCondition)
             if (!this.settings.visibilityCondition) return (this.visible = true)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.visibilityCondition, 'getValue', null)
-            // console.log(' >>>>>> fieldIsVisible INPUT 2', tempFunction(this.widgetModel))
+            console.log(' >>>>>> fieldIsVisible INPUT 2', tempFunction(this.widgetModel))
             if (tempFunction && typeof tempFunction === 'function') return (this.visible = tempFunction(this.widgetModel))
-        },
-        callOnUpdateFunction() {
-            if (this.settings.onUpdate) {
-                const tempFunction = getModelProperty(this.widgetModel, this.settings.onUpdate, 'getValue', null)
-                if (tempFunction && typeof tempFunction === 'function') tempFunction(this.widgetModel)
-            }
         }
     }
 })

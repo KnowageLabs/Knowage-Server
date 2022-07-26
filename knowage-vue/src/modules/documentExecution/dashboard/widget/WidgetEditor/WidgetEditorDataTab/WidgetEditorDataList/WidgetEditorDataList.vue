@@ -31,8 +31,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { AxiosResponse } from 'axios'
-import { IWidgetEditorDataset, IDatasetColumn } from '../../../../Dashboard'
+import { IWidgetEditorDataset, IDatasetColumn, IWidgetColumn } from '../../../../Dashboard'
+import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import mainStore from '../../../../../../../App.store'
@@ -64,6 +64,13 @@ export default defineComponent({
     },
     async created() {
         this.loadDatasets()
+        console.log('EVENT BUS IN DATALIST: ', emitter)
+        emitter.on('collumnAdded', (event) => {
+            this.removeColumn(event)
+        })
+        emitter.on('collumnRemoved', (event) => {
+            this.addColumn(event)
+        })
     },
     methods: {
         loadDatasets() {
@@ -91,17 +98,36 @@ export default defineComponent({
             console.log('showCalculatedFieldDialog() - TODO!')
         },
         loadDatasetColumns() {
+            // TODO - ADD Condition to ignore already selected columns
             this.selectedDatasetColumns = []
             if (!this.datasets || this.datasets.length === 0) return
 
             const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
-            if (index !== -1) this.selectedDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta
+            if (index !== -1)
+                this.selectedDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta.map((column: IDatasetColumn) => {
+                    return { ...column, dataset: this.selectedDataset?.id }
+                })
             console.log('loadDatasetColumns() - selectedDatasetColumns: ', this.selectedDatasetColumns)
         },
         onDragStart(event: any, datasetColumn: IDatasetColumn) {
             event.dataTransfer.setData('text/plain', JSON.stringify(datasetColumn))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
+        },
+        addColumn(column: IWidgetColumn) {
+            if (this.selectedDataset && column.dataset === this.selectedDataset.id && this.datasets) {
+                let tempDatasetColumns = null as IDatasetColumn[] | null
+                const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
+                if (index !== -1) tempDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta
+                if (!tempDatasetColumns) return
+                if (column.name.startsWith('(')) column.name = column.name.slice(1, -1)
+                const columnIndex = tempDatasetColumns.findIndex((tempColumn: any) => column.name === tempColumn.name)
+                if (columnIndex !== -1) this.selectedDatasetColumns.push({ ...tempDatasetColumns[columnIndex], dataset: this.selectedDataset.id })
+            }
+        },
+        removeColumn(column: IDatasetColumn) {
+            const index = this.selectedDatasetColumns.findIndex((tempColumn: IDatasetColumn) => tempColumn.name === column.name)
+            if (index !== -1) this.selectedDatasetColumns.splice(index, 1)
         }
     }
 })

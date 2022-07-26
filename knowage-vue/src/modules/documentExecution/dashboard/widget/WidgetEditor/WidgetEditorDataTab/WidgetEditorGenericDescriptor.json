@@ -1,0 +1,266 @@
+{
+    "tableWidget": [
+        {
+            "cardClasses": "p-d-flex p-flex-row p-ai-center",
+            "containers": [
+                {
+                    "components": [
+                        {
+                            "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
+                            "label": "dashboard.widgetEditor.pagination",
+                            "property": "settings.pagination.enabled",
+                            "settings": {},
+                            "type": "inputSwitch"
+                        },
+                        {
+                            "cssClass": "kn-flex p-m-2",
+                            "label": "dashboard.widgetEditor.itemsPerPage",
+                            "property": "settings.pagination.itemsNumber",
+                            "settings": {
+                                "disabledCondition": "functions.itemsPerPageIsDisabled",
+                                "type": "number",
+                                "watchers": ["settings.pagination.enabled"]
+                            },
+                            "type": "inputText"
+                        }
+                    ],
+                    "containerClasess": "p-d-flex p-flex-row p-ai-center"
+                }
+            ]
+        },
+        {
+            "cardClasses": "",
+            "containers": [
+                {
+                    "components": [
+                        {
+                            "columns": [
+                                {
+                                    "columnBodyStyle": "max-width: 200px",
+                                    "editableField": {
+                                        "function": "functions.updateColumnValue",
+                                        "type": "inputText"
+                                    },
+                                    "field": "alias"
+                                },
+                                {
+                                    "field": "name"
+                                },
+                                {
+                                    "columnBodyStyle": "max-width: 100px",
+                                    "editableField": {
+                                        "function": "functions.updateColumnValue",
+                                        "options": "functions.getColumnAggregationOptions",
+                                        "type": "dropdown",
+                                        "visibilityCondition": "functions.showAggregationDropdown"
+                                    },
+                                    "field": "aggregation"
+                                }
+                            ],
+                            "cssClass": "kn-material-input p-d-flex p-flex-row kn-flex p-m-2",
+                            "settings": {
+                                "buttonColumnStyle": {
+                                    "min-width": "125px",
+                                    "text-align": "end"
+                                },
+                                "buttons": [
+                                    {
+                                        "function": "functions.updateColumnVisibility",
+                                        "icon": "fa fa-eye",
+                                        "tooltip": "common.visibility"
+                                    },
+                                    {
+                                        "function": "functions.setSelectedColumn",
+                                        "icon": "fas fa-cog",
+                                        "tooltip": "common.edit"
+                                    },
+                                    {
+                                        "function": "functions.removeColumn",
+                                        "icon": "pi pi-trash",
+                                        "tooltip": "common.delete"
+                                    }
+                                ],
+                                "dataKey": "name",
+                                "dropIsActive": {
+                                    "dropFunction": "functions.onColumnDrop"
+                                },
+                                "hideHeaders": true,
+                                "iconColumn": "functions.getColumnIcons",
+                                "label": "dashboard.widgetEditor.selectedColumns",
+                                "property": "columns",
+                                "responsiveLayout": "stack",
+                                "rowReorder": {
+                                    "rowReorderColumnStyle": "width: 3rem"
+                                }
+                            },
+                            "titleFunction": "functions.getSelectedColumnTitle",
+                            "type": "dataTable"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "cardClasses": "p-d-flex p-flex-column",
+            "containers": [
+                {
+                    "components": [
+                        {
+                            "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                            "label": "common.alias",
+                            "property": "temp.selectedColumn.alias",
+                            "settings": {
+                                "onUpdate": "functions.updateSelectedColumn"
+                            },
+                            "type": "inputText"
+                        },
+                        {
+                            "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
+                            "label": "qbe.simpleTable.aggregation",
+                            "options": "functions.getColumnAggregationOptions",
+                            "property": "temp.selectedColumn.aggregation",
+                            "settings": {
+                                "onUpdate": "functions.updateSelectedColumn",
+                                "visibilityCondition": "functions.selectedColumnDropdownIsVisible"
+                            },
+                            "type": "dropdown"
+                        }
+                    ],
+                    "containerClasess": "p-d-flex p-flex-row p-ai-center"
+                },
+                {
+                    "components": [
+                        {
+                            "accordions": [
+                                {
+                                    "containers": [
+                                        {
+                                            "components": [
+                                                {
+                                                    "cssClass": "kn-material-input p-d-flex p-flex-row kn-flex p-m-2",
+                                                    "label": "dashboard.widgetEditor.hidden",
+                                                    "property": "temp.selectedColumn.style.hiddenColumn",
+                                                    "settings": {
+                                                        "onUpdate": "functions.updateSelectedColumn"
+                                                    },
+                                                    "type": "inputSwitch"
+                                                },
+                                                {
+                                                    "cssClass": "p-d-flex p-flex-column kn-flex-3 p-m-2",
+                                                    "label": "dashboard.widgetEditor.visualizationType",
+                                                    "options": "functions.getVisualizationTypeOptions",
+                                                    "property": "temp.selectedColumn.visType",
+                                                    "settings": {
+                                                        "onUpdate": "functions.updateSelectedColumn",
+                                                        "visibilityCondition": "functions.visualizationTypeDropdownIsVisible",
+                                                        "watchers": ["temp.selectedColumn.style.hiddenColumn"]
+                                                    },
+                                                    "type": "dropdown"
+                                                }
+                                            ],
+                                            "cssClasses": "p-d-flex p-flex-rows p-ai-center"
+                                        }
+                                    ],
+                                    "icon": "fa fa-table",
+                                    "title": "dashboard.widgetEditor.visualizationType"
+                                }
+                            ],
+                            "settings": {},
+                            "type": "accordion"
+                        },
+                        {
+                            "accordions": [
+                                {
+                                    "containers": [
+                                        {
+                                            "components": [
+                                                {
+                                                    "cssClass": "kn-material-input p-d-flex p-flex-row p-ai-center kn-flex p-m-2",
+                                                    "label": "dashboard.widgetEditor.enableTooltip",
+                                                    "property": "temp.selectedColumn.enableTooltip",
+                                                    "settings": {
+                                                        "onUpdate": "functions.updateSelectedColumn"
+                                                    },
+                                                    "type": "inputSwitch"
+                                                },
+                                                {
+                                                    "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                                                    "label": "dashboard.widgetEditor.prefix",
+                                                    "property": "temp.selectedColumn.style.tooltip.prefix",
+                                                    "settings": {
+                                                        "onUpdate": "functions.updateSelectedColumn"
+                                                    },
+                                                    "type": "inputText"
+                                                }
+                                            ],
+                                            "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                        },
+                                        {
+                                            "components": [
+                                                {
+                                                    "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
+                                                    "label": "dashboard.widgetEditor.sufix",
+                                                    "property": "temp.selectedColumn.style.tooltip.sufix",
+                                                    "settings": {
+                                                        "onUpdate": "functions.updateSelectedColumn"
+                                                    },
+                                                    "type": "inputText"
+                                                },
+                                                {
+                                                    "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
+                                                    "label": "dashboard.widgetEditor.precision",
+                                                    "property": "temp.selectedColumn.style.tooltip.precision",
+                                                    "settings": {
+                                                        "onUpdate": "functions.updateSelectedColumn",
+                                                        "type": "number",
+                                                        "visibilityCondition": "functions.tooltipPrecisionIsVisible"
+                                                    },
+                                                    "type": "inputText"
+                                                }
+                                            ],
+                                            "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                        },
+                                        {
+                                            "components": [
+                                                {
+                                                    "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
+                                                    "label": "dashboard.widgetEditor.customHeaderTooltip",
+                                                    "property": "temp.selectedColumn.style.enableCustomHeaderTooltip",
+                                                    "settings": {
+                                                        "binary": true,
+                                                        "onUpdate": "functions.updateSelectedColumn"
+                                                    },
+                                                    "type": "checkbox"
+                                                },
+                                                {
+                                                    "cssClass": "p-d-flex p-flex-column kn-flex-3 p-m-2",
+                                                    "label": "common.text",
+                                                    "property": "temp.selectedColumn.style.customHeaderTooltip",
+                                                    "settings": {
+                                                        "disabledCondition": "functions.tooltipCustomHeaderTextIsDisabled",
+                                                        "hint": "dashboard.widgetEditor.tooltipTextHint",
+                                                        "hintPlaceholder": "{..}",
+                                                        "onUpdate": "functions.updateSelectedColumn",
+                                                        "watchers": ["temp.selectedColumn.style.enableCustomHeaderTooltip"]
+                                                    },
+                                                    "type": "inputText"
+                                                }
+                                            ],
+                                            "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                        }
+                                    ],
+                                    "icon": "fa fa-comment",
+                                    "title": "dashboard.widgetEditor.settingsListOptions.tooltip"
+                                }
+                            ],
+                            "settings": {},
+                            "type": "accordion"
+                        }
+                    ]
+                }
+            ],
+            "title": "dashboard.widgetEditor.columnDetails",
+            "visibilityCondition": "functions.columnIsSelected"
+        }
+    ]
+}

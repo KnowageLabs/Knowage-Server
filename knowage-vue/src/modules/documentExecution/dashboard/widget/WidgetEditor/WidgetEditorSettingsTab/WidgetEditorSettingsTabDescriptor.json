@@ -1,0 +1,143 @@
+{
+    "tableWidget": {
+        "listOptions": [
+            {
+                "descriptor": [
+                    {
+                        "cardClasses": "p-d-flex p-flex-column",
+                        "containers": [
+                            {
+                                "components": [
+                                    {
+                                        "accordions": [
+                                            {
+                                                "containers": [
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.header.enableHeader",
+                                                                "property": "styles.th.enabled",
+                                                                "settings": {},
+                                                                "type": "inputSwitch"
+                                                            },
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.header.allowMultiline",
+                                                                "property": "styles.th.multiline",
+                                                                "settings": {
+                                                                    "binary": true,
+                                                                    "disabledCondition": "functions.headerIsDisabled",
+                                                                    "watchers": ["styles.th.enabled"]
+                                                                },
+                                                                "type": "checkbox"
+                                                            },
+                                                            {
+                                                                "cssClass": "kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.header.headerHeight",
+                                                                "property": "styles.th.height",
+                                                                "settings": {
+                                                                    "disabledCondition": "functions.headerIsDisabled",
+                                                                    "hint": "dashboard.widgetEditor.header.headerHeightHint",
+                                                                    "watchers": ["styles.th.enabled"]
+                                                                },
+                                                                "type": "inputText"
+                                                            }
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                                    },
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "icons": [
+                                                                    {
+                                                                        "class": "fas fa-bold",
+                                                                        "function": "functions.updateFontWeight",
+                                                                        "isActiveFunction": "functions.boldIconIsActive",
+                                                                        "watchers": ["styles.th.font-weight"]
+                                                                    },
+                                                                    {
+                                                                        "class": "fas fa-italic",
+                                                                        "function": "functions.updateFontStyle",
+                                                                        "isActiveFunction": "functions.fontStyleIconIsActive",
+                                                                        "watchers": ["styles.th.font-style"]
+                                                                    },
+                                                                    {
+                                                                        "arrowDownIcon": true,
+                                                                        "class": "fas fa-text-height",
+                                                                        "contextMenuSettings": {
+                                                                            "options": "functions.getFontSizeOptions",
+                                                                            "translateLabels": true,
+                                                                            "onUpdate": "functions.updateFontSize"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "arrowDownIcon": true,
+                                                                        "class": "fas fa-align-left",
+                                                                        "contextMenuSettings": {
+                                                                            "options": "functions.getCellAlignmentOptions",
+                                                                            "translateLabels": true,
+                                                                            "onUpdate": "functions.updateCellAlignment"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "arrowDownIcon": true,
+                                                                        "class": "fas fa-font",
+                                                                        "contextMenuSettings": {
+                                                                            "options": "functions.getFontFamilyOptions",
+                                                                            "translateLabels": true,
+                                                                            "onUpdate": "functions.updateFontFamily"
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "arrowDownIcon": true,
+                                                                        "class": "fas fa-fill-drip",
+                                                                        "colorCircleIcon": true
+                                                                    },
+                                                                    {
+                                                                        "arrowDownIcon": true,
+                                                                        "class": "fas fa-paint-roller",
+                                                                        "colorCircleIcon": true
+                                                                    },
+                                                                    {
+                                                                        "arrowDownIcon": true,
+                                                                        "class": "fas fa-icons"
+                                                                    }
+                                                                ],
+                                                                "settings": {},
+                                                                "type": "styleToolbar"
+                                                            }
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                                    }
+                                                ],
+                                                "title": "dashboard.widgetEditor.header.title"
+                                            }
+                                        ],
+                                        "settings": {},
+                                        "type": "accordion"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "icon": "fa fa-table",
+                "label": "common.style",
+                "value": "Style"
+            },
+            {
+                "descriptor": {},
+                "icon": "fa fa-table",
+                "label": "TODO",
+                "value": "TODO"
+            }
+        ],
+        "listSettings": {
+            "filter": true,
+            "filterFields": ["label"],
+            "label": "common.settings",
+            "translatedTitleField": "label"
+        }
+    }
+}

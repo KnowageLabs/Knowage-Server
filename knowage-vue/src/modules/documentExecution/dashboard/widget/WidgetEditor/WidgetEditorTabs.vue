@@ -4,7 +4,9 @@
             <TabPanel header="Data">
                 <WidgetEditorDataTab :propWidget="propWidget" :datasets="datasets" :modelDatasets="modelDatasets" @datasetSelected="$emit('datasetSelected', $event)"></WidgetEditorDataTab>
             </TabPanel>
-            <TabPanel header="Settings"> Content II </TabPanel>
+            <TabPanel header="Settings">
+                <WidgetEditorSettingsTab :propWidget="propWidget"></WidgetEditorSettingsTab>
+            </TabPanel>
         </TabView>
     </div>
 </template>
@@ -18,11 +20,12 @@ import { IWidget } from '../../Dashboard'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import WidgetEditorDataTab from './WidgetEditorDataTab/WidgetEditorDataTab.vue'
+import WidgetEditorSettingsTab from './WidgetEditorSettingsTab/WidgetEditorSettingsTab.vue'
 
 export default defineComponent({
     name: 'widget-editor-tabs',
-    components: { TabView, TabPanel, WidgetEditorDataTab },
-    props: { propWidget: { type: Object as PropType<IWidget> }, datasets: { type: Array } },
+    components: { TabView, TabPanel, WidgetEditorDataTab, WidgetEditorSettingsTab },
+    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array } },
     emits: ['datasetSelected'],
     data() {
         return {

@@ -18,12 +18,13 @@
  * ! this component will be in charge of managing the widget editing.
  */
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IDatasetOptions, IWidget } from '../../Dashboard'
+import { IWidgetEditorDataset, IDatasetOptions, IWidget, IWidgetColumn } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
+import { emitter } from '../../DashboardHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
 import WidgetEditorTabs from './WidgetEditorTabs.vue'
 import mainStore from '../../../../../App.store'
-import deepcopy from 'deepcopy'
+import descriptor from './WidgetEditorDescriptor.json'
 
 export default defineComponent({
     name: 'widget-editor',
@@ -32,6 +33,7 @@ export default defineComponent({
     props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array } },
     data() {
         return {
+            descriptor,
             widget: {} as any,
             previewData: null as any,
             datasetFunctions: {} as { availableFunctions: string[]; nullifFunction: string[] }
@@ -59,44 +61,168 @@ export default defineComponent({
             // TODO - remove hardcoded
             const widget = {
                 type: 'tableWidget',
-                columns: [
-                    {
-                        dataset: 1,
-                        name: 'column1',
-                        alias: 'column1 alias',
-                        type: 'java.math.BigDecimal',
-                        fieldType: 'MEASURE',
-                        aggregation: 'SUM'
-                    },
-                    {
-                        dataset: 2,
-                        name: 'column2',
-                        alias: 'column2 alias',
-                        type: 'java.math.BigDecimal',
-                        fieldType: 'ATTRIBUTE',
-                        aggregation: 'SUM'
-                    }
-                ],
+                columns: [],
                 conditionalStyles: [],
                 datasets: [],
                 interactions: [],
                 theme: '',
-                styles: {},
-                settings: {}
+                styles: {
+                    th: {
+                        enabled: true,
+                        'background-color': 'rgb(255, 255, 255)',
+                        color: 'rgb(137, 158, 175)',
+                        'justify-content': 'flex-start',
+                        'font-size': '14px',
+                        multiline: false,
+                        height: 25,
+                        'font-style': '',
+                        'font-weight': '',
+                        'font-family': ''
+                    }
+                },
+                settings: {},
+                temp: {}
             } as any
             if (widget.type === 'tableWidget') {
                 widget.settings.pagination = { enabled: false, itemsNumber: 0 }
                 widget.functions = {
-                    disabledTest: () => {
-                        console.log('DISABLED TEST CALLED! ')
+                    itemsPerPageIsDisabled: () => {
                         return !widget.settings.pagination.enabled
                     },
-                    getColumnIcons(column: any) {
-                        console.log('getColumnIcons TEST CALLED! ', column)
+                    getColumnIcons: (column: any) => {
                         return column.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'
                     },
-                    onColumnDrop(column: any) {
-                        console.log('onColumnDrop  CALLED! ', column)
+                    onColumnDrop: (event: any, model: IWidget) => {
+                        if (event.dataTransfer.getData('text/plain') === 'b') return
+                        const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
+                        const tempColumn = {
+                            dataset: eventData.dataset,
+                            name: '(' + eventData.name + ')',
+                            alias: eventData.alias,
+                            type: eventData.type,
+                            fieldType: eventData.fieldType,
+                            aggregation: eventData.aggregation,
+                            style: {
+                                hiddenColumn: false,
+                                'white-space': 'nowrap',
+                                tooltip: { prefix: '', suffix: '', precision: 0 },
+                                enableCustomHeaderTooltip: false,
+                                customHeaderTooltip: ''
+                            },
+                            enableTooltip: false,
+                            visType: ''
+                        }
+                        tempColumn.aggregation = 'NONE'
+
+                        model.columns.push(tempColumn)
+                        emitter.emit('collumnAdded', eventData)
+                    },
+                    updateColumnVisibility: (column: IWidgetColumn, model: IWidget) => {
+                        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
+                        if (index !== -1) {
+                            if (!model.columns[index].style) {
+                                model.columns[index].style = {}
+                            }
+                            ;(model.columns[index].style.hiddenColumn = false), (model.columns[index].style['white-space'] = 'nowrap')
+                            model.columns[index].style.hiddenColumn = !model.columns[index].style.hiddenColumn
+                        }
+                    },
+                    removeColumn: (column: IWidgetColumn, model: IWidget) => {
+                        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
+                        if (index !== -1) {
+                            model.columns.splice(index, 1)
+                            emitter.emit('collumnRemoved', column)
+                        }
+                    },
+                    updateColumnValue: (column: IWidgetColumn, model: IWidget, field: string) => {
+                        if (!model || !model.columns) return
+                        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
+                        if (index !== -1) {
+                            model.columns[index][field] = column[field]
+                            if (model.columns[index][field].fieldType === 'ATTRIBUTE') model.columns[index][field].aggregation = 'NONE'
+                            if (model.temp.selectedColumn.name === model.columns[index].name) model.temp.selectedColumn = { ...model.columns[index] }
+                        }
+                    },
+                    getColumnAggregationOptions: () => {
+                        return this.descriptor.columnAggregationOptions
+                    },
+                    showAggregationDropdown: (column: IWidgetColumn) => {
+                        return column.fieldType === 'MEASURE'
+                    },
+                    setSelectedColumn: (column: IWidgetColumn, model: IWidget) => {
+                        if (!model || !model.temp) return
+                        model.temp.selectedColumn = { ...column }
+                    },
+                    columnIsSelected: (model: IWidget) => {
+                        return model && model.temp.selectedColumn
+                    },
+                    updateSelectedColumn: (model: IWidget) => {
+                        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === model.temp.selectedColumn.name)
+                        if (index !== -1) model.columns[index] = { ...model.temp.selectedColumn }
+                    },
+                    selectedColumnDropdownIsVisible: (model: IWidget) => {
+                        return model?.temp.selectedColumn?.fieldType === 'MEASURE'
+                    },
+                    getVisualizationTypeOptions: () => {
+                        return this.descriptor.visualizationTypeOptions
+                    },
+                    visualizationTypeDropdownIsVisible: (model: IWidget) => {
+                        return model?.temp.selectedColumn?.fieldType === 'MEASURE'
+                    },
+                    tooltipPrecisionIsVisible: (model: IWidget) => {
+                        return model?.temp.selectedColumn?.fieldType === 'MEASURE'
+                    },
+                    tooltipCustomHeaderTextIsDisabled: (model: IWidget) => {
+                        console.log('tooltipCustomHeaderTextIsDisabled()', model?.temp.selectedColumn?.style.enableCustomHeaderTooltip)
+                        return !model?.temp.selectedColumn?.style.enableCustomHeaderTooltip
+                    },
+                    headerIsDisabled: (model: IWidget) => {
+                        return !model?.styles.th.enabled
+                    },
+                    updateFontWeight: (model: IWidget) => {
+                        if (!model) return
+                        model.styles.th['font-weight'] = model.styles.th['font-weight'] === 'bold' ? '' : 'bold'
+                    },
+                    boldIconIsActive: (model: IWidget) => {
+                        console.log('>>> boldIconIsActive: ', model?.styles.th['font-weight'] === 'bold')
+                        return model?.styles.th['font-weight'] === 'bold'
+                    },
+                    updateFontStyle: (model: IWidget) => {
+                        if (!model) return
+                        model.styles.th['font-style'] = model.styles.th['font-style'] === 'italic' ? '' : 'italic'
+                    },
+                    fontStyleIconIsActive: (model: IWidget) => {
+                        return model?.styles.th['font-style'] === 'italic'
+                    },
+                    getFontSizeOptions: () => {
+                        console.log('>>> getFontSizeOptions: ', this.descriptor.fontSizeOptions)
+
+                        return this.descriptor.fontSizeOptions
+                    },
+                    updateFontSize: (newValue: string, model: IWidget) => {
+                        console.log('>>> updateFontSize: ', model)
+                        if (!model) return
+                        model.styles.th['font-size'] = newValue
+                    },
+                    getCellAlignmentOptions: () => {
+                        console.log('>>> getcellAlignmentOptions: ', this.descriptor.cellAlignmentOptions)
+
+                        return this.descriptor.cellAlignmentOptions
+                    },
+                    updateCellAlignment: (newValue: string, model: IWidget) => {
+                        console.log('>>> updateCellAlignment: ', model)
+                        if (!model) return
+                        model.styles.th['justify-content'] = newValue
+                    },
+                    getFontFamilyOptions: () => {
+                        console.log('>>> getFontFamilyOptions: ', this.descriptor.fontFamilyOptions)
+
+                        return this.descriptor.fontFamilyOptions
+                    },
+                    updateFontFamily: (newValue: string, model: IWidget) => {
+                        console.log('>>> updateFontFamily: ', model)
+                        if (!model) return
+                        model.styles.th['font-family'] = newValue
                     }
                 }
             }

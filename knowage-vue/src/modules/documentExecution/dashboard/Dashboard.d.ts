@@ -7,13 +7,25 @@ export interface ISheet {
 export interface IWidget {
     id?: string
     type: string
-    columns: IDatasetColumn[]
+    columns: IWidgetColumn[]
     conditionalStyles: any[]
     datasets: any[]
     interactions: any[]
     theme: string
     styles: any
     settings: any
+    temp?: any
+    functions?: any
+}
+
+export interface IWidgetColumn {
+    dataset: number
+    name: string
+    alias: string
+    type: string
+    fieldType: string
+    aggregation: string
+    style: any
 }
 
 export interface IInteraction {
@@ -46,7 +58,7 @@ export interface IDatasetOptions {
     indexes: any[]
 }
 
-interface IDatasetOptionCategory {
+export interface IDatasetOptionCategory {
     id: string
     alias: string
     columnName: string
@@ -54,7 +66,8 @@ interface IDatasetOptionCategory {
     funct: string
 }
 
-interface IDatasetColumn {
+export interface IDatasetColumn {
+    dataset?: number
     name: string
     alias: string
     type: string
