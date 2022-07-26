@@ -45,10 +45,8 @@ export default defineComponent({
     methods: {
         getIndexesFromModel() {
             this.datasetIndexes = this.dashboardDatasetsProp?.find((dataset) => dataset.id === this.selectedDatasetProp.id.dsId).indexes
-            console.log(this.datasetIndexes)
         },
         updateDatasetIndexes(event) {
-            console.log(event.value)
             this.dashboardDatasetsProp.find((dataset) => dataset.id === this.selectedDatasetProp.id.dsId).indexes = event.value
         }
     }
