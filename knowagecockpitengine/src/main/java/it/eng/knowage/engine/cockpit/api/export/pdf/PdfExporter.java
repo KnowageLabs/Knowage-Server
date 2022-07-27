@@ -18,6 +18,8 @@
 
 package it.eng.knowage.engine.cockpit.api.export.pdf;
 
+import static java.util.Objects.nonNull;
+
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -44,7 +47,6 @@ import be.quodlibet.boxable.HorizontalAlignment;
 import be.quodlibet.boxable.Row;
 import be.quodlibet.boxable.VerticalAlignment;
 import it.eng.knowage.engine.cockpit.api.export.AbstractFormatExporter;
-import it.eng.qbe.serializer.SerializationException;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.SingletonConfig;
@@ -58,7 +60,8 @@ public class PdfExporter extends AbstractFormatExporter {
 
 	private static final float POINTS_PER_INCH = 72;
 	private static final float POINTS_PER_MM = 1 / (10 * 2.54f) * POINTS_PER_INCH;
-	private final static int DEFAULT_COLUMN_WIDTH = 150;
+	private static final int DEFAULT_COLUMN_WIDTH = 150;
+
 	private float totalColumnsWidth = 0;
 	private float[] columnPercentWidths;
 	private List<Integer> pdfHiddenColumns;
@@ -187,6 +190,20 @@ public class PdfExporter extends AbstractFormatExporter {
 
 			table.addHeaderRow(headerRow);
 
+			// Check if summary row is enabled
+			boolean summaryRowEnabled = false;
+			String summaryRowLabel = null;
+
+			JSONObject summary = settings.getJSONObject("summary");
+			if (nonNull(summary)) {
+				summaryRowEnabled = Boolean.parseBoolean(summary.getString("enabled"));
+				JSONArray list = summary.getJSONArray("list");
+				int listLenght = list.length();
+				if (listLenght > 0) {
+					summaryRowLabel = list.getJSONObject(0).getString("label");
+				}
+			}
+
 			DateFormat inputDateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
 
 			for (int r = 0; r < rows.length(); r++) {
@@ -230,6 +247,14 @@ public class PdfExporter extends AbstractFormatExporter {
 								LOGGER.warn("Cannot format date {" + valueStr + "} according to format {" + columnDateFormats[c] + "}", e);
 							}
 						}
+
+						// If summary row is enabled, add the summary label to the value
+						if (r == (rows.length() - 1)
+								&& summaryRowEnabled
+								&& !StringUtils.isEmpty(valueStr)) {
+							valueStr = summaryRowLabel + " " + valueStr;
+						}
+
 						Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr, HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
 						// first of all set alternate rows color
 						if (settings != null && settings.has("alternateRows")) {
