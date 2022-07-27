@@ -79,6 +79,18 @@
 	]]>
 	</FORMULA>
 
+	<FORMULA name="getCurrentDateTimeMinusOneDay" description="#scheduler.formulas.getCurrentDateTimeMinusOneDay">
+	<![CDATA[
+	String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+	return java.time.ZonedDateTime.now().minusDays(1).format(java.time.format.DateTimeFormatter.ofPattern(DATE_FORMAT));
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentDateTimePlusOneDay" description="#scheduler.formulas.getCurrentDateTimePlusOneDay">
+	<![CDATA[
+	String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+	return java.time.ZonedDateTime.now().plusDays(1).format(java.time.format.DateTimeFormatter.ofPattern(DATE_FORMAT));
+	]]>
+	</FORMULA>
 
 
 
@@ -126,6 +138,17 @@
 	<FORMULA name="getCurrentDateTimePlusOneYearISO8601" description="#scheduler.formulas.getCurrentDateTimePlusOneYearISO8601">
 	<![CDATA[
 	return java.time.ZonedDateTime.now().plusYears(1).format(java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+	]]>
+	</FORMULA>
+
+	<FORMULA name="getCurrentDateTimeMinusOneDayISO8601" description="#scheduler.formulas.getCurrentDateTimeMinusOneDayISO8601">
+	<![CDATA[
+	return java.time.ZonedDateTime.now().minusDays(1).format(java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+	]]>
+	</FORMULA>
+	<FORMULA name="getCurrentDateTimePlusOneDayISO8601" description="#scheduler.formulas.getCurrentDateTimePlusOneDayISO8601">
+	<![CDATA[
+	return java.time.ZonedDateTime.now().plusDays(1).format(java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 	]]>
 	</FORMULA>
 
