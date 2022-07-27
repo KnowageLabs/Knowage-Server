@@ -1,4 +1,18 @@
 {
+    "knListSettings": {
+        "buttons": [
+            {
+                "emits": "delete",
+                "icon": "fas fa-trash-alt",
+                "label": "common.delete"
+            }
+        ],
+        "defaultSortField": "label",
+        "interaction": {
+            "type": "event"
+        },
+        "titleField": "label"
+    },
     "listboxSettings": {
         "avatar": {
             "property": "type",
@@ -101,6 +115,16 @@
                         "color": "white"
                     }
                 }
+            }
+        }
+    },
+    "style": {
+        "list": {
+            "listIcon": {
+                "color": "#929292"
+            },
+            "listItem": {
+                "height": "30px"
             }
         }
     }

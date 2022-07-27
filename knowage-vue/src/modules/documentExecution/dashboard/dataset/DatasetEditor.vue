@@ -8,10 +8,15 @@
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('closeDatasetEditor')" />
                 </template>
             </Toolbar>
-            <div class="datasetEditor-container">
-                <DatasetEditorTabs :dashboardDatasetsProp="dashboardDatasets" />
-                <DatasetEditorPreview :dashboardDatasetsProp="dashboardDatasets" />
-            </div>
+            <TabView v-if="!loading" class="datasetEditor-tabs">
+                <TabPanel :header="$t('dashboard.datasetEditor.dataTabTitle')">
+                    <!-- <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="logModel" /> -->
+                    <DataTab :dashboardDatasetsProp="dashboardDatasets" :availableDatasetsProp="availableDatasets" :selectedDatasetsProp="selectedDatasets" @addSelectedDatasets="addSelectedDatasets" />
+                </TabPanel>
+                <TabPanel :header="$t('dashboard.datasetEditor.associationsTabTitle')">
+                    <AssociationsTab :dashboardAssociationsProp="dashboardAssociations" :selectedDatasetsProp="selectedDatasets" />
+                </TabPanel>
+            </TabView>
         </div>
     </Teleport>
 </template>
@@ -21,20 +26,27 @@
  * ! this component will be in charge of managing the dataset.
  */
 import { defineComponent } from 'vue'
-import DatasetEditorTabs from './DatasetEditorTabs.vue'
-import DatasetEditorPreview from './DatasetEditorPreview.vue'
+import { AxiosResponse } from 'axios'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
+import DataTab from './DatasetEditorDataTab/DatasetEditorDataTab.vue'
+import AssociationsTab from './DatasetEditorAssociations/DatasetEditorAssociations.vue'
 import mainStore from '../../../../App.store'
 import dashStore from '../Dashboard.store'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'dataset-editor',
-    components: { DatasetEditorTabs, DatasetEditorPreview },
+    components: { TabView, TabPanel, DataTab, AssociationsTab },
     props: {},
     emits: ['closeDatasetEditor'],
     data() {
         return {
-            dashboardDatasets: {} as any
+            loading: false,
+            dashboardDatasets: {} as any,
+            dashboardAssociations: {} as any,
+            availableDatasets: {} as any,
+            selectedDatasets: [] as any
         }
     },
     setup() {
@@ -45,9 +57,42 @@ export default defineComponent({
     created() {
         console.log('STORE MODEL', this.dashboardStore.$state.dashboards[1])
         this.dashboardDatasets = deepcopy(this.dashboardStore.$state.dashboards[1].configuration.datasets)
+        this.dashboardAssociations = deepcopy(this.dashboardStore.$state.dashboards[1].configuration.associations)
+        this.getDatasets()
     },
 
-    methods: {}
+    methods: {
+        async getDatasets() {
+            this.store.setLoading(true)
+            this.loading = true
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/?asPagedList=true&seeTechnical=true`)
+                .then((response: AxiosResponse<any>) => {
+                    this.availableDatasets = response.data.item
+                    this.selectedDatasets = this.filterSelectedFromAvailableDatasets()
+                })
+                .finally(() => {
+                    this.store.setLoading(false)
+                    this.loading = false
+                })
+        },
+        filterSelectedFromAvailableDatasets() {
+            return this.availableDatasets?.filter((responseDataset) => {
+                return this.dashboardDatasets?.find((dashboardDataset) => {
+                    return responseDataset.id.dsId === dashboardDataset.id
+                })
+            })
+        },
+        addSelectedDatasets(datasetsToAdd) {
+            datasetsToAdd.forEach((dataset) => {
+                this.selectedDatasets.push(dataset)
+            })
+            console.log('dataset Added -------', this.selectedDatasets)
+        },
+        logModel() {
+            console.log('MODEL --------------------', this.dashboardDatasets[0])
+        }
+    }
 })
 </script>
 <style lang="scss">
@@ -64,6 +109,24 @@ export default defineComponent({
     .datasetEditor-container {
         flex: 1;
         display: flex;
+    }
+}
+.datasetEditor-tabs.p-tabview {
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    .p-tabview-panels {
+        overflow: auto;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        .p-tabview-panel {
+            overflow: auto;
+            display: flex;
+            flex: 1;
+        }
     }
 }
 </style>

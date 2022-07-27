@@ -1,24 +1,34 @@
 <template>
-    <div class="p-d-flex">
-        <DataList :dashboardDatasetsProp="dashboardDatasetsProp" class="kn-flex p-my-2 p-ml-2 p-mr-1" />
-        <DataDetail :dashboardDatasetsProp="dashboardDatasetsProp" class="kn-flex p-my-2 p-mr-2 p-ml-1" />
-    </div>
+    <DataList class="" :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" :selectedDatasetsProp="selectedDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @datasetSelected="selectDataset" />
+    <DataDetail class="kn-flex" :dashboardDatasetsProp="dashboardDatasetsProp" :selectedDatasetProp="selectedDataset" />
+    <DatasetEditorPreview class="kn-flex" :dashboardDatasetsProp="dashboardDatasetsProp" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import DataList from './DatasetEditorDataList/DatasetEditorDataList.vue'
 import DataDetail from './DatasetEditorDataDetail/DatasetEditorDataDetail.vue'
+import DatasetEditorPreview from '../DatasetEditorPreview.vue'
 
 export default defineComponent({
     name: 'dataset-editor-data-tab',
-    components: { DataList, DataDetail },
-    props: { dashboardDatasetsProp: { required: true, type: Array } },
-    emits: [],
+    components: { DataList, DataDetail, DatasetEditorPreview },
+    props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any }, selectedDatasetsProp: { required: true, type: Array as any } },
+    emits: ['addSelectedDatasets'],
     data() {
-        return {}
+        return {
+            selectedDataset: {} as any
+        }
     },
     async created() {},
-    methods: {}
+    methods: {
+        selectDataset(datasetId) {
+            this.selectedDataset = this.availableDatasetsProp.find((dataset) => dataset.id.dsId === datasetId)
+            console.log('selectedDataset', this.selectedDataset)
+        },
+        addSelectedDatasets(datasetsToAdd) {
+            this.$emit('addSelectedDatasets', datasetsToAdd)
+        }
+    }
 })
 </script>

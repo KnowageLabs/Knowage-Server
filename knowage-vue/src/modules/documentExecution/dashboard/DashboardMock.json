@@ -18,15 +18,22 @@
         "datasets": [
             {
                 "cache": true,
-                "id": 1,
-                "label": "test_dataset",
+                "id": 186,
+                "indexes": ["Employee id", "Calc NUMBER"],
                 "parameters": [
                     {
-                        "name": "parameter",
-                        "type": "single"
+                        "multivalue": false,
+                        "name": "Dataset Parameter 1",
+                        "type": "static",
+                        "value": "Static 1"
+                    },
+                    {
+                        "multivalue": false,
+                        "name": "Dynamic Param",
+                        "type": "dynamic",
+                        "value": "Dynamic 1"
                     }
-                ],
-                "type": "SbiQueryDataSet"
+                ]
             }
         ],
         "description": "a long description that could be used in some places",

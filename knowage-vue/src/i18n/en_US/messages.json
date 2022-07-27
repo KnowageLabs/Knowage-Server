@@ -316,7 +316,12 @@
         "datasetEditor": {
             "associationsTabTitle": "Associations",
             "dataTabTitle": "Data",
-            "title": "Dataset Manageent"
+            "title": "Dataset Manageent",
+            "cached": "Cached",
+            "static": "Static",
+            "dynamic": "Dynamic",
+            "indexPresentMsg": "Index already exists!",
+            "indexHint": "Indexes will be created on single selected columns."
         },
         "widgetEditor": {
             "columnDetails": "Column Details",

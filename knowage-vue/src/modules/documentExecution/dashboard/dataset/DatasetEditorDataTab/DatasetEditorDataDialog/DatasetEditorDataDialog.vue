@@ -50,14 +50,13 @@
         </DataTable>
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="$emit('close')" />
-            <Button class="kn-button kn-button--primary" v-t="'common.add'" @click="formatSelectedDatasets" />
+            <Button class="kn-button kn-button--primary" v-t="'common.add'" @click="addSelectedDatasets" />
         </template>
     </Dialog>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { AxiosResponse } from 'axios'
+import { defineComponent } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
@@ -68,13 +67,12 @@ import dashStore from '../../../Dashboard.store'
 export default defineComponent({
     name: 'datasets-catalog-datatable',
     components: { Column, DataTable, Dialog, Chip },
-    props: { dashboardDatasetsProp: { required: true, type: Array as any } },
+    props: { selectedDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any } },
     emits: ['close', 'addSelectedDatasets'],
     data() {
         return {
             dataDialogDescriptor,
             datasets: [] as any[],
-            modelDatasets: [] as any[],
             filteredDatasets: [] as any[],
             selectedDatasets: [] as any,
             searchWord: '',
@@ -86,27 +84,20 @@ export default defineComponent({
         return { dashboardStore }
     },
     async created() {
-        await this.getWidgetTypes()
+        await this.setDatasetList()
     },
     updated() {
         this.filteredDatasets = [...this.datasets]
     },
     methods: {
-        async getWidgetTypes() {
-            //TODO: Which service to use? Because we need only basic info, we can use the fastest service. Maybe make new service like one for dataprep 3.0?
-            this.loading = true
-            await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/?asPagedList=true&seeTechnical=true`)
-                .then((response: AxiosResponse<any>) => {
-                    this.datasets = this.filterOutSelectedDatasets(this.dashboardDatasetsProp, response.data.item)
-                    this.filteredDatasets = [...this.datasets]
-                })
-                .finally(() => (this.loading = false))
+        async setDatasetList() {
+            this.datasets = this.filterOutSelectedDatasets(this.selectedDatasetsProp, this.availableDatasetsProp)
+            this.filteredDatasets = [...this.datasets]
         },
         filterOutSelectedDatasets(selectedDatasets, allDatasets) {
             return allDatasets.filter((responseDataset) => {
-                return !selectedDatasets.find((dashboardDataset) => {
-                    return responseDataset.id.dsId === dashboardDataset.id
+                return !selectedDatasets.find((selectedDataset) => {
+                    return responseDataset.id.dsId === selectedDataset.id.dsId
                 })
             })
         },
@@ -132,11 +123,8 @@ export default defineComponent({
             }
             return tagFound
         },
-        formatSelectedDatasets() {
-            let formattedDatasets = this.selectedDatasets.map((dataset) => {
-                return { id: dataset.id.dsId, label: dataset.label, parameters: dataset.parameters ?? [], type: dataset.type, cache: false }
-            })
-            this.$emit('addSelectedDatasets', formattedDatasets)
+        addSelectedDatasets() {
+            this.$emit('addSelectedDatasets', this.selectedDatasets)
         }
     }
 })
