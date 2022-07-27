@@ -937,12 +937,19 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
-            if (temp.length > 1) {
+            const crossTarget = this.findCrossTargetByCrossName(angularData, temp)
+
+            if (!crossTarget && temp.length > 1) {
                 this.crossNavigationDocuments = temp
                 this.destinationSelectDialogVisible = true
             } else {
-                this.loadCrossNavigation(temp[0], angularData)
+                this.loadCrossNavigation(crossTarget ?? temp[0], angularData)
             }
+        },
+        findCrossTargetByCrossName(angularData: any, temp: any[]) {
+            if (!angularData || !temp) return
+            const index = temp.findIndex((el: any) => el.crossName === angularData.targetCrossNavigation.crossName)
+            return index !== -1 ? temp[index] : null
         },
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
             this.formatAngularOutputParameters(angularData.otherOutputParameters)
