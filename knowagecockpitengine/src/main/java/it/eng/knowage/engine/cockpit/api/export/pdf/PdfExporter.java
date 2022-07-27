@@ -54,19 +54,21 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class PdfExporter extends AbstractFormatExporter {
 
-	static private Logger logger = Logger.getLogger(PdfExporter.class);
+	private static final Logger LOGGER = Logger.getLogger(PdfExporter.class);
+
 	private static final float POINTS_PER_INCH = 72;
 	private static final float POINTS_PER_MM = 1 / (10 * 2.54f) * POINTS_PER_INCH;
 	private final static int DEFAULT_COLUMN_WIDTH = 150;
 	private float totalColumnsWidth = 0;
 	private float[] columnPercentWidths;
 	private List<Integer> pdfHiddenColumns;
+	private CssColorParser cssColorParser = CssColorParser.getInstance();
 
 	public PdfExporter(String userUniqueIdentifier, JSONObject body) {
 		super(userUniqueIdentifier, body);
 	}
 
-	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString) throws JSONException, SerializationException {
+	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString) throws JSONException {
 		if (templateString == null) {
 			ObjTemplate template = null;
 			String message = "Unable to get template for document with id [" + documentId + "] and label [" + documentLabel + "]";
@@ -92,7 +94,6 @@ public class PdfExporter extends AbstractFormatExporter {
 
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			document.save(byteArrayOutputStream);
-			document.close();
 			return byteArrayOutputStream.toByteArray();
 		} catch (IOException e) {
 			throw new SpagoBIRuntimeException("Unable to generate output file", e);
@@ -213,10 +214,10 @@ public class PdfExporter extends AbstractFormatExporter {
 									valueStr = valueStr.substring(0, pos + precision + offset);
 								} catch (Exception e) {
 									// value stays as it is
-									logger.error("Cannot format value according to precision", e);
+									LOGGER.error("Cannot format value according to precision", e);
 								}
 							} else {
-								logger.warn("Cannot format raw value {" + valueStr + "} with precision {" + precision + "}");
+								LOGGER.warn("Cannot format raw value {" + valueStr + "} with precision {" + precision + "}");
 							}
 						}
 						if (type.equalsIgnoreCase("date")) {
@@ -226,7 +227,7 @@ public class PdfExporter extends AbstractFormatExporter {
 								valueStr = outputDateFormat.format(date);
 							} catch (Exception e) {
 								// value stays as it is
-								logger.error("Cannot format date {" + valueStr + "} according to format {" + columnDateFormats[c] + "}", e);
+								LOGGER.warn("Cannot format date {" + valueStr + "} according to format {" + columnDateFormats[c] + "}", e);
 							}
 						}
 						Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr, HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
@@ -360,13 +361,13 @@ public class PdfExporter extends AbstractFormatExporter {
 			}
 			return toReturn;
 		} catch (Exception e) {
-			logger.error("Error while retrieving table columns date formats.", e);
+			LOGGER.error("Error while retrieving table columns date formats.", e);
 			return new String[columnsOrdered.length() + 10];
 		}
 	}
 
 	private List<Integer> getPdfHiddenColumnsList(JSONArray columnsOrdered, JSONArray columns) {
-		List<Integer> pdfHiddenColumns = new ArrayList<Integer>();
+		List<Integer> pdfHiddenColumns = new ArrayList<>();
 		try {
 			for (int i = 0; i < columnsOrdered.length(); i++) {
 				JSONObject orderedCol = columnsOrdered.getJSONObject(i);
@@ -386,7 +387,7 @@ public class PdfExporter extends AbstractFormatExporter {
 			}
 			return pdfHiddenColumns;
 		} catch (Exception e) {
-			logger.error("Error while getting PDF hidden columns list");
+			LOGGER.error("Error while getting PDF hidden columns list");
 			return new ArrayList<Integer>();
 		}
 	}
@@ -436,22 +437,16 @@ public class PdfExporter extends AbstractFormatExporter {
 			String sizeStr = fontSize.split("px")[0];
 			return Integer.parseInt(sizeStr);
 		} catch (Exception e) {
-			logger.error("Cannot get size from string {" + fontSize + "}. Default size will be used.", e);
+			LOGGER.error("Cannot get size from string {" + fontSize + "}. Default size will be used.", e);
 			return 0;
 		}
 	}
 
 	private Color getColorFromString(String rgbColor, Color defaultColor) {
 		try {
-			if (rgbColor == null || rgbColor.isEmpty())
-				return defaultColor;
-			String[] colors = rgbColor.substring(4, rgbColor.length() - 1).split(",");
-			int r = Integer.parseInt(colors[0].trim());
-			int g = Integer.parseInt(colors[1].trim());
-			int b = Integer.parseInt(colors[2].trim());
-			return new Color(r, g, b);
+			return cssColorParser.parse(rgbColor, defaultColor);
 		} catch (Exception e) {
-			logger.error("Cannot create color from string {" + rgbColor + "}. Default color {" + defaultColor + "} will be used", e);
+			LOGGER.error("Cannot create color from string {" + rgbColor + "}. Default color {" + defaultColor + "} will be used", e);
 			return defaultColor;
 		}
 	}
@@ -473,7 +468,7 @@ public class PdfExporter extends AbstractFormatExporter {
 				return new PDPage(calculateTableDimensions(widgetConf));
 			}
 		} catch (Exception e) {
-			logger.error("Cannot instantiate custom page. Default A4 format will be used.", e);
+			LOGGER.error("Cannot instantiate custom page. Default A4 format will be used.", e);
 			return new PDPage(PDRectangle.A4);
 		}
 	}
@@ -493,7 +488,7 @@ public class PdfExporter extends AbstractFormatExporter {
 			}
 			return new PDRectangle(totalWidth, 210 * POINTS_PER_MM);
 		} catch (Exception e) {
-			logger.error("Error while calculating dimensions. Default A4 format will be used.", e);
+			LOGGER.error("Error while calculating dimensions. Default A4 format will be used.", e);
 			return PDRectangle.A4;
 		}
 	}
@@ -525,7 +520,7 @@ public class PdfExporter extends AbstractFormatExporter {
 			cockpitSelections = body.getJSONObject("COCKPIT_SELECTIONS");
 			forceUniqueHeaders(cockpitSelections);
 		} catch (Exception e) {
-			logger.error("Cannot get cockpit selections", e);
+			LOGGER.error("Cannot get cockpit selections", e);
 			return new JSONObject();
 		}
 		return cockpitSelections;
