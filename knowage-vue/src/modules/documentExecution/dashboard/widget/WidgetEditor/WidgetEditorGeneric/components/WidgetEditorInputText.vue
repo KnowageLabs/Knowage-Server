@@ -64,17 +64,13 @@ export default defineComponent({
             this.callOnUpdateFunction()
         },
         fieldIsDisabled() {
-            console.log(' >>>>>> fieldIsDisabled  1', this.settings.visibilityCondition)
             if (!this.settings.disabledCondition) return (this.disabled = false)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.disabledCondition, 'getValue', null)
-            console.log(' >>>>>> fieldIsDisabled  2', tempFunction)
             if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel))
         },
         fieldIsVisible() {
-            // console.log(' >>>>>> fieldIsVisible INPUT 1', this.settings.visibilityCondition)
             if (!this.settings.visibilityCondition) return (this.visible = true)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.visibilityCondition, 'getValue', null)
-            // console.log(' >>>>>> fieldIsVisible INPUT 2', tempFunction(this.widgetModel))
             if (tempFunction && typeof tempFunction === 'function') return (this.visible = tempFunction(this.widgetModel))
         },
         callOnUpdateFunction() {
