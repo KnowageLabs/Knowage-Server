@@ -142,6 +142,7 @@ export default defineComponent({
             if (tempFunction && typeof tempFunction === 'function') this.displayValue = tempFunction(this.widgetModel)
         },
         onColorPickerChange(event: any) {
+            if (!event.value) return
             this.newColor = `rgb(${event.value.r}, ${event.value.g}, ${event.value.b})`
             this.updateColorInModel()
         },
