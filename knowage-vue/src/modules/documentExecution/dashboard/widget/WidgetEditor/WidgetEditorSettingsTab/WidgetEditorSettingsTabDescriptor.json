@@ -103,7 +103,11 @@
                                                                     {
                                                                         "arrowDownIcon": true,
                                                                         "class": "fas fa-paint-roller",
-                                                                        "colorCircleIcon": true
+                                                                        "colorCircleIcon": true,
+                                                                        "colorPickerSettings": {
+                                                                            "initialValue": "functions.getBackgroundColor",
+                                                                            "onUpdate": "functions.setBackgroundColor"
+                                                                        }
                                                                     },
                                                                     {
                                                                         "arrowDownIcon": true,

@@ -222,6 +222,13 @@ export default defineComponent({
                     setFontColor: (newValue: string, model: IWidget) => {
                         if (!model) return
                         model.styles.th.color = newValue
+                    },
+                    getBackgroundColor: (model: IWidget) => {
+                        return model.styles.th['background-color']
+                    },
+                    setBackgroundColor: (newValue: string, model: IWidget) => {
+                        if (!model) return
+                        model.styles.th['background-color'] = newValue
                     }
                 }
             }
