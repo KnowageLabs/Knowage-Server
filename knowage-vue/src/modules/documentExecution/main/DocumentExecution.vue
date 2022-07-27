@@ -926,7 +926,6 @@ export default defineComponent({
         },
         async executeCrossNavigation(event: any) {
             this.angularData = event.data
-            console.log('ANGULAR DATA: ', this.angularData)
             await this.loadCrossNavigationByDocument(event.data)
         },
         async loadCrossNavigationByDocument(angularData: any) {
@@ -955,8 +954,6 @@ export default defineComponent({
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
             this.formatAngularOutputParameters(angularData.otherOutputParameters)
             const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument ? crossNavigationDocument.navigationParams : [])
-
-            console.log('NAVIGATION PARAMS: ', navigationParams)
 
             const popupOptions = crossNavigationDocument?.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
 
@@ -1008,8 +1005,6 @@ export default defineComponent({
             return index !== -1 ? this.filtersData.filterStatus[index].parameterValue[0].value : ''
         },
         formatNavigationParams(otherOutputParameters: any[], navigationParams: any) {
-            console.log('OTHER OUTPUT PARAMETERS: ', otherOutputParameters)
-            console.log('NAVIGATION PARAMETERS: ', navigationParams)
             let formatedParams = {} as any
 
             otherOutputParameters.forEach((el: any) => {
@@ -1032,23 +1027,16 @@ export default defineComponent({
 
             this.setNavigationParametersFromCurrentFilters(formatedParams, navigationParams)
 
-            console.log('FILTER STATUS: ', this.filtersData)
-
             return formatedParams
         },
         setNavigationParametersFromCurrentFilters(formatedParams: any, navigationParams: any) {
-            console.log(' >>>>> GET FORMATTED PARAMS: ', this.getFormattedParameters())
             const navigationParamsKeys = navigationParams ? Object.keys(navigationParams) : []
             const formattedParameters = this.getFormattedParameters()
             const formattedParametersKeys = formattedParameters ? Object.keys(this.getFormattedParameters()) : []
             if (navigationParamsKeys.length > 0 && formattedParametersKeys.length > 0) {
                 for (let i = 0; i < navigationParamsKeys.length; i++) {
-                    const navigationParam = navigationParams[navigationParamsKeys[i]]
-                    console.log('NAVIGATION PARAM: ', navigationParam)
                     const index = formattedParametersKeys.findIndex((key: string) => key === navigationParamsKeys[i])
-                    console.log('INDEX: ', index)
                     if (index !== -1) {
-                        console.log('PARAM KEY: ', formattedParametersKeys[index])
                         formatedParams[navigationParamsKeys[i]] = formattedParameters[formattedParametersKeys[index]]
                         formatedParams[navigationParamsKeys[i] + '_field_visible_description'] = formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] ? formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] : ''
                     }
