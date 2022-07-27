@@ -47,7 +47,7 @@
     "codemirror": "5.32.0",
     "file-saver": "2.0.0",
     "font-awesome": "4.7.0",
-    "html2canvas": "1.0.0-rc.3",
+    "html2canvas": "1.4.1",
     "jquery": "^3.4.1",
     "jsonformatter": "0.6.0",
     "jspdf": "1.5.3",
