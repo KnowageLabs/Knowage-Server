@@ -4,12 +4,12 @@
             {
                 "fields": [
                     {
-                        "column": "modello",
-                        "dataset": 1
+                        "column": "Employee id",
+                        "dataset": 186
                     },
                     {
-                        "column": "modello_ds2",
-                        "dataset": 2
+                        "column": "price",
+                        "dataset": 165
                     }
                 ],
                 "id": "8275d450-879d-4ba9-b2e4-8194e77b59ae"
@@ -20,6 +20,25 @@
                 "cache": true,
                 "id": 186,
                 "indexes": ["Employee id", "Calc NUMBER"],
+                "parameters": [
+                    {
+                        "multivalue": false,
+                        "name": "Dataset Parameter 1",
+                        "type": "static",
+                        "value": "Static 1"
+                    },
+                    {
+                        "multivalue": false,
+                        "name": "Dynamic Param",
+                        "type": "dynamic",
+                        "value": "Dynamic 1"
+                    }
+                ]
+            },
+            {
+                "cache": false,
+                "id": 165,
+                "indexes": [],
                 "parameters": [
                     {
                         "multivalue": false,

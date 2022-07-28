@@ -134,3 +134,17 @@ interface IDatasetParameters {
     defaultValue: string
     multiValue: boolean
 }
+
+interface IAssociation {
+    id: string
+    fields: IAssociationField[]
+    validation?: {
+        isValid: boolean
+        msg: string
+    }
+}
+
+interface IAssociationField {
+    column: string
+    dataset: number
+}

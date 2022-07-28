@@ -54,9 +54,9 @@ export default defineComponent({
     },
     created() {
         this.selectedDatasets = this.selectedDatasetsProp
-        console.log('availableDatasets', this.availableDatasetsProp)
-        console.log('dashboardDatasets', this.dashboardDatasetsProp)
-        console.log('selectedDatasets', this.selectedDatasets)
+        // console.log('availableDatasets', this.availableDatasetsProp)
+        // console.log('dashboardDatasets', this.dashboardDatasetsProp)
+        // console.log('selectedDatasets', this.selectedDatasets)
     },
     methods: {
         toggleDataDialog() {

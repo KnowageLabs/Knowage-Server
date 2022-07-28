@@ -5,7 +5,10 @@
                 "color": "#929292"
             },
             "listItem": {
-                "height": "100px"
+                "height": "30px"
+            },
+            "warningIcon": {
+                "color": "red"
             }
         }
     }

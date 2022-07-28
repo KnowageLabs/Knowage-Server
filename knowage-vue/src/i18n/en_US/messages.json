@@ -321,7 +321,8 @@
             "static": "Static",
             "dynamic": "Dynamic",
             "indexPresentMsg": "Index already exists!",
-            "indexHint": "Indexes will be created on single selected columns."
+            "indexHint": "Indexes will be created on single selected columns.",
+            "duplicateAssociationsMsg":"Association already exists!"
         },
         "widgetEditor": {
             "columnDetails": "Column Details",
