@@ -39,6 +39,7 @@
                     @applyCustomView="executeOlapCustomView"
                     @executeCrossNavigation="executeOLAPCrossNavigation"
                 ></Olap>
+                <DashboardController v-else-if="mode === 'dashboard'" :sbiExecutionId="urlData?.sbiExecutionId" :document="document" :reloadTrigger="reloadTrigger" :hiddenFormData="hiddenFormData" :filtersData="filtersData"></DashboardController>
             </template>
 
             <iframe
@@ -102,6 +103,7 @@ import moment from 'moment'
 import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
 import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
 import mainStore from '../../../App.store'
+import DashboardController from '../dashboard/DashboardController.vue'
 
 import deepcopy from 'deepcopy'
 
@@ -122,7 +124,8 @@ export default defineComponent({
         Dossier,
         Olap,
         DocumentExecutionSelectCrossNavigationDialog,
-        DocumentExecutionCNContainerDialog
+        DocumentExecutionCNContainerDialog,
+        DashboardController
     },
     props: { id: { type: String }, parameterValuesMap: { type: Object }, tabKey: { type: String }, propMode: { type: String }, selectedMenuItem: { type: Object }, menuItemClickedTrigger: { type: Boolean } },
     emits: ['close', 'updateDocumentName', 'parametersChanged'],
@@ -446,7 +449,10 @@ export default defineComponent({
                 this.mode = 'dossier'
             } else if (this.$route.path.includes('olap')) {
                 this.mode = 'olap'
-            } else {
+            } else if (this.$route.path.includes('document-composite')) {
+                this.mode = 'dashboard'
+            } 
+            else {
                 this.mode = 'iframe'
             }
         },
@@ -472,7 +478,10 @@ export default defineComponent({
                 this.mode = 'dossier'
             } else if (this.document.typeCode === 'OLAP') {
                 this.mode = 'olap'
-            } else {
+            } else if (this.document.typeCode === 'DOCUMENT_COMPOSITE') {
+                this.mode = 'dashboard'
+            } 
+            else {
                 this.mode = 'iframe'
             }
         },
@@ -691,7 +700,9 @@ export default defineComponent({
 
             this.hiddenFormData.append('documentMode', this.documentMode)
 
-            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP') {
+            console.log("DOCUMENT TYPE: ", this.document.typeCode)
+
+            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP' || this.document.typeCode === 'DOCUMENT_COMPOSITE') {
                 await this.sendHiddenFormData()
             } else {
                 postForm.submit()

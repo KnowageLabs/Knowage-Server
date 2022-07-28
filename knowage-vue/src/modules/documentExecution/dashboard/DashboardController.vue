@@ -16,9 +16,10 @@
 /**
  * ! this component will be in charge of creating the dashboard instance and to get initializing informations needed like the theme or the datasets.
  */
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
+import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 import DashboardRenderer from './DashboardRenderer.vue'
 import WidgetPickerDialog from './widget/WidgetPicker/WidgetPickerDialog.vue'
 import mock from './DashboardMock.json'
@@ -29,6 +30,7 @@ import DatasetEditor from './dataset/DatasetEditor.vue'
 export default defineComponent({
     name: 'dashboard-manager',
     components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor },
+    props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormDataProp: { type: Object, required: true }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> } },
     data() {
         return {
             model: mock,
