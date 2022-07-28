@@ -322,6 +322,7 @@
             "associationsTabTitle": "Associations",
             "cached": "Cached",
             "dataTabTitle": "Data",
+            "duplicateAssociationsMsg": "Association already exists!",
             "dynamic": "Dynamic",
             "indexHint": "Indexes will be created on single selected columns.",
             "indexPresentMsg": "Index already exists!",

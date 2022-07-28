@@ -1,10 +1,11 @@
 <template>
     <div class="dataset-editor-list-card-container p-m-2">
         <div class="dataset-editor-list-card">
-            <Button label="Add Association" icon="pi pi-plus-circle" class="p-button-outlined p-mt-2 p-mx-2"></Button>
+            <Button label="Add Association" icon="pi pi-plus-circle" class="p-button-outlined p-mt-2 p-mx-2" @click="$emit('createNewAssociation')"></Button>
             <Listbox
                 class="kn-list kn-list-no-border-right dataset-editor-list"
-                :options="associations"
+                v-model="selectedAssociation"
+                :options="dashboardAssociationsProp"
                 :filter="true"
                 :filterPlaceholder="$t('common.search')"
                 optionLabel="label"
@@ -16,44 +17,22 @@
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
                     <div class="kn-list-item" :style="associationListDescriptor.style.list.listItem">
-                        <div class="kn-list-item-text">
-                            <span>{{ slotProps.option }}</span>
+                        <div v-for="(field, index) of slotProps.option.fields" :key="index">
+                            {{ field.column }}
+                            <i class="fa-solid fa-arrows-left-right p-mr-1" v-if="index != slotProps.option.fields.length - 1" />
                         </div>
-                        <div class="kn-list-item-buttons">
-                            <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteDatasetFromModel" />
-                        </div>
+                        <!-- <i class="fa-solid fa-circle-exclamation p-ml-auto" :style="associationListDescriptor.style.list.warningIcon" /> -->
+                        <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click.stop="deleteAssociation(slotProps.option.id)" />
                     </div>
                 </template>
             </Listbox>
         </div>
     </div>
-
-    <!-- <div id="dataset-editor-list-card-container">
-        <Card class="dataset-editor-list-card">
-            <template #title>
-                <Button label="Add Association" icon="pi pi-plus-circle" class="p-button-outlined p-mt-2 p-mr-2"></Button>
-            </template>
-            <template #content>
-                <Listbox class="kn-list kn-list-no-border-right" :options="associations" :filter="true" :filterPlaceholder="$t('common.search')" optionLabel="label" filterMatchMode="contains" :filterFields="['label']" :emptyFilterMessage="$t('common.info.noDataFound')" @change="selectAssociation">
-                    <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                    <template #option="slotProps">
-                        <div class="kn-list-item" :style="associationListDescriptor.style.list.listItem">
-                            <div class="kn-list-item-text">
-                                <span>{{ slotProps.option }}</span>
-                            </div>
-                            <div class="kn-list-item-buttons">
-                                <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain" @click.stop="deleteDatasetFromModel" />
-                            </div>
-                        </div>
-                    </template>
-                </Listbox>
-            </template>
-        </Card>
-    </div> -->
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { IAssociation } from '../../../Dashboard'
 import Card from 'primevue/card'
 import Listbox from 'primevue/listbox'
 import dashStore from '../../../Dashboard.store'
@@ -62,27 +41,31 @@ import associationListDescriptor from './DatasetEditorAssociationsListDescriptor
 export default defineComponent({
     name: 'dataset-editor-data-list',
     components: { Card, Listbox },
-    props: { dashboardAssociationsProp: { required: true, type: Array as any } },
-    emits: ['datasetSelected'],
+    props: { dashboardAssociationsProp: { required: true, type: Array as any }, selectedAssociationProp: { required: true, type: Object as any } },
+    emits: ['createNewAssociation', 'associationSelected', 'associationDeleted'],
     data() {
         return {
             associationListDescriptor,
-            associations: []
+            selectedAssociation: {} as IAssociation
+        }
+    },
+    watch: {
+        selectedAssociationProp() {
+            this.selectedAssociation = this.selectedAssociationProp
         }
     },
     setup() {
         const dashboardStore = dashStore()
         return { dashboardStore }
     },
-    created() {
-        this.associations = this.dashboardAssociationsProp
-    },
+    created() {},
     methods: {
         selectAssociation(event) {
-            console.log(event.value)
+            this.$emit('associationSelected', event.value)
+        },
+        deleteAssociation(associationId) {
+            this.$emit('associationDeleted', associationId)
         }
     }
 })
 </script>
-
-<style lang="scss"></style>
