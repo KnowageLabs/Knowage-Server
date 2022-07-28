@@ -7,14 +7,29 @@
 
             <template #end>
                 <div class="p-d-flex p-jc-around">
-                    <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></Button>
-                    <Button icon="fa fa-eye" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></Button>
-                    <Button icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></Button>
-                    <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
-                    <Button icon="fa fa-filter" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="isParameterSidebarVisible" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></Button>
-                    <Button icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
+                    <Button
+                        icon="pi pi-pencil"
+                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
+                        :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }"
+                        v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'"
+                        v-tooltip.left="$t('documentExecution.main.editCockpit')"
+                        @click="editCockpitDocumentConfirm"
+                    ></Button>
+                    <Button v-if="mode !== 'dashboard'" icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></Button>
+                    <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
+                    <Button
+                        v-if="isParameterSidebarVisible"
+                        icon="fa fa-filter"
+                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
+                        :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }"
+                        v-tooltip.left="$t('common.parameters')"
+                        @click="parameterSidebarVisible = !parameterSidebarVisible"
+                        data-test="parameter-sidebar-icon"
+                    ></Button>
+                    <Button icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
                     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
-                    <Button icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.close')" @click="closeDocument"></Button>
+                    <Button id="add-widget-button" class="p-button-sm" :label="$t('dashboard.widgetEditor.addWidget')" icon="pi pi-plus-circle" @click="addWidget" />
+                    <Button icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.close')" @click="closeDocument"></Button>
                 </div>
             </template>
         </Toolbar>
@@ -85,6 +100,7 @@ import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 import { iURLData, iExporter, iSchedulation } from './DocumentExecution'
+import { emitter } from '../dashboard/DashboardHelpers'
 import DocumentExecutionBreadcrumb from './breadcrumbs/DocumentExecutionBreadcrumb.vue'
 import DocumentExecutionHelpDialog from './dialogs/documentExecutionHelpDialog/DocumentExecutionHelpDialog.vue'
 import DocumentExecutionRankDialog from './dialogs/documentExecutionRankDialog/DocumentExecutionRankDialog.vue'
@@ -103,9 +119,8 @@ import moment from 'moment'
 import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
 import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
 import mainStore from '../../../App.store'
-import DashboardController from '../dashboard/DashboardController.vue'
-
 import deepcopy from 'deepcopy'
+import DashboardController from '../dashboard/DashboardController.vue'
 
 export default defineComponent({
     name: 'document-execution',
@@ -451,8 +466,7 @@ export default defineComponent({
                 this.mode = 'olap'
             } else if (this.$route.path.includes('document-composite')) {
                 this.mode = 'dashboard'
-            } 
-            else {
+            } else {
                 this.mode = 'iframe'
             }
         },
@@ -480,8 +494,7 @@ export default defineComponent({
                 this.mode = 'olap'
             } else if (this.document.typeCode === 'DOCUMENT_COMPOSITE') {
                 this.mode = 'dashboard'
-            } 
-            else {
+            } else {
                 this.mode = 'iframe'
             }
         },
@@ -699,8 +712,6 @@ export default defineComponent({
             }
 
             this.hiddenFormData.append('documentMode', this.documentMode)
-
-            console.log("DOCUMENT TYPE: ", this.document.typeCode)
 
             if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP' || this.document.typeCode === 'DOCUMENT_COMPOSITE') {
                 await this.sendHiddenFormData()
@@ -1140,6 +1151,9 @@ export default defineComponent({
             this.crossNavigationContainerData = null
             this.crossNavigationContainerVisible = true
             this.onBreadcrumbClick(this.breadcrumbs[0])
+        },
+        addWidget() {
+            emitter.emit('openWidgetEditor')
         }
     }
 })
@@ -1223,5 +1237,16 @@ export default defineComponent({
 
 .p-submenu-list {
     right: 100% !important;
+}
+
+.dashboard-toolbar-icon {
+    border: 1px solid white !important;
+    padding: 1.5px !important;
+    border-radius: 5px !important;
+}
+
+#add-widget-button {
+    background-color: #ff0000;
+    min-width: 120px;
 }
 </style>
