@@ -412,13 +412,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 
 		function getCellStyle(params){
+			
 			var tempStyle = params.colDef.style || {};
 			if(params.colDef.ranges && params.colDef.ranges.length > 0){
-				for(var k in params.colDef.ranges){
-					if (params.value!="" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
-						tempStyle['background-color'] = params.colDef.ranges[k]['background-color'] || (tempStyle['background-color'] || '');
-						tempStyle['color'] = params.colDef.ranges[k]['color'] || (tempStyle['color'] || '');
-                        if (params.colDef.ranges[k].operator == '==') break;
+				for(const range of params.colDef.ranges){
+					var valueToCompare;
+					if(range.compareValueType == 'static') valueToCompare = range.value;
+					if(range.compareValueType == 'variable') {
+						if(range.compareValueKey) valueToCompare = cockpitModule_properties.VARIABLES[range.value][range.compareValueKey];
+						else valueToCompare = cockpitModule_properties.VARIABLES[range.value];
+					}
+					if(range.compareValueType == 'parameter') {
+						var parameterKey = cockpitModule_analyticalDrivers[range.value+'_description'] ? range.value+'_description' : range.value;
+						valueToCompare = cockpitModule_analyticalDrivers[parameterKey];
+					}
+					if (params.value!="" && eval(params.value + range.operator + valueToCompare)) {
+						tempStyle['background-color'] = range['background-color'] || (tempStyle['background-color'] || '');
+						tempStyle['color'] = range['color'] || (tempStyle['color'] || '');
+                        if (range.operator == '==') break;
                     }
 				}
 			}
@@ -505,19 +516,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					this.eGui.innerHTML = '<div class="inner-chart-bar" style="justify-content:'+tempStyle['justify-content']+'"><div class="bar" style="justify-content:'+tempStyle['justify-content']+';background-color:'+tempStyle['background-color']+';width:'+percentage+'%">'+(params.colDef.visType.toLowerCase() == 'text & chart' ? '<span style="color:'+tempStyle.color+'">'+tempValue+'</span>' : '')+'</div></div>';
 				}
 				if(params.colDef.ranges && params.colDef.ranges.length > 0){
-					for(var k in params.colDef.ranges){
-						if (typeof params.value != "undefined" && typeof params.value != "string" && eval(params.value + params.colDef.ranges[k].operator + params.colDef.ranges[k].value)) {
-							if(params.colDef.ranges[k]['background-color']) {
+					
+					for(const range of params.colDef.ranges){
+						var valueToCompare;
+						if(range.compareValueType == 'static') valueToCompare = range.value;
+						if(range.compareValueType == 'variable') {
+							if(range.compareValueKey) valueToCompare = cockpitModule_properties.VARIABLES[range.value][range.compareValueKey];
+							else valueToCompare = cockpitModule_properties.VARIABLES[range.value];
+						}
+						if(range.compareValueType == 'parameter') {
+							var parameterKey = cockpitModule_analyticalDrivers[range.value+'_description'] ? range.value+'_description' : range.value;
+							valueToCompare = cockpitModule_analyticalDrivers[parameterKey];
+						}
+						if(typeof valueToCompare != "undefined" && typeof valueToCompare === 'string') valueToCompare = "'"+valueToCompare+"'";
+						if (typeof params.value != "undefined" && eval((typeof params.value == 'string' ? "'"+params.value+"'": params.value) + range.operator + valueToCompare)) {
+							if(range['background-color']) {
 								if(params.colDef.visType && (params.colDef.visType.toLowerCase() == 'chart' || params.colDef.visType.toLowerCase() == 'text & chart')) {
 									this.eGui.innerHTML = this.eGui.innerHTML.replace(/background-color:([\#a-z0-9\(\)\,]+);/g,function(match,p1){
-										return 'background-color:'+params.colDef.ranges[k]['background-color']+';';
+										return 'background-color:'+range['background-color']+';';
 									})
-								}else params.eParentOfValue.style.backgroundColor = params.colDef.ranges[k]['background-color'];
+								}else params.eParentOfValue.style.backgroundColor = range['background-color'];
 							}
-							if(params.colDef.ranges[k]['color']) params.eParentOfValue.style.color = params.colDef.ranges[k]['color'];
-							if(params.colDef.visType && params.colDef.visType.toLowerCase() == 'icon only') tempValue = '<i class="'+params.colDef.ranges[k].icon+'"></i>';
-							else tempValue += '<i class="'+params.colDef.ranges[k].icon+'"></i>';
-	                        if (params.colDef.ranges[k].operator == '==') break;
+							if(range['color']) params.eParentOfValue.style.color = range['color'];
+							if(params.colDef.visType && params.colDef.visType.toLowerCase() == 'icon only') tempValue = '<i class="'+range.icon+'"></i>';
+							else tempValue += '<i class="'+range.icon+'"></i>';
+	                        if (range.operator == '==') break;
 	                    }
 					}
 				}

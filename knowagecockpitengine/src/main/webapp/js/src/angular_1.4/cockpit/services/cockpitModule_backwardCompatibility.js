@@ -348,6 +348,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if (!model.style.legend) model.style.legend = {};
 				}
 			}
+			
+			if(!self.compareVersion("8.1.0",version)){
+				if(model.type=='table'){
+					for(var k in model.content.columnSelectedOfDataset){
+						if(model.content.columnSelectedOfDataset[k].ranges && model.content.columnSelectedOfDataset[k].ranges.length > 0){
+							model.content.columnSelectedOfDataset[k].ranges = model.content.columnSelectedOfDataset[k].ranges.map((item)=>{
+								item.compareValueType = "static"
+								return item
+							})
+						}
+					}
+				}
+			}
 
 			if(model.content.name.match(/new[a-zA-Z\s\-]*Widget/g)) model.content.name = model.type + '_' + model.id;
 
