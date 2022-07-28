@@ -7,12 +7,11 @@ import java.awt.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 
 public class CssColorParser {
 
-	private static final Logger LOGGER = LogManager.getLogger(CssColorParser.class);
+	private static final Logger LOGGER = Logger.getLogger(CssColorParser.class);
 
 	private static final CssColorParser INSTANCE = new CssColorParser();
 
