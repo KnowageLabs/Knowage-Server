@@ -2,6 +2,14 @@ import { iExporter } from './DocumentExecution'
 
 export function createToolbarMenuItems(document: any, functions: any, exporters: iExporter[] | null, user: any, isOrganizerEnabled: boolean, mode: string | null, $t: any,) {
     const toolbarMenuItems = [] as any[]
+
+    if (mode === 'dashboard') {
+        toolbarMenuItems.push({
+            label: $t('common.settings'),
+            items: [{ icon: 'pi pi-cog', label: $t('common.general') }, { icon: 'fas fa-sigma', label: $t('common.variables') }, { icon: 'fas fa-paint-roller', label: $t('common.themes') }, { icon: 'fas fa-recycle', label: $t('documentExecution.main.clearCache') }]
+        })
+    }
+
     toolbarMenuItems.push({
         label: $t('common.file'),
         items: [{ icon: 'pi pi-print', label: $t('common.print'), command: () => functions.print() }]
@@ -71,6 +79,13 @@ export function createToolbarMenuItems(document: any, functions: any, exporters:
             toolbarMenuItems[index].items.push({ icon: 'fa fa-share', label: $t('documentExecution.main.copyLink'), command: () => functions.copyLink(false) })
             toolbarMenuItems[index].items.push({ icon: 'fa fa-share', label: $t('documentExecution.main.embedInHtml'), command: () => functions.copyLink(true) })
         }
+    }
+
+    if (mode === 'dashboard') {
+        toolbarMenuItems.push({
+            label: $t('common.view'),
+            items: [{ icon: 'pi pi-eye', label: $t('documentExecution.main.asFinalUser') }, { icon: 'pi pi-print', label: $t('documentExecution.main.inFullScreen') }]
+        })
     }
 
     return toolbarMenuItems

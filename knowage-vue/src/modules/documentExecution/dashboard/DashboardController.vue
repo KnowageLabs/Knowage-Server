@@ -51,9 +51,7 @@ export default defineComponent({
         return { store, appStore }
     },
     created() {
-        emitter.on('openWidgetEditor', () => {
-            this.openWidgetEditorDialog()
-        })
+        this.setEventListeners()
         this.loadDatasets()
         this.loadModel()
     },
@@ -75,9 +73,19 @@ export default defineComponent({
                 .catch(() => {})
             this.appStore.setLoading(false)
         },
+        setEventListeners() {
+            emitter.on('openWidgetEditor', () => {
+                this.openWidgetEditorDialog()
+            })
+            emitter.on('openDatasetManagement', () => {
+                this.openDatasetManagementDialog()
+            })
+        },
         openWidgetEditorDialog() {
-            console.log(' >>> openWidgetEditorDialog')
             this.widgetPickerVisible = true
+        },
+        openDatasetManagementDialog() {
+            this.datasetEditorVisible = true
         }
     }
 })
