@@ -6,7 +6,7 @@ export function createToolbarMenuItems(document: any, functions: any, exporters:
     if (mode === 'dashboard') {
         toolbarMenuItems.push({
             label: $t('common.settings'),
-            items: [{ icon: 'pi pi-cog', label: $t('common.general') }, { icon: 'fas fa-sigma', label: $t('common.variables') }, { icon: 'fas fa-paint-roller', label: $t('common.themes') }, { icon: 'fas fa-recycle', label: $t('documentExecution.main.clearCache') }]
+            items: [{ icon: 'pi pi-cog', label: $t('common.general') }, { icon: 'fa-brands fa-diaspora', label: $t('common.variables') }, { icon: 'fas fa-paint-roller', label: $t('common.themes') }, { icon: 'fas fa-recycle', label: $t('documentExecution.main.clearCache') }]
         })
     }
 

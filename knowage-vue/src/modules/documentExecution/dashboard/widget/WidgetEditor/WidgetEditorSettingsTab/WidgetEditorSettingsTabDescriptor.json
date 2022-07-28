@@ -137,10 +137,122 @@
                 "value": "Style"
             },
             {
-                "descriptor": {},
+                "descriptor": [
+                    {
+                        "cardClasses": "p-d-flex p-flex-column",
+                        "containers": [
+                            {
+                                "components": [
+                                    {
+                                        "accordions": [
+                                            {
+                                                "containers": [
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.conditionalStyle.enableConditionalStyle",
+                                                                "property": "settings.rowThresholds.enabled",
+                                                                "settings": {
+                                                                    "onUpdate": "functions.onRowThresholdsEnabled"
+                                                                },
+                                                                "type": "inputSwitch"
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "settings": {
+                                                                    "createItem": "functions.createRowThresholdListItem",
+                                                                    "items": "functions.getRowThresholdsList",
+                                                                    "itemsSettings": {
+                                                                        "components": [
+                                                                            {
+                                                                                "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                                                                                "label": "common.columns",
+                                                                                "options": "functions.getDatasetColumns",
+                                                                                "property": "column",
+                                                                                "settings": {
+                                                                                    "onUpdate": "functions.updateThresholdListItem"
+                                                                                },
+                                                                                "type": "dropdown"
+                                                                            },
+                                                                            {
+                                                                                "cssClass": "p-d-flex p-flex-column kn-flex-1 p-m-2",
+                                                                                "label": "common.condition",
+                                                                                "options": "functions.getColumnConditionOptions",
+                                                                                "property": "condition",
+                                                                                "settings": {
+                                                                                    "onUpdate": "functions.updateThresholdListItem"
+                                                                                },
+                                                                                "style": "min-width: 50px; max-width: 50px;",
+                                                                                "type": "dropdown"
+                                                                            },
+                                                                            {
+                                                                                "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                                                                                "label": "dashboard.widgetEditor.conditionalStyle.compareValueType",
+                                                                                "options": "functions.getRowStyleCompareValueTypes",
+                                                                                "property": "compareValueType",
+                                                                                "settings": {
+                                                                                    "onUpdate": "functions.updateThresholdListItem"
+                                                                                },
+                                                                                "type": "dropdown"
+                                                                            },
+                                                                            {
+                                                                                "cssClass": "kn-flex p-m-2",
+                                                                                "label": "dashboard.widgetEditor.conditionalStyle.compareValue",
+                                                                                "property": "compareValue",
+                                                                                "settings": {
+                                                                                    "visible": "functions.compareValueInputTextIsVisible"
+                                                                                },
+                                                                                "type": "inputText"
+                                                                            } ,
+                                                                            {
+                                                                                "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                                                                                "label": "dashboard.widgetEditor.conditionalStyle.compareValue",
+                                                                                "options": "functions.getColumnVariables",
+                                                                                "property": "compareValue",
+                                                                                "settings": {
+                                                                                    "onUpdate": "functions.updateThresholdListItem",
+                                                                                    "visible": "functions.compareValueVariablesDropdownIsVisible"
+                                                                                },
+                                                                                "type": "dropdown"
+                                                                            },
+                                                                            {
+                                                                                "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                                                                                "label": "dashboard.widgetEditor.conditionalStyle.compareValue",
+                                                                                "options": "functions.getColumnParameters",
+                                                                                "property": "compareValue",
+                                                                                "settings": {
+                                                                                    "onUpdate": "functions.updateThresholdListItem",
+                                                                                    "visible": "functions.compareValueParameterDropdownIsVisible"
+                                                                                },
+                                                                                "type": "dropdown"
+                                                                            }                                                                              
+                                                                        ]
+                                                                    },
+                                                                    "watchers": ["settings.rowThresholds.enabled", "settings.rowThresholds.list"]
+                                                                },
+                                                                "type": "formList"
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "title": "dashboard.widgetEditor.conditionalStyle.title"
+                                            }
+                                        ],
+                                        "settings": {},
+                                        "type": "accordion"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
                 "icon": "fa fa-table",
-                "label": "TODO",
-                "value": "TODO"
+                "label": "dashboard.widgetEditor.conditionalStyle.title",
+                "value": "Conditional Style"
             }
         ],
         "listSettings": {

@@ -34,6 +34,7 @@
         "collapse": "collapse",
         "columns": "Columns",
         "comment": "Comment",
+        "condition": "Condition",
         "continue": "Continue",
         "copyOf": "Copy of",
         "create": "Create",
@@ -330,6 +331,12 @@
         "widgetEditor": {
             "addWidget": "Add widget",
             "columnDetails": "Column Details",
+            "conditionalStyle": {
+                "compareValue": "Compare value",
+                "compareValueType": "Value type",
+                "enableConditionalStyle": "Enable Conditional Style",
+                "title": "Conditional Style"
+            },
             "customHeaderTooltip": "Custom Header Tooltip",
             "dragColumnsHint": "Drag columns here",
             "enableTooltip": "Enable Tooltip",
@@ -1004,62 +1011,12 @@
     },
     "locale": {
         "dateFormat": "mm/dd/yy",
-        "dayNames": [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday"
-        ],
-        "dayNamesMin": [
-            "Su",
-            "Mo",
-            "Tu",
-            "We",
-            "Th",
-            "Fr",
-            "Sa"
-        ],
-        "dayNamesShort": [
-            "Sun",
-            "Mon",
-            "Tue",
-            "Wed",
-            "Thu",
-            "Fri",
-            "Sat"
-        ],
+        "dayNames": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        "dayNamesMin": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+        "dayNamesShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
         "firstDayOfWeek": 0,
-        "monthNames": [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December"
-        ],
-        "monthNamesShort": [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec"
-        ],
+        "monthNames": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        "monthNamesShort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         "today": "Today",
         "weekHeader": "Wk"
     },

@@ -80,7 +80,12 @@ export default defineComponent({
                         'font-family': ''
                     }
                 },
-                settings: {},
+                settings: {
+                    rowThresholds: {
+                        enabled: false,
+                        list: []
+                    }
+                },
                 temp: {}
             } as any
             if (widget.type === 'tableWidget') {
@@ -229,6 +234,84 @@ export default defineComponent({
                     setBackgroundColor: (newValue: string, model: IWidget) => {
                         if (!model) return
                         model.styles.th['background-color'] = newValue
+                    },
+                    getRowThresholdsList: (model: IWidget) => {
+                        if (!model) return
+                        return model.settings.rowThresholds?.list
+                    },
+                    createRowThresholdListItem: (model: IWidget) => {
+                        if (!model || !model.settings.rowThresholds?.list) return
+                        model.settings.rowThresholds.list.push({
+                            column: '',
+                            condition: '',
+                            compareValueType: '',
+                            compareValue: ''
+                        })
+                    },
+                    onRowThresholdsEnabled: (model: IWidget) => {
+                        if (!model || !model.settings.rowThresholds?.list) return
+                        if (model.settings.rowThresholds.list.length === 0) {
+                            model.functions.createRowThresholdListItem(model)
+                        }
+                    },
+                    getDatasetColumns: () => {
+                        // TODO - REMOVE MOCK
+                        return [
+                            { value: 'Dataset 1', label: 'Dataset 1' },
+                            { value: 'Dataset 2', label: 'Dataset 2' },
+                            { value: 'Dataset 3', label: 'Dataset 3' }
+                        ]
+                    },
+                    updateThresholdListItem: (model: IWidget, item: any, index: number) => {
+                        console.log('updateThresholdListItem', item, index)
+                        if (!model || !model.settings.rowThresholds?.list) return
+                        if (index !== -1) {
+                            console.log("model.settings.rowThresholds.list[index].column !== item.column && item.compareValueType !== 'static'", model.settings.rowThresholds.list[index].column !== item.column && item.compareValueType !== 'static')
+                            if (model.settings.rowThresholds.list[index].column !== item.column && item.compareValueType !== 'static') {
+                                item.compareValue = ''
+                            }
+                            if (model.settings.rowThresholds.list[index].compareValueType !== item.compareValueType) item.compareValue = ''
+                            model.settings.rowThresholds.list[index] = { ...item }
+                        }
+                    },
+                    getColumnConditionOptions: () => {
+                        return this.descriptor.columnConditionOptions
+                    },
+                    getRowStyleCompareValueTypes: () => {
+                        return this.descriptor.rowStyleCompareValueTypes
+                    },
+                    compareValueInputTextIsVisible: (model: IWidget, item: any) => {
+                        if (!item) return
+                        return item.compareValueType === 'static'
+                    },
+                    getColumnVariables: (model: IWidget) => {
+                        // TODO - remove mock
+                        return [
+                            { value: 'Variable 1', label: 'Varibale 1' },
+                            { value: 'Variable 2', label: 'Varibale 2' }
+                        ]
+                    },
+                    compareValueVariablesDropdownIsVisible: (model: IWidget, item: any) => {
+                        if (!item) return
+                        return item.compareValueType === 'variable'
+                    },
+                    getColumnVariableOptions: (item: any) => {
+                        // TODO - remove mock
+                        return [
+                            { value: 'Variable OPTION 1', label: 'Varibale OPTION 1' },
+                            { value: 'Variable OPTION 2', label: 'Varibale OPTION 2' }
+                        ]
+                    },
+                    getColumnParameters: (model: IWidget) => {
+                        // TODO - remove mock
+                        return [
+                            { value: 'Parameter 1', label: 'Parameter 1' },
+                            { value: 'Parameter 2', label: 'Parameter 2' }
+                        ]
+                    },
+                    compareValueParameterDropdownIsVisible: (model: IWidget, item: any) => {
+                        if (!item) return
+                        return item.compareValueType === 'parameter'
                     }
                 }
             }

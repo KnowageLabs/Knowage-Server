@@ -20,7 +20,8 @@ export default defineComponent({
         label: { type: String },
         class: { type: String },
         inputClass: { type: String },
-        settings: { type: Object, required: true }
+        settings: { type: Object, required: true },
+        initialValue: { type: String }
     },
     emits: ['input', 'change', 'blur'],
     data() {
@@ -50,6 +51,11 @@ export default defineComponent({
     },
     methods: {
         loadValue() {
+            if ((this.initialValue || this.initialValue === '') && !this.property) {
+                this.modelValue = this.initialValue
+                this.visible = true
+                return
+            }
             this.modelValue = getModelProperty(this.widgetModel, this.property, 'getValue', null) ?? ''
 
             this.fieldIsDisabled()
