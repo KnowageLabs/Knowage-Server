@@ -16,8 +16,10 @@
 		};
 	});
 
-	function cockpitColumnsConfiguratorControllerFunction($scope,$mdDialog,cockpitModule_datasetServices,$mdToast,cockpitModule_widgetConfigurator,sbiModule_restServices,sbiModule_translate,sbiModule_config,$mdSidenav,$q,cockpitModule_generalOptions){
+	function cockpitColumnsConfiguratorControllerFunction($scope,$mdDialog,cockpitModule_datasetServices,$mdToast,cockpitModule_widgetConfigurator,sbiModule_restServices,sbiModule_translate,sbiModule_config,$mdSidenav,$q,cockpitModule_generalOptions,cockpitModule_template,cockpitModule_properties){
 		$scope.translate=sbiModule_translate;
+		$scope.cockpitModule_template = cockpitModule_template;
+		$scope.cockpitModule_properties = cockpitModule_properties;
 		$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 		$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
 
@@ -502,14 +504,27 @@ function cockpitStyleColumnFunction(
 		sbiModule_messaging,
 		knModule_fontIconsService,
 		cockpitModule_properties,
+		cockpitModule_template,
+		cockpitModule_analyticalDriversUrls,
 		dialogOptions) {
 
 	$scope.translate=sbiModule_translate;
 	$scope.generalServices=cockpitModule_generalServices;
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.cockpitModule_properties = cockpitModule_properties;
+	$scope.cockpitModule_template = cockpitModule_template;
 	$scope.model = model;
 	$scope.selectedColumn = angular.copy(selectedColumn);
+	
+	function getAnalyticalDrivers(){
+		var tempAnalyticalDrivers = [];
+		for(var k in cockpitModule_analyticalDriversUrls){
+			var url = cockpitModule_analyticalDriversUrls[k].url;
+			tempAnalyticalDrivers.push({name:k, value:url});
+		}
+		return tempAnalyticalDrivers;
+	}
+	$scope.formattedAnalyticalDrivers = getAnalyticalDrivers();
 
 	$scope.needsCommonPrefs   = (typeof dialogOptions.needsCommonPrefs   == 'undefined' ? true : dialogOptions.needsCommonPrefs);
 	$scope.needsVisualization = (typeof dialogOptions.needsVisualization == 'undefined' ? true : dialogOptions.needsVisualization);
@@ -645,7 +660,17 @@ function cockpitStyleColumnFunction(
 
 	$scope.addRange = function(){
 		if(!$scope.selectedColumn.ranges) $scope.selectedColumn.ranges = [];
-		$scope.selectedColumn.ranges.push({});
+		$scope.selectedColumn.ranges.push({compareValueType:"static"});
+	}
+	
+	$scope.emptyVariable = function(threshold){
+		if(!threshold.compareValueType == 'variable' || !$scope.isObject(cockpitModule_properties.VARIABLES[threshold.value])){
+			delete threshold.compareValueKey
+		}
+	}
+	
+	$scope.isObject = function(item){
+		return typeof item == 'object';
 	}
 
 	$scope.deleteRange = function(hashkey){
