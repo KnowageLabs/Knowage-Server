@@ -6,7 +6,7 @@
         <WidgetRenderer :widget="widget" :data="widgetData" v-if="initialized" @interaction="manageInteraction"></WidgetRenderer>
         <WidgetButtonBar @edit-widget="toggleEditMode"></WidgetButtonBar>
         <Transition name="editorEnter" appear>
-            <WidgetEditor :propWidget="widget" @close="toggleEditMode" v-if="editMode" :datasets="datasets"></WidgetEditor>
+            <WidgetEditor v-if="widgetEditorVisible" :propWidget="widget" @close="toggleEditMode" :datasets="datasets"></WidgetEditor>
         </Transition>
     </grid-item>
 </template>
@@ -15,16 +15,16 @@
 /**
  * ! this component will be in charge of managing the widget behaviour related to data and interactions, not related to view elements.
  */
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { mapState } from 'vuex'
 import { getData } from '../DataProxyHelper'
+import { IWidget } from '../Dashboard'
+import { emitter } from '../DashboardHelpers'
 import WidgetEditor from './WidgetEditor/WidgetEditor.vue'
 import WidgetRenderer from './WidgetRenderer.vue'
 import WidgetButtonBar from './WidgetButtonBar.vue'
 import Skeleton from 'primevue/skeleton'
 import ProgressBar from 'primevue/progressbar'
-import mitt from 'mitt'
-export const emitter = mitt()
 
 export default defineComponent({
     name: 'widget-manager',
@@ -39,8 +39,8 @@ export default defineComponent({
             type: Boolean
         },
         widget: {
-            required: true,
-            type: Object
+            type: Object as PropType<IWidget>,
+            required: true
         },
         datasets: { type: Array }
     },
@@ -49,7 +49,7 @@ export default defineComponent({
             loading: true,
             initialized: false,
             widgetData: [] as any,
-            editMode: false
+            widgetEditorVisible: false
         }
     },
     mounted() {
@@ -62,6 +62,9 @@ export default defineComponent({
             this.loading = true
             this.widgetData = await getData([{ event: event }])
             this.loading = false
+        })
+        emitter.on('openWidgetEditor', () => {
+            this.openWidgetEditorDialog()
         })
     },
     computed: {
@@ -85,7 +88,10 @@ export default defineComponent({
             emitter.emit('interaction', { id: this.dHash, event: e })
         },
         toggleEditMode() {
-            this.editMode = !this.editMode
+            this.widgetEditorVisible = !this.widgetEditorVisible
+        },
+        openWidgetEditorDialog() {
+            this.widgetEditorVisible = true
         }
     },
     updated() {

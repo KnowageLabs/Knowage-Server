@@ -173,7 +173,6 @@ export default defineComponent({
                         return model?.temp.selectedColumn?.fieldType === 'MEASURE'
                     },
                     tooltipCustomHeaderTextIsDisabled: (model: IWidget) => {
-                        console.log('tooltipCustomHeaderTextIsDisabled()', model?.temp.selectedColumn?.style.enableCustomHeaderTooltip)
                         return !model?.temp.selectedColumn?.style.enableCustomHeaderTooltip
                     },
                     headerIsDisabled: (model: IWidget) => {
@@ -184,7 +183,6 @@ export default defineComponent({
                         model.styles.th['font-weight'] = model.styles.th['font-weight'] === 'bold' ? '' : 'bold'
                     },
                     boldIconIsActive: (model: IWidget) => {
-                        console.log('>>> boldIconIsActive: ', model?.styles.th['font-weight'] === 'bold')
                         return model?.styles.th['font-weight'] === 'bold'
                     },
                     updateFontStyle: (model: IWidget) => {
@@ -195,34 +193,42 @@ export default defineComponent({
                         return model?.styles.th['font-style'] === 'italic'
                     },
                     getFontSizeOptions: () => {
-                        console.log('>>> getFontSizeOptions: ', this.descriptor.fontSizeOptions)
-
                         return this.descriptor.fontSizeOptions
                     },
                     updateFontSize: (newValue: string, model: IWidget) => {
-                        console.log('>>> updateFontSize: ', model)
                         if (!model) return
                         model.styles.th['font-size'] = newValue
                     },
                     getCellAlignmentOptions: () => {
-                        console.log('>>> getcellAlignmentOptions: ', this.descriptor.cellAlignmentOptions)
-
                         return this.descriptor.cellAlignmentOptions
                     },
                     updateCellAlignment: (newValue: string, model: IWidget) => {
-                        console.log('>>> updateCellAlignment: ', model)
                         if (!model) return
                         model.styles.th['justify-content'] = newValue
                     },
                     getFontFamilyOptions: () => {
-                        console.log('>>> getFontFamilyOptions: ', this.descriptor.fontFamilyOptions)
-
                         return this.descriptor.fontFamilyOptions
                     },
                     updateFontFamily: (newValue: string, model: IWidget) => {
-                        console.log('>>> updateFontFamily: ', model)
                         if (!model) return
                         model.styles.th['font-family'] = newValue
+                    },
+                    getFontSize: (model: IWidget) => {
+                        return model.styles.th['font-size']
+                    },
+                    getFontColor: (model: IWidget) => {
+                        return model.styles.th.color
+                    },
+                    setFontColor: (newValue: string, model: IWidget) => {
+                        if (!model) return
+                        model.styles.th.color = newValue
+                    },
+                    getBackgroundColor: (model: IWidget) => {
+                        return model.styles.th['background-color']
+                    },
+                    setBackgroundColor: (newValue: string, model: IWidget) => {
+                        if (!model) return
+                        model.styles.th['background-color'] = newValue
                     }
                 }
             }

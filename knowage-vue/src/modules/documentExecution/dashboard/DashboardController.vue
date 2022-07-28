@@ -16,9 +16,11 @@
 /**
  * ! this component will be in charge of creating the dashboard instance and to get initializing informations needed like the theme or the datasets.
  */
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
+import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
+import { emitter } from './DashboardHelpers'
 import DashboardRenderer from './DashboardRenderer.vue'
 import WidgetPickerDialog from './widget/WidgetPicker/WidgetPickerDialog.vue'
 import mock from './DashboardMock.json'
@@ -29,6 +31,7 @@ import DatasetEditor from './dataset/DatasetEditor.vue'
 export default defineComponent({
     name: 'dashboard-manager',
     components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor },
+    props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> } },
     data() {
         return {
             model: mock,
@@ -48,6 +51,7 @@ export default defineComponent({
         return { store, appStore }
     },
     created() {
+        this.setEventListeners()
         this.loadDatasets()
         this.loadModel()
     },
@@ -68,6 +72,20 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.datasets = response.data ? response.data.item : []))
                 .catch(() => {})
             this.appStore.setLoading(false)
+        },
+        setEventListeners() {
+            emitter.on('openWidgetEditor', () => {
+                this.openWidgetEditorDialog()
+            })
+            emitter.on('openDatasetManagement', () => {
+                this.openDatasetManagementDialog()
+            })
+        },
+        openWidgetEditorDialog() {
+            this.widgetPickerVisible = true
+        },
+        openDatasetManagementDialog() {
+            this.datasetEditorVisible = true
         }
     }
 })

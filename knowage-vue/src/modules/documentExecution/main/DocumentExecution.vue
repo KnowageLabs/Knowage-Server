@@ -7,14 +7,23 @@
 
             <template #end>
                 <div class="p-d-flex p-jc-around">
-                    <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></Button>
-                    <Button icon="fa fa-eye" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></Button>
-                    <Button icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></Button>
-                    <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
-                    <Button icon="fa fa-filter" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="isParameterSidebarVisible" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></Button>
-                    <Button icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
+                    <Button v-if="mode == 'dashboard'" icon="fas fa-database" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.datasets')" @click="openDashboardDatasetManagement"></Button>
+                    <Button v-if="mode == 'dashboard'" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.save')"></Button>
+                    <Button v-if="mode !== 'dashboard'" icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></Button>
+                    <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
+                    <Button
+                        v-if="isParameterSidebarVisible"
+                        icon="fa fa-filter"
+                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
+                        :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }"
+                        v-tooltip.left="$t('common.parameters')"
+                        @click="parameterSidebarVisible = !parameterSidebarVisible"
+                        data-test="parameter-sidebar-icon"
+                    ></Button>
+                    <Button icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
                     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
-                    <Button icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.close')" @click="closeDocument"></Button>
+                    <Button v-if="mode == 'dashboard'" id="add-widget-button" class="p-button-sm" :label="$t('dashboard.widgetEditor.addWidget')" icon="pi pi-plus-circle" @click="addWidget" />
+                    <Button icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.close')" @click="closeDocument"></Button>
                 </div>
             </template>
         </Toolbar>
@@ -39,6 +48,7 @@
                     @applyCustomView="executeOlapCustomView"
                     @executeCrossNavigation="executeOLAPCrossNavigation"
                 ></Olap>
+                <DashboardController v-else-if="mode === 'dashboard'" :sbiExecutionId="urlData?.sbiExecutionId" :document="document" :reloadTrigger="reloadTrigger" :hiddenFormData="hiddenFormData" :filtersData="filtersData"></DashboardController>
             </template>
 
             <iframe
@@ -84,6 +94,8 @@ import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 import { iURLData, iExporter, iSchedulation } from './DocumentExecution'
+import { createToolbarMenuItems } from './DocumentExecutionHelpers'
+import { emitter } from '../dashboard/DashboardHelpers'
 import DocumentExecutionBreadcrumb from './breadcrumbs/DocumentExecutionBreadcrumb.vue'
 import DocumentExecutionHelpDialog from './dialogs/documentExecutionHelpDialog/DocumentExecutionHelpDialog.vue'
 import DocumentExecutionRankDialog from './dialogs/documentExecutionRankDialog/DocumentExecutionRankDialog.vue'
@@ -102,8 +114,8 @@ import moment from 'moment'
 import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
 import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
 import mainStore from '../../../App.store'
-
 import deepcopy from 'deepcopy'
+import DashboardController from '../dashboard/DashboardController.vue'
 
 export default defineComponent({
     name: 'document-execution',
@@ -122,7 +134,8 @@ export default defineComponent({
         Dossier,
         Olap,
         DocumentExecutionSelectCrossNavigationDialog,
-        DocumentExecutionCNContainerDialog
+        DocumentExecutionCNContainerDialog,
+        DashboardController
     },
     props: { id: { type: String }, parameterValuesMap: { type: Object }, tabKey: { type: String }, propMode: { type: String }, selectedMenuItem: { type: Object }, menuItemClickedTrigger: { type: Boolean } },
     emits: ['close', 'updateDocumentName', 'parametersChanged'],
@@ -267,24 +280,6 @@ export default defineComponent({
                 this.loading = false
             }
         },
-        editCockpitDocumentConfirm() {
-            if (this.documentMode === 'EDIT') {
-                this.$confirm.require({
-                    message: this.$t('documentExecution.main.editModeConfirm'),
-                    header: this.$t('documentExecution.main.editCockpit'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.editCockpitDocument()
-                })
-            } else {
-                this.editCockpitDocument()
-            }
-        },
-        async editCockpitDocument() {
-            this.loading = true
-            this.documentMode = this.documentMode === 'EDIT' ? 'VIEW' : 'EDIT'
-            this.hiddenFormData.set('documentMode', this.documentMode)
-            await this.loadURL(null)
-        },
         openHelp() {
             this.helpDialogVisible = true
         },
@@ -299,77 +294,26 @@ export default defineComponent({
             menu.toggle(event)
         },
         createMenuItems() {
-            this.toolbarMenuItems = []
-            this.toolbarMenuItems.push({
-                label: this.$t('common.file'),
-                items: [{ icon: 'pi pi-print', label: this.$t('common.print'), command: () => this.print() }]
-            })
-
-            if (this.exporters && this.exporters.length !== 0) {
-                this.toolbarMenuItems.push({
-                    label: this.$t('common.export'),
-                    items: []
-                })
-            }
-
-            if (this.user.enterprise) {
-                this.toolbarMenuItems.push({
-                    label: this.$t('common.info.info'),
-                    items: [{ icon: 'pi pi-star', label: this.$t('common.rank'), command: () => this.openRank() }]
-                })
-            }
-
-            this.toolbarMenuItems.push({
-                label: this.$t('common.shortcuts'),
-                items: []
-            })
-
-            this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[1].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
-
-            if (this.user.functionalities.includes('SendMailFunctionality') && this.document.typeCode === 'REPORT') {
-                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
-                if (index !== -1) {
-                    this.toolbarMenuItems[index].items.push({ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() })
-                } else {
-                    this.toolbarMenuItems.push({
-                        label: this.$t('common.export'),
-                        items: [{ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() }]
-                    })
-                }
-            }
-
-            if (this.user.functionalities.includes('SeeMetadataFunctionality')) {
-                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
-                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: 'pi pi-info-circle', label: this.$t('common.metadata'), command: () => this.openMetadata() })
-            }
-
-            if (this.user.functionalities.includes('SeeNotesFunctionality')) {
-                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
-                if (index !== -1) this.toolbarMenuItems[index].items.push({ icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() })
-            }
-
-            if (this.user.functionalities.includes('SeeSnapshotsFunctionality') && this.user.enterprise) {
-                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
-                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
-            }
-
-            if (this.isOrganizerEnabled()) {
-                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
-                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: 'fa fa-suitcase ', label: this.$t('documentExecution.main.addToWorkspace'), command: () => this.addToWorkspace() })
-            }
-
-            if (this.mode === 'olap') {
-                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
-                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: '', label: this.$t('documentExecution.main.showOLAPCustomView'), command: () => this.showOLAPCustomView() })
-            }
-
-            if (this.user.functionalities.includes('EnableToCopyAndEmbed')) {
-                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
-                if (index !== -1) {
-                    this.toolbarMenuItems[index].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.copyLink'), command: () => this.copyLink(false) })
-                    this.toolbarMenuItems[index].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.embedInHtml'), command: () => this.copyLink(true) })
-                }
-            }
+            this.toolbarMenuItems = createToolbarMenuItems(
+                this.document,
+                {
+                    print: this.print,
+                    openRank: this.openRank,
+                    export: this.export,
+                    openMailDialog: this.openMailDialog,
+                    openMetadata: this.openMetadata,
+                    openNotes: this.openNotes,
+                    showScheduledExecutions: this.showScheduledExecutions,
+                    addToWorkspace: this.addToWorkspace,
+                    showOLAPCustomView: this.showOLAPCustomView,
+                    copyLink: this.copyLink
+                },
+                this.exporters,
+                this.user,
+                this.isOrganizerEnabled(),
+                this.mode,
+                this.$t
+            )
         },
         print() {
             window.print()
@@ -446,6 +390,8 @@ export default defineComponent({
                 this.mode = 'dossier'
             } else if (this.$route.path.includes('olap')) {
                 this.mode = 'olap'
+            } else if (this.$route.path.includes('document-composite')) {
+                this.mode = 'dashboard'
             } else {
                 this.mode = 'iframe'
             }
@@ -472,6 +418,8 @@ export default defineComponent({
                 this.mode = 'dossier'
             } else if (this.document.typeCode === 'OLAP') {
                 this.mode = 'olap'
+            } else if (this.document.typeCode === 'DOCUMENT_COMPOSITE') {
+                this.mode = 'dashboard'
             } else {
                 this.mode = 'iframe'
             }
@@ -691,7 +639,7 @@ export default defineComponent({
 
             this.hiddenFormData.append('documentMode', this.documentMode)
 
-            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP') {
+            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP' || this.document.typeCode === 'DOCUMENT_COMPOSITE') {
                 await this.sendHiddenFormData()
             } else {
                 postForm.submit()
@@ -1129,6 +1077,12 @@ export default defineComponent({
             this.crossNavigationContainerData = null
             this.crossNavigationContainerVisible = true
             this.onBreadcrumbClick(this.breadcrumbs[0])
+        },
+        addWidget() {
+            emitter.emit('openWidgetEditor')
+        },
+        openDashboardDatasetManagement() {
+            emitter.emit('openDatasetManagement')
         }
     }
 })
@@ -1212,5 +1166,16 @@ export default defineComponent({
 
 .p-submenu-list {
     right: 100% !important;
+}
+
+.dashboard-toolbar-icon {
+    border: 1px solid white !important;
+    padding: 1.5px !important;
+    border-radius: 5px !important;
+}
+
+#add-widget-button {
+    background-color: #ff0000;
+    min-width: 120px;
 }
 </style>
