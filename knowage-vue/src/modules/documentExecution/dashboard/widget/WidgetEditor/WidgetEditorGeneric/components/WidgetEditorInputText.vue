@@ -35,20 +35,7 @@ export default defineComponent({
     watch: {},
     async created() {
         this.loadValue()
-        this.$watch('widgetModel.' + this.property, () => this.loadValue(), { deep: true })
-
-        if (this.settings.watchers) {
-            for (let i = 0; i < this.settings.watchers.length; i++) {
-                this.$watch(
-                    'widgetModel.' + this.settings.watchers[i],
-                    () => {
-                        this.fieldIsDisabled(this.itemIndex)
-                        this.fieldIsVisible()
-                    },
-                    { deep: true }
-                )
-            }
-        }
+        this.setWatchers()
     },
     methods: {
         loadValue() {
@@ -59,7 +46,7 @@ export default defineComponent({
             }
             this.modelValue = getModelProperty(this.widgetModel, this.property, 'getValue', null) ?? ''
 
-            this.fieldIsDisabled(this.itemIndex)
+            this.fieldIsDisabled()
             this.fieldIsVisible()
         },
         onInput() {
@@ -70,10 +57,10 @@ export default defineComponent({
             this.$emit('change', this.modelValue)
             this.callOnUpdateFunction()
         },
-        fieldIsDisabled(itemIndex: number | undefined) {
+        fieldIsDisabled() {
             if (!this.settings.disabledCondition) return (this.disabled = false)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.disabledCondition, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel, itemIndex))
+            if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel, this.itemIndex))
         },
         fieldIsVisible() {
             if (!this.settings.visibilityCondition) return (this.visible = true)
@@ -84,6 +71,21 @@ export default defineComponent({
             if (this.settings.onUpdate) {
                 const tempFunction = getModelProperty(this.widgetModel, this.settings.onUpdate, 'getValue', null)
                 if (tempFunction && typeof tempFunction === 'function') tempFunction(this.widgetModel)
+            }
+        },
+        setWatchers() {
+            this.$watch('widgetModel.' + this.property, () => this.loadValue(), { deep: true })
+            if (this.settings.watchers) {
+                for (let i = 0; i < this.settings.watchers.length; i++) {
+                    this.$watch(
+                        'widgetModel.' + this.settings.watchers[i],
+                        () => {
+                            this.fieldIsDisabled()
+                            this.fieldIsVisible()
+                        },
+                        { deep: true }
+                    )
+                }
             }
         }
     }

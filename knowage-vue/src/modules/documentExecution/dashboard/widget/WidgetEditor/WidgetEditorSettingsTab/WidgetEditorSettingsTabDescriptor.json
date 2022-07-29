@@ -142,6 +142,7 @@
                                     {
                                         "accordions": [
                                             {
+                                               
                                                 "containers": [
                                                     {
                                                         "components": [
@@ -166,6 +167,8 @@
                                                                     "onReorder": "functions.onRowThresholdListReorder",
                                                                     "items": "functions.getRowThresholdsList",
                                                                     "itemsSettings": {
+                                                                        "disabledCondition": "functions.rowThresholdsIsDisabled",
+                                                                        "watchers": ["settings.rowThresholds.enabled"],
                                                                         "containers": [
                                                                             {
                                                                                 "components": [

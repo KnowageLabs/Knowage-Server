@@ -2,7 +2,6 @@ import { IWidget, IWidgetColumn, IIcon } from "../../../Dashboard"
 import { emitter } from '../../../DashboardHelpers'
 import descriptor from '../WidgetEditorDescriptor.json'
 
-
 const tableWidgetFunctions = {
     itemsPerPageIsDisabled: (model: IWidget) => {
         return !model.settings.pagination.enabled
@@ -284,7 +283,7 @@ const tableWidgetFunctions = {
         return model.settings.rowThresholds.list[itemIndex] ? model.settings.rowThresholds.list[itemIndex].icon : ''
     },
     onRowThresholdListReorder: (model: IWidget, items: any) => {
-        console.log('onRowThresholdListReorder: ', items)
+
     }
 }
 export default tableWidgetFunctions

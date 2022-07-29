@@ -41,25 +41,7 @@ export default defineComponent({
     },
     async created() {
         this.loadValue()
-        this.$watch(
-            'widgetModel.' + this.property,
-            () => {
-                this.loadValue()
-            },
-            { deep: true }
-        )
-        if (this.settings.watchers) {
-            for (let i = 0; i < this.settings.watchers.length; i++) {
-                this.$watch(
-                    'widgetModel.' + this.settings.watchers[i],
-                    () => {
-                        this.fieldIsDisabled(this.itemIndex)
-                        this.fieldIsVisible()
-                    },
-                    { deep: true }
-                )
-            }
-        }
+        this.setWatchers()
     },
     methods: {
         loadValue() {
@@ -78,16 +60,35 @@ export default defineComponent({
             this.$emit('change', this.modelValue)
         },
         fieldIsVisible() {
-            //
             if (!this.settings.visibilityCondition) return (this.visible = true)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.visibilityCondition, 'getValue', null)
-            //
             if (tempFunction && typeof tempFunction === 'function') return (this.visible = tempFunction(this.widgetModel))
         },
-        fieldIsDisabled(itemIndex: number | undefined) {
+        fieldIsDisabled() {
             if (!this.settings.disabledCondition) return (this.disabled = false)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.disabledCondition, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel, itemIndex))
+            if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel, this.itemIndex))
+        },
+        setWatchers() {
+            this.$watch(
+                'widgetModel.' + this.property,
+                () => {
+                    this.loadValue(), this.fieldIsDisabled()
+                },
+                { deep: true }
+            )
+            if (this.settings.watchers) {
+                for (let i = 0; i < this.settings.watchers.length; i++) {
+                    this.$watch(
+                        'widgetModel.' + this.settings.watchers[i],
+                        () => {
+                            this.fieldIsDisabled()
+                            this.fieldIsVisible()
+                        },
+                        { deep: true }
+                    )
+                }
+            }
         }
     }
 })

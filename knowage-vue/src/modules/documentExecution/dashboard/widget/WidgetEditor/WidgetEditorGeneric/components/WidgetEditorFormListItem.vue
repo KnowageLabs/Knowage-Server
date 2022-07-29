@@ -5,7 +5,7 @@
         <div v-for="(container, containerIndex) in settings.containers" :key="containerIndex" :class="{ 'kn-draggable': reorderEnabled }" :draggable="reorderEnabled" @dragstart.stop="onDragStart">
             <div :class="container.cssClasses">
                 <div v-for="(component, index) in container.components" :key="index" :class="component.cssClasess">
-                    <i v-if="component.type === 'reorderIcon' && reorderEnabled" class="pi pi-th-large kn-cursor-pointer p-mr-2" @click="$emit('addNewItem', itemIndex)"></i>
+                    <i v-if="component.type === 'reorderIcon' && reorderEnabled" :class="{ 'icon-disabled': disabled }" class="pi pi-th-large kn-cursor-pointer p-mr-2" @click="$emit('addNewItem', itemIndex)"></i>
                     <WidgetEditorInputText
                         v-if="component.type === 'inputText' && fieldIsVisible(component)"
                         :widgetModel="widgetModel"
@@ -31,7 +31,7 @@
                         @change="onChange($event, component)"
                     ></WidgetEditorDropdown>
                     <WidgetEditorStyleTooblar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings" :item="item" :itemIndex="itemIndex"></WidgetEditorStyleTooblar>
-                    <i v-if="component.type === 'addDeleteIcon'" :class="itemIndex === 0 ? 'pi pi-plus-circle' : 'pi pi-trash'" class="kn-cursor-pointer p-ml-2" @click="$emit('addNewItem', itemIndex)"></i>
+                    <i v-if="component.type === 'addDeleteIcon'" :class="[itemIndex === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', disabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="$emit('addNewItem', itemIndex)"></i>
                 </div>
             </div>
         </div>
@@ -56,6 +56,7 @@ export default defineComponent({
     data() {
         return {
             item: null as any,
+            disabled: false,
             dropzoneTopVisible: false,
             dropzoneBottomVisible: false
         }
@@ -67,10 +68,12 @@ export default defineComponent({
     },
     created() {
         this.loadItem()
+        this.setWatchers()
     },
     methods: {
         loadItem() {
             this.item = this.propItem
+            this.itemIsDisabled()
         },
         onChange(newValue: any, component: any) {
             if (!component) return
@@ -95,11 +98,11 @@ export default defineComponent({
             event.dataTransfer.effectAllowed = 'move'
         },
         onDropComplete(event: any, position: 'before' | 'after') {
-            console.log('ON DRAG DROP: ', event)
+            if (this.disabled) return
             this.hideDropzone('top')
             this.hideDropzone('bottom')
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
-            console.log('EVENT DATA: ', eventData)
+
             this.$emit('moveRows', { sourceRowIndex: eventData, targetRowIndex: this.itemIndex, position: position })
         },
         displayDropzone(position: string) {
@@ -108,7 +111,7 @@ export default defineComponent({
             } else {
                 this.dropzoneBottomVisible = true
             }
-            // console.log('displayDropzone', position, this.dropzoneTopVisible)
+            //
         },
         hideDropzone(position: string) {
             if (position === 'top') {
@@ -116,7 +119,25 @@ export default defineComponent({
             } else {
                 this.dropzoneBottomVisible = false
             }
-            // console.log('hideDropzone', position, this.dropzoneTopVisible)
+            //
+        },
+        itemIsDisabled() {
+            if (!this.settings.disabledCondition) return
+            const tempFunction = getModelProperty(this.widgetModel, this.settings.disabledCondition, 'getValue', null)
+            if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel, this.itemIndex))
+        },
+        setWatchers() {
+            if (this.settings.watchers) {
+                for (let i = 0; i < this.settings.watchers.length; i++) {
+                    this.$watch(
+                        'widgetModel.' + this.settings.watchers[i],
+                        () => {
+                            this.itemIsDisabled()
+                        },
+                        { deep: true }
+                    )
+                }
+            }
         }
     }
 })
@@ -132,5 +153,9 @@ export default defineComponent({
 .form-list-item-dropzone-active {
     height: 10px;
     background-color: #aec1d3;
+}
+
+.icon-disabled {
+    color: #c2c2c2;
 }
 </style>
