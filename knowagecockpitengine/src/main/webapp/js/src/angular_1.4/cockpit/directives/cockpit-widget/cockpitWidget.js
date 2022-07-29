@@ -1462,6 +1462,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 		var tempBackGround={'background-color': $scope.extendedStyle.backgroundColor || ''};
 		angular.merge($scope.borderShadowStyle,tempBackGround);
+		angular.merge($scope.paddingStyle,tempBackGround);
 
 
 		// update sheets background color
