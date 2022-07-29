@@ -252,7 +252,8 @@ export default defineComponent({
                             'font-size': '',
                             'font-style': '',
                             'font-weight': '',
-                            'font-family': ''
+                            'font-family': '',
+                            color: ''
                         })
                     },
                     onRowThresholdsEnabled: (model: IWidget) => {
@@ -340,7 +341,29 @@ export default defineComponent({
                         model.settings.rowThresholds.list[itemIndex]['font-size'] = newValue
                     },
                     getThresholdListItemFontSize: (model: IWidget, item: any, itemIndex: number) => {
+                        console.log('NEW getThresholdListItemFontSize: ', model)
+                        console.log('NEW getThresholdListItemFontSize 2: ', item)
+                        console.log('NEW getThresholdListItemFontSize 3: ', itemIndex)
                         return model.settings.rowThresholds.list[itemIndex]['font-size']
+                    },
+
+                    updateThresholdListItemCellAlignment: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
+                        model.settings.rowThresholds.list[itemIndex]['justify-content'] = newValue
+                    },
+                    updateThresholdListItemFontFamily: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
+                        model.settings.rowThresholds.list[itemIndex]['font-family'] = newValue
+                    },
+                    getThresholdListItemFontColor: (model: IWidget, item: any, itemIndex: number) => {
+                        return model.settings.rowThresholds.list[itemIndex].color
+                    },
+                    setThresholdListItemFontColor: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
+                        model.settings.rowThresholds.list[itemIndex].color = newValue
+                    },
+                    getThresholdListItemBackgroundColor: (model: IWidget, item: any, itemIndex: number) => {
+                        return model.settings.rowThresholds.list[itemIndex]['background-color']
+                    },
+                    setThresholdListItemBackgroundColor: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
+                        model.settings.rowThresholds.list[itemIndex]['background-color'] = newValue
                     }
                 }
             }

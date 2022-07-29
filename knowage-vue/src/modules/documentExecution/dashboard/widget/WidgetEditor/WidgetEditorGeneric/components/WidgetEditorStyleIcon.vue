@@ -137,9 +137,11 @@ export default defineComponent({
             return temp
         },
         updateDisplayValue() {
+            console.log('UPDATE DISPLAY VALUE 1 ', this.icon)
             if (!this.icon.contextMenuSettings?.displayValue) return
             const tempFunction = getModelProperty(this.widgetModel, this.icon.contextMenuSettings.displayValue, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') this.displayValue = tempFunction(this.widgetModel)
+            if (tempFunction && typeof tempFunction === 'function') this.displayValue = tempFunction(this.widgetModel, this.item, this.itemIndex)
+            console.log('UPDATE DISPLAY VALUE 3 ', this.displayValue)
         },
         onColorPickerChange(event: any) {
             if (!event.value) return
@@ -149,7 +151,7 @@ export default defineComponent({
         updateColorInModel() {
             if (this.icon.colorPickerSettings?.onUpdate) {
                 const tempFunction = getModelProperty(this.widgetModel, this.icon.colorPickerSettings.onUpdate, 'getValue', null)
-                if (tempFunction && typeof tempFunction === 'function') tempFunction(this.newColor, this.widgetModel)
+                if (tempFunction && typeof tempFunction === 'function') tempFunction(this.newColor, this.widgetModel, this.item, this.itemIndex)
             }
         }
     }

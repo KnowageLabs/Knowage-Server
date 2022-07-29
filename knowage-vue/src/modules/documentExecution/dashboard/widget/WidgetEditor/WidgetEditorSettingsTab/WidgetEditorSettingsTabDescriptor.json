@@ -69,9 +69,9 @@
                                                                             "displayValue": "functions.getFontSize",
                                                                             "onUpdate": "functions.updateFontSize",
                                                                             "options": "functions.getFontSizeOptions",
-                                                                            "translateLabels": true,
-                                                                            "watchers": ["styles.th.font-size"]
-                                                                        }
+                                                                            "translateLabels": true
+                                                                        },
+                                                                        "watchers": ["styles.th.font-size"]
                                                                     },
                                                                     {
                                                                         "arrowDownIcon": true,
@@ -255,16 +255,16 @@
                                                                                                     "displayValue": "functions.getThresholdListItemFontSize",
                                                                                                     "onUpdate": "functions.updateThresholdListItemFontSize",
                                                                                                     "options": "functions.getFontSizeOptions",
-                                                                                                    "translateLabels": true,
-                                                                                                    "watchers": ["settings.rowThresholds.list"]
-                                                                                                }
+                                                                                                    "translateLabels": true
+                                                                                                },
+                                                                                                "watchers": ["settings.rowThresholds.list"]
                                                                                             },
                                                                                             {
                                                                                                 "arrowDownIcon": true,
                                                                                                 "class": "fas fa-align-left",
                                                                                                 "contextMenuSettings": {
                                                                                                     "onUpdate": "functions.updateThresholdListItemCellAlignment",
-                                                                                                    "options": "functions.getThresholdListItemCellAlignmentOptions",
+                                                                                                    "options": "functions.getCellAlignmentOptions",
                                                                                                     "translateLabels": true
                                                                                                 }
                                                                                             },
