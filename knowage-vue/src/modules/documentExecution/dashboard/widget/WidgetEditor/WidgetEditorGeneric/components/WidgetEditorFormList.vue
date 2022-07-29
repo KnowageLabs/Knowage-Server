@@ -2,7 +2,7 @@
     <div>
         <label v-if="settings.label" class="kn-material-input-label">{{ $t(settings.label) }}</label>
         <div :class="class" :options="options">
-            <WidgetEditorFormListItem v-for="(item, index) in items" :key="index" :widgetModel="widgetModel" :settings="settings.itemsSettings" :propItem="item" :itemIndex="index" @change="onChange($event, index)"></WidgetEditorFormListItem>
+            <WidgetEditorFormListItem v-for="(item, index) in items" :key="index" :widgetModel="widgetModel" :settings="settings.itemsSettings" :propItem="item" :itemIndex="index" @change="onChange($event, index)" @addNewItem="onAddDeleteItemClicked"></WidgetEditorFormListItem>
         </div>
     </div>
 </template>
@@ -52,6 +52,13 @@ export default defineComponent({
             if (event.component?.settings?.onUpdate) {
                 const tempFunction = getModelProperty(this.widgetModel, event.component.settings.onUpdate, 'getValue', null)
                 if (tempFunction && typeof tempFunction === 'function') tempFunction(this.widgetModel, event.item, index)
+            }
+        },
+        onAddDeleteItemClicked(itemIndex: number) {
+            const prop = itemIndex === 0 ? 'createItem' : 'deleteItem'
+            if (this.settings[prop]) {
+                const tempFunction = getModelProperty(this.widgetModel, this.settings[prop], 'getValue', null)
+                if (tempFunction && typeof tempFunction === 'function') tempFunction(this.widgetModel, itemIndex)
             }
         }
     }

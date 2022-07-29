@@ -26,6 +26,7 @@
                         @change="onChange($event, component)"
                     ></WidgetEditorDropdown>
                     <WidgetEditorStyleTooblar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings" :item="item" :itemIndex="itemIndex"></WidgetEditorStyleTooblar>
+                    <i v-if="component.type === 'addDeleteIcon'" :class="itemIndex === 0 ? 'pi pi-plus-circle' : 'pi pi-trash'" class="kn-cursor-pointer p-ml-2" @click="$emit('addNewItem', itemIndex)"></i>
                 </div>
             </div>
         </div>
@@ -44,7 +45,7 @@ export default defineComponent({
     name: 'widget-editor-form-list-item',
     components: { WidgetEditorInputText, WidgetEditorDropdown, WidgetEditorStyleTooblar },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Object, required: true }, propItem: { type: Object }, itemIndex: { type: Number } },
-    emits: ['change'],
+    emits: ['change', 'addNewItem'],
     data() {
         return {
             item: null as any

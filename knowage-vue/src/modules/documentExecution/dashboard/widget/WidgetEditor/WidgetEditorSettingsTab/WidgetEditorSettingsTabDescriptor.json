@@ -161,6 +161,7 @@
                                                             {
                                                                 "settings": {
                                                                     "createItem": "functions.createRowThresholdListItem",
+                                                                    "deleteItem": "functions.deleteRowThresholdListItem",
                                                                     "items": "functions.getRowThresholdsList",
                                                                     "itemsSettings": {
                                                                         "containers": [
@@ -227,9 +228,23 @@
                                                                                             "visible": "functions.compareValueParameterDropdownIsVisible"
                                                                                         },
                                                                                         "type": "dropdown"
+                                                                                    },
+                                                                                    {
+                                                                                        "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                                                                                        "label": "dashboard.widgetEditor.conditionalStyle.compareValue",
+                                                                                        "options": "functions.getColumnParameters",
+                                                                                        "property": "compareValue",
+                                                                                        "settings": {
+                                                                                            "onUpdate": "functions.updateThresholdListItem",
+                                                                                            "visible": "functions.compareValueParameterDropdownIsVisible"
+                                                                                        },
+                                                                                        "type": "dropdown"
+                                                                                    },
+                                                                                    {
+                                                                                        "type": "addDeleteIcon"
                                                                                     }
                                                                                 ],
-                                                                                "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                                                                "cssClasses": "p-d-flex p-flex-row p-ai-center p-jc-around"
                                                                             },
                                                                             {
                                                                                 "components": [

@@ -256,6 +256,9 @@ export default defineComponent({
                             color: ''
                         })
                     },
+                    deleteRowThresholdListItem: (model: IWidget, itemIndex: number) => {
+                        model.settings.rowThresholds.list.splice(itemIndex, 1)
+                    },
                     onRowThresholdsEnabled: (model: IWidget) => {
                         if (!model || !model.settings.rowThresholds?.list) return
                         if (model.settings.rowThresholds.list.length === 0) {
@@ -329,22 +332,21 @@ export default defineComponent({
                         model.settings.rowThresholds.list[itemIndex]['font-weight'] = model.settings.rowThresholds.list[itemIndex]['font-weight'] === 'bold' ? '' : 'bold'
                     },
                     thresholdItemBoldIconIsActive: (model: IWidget, item: any, itemIndex: number) => {
+                        if (!model.settings.rowThresholds.list[itemIndex]) return false
                         return model.settings.rowThresholds.list[itemIndex]['font-weight'] === 'bold'
                     },
                     updateThresholdListItemFontStyle: (model: IWidget, item: any, itemIndex: number) => {
                         model.settings.rowThresholds.list[itemIndex]['font-style'] = model.settings.rowThresholds.list[itemIndex]['font-style'] === 'italic' ? '' : 'italic'
                     },
                     thresholdListItemFontStyleIconIsActive: (model: IWidget, item: any, itemIndex: number) => {
+                        if (!model.settings.rowThresholds.list[itemIndex]) return false
                         return model.settings.rowThresholds.list[itemIndex]['font-style'] === 'italic'
                     },
                     updateThresholdListItemFontSize: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
                         model.settings.rowThresholds.list[itemIndex]['font-size'] = newValue
                     },
                     getThresholdListItemFontSize: (model: IWidget, item: any, itemIndex: number) => {
-                        console.log('NEW getThresholdListItemFontSize: ', model)
-                        console.log('NEW getThresholdListItemFontSize 2: ', item)
-                        console.log('NEW getThresholdListItemFontSize 3: ', itemIndex)
-                        return model.settings.rowThresholds.list[itemIndex]['font-size']
+                        return model.settings.rowThresholds.list[itemIndex] ? model.settings.rowThresholds.list[itemIndex]['font-size'] : ''
                     },
 
                     updateThresholdListItemCellAlignment: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
@@ -354,13 +356,13 @@ export default defineComponent({
                         model.settings.rowThresholds.list[itemIndex]['font-family'] = newValue
                     },
                     getThresholdListItemFontColor: (model: IWidget, item: any, itemIndex: number) => {
-                        return model.settings.rowThresholds.list[itemIndex].color
+                        return model.settings.rowThresholds.list[itemIndex] ? model.settings.rowThresholds.list[itemIndex].color : ''
                     },
                     setThresholdListItemFontColor: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
                         model.settings.rowThresholds.list[itemIndex].color = newValue
                     },
                     getThresholdListItemBackgroundColor: (model: IWidget, item: any, itemIndex: number) => {
-                        return model.settings.rowThresholds.list[itemIndex]['background-color']
+                        return model.settings.rowThresholds.list[itemIndex] ? model.settings.rowThresholds.list[itemIndex]['background-color'] : ''
                     },
                     setThresholdListItemBackgroundColor: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
                         model.settings.rowThresholds.list[itemIndex]['background-color'] = newValue
