@@ -28,7 +28,7 @@
                 </div>
                 <div class="p-field p-col-12 p-lg-6 p-as-center">
                     <span class="p-float-label">
-                        <InputSwitch class="p-mr-2" v-model="selectedDatasetProp.cache" />
+                        <InputSwitch class="p-mr-2" v-model="selectedDatasetProp.modelCache" :disabled="cacheDisabled" />
                         <span>{{ $t('dashboard.datasetEditor.cached') }}</span>
                     </span>
                 </div>
@@ -48,6 +48,11 @@ export default defineComponent({
     components: { Card, InputSwitch },
     props: { selectedDatasetProp: { required: true, type: Object } },
     emits: [],
+    computed: {
+        cacheDisabled(): boolean {
+            return (this.selectedDatasetProp.isCachingSupported && !this.selectedDatasetProp.isNearRealtimeSupported) || (!this.selectedDatasetProp.isCachingSupported && this.selectedDatasetProp.isNearRealtimeSupported) || this.selectedDatasetProp.isRealtime
+        }
+    },
     data() {
         return {
             dataDialogDescriptor

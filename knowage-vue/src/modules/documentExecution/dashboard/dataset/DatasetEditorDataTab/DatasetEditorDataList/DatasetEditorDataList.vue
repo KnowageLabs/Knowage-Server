@@ -18,7 +18,7 @@
                     <div class="kn-list-item" :style="dataListDescriptor.style.list.listItem" v-tooltip.left="slotProps.option.label">
                         <i class="p-mx-2" :style="dataListDescriptor.style.list.listIcon" :class="dataListDescriptor.listboxSettings.avatar.values[slotProps.option.type].icon"></i>
                         <span class="kn-list-item-text">{{ slotProps.option.label }}</span>
-                        <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click.stop="deleteDatasetFromModel" />
+                        <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click.stop="deleteDatasetFromModel(slotProps.option)" />
                     </div>
                 </template>
             </Listbox>
@@ -40,7 +40,7 @@ export default defineComponent({
     name: 'dataset-editor-data-list',
     components: { Card, Listbox, DataDialog },
     props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any }, selectedDatasetsProp: { required: true, type: Array as any } },
-    emits: ['datasetSelected', 'addSelectedDatasets'],
+    emits: ['datasetSelected', 'addSelectedDatasets', 'deleteDataset'],
     data() {
         return {
             dataListDescriptor,
@@ -54,9 +54,6 @@ export default defineComponent({
     },
     created() {
         this.selectedDatasets = this.selectedDatasetsProp
-        // console.log('availableDatasets', this.availableDatasetsProp)
-        // console.log('dashboardDatasets', this.dashboardDatasetsProp)
-        // console.log('selectedDatasets', this.selectedDatasets)
     },
     methods: {
         toggleDataDialog() {
@@ -67,7 +64,7 @@ export default defineComponent({
             this.dataDialogVisible = false
         },
         deleteDatasetFromModel(datasetToDelete) {
-            console.log(datasetToDelete)
+            this.$emit('deleteDataset', datasetToDelete)
         },
         selectDataset(event) {
             this.$emit('datasetSelected', event.value.id.dsId)

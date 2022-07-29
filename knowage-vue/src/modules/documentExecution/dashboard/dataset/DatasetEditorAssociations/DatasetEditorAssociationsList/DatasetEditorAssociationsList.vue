@@ -1,6 +1,7 @@
 <template>
     <div class="dataset-editor-list-card-container p-m-2">
         <div class="dataset-editor-list-card">
+            <Button label="Add Indexes on Associations" icon="pi pi-plus-circle" class="p-button-outlined p-mt-2 p-mx-2" @click="$emit('addIndexesOnAssociations')"></Button>
             <Button label="Add Association" icon="pi pi-plus-circle" class="p-button-outlined p-mt-2 p-mx-2" @click="$emit('createNewAssociation')"></Button>
             <Listbox
                 class="kn-list kn-list-no-border-right dataset-editor-list"
@@ -42,7 +43,7 @@ export default defineComponent({
     name: 'dataset-editor-data-list',
     components: { Card, Listbox },
     props: { dashboardAssociationsProp: { required: true, type: Array as any }, selectedAssociationProp: { required: true, type: Object as any } },
-    emits: ['createNewAssociation', 'associationSelected', 'associationDeleted'],
+    emits: ['createNewAssociation', 'associationSelected', 'associationDeleted', 'addIndexesOnAssociations'],
     data() {
         return {
             associationListDescriptor,

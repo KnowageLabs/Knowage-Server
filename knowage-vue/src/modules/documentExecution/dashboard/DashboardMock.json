@@ -39,20 +39,7 @@
                 "cache": false,
                 "id": 165,
                 "indexes": [],
-                "parameters": [
-                    {
-                        "multivalue": false,
-                        "name": "Dataset Parameter 1",
-                        "type": "static",
-                        "value": "Static 1"
-                    },
-                    {
-                        "multivalue": false,
-                        "name": "Dynamic Param",
-                        "type": "dynamic",
-                        "value": "Dynamic 1"
-                    }
-                ]
+                "parameters": []
             }
         ],
         "description": "a long description that could be used in some places",
