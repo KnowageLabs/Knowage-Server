@@ -6,6 +6,7 @@
         @createNewAssociation="$emit('createNewAssociation')"
         @associationDeleted="$emit('associationDeleted', $event)"
         @associationSelected="associationSelected"
+        @addIndexesOnAssociations="$emit('addIndexesOnAssociations')"
     />
     <AssociationsDetail v-if="selectedAssociation" :dashboardAssociationsProp="dashboardAssociationsProp" :selectedDatasetsProp="selectedDatasetsProp" :selectedAssociationProp="selectedAssociation" @fieldSelected="manageAssociationField" @fieldUnselected="unselectAssociationField" />
     <KnHint v-else class="p-as-center" :title="'documentExecution.dossier.title'" :hint="'documentExecution.dossier.hint'"></KnHint>
@@ -23,7 +24,7 @@ export default defineComponent({
     name: 'dataset-editor-data-tab',
     components: { AssociationsList, AssociationsDetail, KnHint },
     props: { selectedDatasetsProp: { required: true, type: Array }, dashboardAssociationsProp: { required: true, type: Array as PropType<IAssociation[]> }, selectedAssociationProp: { required: true, type: Object as PropType<IAssociation> } },
-    emits: ['createNewAssociation', 'associationDeleted'],
+    emits: ['createNewAssociation', 'associationDeleted', 'addIndexesOnAssociations'],
     data() {
         return {
             selectedAssociation: null as any

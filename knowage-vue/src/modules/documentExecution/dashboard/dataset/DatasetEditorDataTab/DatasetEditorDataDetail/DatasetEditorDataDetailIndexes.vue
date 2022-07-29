@@ -4,7 +4,7 @@
             <div class="p-col-12 p-d-flex">
                 <div class="kn-flex">
                     <span class="p-float-label">
-                        <MultiSelect class="kn-material-input" :style="descriptor.style.indexMultiselect" v-model="datasetIndexes" :options="selectedDatasetProp.metadata.fieldsMeta" optionLabel="alias" optionValue="alias" @change="updateDatasetIndexes" />
+                        <MultiSelect class="kn-material-input" :style="descriptor.style.indexMultiselect" v-model="selectedDatasetProp.modelIndexes" :options="selectedDatasetProp.metadata.fieldsMeta" optionLabel="alias" optionValue="alias" />
                         <label for="field" class="kn-material-input-label"> {{ $t('common.field') }}</label>
                     </span>
                 </div>
@@ -21,33 +21,15 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import MultiSelect from 'primevue/multiselect'
 import descriptor from './DatasetEditorDataDetailDescriptor.json'
-import mainStore from '../../../../../../App.store'
 
 export default defineComponent({
     name: 'dataset-editor-data-detail-info',
     components: { Card, Accordion, AccordionTab, MultiSelect },
-    props: { selectedDatasetProp: { required: true, type: Object }, dashboardDatasetsProp: { required: true, type: Array as any } },
+    props: { selectedDatasetProp: { required: true, type: Object } },
     emits: [],
     data() {
         return {
-            descriptor,
-            datasetIndexes: [] as any,
-            selectedField: ''
-        }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
-    created() {
-        this.getIndexesFromModel()
-    },
-    methods: {
-        getIndexesFromModel() {
-            this.datasetIndexes = this.dashboardDatasetsProp?.find((dataset) => dataset.id === this.selectedDatasetProp.id.dsId).indexes
-        },
-        updateDatasetIndexes(event) {
-            this.dashboardDatasetsProp.find((dataset) => dataset.id === this.selectedDatasetProp.id.dsId).indexes = event.value
+            descriptor
         }
     }
 })

@@ -1,6 +1,6 @@
 <template>
-    <DataList class="" :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" :selectedDatasetsProp="selectedDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @datasetSelected="selectDataset" />
-    <DataDetail class="kn-flex" :dashboardDatasetsProp="dashboardDatasetsProp" :selectedDatasetProp="selectedDataset" />
+    <DataList :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" :selectedDatasetsProp="selectedDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @datasetSelected="selectDataset" @deleteDataset="$emit('deleteDataset', $event)" />
+    <DataDetail class="kn-flex p-mt-2" :dashboardDatasetsProp="dashboardDatasetsProp" :selectedDatasetProp="selectedDataset" :documentDriversProp="documentDriversProp" />
     <DatasetEditorPreview class="kn-flex" :dashboardDatasetsProp="dashboardDatasetsProp" />
 </template>
 
@@ -13,8 +13,8 @@ import DatasetEditorPreview from '../DatasetEditorPreview.vue'
 export default defineComponent({
     name: 'dataset-editor-data-tab',
     components: { DataList, DataDetail, DatasetEditorPreview },
-    props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any }, selectedDatasetsProp: { required: true, type: Array as any } },
-    emits: ['addSelectedDatasets'],
+    props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any }, selectedDatasetsProp: { required: true, type: Array as any }, documentDriversProp: { required: true, type: Array as any } },
+    emits: ['addSelectedDatasets', 'deleteDataset'],
     data() {
         return {
             selectedDataset: {} as any
