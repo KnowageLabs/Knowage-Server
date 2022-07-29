@@ -241,11 +241,18 @@ export default defineComponent({
                     },
                     createRowThresholdListItem: (model: IWidget) => {
                         if (!model || !model.settings.rowThresholds?.list) return
+                        // TODO - CHANGE DEFAULT?
                         model.settings.rowThresholds.list.push({
                             column: '',
                             condition: '',
                             compareValueType: '',
-                            compareValue: ''
+                            compareValue: '',
+                            'background-color': '',
+                            'justify-content': '',
+                            'font-size': '',
+                            'font-style': '',
+                            'font-weight': '',
+                            'font-family': ''
                         })
                     },
                     onRowThresholdsEnabled: (model: IWidget) => {
@@ -312,6 +319,28 @@ export default defineComponent({
                     compareValueParameterDropdownIsVisible: (model: IWidget, item: any) => {
                         if (!item) return
                         return item.compareValueType === 'parameter'
+                    },
+                    updateThresholdListItemFontItemWeight: (model: IWidget, item: any, itemIndex: number) => {
+                        console.log('updateThresholdListFontItemWeight ', model)
+                        console.log('updateThresholdListFontItemWeight ', item)
+                        console.log('updateThresholdListFontItemWeight ', itemIndex)
+
+                        model.settings.rowThresholds.list[itemIndex]['font-weight'] = model.settings.rowThresholds.list[itemIndex]['font-weight'] === 'bold' ? '' : 'bold'
+                    },
+                    thresholdItemBoldIconIsActive: (model: IWidget, item: any, itemIndex: number) => {
+                        return model.settings.rowThresholds.list[itemIndex]['font-weight'] === 'bold'
+                    },
+                    updateThresholdListItemFontStyle: (model: IWidget, item: any, itemIndex: number) => {
+                        model.settings.rowThresholds.list[itemIndex]['font-style'] = model.settings.rowThresholds.list[itemIndex]['font-style'] === 'italic' ? '' : 'italic'
+                    },
+                    thresholdListItemFontStyleIconIsActive: (model: IWidget, item: any, itemIndex: number) => {
+                        return model.settings.rowThresholds.list[itemIndex]['font-style'] === 'italic'
+                    },
+                    updateThresholdListItemFontSize: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
+                        model.settings.rowThresholds.list[itemIndex]['font-size'] = newValue
+                    },
+                    getThresholdListItemFontSize: (model: IWidget, item: any, itemIndex: number) => {
+                        return model.settings.rowThresholds.list[itemIndex]['font-size']
                     }
                 }
             }

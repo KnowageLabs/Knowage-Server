@@ -1,28 +1,33 @@
 <template>
-    <div class="p-d-flex p-flex-row p-ai-center">
-        <div v-for="(component, index) in settings.components" :key="index">
-            <WidgetEditorInputText
-                v-if="component.type === 'inputText' && fieldIsVisible(component)"
-                :widgetModel="widgetModel"
-                :property="''"
-                :label="component.label"
-                :class="component.cssClass"
-                :settings="component.settings"
-                :initialValue="item[component.property]"
-                @input="onChange($event, component, index)"
-            ></WidgetEditorInputText>
-            <WidgetEditorDropdown
-                v-else-if="component.type === 'dropdown' && fieldIsVisible(component)"
-                :widgetModel="widgetModel"
-                :class="component.cssClass"
-                :style="component.style"
-                :label="component.label"
-                :property="''"
-                :options="getDropdownOptions(component)"
-                :settings="component.settings"
-                :initialValue="item[component.property]"
-                @change="onChange($event, component)"
-            ></WidgetEditorDropdown>
+    <div>
+        <div v-for="(container, containerIndex) in settings.containers" :key="containerIndex">
+            <div :class="container.cssClasses">
+                <div v-for="(component, index) in container.components" :key="index" :class="component.cssClasess">
+                    <WidgetEditorInputText
+                        v-if="component.type === 'inputText' && fieldIsVisible(component)"
+                        :widgetModel="widgetModel"
+                        :property="''"
+                        :label="component.label"
+                        :class="component.cssClass"
+                        :settings="component.settings"
+                        :initialValue="item[component.property]"
+                        @input="onChange($event, component, index)"
+                    ></WidgetEditorInputText>
+                    <WidgetEditorDropdown
+                        v-else-if="component.type === 'dropdown' && fieldIsVisible(component)"
+                        :widgetModel="widgetModel"
+                        :class="component.cssClass"
+                        :style="component.style"
+                        :label="component.label"
+                        :property="''"
+                        :options="getDropdownOptions(component)"
+                        :settings="component.settings"
+                        :initialValue="item[component.property]"
+                        @change="onChange($event, component)"
+                    ></WidgetEditorDropdown>
+                    <WidgetEditorStyleTooblar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings" :item="item" :itemIndex="itemIndex"></WidgetEditorStyleTooblar>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -33,11 +38,12 @@ import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { getModelProperty } from '../WidgetEditorGenericHelper'
 import WidgetEditorInputText from './WidgetEditorInputText.vue'
 import WidgetEditorDropdown from './WidgetEditorDropdown.vue'
+import WidgetEditorStyleTooblar from './WidgetEditorStyleTooblar.vue'
 
 export default defineComponent({
     name: 'widget-editor-form-list-item',
-    components: { WidgetEditorInputText, WidgetEditorDropdown },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Object, required: true }, propItem: { type: Object } },
+    components: { WidgetEditorInputText, WidgetEditorDropdown, WidgetEditorStyleTooblar },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Object, required: true }, propItem: { type: Object }, itemIndex: { type: Number } },
     emits: ['change'],
     data() {
         return {

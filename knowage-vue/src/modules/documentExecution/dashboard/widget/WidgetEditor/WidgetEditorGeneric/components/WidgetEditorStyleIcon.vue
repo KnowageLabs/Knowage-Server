@@ -24,7 +24,7 @@ import WidgetEditorToolbarContextMenu from './WidgetEditorToolbarContextMenu.vue
 export default defineComponent({
     name: 'name',
     components: { ColorPicker, WidgetEditorToolbarContextMenu },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, icon: { type: Object, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, icon: { type: Object, required: true }, item: { type: Object }, itemIndex: { type: Number } },
     data() {
         return {
             active: false,
@@ -64,18 +64,18 @@ export default defineComponent({
             if (!icon || !icon.function) return
 
             const tempFunction = getModelProperty(this.widgetModel, icon.function, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') return tempFunction(this.widgetModel)
+            if (tempFunction && typeof tempFunction === 'function') return tempFunction(this.widgetModel, this.item, this.itemIndex)
         },
         iconIsActive() {
             if (!this.icon.isActiveFunction) return (this.active = false)
 
             const tempFunction = getModelProperty(this.widgetModel, this.icon.isActiveFunction, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') return (this.active = tempFunction(this.widgetModel))
+            if (tempFunction && typeof tempFunction === 'function') return (this.active = tempFunction(this.widgetModel, this.item, this.itemIndex))
         },
         loadInitialColorValue() {
             if (!this.icon.colorPickerSettings) return
             const tempFunction = getModelProperty(this.widgetModel, this.icon.colorPickerSettings.initialValue, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') this.newColor = tempFunction(this.widgetModel)
+            if (tempFunction && typeof tempFunction === 'function') this.newColor = tempFunction(this.widgetModel, this.item, this.itemIndex)
         },
         openAdditionalComponents() {
             this.changeColorPickerVisibility()
@@ -124,7 +124,7 @@ export default defineComponent({
         callUpdateFunction(newValue: string) {
             if (this.icon.contextMenuSettings?.onUpdate) {
                 const tempFunction = getModelProperty(this.widgetModel, this.icon.contextMenuSettings.onUpdate, 'getValue', null)
-                if (tempFunction && typeof tempFunction === 'function') tempFunction(newValue, this.widgetModel)
+                if (tempFunction && typeof tempFunction === 'function') tempFunction(newValue, this.widgetModel, this.item, this.itemIndex)
             }
         },
         onContextInputChanged(item: string) {

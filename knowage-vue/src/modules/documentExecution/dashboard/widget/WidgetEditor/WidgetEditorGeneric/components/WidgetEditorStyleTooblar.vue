@@ -1,6 +1,6 @@
 <template>
     <div class="widget-editor-toolbar p-d-flex p-flex-row p-ai-center">
-        <WidgetEditorStyleIcon v-for="(icon, index) in icons" :key="index" :widgetModel="widgetModel" :icon="icon" class="kn-flex"> </WidgetEditorStyleIcon>
+        <WidgetEditorStyleIcon v-for="(icon, index) in icons" :key="index" class="kn-flex" :widgetModel="widgetModel" :icon="icon" :item="item" :itemIndex="itemIndex"> </WidgetEditorStyleIcon>
     </div>
 </template>
 
@@ -13,19 +13,12 @@ import WidgetEditorStyleIcon from './WidgetEditorStyleIcon.vue'
 export default defineComponent({
     name: 'widget-editor-style-toolbar',
     components: { WidgetEditorStyleIcon },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, icons: { type: Array as PropType<any[]>, required: true }, settings: { type: Object, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, icons: { type: Array as PropType<any[]>, required: true }, settings: { type: Object, required: true }, item: { type: Object }, itemIndex: { type: Number } },
     data() {
         return {}
     },
     async created() {},
-    methods: {
-        onIconClicked(icon: any) {
-            if (!icon || !icon.function) return
-
-            const tempFunction = getModelProperty(this.widgetModel, icon.function, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') return tempFunction(this.widgetModel)
-        }
-    }
+    methods: {}
 })
 </script>
 

@@ -2,7 +2,7 @@
     <div>
         <label v-if="settings.label" class="kn-material-input-label">{{ $t(settings.label) }}</label>
         <div :class="class" :options="options">
-            <WidgetEditorFormListItem v-for="(item, index) in items" :key="index" :widgetModel="widgetModel" :settings="settings.itemsSettings" :propItem="item" @change="onChange($event, index)"></WidgetEditorFormListItem>
+            <WidgetEditorFormListItem v-for="(item, index) in items" :key="index" :widgetModel="widgetModel" :settings="settings.itemsSettings" :propItem="item" :itemIndex="index" @change="onChange($event, index)"></WidgetEditorFormListItem>
         </div>
     </div>
 </template>
@@ -10,11 +10,11 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { getModelProperty } from '../WidgetEditorGenericHelper'
 import Listbox from 'primevue/listbox'
 import WidgetEditorButtons from './WidgetEditorButtons.vue'
 import WidgetEditorFormListItem from './WidgetEditorFormListItem.vue'
 import deepcopy from 'deepcopy'
-import { getModelProperty } from '../WidgetEditorGenericHelper'
 
 export default defineComponent({
     name: 'widget-editor-form-list',
