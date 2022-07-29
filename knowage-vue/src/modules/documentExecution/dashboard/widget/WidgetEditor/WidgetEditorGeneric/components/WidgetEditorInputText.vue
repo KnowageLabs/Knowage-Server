@@ -36,10 +36,9 @@ export default defineComponent({
     async created() {
         this.loadValue()
         this.$watch('widgetModel.' + this.property, () => this.loadValue(), { deep: true })
-        console.log('SETTINGS WATCHERS: ', this.settings.watchers)
+
         if (this.settings.watchers) {
             for (let i = 0; i < this.settings.watchers.length; i++) {
-                console.log('TEMP: ', this.settings.watchers[i])
                 this.$watch(
                     'widgetModel.' + this.settings.watchers[i],
                     () => {

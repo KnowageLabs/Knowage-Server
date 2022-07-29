@@ -9,7 +9,7 @@
         </template>
 
         <div class="widget-editor-icon-picker-content">
-            <label class="kn-material-input-label p-my-2"> {{ $t('dashboard.widgetEditor.fontawesome') }}</label>
+            <label class="kn-material-input-label p-my-3"> {{ $t('dashboard.widgetEditor.fontawesome') }}</label>
             <div class="widget-editor-icon-picker-icons-container">
                 <div v-for="(icon, index) in icons" :key="index" :class="{ 'widget-editor-selected-icon-container': selectedIcon?.value === icon.value }" class="widget-editor-icon-container kn-cursor-pointer" @click.stop="setSelectedIcon(icon)">
                     <i :class="'fas fa-' + icon.name"></i>
@@ -25,16 +25,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { IIcon } from '../../../../Dashboard'
+import { defineComponent, PropType } from 'vue'
+import { IIcon, IWidget } from '../../../../Dashboard'
 import Dialog from 'primevue/dialog'
 import descriptor from './WidgetEditorStyleTooblarDescriptor.json'
 import iconsList from '../../../../../../managers/menuManagement/IconPicker/icons'
+import { getModelProperty } from '../WidgetEditorGenericHelper'
 
 export default defineComponent({
     name: 'widget-editor-icon-picker-dialog',
     components: { Dialog },
-    props: { settings: { type: Object, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Object, required: true }, itemIndex: { type: Number } },
     emits: ['close', 'save'],
     data() {
         return {
@@ -45,10 +46,24 @@ export default defineComponent({
     },
     async created() {
         this.loadIcons()
+        this.getSelectedIcon()
     },
     methods: {
         loadIcons() {
             this.icons = iconsList
+        },
+        getSelectedIcon() {
+            if (!this.settings.initialValue) return
+
+            let tempValue = null
+            const tempFunction = getModelProperty(this.widgetModel, this.settings.initialValue, 'getValue', null)
+            if (tempFunction && typeof tempFunction === 'function') tempValue = tempFunction(this.widgetModel, this.settings.initialValue, this.itemIndex)
+
+            if (tempValue) this.setSelectedIconFromInitialValue(tempValue)
+        },
+        setSelectedIconFromInitialValue(value: string) {
+            const index = this.icons.findIndex((icon: IIcon) => icon.value === value)
+            if (index !== -1) this.selectedIcon = { ...this.icons[index] }
         },
         setSelectedIcon(icon: IIcon) {
             this.selectedIcon = icon

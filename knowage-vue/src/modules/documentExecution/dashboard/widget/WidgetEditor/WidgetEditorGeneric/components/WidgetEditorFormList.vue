@@ -36,11 +36,10 @@ export default defineComponent({
             let tempItems = []
             const tempFunction = getModelProperty(this.widgetModel, this.settings.items, 'getValue', null)
             if (tempFunction && typeof tempFunction === 'function') tempItems = tempFunction(this.widgetModel)
-            console.log('>>>>>>> LOADED TEMP ITEMS: ', tempItems)
+
             this.items = tempItems ? deepcopy(tempItems) : []
         },
         setWatchers() {
-            console.log('THIS SETTINGS WATCHERS: ', this.settings.watchers)
             if (this.settings.watchers) {
                 for (let i = 0; i < this.settings.watchers.length; i++) {
                     this.$watch('widgetModel.' + this.settings.watchers[i], () => this.loadItems(), { deep: true })

@@ -33,11 +33,9 @@ export default defineComponent({
     async created() {},
     methods: {
         itemClicked(item: any) {
-            console.log('itemClicked() - item: ', item)
             this.$emit('itemClicked', item)
         },
         buttonClicked(item: any) {
-            console.log('buttonClicked() - item: ', item)
             this.$emit('buttonClicked', item)
         },
         getTitle(item: any) {

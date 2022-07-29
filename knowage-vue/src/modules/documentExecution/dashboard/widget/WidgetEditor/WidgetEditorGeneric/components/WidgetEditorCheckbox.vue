@@ -35,7 +35,6 @@ export default defineComponent({
         this.$watch('widgetModel.' + this.property, () => this.loadValue(), { deep: true })
         if (this.settings.watchers) {
             for (let i = 0; i < this.settings.watchers.length; i++) {
-                console.log('TEMP: ', this.settings.watchers[i])
                 this.$watch(
                     'widgetModel.' + this.settings.watchers[i],
                     () => {
@@ -62,17 +61,15 @@ export default defineComponent({
             }
         },
         fieldIsDisabled() {
-            console.log(' >>>>>> fieldIsDisabled  1', this.settings.visibilityCondition)
             if (!this.settings.disabledCondition) return (this.disabled = false)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.disabledCondition, 'getValue', null)
-            console.log(' >>>>>> fieldIsDisabled  2', tempFunction())
+
             if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel))
         },
         fieldIsVisible() {
-            console.log(' >>>>>> fieldIsVisible INPUT 1', this.settings.visibilityCondition)
             if (!this.settings.visibilityCondition) return (this.visible = true)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.visibilityCondition, 'getValue', null)
-            console.log(' >>>>>> fieldIsVisible INPUT 2', tempFunction(this.widgetModel))
+
             if (tempFunction && typeof tempFunction === 'function') return (this.visible = tempFunction(this.widgetModel))
         }
     }

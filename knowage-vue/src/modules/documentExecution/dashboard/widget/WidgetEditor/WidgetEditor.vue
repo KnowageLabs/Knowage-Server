@@ -18,7 +18,7 @@
  * ! this component will be in charge of managing the widget editing.
  */
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IDatasetOptions, IWidget, IWidgetColumn } from '../../Dashboard'
+import { IWidgetEditorDataset, IDatasetOptions, IWidget, IWidgetColumn, IIcon } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
 import { emitter } from '../../DashboardHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
@@ -274,10 +274,8 @@ export default defineComponent({
                         ]
                     },
                     updateThresholdListItem: (model: IWidget, item: any, index: number) => {
-                        console.log('updateThresholdListItem', item, index)
                         if (!model || !model.settings.rowThresholds?.list) return
                         if (index !== -1) {
-                            console.log("model.settings.rowThresholds.list[index].column !== item.column && item.compareValueType !== 'static'", model.settings.rowThresholds.list[index].column !== item.column && item.compareValueType !== 'static')
                             if (model.settings.rowThresholds.list[index].column !== item.column && item.compareValueType !== 'static') {
                                 item.compareValue = ''
                             }
@@ -325,10 +323,6 @@ export default defineComponent({
                         return item.compareValueType === 'parameter'
                     },
                     updateThresholdListItemFontItemWeight: (model: IWidget, item: any, itemIndex: number) => {
-                        console.log('updateThresholdListFontItemWeight ', model)
-                        console.log('updateThresholdListFontItemWeight ', item)
-                        console.log('updateThresholdListFontItemWeight ', itemIndex)
-
                         model.settings.rowThresholds.list[itemIndex]['font-weight'] = model.settings.rowThresholds.list[itemIndex]['font-weight'] === 'bold' ? '' : 'bold'
                     },
                     thresholdItemBoldIconIsActive: (model: IWidget, item: any, itemIndex: number) => {
@@ -369,6 +363,12 @@ export default defineComponent({
                     },
                     rowThresholdsIsDisabled: (model: IWidget) => {
                         return !model?.settings.rowThresholds?.enabled
+                    },
+                    setThresholdListItemIcon: (icon: IIcon, model: IWidget, item: any, itemIndex: number) => {
+                        model.settings.rowThresholds.list[itemIndex].icon = icon?.value
+                    },
+                    getThresholdListItemIcon: (model: IWidget, item: any, itemIndex: number) => {
+                        return model.settings.rowThresholds.list[itemIndex] ? model.settings.rowThresholds.list[itemIndex].icon : ''
                     }
                 }
             }
@@ -396,7 +396,6 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.previewData = response.data))
                 .catch(() => {})
             this.store.setLoading(false)
-            console.log('loadPreviewData() - previewData: ', this.previewData)
         },
         async loadAvailableFunctions(dataset: IWidgetEditorDataset) {
             this.store.setLoading(true)

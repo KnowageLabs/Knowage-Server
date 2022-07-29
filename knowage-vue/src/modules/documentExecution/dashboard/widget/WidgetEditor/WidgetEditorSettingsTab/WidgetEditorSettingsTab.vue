@@ -34,7 +34,6 @@ export default defineComponent({
     async created() {},
     methods: {
         onItemClicked(item: any) {
-            console.log('ITEM: ', item)
             this.selectedSetting = item.value
             // TODO - see about tableWidget key
             this.selectedDescriptor = { tableWidget: item.descriptor }
