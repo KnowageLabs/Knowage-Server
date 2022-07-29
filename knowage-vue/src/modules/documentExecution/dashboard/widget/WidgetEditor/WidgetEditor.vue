@@ -18,7 +18,7 @@
  * ! this component will be in charge of managing the widget editing.
  */
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IDatasetOptions, IWidget, IWidgetColumn } from '../../Dashboard'
+import { IWidgetEditorDataset, IDatasetOptions, IWidget, IWidgetColumn, IIcon } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
 import { emitter } from '../../DashboardHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
@@ -80,7 +80,12 @@ export default defineComponent({
                         'font-family': ''
                     }
                 },
-                settings: {},
+                settings: {
+                    rowThresholds: {
+                        enabled: false,
+                        list: []
+                    }
+                },
                 temp: {}
             } as any
             if (widget.type === 'tableWidget') {
@@ -229,6 +234,141 @@ export default defineComponent({
                     setBackgroundColor: (newValue: string, model: IWidget) => {
                         if (!model) return
                         model.styles.th['background-color'] = newValue
+                    },
+                    getRowThresholdsList: (model: IWidget) => {
+                        if (!model) return
+                        return model.settings.rowThresholds?.list
+                    },
+                    createRowThresholdListItem: (model: IWidget) => {
+                        if (!model || !model.settings.rowThresholds?.list || !model.settings.rowThresholds.enabled) return
+                        // TODO - CHANGE DEFAULT?
+                        model.settings.rowThresholds.list.push({
+                            column: '',
+                            condition: '',
+                            compareValueType: '',
+                            compareValue: '',
+                            'background-color': '',
+                            'justify-content': '',
+                            'font-size': '',
+                            'font-style': '',
+                            'font-weight': '',
+                            'font-family': '',
+                            color: ''
+                        })
+                    },
+                    deleteRowThresholdListItem: (model: IWidget, itemIndex: number) => {
+                        if (model.settings.rowThresholds.enabled) model.settings.rowThresholds.list.splice(itemIndex, 1)
+                    },
+                    onRowThresholdsEnabled: (model: IWidget) => {
+                        if (!model || !model.settings.rowThresholds?.list) return
+                        if (model.settings.rowThresholds.list.length === 0) {
+                            model.functions.createRowThresholdListItem(model)
+                        }
+                    },
+                    getDatasetColumns: () => {
+                        // TODO - REMOVE MOCK
+                        return [
+                            { value: 'Dataset 1', label: 'Dataset 1' },
+                            { value: 'Dataset 2', label: 'Dataset 2' },
+                            { value: 'Dataset 3', label: 'Dataset 3' }
+                        ]
+                    },
+                    updateThresholdListItem: (model: IWidget, item: any, index: number) => {
+                        if (!model || !model.settings.rowThresholds?.list) return
+                        if (index !== -1) {
+                            if (model.settings.rowThresholds.list[index].column !== item.column && item.compareValueType !== 'static') {
+                                item.compareValue = ''
+                            }
+                            if (model.settings.rowThresholds.list[index].compareValueType !== item.compareValueType) item.compareValue = ''
+                            model.settings.rowThresholds.list[index] = { ...item }
+                        }
+                    },
+                    getColumnConditionOptions: () => {
+                        return this.descriptor.columnConditionOptions
+                    },
+                    getRowStyleCompareValueTypes: () => {
+                        return this.descriptor.rowStyleCompareValueTypes
+                    },
+                    compareValueInputTextIsVisible: (model: IWidget, item: any) => {
+                        if (!item) return
+                        return item.compareValueType === 'static'
+                    },
+                    getColumnVariables: (model: IWidget) => {
+                        // TODO - remove mock
+                        return [
+                            { value: 'Variable 1', label: 'Varibale 1' },
+                            { value: 'Variable 2', label: 'Varibale 2' }
+                        ]
+                    },
+                    compareValueVariablesDropdownIsVisible: (model: IWidget, item: any) => {
+                        if (!item) return
+                        return item.compareValueType === 'variable'
+                    },
+                    getColumnVariableOptions: (item: any) => {
+                        // TODO - remove mock
+                        return [
+                            { value: 'Variable OPTION 1', label: 'Varibale OPTION 1' },
+                            { value: 'Variable OPTION 2', label: 'Varibale OPTION 2' }
+                        ]
+                    },
+                    getColumnParameters: (model: IWidget) => {
+                        // TODO - remove mock
+                        return [
+                            { value: 'Parameter 1', label: 'Parameter 1' },
+                            { value: 'Parameter 2', label: 'Parameter 2' }
+                        ]
+                    },
+                    compareValueParameterDropdownIsVisible: (model: IWidget, item: any) => {
+                        if (!item) return
+                        return item.compareValueType === 'parameter'
+                    },
+                    updateThresholdListItemFontItemWeight: (model: IWidget, item: any, itemIndex: number) => {
+                        model.settings.rowThresholds.list[itemIndex]['font-weight'] = model.settings.rowThresholds.list[itemIndex]['font-weight'] === 'bold' ? '' : 'bold'
+                    },
+                    thresholdItemBoldIconIsActive: (model: IWidget, item: any, itemIndex: number) => {
+                        if (!model.settings.rowThresholds.list[itemIndex]) return false
+                        return model.settings.rowThresholds.list[itemIndex]['font-weight'] === 'bold'
+                    },
+                    updateThresholdListItemFontStyle: (model: IWidget, item: any, itemIndex: number) => {
+                        model.settings.rowThresholds.list[itemIndex]['font-style'] = model.settings.rowThresholds.list[itemIndex]['font-style'] === 'italic' ? '' : 'italic'
+                    },
+                    thresholdListItemFontStyleIconIsActive: (model: IWidget, item: any, itemIndex: number) => {
+                        if (!model.settings.rowThresholds.list[itemIndex]) return false
+                        return model.settings.rowThresholds.list[itemIndex]['font-style'] === 'italic'
+                    },
+                    updateThresholdListItemFontSize: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
+                        model.settings.rowThresholds.list[itemIndex]['font-size'] = newValue
+                    },
+                    getThresholdListItemFontSize: (model: IWidget, item: any, itemIndex: number) => {
+                        return model.settings.rowThresholds.list[itemIndex] ? model.settings.rowThresholds.list[itemIndex]['font-size'] : ''
+                    },
+
+                    updateThresholdListItemCellAlignment: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
+                        model.settings.rowThresholds.list[itemIndex]['justify-content'] = newValue
+                    },
+                    updateThresholdListItemFontFamily: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
+                        model.settings.rowThresholds.list[itemIndex]['font-family'] = newValue
+                    },
+                    getThresholdListItemFontColor: (model: IWidget, item: any, itemIndex: number) => {
+                        return model.settings.rowThresholds.list[itemIndex] ? model.settings.rowThresholds.list[itemIndex].color : ''
+                    },
+                    setThresholdListItemFontColor: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
+                        model.settings.rowThresholds.list[itemIndex].color = newValue
+                    },
+                    getThresholdListItemBackgroundColor: (model: IWidget, item: any, itemIndex: number) => {
+                        return model.settings.rowThresholds.list[itemIndex] ? model.settings.rowThresholds.list[itemIndex]['background-color'] : ''
+                    },
+                    setThresholdListItemBackgroundColor: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
+                        model.settings.rowThresholds.list[itemIndex]['background-color'] = newValue
+                    },
+                    rowThresholdsIsDisabled: (model: IWidget) => {
+                        return !model?.settings.rowThresholds?.enabled
+                    },
+                    setThresholdListItemIcon: (icon: IIcon, model: IWidget, item: any, itemIndex: number) => {
+                        model.settings.rowThresholds.list[itemIndex].icon = icon?.value
+                    },
+                    getThresholdListItemIcon: (model: IWidget, item: any, itemIndex: number) => {
+                        return model.settings.rowThresholds.list[itemIndex] ? model.settings.rowThresholds.list[itemIndex].icon : ''
                     }
                 }
             }
@@ -256,7 +396,6 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.previewData = response.data))
                 .catch(() => {})
             this.store.setLoading(false)
-            console.log('loadPreviewData() - previewData: ', this.previewData)
         },
         async loadAvailableFunctions(dataset: IWidgetEditorDataset) {
             this.store.setLoading(true)

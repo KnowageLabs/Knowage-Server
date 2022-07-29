@@ -20,7 +20,9 @@ export default defineComponent({
         label: { type: String },
         class: { type: String },
         inputClass: { type: String },
-        settings: { type: Object, required: true }
+        settings: { type: Object, required: true },
+        initialValue: { type: String },
+        itemIndex: { type: Number }
     },
     emits: ['input', 'change', 'blur'],
     data() {
@@ -34,13 +36,13 @@ export default defineComponent({
     async created() {
         this.loadValue()
         this.$watch('widgetModel.' + this.property, () => this.loadValue(), { deep: true })
+
         if (this.settings.watchers) {
             for (let i = 0; i < this.settings.watchers.length; i++) {
-                console.log('TEMP: ', this.settings.watchers[i])
                 this.$watch(
                     'widgetModel.' + this.settings.watchers[i],
                     () => {
-                        this.fieldIsDisabled()
+                        this.fieldIsDisabled(this.itemIndex)
                         this.fieldIsVisible()
                     },
                     { deep: true }
@@ -50,9 +52,14 @@ export default defineComponent({
     },
     methods: {
         loadValue() {
+            if ((this.initialValue || this.initialValue === '') && !this.property) {
+                this.modelValue = this.initialValue
+                this.visible = true
+                return
+            }
             this.modelValue = getModelProperty(this.widgetModel, this.property, 'getValue', null) ?? ''
 
-            this.fieldIsDisabled()
+            this.fieldIsDisabled(this.itemIndex)
             this.fieldIsVisible()
         },
         onInput() {
@@ -63,10 +70,10 @@ export default defineComponent({
             this.$emit('change', this.modelValue)
             this.callOnUpdateFunction()
         },
-        fieldIsDisabled() {
+        fieldIsDisabled(itemIndex: number | undefined) {
             if (!this.settings.disabledCondition) return (this.disabled = false)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.disabledCondition, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel))
+            if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel, itemIndex))
         },
         fieldIsVisible() {
             if (!this.settings.visibilityCondition) return (this.visible = true)

@@ -1,5 +1,5 @@
 <template>
-    <div class="icon-container">
+    <div class="icon-container" :class="{ 'icon-disabled': disabled }">
         <div id="color-picker-target" class="p-d-flex p-flex-row p-jc-center p-ai-center" @click="openAdditionalComponents">
             <i :class="[icon.class, active ? 'active-icon' : '']" class="widget-editor-icon kn-cursor-pointer p-mr-2" @click="onIconClicked(icon)"></i>
             <div v-show="icon.arrowDownIcon || icon.colorCircleIcon">
@@ -10,6 +10,7 @@
         </div>
         <ColorPicker class="style-icon-color-picker" v-if="icon.colorPickerSettings && colorPickerVisible" v-model="color" :inline="true" format="rgb" @change="onColorPickerChange" />
         <WidgetEditorToolbarContextMenu class="context-menu" v-if="icon.contextMenuSettings && contextMenuVisible" :settings="icon.contextMenuSettings" :options="getContextMenuOptions()" @selected="onContextItemSelected" @inputChanged="onContextInputChanged"></WidgetEditorToolbarContextMenu>
+        <WidgetEditorIconPickerDialog v-if="iconPickerDialogVisible" :widgetModel="widgetModel" :settings="icon.iconPickerSettings" :itemIndex="itemIndex" @close="iconPickerDialogVisible = false" @save="onIconSelected"></WidgetEditorIconPickerDialog>
     </div>
 </template>
 
@@ -20,11 +21,12 @@ import { getModelProperty } from '../WidgetEditorGenericHelper'
 import { emitter } from '../../../../DashboardHelpers'
 import ColorPicker from 'primevue/colorpicker'
 import WidgetEditorToolbarContextMenu from './WidgetEditorToolbarContextMenu.vue'
+import WidgetEditorIconPickerDialog from './WidgetEditorIconPickerDialog.vue'
 
 export default defineComponent({
     name: 'name',
-    components: { ColorPicker, WidgetEditorToolbarContextMenu },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, icon: { type: Object, required: true } },
+    components: { ColorPicker, WidgetEditorToolbarContextMenu, WidgetEditorIconPickerDialog },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, icon: { type: Object, required: true }, item: { type: Object }, itemIndex: { type: Number } },
     data() {
         return {
             active: false,
@@ -33,7 +35,9 @@ export default defineComponent({
             displayValue: '',
             color: null,
             newColor: 'rgb(255, 255, 255)',
-            colorPickerVisible: false
+            colorPickerVisible: false,
+            iconPickerDialogVisible: false,
+            disabled: false
         }
     },
     created() {
@@ -46,12 +50,13 @@ export default defineComponent({
         this.iconIsActive()
         this.updateDisplayValue()
         this.loadInitialColorValue()
+        this.iconIsDisabled(this.itemIndex)
         if (this.icon.watchers) {
             for (let i = 0; i < this.icon.watchers.length; i++) {
                 this.$watch(
                     'widgetModel.' + this.icon.watchers[i],
                     () => {
-                        this.iconIsActive(), this.updateDisplayValue()
+                        this.iconIsActive(), this.updateDisplayValue(), this.iconIsDisabled(this.itemIndex)
                     },
 
                     { deep: true }
@@ -61,25 +66,27 @@ export default defineComponent({
     },
     methods: {
         onIconClicked(icon: any) {
-            if (!icon || !icon.function) return
+            if (!icon || !icon.function || this.disabled) return
 
             const tempFunction = getModelProperty(this.widgetModel, icon.function, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') return tempFunction(this.widgetModel)
+            if (tempFunction && typeof tempFunction === 'function') return tempFunction(this.widgetModel, this.item, this.itemIndex)
         },
         iconIsActive() {
             if (!this.icon.isActiveFunction) return (this.active = false)
 
             const tempFunction = getModelProperty(this.widgetModel, this.icon.isActiveFunction, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') return (this.active = tempFunction(this.widgetModel))
+            if (tempFunction && typeof tempFunction === 'function') return (this.active = tempFunction(this.widgetModel, this.item, this.itemIndex))
         },
         loadInitialColorValue() {
             if (!this.icon.colorPickerSettings) return
             const tempFunction = getModelProperty(this.widgetModel, this.icon.colorPickerSettings.initialValue, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') this.newColor = tempFunction(this.widgetModel)
+            if (tempFunction && typeof tempFunction === 'function') this.newColor = tempFunction(this.widgetModel, this.item, this.itemIndex)
         },
         openAdditionalComponents() {
+            if (this.disabled) return
             this.changeColorPickerVisibility()
             this.changeContextMenuVisibility()
+            this.changeIconPickerVisibility()
         },
         changeColorPickerVisibility() {
             this.colorPickerVisible = !this.colorPickerVisible
@@ -94,6 +101,9 @@ export default defineComponent({
             } else {
                 this.updateValueFromContextInput()
             }
+        },
+        changeIconPickerVisibility() {
+            if (this.icon.iconPickerSettings) this.iconPickerDialogVisible = !this.iconPickerDialogVisible
         },
         updateValueFromContextInput() {
             if (this.contextMenuInput) this.callUpdateFunction(this.contextMenuInput)
@@ -124,7 +134,7 @@ export default defineComponent({
         callUpdateFunction(newValue: string) {
             if (this.icon.contextMenuSettings?.onUpdate) {
                 const tempFunction = getModelProperty(this.widgetModel, this.icon.contextMenuSettings.onUpdate, 'getValue', null)
-                if (tempFunction && typeof tempFunction === 'function') tempFunction(newValue, this.widgetModel)
+                if (tempFunction && typeof tempFunction === 'function') tempFunction(newValue, this.widgetModel, this.item, this.itemIndex)
             }
         },
         onContextInputChanged(item: string) {
@@ -139,7 +149,7 @@ export default defineComponent({
         updateDisplayValue() {
             if (!this.icon.contextMenuSettings?.displayValue) return
             const tempFunction = getModelProperty(this.widgetModel, this.icon.contextMenuSettings.displayValue, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') this.displayValue = tempFunction(this.widgetModel)
+            if (tempFunction && typeof tempFunction === 'function') this.displayValue = tempFunction(this.widgetModel, this.item, this.itemIndex)
         },
         onColorPickerChange(event: any) {
             if (!event.value) return
@@ -149,8 +159,20 @@ export default defineComponent({
         updateColorInModel() {
             if (this.icon.colorPickerSettings?.onUpdate) {
                 const tempFunction = getModelProperty(this.widgetModel, this.icon.colorPickerSettings.onUpdate, 'getValue', null)
-                if (tempFunction && typeof tempFunction === 'function') tempFunction(this.newColor, this.widgetModel)
+                if (tempFunction && typeof tempFunction === 'function') tempFunction(this.newColor, this.widgetModel, this.item, this.itemIndex)
             }
+        },
+        iconIsDisabled(itemIndex: number | undefined) {
+            if (!this.icon.disabledCondition) return (this.disabled = false)
+            const tempFunction = getModelProperty(this.widgetModel, this.icon.disabledCondition, 'getValue', null)
+            if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel, itemIndex))
+        },
+        onIconSelected(icon: any) {
+            this.iconPickerDialogVisible = false
+
+            if (!this.icon.iconPickerSettings.onSelect) return (this.disabled = false)
+            const tempFunction = getModelProperty(this.widgetModel, this.icon.iconPickerSettings.onSelect, 'getValue', null)
+            if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(icon, this.widgetModel, this.item, this.itemIndex))
         }
     }
 })
@@ -195,5 +217,9 @@ export default defineComponent({
     position: absolute;
     top: 20px;
     left: 20px;
+}
+
+.icon-disabled {
+    color: #c2c2c2;
 }
 </style>

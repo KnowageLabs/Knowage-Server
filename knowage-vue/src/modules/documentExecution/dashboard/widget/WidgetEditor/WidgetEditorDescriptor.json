@@ -47,6 +47,36 @@
             "value": "COUNT_DISTINCT"
         }
     ],
+    "columnConditionOptions": [
+        {
+            "label": ">",
+            "value": ">"
+        },
+        {
+            "label": "<",
+            "value": "<"
+        },
+        {
+            "label": "==",
+            "value": "=="
+        },
+        {
+            "label": ">=",
+            "value": ">="
+        },
+        {
+            "label": "<=",
+            "value": "<="
+        },
+        {
+            "label": "!=",
+            "value": "!="
+        },
+        {
+            "label": "IN",
+            "value": "IN"
+        }
+    ],
     "fontFamilyOptions": [
         {
             "label": "",
@@ -109,6 +139,24 @@
         {
             "label": "kpi.kpiDocumentDesigner.font.xxlarge",
             "value": "40px"
+        }
+    ],
+    "rowStyleCompareValueTypes": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "static",
+            "value": "static"
+        },
+        {
+            "label": "parameter",
+            "value": "parameter"
+        },
+        {
+            "label": "variable",
+            "value": "variable"
         }
     ],
     "visualizationTypeOptions": [

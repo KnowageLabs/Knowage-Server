@@ -148,3 +148,5 @@ interface IAssociationField {
     column: string
     dataset: number
 }
+
+export interface IIcon { id: number, name: string, value: string }

@@ -136,7 +136,6 @@ export default defineComponent({
         },
         updateModelProperty(value: any, propertyPath: string) {
             getModelProperty(this.widgetModel, propertyPath, 'updateValue', value)
-            console.log('UPDATED MODEL: ', this.model)
         },
         getItems(propertyPath: string): any[] {
             return getModelProperty(this.widgetModel, propertyPath, 'getValue', null)

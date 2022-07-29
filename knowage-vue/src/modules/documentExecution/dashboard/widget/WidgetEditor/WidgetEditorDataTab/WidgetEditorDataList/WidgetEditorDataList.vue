@@ -64,7 +64,7 @@ export default defineComponent({
     },
     async created() {
         this.loadDatasets()
-        console.log('EVENT BUS IN DATALIST: ', emitter)
+
         emitter.on('collumnAdded', (event) => {
             this.removeColumn(event)
         })
@@ -92,11 +92,8 @@ export default defineComponent({
         onDatasetSelected() {
             this.loadDatasetColumns()
             this.$emit('datasetSelected', this.selectedDataset)
-            console.log('onDatasetSelected() - allDatasets: ', this.datasets)
         },
-        showCalculatedFieldDialog() {
-            console.log('showCalculatedFieldDialog() - TODO!')
-        },
+        showCalculatedFieldDialog() {},
         loadDatasetColumns() {
             // TODO - ADD Condition to ignore already selected columns
             this.selectedDatasetColumns = []
@@ -107,7 +104,6 @@ export default defineComponent({
                 this.selectedDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta.map((column: IDatasetColumn) => {
                     return { ...column, dataset: this.selectedDataset?.id }
                 })
-            console.log('loadDatasetColumns() - selectedDatasetColumns: ', this.selectedDatasetColumns)
         },
         onDragStart(event: any, datasetColumn: IDatasetColumn) {
             event.dataTransfer.setData('text/plain', JSON.stringify(datasetColumn))

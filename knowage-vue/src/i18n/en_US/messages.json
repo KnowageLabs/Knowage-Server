@@ -34,6 +34,7 @@
         "collapse": "collapse",
         "columns": "Columns",
         "comment": "Comment",
+        "condition": "Condition",
         "continue": "Continue",
         "copyOf": "Copy of",
         "create": "Create",
@@ -331,9 +332,16 @@
         "widgetEditor": {
             "addWidget": "Add widget",
             "columnDetails": "Column Details",
+            "conditionalStyle": {
+                "compareValue": "Compare value",
+                "compareValueType": "Value type",
+                "enableConditionalStyle": "Enable Conditional Style",
+                "title": "Conditional Style"
+            },
             "customHeaderTooltip": "Custom Header Tooltip",
             "dragColumnsHint": "Drag columns here",
             "enableTooltip": "Enable Tooltip",
+            "fontawesome": "Fontawesome",
             "header": {
                 "allowMultiline": "Allow Multiline",
                 "enableHeader": "Enable Header",
