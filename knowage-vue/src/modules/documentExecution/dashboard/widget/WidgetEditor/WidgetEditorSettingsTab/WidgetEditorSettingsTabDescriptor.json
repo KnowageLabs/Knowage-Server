@@ -162,11 +162,14 @@
                                                                 "settings": {
                                                                     "createItem": "functions.createRowThresholdListItem",
                                                                     "deleteItem": "functions.deleteRowThresholdListItem",
+                                                                    "reorderEnabled": true,
+                                                                    "onReorder": "functions.onRowThresholdListReorder",
                                                                     "items": "functions.getRowThresholdsList",
                                                                     "itemsSettings": {
                                                                         "containers": [
                                                                             {
                                                                                 "components": [
+                                                                                    {"type": "reorderIcon"},
                                                                                     {
                                                                                         "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
                                                                                         "label": "common.columns",
@@ -232,11 +235,11 @@
                                                                                     {
                                                                                         "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
                                                                                         "label": "dashboard.widgetEditor.conditionalStyle.compareValue",
-                                                                                        "options": "functions.getColumnParameters",
-                                                                                        "property": "compareValue",
+                                                                                        "options": "functions.getColumnVariableOptions",
+                                                                                        "property": "compareValueVariableOption",
                                                                                         "settings": {
                                                                                             "onUpdate": "functions.updateThresholdListItem",
-                                                                                            "visible": "functions.compareValueParameterDropdownIsVisible",
+                                                                                            "visible": "functions.compareValueVariablesDropdownIsVisible",
                                                                                             "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                             "watchers": ["settings.rowThresholds.enabled"]
                                                                                         },
