@@ -11,6 +11,7 @@
                         :class="component.cssClass"
                         :settings="component.settings"
                         :initialValue="item[component.property]"
+                        :itemIndex="itemIndex"
                         @input="onChange($event, component, index)"
                     ></WidgetEditorInputText>
                     <WidgetEditorDropdown
@@ -23,6 +24,7 @@
                         :options="getDropdownOptions(component)"
                         :settings="component.settings"
                         :initialValue="item[component.property]"
+                        :itemIndex="itemIndex"
                         @change="onChange($event, component)"
                     ></WidgetEditorDropdown>
                     <WidgetEditorStyleTooblar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings" :item="item" :itemIndex="itemIndex"></WidgetEditorStyleTooblar>

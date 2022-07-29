@@ -1,5 +1,5 @@
 <template>
-    <div class="icon-container">
+    <div class="icon-container" :class="{ 'icon-disabled': disabled }">
         <div id="color-picker-target" class="p-d-flex p-flex-row p-jc-center p-ai-center" @click="openAdditionalComponents">
             <i :class="[icon.class, active ? 'active-icon' : '']" class="widget-editor-icon kn-cursor-pointer p-mr-2" @click="onIconClicked(icon)"></i>
             <div v-show="icon.arrowDownIcon || icon.colorCircleIcon">
@@ -33,7 +33,8 @@ export default defineComponent({
             displayValue: '',
             color: null,
             newColor: 'rgb(255, 255, 255)',
-            colorPickerVisible: false
+            colorPickerVisible: false,
+            disabled: false
         }
     },
     created() {
@@ -46,12 +47,13 @@ export default defineComponent({
         this.iconIsActive()
         this.updateDisplayValue()
         this.loadInitialColorValue()
+        this.iconIsDisabled(this.itemIndex)
         if (this.icon.watchers) {
             for (let i = 0; i < this.icon.watchers.length; i++) {
                 this.$watch(
                     'widgetModel.' + this.icon.watchers[i],
                     () => {
-                        this.iconIsActive(), this.updateDisplayValue()
+                        this.iconIsActive(), this.updateDisplayValue(), this.iconIsDisabled(this.itemIndex)
                     },
 
                     { deep: true }
@@ -61,7 +63,7 @@ export default defineComponent({
     },
     methods: {
         onIconClicked(icon: any) {
-            if (!icon || !icon.function) return
+            if (!icon || !icon.function || this.disabled) return
 
             const tempFunction = getModelProperty(this.widgetModel, icon.function, 'getValue', null)
             if (tempFunction && typeof tempFunction === 'function') return tempFunction(this.widgetModel, this.item, this.itemIndex)
@@ -78,6 +80,7 @@ export default defineComponent({
             if (tempFunction && typeof tempFunction === 'function') this.newColor = tempFunction(this.widgetModel, this.item, this.itemIndex)
         },
         openAdditionalComponents() {
+            if (this.disabled) return
             this.changeColorPickerVisibility()
             this.changeContextMenuVisibility()
         },
@@ -153,6 +156,11 @@ export default defineComponent({
                 const tempFunction = getModelProperty(this.widgetModel, this.icon.colorPickerSettings.onUpdate, 'getValue', null)
                 if (tempFunction && typeof tempFunction === 'function') tempFunction(this.newColor, this.widgetModel, this.item, this.itemIndex)
             }
+        },
+        iconIsDisabled(itemIndex: number | undefined) {
+            if (!this.icon.disabledCondition) return (this.disabled = false)
+            const tempFunction = getModelProperty(this.widgetModel, this.icon.disabledCondition, 'getValue', null)
+            if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel, itemIndex))
         }
     }
 })
@@ -197,5 +205,9 @@ export default defineComponent({
     position: absolute;
     top: 20px;
     left: 20px;
+}
+
+.icon-disabled {
+    color: #c2c2c2;
 }
 </style>

@@ -366,6 +366,9 @@ export default defineComponent({
                     },
                     setThresholdListItemBackgroundColor: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
                         model.settings.rowThresholds.list[itemIndex]['background-color'] = newValue
+                    },
+                    rowThresholdsIsDisabled: (model: IWidget) => {
+                        return !model?.settings.rowThresholds?.enabled
                     }
                 }
             }

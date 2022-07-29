@@ -1,7 +1,7 @@
 <template>
     <div v-if="visible" :class="class" :style="style">
         <label v-if="label" class="kn-material-input-label p-mr-2"> {{ $t(label) }}</label>
-        <Dropdown class="kn-material-input" v-model="modelValue" :options="options" :optionLabel="settings.optionLabel ?? 'label'" :optionValue="settings.optionValue ?? 'value'" @change="onChange"></Dropdown>
+        <Dropdown class="kn-material-input" v-model="modelValue" :options="options" :optionLabel="settings.optionLabel ?? 'label'" :optionValue="settings.optionValue ?? 'value'" :disabled="disabled" @change="onChange"></Dropdown>
     </div>
 </template>
 
@@ -23,12 +23,14 @@ export default defineComponent({
         options: { type: Array },
         settings: { type: Object, required: true },
         visibilityCondition: { type: String },
-        initialValue: { type: String }
+        initialValue: { type: String },
+        itemIndex: { type: Number }
     },
     emits: ['change'],
     data() {
         return {
             modelValue: '' as any,
+            disabled: false,
             visible: false
         }
     },
@@ -48,13 +50,19 @@ export default defineComponent({
         )
         if (this.settings.watchers) {
             for (let i = 0; i < this.settings.watchers.length; i++) {
-                this.$watch('widgetModel.' + this.settings.watchers[i], () => this.fieldIsVisible(), { deep: true })
+                this.$watch(
+                    'widgetModel.' + this.settings.watchers[i],
+                    () => {
+                        this.fieldIsDisabled(this.itemIndex)
+                        this.fieldIsVisible()
+                    },
+                    { deep: true }
+                )
             }
         }
     },
     methods: {
         loadValue() {
-            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> LOAD VALUE CALLED")
             if ((this.initialValue || this.initialValue === '') && !this.property) {
                 this.modelValue = this.initialValue
                 this.visible = true
@@ -75,6 +83,11 @@ export default defineComponent({
             const tempFunction = getModelProperty(this.widgetModel, this.settings.visibilityCondition, 'getValue', null)
             // console.log(' >>>>>> fieldIsVisible DROPDOWN 2', tempFunction(this.widgetModel))
             if (tempFunction && typeof tempFunction === 'function') return (this.visible = tempFunction(this.widgetModel))
+        },
+        fieldIsDisabled(itemIndex: number) {
+            if (!this.settings.disabledCondition) return (this.disabled = false)
+            const tempFunction = getModelProperty(this.widgetModel, this.settings.disabledCondition, 'getValue', null)
+            if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel, itemIndex))
         }
     }
 })
