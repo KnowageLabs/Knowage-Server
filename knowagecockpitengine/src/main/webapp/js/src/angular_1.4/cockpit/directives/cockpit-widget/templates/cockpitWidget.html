@@ -105,15 +105,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-button class="md-fab md-raised md-mini" aria-label="unselectable button" 
 			ng-if="highcharts && cliccable==true && checkType(ngModel.type, ['chart']) && (chartsForDrill.indexOf(ngModel.content.chartTemplate.CHART.type.toLowerCase())>-1)" 
 					ng-click="changeClickability()" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
+					<md-icon md-font-icon="fa fa-mouse-pointer" ng-show="ngModel.cliccable && !ngModel.drillable"></md-icon>
 					<md-tooltip md-direction="top" md-delay="1000" ng-show="ngModel.cliccable">
-	          			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.cliccable")}}
+	          		{{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.notcliccable")}}
 	       			 </md-tooltip>
-	       			 <md-tooltip md-direction="top" md-delay="1000" ng-show="!ngModel.cliccable">
-	          			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.notcliccable")}}
-	       			 </md-tooltip>
-	       			 <md-icon md-font-icon="fa fa-mouse-pointer" ng-show="ngModel.cliccable && !ngModel.drillable"></md-icon>
+	       			 
 	       			 <md-icon md-font-icon="fa fa-filter" ng-show="!ngModel.cliccable && ngModel.drillable"></md-icon>
+	       			 <md-tooltip md-direction="top" md-delay="1000" ng-show="!ngModel.cliccable">
+	       			 {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.cliccable")}}	          			
+	       			 </md-tooltip>	       			 
+	
 	       			 <md-icon md-font-icon="fa fa-ban fa-negativer" ng-show="!ngModel.cliccable && !ngModel.drillable"></md-icon>
+	       			   			 <md-tooltip md-direction="top" md-delay="1000" ng-show="!ngModel.cliccable">
+	       			 {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.noInteraction")}}	          			
+	       			 </md-tooltip>	
 				</md-button>
 			
 				<!-- XOR BUTTON -->
@@ -189,19 +194,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.chartType")}}</md-tooltip>
 					<md-icon md-font-icon="fa fa-bar-chart"></md-icon>
 				</md-button>
-				
 				<md-button class="md-fab md-raised md-mini" aria-label="unselectable button" 
 					ng-if="highcharts && cliccable==true && checkType(ngModel.type, ['chart']) &&  (chartsForDrill.indexOf(ngModel.content.chartTemplate.CHART.type.toLowerCase())>-1) && showNegativer"
 					ng-click="changeClickability();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
-					<md-tooltip md-direction="top" md-delay="1000" ng-show="ngModel.cliccable">
-	          			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.cliccable")}}
-	  			 	</md-tooltip>
-	       			<md-tooltip md-direction="top" md-delay="1000" ng-show="!ngModel.cliccable">
-	          			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.notcliccable")}}
-	       			</md-tooltip>
-	       			<md-icon md-font-icon="fa fa-mouse-pointer" ng-show="ngModel.cliccable && !ngModel.drillable"></md-icon>
-	       			<md-icon md-font-icon="fa fa-filter" ng-show="!ngModel.cliccable && ngModel.drillable"></md-icon>
-	       			<md-icon md-font-icon="fa fa-ban fa-negativer" ng-show="!ngModel.cliccable && !ngModel.drillable"></md-icon>
+					<md-icon md-font-icon="fa fa-mouse-pointer" ng-show="ngModel.cliccable && !ngModel.drillable"></md-icon> 
+					<md-tooltip md-direction="top" md-delay="1000" ng-if="ngModel.cliccable && !ngModel.drillable"> 
+	          		{{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.notcliccable")}} 
+	       			 </md-tooltip>
+	       			 
+	       			 <md-icon md-font-icon="fa fa-filter" ng-show="!ngModel.cliccable && ngModel.drillable"></md-icon>
+	       			 <md-tooltip md-direction="top" md-delay="1000" ng-if="!ngModel.cliccable && ngModel.drillable"> 
+	       			 {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.cliccable")}}	      			
+	       			 </md-tooltip>	       			 
+	
+	       			 <md-icon md-font-icon="fa fa-ban fa-negativer" ng-show="!ngModel.cliccable && !ngModel.drillable"></md-icon>
+	       			   <md-tooltip md-direction="top" md-delay="1000" ng-if="!ngModel.cliccable && !ngModel.drillable">
+	       			 {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.noInteraction")}}	     			
+	       			 </md-tooltip>	
 				</md-button>
 	
 				<md-button class="md-fab md-raised md-mini" ng-click="captureScreenShot($event,ngModel);$event.stopPropagation();" ng-disabled="ngModel.loadingScreen" ng-if="showScreenshotButton()">
