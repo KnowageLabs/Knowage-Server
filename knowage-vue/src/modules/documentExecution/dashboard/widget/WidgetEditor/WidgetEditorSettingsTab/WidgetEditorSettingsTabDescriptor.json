@@ -338,7 +338,13 @@
                                                                                             },
                                                                                             {
                                                                                                 "arrowDownIcon": true,
-                                                                                                "class": "fas fa-icons"
+                                                                                                "iconPickerSettings": {
+                                                                                                    "initialValue": "functions.getThresholdListItemIcon",
+                                                                                                    "onSelect": "functions.setThresholdListItemIcon"
+                                                                                                },
+                                                                                                "class": "fas fa-icons",
+                                                                                                "disabledCondition": "functions.rowThresholdsIsDisabled",
+                                                                                                "watchers": ["settings.rowThresholds.enabled", "settings.rowThresholds.list"]
                                                                                             }
                                                                                         ],
                                                                                         "settings": {},

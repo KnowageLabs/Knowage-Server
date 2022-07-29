@@ -10,6 +10,7 @@
         </div>
         <ColorPicker class="style-icon-color-picker" v-if="icon.colorPickerSettings && colorPickerVisible" v-model="color" :inline="true" format="rgb" @change="onColorPickerChange" />
         <WidgetEditorToolbarContextMenu class="context-menu" v-if="icon.contextMenuSettings && contextMenuVisible" :settings="icon.contextMenuSettings" :options="getContextMenuOptions()" @selected="onContextItemSelected" @inputChanged="onContextInputChanged"></WidgetEditorToolbarContextMenu>
+        <WidgetEditorIconPickerDialog v-if="iconPickerDialogVisible" :settings="icon.iconPickerSettings" @close="iconPickerDialogVisible = false" @save="onIconSelected"></WidgetEditorIconPickerDialog>
     </div>
 </template>
 
@@ -20,10 +21,11 @@ import { getModelProperty } from '../WidgetEditorGenericHelper'
 import { emitter } from '../../../../DashboardHelpers'
 import ColorPicker from 'primevue/colorpicker'
 import WidgetEditorToolbarContextMenu from './WidgetEditorToolbarContextMenu.vue'
+import WidgetEditorIconPickerDialog from './WidgetEditorIconPickerDialog.vue'
 
 export default defineComponent({
     name: 'name',
-    components: { ColorPicker, WidgetEditorToolbarContextMenu },
+    components: { ColorPicker, WidgetEditorToolbarContextMenu, WidgetEditorIconPickerDialog },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, icon: { type: Object, required: true }, item: { type: Object }, itemIndex: { type: Number } },
     data() {
         return {
@@ -34,6 +36,7 @@ export default defineComponent({
             color: null,
             newColor: 'rgb(255, 255, 255)',
             colorPickerVisible: false,
+            iconPickerDialogVisible: false,
             disabled: false
         }
     },
@@ -83,6 +86,7 @@ export default defineComponent({
             if (this.disabled) return
             this.changeColorPickerVisibility()
             this.changeContextMenuVisibility()
+            this.changeIconPickerVisibility()
         },
         changeColorPickerVisibility() {
             this.colorPickerVisible = !this.colorPickerVisible
@@ -97,6 +101,9 @@ export default defineComponent({
             } else {
                 this.updateValueFromContextInput()
             }
+        },
+        changeIconPickerVisibility() {
+            if (this.icon.iconPickerSettings) this.iconPickerDialogVisible = !this.iconPickerDialogVisible
         },
         updateValueFromContextInput() {
             if (this.contextMenuInput) this.callUpdateFunction(this.contextMenuInput)
@@ -161,6 +168,12 @@ export default defineComponent({
             if (!this.icon.disabledCondition) return (this.disabled = false)
             const tempFunction = getModelProperty(this.widgetModel, this.icon.disabledCondition, 'getValue', null)
             if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel, itemIndex))
+        },
+        onIconSelected(icon: any) {
+            console.log('onIconSelected: ', icon)
+            if (!this.icon.iconPickerSettings.onSelect) return (this.disabled = false)
+            const tempFunction = getModelProperty(this.widgetModel, this.icon.iconPickerSettings.onSelect, 'getValue', null)
+            if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel, this.itemIndex))
         }
     }
 })

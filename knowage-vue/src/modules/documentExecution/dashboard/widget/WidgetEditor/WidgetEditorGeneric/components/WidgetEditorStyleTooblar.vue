@@ -7,7 +7,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
-import { getModelProperty } from '../WidgetEditorGenericHelper'
 import WidgetEditorStyleIcon from './WidgetEditorStyleIcon.vue'
 
 export default defineComponent({

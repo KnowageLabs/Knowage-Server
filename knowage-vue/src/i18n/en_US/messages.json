@@ -341,6 +341,7 @@
             "customHeaderTooltip": "Custom Header Tooltip",
             "dragColumnsHint": "Drag columns here",
             "enableTooltip": "Enable Tooltip",
+            "fontawesome": "Fontawesome",
             "header": {
                 "allowMultiline": "Allow Multiline",
                 "enableHeader": "Enable Header",

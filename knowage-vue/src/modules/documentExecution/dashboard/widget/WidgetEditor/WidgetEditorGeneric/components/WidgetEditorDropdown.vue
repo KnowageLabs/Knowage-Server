@@ -84,7 +84,7 @@ export default defineComponent({
             // console.log(' >>>>>> fieldIsVisible DROPDOWN 2', tempFunction(this.widgetModel))
             if (tempFunction && typeof tempFunction === 'function') return (this.visible = tempFunction(this.widgetModel))
         },
-        fieldIsDisabled(itemIndex: number) {
+        fieldIsDisabled(itemIndex: number | undefined) {
             if (!this.settings.disabledCondition) return (this.disabled = false)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.disabledCondition, 'getValue', null)
             if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel, itemIndex))

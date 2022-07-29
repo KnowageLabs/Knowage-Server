@@ -240,7 +240,7 @@ export default defineComponent({
                         return model.settings.rowThresholds?.list
                     },
                     createRowThresholdListItem: (model: IWidget) => {
-                        if (!model || !model.settings.rowThresholds?.list) return
+                        if (!model || !model.settings.rowThresholds?.list || !model.settings.rowThresholds.enabled) return
                         // TODO - CHANGE DEFAULT?
                         model.settings.rowThresholds.list.push({
                             column: '',
@@ -257,7 +257,7 @@ export default defineComponent({
                         })
                     },
                     deleteRowThresholdListItem: (model: IWidget, itemIndex: number) => {
-                        model.settings.rowThresholds.list.splice(itemIndex, 1)
+                        if (model.settings.rowThresholds.enabled) model.settings.rowThresholds.list.splice(itemIndex, 1)
                     },
                     onRowThresholdsEnabled: (model: IWidget) => {
                         if (!model || !model.settings.rowThresholds?.list) return
