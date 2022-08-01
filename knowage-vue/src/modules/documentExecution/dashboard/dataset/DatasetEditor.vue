@@ -301,11 +301,7 @@ export default defineComponent({
 
             this.selectedDatasets.forEach((dataset) => {
                 dataset.modelIndexes ? '' : (dataset.modelIndexes = [])
-                selectedFields[dataset.id.dsId]
-                    .filter((item) => dataset.modelIndexes.indexOf(item) == -1)
-                    .forEach((index) => {
-                        dataset.modelIndexes.push(index)
-                    })
+                dataset.modelIndexes.push(...selectedFields[dataset.id.dsId].filter((item) => dataset.modelIndexes.indexOf(item) == -1))
             })
         },
         unselectAssociation() {
