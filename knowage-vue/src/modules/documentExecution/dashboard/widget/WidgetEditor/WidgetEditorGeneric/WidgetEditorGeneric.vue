@@ -112,6 +112,7 @@ export default defineComponent({
     methods: {
         loadDescriptor() {
             this.descriptor = this.propDescriptor as any
+            'DESCRIPTOR: ', this.descriptor
         },
         loadModel() {
             this.model = this.widgetModel

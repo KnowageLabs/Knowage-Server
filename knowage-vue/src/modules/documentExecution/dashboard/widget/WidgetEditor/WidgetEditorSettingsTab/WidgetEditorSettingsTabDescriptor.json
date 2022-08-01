@@ -1,5 +1,5 @@
 {
-    "tableWidget": {
+    "table": {
         "listOptions": [
             {
                 "descriptor": [
@@ -142,7 +142,6 @@
                                     {
                                         "accordions": [
                                             {
-                                               
                                                 "containers": [
                                                     {
                                                         "components": [
@@ -163,24 +162,22 @@
                                                                 "settings": {
                                                                     "createItem": "functions.createRowThresholdListItem",
                                                                     "deleteItem": "functions.deleteRowThresholdListItem",
-                                                                    "reorderEnabled": true,
-                                                                    "onReorder": "functions.onRowThresholdListReorder",
                                                                     "items": "functions.getRowThresholdsList",
                                                                     "itemsSettings": {
-                                                                        "disabledCondition": "functions.rowThresholdsIsDisabled",
-                                                                        "watchers": ["settings.rowThresholds.enabled"],
                                                                         "containers": [
                                                                             {
                                                                                 "components": [
-                                                                                    {"type": "reorderIcon"},
+                                                                                    {
+                                                                                        "type": "reorderIcon"
+                                                                                    },
                                                                                     {
                                                                                         "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
                                                                                         "label": "common.columns",
                                                                                         "options": "functions.getDatasetColumns",
                                                                                         "property": "column",
                                                                                         "settings": {
-                                                                                            "onUpdate": "functions.updateThresholdListItem",
                                                                                             "disabledCondition": "functions.rowThresholdsIsDisabled",
+                                                                                            "onUpdate": "functions.updateThresholdListItem",
                                                                                             "watchers": ["settings.rowThresholds.enabled"]
                                                                                         },
                                                                                         "type": "dropdown"
@@ -191,8 +188,8 @@
                                                                                         "options": "functions.getColumnConditionOptions",
                                                                                         "property": "condition",
                                                                                         "settings": {
-                                                                                            "onUpdate": "functions.updateThresholdListItem",
                                                                                             "disabledCondition": "functions.rowThresholdsIsDisabled",
+                                                                                            "onUpdate": "functions.updateThresholdListItem",
                                                                                             "watchers": ["settings.rowThresholds.enabled"]
                                                                                         },
                                                                                         "style": "min-width: 50px; max-width: 50px;",
@@ -204,23 +201,23 @@
                                                                                         "options": "functions.getRowStyleCompareValueTypes",
                                                                                         "property": "compareValueType",
                                                                                         "settings": {
-                                                                                            "onUpdate": "functions.updateThresholdListItem",
                                                                                             "disabledCondition": "functions.rowThresholdsIsDisabled",
+                                                                                            "onUpdate": "functions.updateThresholdListItem",
                                                                                             "watchers": ["settings.rowThresholds.enabled"]
                                                                                         },
                                                                                         "type": "dropdown"
                                                                                     },
                                                                                     {
                                                                                         "cssClass": "kn-flex p-m-2",
+                                                                                        "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                         "label": "dashboard.widgetEditor.conditionalStyle.compareValue",
                                                                                         "property": "compareValue",
                                                                                         "settings": {
-                                                                                            "visible": "functions.compareValueInputTextIsVisible",
                                                                                             "disabledCondition": "functions.rowThresholdsIsDisabled",
+                                                                                            "visible": "functions.compareValueInputTextIsVisible",
                                                                                             "watchers": ["settings.rowThresholds.enabled"]
                                                                                         },
-                                                                                        "type": "inputText",
-                                                                                        "disabledCondition": "functions.rowThresholdsIsDisabled"
+                                                                                        "type": "inputText"
                                                                                     },
                                                                                     {
                                                                                         "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
@@ -228,9 +225,9 @@
                                                                                         "options": "functions.getColumnVariables",
                                                                                         "property": "compareValue",
                                                                                         "settings": {
+                                                                                            "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                             "onUpdate": "functions.updateThresholdListItem",
                                                                                             "visible": "functions.compareValueVariablesDropdownIsVisible",
-                                                                                            "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                             "watchers": ["settings.rowThresholds.enabled"]
                                                                                         },
                                                                                         "type": "dropdown"
@@ -241,9 +238,9 @@
                                                                                         "options": "functions.getColumnVariableOptions",
                                                                                         "property": "compareValueVariableOption",
                                                                                         "settings": {
+                                                                                            "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                             "onUpdate": "functions.updateThresholdListItem",
                                                                                             "visible": "functions.compareValueVariablesDropdownIsVisible",
-                                                                                            "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                             "watchers": ["settings.rowThresholds.enabled"]
                                                                                         },
                                                                                         "type": "dropdown"
@@ -254,9 +251,9 @@
                                                                                         "options": "functions.getColumnParameters",
                                                                                         "property": "compareValue",
                                                                                         "settings": {
+                                                                                            "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                             "onUpdate": "functions.updateThresholdListItem",
                                                                                             "visible": "functions.compareValueParameterDropdownIsVisible",
-                                                                                            "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                             "watchers": ["settings.rowThresholds.enabled"]
                                                                                         },
                                                                                         "type": "dropdown"
@@ -274,16 +271,16 @@
                                                                                         "icons": [
                                                                                             {
                                                                                                 "class": "fas fa-bold",
+                                                                                                "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                                 "function": "functions.updateThresholdListItemFontItemWeight",
                                                                                                 "isActiveFunction": "functions.thresholdItemBoldIconIsActive",
-                                                                                                "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                                 "watchers": ["settings.rowThresholds.enabled", "settings.rowThresholds.list"]
                                                                                             },
                                                                                             {
                                                                                                 "class": "fas fa-italic",
+                                                                                                "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                                 "function": "functions.updateThresholdListItemFontStyle",
                                                                                                 "isActiveFunction": "functions.thresholdListItemFontStyleIconIsActive",
-                                                                                                "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                                 "watchers": ["settings.rowThresholds.enabled", "settings.rowThresholds.list"]
                                                                                             },
                                                                                             {
@@ -344,12 +341,12 @@
                                                                                             },
                                                                                             {
                                                                                                 "arrowDownIcon": true,
+                                                                                                "class": "fas fa-icons",
+                                                                                                "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                                 "iconPickerSettings": {
                                                                                                     "initialValue": "functions.getThresholdListItemIcon",
                                                                                                     "onSelect": "functions.setThresholdListItemIcon"
                                                                                                 },
-                                                                                                "class": "fas fa-icons",
-                                                                                                "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                                 "watchers": ["settings.rowThresholds.enabled", "settings.rowThresholds.list"]
                                                                                             }
                                                                                         ],
@@ -359,8 +356,12 @@
                                                                                 ],
                                                                                 "cssClasses": "p-d-flex p-flex-row p-ai-center kn-flex"
                                                                             }
-                                                                        ]
+                                                                        ],
+                                                                        "disabledCondition": "functions.rowThresholdsIsDisabled",
+                                                                        "watchers": ["settings.rowThresholds.enabled"]
                                                                     },
+                                                                    "onReorder": "functions.onRowThresholdListReorder",
+                                                                    "reorderEnabled": true,
                                                                     "watchers": ["settings.rowThresholds.enabled", "settings.rowThresholds.list"]
                                                                 },
                                                                 "type": "formList"

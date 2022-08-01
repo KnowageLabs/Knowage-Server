@@ -1,3 +1,4 @@
+import { IWidget } from '../../../Dashboard'
 import tableWidgetFunctions from './TableWidgetFunctions'
 import cryptoRandomString from 'crypto-random-string'
 
@@ -5,7 +6,7 @@ export function createNewWidget() {
     const widget = {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
         new: true,
-        type: 'tableWidget',
+        type: 'table',
         columns: [],
         conditionalStyles: [],
         datasets: [],
@@ -33,9 +34,17 @@ export function createNewWidget() {
         },
         temp: {}
     } as any
-    if (widget.type === 'tableWidget') {
+
+    return widget
+}
+
+export function setWidgetModelTempProperty(widget: IWidget) {
+    if (!widget.temp) widget.temp = {}
+}
+
+export function setWidgetModelFunctions(widget: IWidget) {
+    if (widget.type === 'table') {
         widget.settings.pagination = { enabled: false, itemsNumber: 0 }
         widget.functions = tableWidgetFunctions
     }
-    return widget
 }

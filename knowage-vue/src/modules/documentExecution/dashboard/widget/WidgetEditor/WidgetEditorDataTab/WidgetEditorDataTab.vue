@@ -5,7 +5,7 @@
                 <WidgetEditorDataList :widgetModel="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="$emit('datasetSelected', $event)"></WidgetEditorDataList>
             </template>
         </Card>
-        <WidgetEditorGeneric class="kn-flex p-m-2" :widgetModel="propWidget" :propDescriptor="dataDescriptor"></WidgetEditorGeneric>
+        <WidgetEditorGeneric v-if="propWidget" class="kn-flex p-m-2" :widgetModel="propWidget" :propDescriptor="dataDescriptor"></WidgetEditorGeneric>
     </div>
 </template>
 
