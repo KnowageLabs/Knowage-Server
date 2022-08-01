@@ -118,7 +118,7 @@ export interface IDataset {
     scopeId: number
     transformerId: number
     metadata: {
-        fieldsMetadata: any[]
+        fieldsMeta: any[]
         properties: any
     }
     categoryId: number
@@ -126,7 +126,9 @@ export interface IDataset {
     isRealtime: boolean
     isCachingSupported: boolean
     isIterable: boolean
-    isNearRealtimeSupported: boolean
+    isNearRealtimeSupported: boolean,
+    cache?: boolean,
+    indexes?: any[]
 }
 
 interface IDatasetParameters {

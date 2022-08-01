@@ -30,8 +30,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { IWidgetEditorDataset, IDatasetColumn, IWidgetColumn } from '../../../../Dashboard'
+import { defineComponent, PropType } from 'vue'
+import { IWidgetEditorDataset, IDatasetColumn, IWidgetColumn, IDataset, IWidget } from '../../../../Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -41,19 +41,12 @@ import Listbox from 'primevue/listbox'
 export default defineComponent({
     name: 'widget-editor-data-list',
     components: { Dropdown, Listbox },
-    props: { datasets: { type: Array }, modelDatasets: { type: Array } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array }, selectedDatasets: { type: Array as PropType<IDataset[]> } },
     emits: ['datasetSelected'],
     data() {
         return {
             descriptor,
-            datasetOptions: [
-                {
-                    id: 1,
-                    label: 'dew',
-                    cache: true,
-                    parameters: []
-                }
-            ] as IWidgetEditorDataset[],
+            datasetOptions: [] as IWidgetEditorDataset[],
             selectedDataset: null as IWidgetEditorDataset | null,
             selectedDatasetColumns: [] as IDatasetColumn[]
         }
@@ -64,15 +57,17 @@ export default defineComponent({
     },
     async created() {
         this.loadDatasets()
-
-        emitter.on('collumnAdded', (event) => {
-            this.removeColumn(event)
-        })
-        emitter.on('collumnRemoved', (event) => {
-            this.addColumn(event)
-        })
+        this.setEventListeners()
     },
     methods: {
+        setEventListeners() {
+            emitter.on('collumnAdded', (event) => {
+                this.removeColumn(event)
+            })
+            emitter.on('collumnRemoved', (event) => {
+                this.addColumn(event)
+            })
+        },
         loadDatasets() {
             // TODO - remove mocked
             const mockedDatasets = [
@@ -80,14 +75,17 @@ export default defineComponent({
                 { dsId: 166, name: 'AirBnB-NY 1', dsLabel: 'test', useCache: true, frequency: 0, parameters: {} }
             ]
 
-            this.datasetOptions = mockedDatasets.map((dataset: any) => {
-                return {
-                    id: dataset.dsId,
-                    label: dataset.dsLabel,
-                    cache: dataset.useCache,
-                    parameters: dataset.parameters
-                }
-            })
+            this.datasetOptions = this.selectedDatasets
+                ? this.selectedDatasets.map((dataset: any) => {
+                      return {
+                          id: dataset.id.dsId,
+                          label: dataset.label,
+                          cache: dataset.cache,
+                          indexes: dataset.indexes,
+                          parameters: dataset.parameters
+                      }
+                  })
+                : []
         },
         onDatasetSelected() {
             this.loadDatasetColumns()
@@ -97,13 +95,29 @@ export default defineComponent({
         loadDatasetColumns() {
             // TODO - ADD Condition to ignore already selected columns
             this.selectedDatasetColumns = []
-            if (!this.datasets || this.datasets.length === 0) return
+            if (!this.selectedDatasets || this.selectedDatasets.length === 0) return
 
-            const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
-            if (index !== -1)
-                this.selectedDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta.map((column: IDatasetColumn) => {
-                    return { ...column, dataset: this.selectedDataset?.id }
-                })
+            console.log('propWidget: ', this.widgetModel)
+
+            const index = this.selectedDatasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
+
+            if (index !== -1) this.addSelectedDatasetColumnsFromMetadata(this.selectedDatasets[index].metadata.fieldsMeta)
+            this.selectedDatasetColumns = this.selectedDatasets[index].metadata.fieldsMeta.map((column: IDatasetColumn) => {
+                return { ...column, dataset: this.selectedDataset?.id }
+            })
+        },
+        addSelectedDatasetColumnsFromMetadata(fieldsMeta: any[]) {
+            console.log('FIELDS META: ', fieldsMeta)
+            for (let i = 0; i < fieldsMeta.length; i++) {
+                if (!this.columnIsPresentInModel(fieldsMeta[i])) this.selectedDatasetColumns.push({ ...fieldsMeta[i], dataset: this.selectedDataset?.id })
+            }
+        },
+        columnIsPresentInModel(column: IDatasetColumn) {
+            const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => {
+                if (tempColumn.name.startsWith('(')) tempColumn.name = tempColumn.name.slice(1, -1)
+                return tempColumn.name == column.name
+            })
+            return index !== -1
         },
         onDragStart(event: any, datasetColumn: IDatasetColumn) {
             event.dataTransfer.setData('text/plain', JSON.stringify(datasetColumn))
