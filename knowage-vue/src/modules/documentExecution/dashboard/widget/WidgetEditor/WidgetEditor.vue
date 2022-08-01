@@ -3,7 +3,10 @@
         <div class="widgetEditor">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #start> {{ widget.type }} Widget Editor </template>
-                <template #end> <Button @click="close">Close</Button> </template>
+                <template #end>
+                    <Button class="kn-button p-button-text" @click="save">{{ $t('common.save') }}</Button>
+                    <Button class="kn-button p-button-text" @click="close">{{ $t('common.close') }}</Button>
+                </template>
             </Toolbar>
             <div class="widgetEditor-container">
                 <WidgetEditorTabs :propWidget="widget" :datasets="datasets" @datasetSelected="onDatasetSelected" />
@@ -25,7 +28,6 @@ import WidgetEditorPreview from './WidgetEditorPreview.vue'
 import WidgetEditorTabs from './WidgetEditorTabs.vue'
 import mainStore from '../../../../../App.store'
 import descriptor from './WidgetEditorDescriptor.json'
-import tableWidgetFunctions from './helpers/TableWidgetFunctions'
 
 export default defineComponent({
     name: 'widget-editor',
@@ -54,8 +56,9 @@ export default defineComponent({
     },
     methods: {
         loadWidget() {
+            console.log('THIS WIDGET: ', this.propWidget)
             // TODO - uncomment this, remove mock
-            // this.widget = this.propWidget ? deepcopy(this.propWidget) : this.createNewWidget()
+            // this.widget = this.propWidget?.id ? deepcopy(this.propWidget) : this.createNewWidget()
             this.widget = createNewWidget()
         },
         onDatasetSelected(dataset: IWidgetEditorDataset) {
@@ -88,6 +91,9 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.datasetFunctions = response.data))
                 .catch(() => {})
             this.store.setLoading(false)
+        },
+        save() {
+            console.log('SAVE: ', this.widget)
         },
         close() {
             this.$emit('close')

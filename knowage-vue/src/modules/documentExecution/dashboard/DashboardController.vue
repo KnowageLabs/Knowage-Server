@@ -8,7 +8,11 @@
             <DatasetEditor v-if="datasetEditorVisible" :availableDatasetsProp="datasets" :filtersDataProp="filtersData" @closeDatasetEditor="datasetEditorVisible = false" />
         </Transition>
 
-        <WidgetPickerDialog v-if="widgetPickerVisible" :visible="widgetPickerVisible" @closeWidgetPicker="widgetPickerVisible = false" />
+        <WidgetPickerDialog v-if="widgetPickerVisible" :visible="widgetPickerVisible" @openNewWidgetEditor="openNewWidgetEditor" @closeWidgetPicker="widgetPickerVisible = false" />
+
+        <Transition name="editorEnter" appear>
+            <WidgetEditor v-if="widgetEditorVisible" :propWidget="selectedWidget" :datasets="datasets" @close="closeWidgetEditor"></WidgetEditor>
+        </Transition>
     </div>
 </template>
 
@@ -27,17 +31,20 @@ import mock from './DashboardMock.json'
 import dashboardStore from './Dashboard.store'
 import mainStore from '../../../App.store'
 import DatasetEditor from './dataset/DatasetEditor.vue'
+import WidgetEditor from './widget/WidgetEditor/WidgetEditor.vue'
 
 export default defineComponent({
     name: 'dashboard-manager',
-    components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor },
+    components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor },
     props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> } },
     data() {
         return {
             model: mock,
             widgetPickerVisible: false,
             datasetEditorVisible: false,
-            datasets: [] as any[]
+            datasets: [] as any[],
+            widgetEditorVisible: false,
+            selectedWidget: null as any
         }
     },
     provide() {
@@ -74,18 +81,27 @@ export default defineComponent({
             this.appStore.setLoading(false)
         },
         setEventListeners() {
-            emitter.on('openWidgetEditor', () => {
-                this.openWidgetEditorDialog()
+            emitter.on('openNewWidgetPicker', () => {
+                this.openNewWidgetPicker()
             })
             emitter.on('openDatasetManagement', () => {
                 this.openDatasetManagementDialog()
             })
         },
-        openWidgetEditorDialog() {
+        openNewWidgetPicker() {
             this.widgetPickerVisible = true
         },
         openDatasetManagementDialog() {
             this.datasetEditorVisible = true
+        },
+        openNewWidgetEditor(widget: any) {
+            this.selectedWidget = { type: widget?.type }
+            this.widgetPickerVisible = false
+            this.widgetEditorVisible = true
+        },
+        closeWidgetEditor() {
+            this.widgetEditorVisible = false
+            this.selectedWidget = null
         }
     }
 })

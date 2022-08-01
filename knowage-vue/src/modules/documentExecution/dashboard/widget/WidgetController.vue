@@ -49,23 +49,12 @@ export default defineComponent({
             loading: true,
             initialized: false,
             widgetData: [] as any,
-            widgetEditorVisible: false
+            widgetEditorVisible: false,
+            selectedWidgetId: '' as string
         }
     },
     mounted() {
-        emitter.on('interaction', async (event) => {
-            /**
-             * ! this is just an example of a possible interaction.
-             * TODO: after getting the informations related to what the needed data will be, the dataProxyHelper should take care of getting the updated data.
-             */
-
-            this.loading = true
-            this.widgetData = await getData([{ event: event }])
-            this.loading = false
-        })
-        emitter.on('openWidgetEditor', () => {
-            this.openWidgetEditorDialog()
-        })
+        this.setEventListeners()
     },
     computed: {
         ...mapState({
@@ -73,6 +62,21 @@ export default defineComponent({
         })
     },
     methods: {
+        setEventListeners() {
+            emitter.on('interaction', async (event) => {
+                /**
+                 * ! this is just an example of a possible interaction.
+                 * TODO: after getting the informations related to what the needed data will be, the dataProxyHelper should take care of getting the updated data.
+                 */
+
+                this.loading = true
+                this.widgetData = await getData([{ event: event }])
+                this.loading = false
+            })
+            emitter.on('openNewWidgetEditor', () => {
+                this.openWidgetEditorDialog()
+            })
+        },
         async initializeWidget() {
             this.widgetData = await getData([{ test: 'test' }])
             this.initialized = true

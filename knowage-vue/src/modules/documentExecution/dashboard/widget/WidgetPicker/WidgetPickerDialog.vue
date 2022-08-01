@@ -30,7 +30,7 @@ import WidgetCard from './WidgetPickerCard.vue'
 export default defineComponent({
     name: 'widget-picker-dialog',
     components: { Dialog, WidgetCard },
-    emits: ['closeWidgetPicker'],
+    emits: ['closeWidgetPicker', 'openNewWidgetEditor'],
     inject: [],
     props: {},
     data() {
@@ -47,8 +47,7 @@ export default defineComponent({
             await this.$http.get(import.meta.env.VITE_DASHBOARD_PATH + `1.0/engine/widget`).then((response: AxiosResponse<any>) => (this.widgetTypes = response.data))
         },
         openWidgetEditor(widget) {
-            //TODO: logic that opens widget editor
-            console.log(widget)
+            this.$emit('openNewWidgetEditor', widget)
         }
     }
 })
