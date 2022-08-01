@@ -1,8 +1,10 @@
 <template>
     <div class="dataset-editor-list-card-container p-m-2">
         <div class="dataset-editor-list-card">
-            <Button label="Add Indexes on Associations" icon="pi pi-plus-circle" class="p-button-outlined p-mt-2 p-mx-2" @click="$emit('addIndexesOnAssociations')"></Button>
-            <Button label="Add Association" icon="pi pi-plus-circle" class="p-button-outlined p-mt-2 p-mx-2" @click="$emit('createNewAssociation')"></Button>
+            <div class="p-d-flex p-m-2" style="height: 35px">
+                <Button label="Add Indexes on Associations" class="p-button-outlined kn-flex p-mr-1" @click="$emit('addIndexesOnAssociations')"></Button>
+                <Button label="Add Association" icon="pi pi-plus-circle" class="p-button-outlined" @click="$emit('createNewAssociation')"></Button>
+            </div>
             <Listbox
                 class="kn-list kn-list-no-border-right dataset-editor-list"
                 v-model="selectedAssociation"
