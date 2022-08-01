@@ -265,12 +265,14 @@ const tableWidgetFunctions = {
         return model.settings.rowThresholds.list[itemIndex] ? model.settings.rowThresholds.list[itemIndex].color : ''
     },
     setThresholdListItemFontColor: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
+        if (!model.settings.rowThresholds.list[itemIndex]) return
         model.settings.rowThresholds.list[itemIndex].color = newValue
     },
     getThresholdListItemBackgroundColor: (model: IWidget, item: any, itemIndex: number) => {
         return model.settings.rowThresholds.list[itemIndex] ? model.settings.rowThresholds.list[itemIndex]['background-color'] : ''
     },
     setThresholdListItemBackgroundColor: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
+        if (!model.settings.rowThresholds.list[itemIndex]) return
         model.settings.rowThresholds.list[itemIndex]['background-color'] = newValue
     },
     rowThresholdsIsDisabled: (model: IWidget) => {

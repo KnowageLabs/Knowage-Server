@@ -42,6 +42,7 @@ export default defineComponent({
     },
     created() {
         emitter.on('toolbarIconContextMenuOpened', (event) => {
+            console.log('CLOSE POPUP: ', event)
             this.closePopups(event)
         })
         emitter.on('toolbarIconColorPickerOpened', (event) => {

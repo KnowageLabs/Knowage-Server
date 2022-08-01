@@ -67,6 +67,7 @@ export default defineComponent({
             this.widget = this.propWidget.new ? createNewWidget() : deepcopy(this.propWidget)
             setWidgetModelTempProperty(this.widget)
             setWidgetModelFunctions(this.widget)
+            console.log(' ----------------- WIDGET: ', this.widget)
         },
         loadSelectedModelDatasets() {
             // TODO - remove hardcoded dashboard index
