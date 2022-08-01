@@ -30,8 +30,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { IWidgetEditorDataset, IDatasetColumn, IWidgetColumn } from '../../../../Dashboard'
+import { defineComponent, PropType } from 'vue'
+import { IWidgetEditorDataset, IDatasetColumn, IWidgetColumn, IDataset } from '../../../../Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -41,19 +41,12 @@ import Listbox from 'primevue/listbox'
 export default defineComponent({
     name: 'widget-editor-data-list',
     components: { Dropdown, Listbox },
-    props: { datasets: { type: Array }, selectedDatasets: { type: Array } },
+    props: { datasets: { type: Array }, selectedDatasets: { type: Array as PropType<IDataset[]> } },
     emits: ['datasetSelected'],
     data() {
         return {
             descriptor,
-            datasetOptions: [
-                {
-                    id: 1,
-                    label: 'dew',
-                    cache: true,
-                    parameters: []
-                }
-            ] as IWidgetEditorDataset[],
+            datasetOptions: [] as IWidgetEditorDataset[],
             selectedDataset: null as IWidgetEditorDataset | null,
             selectedDatasetColumns: [] as IDatasetColumn[]
         }
@@ -64,15 +57,17 @@ export default defineComponent({
     },
     async created() {
         this.loadDatasets()
-
-        emitter.on('collumnAdded', (event) => {
-            this.removeColumn(event)
-        })
-        emitter.on('collumnRemoved', (event) => {
-            this.addColumn(event)
-        })
+        this.setEventListeners()
     },
     methods: {
+        setEventListeners() {
+            emitter.on('collumnAdded', (event) => {
+                this.removeColumn(event)
+            })
+            emitter.on('collumnRemoved', (event) => {
+                this.addColumn(event)
+            })
+        },
         loadDatasets() {
             // TODO - remove mocked
             const mockedDatasets = [
@@ -80,14 +75,17 @@ export default defineComponent({
                 { dsId: 166, name: 'AirBnB-NY 1', dsLabel: 'test', useCache: true, frequency: 0, parameters: {} }
             ]
 
-            this.datasetOptions = mockedDatasets.map((dataset: any) => {
-                return {
-                    id: dataset.dsId,
-                    label: dataset.dsLabel,
-                    cache: dataset.useCache,
-                    parameters: dataset.parameters
-                }
-            })
+            this.datasetOptions = this.selectedDatasets
+                ? this.selectedDatasets.map((dataset: any) => {
+                      return {
+                          id: dataset.id.dsId,
+                          label: dataset.label,
+                          cache: dataset.cache,
+                          indexes: dataset.indexes,
+                          parameters: dataset.parameters
+                      }
+                  })
+                : []
         },
         onDatasetSelected() {
             this.loadDatasetColumns()

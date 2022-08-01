@@ -126,7 +126,9 @@ export interface IDataset {
     isRealtime: boolean
     isCachingSupported: boolean
     isIterable: boolean
-    isNearRealtimeSupported: boolean
+    isNearRealtimeSupported: boolean,
+    cache?: boolean,
+    indexes?: any[]
 }
 
 interface IDatasetParameters {

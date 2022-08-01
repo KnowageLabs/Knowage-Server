@@ -21,7 +21,7 @@
  * ! this component will be in charge of managing the widget editing.
  */
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IDatasetOptions, IWidget } from '../../Dashboard'
+import { IWidgetEditorDataset, IDatasetOptions, IWidget, IDataset, IModelDataset } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
 import { createNewWidget } from './helpers/WidgetEditorHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
@@ -35,15 +35,15 @@ export default defineComponent({
     name: 'widget-editor',
     components: { WidgetEditorPreview, WidgetEditorTabs },
     emits: ['close', 'widgetUpdated', 'widgetSaved'],
-    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array } },
+    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> } },
     data() {
         return {
             descriptor,
             widget: {} as any,
             previewData: null as any,
             datasetFunctions: {} as { availableFunctions: string[]; nullifFunction: string[] },
-            selectedModelDatasets: [] as any[],
-            selectedDatasets: [] as any[]
+            selectedModelDatasets: [] as IModelDataset[],
+            selectedDatasets: [] as IDataset[]
         }
     },
     watch: {
@@ -63,17 +63,14 @@ export default defineComponent({
     },
     methods: {
         loadWidget() {
-            console.log('THIS WIDGET: ', this.propWidget)
             if (!this.propWidget) return
             // TODO - uncomment this, remove mock
             this.widget = this.propWidget.new ? createNewWidget() : deepcopy(this.propWidget)
             // this.widget = createNewWidget()
         },
         loadSelectedModelDatasets() {
-            console.log('MODEL: ', this.dashboardStore.$state)
             // TODO - remove hardcoded dashboard index
             this.selectedModelDatasets = this.dashboardStore.getDashboardSelectedDatastes(1)
-            console.log('selectedModelDatasets: ', this.selectedModelDatasets)
         },
         loadSelectedModel() {
             if (!this.datasets) return
@@ -81,9 +78,8 @@ export default defineComponent({
             for (let i = 0; i < this.selectedModelDatasets.length; i++) {
                 const tempDataset = this.selectedModelDatasets[i]
                 const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === tempDataset.id)
-                if (index !== -1) this.selectedDatasets.push(this.datasets[index])
+                if (index !== -1) this.selectedDatasets.push({ ...this.datasets[index], cache: tempDataset.cache, indexes: tempDataset.indexes, parameters: tempDataset.parameters })
             }
-            console.log('selectedDatasets', this.selectedDatasets)
         },
         onDatasetSelected(dataset: IWidgetEditorDataset) {
             this.loadPreviewData(dataset)
@@ -117,7 +113,6 @@ export default defineComponent({
             this.store.setLoading(false)
         },
         save() {
-            console.log('SAVE: ', this.widget)
             if (this.widget.new) {
                 this.dashboardStore.createNewWidget(this.widget)
                 this.$emit('widgetSaved')
