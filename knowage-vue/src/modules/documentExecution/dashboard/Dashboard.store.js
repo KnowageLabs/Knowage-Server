@@ -12,16 +12,21 @@ const store = defineStore('dashboardStore', {
             delete state.dashboards[dashboard.id]
         },
         setDashboard(dashboard) {
-            console.log('DASHBOARD: ', dashboard)
             this.dashboards[dashboard.id] = dashboard
         },
 
         setDashboardSheet(dashboard) {
             this.dashboardModel[dashboard.id].sheet = dashboard.sheet
         },
+        createNewWidget(widget) {
+            delete widget.new
+            // TODO - hardcoded 1 for dashboard
+            this.dashboards[1].widgets.push(widget)
+            this.dashboards[1].sheets[this.selectedSheetIndex].widgets.lg.push({ id: widget.id, h: 5, i: 0, w: 10, x: 10, y: 10, moved: false })
+        },
         updateWidget(widget) {
-            console.log('UPDATE: ', widget)
-            console.log('DASHBOARDS: ', this.dashboards)
+            // TODO - hardcoded 1 for dashboard
+            for (let i = 0; i < this.dashboards[1].sheets.length; i++) {}
         },
         setSelectedSheetIndex(index) {
             this.selectedSheetIndex = index

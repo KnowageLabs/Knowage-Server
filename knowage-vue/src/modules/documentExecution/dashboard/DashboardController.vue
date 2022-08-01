@@ -9,11 +9,8 @@
         </Transition>
 
         <WidgetPickerDialog v-if="widgetPickerVisible" :visible="widgetPickerVisible" @openNewWidgetEditor="openNewWidgetEditor" @closeWidgetPicker="widgetPickerVisible = false" />
-
-        <Transition name="editorEnter" appear>
-            <WidgetEditor v-if="widgetEditorVisible" :propWidget="selectedWidget" :datasets="datasets" @close="closeWidgetEditor"></WidgetEditor>
-        </Transition>
     </div>
+    <WidgetEditor v-if="widgetEditorVisible" :propWidget="selectedWidget" :datasets="datasets" @close="closeWidgetEditor" @widgetSaved="closeWidgetEditor" @widgetUpdated="closeWidgetEditor"></WidgetEditor>
 </template>
 
 <script lang="ts">
@@ -24,6 +21,7 @@ import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
+import { IWidget } from './Dashboard'
 import { emitter } from './DashboardHelpers'
 import DashboardRenderer from './DashboardRenderer.vue'
 import WidgetPickerDialog from './widget/WidgetPicker/WidgetPickerDialog.vue'
@@ -87,6 +85,9 @@ export default defineComponent({
             emitter.on('openDatasetManagement', () => {
                 this.openDatasetManagementDialog()
             })
+            emitter.on('openWidgetEditor', (widget) => {
+                this.openWidgetEditor(widget)
+            })
         },
         openNewWidgetPicker() {
             this.widgetPickerVisible = true
@@ -94,8 +95,13 @@ export default defineComponent({
         openDatasetManagementDialog() {
             this.datasetEditorVisible = true
         },
+        openWidgetEditor(widget: IWidget) {
+            this.selectedWidget = widget
+            this.widgetPickerVisible = false
+            this.widgetEditorVisible = true
+        },
         openNewWidgetEditor(widget: any) {
-            this.selectedWidget = { type: widget?.type }
+            this.selectedWidget = { type: widget?.type, new: true }
             this.widgetPickerVisible = false
             this.widgetEditorVisible = true
         },

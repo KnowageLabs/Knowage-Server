@@ -4,6 +4,7 @@ import cryptoRandomString from 'crypto-random-string'
 export function createNewWidget() {
     const widget = {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
+        new: true,
         type: 'tableWidget',
         columns: [],
         conditionalStyles: [],

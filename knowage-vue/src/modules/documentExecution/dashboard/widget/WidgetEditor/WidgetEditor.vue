@@ -21,7 +21,7 @@
  * ! this component will be in charge of managing the widget editing.
  */
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IDatasetOptions, IWidget, IWidgetColumn, IIcon } from '../../Dashboard'
+import { IWidgetEditorDataset, IDatasetOptions, IWidget } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
 import { createNewWidget } from './helpers/WidgetEditorHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
@@ -29,11 +29,12 @@ import WidgetEditorTabs from './WidgetEditorTabs.vue'
 import mainStore from '../../../../../App.store'
 import descriptor from './WidgetEditorDescriptor.json'
 import dashStore from '../../Dashboard.store'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'widget-editor',
     components: { WidgetEditorPreview, WidgetEditorTabs },
-    emits: ['close'],
+    emits: ['close', 'widgetUpdated', 'widgetSaved'],
     props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array } },
     data() {
         return {
@@ -59,9 +60,10 @@ export default defineComponent({
     methods: {
         loadWidget() {
             console.log('THIS WIDGET: ', this.propWidget)
+            if (!this.propWidget) return
             // TODO - uncomment this, remove mock
-            // this.widget = this.propWidget?.id ? deepcopy(this.propWidget) : this.createNewWidget()
-            this.widget = createNewWidget()
+            this.widget = this.propWidget.new ? createNewWidget() : deepcopy(this.propWidget)
+            // this.widget = createNewWidget()
         },
         onDatasetSelected(dataset: IWidgetEditorDataset) {
             this.loadPreviewData(dataset)
@@ -96,8 +98,13 @@ export default defineComponent({
         },
         save() {
             console.log('SAVE: ', this.widget)
-
-            this.dashboardStore.updateWidget(this.widget)
+            if (this.widget.new) {
+                this.dashboardStore.createNewWidget(this.widget)
+                this.$emit('widgetSaved')
+            } else {
+                this.dashboardStore.updateWidget(this.widget)
+                this.$emit('widgetUpdated')
+            }
         },
         close() {
             this.$emit('close')
