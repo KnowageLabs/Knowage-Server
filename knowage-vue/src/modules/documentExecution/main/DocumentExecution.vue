@@ -1079,7 +1079,7 @@ export default defineComponent({
             this.onBreadcrumbClick(this.breadcrumbs[0])
         },
         addWidget() {
-            emitter.emit('openWidgetEditor')
+            emitter.emit('openNewWidgetPicker')
         },
         openDashboardDatasetManagement() {
             emitter.emit('openDatasetManagement')

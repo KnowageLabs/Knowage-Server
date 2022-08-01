@@ -1,8 +1,19 @@
 <template>
     <div>
         <label v-if="settings.label" class="kn-material-input-label">{{ $t(settings.label) }}</label>
-        <div :class="class" :options="options">
-            <WidgetEditorFormListItem v-for="(item, index) in items" :key="index" :widgetModel="widgetModel" :settings="settings.itemsSettings" :propItem="item" :itemIndex="index" @change="onChange($event, index)" @addNewItem="onAddDeleteItemClicked"></WidgetEditorFormListItem>
+        <div :class="class" :options="options" class="form-list-item-container">
+            <WidgetEditorFormListItem
+                v-for="(item, index) in items"
+                :key="index"
+                :widgetModel="widgetModel"
+                :settings="settings.itemsSettings"
+                :propItem="item"
+                :itemIndex="index"
+                :reorderEnabled="settings.reorderEnabled"
+                @change="onChange($event, index)"
+                @addNewItem="onAddDeleteItemClicked"
+                @moveRows="onRowsMove"
+            ></WidgetEditorFormListItem>
         </div>
     </div>
 </template>
@@ -59,7 +70,22 @@ export default defineComponent({
                 const tempFunction = getModelProperty(this.widgetModel, this.settings[prop], 'getValue', null)
                 if (tempFunction && typeof tempFunction === 'function') tempFunction(this.widgetModel, itemIndex)
             }
+        },
+        onRowsMove(event: { sourceRowIndex: number; targetRowIndex: number; position: string }) {
+            if (!event) return
+            const newIndex = event.position === 'before' ? event.targetRowIndex - 1 : event.targetRowIndex + 1
+            if (newIndex < 0 || newIndex > this.items.length) return
+
+            const temp = this.items[event.sourceRowIndex]
+            this.items.splice(event.sourceRowIndex, 1)
+            this.items.splice(newIndex - 1, 0, temp)
         }
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.form-list-item-container {
+    border-bottom: 1px solid #c2c2c2;
+}
+</style>

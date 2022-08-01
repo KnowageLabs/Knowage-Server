@@ -62,10 +62,8 @@ export default defineComponent({
             }
         },
         fieldIsVisible() {
-            //
             if (!this.settings.visibilityCondition) return (this.visible = true)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.visibilityCondition, 'getValue', null)
-            //
             if (tempFunction && typeof tempFunction === 'function') return (this.visible = tempFunction(this.widgetModel))
         }
     }
