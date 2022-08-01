@@ -118,7 +118,7 @@ export interface IDataset {
     scopeId: number
     transformerId: number
     metadata: {
-        fieldsMetadata: any[]
+        fieldsMeta: any[]
         properties: any
     }
     categoryId: number

@@ -2,7 +2,7 @@
     <div class="p-d-flex">
         <Card class="kn-flex p-m-2">
             <template #content>
-                <WidgetEditorDataList :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="$emit('datasetSelected', $event)"></WidgetEditorDataList>
+                <WidgetEditorDataList :widgetModel="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="$emit('datasetSelected', $event)"></WidgetEditorDataList>
             </template>
         </Card>
         <WidgetEditorGeneric class="kn-flex p-m-2" :widgetModel="propWidget" :propDescriptor="dataDescriptor"></WidgetEditorGeneric>

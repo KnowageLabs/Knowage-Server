@@ -31,7 +31,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IDatasetColumn, IWidgetColumn, IDataset } from '../../../../Dashboard'
+import { IWidgetEditorDataset, IDatasetColumn, IWidgetColumn, IDataset, IWidget } from '../../../../Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -41,7 +41,7 @@ import Listbox from 'primevue/listbox'
 export default defineComponent({
     name: 'widget-editor-data-list',
     components: { Dropdown, Listbox },
-    props: { datasets: { type: Array }, selectedDatasets: { type: Array as PropType<IDataset[]> } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array }, selectedDatasets: { type: Array as PropType<IDataset[]> } },
     emits: ['datasetSelected'],
     data() {
         return {
@@ -95,13 +95,29 @@ export default defineComponent({
         loadDatasetColumns() {
             // TODO - ADD Condition to ignore already selected columns
             this.selectedDatasetColumns = []
-            if (!this.datasets || this.datasets.length === 0) return
+            if (!this.selectedDatasets || this.selectedDatasets.length === 0) return
 
-            const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
-            if (index !== -1)
-                this.selectedDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta.map((column: IDatasetColumn) => {
-                    return { ...column, dataset: this.selectedDataset?.id }
-                })
+            console.log('propWidget: ', this.widgetModel)
+
+            const index = this.selectedDatasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
+
+            if (index !== -1) this.addSelectedDatasetColumnsFromMetadata(this.selectedDatasets[index].metadata.fieldsMeta)
+            this.selectedDatasetColumns = this.selectedDatasets[index].metadata.fieldsMeta.map((column: IDatasetColumn) => {
+                return { ...column, dataset: this.selectedDataset?.id }
+            })
+        },
+        addSelectedDatasetColumnsFromMetadata(fieldsMeta: any[]) {
+            console.log('FIELDS META: ', fieldsMeta)
+            for (let i = 0; i < fieldsMeta.length; i++) {
+                if (!this.columnIsPresentInModel(fieldsMeta[i])) this.selectedDatasetColumns.push({ ...fieldsMeta[i], dataset: this.selectedDataset?.id })
+            }
+        },
+        columnIsPresentInModel(column: IDatasetColumn) {
+            const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => {
+                if (tempColumn.name.startsWith('(')) tempColumn.name = tempColumn.name.slice(1, -1)
+                return tempColumn.name == column.name
+            })
+            return index !== -1
         },
         onDragStart(event: any, datasetColumn: IDatasetColumn) {
             event.dataTransfer.setData('text/plain', JSON.stringify(datasetColumn))

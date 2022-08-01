@@ -78,7 +78,7 @@ export default defineComponent({
             for (let i = 0; i < this.selectedModelDatasets.length; i++) {
                 const tempDataset = this.selectedModelDatasets[i]
                 const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === tempDataset.id)
-                if (index !== -1) this.selectedDatasets.push({ ...this.datasets[index], cache: tempDataset.cache, indexes: tempDataset.indexes, parameters: tempDataset.parameters })
+                if (index !== -1) this.selectedDatasets.push({ ...this.datasets[index], cache: tempDataset.cache, indexes: tempDataset.indexes, parameters: tempDataset.parameters as any[] })
             }
         },
         onDatasetSelected(dataset: IWidgetEditorDataset) {
@@ -98,10 +98,10 @@ export default defineComponent({
                 selections: {},
                 indexes: []
             } as IDatasetOptions
-            await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/${dataset.label}/data?offset=0&size=10&nearRealtime=true&widgetName=widget_table_1658220241151`, postData)
-                .then((response: AxiosResponse<any>) => (this.previewData = response.data))
-                .catch(() => {})
+            // await this.$http
+            //     .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/${dataset.label}/data?offset=0&size=10&nearRealtime=true&widgetName=widget_table_1658220241151`, postData)
+            //     .then((response: AxiosResponse<any>) => (this.previewData = response.data))
+            //     .catch(() => {})
             this.store.setLoading(false)
         },
         async loadAvailableFunctions(dataset: IWidgetEditorDataset) {
