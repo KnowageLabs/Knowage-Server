@@ -30,6 +30,10 @@ const store = defineStore('dashboardStore', {
         },
         setSelectedSheetIndex(index) {
             this.selectedSheetIndex = index
+        },
+        getDashboardSelectedDatastes(index) {
+            const temp = this.dashboards[index]?.configuration?.datasets
+            return temp ?? []
         }
     }
 })

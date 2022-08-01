@@ -9,7 +9,7 @@
                 </template>
             </Toolbar>
             <div class="widgetEditor-container">
-                <WidgetEditorTabs :propWidget="widget" :datasets="datasets" @datasetSelected="onDatasetSelected" />
+                <WidgetEditorTabs :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="onDatasetSelected" />
                 <WidgetEditorPreview :propWidget="widget" />
             </div>
         </div>
@@ -41,7 +41,9 @@ export default defineComponent({
             descriptor,
             widget: {} as any,
             previewData: null as any,
-            datasetFunctions: {} as { availableFunctions: string[]; nullifFunction: string[] }
+            datasetFunctions: {} as { availableFunctions: string[]; nullifFunction: string[] },
+            selectedModelDatasets: [] as any[],
+            selectedDatasets: [] as any[]
         }
     },
     watch: {
@@ -56,6 +58,8 @@ export default defineComponent({
     },
     created() {
         this.loadWidget()
+        this.loadSelectedModelDatasets()
+        this.loadSelectedModel()
     },
     methods: {
         loadWidget() {
@@ -64,6 +68,22 @@ export default defineComponent({
             // TODO - uncomment this, remove mock
             this.widget = this.propWidget.new ? createNewWidget() : deepcopy(this.propWidget)
             // this.widget = createNewWidget()
+        },
+        loadSelectedModelDatasets() {
+            console.log('MODEL: ', this.dashboardStore.$state)
+            // TODO - remove hardcoded dashboard index
+            this.selectedModelDatasets = this.dashboardStore.getDashboardSelectedDatastes(1)
+            console.log('selectedModelDatasets: ', this.selectedModelDatasets)
+        },
+        loadSelectedModel() {
+            if (!this.datasets) return
+            this.selectedDatasets = []
+            for (let i = 0; i < this.selectedModelDatasets.length; i++) {
+                const tempDataset = this.selectedModelDatasets[i]
+                const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === tempDataset.id)
+                if (index !== -1) this.selectedDatasets.push(this.datasets[index])
+            }
+            console.log('selectedDatasets', this.selectedDatasets)
         },
         onDatasetSelected(dataset: IWidgetEditorDataset) {
             this.loadPreviewData(dataset)

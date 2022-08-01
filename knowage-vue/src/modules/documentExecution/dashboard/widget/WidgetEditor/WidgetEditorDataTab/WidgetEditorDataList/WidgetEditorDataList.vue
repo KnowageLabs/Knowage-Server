@@ -41,7 +41,7 @@ import Listbox from 'primevue/listbox'
 export default defineComponent({
     name: 'widget-editor-data-list',
     components: { Dropdown, Listbox },
-    props: { datasets: { type: Array }, modelDatasets: { type: Array } },
+    props: { datasets: { type: Array }, selectedDatasets: { type: Array } },
     emits: ['datasetSelected'],
     data() {
         return {

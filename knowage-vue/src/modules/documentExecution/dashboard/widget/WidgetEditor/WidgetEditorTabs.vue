@@ -2,7 +2,7 @@
     <div class="widgetEditor-tabs">
         <TabView>
             <TabPanel header="Data">
-                <WidgetEditorDataTab :propWidget="propWidget" :datasets="datasets" :modelDatasets="modelDatasets" @datasetSelected="$emit('datasetSelected', $event)"></WidgetEditorDataTab>
+                <WidgetEditorDataTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="$emit('datasetSelected', $event)"></WidgetEditorDataTab>
             </TabPanel>
             <TabPanel header="Settings">
                 <WidgetEditorSettingsTab :propWidget="propWidget"></WidgetEditorSettingsTab>
@@ -25,12 +25,10 @@ import WidgetEditorSettingsTab from './WidgetEditorSettingsTab/WidgetEditorSetti
 export default defineComponent({
     name: 'widget-editor-tabs',
     components: { TabView, TabPanel, WidgetEditorDataTab, WidgetEditorSettingsTab },
-    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array } },
+    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array }, selectedDatasets: { type: Array } },
     emits: ['datasetSelected'],
     data() {
-        return {
-            modelDatasets: [] as any[]
-        }
+        return {}
     }
 })
 </script>
