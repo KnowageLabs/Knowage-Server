@@ -14,11 +14,11 @@ export function getModelProperty(model: IWidget, propertyPath: string, action: s
     while (stack.length > 1) {
         property = stack.shift()
         if (property && model) tempModel = tempModel[property]
+        if (!tempModel) return
     }
     property = stack.shift()
-    if (action === 'updateValue') tempModel[property] = newValue
-    else if (action === 'getValue') {
-        // console.log(">>> TEMP MODEL: ", tempModel)
+    if (action === 'updateValue' && tempModel) tempModel[property] = newValue
+    else if (action === 'getValue' && tempModel)
         return tempModel[property]
-    }
+
 }
