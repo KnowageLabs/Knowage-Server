@@ -23,7 +23,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidgetEditorDataset, IDatasetOptions, IWidget, IDataset, IModelDataset } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
-import { createNewWidget, setWidgetModelTempProperty, setWidgetModelFunctions } from './helpers/WidgetEditorHelpers'
+import { createNewWidget, setWidgetModelTempProperty, setWidgetModelFunctions, formatWidgetForSave } from './helpers/WidgetEditorHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
 import WidgetEditorTabs from './WidgetEditorTabs.vue'
 import mainStore from '../../../../../App.store'
@@ -114,13 +114,15 @@ export default defineComponent({
             this.store.setLoading(false)
         },
         save() {
-            console.log(' --- >>>> ---- >>>> THIS WIDGET ON SAVE: ', this.widget)
-            if (this.widget.new) {
-                delete this.widget.new
-                this.dashboardStore.createNewWidget(this.widget)
+            const tempWidget = formatWidgetForSave(this.widget)
+            if (!tempWidget) return
+            console.log(' --- >>>> ---- >>>> WIDGET ON SAVE: ', tempWidget)
+            if (tempWidget.new) {
+                delete tempWidget.new
+                this.dashboardStore.createNewWidget(tempWidget)
                 this.$emit('widgetSaved')
             } else {
-                this.dashboardStore.updateWidget(this.widget)
+                this.dashboardStore.updateWidget(tempWidget)
                 this.$emit('widgetUpdated')
             }
         },

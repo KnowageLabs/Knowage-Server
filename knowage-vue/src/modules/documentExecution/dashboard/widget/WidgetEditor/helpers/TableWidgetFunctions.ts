@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IIcon, IDataset } from "../../../Dashboard"
+import { IWidget, IWidgetColumn, IIcon } from "../../../Dashboard"
 import { emitter } from '../../../DashboardHelpers'
 import descriptor from '../WidgetEditorDescriptor.json'
 
@@ -285,6 +285,16 @@ function createNewWidgetColumn(eventData: any) {
     }
     tempColumn.aggregation = 'NONE'
     return tempColumn
+}
+
+export function formatTableWidgetForSave(widget: IWidget) {
+    console.log("formatTableWidgetForSave: ", widget)
+    formatTablePagination(widget.settings.pagination)
+}
+
+function formatTablePagination(pagination: { enabled: boolean, itemsNumber: string | number }) {
+    if (!pagination) return
+    pagination.itemsNumber = pagination.enabled ? +pagination.itemsNumber : 0
 }
 
 export default tableWidgetFunctions
