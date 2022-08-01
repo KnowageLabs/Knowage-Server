@@ -218,6 +218,7 @@ export default defineComponent({
     position: absolute;
     top: 20px;
     left: 20px;
+    z-index: 100000;
 }
 
 .icon-disabled {

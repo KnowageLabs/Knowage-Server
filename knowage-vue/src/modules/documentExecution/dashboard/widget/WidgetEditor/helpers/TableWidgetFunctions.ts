@@ -1,48 +1,24 @@
-import { IWidget, IWidgetColumn, IIcon } from "../../../Dashboard"
+import { IWidget, IWidgetColumn, IIcon, IDataset } from "../../../Dashboard"
 import { emitter } from '../../../DashboardHelpers'
 import descriptor from '../WidgetEditorDescriptor.json'
 
 const tableWidgetFunctions = {
     itemsPerPageIsDisabled: (model: IWidget) => {
-        return !model.settings.pagination.enabled
+        return !model.settings?.pagination?.enabled
     },
     getColumnIcons: (column: any) => {
-        return column.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'
+        return column?.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'
     },
     onColumnDrop: (event: any, model: IWidget) => {
         if (event.dataTransfer.getData('text/plain') === 'b') return
         const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
-        const tempColumn = {
-            dataset: eventData.dataset,
-            name: '(' + eventData.name + ')',
-            alias: eventData.alias,
-            type: eventData.type,
-            fieldType: eventData.fieldType,
-            aggregation: eventData.aggregation,
-            style: {
-                hiddenColumn: false,
-                'white-space': 'nowrap',
-                tooltip: { prefix: '', suffix: '', precision: 0 },
-                enableCustomHeaderTooltip: false,
-                customHeaderTooltip: ''
-            },
-            enableTooltip: false,
-            visType: ''
-        }
-        tempColumn.aggregation = 'NONE'
-
+        const tempColumn = createNewWidgetColumn(eventData)
         model.columns.push(tempColumn)
         emitter.emit('collumnAdded', eventData)
     },
     updateColumnVisibility: (column: IWidgetColumn, model: IWidget) => {
-        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
-        if (index !== -1) {
-            if (!model.columns[index].style) {
-                model.columns[index].style = {}
-            }
-            ; (model.columns[index].style.hiddenColumn = false), (model.columns[index].style['white-space'] = 'nowrap')
-            model.columns[index].style.hiddenColumn = !model.columns[index].style.hiddenColumn
-        }
+        const index = model.columns?.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
+        if (index !== -1 && model.columns[index] && model.columns[index].style) model.columns[index].style.hiddenColumn = !model.columns[index].style.hiddenColumn
     },
     removeColumn: (column: IWidgetColumn, model: IWidget) => {
         const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
@@ -288,4 +264,27 @@ const tableWidgetFunctions = {
 
     }
 }
+
+function createNewWidgetColumn(eventData: any) {
+    const tempColumn = {
+        dataset: eventData.dataset,
+        name: '(' + eventData.name + ')',
+        alias: eventData.alias,
+        type: eventData.type,
+        fieldType: eventData.fieldType,
+        aggregation: eventData.aggregation,
+        style: {
+            hiddenColumn: false,
+            'white-space': 'nowrap',
+            tooltip: { prefix: '', suffix: '', precision: 0 },
+            enableCustomHeaderTooltip: false,
+            customHeaderTooltip: ''
+        },
+        enableTooltip: false,
+        visType: ''
+    }
+    tempColumn.aggregation = 'NONE'
+    return tempColumn
+}
+
 export default tableWidgetFunctions

@@ -215,7 +215,8 @@
                                                                                         "settings": {
                                                                                             "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                             "visible": "functions.compareValueInputTextIsVisible",
-                                                                                            "watchers": ["settings.rowThresholds.enabled"]
+                                                                                            "watchers": ["settings.rowThresholds.enabled"],
+                                                                                            "onUpdate": "functions.updateThresholdListItem"
                                                                                         },
                                                                                         "type": "inputText"
                                                                                     },

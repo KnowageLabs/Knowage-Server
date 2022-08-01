@@ -44,7 +44,7 @@ export function setWidgetModelTempProperty(widget: IWidget) {
 
 export function setWidgetModelFunctions(widget: IWidget) {
     if (widget.type === 'table') {
-        widget.settings.pagination = { enabled: false, itemsNumber: 0 }
+        if (!widget.settings.pagination) widget.settings.pagination = { enabled: false, itemsNumber: 0 }
         widget.functions = tableWidgetFunctions
     }
 }

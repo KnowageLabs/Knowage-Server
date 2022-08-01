@@ -90,17 +90,10 @@ export default defineComponent({
             this.selectedDatasetColumns = []
             if (!this.selectedDatasets || this.selectedDatasets.length === 0) return
 
-            'propWidget: ', this.widgetModel
-
             const index = this.selectedDatasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
-
             if (index !== -1) this.addSelectedDatasetColumnsFromMetadata(this.selectedDatasets[index].metadata.fieldsMeta)
-            // this.selectedDatasetColumns = this.selectedDatasets[index].metadata.fieldsMeta.map((column: IDatasetColumn) => {
-            //     return { ...column, dataset: this.selectedDataset?.id }
-            // })
         },
         addSelectedDatasetColumnsFromMetadata(fieldsMeta: any[]) {
-            'FIELDS META: ', fieldsMeta
             for (let i = 0; i < fieldsMeta.length; i++) {
                 if (!this.columnIsPresentInModel(fieldsMeta[i])) this.selectedDatasetColumns.push({ ...fieldsMeta[i], dataset: this.selectedDataset?.id })
             }
@@ -109,7 +102,7 @@ export default defineComponent({
             const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => {
                 if (tempColumn.name.startsWith('(')) tempColumn.name = tempColumn.name.slice(1, -1)
                 return tempColumn.name == column.name
-            })('INDEX: ', index)
+            })
             return index !== -1
         },
         onDragStart(event: any, datasetColumn: IDatasetColumn) {

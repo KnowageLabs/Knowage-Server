@@ -67,7 +67,7 @@ export default defineComponent({
             this.widget = this.propWidget.new ? createNewWidget() : deepcopy(this.propWidget)
             setWidgetModelTempProperty(this.widget)
             setWidgetModelFunctions(this.widget)
-            console.log(' ----------------- WIDGET: ', this.widget)
+            console.log(' --- >>>> ---- >>>> WIDGET: ', this.widget)
         },
         loadSelectedModelDatasets() {
             // TODO - remove hardcoded dashboard index
@@ -114,7 +114,9 @@ export default defineComponent({
             this.store.setLoading(false)
         },
         save() {
+            console.log(' --- >>>> ---- >>>> THIS WIDGET ON SAVE: ', this.widget)
             if (this.widget.new) {
+                delete this.widget.new
                 this.dashboardStore.createNewWidget(this.widget)
                 this.$emit('widgetSaved')
             } else {
