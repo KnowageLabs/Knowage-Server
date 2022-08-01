@@ -1,13 +1,13 @@
 <template>
-    <grid-item :key="item.i" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle">
+    <grid-item :key="item.id" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle">
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressBar mode="indeterminate" v-if="loading" />
         <Skeleton shape="rectangle" v-if="!initialized" height="100%" border-radius="0" />
         <WidgetRenderer :widget="widget" :data="widgetData" v-if="initialized" @interaction="manageInteraction"></WidgetRenderer>
         <WidgetButtonBar @edit-widget="toggleEditMode"></WidgetButtonBar>
-        <Transition name="editorEnter" appear>
-            <WidgetEditor v-if="widgetEditorVisible" :propWidget="widget"  :datasets="datasets" @close="toggleEditMode"></WidgetEditor>
-        </Transition>
+        <!-- <Transition name="editorEnter" appear>
+            <WidgetEditor v-if="widgetEditorVisible" :propWidget="widget" :datasets="datasets" @close="toggleEditMode" @widgetUpdated="closeWidgetEditor"></WidgetEditor>
+        </Transition> -->
     </grid-item>
 </template>
 
@@ -20,7 +20,7 @@ import { mapState } from 'vuex'
 import { getData } from '../DataProxyHelper'
 import { IWidget } from '../Dashboard'
 import { emitter } from '../DashboardHelpers'
-import WidgetEditor from './WidgetEditor/WidgetEditor.vue'
+// import WidgetEditor from './WidgetEditor/WidgetEditor.vue'
 import WidgetRenderer from './WidgetRenderer.vue'
 import WidgetButtonBar from './WidgetButtonBar.vue'
 import Skeleton from 'primevue/skeleton'
@@ -28,7 +28,13 @@ import ProgressBar from 'primevue/progressbar'
 
 export default defineComponent({
     name: 'widget-manager',
-    components: { ProgressBar, Skeleton, WidgetButtonBar, WidgetEditor, WidgetRenderer },
+    components: {
+        ProgressBar,
+        Skeleton,
+        WidgetButtonBar,
+        // WidgetEditor,
+        WidgetRenderer
+    },
     inject: ['dHash'],
     props: {
         item: {
@@ -92,10 +98,15 @@ export default defineComponent({
             emitter.emit('interaction', { id: this.dHash, event: e })
         },
         toggleEditMode() {
-            this.widgetEditorVisible = !this.widgetEditorVisible
+            emitter.emit('openWidgetEditor', this.widget)
+            // this.widgetEditorVisible = !this.widgetEditorVisible
         },
         openWidgetEditorDialog() {
             this.widgetEditorVisible = true
+        },
+        closeWidgetEditor() {
+            this.widgetEditorVisible = false
+            this.selectedWidgetId = ''
         }
     },
     updated() {

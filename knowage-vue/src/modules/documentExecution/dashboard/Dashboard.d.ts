@@ -15,7 +15,8 @@ export interface IWidget {
     styles: any
     settings: any
     temp?: any
-    functions?: any
+    functions?: any,
+    new?: boolean
 }
 
 export interface IWidgetColumn {
