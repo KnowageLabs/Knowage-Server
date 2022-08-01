@@ -6,7 +6,7 @@
         <WidgetRenderer :widget="widget" :data="widgetData" v-if="initialized" @interaction="manageInteraction"></WidgetRenderer>
         <WidgetButtonBar @edit-widget="toggleEditMode"></WidgetButtonBar>
         <Transition name="editorEnter" appear>
-            <WidgetEditor v-if="widgetEditorVisible" :propWidget="widget" @close="toggleEditMode" :datasets="datasets"></WidgetEditor>
+            <WidgetEditor v-if="widgetEditorVisible" :propWidget="widget"  :datasets="datasets" @close="toggleEditMode"></WidgetEditor>
         </Transition>
     </grid-item>
 </template>

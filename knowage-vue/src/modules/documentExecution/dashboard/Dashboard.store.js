@@ -3,7 +3,8 @@ import { defineStore } from 'pinia'
 const store = defineStore('dashboardStore', {
     state() {
         return {
-            dashboards: {}
+            dashboards: {},
+            selectedSheetIndex: 0
         }
     },
     actions: {
@@ -17,6 +18,13 @@ const store = defineStore('dashboardStore', {
 
         setDashboardSheet(dashboard) {
             this.dashboardModel[dashboard.id].sheet = dashboard.sheet
+        },
+        updateWidget(widget) {
+            console.log('UPDATE: ', widget)
+            console.log('DASHBOARDS: ', this.dashboards)
+        },
+        setSelectedSheetIndex(index) {
+            this.selectedSheetIndex = index
         }
     }
 })

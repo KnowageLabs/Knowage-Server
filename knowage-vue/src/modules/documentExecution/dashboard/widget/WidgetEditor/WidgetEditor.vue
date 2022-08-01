@@ -28,6 +28,7 @@ import WidgetEditorPreview from './WidgetEditorPreview.vue'
 import WidgetEditorTabs from './WidgetEditorTabs.vue'
 import mainStore from '../../../../../App.store'
 import descriptor from './WidgetEditorDescriptor.json'
+import dashStore from '../../Dashboard.store'
 
 export default defineComponent({
     name: 'widget-editor',
@@ -49,7 +50,8 @@ export default defineComponent({
     },
     setup() {
         const store = mainStore()
-        return { store }
+        const dashboardStore = dashStore()
+        return { store, dashboardStore }
     },
     created() {
         this.loadWidget()
@@ -94,6 +96,8 @@ export default defineComponent({
         },
         save() {
             console.log('SAVE: ', this.widget)
+
+            this.dashboardStore.updateWidget(this.widget)
         },
         close() {
             this.$emit('close')

@@ -67,6 +67,8 @@ export default defineComponent({
             return this.dashboardModel.widgets.find((item) => item.id === id)
         },
         sheetChange(index) {
+            this.store.setSelectedSheetIndex(index)
+            // TODO - ASK ABOUT THIS
             this.store.setDashboardSheet({ id: (this as any).dHash as any, sheet: index })
         }
     }
