@@ -149,4 +149,22 @@ interface IAssociationField {
     dataset: number
 }
 
-export interface IIcon { id: number, name: string, value: string }
+export interface IModelDataset {
+    id: number
+    cache: boolean
+    indexes: string[]
+    parameters: IModelDatasetParameter[]
+}
+
+interface IModelDatasetParameter {
+    multivalue: boolean
+    name: string
+    type: string
+    value: string
+}
+
+export interface IIcon {
+    id: number
+    name: string
+    value: string
+}
