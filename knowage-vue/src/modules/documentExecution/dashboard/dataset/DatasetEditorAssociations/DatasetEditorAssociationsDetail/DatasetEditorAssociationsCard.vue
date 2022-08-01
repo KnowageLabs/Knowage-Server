@@ -1,7 +1,7 @@
 <template>
     <div class="associations-meta-card">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
-            <template #start> {{ datasetProp.name }} </template>
+            <template #start> {{ datasetProp.name }} - {{ datasetProp.id.dsId }}</template>
         </Toolbar>
         <Listbox class="kn-list kn-list-border-all" v-model="selectedField" :options="datasetProp.metadata.fieldsMeta" @change="selectField">
             <template #option="slotProps">

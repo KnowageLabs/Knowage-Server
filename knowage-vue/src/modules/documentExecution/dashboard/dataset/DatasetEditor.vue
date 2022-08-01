@@ -48,7 +48,7 @@
  */
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
-import { IAssociation } from '../Dashboard'
+import { IAssociation, IModelDataset, IModelDatasetParameter, IAssociationField } from '../Dashboard'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import DataTab from './DatasetEditorDataTab/DatasetEditorDataTab.vue'
@@ -67,7 +67,7 @@ export default defineComponent({
         return {
             loading: false,
             availableDatasets: {} as any,
-            dashboardDatasets: {} as any,
+            dashboardDatasets: [] as IModelDataset[],
             selectedDatasets: [] as any,
             dashboardAssociations: [] as IAssociation[],
             selectedAssociation: {} as IAssociation,
@@ -233,7 +233,7 @@ export default defineComponent({
                     indexes: [],
                     cache: false,
                     parameters: []
-                }
+                } as IModelDataset
                 this.dashboardDatasets.push(formattedDatasetForDashboard)
             })
         },
@@ -287,14 +287,33 @@ export default defineComponent({
             this.unselectAssociation()
         },
         addIndexesOnAssociations() {
-            console.log(this.dashboardAssociations)
+            console.log('ALL ASSOCIATION -----', this.dashboardAssociations)
+
+            let selectedFields = {}
+            this.dashboardAssociations.forEach((association) => {
+                association.fields.reduce((obj, item) => {
+                    obj[item.dataset] = obj[item.dataset] || []
+                    obj[item.dataset].push(item.column)
+                    return obj
+                }, selectedFields)
+            })
+            console.log('MAPPED/REDUCED -----', selectedFields)
+
+            this.selectedDatasets.forEach((dataset) => {
+                dataset.modelIndexes ? '' : (dataset.modelIndexes = [])
+                selectedFields[dataset.id.dsId]
+                    .filter((item) => dataset.modelIndexes.indexOf(item) == -1)
+                    .forEach((index) => {
+                        dataset.modelIndexes.push(index)
+                    })
+            })
         },
         unselectAssociation() {
             this.selectedAssociation = null as any
         },
         //#endregion ===============================================================================================
         saveDatasetsToModel() {
-            let formattedDatasets = [] as any
+            let formattedDatasets = [] as IModelDataset[]
 
             this.selectedDatasets.forEach((dataset) => {
                 formattedDatasets.push(this.formatDatasetForModel(dataset))
@@ -311,9 +330,9 @@ export default defineComponent({
                 cache: datasetToFormat.modelCache ?? false,
                 indexes: datasetToFormat.modelCache ? datasetToFormat.modelIndexes : [],
                 parameters: datasetToFormat.parameters.map((parameter) => {
-                    return { name: parameter.name, type: parameter.modelType, value: parameter.value, multivalue: parameter.multivalue ?? false }
+                    return { name: parameter.name, type: parameter.modelType, value: parameter.value, multivalue: parameter.multivalue ?? false } as IModelDatasetParameter
                 })
-            }
+            } as IModelDataset
 
             return formattedDataset
         }
