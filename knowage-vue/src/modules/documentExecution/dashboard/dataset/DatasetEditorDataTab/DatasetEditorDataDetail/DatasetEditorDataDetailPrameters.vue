@@ -20,7 +20,7 @@
                         <InputText id="label" class="kn-material-input" type="text" v-model="parameter.value" />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.value') }} </label>
                     </span>
-                    <Button icon="fa-solid fa-link" class="p-button-text p-button-rounded p-button-plain p-as-end" @click.stop="showMenu($event, parameter.name)" />
+                    <Button v-if="parameter.modelType === 'dynamic'" icon="fa-solid fa-link" class="p-button-text p-button-rounded p-button-plain p-as-end" @click.stop="showMenu($event, parameter.name)" />
                 </div>
             </div>
             <!-- {{ documentDriversProp }} -->

@@ -4,7 +4,7 @@
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #start> {{ $t('dashboard.datasetEditor.title') }} </template>
                 <template #end>
-                    <Button :disabled="modelHasEmptyAssociations" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" />
+                    <Button :disabled="modelHasEmptyAssociations" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="saveDatasetsToModel" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('closeDatasetEditor')" />
                 </template>
             </Toolbar>
@@ -62,7 +62,7 @@ export default defineComponent({
     name: 'dataset-editor',
     components: { TabView, TabPanel, DataTab, AssociationsTab },
     props: { availableDatasetsProp: { required: true, type: Array }, filtersDataProp: { type: Object } },
-    emits: ['closeDatasetEditor'],
+    emits: ['closeDatasetEditor', 'datasetEditorSaved'],
     data() {
         return {
             loading: false,
@@ -300,8 +300,36 @@ export default defineComponent({
         },
         unselectAssociation() {
             this.selectedAssociation = null as any
-        }
+        },
         //#endregion ===============================================================================================
+        saveDatasetsToModel() {
+            console.log('selectedDatasets - datasetEditor.vue', this.selectedDatasets)
+            console.log('MODEL - datasetEditor.vue', this.dashboardStore.$state.dashboards[1].configuration)
+
+            let formattedDatasets = [] as any
+            this.selectedDatasets.forEach((dataset) => {
+                formattedDatasets.push(this.formatDatasetForModel(dataset))
+            })
+
+            console.log('FORMAT DATASETS', formattedDatasets)
+            console.log('ASSOCIATIONS ', this.dashboardAssociations)
+
+            this.dashboardStore.$state.dashboards[1].configuration.datasets = formattedDatasets
+            this.dashboardStore.$state.dashboards[1].configuration.associations = this.dashboardAssociations
+
+            this.$emit('datasetEditorSaved')
+        },
+        formatDatasetForModel(datasetToFormat) {
+            let formattedDataset = {
+                id: datasetToFormat.id.dsId,
+                cache: datasetToFormat.modelCache ?? false,
+                indexes: datasetToFormat.modelIndexes ?? [],
+                parameters: datasetToFormat.parameters.map((parameter) => {
+                    return { name: parameter.name, type: parameter.modelType, value: parameter.value, multivalue: parameter.multivalue ?? false }
+                })
+            }
+            return formattedDataset
+        }
     }
 })
 </script>
