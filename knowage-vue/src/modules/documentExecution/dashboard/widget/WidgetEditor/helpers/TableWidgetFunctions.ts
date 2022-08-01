@@ -53,6 +53,9 @@ const tableWidgetFunctions = {
         const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === model.temp.selectedColumn.name)
         if (index !== -1) model.columns[index] = { ...model.temp.selectedColumn }
     },
+    tooltipIsDisabled: (model: IWidget) => {
+        return !model?.temp.selectedColumn?.enableTooltip
+    },
     selectedColumnDropdownIsVisible: (model: IWidget) => {
         return model?.temp.selectedColumn?.fieldType === 'MEASURE'
     },
@@ -66,7 +69,7 @@ const tableWidgetFunctions = {
         return model?.temp.selectedColumn?.fieldType === 'MEASURE'
     },
     tooltipCustomHeaderTextIsDisabled: (model: IWidget) => {
-        return !model?.temp.selectedColumn?.style.enableCustomHeaderTooltip
+        return !model?.temp.selectedColumn?.style.enableCustomHeaderTooltip || model.functions.tooltipIsDisabled(model)
     },
     headerIsDisabled: (model: IWidget) => {
         return !model?.styles.th.enabled
@@ -288,13 +291,42 @@ function createNewWidgetColumn(eventData: any) {
 }
 
 export function formatTableWidgetForSave(widget: IWidget) {
+    if (!widget) return
     console.log("formatTableWidgetForSave: ", widget)
     formatTablePagination(widget.settings.pagination)
+    formatTableSelectedColumns(widget.columns)
+    formatWidgetDatasetKeysArray(widget)
 }
 
 function formatTablePagination(pagination: { enabled: boolean, itemsNumber: string | number }) {
     if (!pagination) return
     pagination.itemsNumber = pagination.enabled ? +pagination.itemsNumber : 0
+}
+
+function formatTableSelectedColumns(columns: IWidgetColumn[]) {
+    if (!columns) return
+    columns.forEach((column: IWidgetColumn) => {
+        if (column.name.startsWith('(')) column.name = column.name.slice(1, -1)
+        formatColumnTooltipSettings(column)
+    })
+}
+
+function formatWidgetDatasetKeysArray(widget: IWidget) {
+    if (!widget.columns || !widget.datasets) return
+    for (let i = 0; i < widget.columns.length; i++) {
+        const index = widget.datasets.findIndex((id: number) => id === widget.columns[i].dataset)
+        if (index == -1) widget.datasets.push(widget.columns[i].dataset)
+    }
+}
+
+function formatColumnTooltipSettings(column: IWidgetColumn) {
+    if (column.enableTooltip) {
+        column.style.tooltip.precision = +column.style.tooltip.precision
+    } else {
+        column.style.tooltip = { prefix: '', suffix: '', precision: 0 }
+        column.style.enableCustomHeaderTooltip = false
+        column.style.customHeaderTooltip = ''
+    }
 }
 
 export default tableWidgetFunctions

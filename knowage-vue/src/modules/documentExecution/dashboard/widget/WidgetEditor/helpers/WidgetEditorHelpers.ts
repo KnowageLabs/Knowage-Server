@@ -1,4 +1,4 @@
-import { IWidget } from '../../../Dashboard'
+import { IWidget, IWidgetColumn } from '../../../Dashboard'
 import { formatTableWidgetForSave } from './TableWidgetFunctions'
 import tableWidgetFunctions from './TableWidgetFunctions'
 import cryptoRandomString from 'crypto-random-string'
@@ -49,6 +49,13 @@ export function setWidgetModelFunctions(widget: IWidget) {
         if (!widget.settings.pagination) widget.settings.pagination = { enabled: false, itemsNumber: 0 }
         widget.functions = tableWidgetFunctions
     }
+}
+
+export function formatWidgetColumnsForDisplay(widget: IWidget) {
+    if (!widget || !widget.columns) return
+    widget.columns.forEach((column: IWidgetColumn) => {
+        if (!column.name.startsWith('(')) column.name = '(' + column.name + ')'
+    })
 }
 
 export function formatWidgetForSave(tempWidget: IWidget) {

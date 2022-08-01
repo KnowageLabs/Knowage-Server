@@ -26,7 +26,9 @@ export interface IWidgetColumn {
     type: string
     fieldType: string
     aggregation: string
-    style: any
+    style: any,
+    enableTooltip?: boolean,
+    visType?: string
 }
 
 export interface IInteraction {
