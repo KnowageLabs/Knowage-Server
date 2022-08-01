@@ -186,10 +186,6 @@ export default defineComponent({
     },
     async created() {
         await this.setDatasetsData()
-        console.log('dashboardDatasets - datasetEditor.vue', this.dashboardDatasets)
-        console.log('availableDatasets - datasetEditor.vue', this.availableDatasets)
-        console.log('selectedDatasets - datasetEditor.vue', this.selectedDatasets)
-        console.log('FILTEERS _ DATA ------------- ', this.filtersDataProp)
     },
 
     methods: {
@@ -218,11 +214,9 @@ export default defineComponent({
         setDatasetParametersFromModel() {
             this.selectedDatasets.forEach((dataset) => {
                 if (dataset.parameters.length > 0 && dataset.modelParams.length > 0) {
-                    console.log('dataset has params  ------ ', dataset.name)
                     dataset.parameters.forEach((parameter) => {
                         dataset.modelParams.forEach((modelParam) => {
                             if (parameter.name === modelParam.name) {
-                                console.log('matching jioj1oi4515o25', parameter)
                                 parameter.value = modelParam.value
                                 parameter.modelType = modelParam.type
                             }
@@ -234,22 +228,19 @@ export default defineComponent({
         addSelectedDatasets(datasetsToAdd) {
             datasetsToAdd.forEach((dataset) => {
                 this.selectedDatasets.push(dataset)
-
                 const formattedDatasetForDashboard = {
                     id: dataset.id.dsId,
                     indexes: [],
                     cache: false,
                     parameters: []
                 }
-
                 this.dashboardDatasets.push(formattedDatasetForDashboard)
             })
-            console.log('DATASET ADDED - datasetEditor.vue -------', this.selectedDatasets)
         },
 
         //#region ===================== DELETE DATASET ====================================================
         confirmDeleteDataset(datasetToDelete) {
-            //TODO: Make used by widget check
+            //TODO: Check if widget is using a dataset
             let datasetUsedByWidgetCheck = false
             if (datasetUsedByWidgetCheck) {
                 this.store.setInfo({ title: this.$t('common.toast.error'), msg: 'Dataset is being used by some widget.' })
@@ -303,16 +294,11 @@ export default defineComponent({
         },
         //#endregion ===============================================================================================
         saveDatasetsToModel() {
-            console.log('selectedDatasets - datasetEditor.vue', this.selectedDatasets)
-            console.log('MODEL - datasetEditor.vue', this.dashboardStore.$state.dashboards[1].configuration)
-
             let formattedDatasets = [] as any
+
             this.selectedDatasets.forEach((dataset) => {
                 formattedDatasets.push(this.formatDatasetForModel(dataset))
             })
-
-            console.log('FORMAT DATASETS', formattedDatasets)
-            console.log('ASSOCIATIONS ', this.dashboardAssociations)
 
             this.dashboardStore.$state.dashboards[1].configuration.datasets = formattedDatasets
             this.dashboardStore.$state.dashboards[1].configuration.associations = this.dashboardAssociations
@@ -323,11 +309,12 @@ export default defineComponent({
             let formattedDataset = {
                 id: datasetToFormat.id.dsId,
                 cache: datasetToFormat.modelCache ?? false,
-                indexes: datasetToFormat.modelIndexes ?? [],
+                indexes: datasetToFormat.modelCache ? datasetToFormat.modelIndexes : [],
                 parameters: datasetToFormat.parameters.map((parameter) => {
                     return { name: parameter.name, type: parameter.modelType, value: parameter.value, multivalue: parameter.multivalue ?? false }
                 })
             }
+
             return formattedDataset
         }
     }

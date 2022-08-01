@@ -94,10 +94,19 @@ export default defineComponent({
             this.datasets = this.filterOutSelectedDatasets(this.selectedDatasetsProp, this.availableDatasetsProp)
             this.filteredDatasets = [...this.datasets]
         },
+
+        //TODO: Ask if i need to filter out datasets with drivers if one is already selected, or should i make a warning while adding the datasets...
         filterOutSelectedDatasets(selectedDatasets, allDatasets) {
+            const driveableDatasetSelected = selectedDatasets.some((dataset) => {
+                if (dataset.drivers) {
+                    return true
+                } else return false
+            })
             return allDatasets.filter((responseDataset) => {
                 return !selectedDatasets.find((selectedDataset) => {
-                    return responseDataset.id.dsId === selectedDataset.id.dsId
+                    if (driveableDatasetSelected) {
+                        return responseDataset.id.dsId === selectedDataset.id.dsId || responseDataset.drivers
+                    } else return responseDataset.id.dsId === selectedDataset.id.dsId
                 })
             })
         },
