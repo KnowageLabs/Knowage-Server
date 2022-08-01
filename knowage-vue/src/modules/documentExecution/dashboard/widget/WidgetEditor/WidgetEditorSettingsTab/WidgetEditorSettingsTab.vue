@@ -1,8 +1,8 @@
 <template>
-    <div class="p-d-flex">
+    <div class="p-d-flex" v-if="propWidget">
         <Card class="kn-flex p-m-2">
             <template #content>
-                <WidgetEditorList :widgetModel="propWidget" class="kn-list knListBox" :settings="descriptor.tableWidget.listSettings" :options="descriptor.tableWidget.listOptions" @itemClicked="onItemClicked"></WidgetEditorList>
+                <WidgetEditorList :widgetModel="propWidget" class="kn-list knListBox" :settings="descriptor[propWidget.type].listSettings" :options="descriptor[propWidget.type].listOptions" @itemClicked="onItemClicked"></WidgetEditorList>
             </template>
         </Card>
         <div class="kn-flex p-m-2">
@@ -35,8 +35,7 @@ export default defineComponent({
     methods: {
         onItemClicked(item: any) {
             this.selectedSetting = item.value
-            // TODO - see about tableWidget key
-            this.selectedDescriptor = { tableWidget: item.descriptor }
+            this.selectedDescriptor = { table: item.descriptor }
         }
     }
 })

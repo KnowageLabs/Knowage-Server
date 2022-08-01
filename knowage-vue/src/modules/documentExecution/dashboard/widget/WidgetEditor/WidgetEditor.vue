@@ -23,7 +23,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidgetEditorDataset, IDatasetOptions, IWidget, IDataset, IModelDataset } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
-import { createNewWidget } from './helpers/WidgetEditorHelpers'
+import { createNewWidget, setWidgetModelTempProperty, setWidgetModelFunctions } from './helpers/WidgetEditorHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
 import WidgetEditorTabs from './WidgetEditorTabs.vue'
 import mainStore from '../../../../../App.store'
@@ -64,9 +64,9 @@ export default defineComponent({
     methods: {
         loadWidget() {
             if (!this.propWidget) return
-            // TODO - uncomment this, remove mock
             this.widget = this.propWidget.new ? createNewWidget() : deepcopy(this.propWidget)
-            // this.widget = createNewWidget()
+            setWidgetModelTempProperty(this.widget)
+            setWidgetModelFunctions(this.widget)
         },
         loadSelectedModelDatasets() {
             // TODO - remove hardcoded dashboard index
