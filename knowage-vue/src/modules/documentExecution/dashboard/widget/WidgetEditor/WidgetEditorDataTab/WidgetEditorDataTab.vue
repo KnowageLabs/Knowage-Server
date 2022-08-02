@@ -1,12 +1,14 @@
 <template>
     <div class="p-d-flex">
-        <Card class="kn-flex p-m-2">
+        <Card class="kn-flex p-m-2 widget-editor-data-list-card">
             <template #content>
                 <WidgetEditorDataList :widgetModel="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="setSelectDataset"></WidgetEditorDataList>
             </template>
         </Card>
-        <WidgetEditorHint v-if="propWidget && !selectedDataset && propWidget.columns.length === 0"></WidgetEditorHint>
-        <WidgetEditorGeneric v-else-if="propWidget" class="kn-flex p-m-2" :widgetModel="propWidget" :propDescriptor="dataDescriptor"></WidgetEditorGeneric>
+        <div v-if="propWidget">
+            <WidgetEditorHint v-if="!selectedDataset && propWidget.columns.length === 0"></WidgetEditorHint>
+            <WidgetEditorGeneric v-else class="kn-flex p-m-2" :widgetModel="propWidget" :propDescriptor="dataDescriptor"></WidgetEditorGeneric>
+        </div>
     </div>
 </template>
 
@@ -39,3 +41,10 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.widget-editor-data-list-card {
+    min-width: 250px;
+    max-width: 300px;
+}
+</style>
