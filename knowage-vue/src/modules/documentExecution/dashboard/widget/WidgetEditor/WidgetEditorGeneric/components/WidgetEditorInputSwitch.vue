@@ -34,14 +34,7 @@ export default defineComponent({
     async created() {
         this.loadValue()
         this.fieldIsVisible()
-        this.$watch(
-            'widgetModel.' + this.property,
-            () => {
-                this.loadValue()
-                this.fieldIsVisible()
-            },
-            { deep: true }
-        )
+        this.setWatchers()
     },
     methods: {
         loadValue() {
@@ -65,6 +58,16 @@ export default defineComponent({
             if (!this.settings.visibilityCondition) return (this.visible = true)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.visibilityCondition, 'getValue', null)
             if (tempFunction && typeof tempFunction === 'function') return (this.visible = tempFunction(this.widgetModel))
+        },
+        setWatchers() {
+            this.$watch(
+                'widgetModel.' + this.property,
+                () => {
+                    this.loadValue()
+                    this.fieldIsVisible()
+                },
+                { deep: true }
+            )
         }
     }
 })

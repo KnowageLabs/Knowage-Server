@@ -17,6 +17,7 @@
                                         :settings="component.settings"
                                         @input="onInputTextInput($event, component)"
                                         @change="onInputTextChange($event, component)"
+                                        data-test="widget-editor-input-text"
                                     ></WidgetEditorInputText>
                                     <WidgetEditorInputSwitch
                                         v-else-if="component.type === 'inputSwitch'"
@@ -27,6 +28,7 @@
                                         :label="component.label"
                                         :settings="component.settings"
                                         @change="onInputSwitchChange($event, component)"
+                                        data-test="widget-editor-input-switch"
                                     ></WidgetEditorInputSwitch>
                                     <WidgetEditorDropdown
                                         v-else-if="component.type === 'dropdown'"
@@ -37,6 +39,7 @@
                                         :options="getDropdownOptions(component)"
                                         :settings="component.settings"
                                         @change="onDropdownChange($event, component)"
+                                        data-test="widget-editor-dropdown"
                                     ></WidgetEditorDropdown>
                                     <WidgetEditorCheckbox
                                         v-else-if="component.type === 'checkbox'"
@@ -46,6 +49,7 @@
                                         :property="component.property"
                                         :settings="component.settings"
                                         @change="onCheckboxChanged($event, component)"
+                                        data-test="widget-editor-input-checkbox"
                                     ></WidgetEditorCheckbox>
                                     <WidgetEditorAccordion
                                         v-else-if="component.type === 'accordion'"
@@ -56,6 +60,7 @@
                                         @accordionDropdownChanged="onDropdownChange($event.value, $event.component)"
                                         @accordionInputTextChanged="onInputTextChange($event.value, $event.component)"
                                         @accordionCheckboxChanged="onCheckboxChanged($event.value, $event.component)"
+                                        data-test="widget-editor-accordion"
                                     ></WidgetEditorAccordion>
                                     <WidgetEditorDataTable
                                         v-else-if="component.type === 'dataTable'"
@@ -64,6 +69,7 @@
                                         :columns="component.columns"
                                         :settings="component.settings"
                                         @rowReorder="onRowReorder($event, component)"
+                                        data-test="widget-editor-data-table"
                                     ></WidgetEditorDataTable>
                                 </template>
                             </div>
@@ -112,7 +118,6 @@ export default defineComponent({
     methods: {
         loadDescriptor() {
             this.descriptor = this.propDescriptor as any
-            'DESCRIPTOR: ', this.descriptor
         },
         loadModel() {
             this.model = this.widgetModel

@@ -42,6 +42,7 @@ export default defineComponent({
     async created() {
         this.loadValue()
         this.setWatchers()
+      
     },
     methods: {
         loadValue() {

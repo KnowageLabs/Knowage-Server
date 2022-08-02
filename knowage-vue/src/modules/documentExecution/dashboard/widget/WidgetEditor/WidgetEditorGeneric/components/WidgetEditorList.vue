@@ -3,7 +3,7 @@
         <label v-if="settings.label" class="kn-material-input-label">{{ $t(settings.label) }}</label>
         <Listbox :class="class" :options="options" :listStyle="settings.listStyle" :filter="settings.filter" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="settings.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
             <template #option="slotProps">
-                <div class="kn-list-item" @click="itemClicked(slotProps.option)">
+                <div class="kn-list-item" @click="itemClicked(slotProps.option)" data-test="widget-editor-list-item">
                     <i v-if="slotProps.option.icon" :class="slotProps.option.icon" class="p-mr-2"></i>
                     <div class="kn-list-item-text">
                         <span>{{ getTitle(slotProps.option) }}</span>

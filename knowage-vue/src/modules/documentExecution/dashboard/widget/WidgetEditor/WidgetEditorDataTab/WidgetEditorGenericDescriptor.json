@@ -90,6 +90,7 @@
                                 "property": "columns",
                                 "responsiveLayout": "stack",
                                 "rowReorder": {
+                                    "enabled": true,
                                     "rowReorderColumnStyle": "width: 3rem"
                                 }
                             },

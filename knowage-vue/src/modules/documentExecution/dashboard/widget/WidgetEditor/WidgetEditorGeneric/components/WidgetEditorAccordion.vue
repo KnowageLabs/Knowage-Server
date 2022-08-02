@@ -49,7 +49,7 @@
                                 :settings="component.settings"
                                 @change="$emit('accordionCheckboxChanged', { value: $event, component: component })"
                             ></WidgetEditorCheckbox>
-                            <WidgetEditorStyleTooblar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings"></WidgetEditorStyleTooblar>
+                            <WidgetEditorStyleTooblar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings" data-test="widget-editor-style-toolbar"></WidgetEditorStyleTooblar>
                             <WidgetEditorFormList v-else-if="component.type === 'formList'" :widgetModel="widgetModel" :settings="component.settings"></WidgetEditorFormList>
                         </template>
                     </div>
