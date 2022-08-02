@@ -13,7 +13,7 @@ import DatasetEditorPreview from '../DatasetEditorPreview.vue'
 export default defineComponent({
     name: 'dataset-editor-data-tab',
     components: { DataList, DataDetail, DatasetEditorPreview },
-    props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any }, selectedDatasetsProp: { required: true, type: Array as any }, documentDriversProp: { required: true, type: Array as any } },
+    props: { dashboardDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as any }, selectedDatasetsProp: { type: Array as any }, documentDriversProp: { required: true, type: Array as any } },
     emits: ['addSelectedDatasets', 'deleteDataset'],
     data() {
         return {

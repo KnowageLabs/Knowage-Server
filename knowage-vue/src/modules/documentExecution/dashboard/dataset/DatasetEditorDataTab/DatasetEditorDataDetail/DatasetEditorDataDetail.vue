@@ -19,7 +19,7 @@ import KnHint from '@/components/UI/KnHint.vue'
 export default defineComponent({
     name: 'dataset-editor-data-detail',
     components: { InfoCard, ParamsCard, IndexesCard, KnHint },
-    props: { selectedDatasetProp: { required: true, type: Object }, dashboardDatasetsProp: { required: true, type: Array as any }, documentDriversProp: { required: true, type: Array as any } },
+    props: { selectedDatasetProp: { required: true, type: Object }, dashboardDatasetsProp: { required: true, type: Array as any }, documentDriversProp: { type: Array as any } },
     emits: [],
     data() {
         return {}

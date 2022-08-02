@@ -11,7 +11,7 @@
 
             <TabView v-if="!loading" class="datasetEditor-tabs">
                 <TabPanel :header="$t('dashboard.datasetEditor.dataTabTitle')">
-                    <DataTab :availableDatasetsProp="availableDatasets" :dashboardDatasetsProp="dashboardDatasets" :selectedDatasetsProp="selectedDatasets" :documentDriversProp="filtersDataPropMock" @addSelectedDatasets="addSelectedDatasets" @deleteDataset="confirmDeleteDataset" />
+                    <DataTab :availableDatasetsProp="availableDatasets" :dashboardDatasetsProp="dashboardDatasets" :selectedDatasetsProp="selectedDatasets" :documentDriversProp="filtersDataProp" @addSelectedDatasets="addSelectedDatasets" @deleteDataset="confirmDeleteDataset" />
                 </TabPanel>
                 <TabPanel>
                     <template #header>
@@ -65,95 +65,6 @@ export default defineComponent({
             selectedDatasets: [] as any,
             dashboardAssociations: [] as IAssociation[],
             selectedAssociation: {} as IAssociation,
-            filtersDataPropMock: [
-                {
-                    urlName: '123',
-                    metadata: {},
-                    visible: true,
-                    valueSelection: 'man_in',
-                    showOnPanel: 'true',
-                    driverUseLabel: 'Manual Input',
-                    label: 'test driver',
-                    driverDefaultValue: null,
-                    type: 'STRING',
-                    driverLabel: 'Manual Input String',
-                    mandatory: false,
-                    allowInternalNodeSelection: false,
-                    multivalue: false,
-                    dependencies: {
-                        data: [],
-                        visual: [],
-                        lov: []
-                    },
-                    selectionType: '',
-                    id: 7700,
-                    parameterValue: [
-                        {
-                            value: '',
-                            description: ''
-                        }
-                    ]
-                },
-                {
-                    urlName: 'testdriver2',
-                    metadata: {
-                        colsMap: {
-                            _col0: 'product_family'
-                        },
-                        descriptionColumn: 'product_family',
-                        invisibleColumns: [],
-                        valueColumn: 'product_family',
-                        visibleColumns: ['product_family']
-                    },
-                    visible: true,
-                    data: [
-                        {
-                            value: 'Car',
-                            description: 'Car'
-                        },
-                        {
-                            value: 'Drink',
-                            description: 'Drink'
-                        },
-                        {
-                            value: 'Food',
-                            description: 'Food'
-                        },
-                        {
-                            value: 'Non-Consumable',
-                            description: 'Non-Consumable'
-                        }
-                    ],
-                    valueSelection: 'lov',
-                    showOnPanel: 'true',
-                    driverUseLabel: 'ALL',
-                    label: 'driver2',
-                    driverDefaultValue: [
-                        {
-                            _col0: 'Car'
-                        }
-                    ],
-                    type: 'STRING',
-                    driverLabel: 'DEMO_ProductFamily',
-                    mandatory: false,
-                    allowInternalNodeSelection: false,
-                    multivalue: false,
-                    dependencies: {
-                        data: [],
-                        visual: [],
-                        lov: []
-                    },
-                    selectionType: 'COMBOBOX',
-                    id: 7701,
-                    parameterDescription: ['Car'],
-                    parameterValue: [
-                        {
-                            value: 'Car',
-                            description: 'Car'
-                        }
-                    ]
-                }
-            ] as any,
             ignoredDatasets: [] as string[]
         }
     },
