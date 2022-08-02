@@ -53,7 +53,12 @@
 	#set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
 #end
 
-#set($sizeCriteria = $chart.sizeCriteria)
+#if(!$chart.sizeCriteria)
+	#set($sizeCriteria = 'serie')
+#else 
+	#set($sizeCriteria = $chart.sizeCriteria)
+#end
+
 #set($result = $datasettransformer.toWordcloud($columnsNeeded,$dataColumnsMapper,$dataRows,$serieName, $sizeCriteria, $groupingFunction.toLowerCase()))
 
 #set($crossNavigation = '')
@@ -88,7 +93,7 @@
         	widthDimType: '$chart.widthDimType',
         #end
 		
-  		sizeCriteria: '$chart.sizeCriteria',
+  		sizeCriteria: '$sizeCriteria',
   		wordLayout: '$chart.wordLayout',
   		preventOverlap: $chart.preventOverlap,
   		maxAngle: $chart.maxAngle,
