@@ -1456,11 +1456,19 @@ function setAggregationsOnChartEngine(wconf,sbiModule_util){
 		wconf.chartTemplate = {"CHART":wconf.chartTemplate};
 	}
 	var chartTemplate = wconf.chartTemplate;
-	
-	if(chartTemplate.CHART.type.toUpperCase() === "WORDCLOUD" && !chartTemplate.CHART.sizeCriteria){
-		chartTemplate.CHART.sizeCriteria = "serie";
+	if (chartTemplate.CHART.type == 'WORDCLOUD') {
+		chartTemplate.CHART.sizeCriteria = 'serie';
+  		chartTemplate.CHART.wordLayout= 'horizontal';
+  		chartTemplate.CHART.preventOverlap= false;
+  		chartTemplate.CHART.maxAngle= 0;
+  		chartTemplate.CHART.minAngle= 0;
+  		chartTemplate.CHART.maxFontSize= 10;
+  		chartTemplate.CHART.minFontSize= 5;
+  		chartTemplate.CHART.wordPadding= 2;
+  		chartTemplate.CHART.maxWords= 10;
+  		chartTemplate.CHART.isCockpit= true;
+		
 	}
-	
 	if(chartTemplate && chartTemplate.CHART && chartTemplate.CHART.VALUES) {
 
 		if(chartTemplate.CHART.VALUES.SERIE) {
