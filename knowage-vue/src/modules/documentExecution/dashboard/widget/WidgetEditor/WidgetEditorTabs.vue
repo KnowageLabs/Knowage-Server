@@ -32,12 +32,3 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss">
-.widgetEditor-tabs {
-    flex: 1;
-    .p-tabview {
-        width: 100%;
-        height: 100%;
-    }
-}
-</style>
