@@ -29,7 +29,7 @@
                 <template #empty>
                     {{ $t('common.info.noDataFound') }}
                 </template>
-                <Column v-if="settings.rowReorder" :rowReorder="settings.rowReorder" :style="settings.rowReorder.rowReorderColumnStyle" />
+                <Column v-if="settings.rowReorder" :rowReorder="settings.rowReorder?.enabled" :style="settings.rowReorder.rowReorderColumnStyle" />
                 <Column v-if="settings.iconColumn">
                     <template #body="slotProps">
                         <i :class="getIcon(slotProps.data)"></i>

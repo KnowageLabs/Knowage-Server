@@ -2,11 +2,11 @@
     <div class="p-d-flex" v-if="propWidget">
         <Card class="kn-flex p-m-2">
             <template #content>
-                <WidgetEditorList :widgetModel="propWidget" class="kn-list knListBox" :settings="descriptor[propWidget.type].listSettings" :options="descriptor[propWidget.type].listOptions" @itemClicked="onItemClicked"></WidgetEditorList>
+                <WidgetEditorList :widgetModel="propWidget" class="kn-list knListBox" :settings="descriptor[propWidget.type].listSettings" :options="descriptor[propWidget.type].listOptions" @itemClicked="onItemClicked" data-test="widget-editor-settings-list"></WidgetEditorList>
             </template>
         </Card>
         <div class="kn-flex p-m-2">
-            <WidgetEditorGeneric v-if="propWidget" class="kn-flex p-m-2" :widgetModel="propWidget" :propDescriptor="selectedDescriptor"></WidgetEditorGeneric>
+            <WidgetEditorGeneric v-if="propWidget" class="kn-flex p-m-2" :widgetModel="propWidget" :propDescriptor="selectedDescriptor" data-test="widget-editor-generic"></WidgetEditorGeneric>
         </div>
     </div>
 </template>
