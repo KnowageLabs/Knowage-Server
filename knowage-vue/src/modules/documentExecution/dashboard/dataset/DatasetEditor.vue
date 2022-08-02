@@ -223,7 +223,8 @@ export default defineComponent({
 </script>
 <style lang="scss">
 .datasetEditor {
-    height: 100vh;
+    // height: 100vh;
+    height: 100%;
     width: 100%;
     top: 0;
     left: 0;
@@ -251,6 +252,7 @@ export default defineComponent({
         .p-tabview-panel {
             overflow: auto;
             display: flex;
+            flex-direction: row;
             flex: 1;
         }
     }

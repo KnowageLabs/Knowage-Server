@@ -114,8 +114,10 @@ export default defineComponent({
 </script>
 <style lang="scss">
 .dashboard-container {
-    width: 100%;
-    height: 100vh;
+    flex: 1;
+    height: 100%;
+    // width: 100%;
+    // height: 100vh;
     overflow-y: auto;
     position: relative;
 }
