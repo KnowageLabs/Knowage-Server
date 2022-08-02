@@ -1,14 +1,12 @@
 <template>
-    <div class="widgetEditor-tabs">
-        <TabView :activeIndex="activeIndex">
-            <TabPanel :header="$t('common.data')">
-                <WidgetEditorDataTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="$emit('datasetSelected', $event)" data-test="data-tab"></WidgetEditorDataTab>
-            </TabPanel>
-            <TabPanel :header="$t('common.settings')">
-                <WidgetEditorSettingsTab :propWidget="propWidget"></WidgetEditorSettingsTab>
-            </TabPanel>
-        </TabView>
-    </div>
+    <TabView :activeIndex="activeIndex">
+        <TabPanel :header="$t('common.data')">
+            <WidgetEditorDataTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="$emit('datasetSelected', $event)" data-test="data-tab"></WidgetEditorDataTab>
+        </TabPanel>
+        <TabPanel :header="$t('common.settings')">
+            <WidgetEditorSettingsTab :propWidget="propWidget"></WidgetEditorSettingsTab>
+        </TabPanel>
+    </TabView>
 </template>
 
 <script lang="ts">

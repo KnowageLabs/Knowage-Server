@@ -5,7 +5,7 @@
         <DashboardRenderer :model="model" :datasets="datasets"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
-            <DatasetEditor v-if="datasetEditorVisible" :availableDatasetsProp="datasets" :filtersDataProp="filtersData" @closeDatasetEditor="datasetEditorVisible = false" @datasetEditorSaved="datasetEditorVisible = false" />
+            <DatasetEditor v-if="datasetEditorVisible" :availableDatasetsProp="datasets" :filtersDataProp="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="datasetEditorVisible = false" />
         </Transition>
 
         <WidgetPickerDialog v-if="widgetPickerVisible" :visible="widgetPickerVisible" @openNewWidgetEditor="openNewWidgetEditor" @closeWidgetPicker="widgetPickerVisible = false" />
@@ -108,6 +108,10 @@ export default defineComponent({
         closeWidgetEditor() {
             this.widgetEditorVisible = false
             this.selectedWidget = null
+        },
+        closeDatasetEditor() {
+            this.datasetEditorVisible = false
+            emitter.emit('datasetManagementClosed')
         }
     }
 })

@@ -1,6 +1,6 @@
 <template>
     <div class="kn-height-full detail-page-container">
-        <Toolbar v-if="!embed && !olapDesignerMode" class="kn-toolbar kn-toolbar--primary p-col-12">
+        <Toolbar v-if="!embed && !olapDesignerMode && !managementOpened" class="kn-toolbar kn-toolbar--primary p-col-12">
             <template #start>
                 <span>{{ document?.name }}</span>
             </template>
@@ -141,6 +141,7 @@ export default defineComponent({
     emits: ['close', 'updateDocumentName', 'parametersChanged'],
     data() {
         return {
+            managementOpened: false,
             document: null as any,
             hiddenFormData: {} as any,
             hiddenFormUrl: '' as string,
@@ -248,6 +249,8 @@ export default defineComponent({
         }
     },
     async created() {
+        this.setEventListeners()
+        
         window.addEventListener('message', this.iframeEventsListener)
 
         if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
@@ -1082,7 +1085,13 @@ export default defineComponent({
             emitter.emit('openNewWidgetPicker')
         },
         openDashboardDatasetManagement() {
+            this.managementOpened = true
             emitter.emit('openDatasetManagement')
+        },
+        setEventListeners() {
+            emitter.on('datasetManagementClosed', () => {
+                this.managementOpened = false
+            })
         }
     }
 })

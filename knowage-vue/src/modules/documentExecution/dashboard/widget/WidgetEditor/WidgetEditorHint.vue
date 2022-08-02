@@ -1,5 +1,5 @@
 <template>
-    <KnHint class="p-my-2" title="dashboard.widgetEditor.title" hint="dashboard.widgetEditor.hint"></KnHint>
+    <KnHint title="dashboard.widgetEditor.title" hint="dashboard.widgetEditor.hint"></KnHint>
 </template>
 
 <script lang="ts">

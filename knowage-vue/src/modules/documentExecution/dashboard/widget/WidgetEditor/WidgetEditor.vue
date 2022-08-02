@@ -1,6 +1,6 @@
 <template>
     <Teleport to=".dashboard-container">
-        <div class="widgetEditor">
+        <div class="datasetEditor">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #start> {{ widget.type }} Widget Editor </template>
                 <template #end>
@@ -8,10 +8,10 @@
                     <Button class="kn-button p-button-text" @click="close">{{ $t('common.close') }}</Button>
                 </template>
             </Toolbar>
-            <div class="widgetEditor-container">
-                <WidgetEditorTabs :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="onDatasetSelected" />
-                <WidgetEditorPreview :propWidget="widget" />
-            </div>
+            <!-- <div class="datasetEditor-container"> -->
+            <WidgetEditorTabs class="datasetEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="onDatasetSelected" />
+            <!-- <WidgetEditorPreview :propWidget="widget" /> -->
+            <!-- </div> -->
         </div>
     </Teleport>
 </template>
