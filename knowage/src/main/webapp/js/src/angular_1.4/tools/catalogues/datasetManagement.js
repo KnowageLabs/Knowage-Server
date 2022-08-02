@@ -1904,6 +1904,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		sbiModule_restServices.promiseGet('1.0/datasets', item.label).then(function(response) {
 
 			var item = response.data[0];
+		
+			if (item.limitRows && item.limitRows != '') item.limitRows = Number(item.limitRows);
+			if (item.skipRows && item.skipRows != '') item.skipRows = Number(item.skipRows);
+			if (item.xslSheetNumber && item.xslSheetNumber != '') item.xslSheetNumber = Number(item.xslSheetNumber);
 
 			$scope.isSelected = true;
 			$scope.step=1;
@@ -2431,7 +2435,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.catTypeId =  Number(item.catTypeId);
 			$scope.selectedDataSet.xslSheetNumber = Number($scope.xslSheetNumberDefault);
 			$scope.selectedDataSet.skipRows = Number(item.skipRows);
-			$scope.selectedDataSet.limitRows  = Number($scope.limitRowsDefault);
+			var limitRows = item.limitRows ? item.limitRows : $scope.limitRowsDefault
+			$scope.selectedDataSet.limitRows  = Number(limitRows);
 		}
 		else {
 			$scope.selectedDataSet.catTypeId = null;
@@ -4307,7 +4312,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 
 	$scope.toStep2 = function () {
-		if($scope.changingFile || $scope.initialUpload) {
+		if(!$scope.dataset && $scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd == "File") {
+			$scope.dataset = $scope.selectedDataSet
+		}
+		
 			var params = {};
 			params.showDerivedDataset=false;
 			params.SBI_EXECUTION_ID = -1;
@@ -4336,7 +4344,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.dataset.meta = JSON.stringify($scope.selectedDataSet.meta);
 			$scope.dataset.name = $scope.selectedDataSet.name;
 			$scope.dataset.persist = $scope.selectedDataSet.isPersisted;
-			$scope.dataset.skipRows = $scope.selectedDataSet.skipRows;
+			$scope.dataset.skipRows = Number($scope.selectedDataSet.skipRows);
 			$scope.dataset.tableName = $scope.selectedDataSet.persistTableName;
 			$scope.dataset.type = $scope.selectedDataSet.dsTypeCd;
 			$scope.dataset.xslSheetNumber = $scope.selectedDataSet.xslSheetNumber;
@@ -4393,18 +4401,22 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				function errorCallback(response) {
 
 				});
-		} else {
-			$scope.step = 2;
-
-			$scope.validationPassed = false;
-			$scope.prepareMetaForView();
-			$scope.prepareDatasetForView();
-
-			if($scope.initialUpload){
-				$scope.initialUpload = false;
-			}
-
-		}
+// } else {
+// 	$scope.step = 2;
+// 	
+// 	if(!$scope.dataset && $scope.selectedDataSet && $scope.selectedDataSet.dsTypeCd == "File") {
+// 		$scope.dataset = $scope.selectedDataSet
+// 	}
+// 
+// 	$scope.validationPassed = false;
+// 	$scope.prepareMetaForView();
+// 	$scope.prepareDatasetForView();
+// 
+// 	if($scope.initialUpload){
+// 		$scope.initialUpload = false;
+// 	}
+// 
+// }
 	}
 
     $scope.tableColumns =
