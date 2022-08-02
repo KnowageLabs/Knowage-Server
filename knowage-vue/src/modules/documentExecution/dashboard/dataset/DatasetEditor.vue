@@ -45,11 +45,10 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import DataTab from './DatasetEditorDataTab/DatasetEditorDataTab.vue'
 import AssociationsTab from './DatasetEditorAssociations/DatasetEditorAssociations.vue'
+import DriverWarningDialog from './DatasetEditorDataTab/DatasetEditorDataDialog/DatasetEditorDataWarningDialog.vue'
 import mainStore from '../../../../App.store'
 import dashStore from '../Dashboard.store'
 import deepcopy from 'deepcopy'
-import cryptoRandomString from 'crypto-random-string'
-import DriverWarningDialog from './DatasetEditorDataTab/DatasetEditorDataDialog/DatasetEditorDataWarningDialog.vue'
 
 export default defineComponent({
     name: 'dataset-editor',
@@ -58,14 +57,16 @@ export default defineComponent({
     emits: ['closeDatasetEditor', 'datasetEditorSaved'],
     data() {
         return {
+            activeIndex: 0,
             loading: false,
             warningDialogVisible: false,
             availableDatasets: {} as any,
             dashboardDatasets: [] as IModelDataset[],
             selectedDatasets: [] as any,
             dashboardAssociations: [] as IAssociation[],
-            selectedAssociation: {} as IAssociation,
-            ignoredDatasets: [] as string[]
+            selectedAssociation: {} as any,
+            ignoredDatasets: [] as string[],
+            uncachedDatasets: ['SbiQueryDataSet', 'SbiQbeDataSet', 'SbiSolrDataSet', 'SbiPreparedDataSet']
         }
     },
     watch: {
@@ -131,6 +132,7 @@ export default defineComponent({
             })
         },
         addSelectedDatasets(datasetsToAdd) {
+            this.setDatasetCache(datasetsToAdd)
             if ((this.selectedDatasets.some((dataset) => dataset.drivers?.length > 0) && datasetsToAdd.some((dataset) => dataset.drivers?.length > 0)) || datasetsToAdd.filter((dataset) => dataset.drivers?.length > 0).length > 1) {
                 this.selectedDatasets.push(...datasetsToAdd.filter((dataset) => !(dataset.drivers?.length > 0)))
                 this.ignoredDatasets = datasetsToAdd.filter((dataset) => dataset.drivers?.length > 0).map((dataset) => dataset.name)
@@ -141,12 +143,17 @@ export default defineComponent({
                     const formattedDatasetForDashboard = {
                         id: dataset.id.dsId,
                         indexes: [],
-                        cache: false,
+                        cache: true,
                         parameters: []
                     } as IModelDataset
                     this.dashboardDatasets.push(formattedDatasetForDashboard)
                 })
             }
+        },
+        setDatasetCache(datasets) {
+            datasets.forEach((dataset) => {
+                this.uncachedDatasets.includes(dataset.type) ? (dataset.modelCache = false) : (dataset.modelCache = true)
+            })
         },
         selectAssociation(association) {
             this.selectedAssociation = association
