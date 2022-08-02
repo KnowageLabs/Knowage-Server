@@ -322,6 +322,8 @@
             "associationsTabTitle": "Associations",
             "cached": "Cached",
             "dataTabTitle": "Data",
+            "datasetDriversWarningMsg1": "You can only have one dataset with drivers! ",
+            "datasetDriversWarningMsg2": " datasets were not added!",
             "duplicateAssociationsMsg": "Association already exists!",
             "dynamic": "Dynamic",
             "indexHint": "Indexes will be created on single selected columns.",
