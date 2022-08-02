@@ -95,7 +95,6 @@ export default defineComponent({
     },
 
     methods: {
-        //#region ===================== Dataset Logic ====================================================
         async setDatasetsData() {
             this.availableDatasets = deepcopy(this.availableDatasetsProp)
             this.dashboardDatasets = deepcopy(this.dashboardStore.$state.dashboards[1].configuration.datasets)
@@ -149,8 +148,10 @@ export default defineComponent({
                 })
             }
         },
+        selectAssociation(association) {
+            this.selectedAssociation = association
+        },
 
-        //#region ===================== DELETE DATASET ====================================================
         confirmDeleteDataset(datasetToDelete) {
             //TODO: Check if widget is using a dataset
             let datasetUsedByWidgetCheck = false
@@ -162,7 +163,7 @@ export default defineComponent({
                     header: this.$t('documentExecution.dossier.deleteTitle'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
-                        this.unselectAssociation()
+                        this.selectedAssociation = null as any
                         this.checkForDatasetAssociations(datasetToDelete)
                     }
                 })
@@ -185,41 +186,7 @@ export default defineComponent({
             let toDeleteIndex = this.selectedDatasets.findIndex((dataset) => datasetToDeleteId === dataset.id.dsId)
             this.selectedDatasets.splice(toDeleteIndex, 1)
         },
-        //#endregion ===============================================================================================
-        //#endregion ===============================================================================================
 
-        //#region ===================== Association Logic ====================================================
-        selectAssociation(association) {
-            this.selectedAssociation = association
-        },
-        createNewAssociation() {
-            this.selectedAssociation = { fields: [], id: cryptoRandomString({ length: 16, type: 'base64' }) } as IAssociation
-            this.dashboardAssociations.push(this.selectedAssociation)
-        },
-        deleteAssociation(associationId) {
-            let index = this.dashboardAssociations.findIndex((association) => association.id === associationId)
-            if (index !== -1) this.dashboardAssociations.splice(index, 1)
-            this.unselectAssociation()
-        },
-        addIndexesOnAssociations() {
-            let selectedFields = {}
-            this.dashboardAssociations.forEach((association) => {
-                association.fields.reduce((obj, item) => {
-                    obj[item.dataset] = obj[item.dataset] || []
-                    obj[item.dataset].push(item.column)
-                    return obj
-                }, selectedFields)
-            })
-
-            this.selectedDatasets.forEach((dataset) => {
-                dataset.modelIndexes ? '' : (dataset.modelIndexes = [])
-                dataset.modelIndexes.push(...selectedFields[dataset.id.dsId].filter((item) => dataset.modelIndexes.indexOf(item) == -1))
-            })
-        },
-        unselectAssociation() {
-            this.selectedAssociation = null as any
-        },
-        //#endregion ===============================================================================================
         saveDatasetsToModel() {
             let formattedDatasets = [] as IModelDataset[]
 
