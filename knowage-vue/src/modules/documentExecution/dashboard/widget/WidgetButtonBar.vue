@@ -1,6 +1,6 @@
 <template>
     <div class="widgetButtonBarContainer">
-        <Button @click="editWidget">Edit</Button>
+        <Button @click="editWidget" data-test="edit-widget-button">Edit</Button>
     </div>
 </template>
 
