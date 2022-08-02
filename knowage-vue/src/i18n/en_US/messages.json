@@ -86,6 +86,7 @@
         "general": "General",
         "generate": "Generate",
         "group": "Group",
+        "height": "Height",
         "home": "Home",
         "id": "id",
         "image": "image",
@@ -362,6 +363,17 @@
             "pagination": "Pagination",
             "precision": "Precision",
             "prefix": "Prefix",
+            "rows": {
+                "alternatedRowsEven": "Alternated Rows Even",
+                "alternatedRowsOdd": "Alternated Rows Odd",
+                "customEmptyRowsMessage": "Custom empty rows message",
+                "enabledAlternatedRows": "Enabled Alternated Rows",
+                "hideNoRowsAvailable": "Hide \"No Rows Available\" message",
+                "multiselectable": "Multiselectable",
+                "selectionColor": "Selection color",
+                "showIndexesColumn": "Show indexes column",
+                "title": "Rows"
+            },
             "selectDataset": "Select Dataset",
             "selectedColumns": "Selected Columns",
             "settingsListOptions": {

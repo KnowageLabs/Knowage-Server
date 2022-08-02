@@ -126,6 +126,147 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "cardClasses": "p-d-flex p-flex-column",
+                        "containers": [
+                            {
+                                "components": [
+                                    {
+                                        "accordions": [
+                                            {
+                                                "containers": [
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "cssClass": "kn-flex p-m-2",
+                                                                "label": "common.height",
+                                                                "property": "styles.tr.height",
+                                                                "settings": {
+                                                                    "type": "number"
+                                                                },
+                                                                "type": "inputText"
+                                                            },
+                                                            {
+                                                                "cssClass": "p-m-2",
+                                                                "label": "dashboard.widgetEditor.rows.selectionColor",
+                                                                "property":"settings.multiselectablecolor",
+                                                                "settings": {
+                                                                    "onUpdate": "functions.updateMultiSelectableColor",
+                                                                    "disabledCondition": "functions.multiselectableColorIsDisabled",
+                                                                    "watchers": ["settings.multiselectable"]
+
+                                                                },
+                                                                "type":"colorPicker"
+                                                            }
+                                                            
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center p-m-2"
+                                                    },
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.rows.enabledAlternatedRows",
+                                                                "property": "settings.alternateRows.enabled",
+                                                                "settings": {
+                                                                },
+                                                                "type": "inputSwitch"
+                                                            }
+                                                        
+                                                            
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center p-m-2"
+                                                    },
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "cssClass": "p-m-2",
+                                                                "label": "dashboard.widgetEditor.rows.alternatedRowsEven",
+                                                                "property":"settings.alternateRows.evenRowsColor",
+                                                                "settings": {
+                                                                    "disabledCondition": "functions.alternatedRowsDisabled",
+                                                                    "onUpdate": "functions.updateEvenRowsColor",
+                                                                    "watchers": ["settings.alternateRows.enabled"]
+
+                                                                },
+                                                                "type":"colorPicker"
+                                                            },
+                                                            {
+                                                                "cssClass": "p-m-2",
+                                                                "label": "dashboard.widgetEditor.rows.alternatedRowsOdd",
+                                                                "property":"settings.alternateRows.oddRowsColor",
+                                                                "settings": {
+                                                                    "disabledCondition": "functions.alternatedRowsDisabled",
+                                                                    "onUpdate": "functions.updateOddRowsColor",
+                                                                    "watchers": ["settings.alternateRows.enabled"]
+
+                                                                },
+                                                                "type":"colorPicker"
+                                                            }
+                                                            
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center p-m-2"
+                                                    },
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.rows.multiselectable",
+                                                                "property": "settings.multiselectable",
+                                                                "settings": {
+                                                                    "binary": true
+                                                                },
+                                                                "type": "checkbox"
+                                                            },
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.rows.showIndexesColumn",
+                                                                "property": "settings.indexColumn",
+                                                                "settings": {
+                                                                    "binary": true
+                                                                },
+                                                                "type": "checkbox"
+                                                            }
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center p-m-2"
+                                                    },
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.rows.hideNoRowsAvailable",
+                                                                "property": "settings.norows.hide",
+                                                                "settings": {
+                                                                    "binary": true
+                                                                },
+                                                                "type": "checkbox"
+                                                            },
+                                                            {
+                                                                "cssClass": "kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.rows.customEmptyRowsMessage",
+                                                                "property": "settings.norows.message",
+                                                                "settings": {
+                                                                    "disabledCondition": "functions.customEmptyRowsMessageDisabled",
+                                                                    "watchers": ["settings.norows.hide"]
+                                                                },
+                                                                "type": "inputText"
+                                                            }
+                                                            
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center p-m-2"
+                                                    }
+                                                   
+                                                ],
+                                                "title": "dashboard.widgetEditor.rows.title"
+                                            }
+                                        ],
+                                        "settings": {},
+                                        "type": "accordion"
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ],
                 "icon": "fa fa-table",

@@ -1,4 +1,5 @@
 import { IWidget, IWidgetColumn, IIcon } from "../../../Dashboard"
+import { formatRGBColor } from './WidgetEditorHelpers'
 import { emitter } from '../../../DashboardHelpers'
 import descriptor from '../WidgetEditorDescriptor.json'
 
@@ -266,8 +267,25 @@ const tableWidgetFunctions = {
     getThresholdListItemIcon: (model: IWidget, item: any, itemIndex: number) => {
         return model.settings.rowThresholds.list[itemIndex] ? model.settings.rowThresholds.list[itemIndex].icon : ''
     },
-    onRowThresholdListReorder: (model: IWidget, items: any) => {
-
+    updateMultiSelectableColor: (model: IWidget, newColor: string) => {
+        model.settings.multiselectablecolor = newColor
+    },
+    updateEvenRowsColor: (model: IWidget, newColor: string) => {
+        if (!model.settings.alternateRows) return
+        model.settings.alternateRows.evenRowsColor = newColor
+    },
+    updateOddRowsColor: (model: IWidget, newColor: string) => {
+        if (!model.settings.alternateRows) return
+        model.settings.alternateRows.oddRowsColor = newColor
+    },
+    alternatedRowsDisabled: (model: IWidget) => {
+        return !model?.settings.alternateRows?.enabled
+    },
+    customEmptyRowsMessageDisabled: (model: IWidget) => {
+        return model?.settings.norows?.hide
+    },
+    multiselectableColorIsDisabled: (model: IWidget) => {
+        return !model?.settings.multiselectable
     }
 }
 
@@ -299,6 +317,7 @@ export function formatTableWidgetForSave(widget: IWidget) {
     formatTablePagination(widget.settings.pagination)
     formatTableSelectedColumns(widget.columns)
     formatWidgetDatasetKeysArray(widget)
+    formatRowStyleSettings(widget)
 }
 
 function formatTablePagination(pagination: { enabled: boolean, itemsNumber: string | number }) {
@@ -330,6 +349,19 @@ function formatColumnTooltipSettings(column: IWidgetColumn) {
         column.style.enableCustomHeaderTooltip = false
         column.style.customHeaderTooltip = ''
     }
+}
+
+function formatRowStyleSettings(widget: IWidget) {
+    if (widget.styles.tr.height) widget.styles.tr.height = +widget.styles.tr.height
+    if (!widget.settings.multiselectable) widget.settings.multiselectablecolor = ''
+    if (widget.settings.multiselectablecolor && typeof widget.settings.multiselectablecolor !== 'string') widget.settings.multiselectablecolor = formatRGBColor(widget.settings.multiselectablecolor)
+    if (!widget.settings.alternateRows.enabled) {
+        widget.settings.alternateRows.evenRowsColor = ''
+        widget.settings.alternateRows.oddRowsColor = ''
+    }
+    if (widget.settings.alternateRows.evenRowsColor && typeof widget.settings.alternateRows.evenRowsColorr !== 'string') widget.settings.alternateRows.evenRowsColor = formatRGBColor(widget.settings.alternateRows.evenRowsColor)
+    if (widget.settings.alternateRows.oddRowsColor && typeof widget.settings.alternateRows.oddRowsColor !== 'string') widget.settings.alternateRows.oddRowsColor = formatRGBColor(widget.settings.alternateRows.oddRowsColor)
+    if (widget.settings.norows.hide) widget.settings.norows.message = ''
 }
 
 export default tableWidgetFunctions

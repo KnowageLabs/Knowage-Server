@@ -26,9 +26,24 @@ export function createNewWidget() {
                 'font-style': '',
                 'font-weight': '',
                 'font-family': ''
+            },
+            tr: {
+                height: 0
             }
         },
         settings: {
+            alternateRows: {
+                enabled: true,
+                evenRowsColor: "rgb(228, 232, 236)",
+                oddRowsColor: ""
+            },
+            indexColumn: false,
+            multiselectable: false,
+            multiselectablecolor: "",
+            norows: {
+                hide: false,
+                message: ""
+            },
             rowThresholds: {
                 enabled: false,
                 list: []
@@ -68,4 +83,9 @@ export function formatWidgetForSave(tempWidget: IWidget) {
     }
 
     return widget
+}
+
+export function formatRGBColor(color: { r: string, g: string, b: string }) {
+    console.log("----- formatRGBColor: ", color)
+    return `rgb(${color.r}, ${color.g}, ${color.b})`
 }

@@ -51,6 +51,7 @@
                             ></WidgetEditorCheckbox>
                             <WidgetEditorStyleTooblar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings" data-test="widget-editor-style-toolbar"></WidgetEditorStyleTooblar>
                             <WidgetEditorFormList v-else-if="component.type === 'formList'" :widgetModel="widgetModel" :settings="component.settings"></WidgetEditorFormList>
+                            <WidgetEditorColorPicker v-else-if="component.type === 'colorPicker'" :widgetModel="widgetModel" :class="component.cssClass" :label="component.label" :property="component.property" :settings="component.settings"></WidgetEditorColorPicker>
                         </template>
                     </div>
                 </template>
@@ -71,10 +72,11 @@ import WidgetEditorInputText from './WidgetEditorInputText.vue'
 import WidgetEditorCheckbox from './WidgetEditorCheckbox.vue'
 import WidgetEditorStyleTooblar from './WidgetEditorStyleTooblar.vue'
 import WidgetEditorFormList from './WidgetEditorFormList.vue'
+import WidgetEditorColorPicker from './WidgetEditorColorPicker.vue'
 
 export default defineComponent({
     name: 'widget-editor-accordion',
-    components: { Accordion, AccordionTab, WidgetEditorInputSwitch, WidgetEditorDropdown, WidgetEditorInputText, WidgetEditorCheckbox, WidgetEditorStyleTooblar, WidgetEditorFormList },
+    components: { Accordion, AccordionTab, WidgetEditorInputSwitch, WidgetEditorDropdown, WidgetEditorInputText, WidgetEditorCheckbox, WidgetEditorStyleTooblar, WidgetEditorFormList, WidgetEditorColorPicker },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Object, required: true }, accordions: { type: Array as PropType<any[]>, requried: true } },
     emits: ['accordionInputSwitchChanged', 'accordionDropdownChanged', 'accordionInputTextChanged', 'accordionCheckboxChanged'],
     data() {
