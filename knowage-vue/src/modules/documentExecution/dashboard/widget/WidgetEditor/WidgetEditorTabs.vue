@@ -1,10 +1,10 @@
 <template>
     <div class="widgetEditor-tabs">
-        <TabView>
-            <TabPanel header="Data">
-                <WidgetEditorDataTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="$emit('datasetSelected', $event)"></WidgetEditorDataTab>
+        <TabView :activeIndex="activeIndex">
+            <TabPanel :header="$t('common.data')">
+                <WidgetEditorDataTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="$emit('datasetSelected', $event)" data-test="data-tab"></WidgetEditorDataTab>
             </TabPanel>
-            <TabPanel header="Settings">
+            <TabPanel :header="$t('common.settings')">
                 <WidgetEditorSettingsTab :propWidget="propWidget"></WidgetEditorSettingsTab>
             </TabPanel>
         </TabView>
@@ -28,7 +28,9 @@ export default defineComponent({
     props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, selectedDatasets: { type: Array as PropType<IDataset[]> } },
     emits: ['datasetSelected'],
     data() {
-        return {}
+        return {
+            activeIndex: 0
+        }
     }
 })
 </script>

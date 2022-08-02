@@ -10,7 +10,7 @@
 
         <WidgetPickerDialog v-if="widgetPickerVisible" :visible="widgetPickerVisible" @openNewWidgetEditor="openNewWidgetEditor" @closeWidgetPicker="widgetPickerVisible = false" />
     </div>
-    <WidgetEditor v-if="widgetEditorVisible" :propWidget="selectedWidget" :datasets="datasets" @close="closeWidgetEditor" @widgetSaved="closeWidgetEditor" @widgetUpdated="closeWidgetEditor"></WidgetEditor>
+    <WidgetEditor v-if="widgetEditorVisible" :propWidget="selectedWidget" :datasets="datasets" @close="closeWidgetEditor" @widgetSaved="closeWidgetEditor" @widgetUpdated="closeWidgetEditor" data-test="widget-editor"></WidgetEditor>
 </template>
 
 <script lang="ts">
