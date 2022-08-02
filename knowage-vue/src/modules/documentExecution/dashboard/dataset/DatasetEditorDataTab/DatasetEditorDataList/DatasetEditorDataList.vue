@@ -1,5 +1,5 @@
 <template>
-    <div class="dataset-editor-list-card-container p-m-2">
+    <div class="dataset-editor-list-card-container p-m-3">
         <div class="dataset-editor-list-card">
             <Button label="Add Dataset" icon="pi pi-plus-circle" class="p-button-outlined p-mt-2 p-mx-2" @click="toggleDataDialog"></Button>
             <Listbox

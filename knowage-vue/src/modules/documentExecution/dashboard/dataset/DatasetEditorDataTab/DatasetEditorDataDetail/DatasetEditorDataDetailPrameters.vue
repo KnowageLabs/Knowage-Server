@@ -1,6 +1,6 @@
 <template>
-    <Accordion>
-        <AccordionTab header="Parameters">
+    <Accordion class="p-mb-3">
+        <AccordionTab :header="$t('common.parameters')">
             <!-- PARAMETERS ---------------- -->
             <div id="parameters" v-for="(parameter, index) of selectedDatasetProp.parameters" :key="index" class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-12 p-lg-4">
@@ -20,11 +20,11 @@
                         <InputText id="label" class="kn-material-input" type="text" v-model="parameter.value" />
                         <label for="label" class="kn-material-input-label"> {{ $t('common.value') }} </label>
                     </span>
-                    <Button v-if="parameter.modelType === 'dynamic'" icon="fa-solid fa-link" class="p-button-text p-button-rounded p-button-plain p-as-end" @click.stop="showMenu($event, parameter.name)" />
+                    <Button v-if="parameter.modelType === 'dynamic' && documentDriversProp && documentDriversProp.filterStatus.length > 0" icon="fa-solid fa-link" class="p-button-text p-button-rounded p-button-plain p-as-end" @click.stop="showMenu($event, parameter.name)" />
                 </div>
             </div>
-            <!-- {{ documentDriversProp }} -->
 
+            <!-- DRIVERS ---------------- -->
             <!-- <div id="drivers" v-for="(driver, index) of selectedDatasetProp.drivers" :key="index" class="p-field p-col-12">
                 <span v-if="driver.showOnPanel == 'true'">
                     {{ driver.label }}
@@ -47,7 +47,7 @@ import Menu from 'primevue/contextmenu'
 export default defineComponent({
     name: 'dataset-editor-data-detail-info',
     components: { Card, Accordion, AccordionTab, Dropdown, Menu },
-    props: { selectedDatasetProp: { required: true, type: Object }, dashboardDatasetsProp: { required: true, type: Array as any }, documentDriversProp: { required: true, type: Array as any } },
+    props: { selectedDatasetProp: { required: true, type: Object }, dashboardDatasetsProp: { required: true, type: Array as any }, documentDriversProp: { type: Array as any } },
     emits: [],
     data() {
         return {
@@ -65,7 +65,7 @@ export default defineComponent({
             this.$refs.parameterPickerMenu.toggle(event)
         },
         createMenuItems(paramName) {
-            this.menuButtons = this.documentDriversProp.map((driver) => {
+            this.menuButtons = this.documentDriversProp.filterStatus.map((driver) => {
                 return { label: driver.label, urlName: driver.urlName, command: () => this.addDriverValueToParameter(driver.label, paramName) }
             })
         },

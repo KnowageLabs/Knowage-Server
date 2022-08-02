@@ -1,5 +1,8 @@
 {
     "style": {
+        "buttonContainer": {
+            "height": "35px"
+        },
         "list": {
             "listIcon": {
                 "color": "#929292"

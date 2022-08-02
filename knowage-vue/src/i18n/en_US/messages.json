@@ -329,7 +329,10 @@
             "indexHint": "Indexes will be created on single selected columns.",
             "indexPresentMsg": "Index already exists!",
             "static": "Static",
-            "title": "Dataset Manageent"
+            "title": "Dataset Manageent",
+            "indexesTitle": "Indexes",
+            "addAssociation": "Add Association",
+            "addIndexes": "Add Indexes on Associations"
         },
         "widgetEditor": {
             "addWidget": "Add widget",
