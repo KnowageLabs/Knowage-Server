@@ -24,6 +24,7 @@
                         :selectedAssociationProp="selectedAssociation"
                         @createNewAssociation="createNewAssociation"
                         @associationDeleted="deleteAssociation"
+                        @associationSelected="selectAssociation"
                         @addIndexesOnAssociations="addIndexesOnAssociations"
                     />
                 </TabPanel>
@@ -277,6 +278,9 @@ export default defineComponent({
         //#endregion ===============================================================================================
 
         //#region ===================== Association Logic ====================================================
+        selectAssociation(association) {
+            this.selectedAssociation = association
+        },
         createNewAssociation() {
             this.selectedAssociation = { fields: [], id: cryptoRandomString({ length: 16, type: 'base64' }) } as IAssociation
             this.dashboardAssociations.push(this.selectedAssociation)

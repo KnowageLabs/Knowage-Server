@@ -24,15 +24,18 @@ export default defineComponent({
     name: 'dataset-editor-data-tab',
     components: { AssociationsList, AssociationsDetail, KnHint },
     props: { selectedDatasetsProp: { required: true, type: Array }, dashboardAssociationsProp: { required: true, type: Array as PropType<IAssociation[]> }, selectedAssociationProp: { required: true, type: Object as PropType<IAssociation> } },
-    emits: ['createNewAssociation', 'associationDeleted', 'addIndexesOnAssociations'],
+    emits: ['createNewAssociation', 'associationDeleted', 'addIndexesOnAssociations', 'associationSelected'],
     data() {
         return {
             selectedAssociation: null as any
         }
     },
     watch: {
-        selectedAssociationProp() {
-            this.selectedAssociation = this.selectedAssociationProp as IAssociation
+        selectedAssociationProp: {
+            handler() {
+                this.selectedAssociation = this.selectedAssociationProp as IAssociation
+            },
+            deep: true
         }
     },
     setup() {
@@ -42,6 +45,7 @@ export default defineComponent({
     methods: {
         associationSelected(associationToSelect) {
             this.selectedAssociation = associationToSelect as IAssociation
+            this.$emit('associationSelected', associationToSelect)
         },
         manageAssociationField(selectedField: IAssociationField) {
             let fieldToEdit = this.selectedAssociation.fields.find((field) => selectedField.dataset === field.dataset) as IAssociationField
