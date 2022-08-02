@@ -1,10 +1,9 @@
 <template>
-    <div>
-        <label v-if="settings.label" class="kn-material-input-label">{{ $t(settings.label) }}</label>
-        <Listbox :class="class" :options="options" :listStyle="settings.listStyle" :filter="settings.filter" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="settings.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
+    <div class="dataset-editor-list-card-container p-m-3">
+        <Listbox class="kn-list kn-list-no-border-right dataset-editor-list" :options="options">
             <template #option="slotProps">
-                <div class="kn-list-item" @click="itemClicked(slotProps.option)" data-test="widget-editor-list-item">
-                    <i v-if="slotProps.option.icon" :class="slotProps.option.icon" class="p-mr-2"></i>
+                <div class="kn-list-item" :style="dataListDescriptor.style.list.listItem" @click="itemClicked(slotProps.option)" data-test="widget-editor-list-item">
+                    <i v-if="slotProps.option.icon" :class="slotProps.option.icon" class="p-mr-2" :style="dataListDescriptor.style.list.listIcon"></i>
                     <div class="kn-list-item-text">
                         <span>{{ getTitle(slotProps.option) }}</span>
                         <span class="kn-list-item-text-secondary kn-truncated" v-if="settings.textField != false || settings.translatedTextField != false">{{ getTextField(slotProps.option) }}</span>
@@ -21,6 +20,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 import Listbox from 'primevue/listbox'
 import WidgetEditorButtons from './WidgetEditorButtons.vue'
+import dataListDescriptor from '../../../../dataset/DatasetEditorDataTab/DatasetEditorDataList/DatasetEditorDataListDescriptor.json'
 
 export default defineComponent({
     name: 'widget-editor-list',
@@ -28,7 +28,9 @@ export default defineComponent({
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, class: { type: String }, options: { type: Array }, settings: { type: Object, required: true } },
     emits: ['itemClicked', 'buttonClicked'],
     data() {
-        return {}
+        return {
+            dataListDescriptor
+        }
     },
     async created() {},
     methods: {

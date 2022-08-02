@@ -76,6 +76,7 @@ export default defineComponent({
 <style lang="scss">
 .dataset-editor-list-card-container {
     display: flex;
+    flex-direction: column;
     width: 300px;
     background: #ffffff;
     color: rgba(0, 0, 0, 0.87);

@@ -1,31 +1,26 @@
 <template>
-    <div>
-        <div class="p-fluid p-field">
-            <div class="p-d-flex">
-                <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.selectDataset') }} </label>
-            </div>
-            <Dropdown class="kn-material-input" v-model="selectedDataset" :options="datasetOptions" optionLabel="label" @change="onDatasetSelected"></Dropdown>
+    <div class="dataset-editor-list-card-container p-m-3">
+        <span class="p-float-label p-mx-2 p-mt-4 p-mb-1">
+            <Dropdown id="dataset" class="kn-material-input kn-width-full" v-model="selectedDataset" :options="datasetOptions" optionLabel="label" @change="onDatasetSelected"></Dropdown>
+            <label for="dataset" class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.selectDataset') }} </label>
+        </span>
+        <div class="p-col-12 p-d-flex">
+            <label class="kn-material-input-label p-as-center p-ml-1"> {{ $t('common.columns') }} </label>
+            <Button :label="$t('common.addColumn')" icon="pi pi-plus-circle" class="p-button-outlined p-ml-auto p-mr-1" @click="showCalculatedFieldDialog"></Button>
         </div>
 
-        <div class="p-d-flex p-jc-around">
-            <label class="kn-material-input-label"> {{ $t('common.columns') }} </label>
-            <Button class="kn-button kn-button--primary" @click="showCalculatedFieldDialog"> {{ $t('common.addColumn') }}</Button>
-        </div>
-
-        <div>
-            <Listbox v-if="selectedDataset" class="kn-list--column" :options="selectedDatasetColumns" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="[]" :emptyFilterMessage="$t('common.info.noDataFound')">
-                <template #empty>{{ $t('common.info.noDataFound') }}</template>
-                <template #option="slotProps">
-                    <div class="kn-list-item kn-draggable" draggable="true" @dragstart="onDragStart($event, slotProps.option)">
-                        <i class="pi pi-bars"></i>
-                        <i :class="slotProps.option.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'" class="p-ml-2"></i>
-                        <div class="kn-list-item-text">
-                            <span>{{ slotProps.option.alias }}</span>
-                        </div>
+        <Listbox v-if="selectedDataset" class="kn-list kn-list-no-border-right dataset-editor-list" :options="selectedDatasetColumns" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="[]" :emptyFilterMessage="$t('common.info.noDataFound')">
+            <template #empty>{{ $t('common.info.noDataFound') }}</template>
+            <template #option="slotProps">
+                <div class="kn-list-item kn-draggable" draggable="true" :style="dataListDescriptor.style.list.listItem" @dragstart="onDragStart($event, slotProps.option)">
+                    <i class="pi pi-bars" :style="dataListDescriptor.style.list.listIcon"></i>
+                    <i :style="dataListDescriptor.style.list.listIcon" :class="slotProps.option.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'" class="p-ml-2"></i>
+                    <div class="kn-list-item-text">
+                        <span>{{ slotProps.option.alias }}</span>
                     </div>
-                </template>
-            </Listbox>
-        </div>
+                </div>
+            </template>
+        </Listbox>
     </div>
 </template>
 
@@ -37,15 +32,18 @@ import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import mainStore from '../../../../../../../App.store'
 import Listbox from 'primevue/listbox'
+import Card from 'primevue/card'
+import dataListDescriptor from '../../../../dataset/DatasetEditorDataTab/DatasetEditorDataList/DatasetEditorDataListDescriptor.json'
 
 export default defineComponent({
     name: 'widget-editor-data-list',
-    components: { Dropdown, Listbox },
+    components: { Card, Dropdown, Listbox },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array }, selectedDatasets: { type: Array as PropType<IDataset[]> } },
     emits: ['datasetSelected'],
     data() {
         return {
             descriptor,
+            dataListDescriptor,
             datasetOptions: [] as IWidgetEditorDataset[],
             selectedDataset: null as IWidgetEditorDataset | null,
             selectedDatasetColumns: [] as IDatasetColumn[]

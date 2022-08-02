@@ -1,17 +1,17 @@
 <template>
     <Teleport to=".dashboard-container">
-        <div class="widgetEditor">
+        <div class="datasetEditor">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #start> {{ widget.type }} Widget Editor </template>
                 <template #end>
-                    <Button class="kn-button p-button-text" @click="save">{{ $t('common.save') }}</Button>
-                    <Button class="kn-button p-button-text" @click="close">{{ $t('common.close') }}</Button>
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="save" />
+                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="close" />
                 </template>
             </Toolbar>
-            <div class="widgetEditor-container">
-                <WidgetEditorTabs :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="onDatasetSelected" />
-                <WidgetEditorPreview :propWidget="widget" />
-            </div>
+            <!-- <div class="datasetEditor-container"> -->
+            <WidgetEditorTabs class="datasetEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="onDatasetSelected" />
+            <!-- <WidgetEditorPreview :propWidget="widget" /> -->
+            <!-- </div> -->
         </div>
     </Teleport>
 </template>
