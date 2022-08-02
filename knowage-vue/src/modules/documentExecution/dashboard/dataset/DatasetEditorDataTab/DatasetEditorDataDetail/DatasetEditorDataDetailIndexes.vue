@@ -1,6 +1,6 @@
 <template>
     <Accordion>
-        <AccordionTab header="Indexes">
+        <AccordionTab :header="$t('dashboard.datasetEditor.indexesTitle')">
             <div class="p-col-12 p-d-flex">
                 <div class="kn-flex">
                     <span class="p-float-label">

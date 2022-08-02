@@ -1,9 +1,9 @@
 <template>
     <div class="p-d-flex p-flex-column kn-flex">
-        <InlineMessage v-if="selectedAssociationProp.fields.length == 0" class="p-mt-2 p-mx-2" severity="error">Select Associations - TODO: Finish validation of this stuff</InlineMessage>
+        <InlineMessage v-if="selectedAssociationProp.fields.length == 0" class="p-mt-3 p-mr-3" severity="error">Select Associations - TODO: Finish validation of this stuff</InlineMessage>
 
-        <div class="p-d-flex p-flex-column kn-flex kn-overflow p-mx-3 p-mb-3">
-            <MasonryWall class="kn-flex p-mt-2 p-mx-2" :items="selectedDatasetsProp" :column-width="300" :gap="10">
+        <div class="p-d-flex p-flex-column kn-flex kn-overflow p-mt-3 p-mr-3">
+            <MasonryWall class="kn-flex" :items="selectedDatasetsProp" :column-width="300" :gap="10">
                 <template #default="{ item, index }">
                     <DataCard :datasetProp="item" :indexProp="index" :selectedAssociationProp="selectedAssociationProp" @fieldSelected="$emit('fieldSelected', $event)" @fieldUnselected="$emit('fieldUnselected', $event)" />
                 </template>

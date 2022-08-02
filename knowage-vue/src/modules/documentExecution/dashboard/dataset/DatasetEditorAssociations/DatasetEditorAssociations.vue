@@ -34,7 +34,6 @@ export default defineComponent({
     watch: {
         selectedAssociationProp: {
             handler() {
-                console.log('CHANGED')
                 this.selectedAssociation = this.selectedAssociationProp as IAssociation
             },
             deep: true

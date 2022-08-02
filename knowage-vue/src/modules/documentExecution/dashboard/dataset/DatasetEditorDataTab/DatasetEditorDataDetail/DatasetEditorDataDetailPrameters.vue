@@ -1,6 +1,6 @@
 <template>
-    <Accordion>
-        <AccordionTab header="Parameters">
+    <Accordion class="p-mb-3">
+        <AccordionTab :header="$t('common.parameters')">
             <!-- PARAMETERS ---------------- -->
             <div id="parameters" v-for="(parameter, index) of selectedDatasetProp.parameters" :key="index" class="p-fluid p-formgrid p-grid">
                 <div class="p-field p-col-12 p-lg-4">
@@ -23,8 +23,8 @@
                     <Button v-if="parameter.modelType === 'dynamic' && documentDriversProp && documentDriversProp.filterStatus.length > 0" icon="fa-solid fa-link" class="p-button-text p-button-rounded p-button-plain p-as-end" @click.stop="showMenu($event, parameter.name)" />
                 </div>
             </div>
-            <!-- {{ documentDriversProp }} -->
 
+            <!-- DRIVERS ---------------- -->
             <!-- <div id="drivers" v-for="(driver, index) of selectedDatasetProp.drivers" :key="index" class="p-field p-col-12">
                 <span v-if="driver.showOnPanel == 'true'">
                     {{ driver.label }}

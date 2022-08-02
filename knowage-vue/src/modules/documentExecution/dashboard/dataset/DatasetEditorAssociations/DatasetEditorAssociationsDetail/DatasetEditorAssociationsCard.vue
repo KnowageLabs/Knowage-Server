@@ -55,7 +55,6 @@ export default defineComponent({
     },
     methods: {
         setSelectedAssociatonField() {
-            // console.log('setSelectedAssociatonField - associationsCard.vue ----------------')
             this.selectedField = this.datasetProp.metadata.fieldsMeta.find((datasetField) => {
                 return this.selectedAssociationProp.fields.some((associationField) => this.datasetProp.id.dsId === associationField.dataset && datasetField.alias === associationField.column)
             })

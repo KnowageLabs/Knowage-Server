@@ -1,7 +1,7 @@
 <template>
-    <div v-if="selectedDatasetProp.id" id="dataset-editor-data-detail-container">
+    <div v-if="selectedDatasetProp.id" id="dataset-editor-data-detail-container" class="kn-flex p-mt-3 p-mr-3">
         <InfoCard :selectedDatasetProp="selectedDatasetProp" />
-        <ParamsCard class="p-my-2" :selectedDatasetProp="selectedDatasetProp" :dashboardDatasetsProp="dashboardDatasetsProp" :documentDriversProp="documentDriversProp" />
+        <ParamsCard v-if="selectedDatasetProp.parameters.length > 0" :selectedDatasetProp="selectedDatasetProp" :dashboardDatasetsProp="dashboardDatasetsProp" :documentDriversProp="documentDriversProp" />
         <IndexesCard v-if="selectedDatasetProp.modelCache" :selectedDatasetProp="selectedDatasetProp" />
     </div>
     <div v-else>

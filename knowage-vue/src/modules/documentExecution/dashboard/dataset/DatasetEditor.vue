@@ -16,7 +16,7 @@
                 <TabPanel>
                     <template #header>
                         <span v-bind:class="{ 'details-warning-color': modelHasEmptyAssociations }">{{ $t('dashboard.datasetEditor.associationsTabTitle') }}</span>
-                        <i v-if="modelHasEmptyAssociations" class="fa-solid fa-circle-exclamation p-ml-1" v-bind:class="{ 'details-warning-color': modelHasEmptyAssociations }" />
+                        <i v-if="modelHasEmptyAssociations" class="fa-solid fa-circle-exclamation p-ml-1 details-warning-color" />
                     </template>
                     <AssociationsTab
                         :dashboardAssociationsProp="dashboardAssociations"
