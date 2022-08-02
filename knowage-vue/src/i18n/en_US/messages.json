@@ -39,6 +39,7 @@
         "copyOf": "Copy of",
         "create": "Create",
         "creationDate": "Creation Date",
+        "data": "Data",
         "dataset": "Dataset",
         "datasets": "Datasets",
         "default": "Default",
@@ -319,6 +320,8 @@
     },
     "dashboard": {
         "datasetEditor": {
+            "addAssociation": "Add Association",
+            "addIndexes": "Add Indexes on Associations",
             "associationsTabTitle": "Associations",
             "cached": "Cached",
             "dataTabTitle": "Data",
@@ -328,11 +331,9 @@
             "dynamic": "Dynamic",
             "indexHint": "Indexes will be created on single selected columns.",
             "indexPresentMsg": "Index already exists!",
-            "static": "Static",
-            "title": "Dataset Manageent",
             "indexesTitle": "Indexes",
-            "addAssociation": "Add Association",
-            "addIndexes": "Add Indexes on Associations"
+            "static": "Static",
+            "title": "Dataset Manageent"
         },
         "widgetEditor": {
             "addWidget": "Add widget",
@@ -355,6 +356,7 @@
                 "title": "header"
             },
             "hidden": "Hidden",
+            "hint": "Select dataset",
             "itemsPerPage": "Items per page",
             "manualInput": "Manual input",
             "pagination": "Pagination",
@@ -366,6 +368,7 @@
                 "tooltip": "Tooltip"
             },
             "sufix": "Sufix",
+            "title": "Widget Editor",
             "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
             "visualizationType": "Visualization Type"
         }
