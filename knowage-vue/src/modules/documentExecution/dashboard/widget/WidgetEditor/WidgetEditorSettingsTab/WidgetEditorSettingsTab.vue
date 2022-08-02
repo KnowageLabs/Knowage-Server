@@ -6,7 +6,7 @@
             </template>
         </Card>
         <div class="kn-flex p-m-2">
-            <WidgetEditorGeneric class="kn-flex p-m-2" :widgetModel="propWidget" :propDescriptor="selectedDescriptor"></WidgetEditorGeneric>
+            <WidgetEditorGeneric v-if="propWidget" class="kn-flex p-m-2" :widgetModel="propWidget" :propDescriptor="selectedDescriptor"></WidgetEditorGeneric>
         </div>
     </div>
 </template>

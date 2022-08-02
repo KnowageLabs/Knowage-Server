@@ -1,6 +1,8 @@
-import { IWidget } from '../../../Dashboard'
+import { IWidget, IWidgetColumn } from '../../../Dashboard'
+import { formatTableWidgetForSave } from './TableWidgetFunctions'
 import tableWidgetFunctions from './TableWidgetFunctions'
 import cryptoRandomString from 'crypto-random-string'
+import deepcopy from 'deepcopy'
 
 export function createNewWidget() {
     const widget = {
@@ -44,7 +46,26 @@ export function setWidgetModelTempProperty(widget: IWidget) {
 
 export function setWidgetModelFunctions(widget: IWidget) {
     if (widget.type === 'table') {
-        widget.settings.pagination = { enabled: false, itemsNumber: 0 }
+        if (!widget.settings.pagination) widget.settings.pagination = { enabled: false, itemsNumber: 0 }
         widget.functions = tableWidgetFunctions
     }
+}
+
+export function formatWidgetColumnsForDisplay(widget: IWidget) {
+    if (!widget || !widget.columns) return
+    widget.columns.forEach((column: IWidgetColumn) => {
+        if (!column.name.startsWith('(')) column.name = '(' + column.name + ')'
+    })
+}
+
+export function formatWidgetForSave(tempWidget: IWidget) {
+    if (!tempWidget) return
+
+    const widget = deepcopy(tempWidget)
+
+    switch (widget.type) {
+        case 'table': formatTableWidgetForSave(widget)
+    }
+
+    return widget
 }

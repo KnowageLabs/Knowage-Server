@@ -42,6 +42,7 @@ export default defineComponent({
     },
     created() {
         emitter.on('toolbarIconContextMenuOpened', (event) => {
+            console.log('CLOSE POPUP: ', event)
             this.closePopups(event)
         })
         emitter.on('toolbarIconColorPickerOpened', (event) => {
@@ -217,6 +218,7 @@ export default defineComponent({
     position: absolute;
     top: 20px;
     left: 20px;
+    z-index: 100000;
 }
 
 .icon-disabled {

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import deepcopy from 'deepcopy'
 
 const store = defineStore('dashboardStore', {
     state() {
@@ -19,14 +20,18 @@ const store = defineStore('dashboardStore', {
             this.dashboardModel[dashboard.id].sheet = dashboard.sheet
         },
         createNewWidget(widget) {
-            delete widget.new
             // TODO - hardcoded 1 for dashboard
             this.dashboards[1].widgets.push(widget)
             this.dashboards[1].sheets[this.selectedSheetIndex].widgets.lg.push({ id: widget.id, h: 5, i: 0, w: 10, x: 10, y: 10, moved: false })
         },
         updateWidget(widget) {
             // TODO - hardcoded 1 for dashboard
-            for (let i = 0; i < this.dashboards[1].sheets.length; i++) {}
+            for (let i = 0; i < this.dashboards[1].widgets.length; i++) {
+                console.log(widget.id + ' === ' + this.dashboards[1].widgets[i].id)
+                if (widget.id === this.dashboards[1].widgets[i].id) {
+                    this.dashboards[1].widgets[i] = deepcopy(widget)
+                }
+            }
         },
         setSelectedSheetIndex(index) {
             this.selectedSheetIndex = index

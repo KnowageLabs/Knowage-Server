@@ -4,49 +4,28 @@ import descriptor from '../WidgetEditorDescriptor.json'
 
 const tableWidgetFunctions = {
     itemsPerPageIsDisabled: (model: IWidget) => {
-        return !model.settings.pagination.enabled
+        return !model.settings?.pagination?.enabled
     },
     getColumnIcons: (column: any) => {
-        return column.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'
+        return column?.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'
     },
     onColumnDrop: (event: any, model: IWidget) => {
         if (event.dataTransfer.getData('text/plain') === 'b') return
         const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
-        const tempColumn = {
-            dataset: eventData.dataset,
-            name: '(' + eventData.name + ')',
-            alias: eventData.alias,
-            type: eventData.type,
-            fieldType: eventData.fieldType,
-            aggregation: eventData.aggregation,
-            style: {
-                hiddenColumn: false,
-                'white-space': 'nowrap',
-                tooltip: { prefix: '', suffix: '', precision: 0 },
-                enableCustomHeaderTooltip: false,
-                customHeaderTooltip: ''
-            },
-            enableTooltip: false,
-            visType: ''
-        }
-        tempColumn.aggregation = 'NONE'
-
+        const tempColumn = createNewWidgetColumn(eventData)
         model.columns.push(tempColumn)
         emitter.emit('collumnAdded', eventData)
     },
     updateColumnVisibility: (column: IWidgetColumn, model: IWidget) => {
-        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
-        if (index !== -1) {
-            if (!model.columns[index].style) {
-                model.columns[index].style = {}
-            }
-            ; (model.columns[index].style.hiddenColumn = false), (model.columns[index].style['white-space'] = 'nowrap')
-            model.columns[index].style.hiddenColumn = !model.columns[index].style.hiddenColumn
-        }
+        const index = model.columns?.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
+        if (index !== -1 && model.columns[index] && model.columns[index].style) model.columns[index].style.hiddenColumn = !model.columns[index].style.hiddenColumn
     },
     removeColumn: (column: IWidgetColumn, model: IWidget) => {
         const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
         if (index !== -1) {
+            console.log('TEEEEEEEEEEEEEEEEEEEEEEEST: ', column.name, ' === ', model.temp.selectedColumn.name)
+            // TODO - remove selected column when removed from table
+            if (column.name === model.temp.selectedColumn.name) model.temp.selectedColumn = null
             model.columns.splice(index, 1)
             emitter.emit('collumnRemoved', column)
         }
@@ -77,6 +56,9 @@ const tableWidgetFunctions = {
         const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === model.temp.selectedColumn.name)
         if (index !== -1) model.columns[index] = { ...model.temp.selectedColumn }
     },
+    tooltipIsDisabled: (model: IWidget) => {
+        return !model?.temp.selectedColumn?.enableTooltip
+    },
     selectedColumnDropdownIsVisible: (model: IWidget) => {
         return model?.temp.selectedColumn?.fieldType === 'MEASURE'
     },
@@ -90,7 +72,7 @@ const tableWidgetFunctions = {
         return model?.temp.selectedColumn?.fieldType === 'MEASURE'
     },
     tooltipCustomHeaderTextIsDisabled: (model: IWidget) => {
-        return !model?.temp.selectedColumn?.style.enableCustomHeaderTooltip
+        return !model?.temp.selectedColumn?.style.enableCustomHeaderTooltip || model.functions.tooltipIsDisabled(model)
     },
     headerIsDisabled: (model: IWidget) => {
         return !model?.styles.th.enabled
@@ -265,12 +247,14 @@ const tableWidgetFunctions = {
         return model.settings.rowThresholds.list[itemIndex] ? model.settings.rowThresholds.list[itemIndex].color : ''
     },
     setThresholdListItemFontColor: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
+        if (!model.settings.rowThresholds.list[itemIndex]) return
         model.settings.rowThresholds.list[itemIndex].color = newValue
     },
     getThresholdListItemBackgroundColor: (model: IWidget, item: any, itemIndex: number) => {
         return model.settings.rowThresholds.list[itemIndex] ? model.settings.rowThresholds.list[itemIndex]['background-color'] : ''
     },
     setThresholdListItemBackgroundColor: (newValue: string, model: IWidget, item: any, itemIndex: number) => {
+        if (!model.settings.rowThresholds.list[itemIndex]) return
         model.settings.rowThresholds.list[itemIndex]['background-color'] = newValue
     },
     rowThresholdsIsDisabled: (model: IWidget) => {
@@ -286,4 +270,66 @@ const tableWidgetFunctions = {
 
     }
 }
+
+function createNewWidgetColumn(eventData: any) {
+    const tempColumn = {
+        dataset: eventData.dataset,
+        name: '(' + eventData.name + ')',
+        alias: eventData.alias,
+        type: eventData.type,
+        fieldType: eventData.fieldType,
+        aggregation: eventData.aggregation,
+        style: {
+            hiddenColumn: false,
+            'white-space': 'nowrap',
+            tooltip: { prefix: '', suffix: '', precision: 0 },
+            enableCustomHeaderTooltip: false,
+            customHeaderTooltip: ''
+        },
+        enableTooltip: false,
+        visType: ''
+    }
+    tempColumn.aggregation = 'NONE'
+    return tempColumn
+}
+
+export function formatTableWidgetForSave(widget: IWidget) {
+    if (!widget) return
+    console.log("formatTableWidgetForSave: ", widget)
+    formatTablePagination(widget.settings.pagination)
+    formatTableSelectedColumns(widget.columns)
+    formatWidgetDatasetKeysArray(widget)
+}
+
+function formatTablePagination(pagination: { enabled: boolean, itemsNumber: string | number }) {
+    if (!pagination) return
+    pagination.itemsNumber = pagination.enabled ? +pagination.itemsNumber : 0
+}
+
+function formatTableSelectedColumns(columns: IWidgetColumn[]) {
+    if (!columns) return
+    columns.forEach((column: IWidgetColumn) => {
+        if (column.name.startsWith('(')) column.name = column.name.slice(1, -1)
+        formatColumnTooltipSettings(column)
+    })
+}
+
+function formatWidgetDatasetKeysArray(widget: IWidget) {
+    if (!widget.columns || !widget.datasets) return
+    for (let i = 0; i < widget.columns.length; i++) {
+        const index = widget.datasets.findIndex((id: number) => id === widget.columns[i].dataset)
+        if (index == -1) widget.datasets.push(widget.columns[i].dataset)
+    }
+}
+
+function formatColumnTooltipSettings(column: IWidgetColumn) {
+    if (column.enableTooltip) {
+        column.style.tooltip.precision = +column.style.tooltip.precision
+    } else {
+        column.style.tooltip = { prefix: '', suffix: '', precision: 0 }
+        column.style.enableCustomHeaderTooltip = false
+        column.style.customHeaderTooltip = ''
+    }
+}
+
 export default tableWidgetFunctions
