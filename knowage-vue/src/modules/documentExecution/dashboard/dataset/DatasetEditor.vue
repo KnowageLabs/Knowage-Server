@@ -8,16 +8,6 @@
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('closeDatasetEditor')" />
                 </template>
             </Toolbar>
-            <!-- <div id="logsnstuff" style="height: 300px; overflow: auto">
-                {{ dashboardAssociations }}
-                <br />
-                {{ dashboardDatasets }}
-                <br />
-                selected -------------
-                <br />
-                {{ selectedDatasets.length }}
-            </div>
-            <br /> -->
 
             <TabView v-if="!loading" class="datasetEditor-tabs">
                 <TabPanel :header="$t('dashboard.datasetEditor.dataTabTitle')">
@@ -40,6 +30,7 @@
             </TabView>
         </div>
     </Teleport>
+    <DriverWarningDialog :visible="warningDialogVisible" :ignoredDatasets="ignoredDatasets" @close="warningDialogVisible = false" />
 </template>
 
 <script lang="ts">
@@ -57,15 +48,17 @@ import mainStore from '../../../../App.store'
 import dashStore from '../Dashboard.store'
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
+import DriverWarningDialog from './DatasetEditorDataTab/DatasetEditorDataDialog/DatasetEditorDataWarningDialog.vue'
 
 export default defineComponent({
     name: 'dataset-editor',
-    components: { TabView, TabPanel, DataTab, AssociationsTab },
+    components: { TabView, TabPanel, DataTab, AssociationsTab, DriverWarningDialog },
     props: { availableDatasetsProp: { required: true, type: Array }, filtersDataProp: { type: Object } },
     emits: ['closeDatasetEditor', 'datasetEditorSaved'],
     data() {
         return {
             loading: false,
+            warningDialogVisible: false,
             availableDatasets: {} as any,
             dashboardDatasets: [] as IModelDataset[],
             selectedDatasets: [] as any,
@@ -159,7 +152,8 @@ export default defineComponent({
                         }
                     ]
                 }
-            ] as any
+            ] as any,
+            ignoredDatasets: [] as string[]
         }
     },
     watch: {
@@ -226,16 +220,22 @@ export default defineComponent({
             })
         },
         addSelectedDatasets(datasetsToAdd) {
-            datasetsToAdd.forEach((dataset) => {
-                this.selectedDatasets.push(dataset)
-                const formattedDatasetForDashboard = {
-                    id: dataset.id.dsId,
-                    indexes: [],
-                    cache: false,
-                    parameters: []
-                } as IModelDataset
-                this.dashboardDatasets.push(formattedDatasetForDashboard)
-            })
+            if ((this.selectedDatasets.some((dataset) => dataset.drivers?.length > 0) && datasetsToAdd.some((dataset) => dataset.drivers?.length > 0)) || datasetsToAdd.filter((dataset) => dataset.drivers?.length > 0).length > 1) {
+                this.selectedDatasets.push(...datasetsToAdd.filter((dataset) => !(dataset.drivers?.length > 0)))
+                this.ignoredDatasets = datasetsToAdd.filter((dataset) => dataset.drivers?.length > 0).map((dataset) => dataset.name)
+                this.warningDialogVisible = true
+            } else {
+                datasetsToAdd.forEach((dataset) => {
+                    this.selectedDatasets.push(dataset)
+                    const formattedDatasetForDashboard = {
+                        id: dataset.id.dsId,
+                        indexes: [],
+                        cache: false,
+                        parameters: []
+                    } as IModelDataset
+                    this.dashboardDatasets.push(formattedDatasetForDashboard)
+                })
+            }
         },
 
         //#region ===================== DELETE DATASET ====================================================
@@ -287,8 +287,6 @@ export default defineComponent({
             this.unselectAssociation()
         },
         addIndexesOnAssociations() {
-            console.log('ALL ASSOCIATION -----', this.dashboardAssociations)
-
             let selectedFields = {}
             this.dashboardAssociations.forEach((association) => {
                 association.fields.reduce((obj, item) => {
@@ -297,7 +295,6 @@ export default defineComponent({
                     return obj
                 }, selectedFields)
             })
-            console.log('MAPPED/REDUCED -----', selectedFields)
 
             this.selectedDatasets.forEach((dataset) => {
                 dataset.modelIndexes ? '' : (dataset.modelIndexes = [])
