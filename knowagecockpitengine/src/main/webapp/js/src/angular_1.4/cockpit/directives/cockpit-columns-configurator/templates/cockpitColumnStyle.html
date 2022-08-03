@@ -104,8 +104,10 @@
 						
 	
 		        	</div>
-	
-	       			<md-card ng-if="needsThresholds">
+	       			
+				  </div> 
+				  
+				  <md-card>
 		       			<md-toolbar class="ternaryToolbar ">
 					      <div class="md-toolbar-tools">
 					        <h2>{{::translate.load('sbi.cockpit.table.threshold')}}</h2>
@@ -117,43 +119,75 @@
 				       </md-toolbar>
 				      
 	       			   <md-card-content layout="column">
-	       			   		<div ng-if="!selectedColumn.ranges || selectedColumn.ranges.length == 0" flex>{{::translate.load('sbi.cockpit.table.nothreshold')}}</div>
-							<div layout="row" ng-repeat="range in selectedColumn.ranges" layout-align="space-between center">
-								<md-input-container flex=20 class="md-block"> 
-									<label>{{::translate.load('sbi.cockpit.table.condition')}}</label>
-									<md-select aria-label="aria-label" ng-model="range.operator">
-										<md-option ng-repeat="c in conditions" value="{{c}}">{{c}}</md-option>
-									</md-select>
-								</md-input-container>
-								
-								<md-input-container flex=20 class="md-block">
-									<label>{{::translate.load('sbi.cockpit.table.threshold')}}</label>
-									<input class="input_class" type="number" ng-model="range.value"> 
-								</md-input-container>
-								
-								<button flex="10" class="md-button md-raised md-button-empty" ng-click="chooseIcon(range)" ng-style="{'background-color':range['background-color']}">
-									<span ng-if="!range.icon" ng-style="{'color':range.color}">Choose Icon</span>
-									<i ng-if="range.icon" ng-class="range.icon" ng-style="{'color':range.color}"></i>
-								</button>
-								
-								<md-input-container flex=20 class="md-block"> 
-									<label>Text/icon color</label>
-									<color-picker options="colorPickerProperty" ng-model="range.color"></color-picker>
-								</md-input-container>
-	
-								<md-input-container flex=20 class="md-block"> 
-									<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}/chart color</label>
-									<color-picker options="colorPickerProperty" ng-model="range['background-color']"></color-picker>
-								</md-input-container>
-	
-								<md-button class="md-icon-button" ng-click="deleteRange(range.$$hashKey)" >
-							      	<md-icon md-font-icon="fa fa-trash" aria-label="Delete range"></md-icon>
-							    </md-button>
-							</div>
+	       			   
+	       			   <div ng-if="!selectedColumn.ranges || selectedColumn.ranges.length == 0" flex>{{::translate.load('sbi.cockpit.table.nothreshold')}}</div>
+	       			   <div ng-repeat="threshold in selectedColumn.ranges track by $index" layout="row" style="padding:0 8px;" layout-align="start center">
+							     	
+							    	<div flex layout="row">
+								    	<md-input-container flex class="md-block">
+						       				<label>{{::translate.load('sbi.cockpit.widget.table.rowthreshold.condition')}}</label>
+						       				<md-select ng-model="threshold.operator">
+				          						<md-option ng-repeat="func in cockpitModule_generalOptions.conditions" ng-value="func">{{func}}</md-option>
+					       					</md-select>
+								    	</md-input-container>
+								    	<md-input-container flex class="md-block">
+						       				<label>{{::translate.load('sbi.cockpit.widget.table.rowthreshold.comparevaluetype')}}</label>
+						       				<md-select ng-model="threshold.compareValueType" ng-change="emptyVariable(threshold)">
+				          						<md-option  ng-repeat="func in cockpitModule_generalOptions.compareValueTypes" ng-value="func.value">{{func.label}}</md-option>
+					       					</md-select>
+								    	</md-input-container>
+								    	
+								    	<md-input-container flex class="md-block" ng-if="threshold.compareValueType == 'variable'">
+						       				<label>{{::translate.load('sbi.cockpit.widget.table.rowthreshold.comparevalue')}}</label>
+						       				<md-select ng-model="threshold.value" ng-change="emptyVariable(threshold)">
+				          						<md-option ng-repeat="variable in cockpitModule_template.configuration.variables" ng-value="variable.name">{{variable.name}}</md-option>
+					       					</md-select>
+				       					</md-input-container>
+				       					
+				       					<md-input-container flex class="md-block" ng-if="threshold.compareValueType == 'variable' && isObject(cockpitModule_properties.VARIABLES[threshold.value])">
+						       				<label>{{::translate.load('sbi.cockpit.widget.table.rowthreshold.comparevaluekey')}}</label>
+						       				<md-select ng-model="threshold.compareValueKey">
+				          						<md-option ng-repeat="(key, value) in cockpitModule_properties.VARIABLES[threshold.value]" ng-value="key">{{key}}</md-option>
+					       					</md-select>
+				       					</md-input-container>
+					       					
+				       					<md-input-container flex class="md-block" ng-if="threshold.compareValueType == 'parameter'">
+						       				<label>{{::translate.load('sbi.cockpit.widget.table.rowthreshold.comparevalue')}}</label>
+					       					<md-select ng-model="threshold.value">
+				          						<md-option ng-repeat="driver in formattedAnalyticalDrivers" ng-value="driver.value">{{driver.name}}</md-option>
+					       					</md-select>
+								    	</md-input-container>
+								    
+								    	<md-input-container flex class="md-block" ng-if="!threshold.compareValueType || threshold.compareValueType == 'static'"">
+						       				<label>{{::translate.load('sbi.cockpit.widget.table.rowthreshold.comparevalue')}}</label>
+						       				<input type="text" ng-model="threshold.value" />
+								    	</md-input-container>
+								    	
+								    	<button flex="10" class="md-button md-raised md-button-empty" ng-click="chooseIcon(threshold)" ng-style="{'background-color':threshold['background-color']}">
+											<span ng-if="!threshold.icon" ng-style="{'color':threshold.color}">Choose Icon</span>
+											<i ng-if="threshold.icon" ng-class="threshold.icon" ng-style="{'color':threshold.color}"></i>
+										</button>
+										
+										<md-input-container flex=20 class="md-block"> 
+											<label>Text/icon color</label>
+											<color-picker options="colorPickerProperty" ng-model="threshold.color"></color-picker>
+										</md-input-container>
+			
+										<md-input-container flex=20 class="md-block"> 
+											<label>{{::translate.load('sbi.cockpit.table.backgroundcolor')}}/chart color</label>
+											<color-picker options="colorPickerProperty" ng-model="threshold['background-color']"></color-picker>
+										</md-input-container>
+			
+										<md-button class="md-icon-button" ng-click="deleteRange(threshold.$$hashKey)" >
+									      	<md-icon md-font-icon="fa fa-trash" aria-label="Delete range"></md-icon>
+									    </md-button>
+							    	</div>
+
+								</div>
+
 	
 						</md-card-content>
 					</md-card>
-				  </div> 
 				  
 				  <cockpit-column-variables variables="selectedColumn.variables" ng-if="variablesExists()"></cockpit-column-variables>
 			       
