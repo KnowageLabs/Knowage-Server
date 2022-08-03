@@ -327,6 +327,7 @@ export function formatTableWidgetForSave(widget: IWidget) {
     formatTablePagination(widget.settings.pagination)
     formatTableSelectedColumns(widget.columns)
     formatWidgetDatasetKeysArray(widget)
+    formatRowHeaderSettings(widget)
     formatRowStyleSettings(widget)
     formatBorderSettings(widget)
 }
@@ -359,6 +360,22 @@ function formatColumnTooltipSettings(column: IWidgetColumn) {
         column.style.tooltip = { prefix: '', suffix: '', precision: 0 }
         column.style.enableCustomHeaderTooltip = false
         column.style.customHeaderTooltip = ''
+    }
+}
+
+function formatRowHeaderSettings(widget: IWidget) {
+    if (!widget.styles.th.enbaled) {
+        widget.styles.th = {
+            'background-color': '',
+            color: '',
+            'justify-content': '',
+            'font-size': '',
+            multiline: false,
+            height: 0,
+            'font-style': '',
+            'font-weight': '',
+            'font-family': ''
+        }
     }
 }
 

@@ -52,15 +52,17 @@
                                                                 "icons": [
                                                                     {
                                                                         "class": "fas fa-bold",
+                                                                        "disabledCondition": "functions.headerIsDisabled",
                                                                         "function": "functions.updateFontWeight",
                                                                         "isActiveFunction": "functions.boldIconIsActive",
-                                                                        "watchers": ["styles.th.font-weight"]
+                                                                        "watchers": ["styles.th.enabled", "styles.th.font-weight"]
                                                                     },
                                                                     {
                                                                         "class": "fas fa-italic",
+                                                                        "disabledCondition": "functions.headerIsDisabled",
                                                                         "function": "functions.updateFontStyle",
                                                                         "isActiveFunction": "functions.fontStyleIconIsActive",
-                                                                        "watchers": ["styles.th.font-style"]
+                                                                        "watchers": ["styles.th.enabled", "styles.th.font-style"]
                                                                     },
                                                                     {
                                                                         "arrowDownIcon": true,
@@ -71,7 +73,8 @@
                                                                             "options": "functions.getFontSizeOptions",
                                                                             "translateLabels": true
                                                                         },
-                                                                        "watchers": ["styles.th.font-size"]
+                                                                        "disabledCondition": "functions.headerIsDisabled",
+                                                                        "watchers": ["styles.th.enabled", "styles.th.font-size"]
                                                                     },
                                                                     {
                                                                         "arrowDownIcon": true,
@@ -80,7 +83,9 @@
                                                                             "onUpdate": "functions.updateCellAlignment",
                                                                             "options": "functions.getCellAlignmentOptions",
                                                                             "translateLabels": true
-                                                                        }
+                                                                        },
+                                                                        "disabledCondition": "functions.headerIsDisabled",
+                                                                        "watchers": ["styles.th.enabled"]
                                                                     },
                                                                     {
                                                                         "arrowDownIcon": true,
@@ -89,7 +94,9 @@
                                                                             "onUpdate": "functions.updateFontFamily",
                                                                             "options": "functions.getFontFamilyOptions",
                                                                             "translateLabels": true
-                                                                        }
+                                                                        },
+                                                                        "disabledCondition": "functions.headerIsDisabled",
+                                                                        "watchers": ["styles.th.enabled"]
                                                                     },
                                                                     {
                                                                         "arrowDownIcon": true,
@@ -98,7 +105,9 @@
                                                                         "colorPickerSettings": {
                                                                             "initialValue": "functions.getFontColor",
                                                                             "onUpdate": "functions.setFontColor"
-                                                                        }
+                                                                        },
+                                                                        "disabledCondition": "functions.headerIsDisabled",
+                                                                        "watchers": ["styles.th.enabled"]
                                                                     },
                                                                     {
                                                                         "arrowDownIcon": true,
@@ -107,7 +116,9 @@
                                                                         "colorPickerSettings": {
                                                                             "initialValue": "functions.getBackgroundColor",
                                                                             "onUpdate": "functions.setBackgroundColor"
-                                                                        }
+                                                                        },
+                                                                        "disabledCondition": "functions.headerIsDisabled",
+                                                                        "watchers": ["styles.th.enabled"]
                                                                     }
                                                                 ],
                                                                 "settings": {},
@@ -123,7 +134,8 @@
                                         "settings": {},
                                         "type": "accordion"
                                     }
-                                ]
+                                ],
+                                "containerClasess": "p-m-2"
                             }
                         ]
                     },
@@ -254,7 +266,8 @@
                                         "settings": {},
                                         "type": "accordion"
                                     }
-                                ]
+                                ],
+                                "containerClasess": "p-m-2"
                             }
                         ]
                     },
@@ -374,7 +387,8 @@
                                         "settings": {},
                                         "type": "accordion"
                                     }
-                                ]
+                                ],
+                                "containerClasess": "p-m-2"
                             }
                         ]
                     }
@@ -422,7 +436,7 @@
                                                                                         "type": "reorderIcon"
                                                                                     },
                                                                                     {
-                                                                                        "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                                                                                        "cssClass": "p-d-flex p-flex-column kn-flex-3 p-m-2",
                                                                                         "label": "common.columns",
                                                                                         "options": "functions.getDatasetColumns",
                                                                                         "property": "column",
@@ -434,7 +448,7 @@
                                                                                         "type": "dropdown"
                                                                                     },
                                                                                     {
-                                                                                        "cssClass": "p-d-flex p-flex-column kn-flex-1 p-m-2",
+                                                                                        "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
                                                                                         "label": "common.condition",
                                                                                         "options": "functions.getColumnConditionOptions",
                                                                                         "property": "condition",
@@ -518,7 +532,7 @@
                                                                             {
                                                                                 "components": [
                                                                                     {
-                                                                                        "cssClasess": "kn-flex",
+                                                                                        "cssClass": "kn-flex",
                                                                                         "icons": [
                                                                                             {
                                                                                                 "class": "fas fa-bold",
@@ -626,7 +640,8 @@
                                         "settings": {},
                                         "type": "accordion"
                                     }
-                                ]
+                                ],
+                                "containerClasess": "p-m-2"
                             }
                         ]
                     }

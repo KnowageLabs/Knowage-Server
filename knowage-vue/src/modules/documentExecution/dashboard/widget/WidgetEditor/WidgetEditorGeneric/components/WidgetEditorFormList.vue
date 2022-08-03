@@ -88,4 +88,8 @@ export default defineComponent({
 .form-list-item-container {
     border-bottom: 1px solid #c2c2c2;
 }
+
+.form-list-item-container:last-child {
+    border-bottom: none;
+}
 </style>

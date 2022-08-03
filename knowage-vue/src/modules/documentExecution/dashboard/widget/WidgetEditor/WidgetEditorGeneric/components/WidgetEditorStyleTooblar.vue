@@ -1,5 +1,5 @@
 <template>
-    <div class="widget-editor-toolbar p-d-flex p-flex-row p-ai-center">
+    <div class="widget-editor-toolbar p-d-flex p-flex-row p-ai-center kn-flex">
         <WidgetEditorStyleIcon v-for="(icon, index) in icons" :key="index" class="kn-flex" :widgetModel="widgetModel" :icon="icon" :item="item" :itemIndex="itemIndex"> </WidgetEditorStyleIcon>
     </div>
 </template>
