@@ -68,7 +68,6 @@ export default defineComponent({
         },
         sheetChange(index) {
             this.store.setSelectedSheetIndex(index)
-            // TODO - ASK ABOUT THIS
             this.store.setDashboardSheet({ id: (this as any).dHash as any, sheet: index })
         }
     }

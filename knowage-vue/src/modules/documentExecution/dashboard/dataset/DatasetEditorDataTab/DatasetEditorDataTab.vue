@@ -1,7 +1,7 @@
 <template>
     <DataList :dashboardDatasetsProp="dashboardDatasetsProp" :availableDatasetsProp="availableDatasetsProp" :selectedDatasetsProp="selectedDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @datasetSelected="selectDataset" @deleteDataset="$emit('deleteDataset', $event)" />
     <DataDetail :dashboardDatasetsProp="dashboardDatasetsProp" :selectedDatasetProp="selectedDataset" :documentDriversProp="documentDriversProp" data-test="dataset-detail" />
-    <DatasetEditorPreview v-if="selectedDataset.id" class="kn-flex" :selectedDatasetProp="selectedDataset" data-test="dataset-preview" />
+    <DatasetEditorPreview v-if="selectedDataset.id" id="dataset-editor-preview" :selectedDatasetProp="selectedDataset" data-test="dataset-preview" />
 </template>
 
 <script lang="ts">
@@ -31,3 +31,19 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss" scoped>
+@media screen and (max-width: 1199px) {
+    #dataset-editor-preview {
+        -webkit-transition: width 0.3s;
+        transition: flex 0.3s;
+        flex: 0;
+    }
+}
+@media screen and (min-width: 1200px) {
+    #dataset-editor-preview {
+        -webkit-transition: width 0.3s;
+        transition: flex 0.3s;
+        flex: 1.5;
+    }
+}
+</style>
