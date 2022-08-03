@@ -68,6 +68,7 @@
             ></KnParameterSidebar>
 
             <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
+
             <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
             <DocumentExecutionNotesDialog :visible="notesDialogVisible" :propDocument="document" @close="notesDialogVisible = false"></DocumentExecutionNotesDialog>
             <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :propDocument="document" :propMetadata="metadata" :propLoading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
@@ -123,7 +124,14 @@ export default defineComponent({
         DocumentExecutionSelectCrossNavigationDialog,
         DocumentExecutionCNContainerDialog
     },
-    props: { id: { type: String }, parameterValuesMap: { type: Object }, tabKey: { type: String }, propMode: { type: String }, selectedMenuItem: { type: Object }, menuItemClickedTrigger: { type: Boolean } },
+    props: {
+        id: { type: String },
+        parameterValuesMap: { type: Object },
+        tabKey: { type: String },
+        propMode: { type: String },
+        selectedMenuItem: { type: Object },
+        menuItemClickedTrigger: { type: Boolean }
+    },
     emits: ['close', 'updateDocumentName', 'parametersChanged'],
     data() {
         return {
@@ -131,7 +139,10 @@ export default defineComponent({
             hiddenFormData: {} as any,
             hiddenFormUrl: '' as string,
             documentMode: 'VIEW',
-            filtersData: {} as { filterStatus: iParameter[]; isReadyForExecution: boolean },
+            filtersData: {} as {
+                filterStatus: iParameter[]
+                isReadyForExecution: boolean
+            },
             urlData: null as iURLData | null,
             exporters: null as iExporter[] | null,
             mode: null as string | null,
@@ -147,7 +158,10 @@ export default defineComponent({
             schedulationsTableVisible: false,
             schedulations: [] as any[],
             linkDialogVisible: false,
-            linkInfo: null as { isPublic: boolean; noPublicRoleError: boolean } | null,
+            linkInfo: null as {
+                isPublic: boolean
+                noPublicRoleError: boolean
+            } | null,
             sbiExecutionId: null as string | null,
             embedHTML: false,
             user: null as any,
@@ -220,7 +234,7 @@ export default defineComponent({
             let parameterVisible = false
             for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {
                 const tempFilter = this.filtersData.filterStatus[i]
-                if (tempFilter.showOnPanel === 'true') {
+                if (tempFilter.showOnPanel === 'true' && tempFilter.visible) {
                     parameterVisible = true
                     break
                 }
@@ -297,7 +311,13 @@ export default defineComponent({
             this.toolbarMenuItems = []
             this.toolbarMenuItems.push({
                 label: this.$t('common.file'),
-                items: [{ icon: 'pi pi-print', label: this.$t('common.print'), command: () => this.print() }]
+                items: [
+                    {
+                        icon: 'pi pi-print',
+                        label: this.$t('common.print'),
+                        command: () => this.print()
+                    }
+                ]
             })
 
             if (this.exporters && this.exporters.length !== 0) {
@@ -310,7 +330,13 @@ export default defineComponent({
             if (this.user.enterprise) {
                 this.toolbarMenuItems.push({
                     label: this.$t('common.info.info'),
-                    items: [{ icon: 'pi pi-star', label: this.$t('common.rank'), command: () => this.openRank() }]
+                    items: [
+                        {
+                            icon: 'pi pi-star',
+                            label: this.$t('common.rank'),
+                            command: () => this.openRank()
+                        }
+                    ]
                 })
             }
 
@@ -319,50 +345,99 @@ export default defineComponent({
                 items: []
             })
 
-            this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[1].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
+            this.exporters?.forEach((exporter: any) =>
+                this.toolbarMenuItems[1].items.push({
+                    icon: 'fa fa-file-excel',
+                    label: exporter.name,
+                    command: () => this.export(exporter.name)
+                })
+            )
 
             if (this.user.functionalities.includes('SendMailFunctionality') && this.document.typeCode === 'REPORT') {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
                 if (index !== -1) {
-                    this.toolbarMenuItems[index].items.push({ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() })
+                    this.toolbarMenuItems[index].items.push({
+                        icon: 'pi pi-envelope',
+                        label: this.$t('common.sendByEmail'),
+                        command: () => this.openMailDialog()
+                    })
                 } else {
                     this.toolbarMenuItems.push({
                         label: this.$t('common.export'),
-                        items: [{ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() }]
+                        items: [
+                            {
+                                icon: 'pi pi-envelope',
+                                label: this.$t('common.sendByEmail'),
+                                command: () => this.openMailDialog()
+                            }
+                        ]
                     })
                 }
             }
 
             if (this.user.functionalities.includes('SeeMetadataFunctionality')) {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
-                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: 'pi pi-info-circle', label: this.$t('common.metadata'), command: () => this.openMetadata() })
+                if (index !== -1)
+                    this.toolbarMenuItems[index].items.unshift({
+                        icon: 'pi pi-info-circle',
+                        label: this.$t('common.metadata'),
+                        command: () => this.openMetadata()
+                    })
             }
 
             if (this.user.functionalities.includes('SeeNotesFunctionality')) {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
-                if (index !== -1) this.toolbarMenuItems[index].items.push({ icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() })
+                if (index !== -1)
+                    this.toolbarMenuItems[index].items.push({
+                        icon: 'pi pi-file',
+                        label: this.$t('common.notes'),
+                        command: () => this.openNotes()
+                    })
             }
 
             if (this.user.functionalities.includes('SeeSnapshotsFunctionality') && this.user.enterprise) {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
-                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
+                if (index !== -1)
+                    this.toolbarMenuItems[index].items.unshift({
+                        icon: '',
+                        label: this.$t('documentExecution.main.showScheduledExecutions'),
+                        command: () => this.showScheduledExecutions()
+                    })
             }
 
             if (this.isOrganizerEnabled()) {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
-                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: 'fa fa-suitcase ', label: this.$t('documentExecution.main.addToWorkspace'), command: () => this.addToWorkspace() })
+                if (index !== -1)
+                    this.toolbarMenuItems[index].items.unshift({
+                        icon: 'fa fa-suitcase ',
+                        label: this.$t('documentExecution.main.addToWorkspace'),
+                        command: () => this.addToWorkspace()
+                    })
             }
 
             if (this.mode === 'olap') {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
-                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: '', label: this.$t('documentExecution.main.showOLAPCustomView'), command: () => this.showOLAPCustomView() })
+                if (index !== -1)
+                    this.toolbarMenuItems[index].items.unshift({
+                        icon: '',
+                        label: this.$t('documentExecution.main.showOLAPCustomView'),
+                        command: () => this.showOLAPCustomView()
+                    })
             }
 
             if (this.user.functionalities.includes('EnableToCopyAndEmbed')) {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
                 if (index !== -1) {
-                    this.toolbarMenuItems[index].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.copyLink'), command: () => this.copyLink(false) })
-                    this.toolbarMenuItems[index].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.embedInHtml'), command: () => this.copyLink(true) })
+                    this.toolbarMenuItems[index].items.push({
+                        icon: 'fa fa-share',
+                        label: this.$t('documentExecution.main.copyLink'),
+                        command: () => this.copyLink(false)
+                    })
+                    this.toolbarMenuItems[index].items.push({
+                        icon: 'fa fa-share',
+                        label: this.$t('documentExecution.main.embedInHtml'),
+                        command: () => this.copyLink(true)
+                    })
                 }
             }
         },
@@ -479,7 +554,10 @@ export default defineComponent({
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
-                this.breadcrumbs.push({ label: this.document.label, document: this.document })
+                this.breadcrumbs.push({
+                    label: this.document.label,
+                    document: this.document
+                })
             }
         },
         async loadFilters(initialLoading: boolean = false) {
@@ -492,7 +570,10 @@ export default defineComponent({
             if (this.sessionEnabled && !this.document.navigationParams) {
                 const tempFilters = sessionStorage.getItem(this.document.label)
                 if (tempFilters) {
-                    this.filtersData = JSON.parse(tempFilters) as { filterStatus: iParameter[]; isReadyForExecution: boolean }
+                    this.filtersData = JSON.parse(tempFilters) as {
+                        filterStatus: iParameter[]
+                        isReadyForExecution: boolean
+                    }
                     this.filtersData.filterStatus?.forEach((filter: any) => {
                         if (filter.type === 'DATE' && filter.parameterValue[0].value) {
                             filter.parameterValue[0].value = new Date(filter.parameterValue[0].value)
@@ -504,7 +585,11 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.document.label, role: this.userRole, parameters: this.document.navigationParams ?? {} })
+                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, {
+                    label: this.document.label,
+                    role: this.userRole,
+                    parameters: this.document.navigationParams ?? {}
+                })
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
                 .catch((error: any) => {
                     if (error.response?.status === 500) {
@@ -526,10 +611,13 @@ export default defineComponent({
                     }
 
                     el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {
-                        return { value: defaultValue.value ?? defaultValue[valueIndex], description: defaultValue.desc ?? defaultValue[descriptionIndex] }
+                        return {
+                            value: defaultValue.value ?? defaultValue[valueIndex],
+                            description: defaultValue.desc ?? defaultValue[descriptionIndex]
+                        }
                     })
 
-                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true') {
+                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
                         el.parameterValue[0].value = moment(el.parameterValue[0].description?.split('#')[0]).toDate() as any
                     }
                 }
@@ -544,6 +632,7 @@ export default defineComponent({
                 }
                 if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
                     el.showOnPanel = 'false'
+                    el.visible = false
                 }
 
                 if (!el.parameterValue) {
@@ -592,10 +681,19 @@ export default defineComponent({
             const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
             const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
 
-            return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
+            return {
+                value: valueIndex ? data[valueIndex] : '',
+                description: descriptionIndex ? data[descriptionIndex] : ''
+            }
         },
         async loadURL(olapParameters: any, documentLabel: string | null = null) {
-            const postData = { label: this.document.label, role: this.userRole, parameters: olapParameters ? olapParameters : this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
+            const postData = {
+                label: this.document.label,
+                role: this.userRole,
+                parameters: olapParameters ? olapParameters : this.getFormattedParameters(),
+                EDIT_MODE: 'null',
+                IS_FOR_EXPORT: true
+            } as any
 
             if (this.sbiExecutionId) {
                 postData.SBI_EXECUTION_ID = this.sbiExecutionId
@@ -631,7 +729,10 @@ export default defineComponent({
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label) as any
 
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
-            const postObject = { params: { document: null } as any, url: documentUrl.split('?')[0] }
+            const postObject = {
+                params: { document: null } as any,
+                url: documentUrl.split('?')[0]
+            }
             postObject.params.documentMode = this.documentMode
             this.hiddenFormUrl = postObject.url
             const paramsFromUrl = documentUrl?.split('?')[1]?.split('&')
@@ -722,7 +823,13 @@ export default defineComponent({
                         items: []
                     })
                 } else {
-                    this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[index].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
+                    this.exporters?.forEach((exporter: any) =>
+                        this.toolbarMenuItems[index].items.push({
+                            icon: 'fa fa-file-excel',
+                            label: exporter.name,
+                            command: () => this.export(exporter.name)
+                        })
+                    )
                 }
             }
 
@@ -732,7 +839,12 @@ export default defineComponent({
             this.loading = false
         },
         async onExportCSV() {
-            const postData = { documentId: this.document.id, documentLabel: this.document.label, exportType: 'CSV', parameters: this.getFormattedParametersForCSVExport() }
+            const postData = {
+                documentId: this.document.id,
+                documentLabel: this.document.label,
+                exportType: 'CSV',
+                parameters: this.getFormattedParametersForCSVExport()
+            }
             this.loading = true
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/cockpitData`, postData)
@@ -870,7 +982,13 @@ export default defineComponent({
         },
         async onMailSave(mail: any) {
             this.loading = true
-            const postData = { ...mail, label: this.document.label, docId: this.document.id, userId: this.user.userId, parameters: this.getFormattedParameters() }
+            const postData = {
+                ...mail,
+                label: this.document.label,
+                docId: this.document.id,
+                userId: this.user.userId,
+                parameters: this.getFormattedParameters()
+            }
             await this.$http
                 .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecutionmail/sendMail`, postData)
                 .then(() => {
@@ -919,7 +1037,10 @@ export default defineComponent({
         },
         async onRoleChange(role: string) {
             this.userRole = role as any
-            this.filtersData = {} as { filterStatus: iParameter[]; isReadyForExecution: boolean }
+            this.filtersData = {} as {
+                filterStatus: iParameter[]
+                isReadyForExecution: boolean
+            }
             this.urlData = null
             this.exporters = null
             await this.loadPage()
@@ -958,14 +1079,20 @@ export default defineComponent({
             const popupOptions = crossNavigationDocument?.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
 
             if (crossNavigationDocument.crossType !== 2) {
-                this.document = { ...crossNavigationDocument?.document, navigationParams: navigationParams }
+                this.document = {
+                    ...crossNavigationDocument?.document,
+                    navigationParams: navigationParams
+                }
             }
 
             if (crossNavigationDocument.crossType === 2) {
                 this.openCrossNavigationInNewWindow(popupOptions, crossNavigationDocument, navigationParams)
             } else if (crossNavigationDocument.crossType === 1) {
                 const documentLabel = crossNavigationDocument?.document.label
-                this.crossNavigationContainerData = { documentLabel: documentLabel, iFrameName: documentLabel }
+                this.crossNavigationContainerData = {
+                    documentLabel: documentLabel,
+                    iFrameName: documentLabel
+                }
                 this.crossNavigationContainerVisible = true
                 await this.loadPage(false, documentLabel)
             } else {
@@ -973,7 +1100,11 @@ export default defineComponent({
                 if (index !== -1) {
                     this.breadcrumbs[index].document = this.document
                 } else {
-                    this.breadcrumbs.push({ label: this.document.label, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb ?? this.document.name })
+                    this.breadcrumbs.push({
+                        label: this.document.label,
+                        document: this.document,
+                        crossBreadcrumb: crossNavigationDocument.crossBreadcrumb ?? this.document.name
+                    })
                 }
 
                 await this.loadPage()
@@ -1067,13 +1198,19 @@ export default defineComponent({
                 return
             }
 
-            this.document = { ...temp[0].document, navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams) }
+            this.document = {
+                ...temp[0].document,
+                navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams)
+            }
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
-                this.breadcrumbs.push({ label: this.document.label, document: this.document })
+                this.breadcrumbs.push({
+                    label: this.document.label,
+                    document: this.document
+                })
             }
 
             await this.loadPage()
