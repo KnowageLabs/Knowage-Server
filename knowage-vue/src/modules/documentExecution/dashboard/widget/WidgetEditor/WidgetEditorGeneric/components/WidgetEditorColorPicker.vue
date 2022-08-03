@@ -48,12 +48,9 @@ export default defineComponent({
                 this.modelValue = getModelProperty(this.widgetModel, this.property, 'getValue', null) ?? null
             }
 
-            console.log('TEEEEEEEEEST: ', typeof this.modelValue === 'string')
             if (typeof this.modelValue === 'string' && this.modelValue !== '') this.modelValue = this.getRGBColorFromString(this.modelValue)
-            console.log('LOADED MODEL VALUE: ', this.modelValue)
         },
         onChange(event: any) {
-            console.log('EVENT: ', event)
             if (!event.value) return
             if (this.settings.onUpdate) {
                 const tempFunction = getModelProperty(this.widgetModel, this.settings.onUpdate, 'getValue', null)
@@ -85,14 +82,13 @@ export default defineComponent({
             }
         },
         getRGBColorFromString(color: string) {
-            console.log('----- getRGBColorFromString: ', color)
             const temp = color
                 ?.trim()
                 ?.substring(4, color.length - 1)
                 ?.split(',')
-            console.log('TEMP: ', temp)
+
             if (temp) {
-                return { r: temp[0], g: temp[1], b: temp[2] }
+                return { r: +temp[0], g: +temp[1], b: +temp[2] }
             } else return { r: 0, g: 0, b: 0 }
         }
     }

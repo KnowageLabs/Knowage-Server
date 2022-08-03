@@ -97,6 +97,6 @@ export function formatWidgetForSave(tempWidget: IWidget) {
 }
 
 export function formatRGBColor(color: { r: string, g: string, b: string }) {
-    console.log("----- formatRGBColor: ", color)
+
     return `rgb(${color.r}, ${color.g}, ${color.b})`
 }
