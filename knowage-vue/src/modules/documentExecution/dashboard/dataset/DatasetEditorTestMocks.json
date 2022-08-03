@@ -1,0 +1,92 @@
+{
+    "availableDatasetsMock": [
+        {
+            "active": true,
+            "categoryId": 409,
+            "configuration": {
+                "Query": "SELECT DATE_FORMAT(TIME_IN, \"%Y %m %d\") as date,COUNT(*) as documents \nFROM SBI_AUDIT \nwhere TIME_IN > ADDDATE(curdate(), -60)\nGROUP BY DATE_FORMAT(TIME_IN, \"%Y %m %d\")\norder by  DATE_FORMAT(TIME_IN, \"%Y %m %d\") asc",
+                "dataSource": "knowage",
+                "queryScript": "",
+                "queryScriptLanguage": ""
+            },
+            "description": "AUDIT_01",
+            "federation": null,
+            "id": {
+                "dsId": 116,
+                "organization": "DEMO",
+                "versionNum": 5
+            },
+            "isCachingSupported": true,
+            "isIterable": true,
+            "isNearRealtimeSupported": true,
+            "isRealtime": false,
+            "label": "AUDIT_01",
+            "metaVersion": null,
+            "metadata": {
+                "fieldsMeta": [
+                    {
+                        "alias": "date",
+                        "decript": false,
+                        "fieldType": "ATTRIBUTE",
+                        "multiValue": false,
+                        "name": "date",
+                        "personal": false,
+                        "precision": 0,
+                        "properties": {},
+                        "scale": 0,
+                        "subjectId": false,
+                        "type": "java.lang.String"
+                    },
+                    {
+                        "alias": "documents",
+                        "decript": false,
+                        "fieldType": "ATTRIBUTE",
+                        "multiValue": false,
+                        "name": "documents",
+                        "personal": false,
+                        "precision": 0,
+                        "properties": {},
+                        "scale": 0,
+                        "subjectId": false,
+                        "type": "java.lang.Long"
+                    }
+                ],
+                "properties": {
+                    "resultNumber": "1"
+                }
+            },
+            "modelCache": false,
+            "name": "AUDIT_01",
+            "numRows": false,
+            "owner": "demo_admin",
+            "parameters": [],
+            "persistTableName": "",
+            "persisted": false,
+            "persistedHDFS": false,
+            "pivotColumnName": null,
+            "pivotColumnValue": null,
+            "pivotRowName": null,
+            "sbiVersionDe": null,
+            "sbiVersionIn": null,
+            "sbiVersionUp": null,
+            "scope": {
+                "domainCd": "DS_SCOPE",
+                "domainNm": "Dataset scope",
+                "valueCd": "TECHNICAL",
+                "valueDs": "Dataset scope",
+                "valueId": 188,
+                "valueNm": "TECHNICAL"
+            },
+            "scopeId": 188,
+            "tags": [],
+            "timeDe": null,
+            "timeIn": null,
+            "timeUp": null,
+            "transformerId": null,
+            "type": "SbiQueryDataSet",
+            "userDe": null,
+            "userIn": null,
+            "userUp": null
+        }
+    ]
+}

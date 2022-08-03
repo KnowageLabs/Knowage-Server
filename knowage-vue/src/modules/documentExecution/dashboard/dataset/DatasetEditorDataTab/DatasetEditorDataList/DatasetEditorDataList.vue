@@ -1,7 +1,7 @@
 <template>
     <div class="dataset-editor-list-card-container p-m-3">
         <div class="dataset-editor-list-card">
-            <Button label="Add Dataset" icon="pi pi-plus-circle" class="p-button-outlined p-mt-2 p-mx-2" @click="toggleDataDialog"></Button>
+            <Button label="Add Dataset" icon="pi pi-plus-circle" class="p-button-outlined p-mt-2 p-mx-2" @click="toggleDataDialog" data-test="add-dataset-button"></Button>
             <Listbox
                 class="kn-list kn-list-no-border-right dataset-editor-list"
                 :options="selectedDatasets"
@@ -15,16 +15,16 @@
             >
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
-                    <div class="kn-list-item" :style="dataListDescriptor.style.list.listItem" v-tooltip.left="slotProps.option.label">
+                    <div class="kn-list-item" :style="dataListDescriptor.style.list.listItem" v-tooltip.left="slotProps.option.label" data-test="dataset-list-item">
                         <i class="p-mx-2" :style="dataListDescriptor.style.list.listIcon" :class="dataListDescriptor.listboxSettings.avatar.values[slotProps.option.type].icon"></i>
                         <span class="kn-list-item-text">{{ slotProps.option.label }}</span>
-                        <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click.stop="deleteDatasetFromModel(slotProps.option)" />
+                        <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click.stop="deleteDatasetFromModel(slotProps.option)" data-test="delete-dataset-list-item" />
                     </div>
                 </template>
             </Listbox>
         </div>
 
-        <DataDialog v-if="dataDialogVisible" :visible="dataDialogVisible" :selectedDatasetsProp="selectedDatasets" :availableDatasetsProp="availableDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @close="toggleDataDialog" />
+        <DataDialog v-if="dataDialogVisible" :visible="dataDialogVisible" :selectedDatasetsProp="selectedDatasets" :availableDatasetsProp="availableDatasetsProp" @addSelectedDatasets="addSelectedDatasets" @close="toggleDataDialog" data-test="dataset-data-dialog" />
     </div>
 </template>
 
