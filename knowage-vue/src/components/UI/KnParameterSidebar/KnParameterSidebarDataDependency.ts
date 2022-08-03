@@ -59,6 +59,7 @@ export function formatParameterAfterDataDependencyCheck(parameter: any) {
 
     if ((parameter.selectionType === 'COMBOBOX' || parameter.selectionType === 'LIST') && parameter.multivalue && parameter.mandatory && parameter.data.length === 1) {
         parameter.showOnPanel = 'false'
+        parameter.visible = false
     }
 
     if (parameter.parameterValue[0] && !parameter.parameterValue[0].description) {
