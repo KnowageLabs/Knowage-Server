@@ -288,6 +288,7 @@
                                                                 "property": "styles.border.border-style",
                                                                 "settings": {
                                                                     "disabledCondition": "functions.bordersAreDisabled",
+                                                                    "translateLabels": true,
                                                                     "watchers": ["styles.borders"]
                                                                 },
                                                                 "type": "dropdown"

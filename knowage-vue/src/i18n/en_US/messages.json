@@ -348,7 +348,10 @@
                 "bordersStyle": "Borders Style",
                 "bordersThickness": "Borders Thickness",
                 "bordersThicknessHint": "px, rem or % measure units are available",
+                "dashed": "Dashed",
+                "dotted": "Dotted",
                 "enableBorders": "Enable Borders",
+                "solid": "Solid",
                 "title": "Borders"
             },
             "columnDetails": "Column Details",
@@ -395,6 +398,11 @@
             "sufix": "Sufix",
             "title": "Widget Editor",
             "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
+            "visualizationOptions": {
+                "chart": "Chart",
+                "iconOnly": "Icon only",
+                "textAndChart": "Text & Chart"
+            },
             "visualizationType": "Visualization Type"
         }
     },

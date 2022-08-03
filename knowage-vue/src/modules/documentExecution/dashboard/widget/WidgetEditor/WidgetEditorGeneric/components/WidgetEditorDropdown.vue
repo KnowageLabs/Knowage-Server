@@ -1,7 +1,21 @@
 <template>
     <div v-if="visible" :class="class" :style="style">
         <label v-if="label" class="kn-material-input-label p-mr-2"> {{ $t(label) }}</label>
-        <Dropdown class="kn-material-input" v-model="modelValue" :options="options" :optionLabel="settings.optionLabel ?? 'label'" :optionValue="settings.optionValue ?? 'value'" :disabled="disabled" @change="onChange"></Dropdown>
+        <Dropdown class="kn-material-input" v-model="modelValue" :options="options" :optionValue="settings.optionValue ?? 'value'" :disabled="disabled" @change="onChange">
+            <template #value="slotProps">
+                <div v-if="slotProps.value">
+                    <span>{{ slotProps.value }}</span>
+                </div>
+                <span v-else>
+                    {{ slotProps.placeholder }}
+                </span>
+            </template>
+            <template #option="slotProps">
+                <div>
+                    <span>{{ settings.translateLabels ? $t(slotProps.option.label) : slotProps.option.label }}</span>
+                </div>
+            </template>
+        </Dropdown>
     </div>
 </template>
 
@@ -42,7 +56,6 @@ export default defineComponent({
     async created() {
         this.loadValue()
         this.setWatchers()
-      
     },
     methods: {
         loadValue() {
@@ -56,6 +69,7 @@ export default defineComponent({
             }
 
             this.fieldIsVisible()
+            this.fieldIsDisabled()
         },
         onChange() {
             this.$emit('change', this.modelValue)
