@@ -22,7 +22,10 @@
                 <div v-for="(qbeParameter, index) in qbeParameters" :key="index">
                     <div class="p-field p-m-4">
                         <div class="p-d-flex">
-                            <label class="kn-material-input-label">{{ qbeParameter.name }} <span v-if="mode !== 'datasetManagement'"> *</span> </label>
+                            <label class="kn-material-input-label"
+                                >{{ qbeParameter.name }}
+                                <span v-if="mode !== 'datasetManagement'"> *</span>
+                            </label>
                             <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="qbeParameter.value = qbeParameter.defaultValue"></i>
                         </div>
                         <Chips v-if="qbeParameter.multiValue" v-model="qbeParameter.value" />
@@ -39,9 +42,16 @@
             </template>
 
             <template v-for="(parameter, index) in parameters.filterStatus" :key="index">
-                <div class="p-field p-my-1 p-p-2" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-my-1 p-p-2" v-if="(parameter.type === 'STRING' || parameter.type === 'NUM') && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true' && parameter.visible">
                     <div class="p-d-flex">
-                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters }" :data-test="'parameter-input-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
+                        <label
+                            class="kn-material-input-label"
+                            :class="{
+                                'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
+                            }"
+                            :data-test="'parameter-input-label-' + parameter.id"
+                            >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
+                        >
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-input-clear-' + parameter.id"></i>
                     </div>
                     <InputText
@@ -56,9 +66,16 @@
                         :data-test="'parameter-input-' + parameter.id"
                     />
                 </div>
-                <div class="p-field p-my-1 p-p-2" v-if="parameter.type === 'DATE' && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-my-1 p-p-2" v-if="parameter.type === 'DATE' && !parameter.selectionType && parameter.valueSelection === 'man_in' && parameter.showOnPanel === 'true' && parameter.visible">
                     <div class="p-d-flex">
-                        <label class="kn-material-input-label" :class="{ 'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters }" :data-test="'parameter-date-label-' + parameter.id">{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label>
+                        <label
+                            class="kn-material-input-label"
+                            :class="{
+                                'p-text-italic': parameter.dependsOnParameters || parameter.lovDependsOnParameters
+                            }"
+                            :data-test="'parameter-date-label-' + parameter.id"
+                            >{{ parameter.label }} {{ parameter.mandatory ? '*' : '' }}</label
+                        >
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)" :data-test="'parameter-date-clear-' + parameter.id"></i>
                     </div>
                     <Calendar
@@ -68,13 +85,15 @@
                         :showIcon="true"
                         :manualInput="true"
                         class="kn-material-input custom-timepicker"
-                        :class="{ 'p-invalid': parameter.mandatory && parameter.parameterValue && !parameter.parameterValue[0]?.value }"
+                        :class="{
+                            'p-invalid': parameter.mandatory && parameter.parameterValue && !parameter.parameterValue[0]?.value
+                        }"
                         @change="updateDependency(parameter)"
                         @date-select="updateDependency(parameter)"
                         :data-test="'parameter-date-input-' + parameter.id"
                     />
                 </div>
-                <div class="p-field p-my-1 p-p-2" v-if="parameter.selectionType === 'LIST' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-my-1 p-p-2" v-if="parameter.selectionType === 'LIST' && parameter.showOnPanel === 'true' && parameter.visible">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
@@ -95,7 +114,7 @@
                         </div>
                     </ScrollPanel>
                 </div>
-                <div class="p-field p-my-1 p-p-2" v-if="parameter.selectionType === 'COMBOBOX' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-my-1 p-p-2" v-if="parameter.selectionType === 'COMBOBOX' && parameter.showOnPanel === 'true' && parameter.visible">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
@@ -107,11 +126,11 @@
                         >
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
                     </div>
-                    <Dropdown v-if="!parameter.multivalue && parameter.parameterValue" class="kn-material-input" v-model="parameter.parameterValue[0]" :options="parameter.data" optionLabel="description" @change="updateDependency(parameter)" />
+                    <Dropdown v-if="!parameter.multivalue && parameter.parameterValue" class="kn-material-input" v-model="parameter.parameterValue[0].value" :options="parameter.data" optionValue="value" optionLabel="description" @change="onDropdownChange(parameter)" />
 
                     <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" optionLabel="description" @change="updateDependency(parameter)" />
                 </div>
-                <div class="p-field p-my-1 p-p-2" v-if="parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-my-1 p-p-2" v-if="parameter.selectionType === 'LOOKUP' && parameter.showOnPanel === 'true' && parameter.visible">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"
@@ -130,7 +149,7 @@
                         </ScrollPanel>
                     </div>
                 </div>
-                <div class="p-field p-my-1 p-p-2" v-if="parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true'">
+                <div class="p-field p-my-1 p-p-2" v-if="parameter.selectionType === 'TREE' && parameter.showOnPanel === 'true' && parameter.visible">
                     <div class="p-d-flex">
                         <label
                             class="kn-material-input-label"

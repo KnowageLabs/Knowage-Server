@@ -78,6 +78,7 @@
             ></KnParameterSidebar>
 
             <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
+
             <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
             <DocumentExecutionNotesDialog :visible="notesDialogVisible" :propDocument="document" @close="notesDialogVisible = false"></DocumentExecutionNotesDialog>
             <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :propDocument="document" :propMetadata="metadata" :propLoading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
@@ -137,7 +138,14 @@ export default defineComponent({
         DocumentExecutionCNContainerDialog,
         DashboardController
     },
-    props: { id: { type: String }, parameterValuesMap: { type: Object }, tabKey: { type: String }, propMode: { type: String }, selectedMenuItem: { type: Object }, menuItemClickedTrigger: { type: Boolean } },
+    props: {
+        id: { type: String },
+        parameterValuesMap: { type: Object },
+        tabKey: { type: String },
+        propMode: { type: String },
+        selectedMenuItem: { type: Object },
+        menuItemClickedTrigger: { type: Boolean }
+    },
     emits: ['close', 'updateDocumentName', 'parametersChanged'],
     data() {
         return {
@@ -146,7 +154,10 @@ export default defineComponent({
             hiddenFormData: {} as any,
             hiddenFormUrl: '' as string,
             documentMode: 'VIEW',
-            filtersData: {} as { filterStatus: iParameter[]; isReadyForExecution: boolean },
+            filtersData: {} as {
+                filterStatus: iParameter[]
+                isReadyForExecution: boolean
+            },
             urlData: null as iURLData | null,
             exporters: null as iExporter[] | null,
             mode: null as string | null,
@@ -162,7 +173,10 @@ export default defineComponent({
             schedulationsTableVisible: false,
             schedulations: [] as any[],
             linkDialogVisible: false,
-            linkInfo: null as { isPublic: boolean; noPublicRoleError: boolean } | null,
+            linkInfo: null as {
+                isPublic: boolean
+                noPublicRoleError: boolean
+            } | null,
             sbiExecutionId: null as string | null,
             embedHTML: false,
             user: null as any,
@@ -239,7 +253,7 @@ export default defineComponent({
             let parameterVisible = false
             for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {
                 const tempFilter = this.filtersData.filterStatus[i]
-                if (tempFilter.showOnPanel === 'true') {
+                if (tempFilter.showOnPanel === 'true' && tempFilter.visible) {
                     parameterVisible = true
                     break
                 }
@@ -435,7 +449,10 @@ export default defineComponent({
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
-                this.breadcrumbs.push({ label: this.document.label, document: this.document })
+                this.breadcrumbs.push({
+                    label: this.document.label,
+                    document: this.document
+                })
             }
         },
         async loadFilters(initialLoading: boolean = false) {
@@ -448,7 +465,10 @@ export default defineComponent({
             if (this.sessionEnabled && !this.document.navigationParams) {
                 const tempFilters = sessionStorage.getItem(this.document.label)
                 if (tempFilters) {
-                    this.filtersData = JSON.parse(tempFilters) as { filterStatus: iParameter[]; isReadyForExecution: boolean }
+                    this.filtersData = JSON.parse(tempFilters) as {
+                        filterStatus: iParameter[]
+                        isReadyForExecution: boolean
+                    }
                     this.filtersData.filterStatus?.forEach((filter: any) => {
                         if (filter.type === 'DATE' && filter.parameterValue[0].value) {
                             filter.parameterValue[0].value = new Date(filter.parameterValue[0].value)
@@ -482,10 +502,13 @@ export default defineComponent({
                     }
 
                     el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {
-                        return { value: defaultValue.value ?? defaultValue[valueIndex], description: defaultValue.desc ?? defaultValue[descriptionIndex] }
+                        return {
+                            value: defaultValue.value ?? defaultValue[valueIndex],
+                            description: defaultValue.desc ?? defaultValue[descriptionIndex]
+                        }
                     })
 
-                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true') {
+                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
                         el.parameterValue[0].value = moment(el.parameterValue[0].description?.split('#')[0]).toDate() as any
                     }
                 }
@@ -500,6 +523,7 @@ export default defineComponent({
                 }
                 if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
                     el.showOnPanel = 'false'
+                    el.visible = false
                 }
 
                 if (!el.parameterValue) {
@@ -548,10 +572,19 @@ export default defineComponent({
             const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
             const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
 
-            return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
+            return {
+                value: valueIndex ? data[valueIndex] : '',
+                description: descriptionIndex ? data[descriptionIndex] : ''
+            }
         },
         async loadURL(olapParameters: any, documentLabel: string | null = null) {
-            const postData = { label: this.document.label, role: this.userRole, parameters: olapParameters ? olapParameters : this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
+            const postData = {
+                label: this.document.label,
+                role: this.userRole,
+                parameters: olapParameters ? olapParameters : this.getFormattedParameters(),
+                EDIT_MODE: 'null',
+                IS_FOR_EXPORT: true
+            } as any
 
             if (this.sbiExecutionId) {
                 postData.SBI_EXECUTION_ID = this.sbiExecutionId
@@ -587,7 +620,10 @@ export default defineComponent({
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label) as any
 
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
-            const postObject = { params: { document: null } as any, url: documentUrl.split('?')[0] }
+            const postObject = {
+                params: { document: null } as any,
+                url: documentUrl.split('?')[0]
+            }
             postObject.params.documentMode = this.documentMode
             this.hiddenFormUrl = postObject.url
             const paramsFromUrl = documentUrl?.split('?')[1]?.split('&')
@@ -678,7 +714,13 @@ export default defineComponent({
                         items: []
                     })
                 } else {
-                    this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[index].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
+                    this.exporters?.forEach((exporter: any) =>
+                        this.toolbarMenuItems[index].items.push({
+                            icon: 'fa fa-file-excel',
+                            label: exporter.name,
+                            command: () => this.export(exporter.name)
+                        })
+                    )
                 }
             }
 
@@ -688,7 +730,12 @@ export default defineComponent({
             this.loading = false
         },
         async onExportCSV() {
-            const postData = { documentId: this.document.id, documentLabel: this.document.label, exportType: 'CSV', parameters: this.getFormattedParametersForCSVExport() }
+            const postData = {
+                documentId: this.document.id,
+                documentLabel: this.document.label,
+                exportType: 'CSV',
+                parameters: this.getFormattedParametersForCSVExport()
+            }
             this.loading = true
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/export/cockpitData`, postData)
@@ -826,7 +873,13 @@ export default defineComponent({
         },
         async onMailSave(mail: any) {
             this.loading = true
-            const postData = { ...mail, label: this.document.label, docId: this.document.id, userId: this.user.userId, parameters: this.getFormattedParameters() }
+            const postData = {
+                ...mail,
+                label: this.document.label,
+                docId: this.document.id,
+                userId: this.user.userId,
+                parameters: this.getFormattedParameters()
+            }
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecutionmail/sendMail`, postData)
                 .then(() => {
@@ -871,11 +924,15 @@ export default defineComponent({
             this.filtersData = item.filtersData
             this.urlData = item.urlData
             this.hiddenFormData = item.hiddenFormData
+            this.documentMode = 'VIEW'
             this.updateMode()
         },
         async onRoleChange(role: string) {
             this.userRole = role as any
-            this.filtersData = {} as { filterStatus: iParameter[]; isReadyForExecution: boolean }
+            this.filtersData = {} as {
+                filterStatus: iParameter[]
+                isReadyForExecution: boolean
+            }
             this.urlData = null
             this.exporters = null
             await this.loadPage()
@@ -893,28 +950,41 @@ export default defineComponent({
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
-            if (temp.length > 1) {
+            const crossTarget = this.findCrossTargetByCrossName(angularData, temp)
+
+            if (!crossTarget && temp.length > 1) {
                 this.crossNavigationDocuments = temp
                 this.destinationSelectDialogVisible = true
             } else {
-                this.loadCrossNavigation(temp[0], angularData)
+                this.loadCrossNavigation(crossTarget ?? temp[0], angularData)
             }
+        },
+        findCrossTargetByCrossName(angularData: any, temp: any[]) {
+            if (!angularData || !temp) return
+            const index = temp.findIndex((el: any) => el.crossName === angularData.targetCrossNavigation.crossName)
+            return index !== -1 ? temp[index] : null
         },
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
             this.formatAngularOutputParameters(angularData.otherOutputParameters)
             const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument ? crossNavigationDocument.navigationParams : [])
 
-            const popupOptions = crossNavigationDocument.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
+            const popupOptions = crossNavigationDocument?.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
 
-            if (crossNavigationDocument.crossType !== 2) {
-                this.document = { ...crossNavigationDocument?.document, navigationParams: navigationParams }
+            if (crossNavigationDocument?.crossType !== 2) {
+                this.document = {
+                    ...crossNavigationDocument?.document,
+                    navigationParams: navigationParams
+                }
             }
 
-            if (crossNavigationDocument.crossType === 2) {
+            if (crossNavigationDocument?.crossType === 2) {
                 this.openCrossNavigationInNewWindow(popupOptions, crossNavigationDocument, navigationParams)
-            } else if (crossNavigationDocument.crossType === 1) {
+            } else if (crossNavigationDocument?.crossType === 1) {
                 const documentLabel = crossNavigationDocument?.document.label
-                this.crossNavigationContainerData = { documentLabel: documentLabel, iFrameName: documentLabel }
+                this.crossNavigationContainerData = {
+                    documentLabel: documentLabel,
+                    iFrameName: documentLabel
+                }
                 this.crossNavigationContainerVisible = true
                 await this.loadPage(false, documentLabel)
             } else {
@@ -922,11 +992,16 @@ export default defineComponent({
                 if (index !== -1) {
                     this.breadcrumbs[index].document = this.document
                 } else {
-                    this.breadcrumbs.push({ label: this.document.label, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb ?? this.document.name })
+                    this.breadcrumbs.push({
+                        label: this.document.label,
+                        document: this.document,
+                        crossBreadcrumb: crossNavigationDocument.crossBreadcrumb ?? this.document.name
+                    })
                 }
 
                 await this.loadPage()
             }
+            this.documentMode = 'VIEW'
         },
         openCrossNavigationInNewWindow(popupOptions: any, crossNavigationDocument: any, navigationParams: any) {
             if (!crossNavigationDocument || !crossNavigationDocument.document) return
@@ -950,6 +1025,7 @@ export default defineComponent({
             }
         },
         getParameterValueForCrossNavigation(parameterLabel: string) {
+            if (!parameterLabel) return
             const index = this.filtersData.filterStatus?.findIndex((param: any) => param.label === parameterLabel)
             return index !== -1 ? this.filtersData.filterStatus[index].parameterValue[0].value : ''
         },
@@ -974,7 +1050,23 @@ export default defineComponent({
                 }
             })
 
+            this.setNavigationParametersFromCurrentFilters(formatedParams, navigationParams)
+
             return formatedParams
+        },
+        setNavigationParametersFromCurrentFilters(formatedParams: any, navigationParams: any) {
+            const navigationParamsKeys = navigationParams ? Object.keys(navigationParams) : []
+            const formattedParameters = this.getFormattedParameters()
+            const formattedParametersKeys = formattedParameters ? Object.keys(this.getFormattedParameters()) : []
+            if (navigationParamsKeys.length > 0 && formattedParametersKeys.length > 0) {
+                for (let i = 0; i < navigationParamsKeys.length; i++) {
+                    const index = formattedParametersKeys.findIndex((key: string) => key === navigationParamsKeys[i])
+                    if (index !== -1) {
+                        formatedParams[navigationParamsKeys[i]] = formattedParameters[formattedParametersKeys[index]]
+                        formatedParams[navigationParamsKeys[i] + '_field_visible_description'] = formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] ? formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] : ''
+                    }
+                }
+            }
         },
         showOLAPCustomView() {
             this.olapCustomViewVisible = true
@@ -1000,13 +1092,19 @@ export default defineComponent({
                 return
             }
 
-            this.document = { ...temp[0].document, navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams) }
+            this.document = {
+                ...temp[0].document,
+                navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams)
+            }
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
-                this.breadcrumbs.push({ label: this.document.label, document: this.document })
+                this.breadcrumbs.push({
+                    label: this.document.label,
+                    document: this.document
+                })
             }
 
             await this.loadPage()

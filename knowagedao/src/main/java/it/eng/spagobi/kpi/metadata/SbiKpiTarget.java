@@ -1,16 +1,16 @@
 package it.eng.spagobi.kpi.metadata;
 
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.metadata.SbiHibernateModel;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+
 public class SbiKpiTarget extends SbiHibernateModel {
 	private Integer targetId;
 	private String name;
-	private SbiDomains category;
+	private SbiCategory category;
 	private Date startValidity;
 	private Date endValidity;
 
@@ -24,8 +24,7 @@ public class SbiKpiTarget extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param targetId
-	 *            the targetId to set
+	 * @param targetId the targetId to set
 	 */
 	public void setTargetId(Integer targetId) {
 		this.targetId = targetId;
@@ -39,8 +38,7 @@ public class SbiKpiTarget extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param name
-	 *            the name to set
+	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -49,15 +47,14 @@ public class SbiKpiTarget extends SbiHibernateModel {
 	/**
 	 * @return the category
 	 */
-	public SbiDomains getCategory() {
+	public SbiCategory getCategory() {
 		return category;
 	}
 
 	/**
-	 * @param category
-	 *            the category to set
+	 * @param category the category to set
 	 */
-	public void setCategory(SbiDomains category) {
+	public void setCategory(SbiCategory category) {
 		this.category = category;
 	}
 
@@ -69,8 +66,7 @@ public class SbiKpiTarget extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param startValidity
-	 *            the startValidity to set
+	 * @param startValidity the startValidity to set
 	 */
 	public void setStartValidity(Date startValidity) {
 		this.startValidity = startValidity;
@@ -84,8 +80,7 @@ public class SbiKpiTarget extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param endValidity
-	 *            the endValidity to set
+	 * @param endValidity the endValidity to set
 	 */
 	public void setEndValidity(Date endValidity) {
 		this.endValidity = endValidity;
@@ -99,8 +94,7 @@ public class SbiKpiTarget extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param sbiKpiTargetValues
-	 *            the sbiKpiTargetValues to set
+	 * @param sbiKpiTargetValues the sbiKpiTargetValues to set
 	 */
 	public void setSbiKpiTargetValues(Set<SbiKpiTargetValue> sbiKpiTargetValues) {
 		this.sbiKpiTargetValues = sbiKpiTargetValues;

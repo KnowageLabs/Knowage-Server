@@ -106,6 +106,10 @@ export default defineComponent({
         datasetToCloneId: { type: Number as any }
     },
     computed: {
+        ...mapState({
+            user: 'user',
+            isEnterprise: 'isEnterprise'
+        }),
         buttonDisabled(): any {
             return this.v$.$invalid
         }
@@ -245,8 +249,11 @@ export default defineComponent({
                     this.touched = false
                     this.store.setInfo({ title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
+
                     await this.saveTags(dsToSave, response.data.id)
-                    await this.saveSchedulation(dsToSave, response.data.id)
+                    if (this.user.functionalities.includes('SchedulingDatasetManagement')) {
+                        await this.saveSchedulation(dsToSave, response.data.id)
+                    }
                     await this.saveLinks(response.data.id)
                     await this.removeLinks(response.data.id)
                     await this.getSelectedDataset()

@@ -790,7 +790,9 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCross
            }
        };
 	}
-
+	if (toReturn['colorAxis'].min === toReturn['colorAxis'].max) { 
+	toReturn['colorAxis'].stops = new Array(colorStops[0])
+	}
 
     if(chartConf.additionalData.differentOrdering && chartConf.additionalData.storeresultOrder){
     	var categories = []

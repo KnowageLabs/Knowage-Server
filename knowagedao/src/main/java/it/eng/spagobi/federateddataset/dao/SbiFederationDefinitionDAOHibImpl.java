@@ -458,11 +458,11 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			aSession.update(fds);
 			SbiFederationDefinition hibFederation = (SbiFederationDefinition) aSession.load(SbiFederationDefinition.class, fds.getFederation_id());
 			SbiFederationUtils.toSbiFederationDefinition(hibFederation, fds);
 
 			updateSbiCommonInfo4Update(hibFederation);
+			aSession.update(hibFederation);
 			tx.commit();
 			logger.debug("OUT");
 		} catch (HibernateException he) {

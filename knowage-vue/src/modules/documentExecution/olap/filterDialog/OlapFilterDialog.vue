@@ -108,7 +108,7 @@ export default defineComponent({
             this.loadLevelValues()
         },
         loadLevelValues() {
-            const dynamicSlicers = this.olapDesigner?.template.wrappedObject.olap.DYNAMIC_SLICER
+            const dynamicSlicers = this.olapDesigner?.template?.wrappedObject?.olap?.DYNAMIC_SLICER
 
             dynamicSlicers?.forEach((slicer: any) => {
                 const index = this.levels.findIndex((level: any) => level.LEVEL === slicer.LEVEL && level.HIERARCHY === slicer.HIERARCHY)

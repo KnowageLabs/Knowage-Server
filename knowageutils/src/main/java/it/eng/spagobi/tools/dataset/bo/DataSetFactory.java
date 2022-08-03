@@ -113,6 +113,8 @@ public class DataSetFactory {
 				className = JDBCSynapseDataSet.class.getName();
 			} else if (dialectToLowerCase.contains("Spanner")) {
 				className = JDBCSpannerDataSet.class.getName();
+			} else if (dialectToLowerCase.contains("postgres")) {
+				className = JDBCPostgreSQLDataSet.class.getName();
 			}
 		}
 		try {

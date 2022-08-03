@@ -275,48 +275,6 @@ public class JDBCSpannerDataProxy extends JDBCDataProxy {
 		this.dataSource = dataSource;
 	}
 
-	private void releaseResources(Connection connection, Statement statement, ResultSet resultSet) {
-
-		logger.debug("IN");
-
-		try {
-			logger.debug("Relesing resources ...");
-			if (resultSet != null) {
-				try {
-					resultSet.close();
-
-				} catch (SQLException e) {
-					throw new SpagoBIRuntimeException("Impossible to release [resultSet]", e);
-				}
-				logger.debug("[resultSet] released succesfully");
-			}
-
-			if (statement != null) {
-				try {
-					statement.close();
-
-				} catch (SQLException e) {
-					throw new SpagoBIRuntimeException("Impossible to release [statement]", e);
-				}
-				logger.debug("[statement] released succesfully");
-			}
-
-			if (connection != null) {
-				try {
-					if (!connection.isClosed()) {
-						connection.close();
-					}
-				} catch (SQLException e) {
-					throw new SpagoBIRuntimeException("Impossible to release [connection]", e);
-				}
-				logger.debug("[connection] released succesfully");
-			}
-			logger.debug("All resources have been released succesfully");
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
 	@Override
 	public ResultSet getData(IDataReader dataReader, Object... resources) {
 		logger.debug("IN");
@@ -361,9 +319,7 @@ public class JDBCSpannerDataProxy extends JDBCDataProxy {
 		if (!this.statement.isEmpty()) {
 			this.statement = removeLastSemicolon(this.statement);
 
-			newStatement.append("SELECT * FROM (")
-				.append(this.statement)
-				.append(")");
+			newStatement.append("SELECT * FROM (").append(this.statement).append(")");
 
 			// TODO : could fetchSize be an Integer?
 			if (fetchSize > 0) {

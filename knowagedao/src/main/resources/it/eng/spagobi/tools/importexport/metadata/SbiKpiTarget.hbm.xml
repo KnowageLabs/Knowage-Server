@@ -7,7 +7,7 @@
         <id name="targetId" column="TARGET_ID" type="integer">
         </id>
         <property name="name" type="string" column="NAME" />
-        <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains">
+        <many-to-one name="category" class="it.eng.spagobi.commons.dao.dto.SbiCategory">
             <column name="CATEGORY_ID" />
         </many-to-one>
         <property name="startValidity" type="timestamp" column="START_VALIDITY_DAY" not-null="true"/>

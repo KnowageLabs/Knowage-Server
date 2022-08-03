@@ -7,6 +7,8 @@ import it.eng.knowage.boot.utils.EngineMessageBundle;
 
 public class InvalidHtmlPayloadException extends KnowageRuntimeException {
 
+	private static final long serialVersionUID = 2861675799031365764L;
+
 	/*
 	 * Status
 	 */

@@ -912,11 +912,11 @@ export default defineComponent({
             }
 
             this.formatOlapTable()
-            this.olapDesigner.template.wrappedObject.olap.MDXMondrianQuery.XML_TAG_TEXT_CONTENT = this.olap.MDXWITHOUTCF
+            if (this.olapDesigner.template) this.olapDesigner.template.wrappedObject.olap.MDXMondrianQuery.XML_TAG_TEXT_CONTENT = this.olap.MDXWITHOUTCF
             this.loading = false
         },
         updateOlapDesignerMDXQueryParameters() {
-            if (!this.olapDesigner) return
+            if (!this.olapDesigner || !this.olapDesigner.template) return
             let query = this.olap.MDXWITHOUTCF
 
             this.olapDesigner.template.wrappedObject.olap.MDXMondrianQuery.XML_TAG_TEXT_CONTENT = query

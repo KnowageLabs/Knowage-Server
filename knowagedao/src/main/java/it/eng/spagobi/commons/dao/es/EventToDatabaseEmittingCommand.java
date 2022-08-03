@@ -17,6 +17,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
@@ -484,9 +485,9 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 		JsonArrayBuilder authorizationsArrayBuilder = Json.createArrayBuilder();
 
 		if (!isNull(role.getSbiMetaModelCategories())) {
-			((Set<SbiDomains>) role.getSbiMetaModelCategories())
+			role.getSbiMetaModelCategories()
 				.stream()
-				.map(this::fromSbiDomainsToJsonObject)
+				.map(this::fromSbiCategoryToJsonObject)
 				.forEach(authorizationsArrayBuilder::add);
 		}
 
@@ -524,6 +525,17 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 				.add("valueDs", e.getValueDs())
 				.add("valueNm", e.getValueNm())
 				.add("valueId", e.getValueId())
+				.build();
+
+		return ret;
+	}
+
+	protected final JsonObject fromSbiCategoryToJsonObject(SbiCategory e) {
+		JsonObject ret = Json.createObjectBuilder()
+				.add("code", e.getCode())
+				.add("name", e.getName())
+				.add("type", e.getType())
+				.add("id", e.getId())
 				.build();
 
 		return ret;

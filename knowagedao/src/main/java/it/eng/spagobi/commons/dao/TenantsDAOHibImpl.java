@@ -463,7 +463,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			tenantAdmin.setIsSuperadmin(false);
 			tenantAdmin.getCommonInfo().setOrganization(aTenant.getName());
 			Integer newId = userDAO.saveSbiUser(tenantAdmin);
-			setRole(adminRole, newId);
+			setRole(adminRole, tenantAdmin);
 			logger.debug("User [" + userId + "] sucesfully stored into database with id [" + newId + "]");
 			toReturn = userDAO.loadSbiUserById(newId);
 		} catch (Exception e) {
@@ -558,7 +558,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 		aRole.setIsAbleToViewSocialAnalysis(true);
 	}
 
-	private void setRole(Role role, int userIdInt) {
+	private void setRole(Role role, SbiUser tenantAdmin) {
 		logger.debug("IN");
 		SbiExtUserRoles sbiExtUserRole = new SbiExtUserRoles();
 		SbiExtUserRolesId id = new SbiExtUserRolesId();
@@ -566,15 +566,16 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
 			Integer extRoleId = role.getId();
 			id.setExtRoleId(extRoleId); // role Id
-			id.setId(userIdInt); // user Id
+			id.setId(tenantAdmin.getId()); // user Id
+			sbiExtUserRole.setSbiUser(tenantAdmin);
 			sbiExtUserRole.setId(id);
 			sbiExtUserRole.getCommonInfo().setOrganization(role.getOrganization());
 			userDAO.updateSbiUserRoles(sbiExtUserRole);
 			// RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();
 			// userDAO.updateSbiUserRoles(sbiExtUserRole);
 		} catch (Exception e) {
-			logger.error("An unexpected error occurred while associating role [" + role.getName() + "] to user with id " + userIdInt, e);
-			throw new SpagoBIRuntimeException("An unexpected error occurred while associating role [" + role.getName() + "] to user with id " + userIdInt, e);
+			logger.error("An unexpected error occurred while associating role [" + role.getName() + "] to user with id " + tenantAdmin, e);
+			throw new SpagoBIRuntimeException("An unexpected error occurred while associating role [" + role.getName() + "] to user with id " + tenantAdmin, e);
 		} finally {
 			logger.debug("OUT");
 		}

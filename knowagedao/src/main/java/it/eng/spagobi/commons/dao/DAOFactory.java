@@ -196,6 +196,16 @@ public class DAOFactory {
 	}
 
 	/**
+	 * Creates a DAO instance for a categories.
+	 *
+	 * @return a DAO instance for categories
+	 *
+	 */
+	public static ICategoryDAO getCategoryDAO() {
+		return (ICategoryDAO) createDAOInstance("CategoryDAO");
+	}
+
+	/**
 	 * Creates a DAO instance for an engine.
 	 *
 	 * @return a DAO instance for the engine

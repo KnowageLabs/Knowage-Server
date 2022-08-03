@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,7 +20,7 @@ package it.eng.spagobi.mapcatalogue.metadata;
 
 import java.util.List;
 
-import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
@@ -38,7 +38,7 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	private byte[] bodyFile;
 	private int layerOrder;
 	private Integer category_id;
-	private SbiDomains category;
+	private SbiCategory category;
 	private List<SbiExtRoles> roles;
 
 	public SbiGeoLayers() {
@@ -116,11 +116,11 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		this.layerOrder = layerOrder;
 	}
 
-	public SbiDomains getCategory() {
+	public SbiCategory getCategory() {
 		return category;
 	}
 
-	public void setCategory(SbiDomains category) {
+	public void setCategory(SbiCategory category) {
 		this.category = category;
 	}
 

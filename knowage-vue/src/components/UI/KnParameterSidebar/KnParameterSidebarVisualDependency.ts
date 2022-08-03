@@ -57,4 +57,5 @@ export function visualDependencyCheck(parameter: iParameter, changedParameter: a
         }
     }
     parameter.showOnPanel = showOnPanel
+    parameter.visible = showOnPanel === 'true'
 }

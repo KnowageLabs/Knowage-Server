@@ -22,12 +22,15 @@
 
 package it.eng.spagobi.tools.dataset.service;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -60,6 +63,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.DataSetMetadataJSONSerializer;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
@@ -553,6 +557,7 @@ public class ManageDataSetsForREST {
 			UserProfile profile = userProfile;
 			rolesDao = DAOFactory.getRoleDAO();
 			rolesDao.setUserProfile(profile);
+			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 			if (UserUtilities.hasDeveloperRole(profile) && !UserUtilities.hasAdministratorRole(profile)) {
 				List<Domain> categoriesDev = new ArrayList<>();
 				Collection<String> roles = profile.getRolesForUse();
@@ -561,7 +566,7 @@ public class ManageDataSetsForREST {
 					String roleName = itRoles.next();
 					role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
-					List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+					List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 					for (RoleMetaModelCategory r : ds) {
 						for (Domain dom : array) {
 							if (r.getCategoryId().equals(dom.getValueId())) {
@@ -572,7 +577,7 @@ public class ManageDataSetsForREST {
 				}
 				return categoriesDev;
 			} else {
-				return DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+				return categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 			}
 		} catch (Exception e) {
 			logger.error("Role with selected id: " + role.getId() + " doesn't exists", e);
@@ -1428,7 +1433,7 @@ public class ManageDataSetsForREST {
 		MetaData toReturn = new MetaData();
 
 		List<IFieldMetaData> fieldsMeta = new ArrayList<IFieldMetaData>();
-		Map<String, IFieldMetaData> m = new HashMap<String, IFieldMetaData>();
+		Map<String, IFieldMetaData> m = new LinkedHashMap<String, IFieldMetaData>();
 
 		for (int i = 0; i < dsMeta.length() - 1; i++) {
 			JSONObject currMetaType = dsMeta.getJSONObject(i);

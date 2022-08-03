@@ -1,5 +1,9 @@
 # knowage-vue
 
+## Prerequisites
+- [Node.js 16+](https://nodejs.org/it/download/)
+- Knowage Server running on [localhost:8080](http://localhost:8080): see our [official Docker image](https://hub.docker.com/r/knowagelabs/knowage-server-docker/)
+
 ## Project setup
 
 ```

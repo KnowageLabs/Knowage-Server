@@ -3,24 +3,12 @@
 <ACTIONS>
 	
 	<!-- QBE_ENGINE Initializations -->
-	<ACTION name="QBE_ENGINE_START_ACTION" 
-			class="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineStartAction" 
-			scope="REQUEST">
-		<CONFIG></CONFIG>
-	</ACTION>
-	
 	<ACTION name="QBE_ENGINE_START_ACTION_FROM_BM" 
 			class="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineStartActionFromBusinessModel" 
 			scope="REQUEST">
 		<CONFIG></CONFIG>
 	</ACTION>
 
-	<ACTION name="QBE_ENGINE_FROM_FEDERATION_START_ACTION" 
-            class="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineFromFederationStartAction" 
-            scope="REQUEST">
-        <CONFIG></CONFIG>
-    </ACTION>
-	
 	<ACTION name="QBE_ENGINE_FROM_DATASET_START_ACTION" 
             class="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineFromDatasetStartAction" 
             scope="REQUEST">
