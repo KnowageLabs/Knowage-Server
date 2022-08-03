@@ -10,7 +10,7 @@
             </Toolbar>
             <!-- <div class="datasetEditor-container"> -->
             <WidgetEditorTabs class="datasetEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="onDatasetSelected" />
-            <!-- <WidgetEditorPreview :propWidget="widget" /> -->
+            <WidgetEditorPreview :propWidget="widget" />
             <!-- </div> -->
         </div>
     </Teleport>
@@ -68,7 +68,6 @@ export default defineComponent({
             formatWidgetColumnsForDisplay(this.widget)
             setWidgetModelTempProperty(this.widget)
             setWidgetModelFunctions(this.widget)
-            console.log(' --- >>>> ---- >>>> WIDGET: ', this.widget)
         },
         loadSelectedModelDatasets() {
             // TODO - remove hardcoded dashboard index
@@ -117,7 +116,7 @@ export default defineComponent({
         save() {
             const tempWidget = formatWidgetForSave(this.widget)
             if (!tempWidget) return
-            console.log(' --- >>>> ---- >>>> WIDGET ON SAVE: ', tempWidget)
+
             if (tempWidget.new) {
                 delete tempWidget.new
                 this.dashboardStore.createNewWidget(tempWidget)

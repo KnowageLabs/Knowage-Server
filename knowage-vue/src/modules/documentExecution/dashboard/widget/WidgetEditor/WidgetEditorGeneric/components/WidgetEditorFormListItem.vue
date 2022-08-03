@@ -1,38 +1,36 @@
 <template>
-    <div>
+    <div :class="{ 'kn-draggable': reorderEnabled }">
         <div v-show="dropzoneTopVisible" class="form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before')" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
         <div v-show="reorderEnabled" class="form-list-item-dropzone" :class="{ 'form-list-item-dropzone-active': dropzoneTopVisible }" @drop.stop="onDropComplete($event, 'before')" @dragover.prevent @dragenter.prevent="displayDropzone('top')" @dragleave.prevent="hideDropzone('top')"></div>
-        <div v-for="(container, containerIndex) in settings.containers" :key="containerIndex" :class="{ 'kn-draggable': reorderEnabled }" :draggable="reorderEnabled" @dragstart.stop="onDragStart">
-            <div :class="container.cssClasses">
-                <div v-for="(component, index) in container.components" :key="index" :class="component.cssClasess">
-                    <i v-if="component.type === 'reorderIcon' && reorderEnabled" :class="{ 'icon-disabled': disabled }" class="pi pi-th-large kn-cursor-pointer p-mr-2" @click="$emit('addNewItem', itemIndex)"></i>
-                    <WidgetEditorInputText
-                        v-if="component.type === 'inputText' && fieldIsVisible(component)"
-                        :widgetModel="widgetModel"
-                        :property="''"
-                        :label="component.label"
-                        :class="component.cssClass"
-                        :settings="component.settings"
-                        :initialValue="item[component.property]"
-                        :itemIndex="itemIndex"
-                        @input="onChange($event, component, index)"
-                    ></WidgetEditorInputText>
-                    <WidgetEditorDropdown
-                        v-else-if="component.type === 'dropdown' && fieldIsVisible(component)"
-                        :widgetModel="widgetModel"
-                        :class="component.cssClass"
-                        :style="component.style"
-                        :label="component.label"
-                        :property="''"
-                        :options="getDropdownOptions(component)"
-                        :settings="component.settings"
-                        :initialValue="item[component.property]"
-                        :itemIndex="itemIndex"
-                        @change="onChange($event, component)"
-                    ></WidgetEditorDropdown>
-                    <WidgetEditorStyleTooblar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings" :item="item" :itemIndex="itemIndex"></WidgetEditorStyleTooblar>
-                    <i v-if="component.type === 'addDeleteIcon'" :class="[itemIndex === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', disabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="$emit('addNewItem', itemIndex)"></i>
-                </div>
+        <div v-for="(container, containerIndex) in settings.containers" :key="containerIndex" :class="container.cssClasses" :draggable="reorderEnabled" @dragstart.stop="onDragStart">
+            <div v-for="(component, index) in container.components" :key="index" :class="component.cssClass">
+                <i v-if="component.type === 'reorderIcon' && reorderEnabled" :class="{ 'icon-disabled': disabled }" class="pi pi-th-large kn-cursor-pointer p-mr-2" @click="$emit('addNewItem', itemIndex)"></i>
+                <WidgetEditorInputText
+                    v-if="component.type === 'inputText' && fieldIsVisible(component)"
+                    :widgetModel="widgetModel"
+                    :property="''"
+                    :label="component.label"
+                    :class="component.cssClass"
+                    :settings="component.settings"
+                    :initialValue="item[component.property]"
+                    :itemIndex="itemIndex"
+                    @input="onChange($event, component, index)"
+                ></WidgetEditorInputText>
+                <WidgetEditorDropdown
+                    v-else-if="component.type === 'dropdown' && fieldIsVisible(component)"
+                    :widgetModel="widgetModel"
+                    :class="component.cssClass"
+                    :style="component.style"
+                    :label="component.label"
+                    :property="''"
+                    :options="getDropdownOptions(component)"
+                    :settings="component.settings"
+                    :initialValue="item[component.property]"
+                    :itemIndex="itemIndex"
+                    @change="onChange($event, component)"
+                ></WidgetEditorDropdown>
+                <WidgetEditorStyleTooblar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings" :item="item" :itemIndex="itemIndex"></WidgetEditorStyleTooblar>
+                <i v-if="component.type === 'addDeleteIcon'" :class="[itemIndex === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', disabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="$emit('addNewItem', itemIndex)"></i>
             </div>
         </div>
         <div v-show="reorderEnabled" class="form-list-item-dropzone" :class="{ 'form-list-item-dropzone-active': dropzoneBottomVisible }" @drop.stop="onDropComplete($event, 'after')" @dragover.prevent @dragenter.prevent="displayDropzone('bottom')" @dragleave.prevent="hideDropzone('bottom')"></div>

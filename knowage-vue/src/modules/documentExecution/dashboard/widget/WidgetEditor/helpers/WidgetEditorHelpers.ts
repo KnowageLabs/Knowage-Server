@@ -15,6 +15,17 @@ export function createNewWidget() {
         interactions: [],
         theme: '',
         styles: {
+            borders: true,
+            border: {
+                "border-top-left-radius": "",
+                "border-top-right-radius": "",
+                "border-bottom-left-radius": "",
+                "border-bottom-right-radius": "",
+                "border-color": "rgb(212, 212, 212)",
+                "border-width": "1px",
+                "border-style": "solid"
+
+            },
             th: {
                 enabled: true,
                 'background-color': 'rgb(255, 255, 255)',
@@ -86,6 +97,6 @@ export function formatWidgetForSave(tempWidget: IWidget) {
 }
 
 export function formatRGBColor(color: { r: string, g: string, b: string }) {
-    console.log("----- formatRGBColor: ", color)
+
     return `rgb(${color.r}, ${color.g}, ${color.b})`
 }

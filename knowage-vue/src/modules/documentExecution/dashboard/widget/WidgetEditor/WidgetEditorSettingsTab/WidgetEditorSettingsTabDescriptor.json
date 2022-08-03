@@ -52,15 +52,17 @@
                                                                 "icons": [
                                                                     {
                                                                         "class": "fas fa-bold",
+                                                                        "disabledCondition": "functions.headerIsDisabled",
                                                                         "function": "functions.updateFontWeight",
                                                                         "isActiveFunction": "functions.boldIconIsActive",
-                                                                        "watchers": ["styles.th.font-weight"]
+                                                                        "watchers": ["styles.th.enabled", "styles.th.font-weight"]
                                                                     },
                                                                     {
                                                                         "class": "fas fa-italic",
+                                                                        "disabledCondition": "functions.headerIsDisabled",
                                                                         "function": "functions.updateFontStyle",
                                                                         "isActiveFunction": "functions.fontStyleIconIsActive",
-                                                                        "watchers": ["styles.th.font-style"]
+                                                                        "watchers": ["styles.th.enabled", "styles.th.font-style"]
                                                                     },
                                                                     {
                                                                         "arrowDownIcon": true,
@@ -71,7 +73,8 @@
                                                                             "options": "functions.getFontSizeOptions",
                                                                             "translateLabels": true
                                                                         },
-                                                                        "watchers": ["styles.th.font-size"]
+                                                                        "disabledCondition": "functions.headerIsDisabled",
+                                                                        "watchers": ["styles.th.enabled", "styles.th.font-size"]
                                                                     },
                                                                     {
                                                                         "arrowDownIcon": true,
@@ -80,7 +83,9 @@
                                                                             "onUpdate": "functions.updateCellAlignment",
                                                                             "options": "functions.getCellAlignmentOptions",
                                                                             "translateLabels": true
-                                                                        }
+                                                                        },
+                                                                        "disabledCondition": "functions.headerIsDisabled",
+                                                                        "watchers": ["styles.th.enabled"]
                                                                     },
                                                                     {
                                                                         "arrowDownIcon": true,
@@ -89,7 +94,9 @@
                                                                             "onUpdate": "functions.updateFontFamily",
                                                                             "options": "functions.getFontFamilyOptions",
                                                                             "translateLabels": true
-                                                                        }
+                                                                        },
+                                                                        "disabledCondition": "functions.headerIsDisabled",
+                                                                        "watchers": ["styles.th.enabled"]
                                                                     },
                                                                     {
                                                                         "arrowDownIcon": true,
@@ -98,7 +105,9 @@
                                                                         "colorPickerSettings": {
                                                                             "initialValue": "functions.getFontColor",
                                                                             "onUpdate": "functions.setFontColor"
-                                                                        }
+                                                                        },
+                                                                        "disabledCondition": "functions.headerIsDisabled",
+                                                                        "watchers": ["styles.th.enabled"]
                                                                     },
                                                                     {
                                                                         "arrowDownIcon": true,
@@ -107,7 +116,9 @@
                                                                         "colorPickerSettings": {
                                                                             "initialValue": "functions.getBackgroundColor",
                                                                             "onUpdate": "functions.setBackgroundColor"
-                                                                        }
+                                                                        },
+                                                                        "disabledCondition": "functions.headerIsDisabled",
+                                                                        "watchers": ["styles.th.enabled"]
                                                                     }
                                                                 ],
                                                                 "settings": {},
@@ -123,7 +134,8 @@
                                         "settings": {},
                                         "type": "accordion"
                                     }
-                                ]
+                                ],
+                                "containerClasess": "p-m-2"
                             }
                         ]
                     },
@@ -150,16 +162,14 @@
                                                             {
                                                                 "cssClass": "p-m-2",
                                                                 "label": "dashboard.widgetEditor.rows.selectionColor",
-                                                                "property":"settings.multiselectablecolor",
+                                                                "property": "settings.multiselectablecolor",
                                                                 "settings": {
-                                                                    "onUpdate": "functions.updateMultiSelectableColor",
                                                                     "disabledCondition": "functions.multiselectableColorIsDisabled",
+                                                                    "onUpdate": "functions.updateMultiSelectableColor",
                                                                     "watchers": ["settings.multiselectable"]
-
                                                                 },
-                                                                "type":"colorPicker"
+                                                                "type": "colorPicker"
                                                             }
-                                                            
                                                         ],
                                                         "cssClasses": "p-d-flex p-flex-row p-ai-center p-m-2"
                                                     },
@@ -169,12 +179,9 @@
                                                                 "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
                                                                 "label": "dashboard.widgetEditor.rows.enabledAlternatedRows",
                                                                 "property": "settings.alternateRows.enabled",
-                                                                "settings": {
-                                                                },
+                                                                "settings": {},
                                                                 "type": "inputSwitch"
                                                             }
-                                                        
-                                                            
                                                         ],
                                                         "cssClasses": "p-d-flex p-flex-row p-ai-center p-m-2"
                                                     },
@@ -183,28 +190,25 @@
                                                             {
                                                                 "cssClass": "p-m-2",
                                                                 "label": "dashboard.widgetEditor.rows.alternatedRowsEven",
-                                                                "property":"settings.alternateRows.evenRowsColor",
+                                                                "property": "settings.alternateRows.evenRowsColor",
                                                                 "settings": {
                                                                     "disabledCondition": "functions.alternatedRowsDisabled",
                                                                     "onUpdate": "functions.updateEvenRowsColor",
                                                                     "watchers": ["settings.alternateRows.enabled"]
-
                                                                 },
-                                                                "type":"colorPicker"
+                                                                "type": "colorPicker"
                                                             },
                                                             {
                                                                 "cssClass": "p-m-2",
                                                                 "label": "dashboard.widgetEditor.rows.alternatedRowsOdd",
-                                                                "property":"settings.alternateRows.oddRowsColor",
+                                                                "property": "settings.alternateRows.oddRowsColor",
                                                                 "settings": {
                                                                     "disabledCondition": "functions.alternatedRowsDisabled",
                                                                     "onUpdate": "functions.updateOddRowsColor",
                                                                     "watchers": ["settings.alternateRows.enabled"]
-
                                                                 },
-                                                                "type":"colorPicker"
+                                                                "type": "colorPicker"
                                                             }
-                                                            
                                                         ],
                                                         "cssClasses": "p-d-flex p-flex-row p-ai-center p-m-2"
                                                     },
@@ -252,11 +256,9 @@
                                                                 },
                                                                 "type": "inputText"
                                                             }
-                                                            
                                                         ],
                                                         "cssClasses": "p-d-flex p-flex-row p-ai-center p-m-2"
                                                     }
-                                                   
                                                 ],
                                                 "title": "dashboard.widgetEditor.rows.title"
                                             }
@@ -264,7 +266,129 @@
                                         "settings": {},
                                         "type": "accordion"
                                     }
-                                ]
+                                ],
+                                "containerClasess": "p-m-2"
+                            }
+                        ]
+                    },
+                    {
+                        "cardClasses": "p-d-flex p-flex-column",
+                        "containers": [
+                            {
+                                "components": [
+                                    {
+                                        "accordions": [
+                                            {
+                                                "containers": [
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.borders.enableBorders",
+                                                                "property": "styles.borders",
+                                                                "settings": {},
+                                                                "type": "inputSwitch"
+                                                            }
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                                    },
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.borders.bordersStyle",
+                                                                "options": "functions.getBordersStyleOptions",
+                                                                "property": "styles.border.border-style",
+                                                                "settings": {
+                                                                    "disabledCondition": "functions.bordersAreDisabled",
+                                                                    "translateLabels": true,
+                                                                    "watchers": ["styles.borders"]
+                                                                },
+                                                                "type": "dropdown"
+                                                            },
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-column kn-flex-2 p-mt-4 p-mx-2",
+                                                                "label": "dashboard.widgetEditor.borders.bordersThickness",
+                                                                "property": "styles.border.border-width",
+                                                                "settings": {
+                                                                    "disabledCondition": "functions.bordersAreDisabled",
+                                                                    "hint": "dashboard.widgetEditor.borders.bordersThicknessHint",
+                                                                    "watchers": ["styles.borders"]
+                                                                },
+                                                                "type": "inputText"
+                                                            },
+                                                            {
+                                                                "cssClass": "kn-flex-2 p-m-3",
+                                                                "label": "dashboard.widgetEditor.borders.bordersColor",
+                                                                "property": "styles.border.border-color",
+                                                                "settings": {
+                                                                    "disabledCondition": "functions.bordersAreDisabled",
+                                                                    "onUpdate": "functions.updateBordersColor",
+                                                                    "watchers": ["styles.borders"]
+                                                                },
+                                                                "type": "colorPicker"
+                                                            }
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                                    },
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-column kn-flex p-m-3",
+                                                                "label": "dashboard.widgetEditor.borders.borderRadiusTopLeft",
+                                                                "property": "styles.border.border-top-left-radius",
+                                                                "settings": {
+                                                                    "disabledCondition": "functions.bordersAreDisabled",
+                                                                    "hint": "dashboard.widgetEditor.borders.borderRadiusHint",
+                                                                    "watchers": ["styles.borders"]
+                                                                },
+                                                                "type": "inputText"
+                                                            },
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-column kn-flex p-m-3",
+                                                                "label": "dashboard.widgetEditor.borders.borderRadiusTopRight",
+                                                                "property": "styles.border.border-top-right-radius",
+                                                                "settings": {
+                                                                    "disabledCondition": "functions.bordersAreDisabled",
+                                                                    "hint": "dashboard.widgetEditor.borders.borderRadiusHint",
+                                                                    "watchers": ["styles.borders"]
+                                                                },
+                                                                "type": "inputText"
+                                                            },
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-column kn-flex p-m-3",
+                                                                "label": "dashboard.widgetEditor.borders.borderRadiusBottomLeft",
+                                                                "property": "styles.border.border-bottom-left-radius",
+                                                                "settings": {
+                                                                    "disabledCondition": "functions.bordersAreDisabled",
+                                                                    "hint": "dashboard.widgetEditor.borders.borderRadiusHint",
+                                                                    "watchers": ["styles.borders"]
+                                                                },
+                                                                "type": "inputText"
+                                                            },
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-column kn-flex p-m-3",
+                                                                "label": "dashboard.widgetEditor.borders.borderRadiusBottomRight",
+                                                                "property": "styles.border.border-bottom-right-radius",
+                                                                "settings": {
+                                                                    "disabledCondition": "functions.bordersAreDisabled",
+                                                                    "hint": "dashboard.widgetEditor.borders.borderRadiusHint",
+                                                                    "watchers": ["styles.borders"]
+                                                                },
+                                                                "type": "inputText"
+                                                            }
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                                    }
+                                                ],
+                                                "title": "dashboard.widgetEditor.borders.title"
+                                            }
+                                        ],
+                                        "settings": {},
+                                        "type": "accordion"
+                                    }
+                                ],
+                                "containerClasess": "p-m-2"
                             }
                         ]
                     }
@@ -312,7 +436,7 @@
                                                                                         "type": "reorderIcon"
                                                                                     },
                                                                                     {
-                                                                                        "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                                                                                        "cssClass": "p-d-flex p-flex-column kn-flex-3 p-m-2",
                                                                                         "label": "common.columns",
                                                                                         "options": "functions.getDatasetColumns",
                                                                                         "property": "column",
@@ -324,7 +448,7 @@
                                                                                         "type": "dropdown"
                                                                                     },
                                                                                     {
-                                                                                        "cssClass": "p-d-flex p-flex-column kn-flex-1 p-m-2",
+                                                                                        "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
                                                                                         "label": "common.condition",
                                                                                         "options": "functions.getColumnConditionOptions",
                                                                                         "property": "condition",
@@ -350,14 +474,13 @@
                                                                                     },
                                                                                     {
                                                                                         "cssClass": "kn-flex p-m-2",
-                                                                                        "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                         "label": "dashboard.widgetEditor.conditionalStyle.compareValue",
                                                                                         "property": "compareValue",
                                                                                         "settings": {
                                                                                             "disabledCondition": "functions.rowThresholdsIsDisabled",
+                                                                                            "onUpdate": "functions.updateThresholdListItem",
                                                                                             "visible": "functions.compareValueInputTextIsVisible",
-                                                                                            "watchers": ["settings.rowThresholds.enabled"],
-                                                                                            "onUpdate": "functions.updateThresholdListItem"
+                                                                                            "watchers": ["settings.rowThresholds.enabled"]
                                                                                         },
                                                                                         "type": "inputText"
                                                                                     },
@@ -409,7 +532,7 @@
                                                                             {
                                                                                 "components": [
                                                                                     {
-                                                                                        "cssClasess": "kn-flex",
+                                                                                        "cssClass": "kn-flex",
                                                                                         "icons": [
                                                                                             {
                                                                                                 "class": "fas fa-bold",
@@ -517,7 +640,8 @@
                                         "settings": {},
                                         "type": "accordion"
                                     }
-                                ]
+                                ],
+                                "containerClasess": "p-m-2"
                             }
                         ]
                     }

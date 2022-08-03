@@ -24,7 +24,7 @@ const tableWidgetFunctions = {
     removeColumn: (column: IWidgetColumn, model: IWidget) => {
         const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
         if (index !== -1) {
-            console.log('TEEEEEEEEEEEEEEEEEEEEEEEST: ', column.name, ' === ', model.temp.selectedColumn.name)
+
             // TODO - remove selected column when removed from table
             if (column.name === model.temp.selectedColumn.name) model.temp.selectedColumn = null
             model.columns.splice(index, 1)
@@ -286,7 +286,17 @@ const tableWidgetFunctions = {
     },
     multiselectableColorIsDisabled: (model: IWidget) => {
         return !model?.settings.multiselectable
-    }
+    },
+    getBordersStyleOptions: () => {
+        return descriptor.bordersStyleOptions
+    },
+    bordersAreDisabled: (model: IWidget) => {
+        return !model?.styles.borders
+    },
+    updateBordersColor: (model: IWidget, newColor: string) => {
+        if (!model.styles.border) return
+        model.styles.border['border-color'] = newColor
+    },
 }
 
 function createNewWidgetColumn(eventData: any) {
@@ -313,11 +323,13 @@ function createNewWidgetColumn(eventData: any) {
 
 export function formatTableWidgetForSave(widget: IWidget) {
     if (!widget) return
-    console.log("formatTableWidgetForSave: ", widget)
+
     formatTablePagination(widget.settings.pagination)
     formatTableSelectedColumns(widget.columns)
     formatWidgetDatasetKeysArray(widget)
+    formatRowHeaderSettings(widget)
     formatRowStyleSettings(widget)
+    formatBorderSettings(widget)
 }
 
 function formatTablePagination(pagination: { enabled: boolean, itemsNumber: string | number }) {
@@ -351,6 +363,22 @@ function formatColumnTooltipSettings(column: IWidgetColumn) {
     }
 }
 
+function formatRowHeaderSettings(widget: IWidget) {
+    if (!widget.styles.th.enbaled) {
+        widget.styles.th = {
+            'background-color': '',
+            color: '',
+            'justify-content': '',
+            'font-size': '',
+            multiline: false,
+            height: 0,
+            'font-style': '',
+            'font-weight': '',
+            'font-family': ''
+        }
+    }
+}
+
 function formatRowStyleSettings(widget: IWidget) {
     if (widget.styles.tr.height) widget.styles.tr.height = +widget.styles.tr.height
     if (!widget.settings.multiselectable) widget.settings.multiselectablecolor = ''
@@ -362,6 +390,21 @@ function formatRowStyleSettings(widget: IWidget) {
     if (widget.settings.alternateRows.evenRowsColor && typeof widget.settings.alternateRows.evenRowsColorr !== 'string') widget.settings.alternateRows.evenRowsColor = formatRGBColor(widget.settings.alternateRows.evenRowsColor)
     if (widget.settings.alternateRows.oddRowsColor && typeof widget.settings.alternateRows.oddRowsColor !== 'string') widget.settings.alternateRows.oddRowsColor = formatRGBColor(widget.settings.alternateRows.oddRowsColor)
     if (widget.settings.norows.hide) widget.settings.norows.message = ''
+}
+
+function formatBorderSettings(widget: IWidget) {
+    if (!widget.styles.borders) {
+        widget.styles.border = {
+            "border-top-left-radius": "",
+            "border-top-right-radius": "",
+            "border-bottom-left-radius": "",
+            "border-bottom-right-radius": "",
+            "border-color": "",
+            "border-width": "",
+            "border-style": ""
+        }
+    }
+    if (widget.styles.border['border-color'] && typeof widget.styles.border['border-color'] !== 'string') widget.styles.border['border-color'] = formatRGBColor(widget.styles.border['border-color'])
 }
 
 export default tableWidgetFunctions

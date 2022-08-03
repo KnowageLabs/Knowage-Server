@@ -1,4 +1,22 @@
 {
+    "bordersStyleOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.solid",
+            "value": "solid"
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.dashed",
+            "value": "dashed"
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.dotted",
+            "value": "dotted"
+        }
+    ],
     "cellAlignmentOptions": [
         {
             "label": "",
@@ -161,19 +179,19 @@
     ],
     "visualizationTypeOptions": [
         {
-            "label": "Chart",
+            "label": "dashboard.widgetEditor.visualizationOptions.chart",
             "value": "Chart"
         },
         {
-            "label": "Text",
+            "label": "common.text",
             "value": "Text"
         },
         {
-            "label": "Text & Chart",
+            "label": "dashboard.widgetEditor.visualizationOptions.textAndChart",
             "value": "Text & Chart"
         },
         {
-            "label": "Icon only",
+            "label": "dashboard.widgetEditor.visualizationOptions.iconOnly",
             "value": "Icon only"
         }
     ]
