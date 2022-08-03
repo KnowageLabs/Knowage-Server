@@ -31,7 +31,7 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @media screen and (max-width: 1199px) {
     #dataset-editor-preview {
         -webkit-transition: width 0.3s;

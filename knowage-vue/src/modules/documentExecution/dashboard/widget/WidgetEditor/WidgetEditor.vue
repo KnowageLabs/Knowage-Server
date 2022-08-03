@@ -8,10 +8,10 @@
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="close" />
                 </template>
             </Toolbar>
-            <!-- <div class="datasetEditor-container"> -->
-            <WidgetEditorTabs class="datasetEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="onDatasetSelected" />
-            <WidgetEditorPreview :propWidget="widget" />
-            <!-- </div> -->
+            <div class="datasetEditor-container kn-overflow">
+                <WidgetEditorTabs class="datasetEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="onDatasetSelected" />
+                <WidgetEditorPreview id="widget-editor-preview" :propWidget="widget" />
+            </div>
         </div>
     </Teleport>
 </template>
@@ -133,19 +133,18 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
-.widgetEditor {
-    height: 100vh;
-    width: 100%;
-    top: 0;
-    left: 0;
-    background-color: white;
-    position: absolute;
-    z-index: 999;
-    display: flex;
-    flex-direction: column;
-    .widgetEditor-container {
-        flex: 1;
-        display: flex;
+@media screen and (max-width: 1199px) {
+    #widget-editor-preview {
+        -webkit-transition: width 0.3s;
+        transition: flex 0.3s;
+        flex: 0;
+    }
+}
+@media screen and (min-width: 1200px) {
+    #widget-editor-preview {
+        -webkit-transition: width 0.3s;
+        transition: flex 0.3s;
+        flex: 0.5;
     }
 }
 </style>

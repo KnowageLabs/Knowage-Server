@@ -1,7 +1,8 @@
 <template>
-    <div class="widgetEditor-preview">
-        Preview
-        {{ propWidget }}
+    <div class="datasetEditor-preview">
+        <DataTable :value="rows" class="p-datatable-sm kn-table" style="height: unset !important" stripedRows rowHover>
+            <Column v-for="col of columns" :field="col.name" :header="col.header" :key="col.dataIndex" class="kn-truncated" />
+        </DataTable>
     </div>
 </template>
 
@@ -10,23 +11,36 @@
  * ! this component will be in charge of managing the widget editing preview.
  */
 import { defineComponent } from 'vue'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import mock from '../../dataset/DatasetEditorTestMocks.json'
 
 export default defineComponent({
     name: 'widget-editor-preview',
+    components: { Column, DataTable },
     props: {
         propWidget: {
             required: true,
             type: Object
         }
+    },
+    data() {
+        return {
+            mock,
+            columns: [] as any,
+            rows: [] as any
+        }
+    },
+    created() {
+        this.setDatatableData()
+    },
+    methods: {
+        setDatatableData() {
+            this.mock.previewMock.metaData.fields.forEach((el: any) => {
+                typeof el != 'object' ? '' : this.columns.push(el)
+            })
+            this.rows = this.mock.previewMock.rows
+        }
     }
 })
 </script>
-<style lang="scss">
-.widgetEditor-preview {
-    border-left: 1px solid #ccc;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-</style>
