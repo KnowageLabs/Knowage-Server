@@ -10,7 +10,7 @@
             </Toolbar>
             <!-- <div class="datasetEditor-container"> -->
             <WidgetEditorTabs class="datasetEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="onDatasetSelected" />
-            <!-- <WidgetEditorPreview :propWidget="widget" /> -->
+            <WidgetEditorPreview :propWidget="widget" />
             <!-- </div> -->
         </div>
     </Teleport>

@@ -286,7 +286,17 @@ const tableWidgetFunctions = {
     },
     multiselectableColorIsDisabled: (model: IWidget) => {
         return !model?.settings.multiselectable
-    }
+    },
+    getBordersStyleOptions: () => {
+        return descriptor.bordersStyleOptions
+    },
+    bordersAreDisabled: (model: IWidget) => {
+        return !model?.styles.borders
+    },
+    updateBordersColor: (model: IWidget, newColor: string) => {
+        if (!model.styles.border) return
+        model.styles.border['border-color'] = newColor
+    },
 }
 
 function createNewWidgetColumn(eventData: any) {
@@ -318,6 +328,7 @@ export function formatTableWidgetForSave(widget: IWidget) {
     formatTableSelectedColumns(widget.columns)
     formatWidgetDatasetKeysArray(widget)
     formatRowStyleSettings(widget)
+    formatBorderSettings(widget)
 }
 
 function formatTablePagination(pagination: { enabled: boolean, itemsNumber: string | number }) {
@@ -362,6 +373,21 @@ function formatRowStyleSettings(widget: IWidget) {
     if (widget.settings.alternateRows.evenRowsColor && typeof widget.settings.alternateRows.evenRowsColorr !== 'string') widget.settings.alternateRows.evenRowsColor = formatRGBColor(widget.settings.alternateRows.evenRowsColor)
     if (widget.settings.alternateRows.oddRowsColor && typeof widget.settings.alternateRows.oddRowsColor !== 'string') widget.settings.alternateRows.oddRowsColor = formatRGBColor(widget.settings.alternateRows.oddRowsColor)
     if (widget.settings.norows.hide) widget.settings.norows.message = ''
+}
+
+function formatBorderSettings(widget: IWidget) {
+    if (!widget.styles.borders) {
+        widget.styles.border = {
+            "border-top-left-radius": "",
+            "border-top-right-radius": "",
+            "border-bottom-left-radius": "",
+            "border-bottom-right-radius": "",
+            "border-color": "",
+            "border-width": "",
+            "border-style": ""
+        }
+    }
+    if (widget.styles.border['border-color'] && typeof widget.styles.border['border-color'] !== 'string') widget.styles.border['border-color'] = formatRGBColor(widget.styles.border['border-color'])
 }
 
 export default tableWidgetFunctions

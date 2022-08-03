@@ -1,4 +1,22 @@
 {
+    "bordersStyleOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "Solid",
+            "value": "Solid"
+        },
+        {
+            "label": "Dashed",
+            "value": "Dashed"
+        },
+        {
+            "label": "Dotted",
+            "value": "Dotted"
+        }
+    ],
     "cellAlignmentOptions": [
         {
             "label": "",

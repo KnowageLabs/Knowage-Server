@@ -338,6 +338,19 @@
         },
         "widgetEditor": {
             "addWidget": "Add widget",
+            "borders": {
+                "borderRadiusBottomLeft": "Border radius bottom left",
+                "borderRadiusBottomRight": "Border radius bottom right",
+                "borderRadiusHint": "use px measure unit, ie: 5px",
+                "borderRadiusTopLeft": "Border radius top left",
+                "borderRadiusTopRight": "Border radius top right",
+                "bordersColor": "Borders Color",
+                "bordersStyle": "Borders Style",
+                "bordersThickness": "Borders Thickness",
+                "bordersThicknessHint": "px, rem or % measure units are available",
+                "enableBorders": "Enable Borders",
+                "title": "Borders"
+            },
             "columnDetails": "Column Details",
             "conditionalStyle": {
                 "compareValue": "Compare value",
