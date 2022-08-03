@@ -30,7 +30,7 @@
 		var ng = $window.parent.angular 
 			|| $window.parent.parent.angular; // coming from cockpit DocumentWidget
 		
-		if(ng && $window.frameElement!=null) {
+		if(ng && $window.frameElement!=null && !$window.frameElement.classList.contains('crossNavigationDialogIframe')) {
 //			return ng.element($window.frameElement).scope().$parent.$parent;
 			var scope = ng.element($window.frameElement).scope();
 			if(scope && scope.$parent && scope.$parent.$parent) {
@@ -41,7 +41,11 @@
 		
 		} else if(ng ){ // coming from cockpit DocumentWidget
 //			var scope = ng.element($window.parent.parent.frameElement).scope().$parent;
-			var scope = ng.element($window.parent.parent.frameElement).scope();
+			if($window.frameElement.classList.contains('crossNavigationDialogIframe')) {
+				ng = $window.parent.angular
+				return ng.element($window.parent.frameElement).scope().$$childHead;
+			}
+			else var scope = ng.element($window.parent.parent.frameElement).scope();
 			
 			if(scope && scope.$parent) {
 				var scopeParent = scope.$parent;

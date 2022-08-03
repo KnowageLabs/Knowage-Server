@@ -1088,10 +1088,10 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 
 					// if destination document is specified don't ask
 					if(crossSettings.crossName != undefined){
-						parent.execExternalCrossNavigation(outputParameter,{},crossSettings.crossName,null,otherOutputParameters);
+						parent.execExternalCrossNavigation(outputParameter,{},crossSettings.crossName,cockpitModule_properties.DOCUMENT_LABEL,otherOutputParameters);
 					}
 					else{
-						parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
+						parent.execExternalCrossNavigation(outputParameter,{},null,cockpitModule_properties.DOCUMENT_LABEL,otherOutputParameters);
 					}
 					return;
 				}
