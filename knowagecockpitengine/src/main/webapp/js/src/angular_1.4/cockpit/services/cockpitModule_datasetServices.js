@@ -1228,7 +1228,11 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 			if (parameters.hasOwnProperty(parameter)){
 				if (parameters[parameter] == null || parameters[parameter] == undefined) {
 					output += delim + "\"" + parameter + "\":null";
-				}else{
+				}
+				else if (!cockpitModule_properties.PARAMETERS[parameter].multiValue){
+					output += delim + "\"" + parameter + "\":"+ "\""+parameters[parameter]+ "\"";
+				}
+				else{
 //					var tempJSN = JSON.stringify(parameters[parameter]);
 					var tempJSN = '"';
 					if(Array.isArray(parameters[parameter])) {
