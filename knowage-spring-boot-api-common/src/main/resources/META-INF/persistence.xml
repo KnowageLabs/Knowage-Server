@@ -24,8 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		<non-jta-data-source>java:comp/env/jdbc/knowage</non-jta-data-source>
 
-		<class>it.eng.knowage.knowageapi.dao.dto.SbiConfig</class>
-		<class>it.eng.knowage.knowageapi.dao.dto.SbiDomains</class>
+		<class>it.eng.knowage.boot.dao.dto.SbiConfig</class>
 
 	</persistence-unit>
 

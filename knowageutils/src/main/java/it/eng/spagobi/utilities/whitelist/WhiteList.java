@@ -89,7 +89,27 @@ public class WhiteList implements IWhiteList {
 
 	@Override
 	public List<String> getRelativePaths() {
-		return getProperties("relativepath");
+		List<String> ret = getProperties("relativepath");
+
+		ret.add("/knowage");
+		ret.add("/knowage-api");
+		ret.add("/knowagebirtreportengine");
+		ret.add("/knowagecockpitengine");
+		ret.add("/knowagecommonjengine");
+		ret.add("/knowage-data-preparation");
+		ret.add("/knowagedossierengine");
+		ret.add("/knowagegeoreportengine");
+		ret.add("/knowagejasperreportengine");
+		ret.add("/knowagekpiengine");
+		ret.add("/knowagemeta");
+		ret.add("/knowageqbeengine");
+		ret.add("/knowagesdk");
+		ret.add("/knowagesvgviewerengine");
+		ret.add("/knowagetalendengine");
+		ret.add("/knowage-vue");
+		ret.add("/knowagewhatifengine");
+
+		return ret;
 	}
 
 	@Override

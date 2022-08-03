@@ -40,6 +40,7 @@ export default defineComponent({
         transition: background-color 0.3s cubic-bezier(0.445, 0.05, 0.55, 0.95);
         &:hover {
             background-color: var(--kn-button-fab-hover-background-color);
+            color: var(--kn-button-fab-hover-color);
             box-shadow: 0px 5px 5px -3px rgba(black, 0.2), 0px 8px 10px 1px rgba(black, 0.14), 0px 3px 14px 2px rgba(black, 0.12);
         }
         &:active {

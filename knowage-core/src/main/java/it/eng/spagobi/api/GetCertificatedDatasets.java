@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -43,6 +45,7 @@ import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -313,8 +316,15 @@ public class GetCertificatedDatasets {
 		List<Integer> categories = new ArrayList<Integer>();
 		try {
 			// NO CATEGORY IN THE DOMAINS
-			IDomainDAO domaindao = DAOFactory.getDomainDAO();
-			List<Domain> dialects = domaindao.loadListDomainsByType("CATEGORY_TYPE");
+			IDomainDAO domainDao = DAOFactory.getDomainDAO();
+			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+
+			// TODO : Makes sense?
+			List<Domain> dialects = categoryDao.getCategoriesForDataset()
+				.stream()
+				.map(Domain::fromCategory)
+				.collect(toList());
+
 			if (dialects == null || dialects.size() == 0) {
 				return null;
 			}
@@ -328,7 +338,10 @@ public class GetCertificatedDatasets {
 
 				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
 				List<RoleMetaModelCategory> resp = new ArrayList<>();
-				List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType("CATEGORY_TYPE");
+				List<Domain> array = categoryDao.getCategoriesForDataset()
+						.stream()
+						.map(Domain::fromCategory)
+						.collect(toList());
 				for (RoleMetaModelCategory r : aRoleCategories) {
 					for (Domain dom : array) {
 						if (r.getCategoryId().equals(dom.getValueId())) {

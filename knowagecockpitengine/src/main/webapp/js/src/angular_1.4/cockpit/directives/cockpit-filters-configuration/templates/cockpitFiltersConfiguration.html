@@ -1,7 +1,7 @@
 <md-content class="filters" layout="column" layout-fill ng-cloak>
 	<md-card ng-if="ngModelShared.filters!=undefined" >
 		<md-card-content layout="column" class="noPadding">
-			<div layout="row" layout-align="center center" ng-show="ngModelShared.type != 'static-pivot-table' || ngModelShared.limitRows.enable == true" layout-padding>
+			<div layout="row" layout-align="center center" ng-show="(ngModelShared.type != 'static-pivot-table' && ngModelShared.type != 'html') || ngModelShared.limitRows.enable == true" layout-padding>
 				<md-switch ng-model="ngModelShared.limitRows.enable" aria-label="Limit rows">
 					{{translate.load("sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.limitrows")}} &nbsp;
 				</md-switch>

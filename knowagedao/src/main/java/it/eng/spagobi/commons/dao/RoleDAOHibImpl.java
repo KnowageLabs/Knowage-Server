@@ -49,6 +49,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
 import it.eng.spagobi.commons.dao.es.NoEventEmitting;
 import it.eng.spagobi.commons.dao.es.RoleEventsEmittingCommand;
 import it.eng.spagobi.commons.metadata.SbiAuthorizations;
@@ -1245,11 +1246,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 			SbiExtRoles hibRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleId);
 
-			SbiDomains category = (SbiDomains) aSession.load(SbiDomains.class, categoryId);
+			SbiCategory category = (SbiCategory) aSession.load(SbiCategory.class, categoryId);
 
-			Set<SbiDomains> metaModelCategories = hibRole.getSbiMetaModelCategories();
+			Set<SbiCategory> metaModelCategories = hibRole.getSbiMetaModelCategories();
 			if (metaModelCategories == null) {
-				metaModelCategories = new HashSet<SbiDomains>();
+				metaModelCategories = new HashSet<>();
 			}
 			metaModelCategories.add(category);
 			hibRole.setSbiMetaModelCategories(metaModelCategories);
@@ -1297,15 +1298,15 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 			SbiExtRoles hibRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleId);
 
-			SbiDomains category = (SbiDomains) aSession.load(SbiDomains.class, categoryId);
+			SbiCategory category = (SbiCategory) aSession.load(SbiCategory.class, categoryId);
 
-			Set<SbiDomains> metaModelCategories = hibRole.getSbiMetaModelCategories();
+			Set<SbiCategory> metaModelCategories = hibRole.getSbiMetaModelCategories();
 			if (metaModelCategories != null) {
 				if (metaModelCategories.contains(category)) {
 					metaModelCategories.remove(category);
 					hibRole.setSbiMetaModelCategories(metaModelCategories);
 				} else {
-					LOGGER.debug("Category " + category.getValueNm() + " is not associated to the role " + hibRole.getName());
+					LOGGER.debug("Category " + category.getName() + " is not associated to the role " + hibRole.getName());
 				}
 
 			}
@@ -1350,12 +1351,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 			SbiExtRoles sbiExtRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleId);
 			Integer extRoleId = sbiExtRole.getExtRoleId();
-			Set<SbiDomains> sbiDomains = sbiExtRole.getSbiMetaModelCategories();
+			Set<SbiCategory> categoriesAsSet = sbiExtRole.getSbiMetaModelCategories();
 
 			// For each category associated to the role
-			for (SbiDomains sbiDomain : sbiDomains) {
+			for (SbiCategory currCategoryFromSet : categoriesAsSet) {
 				RoleMetaModelCategory category = new RoleMetaModelCategory();
-				category.setCategoryId(sbiDomain.getValueId());
+				category.setCategoryId(currCategoryFromSet.getId());
 				category.setRoleId(extRoleId);
 				categories.add(category);
 			}
@@ -1432,7 +1433,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				Criteria c = session.createCriteria(SbiExtRoles.class);
 				c.add(Restrictions.in("name", roles));
 				c.createAlias("sbiMetaModelCategories", "_sbiMetaModelCategories");
-				c.setProjection(Property.forName("_sbiMetaModelCategories.valueId"));
+				c.setProjection(Property.forName("_sbiMetaModelCategories.id"));
 				return c.list();
 			}
 		});

@@ -39,10 +39,10 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
- * The Class QbeEngineStartAction.
- *
  * @author Andrea Gioia
+ * @deprecated Replaced by {@link QbeEngineStartResource}
  */
+@Deprecated
 public class QbeEngineStartAction extends AbstractEngineStartAction {
 
 	// INPUT PARAMETERS

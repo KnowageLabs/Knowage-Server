@@ -60,6 +60,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCPostgreSQLDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCRedShiftDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCSpannerDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCSynapseDataSet;
@@ -491,8 +492,8 @@ public class DataSetFactory {
 			try {
 
 				if (sbiDataSet.getCategory() != null) {
-					ds.setCategoryCd(sbiDataSet.getCategory().getValueCd());
-					ds.setCategoryId(sbiDataSet.getCategory().getValueId());
+					ds.setCategoryCd(sbiDataSet.getCategory().getCode());
+					ds.setCategoryId(sbiDataSet.getCategory().getId());
 				}
 				// ds.setConfiguration(sbiDataSet.getConfiguration());
 				if (sbiDataSet.getId().getDsId() != null)
@@ -841,6 +842,8 @@ public class DataSetFactory {
 				ds = new JDBCSynapseDataSet();
 			} else if (dialectToLowerCase.contains("Spanner")) {
 				ds = new JDBCSpannerDataSet();
+			} else if (dialectToLowerCase.contains("postgres")) {
+				ds = new JDBCPostgreSQLDataSet();
 			}
 		}
 		return (ds != null) ? ds : new JDBCDataSet();
@@ -1094,8 +1097,8 @@ public class DataSetFactory {
 			try {
 
 				if (sbiDataSet.getCategory() != null) {
-					ds.setCategoryCd(sbiDataSet.getCategory().getValueCd());
-					ds.setCategoryId(sbiDataSet.getCategory().getValueId());
+					ds.setCategoryCd(sbiDataSet.getCategory().getCode());
+					ds.setCategoryId(sbiDataSet.getCategory().getId());
 				}
 				// ds.setConfiguration(sbiDataSet.getConfiguration());
 				if (sbiDataSet.getId().getDsId() != null)

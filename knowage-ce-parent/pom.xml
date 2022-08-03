@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.eng.knowage</groupId>
 	<artifactId>knowage-ce-parent</artifactId>
-	<version>8.1.0-SNAPSHOT</version>
+	<version>8.2.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>knowage-ce-parent</name>
 
@@ -90,6 +90,7 @@
 		<log4j.version>2.17.1</log4j.version>
 		<ojdbc.version>12.2.0.1</ojdbc.version>
 		<owasp-java-html-sanitizer.version>20220608.1</owasp-java-html-sanitizer.version>
+		<commons-lang3.version>3.12.0</commons-lang3.version>
 	</properties>
 
 	<modules>
@@ -424,6 +425,12 @@
 				<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
 				<artifactId>owasp-java-html-sanitizer</artifactId>
 				<version>${owasp-java-html-sanitizer.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${commons-lang3.version}</version>
 			</dependency>
 
 		</dependencies>

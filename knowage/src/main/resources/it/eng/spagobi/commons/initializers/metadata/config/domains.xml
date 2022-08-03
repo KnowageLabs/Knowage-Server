@@ -329,8 +329,6 @@
 	<DOMAIN valueCd="SPARQL" valueNm="SbiSPARQLDataSet" domainCd="DATA_SET_TYPE"
 		domainNm="Data Set Type" valueDs="SbiSPARQLDataSet" />
 		
-	<DOMAIN valueCd="Default Dataset Category" valueNm="Default Dataset Category" domainCd="CATEGORY_TYPE"
-		domainNm="Category Type" valueDs="Default Dataset Category" />
 	<DOMAIN valueCd="DEVELOPMENT" valueNm="sbidomains.permissiononfolder.nm.dev"
 		domainCd="PERMISSION_ON_FOLDER" domainNm="Permission on folder"
 		valueDs="sbidomains.permissiononfolder.ds.dev" />
@@ -393,8 +391,6 @@
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />
 	<DOMAIN valueCd="Timestamp" valueNm="Timestamp" domainCd="DS_META_VALUE"
 		domainNm="Data Set Metadata Value" valueDs="Data Set Metadata Value" />				
-	<DOMAIN valueCd="Default Model Category" valueNm="Default Model Category"
-		domainCd="BM_CATEGORY" domainNm="Category Meta Model" valueDs="Default Model Category" />
 
 	<DOMAIN valueCd="hierarchy" valueNm="hierarchy" domainCd="DS_META_PROPERTY"
 		domainNm="Data Set Metadata Property" valueDs="Data Set Metadata Property" />
@@ -602,10 +598,6 @@
 			
 	<DOMAIN valueCd="APDF" valueNm="APDF"
 		domainCd="EXPORT_TYPE" domainNm="Exporters types" valueDs="Export type" />				
-		
-	<DOMAIN valueCd="Default Layer Category" valueNm="Default Layer Category" domainCd="GEO_CATEGORY"
-		domainNm="Layer Category" valueDs="Default Layer Category" />
-			
 
 	<DOMAIN valueCd="Announcement" valueNm="sbidomains.news.announcement" 
 		domainCd="NEWS_TYPE" domainNm="News Type" valueDs="sbidomains.news.announcement"></DOMAIN>

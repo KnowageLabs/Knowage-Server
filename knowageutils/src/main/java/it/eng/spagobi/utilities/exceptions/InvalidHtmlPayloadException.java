@@ -23,6 +23,8 @@ import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 
 public class InvalidHtmlPayloadException extends SpagoBIRuntimeException {
 
+	private static final long serialVersionUID = 7238971352468593356L;
+
 	private final String serviceName = "";
 	private final String localizationCode = "10000";
 	private final String messageBundle = "MessageFiles.messages";
@@ -33,8 +35,6 @@ public class InvalidHtmlPayloadException extends SpagoBIRuntimeException {
 	}
 
 	private Locale locale = Locale.US;
-
-	private static final long serialVersionUID = 7238971352468593356L;
 
 	public InvalidHtmlPayloadException(String payload) {
 		super((Throwable) null);

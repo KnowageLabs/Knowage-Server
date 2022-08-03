@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,23 +11,13 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.catalogue.service;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.serializer.SerializationException;
-import it.eng.spagobi.commons.serializer.SerializerFactory;
-import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
-import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.service.JSONSuccess;
+import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,6 +28,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICategoryDAO;
+import it.eng.spagobi.commons.serializer.SerializationException;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.JSONSuccess;
+
 public class GetMetaModelsAction extends AbstractSpagoBIAction {
 
 	// logger component
@@ -46,7 +47,6 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	public static String FILTERS = "Filters";
-	public static String DOMAIN_TYPE = "BM_CATEGORY";
 
 	public static Integer START_DEFAULT = 0;
 	public static Integer LIMIT_DEFAULT = 15;
@@ -145,38 +145,37 @@ public class GetMetaModelsAction extends AbstractSpagoBIAction {
 	}
 
 	protected Integer getCategoryIdbyName(String categoryName) {
-		IDomainDAO domaindao;
-		try {
+		ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+		List<Domain> domains = categoryDao.getCategoriesForBusinessModel()
+			.stream()
+			.map(Domain::fromCategory)
+			.collect(toList());
 
-			domaindao = DAOFactory.getDomainDAO();
-			List<Domain> domains = domaindao.loadListDomainsByType(DOMAIN_TYPE);
-			for (Domain domainElement : domains) {
-				if (domainElement.getValueName().equals(categoryName)) {
-					return domainElement.getValueId();
-				}
+		for (Domain domainElement : domains) {
+			if (domainElement.getValueName().equals(categoryName)) {
+				return domainElement.getValueId();
 			}
-		} catch (EMFUserError e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot get Business Model Category Id", e);
 		}
+
 		return null;
 
 	}
 
 	protected List<Integer> getCategoryIdbyContainsName(String categoryName) {
-		IDomainDAO domaindao;
 		List<Integer> categoryIds = new ArrayList<Integer>();
-		try {
 
-			domaindao = DAOFactory.getDomainDAO();
-			List<Domain> domains = domaindao.loadListDomainsByType(DOMAIN_TYPE);
-			for (Domain domainElement : domains) {
-				if (domainElement.getValueName().contains(categoryName)) {
-					categoryIds.add(domainElement.getValueId());
-				}
+		ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
+		List<Domain> domains = categoryDao.getCategoriesForBusinessModel()
+			.stream()
+			.map(Domain::fromCategory)
+			.collect(toList());
+
+		for (Domain domainElement : domains) {
+			if (domainElement.getValueName().contains(categoryName)) {
+				categoryIds.add(domainElement.getValueId());
 			}
-		} catch (EMFUserError e) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot get Business Model Category Id", e);
 		}
+
 		return categoryIds;
 
 	}

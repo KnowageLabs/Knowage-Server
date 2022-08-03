@@ -69,6 +69,36 @@
             }
         ]
     },
+    "menu": {
+        "label": "main menu",
+        "properties": [
+            {
+                "key": "--kn-mainmenu-width",
+                "label": "Menu Width",
+                "type": "text"
+            },
+            {
+                "key": "--kn-mainmenu-background-color",
+                "label": "Menu Background Color",
+                "type": "color"
+            },
+            {
+                "key": "--kn-mainmenu-hover-background-color",
+                "label": "Menu Background Hover Color",
+                "type": "color"
+            },
+            {
+                "key": "--kn-mainmenu-highlight-color",
+                "label": "Menu Highlight Color",
+                "type": "color"
+            },
+            {
+                "key": "--kn-mainmenu-icon-color",
+                "label": "Menu Icons Color",
+                "type": "color"
+            }
+        ]
+    },
     "messages": {
         "label": "messages",
         "properties": [
