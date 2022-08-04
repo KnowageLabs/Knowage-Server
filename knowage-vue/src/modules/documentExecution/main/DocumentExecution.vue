@@ -1115,7 +1115,7 @@ export default defineComponent({
             this.documentMode = 'VIEW'
         },
         addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
-            if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument.navigationParams) return
+            if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
             const keys = Object.keys(angularData.outputParameters)
             const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
             for (let i = 0; i < keys.length; i++) {
