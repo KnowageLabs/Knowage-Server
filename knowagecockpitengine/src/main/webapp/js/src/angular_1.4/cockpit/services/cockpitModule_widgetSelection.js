@@ -142,7 +142,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 						}
 					}
 				}
-
+				else if(col.fieldType == "MEASURE" && ngModel.content.chartTemplate && ngModel.content.chartTemplate.CHART){
+					obj["orderType"] = col.orderType ? col.orderType : "";
+					}
 				// SUM is default but for attribute is meaningless
 				if(ngModel.type != "discovery" && (col.fieldType=="ATTRIBUTE" || col.fieldType=="SPATIAL_ATTRIBUTE") && col.aggregationSelected && col.aggregationSelected === 'SUM'){
 					obj["funct"] = 'NONE';
