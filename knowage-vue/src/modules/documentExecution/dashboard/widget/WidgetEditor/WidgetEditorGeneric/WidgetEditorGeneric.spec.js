@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 import mockedModel from './mockedModel'
 import Button from 'primevue/button'
-import Card from 'primevue/card'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import PrimeVue from 'primevue/config'
@@ -16,8 +15,6 @@ import WidgetEditorDropdown from './components/WidgetEditorDropdown.vue'
 import WidgetEditorAccordion from './components/WidgetEditorAccordion.vue'
 import WidgetEditorCheckbox from './components/WidgetEditorCheckbox.vue'
 import dataDescriptor from '../WidgetEditorDataTab/WidgetEditorGenericDescriptor.json'
-
-
 
 const factory = (widgetModel, propDescriptor) => {
     return mount(WidgetEditorGeneric, {
@@ -34,7 +31,6 @@ const factory = (widgetModel, propDescriptor) => {
             plugins: [createTestingPinia()],
             stubs: {
                 Button,
-                Card,
                 Column,
                 InputText,
                 Toolbar,

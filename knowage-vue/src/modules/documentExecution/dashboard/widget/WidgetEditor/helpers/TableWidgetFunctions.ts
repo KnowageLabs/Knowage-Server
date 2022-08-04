@@ -24,9 +24,7 @@ const tableWidgetFunctions = {
     removeColumn: (column: IWidgetColumn, model: IWidget) => {
         const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
         if (index !== -1) {
-
-            // TODO - remove selected column when removed from table
-            if (column.name === model.temp.selectedColumn.name) model.temp.selectedColumn = null
+            if (column.name === model.temp.selectedColumn?.name) model.temp.selectedColumn = null
             model.columns.splice(index, 1)
             emitter.emit('collumnRemoved', column)
         }
