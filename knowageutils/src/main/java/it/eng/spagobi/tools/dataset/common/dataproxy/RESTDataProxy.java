@@ -178,7 +178,6 @@ public class RESTDataProxy extends AbstractDataProxy {
 				if (val instanceof String) {
 					if (val != null && !val.equals("") && !val.equals("''")) {
 						String curval = (String) val;
-						curval = curval.replaceAll("'", "");
 						res.add(new NameValuePair(key, curval));
 					}
 				}
