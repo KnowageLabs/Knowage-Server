@@ -1,6 +1,6 @@
 <template>
     <div class="icon-container" :class="{ 'icon-disabled': disabled }">
-        <div id="color-picker-target" class="p-d-flex p-flex-row p-jc-center p-ai-center" @click="openAdditionalComponents">
+        <div id="color-picker-target" class="p-d-flex p-flex-row p-jc-center p-ai-center" v-tooltip.top="{ value: icon.tooltip ? $t(icon.tooltip) : '', disabled: !icon.tooltip }" @click="openAdditionalComponents">
             <i :class="[icon.class, active ? 'active-icon' : '']" class="widget-editor-icon kn-cursor-pointer p-mr-2" @click="onIconClicked(icon)"></i>
             <div v-show="icon.arrowDownIcon || icon.colorCircleIcon">
                 <div v-show="icon.colorCircleIcon" class="style-circle-icon" :style="{ 'background-color': newColor }"></div>

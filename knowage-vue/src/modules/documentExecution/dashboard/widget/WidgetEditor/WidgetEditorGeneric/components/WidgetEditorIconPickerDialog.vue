@@ -9,9 +9,13 @@
         </template>
 
         <div class="widget-editor-icon-picker-content">
+            <div class="p-m-2">
+                <InputText class="p-inputtext p-component kn-material-input" v-model="searchWord" :placeholder="$t('common.search')" @input="filterIcons()" />
+            </div>
+
             <label class="kn-material-input-label p-my-3"> {{ $t('dashboard.widgetEditor.fontawesome') }}</label>
             <div class="widget-editor-icon-picker-icons-container">
-                <div v-for="(icon, index) in icons" :key="index" :class="{ 'widget-editor-selected-icon-container': selectedIcon?.value === icon.value }" class="widget-editor-icon-container kn-cursor-pointer" @click.stop="setSelectedIcon(icon)">
+                <div v-for="(icon, index) in filteredIcons" :key="index" :class="{ 'widget-editor-selected-icon-container': selectedIcon?.value === icon.value }" class="widget-editor-icon-container kn-cursor-pointer" @click.stop="setSelectedIcon(icon)">
                     <i :class="'fas fa-' + icon.name"></i>
                 </div>
             </div>
@@ -41,7 +45,9 @@ export default defineComponent({
         return {
             descriptor,
             icons: [] as IIcon[],
-            selectedIcon: null as IIcon | null
+            filteredIcons: [] as IIcon[],
+            selectedIcon: null as IIcon | null,
+            searchWord: ''
         }
     },
     async created() {
@@ -51,6 +57,7 @@ export default defineComponent({
     methods: {
         loadIcons() {
             this.icons = iconsList
+            this.filteredIcons = this.icons ? [...this.icons] : []
         },
         getSelectedIcon() {
             if (!this.settings.initialValue) return
@@ -75,6 +82,17 @@ export default defineComponent({
         save() {
             this.$emit('save', { ...this.selectedIcon })
             this.selectedIcon = null
+        },
+        filterIcons() {
+            setTimeout(() => {
+                if (!this.searchWord.trim().length) {
+                    this.filteredIcons = [...this.icons] as IIcon[]
+                } else {
+                    this.filteredIcons = this.filteredIcons.filter((icon: IIcon) => {
+                        return icon.name?.toLowerCase().includes(this.searchWord.toLowerCase())
+                    })
+                }
+            }, 250)
         }
     }
 })
