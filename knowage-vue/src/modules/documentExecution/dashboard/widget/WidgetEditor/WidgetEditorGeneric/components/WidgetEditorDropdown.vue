@@ -73,6 +73,13 @@ export default defineComponent({
         },
         onChange() {
             this.$emit('change', this.modelValue)
+            this.callOnUpdateFunction()
+        },
+        callOnUpdateFunction() {
+            if (this.settings.onUpdate) {
+                const tempFunction = getModelProperty(this.widgetModel, this.settings.onUpdate, 'getValue', null)
+                if (tempFunction && typeof tempFunction === 'function') tempFunction(this.widgetModel)
+            }
         },
         fieldIsVisible() {
             if (!this.settings.visibilityCondition) return (this.visible = true)

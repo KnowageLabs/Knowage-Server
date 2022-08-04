@@ -362,7 +362,7 @@ function formatColumnTooltipSettings(column: IWidgetColumn) {
 }
 
 function formatRowHeaderSettings(widget: IWidget) {
-    if (!widget.styles.th.enbaled) {
+    if (!widget.styles.th.enabled) {
         widget.styles.th = {
             'background-color': '',
             color: '',
