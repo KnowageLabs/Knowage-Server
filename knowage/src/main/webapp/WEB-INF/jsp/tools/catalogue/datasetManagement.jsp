@@ -398,7 +398,7 @@ div.lower i  {
 					                  	
 					                  	<div class="">
 						                    <md-button 	ng-click="uploadFile();setFormDirty();" class="md-raised" 
-						                     			ng-disabled="!fileObj.fileName || (changingFile && selectedDataSet.fileName==fileObj.fileName)" 
+						                     			ng-disabled="!fileObj.fileName" 
 						                     			title="{{datasetWizStep1UploadButtonTitle()}}">
 				                     			{{translate.load("sbi.workspace.dataset.wizard.upload")}}
 			             					</md-button>
