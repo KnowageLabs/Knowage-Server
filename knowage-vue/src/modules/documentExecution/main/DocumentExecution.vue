@@ -1033,6 +1033,7 @@ export default defineComponent({
             this.filtersData = item.filtersData
             this.urlData = item.urlData
             this.hiddenFormData = item.hiddenFormData
+            this.documentMode = 'VIEW'
             this.updateMode()
         },
         async onRoleChange(role: string) {
@@ -1078,16 +1079,16 @@ export default defineComponent({
 
             const popupOptions = crossNavigationDocument?.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
 
-            if (crossNavigationDocument.crossType !== 2) {
+            if (crossNavigationDocument?.crossType !== 2) {
                 this.document = {
                     ...crossNavigationDocument?.document,
                     navigationParams: navigationParams
                 }
             }
 
-            if (crossNavigationDocument.crossType === 2) {
+            if (crossNavigationDocument?.crossType === 2) {
                 this.openCrossNavigationInNewWindow(popupOptions, crossNavigationDocument, navigationParams)
-            } else if (crossNavigationDocument.crossType === 1) {
+            } else if (crossNavigationDocument?.crossType === 1) {
                 const documentLabel = crossNavigationDocument?.document.label
                 this.crossNavigationContainerData = {
                     documentLabel: documentLabel,
@@ -1109,6 +1110,7 @@ export default defineComponent({
 
                 await this.loadPage()
             }
+            this.documentMode = 'VIEW'
         },
         openCrossNavigationInNewWindow(popupOptions: any, crossNavigationDocument: any, navigationParams: any) {
             if (!crossNavigationDocument || !crossNavigationDocument.document) return
@@ -1132,6 +1134,7 @@ export default defineComponent({
             }
         },
         getParameterValueForCrossNavigation(parameterLabel: string) {
+            if (!parameterLabel) return
             const index = this.filtersData.filterStatus?.findIndex((param: any) => param.label === parameterLabel)
             return index !== -1 ? this.filtersData.filterStatus[index].parameterValue[0].value : ''
         },

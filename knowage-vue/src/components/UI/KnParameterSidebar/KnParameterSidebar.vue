@@ -126,7 +126,7 @@
                         >
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
                     </div>
-                    <Dropdown v-if="!parameter.multivalue && parameter.parameterValue" class="kn-material-input" v-model="parameter.parameterValue[0]" :options="parameter.data" optionLabel="description" @change="updateDependency(parameter)" />
+                    <Dropdown v-if="!parameter.multivalue && parameter.parameterValue" class="kn-material-input" v-model="parameter.parameterValue[0].value" :options="parameter.data" optionValue="value" optionLabel="description" @change="onDropdownChange(parameter)" />
 
                     <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" optionLabel="description" @change="updateDependency(parameter)" />
                 </div>
@@ -682,6 +682,15 @@ export default defineComponent({
                 if (!parameter.value) parameter.value = parameter.defaultValue
                 this.qbeParameters.push(parameter)
             })
+        },
+        onDropdownChange(parameter: any) {
+            this.updateParameterDescriptionOnDropdownChange(parameter)
+            this.updateDependency(parameter)
+        },
+        updateParameterDescriptionOnDropdownChange(parameter: any) {
+            if (!parameter.parameterValue[0]) return
+            const index = parameter.data?.findIndex((el: { value: string; description: string }) => el.value === parameter.parameterValue[0].value)
+            if (index !== -1) parameter.parameterValue[0].description = parameter.data[index].description
         }
     }
 })
