@@ -1,9 +1,10 @@
 <template>
-    <div id="widget-card" class="p-m-2">
-        <div id="widget-card-icon-container">{{ widget.cssClass }}</div>
-        <div id="widget-card-detail-container">
-            <span>Title: {{ widget.name }}</span>
-            <!-- <span>Description: {{ widget.descKey }}</span> -->
+    <div class="p-m-2" :style="descriptor.style.widgetCard">
+        <div id="widget-card-icon-container" class="p-d-flex p-ai-center p-jc-center" :style="descriptor.style.cardIconContainer">
+            <i :class="widget.cssClass" :style="descriptor.style.mainIcon" />
+        </div>
+        <div class="p-d-flex p-flex-column p-ai-start p-jc-center">
+            <span class="p-ml-2">{{ widget.name }}</span>
         </div>
     </div>
 </template>
@@ -14,6 +15,7 @@
  */
 import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
+import descriptor from './WidgetPickerDescriptor.json'
 
 export default defineComponent({
     name: 'widget-picker-dialog',
@@ -22,7 +24,9 @@ export default defineComponent({
     inject: [],
     props: { widget: { required: true, type: Object } },
     data() {
-        return {}
+        return {
+            descriptor
+        }
     },
     created() {},
     computed: {},
@@ -30,26 +34,11 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-#widget-card {
-    border: 1px solid #cccccc;
-    width: 285px;
-    height: 100px;
-    display: flex;
-    transition: 0.5s ease;
-}
 #widget-card:hover {
     border-color: #43749e !important;
-    // border-color: #bbd6ed !important;
-}
-#widget-card-icon-container {
-    width: 100px;
-    border-right: 1px solid #cccccc;
-    background-color: #cccccc;
-    flex-shrink: 0;
-}
-#widget-card-detail-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+    #widget-card-icon-container {
+        border-color: #43749e !important;
+        transition: 0.5s ease;
+    }
 }
 </style>

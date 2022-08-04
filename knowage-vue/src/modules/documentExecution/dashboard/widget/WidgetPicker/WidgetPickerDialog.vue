@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="dialog-no-padding" :visible="visible" style="width: 60%" :modal="true" :closable="false">
+    <Dialog class="dialog-no-padding" :visible="visible" :style="descriptor.style.dialog" :modal="true" :closable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary kn-width-full">
                 <template #start>
@@ -11,7 +11,7 @@
             </Toolbar>
         </template>
 
-        <div id="widget-card-container" class="p-grid p-m-2">
+        <div id="widget-card-container" class="p-grid p-jc-center p-m-2">
             <WidgetCard v-for="(widget, index) in widgetTypes" :key="index" :widget="widget" @click="openWidgetEditor(widget)" />
         </div>
     </Dialog>
@@ -26,6 +26,7 @@ import { AxiosResponse } from 'axios'
 import { IWidgetPickerType } from '../../Dashboard'
 import Dialog from 'primevue/dialog'
 import WidgetCard from './WidgetPickerCard.vue'
+import descriptor from './WidgetPickerDescriptor.json'
 
 export default defineComponent({
     name: 'widget-picker-dialog',
@@ -35,6 +36,7 @@ export default defineComponent({
     props: {},
     data() {
         return {
+            descriptor,
             widgetTypes: [] as IWidgetPickerType[]
         }
     },
