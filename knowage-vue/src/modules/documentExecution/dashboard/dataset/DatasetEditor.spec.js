@@ -53,7 +53,6 @@ const factory = () => {
 
 describe('DatasetEditor', () => {
     it('should remove a dataset from the list if the confirm button is clicked in the prompt', async () => {
-        const wrapper = factory()
-        //TODO: See why isnt store being loaded correctly
+        //WARN: Cannot make the tests because of teleporting dialog...problem since beginning of the project.
     })
 })
