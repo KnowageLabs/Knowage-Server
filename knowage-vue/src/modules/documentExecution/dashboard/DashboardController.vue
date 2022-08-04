@@ -97,17 +97,21 @@ export default defineComponent({
         },
         openWidgetEditor(widget: IWidget) {
             this.selectedWidget = widget
-            this.widgetPickerVisible = false
-            this.widgetEditorVisible = true
+            this.setWidgetEditorToVisible()
         },
         openNewWidgetEditor(widget: any) {
             this.selectedWidget = { type: widget?.type, new: true }
+            this.setWidgetEditorToVisible()
+        },
+        setWidgetEditorToVisible() {
             this.widgetPickerVisible = false
             this.widgetEditorVisible = true
+            emitter.emit('widgetEditorOpened')
         },
         closeWidgetEditor() {
             this.widgetEditorVisible = false
             this.selectedWidget = null
+            emitter.emit('widgetEditorClosed')
         },
         closeDatasetEditor() {
             this.datasetEditorVisible = false
