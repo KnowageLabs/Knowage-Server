@@ -22,6 +22,10 @@
 
 package it.eng.spagobi.tools.dataset.service;
 
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,6 +49,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONObjectDeserializator;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
@@ -723,9 +728,24 @@ public class ManageDataSetsForREST {
 				String value = "";
 				if (multivalue) {
 
-					value = getMultiValueSolr(tempVal, type);
+					// WORKAROUND : the preview and the save dataset service have different format
+					List<Object> listValue = new ArrayList<>();
+
+					if (isNotEmpty(tempVal) && tempVal.startsWith("[") && tempVal.endsWith("]")) {
+						JSONArray arrayValue = new JSONArray(tempVal);
+
+						for (int j=0; j < arrayValue.length(); j++) {
+							listValue.add(arrayValue.get(j));
+						}
+					} else {
+						// TODO : Delete this branch when the format between preview and save dataset will be the same
+						listValue = Arrays.asList(tempVal.split(","));
+					}
+
+
+					value = getMultiValueForSolr(listValue, type);
 				} else {
-					value = getSingleValueREST(tempVal, type);
+					value = getSingleValueForSolr(tempVal, type);
 				}
 
 				logger.debug("name: " + name + " / value: " + value);
@@ -1476,6 +1496,8 @@ public class ManageDataSetsForREST {
 		String toReturn = "";
 		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
 
+			value = value.replace("'", "\\'");
+
 			if ((!(value.startsWith("'") && value.endsWith("'")))) {
 				toReturn = "'" + value + "'";
 			} else {
@@ -1512,51 +1534,11 @@ public class ManageDataSetsForREST {
 	 * @param type
 	 * @return
 	 */
-	static String getSingleValueSolr(String value, String type) {
+	static String getSingleValueForSolr(String value, String type) {
 		String toReturn = "";
 		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
 
-			if ((!(value.startsWith("'") && value.endsWith("'")))) {
-				toReturn = "\"" + value + "\"";
-			} else {
-				toReturn = value;
-			}
-
-		} else if (type.equalsIgnoreCase(DataSetUtilities.NUMBER_TYPE)) {
-
-			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
-				toReturn = value.substring(1, value.length() - 1);
-			} else {
-				toReturn = value;
-			}
-			if (toReturn == null || toReturn.length() == 0) {
-				toReturn = "";
-			}
-		} else if (type.equalsIgnoreCase(DataSetUtilities.GENERIC_TYPE)) {
-			toReturn = value;
-		} else if (type.equalsIgnoreCase(DataSetUtilities.RAW_TYPE)) {
-			if (value.startsWith("'") && value.endsWith("'") && value.length() >= 2) {
-				toReturn = value.substring(1, value.length() - 1);
-			} else {
-				toReturn = value;
-			}
-		}
-
-		return toReturn;
-	}
-
-	/**
-	 * Protected for testing purposes
-	 *
-	 * @param value
-	 * @param type
-	 * @return
-	 */
-	static String getSingleValueREST(String value, String type) {
-		String toReturn = "";
-		if (type.equalsIgnoreCase(DataSetUtilities.STRING_TYPE)) {
-
-			toReturn = value;
+			toReturn = value.replace("'", "\\'");
 
 		} else if (type.equalsIgnoreCase(DataSetUtilities.NUMBER_TYPE)) {
 
@@ -1597,20 +1579,11 @@ public class ManageDataSetsForREST {
 		return toReturn;
 	}
 
-	private String getMultiValueSolr(String value, String type) {
-		String toReturn = "(";
-
-		String[] tempArrayValues = value.split(",");
-		for (int j = 0; j < tempArrayValues.length; j++) {
-			String tempValue = tempArrayValues[j];
-			if (j == 0) {
-				toReturn = toReturn + getSingleValue(tempValue, type);
-			} else {
-				toReturn = toReturn + " OR " + getSingleValue(tempValue, type);
-			}
-		}
-		toReturn = toReturn + ")";
-		return toReturn;
+	private String getMultiValueForSolr(List<Object> value, String type) {
+		return value.stream()
+			.map(String::valueOf)
+			.map(e -> getSingleValueForSolr(e, type))
+			.collect(joining(" OR ", "(", ")"));
 	}
 
 	private void checkFileDataset(IDataSet dataSet) {
