@@ -21,7 +21,20 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [createTestingPinia()],
+            plugins: [
+                createTestingPinia({
+                    initialState: {
+                        dashboardStore: {
+                            dashboards: [
+                                {},
+                                {
+                                    configuration: { datasets: [] }
+                                }
+                            ]
+                        }
+                    }
+                })
+            ],
             stubs: {
                 TabView,
                 TabPanel,
