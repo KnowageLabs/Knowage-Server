@@ -1,6 +1,6 @@
 <template>
-    <div class="datasetEditor-preview">
-        <DataTable :value="rows" class="p-datatable-sm kn-table" style="height: unset !important" stripedRows rowHover>
+    <div class="p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow" :style="descriptor.style.preview">
+        <DataTable :value="rows" class="p-datatable-sm kn-table" :style="descriptor.style.previewTable" stripedRows rowHover>
             <Column v-for="col of columns" :field="col.name" :header="col.header" :key="col.dataIndex" class="kn-truncated" />
         </DataTable>
     </div>
@@ -14,6 +14,7 @@ import { defineComponent } from 'vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import mock from './DatasetEditorTestMocks.json'
+import descriptor from './DatasetEditorDescriptor.json'
 
 export default defineComponent({
     name: 'dataset-editor-preview',
@@ -23,6 +24,7 @@ export default defineComponent({
     },
     data() {
         return {
+            descriptor,
             mock,
             columns: [] as any,
             rows: [] as any
@@ -41,13 +43,3 @@ export default defineComponent({
     }
 })
 </script>
-<style lang="scss">
-.datasetEditor-preview {
-    border-left: 1px solid #ccc;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: stretch;
-    overflow: auto;
-}
-</style>

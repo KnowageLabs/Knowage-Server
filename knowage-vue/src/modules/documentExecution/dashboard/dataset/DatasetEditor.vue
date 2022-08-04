@@ -1,6 +1,6 @@
 <template>
     <Teleport to=".dashboard-container">
-        <div class="datasetEditor">
+        <div class="dashboardEditor">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #start> {{ $t('dashboard.datasetEditor.title') }} </template>
                 <template #end>
@@ -9,7 +9,7 @@
                 </template>
             </Toolbar>
 
-            <TabView v-if="!loading" class="datasetEditor-tabs">
+            <TabView v-if="!loading" class="dashboardEditor-tabs">
                 <TabPanel :header="$t('dashboard.datasetEditor.dataTabTitle')">
                     <DataTab :availableDatasetsProp="availableDatasets" :dashboardDatasetsProp="dashboardDatasets" :selectedDatasetsProp="selectedDatasets" :documentDriversProp="filtersDataProp" @addSelectedDatasets="addSelectedDatasets" @deleteDataset="confirmDeleteDataset" />
                 </TabPanel>
@@ -222,7 +222,7 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
-.datasetEditor {
+.dashboardEditor {
     // height: 100vh;
     height: 100%;
     width: 100%;
@@ -238,7 +238,7 @@ export default defineComponent({
         display: flex;
     }
 }
-.datasetEditor-tabs.p-tabview {
+.dashboardEditor-tabs.p-tabview {
     overflow: auto;
     display: flex;
     flex-direction: column;

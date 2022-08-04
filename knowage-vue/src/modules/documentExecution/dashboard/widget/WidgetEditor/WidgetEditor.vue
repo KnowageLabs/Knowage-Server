@@ -1,6 +1,6 @@
 <template>
     <Teleport to=".dashboard-container">
-        <div class="datasetEditor">
+        <div class="dashboardEditor">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #start> {{ widget.type }} Widget Editor </template>
                 <template #end>
@@ -9,7 +9,7 @@
                 </template>
             </Toolbar>
             <div class="datasetEditor-container kn-overflow">
-                <WidgetEditorTabs class="datasetEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="onDatasetSelected" />
+                <WidgetEditorTabs class="dashboardEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="onDatasetSelected" />
                 <WidgetEditorPreview id="widget-editor-preview" :propWidget="widget" />
             </div>
         </div>

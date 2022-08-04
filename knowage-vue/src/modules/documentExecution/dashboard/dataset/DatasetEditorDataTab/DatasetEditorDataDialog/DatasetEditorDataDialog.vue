@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="kn-dialog--toolbar--primary datasetListDialogClass" :visible="visible" :header="$t('components.advancedData.title')" :closable="false" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
+    <Dialog class="kn-dialog--toolbar--primary" :visible="visible" :header="$t('dashboard.datasetEditor.selectDatasets')" :style="dataDialogDescriptor.style.datasetListDialog" :closable="false" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
         <DataTable
             id="datasets-datatable"
             class="p-datatable-sm kn-table kn-page-content"
@@ -131,12 +131,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.datasetListDialogClass {
-    min-width: 600px;
-    width: 60%;
-    max-width: 1200px;
-}
-
 #noDatasetsFound {
     margin: 0 auto;
     border: 1px solid rgba(204, 204, 204, 0.6);

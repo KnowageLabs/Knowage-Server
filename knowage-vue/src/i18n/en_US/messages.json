@@ -334,7 +334,13 @@
             "indexPresentMsg": "Index already exists!",
             "indexesTitle": "Indexes",
             "static": "Static",
-            "title": "Dataset Manageent"
+            "title": "Dataset Manageent",
+            "selectDatasets": "Select Datasets",
+            "dataDetailTitle": "Dataset Management",
+            "dataDetailMsg": "Add or select datasets, TODO: Write whatever we need to write here after PR",
+            "associationsDetailTitle": "Dataset Associations",
+            "associationsDetailMsg": "TODO: Write whatever we need to write here after PR",
+            "emptyAssociationError": "Association cannot be empty!"
         },
         "widgetEditor": {
             "addWidget": "Add widget",

@@ -1,5 +1,5 @@
 <template>
-    <div class="dataset-editor-list-card-container p-m-3">
+    <div class="dashboard-editor-list-card-container p-m-3">
         <span class="p-float-label p-mx-2 p-mt-4 p-mb-1">
             <Dropdown id="dataset" class="kn-material-input kn-width-full" v-model="selectedDataset" :options="datasetOptions" optionLabel="label" @change="onDatasetSelected"></Dropdown>
             <label for="dataset" class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.selectDataset') }} </label>
@@ -9,7 +9,7 @@
             <Button :label="$t('common.addColumn')" icon="pi pi-plus-circle" class="p-button-outlined p-ml-auto p-mr-1" @click="showCalculatedFieldDialog"></Button>
         </div>
 
-        <Listbox v-if="selectedDataset" class="kn-list kn-list-no-border-right dataset-editor-list" :options="selectedDatasetColumns" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="[]" :emptyFilterMessage="$t('common.info.noDataFound')">
+        <Listbox v-if="selectedDataset" class="kn-list kn-list-no-border-right dashboard-editor-list" :options="selectedDatasetColumns" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="[]" :emptyFilterMessage="$t('common.info.noDataFound')">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
                 <div class="kn-list-item kn-draggable" draggable="true" :style="dataListDescriptor.style.list.listItem" @dragstart="onDragStart($event, slotProps.option)">

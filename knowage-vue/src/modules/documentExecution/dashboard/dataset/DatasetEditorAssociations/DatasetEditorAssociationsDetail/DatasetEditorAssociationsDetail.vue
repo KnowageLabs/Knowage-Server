@@ -1,6 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-column kn-flex">
-        <InlineMessage v-if="selectedAssociationProp.fields.length == 0" class="p-mt-3 p-mr-3" severity="error">Select Associations - TODO: Finish validation of this stuff</InlineMessage>
+        <InlineMessage v-if="selectedAssociationProp.fields.length == 0" class="p-mt-3 p-mr-3" severity="error"> {{ $t('dashboard.datasetEditor.emptyAssociationError') }} </InlineMessage>
 
         <div class="p-d-flex p-flex-column kn-flex kn-overflow p-my-3 p-mr-3">
             <MasonryWall class="kn-flex" :items="selectedDatasetsProp" :column-width="300" :gap="10">

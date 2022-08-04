@@ -5,7 +5,7 @@
         <IndexesCard v-if="selectedDatasetProp.modelCache" :selectedDatasetProp="selectedDatasetProp" />
     </div>
     <div v-else>
-        <KnHint class="p-as-center" :title="'documentExecution.dossier.title'" :hint="'documentExecution.dossier.hint'" data-test="dataset-hint"></KnHint>
+        <KnHint class="p-as-center" :title="'dashboard.datasetEditor.dataDetailTitle'" :hint="'dashboard.datasetEditor.dataDetailMsg'" data-test="dataset-hint"></KnHint>
     </div>
 </template>
 
