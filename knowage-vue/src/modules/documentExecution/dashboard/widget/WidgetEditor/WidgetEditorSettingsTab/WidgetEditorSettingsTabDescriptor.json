@@ -539,7 +539,7 @@
                                                                             {
                                                                                 "components": [
                                                                                     {
-                                                                                        "cssClass": "kn-flex",
+                                                                                        "cssClass": "kn-flex p-mt-2",
                                                                                         "icons": [
                                                                                             {
                                                                                                 "class": "fas fa-bold",

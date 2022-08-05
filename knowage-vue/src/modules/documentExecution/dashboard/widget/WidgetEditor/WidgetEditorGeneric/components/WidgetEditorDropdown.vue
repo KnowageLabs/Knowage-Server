@@ -38,6 +38,7 @@ export default defineComponent({
         settings: { type: Object, required: true },
         visibilityCondition: { type: String },
         initialValue: { type: String },
+        item: { type: Object },
         itemIndex: { type: Number }
     },
     emits: ['change'],
@@ -78,7 +79,7 @@ export default defineComponent({
         callOnUpdateFunction() {
             if (this.settings.onUpdate) {
                 const tempFunction = getModelProperty(this.widgetModel, this.settings.onUpdate, 'getValue', null)
-                if (tempFunction && typeof tempFunction === 'function') tempFunction(this.widgetModel)
+                if (tempFunction && typeof tempFunction === 'function') tempFunction(this.widgetModel, this.item, this.itemIndex)
             }
         },
         fieldIsVisible() {
