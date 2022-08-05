@@ -340,7 +340,8 @@
             "indexesTitle": "Indexes",
             "selectDatasets": "Select Datasets",
             "static": "Static",
-            "title": "Dataset Manageent"
+            "title": "Dataset Manageent",
+            "association": "Association"
         },
         "widgetEditor": {
             "addWidget": "Add widget",

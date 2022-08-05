@@ -19,12 +19,13 @@
             >
                 <template #empty>{{ $t('common.info.noDataFound') }}</template>
                 <template #option="slotProps">
-                    <div class="kn-list-item" :style="associationListDescriptor.style.list.listItem">
+                    <div class="kn-list-item" :style="associationListDescriptor.style.list.listItem" v-tooltip.right="slotProps.option.fields.length">
                         <i v-if="slotProps.option.fields.length === 0" class="fa-solid fa-circle-exclamation p-ml-1 details-warning-color" />
-                        <div v-for="(field, index) of slotProps.option.fields" :key="index">
+                        <!-- <div v-for="(field, index) of slotProps.option.fields" :key="index">
                             {{ field.column }}
                             <i class="fa-solid fa-arrows-left-right p-mr-1" v-if="index != slotProps.option.fields.length - 1" />
-                        </div>
+                        </div> -->
+                        <span class="p-mx-2">{{ $t('dashboard.datasetEditor.association') }} - {{ slotProps.index }}</span>
                         <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click.stop="deleteAssociation(slotProps.option.id)" />
                     </div>
                 </template>
