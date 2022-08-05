@@ -1029,7 +1029,7 @@ export default defineComponent({
             const format = date instanceof Date ? undefined : 'dd/MM/yyyy'
             return luxonFormatDate(date, format, useDefaultFormat ? undefined : this.dateFormat)
         },
-        onBreadcrumbClick(item: any) {
+        async onBreadcrumbClick(item: any) {
             this.document = item.document
             this.filtersData = item.filtersData
             this.urlData = item.urlData
