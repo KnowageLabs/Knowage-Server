@@ -708,7 +708,7 @@
     },
     "infoDialog": {
         "aboutKnowage": "About Knowage",
-        "copyright": "Â© {year} Engineering Ingegneria Informatica S.p.A.",
+        "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
     },
     "knScheduler": {

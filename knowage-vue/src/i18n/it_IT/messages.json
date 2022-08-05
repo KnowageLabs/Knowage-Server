@@ -693,7 +693,7 @@
   },
   "infoDialog": {
     "aboutKnowage": "about Knowage",
-    "copyright": "Â© {year} Engineering Ingegneria Informatica S.p.A.",
+    "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
     "sourceCode": "codice sorgente disponibile "
   },
   "knScheduler": {

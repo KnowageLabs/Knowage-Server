@@ -11,6 +11,9 @@ export default defineConfig((command, mode) => {
     const env = loadEnv(mode, process.cwd())
     return {
         plugins: [vue(), builtinsPlugin],
+        define: {
+            _KNOWAGE_VERSION: JSON.stringify(process.env.npm_package_version)
+        },
         resolve: {
             extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
             alias: {
