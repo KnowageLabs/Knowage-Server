@@ -55,6 +55,7 @@
                                                                         "disabledCondition": "functions.headerIsDisabled",
                                                                         "function": "functions.updateFontWeight",
                                                                         "isActiveFunction": "functions.boldIconIsActive",
+                                                                        "tooltip": "dashboard.widgetEditor.iconTooltips.bold",
                                                                         "watchers": ["styles.th.enabled", "styles.th.font-weight"]
                                                                     },
                                                                     {
@@ -62,6 +63,7 @@
                                                                         "disabledCondition": "functions.headerIsDisabled",
                                                                         "function": "functions.updateFontStyle",
                                                                         "isActiveFunction": "functions.fontStyleIconIsActive",
+                                                                        "tooltip": "dashboard.widgetEditor.iconTooltips.italic",
                                                                         "watchers": ["styles.th.enabled", "styles.th.font-style"]
                                                                     },
                                                                     {
@@ -74,6 +76,7 @@
                                                                             "translateLabels": true
                                                                         },
                                                                         "disabledCondition": "functions.headerIsDisabled",
+                                                                        "tooltip": "dashboard.widgetEditor.iconTooltips.fontSize",
                                                                         "watchers": ["styles.th.enabled", "styles.th.font-size"]
                                                                     },
                                                                     {
@@ -85,6 +88,7 @@
                                                                             "translateLabels": true
                                                                         },
                                                                         "disabledCondition": "functions.headerIsDisabled",
+                                                                        "tooltip": "dashboard.widgetEditor.iconTooltips.textAlignment",
                                                                         "watchers": ["styles.th.enabled"]
                                                                     },
                                                                     {
@@ -96,6 +100,7 @@
                                                                             "translateLabels": true
                                                                         },
                                                                         "disabledCondition": "functions.headerIsDisabled",
+                                                                        "tooltip": "dashboard.widgetEditor.iconTooltips.fontFamily",
                                                                         "watchers": ["styles.th.enabled"]
                                                                     },
                                                                     {
@@ -107,6 +112,7 @@
                                                                             "onUpdate": "functions.setFontColor"
                                                                         },
                                                                         "disabledCondition": "functions.headerIsDisabled",
+                                                                        "tooltip": "dashboard.widgetEditor.iconTooltips.fontColor",
                                                                         "watchers": ["styles.th.enabled"]
                                                                     },
                                                                     {
@@ -118,6 +124,7 @@
                                                                             "onUpdate": "functions.setBackgroundColor"
                                                                         },
                                                                         "disabledCondition": "functions.headerIsDisabled",
+                                                                        "tooltip": "dashboard.widgetEditor.iconTooltips.backgroundColor",
                                                                         "watchers": ["styles.th.enabled"]
                                                                     }
                                                                 ],
@@ -532,13 +539,14 @@
                                                                             {
                                                                                 "components": [
                                                                                     {
-                                                                                        "cssClass": "kn-flex",
+                                                                                        "cssClass": "kn-flex p-mt-2",
                                                                                         "icons": [
                                                                                             {
                                                                                                 "class": "fas fa-bold",
                                                                                                 "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                                 "function": "functions.updateThresholdListItemFontItemWeight",
                                                                                                 "isActiveFunction": "functions.thresholdItemBoldIconIsActive",
+                                                                                                "tooltip": "dashboard.widgetEditor.iconTooltips.bold",
                                                                                                 "watchers": ["settings.rowThresholds.enabled", "settings.rowThresholds.list"]
                                                                                             },
                                                                                             {
@@ -546,6 +554,7 @@
                                                                                                 "disabledCondition": "functions.rowThresholdsIsDisabled",
                                                                                                 "function": "functions.updateThresholdListItemFontStyle",
                                                                                                 "isActiveFunction": "functions.thresholdListItemFontStyleIconIsActive",
+                                                                                                "tooltip": "dashboard.widgetEditor.iconTooltips.italic",
                                                                                                 "watchers": ["settings.rowThresholds.enabled", "settings.rowThresholds.list"]
                                                                                             },
                                                                                             {
@@ -558,6 +567,7 @@
                                                                                                     "translateLabels": true
                                                                                                 },
                                                                                                 "disabledCondition": "functions.rowThresholdsIsDisabled",
+                                                                                                "tooltip": "dashboard.widgetEditor.iconTooltips.fontSize",
                                                                                                 "watchers": ["settings.rowThresholds.enabled", "settings.rowThresholds.list"]
                                                                                             },
                                                                                             {
@@ -569,6 +579,7 @@
                                                                                                     "translateLabels": true
                                                                                                 },
                                                                                                 "disabledCondition": "functions.rowThresholdsIsDisabled",
+                                                                                                "tooltip": "dashboard.widgetEditor.iconTooltips.textAlignment",
                                                                                                 "watchers": ["settings.rowThresholds.enabled", "settings.rowThresholds.list"]
                                                                                             },
                                                                                             {
@@ -580,6 +591,7 @@
                                                                                                     "translateLabels": true
                                                                                                 },
                                                                                                 "disabledCondition": "functions.rowThresholdsIsDisabled",
+                                                                                                "tooltip": "dashboard.widgetEditor.iconTooltips.fontFamily",
                                                                                                 "watchers": ["settings.rowThresholds.enabled", "settings.rowThresholds.list"]
                                                                                             },
                                                                                             {
@@ -591,6 +603,7 @@
                                                                                                     "onUpdate": "functions.setThresholdListItemFontColor"
                                                                                                 },
                                                                                                 "disabledCondition": "functions.rowThresholdsIsDisabled",
+                                                                                                "tooltip": "dashboard.widgetEditor.iconTooltips.fontColor",
                                                                                                 "watchers": ["settings.rowThresholds.enabled", "settings.rowThresholds.list"]
                                                                                             },
                                                                                             {
@@ -602,6 +615,7 @@
                                                                                                     "onUpdate": "functions.setThresholdListItemBackgroundColor"
                                                                                                 },
                                                                                                 "disabledCondition": "functions.rowThresholdsIsDisabled",
+                                                                                                "tooltip": "dashboard.widgetEditor.iconTooltips.backgroundColor",
                                                                                                 "watchers": ["settings.rowThresholds.enabled", "settings.rowThresholds.list"]
                                                                                             },
                                                                                             {
@@ -612,6 +626,7 @@
                                                                                                     "initialValue": "functions.getThresholdListItemIcon",
                                                                                                     "onSelect": "functions.setThresholdListItemIcon"
                                                                                                 },
+                                                                                                "tooltip": "dashboard.widgetEditor.iconTooltips.iconPicker",
                                                                                                 "watchers": ["settings.rowThresholds.enabled", "settings.rowThresholds.list"]
                                                                                             }
                                                                                         ],

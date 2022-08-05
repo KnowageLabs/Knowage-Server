@@ -264,7 +264,7 @@ export default defineComponent({
     },
     async created() {
         this.setEventListeners()
-        
+
         window.addEventListener('message', this.iframeEventsListener)
 
         if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
@@ -1188,6 +1188,12 @@ export default defineComponent({
         },
         setEventListeners() {
             emitter.on('datasetManagementClosed', () => {
+                this.managementOpened = false
+            })
+            emitter.on('widgetEditorOpened', () => {
+                this.managementOpened = true
+            })
+            emitter.on('widgetEditorClosed', () => {
                 this.managementOpened = false
             })
         }

@@ -22,6 +22,7 @@ export default defineComponent({
         inputClass: { type: String },
         settings: { type: Object, required: true },
         initialValue: { type: String },
+        item: { type: Object },
         itemIndex: { type: Number }
     },
     emits: ['input', 'change', 'blur'],
@@ -70,7 +71,7 @@ export default defineComponent({
         callOnUpdateFunction() {
             if (this.settings.onUpdate) {
                 const tempFunction = getModelProperty(this.widgetModel, this.settings.onUpdate, 'getValue', null)
-                if (tempFunction && typeof tempFunction === 'function') tempFunction(this.widgetModel)
+                if (tempFunction && typeof tempFunction === 'function') tempFunction(this.widgetModel, this.item, this.itemIndex)
             }
         },
         setWatchers() {
