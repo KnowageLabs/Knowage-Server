@@ -291,13 +291,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		return availableTypes.indexOf(type) != -1;
 	}
 
-	$scope.isExportPdfEnabled = function(){
-		toReturn = true;
-		if ($scope.ngModel.settings && $scope.ngModel.settings.exportpdf) toReturn = $scope.ngModel.settings.exportpdf.enabled;
-		toReturn = typeof(toReturn) != 'undefined' ? toReturn : true;
-		return toReturn;
-	}
-
 	$scope.checkChartType = function(model, notAvailableCharts){
 		return !(notAvailableCharts.indexOf(model.content.chartTemplate.CHART.type.toLowerCase()) != -1);
 	}
@@ -1088,7 +1081,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						}
 					}
 
-
+					
 					// temporary section needed as a workaround to get vue instance
 					var hasVueParent = false
 					if(window.parent.document.getElementById('_KNOWAGE_VUE')){
@@ -1096,9 +1089,10 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 					}else if(window.parent.parent.document.getElementById('_KNOWAGE_VUE')){
 						hasVueParent = window.parent.parent
 					}
-
+					
 					if(hasVueParent){
 						hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":crossSettings,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
+						return;
 					}else{
 						// if destination document is specified don't ask
 						if(crossSettings.crossName != undefined){
@@ -1136,7 +1130,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 										}else if(parameter.column == columnName){
 											paramValue = columnValue;
 										}
-
+										
 									}
 									else{
 										for(var c in $scope.ngModel.content.columnSelectedOfDataset){
@@ -1706,7 +1700,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		var matchedProperties = lintConfig.match(/categoriesCardinality:(?<categoriesCardinality>\[.*?\]){1},range:(?<range>\[.*?\]){1}/);
 		var range = JSON.parse(matchedProperties.groups.range);
 		var categoriesCardinality = JSON.parse(matchedProperties.groups.categoriesCardinality);
-
+		
 		var tempObject = {
 				type: $scope.ngModel.content.chartTemplate.CHART.type.toLowerCase(),
 				categoriesNumber: cockpitModule_widgetServices.checkNumOfCategory($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY),
@@ -1717,7 +1711,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				range:range,
 				categoriesCardinality:categoriesCardinality
 		};
-
+		
 		if(cockpitModule_widgetServices.checkNumOfCategory($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY) === 1){
 			if(Array.isArray($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY)){
 				var javaType = $scope.ngModel.content.columnSelectedOfDatasetAggregations.filter(x=>x.name === $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY[0].column)[0].type;
@@ -1726,10 +1720,10 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 			}
 			tempObject.typeOfCategory = cockpitModule_generalOptions.fieldsTypes.filter(x=>x.value === javaType)[0].label;
 		}
-
+		
 		$scope.chartTypes = knModule_chartOptions.getAvailableCharts(tempObject);
 		$scope.suggestedChartType = knModule_chartOptions.getSuggestedChart(tempObject)
-
+		
 		if(!$scope.ngModel.content.chartTemplateOriginal){
 			$scope.ngModel.content.chartTemplateOriginal = angular.copy($scope.ngModel.content.chartTemplate);
 		}
@@ -1746,7 +1740,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 				scope.isOriginal = isOriginal;
 				scope.ngModel = angular.copy(ngModel);
 				scope.suggestedChartType = suggestedChartType;
-
+				
 
 				scope.changeChartType = function(type, isOriginal){
 
@@ -1766,7 +1760,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						scope.ngModel.content.chartTemplate.CHART.type = type.toUpperCase();
 
 					}
-
+					
 					$mdDialog.hide({model:scope.ngModel,isOriginal:scope.isOriginal,type:type});
 
 				}
