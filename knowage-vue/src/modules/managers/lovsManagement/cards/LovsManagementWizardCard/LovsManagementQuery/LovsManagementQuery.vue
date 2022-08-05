@@ -39,7 +39,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iLov } from '../../../LovsManagement'
-import { VCodeMirror } from 'vue3-code-mirror'
+import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
 import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
@@ -106,7 +106,7 @@ export default defineComponent({
         },
         setupCodeMirror() {
             if (this.$refs.codeMirror) {
-                this.codeMirror = (this.$refs.codeMirror as any).editor as any
+                this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
             }
         },
         onKeyUp() {

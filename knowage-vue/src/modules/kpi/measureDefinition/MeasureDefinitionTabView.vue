@@ -27,6 +27,7 @@
                             :rows="rows"
                             :codeInput="codeInput"
                             :preview="preview"
+                            :activeTab="activeTab"
                             @queryChanged="queryChanged = true"
                             @loadPreview="previewQuery(false, true, true)"
                             @closePreview="preview = false"
@@ -53,7 +54,7 @@
 
     <MeasureDefinitionSubmitDialog v-if="showSaveDialog" :ruleName="rule.name" :newAlias="newAlias" :reusedAlias="reusedAlias" :newPlaceholder="newPlaceholder" :reusedPlaceholder="reusedPlaceholder" @close="showSaveDialog = false" @save="saveRule($event)"></MeasureDefinitionSubmitDialog>
 
-    <Dialog :autoZIndex="false" :style="metadataDefinitionTabViewDescriptor.errorDialog.style" :modal="true" :visible="errorDialogVisible" :header="errorTitle" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
+    <Dialog :autoZIndex="false" :style="metadataDefinitionTabViewDescriptor.errorDialog.style" :contentStyle="metadataDefinitionTabViewDescriptor.errorDialog.contentStyle"  :modal="true" :visible="errorDialogVisible" :header="errorTitle" class="p-fluid kn-dialog--toolbar--primary error-dialog" :closable="false">
         <p>{{ errorMessage }}</p>
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="closeErrorMessageDialog"></Button>
@@ -73,6 +74,7 @@ import MeasureDefinitionQueryCard from './card/MeasureDefinitionQueryCard/Measur
 import MeasureDefinitionSubmitDialog from './MeasureDefinitionSubmitDialog.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'measure-definition-detail',
@@ -146,6 +148,10 @@ export default defineComponent({
             return this.errorMessage ? true : false
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         this.loading = true
         if (this.id && this.ruleVersion) {
@@ -168,13 +174,13 @@ export default defineComponent({
     },
     methods: {
         async loadSelectedRule() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.ruleVersion}/loadRule`).then((response: AxiosResponse<any>) => (this.rule = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/${this.id}/${this.ruleVersion}/loadRule`).then((response: AxiosResponse<any>) => (this.rule = response.data))
         },
         async loadDataSources() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `datasources/?onlySqlLike=true`).then((response: AxiosResponse<any>) => (this.datasourcesList = response.data.root))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `datasources/?onlySqlLike=true`).then((response: AxiosResponse<any>) => (this.datasourcesList = response.data.root))
         },
         async loadAliases() {
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listAvailableAlias`
+            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/listAvailableAlias`
             if (this.rule.id) {
                 url += `?ruleId=${this.id}&ruleVersion=${this.ruleVersion}`
             }
@@ -184,18 +190,15 @@ export default defineComponent({
             })
         },
         async loadPlaceholders() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpi/listPlaceholder`).then((response: AxiosResponse<any>) => (this.placeholdersList = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/listPlaceholder`).then((response: AxiosResponse<any>) => (this.placeholdersList = response.data))
         },
         async loadDomainsData() {
             await this.loadDomainsByCode('KPI_RULEOUTPUT_TYPE').then((response: AxiosResponse<any>) => (this.domainsKpiRuleoutput = response.data))
             await this.loadDomainsByCode('TEMPORAL_LEVEL').then((response: AxiosResponse<any>) => (this.domainsTemporalLevel = response.data))
-            await this.loadCategoriesByCode('KPI_MEASURE_CATEGORY').then((response: AxiosResponse<any>) => (this.domainsKpiMeasures = response.data))
+            await this.loadDomainsByCode('KPI_MEASURE_CATEGORY').then((response: AxiosResponse<any>) => (this.domainsKpiMeasures = response.data))
         },
         loadDomainsByCode(code: string) {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${code}`)
-        },
-        loadCategoriesByCode(code: string) {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/category/listByCode/${code}`)
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${code}`)
         },
         async setTabChanged(tabIndex: any) {
             this.activeTab = tabIndex
@@ -300,7 +303,7 @@ export default defineComponent({
                 const postData = { rule: this.rule, maxItem: 10 }
 
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData, { headers: { 'X-Disable-Errors': 'true' } })
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/queryPreview', postData, { headers: { 'X-Disable-Errors': 'true' } })
                     .then((response: AxiosResponse<any>) => {
                         this.columns = response.data.columns
                         this.rows = response.data.rows
@@ -336,7 +339,7 @@ export default defineComponent({
             })
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/preSaveRule', this.rule, { headers: { 'X-Disable-Errors': 'true' } })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/preSaveRule', this.rule, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
                     if (this.rule.ruleOutputs.length === 0) {
                         this.errorTitle = this.$t('kpi.measureDefinition.presaveErrors.metadataMissing')
@@ -386,16 +389,16 @@ export default defineComponent({
 
             delete this.rule.dataSource
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/saveRule', this.rule)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/saveRule', this.rule)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.' + this.operation + 'Title'),
                         msg: this.$t('common.toast.success')
                     })
                     this.$router.replace('/measure-definition')
                 })
                 .catch((response: any) => {
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.toast.' + this.operation + 'Title'),
                         msg: response.message
                     })
@@ -525,6 +528,7 @@ export default defineComponent({
 .error-dialog {
     width: 60vw;
 }
+
 .listbox {
     width: 320px;
 }

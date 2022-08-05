@@ -121,7 +121,7 @@
                 <Column field="userIn" :header="$t('managers.datasetManagement.creationUser')" :sortable="true" />
                 <Column field="type" :header="$t('importExport.gallery.column.type')" :sortable="true" />
                 <Column field="dateIn" :header="$t('managers.mondrianSchemasManagement.headers.creationDate')" dataType="date" :sortable="true">
-                    <template #body="{data}">
+                    <template #body="{ data }">
                         {{ formatDate(data.dateIn) }}
                     </template>
                 </Column>
@@ -149,6 +149,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import AutoComplete from 'primevue/autocomplete'
 import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages, DataTable, Column, AutoComplete },
@@ -181,6 +182,10 @@ export default defineComponent({
             filteredTagsNames: null as any
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.dataset = this.selectedDataset
     },
@@ -200,7 +205,6 @@ export default defineComponent({
     methods: {
         //#region ===================== Delete Versions Functionality ====================================================
         deleteConfirm(deletetype, event) {
-            console.log(event)
             let msgDesc = ''
             deletetype === 'deleteOne' ? (msgDesc = 'managers.datasetManagement.deleteOneVersionMsg') : (msgDesc = 'managers.datasetManagement.deleteAllVersionsMsg')
             this.$confirm.require({
@@ -214,21 +218,21 @@ export default defineComponent({
         },
         async deleteSelectedVersion(event) {
             return this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.dsId}/version/${event.versNum}`)
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${event.dsId}/version/${event.versNum}`)
                 .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                    this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                     this.$emit('reloadVersions')
                 })
-                .catch((error) => this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: error.message }))
+                .catch((error) => this.store.setError({ title: this.$t('common.error.generic'), msg: error.message }))
         },
         async deleteAllVersions() {
             return this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.selectedDataset.id}/allversions/`)
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.selectedDataset.id}/allversions/`)
                 .then(() => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.deleteTitle'), msg: this.$t('managers.datasetManagement.deleteAllVersionsSuccess') })
+                    this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('managers.datasetManagement.deleteAllVersionsSuccess') })
                     this.$emit('reloadVersions')
                 })
-                .catch((error) => this.$store.commit('setError', { title: this.$t('common.error.generic'), msg: error.message }))
+                .catch((error) => this.store.setError({ title: this.$t('common.error.generic'), msg: error.message }))
         },
         //#endregion ================================================================================================
 
@@ -243,7 +247,7 @@ export default defineComponent({
         },
         async restoreVersion(dsToRestore) {
             this.$emit('loadingOlderVersion')
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.dataset.id}/restore?versionId=${dsToRestore.versNum}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${this.dataset.id}/restore?versionId=${dsToRestore.versNum}`).then((response: AxiosResponse<any>) => {
                 this.dataset.dsTypeCd.toLowerCase() == 'file' ? this.refactorFileDatasetConfig(response.data[0]) : ''
                 this.$emit('olderVersionLoaded', response.data[0])
             })

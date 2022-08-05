@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import Card from 'primevue/card'
@@ -48,8 +49,7 @@ const mockedDataset = {
     userIn: 'demo_admin',
     versNum: 10,
     dateIn: '2019-02-05T18:48:10.000+01:00',
-    query:
-        'select a.product_id, \na.product_name as "product name", \nb.product_department as "product department", \nb.product_category as "product category",\nb.product_family as "product family",\n sum(c.store_sales) as sales, sum(c.store_cost) as costs,\n sum(c.unit_sales) as units, sum(c.store_sales) - sum(c.store_cost) as revenues\nfrom product a, product_class b, sales_fact c \nwhere \na.product_class_id=b.product_class_id \nand a.product_id=c.product_id \n and product_family=$P{par_family}\n__PH__\ngroup by a.product_id,a.product_name,b.product_department,b.product_family\norder by sum(c.store_sales)\nlimit 100',
+    query: 'select a.product_id, \na.product_name as "product name", \nb.product_department as "product department", \nb.product_category as "product category",\nb.product_family as "product family",\n sum(c.store_sales) as sales, sum(c.store_cost) as costs,\n sum(c.unit_sales) as units, sum(c.store_sales) - sum(c.store_cost) as revenues\nfrom product a, product_class b, sales_fact c \nwhere \na.product_class_id=b.product_class_id \nand a.product_id=c.product_id \n and product_family=$P{par_family}\n__PH__\ngroup by a.product_id,a.product_name,b.product_department,b.product_family\norder by sum(c.store_sales)\nlimit 100',
     queryScript:
         'var filters = "";\n\nif (parameters.get(\'par_department\')!=null && parameters.get(\'par_category\')==null){\nfilters += "and product_department=$P{par_department}";\n}\nelse if(parameters.get(\'par_department\')!=null && parameters.get(\'par_category\')!=null){\nfilters += "and product_department=$P{par_department} and product_category=$P{par_category}";\n}\nquery = query.replace("__PH__", filters);',
     queryScriptLanguage: 'ECMAScript',
@@ -130,27 +130,23 @@ const mockedSelectedDatasetVersions = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() =>
+    get: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: []
         })
     ),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = (scopeTypes, categoryTypes, selectedDataset, selectedDatasetVersions, loading) => {
@@ -163,6 +159,7 @@ const factory = (scopeTypes, categoryTypes, selectedDataset, selectedDatasetVers
             loading
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Column,
@@ -177,7 +174,7 @@ const factory = (scopeTypes, categoryTypes, selectedDataset, selectedDatasetVers
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $router,
                 $http

@@ -32,7 +32,7 @@ export default defineComponent({
     },
     watch: {
         selected: {
-            handler: function(select) {
+            handler: function (select) {
                 if (this.checkValueIsPath(select)) {
                     // let flattenTree = this.nodes.map((node) => this.flattenTree(node, 'children')).reduce((a, b) => a.concat(b), [])
                     this.preselectNodeKey(this.flatTree, select)
@@ -40,14 +40,14 @@ export default defineComponent({
             }
         },
         loading: {
-            handler: function(l) {
+            handler: function (l) {
                 this.load = l
             }
         }
     },
     data() {
         return {
-            apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
+            apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
             load: false as Boolean,
             preselectedNodeKey: null as any | null,
             nodes: [] as any[],
@@ -97,7 +97,7 @@ export default defineComponent({
             }
         },
         expandAll() {
-            if (!this.nodes) return;
+            if (!this.nodes) return
             for (let node of this.nodes) {
                 this.expandNode(node)
             }

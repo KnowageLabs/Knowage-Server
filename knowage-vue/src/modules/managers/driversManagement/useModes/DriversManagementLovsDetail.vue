@@ -53,13 +53,15 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import useModeDescriptor from './UseModesDescriptor.json'
-import { VCodeMirror } from 'vue3-code-mirror'
+import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
 import { decode } from 'js-base64'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 export default defineComponent({
     name: 'lovs-detail',
-    components: { VCodeMirror, Column, DataTable },
+    components: { 
+    VCodeMirror, 
+    Column, DataTable },
     props: {
         lov: {
             type: Object,
@@ -105,7 +107,7 @@ export default defineComponent({
     methods: {
         setupCodeMirror() {
             if (this.$refs.codeMirror) {
-                this.codeMirror = (this.$refs.codeMirror as any).editor as any
+                this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
             }
         },
         escapeXml(value: string) {

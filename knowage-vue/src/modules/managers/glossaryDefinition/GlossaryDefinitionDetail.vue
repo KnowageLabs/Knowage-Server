@@ -120,6 +120,7 @@ import GlossaryDefinitionHint from './GlossaryDefinitionHint.vue'
 import GlossaryDefinitionNodeDialog from './dialogs/GlossaryDefinitionNodeDialog.vue'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import Tree from 'primevue/tree'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'glossary-definition-detail',
@@ -161,6 +162,10 @@ export default defineComponent({
             await this.listContents(this.selectedGlossaryId as number, this.selectedNode)
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         await this.loadGlossaryList()
     },
@@ -170,12 +175,12 @@ export default defineComponent({
             await this.listContents(glossaryId, parent)
         },
         async loadGlossaryList() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listGlossary`).then((response: AxiosResponse<any>) => (this.glossaries = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/listGlossary`).then((response: AxiosResponse<any>) => (this.glossaries = response.data))
         },
         async loadGlossary(glossaryId: number) {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getGlossary?GLOSSARY_ID=${glossaryId}`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/getGlossary?GLOSSARY_ID=${glossaryId}`)
                 .then((response: AxiosResponse<any>) => {
                     this.selectedGlossary = { ...response.data, SaveOrUpdate: 'Update' }
                     this.originalGlossary = { ...response.data, SaveOrUpdate: 'Update' }
@@ -194,7 +199,7 @@ export default defineComponent({
 
             const parentId = parent ? parent.id : null
             let content = [] as iNode[]
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/listContents?GLOSSARY_ID=${glossaryId}&PARENT_ID=${parentId}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/listContents?GLOSSARY_ID=${glossaryId}&PARENT_ID=${parentId}`).then((response: AxiosResponse<any>) => {
                 response.data.forEach((el: any) => content.push(this.createNode(el, parent)))
                 content.sort((a: iNode, b: iNode) => (a.label > b.label ? 1 : -1))
             })
@@ -233,7 +238,7 @@ export default defineComponent({
             this.timer = setTimeout(() => {
                 this.loading = true
                 this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/glosstreeLike?WORD=${this.searchWord}&GLOSSARY_ID=${this.selectedGlossary?.GLOSSARY_ID}`)
+                    .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/glosstreeLike?WORD=${this.searchWord}&GLOSSARY_ID=${this.selectedGlossary?.GLOSSARY_ID}`)
                     .then((response: AxiosResponse<any>) => (tempData = response.data))
                     .finally(() => {
                         this.createGlossaryTree(tempData)
@@ -269,28 +274,28 @@ export default defineComponent({
             this.loading = true
             this.selectedNode = item
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addContents', {
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addContents', {
                     GLOSSARY_ID: this.selectedGlossaryId,
                     PARENT_ID: item.id,
                     WORD_ID: word.WORD_ID
                 })
                 .then(async (response: AxiosResponse<any>) => {
                     if (response.data.Status !== 'NON OK') {
-                        this.$store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.toast.createTitle'),
                             msg: this.$t('common.toast.success')
                         })
                         this.updateParentNode('HAVE_WORD_CHILD', true)
                         await this.listContents(this.selectedGlossaryId as number, item)
                     } else {
-                        this.$store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.error.generic'),
                             msg: this.$t(this.glossaryDefinitionDescriptor.translation[response.data.Message])
                         })
                     }
                 })
                 .catch((response) => {
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: response
                     })
@@ -314,10 +319,10 @@ export default defineComponent({
             const url = node.data.CONTENT_ID ? `1.0/glossary/business/deleteContents?CONTENTS_ID=${node.data.CONTENT_ID}` : `1.0/glossary/business/deleteContents?PARENT_ID=${node.parent.id}&WORD_ID=${node.data.WORD_ID}`
             let status = ''
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, {})
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, {})
                 .then((response: AxiosResponse<any>) => (status = response.data.Status))
                 .catch((response) => {
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: response
                     })
@@ -359,7 +364,7 @@ export default defineComponent({
         async loadContent(contentId: number) {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/getContent?CONTENT_ID=${contentId}`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/getContent?CONTENT_ID=${contentId}`)
                 .then(
                     (response: AxiosResponse<any>) =>
                         (this.selectedContent = {
@@ -375,7 +380,7 @@ export default defineComponent({
 
             let result = { status: '', message: '' } as any
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addContents', content)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/business/addContents', content)
                 .then(
                     (response: AxiosResponse<any>) =>
                         (result = {
@@ -384,7 +389,7 @@ export default defineComponent({
                         })
                 )
                 .catch((response) => {
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: response
                     })
@@ -395,12 +400,12 @@ export default defineComponent({
         },
         async updateTree(result: { status: string; message: string }, content: iContent) {
             if (result.status === 'NON OK') {
-                this.$store.commit('setError', {
+                this.store.setError({
                     title: this.$t('common.toast.createTitle'),
                     msg: this.$t(this.glossaryDefinitionDescriptor.translation[result.message])
                 })
             } else {
-                this.$store.commit('setInfo', {
+                this.store.setInfo({
                     title: this.$t('common.toast.createTitle'),
                     msg: this.$t('common.toast.success')
                 })
@@ -445,8 +450,8 @@ export default defineComponent({
         },
         async deleteGlossary() {
             this.loading = true
-            await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/glossary/business/deleteGlossary?GLOSSARY_ID=${this.selectedGlossaryId}`).then(() => {
-                this.$store.commit('setInfo', {
+            await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/glossary/business/deleteGlossary?GLOSSARY_ID=${this.selectedGlossaryId}`).then(() => {
+                this.store.setInfo({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })
@@ -507,12 +512,12 @@ export default defineComponent({
             const url = this.selectedGlossary?.SaveOrUpdate ? '1.0/glossary/business/addGlossary' : '1.0/glossary/business/cloneGlossary'
             let tempData = {} as any
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, this.selectedGlossary)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, this.selectedGlossary)
                 .then((response: AxiosResponse<any>) => {
                     tempData = response.data
                 })
                 .catch((response) => {
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: response
                     })
@@ -523,7 +528,7 @@ export default defineComponent({
         },
         async updateGlossaryList(tempData: any) {
             if (tempData.Status && tempData.Status !== 'NON OK') {
-                this.$store.commit('setInfo', {
+                this.store.setInfo({
                     title: this.$t('common.toast.createTitle'),
                     msg: this.$t('common.toast.success')
                 })
@@ -543,7 +548,7 @@ export default defineComponent({
                 }
                 this.originalGlossary = { ...this.selectedGlossary } as iGlossary
             } else {
-                this.$store.commit('setError', {
+                this.store.setError({
                     title: this.$t('common.error.generic'),
                     msg: this.glossaryDefinitionDescriptor.translation[tempData.Message] ? this.$t(this.glossaryDefinitionDescriptor.translation[tempData.Message]) : ''
                 })

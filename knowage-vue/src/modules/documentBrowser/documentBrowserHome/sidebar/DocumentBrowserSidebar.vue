@@ -2,7 +2,7 @@
     <div id="document-browser-sidebar">
         <Toolbar id="document-detail-toolbar" class="kn-toolbar kn-toolbar--secondary">
             <template #start>
-                <div id="document-icons-container" class="p-d-flex p-flex-row p-jc-around ">
+                <div id="document-icons-container" class="p-d-flex p-flex-row p-jc-around">
                     <i class="fa fa-play-circle document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.executeDocument')" @click="executeDocument" v-if="user?.functionalities.includes('DocumentUserManagement')" />
                     <template v-if="canEditDocument">
                         <i class="pi pi-pencil document-pointer p-mx-4" v-tooltip.top="$t('documentBrowser.editDocument')" @click="$emit('showDocumentDetails', document)" />
@@ -62,9 +62,12 @@
         </div>
     </div>
 </template>
+
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
+import mainStore from '../../../../App.store'
+
 export default defineComponent({
     name: 'document-browser-sidebar',
     props: { selectedDocument: { type: Object } },
@@ -85,7 +88,7 @@ export default defineComponent({
             return this.user?.isSuperadmin
         },
         getImageUrl(): string {
-            return process.env.VUE_APP_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
+            return import.meta.env.VITE_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
         },
         canEditDocument(): boolean {
             if (!this.user) return false
@@ -104,9 +107,13 @@ export default defineComponent({
             }
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadDocument()
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.$state as any).user
     },
     methods: {
         loadDocument() {

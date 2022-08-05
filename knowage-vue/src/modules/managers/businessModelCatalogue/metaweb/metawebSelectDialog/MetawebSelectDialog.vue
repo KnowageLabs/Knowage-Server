@@ -27,7 +27,7 @@
                 </div>
             </template>
 
-            <Column field="value" :header="$t('metaweb.selectDialog.tableName')" style="flex:5"></Column>
+            <Column field="value" :header="$t('metaweb.selectDialog.tableName')" style="flex: 5"></Column>
             <Column :header="$t('metaweb.physicalModel.title')">
                 <template #header>
                     <Checkbox class="p-mr-2" v-model="allPhysicalSelected" :binary="true" @change="setAllChecked('physical')" />
@@ -58,6 +58,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
 import metawebSelectDialogDescriptor from '@/modules/managers/businessModelCatalogue/metaweb/metawebSelectDialog/MetawebSelectDialogDescriptor.json'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'metaweb-select-dialog',
@@ -93,6 +94,10 @@ export default defineComponent({
             }
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         await this.loadData()
     },
@@ -113,7 +118,7 @@ export default defineComponent({
                 const urlParams = {} as any
                 if (this.businessModel.tablePrefixLike) urlParams.tablePrefixLike = this.businessModel.tablePrefixLike
                 if (this.businessModel.tablePrefixNotLike) urlParams.tablePrefixNotLike = this.businessModel.tablePrefixNotLike
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, { params: urlParams }).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, { params: urlParams }).then((response: AxiosResponse<any>) => (this.datasourceStructure = response.data))
             }
         },
         loadRows() {
@@ -164,7 +169,7 @@ export default defineComponent({
         },
         async onContinue() {
             if (!this.checkIfPhysicalModelIsSelected()) {
-                this.$store.commit('setError', {
+                this.store.setError({
                     title: this.$t('common.error.generic'),
                     msg: this.$t('metaweb.selectDialog.noPhysicalModelsSelectedError')
                 })
@@ -181,7 +186,7 @@ export default defineComponent({
             this.prepareDataForPost(physicalModels, businessModels)
 
             await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/create`, { datasourceId: '' + this.businessModel?.dataSourceId, physicalModels: physicalModels, businessModels: businessModels, modelName: this.businessModel?.name })
+                .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/create`, { datasourceId: '' + this.businessModel?.dataSourceId, physicalModels: physicalModels, businessModels: businessModels, modelName: this.businessModel?.name })
                 .then((response: AxiosResponse<any>) => {
                     this.$emit('metaSelected', response.data)
                 })

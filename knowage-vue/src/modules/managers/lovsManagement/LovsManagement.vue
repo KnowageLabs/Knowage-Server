@@ -22,84 +22,89 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { iLov } from './LovsManagement'
-    import { AxiosResponse } from 'axios'
-    import FabButton from '@/components/UI/KnFabButton.vue'
-    import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
-    import lovsManagementDescriptor from './LovsManagementDescriptor.json'
+import { defineComponent } from 'vue'
+import { iLov } from './LovsManagement'
+import { AxiosResponse } from 'axios'
+import FabButton from '@/components/UI/KnFabButton.vue'
+import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+import lovsManagementDescriptor from './LovsManagementDescriptor.json'
+import mainStore from '../../../App.store'
 
-    export default defineComponent({
-        name: 'lovs-management',
-        components: { FabButton, KnListBox },
-        data() {
-            return {
-                lovsManagementDescriptor,
-                lovsList: [] as iLov[],
-                loading: false,
-                touched: false
-            }
+export default defineComponent({
+    name: 'lovs-management',
+    components: { FabButton, KnListBox },
+    data() {
+        return {
+            lovsManagementDescriptor,
+            lovsList: [] as iLov[],
+            loading: false,
+            touched: false
+        }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    async created() {
+        await this.loadLovs()
+    },
+    methods: {
+        async loadLovs() {
+            this.touched = false
+            this.loading = true
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all')
+                .then((response: AxiosResponse<any>) => {
+                    this.lovsList = response.data
+                    this.lovsList.sort((a: iLov, b: iLov) => (a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1))
+                })
+                .finally(() => (this.loading = false))
         },
-        async created() {
-            await this.loadLovs()
-        },
-        methods: {
-            async loadLovs() {
-                this.touched = false
-                this.loading = true
-                await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/lovs/get/all')
-                    .then((response: AxiosResponse<any>) => {
-                        this.lovsList = response.data
-                        this.lovsList.sort((a: iLov, b: iLov) => (a.label.toUpperCase() > b.label.toUpperCase() ? 1 : -1))
-                    })
-                    .finally(() => (this.loading = false))
-            },
-            showForm(event: any) {
-                const path = event.id ? `/lovs-management/${event.id}` : '/lovs-management/new-lov'
-                if (!this.touched) {
-                    this.$router.push(path)
-                } else {
-                    this.$confirm.require({
-                        message: this.$t('common.toast.unsavedChangesMessage'),
-                        header: this.$t('common.toast.unsavedChangesHeader'),
-                        icon: 'pi pi-exclamation-triangle',
-                        accept: () => {
-                            this.touched = false
-                            this.$router.push(path)
-                        }
-                    })
-                }
-            },
-            deleteLovConfirm(event) {
+        showForm(event: any) {
+            const path = event.id ? `/lovs-management/${event.id}` : '/lovs-management/new-lov'
+            if (!this.touched) {
+                this.$router.push(path)
+            } else {
                 this.$confirm.require({
-                    message: this.$t('common.toast.deleteMessage'),
-                    header: this.$t('common.toast.deleteTitle'),
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.touched = false
-                        this.deleteLov(event.item.id)
+                        this.$router.push(path)
                     }
                 })
-            },
-            async deleteLov(lovId: number) {
-                await this.$http
-                    .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/lovs/delete/${lovId}`)
-                    .then(() => {
-                        this.$store.commit('setInfo', {
-                            title: this.$t('common.toast.deleteTitle'),
-                            msg: this.$t('common.toast.deleteSuccess')
-                        })
-                        this.$router.push('/lovs-management')
-                        this.loadLovs()
-                    })
-                    .catch((error) => {
-                        this.$store.commit('setError', {
-                            title: 'Server error',
-                            msg: error.message
-                        })
-                    })
             }
+        },
+        deleteLovConfirm(event) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.toast.deleteTitle'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.touched = false
+                    this.deleteLov(event.item.id)
+                }
+            })
+        },
+        async deleteLov(lovId: number) {
+            await this.$http
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/lovs/delete/${lovId}`)
+                .then(() => {
+                    this.store.setInfo({
+                        title: this.$t('common.toast.deleteTitle'),
+                        msg: this.$t('common.toast.deleteSuccess')
+                    })
+                    this.$router.push('/lovs-management')
+                    this.loadLovs()
+                })
+                .catch((error) => {
+                    this.store.setError({
+                        title: 'Server error',
+                        msg: error.message
+                    })
+                })
         }
-    })
+    }
+})
 </script>

@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import TargetDefinitionDetail from './TargetDefinitionDetail.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -11,36 +12,31 @@ import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $route = { path: '/target-definition' }
 
 const $router = {
-    push: jest.fn(),
-
-    replace: jest.fn()
+    push: vi.fn(),
+    replace: vi.fn()
 }
 
-const $store = {
-    commit: jest.fn()
-}
-
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() =>
+    get: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: []
         })
     ),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const factory = () => {
     return mount(TargetDefinitionDetail, {
         global: {
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -53,7 +49,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $route,
                 $router,

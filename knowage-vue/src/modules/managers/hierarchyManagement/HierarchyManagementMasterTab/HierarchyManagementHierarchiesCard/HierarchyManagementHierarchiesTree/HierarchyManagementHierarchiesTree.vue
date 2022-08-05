@@ -50,10 +50,10 @@ import hierarchyManagementHierarchiesTreeDescriptor from './HierarchyManagementH
 import HierarchyManagementNodeDetailDialog from './HierarchyManagementNodeDetailDialog.vue'
 import HierarchyManagementHierarchiesTargetDialog from './HierarchyManagementHierarchiesTargetDialog.vue'
 import Tree from 'primevue/tree'
-
-const deepEqual = require('deep-equal')
-const deepcopy = require('deepcopy')
-const crypto = require('crypto')
+import deepEqual from 'deep-equal'
+import deepcopy from 'deepcopy'
+import cryptoRandomString from 'crypto-random-string'
+import mainStore from '../../../../../../App.store'
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchies-tree',
@@ -96,6 +96,10 @@ export default defineComponent({
             this.loadMasterTreeRelations()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadTree()
         this.loadMasterTreeRelations()
@@ -116,7 +120,7 @@ export default defineComponent({
         formatNodes(tree: any, parent: any) {
             return tree.map((node: any) => {
                 node = {
-                    key: crypto.randomBytes(16).toString('hex'),
+                    key: cryptoRandomString({ length: 16, type: 'base64' }),
                     id: node.id,
                     label: node.name,
                     children: node.children ?? [],
@@ -228,7 +232,7 @@ export default defineComponent({
 
             if (tempNode) {
                 tempNode.data = node
-                tempNode.key = crypto.randomBytes(16).toString('hex')
+                tempNode.key = cryptoRandomString({ length: 16, type: 'base64' })
                 tempNode.label = node.name
             }
             this.$emit('treeUpdated', this.nodes)
@@ -238,7 +242,7 @@ export default defineComponent({
 
             let tempNode = this.findNodeInTree(node.parent.key) as any
             node.LEVEL = tempNode.data.LEVEL + 1
-            if (tempNode) tempNode.children.push({ key: crypto.randomBytes(16).toString('hex'), id: node.name, label: node.name, children: node.children, data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: node.leaf, parent: tempNode })
+            if (tempNode) tempNode.children.push({ key: cryptoRandomString({ length: 16, type: 'base64' }), id: node.name, label: node.name, children: node.children, data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: node.leaf, parent: tempNode })
             this.$emit('treeUpdated', this.nodes)
         },
         copyNode(node: any) {
@@ -248,7 +252,7 @@ export default defineComponent({
             delete node.parentNode
 
             if (deepEqual(node, originalNode)) {
-                this.$store.commit('setError', {
+                this.store.setError({
                     title: this.$t('common.error.generic'),
                     msg: this.$t('managers.hierarchyManagement.nodeCloneError')
                 })
@@ -318,11 +322,11 @@ export default defineComponent({
             this.$emit('loading', true)
             const nodeSourceCode = targetNode.data[targetNode.data.aliasId]
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchies/getRelationsMasterTechnical?dimension=${this.selectedDimension.DIMENSION_NM}&hierSourceCode=${this.selectedHierarchy.HIER_CD}&hierSourceName=${this.selectedHierarchy.HIER_NM}&nodeSourceCode=${nodeSourceCode}`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `hierarchies/getRelationsMasterTechnical?dimension=${this.selectedDimension.DIMENSION_NM}&hierSourceCode=${this.selectedHierarchy.HIER_CD}&hierSourceName=${this.selectedHierarchy.HIER_NM}&nodeSourceCode=${nodeSourceCode}`)
                 .then((response: AxiosResponse<any>) => {
                     this.relations = response.data?.root
                     if (this.relations && this.relations.length === 0) {
-                        this.$store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.info.info'),
                             msg: this.$t('managers.hierarchyManagement.noHierarchiesForPropagation')
                         })
@@ -386,7 +390,7 @@ export default defineComponent({
                 this.relationsMasterTree.push(newElement)
             }
 
-            parentNode.children.push({ key: crypto.randomBytes(16).toString('hex'), id: node.name, label: node.name, children: [], data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: true, parent: parentNode })
+            parentNode.children.push({ key: cryptoRandomString({ length: 16, type: 'base64' }), id: node.name, label: node.name, children: [], data: node, style: this.hierarchyManagementHierarchiesTreeDescriptor.node.style, leaf: true, parent: parentNode })
             this.nodeToMove = null
             this.targetForMove = null
             this.$emit('treeUpdated', this.nodes)
@@ -443,7 +447,7 @@ export default defineComponent({
             node.parent = parent
 
             let parentToAdd = this.findNodeInTree(parent.key)
-            parentToAdd.children ? parentToAdd.children.push({ ...node, parentKey: parentToAdd.key, key: crypto.randomBytes(16).toString('hex') }) : (parentToAdd.children = [{ ...node, parentKey: parentToAdd.key, key: crypto.randomBytes(16).toString('hex') }])
+            parentToAdd.children ? parentToAdd.children.push({ ...node, parentKey: parentToAdd.key, key: cryptoRandomString({ length: 4, type: 'base64' }) }) : (parentToAdd.children = [{ ...node, parentKey: parentToAdd.key, key: cryptoRandomString({ length: 16, type: 'base64' }) }])
             this.$emit('treeUpdated', this.nodes)
         }
     }

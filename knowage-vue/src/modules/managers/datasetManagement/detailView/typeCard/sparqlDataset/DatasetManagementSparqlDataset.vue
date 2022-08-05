@@ -40,7 +40,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-import { VCodeMirror } from 'vue3-code-mirror'
+import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
 import useValidate from '@vuelidate/core'
 import sparqlDescriptor from './DatasetManagementSparqlDataset.json'
 import Card from 'primevue/card'

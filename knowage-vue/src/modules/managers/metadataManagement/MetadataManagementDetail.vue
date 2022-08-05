@@ -123,87 +123,92 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { iMetadata } from './MetadataManagement'
-    import { createValidations } from '@/helpers/commons/validationHelper'
-    import Dropdown from 'primevue/dropdown'
-    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
-    import metadataManagementDescriptor from './MetadataManagementDescriptor.json'
-    import metadataManagementValidationDescriptor from './MetadataManagementValidationDescriptor.json'
-    import useValidate from '@vuelidate/core'
+import { defineComponent } from 'vue'
+import { iMetadata } from './MetadataManagement'
+import { createValidations } from '@/helpers/commons/validationHelper'
+import Dropdown from 'primevue/dropdown'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import metadataManagementDescriptor from './MetadataManagementDescriptor.json'
+import metadataManagementValidationDescriptor from './MetadataManagementValidationDescriptor.json'
+import useValidate from '@vuelidate/core'
+import mainStore from '../../../App.store'
 
-    export default defineComponent({
-        name: 'metadata-management-detail',
-        components: {
-            Dropdown,
-            KnValidationMessages
-        },
-        props: {
-            model: {
-                type: Object,
-                required: false
-            }
-        },
-        emits: ['close', 'saved', 'touched'],
-        data() {
-            return {
-                metadataManagementDescriptor: metadataManagementDescriptor,
-                metadataManagementValidationDescriptor,
-                metadata: {} as iMetadata,
-                metadataTypes: metadataManagementDescriptor.metadataTypes,
-                submitted: false as Boolean,
-                operation: 'insert',
-                v$: useValidate() as any
-            }
-        },
-        validations() {
-            return {
-                metadata: createValidations('metadata', metadataManagementValidationDescriptor.validations.metadata)
-            }
-        },
-        computed: {
-            buttonDisabled(): any {
-                return this.v$.$invalid
-            },
-            title(): any {
-                return this.metadata.id ? this.$t('common.edit') : this.$t('common.new')
-            }
-        },
-        watch: {
-            model() {
-                this.v$.$reset()
-                this.metadata = { ...this.model } as iMetadata
-            }
-        },
-        mounted() {
-            if (this.model) {
-                this.metadata = { ...this.model } as iMetadata
-            }
-        },
-        methods: {
-            async handleSubmit() {
-                if (this.v$.$invalid) {
-                    return
-                }
-
-                if (this.metadata.id) {
-                    this.operation = 'update'
-                }
-
-                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/objMetadata', this.metadata).then(() => {
-                    this.$store.commit('setInfo', {
-                        title: this.$t(this.metadataManagementDescriptor.operation[this.operation].toastTitle),
-                        msg: this.$t(this.metadataManagementDescriptor.operation.success)
-                    })
-                    this.$emit('saved')
-                })
-            },
-            closeTemplate() {
-                this.$emit('close')
-            },
-            setDirty(): void {
-                this.$emit('touched')
-            }
+export default defineComponent({
+    name: 'metadata-management-detail',
+    components: {
+        Dropdown,
+        KnValidationMessages
+    },
+    props: {
+        model: {
+            type: Object,
+            required: false
         }
-    })
+    },
+    emits: ['close', 'saved', 'touched'],
+    data() {
+        return {
+            metadataManagementDescriptor: metadataManagementDescriptor,
+            metadataManagementValidationDescriptor,
+            metadata: {} as iMetadata,
+            metadataTypes: metadataManagementDescriptor.metadataTypes,
+            submitted: false as Boolean,
+            operation: 'insert',
+            v$: useValidate() as any
+        }
+    },
+    validations() {
+        return {
+            metadata: createValidations('metadata', metadataManagementValidationDescriptor.validations.metadata)
+        }
+    },
+    computed: {
+        buttonDisabled(): any {
+            return this.v$.$invalid
+        },
+        title(): any {
+            return this.metadata.id ? this.$t('common.edit') : this.$t('common.new')
+        }
+    },
+    watch: {
+        model() {
+            this.v$.$reset()
+            this.metadata = { ...this.model } as iMetadata
+        }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    mounted() {
+        if (this.model) {
+            this.metadata = { ...this.model } as iMetadata
+        }
+    },
+    methods: {
+        async handleSubmit() {
+            if (this.v$.$invalid) {
+                return
+            }
+
+            if (this.metadata.id) {
+                this.operation = 'update'
+            }
+
+            await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/objMetadata', this.metadata).then(() => {
+                this.store.setInfo({
+                    title: this.$t(this.metadataManagementDescriptor.operation[this.operation].toastTitle),
+                    msg: this.$t(this.metadataManagementDescriptor.operation.success)
+                })
+                this.$emit('saved')
+            })
+        },
+        closeTemplate() {
+            this.$emit('close')
+        },
+        setDirty(): void {
+            this.$emit('touched')
+        }
+    }
+})
 </script>

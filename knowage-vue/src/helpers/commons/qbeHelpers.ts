@@ -1,4 +1,4 @@
-const crypto = require('crypto')
+import cryptoRandomString from 'crypto-random-string';
 
 export function createNewField(editQueryObj, field) {
     var newField = {
@@ -24,7 +24,7 @@ export function createNewField(editQueryObj, field) {
         leaf: field.leaf,
         originalId: field.id,
         isSpatial: field.isSpatial,
-        uniqueID: crypto.randomBytes(4).toString('hex')
+        uniqueID:cryptoRandomString({length: 4, type: 'base64'})
     } as any
 
     // eslint-disable-next-line no-prototype-builtins

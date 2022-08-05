@@ -70,7 +70,7 @@
                                         </template>
                                     </i18n-t>
 
-                                    <span class="p-mr-2" style="white-space:nowrap">
+                                    <span class="p-mr-2" style="white-space: nowrap">
                                         {{ $t('knScheduler.startingIn') }}
                                     </span>
                                     <Dropdown
@@ -320,7 +320,7 @@
 
                         <Column class="kn-truncated" field="errorFile" :header="''" :sortable="false" :selectionMode="false" :exportable="false">
                             <template #body="slotProps">
-                                <span><Button icon="pi pi-download" class="p-button-link" v-if="slotProps.data['status'] === 'KO'" @click="downloadLog(slotProps.data)"/></span> </template
+                                <span><Button icon="pi pi-download" class="p-button-link" v-if="slotProps.data['status'] === 'KO'" @click="downloadLog(slotProps.data)" /></span> </template
                         ></Column> </DataTable
                 ></template>
             </Card>
@@ -329,445 +329,411 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import Calendar from 'primevue/calendar'
-    import Checkbox from 'primevue/checkbox'
-    import Dropdown from 'primevue/dropdown'
-    import Message from 'primevue/message'
-    import RadioButton from 'primevue/radiobutton'
-    import InputText from 'primevue/inputtext'
-    import DataTable from 'primevue/datatable'
-    import Column from 'primevue/column'
-    import InputSwitch from 'primevue/inputswitch'
+import { defineComponent } from 'vue'
+import Calendar from 'primevue/calendar'
+import Checkbox from 'primevue/checkbox'
+import Dropdown from 'primevue/dropdown'
+import Message from 'primevue/message'
+import RadioButton from 'primevue/radiobutton'
+import InputText from 'primevue/inputtext'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import InputSwitch from 'primevue/inputswitch'
+import moment from 'moment'
+import { luxonFormatDate } from '@/helpers/commons/localeHelper'
+import cronstrue from 'cronstrue/i18n'
+import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
+import { IDataPrepLog } from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoring'
+import { AxiosResponse } from 'axios'
+import { mapState } from 'pinia'
+import mainStore from '../../../App.store'
 
-    import moment from 'moment'
-    import { luxonFormatDate } from '@/helpers/commons/localeHelper'
-    import cronstrue from 'cronstrue/i18n'
-    import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
-    import { IDataPrepLog } from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoring'
-    import { AxiosResponse } from 'axios'
-    import { mapState } from 'vuex'
-
-    export default defineComponent({
-        name: 'kn-scheduler',
-        components: {
-            Calendar,
-            Checkbox,
-            Column,
-            DataTable,
-            Dropdown,
-            InputSwitch,
-            Message,
-            InputText,
-            RadioButton
-        },
-        props: {
-            descriptor: Object,
-            readOnly: { type: Boolean, default: false },
-            cronExpression: String,
-            cronExpressionType: String,
-            logs: [] as any,
-            schedulerVisible: { type: Boolean, default: true },
-            logsVisible: { type: Boolean, default: true },
-            schedulationEnabled: Boolean,
-            schedulationPaused: Boolean,
-            loadingLogs: { type: Boolean, default: false }
-        },
-        emits: ['touched', 'update:schedulationPaused', 'update:schedulationEnabled', 'update:currentCronExpression', 'update:cronExpressionType'],
-        data() {
-            return {
-                startDate: null as Date | null,
-                endDate: null as Date | null,
-                selectedRefreshRate: '',
-                selectedMonth: null,
-                selectedYear: null,
-                selectedDay: null,
-                selectedDayExtended: null,
-                selectedDayOrdinal: null,
-                selectedDayNumber: null,
-                selectedMonthExtended: null,
-                dateFormat: '' as string,
-                dayConf: null,
-                monthConf: null,
-                yearConf: null,
-                days: [] as any,
-                months: [] as any,
-                ordinal: [] as any,
-                refreshRates: [] as any,
-                nextFlush: '',
-                selectedWeekdays: {} as any,
-                startDateEnabled: false,
-                endDateEnabled: false,
-                localCronExpression: '0 0 0 * * ? *',
-                // CONST
-                allValues: '*',
-                noSpecificValue: '?',
-                enableSchedulation: true,
-                paused: false,
-                validCronExpression: true
+export default defineComponent({
+    name: 'kn-scheduler',
+    components: {
+        Calendar,
+        Checkbox,
+        Column,
+        DataTable,
+        Dropdown,
+        InputSwitch,
+        Message,
+        InputText,
+        RadioButton
+    },
+    props: {
+        descriptor: Object,
+        readOnly: { type: Boolean, default: false },
+        cronExpression: String,
+        cronExpressionType: String,
+        logs: [] as any,
+        schedulerVisible: { type: Boolean, default: true },
+        logsVisible: { type: Boolean, default: true },
+        schedulationEnabled: Boolean,
+        schedulationPaused: Boolean,
+        loadingLogs: { type: Boolean, default: false }
+    },
+    emits: ['touched', 'update:schedulationPaused', 'update:schedulationEnabled', 'update:currentCronExpression', 'update:cronExpressionType'],
+    data() {
+        return {
+            startDate: null as Date | null,
+            endDate: null as Date | null,
+            selectedRefreshRate: '',
+            selectedMonth: null,
+            selectedYear: null,
+            selectedDay: null,
+            selectedDayExtended: null,
+            selectedDayOrdinal: null,
+            selectedDayNumber: null,
+            selectedMonthExtended: null,
+            dateFormat: '' as string,
+            dayConf: null,
+            monthConf: null,
+            yearConf: null,
+            days: [] as any,
+            months: [] as any,
+            ordinal: [] as any,
+            refreshRates: [] as any,
+            nextFlush: '',
+            selectedWeekdays: {} as any,
+            startDateEnabled: false,
+            endDateEnabled: false,
+            localCronExpression: '0 0 0 * * ? *',
+            // CONST
+            allValues: '*',
+            noSpecificValue: '?',
+            enableSchedulation: true,
+            paused: false,
+            validCronExpression: true
+        }
+    },
+    computed: {
+        ...mapState(mainStore, {
+            configuration: 'configuration'
+        }),
+        getCronstrueFormula(): String {
+            let locale = localStorage.getItem('locale')
+            let cronLocale = ''
+            if (locale) {
+                let splitted = locale.split('_')
+                cronLocale = locale.includes('#') ? (cronLocale = splitted[0] + '_' + splitted[2]) : (cronLocale = splitted[0])
             }
+            let verboseDescription = cronstrue.toString(this.localCronExpression, { locale: cronLocale })
+            if (verboseDescription.includes('undefined')) verboseDescription = this.$t('knScheduler.invalidCronExpression')
+            return verboseDescription
         },
-        computed: {
-            ...mapState({
-                configuration: 'configuration'
-            }),
-
-            getCronstrueFormula(): String {
-                let locale = localStorage.getItem('locale')
-                let cronLocale = ''
-                if (locale) {
-                    let splitted = locale.split('_')
-
-                    cronLocale = locale.includes('#') ? (cronLocale = splitted[0] + '_' + splitted[2]) : (cronLocale = splitted[0])
-                }
-                let verboseDescription = cronstrue.toString(this.localCronExpression, { locale: cronLocale })
-
-                if (verboseDescription.includes('undefined')) verboseDescription = this.$t('knScheduler.invalidCronExpression')
-
-                return verboseDescription
-            },
-
-            getSchedulerClass(): String {
-                if (this.logsVisible) {
-                    if (this.schedulerVisible) {
-                        return 'p-col-5'
-                    } else {
-                        return 'p-col-0'
-                    }
-                } else {
-                    return 'p-col'
-                }
-            },
-            getLogsTableClass(): String {
+        getSchedulerClass(): String {
+            if (this.logsVisible) {
                 if (this.schedulerVisible) {
-                    if (this.logsVisible) {
-                        return 'p-col-7'
+                    return 'p-col-5'
+                } else {
+                    return 'p-col-0'
+                }
+            } else {
+                return 'p-col'
+            }
+        },
+        getLogsTableClass(): String {
+            if (this.schedulerVisible) {
+                if (this.logsVisible) {
+                    return 'p-col-7'
+                } else {
+                    return 'p-col-0'
+                }
+            } else {
+                return 'p-col-12'
+            }
+        },
+        isDisabled(): Boolean {
+            return this.readOnly || !this.enableSchedulation || this.loadingLogs
+        }
+    },
+    async created() {
+        if (!this.configuration || (!this.configuration && !this.configuration['SPAGOBI.TIMESTAMP-FORMAT.format'])) await this.loadUserConfig()
+        this.startDateEnabled = this.descriptor?.config.startDateEnabled
+        if (this.startDateEnabled) {
+            this.startDate = new Date()
+        }
+        this.descriptor?.refreshRate.options.forEach((x) => {
+            this.refreshRates.push({ code: x.code, id: x.id, name: this.$t(x.name) })
+        })
+        this.descriptor?.days.forEach((x) => {
+            this.days.push({ code: x.code, id: x.id, name: this.$t(x.name) })
+        })
+        this.descriptor?.months.forEach((x) => {
+            this.months.push({ code: x.code, id: x.id, name: this.$t(x.name) })
+        })
+        this.descriptor?.monthly.ordinal.options.forEach((x) => {
+            this.ordinal.push({ code: x.code, id: x.id, name: this.$t(x.name) })
+        })
+        this.localCronExpression = this.cronExpression || '0 0 0 * * ? *'
+        if (this.schedulationEnabled) this.enableSchedulation = this.schedulationEnabled
+        this.selectedRefreshRate = this.descriptor?.refreshRate.options[0].code
+        if (this.cronExpressionType) {
+            this.selectedRefreshRate = this.cronExpressionType
+        }
+    },
+    updated() {
+        this.enableSchedulation = this.schedulationEnabled
+        this.paused = this.schedulationPaused
+    },
+    methods: {
+        async downloadLog(item: IDataPrepLog) {
+            await this.$http.post(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process/' + item.id + '/log/download').then((response: AxiosResponse<any>) => {
+                downloadDirectFromResponse(response)
+            })
+        },
+        getFormattedDate(date: any): String {
+            return luxonFormatDate(new Date(date), undefined, this.dateFormat)
+        },
+        getNumberOptions(max: Number) {
+            let tmp = [] as any
+            for (var i = 1; i <= max; i++) tmp.push({ code: i.toString(), id: i, name: i.toString() })
+            return tmp
+        },
+        isSet(cronExpressionToken): Boolean {
+            return cronExpressionToken && cronExpressionToken !== this.allValues && cronExpressionToken !== this.noSpecificValue
+        },
+        async loadUserConfig() {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
+                if (response.data) {
+                    this.dateFormat = response.data['SPAGOBI.TIMESTAMP-FORMAT.format'] ? response.data['SPAGOBI.TIMESTAMP-FORMAT.format'] : response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === '%Y-%m-%d' ? 'dd/MM/yyyy' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
+                }
+            })
+        },
+        parseFormula(cronExpression) {
+            if (this.selectedRefreshRate == 'custom') {
+                return
+            }
+            if (cronExpression === '0 0 0 ? * MON,TUE,WED,THU,FRI *') {
+                // @ts-ignore
+                this.dayConf = 'everyNotWorkingDays'
+            } else {
+                let cronExpressionArr = cronExpression.split(' ')
+                if (this.isSet(cronExpressionArr[3])) {
+                    this.selectedDayNumber = cronExpressionArr[3]
+                }
+                if (this.isSet(cronExpressionArr[4])) {
+                    let splitted = cronExpressionArr[4].split('/')
+                    if (splitted.length > 1) {
+                        // @ts-ignore
+                        this.selectedMonthExtended = parseInt(splitted[0])
+                        // @ts-ignore
+                        this.selectedMonth = parseInt(splitted[1])
+                    } else if (this.months.filter((x) => x.code === cronExpressionArr[4]).length == 1) {
+                        this.selectedMonth = cronExpressionArr[4]
+                    }
+                }
+                if (this.isSet(cronExpressionArr[5])) {
+                    let splitted = cronExpressionArr[5].split('/')
+                    if (splitted.length > 1) {
+                        // @ts-ignore
+                        this.selectedDayExtended = parseInt(splitted[0])
+                        // @ts-ignore
+                        this.selectedDay = splitted[1]
                     } else {
-                        return 'p-col-0'
-                    }
-                } else {
-                    return 'p-col-12'
-                }
-            },
-            isDisabled(): Boolean {
-                return this.readOnly || !this.enableSchedulation || this.loadingLogs
-            }
-        },
-        async created() {
-            if (!this.configuration || (!this.configuration && !this.configuration['SPAGOBI.TIMESTAMP-FORMAT.format'])) await this.loadUserConfig()
-
-            this.startDateEnabled = this.descriptor?.config.startDateEnabled
-            if (this.startDateEnabled) {
-                this.startDate = new Date()
-            }
-
-            this.descriptor?.refreshRate.options.forEach((x) => {
-                this.refreshRates.push({ code: x.code, id: x.id, name: this.$t(x.name) })
-            })
-
-            this.descriptor?.days.forEach((x) => {
-                this.days.push({ code: x.code, id: x.id, name: this.$t(x.name) })
-            })
-
-            this.descriptor?.months.forEach((x) => {
-                this.months.push({ code: x.code, id: x.id, name: this.$t(x.name) })
-            })
-
-            this.descriptor?.monthly.ordinal.options.forEach((x) => {
-                this.ordinal.push({ code: x.code, id: x.id, name: this.$t(x.name) })
-            })
-
-            this.localCronExpression = this.cronExpression || '0 0 0 * * ? *'
-
-            if (this.schedulationEnabled) this.enableSchedulation = this.schedulationEnabled
-
-            this.selectedRefreshRate = this.descriptor?.refreshRate.options[0].code
-            if (this.cronExpressionType) {
-                this.selectedRefreshRate = this.cronExpressionType
-            }
-        },
-        updated() {
-            this.enableSchedulation = this.schedulationEnabled
-
-            this.paused = this.schedulationPaused
-        },
-        methods: {
-            async downloadLog(item: IDataPrepLog) {
-                await this.$http.post(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/process/' + item.id + '/log/download').then((response: AxiosResponse<any>) => {
-                    downloadDirectFromResponse(response)
-                })
-            },
-            getFormattedDate(date: any): String {
-                return luxonFormatDate(new Date(date), undefined, this.dateFormat)
-            },
-            getNumberOptions(max: Number) {
-                let tmp = [] as any
-                for (var i = 1; i <= max; i++) tmp.push({ code: i.toString(), id: i, name: i.toString() })
-                return tmp
-            },
-            isSet(cronExpressionToken): Boolean {
-                return cronExpressionToken && cronExpressionToken !== this.allValues && cronExpressionToken !== this.noSpecificValue
-            },
-            async loadUserConfig() {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
-                    if (response.data) {
-                        this.dateFormat = response.data['SPAGOBI.TIMESTAMP-FORMAT.format'] ? response.data['SPAGOBI.TIMESTAMP-FORMAT.format'] : response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === '%Y-%m-%d' ? 'dd/MM/yyyy' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']
-                    }
-                })
-            },
-            parseFormula(cronExpression) {
-                if (this.selectedRefreshRate == 'custom') {
-                    return
-                }
-                if (cronExpression === '0 0 0 ? * MON,TUE,WED,THU,FRI *') {
-                    // @ts-ignore
-                    this.dayConf = 'everyNotWorkingDays'
-                } else {
-                    let cronExpressionArr = cronExpression.split(' ')
-                    if (this.isSet(cronExpressionArr[3])) {
-                        this.selectedDayNumber = cronExpressionArr[3]
-                    }
-                    if (this.isSet(cronExpressionArr[4])) {
-                        let splitted = cronExpressionArr[4].split('/')
-                        if (splitted.length > 1) {
-                            // @ts-ignore
-                            this.selectedMonthExtended = parseInt(splitted[0])
-                            // @ts-ignore
-                            this.selectedMonth = parseInt(splitted[1])
-                        } else if (this.months.filter((x) => x.code === cronExpressionArr[4]).length == 1) {
-                            this.selectedMonth = cronExpressionArr[4]
-                        }
-                    }
-                    if (this.isSet(cronExpressionArr[5])) {
-                        let splitted = cronExpressionArr[5].split('/')
+                        splitted = cronExpressionArr[5].split('#')
                         if (splitted.length > 1) {
                             // @ts-ignore
                             this.selectedDayExtended = parseInt(splitted[0])
                             // @ts-ignore
-                            this.selectedDay = splitted[1]
+                            this.selectedDayOrdinal = parseInt(splitted[1])
                         } else {
-                            splitted = cronExpressionArr[5].split('#')
-                            if (splitted.length > 1) {
-                                // @ts-ignore
-                                this.selectedDayExtended = parseInt(splitted[0])
-                                // @ts-ignore
-                                this.selectedDayOrdinal = parseInt(splitted[1])
-                            } else {
-                                splitted = cronExpressionArr[5].split(',')
-                                if (splitted.length > 0) {
-                                    for (var index in splitted) {
-                                        let day = this.descriptor?.days.filter((x) => x.code === splitted[index].toLowerCase())[0]
-
-                                        this.selectedWeekdays[day.id] = [day.code]
-                                    }
+                            splitted = cronExpressionArr[5].split(',')
+                            if (splitted.length > 0) {
+                                for (var index in splitted) {
+                                    let day = this.descriptor?.days.filter((x) => x.code === splitted[index].toLowerCase())[0]
+                                    this.selectedWeekdays[day.id] = [day.code]
                                 }
                             }
                         }
                     }
-                    if (this.isSet(cronExpressionArr[6])) {
+                }
+                if (this.isSet(cronExpressionArr[6])) {
+                    // @ts-ignore
+                    this.selectedYear = cronExpressionArr[6].split('/')[1]
+                }
+                if (this.selectedYear) {
+                    if (this.selectedDayExtended)
                         // @ts-ignore
-                        this.selectedYear = cronExpressionArr[6].split('/')[1]
-                    }
-
-                    if (this.selectedYear) {
-                        if (this.selectedDayExtended)
-                            // @ts-ignore
-                            this.yearConf = 'theOrdinalDay'
+                        this.yearConf = 'theOrdinalDay'
+                    // @ts-ignore
+                    else this.yearConf = 'theDay'
+                } else {
+                    if (this.selectedDay) {
                         // @ts-ignore
-                        else this.yearConf = 'theDay'
-                    } else {
-                        if (this.selectedDay) {
+                        this.dayConf = 'everyDay'
+                    } else if (this.selectedMonth) {
+                        if (this.selectedDayNumber) {
                             // @ts-ignore
-                            this.dayConf = 'everyDay'
-                        } else if (this.selectedMonth) {
-                            if (this.selectedDayNumber) {
-                                // @ts-ignore
-                                this.monthConf = 'theDay'
-                            } else {
-                                // @ts-ignore
-                                this.monthConf = 'theOrdinalDay'
-                            }
+                            this.monthConf = 'theDay'
+                        } else {
+                            // @ts-ignore
+                            this.monthConf = 'theOrdinalDay'
                         }
                     }
                 }
-            },
-            resetFormula() {
-                this.localCronExpression = '0 0 0 * * ? *'
-
-                this.selectedMonth = null
-                this.selectedYear = null
-                this.selectedDay = null
-                this.selectedDayExtended = null
-                this.selectedDayOrdinal = null
-                this.selectedDayNumber = null
-                this.dayConf = null
-                this.monthConf = null
-                this.yearConf = null
-
-                this.$emit('update:currentCronExpression', this.localCronExpression)
-                this.$emit('update:cronExpressionType', this.selectedRefreshRate)
-            },
-            updateFormula() {
-                if (this.selectedRefreshRate === 'custom') {
-                    return
-                }
-
-                let cronExpressionArr = this.localCronExpression.split(' ')
-                cronExpressionArr[0] = cronExpressionArr[1] = cronExpressionArr[2] = '0'
-                if (this.selectedRefreshRate === 'daily') {
-                    if (this.dayConf === 'everyDay') {
-                        cronExpressionArr[3] = this.noSpecificValue
-
-                        if (this.selectedDay && this.selectedDayExtended) {
-                            cronExpressionArr[5] = this.selectedDayExtended + '/' + this.selectedDay
-                        }
-                    } else if (this.dayConf === 'everyNotWorkingDays') {
-                        cronExpressionArr = '0 0 0 ? * MON,TUE,WED,THU,FRI *'.split(' ')
-                    }
-                } else if (this.selectedRefreshRate === 'weekly') {
-                    let t = ''
-                    let weekdayKeys = Object.keys(this.selectedWeekdays)
-                    if (weekdayKeys.length > 0) {
-                        let set = new Set()
-
-                        for (var day in this.selectedWeekdays) {
-                            if (this.selectedWeekdays[day][0]) {
-                                set.add(this.selectedWeekdays[day][0].toUpperCase())
-                            }
-                        }
-                        t = Array.from(set).join(',')
-                    } else {
-                        t += this.allValues
-                    }
-
-                    cronExpressionArr[5] = t
-
-                    cronExpressionArr[3] = '?'
-
-                    cronExpressionArr[4] = this.allValues
-                } else if (this.selectedRefreshRate === 'monthly') {
-                    if (this.selectedMonthExtended && this.selectedMonth) {
-                        cronExpressionArr[4] = this.selectedMonthExtended + '/' + this.selectedMonth
-                    }
-
-                    if (this.monthConf === 'theDay') {
-                        cronExpressionArr[3] = this.selectedDayNumber ? this.selectedDayNumber! : this.allValues
-
-                        cronExpressionArr[5] = this.noSpecificValue
-                    } else if (this.monthConf === 'theOrdinalDay') {
-                        cronExpressionArr[3] = this.noSpecificValue
-
-                        if (this.selectedDayExtended && this.selectedDayOrdinal) {
-                            cronExpressionArr[5] = this.selectedDayExtended + '#' + this.selectedDayOrdinal
-                        }
-                    }
-                    cronExpressionArr[6] = this.allValues
-                } else if (this.selectedRefreshRate === 'yearly') {
-                    cronExpressionArr[4] = this.selectedMonth ? this.selectedMonth! : this.allValues
-
-                    if (this.yearConf === 'theDay') {
-                        cronExpressionArr[3] = this.selectedDayNumber ? this.selectedDayNumber! : this.allValues
-                    } else if (this.yearConf === 'theOrdinalDay') {
-                        cronExpressionArr[3] = this.noSpecificValue
-
-                        if (this.selectedDayExtended && this.selectedDayOrdinal) {
-                            cronExpressionArr[5] = this.selectedDayExtended + '#' + this.selectedDayOrdinal
-                        }
-                    }
-
-                    if (this.selectedYear) {
-                        cronExpressionArr[6] = moment().year() + '/' + this.selectedYear
-                    } else {
-                        cronExpressionArr[6] = this.allValues
-                    }
-                }
-                this.localCronExpression = cronExpressionArr.join(' ')
-
-                this.$emit('update:currentCronExpression', this.localCronExpression)
-            },
-            togglePause() {
-                this.paused = !this.paused
-                this.$emit('update:schedulationPaused', this.paused)
-                this.$emit('touched')
-            },
-            toggleSchedulationEnabled() {
-                this.$emit('update:schedulationEnabled', this.enableSchedulation)
-                this.$emit('touched')
             }
         },
-        watch: {
-            selectedRefreshRate(newValue) {
-                this.$emit('update:cronExpressionType', newValue)
-            },
-
-            selectedMonth() {
-                this.updateFormula()
-            },
-            selectedYear() {
-                this.updateFormula()
-            },
-            selectedDay() {
-                this.updateFormula()
-            },
-            selectedDayExtended() {
-                this.updateFormula()
-            },
-            selectedDayOrdinal() {
-                this.updateFormula()
-            },
-            selectedDayNumber() {
-                this.updateFormula()
-            },
-            dayConf() {
-                this.updateFormula()
-            },
-            monthConf() {
-                this.updateFormula()
-            },
-            selectedWeekdays: {
-                handler() {
-                    this.updateFormula()
-                },
-                deep: true
-            },
-            cronExpression(newFormula) {
-                this.localCronExpression = newFormula
-                this.parseFormula(this.localCronExpression)
-            },
-            cronExpressionType(newCronExpressionType) {
-                this.selectedRefreshRate = newCronExpressionType
-                this.parseFormula(this.localCronExpression)
-            },
-            localCronExpression() {
-                if (this.localCronExpression !== this.cronExpression) this.$emit('touched')
-                this.parseFormula(this.localCronExpression)
-            },
-            schedulationPaused(newSchedulationPaused) {
-                this.paused = newSchedulationPaused
-            },
-            schedulationEnabled(newSchedulationEnabled) {
-                this.enableSchedulation = newSchedulationEnabled
+        resetFormula() {
+            this.localCronExpression = '0 0 0 * * ? *'
+            this.selectedMonth = null
+            this.selectedYear = null
+            this.selectedDay = null
+            this.selectedDayExtended = null
+            this.selectedDayOrdinal = null
+            this.selectedDayNumber = null
+            this.dayConf = null
+            this.monthConf = null
+            this.yearConf = null
+            this.$emit('update:currentCronExpression', this.localCronExpression)
+            this.$emit('update:cronExpressionType', this.selectedRefreshRate)
+        },
+        updateFormula() {
+            if (this.selectedRefreshRate === 'custom') {
+                return
             }
+            let cronExpressionArr = this.localCronExpression.split(' ')
+            cronExpressionArr[0] = cronExpressionArr[1] = cronExpressionArr[2] = '0'
+            if (this.selectedRefreshRate === 'daily') {
+                if (this.dayConf === 'everyDay') {
+                    cronExpressionArr[3] = this.noSpecificValue
+                    if (this.selectedDay && this.selectedDayExtended) {
+                        cronExpressionArr[5] = this.selectedDayExtended + '/' + this.selectedDay
+                    }
+                } else if (this.dayConf === 'everyNotWorkingDays') {
+                    cronExpressionArr = '0 0 0 ? * MON,TUE,WED,THU,FRI *'.split(' ')
+                }
+            } else if (this.selectedRefreshRate === 'weekly') {
+                let t = ''
+                let weekdayKeys = Object.keys(this.selectedWeekdays)
+                if (weekdayKeys.length > 0) {
+                    let set = new Set()
+                    for (var day in this.selectedWeekdays) {
+                        if (this.selectedWeekdays[day][0]) {
+                            set.add(this.selectedWeekdays[day][0].toUpperCase())
+                        }
+                    }
+                    t = Array.from(set).join(',')
+                } else {
+                    t += this.allValues
+                }
+                cronExpressionArr[5] = t
+                cronExpressionArr[3] = '?'
+                cronExpressionArr[4] = this.allValues
+            } else if (this.selectedRefreshRate === 'monthly') {
+                if (this.selectedMonthExtended && this.selectedMonth) {
+                    cronExpressionArr[4] = this.selectedMonthExtended + '/' + this.selectedMonth
+                }
+                if (this.monthConf === 'theDay') {
+                    cronExpressionArr[3] = this.selectedDayNumber ? this.selectedDayNumber! : this.allValues
+                    cronExpressionArr[5] = this.noSpecificValue
+                } else if (this.monthConf === 'theOrdinalDay') {
+                    cronExpressionArr[3] = this.noSpecificValue
+                    if (this.selectedDayExtended && this.selectedDayOrdinal) {
+                        cronExpressionArr[5] = this.selectedDayExtended + '#' + this.selectedDayOrdinal
+                    }
+                }
+                cronExpressionArr[6] = this.allValues
+            } else if (this.selectedRefreshRate === 'yearly') {
+                cronExpressionArr[4] = this.selectedMonth ? this.selectedMonth! : this.allValues
+                if (this.yearConf === 'theDay') {
+                    cronExpressionArr[3] = this.selectedDayNumber ? this.selectedDayNumber! : this.allValues
+                } else if (this.yearConf === 'theOrdinalDay') {
+                    cronExpressionArr[3] = this.noSpecificValue
+                    if (this.selectedDayExtended && this.selectedDayOrdinal) {
+                        cronExpressionArr[5] = this.selectedDayExtended + '#' + this.selectedDayOrdinal
+                    }
+                }
+                if (this.selectedYear) {
+                    cronExpressionArr[6] = moment().year() + '/' + this.selectedYear
+                } else {
+                    cronExpressionArr[6] = this.allValues
+                }
+            }
+            this.localCronExpression = cronExpressionArr.join(' ')
+            this.$emit('update:currentCronExpression', this.localCronExpression)
+        },
+        togglePause() {
+            this.paused = !this.paused
+            this.$emit('update:schedulationPaused', this.paused)
+            this.$emit('touched')
+        },
+        toggleSchedulationEnabled() {
+            this.$emit('update:schedulationEnabled', this.enableSchedulation)
+            this.$emit('touched')
         }
-    })
+    },
+    watch: {
+        selectedRefreshRate(newValue) {
+            this.$emit('update:cronExpressionType', newValue)
+        },
+        selectedMonth() {
+            this.updateFormula()
+        },
+        selectedYear() {
+            this.updateFormula()
+        },
+        selectedDay() {
+            this.updateFormula()
+        },
+        selectedDayExtended() {
+            this.updateFormula()
+        },
+        selectedDayOrdinal() {
+            this.updateFormula()
+        },
+        selectedDayNumber() {
+            this.updateFormula()
+        },
+        dayConf() {
+            this.updateFormula()
+        },
+        monthConf() {
+            this.updateFormula()
+        },
+        selectedWeekdays: {
+            handler() {
+                this.updateFormula()
+            },
+            deep: true
+        },
+        cronExpression(newFormula) {
+            this.localCronExpression = newFormula
+            this.parseFormula(this.localCronExpression)
+        },
+        cronExpressionType(newCronExpressionType) {
+            this.selectedRefreshRate = newCronExpressionType
+            this.parseFormula(this.localCronExpression)
+        },
+        localCronExpression() {
+            if (this.localCronExpression !== this.cronExpression) this.$emit('touched')
+            this.parseFormula(this.localCronExpression)
+        },
+        schedulationPaused(newSchedulationPaused) {
+            this.paused = newSchedulationPaused
+        },
+        schedulationEnabled(newSchedulationEnabled) {
+            this.enableSchedulation = newSchedulationEnabled
+        }
+    }
+})
 </script>
 
 <style lang="css" scoped>
-    .knScheduler {
-        min-width: 200px;
-        min-height: 100px;
-        max-height: 350px;
-        font-size: 0.9rem;
-    }
-    .dayCheckbox {
-        width: 100px;
-    }
-
-    .messageClass {
-        height: 50px;
-    }
-
-    .itemClass {
-        width: 100%;
-    }
+.knScheduler {
+    min-width: 200px;
+    min-height: 100px;
+    max-height: 350px;
+    font-size: 0.9rem;
+}
+.dayCheckbox {
+    width: 100px;
+}
+.messageClass {
+    height: 50px;
+}
+.itemClass {
+    width: 100%;
+}
 </style>

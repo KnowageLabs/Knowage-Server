@@ -43,6 +43,8 @@ import { iMenuNode } from './MenuManagement'
 import MenuNodesTree from './MenuNodesTree/MenuManagementNodesTree.vue'
 import MenuElementsDetail from './ElementDetailsCard/MenuManagementElementsDetail.vue'
 import { iRole, iStaticPage } from '../usersManagement/UsersManagement'
+import mainStore from '../../../App.store'
+
 export default defineComponent({
     name: 'menu-management',
     components: {
@@ -53,7 +55,7 @@ export default defineComponent({
     },
     data() {
         return {
-            apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
+            apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
             menuNodes: [] as iMenuNode[],
             staticPagesList: [] as iStaticPage[],
             selectedMenuNode: {} as any,
@@ -63,6 +65,10 @@ export default defineComponent({
             dirty: false as Boolean,
             roles: [] as iRole[]
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadMenuNodes()
@@ -96,7 +102,15 @@ export default defineComponent({
             this.selectedMenuNode.level = 0
             this.selectedMenuNode.icon = {}
             this.selectedMenuNode.roles = []
-            this.selectedMenuNode.custIcon = this.selectedMenuNode.externalApplicationUrl = this.selectedMenuNode.functionality = this.selectedMenuNode.initialPath = this.selectedMenuNode.objId = this.selectedMenuNode.objParameters = this.selectedMenuNode.staticPage = this.selectedMenuNode.parentId = null
+            this.selectedMenuNode.custIcon =
+                this.selectedMenuNode.externalApplicationUrl =
+                this.selectedMenuNode.functionality =
+                this.selectedMenuNode.initialPath =
+                this.selectedMenuNode.objId =
+                this.selectedMenuNode.objParameters =
+                this.selectedMenuNode.staticPage =
+                this.selectedMenuNode.parentId =
+                    null
             this.selectedMenuNode.hideSliders = this.selectedMenuNode.hideToolbar = this.selectedMenuNode.viewIcons = false
         },
         closeForm() {
@@ -204,7 +218,7 @@ export default defineComponent({
                     this.axios
                         .delete(this.apiUrl + 'menu/' + id)
                         .then(() => {
-                            this.$store.commit('setInfo', {
+                            this.store.setInfo({
                                 title: this.$t('managers.menuManagement.info.deleteTitle'),
                                 msg: this.$t('managers.menuManagement.info.deleteMessage')
                             })

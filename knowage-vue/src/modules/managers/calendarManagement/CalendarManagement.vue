@@ -77,6 +77,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'calendar-management',
@@ -94,8 +95,12 @@ export default defineComponent({
     },
     computed: {
         canManageCalendar(): boolean {
-            return (this.$store.state as any).user.functionalities.includes('ManageCalendar')
+            return (this.store.$state as any).user.functionalities.includes('ManageCalendar')
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadCalendars()
@@ -104,12 +109,12 @@ export default defineComponent({
     methods: {
         async loadCalendars() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/getCalendarList`).then((response: AxiosResponse<any>) => (this.calendars = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/getCalendarList`).then((response: AxiosResponse<any>) => (this.calendars = response.data))
             this.loading = false
         },
         async loadDomains() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/getDomains`).then((response: AxiosResponse<any>) => (this.domains = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/getDomains`).then((response: AxiosResponse<any>) => (this.domains = response.data))
             this.loading = false
         },
         showForm(event: any = null) {
@@ -130,9 +135,9 @@ export default defineComponent({
         },
         async deleteCalendar(calendar: iCalendar) {
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/${calendar.calendarId}/deleteCalendar`)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/${calendar.calendarId}/deleteCalendar`)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })

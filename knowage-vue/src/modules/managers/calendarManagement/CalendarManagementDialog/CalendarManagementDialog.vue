@@ -31,8 +31,8 @@ import calendarManagementDialogDescriptor from './CalendarManagementDialogDescri
 import CalendarManagementDetailForm from './CalendarManagementDetailForm/CalendarManagementDetailForm.vue'
 import CalendarManagementDetailTable from './CalendarManagementDetailTable/CalendarManagementDetailTable.vue'
 import moment from 'moment'
-
-const deepcopy = require('deepcopy')
+import mainStore from '../../../../App.store'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'calendar-management-dialog',
@@ -55,13 +55,17 @@ export default defineComponent({
             return this.calendar === null || !this.calendar.calendar || !this.calendar.calStartDay || !this.calendar.calEndDay
         },
         canManageCalendar(): boolean {
-            return (this.$store.state as any).user.functionalities.includes('ManageCalendar')
+            return (this.store.$state as any).user.functionalities.includes('ManageCalendar')
         }
     },
     watch: {
         propCalendar() {
             if (this.visible) this.loadCalendar()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadCalendar()
@@ -80,7 +84,7 @@ export default defineComponent({
         async loadCalendarInfo(calendarId: number) {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/${calendarId}/getInfoCalendarById`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/${calendarId}/getInfoCalendarById`)
                 .then((response: AxiosResponse<any>) => {
                     this.calendarInfo = response.data
                     this.generateButtonVisible = true
@@ -121,9 +125,9 @@ export default defineComponent({
             tempCalendar.calEndDay = moment(tempCalendar.calEndDay).valueOf()
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/saveCalendar`, tempCalendar)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/saveCalendar`, tempCalendar)
                 .then((response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.createSuccess')
                     })
@@ -140,9 +144,9 @@ export default defineComponent({
             const postData = this.getFormattedSplittedCalendar()
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/${this.calendar.calendarId}/updateDaysGenerated`, postData)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/${this.calendar.calendarId}/updateDaysGenerated`, postData)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.updateSuccess')
                     })
@@ -180,7 +184,7 @@ export default defineComponent({
         async generateCalendar() {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/${this.calendar?.calendarId}/generateCalendarDays`, {})
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/${this.calendar?.calendarId}/generateCalendarDays`, {})
                 .then(async () => {
                     await this.loadCalendarInfo(this.calendar?.calendarId as number)
                     this.generateButtonDisabled = true

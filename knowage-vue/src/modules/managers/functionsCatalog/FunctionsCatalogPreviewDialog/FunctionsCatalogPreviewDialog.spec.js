@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import FunctionsCatalogPreviewDialog from './FunctionsCatalogPreviewDialog.vue'
@@ -169,14 +169,10 @@ const mockedDataset = {
     ]
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    post: axios.post.mockImplementation(() => Promise.reject({ message: '100' }))
-}
-
-const $store = {
-    commit: jest.fn()
+    post: vi.fn().mockImplementation(() => Promise.reject({ message: '100' }))
 }
 
 const factory = () => {
@@ -201,7 +197,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $http
             }
         }
@@ -209,7 +204,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Functons Catalog Preview Dialog', () => {

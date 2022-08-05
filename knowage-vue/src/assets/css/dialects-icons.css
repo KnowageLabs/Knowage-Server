@@ -1,7 +1,7 @@
 @font-face {
     font-family: 'icomoon';
-    src: url('~@/assets/fonts/dialects/dialects.eot');
-    src: url('~@/assets/fonts/dialects/dialects.eot') format('embedded-opentype'), url('~@/assets/fonts/dialects/dialects.ttf') format('truetype'), url('~@/assets/fonts/dialects/dialects.woff') format('woff'), url('~@/assets/fonts/dialects/dialects.svg') format('svg');
+    src: url('/fonts/dialects/dialects.eot');
+    src: url('/fonts/dialects/dialects.eot') format('embedded-opentype'), url('/fonts/dialects/dialects.ttf') format('truetype'), url('/fonts/dialects/dialects.woff') format('woff'), url('/fonts/dialects/dialects.svg') format('svg');
     font-weight: normal;
     font-style: normal;
     font-display: block;

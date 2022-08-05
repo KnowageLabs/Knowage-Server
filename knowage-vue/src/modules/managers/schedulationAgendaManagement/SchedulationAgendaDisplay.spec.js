@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import Card from 'primevue/card'
@@ -124,23 +125,20 @@ const mockedResultList = {
     ]
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    post: axios.post.mockImplementation(() => Promise.resolve())
-}
-
-const $store = {
-    commit: jest.fn()
+    post: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $router = {
-    replace: jest.fn()
+    replace: vi.fn()
 }
 
 const factory = () => {
     return mount(SchedulationAgendaDisplay, {
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Column,
@@ -152,7 +150,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $router,
                 $http
             }
@@ -164,7 +161,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Scheduler Agenda', () => {

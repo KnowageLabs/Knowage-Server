@@ -1,15 +1,15 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import Button from 'primevue/button'
 import HierarchyManagement from './HierarchyManagement.vue'
 import ProgressSpinner from 'primevue/progressspinner'
 import PrimeVue from 'primevue/config'
 import Toolbar from 'primevue/toolbar'
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
+    get: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 
 const factory = () => {
@@ -26,7 +26,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Hierarchy Management', () => {

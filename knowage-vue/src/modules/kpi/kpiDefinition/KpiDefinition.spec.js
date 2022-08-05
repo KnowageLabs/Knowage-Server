@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
 import InputText from 'primevue/inputtext'
@@ -28,31 +29,28 @@ const mockedKpi = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() =>
+    get: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: mockedKpi
         })
     ),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = () => {
     return mount(KpiDefinition, {
+        plugins: [createTestingPinia()],
         global: {
             stubs: {
                 Button,
@@ -63,7 +61,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $confirm,
                 $router,
                 $http
@@ -73,7 +70,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Kpi Definition loading', () => {
@@ -84,7 +81,7 @@ describe('Kpi Definition loading', () => {
         expect(wrapper.find('[data-test="progress-bar"]').exists()).toBe(true)
     })
     it('shows "no data" label when loaded empty', async () => {
-        axios.get.mockReturnValueOnce(Promise.resolve({ data: [] }))
+        $http.get.mockReturnValueOnce(Promise.resolve({ data: [] }))
         const wrapper = factory()
 
         await flushPromises()
@@ -111,7 +108,7 @@ describe('KPI Definition List', () => {
         expect($confirm.require).toHaveBeenCalledTimes(1)
 
         await wrapper.vm.deleteKpi(1)
-        expect(axios.delete).toHaveBeenCalledTimes(1)
+        expect($http.delete).toHaveBeenCalledTimes(1)
     })
     it('changes url when the "+" button is clicked', async () => {
         const wrapper = factory()

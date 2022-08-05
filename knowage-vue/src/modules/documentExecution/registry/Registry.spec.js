@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Registry from './Registry.vue'
 import ProgressBar from 'primevue/progressbar'
@@ -82,10 +83,10 @@ const mockedRegistry = {
     }
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    post: axios.post.mockImplementation((url) => {
+    post: vi.fn().mockImplementation((url) => {
         switch (url) {
             case `/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=1`:
                 return Promise.resolve({ data: mockedRegistry })
@@ -96,11 +97,7 @@ const $http = {
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const factory = () => {
@@ -109,7 +106,7 @@ const factory = () => {
             id: '1'
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 RegistryDatatable: true,
@@ -120,7 +117,6 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $confirm,
-                $store,
                 $http
             }
         }

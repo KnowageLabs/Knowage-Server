@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
@@ -18,10 +20,10 @@ const mockedRole = {
     isPublic: true
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
+    get: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 
 const factory = () => {
@@ -69,9 +71,9 @@ describe('Role Detail Tab', () => {
         expect(wrapper.emitted().fieldChanged[0][0].value).toBe('test name')
 
         await codeInput.setValue('test code')
-        expect(wrapper.emitted().fieldChanged[2][0].value).toBe('test code')
+        expect(wrapper.emitted().fieldChanged[1][0].value).toBe('test code')
 
         await descriptionInput.setValue('test description')
-        expect(wrapper.emitted().fieldChanged[4][0].value).toBe('test description')
+        expect(wrapper.emitted().fieldChanged[2][0].value).toBe('test description')
     })
 })

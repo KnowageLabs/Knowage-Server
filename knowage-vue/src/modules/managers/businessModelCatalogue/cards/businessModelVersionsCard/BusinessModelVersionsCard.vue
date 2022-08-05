@@ -39,6 +39,7 @@ import Card from 'primevue/card'
 import Listbox from 'primevue/listbox'
 import Menu from 'primevue/menu'
 import RadioButton from 'primevue/radiobutton'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     name: 'business-models-versions-card',
@@ -65,6 +66,10 @@ export default defineComponent({
         versions() {
             this.loadVersions()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadVersions()
@@ -120,7 +125,7 @@ export default defineComponent({
         },
         async downloadFile(versionId: number, filetype: string) {
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/${versionId}/${filetype}/file`, {
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/${versionId}/${filetype}/file`, {
                     responseType: 'arraybuffer',
                     headers: {
                         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
@@ -128,7 +133,7 @@ export default defineComponent({
                 })
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.errors) {
-                        this.$store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.error.downloading'),
                             msg: this.$t('common.error.errorCreatingPackage')
                         })
@@ -142,7 +147,7 @@ export default defineComponent({
                                 downloadDirect(response.data, completeFileName, response.headers['content-type'])
                             }
                         }
-                        this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
+                        this.store.setInfo({ title: this.$t('common.toast.success') })
                     }
                 })
         },
@@ -157,8 +162,8 @@ export default defineComponent({
             })
         },
         async deleteVersion(versionId: number) {
-            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/${versionId}/`).then(() => {
-                this.$store.commit('setInfo', {
+            await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${this.id}/versions/${versionId}/`).then(() => {
+                this.store.setInfo({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })

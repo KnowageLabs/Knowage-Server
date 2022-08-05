@@ -60,7 +60,7 @@
                 <KnValidationMessages class="p-mt-1" :vComp="v$.dataSend.name" :additionalTranslateParams="{ fieldName: $t('metaweb.businessModel.inbound.name') }" />
             </div>
             <div class="p-field p-col-12 p-md-6">
-                <span class="p-float-label ">
+                <span class="p-float-label">
                     <Dropdown
                         id="source"
                         class="kn-material-input"
@@ -76,7 +76,7 @@
                 <KnValidationMessages class="p-mt-1" :vComp="v$.dataSend.cardinality" :additionalTranslateParams="{ fieldName: $t('kpi.kpiDefinition.cardinalityTtitle') }" />
             </div>
             <div class="p-field p-col-12 p-md-6">
-                <span class="p-float-label ">
+                <span class="p-float-label">
                     <Dropdown id="source" class="kn-material-input" v-model="rightElement" :options="sourceBusinessClassOptions" optionLabel="name" @change="alterTableToSimpleBound($event.value)" />
                     <label for="source" class="kn-material-input-label"> {{ $t('metaweb.businessModel.inbound.sourceBc') }} </label>
                 </span>
@@ -99,161 +99,161 @@
 </template>
 
 <script lang="ts">
-    import { AxiosResponse } from 'axios'
-    import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
-    import { defineComponent, PropType } from 'vue'
-    import { iBusinessModel } from '@/modules/managers/businessModelCatalogue/metaweb/Metaweb'
-    import { filterDefault } from '@/helpers/commons/filterHelper'
-    import useValidate from '@vuelidate/core'
-    import irDescriptor from './MetawebInboundRelationshipsDescriptor.json'
-    import bsDescriptor from '@/modules/managers/businessModelCatalogue/metaweb/businessModel/MetawebBusinessModelDescriptor.json'
-    import TableAssociator from '@/modules/managers/businessModelCatalogue/metaweb/businessModel/tableAssociator/MetawebTableAssociator.vue'
-    import DataTable from 'primevue/datatable'
-    import Column from 'primevue/column'
-    import Dialog from 'primevue/dialog'
-    import Dropdown from 'primevue/dropdown'
-    import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
+import { AxiosResponse } from 'axios'
+import { createValidations, ICustomValidatorMap } from '@/helpers/commons/validationHelper'
+import { defineComponent, PropType } from 'vue'
+import { iBusinessModel } from '@/modules/managers/businessModelCatalogue/metaweb/Metaweb'
+import { filterDefault } from '@/helpers/commons/filterHelper'
+import useValidate from '@vuelidate/core'
+import irDescriptor from './MetawebInboundRelationshipsDescriptor.json'
+import bsDescriptor from '@/modules/managers/businessModelCatalogue/metaweb/businessModel/MetawebBusinessModelDescriptor.json'
+import TableAssociator from '@/modules/managers/businessModelCatalogue/metaweb/businessModel/tableAssociator/MetawebTableAssociator.vue'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Dialog from 'primevue/dialog'
+import Dropdown from 'primevue/dropdown'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 
-    const { generate, applyPatch } = require('fast-json-patch')
+import { generate, applyPatch } from 'fast-json-patch'
 
-    export default defineComponent({
-        name: 'metaweb-attributes-tab',
-        components: { TableAssociator, DataTable, Column, Dialog, Dropdown, KnValidationMessages },
-        props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null>, required: true }, propMeta: { type: Object, required: true }, observer: { type: Object, required: true } },
-        emits: ['loading'],
-        computed: {
-            leftHasLinks(): boolean {
-                var x = 0
-                this.simpleLeft.forEach((item) => {
-                    if (item.links.length > 0) x += 1
-                })
-                return x > 0 ? false : true
-            },
-            buttonDisabled(): boolean {
-                if (this.v$.$invalid || this.leftHasLinks) {
-                    return true
-                } else return false
-            }
+export default defineComponent({
+    name: 'metaweb-attributes-tab',
+    components: { TableAssociator, DataTable, Column, Dialog, Dropdown, KnValidationMessages },
+    props: { selectedBusinessModel: { type: Object as PropType<iBusinessModel | null>, required: true }, propMeta: { type: Object, required: true }, observer: { type: Object, required: true } },
+    emits: ['loading'],
+    computed: {
+        leftHasLinks(): boolean {
+            var x = 0
+            this.simpleLeft.forEach((item) => {
+                if (item.links.length > 0) x += 1
+            })
+            return x > 0 ? false : true
         },
-        data() {
-            return {
-                bsDescriptor,
-                irDescriptor,
-                meta: null as any,
-                dataSend: {} as any,
-                simpleLeft: [] as any,
-                simpleRight: [] as any,
-                v$: useValidate() as any,
-                rightElement: null as any,
-                inboundDialogVisible: false,
-                inboundRelationships: [] as any,
-                sourceBusinessClassOptions: [] as any,
-                businessModel: null as iBusinessModel | null,
-                filters: { global: [filterDefault] } as Object
-            }
-        },
-        watch: {
-            selectedBusinessModel: {
-                handler() {
-                    this.loadData()
-                },
-                deep: true
-            }
-        },
-        created() {
-            this.loadData()
-        },
-        validations() {
-            const inboundRequired = (value) => {
-                return !this.inboundDialogVisible || value
-            }
-            const customValidators: ICustomValidatorMap = {
-                'inbound-dialog-required': inboundRequired
-            }
-            const validationObject = {
-                dataSend: createValidations('dataSend', irDescriptor.validations.dataSend, customValidators)
-            }
-            return validationObject
-        },
-        methods: {
-            loadData() {
-                this.meta = this.propMeta as any
-                this.businessModel = this.selectedBusinessModel as iBusinessModel
-                this.simpleLeft = this.tableToSimpleBound(this.businessModel)
-                this.populateInboundRelationships()
-                this.populateSourceBusinessClassOptions()
-            },
-            populateInboundRelationships() {
-                this.inboundRelationships = this.selectedBusinessModel?.relationships.filter((relationship) => this.selectedBusinessModel?.uniqueName != relationship.sourceTableName)
-            },
-            populateSourceBusinessClassOptions() {
-                this.sourceBusinessClassOptions = []
-                this.propMeta.businessModels.forEach((el) => this.sourceBusinessClassOptions.push(el))
-                this.propMeta.businessViews.forEach((el) => this.sourceBusinessClassOptions.push(el))
-            },
-            createColumnString(data) {
-                var ret = [] as any
-                data.forEach((entry) => {
-                    ret.push(entry.name)
-                }, this)
-                return ret.join(', ')
-            },
-            closeDialog() {
-                this.dataSend = {}
-                this.rightElement = null
-                this.simpleRight = []
-                this.simpleLeft = this.tableToSimpleBound(this.businessModel)
-                this.inboundDialogVisible = false
-            },
-            alterTableToSimpleBound(item) {
-                this.simpleRight = this.tableToSimpleBound(item)
-            },
-            tableToSimpleBound(model) {
-                var a = [] as any
-                if (model) {
-                    if (model.columns)
-                        model.columns.forEach(function(item) {
-                            // eslint-disable-next-line no-prototype-builtins
-                            if (!item.hasOwnProperty('referencedColumns')) {
-                                a.push({ name: item.name, uname: item.uniqueName, links: [] })
-                            }
-                        })
-                }
-                return a
-            },
-            async createInbound() {
-                this.dataSend.sourceColumns = []
-                this.dataSend.destinationColumns = []
-                this.dataSend.sourceTableName = this.rightElement.uniqueName
-                this.dataSend.destinationTableName = this.businessModel?.uniqueName
-                this.simpleLeft.forEach((entry) => {
-                    if (entry.links.length > 0) {
-                        this.dataSend.destinationColumns.push(entry.uname)
-                        this.dataSend.sourceColumns.push(entry.links[0].uname)
-                    }
-                })
-                const postData = { data: this.dataSend, diff: generate(this.observer) }
-                await this.$http
-                    .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/addBusinessRelation`, postData)
-                    .then((response: AxiosResponse<any>) => {
-                        this.meta = applyPatch(this.meta, response.data).newDocument
-                        this.closeDialog()
-                        this.populateInboundRelationships()
-                    })
-                    .catch(() => {})
-                    .finally(() => generate(this.observer))
-            },
-            async deleteInbound(item) {
-                const postData = { data: item, diff: generate(this.observer) }
-                await this.$http
-                    .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/deleteBusinessRelation`, postData)
-                    .then((response: AxiosResponse<any>) => {
-                        this.meta = applyPatch(this.meta, response.data).newDocument
-                        this.populateInboundRelationships()
-                    })
-                    .catch(() => {})
-                    .finally(() => generate(this.observer))
-            }
+        buttonDisabled(): boolean {
+            if (this.v$.$invalid || this.leftHasLinks) {
+                return true
+            } else return false
         }
-    })
+    },
+    data() {
+        return {
+            bsDescriptor,
+            irDescriptor,
+            meta: null as any,
+            dataSend: {} as any,
+            simpleLeft: [] as any,
+            simpleRight: [] as any,
+            v$: useValidate() as any,
+            rightElement: null as any,
+            inboundDialogVisible: false,
+            inboundRelationships: [] as any,
+            sourceBusinessClassOptions: [] as any,
+            businessModel: null as iBusinessModel | null,
+            filters: { global: [filterDefault] } as Object
+        }
+    },
+    watch: {
+        selectedBusinessModel: {
+            handler() {
+                this.loadData()
+            },
+            deep: true
+        }
+    },
+    created() {
+        this.loadData()
+    },
+    validations() {
+        const inboundRequired = (value) => {
+            return !this.inboundDialogVisible || value
+        }
+        const customValidators: ICustomValidatorMap = {
+            'inbound-dialog-required': inboundRequired
+        }
+        const validationObject = {
+            dataSend: createValidations('dataSend', irDescriptor.validations.dataSend, customValidators)
+        }
+        return validationObject
+    },
+    methods: {
+        loadData() {
+            this.meta = this.propMeta as any
+            this.businessModel = this.selectedBusinessModel as iBusinessModel
+            this.simpleLeft = this.tableToSimpleBound(this.businessModel)
+            this.populateInboundRelationships()
+            this.populateSourceBusinessClassOptions()
+        },
+        populateInboundRelationships() {
+            this.inboundRelationships = this.selectedBusinessModel?.relationships.filter((relationship) => this.selectedBusinessModel?.uniqueName != relationship.sourceTableName)
+        },
+        populateSourceBusinessClassOptions() {
+            this.sourceBusinessClassOptions = []
+            this.propMeta.businessModels.forEach((el) => this.sourceBusinessClassOptions.push(el))
+            this.propMeta.businessViews.forEach((el) => this.sourceBusinessClassOptions.push(el))
+        },
+        createColumnString(data) {
+            var ret = [] as any
+            data.forEach((entry) => {
+                ret.push(entry.name)
+            }, this)
+            return ret.join(', ')
+        },
+        closeDialog() {
+            this.dataSend = {}
+            this.rightElement = null
+            this.simpleRight = []
+            this.simpleLeft = this.tableToSimpleBound(this.businessModel)
+            this.inboundDialogVisible = false
+        },
+        alterTableToSimpleBound(item) {
+            this.simpleRight = this.tableToSimpleBound(item)
+        },
+        tableToSimpleBound(model) {
+            var a = [] as any
+            if (model) {
+                if (model.columns)
+                    model.columns.forEach(function (item) {
+                        // eslint-disable-next-line no-prototype-builtins
+                        if (!item.hasOwnProperty('referencedColumns')) {
+                            a.push({ name: item.name, uname: item.uniqueName, links: [] })
+                        }
+                    })
+            }
+            return a
+        },
+        async createInbound() {
+            this.dataSend.sourceColumns = []
+            this.dataSend.destinationColumns = []
+            this.dataSend.sourceTableName = this.rightElement.uniqueName
+            this.dataSend.destinationTableName = this.businessModel?.uniqueName
+            this.simpleLeft.forEach((entry) => {
+                if (entry.links.length > 0) {
+                    this.dataSend.destinationColumns.push(entry.uname)
+                    this.dataSend.sourceColumns.push(entry.links[0].uname)
+                }
+            })
+            const postData = { data: this.dataSend, diff: generate(this.observer) }
+            await this.$http
+                .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/addBusinessRelation`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    this.meta = applyPatch(this.meta, response.data).newDocument
+                    this.closeDialog()
+                    this.populateInboundRelationships()
+                })
+                .catch(() => {})
+                .finally(() => generate(this.observer))
+        },
+        async deleteInbound(item) {
+            const postData = { data: item, diff: generate(this.observer) }
+            await this.$http
+                .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/deleteBusinessRelation`, postData)
+                .then((response: AxiosResponse<any>) => {
+                    this.meta = applyPatch(this.meta, response.data).newDocument
+                    this.populateInboundRelationships()
+                })
+                .catch(() => {})
+                .finally(() => generate(this.observer))
+        }
+    }
+})
 </script>

@@ -106,7 +106,7 @@ export interface iFilter {
     entity: string,
     filterDescripion: string,
     filterId: string,
-    filterInd: number,
+    filterInd: string,
     leftOperandAlias?: string,
     leftOperandDataType: string,
     leftOperandDefaultValue: any,

@@ -133,6 +133,7 @@ import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import olapSidebarDescriptor from './OlapSidebarDescriptor.json'
 import SelectButton from 'primevue/selectbutton'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'olap-sidebar',
@@ -197,6 +198,11 @@ export default defineComponent({
             this.loadOlapModelConfigValues()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+
     created() {
         this.loadButtons()
         this.loadOlapModelConfigValues()
@@ -255,10 +261,10 @@ export default defineComponent({
             if (!this.olap) return
             this.$emit('loading', true)
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/locker/${this.olap.modelConfig.artifactId}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/locker/${this.olap.modelConfig.artifactId}`, null, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
                     if ((response.data.status === 'unlocked' || response.data.status === 'locked_by_user') && this.olap) {
-                        this.$store.commit('setInfo', {
+                        this.store.setInfo({
                             msg: this.$t('common.toast.success')
                         })
                         this.olapLocked = response.data.status === 'locked_by_user'

@@ -25,6 +25,7 @@ import { defineComponent } from 'vue'
 import DocumentBrowserBreadcrumb from './breadcrumbs/DocumentBrowserBreadcrumb.vue'
 import DocumentBrowserTable from './tables/DocumentBrowserTable.vue'
 import DocumentBrowserSidebar from './sidebar/DocumentBrowserSidebar.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'document-browser-detail',
@@ -43,6 +44,10 @@ export default defineComponent({
             this.selectedDocument = null
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadDocuments()
     },
@@ -56,9 +61,9 @@ export default defineComponent({
         async cloneDocument(document: any) {
             this.$emit('loading', true)
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/clone?docId=${document.id}`)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `documents/clone?docId=${document.id}`)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -70,9 +75,9 @@ export default defineComponent({
         async deleteDocument(document: any) {
             this.$emit('loading', true)
             await this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${document.label}`)
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documents/${document.label}`)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -85,9 +90,9 @@ export default defineComponent({
         async changeDocumentState(event: any) {
             this.$emit('loading', true)
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/changeStateDocument?docId=${event.document.id}&direction=${event.direction}`)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `documents/changeStateDocument?docId=${event.document.id}&direction=${event.direction}`)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
                     })

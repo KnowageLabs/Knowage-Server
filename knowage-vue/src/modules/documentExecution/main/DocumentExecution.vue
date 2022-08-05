@@ -68,7 +68,6 @@
             ></KnParameterSidebar>
 
             <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
-
             <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
             <DocumentExecutionNotesDialog :visible="notesDialogVisible" :propDocument="document" @close="notesDialogVisible = false"></DocumentExecutionNotesDialog>
             <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :propDocument="document" :propMetadata="metadata" :propLoading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
@@ -102,8 +101,9 @@ import Olap from '../olap/Olap.vue'
 import moment from 'moment'
 import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
 import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
+import mainStore from '../../../App.store'
 
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'document-execution',
@@ -124,14 +124,7 @@ export default defineComponent({
         DocumentExecutionSelectCrossNavigationDialog,
         DocumentExecutionCNContainerDialog
     },
-    props: {
-        id: { type: String },
-        parameterValuesMap: { type: Object },
-        tabKey: { type: String },
-        propMode: { type: String },
-        selectedMenuItem: { type: Object },
-        menuItemClickedTrigger: { type: Boolean }
-    },
+    props: { id: { type: String }, parameterValuesMap: { type: Object }, tabKey: { type: String }, propMode: { type: String }, selectedMenuItem: { type: Object }, menuItemClickedTrigger: { type: Boolean } },
     emits: ['close', 'updateDocumentName', 'parametersChanged'],
     data() {
         return {
@@ -139,10 +132,7 @@ export default defineComponent({
             hiddenFormData: {} as any,
             hiddenFormUrl: '' as string,
             documentMode: 'VIEW',
-            filtersData: {} as {
-                filterStatus: iParameter[]
-                isReadyForExecution: boolean
-            },
+            filtersData: {} as { filterStatus: iParameter[]; isReadyForExecution: boolean },
             urlData: null as iURLData | null,
             exporters: null as iExporter[] | null,
             mode: null as string | null,
@@ -158,10 +148,7 @@ export default defineComponent({
             schedulationsTableVisible: false,
             schedulations: [] as any[],
             linkDialogVisible: false,
-            linkInfo: null as {
-                isPublic: boolean
-                noPublicRoleError: boolean
-            } | null,
+            linkInfo: null as { isPublic: boolean; noPublicRoleError: boolean } | null,
             sbiExecutionId: null as string | null,
             embedHTML: false,
             user: null as any,
@@ -202,6 +189,10 @@ export default defineComponent({
             }
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async activated() {
         if (this.mode === 'iframe' && this.$route.name !== 'new-dashboard') {
             if (this.userRole) {
@@ -223,7 +214,7 @@ export default defineComponent({
         url(): string {
             if (this.document) {
                 return (
-                    process.env.VUE_APP_HOST_URL +
+                    import.meta.env.VITE_HOST_URL +
                     `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${this.document.id}&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=false&MENU_PARAMETERS=%7B%7D&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=${this.sbiExecutionId}&OBJECT_NAME=${this.document.name}&CROSS_PARAMETER=null`
                 )
             } else {
@@ -234,7 +225,7 @@ export default defineComponent({
             let parameterVisible = false
             for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {
                 const tempFilter = this.filtersData.filterStatus[i]
-                if (tempFilter.showOnPanel === 'true' && tempFilter.visible) {
+                if (tempFilter.showOnPanel === 'true') {
                     parameterVisible = true
                     break
                 }
@@ -259,7 +250,7 @@ export default defineComponent({
 
         await this.loadDocument()
 
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.$state as any).user
         this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
 
         if (this.userRole) {
@@ -311,13 +302,7 @@ export default defineComponent({
             this.toolbarMenuItems = []
             this.toolbarMenuItems.push({
                 label: this.$t('common.file'),
-                items: [
-                    {
-                        icon: 'pi pi-print',
-                        label: this.$t('common.print'),
-                        command: () => this.print()
-                    }
-                ]
+                items: [{ icon: 'pi pi-print', label: this.$t('common.print'), command: () => this.print() }]
             })
 
             if (this.exporters && this.exporters.length !== 0) {
@@ -330,13 +315,7 @@ export default defineComponent({
             if (this.user.enterprise) {
                 this.toolbarMenuItems.push({
                     label: this.$t('common.info.info'),
-                    items: [
-                        {
-                            icon: 'pi pi-star',
-                            label: this.$t('common.rank'),
-                            command: () => this.openRank()
-                        }
-                    ]
+                    items: [{ icon: 'pi pi-star', label: this.$t('common.rank'), command: () => this.openRank() }]
                 })
             }
 
@@ -345,99 +324,50 @@ export default defineComponent({
                 items: []
             })
 
-            this.exporters?.forEach((exporter: any) =>
-                this.toolbarMenuItems[1].items.push({
-                    icon: 'fa fa-file-excel',
-                    label: exporter.name,
-                    command: () => this.export(exporter.name)
-                })
-            )
+            this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[1].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
 
             if (this.user.functionalities.includes('SendMailFunctionality') && this.document.typeCode === 'REPORT') {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
                 if (index !== -1) {
-                    this.toolbarMenuItems[index].items.push({
-                        icon: 'pi pi-envelope',
-                        label: this.$t('common.sendByEmail'),
-                        command: () => this.openMailDialog()
-                    })
+                    this.toolbarMenuItems[index].items.push({ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() })
                 } else {
                     this.toolbarMenuItems.push({
                         label: this.$t('common.export'),
-                        items: [
-                            {
-                                icon: 'pi pi-envelope',
-                                label: this.$t('common.sendByEmail'),
-                                command: () => this.openMailDialog()
-                            }
-                        ]
+                        items: [{ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() }]
                     })
                 }
             }
 
             if (this.user.functionalities.includes('SeeMetadataFunctionality')) {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
-                if (index !== -1)
-                    this.toolbarMenuItems[index].items.unshift({
-                        icon: 'pi pi-info-circle',
-                        label: this.$t('common.metadata'),
-                        command: () => this.openMetadata()
-                    })
+                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: 'pi pi-info-circle', label: this.$t('common.metadata'), command: () => this.openMetadata() })
             }
 
             if (this.user.functionalities.includes('SeeNotesFunctionality')) {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
-                if (index !== -1)
-                    this.toolbarMenuItems[index].items.push({
-                        icon: 'pi pi-file',
-                        label: this.$t('common.notes'),
-                        command: () => this.openNotes()
-                    })
+                if (index !== -1) this.toolbarMenuItems[index].items.push({ icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() })
             }
 
             if (this.user.functionalities.includes('SeeSnapshotsFunctionality') && this.user.enterprise) {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
-                if (index !== -1)
-                    this.toolbarMenuItems[index].items.unshift({
-                        icon: '',
-                        label: this.$t('documentExecution.main.showScheduledExecutions'),
-                        command: () => this.showScheduledExecutions()
-                    })
+                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
             }
 
             if (this.isOrganizerEnabled()) {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
-                if (index !== -1)
-                    this.toolbarMenuItems[index].items.unshift({
-                        icon: 'fa fa-suitcase ',
-                        label: this.$t('documentExecution.main.addToWorkspace'),
-                        command: () => this.addToWorkspace()
-                    })
+                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: 'fa fa-suitcase ', label: this.$t('documentExecution.main.addToWorkspace'), command: () => this.addToWorkspace() })
             }
 
             if (this.mode === 'olap') {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
-                if (index !== -1)
-                    this.toolbarMenuItems[index].items.unshift({
-                        icon: '',
-                        label: this.$t('documentExecution.main.showOLAPCustomView'),
-                        command: () => this.showOLAPCustomView()
-                    })
+                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: '', label: this.$t('documentExecution.main.showOLAPCustomView'), command: () => this.showOLAPCustomView() })
             }
 
             if (this.user.functionalities.includes('EnableToCopyAndEmbed')) {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
                 if (index !== -1) {
-                    this.toolbarMenuItems[index].items.push({
-                        icon: 'fa fa-share',
-                        label: this.$t('documentExecution.main.copyLink'),
-                        command: () => this.copyLink(false)
-                    })
-                    this.toolbarMenuItems[index].items.push({
-                        icon: 'fa fa-share',
-                        label: this.$t('documentExecution.main.embedInHtml'),
-                        command: () => this.copyLink(true)
-                    })
+                    this.toolbarMenuItems[index].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.copyLink'), command: () => this.copyLink(false) })
+                    this.toolbarMenuItems[index].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.embedInHtml'), command: () => this.copyLink(true) })
                 }
             }
         },
@@ -465,7 +395,7 @@ export default defineComponent({
         },
         async openMetadata() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecutionee/${this.document.id}/documentMetadata`).then((response: AxiosResponse<any>) => (this.metadata = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecutionee/${this.document.id}/documentMetadata`).then((response: AxiosResponse<any>) => (this.metadata = response.data))
             this.metadataDialogVisible = true
             this.loading = false
         },
@@ -480,7 +410,7 @@ export default defineComponent({
             this.loading = true
             this.parameterSidebarVisible = false
             this.schedulationsTableVisible = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshots?id=${this.document.id}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshots?id=${this.document.id}`).then((response: AxiosResponse<any>) => {
                 response.data?.schedulers.forEach((el: any) => this.schedulations.push({ ...el, urlPath: response.data.urlPath }))
             })
             this.loading = false
@@ -489,7 +419,7 @@ export default defineComponent({
             this.loading = true
             this.linkParameters = this.getFormattedParameters()
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/canHavePublicExecutionUrl`, { label: this.document.label })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecution/canHavePublicExecutionUrl`, { label: this.document.label })
                 .then((response: AxiosResponse<any>) => {
                     this.embedHTML = embedHTML
                     this.linkInfo = response.data
@@ -507,7 +437,7 @@ export default defineComponent({
         setMode() {
             this.embed = this.$route.path.includes('embed')
             if (this.embed) {
-                this.$store.commit('setDocumentExecutionEmbed')
+                this.store.setDocumentExecutionEmbed()
             }
 
             if (this.$route.path.includes('registry')) {
@@ -547,17 +477,14 @@ export default defineComponent({
             }
         },
         async loadDocument() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.document?.label}`).then((response: AxiosResponse<any>) => (this.document = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documents/${this.document?.label}`).then((response: AxiosResponse<any>) => (this.document = response.data))
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
 
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
-                this.breadcrumbs.push({
-                    label: this.document.label,
-                    document: this.document
-                })
+                this.breadcrumbs.push({ label: this.document.label, document: this.document })
             }
         },
         async loadFilters(initialLoading: boolean = false) {
@@ -570,10 +497,7 @@ export default defineComponent({
             if (this.sessionEnabled && !this.document.navigationParams) {
                 const tempFilters = sessionStorage.getItem(this.document.label)
                 if (tempFilters) {
-                    this.filtersData = JSON.parse(tempFilters) as {
-                        filterStatus: iParameter[]
-                        isReadyForExecution: boolean
-                    }
+                    this.filtersData = JSON.parse(tempFilters) as { filterStatus: iParameter[]; isReadyForExecution: boolean }
                     this.filtersData.filterStatus?.forEach((filter: any) => {
                         if (filter.type === 'DATE' && filter.parameterValue[0].value) {
                             filter.parameterValue[0].value = new Date(filter.parameterValue[0].value)
@@ -585,15 +509,11 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, {
-                    label: this.document.label,
-                    role: this.userRole,
-                    parameters: this.document.navigationParams ?? {}
-                })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, { label: this.document.label, role: this.userRole, parameters: this.document.navigationParams ?? {} })
                 .then((response: AxiosResponse<any>) => (this.filtersData = response.data))
                 .catch((error: any) => {
                     if (error.response?.status === 500) {
-                        this.$store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.error.generic'),
                             msg: this.$t('documentExecution.main.userRoleError')
                         })
@@ -611,13 +531,10 @@ export default defineComponent({
                     }
 
                     el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {
-                        return {
-                            value: defaultValue.value ?? defaultValue[valueIndex],
-                            description: defaultValue.desc ?? defaultValue[descriptionIndex]
-                        }
+                        return { value: defaultValue.value ?? defaultValue[valueIndex], description: defaultValue.desc ?? defaultValue[descriptionIndex] }
                     })
 
-                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
+                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true') {
                         el.parameterValue[0].value = moment(el.parameterValue[0].description?.split('#')[0]).toDate() as any
                     }
                 }
@@ -632,7 +549,6 @@ export default defineComponent({
                 }
                 if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
                     el.showOnPanel = 'false'
-                    el.visible = false
                 }
 
                 if (!el.parameterValue) {
@@ -681,19 +597,10 @@ export default defineComponent({
             const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
             const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
 
-            return {
-                value: valueIndex ? data[valueIndex] : '',
-                description: descriptionIndex ? data[descriptionIndex] : ''
-            }
+            return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
         },
         async loadURL(olapParameters: any, documentLabel: string | null = null) {
-            const postData = {
-                label: this.document.label,
-                role: this.userRole,
-                parameters: olapParameters ? olapParameters : this.getFormattedParameters(),
-                EDIT_MODE: 'null',
-                IS_FOR_EXPORT: true
-            } as any
+            const postData = { label: this.document.label, role: this.userRole, parameters: olapParameters ? olapParameters : this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
 
             if (this.sbiExecutionId) {
                 postData.SBI_EXECUTION_ID = this.sbiExecutionId
@@ -704,7 +611,7 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.urlData = response.data
                     this.sbiExecutionId = this.urlData?.sbiExecutionId as string
@@ -723,16 +630,13 @@ export default defineComponent({
             await this.sendForm(documentLabel)
         },
         async loadExporters() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
         async sendForm(documentLabel: string | null = null) {
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label) as any
 
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
-            const postObject = {
-                params: { document: null } as any,
-                url: documentUrl.split('?')[0]
-            }
+            const postObject = { params: { document: null } as any, url: documentUrl.split('?')[0] }
             postObject.params.documentMode = this.documentMode
             this.hiddenFormUrl = postObject.url
             const paramsFromUrl = documentUrl?.split('?')[1]?.split('&')
@@ -748,7 +652,7 @@ export default defineComponent({
                 postForm = document.createElement('form')
             }
             postForm.id = 'postForm_' + postObject.params.document
-            postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
+            postForm.action = import.meta.env.VITE_HOST_URL + postObject.url
             postForm.method = 'post'
             postForm.target = tempIndex !== -1 ? 'documentFrame' + tempIndex : documentLabel
             postForm.acceptCharset = 'UTF-8'
@@ -823,13 +727,7 @@ export default defineComponent({
                         items: []
                     })
                 } else {
-                    this.exporters?.forEach((exporter: any) =>
-                        this.toolbarMenuItems[index].items.push({
-                            icon: 'fa fa-file-excel',
-                            label: exporter.name,
-                            command: () => this.export(exporter.name)
-                        })
-                    )
+                    this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[index].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
                 }
             }
 
@@ -839,17 +737,12 @@ export default defineComponent({
             this.loading = false
         },
         async onExportCSV() {
-            const postData = {
-                documentId: this.document.id,
-                documentLabel: this.document.label,
-                exportType: 'CSV',
-                parameters: this.getFormattedParametersForCSVExport()
-            }
+            const postData = { documentId: this.document.id, documentLabel: this.document.label, exportType: 'CSV', parameters: this.getFormattedParametersForCSVExport() }
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/export/cockpitData`, postData)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/export/cockpitData`, postData)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.exportSuccess')
                     })
@@ -925,10 +818,10 @@ export default defineComponent({
         async getRank() {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documentrating/getvote`, { obj: this.document.id })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `documentrating/getvote`, { obj: this.document.id })
                 .then((response: AxiosResponse<any>) => (this.documentRank = response.data))
                 .catch((error: any) =>
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: error
                     })
@@ -939,15 +832,15 @@ export default defineComponent({
             if (newRank) {
                 this.loading = true
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documentrating/vote`, { rating: newRank, obj: this.document.id })
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `documentrating/vote`, { rating: newRank, obj: this.document.id })
                     .then(() =>
-                        this.$store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.toast.updateTitle'),
                             msg: this.$t('documentExecution.main.rankSaveSucces')
                         })
                     )
                     .catch((error: any) =>
-                        this.$store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.error.generic'),
                             msg: error
                         })
@@ -970,9 +863,9 @@ export default defineComponent({
             )
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecutionee/saveDocumentMetadata`, { id: this.document.id, jsonMeta: jsonMeta })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecutionee/saveDocumentMetadata`, { id: this.document.id, jsonMeta: jsonMeta })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -983,24 +876,18 @@ export default defineComponent({
         },
         async onMailSave(mail: any) {
             this.loading = true
-            const postData = {
-                ...mail,
-                label: this.document.label,
-                docId: this.document.id,
-                userId: this.user.userId,
-                parameters: this.getFormattedParameters()
-            }
+            const postData = { ...mail, label: this.document.label, docId: this.document.id, userId: this.user.userId, parameters: this.getFormattedParameters() }
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentexecutionmail/sendMail`, postData)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecutionmail/sendMail`, postData)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.sendMailSuccess')
                     })
                     this.mailDialogVisible = false
                 })
                 .catch((error: any) => {
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: error
                     })
@@ -1010,10 +897,10 @@ export default defineComponent({
         async onDeleteSchedulation(schedulation: any) {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/deleteSnapshot`, { SNAPSHOT: '' + schedulation.id })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/deleteSnapshot`, { SNAPSHOT: '' + schedulation.id })
                 .then(async () => {
                     this.removeSchedulation(schedulation)
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
@@ -1034,15 +921,11 @@ export default defineComponent({
             this.filtersData = item.filtersData
             this.urlData = item.urlData
             this.hiddenFormData = item.hiddenFormData
-            this.documentMode = 'VIEW'
             this.updateMode()
         },
         async onRoleChange(role: string) {
             this.userRole = role as any
-            this.filtersData = {} as {
-                filterStatus: iParameter[]
-                isReadyForExecution: boolean
-            }
+            this.filtersData = {} as { filterStatus: iParameter[]; isReadyForExecution: boolean }
             this.urlData = null
             this.exporters = null
             await this.loadPage()
@@ -1057,45 +940,32 @@ export default defineComponent({
             let temp = {} as any
 
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
-            const crossTarget = this.findCrossTargetByCrossName(angularData, temp)
-
-            if (!crossTarget && temp.length > 1) {
+            if (temp.length > 1) {
                 this.crossNavigationDocuments = temp
                 this.destinationSelectDialogVisible = true
             } else {
-                this.loadCrossNavigation(crossTarget ?? temp[0], angularData)
+                this.loadCrossNavigation(temp[0], angularData)
             }
-        },
-        findCrossTargetByCrossName(angularData: any, temp: any[]) {
-            if (!angularData || !temp) return
-            const index = temp.findIndex((el: any) => el.crossName === angularData.targetCrossNavigation.crossName)
-            return index !== -1 ? temp[index] : null
         },
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
             this.formatAngularOutputParameters(angularData.otherOutputParameters)
             const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument ? crossNavigationDocument.navigationParams : [])
             this.addDocumentOtherParametersToNavigationParamas(navigationParams, angularData, crossNavigationDocument)
 
-            const popupOptions = crossNavigationDocument?.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
+            const popupOptions = crossNavigationDocument.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
 
-            if (crossNavigationDocument?.crossType !== 2) {
-                this.document = {
-                    ...crossNavigationDocument?.document,
-                    navigationParams: navigationParams
-                }
+            if (crossNavigationDocument.crossType !== 2) {
+                this.document = { ...crossNavigationDocument?.document, navigationParams: navigationParams }
             }
 
-            if (crossNavigationDocument?.crossType === 2) {
+            if (crossNavigationDocument.crossType === 2) {
                 this.openCrossNavigationInNewWindow(popupOptions, crossNavigationDocument, navigationParams)
-            } else if (crossNavigationDocument?.crossType === 1) {
+            } else if (crossNavigationDocument.crossType === 1) {
                 const documentLabel = crossNavigationDocument?.document.label
-                this.crossNavigationContainerData = {
-                    documentLabel: documentLabel,
-                    iFrameName: documentLabel
-                }
+                this.crossNavigationContainerData = { documentLabel: documentLabel, iFrameName: documentLabel }
                 this.crossNavigationContainerVisible = true
                 await this.loadPage(false, documentLabel)
             } else {
@@ -1103,16 +973,11 @@ export default defineComponent({
                 if (index !== -1) {
                     this.breadcrumbs[index].document = this.document
                 } else {
-                    this.breadcrumbs.push({
-                        label: this.document.label,
-                        document: this.document,
-                        crossBreadcrumb: crossNavigationDocument.crossBreadcrumb ?? this.document.name
-                    })
+                    this.breadcrumbs.push({ label: this.document.label, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb ?? this.document.name })
                 }
 
                 await this.loadPage()
             }
-            this.documentMode = 'VIEW'
         },
         addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
             if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
@@ -1133,7 +998,7 @@ export default defineComponent({
             if (!crossNavigationDocument || !crossNavigationDocument.document) return
             const parameters = encodeURI(JSON.stringify(navigationParams))
             const url =
-                process.env.VUE_APP_HOST_URL +
+                import.meta.env.VITE_HOST_URL +
                 `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${crossNavigationDocument.document.id}&OBJECT_LABEL=${crossNavigationDocument.document.label}&SELECTED_ROLE=${this.sessionRole}&SBI_EXECUTION_ID=null&OBJECT_NAME=${crossNavigationDocument.document.name}&CROSS_PARAMETER=${parameters}`
             window.open(url, '_blank', `toolbar=0,status=0,menubar=0,width=${popupOptions.width || '800'},height=${popupOptions.height || '600'}`)
         },
@@ -1151,7 +1016,6 @@ export default defineComponent({
             }
         },
         getParameterValueForCrossNavigation(parameterLabel: string) {
-            if (!parameterLabel) return
             const index = this.filtersData.filterStatus?.findIndex((param: any) => param.label === parameterLabel)
             return index !== -1 ? this.filtersData.filterStatus[index].parameterValue[0].value : ''
         },
@@ -1176,23 +1040,7 @@ export default defineComponent({
                 }
             })
 
-            this.setNavigationParametersFromCurrentFilters(formatedParams, navigationParams)
-
             return formatedParams
-        },
-        setNavigationParametersFromCurrentFilters(formatedParams: any, navigationParams: any) {
-            const navigationParamsKeys = navigationParams ? Object.keys(navigationParams) : []
-            const formattedParameters = this.getFormattedParameters()
-            const formattedParametersKeys = formattedParameters ? Object.keys(this.getFormattedParameters()) : []
-            if (navigationParamsKeys.length > 0 && formattedParametersKeys.length > 0) {
-                for (let i = 0; i < navigationParamsKeys.length; i++) {
-                    const index = formattedParametersKeys.findIndex((key: string) => key === navigationParamsKeys[i])
-                    if (index !== -1) {
-                        formatedParams[navigationParamsKeys[i]] = formattedParameters[formattedParametersKeys[index]]
-                        formatedParams[navigationParamsKeys[i] + '_field_visible_description'] = formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] ? formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] : ''
-                    }
-                }
-            }
         },
         showOLAPCustomView() {
             this.olapCustomViewVisible = true
@@ -1207,30 +1055,24 @@ export default defineComponent({
         async executeOLAPCrossNavigation(crossNavigationParams: any) {
             let temp = {} as any
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
             if (!temp || temp.length === 0) {
-                this.$store.commit('setError', {
+                this.store.setError({
                     title: this.$t('common.error.generic'),
                     msg: this.$t('documentExecution.main.crossNavigationNoTargetError')
                 })
                 return
             }
 
-            this.document = {
-                ...temp[0].document,
-                navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams)
-            }
+            this.document = { ...temp[0].document, navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams) }
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
-                this.breadcrumbs.push({
-                    label: this.document.label,
-                    document: this.document
-                })
+                this.breadcrumbs.push({ label: this.document.label, document: this.document })
             }
 
             await this.loadPage()
@@ -1260,15 +1102,15 @@ export default defineComponent({
         async addToWorkspace() {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.document.id}`, {}, { headers: { 'X-Disable-Errors': 'true' } })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.document.id}`, {}, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })
                 })
                 .catch((error) => {
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.toast.updateTitle'),
                         msg: error.message === 'sbi.workspace.organizer.document.addtoorganizer.error.duplicateentry' ? this.$t('documentExecution.main.addToWorkspaceError') : error.message
                     })
@@ -1276,7 +1118,7 @@ export default defineComponent({
             this.loading = false
         },
         async loadUserConfig() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/user-configs`).then((response: AxiosResponse<any>) => {
                 if (response.data) {
                     this.sessionEnabled = response.data['SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled'] === 'false' ? false : true
                     this.dateFormat = response.data['SPAGOBI.DATE-FORMAT-SERVER.format'] === '%Y-%m-%d' ? 'dd/MM/yyyy' : response.data['SPAGOBI.DATE-FORMAT-SERVER.format']

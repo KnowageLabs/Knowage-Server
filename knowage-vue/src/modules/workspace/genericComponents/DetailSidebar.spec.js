@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import DetailSidebar from './DetailSidebar.vue'
 import InputText from 'primevue/inputtext'
@@ -45,14 +47,8 @@ const mockedDocument = {
     pars: []
 }
 
-const $store = {
-    state: {
-        user: {}
-    }
-}
-
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = (viewType) => {
@@ -68,7 +64,7 @@ const factory = (viewType) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 InputText,
@@ -78,7 +74,6 @@ const factory = (viewType) => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $router
             }
         }

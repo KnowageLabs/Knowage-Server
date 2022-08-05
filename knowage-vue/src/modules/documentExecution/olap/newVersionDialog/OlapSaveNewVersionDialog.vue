@@ -39,6 +39,7 @@ import Dialog from 'primevue/dialog'
 import InlineMessage from 'primevue/inlinemessage'
 import olapSaveNewVersionDialogDescriptor from './OlapSaveNewVersionDialogDescriptor.json'
 import Textarea from 'primevue/textarea'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'olap-save-new-version-dialog',
@@ -54,6 +55,10 @@ export default defineComponent({
         }
     },
     watch: {},
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {},
     methods: {
         close() {
@@ -64,12 +69,12 @@ export default defineComponent({
             this.loading = true
             await this.$http
                 .post(
-                    process.env.VUE_APP_OLAP_PATH + `1.0/model/saveAs?SBI_EXECUTION_ID=${this.id}`,
+                    import.meta.env.VITE_OLAP_PATH + `1.0/model/saveAs?SBI_EXECUTION_ID=${this.id}`,
                     { name: this.version.name !== '' ? this.version.name : 'sbiNoDescription', descr: this.version.descr !== '' ? this.version.descr : 'sbiNoDescription' },
                     { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } }
                 )
                 .then((response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -77,7 +82,7 @@ export default defineComponent({
                     this.close()
                 })
                 .catch((error: any) =>
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: error?.localizedMessage
                     })

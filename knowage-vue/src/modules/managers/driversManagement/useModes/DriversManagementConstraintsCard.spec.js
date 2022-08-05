@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Column from 'primevue/column'
 import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
@@ -39,11 +41,7 @@ const mockedConstraints = [
 ]
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const factory = () => {
@@ -52,7 +50,7 @@ const factory = () => {
             constraints: [...mockedConstraints]
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Column,
                 Card,
@@ -61,7 +59,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm
             }
         }
@@ -69,7 +67,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Drivers Management Use modes', () => {

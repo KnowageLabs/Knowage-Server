@@ -73,15 +73,15 @@
     <div id="preview-container" v-if="rows.length > 0">
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
             <template #start>
-                <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = true" />
-                <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = false" />
+                <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandTableCard = true" />
+                <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandTableCard = false" />
                 {{ $t('managers.lovsManagement.preview') }}
             </template>
         </Toolbar>
         <Card class="p-m-2" v-show="expandTableCard">
             <template #content>
-                <DataTable :value="rows" class="p-datatable-sm kn-table" :loading="loading" responsiveLayout="scroll" :scrollable="true" scrollDirection="both" scrollHeight="800px" stripedRows rowHover style="width:70vw">
-                    <Column v-for="col of columns" :field="col.name" :header="col.header" :key="col.dataIndex" class="kn-truncated" style="width:250px" />
+                <DataTable :value="rows" class="p-datatable-sm kn-table" :loading="loading" responsiveLayout="scroll" :scrollable="true" scrollDirection="both" scrollHeight="800px" stripedRows rowHover style="width: 70vw">
+                    <Column v-for="col of columns" :field="col.name" :header="col.header" :key="col.dataIndex" class="kn-truncated" style="width: 250px" />
                 </DataTable>
             </template>
         </Card>
@@ -101,6 +101,7 @@ import Dropdown from 'primevue/dropdown'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import mainStore from '../../../../../../App.store'
 
 export default defineComponent({
     components: { Card, KnValidationMessages, KnInputFile, Dropdown, DataTable, Column },
@@ -118,6 +119,10 @@ export default defineComponent({
             columns: [] as any,
             rows: [] as any
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.dataset = this.selectedDataset
@@ -145,9 +150,12 @@ export default defineComponent({
         uploadDatasetFile(event) {
             this.uploading = true
             let uploadedFile = event.target.files[0]
-
-            this.startUpload(uploadedFile)
-
+            if (uploadedFile.name.includes(this.dataset.fileName)) {
+                this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('common.error.sameFileName') })
+                this.triggerUpload = false
+            } else {
+                this.startUpload(uploadedFile)
+            }
             this.triggerUpload = false
             setTimeout(() => (this.uploading = false), 200)
         },
@@ -155,13 +163,13 @@ export default defineComponent({
             var formData = new FormData()
             formData.append('file', uploadedFile)
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `selfservicedatasetupload/fileupload`, formData, {
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `selfservicedatasetupload/fileupload`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryFYwjkDOpT85ZFN3L'
                     }
                 })
                 .then((response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.uploading'),
                         msg: this.$t('importExport.import.successfullyCompleted')
                     })
@@ -198,7 +206,7 @@ export default defineComponent({
         async downloadDatasetFile() {
             var encodedLabel = encodeURI(this.dataset.label)
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${encodedLabel}&type=${this.dataset.fileType}`, {
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${encodedLabel}&type=${this.dataset.fileType}`, {
                     headers: {
                         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
                     }
@@ -206,16 +214,16 @@ export default defineComponent({
                 .then(
                     (response: AxiosResponse<any>) => {
                         if (response.data.errors) {
-                            this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
+                            this.store.setError({ title: this.$t('common.error.downloading'), msg: this.$t('common.error.errorCreatingPackage') })
                         } else {
-                            this.$store.commit('setInfo', { title: this.$t('common.toast.success') })
+                            this.store.setInfo({ title: this.$t('common.toast.success') })
                             if (response.headers) {
                                 downloadDirect(response.data, this.createCompleteFileName(response), response.headers['content-type'])
                             }
                         }
                     },
                     (error) =>
-                        this.$store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.error.downloading'),
                             msg: this.$t(error)
                         })
@@ -231,7 +239,7 @@ export default defineComponent({
             this.loading = true
             this.dataset.limit = 10
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, this.dataset, {
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, this.dataset, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8',
@@ -239,7 +247,6 @@ export default defineComponent({
                     }
                 })
                 .then((response: AxiosResponse<any>) => {
-                    this.columns = []
                     let previewColumns = response.data.metaData.fields
                     previewColumns.forEach((el: any) => {
                         typeof el != 'object' ? '' : this.columns.push(el)

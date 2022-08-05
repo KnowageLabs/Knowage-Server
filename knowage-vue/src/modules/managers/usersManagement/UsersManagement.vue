@@ -73,6 +73,7 @@ import UsersListBox from './UsersListBox.vue'
 import UserAttributesForm from './UserAttributesTab/UserAttributesForm.vue'
 import detailFormTabValidationDescriptor from './UserDetailTab/DetailFormTabValidationDescriptor.json'
 import { sameAs } from '@vuelidate/validators'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'user-management',
@@ -80,7 +81,7 @@ export default defineComponent({
     data() {
         return {
             v$: useValidate() as any,
-            apiUrl: process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/',
+            apiUrl: import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/',
             users: [] as iUser[],
             roles: [] as iRole[],
             detailFormTabValidationDescriptor: detailFormTabValidationDescriptor,
@@ -109,6 +110,10 @@ export default defineComponent({
         }
 
         return validationObject
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         await this.loadAllUsers()
@@ -187,13 +192,13 @@ export default defineComponent({
             this.dirty = true
         },
         saveOrUpdateUser(user: iUser) {
-            const endpointPath = `${process.env.VUE_APP_RESTFUL_SERVICES_PATH}2.0/users`
+            const endpointPath = `${import.meta.env.VITE_RESTFUL_SERVICES_PATH}2.0/users`
             return this.userDetailsForm.id ? this.$http.put<any>(`${endpointPath}/${user.id}`, user) : this.$http.post<any>(endpointPath, user)
         },
         async saveUser() {
             this.loading = true
             if (!this.selectedRoles || this.selectedRoles.length == 0) {
-                this.$store.commit('setError', {
+                this.store.setError({
                     title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
                     msg: this.$t('managers.usersManagement.error.noRolesSelected')
                 })
@@ -205,7 +210,7 @@ export default defineComponent({
                         this.afterSaveOrUpdate(response)
                     })
                     .catch((error) => {
-                        this.$store.commit('setError', {
+                        this.store.setError({
                             title: error.title,
                             msg: error.msg
                         })
@@ -226,7 +231,7 @@ export default defineComponent({
             if (selectedUser) {
                 this.onUserSelect(selectedUser)
             }
-            this.$store.commit('setInfo', {
+            this.store.setInfo({
                 title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
                 msg: this.userDetailsForm.id ? this.$t('common.toast.updateSuccess') : this.$t('managers.usersManagement.info.createMessage')
             })
@@ -234,16 +239,16 @@ export default defineComponent({
         onUserDelete(id: number) {
             this.loading = true
             this.$http
-                .delete(`${process.env.VUE_APP_RESTFUL_SERVICES_PATH}2.0/users/${id}`)
+                .delete(`${import.meta.env.VITE_RESTFUL_SERVICES_PATH}2.0/users/${id}`)
                 .then(() => {
                     this.loadAllUsers()
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('managers.usersManagement.info.deleteTitle'),
                         msg: this.$t('managers.usersManagement.info.deleteMessage')
                     })
                 })
                 .catch((error) => {
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: error.title,
                         msg: error.msg
                     })

@@ -167,8 +167,9 @@ import CalculatedField from './tabs/calculatedField/MetawebCalculatedField.vue'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Chip from 'primevue/chip'
+import mainStore from '../../../../../App.store'
 
-const { generate, applyPatch } = require('fast-json-patch')
+import { generate, applyPatch } from 'fast-json-patch'
 
 export default defineComponent({
     name: 'metaweb-business-model',
@@ -216,6 +217,10 @@ export default defineComponent({
             this.loadMeta()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadMeta()
         this.createMenuItems()
@@ -247,13 +252,13 @@ export default defineComponent({
         async deleteFromList(itemForDeletion) {
             const postData = { data: { name: itemForDeletion.uniqueName }, diff: generate(this.observer) }
             let url = ''
-            itemForDeletion.joinRelationships ? (url = process.env.VUE_APP_META_API_URL + '/1.0/metaWeb/deleteBusinessView') : (url = process.env.VUE_APP_META_API_URL + '/1.0/metaWeb/deleteBusinessClass')
+            itemForDeletion.joinRelationships ? (url = import.meta.env.VITE_META_API_URL + '/1.0/metaWeb/deleteBusinessView') : (url = import.meta.env.VITE_META_API_URL + '/1.0/metaWeb/deleteBusinessClass')
             await this.$http
                 .post(url, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = applyPatch(this.meta, response.data).newDocument
 
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
@@ -263,12 +268,12 @@ export default defineComponent({
         },
         async loadRoles() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles').then((response: AxiosResponse<any>) => (this.roles = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles').then((response: AxiosResponse<any>) => (this.roles = response.data))
             this.loading = false
         },
         async loadCustomFunctions() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${this.businessModelId}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${this.businessModelId}`).then((response: AxiosResponse<any>) => {
                 if (response.data.data && response.data.data.length > 0) {
                     this.customFunctions = response.data.data.map((funct) => ({ category: 'CUSTOM', formula: funct.value, label: funct.label, name: funct.name, help: 'dataPreparation.custom' }))
                 } else this.customFunctions = null
@@ -279,7 +284,7 @@ export default defineComponent({
             this.loading = true
             const postData = { data: { index: event.dragIndex, direction: event.dropIndex - event.dragIndex }, diff: generate(this.observer) }
             await this.$http
-                .post(process.env.VUE_APP_META_API_URL + `/1.0/metaWeb/moveBusinessClass`, postData)
+                .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/moveBusinessClass`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.meta = applyPatch(this.meta, response.data).newDocument
                 })

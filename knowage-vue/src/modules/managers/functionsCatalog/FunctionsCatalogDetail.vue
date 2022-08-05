@@ -13,7 +13,7 @@
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
         </template>
 
-        <TabView>
+        <TabView v-model:activeIndex="activeTab" >
             <TabPanel>
                 <template #header>
                     <span>{{ $t('common.general') }}</span>
@@ -35,7 +35,7 @@
                     <span>{{ $t('common.script') }}</span>
                     <Badge class="p-ml-2" severity="danger" v-if="invalidCode"></Badge>
                 </template>
-                <FunctionsCatalogScriptTab :propFunction="selectedFunction" :readonly="readonly"></FunctionsCatalogScriptTab>
+                <FunctionsCatalogScriptTab :activeTab="activeTab" :propFunction="selectedFunction" :readonly="readonly"></FunctionsCatalogScriptTab>
             </TabPanel>
             <TabPanel>
                 <template #header>
@@ -65,6 +65,7 @@ import FunctionsCatalogOutputTab from './tabs/FunctionsCatalogOutputTab/Function
 import FunctionsCatalogWarningDialog from './FunctionsCatalogWarningDialog.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'functions-catalog-detail',
@@ -84,6 +85,7 @@ export default defineComponent({
             warningTitle: '',
             operation: 'create',
             warningVisible: false,
+            activeTab: 0,
             loading: false
         }
     },
@@ -97,11 +99,11 @@ export default defineComponent({
     },
     computed: {
         canManageFunctionalities(): boolean {
-            const index = (this.$store.state as any).user?.functionalities?.findIndex((el: string) => el === 'FunctionsCatalogManagement')
+            const index = (this.store.$state as any).user?.functionalities?.findIndex((el: string) => el === 'FunctionsCatalogManagement')
             return index !== -1
         },
         readonly(): boolean {
-            return !this.canManageFunctionalities && this.selectedFunction?.owner !== (this.$store.state as any).user.userId
+            return !this.canManageFunctionalities && this.selectedFunction?.owner !== (this.store.$state as any).user.userId
         },
         invalidGeneral(): boolean {
             return !this.validateFunctionInfo(false)
@@ -115,6 +117,10 @@ export default defineComponent({
         invalidOutput(): boolean {
             return !this.validateOutputColumns(false)
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadFunction()
@@ -130,6 +136,7 @@ export default defineComponent({
         closeFunctionDetail() {
             this.selectedFunction = this.getFunctionDefaultValues()
             this.$emit('close')
+            this.activeTab =0 
         },
         getFunctionDefaultValues() {
             return {
@@ -138,7 +145,7 @@ export default defineComponent({
                 benchmark: '',
                 type: '',
                 label: '',
-                owner: (this.$store.state as any).user.userId,
+                owner: (this.store.$state as any).user.userId,
                 language: 'Python',
                 inputColumns: [] as iInputColumn[],
                 inputVariables: [] as iInputVariable[],
@@ -267,11 +274,11 @@ export default defineComponent({
                 return
             }
 
-            let url = process.env.VUE_APP_API_PATH + '1.0/functioncatalog/new'
+            let url = import.meta.env.VITE_API_PATH + '1.0/functioncatalog/new'
 
             if (this.selectedFunction.id) {
                 this.operation = 'update'
-                url = process.env.VUE_APP_API_PATH + `1.0/functioncatalog`
+                url = import.meta.env.VITE_API_PATH + `1.0/functioncatalog`
             } else {
                 this.operation = 'create'
             }
@@ -282,7 +289,7 @@ export default defineComponent({
                         this.warningVisible = true
                         this.missingFields.push(response.data.errrors[0].message)
                     } else {
-                        this.$store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.toast.' + this.operation + 'Title'),
                             msg: this.$t('common.toast.success')
                         })

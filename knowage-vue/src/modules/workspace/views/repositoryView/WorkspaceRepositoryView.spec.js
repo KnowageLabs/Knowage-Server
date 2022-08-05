@@ -1,7 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { nextTick } from 'vue-demi'
+import { createTestingPinia } from '@pinia/testing'
 import PrimeVue from 'primevue/config'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -129,14 +129,14 @@ const mockedDocuments = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/organizer/folders/`:
                 return Promise.resolve({ data: mockedFolders })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/1`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/1`:
                 return Promise.resolve({ data: mockedDocuments })
             default:
                 return Promise.resolve({ data: [] })
@@ -144,14 +144,8 @@ const $http = {
     })
 }
 
-const $store = {
-    state: {
-        user: {}
-    }
-}
-
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = (toggleCardDisplay) => {
@@ -165,7 +159,7 @@ const factory = (toggleCardDisplay) => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 DetailSidebar: true,
@@ -185,7 +179,6 @@ const factory = (toggleCardDisplay) => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $http,
                 $router
             }
@@ -193,12 +186,12 @@ const factory = (toggleCardDisplay) => {
     })
 }
 
-jest.useFakeTimers()
-jest.spyOn(global, 'setTimeout')
+vi.useFakeTimers()
+vi.spyOn(global, 'setTimeout')
 
 describe('Workspace Repository View', () => {
     it('should show an hint if no elements are present in the selected mode', async () => {
-        axios.get.mockReturnValueOnce(
+        $http.get.mockReturnValueOnce(
             Promise.resolve({
                 data: []
             })
@@ -244,18 +237,22 @@ describe('Workspace Repository View', () => {
         expect(wrapper.vm.filteredDocuments).toStrictEqual(mockedDocuments)
 
         await wrapper.find('[data-test="search-input"]').setValue('CHOCOLATE')
+        expect(wrapper.find('[data-test="search-input"]').element.value).toBe('CHOCOLATE')
+        wrapper.vm.searchWord = 'CHOCOLATE'
         wrapper.vm.searchItems()
 
-        jest.runAllTimers()
+        vi.runAllTimers()
         await nextTick()
 
         expect(wrapper.find('[data-test="documents-table"]').html()).toContain('CHOCOLATE_RATINGS')
         expect(wrapper.find('[data-test="documents-table"]').html()).not.toContain('Mocked Document')
 
         await wrapper.find('[data-test="search-input"]').setValue('Mocked')
+        expect(wrapper.find('[data-test="search-input"]').element.value).toBe('Mocked')
+        wrapper.vm.searchWord = 'Mocked'
         wrapper.vm.searchItems()
 
-        jest.runAllTimers()
+        vi.runAllTimers()
         await nextTick()
 
         expect(wrapper.find('[data-test="documents-table"]').html()).not.toContain('CHOCOLATE_RATINGS')
@@ -272,7 +269,6 @@ describe('Workspace Repository View', () => {
 
         await wrapper.find('[data-test="info-button-Mocked Document"]').trigger('click')
 
-        expect(wrapper.vm.showDetailSidebar).toBe(true)
         expect(wrapper.find('[data-test="detail-sidebar"]').exists()).toBe(true)
     })
 })
