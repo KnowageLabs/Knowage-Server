@@ -872,8 +872,9 @@ export default defineComponent({
                         parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value)
                         parameters[parameter.urlName + '_field_visible_description'] = this.getFormattedDate(parameter.parameterValue[0].value, true)
                     } else if (parameter.valueSelection === 'man_in') {
-                        parameters[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
-                        parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
+                        if (!parameter.parameterValue[0]) parameter.parameterValue[0] = { value: '', description: '' }
+                        parameters[parameter.urlName] = parameter.type === 'NUM' && parameter.parameterValue[0].value ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
+                        parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' && parameter.parameterValue[0].description ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
                     } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
                         parameters[parameter.urlName] = parameter.parameterValue.map((el: any) => el.value)
                         let tempString = ''
@@ -1028,7 +1029,7 @@ export default defineComponent({
             const format = date instanceof Date ? undefined : 'dd/MM/yyyy'
             return luxonFormatDate(date, format, useDefaultFormat ? undefined : this.dateFormat)
         },
-        onBreadcrumbClick(item: any) {
+        async onBreadcrumbClick(item: any) {
             this.document = item.document
             this.filtersData = item.filtersData
             this.urlData = item.urlData
@@ -1076,6 +1077,7 @@ export default defineComponent({
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
             this.formatAngularOutputParameters(angularData.otherOutputParameters)
             const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument ? crossNavigationDocument.navigationParams : [])
+            this.addDocumentOtherParametersToNavigationParamas(navigationParams, angularData, crossNavigationDocument)
 
             const popupOptions = crossNavigationDocument?.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
 
@@ -1111,6 +1113,21 @@ export default defineComponent({
                 await this.loadPage()
             }
             this.documentMode = 'VIEW'
+        },
+        addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
+            if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
+            const keys = Object.keys(angularData.outputParameters)
+            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
+            for (let i = 0; i < keys.length; i++) {
+                const tempKey = keys[i]
+                let newKey = ''
+                for (let j = 0; j < documentNavigationParamsKeys.length; j++) {
+                    if (crossNavigationDocument.navigationParams[documentNavigationParamsKeys[j]].value?.label === tempKey) {
+                        newKey = documentNavigationParamsKeys[j]
+                    }
+                }
+                if (newKey) navigationParams[newKey] = angularData.outputParameters[tempKey]
+            }
         },
         openCrossNavigationInNewWindow(popupOptions: any, crossNavigationDocument: any, navigationParams: any) {
             if (!crossNavigationDocument || !crossNavigationDocument.document) return

@@ -34,7 +34,7 @@ export default defineComponent({
             this.items = this.breadcrumbs as any[]
         },
         selectBreadcrumb(event: any) {
-            const index = this.items.findIndex((el: any) => el.label === event.target.textContent)
+            const index = this.items.findIndex((el: any) => el.label === event.target.textContent || el.crossBreadcrumb === event.target.textContent)
             if (index !== -1) {
                 this.$emit('breadcrumbClicked', this.items[index])
                 this.items.splice(index + 1)
