@@ -61,6 +61,10 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 	public static final String CSV_FILE_DATE_FORMAT = "dateFormat";
 	public static final String CSV_FILE_TIMESTAMP_FORMAT = "timestampFormat";
 
+	private static final String UTF_8_ENCODING = "UTF-8";
+	private static final String UTF_8_BOM_ENCODING = "UTF-8-BOM";
+	private static final String UTF8_BOM = "\uFEFF";
+
 	private String csvDelimiter;
 	private String csvQuote;
 	private String csvEncoding;
@@ -138,7 +142,12 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 
 	private DataStore readWithCsvMapReader(InputStream inputDataStream) throws Exception {
 
-		InputStreamReader inputStreamReader = new InputStreamReader(inputDataStream, csvEncoding);
+		String fileEncoding = csvEncoding;
+		if (isUTF8BOMEncoding()) {
+			fileEncoding = UTF_8_ENCODING;
+		}
+		InputStreamReader inputStreamReader = new InputStreamReader(inputDataStream, fileEncoding);
+
 		DataStore dataStore = null;
 		MetaData dataStoreMeta;
 		dataStore = new DataStore();
@@ -274,6 +283,9 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 				logger.debug("Calculation of result set number is NOT enabled");
 			}
 
+			if (header.length > 0 && isUTF8BOMEncoding())
+				((FieldMetadata) dataStore.getMetaData().getFieldsMeta().get(0)).setName(escapeUTF8BOM(header[0]));
+
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while reading csv file", e);
 		} finally {
@@ -282,6 +294,14 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 			}
 		}
 		return dataStore;
+	}
+
+	private String escapeUTF8BOM(String input) {
+		return input.startsWith(UTF8_BOM) ? input.replace(UTF8_BOM, "") : input;
+	}
+
+	private boolean isUTF8BOMEncoding() {
+		return UTF_8_BOM_ENCODING.equals(csvEncoding);
 	}
 
 	private boolean isIntegerOverflow(String currentIntStringValue) {
