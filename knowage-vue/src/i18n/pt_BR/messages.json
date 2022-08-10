@@ -1198,7 +1198,7 @@
             "confirmMsg": "Você perderá todas as mudanças não salvas, tem certeza de que deseja abrir Preparação de Dados? ",
             "creationUser": "Usuário de Criação ",
             "dataframeName": "Nome da variável de dataframe ",
-            "decrypt": "Decript ",
+            "decrypt": "Decrypt ",
             "deleteAllParams": "Limpar todos os parâmetros do dataset ",
             "deleteAllParamsMsg": "Tem certeza de que deseja excluir todos os parâmetros do dataset? ",
             "deleteAllRequestHeaderMsg": "Tem certeza de que deseja excluir todos os cabeçalhos de solicitação REST ",

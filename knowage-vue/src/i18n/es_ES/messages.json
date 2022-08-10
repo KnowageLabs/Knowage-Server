@@ -1198,7 +1198,7 @@
             "confirmMsg": "Perderá todos los cambios no guardados, ¿está seguro de que desea abrir la preparación de datos?",
             "creationUser": "Usuario de creación",
             "dataframeName": "Nombre de variable de Dataframe",
-            "decrypt": "Decript",
+            "decrypt": "Decrypt",
             "deleteAllParams": "Borrar todos los parámetros de conjunto",
             "deleteAllParamsMsg": "¿Está seguro de que desea suprimir todos los parámetros de conjunto de datos?",
             "deleteAllRequestHeaderMsg": "¿Está seguro de que desea suprimir todas las cabeceras de solicitud REST?",
