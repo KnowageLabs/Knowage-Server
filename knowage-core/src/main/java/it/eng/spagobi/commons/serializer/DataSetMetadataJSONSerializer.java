@@ -93,8 +93,8 @@ public class DataSetMetadataJSONSerializer implements Serializer {
 						jsonMeta.put("personal", personal);
 //						boolean masked = "true".equalsIgnoreCase((String) row.getAttribute("masked"));
 //						jsonMeta.put("masked", masked);
-						boolean decript = "true".equalsIgnoreCase((String) row.getAttribute("decript"));
-						jsonMeta.put("decript", decript);
+						boolean decrypt = "true".equalsIgnoreCase((String) row.getAttribute("decrypt"));
+						jsonMeta.put("decrypt", decrypt);
 						boolean subjectId = "true".equalsIgnoreCase((String) row.getAttribute("subjectId"));
 						jsonMeta.put("subjectId", subjectId);
 						metaListJSON.put(jsonMeta);
@@ -113,8 +113,8 @@ public class DataSetMetadataJSONSerializer implements Serializer {
 						jsonMeta.put("personal", personal);
 //						boolean masked = "true".equalsIgnoreCase((String) row.getAttribute("masked"));
 //						jsonMeta.put("masked", masked);
-						boolean decript = "true".equalsIgnoreCase((String) row.getAttribute("decript"));
-						jsonMeta.put("decript", decript);
+						boolean decrypt = "true".equalsIgnoreCase((String) row.getAttribute("decrypt"));
+						jsonMeta.put("decrypt", decrypt);
 						boolean subjectId = "true".equalsIgnoreCase((String) row.getAttribute("subjectId"));
 						jsonMeta.put("subjectId", subjectId);
 
@@ -193,9 +193,9 @@ public class DataSetMetadataJSONSerializer implements Serializer {
 //							JSONObject maskedJSONObject = createPropertyObject(columnName, "masked", masked);
 //							columnsJSONArray.put(maskedJSONObject);
 
-							boolean decript = "true".equalsIgnoreCase((String) row.getAttribute("decript"));
-							JSONObject decriptJSONObject = createPropertyObject(columnName, "decript", decript);
-							columnsJSONArray.put(decriptJSONObject);
+							boolean decrypt = "true".equalsIgnoreCase((String) row.getAttribute("decrypt"));
+							JSONObject decryptJSONObject = createPropertyObject(columnName, "decrypt", decrypt);
+							columnsJSONArray.put(decryptJSONObject);
 
 							boolean subjectId = "true".equalsIgnoreCase((String) row.getAttribute("subjectId"));
 							JSONObject subjectIdJSONObject = createPropertyObject(columnName, "subjectId", subjectId);
