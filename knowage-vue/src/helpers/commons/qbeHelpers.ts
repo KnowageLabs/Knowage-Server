@@ -45,7 +45,7 @@ export function creatNewMetadataFromField(newField) {
         fieldAlias: newField.field,
         Type: newField.dataType,
         fieldType: newField.iconCls.toUpperCase(),
-        decript: false,
+        decrypt: false,
         personal: false,
         subjectid: false
     } as any

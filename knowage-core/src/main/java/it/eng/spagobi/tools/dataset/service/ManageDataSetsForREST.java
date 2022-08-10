@@ -140,7 +140,7 @@ public class ManageDataSetsForREST {
 
 	public static final String PERSONAL = "personal";
 	public static final String MASKED = "masked";
-	public static final String DECRIPT = "decript";
+	public static final String DECRYPT = "decrypt";
 	public static final String SUBJECT_ID = "subjectId";
 	// logger component
 	public static Logger logger = Logger.getLogger(ManageDataSetsForREST.class);
@@ -459,7 +459,7 @@ public class ManageDataSetsForREST {
 			newMeta.setFieldType(fieldType);
 			newMeta.setPersonal(metaObj.optBoolean("personal"));
 //			newMeta.setMasked(metaObj.optBoolean("masked"));
-			newMeta.setDecript(metaObj.optBoolean("decript"));
+			newMeta.setDecrypt(metaObj.optBoolean("decrypt"));
 			newMeta.setSubjectId(metaObj.optBoolean("subjectId"));
 			toReturn.addFiedMeta(newMeta);
 		}
@@ -568,10 +568,7 @@ public class ManageDataSetsForREST {
 					String roleName = itRoles.next();
 					role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
-					List<Domain> array = categoryDao.getCategoriesForDataset()
-						.stream()
-						.map(Domain::fromCategory)
-						.collect(toList());
+					List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 					for (RoleMetaModelCategory r : ds) {
 						for (Domain dom : array) {
 							if (r.getCategoryId().equals(dom.getValueId())) {
@@ -582,10 +579,7 @@ public class ManageDataSetsForREST {
 				}
 				return categoriesDev;
 			} else {
-				return categoryDao.getCategoriesForDataset()
-					.stream()
-					.map(Domain::fromCategory)
-					.collect(toList());
+				return categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 			}
 		} catch (Exception e) {
 			logger.error("Role with selected id: " + role.getId() + " doesn't exists", e);
@@ -801,14 +795,13 @@ public class ManageDataSetsForREST {
 					if (isNotEmpty(tempVal) && tempVal.startsWith("[") && tempVal.endsWith("]")) {
 						JSONArray arrayValue = new JSONArray(tempVal);
 
-						for (int j=0; j < arrayValue.length(); j++) {
+						for (int j = 0; j < arrayValue.length(); j++) {
 							listValue.add(arrayValue.get(j));
 						}
 					} else {
 						// TODO : Delete this branch when the format between preview and save dataset will be the same
 						listValue = Arrays.asList(tempVal.split(","));
 					}
-
 
 					value = getMultiValueForSolr(listValue, type);
 				} else {
@@ -878,7 +871,7 @@ public class ManageDataSetsForREST {
 
 							ifmd.setPersonal(metadataJSONObject.optBoolean("personal"));
 //							ifmd.setMasked(metadataJSONObject.optBoolean("masked"));
-							ifmd.setDecript(metadataJSONObject.optBoolean("decript"));
+							ifmd.setDecrypt(metadataJSONObject.optBoolean("decrypt"));
 							ifmd.setSubjectId(metadataJSONObject.optBoolean("subjectId"));
 							break;
 						}
@@ -1483,8 +1476,8 @@ public class ManageDataSetsForREST {
 			case "personal":
 				m.get(column).setPersonal(currMetaType.getBoolean("pvalue"));
 				break;
-			case "decript":
-				m.get(column).setDecript(currMetaType.getBoolean("pvalue"));
+			case "decrypt":
+				m.get(column).setDecrypt(currMetaType.getBoolean("pvalue"));
 				break;
 			case "subjectId":
 				m.get(column).setSubjectId(currMetaType.getBoolean("pvalue"));
@@ -1691,10 +1684,7 @@ public class ManageDataSetsForREST {
 	}
 
 	private String getMultiValueForSolr(List<Object> value, String type) {
-		return value.stream()
-			.map(String::valueOf)
-			.map(e -> getSingleValueForSolr(e, type))
-			.collect(joining(" OR ", "(", ")"));
+		return value.stream().map(String::valueOf).map(e -> getSingleValueForSolr(e, type)).collect(joining(" OR ", "(", ")"));
 	}
 
 	private void checkFileDataset(IDataSet dataSet) {
