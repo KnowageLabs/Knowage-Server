@@ -94,7 +94,7 @@ public class DataStore implements IDataStore {
 		this.metaData = dataSetMetadata;
 		this.metaData.setProperty(IMetaData.RESULT_NUMBER_PROPERTY, 0);
 		adjustMetadata(dataSetMetadata);
-		setDecryptionFlag(dataSetMetadata);
+		setUpDecryption();
 	}
 
 	@Override
@@ -221,7 +221,7 @@ public class DataStore implements IDataStore {
 	public void setMetaData(IMetaData metaData) {
 		this.metaData = metaData;
 		// TODO : Do we need to call adjustMetadata?
-		setDecryptionFlag(metaData);
+		setUpDecryption();
 	}
 
 	@Override
@@ -815,7 +815,7 @@ public class DataStore implements IDataStore {
 	private Map<Integer, IFieldMetaData> decryptableFieldByIndex = new LinkedHashMap();
 	private StandardPBEStringEncryptor encryptor;
 
-	private void setDecryptionFlag(IMetaData metadata) {
+	private void setUpDecryption() {
 		IMetaData dataStoreMetadata = getMetaData();
 
 		AtomicInteger index = new AtomicInteger();
@@ -825,7 +825,7 @@ public class DataStore implements IDataStore {
 			.collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
 			.entrySet()
 			.stream()
-			.filter(e -> e.getValue().isDecript())
+			.filter(e -> e.getValue().isDecrypt())
 			.forEach(e -> {
 				Integer key = e.getKey();
 				IFieldMetaData value = e.getValue();

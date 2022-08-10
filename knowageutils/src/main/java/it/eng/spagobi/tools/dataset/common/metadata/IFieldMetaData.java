@@ -81,7 +81,7 @@ public interface IFieldMetaData {
 
 //	boolean isMasked();
 
-	boolean isDecript();
+	boolean isDecrypt();
 
 	boolean isSubjectId();
 
@@ -89,7 +89,7 @@ public interface IFieldMetaData {
 
 //	void setMasked(boolean masked);
 
-	void setDecript(boolean decript);
+	void setDecrypt(boolean decrypt);
 
 	void setSubjectId(boolean subjectId);
 

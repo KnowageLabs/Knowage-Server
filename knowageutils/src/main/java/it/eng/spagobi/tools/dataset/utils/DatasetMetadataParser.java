@@ -65,7 +65,7 @@ public class DatasetMetadataParser {
 
 	public static final String PERSONAL = "personal";
 	public static final String MASKED = "masked";
-	public static final String DECRIPT = "decript";
+	public static final String DECRYPT = "decrypt";
 	public static final String SUBJECT_ID = "subjectId";
 
 	// XML VALUES FOR PROPERTIES TAG
@@ -183,8 +183,8 @@ public class DatasetMetadataParser {
 				sbMeta.setAttribute(attPersonal);
 //				SourceBeanAttribute attMasked = new SourceBeanAttribute(MASKED, fieldMetaData.isMaskValue());
 //				sbMeta.setAttribute(attMasked);
-				SourceBeanAttribute attDecript = new SourceBeanAttribute(DECRIPT, fieldMetaData.isDecript());
-				sbMeta.setAttribute(attDecript);
+				SourceBeanAttribute attDecrypt = new SourceBeanAttribute(DECRYPT, fieldMetaData.isDecrypt());
+				sbMeta.setAttribute(attDecrypt);
 				SourceBeanAttribute attSubjectId = new SourceBeanAttribute(SUBJECT_ID, fieldMetaData.isSubjectId());
 				sbMeta.setAttribute(attSubjectId);
 
@@ -353,8 +353,8 @@ public class DatasetMetadataParser {
 					fieldMeta.setPersonal(personal);
 //					boolean masked = sbRow.getAttribute(MASKED) != null ? Boolean.parseBoolean((String) sbRow.getAttribute(MASKED)) : false;
 //					fieldMeta.setMasked(masked);
-					boolean decript = sbRow.getAttribute(DECRIPT) != null ? Boolean.parseBoolean((String) sbRow.getAttribute(DECRIPT)) : false;
-					fieldMeta.setDecript(decript);
+					boolean decrypt = sbRow.getAttribute(DECRYPT) != null ? Boolean.parseBoolean((String) sbRow.getAttribute(DECRYPT)) : false;
+					fieldMeta.setDecrypt(decrypt);
 					boolean subjectId = sbRow.getAttribute(SUBJECT_ID) != null ? Boolean.parseBoolean((String) sbRow.getAttribute(SUBJECT_ID)) : false;
 					fieldMeta.setSubjectId(subjectId);
 
