@@ -76,7 +76,7 @@
                 </Toolbar>
                 <div class="kn-relative kn-flex p-mt-2">
                     <div class="kn-height-full kn-width-full kn-absolute">
-                         <QBESimpleTable
+                        <QBESimpleTable
                             v-if="!smartView"
                             :query="selectedQuery"
                             @columnVisibilityChanged="checkIfHiddenColumnsExist"
@@ -648,7 +648,7 @@ export default defineComponent({
                 column: calculatedField.alias,
                 fieldAlias: calculatedField.field,
                 fieldType: calculatedField.id.nature.toUpperCase(),
-                decript: false,
+                decrypt: false,
                 personal: false,
                 subjectid: false
             } as any

@@ -135,7 +135,7 @@ export default defineComponent({
                     displayedName: meta.fieldAlias,
                     type: meta.Type,
                     fieldType: meta.fieldType,
-                    decript: meta.decript,
+                    decrypt: meta.decrypt,
                     personal: meta.personal,
                     subjectId: meta.subjectId
                 }
@@ -157,7 +157,7 @@ export default defineComponent({
                 columnsNames = this.removeDuplicates(columnsNames)
 
                 for (i = 0; i < columnsNames.length; i++) {
-                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '', personal: false, decript: false, subjectId: false }
+                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '', personal: false, decrypt: false, subjectId: false }
                     var currentColumnName = columnsNames[i]
 
                     if (currentColumnName.indexOf(':') != -1) {
@@ -177,8 +177,8 @@ export default defineComponent({
                                 columnObject.fieldType = element.pvalue
                             } else if (element.pname.toUpperCase() == 'personal'.toUpperCase()) {
                                 columnObject.personal = element.pvalue
-                            } else if (element.pname.toUpperCase() == 'decript'.toUpperCase()) {
-                                columnObject.decript = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'decrypt'.toUpperCase()) {
+                                columnObject.decrypt = element.pvalue
                             } else if (element.pname.toUpperCase() == 'subjectId'.toUpperCase()) {
                                 columnObject.subjectId = element.pvalue
                             }

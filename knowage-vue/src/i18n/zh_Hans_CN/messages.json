@@ -1198,7 +1198,7 @@
             "confirmMsg": "您将丢失所有未保存的更改，是否确定要打开数据准备?",
             "creationUser": "创建用户",
             "dataframeName": "数据帧变量名",
-            "decript": "德克里普",
+            "decrypt": "德克里普",
             "deleteAllParams": "清除所有数据集参数",
             "deleteAllParamsMsg": "确定要删除所有数据集参数吗 ?",
             "deleteAllRequestHeaderMsg": "是否确定要删除所有 REST 请求头",

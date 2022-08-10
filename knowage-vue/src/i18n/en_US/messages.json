@@ -1214,7 +1214,7 @@
             "confirmMsg": "You will lose all unsaved changes, are you sure you want to open Data Preparation?",
             "creationUser": "Creation User",
             "dataframeName": "Dataframe variable name",
-            "decript": "Decript",
+            "decrypt": "Decrypt",
             "deleteAllParams": "Clear all dataset parameters",
             "deleteAllParamsMsg": "Are you sure you want to delete all dataset parameters?",
             "deleteAllRequestHeaderMsg": "Are you sure you want to delete all REST request headers",

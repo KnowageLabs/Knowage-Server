@@ -1198,7 +1198,7 @@
             "confirmMsg": "保存されていない変更がすべて失われます。データ準備をオープンしますか ?",
             "creationUser": "作成ユーザー",
             "dataframeName": "データ・フレーム変数名",
-            "decript": "デクリプト",
+            "decrypt": "デクリプト",
             "deleteAllParams": "すべてのデータセットパラメータを",
             "deleteAllParamsMsg": "すべてのデータ・セット・パラメーターを削除しますか ?",
             "deleteAllRequestHeaderMsg": "すべての REST 要求ヘッダーを削除しますか ?",
