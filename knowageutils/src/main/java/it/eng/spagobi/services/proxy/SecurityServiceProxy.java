@@ -49,10 +49,8 @@ public final class SecurityServiceProxy extends AbstractServiceProxy {
 	/**
 	 * Use this constructor.
 	 *
-	 * @param user
-	 *            user ID
-	 * @param session
-	 *            HttpSession
+	 * @param user    user ID
+	 * @param session HttpSession
 	 */
 	public SecurityServiceProxy(String user, HttpSession session) {
 		super(user, session);
@@ -67,8 +65,7 @@ public final class SecurityServiceProxy extends AbstractServiceProxy {
 
 	/**
 	 * @return Object used
-	 * @throws SecurityException
-	 *             catch this if exist error
+	 * @throws SecurityException catch this if exist error
 	 */
 	private SecurityService lookUp() throws SecurityException {
 		SecurityService service;
@@ -95,8 +92,7 @@ public final class SecurityServiceProxy extends AbstractServiceProxy {
 	 *
 	 * @return IEngUserProfile with user profile
 	 *
-	 * @throws SecurityException
-	 *             if the process has generated an error
+	 * @throws SecurityException if the process has generated an error
 	 */
 	@Override
 	public IEngUserProfile getUserProfile() throws SecurityException {
@@ -112,6 +108,8 @@ public final class SecurityServiceProxy extends AbstractServiceProxy {
 				} catch (SpagoBIRuntimeException e) {
 					userProfile = UserProfile.createSchedulerUserProfile();
 				}
+			} else if (UserProfile.isDataPreparationUser(userId)) {
+				userProfile = UserProfile.createDataPreparationUserProfile(userId);
 			} else {
 				SpagoBIUserProfile user = lookUp().getUserProfile(readTicket(), userId);
 				if (user != null) {
@@ -122,10 +120,12 @@ public final class SecurityServiceProxy extends AbstractServiceProxy {
 				}
 			}
 		} catch (Throwable e) {
-			logger.error("Error occured while retrieving user profile of user [" + userId + "] from service [" + SERVICE_NAME + "] at endpoint [" + serviceUrl
-					+ "]", e);
-			throw new SecurityException("Error occured while retrieving user profile of user [" + userId + "] from service [" + SERVICE_NAME
-					+ "] at endpoint [" + serviceUrl + "]", e);
+			logger.error(
+					"Error occured while retrieving user profile of user [" + userId + "] from service [" + SERVICE_NAME + "] at endpoint [" + serviceUrl + "]",
+					e);
+			throw new SecurityException(
+					"Error occured while retrieving user profile of user [" + userId + "] from service [" + SERVICE_NAME + "] at endpoint [" + serviceUrl + "]",
+					e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -136,10 +136,8 @@ public final class SecurityServiceProxy extends AbstractServiceProxy {
 	/**
 	 * Check if the user is authorized to access the folder.
 	 *
-	 * @param folderId
-	 *            folder id
-	 * @param mode
-	 *            mode
+	 * @param folderId folder id
+	 * @param mode     mode
 	 *
 	 * @return true/false
 	 */
@@ -159,8 +157,7 @@ public final class SecurityServiceProxy extends AbstractServiceProxy {
 	/**
 	 * Check if the user can execute the function ( user function ).
 	 *
-	 * @param function
-	 *            function id
+	 * @param function function id
 	 *
 	 * @return true/false
 	 */
@@ -171,10 +168,8 @@ public final class SecurityServiceProxy extends AbstractServiceProxy {
 	/**
 	 * Check if the user can execute the function ( user function ).
 	 *
-	 * @param function
-	 *            function
-	 * @param principal
-	 *            user principal
+	 * @param function  function
+	 * @param principal user principal
 	 *
 	 * @return true / false
 	 */

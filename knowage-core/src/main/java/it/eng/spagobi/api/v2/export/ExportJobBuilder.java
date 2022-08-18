@@ -23,6 +23,7 @@ import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_ID;
 import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_LOCALE;
 import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_PARAMETERS;
 import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_RESOURCE_PATH;
+import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_USER_ID;
 import static it.eng.spagobi.api.v2.export.AbstractExportJob.MAP_KEY_USER_PROFILE;
 import static org.quartz.JobBuilder.newJob;
 
@@ -69,6 +70,18 @@ public class ExportJobBuilder {
 	}
 
 	/**
+	 * Instantiates new builder.
+	 *
+	 * @param datasetId   Data set id to export
+	 * @param userProfile User that request the export
+	 * @param userId      user id that can differ for specific purposes
+	 * @return Current builder
+	 */
+	public static ExportJobBuilder fromDataSetIdAndUserProfile(Integer datasetId, UserProfile userProfile, String userId) {
+		return new ExportJobBuilder(datasetId, userProfile, userId);
+	}
+
+	/**
 	 * String value of main resource path.
 	 */
 	private final String resoursePath = SpagoBIUtilities.getResourcePath();
@@ -99,6 +112,11 @@ public class ExportJobBuilder {
 	private UserProfile userProfile;
 
 	/**
+	 * Reference to user id.
+	 */
+	private String userId;
+
+	/**
 	 * Parameters data.
 	 */
 	Map<String, String> parameters = new HashMap<>();
@@ -116,6 +134,12 @@ public class ExportJobBuilder {
 	private ExportJobBuilder(final Integer dataSetId, final UserProfile userProfile) {
 		this.dataSetId = dataSetId;
 		this.userProfile = userProfile;
+	}
+
+	private ExportJobBuilder(final Integer dataSetId, final UserProfile userProfile, final String userId) {
+		this.dataSetId = dataSetId;
+		this.userProfile = userProfile;
+		this.userId = userId;
 	}
 
 	/**
@@ -146,6 +170,9 @@ public class ExportJobBuilder {
 		jobDataMap.put(MAP_KEY_RESOURCE_PATH, resoursePath);
 		jobDataMap.put(MAP_KEY_USER_PROFILE, userProfile);
 
+		if (userId != null) {
+			jobDataMap.put(MAP_KEY_USER_ID, userId);
+		}
 		logger.debug("\t- Dataset id: " + String.valueOf(dataSetId));
 		logger.debug("\t- UUID: " + String.valueOf(randomUUID));
 		logger.debug("\t- Resource path: " + String.valueOf(resoursePath));

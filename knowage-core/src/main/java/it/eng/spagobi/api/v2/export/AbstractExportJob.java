@@ -60,6 +60,8 @@ abstract class AbstractExportJob implements Job {
 
 	public static final String MAP_KEY_USER_PROFILE = "userProfile";
 
+	public static final String MAP_KEY_USER_ID = "userId";
+
 	private Path dataFile = null;
 	private OutputStream dataOutputStream = null;
 	private IDataSet dataSet = null;
@@ -71,6 +73,7 @@ abstract class AbstractExportJob implements Job {
 	Path resourcePath = null;
 	String resourcePathAsStr = null;
 	UserProfile userProfile = null;
+	String userId = null;
 
 	/**
 	 * Internal cleanup in case of error.
@@ -94,6 +97,7 @@ abstract class AbstractExportJob implements Job {
 		parameters = getParametersData(mergedJobDataMap);
 		resourcePathAsStr = getResourcePathString(mergedJobDataMap);
 		userProfile = getUserProfile(mergedJobDataMap);
+		userId = getUserId(mergedJobDataMap);
 
 		initializeTenant();
 
@@ -241,6 +245,10 @@ abstract class AbstractExportJob implements Job {
 
 	protected final String getResourcePathString(JobDataMap mergedJobDataMap) {
 		return (String) mergedJobDataMap.get(MAP_KEY_RESOURCE_PATH);
+	}
+
+	protected final String getUserId(JobDataMap mergedJobDataMap) {
+		return (String) mergedJobDataMap.get(MAP_KEY_USER_ID);
 	}
 
 	protected UserProfile getUserProfile() {

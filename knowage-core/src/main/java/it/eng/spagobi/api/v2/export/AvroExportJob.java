@@ -251,7 +251,7 @@ public class AvroExportJob extends AbstractExportJob {
 	protected OutputStream getDataOutputStream() {
 		try {
 			String dsIdasString = Integer.toString(dataSet.getId());
-			avroExportFolder = Paths.get(resourcePathAsStr, "dataPreparation", (String) userProfile.getUserId(), dsIdasString);
+			avroExportFolder = Paths.get(resourcePathAsStr, "dataPreparation", userId != null ? userId : (String) userProfile.getUserId(), dsIdasString);
 			Files.createDirectories(avroExportFolder);
 			return Files.newOutputStream(avroExportFolder.resolve(data));
 		} catch (Exception e) {

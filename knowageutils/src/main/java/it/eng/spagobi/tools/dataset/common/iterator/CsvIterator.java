@@ -91,8 +91,8 @@ public class CsvIterator extends FileIterator implements DataIterator {
 
 	private Object getValue(String stringValue, IFieldMetaData fieldMeta) {
 		Class<?> clazz = fieldMeta.getType();
-		if (stringValue != null && NumberUtils.isNumber(stringValue.replace(",", "."))) {
-			return new BigDecimal(stringValue.replace(",", "."));
+		if (stringValue != null && NumberUtils.isNumber(stringValue.trim().replace(",", "."))) {
+			return new BigDecimal(stringValue.trim().replace(",", "."));
 		}
 		return clazz.cast(stringValue);
 	}
