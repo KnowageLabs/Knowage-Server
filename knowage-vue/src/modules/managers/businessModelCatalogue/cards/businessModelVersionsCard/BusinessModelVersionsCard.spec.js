@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import BusinessModelVersionsCard from './BusinessModelVersionsCard.vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -23,16 +25,12 @@ const mockedVersions = [
 ]
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const $router = {
-    push: jest.fn(),
-    replace: jest.fn()
+    push: vi.fn(),
+    replace: vi.fn()
 }
 
 const factory = () => {
@@ -42,6 +40,7 @@ const factory = () => {
             versions: []
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -53,7 +52,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $confirm,
                 $router
             }
@@ -62,7 +60,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Business Model Management Saved versions', () => {

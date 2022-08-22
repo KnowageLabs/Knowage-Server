@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
-import Calendar from 'primevue/calendar'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
@@ -295,7 +296,7 @@ const factory = (rows) => {
             id: '1'
         },
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Calendar: true,

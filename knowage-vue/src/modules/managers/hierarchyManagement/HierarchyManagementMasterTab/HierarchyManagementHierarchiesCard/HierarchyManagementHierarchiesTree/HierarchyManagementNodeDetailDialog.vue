@@ -35,7 +35,7 @@ import Calendar from 'primevue/calendar'
 import Dialog from 'primevue/dialog'
 import hierarchyManagementHierarchiesTreeDescriptor from './HierarchyManagementHierarchiesTreeDescriptor.json'
 
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'hierarchy-management-node-detail-dialog',

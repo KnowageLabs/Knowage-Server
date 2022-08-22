@@ -31,6 +31,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dialog from 'primevue/dialog'
 import olapDeleteVersionsDialogDescriptor from './OlapDeleteVersionsDialogDescriptor.json'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'olap-delete-versions-dialog',
@@ -51,6 +52,10 @@ export default defineComponent({
             this.loadVersions()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadVersions()
     },
@@ -66,7 +71,7 @@ export default defineComponent({
             this.loading = true
 
             if (this.checkIfActiveVersionIsSelected()) {
-                this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.deleteVersion.errorMessage') })
+                this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.olap.deleteVersion.errorMessage') })
                 this.loading = false
                 return
             }
@@ -74,16 +79,16 @@ export default defineComponent({
             const versionsToDelete = this.selectedVersions?.map((version: { id: number; name: string; description: string }) => version.id).join(',')
             if (!versionsToDelete || versionsToDelete.length === 0) return
             await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/version/delete/${versionsToDelete}?SBI_EXECUTION_ID=${this.id}`, {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/version/delete/${versionsToDelete}?SBI_EXECUTION_ID=${this.id}`, {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8', 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
                     })
                     this.close()
                 })
                 .catch((error: any) =>
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('common.error.generic'),
                         msg: error?.localizedMessage
                     })

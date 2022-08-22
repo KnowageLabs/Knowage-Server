@@ -25,6 +25,7 @@ import useValidate from '@vuelidate/core'
 import AddKpiDialog from './AddKpiDialog.vue'
 import TargetDefinitionForm from './TargetDefinitionForm.vue'
 import ApplyTargetCard from './ApplyTargetCard.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'target-definition-detail',
@@ -72,6 +73,10 @@ export default defineComponent({
             return this.v$.$invalid || this.kpi.length < 1
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         if (this.id) {
             this.loadTarget()
@@ -98,7 +103,7 @@ export default defineComponent({
         async loadTarget() {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + this.id + '/loadTarget')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + this.id + '/loadTarget')
                 .then((response: AxiosResponse<any>) => {
                     this.target = {
                         id: this.clone == 'true' ? null : response.data.id,
@@ -127,7 +132,7 @@ export default defineComponent({
             this.loadingAllKpi = true
             this.filteredKpi = []
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpi/listKpi')
                 .then(
                     (response: AxiosResponse<any>) =>
                         (this.filteredKpi = response.data
@@ -148,11 +153,11 @@ export default defineComponent({
                 .finally(() => (this.loadingAllKpi = false))
         },
         async loadCategory() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '3.0/category/listByCode/KPI_TARGET_CATEGORY').then((response: AxiosResponse<any>) => (this.categories = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/domains/listByCode/KPI_TARGET_CATEGORY').then((response: AxiosResponse<any>) => (this.categories = response.data))
         },
         async saveTemplate() {
             if (this.kpi.length < 1) {
-                this.$store.commit('setError', {
+                this.store.setError({
                     title: this.$t('kpi.targetDefinition.noKpi'),
                     msg: this.$t('kpi.targetDefinition.noKpiMessage')
                 })
@@ -164,7 +169,7 @@ export default defineComponent({
         },
         async handleSubmit() {
             this.categoryDialogVisiable = false
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/saveTarget'
+            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpiee/saveTarget'
 
             this.target.values = this.kpi.map((kpi: iValues) => {
                 return {
@@ -185,12 +190,12 @@ export default defineComponent({
             await this.$http.post(url, this.target).then((response: AxiosResponse<any>) => {
                 if (response.data.errors != undefined && response.data.errors.length > 0) {
                     this.categoryDialogVisiable = false
-                    this.$store.commit('setError', {
+                    this.store.setError({
                         title: this.$t('kpi.targetDefinition.savingError'),
                         msg: response.data.errors[0].message
                     })
                 } else {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t(this.targetDefinitionDetailDecriptor.operation[operation].toastTitle),
                         msg: this.$t(this.targetDefinitionDetailDecriptor.operation.success)
                     })
@@ -219,7 +224,7 @@ export default defineComponent({
             this.kpi = [...this.kpi, ...selectedKpi]
             this.kpiDialogVisible = false
             if (selectedKpi.length > 0) {
-                this.$store.commit('setInfo', {
+                this.store.setInfo({
                     title: this.$t('kpi.targetDefinition.kpiAddedTitile'),
                     msg: this.$t('kpi.targetDefinition.kpiAddedMessage')
                 })

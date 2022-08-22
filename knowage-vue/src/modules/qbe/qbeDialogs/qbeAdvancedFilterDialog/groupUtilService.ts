@@ -1,8 +1,8 @@
-const filterTreeFactoryService = require('./filterTreeFactoryService')
-const treeService = require('./treeService')
-const operatorUtilService = require('./operatorUtilService')
+import * as treeService  from './treeService'
+import * as filterTreeFactoryService  from './filterTreeFactoryService'
+import * as operatorUtilService  from './operatorUtilService'
 
-const deepcopy = require('deepcopy');
+import deepcopy from 'deepcopy'
 
 const defaultOperator = filterTreeFactoryService.operator('AND')
 

@@ -45,7 +45,7 @@ import Dialog from 'primevue/dialog'
 import knParameterTreeDialogDescriptor from './KnParameterTreeDialogDescriptor.json'
 import Tree from 'primevue/tree'
 
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'kn-parameter-tree-dialog',
@@ -111,7 +111,7 @@ export default defineComponent({
                 return
             }
 
-            const sessionRole = (this.$store.state as any).user.sessionRole
+            const sessionRole = (this.store.$state as any).user.sessionRole
             const role = sessionRole && sessionRole !== this.$t('role.defaultRolePlaceholder') ? sessionRole : this.selectedRole
 
             let url = '2.0/documentexecution/admissibleValuesTree'
@@ -122,7 +122,7 @@ export default defineComponent({
             const postData = { label: this.document.label ?? this.document.name, role: role, parameterId: this.parameter?.urlName, mode: 'complete', treeLovNode: parent ? parent.id : 'lovroot', parameters: this.formatedParameterValues }
             let content = [] as any[]
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
                 .then((response: AxiosResponse<any>) =>
                     response.data.rows.forEach((el: any) => {
                         content.push(this.createNode(el, parent))

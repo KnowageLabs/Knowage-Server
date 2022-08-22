@@ -25,7 +25,7 @@
     <div id="document-browser-detail" class="p-d-flex p-flex-row kn-flex p-m-0">
         <div v-if="sidebarVisible && windowWidth < 1024" id="document-browser-sidebar-backdrop" @click="sidebarVisible = false"></div>
 
-        <div v-show="!searchMode" class="document-sidebar kn-flex" style="width:350px" :class="{ 'sidebar-hidden': isSidebarHidden, 'document-sidebar-absolute': sidebarVisible && windowWidth < 1024 }">
+        <div v-show="!searchMode" class="document-sidebar kn-flex" style="width: 350px" :class="{ 'sidebar-hidden': isSidebarHidden, 'document-sidebar-absolute': sidebarVisible && windowWidth < 1024 }">
             <DocumentBrowserTree :propFolders="folders" :selectedBreadcrumb="selectedBreadcrumb" :selectedFolderProp="selectedFolder" @folderSelected="setSelectedFolder"></DocumentBrowserTree>
         </div>
 
@@ -54,6 +54,7 @@ import DocumentBrowserTree from './DocumentBrowserTree.vue'
 import DocumentBrowserDetail from './DocumentBrowserDetail.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Menu from 'primevue/menu'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'document-browser-home',
@@ -85,10 +86,10 @@ export default defineComponent({
             return this.user?.isSuperadmin
         },
         canAddNewDocument(): boolean {
-            return this.user?.functionalities.includes('DocumentManagement')
+            return this.user?.functionalities?.includes('DocumentManagement')
         },
         hasCreateCockpitFunctionality(): boolean {
-            return this.user.functionalities.includes('CreateCockpitFunctionality')
+            return this.user.functionalities?.includes('CreateCockpitFunctionality')
         },
         isSidebarHidden(): boolean {
             if (this.sidebarVisible) {
@@ -106,11 +107,15 @@ export default defineComponent({
             this.loadDocumentsWithBreadcrumbs()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         window.addEventListener('resize', this.onResize)
 
         await this.loadFolders()
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.$state as any).user
 
         if (this.$route.name === 'document-browser-functionality') {
             this.setFolderFromRoute()
@@ -148,7 +153,7 @@ export default defineComponent({
         },
         async loadFolders() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/folders/`).then((response: AxiosResponse<any>) => {
                 this.folders = response.data
                 this.folders?.sort((a: any, b: any) => {
                     return a.id - b.id
@@ -160,7 +165,7 @@ export default defineComponent({
         async loadDocuments() {
             this.loading = true
             const url = this.searchMode ? `2.0/documents?searchAttributes=all&searchKey=${this.searchWord}` : `2.0/documents?folderId=${this.selectedFolder?.id}`
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url).then((response: AxiosResponse<any>) => {
                 this.searchMode ? (this.searchedDocuments = response.data) : (this.documents = response.data)
             })
             this.loading = false
@@ -183,7 +188,7 @@ export default defineComponent({
                     temp += `/${this.folders[index].id}`
                 }
             }
-            history.pushState({}, '', process.env.VUE_APP_PUBLIC_PATH + 'document-browser' + temp)
+            history.pushState({}, '', import.meta.env.VITE_PUBLIC_PATH + 'document-browser' + temp)
         },
         async loadDocumentsWithBreadcrumbs() {
             if (this.selectedFolder && this.selectedFolder.id !== -1) {

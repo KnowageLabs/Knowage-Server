@@ -24,127 +24,132 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { AxiosResponse } from 'axios'
-    import importExportDescriptor from './ImportExportDescriptor.json'
-    import ExportDialog from './ExportDialog.vue'
-    import ImportDialog from './ImportDialog.vue'
-    import ProgressBar from 'primevue/progressbar'
-    import KnTabCard from '@/components/UI/KnTabCard.vue'
-    import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
-    import { mapState } from 'vuex'
+import { defineComponent } from 'vue'
+import { AxiosResponse } from 'axios'
+import importExportDescriptor from './ImportExportDescriptor.json'
+import ExportDialog from './ExportDialog.vue'
+import ImportDialog from './ImportDialog.vue'
+import ProgressBar from 'primevue/progressbar'
+import KnTabCard from '@/components/UI/KnTabCard.vue'
+import { downloadDirectFromResponse } from '@/helpers/commons/fileHelper'
+import { mapState } from 'pinia'
+import mainStore from '../../App.store'
 
-    export default defineComponent({
-        name: 'import-export',
-        components: { ExportDialog, KnTabCard, ImportDialog, ProgressBar },
-        data() {
-            return {
-                importExportDescriptor: importExportDescriptor,
-                displayImportDialog: false,
-                displayExportDialog: false,
-                fileName: '',
-                loading: false,
-                selectedItems: {
-                    gallery: [],
-                    catalogFunction: []
-                },
-                functionalities: Array<any>()
-            }
-        },
-        mounted() {
-            if (this.isEnterprise) this.setFunctionalities()
-        },
-        emits: ['onItemSelected'],
-        methods: {
-            async setFunctionalities() {
-                this.loading = true
-                this.functionalities = []
-
-                let licenses = this.licenses.licenses
-                let currentHostName = this.licenses.hosts[0] ? this.licenses.hosts[0].hostName : undefined
-
-                this.functionalities = importExportDescriptor.functionalities
-                    .filter((x) => {
-                        return x.requiredFunctionality ? this.user.functionalities.includes(x.requiredFunctionality) : true
-                    })
-                    .filter((x) => {
-                        return x.requiredLicense && currentHostName && licenses[currentHostName] ? licenses[currentHostName].filter((lic) => lic.product === x.requiredLicense).length == 1 : true
-                    })
-
-                this.loading = false
+export default defineComponent({
+    name: 'import-export',
+    components: { ExportDialog, KnTabCard, ImportDialog, ProgressBar },
+    data() {
+        return {
+            importExportDescriptor: importExportDescriptor,
+            displayImportDialog: false,
+            displayExportDialog: false,
+            fileName: '',
+            loading: false,
+            selectedItems: {
+                gallery: [],
+                catalogFunction: []
             },
-            getSelectedItems(e) {
-                if (e.items) this.selectedItems[e.functionality] = e.items
-            },
-            isExportDisabled() {
-                for (var index in this.selectedItems) {
-                    if (this.selectedItems[index].length > 0) return false
-                }
-                return true
-            },
-            selectType(type): void {
-                this.$router.push(type.route)
-            },
-            openImportDialog(): void {
-                this.displayImportDialog = !this.displayImportDialog
-            },
-            openExportDialog(): void {
-                this.displayExportDialog = !this.displayExportDialog
-            },
-            async startExport(fileName: string) {
-                await this.$http
-                    .post(process.env.VUE_APP_API_PATH + '1.0/export/bulk', this.streamlineSelectedItemsArray(fileName), {
-                        responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
-
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Accept: 'application/zip; charset=utf-8'
-                        }
-                    })
-                    .then(
-                        (response: AxiosResponse<any>) => {
-                            if (response.data.errors) {
-                                this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('importExport.export.completedWithErrors') })
-                            } else {
-                                downloadDirectFromResponse(response)
-                                this.$store.commit('setInfo', { title: this.$t('common.downloading'), msg: this.$t('importExport.export.successfullyCompleted') })
-                            }
-
-                            this.selectedItems = {
-                                gallery: [],
-                                catalogFunction: []
-                            }
-                            /* closing dialog */
-                            this.openExportDialog()
-                        },
-                        () => this.$store.commit('setError', { title: this.$t('common.error.downloading'), msg: this.$t('importExport.export.completedWithErrors') })
-                    )
-            },
-
-            streamlineSelectedItemsArray(fileName): JSON {
-                let selectedItemsToBE = {} as JSON
-                selectedItemsToBE['selectedItems'] = {}
-                for (var category in this.selectedItems) {
-                    for (var k in this.selectedItems[category]) {
-                        if (!selectedItemsToBE['selectedItems'][category]) {
-                            selectedItemsToBE['selectedItems'][category] = []
-                        }
-
-                        selectedItemsToBE['selectedItems'][category].push(this.selectedItems[category][k].id)
-                    }
-                }
-                selectedItemsToBE['filename'] = fileName
-                return selectedItemsToBE
-            }
-        },
-        computed: {
-            ...mapState({
-                user: 'user',
-                isEnterprise: 'isEnterprise',
-                licenses: 'licenses'
-            })
+            functionalities: Array<any>()
         }
-    })
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    mounted() {
+        if (this.isEnterprise) this.setFunctionalities()
+    },
+    emits: ['onItemSelected'],
+    methods: {
+        async setFunctionalities() {
+            this.loading = true
+            this.functionalities = []
+
+            let licenses = this.licenses.licenses
+            let currentHostName = this.licenses.hosts[0] ? this.licenses.hosts[0].hostName : undefined
+
+            this.functionalities = importExportDescriptor.functionalities
+                .filter((x) => {
+                    return x.requiredFunctionality ? this.user.functionalities.includes(x.requiredFunctionality) : true
+                })
+                .filter((x) => {
+                    return x.requiredLicense && currentHostName && licenses[currentHostName] ? licenses[currentHostName].filter((lic) => lic.product === x.requiredLicense).length == 1 : true
+                })
+
+            this.loading = false
+        },
+        getSelectedItems(e) {
+            if (e.items) this.selectedItems[e.functionality] = e.items
+        },
+        isExportDisabled() {
+            for (var index in this.selectedItems) {
+                if (this.selectedItems[index].length > 0) return false
+            }
+            return true
+        },
+        selectType(type): void {
+            this.$router.push(type.route)
+        },
+        openImportDialog(): void {
+            this.displayImportDialog = !this.displayImportDialog
+        },
+        openExportDialog(): void {
+            this.displayExportDialog = !this.displayExportDialog
+        },
+        async startExport(fileName: string) {
+            await this.$http
+                .post(import.meta.env.VITE_API_PATH + '1.0/export/bulk', this.streamlineSelectedItemsArray(fileName), {
+                    responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
+
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/zip; charset=utf-8'
+                    }
+                })
+                .then(
+                    (response: AxiosResponse<any>) => {
+                        if (response.data.errors) {
+                            this.store.setError({ title: this.$t('common.error.downloading'), msg: this.$t('importExport.export.completedWithErrors') })
+                        } else {
+                            downloadDirectFromResponse(response)
+                            this.store.setInfo({ title: this.$t('common.downloading'), msg: this.$t('importExport.export.successfullyCompleted') })
+                        }
+
+                        this.selectedItems = {
+                            gallery: [],
+                            catalogFunction: []
+                        }
+                        /* closing dialog */
+                        this.openExportDialog()
+                    },
+                    () => this.store.setError({ title: this.$t('common.error.downloading'), msg: this.$t('importExport.export.completedWithErrors') })
+                )
+        },
+
+        streamlineSelectedItemsArray(fileName): JSON {
+            let selectedItemsToBE = {} as JSON
+            selectedItemsToBE['selectedItems'] = {}
+            for (var category in this.selectedItems) {
+                for (var k in this.selectedItems[category]) {
+                    if (!selectedItemsToBE['selectedItems'][category]) {
+                        selectedItemsToBE['selectedItems'][category] = []
+                    }
+
+                    selectedItemsToBE['selectedItems'][category].push(this.selectedItems[category][k].id)
+                }
+            }
+            selectedItemsToBE['filename'] = fileName
+            return selectedItemsToBE
+        }
+    },
+    computed: {
+        ...mapState(mainStore, {
+            user: 'user',
+            isEnterprise: 'isEnterprise',
+            licenses: 'licenses'
+        })
+    }
+})
 </script>
 
 <style lang="scss" scoped></style>

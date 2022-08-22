@@ -76,6 +76,7 @@ import AccordionTab from 'primevue/accordiontab'
 import Dropdown from 'primevue/dropdown'
 import metawebBusinessPropertyListTabDescriptor from './MetawebBusinessPropertyListTabDescriptor.json'
 import MultiSelect from 'primevue/multiselect'
+import mainStore from '../../../../../../../App.store'
 
 export default defineComponent({
     name: 'metaweb-business-property-list-tab',
@@ -93,7 +94,7 @@ export default defineComponent({
     },
     computed: {
         profileAttributes(): any[] {
-            return (this.$store.state as any).user.attributes ? Object.keys((this.$store.state as any).user.attributes) : []
+            return (this.store.$state as any).user.attributes ? Object.keys((this.store.$state as any).user.attributes) : []
         }
     },
     watch: {
@@ -104,6 +105,10 @@ export default defineComponent({
         roles() {
             this.loadRoleOptions()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadMeta()

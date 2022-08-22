@@ -34,7 +34,7 @@
             :breakpoint="documentBrowserTableDescriptor.breakpoint"
             @rowClick="$emit('selected', $event.data)"
             data-test="documents-datatable"
-            style="width:100%;"
+            style="width: 100%"
             :scrollable="true"
             scrollHeight="100%"
         >
@@ -44,7 +44,7 @@
                 </Message>
             </template>
             <Column class="kn-truncated" :style="col.style" v-for="col of documentBrowserTableDescriptor.columns" :header="$t(col.header)" :field="col.field" :key="col.field" :sortField="col.field" :sortable="true">
-                <template #filter="{filterModel}">
+                <template #filter="{ filterModel }">
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                 </template>
                 <template #body="slotProps">
@@ -52,7 +52,7 @@
                 </template>
             </Column>
             <Column v-if="isAdmin" :header="$t('common.status')" field="stateCodeStr" sortField="stateCodeStr" :sortable="true" :style="documentBrowserTableDescriptor.table.smallmessage">
-                <template #filter="{filterModel}">
+                <template #filter="{ filterModel }">
                     <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                 </template>
                 <template #body="slotProps" :style="documentBrowserTableDescriptor.table.iconColumn.smallmessage">
@@ -83,6 +83,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Message from 'primevue/message'
 import documentBrowserTableDescriptor from './DocumentBrowserTableDescriptor.json'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'document-browser-table',
@@ -131,10 +132,14 @@ export default defineComponent({
             return this.user?.functionalities.includes('DocumentManagement') || this.user?.isSuperadmin
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadDocuments()
         this.first = 0
-        this.user = (this.$store.state as any).user
+        this.user = (this.store.$state as any).user
     },
     methods: {
         loadDocuments() {

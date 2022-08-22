@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Checkbox from 'primevue/checkbox'
 import SchedulerTimingOutputDocumentDetail from './SchedulerTimingOutputDocumentDetail.vue'
 import Toolbar from 'primevue/toolbar'
@@ -19,7 +21,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Checkbox,
                 SchedulerSnapshotAccordion: true,

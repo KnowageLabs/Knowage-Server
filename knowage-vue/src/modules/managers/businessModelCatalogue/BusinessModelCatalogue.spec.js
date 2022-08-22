@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import BusinessModelCatalogue from './BusinessModelCatalogue.vue'
@@ -26,28 +27,24 @@ const mockedBusinessModels = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() =>
+    get: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: mockedBusinessModels
         })
     ),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const $router = {
-    push: jest.fn(),
-    replace: jest.fn()
+    push: vi.fn(),
+    replace: vi.fn()
 }
 
 const $route = { path: '/business-model-catalogue' }
@@ -55,6 +52,7 @@ const $route = { path: '/business-model-catalogue' }
 const factory = () => {
     return mount(BusinessModelCatalogue, {
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -67,7 +65,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $router,
                 $route,
@@ -78,7 +76,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Business Model Management loading', () => {

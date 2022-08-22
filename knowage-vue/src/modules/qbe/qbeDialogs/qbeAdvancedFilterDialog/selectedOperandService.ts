@@ -1,7 +1,7 @@
 
-const advancedFilterService = require('./advancedFilterService')
-const treeService = require('./treeService')
-const deepEqual = require('deep-equal')
+import * as advancedFilterService from './advancedFilterService';
+import * as treeService from './treeService';
+import deepEqual from 'deep-equal';
 
 const selected = [] as any
 
@@ -65,7 +65,7 @@ export function getGroupOperands(groupOperand) {
 
 export function getGroupOperandsCount(groupOperand) {
     if (getGroupOperands(groupOperand) && Array.isArray(getGroupOperands(groupOperand))) {
-        return getGroupOperands(groupOperand).length;
+        return getGroupOperands(groupOperand)?.length ?? 0;
     }
     return 0;
 }

@@ -50,6 +50,7 @@ import PersistenceTab from './QBESavingDialogPersistence.vue'
 import MetadataCard from './QbeSavingDialogMetadata.vue'
 import useValidate from '@vuelidate/core'
 import descriptor from './QBESavingDialogDescriptor.json'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
@@ -74,6 +75,10 @@ export default defineComponent({
             } as any
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.getDomainData()
         this.selectedDataset = this.propDataset
@@ -89,7 +94,7 @@ export default defineComponent({
     },
     methods: {
         getDomainByType(type: string) {
-            return this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `domains/listValueDescriptionByType?DOMAIN_TYPE=${type}`)
         },
         async getDomainData() {
             await this.getDomainByType('DS_SCOPE').then((response: AxiosResponse<any>) => (this.scopeTypes = response.data))
@@ -105,14 +110,14 @@ export default defineComponent({
             dsToSave.isScheduled ? (dsToSave.schedulingCronLine = await this.formatCronForSave()) : ''
 
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/`, dsToSave, {
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/`, dsToSave, {
                     headers: {
                         Accept: 'application/json, text/plain, */*',
                         'Content-Type': 'application/json;charset=UTF-8'
                     }
                 })
                 .then((response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
+                    this.store.setInfo({ title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     this.selectedDataset.meta = response.data.meta
                     if (!this.selectedDataset.id) {
                         this.selectedDataset.id = response.data.id
@@ -130,7 +135,7 @@ export default defineComponent({
                     displayedName: meta.fieldAlias,
                     type: meta.Type,
                     fieldType: meta.fieldType,
-                    decript: meta.decript,
+                    decrypt: meta.decrypt,
                     personal: meta.personal,
                     subjectId: meta.subjectId
                 }
@@ -152,7 +157,7 @@ export default defineComponent({
                 columnsNames = this.removeDuplicates(columnsNames)
 
                 for (i = 0; i < columnsNames.length; i++) {
-                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '', personal: false, decript: false, subjectId: false }
+                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '', personal: false, decrypt: false, subjectId: false }
                     var currentColumnName = columnsNames[i]
 
                     if (currentColumnName.indexOf(':') != -1) {
@@ -172,8 +177,8 @@ export default defineComponent({
                                 columnObject.fieldType = element.pvalue
                             } else if (element.pname.toUpperCase() == 'personal'.toUpperCase()) {
                                 columnObject.personal = element.pvalue
-                            } else if (element.pname.toUpperCase() == 'decript'.toUpperCase()) {
-                                columnObject.decript = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'decrypt'.toUpperCase()) {
+                                columnObject.decrypt = element.pvalue
                             } else if (element.pname.toUpperCase() == 'subjectId'.toUpperCase()) {
                                 columnObject.subjectId = element.pvalue
                             }
@@ -237,7 +242,7 @@ export default defineComponent({
             }
         },
         setEndUserScope() {
-            if (this.selectedDataset && !this.selectedDataset.id && !(this.$store.state as any).user.functionalities.includes('QbeAdvancedSaving')) {
+            if (this.selectedDataset && !this.selectedDataset.id && !(this.store.$state as any).user.functionalities.includes('QbeAdvancedSaving')) {
                 let userScope = this.scopeTypes.find((scope) => scope.VALUE_CD === 'USER')
                 this.selectedDataset.scopeCd = userScope.VALUE_CD
                 this.selectedDataset.scopeId = userScope.VALUE_ID

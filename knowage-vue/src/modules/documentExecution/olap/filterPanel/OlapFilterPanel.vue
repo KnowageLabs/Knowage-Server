@@ -20,6 +20,7 @@ import { iOlapFilter, iOlap } from '@/modules/documentExecution/olap/Olap'
 import panelDescriptor from './OlapFilterPanelDescriptor.json'
 import InlineMessage from 'primevue/inlinemessage'
 import FilterCard from './OlapFilterCard.vue'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: { InlineMessage, FilterCard },
@@ -38,10 +39,13 @@ export default defineComponent({
             this.loadData()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadData()
     },
-
     methods: {
         loadData() {
             this.filterCardList = this.olapProp?.filters as iOlapFilter[]
@@ -50,15 +54,15 @@ export default defineComponent({
         },
         displayDropzone() {
             // @ts-ignore
-            this.$refs.axisDropzone.classList.add('display-axis-dropzone')
+            this.$refs.axisDropzone.classList?.add('display-axis-dropzone')
         },
         hideDropzone() {
             // @ts-ignore
-            this.$refs.axisDropzone.classList.remove('display-axis-dropzone')
+            this.$refs.axisDropzone.classList?.remove('display-axis-dropzone')
         },
         onDrop(event) {
             // @ts-ignore
-            this.$refs.axisDropzone.classList.remove('display-axis-dropzone')
+            this.$refs.axisDropzone.classList?.remove('display-axis-dropzone')
             var data = JSON.parse(event.dataTransfer.getData('text/plain'))
             var topLength = this.olapProp?.columns.length
             var leftLength = this.olapProp?.rows.length
@@ -66,12 +70,12 @@ export default defineComponent({
             if (data != null) {
                 fromAxis = data.axis
                 if (data.measure) {
-                    this.$store.commit('setInfo', { title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.noMeasure') })
+                    this.store.setInfo({ title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.noMeasure') })
                     return null
                 }
                 if (fromAxis != -1) {
                     if ((fromAxis === 0 && topLength == 1) || (fromAxis === 1 && leftLength == 1)) {
-                        this.$store.commit('setInfo', { title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.dragEmptyWarning') })
+                        this.store.setInfo({ title: this.$t('common.toast.warning'), msg: this.$t('documentExecution.olap.filterToolbar.dragEmptyWarning') })
                     } else {
                         data.positionInAxis = this.filterCardList.length
                         data.axis = -1

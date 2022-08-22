@@ -22,7 +22,7 @@
             <DatasetPreviewTable v-else class="p-d-flex p-flex-column kn-flex p-m-2" :previewColumns="columns" :previewRows="rows" :pagination="pagination" :previewType="previewType" @pageChanged="updatePagination($event)" @sort="onSort" @filter="onFilter"></DatasetPreviewTable>
             <KnParameterSidebar
                 v-if="parameterSidebarVisible && dataset"
-                style="height:calc(100% - 35px)"
+                style="height: calc(100% - 35px)"
                 class="workspace-parameter-sidebar kn-overflow-y"
                 :filtersData="filtersData"
                 :propDocument="dataset"
@@ -47,6 +47,8 @@ import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import workspaceDataPreviewDialogDescriptor from './WorkspaceDataPreviewDialogDescriptor.json'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
 import moment from 'moment'
+import mainStore from '../../../../../App.store'
+
 export default defineComponent({
     name: 'kpi-scheduler-save-dialog',
     components: { Dialog, DatasetPreviewTable, Message, KnParameterSidebar },
@@ -105,8 +107,12 @@ export default defineComponent({
             this.setSidebarMode()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
-        this.userRole = (this.$store.state as any).user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? (this.$store.state as any).user.sessionRole : null
+        this.userRole = (this.store.$state as any).user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? (this.store.$state as any).user.sessionRole : null
         await this.loadPreview()
         this.setSidebarMode()
     },
@@ -141,7 +147,7 @@ export default defineComponent({
                 postData.DRIVERS = this.formatDriversForPreviewData()
             }
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, postData)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.setPreviewColumns(response.data)
                     this.rows = response.data.rows
@@ -169,7 +175,7 @@ export default defineComponent({
                 postData.drivers = this.formatDriversForPreviewData()
             }
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.dataset.label}/preview`, postData)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.dataset.label}/preview`, postData)
                 .then((response: AxiosResponse<any>) => {
                     this.setPreviewColumns(response.data)
                     this.rows = response.data.rows
@@ -185,7 +191,7 @@ export default defineComponent({
             let hasError = false
             if (this.dataset.label && this.dataset.id && this.dataset.dsTypeCd !== 'Prepared') {
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `3.0/datasets/${this.dataset.label}/filters`, { role: this.userRole })
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/${this.dataset.label}/filters`, { role: this.userRole })
                     .then((response: AxiosResponse<any>) => {
                         this.filtersData = response.data
                         if (this.filtersData.filterStatus) {

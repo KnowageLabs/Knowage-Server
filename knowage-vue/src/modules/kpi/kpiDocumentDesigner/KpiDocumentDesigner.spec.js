@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import KpiDocumentDesigner from './KpiDocumentDesigner.vue'
 import PrimeVue from 'primevue/config'
@@ -25,22 +26,22 @@ const mockedKpiTemplate = {
     }
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/timespan/listDynTimespan`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/timespan/listDynTimespan`:
                 return Promise.resolve({ data: mockedKpi })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/listScorecard`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpiee/listScorecard`:
                 return Promise.resolve({ data: mockedScorecards })
             default:
                 return Promise.resolve({ data: [] })
         }
     }),
-    post: axios.post.mockImplementation((url) => {
+    post: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_KPI_ENGINE_API_URL + `1.0/kpisTemplate/getKpiTemplate`:
+            case import.meta.env.VITE_KPI_ENGINE_API_URL + `1.0/kpisTemplate/getKpiTemplate`:
                 return Promise.resolve({ data: mockedKpiTemplate })
             default:
                 return Promise.resolve({ data: [] })
@@ -49,20 +50,11 @@ const $http = {
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    state: {
-        user: {
-            functionalities: ['ScorecardsManagement'],
-            locale: 'en_US'
-        }
-    }
+    require: vi.fn()
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = () => {
@@ -75,7 +67,18 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [
+                createTestingPinia({
+                    initialState: {
+                        store: {
+                            user: {
+                                loacle: 'en_US',
+                                functionalities: ['ScorecardsManagement']
+                            }
+                        }
+                    }
+                })
+            ],
             stubs: {
                 Button,
                 KpiDocumentDesignerDocumentTypeCard: true,
@@ -92,7 +95,6 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $http,
-                $store,
                 $confirm,
                 $router
             }
@@ -101,7 +103,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Kpi Edit loading', () => {

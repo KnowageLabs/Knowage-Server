@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import GlossaryUsageDetail from './GlossaryUsageDetail.vue'
 import ProgressBar from 'primevue/progressbar'
 
@@ -91,28 +92,28 @@ const mockedFilteredResponse = {
     Status: 'OK'
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/documents/mockedDocument':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/documents/mockedDocument':
                 return Promise.resolve({ data: mockedDocumentInfo })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/documents/1/roles':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/documents/1/roles':
                 return Promise.resolve({ data: mockedRoles })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/getDataSetInfo?DATASET_ID=1&ORGANIZATION=DEMO':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/getDataSetInfo?DATASET_ID=1&ORGANIZATION=DEMO':
                 return Promise.resolve({ data: mockedDatasetInfo })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/getMetaBcInfo?META_BC_ID=1':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/getMetaBcInfo?META_BC_ID=1':
                 return Promise.resolve({ data: mockedBusinessClassInfo })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/getMetaTableInfo?META_TABLE_ID=1':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/getMetaTableInfo?META_TABLE_ID=1':
                 return Promise.resolve({ data: mockedTableInfo })
             default:
                 return Promise.resolve({ data: [] })
         }
     }),
-    post: axios.post.mockImplementation((url) => {
+    post: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/glossary/loadNavigationItem':
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/glossary/loadNavigationItem':
                 return Promise.resolve({ data: mockedFilteredResponse })
             default:
                 return Promise.resolve({ data: [] })
@@ -121,12 +122,13 @@ const $http = {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 const factory = () => {
     return mount(GlossaryUsageDetail, {
         global: {
+            plugins: [createTestingPinia()],
             stubs: { GlossaryUsageNavigationCard: true, GlossaryUsageLinkCard: true, ProgressBar },
             mocks: {
                 $t: (msg) => msg,

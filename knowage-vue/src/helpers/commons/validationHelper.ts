@@ -1,5 +1,5 @@
 import { email, maxLength, maxValue, minLength, minValue, required } from '@vuelidate/validators'
-import { extendedAlphanumeric, alphanumericNoSpaces, fullnameRegex } from '@/helpers/commons/regexHelper'
+import { extendedAlphanumeric, alphanumericNoSpaces, fullnameRegex } from './regexHelper'
 import { ValidationRule } from '@vuelidate/core'
 
 export interface IValidator {

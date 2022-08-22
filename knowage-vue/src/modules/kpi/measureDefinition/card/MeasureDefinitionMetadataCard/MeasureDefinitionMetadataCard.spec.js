@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import AutoComplete from 'primevue/autocomplete'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -75,7 +76,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Metadata Card', () => {

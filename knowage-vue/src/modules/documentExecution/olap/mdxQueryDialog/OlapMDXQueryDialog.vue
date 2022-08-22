@@ -20,7 +20,7 @@
     import { defineComponent, PropType } from 'vue'
     import Dialog from 'primevue/dialog'
     import olapMDXQueryDialogDescriptor from './OlapMDXQueryDialogDescriptor.json'
-    import { VCodeMirror } from 'vue3-code-mirror'
+    import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
 
     export default defineComponent({
         name: 'olap-custom-view-save-dialog',
@@ -60,7 +60,7 @@
             setupCodeMirror() {
                 const interval = setInterval(() => {
                     if (!this.$refs.codeMirror) return
-                    this.codeMirror = (this.$refs.codeMirror as any).editor as any
+                    this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
                     setTimeout(() => {
                         this.codeMirror.refresh()
                     }, 0)

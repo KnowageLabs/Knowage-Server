@@ -34,12 +34,12 @@ export default defineComponent({
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
             // @ts-ignore
-            this.$refs[`${filterId}`].classList.add('filter-dragging')
+            this.$refs[`${filterId}`].classList?.add('filter-dragging')
             this.$emit('dragging')
         },
         removeDragClass(filterId) {
             // @ts-ignore
-            this.$refs[`${filterId}`].classList.remove('filter-dragging')
+            this.$refs[`${filterId}`].classList?.remove('filter-dragging')
             this.$emit('dragend')
         },
         openFilterDialog(filter: any) {

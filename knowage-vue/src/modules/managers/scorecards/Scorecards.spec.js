@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -10,6 +11,7 @@ import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
 import Scorecards from './Scorecards.vue'
 import Toolbar from 'primevue/toolbar'
+import mainStore from '../../../App.store'
 
 const mockedScorecards = [
     {
@@ -35,12 +37,12 @@ const mockedScorecards = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/listScorecard`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpiee/listScorecard`:
                 return Promise.resolve({ data: mockedScorecards })
             default:
                 return Promise.resolve({ data: [] })
@@ -49,15 +51,11 @@ const $http = {
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = () => {
@@ -67,7 +65,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Column,
@@ -81,7 +79,6 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $http,
-                $store,
                 $confirm,
                 $router
             }
@@ -90,17 +87,18 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Scorecards', () => {
     it('should show a loader when opened', async () => {
         factory()
+        const store = mainStore()
 
         await flushPromises()
-        expect($store.commit).toHaveBeenCalledTimes(2)
-        expect($store.commit).toHaveBeenNthCalledWith(1, 'setLoading', true)
-        expect($store.commit).toHaveBeenNthCalledWith(2, 'setLoading', false)
+        expect(store.setLoading).toHaveBeenCalledTimes(2)
+        expect(store.setLoading).toHaveBeenNthCalledWith(1, true)
+        expect(store.setLoading).toHaveBeenNthCalledWith(2, false)
     })
 
     it('should show a list of scroecards', async () => {

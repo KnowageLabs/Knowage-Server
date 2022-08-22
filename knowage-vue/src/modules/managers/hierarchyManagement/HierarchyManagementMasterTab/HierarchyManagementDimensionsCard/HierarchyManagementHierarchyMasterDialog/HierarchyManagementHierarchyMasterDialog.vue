@@ -1,5 +1,5 @@
 <template>
-    <Dialog class="p-fluid kn-dialog--toolbar--primary hierarchy-dialog " style="width:70%" :visible="visible" :modal="true" :closable="false" :draggable="false">
+    <Dialog class="p-fluid kn-dialog--toolbar--primary hierarchy-dialog" style="width: 70%" :visible="visible" :modal="true" :closable="false" :draggable="false">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
@@ -27,6 +27,7 @@ import Dialog from 'primevue/dialog'
 import hierarchyManagementHierarchyMasterDialogDescriptor from './HierarchyManagementMasterDescriptor.json'
 import HierarchyManagementHierarchyMasterForm from './HierarchyManagementHierarchyMasterForm.vue'
 import HierarchyManagementHierarchyMasterSelectList from './HierarchyManagementHierarchyMasterSelectList.vue'
+import mainStore from '../../../../../../App.store'
 
 export default defineComponent({
     name: 'hierarchy-management-hierarchy-master-dialog',
@@ -61,6 +62,10 @@ export default defineComponent({
         nodeMetadata() {
             this.loadNodeData()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadNodeData()
@@ -116,11 +121,11 @@ export default defineComponent({
 
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `hierarchiesMaster/createHierarchyMaster`, postData)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `hierarchiesMaster/createHierarchyMaster`, postData)
                 .then((response: AxiosResponse<any>) => {
                     if (response.data?.response === 'ok') {
                         this.$emit('masterHierarchyCreated')
-                        this.$store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.toast.createTitle'),
                             msg: this.$t('common.toast.success')
                         })

@@ -11,21 +11,20 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import ConfirmDialog from 'primevue/confirmdialog'
 import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import MainMenu from '@/modules/mainMenu/MainMenu'
 import Toast from 'primevue/toast'
 import { defineComponent } from 'vue'
-import store from '@/App.store'
-import { mapState } from 'vuex'
+import mainStore from '@/App.store'
+import { mapState, mapActions } from 'pinia'
 import WEB_SOCKET from '@/services/webSocket.js'
 import themeHelper from '@/helpers/themeHelper/themeHelper'
 import { primeVueDate, getLocale } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     components: { ConfirmDialog, KnOverlaySpinnerPanel, MainMenu, Toast },
-
     data() {
         return {
             themeHelper: new themeHelper(),
@@ -36,14 +35,14 @@ export default defineComponent({
 
     async beforeCreate() {
         await this.$http
-            .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/currentuser')
+            .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/currentuser')
             .then((response) => {
                 let currentUser = response.data
                 if (localStorage.getItem('sessionRole')) {
                     currentUser.sessionRole = localStorage.getItem('sessionRole')
                 } else if (currentUser.defaultRole) currentUser.sessionRole = currentUser.defaultRole
 
-                store.dispatch('initializeUser', currentUser)
+                this.store.initializeUser(currentUser)
 
                 let responseLocale = response.data.locale
                 let storedLocale = responseLocale
@@ -53,7 +52,7 @@ export default defineComponent({
                 localStorage.setItem('locale', storedLocale)
                 localStorage.setItem('token', response.data.userUniqueIdentifier)
 
-                store.commit('setLocale', storedLocale)
+                this.store.setLocale(storedLocale)
                 this.$i18n.locale = storedLocale
 
                 // @ts-ignore
@@ -73,42 +72,46 @@ export default defineComponent({
                 url += '&SCRIPT_ID=' + (splittedLanguage.length > 2 ? splittedLanguage[2].replaceAll('#', '') : '')
                 url += '&THEME_NAME=sbi_default'
 
-                this.$store.commit('setLoading', true)
+                this.store.setLoading(true)
                 this.$http.get(url).then(
                     () => {
-                        store.commit('setLocale', language.locale)
+                        this.store.setLocale(language.locale)
                         localStorage.setItem('locale', language.locale)
                         this.$i18n.locale = language.locale
                     },
                     (error) => console.error(error)
                 )
-                this.$store.commit('setLoading', false)
+                this.store.setLoading(false)
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 if (error.response) {
                     console.log(error.response.data)
                     console.log(error.response.status)
                     console.log(error.response.headers)
                 }
             })
-        await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/user-configs').then((response) => {
-            store.commit('setConfigurations', response.data)
+        await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/user-configs').then((response) => {
+            this.store.setConfigurations(response.data)
         })
         if (this.isEnterprise) {
-            if (Object.keys(this.defaultTheme.length === 0)) store.commit('setDefaultTheme', await this.themeHelper.getDefaultKnowageTheme())
+            if (Object.keys(this.defaultTheme.length === 0)) this.store.setDefaultTheme(await this.themeHelper.getDefaultKnowageTheme())
 
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
-                store.commit('setLicenses', response.data)
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/license').then((response) => {
+                this.store.setLicenses(response.data)
             })
             if (Object.keys(this.theme).length === 0) {
-                this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `thememanagement/current`).then((response) => {
-                    store.commit('setTheme', response.data.config)
+                this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `thememanagement/current`).then((response) => {
+                    this.store.setTheme(response.data.config)
                     this.themeHelper.setTheme(response.data.config)
                 })
             } else {
                 this.themeHelper.setTheme(this.theme)
             }
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     mounted() {
         this.onLoad()
@@ -120,7 +123,7 @@ export default defineComponent({
         },
         async onLoad() {
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/export/dataset')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/export/dataset')
                 .then((response) => {
                     let totalDownloads = response.data.length
                     let alreadyDownloaded = response.data.filter((x) => x.alreadyDownloaded).length
@@ -129,12 +132,12 @@ export default defineComponent({
                     json.downloads.count.total = totalDownloads
                     json.downloads.count.alreadyDownloaded = alreadyDownloaded
 
-                    store.commit('setDownloads', json.downloads)
+                    this.store.setDownloads(json.downloads)
 
                     this.newsDownloadHandler()
                     this.loadInternationalization()
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     if (error.response) {
                         console.log(error.response.data)
                         console.log(error.response.status)
@@ -143,7 +146,7 @@ export default defineComponent({
                 })
         },
         async loadInternationalization() {
-            let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : store.state.locale
+            let currentLocale = localStorage.getItem('locale') ? localStorage.getItem('locale') : this.store.$state.locale
             let currLanguage = ''
             if (currentLocale && Object.keys(currentLocale).length > 0) currentLocale = currentLocale.replaceAll('_', '-')
             else currentLocale = 'en-US'
@@ -153,41 +156,42 @@ export default defineComponent({
             if (splittedLanguage.length > 2) currLanguage += splittedLanguage[2].replaceAll('#', '') + '-'
             currLanguage += splittedLanguage[1].toUpperCase()
 
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization?currLanguage=' + currLanguage).then((response) => store.commit('setInternationalization', response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/i18nMessages/internationalization?currLanguage=' + currLanguage).then((response) => this.store.setInternationalization(response.data))
         },
         newsDownloadHandler() {
             console.log('Starting connection to WebSocket Server')
+            const store = this.store
 
-            WEB_SOCKET.update = function(event) {
+            WEB_SOCKET.update = function (event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
-                        store.commit('setNews', json.news)
+                        store.setNews(json.news)
                     }
                     if (json.downloads) {
-                        store.commit('setDownloads', json.downloads)
+                        store.setDownloads(json.downloads)
                     }
                 }
             }
-            WEB_SOCKET.onopen = function(event) {
+            WEB_SOCKET.onopen = function (event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
-                        store.commit('setNews', json.news)
+                        this.store.setNews(json.news)
                     }
                     if (json.downloads) {
-                        store.commit('setDownloads', json.downloads)
+                        this.store.setDownloads(json.downloads)
                     }
                 }
             }
-            WEB_SOCKET.onmessage = function(event) {
+            WEB_SOCKET.onmessage = function (event) {
                 if (event.data) {
                     let json = JSON.parse(event.data)
                     if (json.news) {
-                        store.commit('setNews', json.news)
+                        store.setNews(json.news)
                     }
                     if (json.downloads) {
-                        store.commit('setDownloads', json.downloads)
+                        store.setDownloads(json.downloads)
                     }
                 }
             }
@@ -198,7 +202,7 @@ export default defineComponent({
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(mainStore, {
             error: 'error',
             info: 'info',
             user: 'user',
@@ -216,7 +220,7 @@ export default defineComponent({
                 summary: newError.title ? this.$t(newError.title) : '',
                 detail: newError.msg ? this.$t(newError.msg) : '',
                 baseZIndex: typeof newError.baseZIndex == 'undefined' ? 0 : newError.baseZIndex,
-                life: typeof newError.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newError.duration
+                life: typeof newError.duration == 'undefined' ? import.meta.env.VITE_TOAST_DURATION : newError.duration
             })
         },
         info(newInfo) {
@@ -225,7 +229,7 @@ export default defineComponent({
                 summary: newInfo.title ? this.$t(newInfo.title) : '',
                 detail: newInfo.msg ? this.$t(newInfo.msg) : '',
                 baseZIndex: typeof newInfo.baseZIndex == 'undefined' ? 0 : newInfo.baseZIndex,
-                life: typeof newInfo.duration == 'undefined' ? process.env.VUE_APP_TOAST_DURATION : newInfo.duration
+                life: typeof newInfo.duration == 'undefined' ? import.meta.env.VITE_TOAST_DURATION : newInfo.duration
             })
         },
         user() {

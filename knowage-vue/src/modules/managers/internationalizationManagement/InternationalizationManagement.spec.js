@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import axios from 'axios'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import InternationalizationManagement from './InternationalizationManagement.vue'
 import InputText from 'primevue/inputtext'
@@ -87,14 +87,14 @@ const mockedMessages = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/internationalization/languages`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/internationalization/languages`:
                 return Promise.resolve({ data: mockedLanguages })
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/i18nMessages/internationalization/?currLanguage=en-US`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/i18nMessages/internationalization/?currLanguage=en-US`:
                 return Promise.resolve({ data: mockedMessages })
             default:
                 return Promise.resolve({ data: [] })
@@ -109,7 +109,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, InputText, ProgressBar, Toolbar, Message, Checkbox, DataTable, Column, TabPanel, TabView },
             mocks: {
                 $t: (msg) => msg,
@@ -120,7 +120,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Internationalization Management loading', () => {

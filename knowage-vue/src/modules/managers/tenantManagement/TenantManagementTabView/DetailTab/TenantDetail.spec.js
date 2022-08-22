@@ -1,8 +1,9 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import axios from 'axios'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
-// import flushPromises from 'flush-promises'
 import InputText from 'primevue/inputtext'
 import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import TenantDetail from './TenantDetail.vue'
@@ -18,18 +19,17 @@ const mockedTenantEnabled = {
     MULTITENANT_THEME: 'spagobi_bi'
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
+    get: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
-
-axios.get.mockImplementation(() => Promise.resolve({ data: [] }))
 
 const factory = () => {
     return mount(TenantDetail, {
         props: { listOfThemes: [] },
         global: {
+            plugins: [createTestingPinia()],
             directives: {
                 tooltip() {}
             },
@@ -53,7 +53,7 @@ describe('Role Detail Tab', () => {
         await wrapper.setProps({ selectedTenant: mockedTenant })
         const nameInput = wrapper.find('[data-test="name-input"]')
 
-        expect(wrapper.vm.tenant).toStrictEqual({ ...mockedTenant, MULTITENANT_IMAGE: [] })
+        expect(wrapper.vm.tenant).toStrictEqual(mockedTenant)
 
         expect(nameInput.wrapperElement._value).toBe('DEFAULT_TENANT')
     })

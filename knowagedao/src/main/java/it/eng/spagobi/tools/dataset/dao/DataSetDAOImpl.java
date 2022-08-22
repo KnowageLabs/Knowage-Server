@@ -2400,6 +2400,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				} else if (dsActiveDetail.getScope() != null) {
 					hibDataSet.setScope(dsActiveDetail.getScope());
 				}
+				if (category != null) {
+					hibDataSet.setCategory(category);
+				} else if (dsActiveDetail.getCategory() != null) {
+					hibDataSet.setCategory(dsActiveDetail.getCategory());
+				}
 				dsActiveDetail.setActive(false);
 				session.update(dsActiveDetail);
 				session.save(hibDataSet);

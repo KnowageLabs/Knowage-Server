@@ -32,7 +32,7 @@ import Dialog from 'primevue/dialog'
 import QBEAdvancedFilterDialogDescriptor from './QBEAdvancedFilterDialogDescriptor.json'
 import QBEOperator from './QBEOperator.vue'
 
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'qbe-advanced-filter-dialog',

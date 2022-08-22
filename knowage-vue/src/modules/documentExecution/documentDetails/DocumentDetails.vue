@@ -92,6 +92,7 @@ import TabPanel from 'primevue/tabpanel'
 import ProgressSpinner from 'primevue/progressspinner'
 import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam, iDocumentType } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import DocumentDetailOlapDesignerDialog from './dialogs/olapDesignerDialog/DocumentDetailOlapDesignerDialog.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'document-details',
@@ -159,6 +160,10 @@ export default defineComponent({
             await this.isForEdit()
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         if (this.viewMode !== 'document-detail' && this.$route.name !== 'document-details-new-document' && this.$route.name !== 'document-details-edit-document') return
         await this.isForEdit()
@@ -215,14 +220,14 @@ export default defineComponent({
         },
         async getSelectedDocumentById(id) {
             if (id) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${id}`).then((response: AxiosResponse<any>) => (this.selectedDocument = response.data))
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documents/${id}`).then((response: AxiosResponse<any>) => (this.selectedDocument = response.data))
             } else {
                 this.selectedDocument = { ...this.mainDescriptor.newDocument }
                 this.selectedDocument.functionalities = []
             }
         },
         async getFunctionalities() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/folders?includeDocs=false`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/folders?includeDocs=false`).then((response: AxiosResponse<any>) => {
                 this.availableFolders = response.data
                 if (this.$route.params.folderId) {
                     let sourceFolder = this.availableFolders.find((folder) => folder.id == parseInt(this.folderId)) as iFolder
@@ -231,59 +236,59 @@ export default defineComponent({
             })
         },
         async getAnalyticalDrivers() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers`).then((response: AxiosResponse<any>) => (this.analyticalDrivers = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/analyticalDrivers`).then((response: AxiosResponse<any>) => (this.analyticalDrivers = response.data))
         },
         async getDatasources() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasources`).then((response: AxiosResponse<any>) => (this.dataSources = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasources`).then((response: AxiosResponse<any>) => (this.dataSources = response.data))
         },
         async getDocumentDrivers() {
             if (this.selectedDocument?.id) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/drivers`).then((response: AxiosResponse<any>) => (this.drivers = response.data))
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/drivers`).then((response: AxiosResponse<any>) => (this.drivers = response.data))
             }
         },
         async getTemplates() {
             if (this.selectedDocument?.id) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/templates`).then((response: AxiosResponse<any>) => (this.templates = response.data))
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument?.id}/templates`).then((response: AxiosResponse<any>) => (this.templates = response.data))
             }
         },
         async getTypes() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/document-detail/types`).then((response: AxiosResponse<any>) => (this.types = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/document-detail/types`).then((response: AxiosResponse<any>) => (this.types = response.data))
         },
         async getEngines() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/document-detail/engines`).then((response: AxiosResponse<any>) => (this.engines = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/document-detail/engines`).then((response: AxiosResponse<any>) => (this.engines = response.data))
         },
         async getAttributes() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/attributes`).then((response: AxiosResponse<any>) => (this.attributes = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/attributes`).then((response: AxiosResponse<any>) => (this.attributes = response.data))
         },
         async getParTypes() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/PAR_TYPE`).then((response: AxiosResponse<any>) => (this.parTypes = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/PAR_TYPE`).then((response: AxiosResponse<any>) => (this.parTypes = response.data))
         },
         async getDateFormats() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/DATE_FORMAT`).then((response: AxiosResponse<any>) => (this.dateFormats = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/DATE_FORMAT`).then((response: AxiosResponse<any>) => (this.dateFormats = response.data))
         },
         async getDataSources() {
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`).then((response: AxiosResponse<any>) => (this.metaSourceResource = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaSourceResource/`).then((response: AxiosResponse<any>) => (this.metaSourceResource = response.data))
         },
         async getSavedTablesByDocumentID() {
             if (this.selectedDocument.id) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/document/${this.selectedDocument.id}`).then((response: AxiosResponse<any>) => (this.savedTables = response.data))
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/metaDocumetRelationResource/document/${this.selectedDocument.id}`).then((response: AxiosResponse<any>) => (this.savedTables = response.data))
             }
         },
         async getDataset() {
             if (this.selectedDocument?.dataSetId) {
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.selectedDocument?.dataSetId}`, { headers: { 'X-Disable-Errors': 'true' } })
+                    .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.selectedDocument?.dataSetId}`, { headers: { 'X-Disable-Errors': 'true' } })
                     .then((response: AxiosResponse<any>) => {
                         this.selectedDataset = response.data[0]
                     })
                     .catch((error) => {
-                        this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message })
+                        this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error.message })
                     })
             }
         },
         async getAllSubreports() {
             this.loading = true
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/`).then((response: AxiosResponse<any>) => (this.allDocumentDetails = response.data))
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/`).then((response: AxiosResponse<any>) => (this.allDocumentDetails = response.data))
             this.loading = false
         },
         setTemplateForUpload(event) {
@@ -294,20 +299,20 @@ export default defineComponent({
                 var formData = new FormData()
                 formData.append('file', uploadedFile)
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${responseId}/templates`, formData, {
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${responseId}/templates`, formData, {
                         headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' }
                     })
                     .then(() => (this.templateToUpload = null))
                     .catch(() => {
-                        this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') })
+                        this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') })
                     })
             }
         },
         deleteImage() {
             this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/image`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/image`, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
                 .then(() => this.loadPage(this.docId))
-                .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.info.imageError') }))
+                .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.info.imageError') }))
         },
         setImageForUpload(event) {
             this.imageToUpload = event
@@ -318,12 +323,12 @@ export default defineComponent({
                 formData.append('file', uploadedFile)
                 formData.append('fileName', uploadedFile.name)
                 await this.$http
-                    .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${responseId}/image`, formData, {
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${responseId}/image`, formData, {
                         headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' }
                     })
                     .then(() => (this.imageToUpload = null))
                     .catch(() => {
-                        this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.info.imageUploadError') })
+                        this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.info.imageUploadError') })
                     })
             }
         },
@@ -335,14 +340,14 @@ export default defineComponent({
                         delete parameter.tempId
                         delete parameter.isChanged
                         this.$http
-                            .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                            .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
+                            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                            .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
                     } else if (parameter.isChanged) {
                         delete parameter.numberOfErrors
                         delete parameter.isChanged
                         this.$http
-                            .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${parameter.id}`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                            .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
+                            .put(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/outputparameters/${parameter.id}`, parameter, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                            .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.outputParams.persistError') }))
                     }
                 })
             }
@@ -355,23 +360,23 @@ export default defineComponent({
                         delete driver.numberOfErrors
                         delete driver.isChanged
                         this.$http
-                            .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                            .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.persistError') }))
+                            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                            .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.persistError') }))
                     } else if (driver.isChanged) {
                         delete driver.numberOfErrors
                         delete driver.isChanged
                         this.$http
-                            .put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${driver.id}`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
-                            .catch(() => this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.persistError') }))
+                            .put(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/drivers/${driver.id}`, driver, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                            .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.drivers.persistError') }))
                     }
                 })
             }
         },
         saveRequest(docToSave) {
             if (!this.selectedDocument.id) {
-                return this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails`, docToSave, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                return this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails`, docToSave, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
             } else {
-                return this.$http.put(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${docToSave.id}`, docToSave, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
+                return this.$http.put(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${docToSave.id}`, docToSave, { headers: { Accept: 'application/json, text/plain, */*', 'X-Disable-Errors': 'true' } })
             }
         },
         async saveDocument() {
@@ -388,7 +393,7 @@ export default defineComponent({
                     await this.saveDrivers()
                     await this.uploadTemplate(this.templateToUpload, response.data.id)
                     await this.uploadImage(this.imageToUpload, response.data.id)
-                    this.$store.commit('setInfo', { title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
+                    this.store.setInfo({ title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
                     setTimeout(() => {
                         const path = `/document-details/${response.data.id}`
                         !this.selectedDocument.id ? this.$router.push(path) : ''
@@ -397,7 +402,7 @@ export default defineComponent({
                     }, 200)
                 })
                 .catch((error) => {
-                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: error.message }), (this.loading = false)
+                    this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: error.message }), (this.loading = false)
                 })
         },
         closeDocument() {

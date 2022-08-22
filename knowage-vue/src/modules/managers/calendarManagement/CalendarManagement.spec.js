@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import flushPromises from 'flush-promises'
 import CalendarManagement from './CalendarManagement.vue'
@@ -39,38 +40,42 @@ const mockedCalendars = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `calendar/getCalendarList`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `calendar/getCalendarList`:
                 return Promise.resolve({ data: mockedCalendars })
             default:
                 return Promise.resolve({ data: [] })
         }
     }),
-    post: axios.post.mockImplementation(() => Promise.resolve({ data: [] }))
+    post: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
-const $store = {
-    state: {
-        user: {
-            functionalities: ['ManageCalendar']
-        }
-    }
-}
+
 const factory = () => {
     return mount(CalendarManagement, {
         global: {
-            plugins: [PrimeVue],
+            plugins: [
+                PrimeVue,
+                createTestingPinia({
+                    initialState: {
+                        store: {
+                            user: {
+                                functionalities: ['ManageCalendar']
+                            }
+                        }
+                    }
+                })
+            ],
             stubs: { Button, Column, DataTable, InputText, KnFabButton, KnOverlaySpinnerPanel, ProgressBar, Toolbar },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $confirm,
                 $http
             }
@@ -79,7 +84,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Calendar Management loading', () => {
@@ -144,7 +149,7 @@ describe('Calendar Management loading', () => {
 
         wrapper.vm.deleteCalendar(mockedCalendars[2])
 
-        expect(axios.post).toHaveBeenCalledTimes(1)
-        expect(axios.post).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'calendar/22/deleteCalendar')
+        expect($http.post).toHaveBeenCalledTimes(1)
+        expect($http.post).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'calendar/22/deleteCalendar')
     })
 })

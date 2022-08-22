@@ -35,7 +35,7 @@
         <Column field="type" :header="$t(importExportDescriptor.export.catalogFunction.column.type.header)" :sortable="true" :style="importExportDescriptor.export.catalogFunction.column.type.style"> </Column>
 
         <Column field="tags" :header="$t(importExportDescriptor.export.catalogFunction.column.tags.header)" :sortable="true" :style="importExportDescriptor.export.catalogFunction.column.tags.style">
-            <template #body="{data}">
+            <template #body="{ data }">
                 <span class="p-float-label kn-material-input">
                     <Tag class="importExportTags p-mr-1" v-for="(tag, index) in data.tags" v-bind:key="index" rounded :value="tag"> </Tag>
                 </span>
@@ -84,7 +84,7 @@ export default defineComponent({
         loadAllFunctions(): void {
             this.$emit('update:loading', true)
             this.$http
-                .get(process.env.VUE_APP_API_PATH + '1.0/functioncatalog')
+                .get(import.meta.env.VITE_API_PATH + '1.0/functioncatalog')
                 .then((response: AxiosResponse<any>) => {
                     this.functions = response.data
 

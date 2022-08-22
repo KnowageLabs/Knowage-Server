@@ -19,7 +19,7 @@
                     v-model:selection="selectedDomain"
                     selectionMode="single"
                     class="p-datatable-sm kn-table"
-                    dataKey="id"
+                    dataKey="valueId"
                     v-model:filters="filters"
                     filterDisplay="menu"
                     :globalFilterFields="domainsManagementDescriptor.globalFilterFields"
@@ -52,7 +52,7 @@
                     </template>
 
                     <Column v-for="col of domainsManagementDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :style="domainsManagementDescriptor.table.column.style" :sortable="true" class="kn-truncated">
-                        <template #filter="{filterModel}">
+                        <template #filter="{ filterModel }">
                             <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                         </template>
                         <template #body="slotProps">
@@ -78,13 +78,14 @@
 import { defineComponent } from 'vue'
 import { iDomain } from './DomainsManagement'
 import { FilterOperator } from 'primevue/api'
-import { filterDefault } from '@/helpers/commons/filterHelper'
+import { filterDefault } from '../../../helpers/commons/filterHelper'
 import { AxiosResponse } from 'axios'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import domainsManagementDescriptor from './DomainsManagementDescriptor.json'
 import DomainsManagementDialog from './DomainsManagementDialog.vue'
-import KnFabButton from '@/components/UI/KnFabButton.vue'
+import KnFabButton from '../../../components/UI/KnFabButton.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'domains-management',
@@ -126,6 +127,10 @@ export default defineComponent({
             selectedDomain: null as iDomain | null
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.loadAllDomains()
     },
@@ -133,7 +138,7 @@ export default defineComponent({
         async loadAllDomains() {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/domains')
                 .then((response: AxiosResponse<any>) => {
                     this.domains = response.data
                 })
@@ -148,8 +153,8 @@ export default defineComponent({
             })
         },
         async deleteDomain(domainId: number) {
-            await this.$http.delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/domains/' + domainId).then(() => {
-                this.$store.commit('setInfo', {
+            await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/domains/' + domainId).then(() => {
+                this.store.setInfo({
                     title: this.$t('common.toast.deleteTitle'),
                     msg: this.$t('common.toast.deleteSuccess')
                 })

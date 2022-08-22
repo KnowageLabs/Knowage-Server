@@ -21,7 +21,7 @@
                     <InputSwitch v-model="metadata.openSource" @change="setDirty" />
                 </span>
                 <span class="p-float-label p-col-8 descriptionTextArea">
-                    <Textarea v-model="metadata.description" class="kn-material-input " style="resize:none" id="description" rows="5" @change="setDirty" />
+                    <Textarea v-model="metadata.description" class="kn-material-input" style="resize: none" id="description" rows="5" @change="setDirty" />
                     <label class="kn-material-input-label" for="description">{{ $t('common.description') }}</label>
                 </span>
                 <span class="p-col-4 kn-height-full">
@@ -41,13 +41,13 @@
 
             <Accordion class="p-col-12">
                 <AccordionTab :header="$t(descriptor.metadata.accuracyAndPerformance.label)">
-                    <Textarea v-model="metadata.accuracyAndPerformance" class="kn-material-input metadataTextArea" style="resize:none" id="accuracyAndPerformance" rows="3" @change="setDirty" />
+                    <Textarea v-model="metadata.accuracyAndPerformance" class="kn-material-input metadataTextArea" style="resize: none" id="accuracyAndPerformance" rows="3" @change="setDirty" />
                 </AccordionTab>
                 <AccordionTab :header="$t(descriptor.metadata.usageOfTheModel.label)">
-                    <Textarea v-model="metadata.usageOfTheModel" class="kn-material-input metadataTextArea" style="resize:none" id="usageOfTheModel" rows="3" @change="setDirty" />
+                    <Textarea v-model="metadata.usageOfTheModel" class="kn-material-input metadataTextArea" style="resize: none" id="usageOfTheModel" rows="3" @change="setDirty" />
                 </AccordionTab>
                 <AccordionTab :header="$t(descriptor.metadata.formatOfData.label)">
-                    <Textarea v-model="metadata.formatOfData" class="kn-material-input metadataTextArea" style="resize:none" id="formatOfData" rows="3" @change="setDirty" />
+                    <Textarea v-model="metadata.formatOfData" class="kn-material-input metadataTextArea" style="resize: none" id="formatOfData" rows="3" @change="setDirty" />
                 </AccordionTab>
             </Accordion>
 
@@ -64,7 +64,7 @@ import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
-import { mapState } from 'vuex'
+import { mapState } from 'pinia'
 import InputSwitch from 'primevue/inputswitch'
 import resourceManagementDescriptor from './ResourceManagementDescriptor.json'
 import Textarea from 'primevue/textarea'
@@ -72,6 +72,7 @@ import Textarea from 'primevue/textarea'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import { iModelMetadataTemplate } from './ResourceManagement'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'metadata-dialog',
@@ -85,6 +86,10 @@ export default defineComponent({
             descriptor: resourceManagementDescriptor,
             translatedOptions: Array<any>()
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.loadMetadata()
@@ -109,12 +114,12 @@ export default defineComponent({
 
             if (this.id) {
                 this.$http
-                    .get(process.env.VUE_APP_API_PATH + `2.0/resources/files/metadata?key=` + this.id)
+                    .get(import.meta.env.VITE_API_PATH + `2.0/resources/files/metadata?key=` + this.id)
                     .then((response: AxiosResponse<any>) => {
                         this.metadata = response.data
                     })
                     .catch(() => {
-                        this.$store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.toast.metadata'),
                             msg: this.$t('common.toast.metadataLoadingFailed')
                         })
@@ -130,7 +135,7 @@ export default defineComponent({
             this.loading = true
             if (this.id) {
                 this.$http
-                    .post(process.env.VUE_APP_API_PATH + `2.0/resources/files/metadata?key=` + this.id, this.metadata, {
+                    .post(import.meta.env.VITE_API_PATH + `2.0/resources/files/metadata?key=` + this.id, this.metadata, {
                         responseType: 'arraybuffer', // important...because we need to convert it to a blob. If we don't specify this, response.data will be the raw data. It cannot be converted to blob directly.
 
                         headers: {
@@ -138,13 +143,13 @@ export default defineComponent({
                         }
                     })
                     .then(() => {
-                        this.$store.commit('setInfo', {
+                        this.store.setInfo({
                             title: this.$t('common.toast.updateTitle'),
                             msg: this.$t('common.toast.updateSuccess')
                         })
                     })
                     .catch((error) => {
-                        this.$store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.toast.updateTitle'),
                             msg: this.$t(error)
                         })
@@ -161,19 +166,19 @@ export default defineComponent({
             let self = this
             reader.addEventListener(
                 'load',
-                function() {
+                function () {
                     self.metadata.image = reader.result || ''
                 },
                 false
             )
-            if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
+            if (event.srcElement.files[0] && event.srcElement.files[0].size < import.meta.env.VITE_MAX_UPLOAD_IMAGE_SIZE) {
                 reader.readAsDataURL(event.srcElement.files[0])
                 this.setDirty()
-            } else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
+            } else this.store.setError({ title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
         }
     },
     computed: {
-        ...mapState({
+        ...mapState(mainStore, {
             locale: 'locale'
         })
     },

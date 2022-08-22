@@ -133,152 +133,157 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent, PropType } from 'vue'
-    import { iBusinessModelColumn } from '../../../../../Metaweb'
-    import { formatDate } from '@/helpers/commons/localeHelper'
-    import Dialog from 'primevue/dialog'
-    import Dropdown from 'primevue/dropdown'
-    import MultiSelect from 'primevue/multiselect'
-    import metawebAttributeDetailDialogDescriptor from './MetawebAttributeDetailDialogDescriptor.json'
+import { defineComponent, PropType } from 'vue'
+import { iBusinessModelColumn } from '../../../../../Metaweb'
+import { formatDate } from '@/helpers/commons/localeHelper'
+import Dialog from 'primevue/dialog'
+import Dropdown from 'primevue/dropdown'
+import MultiSelect from 'primevue/multiselect'
+import metawebAttributeDetailDialogDescriptor from './MetawebAttributeDetailDialogDescriptor.json'
+import mainStore from '../../../../../../../../../App.store'
 
-    export default defineComponent({
-        name: 'metaweb-attribute-detail-dialog',
-        components: { Dialog, Dropdown, MultiSelect },
-        props: { visible: { type: Boolean }, selectedAttribute: { type: Object as PropType<iBusinessModelColumn> }, roles: { type: Array } },
-        emits: ['close', 'save'],
-        data() {
-            return {
-                metawebAttributeDetailDialogDescriptor,
-                attribute: null as iBusinessModelColumn | null,
-                properties: {} as any,
-                roleOptions: [] as any[],
-                columnType: '' as string,
-                loading: false
-            }
-        },
-        computed: {
-            profileAttributes(): any[] {
-                return (this.$store.state as any).user.attributes ? Object.keys((this.$store.state as any).user.attributes) : []
-            }
-        },
-        watch: {
-            selectedAttribute() {
-                this.loadAttribute()
-            },
-            roles() {
-                this.loadRoleOptions()
-            },
-            visible() {
-                this.loadAttribute()
-                this.loadRoleOptions()
-            }
-        },
-        created() {
+export default defineComponent({
+    name: 'metaweb-attribute-detail-dialog',
+    components: { Dialog, Dropdown, MultiSelect },
+    props: { visible: { type: Boolean }, selectedAttribute: { type: Object as PropType<iBusinessModelColumn> }, roles: { type: Array } },
+    emits: ['close', 'save'],
+    data() {
+        return {
+            metawebAttributeDetailDialogDescriptor,
+            attribute: null as iBusinessModelColumn | null,
+            properties: {} as any,
+            roleOptions: [] as any[],
+            columnType: '' as string,
+            loading: false
+        }
+    },
+    computed: {
+        profileAttributes(): any[] {
+            return (this.store.$state as any).user.attributes ? Object.keys((this.store.$state as any).user.attributes) : []
+        }
+    },
+    watch: {
+        selectedAttribute() {
             this.loadAttribute()
+        },
+        roles() {
             this.loadRoleOptions()
         },
-        methods: {
-            loadAttribute() {
-                if (this.selectedAttribute) {
-                    this.attribute = { ...this.selectedAttribute, physicalColumn: { ...this.selectedAttribute.physicalColumn }, properties: this.getDeepCopyProperties(this.selectedAttribute.properties) } as iBusinessModelColumn
-                }
-
-                this.getAttributeType()
-                this.loadAttributeProperties()
-            },
-            loadRoleOptions() {
-                this.roleOptions = this.roles as any[]
-            },
-            getAttributeType() {
-                if (this.attribute) {
-                    for (let i = 0; i < this.attribute.properties.length; i++) {
-                        const tempProperty = this.attribute.properties[i]
-                        const key = Object.keys(tempProperty)[0]
-                        if (key === 'structural.columntype') {
-                            this.columnType = tempProperty[key].value
-                        }
-                    }
-                }
-            },
-            getDeepCopyProperties(properties: any[]) {
-                const newProperties = [] as any[]
-                properties.forEach((property: any) => {
-                    const key = Object.keys(property)[0]
-                    const tempProperty = {}
-                    tempProperty[key] = { ...property[key] }
-                    newProperties.push(tempProperty)
-                })
-
-                return newProperties
-            },
-            loadAttributeProperties() {
-                if (this.attribute) {
-                    this.attribute.properties?.forEach((property: any) => {
-                        const key = Object.keys(property)[0]
-                        this.properties[key] = property[key]
-                    })
-                }
-
-                if (this.properties['behavioural.notEnabledRoles']?.value && typeof this.properties['behavioural.notEnabledRoles'].value === 'string') {
-                    this.properties['behavioural.notEnabledRoles'].value = this.properties['behavioural.notEnabledRoles'].value?.split(';')
-                }
-            },
-            onTypeChange() {
-                if (this.attribute) {
-                    for (let i = 0; i < this.attribute.properties.length; i++) {
-                        const tempProperty = this.attribute.properties[i]
-                        const key = Object.keys(tempProperty)[0]
-                        if (key === 'structural.columntype') {
-                            tempProperty[key].value = this.columnType
-                        }
-                    }
-                }
-            },
-            updateAttribute(propertyKey: string) {
-                if (this.attribute) {
-                    for (let i = 0; i < this.attribute.properties.length; i++) {
-                        const property = this.attribute.properties[i]
-                        const key = Object.keys(property)[0]
-                        if (key === propertyKey) {
-                            property[key].value = this.properties[key].value
-                            break
-                        }
-                    }
-                }
-            },
-            closeDialog() {
-                this.$emit('close')
-            },
-            saveAttribute() {
-                if (this.attribute) {
-                    for (let i = 0; i < this.attribute.properties.length; i++) {
-                        const property = this.attribute.properties[i]
-                        const key = Object.keys(property)[0]
-                        if (key === 'behavioural.notEnabledRoles' && Array.isArray(property[key].value)) {
-                            property[key].value = property[key].value?.join(';')
-                            break
-                        }
-                    }
-                }
-
-                this.$emit('save', this.attribute)
-            },
-            getFormattedDate(date: any, format: any) {
-                return formatDate(date, format)
-            }
+        visible() {
+            this.loadAttribute()
+            this.loadRoleOptions()
         }
-    })
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    created() {
+        this.loadAttribute()
+        this.loadRoleOptions()
+    },
+    methods: {
+        loadAttribute() {
+            if (this.selectedAttribute) {
+                this.attribute = { ...this.selectedAttribute, physicalColumn: { ...this.selectedAttribute.physicalColumn }, properties: this.getDeepCopyProperties(this.selectedAttribute.properties) } as iBusinessModelColumn
+            }
+
+            this.getAttributeType()
+            this.loadAttributeProperties()
+        },
+        loadRoleOptions() {
+            this.roleOptions = this.roles as any[]
+        },
+        getAttributeType() {
+            if (this.attribute) {
+                for (let i = 0; i < this.attribute.properties.length; i++) {
+                    const tempProperty = this.attribute.properties[i]
+                    const key = Object.keys(tempProperty)[0]
+                    if (key === 'structural.columntype') {
+                        this.columnType = tempProperty[key].value
+                    }
+                }
+            }
+        },
+        getDeepCopyProperties(properties: any[]) {
+            const newProperties = [] as any[]
+            properties.forEach((property: any) => {
+                const key = Object.keys(property)[0]
+                const tempProperty = {}
+                tempProperty[key] = { ...property[key] }
+                newProperties.push(tempProperty)
+            })
+
+            return newProperties
+        },
+        loadAttributeProperties() {
+            if (this.attribute) {
+                this.attribute.properties?.forEach((property: any) => {
+                    const key = Object.keys(property)[0]
+                    this.properties[key] = property[key]
+                })
+            }
+
+            if (this.properties['behavioural.notEnabledRoles']?.value && typeof this.properties['behavioural.notEnabledRoles'].value === 'string') {
+                this.properties['behavioural.notEnabledRoles'].value = this.properties['behavioural.notEnabledRoles'].value?.split(';')
+            }
+        },
+        onTypeChange() {
+            if (this.attribute) {
+                for (let i = 0; i < this.attribute.properties.length; i++) {
+                    const tempProperty = this.attribute.properties[i]
+                    const key = Object.keys(tempProperty)[0]
+                    if (key === 'structural.columntype') {
+                        tempProperty[key].value = this.columnType
+                    }
+                }
+            }
+        },
+        updateAttribute(propertyKey: string) {
+            if (this.attribute) {
+                for (let i = 0; i < this.attribute.properties.length; i++) {
+                    const property = this.attribute.properties[i]
+                    const key = Object.keys(property)[0]
+                    if (key === propertyKey) {
+                        property[key].value = this.properties[key].value
+                        break
+                    }
+                }
+            }
+        },
+        closeDialog() {
+            this.$emit('close')
+        },
+        saveAttribute() {
+            if (this.attribute) {
+                for (let i = 0; i < this.attribute.properties.length; i++) {
+                    const property = this.attribute.properties[i]
+                    const key = Object.keys(property)[0]
+                    if (key === 'behavioural.notEnabledRoles' && Array.isArray(property[key].value)) {
+                        property[key].value = property[key].value?.join(';')
+                        break
+                    }
+                }
+            }
+
+            this.$emit('save', this.attribute)
+        },
+        getFormattedDate(date: any, format: any) {
+            return formatDate(date, format)
+        }
+    }
+})
 </script>
 
 <style lang="scss">
-    #metaweb-attribute-detail-dialog .p-dialog-header,
-    #metaweb-attribute-detail-dialog .p-dialog-content {
-        padding: 0;
-    }
+#metaweb-attribute-detail-dialog .p-dialog-header,
+#metaweb-attribute-detail-dialog .p-dialog-content {
+    padding: 0;
+}
 
-    #metaweb-attribute-detail-dialog .p-dialog-content {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-    }
+#metaweb-attribute-detail-dialog .p-dialog-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
 </style>

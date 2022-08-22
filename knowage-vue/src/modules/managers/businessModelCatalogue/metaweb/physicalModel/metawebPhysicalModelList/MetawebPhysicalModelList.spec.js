@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import Button from 'primevue/button'
@@ -482,9 +483,9 @@ const metaMock = {
     ]
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
-const $http = { get: axios.get.mockImplementation(() => Promise.resolve({ data: [] })) }
+const $http = { get: vi.fn().mockImplementation(() => Promise.resolve({ data: [] })) }
 
 const factory = () => {
     return mount(MetawebPhysicalModelList, {
@@ -496,7 +497,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Accordion,
                 AccordionTab,

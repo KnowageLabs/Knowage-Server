@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -10,7 +12,7 @@ import PrimeVue from 'primevue/config'
 import ProgressBar from 'primevue/progressbar'
 import Toolbar from 'primevue/toolbar'
 
-const deepcopy = require('deepcopy')
+import deepcopy from 'deepcopy'
 
 const mockedPropData = {
     kpi: [
@@ -91,11 +93,11 @@ const mockedKpiList = [
 ]
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = () => {
@@ -110,7 +112,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,

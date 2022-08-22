@@ -25,7 +25,7 @@
             <Column field="name" :header="$t('importExport.gallery.column.name')" :sortable="true" />
             <Column field="creationUser" :header="$t('kpi.targetDefinition.kpiAuthor')" :sortable="true" />
             <Column field="creationDate" :header="$t('kpi.targetDefinition.kpiDate')" :sortable="true">
-                <template #body="{data}">
+                <template #body="{ data }">
                     {{ formatDate(data.creationDate) }}
                 </template>
             </Column>
@@ -98,6 +98,7 @@ import WorkspaceAnalysisViewShareDialog from './dialogs/WorkspaceAnalysisViewSha
 import { AxiosResponse } from 'axios'
 import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
 import WorkspaceCockpitDialog from './dialogs/WorkspaceCockpitDialog.vue'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'workspace-analysis-view',
@@ -106,7 +107,7 @@ export default defineComponent({
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
         isOwner(): any {
-            return (this.$store.state as any).user.userId === this.selectedAnalysis.creationUser
+            return (this.store.$state as any).user.userId === this.selectedAnalysis.creationUser
         },
         isShared(): any {
             return this.selectedAnalysis.functionalities.length > 1
@@ -133,6 +134,10 @@ export default defineComponent({
             cockpitDialogVisible: false
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.getAnalysisDocs()
     },
@@ -140,7 +145,7 @@ export default defineComponent({
         getAnalysisDocs() {
             this.loading = true
             return this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/myAnalysisDocsList`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `documents/myAnalysisDocsList`)
                 .then((response: AxiosResponse<any>) => {
                     this.analysisDocuments = [...response.data.root]
                     this.filteredAnalysisDocuments = [...this.analysisDocuments]
@@ -194,9 +199,9 @@ export default defineComponent({
                 updateFromWorkspace: true
             }
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/saveDocument/', formatedAnalysis, { headers: { 'X-Disable-Errors': 'true' } })
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/saveDocument/', formatedAnalysis, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -214,7 +219,7 @@ export default defineComponent({
             this.loading = true
             const shared = this.selectedAnalysis.functionalities.length > 1
             if (!shared) {
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/functionalities/forsharing/${analysis.id}`).then((response: AxiosResponse<any>) => {
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/functionalities/forsharing/${analysis.id}`).then((response: AxiosResponse<any>) => {
                     this.folders = response.data
                     this.shareDialogVisible = true
                 })
@@ -226,7 +231,7 @@ export default defineComponent({
         async handleAnalysShared(selectedFolders: any, shared: boolean) {
             this.loading = true
 
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/share?docId=${this.selectedAnalysis.id}&`
+            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `documents/share?docId=${this.selectedAnalysis.id}&`
             if (!shared) {
                 Object.keys(selectedFolders).forEach((id: any) => (url += `functs=${selectedFolders[id]}&`))
             }
@@ -235,7 +240,7 @@ export default defineComponent({
             await this.$http
                 .post(url)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -256,9 +261,9 @@ export default defineComponent({
         async cloneAnalysisDocument(analysis: any) {
             this.loading = true
             await this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `documents/clone?docId=${analysis.id}`)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `documents/clone?docId=${analysis.id}`)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -279,9 +284,9 @@ export default defineComponent({
         deleteAnalysis(analysis: any) {
             this.loading = true
             this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/documents/${analysis.label}`)
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documents/${analysis.label}`)
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -309,13 +314,13 @@ export default defineComponent({
             var formData = new FormData()
             formData.append('file', uploadedFile)
             this.$http
-                .post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/analysis/${this.selectedAnalysis.id}`, formData, {
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/analysis/${this.selectedAnalysis.id}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.uploading'),
                         msg: this.$t('common.toast.uploadSuccess')
                     })

@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import Button from 'primevue/button'
+import { createTestingPinia } from '@pinia/testing'
 import MenuConfiguration from './MenuManagement.vue'
 import InputText from 'primevue/inputtext'
 import ProgressBar from 'primevue/progressbar'
@@ -10,16 +11,13 @@ import Tree from 'primevue/tree'
 import axios from 'axios'
 
 const $confirm = {
-    require: jest.fn()
-}
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() =>
+    get: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: []
         })
@@ -30,11 +28,11 @@ const factory = () => {
     return mount(MenuConfiguration, {
         attachToDocument: true,
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, InputText, MenuManagementDocumentBrowserTree: true, ProgressBar, Toolbar, Card, KnHint, Tree },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $http
             }
@@ -43,7 +41,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('menu configuration management loading', () => {
@@ -56,7 +54,7 @@ describe('menu configuration management loading', () => {
 })
 
 it('when loaded a tree with just the root is shown if no child are present', async () => {
-    axios.get.mockReturnValueOnce(
+    $http.get.mockReturnValueOnce(
         Promise.resolve({
             data: [
                 {

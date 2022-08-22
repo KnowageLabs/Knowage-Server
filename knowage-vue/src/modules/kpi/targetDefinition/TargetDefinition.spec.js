@@ -1,7 +1,8 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { createRouter, createWebHistory } from 'vue-router'
 import TargetDefinitionHint from './TargetDefinitionHint.vue'
-import axios from 'axios'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import flushPromises from 'flush-promises'
@@ -11,6 +12,7 @@ import ProgressBar from 'primevue/progressbar'
 import TargetDefinition from './TargetDefinition.vue'
 import Toolbar from 'primevue/toolbar'
 import KnHint from '@/components/UI/KnHint.vue'
+import mainStore from '../../../App.store'
 
 const mockedTarget = [
     {
@@ -69,27 +71,26 @@ const mockedTarget = [
     }
 ]
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() =>
+    get: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: mockedTarget
         })
     ),
-    delete: axios.delete.mockImplementation(() => Promise.resolve())
+    delete: vi.fn().mockImplementation(() => Promise.resolve())
 }
 
 const $confirm = {
-    require: jest.fn()
+    require: vi.fn()
 }
 
 const $route = { path: '/target-definition' }
 
 const $router = {
-    push: jest.fn(),
-
-    replace: jest.fn()
+    push: vi.fn(),
+    replace: vi.fn()
 }
 const router = createRouter({
     history: createWebHistory(),
@@ -113,13 +114,10 @@ const router = createRouter({
         }
     ]
 })
-const $store = {
-    commit: jest.fn()
-}
 const factory = () => {
     return mount(TargetDefinition, {
         global: {
-            plugins: [router],
+            plugins: [router, createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -131,7 +129,7 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $route,
                 $router,
@@ -142,7 +140,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Target Definition loading', () => {
@@ -153,7 +151,7 @@ describe('Target Definition loading', () => {
         expect(wrapper.find('[data-test="progress-bar"]').exists()).toBe(true)
     })
     it('the list shows "no data" label when loaded empty', async () => {
-        axios.get.mockReturnValueOnce(
+        $http.get.mockReturnValueOnce(
             Promise.resolve({
                 data: []
             })
@@ -180,6 +178,7 @@ describe('Target Definition List', () => {
     })
     it('deletes target when clicking on delete icon', async () => {
         const wrapper = factory()
+        const store = mainStore()
 
         await flushPromises()
 
@@ -190,9 +189,9 @@ describe('Target Definition List', () => {
         expect($confirm.require).toHaveBeenCalledTimes(1)
 
         await wrapper.vm.deleteTarget(88)
-        expect(axios.delete).toHaveBeenCalledTimes(1)
-        expect(axios.delete).toHaveBeenCalledWith(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + 88 + '/deleteTarget')
-        expect($store.commit).toHaveBeenCalledTimes(1)
+        expect($http.delete).toHaveBeenCalledTimes(1)
+        expect($http.delete).toHaveBeenCalledWith(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/kpiee/' + 88 + '/deleteTarget')
+        expect(store.setInfo).toHaveBeenCalledTimes(1)
         expect($router.replace).toHaveBeenCalledWith('/target-definition')
     })
     it("opens empty detail form when the '+' button is clicked", async () => {

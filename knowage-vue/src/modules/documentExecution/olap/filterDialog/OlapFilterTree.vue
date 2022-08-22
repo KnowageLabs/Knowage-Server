@@ -32,7 +32,7 @@ import Message from 'primevue/message'
 import olapFilterDialogDescriptor from './OlapFilterDialogDescriptor.json'
 import Tree from 'primevue/tree'
 
-const crypto = require('crypto')
+import cryptoRandomString from 'crypto-random-string';
 
 export default defineComponent({
     name: 'olap-filter-tree',
@@ -106,7 +106,7 @@ export default defineComponent({
             }
 
             await this.$http
-                .post(process.env.VUE_APP_OLAP_PATH + `1.0/hierarchy/${type}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
+                .post(import.meta.env.VITE_OLAP_PATH + `1.0/hierarchy/${type}?SBI_EXECUTION_ID=${this.id}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then((response: AxiosResponse<any>) => {
                     response.data.forEach((el: any) => {
                         content.push(this.createNode(el))
@@ -121,7 +121,7 @@ export default defineComponent({
         },
         createNode(el: iFilterNode) {
             const tempNode = {
-                key: crypto.randomBytes(16).toString('hex'),
+                key: cryptoRandomString({length: 16, type: 'base64'}),
                 id: '' + el.id,
                 label: el.name,
                 children: [] as iNode[],
@@ -193,7 +193,7 @@ export default defineComponent({
                 if (this.searchWord.length > 2) {
                     const content = [] as any[]
                     await this.$http
-                        .post(process.env.VUE_APP_OLAP_PATH + `1.0/hierarchy/search?SBI_EXECUTION_ID=${this.id}`, { axis: this.filter.axis, hierarchy: this.filter.selectedHierarchyUniqueName, name: this.searchWord, showS: false }, { headers: { Accept: 'application/json, text/plain, */*' } })
+                        .post(import.meta.env.VITE_OLAP_PATH + `1.0/hierarchy/search?SBI_EXECUTION_ID=${this.id}`, { axis: this.filter.axis, hierarchy: this.filter.selectedHierarchyUniqueName, name: this.searchWord, showS: false }, { headers: { Accept: 'application/json, text/plain, */*' } })
                         .then((response: AxiosResponse<any>) => {
                             this.expandedKeys = {}
                             response.data.forEach((el: any) => {

@@ -1,8 +1,7 @@
 import { AxiosResponse } from 'axios'
-import { iParameter, } from './KnParameterSidebar'
+import { iParameter } from './KnParameterSidebar'
 
-
-export function setLovsDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter) {
+export function setLovsDependency(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter) {
     if (parameter.dependencies.lov.length !== 0) {
         parameter.dependencies.lov.forEach((dependency: any) => {
             const index = loadedParameters.filterStatus.findIndex((param: any) => {
@@ -17,7 +16,7 @@ export function setLovsDependency(loadedParameters: { filterStatus: iParameter[]
     }
 }
 
-export async function updateLovDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
+export async function updateLovDependency(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
     if (parameter && parameter.lovDependentParameters) {
         for (let i = 0; i < parameter.lovDependentParameters.length; i++) {
             await lovDependencyCheck(loadedParameters, parameter.lovDependentParameters[i], loading, document, sessionRole, $http, mode)
@@ -25,7 +24,7 @@ export async function updateLovDependency(loadedParameters: { filterStatus: iPar
     }
 }
 
-export async function lovDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
+export async function lovDependencyCheck(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string) {
     loading = true
     if (parameter.parameterValue[0]) {
         parameter.parameterValue[0] = { value: '', description: '' }
@@ -40,11 +39,14 @@ export async function lovDependencyCheck(loadedParameters: { filterStatus: iPara
         url = document.type === 'businessModel' ? `1.0/businessmodel/${document.name}/admissibleValues` : `/3.0/datasets/${document.label}/admissibleValues`
     }
 
-    await $http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + url, postData).then((response: AxiosResponse<any>) => {
-        parameter.data = response.data.result.data
-        parameter.metadata = response.data.result.metadata
-        formatParameterAfterDataDependencyCheck(parameter)
-    }).catch(() => { })
+    await $http
+        .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData)
+        .then((response: AxiosResponse<any>) => {
+            parameter.data = response.data.result.data
+            parameter.metadata = response.data.result.metadata
+            formatParameterAfterDataDependencyCheck(parameter)
+        })
+        .catch(() => {})
     loading = false
 }
 
@@ -79,7 +81,7 @@ export function formatParameterDataOptions(parameter: iParameter, data: any) {
     return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
 }
 
-export function getFormattedParameters(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }) {
+export function getFormattedParameters(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }) {
     let parameters = [] as any[]
 
     Object.keys(loadedParameters.filterStatus).forEach((key: any) => {

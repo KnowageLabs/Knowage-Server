@@ -39,7 +39,7 @@ import Message from 'primevue/message'
 import QBEHavingDialogDescriptor from './QBEHavingDialogDescriptor.json'
 import QBEHavingCard from './QBEHavingCard.vue'
 
-const crypto = require('crypto')
+import cryptoRandomString from 'crypto-random-string';
 
 export default defineComponent({
     name: 'qbe-having-dialog',
@@ -50,7 +50,7 @@ export default defineComponent({
         return {
             QBEHavingDialogDescriptor,
             havings: [] as any[],
-            nextHavingIndex: -1
+            nextHavingIndex: '-1' as string
         }
     },
     watch: {
@@ -71,7 +71,7 @@ export default defineComponent({
                     this.havings.push({ ...having })
                 }
             })
-            this.nextHavingIndex = crypto.randomBytes(16).toString('hex')
+            this.nextHavingIndex = cryptoRandomString({length: 16, type: 'base64'})
         },
         addNewHaving() {
             const field = this.havingDialogData?.field
@@ -102,7 +102,7 @@ export default defineComponent({
                     color: '',
                     entity: field.entity
                 })
-                this.nextHavingIndex = crypto.randomBytes(16).toString('hex')
+                this.nextHavingIndex = cryptoRandomString({length: 16, type: 'base64'})
             }
         },
         removeHaving(having: iFilter) {

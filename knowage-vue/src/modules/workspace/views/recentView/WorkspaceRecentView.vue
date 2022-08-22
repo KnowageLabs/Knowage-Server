@@ -11,14 +11,14 @@
     </Toolbar>
     <InputText class="kn-material-input p-m-2" :style="mainDescriptor.style.filterInput" v-model="searchWord" type="text" :placeholder="$t('common.search')" @input="searchItems" data-test="search-input" />
     <div class="kn-overflow">
-        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table  p-mx-2" :value="filteredDocuments" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="recent-table">
+        <DataTable v-if="!toggleCardDisplay" class="p-datatable-sm kn-table p-mx-2" :value="filteredDocuments" :loading="loading" dataKey="objId" responsiveLayout="stack" breakpoint="600px" data-test="recent-table">
             <template #empty>
                 {{ $t('common.info.noDataFound') }}
             </template>
             <Column field="documentType" :header="$t('importExport.gallery.column.type')" :sortable="true" />
             <Column field="documentName" :header="$t('importExport.gallery.column.name')" :sortable="true" />
             <Column field="requestTime" :header="$t('managers.functionalitiesManagement.execution')" :sortable="true">
-                <template #body="{data}">
+                <template #body="{ data }">
                     {{ formatDate(data.requestTime) }}
                 </template>
             </Column>
@@ -53,6 +53,7 @@ import mainDescriptor from '@/modules/workspace/WorkspaceDescriptor.json'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: { DataTable, Column, DetailSidebar, WorkspaceCard, Message },
@@ -69,6 +70,10 @@ export default defineComponent({
             searchWord: '' as string
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.getRecentDocuments()
     },
@@ -76,7 +81,7 @@ export default defineComponent({
         getRecentDocuments() {
             this.loading = true
             return this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/recents`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/recents`)
                 .then((response: AxiosResponse<any>) => {
                     this.recentDocumentsList = [...response.data]
                     this.filteredDocuments = [...this.recentDocumentsList]

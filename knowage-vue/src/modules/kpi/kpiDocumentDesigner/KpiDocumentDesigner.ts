@@ -46,7 +46,7 @@ export interface iChart {
             name: string
         }
     },
-    options: iOptions,
+    options?: iOptions,
     style: iStyle
 }
 

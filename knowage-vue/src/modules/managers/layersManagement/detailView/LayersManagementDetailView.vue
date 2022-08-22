@@ -36,6 +36,7 @@ import TabPanel from 'primevue/tabpanel'
 import LayerTab from './layerTab/LayersManagementLayerTab.vue'
 import FilterTab from './filterTab/LayersManagementFilterTab.vue'
 import Toast from 'primevue/toast'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     components: { TabView, TabPanel, LayerTab, FilterTab, Toast },
@@ -55,6 +56,10 @@ export default defineComponent({
             activeIndex: 0,
             filters: [] as iFilter[]
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     async created() {
         this.loadLayer()
@@ -79,7 +84,7 @@ export default defineComponent({
         },
         async getRolesForLayer() {
             if (this.layer.layerId) {
-                await this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `layers/postitem`, this.selectedLayer).then((response: AxiosResponse<any>) => (this.layer.roles = response.data))
+                await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `layers/postitem`, this.selectedLayer).then((response: AxiosResponse<any>) => (this.layer.roles = response.data))
             }
         },
         closeTemplateConfirm() {
@@ -109,20 +114,20 @@ export default defineComponent({
         async loadFilters() {
             if (this.layer) {
                 this.loading = true
-                await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `layers/getFilter?id=${this.layer.layerId}`).then((response: AxiosResponse<any>) => (this.filters = response.data))
+                await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `layers/getFilter?id=${this.layer.layerId}`).then((response: AxiosResponse<any>) => (this.filters = response.data))
                 this.loading = false
             }
         },
         saveOrUpdateMessage(layer) {
             let toSend = layer
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'layers'
+            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'layers'
             if (this.layer.layerFile) {
                 let formData = new FormData()
                 formData.append('data', JSON.stringify(this.layer))
                 formData.append('layerFile', this.layer.layerFile.file)
                 if (layer.layerId) {
-                    url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'layers/updateData'
-                } else url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'layers/addData'
+                    url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'layers/updateData'
+                } else url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'layers/addData'
                 toSend = formData
             }
             if (layer.layerId) {
@@ -133,7 +138,7 @@ export default defineComponent({
             this.layer.roles === null ? (this.layer.roles = []) : ''
             await this.saveOrUpdateMessage(this.layer)
                 .then((response: AxiosResponse<any>) => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.success'),
                         msg: this.$t('common.toast.success')
                     })

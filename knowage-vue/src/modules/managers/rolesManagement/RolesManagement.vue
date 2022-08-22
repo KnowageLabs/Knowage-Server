@@ -28,6 +28,7 @@ import { AxiosResponse } from 'axios'
 import rolesDecriptor from './RolesManagementDescriptor.json'
 import FabButton from '@/components/UI/KnFabButton.vue'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
+import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'roles-management',
@@ -43,6 +44,10 @@ export default defineComponent({
             publicRole: null as any
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     async created() {
         await this.loadAllRoles()
     },
@@ -50,13 +55,12 @@ export default defineComponent({
         async loadAllRoles() {
             this.loading = true
             await this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles')
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles')
                 .then((response: AxiosResponse<any>) => {
                     this.roles = response.data
                     this.checkAllRolesForPublicRole()
                 })
                 .finally(() => (this.loading = false))
-            console.log('LOADED ROLES: ', this.roles)
         },
         checkAllRolesForPublicRole() {
             this.publicRole = null
@@ -94,9 +98,9 @@ export default defineComponent({
         },
         async deleteRole(roleId: number) {
             await this.$http
-                .delete(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId, { headers: { 'X-Disable-Errors': 'true' } })
+                .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/roles/' + roleId, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.$store.commit('setInfo', {
+                    this.store.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.deleteSuccess')
                     })
@@ -105,7 +109,7 @@ export default defineComponent({
                 })
                 .catch((error) => {
                     if (error) {
-                        this.$store.commit('setError', {
+                        this.store.setError({
                             title: this.$t('common.toast.deleteTitle'),
                             msg: this.$t('common.error.deleting')
                         })

@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import PrimeVue from 'primevue/config'
 import Button from 'primevue/button'
 import Calendar from 'primevue/calendar'
@@ -386,16 +388,8 @@ const mockedFilterData = {
     isReadyForExecution: true
 }
 
-const $store = {
-    state: {
-        user: {
-            sessionRole: '/demo/admin'
-        }
-    }
-}
-
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = () => {
@@ -409,7 +403,18 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [
+                PrimeVue,
+                createTestingPinia({
+                    initialState: {
+                        store: {
+                            user: {
+                                sessionRole: '/demo/admin'
+                            }
+                        }
+                    }
+                })
+            ],
             stubs: {
                 Button,
                 Calendar,
@@ -430,7 +435,6 @@ const factory = () => {
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
                 $router
             }
         }

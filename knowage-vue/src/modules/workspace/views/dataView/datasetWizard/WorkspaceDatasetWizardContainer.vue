@@ -32,6 +32,7 @@ import StepTwo from './WorkspaceDatasetWizardStepTwo.vue'
 import StepThree from './WorkspaceDatasetWizardStepThree.vue'
 import StepFour from './WorkspaceDatasetWizardStepFour.vue'
 import Dialog from 'primevue/dialog'
+import mainStore from '../../../../../App.store'
 
 export default defineComponent({
     components: { Dialog, StepOne, StepTwo, StepThree, StepFour },
@@ -65,6 +66,10 @@ export default defineComponent({
             wizardStep: 1
         }
     },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     created() {
         this.dataset = this.selectedDataset
         this.dataset.id ? this.getSelectedDataset() : this.initializeDatasetWizard(undefined, false)
@@ -82,7 +87,7 @@ export default defineComponent({
         },
         async getSelectedDataset() {
             this.$http
-                .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.selectedDataset.id}`)
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.selectedDataset.id}`)
                 .then((response: AxiosResponse<any>) => {
                     this.dataset = response.data[0] ? { ...response.data[0] } : {}
                     this.initializeDatasetWizard(this.dataset, true)
@@ -138,11 +143,11 @@ export default defineComponent({
             console.log(this.dataset)
             this.$http({
                 method: 'POST',
-                url: process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'selfservicedataset/testDataSet',
+                url: import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'selfservicedataset/testDataSet',
                 data: this.dataset,
                 params: params,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Disable-Errors': 'true' },
-                transformRequest: function(obj) {
+                transformRequest: function (obj) {
                     var str = [] as any
                     for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                     return str.join('&')
@@ -160,9 +165,7 @@ export default defineComponent({
                 })
                 .catch((error: any) => {
                     this.dataset.meta = []
-                    error.message == 'error.mesage.description.data.set.parsing.error'
-                        ? this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t('workspace.myData.parseError') })
-                        : this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: this.$t(error.message) })
+                    error.message == 'error.mesage.description.data.set.parsing.error' ? this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('workspace.myData.parseError') }) : this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t(error.message) })
                 })
         },
         submitStepTwo() {
@@ -220,12 +223,12 @@ export default defineComponent({
 
             await this.$http({
                 method: 'POST',
-                url: process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'selfservicedataset/save',
+                url: import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'selfservicedataset/save',
                 data: dsToSend,
                 params: params,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Disable-Errors': 'true' },
 
-                transformRequest: function(obj) {
+                transformRequest: function (obj) {
                     var str = [] as any
                     for (var p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                     return str.join('&')
@@ -233,14 +236,14 @@ export default defineComponent({
             })
                 .then((response: AxiosResponse<any>) => {
                     if (dsToSend.exportToHdfs) {
-                        this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/hdfs/${response.data.id}`, { headers: { 'X-Disable-Errors': 'true' } }).catch((responseHDFS: any) => {
-                            this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: responseHDFS.data.errors[0].message })
+                        this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/hdfs/${response.data.id}`, { headers: { 'X-Disable-Errors': 'true' } }).catch((responseHDFS: any) => {
+                            this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: responseHDFS.data.errors[0].message })
                         })
                     }
                     this.$emit('closeDialogAndReload')
                 })
                 .catch((response: any) => {
-                    this.$store.commit('setError', { title: this.$t('common.toast.errorTitle'), msg: response.data.errors[0].message })
+                    this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: response.data.errors[0].message })
                 })
         }
     }

@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
-import axios from 'axios'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -221,30 +222,22 @@ const mockedScorecard = {
     ]
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation((url) => {
+    get: vi.fn().mockImplementation((url) => {
         switch (url) {
-            case process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/kpiee/1/loadScorecard`:
+            case import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpiee/1/loadScorecard`:
                 return Promise.resolve({ data: mockedScorecard })
             default:
                 return Promise.resolve({ data: [] })
         }
     }),
-    post: axios.post.mockImplementation(() => Promise.resolve({ data: [] }))
+    post: vi.fn().mockImplementation(() => Promise.resolve({ data: [] }))
 }
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
-}
-
-const $router = {
-    push: jest.fn()
+    require: vi.fn()
 }
 
 const factory = () => {
@@ -255,7 +248,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Card,
@@ -272,16 +265,14 @@ const factory = () => {
             mocks: {
                 $t: (msg) => msg,
                 $http,
-                $store,
-                $confirm,
-                $router
+                $confirm
             }
         }
     })
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Scorecards Designer', () => {

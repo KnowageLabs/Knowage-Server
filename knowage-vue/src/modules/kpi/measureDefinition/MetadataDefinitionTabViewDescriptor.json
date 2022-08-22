@@ -9,6 +9,9 @@
         "style": {
             "width": "60vw",
             "z-index": "9999"
+        },
+        "contentStyle": {
+            "flex": 1
         }
     },
     "listBox": {

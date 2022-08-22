@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import MondrianSchemasWorkflowTab from './MondrianSchemasWorkflowTab.vue'
 import Toolbar from 'primevue/toolbar'
@@ -32,15 +34,11 @@ const mockedUsers = [
 ]
 
 const $confirm = {
-    require: jest.fn()
-}
-
-const $store = {
-    commit: jest.fn()
+    require: vi.fn()
 }
 
 const $router = {
-    push: jest.fn()
+    push: vi.fn()
 }
 
 const factory = (usersList) => {
@@ -49,13 +47,14 @@ const factory = (usersList) => {
             usersList
         },
         global: {
+            plugins: [createTestingPinia()],
             stubs: {
                 Button,
                 Toolbar
             },
             mocks: {
                 $t: (msg) => msg,
-                $store,
+
                 $confirm,
                 $router
             }
@@ -64,7 +63,7 @@ const factory = (usersList) => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Mondrian Schema Workflow Tab', () => {

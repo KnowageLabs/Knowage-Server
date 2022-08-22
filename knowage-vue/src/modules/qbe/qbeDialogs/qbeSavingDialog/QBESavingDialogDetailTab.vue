@@ -97,13 +97,15 @@ import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import descriptor from './QBESavingDialogDescriptor.json'
+import mainStore from '../../../../App.store'
+
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
     components: { Card, Dropdown, KnValidationMessages },
     props: { propDataset: Object, scopeTypes: Array, categoryTypes: Array },
     computed: {
         qbeAdvancedSaving(): any {
-            return (this.$store.state as any).user.functionalities.includes('QbeAdvancedSaving')
+            return (this.store.$state as any).user.functionalities.includes('QbeAdvancedSaving')
         }
     },
     data() {
@@ -112,6 +114,10 @@ export default defineComponent({
             dataset: {} as any,
             descriptor
         }
+    },
+    setup() {
+        const store = mainStore()
+        return { store }
     },
     created() {
         this.dataset = this.propDataset

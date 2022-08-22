@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
-import axios from 'axios'
+import { describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import PrimeVue from 'primevue/config'
@@ -32,10 +33,10 @@ const mockedTrigger = {
     endTimeTiming: null
 }
 
-jest.mock('axios')
+vi.mock('axios')
 
 const $http = {
-    get: axios.get.mockImplementation(() =>
+    get: vi.fn().mockImplementation(() =>
         Promise.resolve({
             data: []
         })
@@ -52,7 +53,7 @@ const factory = () => {
             directives: {
                 tooltip() {}
             },
-            plugins: [PrimeVue],
+            plugins: [PrimeVue, createTestingPinia()],
             stubs: {
                 Button,
                 Dialog,

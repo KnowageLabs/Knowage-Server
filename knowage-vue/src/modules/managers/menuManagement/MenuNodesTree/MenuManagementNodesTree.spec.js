@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import Button from 'primevue/button'
 import MenuNodesTree from './MenuManagementNodesTree.vue'
 import InputText from 'primevue/inputtext'
@@ -411,7 +413,7 @@ const factory = () => {
         },
         attachToDocument: true,
         global: {
-            plugins: [],
+            plugins: [createTestingPinia()],
             stubs: { Button, InputText, ProgressBar, Tree, Card },
             mocks: {
                 $t: (msg) => msg
@@ -421,7 +423,7 @@ const factory = () => {
 }
 
 afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 })
 
 describe('Menu Nodes Tree', () => {

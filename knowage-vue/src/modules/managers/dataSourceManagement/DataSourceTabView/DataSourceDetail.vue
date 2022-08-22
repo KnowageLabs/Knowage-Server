@@ -221,6 +221,7 @@ import Checkbox from 'primevue/checkbox'
 import Card from 'primevue/card'
 import Tooltip from 'primevue/tooltip'
 import Message from 'primevue/message'
+import mainStore from '../../../../App.store'
 
 export default defineComponent({
     emits: ['touched', 'closed', 'inserted'],
@@ -250,6 +251,11 @@ export default defineComponent({
         },
         databases: Array,
         id: String
+    },
+
+    setup() {
+        const store = mainStore()
+        return { store }
     },
 
     mounted() {
@@ -413,16 +419,16 @@ export default defineComponent({
         },
 
         async testDataSource() {
-            var url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'datasourcestest/2.0/test/'
+            var url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'datasourcestest/2.0/test/'
             var dsToTest = {} as any
             dsToTest = { ...this.datasource }
             dsToTest.type = this.jdbcOrJndi.type
 
             await this.$http.post(url, dsToTest).then((response: AxiosResponse<any>) => {
                 if (response.data.error) {
-                    this.$store.commit('setError', { title: this.$t('managers.dataSourceManagement.form.errorTitle'), msg: response.data.error })
+                    this.store.setError({ title: this.$t('managers.dataSourceManagement.form.errorTitle'), msg: response.data.error })
                 } else {
-                    this.$store.commit('setInfo', { msg: this.$t('managers.dataSourceManagement.form.testOk') })
+                    this.store.setInfo({ msg: this.$t('managers.dataSourceManagement.form.testOk') })
                 }
             })
         },
@@ -435,7 +441,7 @@ export default defineComponent({
             if (this.v$.$invalid) {
                 return
             }
-            let url = process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/datasources/'
+            let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/datasources/'
             let dsToSave = {} as any
             dsToSave = { ...this.datasource }
 
@@ -445,9 +451,9 @@ export default defineComponent({
 
             await this.createOrUpdate(url, dsToSave).then((response: AxiosResponse<any>) => {
                 if (response.data.errors) {
-                    this.$store.commit('setError', { title: 'Error', msg: response.data.error })
+                    this.store.setError({ title: 'Error', msg: response.data.error })
                 } else {
-                    this.$store.commit('setInfo', { title: 'Ok', msg: 'Saved OK' })
+                    this.store.setInfo({ title: 'Ok', msg: 'Saved OK' })
                 }
             })
             this.$emit('inserted')
@@ -479,7 +485,7 @@ export default defineComponent({
             this.$emit('touched')
         },
         closeTemplate() {
-            this.$router.push('/datasource')
+            this.$router.push('/datasource-management')
             this.$emit('closed')
         }
     }

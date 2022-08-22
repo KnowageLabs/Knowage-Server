@@ -1,6 +1,6 @@
-const treeService = require('./treeService')
-const filterTreeFactoryService = require('./filterTreeFactoryService')
-const deepEqual = require('deep-equal')
+import * as treeService  from './treeService'
+import * as filterTreeFactoryService  from './filterTreeFactoryService'
+import deepEqual  from 'deep-equal'
 
 export function getOperator(filterTree, operand) {
     if (!filterTree) throw new Error('filterTree cannot be undefined.');
