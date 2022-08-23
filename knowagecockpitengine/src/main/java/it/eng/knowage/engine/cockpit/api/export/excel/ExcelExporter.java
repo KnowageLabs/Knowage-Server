@@ -23,11 +23,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -335,6 +337,19 @@ public class ExcelExporter extends AbstractFormatExporter {
 				IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString, Long.parseLong(widgetId), wb,
 						currWidgetOptions);
 				exportedSheets += widgetExporter.export();
+
+				HashMap<String, HashMap<String, Object>> selectionsMap = new HashMap<String, HashMap<String, Object>>();
+				try {
+					selectionsMap = createSelectionsMap();
+				} catch (JSONException e) {
+					throw new SpagoBIRuntimeException("Unable to get selection map: ", e);
+				}
+				if (!selectionsMap.isEmpty()) {
+					Sheet selectionsSheet = createUniqueSafeSheetForSelections(wb, "Active Selections");
+					fillSelectionsSheetWithData(selectionsMap, wb, selectionsSheet, "Selections");
+					exportedSheets++;
+				}
+
 			} catch (Exception e) {
 				logger.error("Error while exporting widget [" + widgetId + "]", e);
 			}
@@ -446,6 +461,46 @@ public class ExcelExporter extends AbstractFormatExporter {
 	public void createAndFillExcelSheet(JSONObject dataStore, Workbook wb, String widgetName, String cockpitSheetName) {
 		Sheet newSheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
 		fillSheetWithData(dataStore, wb, newSheet, widgetName, 0);
+	}
+
+	public void fillSelectionsSheetWithData(HashMap<String, HashMap<String, Object>> selectionsMap, Workbook wb, Sheet sheet, String widgetName) {
+
+		Row newheader = sheet.createRow((short) 0);
+		Cell cell = newheader.createCell(0);
+		cell.setCellValue("Dataset");
+		Cell cell2 = newheader.createCell(1);
+		cell2.setCellValue("Field");
+		Cell cell3 = newheader.createCell(2);
+		cell3.setCellValue("Values");
+
+		int j = 1;
+		for (String key : selectionsMap.keySet()) {
+
+			for (int i = 0; i < selectionsMap.size(); i++) {
+
+				for (String selectionskey : selectionsMap.get(key).keySet()) {
+
+					Row row = sheet.createRow(j++);
+
+					Cell cellData0 = row.createCell(0);
+					cellData0.setCellValue(key);
+
+					Cell cellData1 = row.createCell(1);
+					cellData1.setCellValue(selectionskey);
+
+					Cell cellData2 = row.createCell(2);
+
+					cellData2.setCellValue(extractSelectionValues("" + selectionsMap.get(key).get(selectionskey)));
+
+				}
+
+			}
+		}
+
+	}
+
+	public String extractSelectionValues(String selectionValues) {
+		return selectionValues = selectionValues.replace("[\"(", "").replace(")\"]", "");
 	}
 
 	public void fillSheetWithData(JSONObject dataStore, Workbook wb, Sheet sheet, String widgetName, int offset) {
@@ -657,6 +712,37 @@ public class ExcelExporter extends AbstractFormatExporter {
 		}
 	}
 
+	private HashMap<String, HashMap<String, Object>> createSelectionsMap() throws JSONException {
+		JSONArray cockpitSelections = body.getJSONArray("COCKPIT_SELECTIONS");
+		HashMap<String, HashMap<String, Object>> selectionsMap = new HashMap<String, HashMap<String, Object>>();
+		for (int i = 0; i < cockpitSelections.length(); i++) {
+			JSONObject cockpitSelection = cockpitSelections.getJSONObject(i);
+
+			JSONObject selections = cockpitSelection.getJSONObject("selections");
+
+			Iterator<String> keys = selections.keys();
+
+			while (keys.hasNext()) {
+				String key = keys.next();
+				if (selections.get(key) instanceof JSONObject) {
+					JSONObject selection = (JSONObject) selections.get(key);
+					Iterator<String> selectionKeys = selection.keys();
+					List<Object> selectList = new ArrayList<Object>();
+					HashMap<String, Object> selects = new HashMap<String, Object>();
+
+					while (selectionKeys.hasNext()) {
+						String selKey = selectionKeys.next();
+						Object select = selection.get(selKey);
+						selects.put(selKey, select);
+					}
+					selectionsMap.put(key, selects);
+				}
+			}
+
+		}
+		return selectionsMap;
+	}
+
 	private String getCellType(JSONObject column, String colName, JSONObject colStyle) {
 		try {
 			String toReturn = column.getString("type");
@@ -766,6 +852,17 @@ public class ExcelExporter extends AbstractFormatExporter {
 			String uniqueSafeSheetName = safeSheetName + String.valueOf(uniqueId);
 			sheet = wb.createSheet(uniqueSafeSheetName);
 			uniqueId++;
+			return sheet;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Couldn't create sheet", e);
+		}
+	}
+
+	public Sheet createUniqueSafeSheetForSelections(Workbook wb, String widgetName) {
+		Sheet sheet;
+		String sheetName;
+		try {
+			sheet = wb.createSheet(widgetName);
 			return sheet;
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Couldn't create sheet", e);
