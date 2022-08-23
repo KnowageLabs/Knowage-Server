@@ -45,7 +45,7 @@
                             class="kn-truncated"
                             style="width:200px"
                             :field="col.field"
-                            :style="col.columnInfo.type === 'date' ? registryDatatableDescriptor.dateColumn.style : ''"
+                            :style="col.columnInfo?.type === 'date' ? registryDatatableDescriptor.dateColumn.style : ''"
                             :bodyStyle="{
                                 'background-color': col.color,
                                 width: col.size + 'px'
@@ -54,13 +54,13 @@
                             <template #header>
                                 <div class="table-header">
                                     {{ col.title }}
-                                    <i v-if="col.isEditable && col.columnInfo.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
+                                    <i v-if="col.isEditable && col.columnInfo?.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
                                 </div>
                             </template>
                             <template #editor="slotProps">
                                 <div :data-test="col.field + '-editor'">
-                                    <span v-if="!col.isEditable && col.columnInfo.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
-                                    <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
+                                    <span v-if="!col.isEditable && col.columnInfo?.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
+                                    <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo?.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                                     <RegistryDatatableEditableField
                                         v-else-if="col.isEditable"
                                         :column="col"
@@ -74,9 +74,9 @@
                             </template>
                             <template #body="slotProps">
                                 <div class="p-d-flex p-flex-row" :data-test="col.field + '-body'">
-                                    <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
+                                    <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo?.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                                     <RegistryDatatableEditableField
-                                        v-else-if="col.isEditable && col.columnInfo.type === 'date'"
+                                        v-else-if="col.isEditable && col.columnInfo?.type === 'date'"
                                         :column="col"
                                         :propRow="slotProps.data"
                                         :comboColumnOptions="comboColumnOptions"
@@ -85,10 +85,10 @@
                                         @dropdownOpened="addColumnOptions"
                                     ></RegistryDatatableEditableField>
                                     <div v-else-if="col.isEditable">
-                                        <span v-if="(col.columnInfo.type === 'int' || col.columnInfo.type === 'float') && slotProps.data[col.field]">{{ getFormatedNumber(slotProps.data[col.field]) }}</span>
+                                        <span v-if="(col.columnInfo?.type === 'int' || col.columnInfo?.type === 'float') && slotProps.data[col.field]">{{ getFormatedNumber(slotProps.data[col.field]) }}</span>
                                         <span v-else> {{ slotProps.data[col.field] }}</span>
                                     </div>
-                                    <span v-else-if="col.columnInfo.type === 'date'"> {{ getFormattedDate(slotProps.data[col.field], 'MM/DD/YYYY hh:mm:ss') }}</span>
+                                    <span v-else-if="col.columnInfo?.type === 'date'"> {{ getFormattedDate(slotProps.data[col.field], 'MM/DD/YYYY hh:mm:ss') }}</span>
                                     <span v-else> {{ slotProps.data[col.field] }}</span>
                                 </div>
                             </template>
