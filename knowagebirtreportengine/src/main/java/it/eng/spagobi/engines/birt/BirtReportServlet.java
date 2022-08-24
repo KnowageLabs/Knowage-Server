@@ -573,7 +573,7 @@ public class BirtReportServlet extends HttpServlet {
 		boolean containsJQuery = false;
 
 		// check if there is script for progressive pagination inside the report
-		if (result.contains("<script src=\"./js/lib/jquery")) {
+		if (result.contains("<script src=\"./js/infiniteScrolling.js")) {
 			containsJQuery = true;
 			logger.debug("JQuery to enable progressive viewing is contained");
 		}

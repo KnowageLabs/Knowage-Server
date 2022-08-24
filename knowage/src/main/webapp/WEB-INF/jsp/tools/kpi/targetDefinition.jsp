@@ -41,18 +41,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/kpi/targetDefinition.css", currTheme)%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/kpi/targetDefinitionController.js")%>"></script>
 
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.css")%>">
-<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/theme/eclipse.css")%>">  
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.js")%>"></script>  
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/ui-codemirror.js")%>"></script> 
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/lib/codemirror.css")%>">
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/theme/eclipse.css")%>">  
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/lib/codemirror.js")%>"></script>  
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/angular-ui-codemirror/src/ui-codemirror.js")%>"></script> 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/mathematicaModified.js")%>"></script>  
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/kpi/targetDefinitionSubController/listController.js")%>"></script>
 
-<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.css")%>" />
-<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.js")%>"></script>
-<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/hint/sql-hint.js")%>"></script>
-<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/clike/clike.js")%>"></script>
-<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js")%>"></script>
+<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/hint/show-hint.css")%>" />
+<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/hint/show-hint.js")%>"></script>
+<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/hint/sql-hint.js")%>"></script>
+<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/mode/clike/clike.js")%>"></script>
+<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/selection/mark-selection.js")%>"></script>
 <script type="text/ng-template" id="templatesaveTarget.html">
 <md-dialog aria-label="Select Function" ng-cloak>
 	<form>

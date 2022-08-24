@@ -36,15 +36,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <link rel="stylesheet" type="text/css"	href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>"> 
-  <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.css")%>">
-  <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/theme/eclipse.css")%>">  
-  <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.js")%>"></script>  
- <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/ui-codemirror.js")%>"></script> 
- <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/mode/sql/sql.js")%>"></script>  
+  <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/lib/codemirror.css")%>">
+  <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/theme/eclipse.css")%>">  
+  <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/lib/codemirror.js")%>"></script>  
+ <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/angular-ui-codemirror/src/ui-codemirror.js")%>"></script> 
+ <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/mode/sql/sql.js")%>"></script>  
 
-<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.css")%>" />
-<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.js")%>"></script>
-<script src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/codemirror/CodeMirror-master/addon/hint/sql-hint.js")%>"></script>
+<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/hint/show-hint.css")%>" />
+<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/hint/show-hint.js")%>"></script>
+<script src="<%=urlBuilder.getResourceLink(request, "node_modules/codemirror/addon/hint/sql-hint.js")%>"></script>
 
 <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLinkByTheme(request, "/css/angularjs/kpi/measureRuleCustomStyle.css", currTheme)%>">
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/kpi/measureRuleDefinition.js")%>"></script>
