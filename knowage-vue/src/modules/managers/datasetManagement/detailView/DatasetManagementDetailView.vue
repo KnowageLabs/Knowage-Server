@@ -106,10 +106,6 @@ export default defineComponent({
         datasetToCloneId: { type: Number as any }
     },
     computed: {
-        ...mapState({
-            user: 'user',
-            isEnterprise: 'isEnterprise'
-        }),
         buttonDisabled(): any {
             return this.v$.$invalid
         }
@@ -249,11 +245,8 @@ export default defineComponent({
                     this.touched = false
                     this.store.setInfo({ title: this.$t('common.toast.createTitle'), msg: this.$t('common.toast.success') })
                     this.selectedDataset.id ? this.$emit('updated') : this.$emit('created', response)
-
                     await this.saveTags(dsToSave, response.data.id)
-                    if (this.user.functionalities.includes('SchedulingDatasetManagement')) {
-                        await this.saveSchedulation(dsToSave, response.data.id)
-                    }
+                    await this.saveSchedulation(dsToSave, response.data.id)
                     await this.saveLinks(response.data.id)
                     await this.removeLinks(response.data.id)
                     await this.getSelectedDataset()
@@ -329,7 +322,7 @@ export default defineComponent({
                 columnsNames = this.removeDuplicates(columnsNames)
 
                 for (i = 0; i < columnsNames.length; i++) {
-                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '', personal: false, decript: false, subjectId: false }
+                    var columnObject = { displayedName: '', name: '', fieldType: '', type: '', personal: false, decrypt: false, subjectId: false }
                     var currentColumnName = columnsNames[i]
 
                     //remove the part before the double dot if the column is in the format ex: it.eng.spagobi.Customer:customerId
@@ -350,8 +343,8 @@ export default defineComponent({
                                 columnObject.fieldType = element.pvalue
                             } else if (element.pname.toUpperCase() == 'personal'.toUpperCase()) {
                                 columnObject.personal = element.pvalue
-                            } else if (element.pname.toUpperCase() == 'decript'.toUpperCase()) {
-                                columnObject.decript = element.pvalue
+                            } else if (element.pname.toUpperCase() == 'decrypt'.toUpperCase()) {
+                                columnObject.decrypt = element.pvalue
                             } else if (element.pname.toUpperCase() == 'subjectId'.toUpperCase()) {
                                 columnObject.subjectId = element.pvalue
                             }

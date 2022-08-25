@@ -1,4 +1,5 @@
 import { defineConfig, loadEnv } from 'vite'
+const { resolve } = require('path')
 import vue from '@vitejs/plugin-vue'
 import builtins from 'rollup-plugin-node-builtins'
 
@@ -10,6 +11,9 @@ export default defineConfig((command, mode) => {
     const env = loadEnv(mode, process.cwd())
     return {
         plugins: [vue(), builtinsPlugin],
+        define: {
+            _KNOWAGE_VERSION: JSON.stringify(process.env.npm_package_version)
+        },
         resolve: {
             extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
             alias: {
@@ -23,8 +27,17 @@ export default defineConfig((command, mode) => {
                 }
             }
         },
-        publicPath: env.VITE_PUBLIC_PATH,
-        outputDir: './src/main/webapp',
+        base: env.VITE_PUBLIC_PATH,
+        build: {
+            outDir: './src/main/webapp',
+            sourcemap: true,
+            rollupOptions: {
+                output: {
+                    chunkFileNames: 'assets/js/[name]-[hash].js',
+                    entryFileNames: 'assets/js/[name]-[hash].js'
+                }
+            }
+        },
         server: {
             https: env.VITE_HOST_HTTPS === 'true',
             proxy: {
@@ -83,6 +96,9 @@ export default defineConfig((command, mode) => {
                     changeOrigin: true
                 }
             }
+        },
+        preview: {
+            port: 3000
         }
     }
 })

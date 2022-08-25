@@ -31,7 +31,7 @@ function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $
 //					
 //				});
 				
-				
+				if(!$scope.flags) $scope.flags = {}
 				
 				sbiModule_restServices.promisePost("1.0/serverManager/importExport/document", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 				.then(function(response) {

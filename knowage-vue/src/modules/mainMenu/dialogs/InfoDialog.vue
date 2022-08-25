@@ -3,7 +3,7 @@
         <div class="p-grid p-m-1">
             <div class="p-col">
                 <div class="p-d-flex p-jc-center">
-                    <img :src="require('@/assets/images/commons/logo_knowage.svg')" height="100" />
+                    <img :src="`${publicPath}/images/commons/logo_knowage.svg`" height="100" />
                 </div>
                 <p>
                     <strong>{{ $t('common.version') }}:</strong> {{ currentVersion }}
@@ -43,7 +43,8 @@ export default defineComponent({
     data() {
         return {
             currentYear: moment().year(),
-            currentVersion: import.meta.env.VITE_VERSION
+            currentVersion: _KNOWAGE_VERSION,
+            publicPath: import.meta.env.VITE_PUBLIC_PATH
         }
     },
     methods: {

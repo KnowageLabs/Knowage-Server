@@ -27,9 +27,9 @@
                         <Checkbox id="personal" v-model="data.personal" :binary="true" @change="saveFieldsMetadata('personal')" />
                     </template>
                 </Column>
-                <Column field="decript" :header="$t('managers.datasetManagement.decript')" :sortable="true">
+                <Column field="decrypt" :header="$t('managers.datasetManagement.decrypt')" :sortable="true">
                     <template #body="{ data }">
-                        <Checkbox id="decript" v-model="data.decript" :binary="true" @change="saveFieldsMetadata('decript')" />
+                        <Checkbox id="decrypt" v-model="data.decrypt" :binary="true" @change="saveFieldsMetadata('decrypt')" />
                     </template>
                 </Column>
                 <Column field="subjectId" :header="$t('managers.datasetManagement.subjectId')" :sortable="true">

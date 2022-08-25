@@ -297,6 +297,24 @@ export default defineComponent({
                 this.loading = false
             }
         },
+        editCockpitDocumentConfirm() {
+            if (this.documentMode === 'EDIT') {
+                this.$confirm.require({
+                    message: this.$t('documentExecution.main.editModeConfirm'),
+                    header: this.$t('documentExecution.main.editCockpit'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.editCockpitDocument()
+                })
+            } else {
+                this.editCockpitDocument()
+            }
+        },
+        async editCockpitDocument() {
+            this.loading = true
+            this.documentMode = this.documentMode === 'EDIT' ? 'VIEW' : 'EDIT'
+            this.hiddenFormData.set('documentMode', this.documentMode)
+            await this.loadURL(null)
+        },
         openHelp() {
             this.helpDialogVisible = true
         },
@@ -763,8 +781,9 @@ export default defineComponent({
                         parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value)
                         parameters[parameter.urlName + '_field_visible_description'] = this.getFormattedDate(parameter.parameterValue[0].value, true)
                     } else if (parameter.valueSelection === 'man_in') {
-                        parameters[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
-                        parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
+                        if (!parameter.parameterValue[0]) parameter.parameterValue[0] = { value: '', description: '' }
+                        parameters[parameter.urlName] = parameter.type === 'NUM' && parameter.parameterValue[0].value ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
+                        parameters[parameter.urlName + '_field_visible_description'] = parameter.type === 'NUM' && parameter.parameterValue[0].description ? +parameter.parameterValue[0].description : parameter.parameterValue[0].description
                     } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
                         parameters[parameter.urlName] = parameter.parameterValue.map((el: any) => el.value)
                         let tempString = ''
@@ -919,7 +938,7 @@ export default defineComponent({
             const format = date instanceof Date ? undefined : 'dd/MM/yyyy'
             return luxonFormatDate(date, format, useDefaultFormat ? undefined : this.dateFormat)
         },
-        onBreadcrumbClick(item: any) {
+        async onBreadcrumbClick(item: any) {
             this.document = item.document
             this.filtersData = item.filtersData
             this.urlData = item.urlData
@@ -967,8 +986,9 @@ export default defineComponent({
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
             this.formatAngularOutputParameters(angularData.otherOutputParameters)
             const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument ? crossNavigationDocument.navigationParams : [])
+            this.addDocumentOtherParametersToNavigationParamas(navigationParams, angularData, crossNavigationDocument)
 
-            const popupOptions = crossNavigationDocument?.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
+            const popupOptions = crossNavigationDocument.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
 
             if (crossNavigationDocument?.crossType !== 2) {
                 this.document = {
@@ -1002,6 +1022,36 @@ export default defineComponent({
                 await this.loadPage()
             }
             this.documentMode = 'VIEW'
+        },
+        addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
+            if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
+            const keys = Object.keys(angularData.outputParameters)
+            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
+            for (let i = 0; i < keys.length; i++) {
+                const tempKey = keys[i]
+                let newKey = ''
+                for (let j = 0; j < documentNavigationParamsKeys.length; j++) {
+                    if (crossNavigationDocument.navigationParams[documentNavigationParamsKeys[j]].value?.label === tempKey) {
+                        newKey = documentNavigationParamsKeys[j]
+                    }
+                }
+                if (newKey) navigationParams[newKey] = angularData.outputParameters[tempKey]
+            }
+        },
+        addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
+            if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
+            const keys = Object.keys(angularData.outputParameters)
+            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
+            for (let i = 0; i < keys.length; i++) {
+                const tempKey = keys[i]
+                let newKey = ''
+                for (let j = 0; j < documentNavigationParamsKeys.length; j++) {
+                    if (crossNavigationDocument.navigationParams[documentNavigationParamsKeys[j]].value?.label === tempKey) {
+                        newKey = documentNavigationParamsKeys[j]
+                    }
+                }
+                if (newKey) navigationParams[newKey] = angularData.outputParameters[tempKey]
+            }
         },
         openCrossNavigationInNewWindow(popupOptions: any, crossNavigationDocument: any, navigationParams: any) {
             if (!crossNavigationDocument || !crossNavigationDocument.document) return
@@ -1050,23 +1100,7 @@ export default defineComponent({
                 }
             })
 
-            this.setNavigationParametersFromCurrentFilters(formatedParams, navigationParams)
-
             return formatedParams
-        },
-        setNavigationParametersFromCurrentFilters(formatedParams: any, navigationParams: any) {
-            const navigationParamsKeys = navigationParams ? Object.keys(navigationParams) : []
-            const formattedParameters = this.getFormattedParameters()
-            const formattedParametersKeys = formattedParameters ? Object.keys(this.getFormattedParameters()) : []
-            if (navigationParamsKeys.length > 0 && formattedParametersKeys.length > 0) {
-                for (let i = 0; i < navigationParamsKeys.length; i++) {
-                    const index = formattedParametersKeys.findIndex((key: string) => key === navigationParamsKeys[i])
-                    if (index !== -1) {
-                        formatedParams[navigationParamsKeys[i]] = formattedParameters[formattedParametersKeys[index]]
-                        formatedParams[navigationParamsKeys[i] + '_field_visible_description'] = formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] ? formattedParameters[formattedParametersKeys[index] + '_field_visible_description'] : ''
-                    }
-                }
-            }
         },
         showOLAPCustomView() {
             this.olapCustomViewVisible = true

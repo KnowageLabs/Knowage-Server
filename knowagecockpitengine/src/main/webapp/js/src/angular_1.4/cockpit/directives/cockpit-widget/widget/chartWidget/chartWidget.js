@@ -1256,12 +1256,12 @@ function cockpitChartWidgetControllerFunction(
 			}
 			
 			if(model.cross.crossName != undefined){
-				if(hasVueParent) hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":crossSettings,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
+				if(hasVueParent) hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":model.cross.crossName,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
 				else parent.execExternalCrossNavigation(outputParameter,{},model.cross.crossName,null,otherOutputParameters);
 				return;
 			}
 			else{
-				if(hasVueParent) hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":crossSettings,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
+				if(hasVueParent) hasVueParent.postMessage({"type":"crossNavigation","outputParameters":outputParameter,"inputParameters":{},"targetCrossNavigation":model.cross.crossName,"docLabel":null, "otherOutputParameters":otherOutputParameters}, '*')
 				else parent.execExternalCrossNavigation(outputParameter,{},null,null,otherOutputParameters);
 				return;
 			}

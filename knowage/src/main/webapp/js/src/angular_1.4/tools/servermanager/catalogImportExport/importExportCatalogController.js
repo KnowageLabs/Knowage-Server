@@ -153,7 +153,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 						"SCHEMA_LIST": schemaList,
 						"SVG_LIST": SVGtList,
 						"LAYER_LIST": layerList,
-						"EXPORT_FILE_NAME":$scope.nameExport,
+						"EXPORT_FILE_NAME":$scope.nameExport.trim(),
 						"EXPORT_SUB_OBJ":false,
 						"EXPORT_SNAPSHOT":false};
 
@@ -186,11 +186,11 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	
 	
 	$scope.downloadFile= function(){
-		var data={"FILE_NAME":$scope.nameExport};
+		var data={"FILE_NAME":$scope.nameExport.trim()};
 		var config={"responseType": "arraybuffer"};
 		sbiModule_restServices.promisePost("1.0/serverManager/importExport/wizard","downloadExportFile",data,config)
 		.then(function(response, status, headers, config) {
-				$scope.download.getBlob(response.data,$scope.nameExport,'application/zip','zip');
+				$scope.download.getBlob(response.data,$scope.nameExport.trim(),'application/zip','zip');
 				//$scope.showAction(sbiModule_translate.load("sbi.importusers.downloadOK"));
 				sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importusers.downloadOK"),"");
 				$scope.wait=false;

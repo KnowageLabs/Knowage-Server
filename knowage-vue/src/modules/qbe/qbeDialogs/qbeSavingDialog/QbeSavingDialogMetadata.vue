@@ -27,9 +27,9 @@
                         <Checkbox id="personal" v-model="data.personal" :binary="true" @change="warnForDuplicateSpatialFields('personal')" />
                     </template>
                 </Column>
-                <Column hidden="true" field="decript" :header="$t('managers.datasetManagement.decript')" :sortable="true">
+                <Column hidden="true" field="decrypt" :header="$t('managers.datasetManagement.decrypt')" :sortable="true">
                     <template #body="{ data }">
-                        <Checkbox id="decript" v-model="data.decript" :binary="true" @change="warnForDuplicateSpatialFields('decript')" />
+                        <Checkbox id="decrypt" v-model="data.decrypt" :binary="true" @change="warnForDuplicateSpatialFields('decrypt')" />
                     </template>
                 </Column>
                 <Column hidden="true" field="subjectId" :header="$t('managers.datasetManagement.subjectId')" :sortable="true">

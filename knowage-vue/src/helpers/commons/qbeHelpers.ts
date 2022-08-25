@@ -1,4 +1,4 @@
-import cryptoRandomString from 'crypto-random-string';
+import cryptoRandomString from 'crypto-random-string'
 
 export function createNewField(editQueryObj, field) {
     var newField = {
@@ -24,7 +24,7 @@ export function createNewField(editQueryObj, field) {
         leaf: field.leaf,
         originalId: field.id,
         isSpatial: field.isSpatial,
-        uniqueID:cryptoRandomString({length: 4, type: 'base64'})
+        uniqueID: cryptoRandomString({ length: 4, type: 'base64' })
     } as any
 
     // eslint-disable-next-line no-prototype-builtins
@@ -45,7 +45,7 @@ export function creatNewMetadataFromField(newField) {
         fieldAlias: newField.field,
         Type: newField.dataType,
         fieldType: newField.iconCls.toUpperCase(),
-        decript: false,
+        decrypt: false,
         personal: false,
         subjectid: false
     } as any

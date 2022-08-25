@@ -17,8 +17,8 @@
                     </template>
                 </div>
             </span>
-            <div aria-hidden="true" v-if="document[documentFields.image]" class="card-image" :style="[documentImageSource]" />
-            <div v-else aria-hidden="true" class="card-image" :style="[documentImageSource]" />
+            <div aria-hidden="true" v-if="document[documentFields.image]" class="card-image" :style="documentImageSource" />
+            <div v-else aria-hidden="true" class="card-image" :style="documentImageSource" />
         </div>
     </div>
     <Menu id="optionsMenu" ref="optionsMenu" :model="menuButtons" />
@@ -76,11 +76,11 @@ export default defineComponent({
         documentImageSource(): any {
             if (this.document[this.documentFields.image]) {
                 return {
-                    'background-image': `url(${import.meta.env.VITE_HOST_URL}${descriptor.imgPath}${this.document[this.documentFields.image]}),url(${'../../..//assets/images/workspace/documentTypes/' + cardDescriptor.defaultImages.missing})`
+                    'background-image': `url(${process.env.VUE_APP_HOST_URL}${descriptor.imgPath}${this.document[this.documentFields.image]}),url(${require('@/assets/images/workspace/documentTypes/' + cardDescriptor.defaultImages.missing)})`
                 }
             }
             return {
-                'background-image': `url(${'../../..//assets/images/workspace/documentTypes/' + (cardDescriptor.defaultImages[this.document.type] || cardDescriptor.defaultImages.missing)})`
+                'background-image': `url(${require('@/assets/images/workspace/documentTypes/' + (cardDescriptor.defaultImages[this.document.type] || cardDescriptor.defaultImages.missing))})`
             }
         },
         documentFields(): any {

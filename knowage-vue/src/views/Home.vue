@@ -4,7 +4,7 @@
         <div class="upperSection p-d-flex">
             <div class="p-d-flex p-flex-column kn-flex">
                 <div class="logo">
-                    <img src="../assets/images/home/logo-knowage8.svg" />
+                    <img src="/images/home/logo-knowage8.svg" />
                 </div>
                 <div class="text p-grid">
                     <h2 class="p-col-12 p-m-0">{{ $t('home.welcome') }}</h2>
@@ -19,19 +19,19 @@
         <div class="lowerSection">
             <div class="border-container">
                 <div class="image">
-                    <img src="../assets/images/home/kn_arrow_right.svg" />
+                    <img src="/images/home/kn_arrow_right.svg" />
                     <p>{{ $t('home.connectYourData') }}</p>
                 </div>
                 <div class="image">
-                    <img src="../assets/images/home/kn_bubble.svg" />
+                    <img src="/images/home/kn_bubble.svg" />
                     <p>{{ $t('home.queryYourData') }}</p>
                 </div>
                 <div class="image">
-                    <img src="../assets/images/home/kn_add.svg" />
+                    <img src="/images/home/kn_add.svg" />
                     <p>{{ $t('home.createYourAnalysis') }}</p>
                 </div>
                 <div class="image">
-                    <img src="../assets/images/home/kn_flag.svg" />
+                    <img src="/images/home/kn_flag.svg" />
                     <p>{{ $t('home.saveAndShare') }}</p>
                 </div>
             </div>
@@ -99,7 +99,7 @@ $knowageBlueColor: #042d5f;
 .homeContainer {
     height: 100vh;
     padding: 64px;
-    background: url('../assets/images/home/home-background.png') no-repeat;
+    background: url('/images/home/home-background.png') no-repeat;
     background-position: bottom right;
     background-size: 120%;
     display: flex;

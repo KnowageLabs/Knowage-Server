@@ -528,6 +528,7 @@ export default defineComponent({
 .error-dialog {
     width: 60vw;
 }
+
 .listbox {
     width: 320px;
 }

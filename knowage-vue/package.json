@@ -1,6 +1,6 @@
 {
     "name": "knowage-vue",
-    "version": "8.1.0-SNAPSHOT",
+    "version": "8.2.0-SNAPSHOT",
     "description": "Knowage is the professional open source suite for modern business analytics over traditional sources and big data systems.",
     "author": "knowage labs <knowage@eng.it>",
     "scripts": {
