@@ -80,7 +80,7 @@ export function setWidgetModelFunctions(widget: IWidget) {
 export function formatWidgetColumnsForDisplay(widget: IWidget) {
     if (!widget || !widget.columns) return
     widget.columns.forEach((column: IWidgetColumn) => {
-        if (!column.name.startsWith('(')) column.name = '(' + column.name + ')'
+        if (!column.name?.startsWith('(')) column.name = '(' + column.name + ')'
     })
 }
 

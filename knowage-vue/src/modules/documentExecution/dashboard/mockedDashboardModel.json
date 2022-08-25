@@ -1,0 +1,221 @@
+{
+    "sheets": [
+        {
+            "label": "New Sheet",
+            "widgets": [
+                {
+                    "id": 1661433913592,
+                    "sizeX": 10,
+                    "sizeY": 7,
+                    "type": "table",
+                    "updateble": true,
+                    "cliccable": true,
+                    "content": {
+                        "name": "widget_table_1661433913592",
+                        "columnSelectedOfDataset": [
+                            {
+                                "name": "date",
+                                "alias": "date",
+                                "type": "java.lang.String",
+                                "properties": {},
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "precision": 0,
+                                "scale": 0,
+                                "personal": false,
+                                "decript": false,
+                                "subjectId": false,
+                                "aliasToShow": "date"
+                            },
+                            {
+                                "name": "documents",
+                                "alias": "documents",
+                                "type": "java.lang.Long",
+                                "properties": {},
+                                "fieldType": "ATTRIBUTE",
+                                "multiValue": false,
+                                "precision": 0,
+                                "scale": 0,
+                                "personal": false,
+                                "decript": false,
+                                "subjectId": false,
+                                "aliasToShow": "documents"
+                            }
+                        ]
+                    },
+                    "search": {
+                        "columns": []
+                    },
+                    "row": 0,
+                    "col": 0,
+                    "settings": {
+                        "pagination": {
+                            "enabled": true,
+                            "itemsNumber": 10,
+                            "frontEnd": false
+                        },
+                        "alternateRows": {
+                            "enabled": true,
+                            "evenRowsColor": "rgb(228, 232, 236)",
+                            "oddRowsColor": "rgb(194, 18, 18)"
+                        },
+                        "page": 1,
+                        "exportpdf": {
+                            "enabled": true,
+                            "custom": {
+                                "height": 210,
+                                "width": 297
+                            }
+                        },
+                        "modalSelectionColumn": "date",
+                        "sortingColumn": "documents",
+                        "sortingOrder": "ASC",
+                        "multiselectable": true,
+                        "indexColumn": true,
+                        "norows": {
+                            "hide": false,
+                            "message": "Text"
+                        },
+                        "multiselectablecolor": "rgb(150, 39, 39)",
+                        "rowThresholds": {
+                            "enabled": true,
+                            "list": [
+                                {
+                                    "column": "documents",
+                                    "condition": ">=",
+                                    "compareValueType": "static",
+                                    "compareValue": "rwqqr"
+                                }
+                            ]
+                        },
+                        "summary": {
+                            "enabled": true,
+                            "list": [
+                                {
+                                    "label": "Row summary 1"
+                                },
+                                {
+                                    "label": "Row summary 2",
+                                    "aggregation": "COUNT"
+                                }
+                            ],
+                            "style": {
+                                "pinnedOnly": true,
+                                "font-family": "roboto",
+                                "font-style": "italic",
+                                "font-size": "4",
+                                "font-weight": "regular",
+                                "color": "hsl(0, 90%, 29%)",
+                                "background-color": "hsl(0, 100%, 10%)"
+                            }
+                        }
+                    },
+                    "style": {
+                        "titles": true,
+                        "title": {
+                            "font": {
+                                "color": "rgb(59, 103, 140)",
+                                "text-align": "center",
+                                "font-weight": "bold",
+                                "font-size": "16px",
+                                "font-style": "normal",
+                                "font-family": "arial"
+                            },
+                            "label": "Table Widget",
+                            "background-color": "rgb(90, 0, 0)",
+                            "height": 3
+                        },
+                        "border": {
+                            "border-width": "6px",
+                            "border-style": "dotted"
+                        },
+                        "th": {
+                            "enabled": true,
+                            "background-color": "rgb(137, 158, 175)",
+                            "color": "rgb(255, 255, 255)",
+                            "justify-content": "center",
+                            "font-size": "14px",
+                            "multiline": true,
+                            "height": 2,
+                            "font-family": "roboto",
+                            "font-weight": "regular",
+                            "font-style": "normal"
+                        },
+                        "tr": {
+                            "height": 2
+                        },
+                        "padding": {
+                            "enabled": true,
+                            "padding-left": "5px",
+                            "padding-bottom": "5px",
+                            "padding-right": "5px",
+                            "padding-top": "",
+                            "unlinked": true
+                        },
+                        "showExcelExport": true
+                    },
+                    "cross": {
+                        "cross": {
+                            "enable": true,
+                            "crossType": "allRow",
+                            "column": "date"
+                        }
+                    },
+                    "limitRows": {
+                        "enable": true,
+                        "rows": 10
+                    },
+                    "dataset": {
+                        "dsId": 116
+                    },
+                    "filters": []
+                }
+            ],
+            "index": "0"
+        }
+    ],
+    "configuration": {
+        "showMenuOnView": true,
+        "showSelectionButton": true,
+        "style": {
+            "titles": false,
+            "title": {
+                "font": {
+                    "color": "rgb(59, 103, 140)",
+                    "text-align": "center",
+                    "font-weight": "bold",
+                    "font-size": "16px"
+                }
+            },
+            "borders": true,
+            "border": {
+                "border-color": "rgb(212, 212, 212)",
+                "border-width": "1px",
+                "border-style": "solid"
+            },
+            "shadows": true,
+            "shadow": {
+                "box-shadow": "0px 2px 3px #ccc"
+            }
+        },
+        "datasets": [
+            {
+                "dsId": 116,
+                "name": "AUDIT_01",
+                "dsLabel": "AUDIT_01",
+                "useCache": false,
+                "frequency": 0,
+                "parameters": {}
+            }
+        ],
+        "documents": [],
+        "associations": [],
+        "aggregations": [],
+        "filters": {},
+        "variables": [],
+        "showScreenshot": true,
+        "showExcelExport": true,
+        "indexes": []
+    },
+    "knowageVersion": "8.1.0-S"
+}

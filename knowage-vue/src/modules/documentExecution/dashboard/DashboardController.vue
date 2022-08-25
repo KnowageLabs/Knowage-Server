@@ -23,6 +23,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 import { IWidget } from './Dashboard'
 import { emitter } from './DashboardHelpers'
+import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
 import DashboardRenderer from './DashboardRenderer.vue'
 import WidgetPickerDialog from './widget/WidgetPicker/WidgetPickerDialog.vue'
 import mock from './DashboardMock.json'
@@ -30,6 +31,7 @@ import dashboardStore from './Dashboard.store'
 import mainStore from '../../../App.store'
 import DatasetEditor from './dataset/DatasetEditor.vue'
 import WidgetEditor from './widget/WidgetEditor/WidgetEditor.vue'
+import mockedDashboardModel from './mockedDashboardModel.json'
 
 export default defineComponent({
     name: 'dashboard-manager',
@@ -67,7 +69,10 @@ export default defineComponent({
     methods: {
         loadModel() {
             // TODO
-            this.model = mock
+            // this.model = mock
+            console.log('FORMATTED MODEL: ', formatModel(mockedDashboardModel))
+            this.model = formatModel(mockedDashboardModel) as any
+
             this.store.setDashboard(mock)
         },
         async loadDatasets() {
