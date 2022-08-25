@@ -1,0 +1,198 @@
+{
+    "bordersStyleOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.solid",
+            "value": "solid"
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.dashed",
+            "value": "dashed"
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.dotted",
+            "value": "dotted"
+        }
+    ],
+    "cellAlignmentOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "common.left",
+            "value": "flex-start"
+        },
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.right",
+            "value": "flex-end"
+        }
+    ],
+    "columnAggregationOptions": [
+        {
+            "label": "NONE",
+            "value": "NONE"
+        },
+        {
+            "label": "SUM",
+            "value": "SUM"
+        },
+        {
+            "label": "AVG",
+            "value": "AVG"
+        },
+        {
+            "label": "MAX",
+            "value": "MAX"
+        },
+        {
+            "label": "MIN",
+            "value": "MIN"
+        },
+        {
+            "label": "COUNT",
+            "value": "COUNT"
+        },
+        {
+            "label": "COUNT_DISTINCT",
+            "value": "COUNT_DISTINCT"
+        }
+    ],
+    "columnConditionOptions": [
+        {
+            "label": ">",
+            "value": ">"
+        },
+        {
+            "label": "<",
+            "value": "<"
+        },
+        {
+            "label": "==",
+            "value": "=="
+        },
+        {
+            "label": ">=",
+            "value": ">="
+        },
+        {
+            "label": "<=",
+            "value": "<="
+        },
+        {
+            "label": "!=",
+            "value": "!="
+        },
+        {
+            "label": "IN",
+            "value": "IN"
+        }
+    ],
+    "fontFamilyOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.roboto",
+            "value": "roboto"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.arial",
+            "value": "arial"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.courierNew",
+            "value": "courier-new"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.tahoma",
+            "value": "tahoma"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.timesNewRoman",
+            "value": "times-new-roman"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.verdana",
+            "value": "verdana"
+        }
+    ],
+    "fontSizeOptions": [
+        {
+            "label": "dashboard.widgetEditor.manualInput",
+            "value": "input"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.xsmall",
+            "value": "8px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.small",
+            "value": "10px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.medium",
+            "value": "14px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.extended",
+            "value": "16px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.large",
+            "value": "18px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.xlarge",
+            "value": "24px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.xxlarge",
+            "value": "40px"
+        }
+    ],
+    "rowStyleCompareValueTypes": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "static",
+            "value": "static"
+        },
+        {
+            "label": "parameter",
+            "value": "parameter"
+        },
+        {
+            "label": "variable",
+            "value": "variable"
+        }
+    ],
+    "visualizationTypeOptions": [
+        {
+            "label": "dashboard.widgetEditor.visualizationOptions.chart",
+            "value": "Chart"
+        },
+        {
+            "label": "common.text",
+            "value": "Text"
+        },
+        {
+            "label": "dashboard.widgetEditor.visualizationOptions.textAndChart",
+            "value": "Text & Chart"
+        },
+        {
+            "label": "dashboard.widgetEditor.visualizationOptions.iconOnly",
+            "value": "Icon only"
+        }
+    ]
+}

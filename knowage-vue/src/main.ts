@@ -52,6 +52,8 @@ import QBEOperator from './modules/qbe/qbeDialogs/qbeAdvancedFilterDialog/QBEOpe
 
 if (import.meta.env.NODE_ENV === 'development') document.domain = 'localhost'
 
+import VueGridLayout from 'vue-grid-layout'
+
 const pinia = createPinia()
 
 const app = createApp(App).use(pinia)
@@ -67,6 +69,7 @@ app.use(VueAxios, interceptor)
     .use(ConfirmationService)
     .use(internationalizationPlugin, mainStore.$state.internationalization)
     .use(GlobalCmComponent)
+    .use(VueGridLayout)
 
     .directive('badge', BadgeDirective)
     .directive('tooltip', Tooltip)

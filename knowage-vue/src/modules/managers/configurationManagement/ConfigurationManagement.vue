@@ -85,7 +85,6 @@ import DataTable from 'primevue/datatable'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import ConfigurationManagementDialog from './ConfigurationManagementDialog.vue'
 import mainStore from '../../../App.store'
-
 export default defineComponent({
     name: 'configuration-management',
     components: {
@@ -102,7 +101,6 @@ export default defineComponent({
             columns: configurationManagementDescriptor.columns,
             formVisible: false,
             loading: false,
-
             filters: {
                 global: [filterDefault],
                 label: {
@@ -162,7 +160,6 @@ export default defineComponent({
                 this.loadConfigurations()
             })
         },
-
         showForm(event) {
             if (event) {
                 this.selectedConfiguration = event.data

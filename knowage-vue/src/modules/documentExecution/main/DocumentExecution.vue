@@ -1,20 +1,43 @@
 <template>
     <div class="kn-height-full detail-page-container">
-        <Toolbar v-if="!embed && !olapDesignerMode" class="kn-toolbar kn-toolbar--primary p-col-12">
+        <Toolbar v-if="!embed && !olapDesignerMode && !managementOpened" class="kn-toolbar kn-toolbar--primary p-col-12">
             <template #start>
                 <span>{{ document?.name }}</span>
             </template>
 
             <template #end>
                 <div class="p-d-flex p-jc-around">
-                    <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'" v-tooltip.left="$t('documentExecution.main.editCockpit')" @click="editCockpitDocumentConfirm"></Button>
-                    <Button icon="fa fa-eye" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'" v-tooltip.left="$t('documentExecution.main.viewCockpit')" @click="editCockpitDocumentConfirm"></Button>
-                    <Button icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></Button>
-                    <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
-                    <Button icon="fa fa-filter" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="isParameterSidebarVisible" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></Button>
-                    <Button icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
+                    <Button v-if="mode == 'dashboard'" icon="fas fa-database" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.datasets')" @click="openDashboardDatasetManagement"></Button>
+                    <Button v-if="mode == 'dashboard'" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.save')"></Button>
+                    <Button
+                        icon="pi pi-pencil"
+                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
+                        v-if="mode !== 'dashboard' && document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'"
+                        v-tooltip.left="$t('documentExecution.main.editCockpit')"
+                        @click="editCockpitDocumentConfirm"
+                    ></Button>
+                    <Button
+                        icon="fa fa-eye"
+                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
+                        v-if="mode !== 'dashboard' && document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'"
+                        v-tooltip.left="$t('documentExecution.main.viewCockpit')"
+                        @click="editCockpitDocumentConfirm"
+                    ></Button>
+                    <Button v-if="mode !== 'dashboard'" icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></Button>
+                    <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
+                    <Button
+                        v-if="isParameterSidebarVisible"
+                        icon="fa fa-filter"
+                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
+                        :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }"
+                        v-tooltip.left="$t('common.parameters')"
+                        @click="parameterSidebarVisible = !parameterSidebarVisible"
+                        data-test="parameter-sidebar-icon"
+                    ></Button>
+                    <Button icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
                     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
-                    <Button icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.close')" @click="closeDocument"></Button>
+                    <Button v-if="mode == 'dashboard'" id="add-widget-button" class="p-button-sm" :label="$t('dashboard.widgetEditor.addWidget')" icon="pi pi-plus-circle" @click="addWidget" />
+                    <Button icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.close')" @click="closeDocument"></Button>
                 </div>
             </template>
         </Toolbar>
@@ -39,6 +62,7 @@
                     @applyCustomView="executeOlapCustomView"
                     @executeCrossNavigation="executeOLAPCrossNavigation"
                 ></Olap>
+                <DashboardController v-else-if="mode === 'dashboard'" :sbiExecutionId="urlData?.sbiExecutionId" :document="document" :reloadTrigger="reloadTrigger" :hiddenFormData="hiddenFormData" :filtersData="filtersData"></DashboardController>
             </template>
 
             <iframe
@@ -68,6 +92,7 @@
             ></KnParameterSidebar>
 
             <DocumentExecutionHelpDialog :visible="helpDialogVisible" :propDocument="document" @close="helpDialogVisible = false"></DocumentExecutionHelpDialog>
+
             <DocumentExecutionRankDialog :visible="rankDialogVisible" :propDocumentRank="documentRank" @close="rankDialogVisible = false" @saveRank="onSaveRank"></DocumentExecutionRankDialog>
             <DocumentExecutionNotesDialog :visible="notesDialogVisible" :propDocument="document" @close="notesDialogVisible = false"></DocumentExecutionNotesDialog>
             <DocumentExecutionMetadataDialog :visible="metadataDialogVisible" :propDocument="document" :propMetadata="metadata" :propLoading="loading" @close="metadataDialogVisible = false" @saveMetadata="onMetadataSave"></DocumentExecutionMetadataDialog>
@@ -84,6 +109,8 @@ import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 import { iURLData, iExporter, iSchedulation } from './DocumentExecution'
+import { createToolbarMenuItems } from './DocumentExecutionHelpers'
+import { emitter } from '../dashboard/DashboardHelpers'
 import DocumentExecutionBreadcrumb from './breadcrumbs/DocumentExecutionBreadcrumb.vue'
 import DocumentExecutionHelpDialog from './dialogs/documentExecutionHelpDialog/DocumentExecutionHelpDialog.vue'
 import DocumentExecutionRankDialog from './dialogs/documentExecutionRankDialog/DocumentExecutionRankDialog.vue'
@@ -102,8 +129,8 @@ import moment from 'moment'
 import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
 import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
 import mainStore from '../../../App.store'
-
 import deepcopy from 'deepcopy'
+import DashboardController from '../dashboard/DashboardController.vue'
 
 export default defineComponent({
     name: 'document-execution',
@@ -122,17 +149,29 @@ export default defineComponent({
         Dossier,
         Olap,
         DocumentExecutionSelectCrossNavigationDialog,
-        DocumentExecutionCNContainerDialog
+        DocumentExecutionCNContainerDialog,
+        DashboardController
     },
-    props: { id: { type: String }, parameterValuesMap: { type: Object }, tabKey: { type: String }, propMode: { type: String }, selectedMenuItem: { type: Object }, menuItemClickedTrigger: { type: Boolean } },
+    props: {
+        id: { type: String },
+        parameterValuesMap: { type: Object },
+        tabKey: { type: String },
+        propMode: { type: String },
+        selectedMenuItem: { type: Object },
+        menuItemClickedTrigger: { type: Boolean }
+    },
     emits: ['close', 'updateDocumentName', 'parametersChanged'],
     data() {
         return {
+            managementOpened: false,
             document: null as any,
             hiddenFormData: {} as any,
             hiddenFormUrl: '' as string,
             documentMode: 'VIEW',
-            filtersData: {} as { filterStatus: iParameter[]; isReadyForExecution: boolean },
+            filtersData: {} as {
+                filterStatus: iParameter[]
+                isReadyForExecution: boolean
+            },
             urlData: null as iURLData | null,
             exporters: null as iExporter[] | null,
             mode: null as string | null,
@@ -148,7 +187,10 @@ export default defineComponent({
             schedulationsTableVisible: false,
             schedulations: [] as any[],
             linkDialogVisible: false,
-            linkInfo: null as { isPublic: boolean; noPublicRoleError: boolean } | null,
+            linkInfo: null as {
+                isPublic: boolean
+                noPublicRoleError: boolean
+            } | null,
             sbiExecutionId: null as string | null,
             embedHTML: false,
             user: null as any,
@@ -225,7 +267,7 @@ export default defineComponent({
             let parameterVisible = false
             for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {
                 const tempFilter = this.filtersData.filterStatus[i]
-                if (tempFilter.showOnPanel === 'true') {
+                if (tempFilter.showOnPanel === 'true' && tempFilter.visible) {
                     parameterVisible = true
                     break
                 }
@@ -235,6 +277,8 @@ export default defineComponent({
         }
     },
     async created() {
+        this.setEventListeners()
+
         window.addEventListener('message', this.iframeEventsListener)
 
         if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
@@ -299,77 +343,26 @@ export default defineComponent({
             menu.toggle(event)
         },
         createMenuItems() {
-            this.toolbarMenuItems = []
-            this.toolbarMenuItems.push({
-                label: this.$t('common.file'),
-                items: [{ icon: 'pi pi-print', label: this.$t('common.print'), command: () => this.print() }]
-            })
-
-            if (this.exporters && this.exporters.length !== 0) {
-                this.toolbarMenuItems.push({
-                    label: this.$t('common.export'),
-                    items: []
-                })
-            }
-
-            if (this.user.enterprise) {
-                this.toolbarMenuItems.push({
-                    label: this.$t('common.info.info'),
-                    items: [{ icon: 'pi pi-star', label: this.$t('common.rank'), command: () => this.openRank() }]
-                })
-            }
-
-            this.toolbarMenuItems.push({
-                label: this.$t('common.shortcuts'),
-                items: []
-            })
-
-            this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[1].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
-
-            if (this.user.functionalities.includes('SendMailFunctionality') && this.document.typeCode === 'REPORT') {
-                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
-                if (index !== -1) {
-                    this.toolbarMenuItems[index].items.push({ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() })
-                } else {
-                    this.toolbarMenuItems.push({
-                        label: this.$t('common.export'),
-                        items: [{ icon: 'pi pi-envelope', label: this.$t('common.sendByEmail'), command: () => this.openMailDialog() }]
-                    })
-                }
-            }
-
-            if (this.user.functionalities.includes('SeeMetadataFunctionality')) {
-                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
-                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: 'pi pi-info-circle', label: this.$t('common.metadata'), command: () => this.openMetadata() })
-            }
-
-            if (this.user.functionalities.includes('SeeNotesFunctionality')) {
-                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.info.info'))
-                if (index !== -1) this.toolbarMenuItems[index].items.push({ icon: 'pi pi-file', label: this.$t('common.notes'), command: () => this.openNotes() })
-            }
-
-            if (this.user.functionalities.includes('SeeSnapshotsFunctionality') && this.user.enterprise) {
-                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
-                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: '', label: this.$t('documentExecution.main.showScheduledExecutions'), command: () => this.showScheduledExecutions() })
-            }
-
-            if (this.isOrganizerEnabled()) {
-                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
-                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: 'fa fa-suitcase ', label: this.$t('documentExecution.main.addToWorkspace'), command: () => this.addToWorkspace() })
-            }
-
-            if (this.mode === 'olap') {
-                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
-                if (index !== -1) this.toolbarMenuItems[index].items.unshift({ icon: '', label: this.$t('documentExecution.main.showOLAPCustomView'), command: () => this.showOLAPCustomView() })
-            }
-
-            if (this.user.functionalities.includes('EnableToCopyAndEmbed')) {
-                const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
-                if (index !== -1) {
-                    this.toolbarMenuItems[index].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.copyLink'), command: () => this.copyLink(false) })
-                    this.toolbarMenuItems[index].items.push({ icon: 'fa fa-share', label: this.$t('documentExecution.main.embedInHtml'), command: () => this.copyLink(true) })
-                }
-            }
+            this.toolbarMenuItems = createToolbarMenuItems(
+                this.document,
+                {
+                    print: this.print,
+                    openRank: this.openRank,
+                    export: this.export,
+                    openMailDialog: this.openMailDialog,
+                    openMetadata: this.openMetadata,
+                    openNotes: this.openNotes,
+                    showScheduledExecutions: this.showScheduledExecutions,
+                    addToWorkspace: this.addToWorkspace,
+                    showOLAPCustomView: this.showOLAPCustomView,
+                    copyLink: this.copyLink
+                },
+                this.exporters,
+                this.user,
+                this.isOrganizerEnabled(),
+                this.mode,
+                this.$t
+            )
         },
         print() {
             window.print()
@@ -446,6 +439,8 @@ export default defineComponent({
                 this.mode = 'dossier'
             } else if (this.$route.path.includes('olap')) {
                 this.mode = 'olap'
+            } else if (this.$route.path.includes('dashboard')) {
+                this.mode = 'dashboard'
             } else {
                 this.mode = 'iframe'
             }
@@ -472,6 +467,8 @@ export default defineComponent({
                 this.mode = 'dossier'
             } else if (this.document.typeCode === 'OLAP') {
                 this.mode = 'olap'
+            } else if (this.document.typeCode === 'DOCUMENT_COMPOSITE' && this.$route.path.includes('dashboard')) {
+                this.mode = 'dashboard'
             } else {
                 this.mode = 'iframe'
             }
@@ -484,7 +481,10 @@ export default defineComponent({
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
-                this.breadcrumbs.push({ label: this.document.label, document: this.document })
+                this.breadcrumbs.push({
+                    label: this.document.label,
+                    document: this.document
+                })
             }
         },
         async loadFilters(initialLoading: boolean = false) {
@@ -497,7 +497,10 @@ export default defineComponent({
             if (this.sessionEnabled && !this.document.navigationParams) {
                 const tempFilters = sessionStorage.getItem(this.document.label)
                 if (tempFilters) {
-                    this.filtersData = JSON.parse(tempFilters) as { filterStatus: iParameter[]; isReadyForExecution: boolean }
+                    this.filtersData = JSON.parse(tempFilters) as {
+                        filterStatus: iParameter[]
+                        isReadyForExecution: boolean
+                    }
                     this.filtersData.filterStatus?.forEach((filter: any) => {
                         if (filter.type === 'DATE' && filter.parameterValue[0].value) {
                             filter.parameterValue[0].value = new Date(filter.parameterValue[0].value)
@@ -531,10 +534,13 @@ export default defineComponent({
                     }
 
                     el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {
-                        return { value: defaultValue.value ?? defaultValue[valueIndex], description: defaultValue.desc ?? defaultValue[descriptionIndex] }
+                        return {
+                            value: defaultValue.value ?? defaultValue[valueIndex],
+                            description: defaultValue.desc ?? defaultValue[descriptionIndex]
+                        }
                     })
 
-                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true') {
+                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
                         el.parameterValue[0].value = moment(el.parameterValue[0].description?.split('#')[0]).toDate() as any
                     }
                 }
@@ -549,6 +555,7 @@ export default defineComponent({
                 }
                 if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
                     el.showOnPanel = 'false'
+                    el.visible = false
                 }
 
                 if (!el.parameterValue) {
@@ -597,10 +604,19 @@ export default defineComponent({
             const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
             const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
 
-            return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
+            return {
+                value: valueIndex ? data[valueIndex] : '',
+                description: descriptionIndex ? data[descriptionIndex] : ''
+            }
         },
         async loadURL(olapParameters: any, documentLabel: string | null = null) {
-            const postData = { label: this.document.label, role: this.userRole, parameters: olapParameters ? olapParameters : this.getFormattedParameters(), EDIT_MODE: 'null', IS_FOR_EXPORT: true } as any
+            const postData = {
+                label: this.document.label,
+                role: this.userRole,
+                parameters: olapParameters ? olapParameters : this.getFormattedParameters(),
+                EDIT_MODE: 'null',
+                IS_FOR_EXPORT: true
+            } as any
 
             if (this.sbiExecutionId) {
                 postData.SBI_EXECUTION_ID = this.sbiExecutionId
@@ -636,7 +652,10 @@ export default defineComponent({
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label) as any
 
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
-            const postObject = { params: { document: null } as any, url: documentUrl.split('?')[0] }
+            const postObject = {
+                params: { document: null } as any,
+                url: documentUrl.split('?')[0]
+            }
             postObject.params.documentMode = this.documentMode
             this.hiddenFormUrl = postObject.url
             const paramsFromUrl = documentUrl?.split('?')[1]?.split('&')
@@ -691,7 +710,7 @@ export default defineComponent({
 
             this.hiddenFormData.append('documentMode', this.documentMode)
 
-            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP') {
+            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP' || (this.document.typeCode === 'DOCUMENT_COMPOSITE' && this.mode === 'dashboard')) {
                 await this.sendHiddenFormData()
             } else {
                 postForm.submit()
@@ -727,7 +746,13 @@ export default defineComponent({
                         items: []
                     })
                 } else {
-                    this.exporters?.forEach((exporter: any) => this.toolbarMenuItems[index].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => this.export(exporter.name) }))
+                    this.exporters?.forEach((exporter: any) =>
+                        this.toolbarMenuItems[index].items.push({
+                            icon: 'fa fa-file-excel',
+                            label: exporter.name,
+                            command: () => this.export(exporter.name)
+                        })
+                    )
                 }
             }
 
@@ -737,7 +762,12 @@ export default defineComponent({
             this.loading = false
         },
         async onExportCSV() {
-            const postData = { documentId: this.document.id, documentLabel: this.document.label, exportType: 'CSV', parameters: this.getFormattedParametersForCSVExport() }
+            const postData = {
+                documentId: this.document.id,
+                documentLabel: this.document.label,
+                exportType: 'CSV',
+                parameters: this.getFormattedParametersForCSVExport()
+            }
             this.loading = true
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/export/cockpitData`, postData)
@@ -876,7 +906,13 @@ export default defineComponent({
         },
         async onMailSave(mail: any) {
             this.loading = true
-            const postData = { ...mail, label: this.document.label, docId: this.document.id, userId: this.user.userId, parameters: this.getFormattedParameters() }
+            const postData = {
+                ...mail,
+                label: this.document.label,
+                docId: this.document.id,
+                userId: this.user.userId,
+                parameters: this.getFormattedParameters()
+            }
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecutionmail/sendMail`, postData)
                 .then(() => {
@@ -921,11 +957,15 @@ export default defineComponent({
             this.filtersData = item.filtersData
             this.urlData = item.urlData
             this.hiddenFormData = item.hiddenFormData
+            this.documentMode = 'VIEW'
             this.updateMode()
         },
         async onRoleChange(role: string) {
             this.userRole = role as any
-            this.filtersData = {} as { filterStatus: iParameter[]; isReadyForExecution: boolean }
+            this.filtersData = {} as {
+                filterStatus: iParameter[]
+                isReadyForExecution: boolean
+            }
             this.urlData = null
             this.exporters = null
             await this.loadPage()
@@ -943,12 +983,19 @@ export default defineComponent({
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
             this.loading = false
 
-            if (temp.length > 1) {
+            const crossTarget = this.findCrossTargetByCrossName(angularData, temp)
+
+            if (!crossTarget && temp.length > 1) {
                 this.crossNavigationDocuments = temp
                 this.destinationSelectDialogVisible = true
             } else {
-                this.loadCrossNavigation(temp[0], angularData)
+                this.loadCrossNavigation(crossTarget ?? temp[0], angularData)
             }
+        },
+        findCrossTargetByCrossName(angularData: any, temp: any[]) {
+            if (!angularData || !temp) return
+            const index = temp.findIndex((el: any) => el.crossName === angularData.targetCrossNavigation.crossName)
+            return index !== -1 ? temp[index] : null
         },
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
             this.formatAngularOutputParameters(angularData.otherOutputParameters)
@@ -957,15 +1004,21 @@ export default defineComponent({
 
             const popupOptions = crossNavigationDocument.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
 
-            if (crossNavigationDocument.crossType !== 2) {
-                this.document = { ...crossNavigationDocument?.document, navigationParams: navigationParams }
+            if (crossNavigationDocument?.crossType !== 2) {
+                this.document = {
+                    ...crossNavigationDocument?.document,
+                    navigationParams: navigationParams
+                }
             }
 
-            if (crossNavigationDocument.crossType === 2) {
+            if (crossNavigationDocument?.crossType === 2) {
                 this.openCrossNavigationInNewWindow(popupOptions, crossNavigationDocument, navigationParams)
-            } else if (crossNavigationDocument.crossType === 1) {
+            } else if (crossNavigationDocument?.crossType === 1) {
                 const documentLabel = crossNavigationDocument?.document.label
-                this.crossNavigationContainerData = { documentLabel: documentLabel, iFrameName: documentLabel }
+                this.crossNavigationContainerData = {
+                    documentLabel: documentLabel,
+                    iFrameName: documentLabel
+                }
                 this.crossNavigationContainerVisible = true
                 await this.loadPage(false, documentLabel)
             } else {
@@ -973,11 +1026,16 @@ export default defineComponent({
                 if (index !== -1) {
                     this.breadcrumbs[index].document = this.document
                 } else {
-                    this.breadcrumbs.push({ label: this.document.label, document: this.document, crossBreadcrumb: crossNavigationDocument.crossBreadcrumb ?? this.document.name })
+                    this.breadcrumbs.push({
+                        label: this.document.label,
+                        document: this.document,
+                        crossBreadcrumb: crossNavigationDocument.crossBreadcrumb ?? this.document.name
+                    })
                 }
 
                 await this.loadPage()
             }
+            this.documentMode = 'VIEW'
         },
         addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
             if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
@@ -1031,6 +1089,7 @@ export default defineComponent({
             }
         },
         getParameterValueForCrossNavigation(parameterLabel: string) {
+            if (!parameterLabel) return
             const index = this.filtersData.filterStatus?.findIndex((param: any) => param.label === parameterLabel)
             return index !== -1 ? this.filtersData.filterStatus[index].parameterValue[0].value : ''
         },
@@ -1081,13 +1140,19 @@ export default defineComponent({
                 return
             }
 
-            this.document = { ...temp[0].document, navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams) }
+            this.document = {
+                ...temp[0].document,
+                navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams)
+            }
 
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
-                this.breadcrumbs.push({ label: this.document.label, document: this.document })
+                this.breadcrumbs.push({
+                    label: this.document.label,
+                    document: this.document
+                })
             }
 
             await this.loadPage()
@@ -1161,6 +1226,24 @@ export default defineComponent({
             this.crossNavigationContainerData = null
             this.crossNavigationContainerVisible = true
             this.onBreadcrumbClick(this.breadcrumbs[0])
+        },
+        addWidget() {
+            emitter.emit('openNewWidgetPicker')
+        },
+        openDashboardDatasetManagement() {
+            this.managementOpened = true
+            emitter.emit('openDatasetManagement')
+        },
+        setEventListeners() {
+            emitter.on('datasetManagementClosed', () => {
+                this.managementOpened = false
+            })
+            emitter.on('widgetEditorOpened', () => {
+                this.managementOpened = true
+            })
+            emitter.on('widgetEditorClosed', () => {
+                this.managementOpened = false
+            })
         }
     }
 })
@@ -1244,5 +1327,16 @@ export default defineComponent({
 
 .p-submenu-list {
     right: 100% !important;
+}
+
+.dashboard-toolbar-icon {
+    border: 1px solid white !important;
+    padding: 1.5px !important;
+    border-radius: 5px !important;
+}
+
+#add-widget-button {
+    background-color: #ff0000;
+    min-width: 120px;
 }
 </style>
