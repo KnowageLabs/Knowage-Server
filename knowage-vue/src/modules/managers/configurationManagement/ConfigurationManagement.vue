@@ -1,24 +1,55 @@
 <template>
-    <grid-layout :layout.sync="layout"
-                 :col-num="12"
-                 :row-height="30"
-                 :is-draggable="draggable"
-                 :is-resizable="resizable"
-                 :vertical-compact="true"
-                 :use-css-transforms="true"
-    >
-        <grid-item v-for="item in layout"
-                   :static="item.static"
-                   :x="item.x"
-                   :y="item.y"
-                   :w="item.w"
-                   :h="item.h"
-                   :i="item.i"
-        >
-            <span class="text">{{itemTitle(item)}}</span>
-        </grid-item>
-    </grid-layout>
-</template>
+    <div class="kn-page">
+        <Toolbar class="kn-toolbar kn-toolbar--primary">
+            <template #start>
+                {{ $t('managers.configurationManagement.title') }}
+            </template>
+            <template #end>
+                <KnFabButton icon="fas fa-plus" @click="showForm()" data-test="open-form-button"></KnFabButton>
+            </template>
+        </Toolbar>
+        <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
+        <div class="kn-page-content p-grid p-m-0">
+            <div class="p-col" v-if="!loading">
+                <DataTable
+                    :value="configurations"
+                    :paginator="true"
+                    :loading="loading"
+                    :rows="20"
+                    class="p-datatable-sm kn-table"
+                    dataKey="id"
+                    v-model:filters="filters"
+                    filterDisplay="menu"
+                    :globalFilterFields="configurationManagementDescriptor.globalFilterFields"
+                    :rowsPerPageOptions="[10, 15, 20]"
+                    responsiveLayout="stack"
+                    breakpoint="960px"
+                    :currentPageReportTemplate="
+                        $t('common.table.footer.paginated', {
+                            first: '{first}',
+                            last: '{last}',
+                            totalRecords: '{totalRecords}'
+                        })
+                    "
+                    data-test="configurations-table"
+                    v-model:selection="selectedConfiguration"
+                    selectionMode="single"
+                    @rowSelect="showForm"
+                >
+                    <template #header>
+                        <div class="table-header">
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-search" />
+                                <InputText class="kn-material-input" type="text" v-model="filters['global'].value" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                            </span>
+                        </div>
+                    </template>
+                    <template #empty>
+                        {{ $t('common.info.noDataFound') }}
+                    </template>
+                    <template #loading v-if="loading">
+                        {{ $t('common.info.dataLoading') }}
+                    </template>
 
                     <Column v-for="col of columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true" :style="[col.style, [col.field == 'valueCheck' ? 'max-width: 200px' : '']]" class="kn-truncated">
                         <template #filter="{ filterModel }">
@@ -54,12 +85,13 @@ import DataTable from 'primevue/datatable'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import ConfigurationManagementDialog from './ConfigurationManagementDialog.vue'
 import mainStore from '../../../App.store'
-
 export default defineComponent({
     name: 'configuration-management',
     components: {
-        GridLayout,
-        GridItem
+        Column,
+        DataTable,
+        KnFabButton,
+        ConfigurationManagementDialog
     },
     data() {
         return {
@@ -69,7 +101,6 @@ export default defineComponent({
             columns: configurationManagementDescriptor.columns,
             formVisible: false,
             loading: false,
-
             filters: {
                 global: [filterDefault],
                 label: {
@@ -129,7 +160,6 @@ export default defineComponent({
                 this.loadConfigurations()
             })
         },
-
         showForm(event) {
             if (event) {
                 this.selectedConfiguration = event.data
@@ -148,54 +178,4 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-.vue-grid-layout {
-    background: #eee;
-}
-.vue-grid-item:not(.vue-grid-placeholder) {
-    background: #ccc;
-    border: 1px solid black;
-}
-.vue-grid-item .resizing {
-    opacity: 0.9;
-}
-.vue-grid-item .static {
-    background: #cce;
-}
-.vue-grid-item .text {
-    font-size: 24px;
-    text-align: center;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    height: 100%;
-    width: 100%;
-}
-.vue-grid-item .no-drag {
-    height: 100%;
-    width: 100%;
-}
-.vue-grid-item .minMax {
-    font-size: 12px;
-}
-.vue-grid-item .add {
-    cursor: pointer;
-}
-.vue-draggable-handle {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    top: 0;
-    left: 0;
-    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><circle cx='5' cy='5' r='5' fill='#999999'/></svg>") no-repeat;
-    background-position: bottom right;
-    padding: 0 8px 8px 0;
-    background-repeat: no-repeat;
-    background-origin: content-box;
-    box-sizing: border-box;
-    cursor: pointer;
-}
-</style>
+<style lang="scss" scoped></style>
