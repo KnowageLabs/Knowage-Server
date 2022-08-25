@@ -426,6 +426,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						var parameterKey = cockpitModule_analyticalDrivers[range.value+'_description'] ? range.value+'_description' : range.value;
 						valueToCompare = cockpitModule_analyticalDrivers[parameterKey];
 					}
+					if (range.operator === "IN" && params.value!="" && Array.isArray(valueToCompare) && valueToCompare.includes(params.value)) {
+						tempStyle['background-color'] = range['background-color'] || (tempStyle['background-color'] || '');
+						tempStyle['color'] = range['color'] || (tempStyle['color'] || '');
+						break;
+                    }
 					if (params.value!="" && eval(params.value + range.operator + valueToCompare)) {
 						tempStyle['background-color'] = range['background-color'] || (tempStyle['background-color'] || '');
 						tempStyle['color'] = range['color'] || (tempStyle['color'] || '');
@@ -529,6 +534,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							valueToCompare = cockpitModule_analyticalDrivers[parameterKey];
 						}
 						if(typeof valueToCompare != "undefined" && typeof valueToCompare === 'string') valueToCompare = "'"+valueToCompare+"'";
+						if(range.operator === "IN"){
+							if(range.valueArray.includes(params.value)){
+								if(range['background-color']) params.eParentOfValue.style.backgroundColor = range['background-color'];
+								if(range['color']) params.eParentOfValue.style.color = range['color'];
+								if(params.colDef.visType && params.colDef.visType.toLowerCase() == 'icon only') tempValue = '<i class="'+range.icon+'"></i>';
+							}
+							break;
+						}
 						if (typeof params.value != "undefined" && eval((typeof params.value == 'string' ? "'"+params.value+"'": params.value) + range.operator + valueToCompare)) {
 							if(range['background-color']) {
 								if(params.colDef.visType && (params.colDef.visType.toLowerCase() == 'chart' || params.colDef.visType.toLowerCase() == 'text & chart')) {
