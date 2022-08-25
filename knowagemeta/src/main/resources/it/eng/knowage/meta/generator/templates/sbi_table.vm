@@ -8,7 +8,10 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
-
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
+import org.jasypt.hibernate3.type.EncryptedStringType;
 
 ${jpaTable.importStatements}
 
@@ -48,6 +51,15 @@ ${jpaTable.importStatements}
 		dynamicUpdate = true
 	)
 #end
+@TypeDefs({
+	@TypeDef(
+		name="${jpaTable.encryptedColTypeName}",
+		typeClass= EncryptedStringType.class,
+		parameters= {
+			@Parameter(name = "encryptorRegisteredName", value = "${jpaTable.encryptorName}")
+		}
+	)
+})
 public class ${jpaTable.className} implements Serializable {
 
 private static final long serialVersionUID = 1L;

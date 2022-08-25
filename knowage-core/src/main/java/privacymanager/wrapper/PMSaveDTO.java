@@ -17,9 +17,7 @@
  */
 package privacymanager.wrapper;
 
-import java.io.Serializable;
-
-public class PMSaveDTO implements Serializable {
+public class PMSaveDTO {
 
 	String technicalDescription;
 	String vendor;

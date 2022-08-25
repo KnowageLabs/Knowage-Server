@@ -17,13 +17,13 @@
  */
 package privacymanager.wrapper;
 
-import java.io.Serializable;
+import java.util.Locale;
 
-public class PMTokenDTO implements Serializable {
+public class PMTokenDTO {
 
 	private String username;
 	private String password;
-	private String lang;
+	private Locale lang;
 
 	public String getUsername() {
 		return username;
@@ -41,15 +41,15 @@ public class PMTokenDTO implements Serializable {
 		this.password = password;
 	}
 
-	public String getLang() {
+	public Locale getLang() {
 		return lang;
 	}
 
-	public void setLang(String lang) {
+	public void setLang(Locale lang) {
 		this.lang = lang;
 	}
 
-	public PMTokenDTO(String username, String password, String lang) {
+	public PMTokenDTO(String username, String password, Locale lang) {
 		super();
 		this.username = username;
 		this.password = password;

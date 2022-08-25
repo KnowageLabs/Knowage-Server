@@ -78,11 +78,6 @@ public class JpaMappingCodeGenerator implements IGenerator {
 	private File tableTemplate;
 
 	/**
-	 * The template used to create the <code>package-info.java</code>
-	 */
-	private File packageInfo;
-
-	/**
 	 * The template used to map business view to json mapping file
 	 */
 	private File viewTemplate;
@@ -157,10 +152,6 @@ public class JpaMappingCodeGenerator implements IGenerator {
 			tableTemplate = new File(templateDir, "sbi_table.vm");
 			logger.trace("[Table] template file is equal to [{}]", tableTemplate);
 			Assert.assertTrue("[Table] template file [" + tableTemplate + "] does not exist", tableTemplate.exists());
-
-			packageInfo = new File(templateDir, "sbi_package-info.vm");
-			logger.trace("[package-info] template file is equal to [{}]", packageInfo);
-			Assert.assertTrue("[package-info] template file [" + packageInfo + "] does not exist", packageInfo.exists());
 
 			viewTemplate = new File(templateDir, "sbi_view.vm");
 			logger.trace("[View] template file is equal to [{}]", viewTemplate);
@@ -292,9 +283,6 @@ public class JpaMappingCodeGenerator implements IGenerator {
 		generateBusinessTableMappings(jpaModel.getTables(), isUpdatableMapping);
 		logger.info("Java files for tables of model [{}] succesfully created", model.getName());
 
-		generatePackageInfo(jpaModel.getTables().get(0));
-		logger.info("package-info for model [{}] succesfully created", model.getName());
-
 		generateBusinessViewMappings(jpaModel.getViews(), isUpdatableMapping);
 		logger.info("Java files for views of model [{}] succesfully created", model.getName());
 
@@ -317,27 +305,6 @@ public class JpaMappingCodeGenerator implements IGenerator {
 		logger.info("Hierarchies file for model [{}] succesfully created", model.getName());
 
 		logger.trace("OUT");
-	}
-
-	private void generatePackageInfo(IJpaTable jpaTable) {
-		logger.debug("Creating package-info.java for business class [{}]", jpaTable.getName());
-
-		try {
-			VelocityContext velocityContext;
-
-			velocityContext = new VelocityContext();
-			velocityContext.put("jpaTable", jpaTable);
-
-			File outputDir = new File(srcDir, StringUtils.strReplaceAll(jpaTable.getPackage(), ".", "/"));
-			outputDir.mkdirs();
-			File outputFile = new File(outputDir, "package-info.java");
-
-			createFile(packageInfo, outputFile, velocityContext);
-		} catch (IOException e) {
-			throw new GenerationException("Impossible to create package-info.java file for " + jpaTable.getClassName());
-		}
-
-		logger.debug("package-info.java for business class [{}] created succesfully", jpaTable.getName());
 	}
 
 	public void generateBusinessTableMappings(List<IJpaTable> jpaTables, boolean isUpdatableMapping) {

@@ -126,7 +126,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jasypt</groupId>
-			<artifactId>jasypt-hibernate5</artifactId>
+			<artifactId>jasypt-hibernate3</artifactId>
 		</dependency>
 
 		<dependency>

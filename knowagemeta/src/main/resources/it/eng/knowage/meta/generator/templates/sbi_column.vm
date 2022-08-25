@@ -14,7 +14,7 @@
 #if ( $jpaColumn.isDataTypeGeometry() )
 @Type(type = "org.hibernatespatial.GeometryUserType")
 #elseif ( $jpaColumn.isDecryptable() )
-@Type(type="encryptedString")
+@Type(type="${jpaTable.encryptedColTypeName}")
 #end
 #if ($jpaColumn.needMapTemporalType())
 @Temporal( TemporalType.$jpaColumn.getMapTemporalType())
