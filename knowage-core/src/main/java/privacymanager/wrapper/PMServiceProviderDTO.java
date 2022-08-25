@@ -17,12 +17,12 @@
  */
 package privacymanager.wrapper;
 
-public class ServiceProvider {
+public class PMServiceProviderDTO {
 
-	String id;
-	String technicalDescription;
-	String vendor;
-	String url;
+	private String id;
+	private String technicalDescription;
+	private String vendor;
+	private String url;
 
 	public String getId() {
 		return id;
@@ -56,7 +56,7 @@ public class ServiceProvider {
 		this.url = url;
 	}
 
-	public ServiceProvider(String id, String technicalDescription, String vendor, String url) {
+	public PMServiceProviderDTO(String id, String technicalDescription, String vendor, String url) {
 		super();
 		this.id = id;
 		this.technicalDescription = technicalDescription;

@@ -17,6 +17,8 @@
  */
 package it.eng.qbe.datasource.jpa;
 
+import static it.eng.knowage.encryption.EncryptionPreferencesRegistry.DEFAULT_CFG_KEY;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,8 +32,12 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.apache.log4j.Logger;
+import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.hibernate3.encryptor.HibernatePBEEncryptorRegistry;
 import org.json.JSONObject;
 
+import it.eng.knowage.encryption.EncryptionConfiguration;
+import it.eng.knowage.encryption.EncryptionPreferencesRegistry;
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IPersistenceManager;
@@ -101,6 +107,28 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		factory = Persistence.createEntityManagerFactory(name, buildEmptyConfiguration());
 	}
 
+	private void initJasypt() {
+
+		String cfgKey = DEFAULT_CFG_KEY;
+		EncryptionConfiguration cfg = EncryptionPreferencesRegistry.getInstance()
+			.getConfiguration(cfgKey);
+
+		if (cfg != null) {
+			String algorithm = cfg.getAlgorithm();
+			String password = cfg.getEncryptionPwd();
+
+			String modelName = configuration.getModelName();
+			String encryptorName = modelName + "_encryptor";
+
+			StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
+			encryptor.setAlgorithm(algorithm);
+			encryptor.setPassword(password);
+
+			HibernatePBEEncryptorRegistry registry = HibernatePBEEncryptorRegistry.getInstance();
+			registry.registerPBEStringEncryptor(encryptorName, encryptor);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -144,6 +172,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 
 		initEntityManagerFactory(getConfiguration().getModelName());
 		initEntityManager();
+		initJasypt();
 
 	}
 
