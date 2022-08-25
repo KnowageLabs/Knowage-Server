@@ -6,6 +6,7 @@
 	<INITIALIZER class="it.eng.spago.util.MonitorInitializer" config="" />
 	<INITIALIZER class="it.eng.spago.message.MessageBundleInitializer" config="" />
 	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.QuartzInitializer" config="" />
+	<INITIALIZER class="it.eng.knowage.encryption.DataEncryptionInitializer" config="" />
 
 	<!-- Initializer for SpagoBI metadata   -->  
 	<INITIALIZER class="it.eng.spagobi.commons.initializers.metadata.MetadataInitializer" config="" />
@@ -30,12 +31,12 @@
 	<!-- Initializer for SpagoBI metadata   -->  
 	<INITIALIZER class="it.eng.spagobi.commons.initializers.caching.CachingInitializer" config="" />
 	
-		<!-- Initializer for Scheduler REST events -->
+	<!-- Initializer for Scheduler REST events -->
 	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.ResourceExportFolderSchedulerInitializer" config="" />
 
-    <!-- START-WEB  -->
-    
-    <INITIALIZER class="it.eng.spagobi.security.init.SecurityInitializer" config="" />
+	<!-- START-WEB  -->
+
+	<INITIALIZER class="it.eng.spagobi.security.init.SecurityInitializer" config="" />
 	<INITIALIZER class="it.eng.spagobi.analiticalmodel.functionalitytree.init.TreeInitializer" config="TREE_INITIALIZATION" />
 	
 	<!-- END-WEB  -->
@@ -43,7 +44,7 @@
 	<!-- INTERNAL PROFILING -->
 	<INITIALIZER class="it.eng.spagobi.security.init.InternalSecurityInitializer" config="" />
 	
-		<!-- Initializer for Audit Cleaning -->
+	<!-- Initializer for Audit Cleaning -->
 	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.CleanAuditQuartzInitializer" config="" />
 	
 	<INITIALIZER class="it.eng.spagobi.commons.initializers.metadata.CategoriesInitializer" config="" />
