@@ -45,6 +45,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -76,8 +77,6 @@ public class ExcelExporter extends AbstractFormatExporter {
 	private final boolean isSingleWidgetExport;
 	private int uniqueId = 0;
 	private String requestURL = "";
-
-	private Map<String, CellStyle> format2CellStyle = new HashMap<String, CellStyle>();
 
 	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "selector", "selection", "html" };
 	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
@@ -460,7 +459,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 	public void createAndFillExcelSheet(JSONObject dataStore, Workbook wb, String widgetName, String cockpitSheetName) {
 		Sheet newSheet = createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
-		fillSheetWithData(dataStore, wb, newSheet, widgetName, 0);
+		fillSheetWithData(dataStore, wb, newSheet, widgetName, 0, null);
 	}
 
 	public void fillSelectionsSheetWithData(HashMap<String, HashMap<String, Object>> selectionsMap, Workbook wb, Sheet sheet, String widgetName) {
@@ -503,7 +502,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 		return selectionValues = selectionValues.replace("[\"(", "").replace(")\"]", "");
 	}
 
-	public void fillSheetWithData(JSONObject dataStore, Workbook wb, Sheet sheet, String widgetName, int offset) {
+	public void fillSheetWithData(JSONObject dataStore, Workbook wb, Sheet sheet, String widgetName, int offset, JSONObject settings) {
 		try {
 			JSONObject metadata = dataStore.getJSONObject("metaData");
 			JSONArray columns = metadata.getJSONArray("fields");
@@ -625,7 +624,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			CellStyle intCellStyle = wb.createCellStyle();
 			intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
 
-			CellStyle floatCellStyle = wb.createCellStyle();
+			XSSFCellStyle floatCellStyle = (XSSFCellStyle) wb.createCellStyle();
 			floatCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
 
 			DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
@@ -662,18 +661,22 @@ public class ExcelExporter extends AbstractFormatExporter {
 						switch (type) {
 						case "string":
 							cell.setCellValue(s);
+							cell.setCellStyle(getStringCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, s));
 							break;
 						case "int":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
+								cell.setCellStyle(getIntCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle, settings, Integer.parseInt(s)));
 							}
-							cell.setCellStyle(getCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle));
+
 							break;
 						case "float":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
+								cell.setCellStyle(getDoubleCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, Double.parseDouble(s),
+										rowObject));
 							}
-							cell.setCellStyle(getCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle));
+
 							break;
 						case "date":
 							try {
@@ -752,40 +755,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 		}
 	}
 
-	private boolean isAvoidSeparator(JSONObject colStyle) throws JSONException {
-		if (colStyle != null && colStyle.has("asString")) {
-			if (colStyle.getBoolean("asString")) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private CellStyle getCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, CellStyle defaultStyle) {
-		String colName = null;
-		try {
-			colName = column.getString("name");
-			boolean isAvoidSeparator = isAvoidSeparator(colStyle);
-			String format = null;
-			if (isAvoidSeparator) {
-				format = "0";
-			} else {
-				format = "#,##0";
-			}
-			// precision (i.e. number of digits to right of the decimal point) that is specified on dashboard design wins
-			if ((colStyle != null && colStyle.has("precision")) || isAvoidSeparator) {
-				int precision = (colStyle != null && colStyle.has("precision")) ? colStyle.getInt("precision") : 2;
-				format = getNumberFormatByPrecision(precision, format);
-				CellStyle toReturn = getCellStyleByFormat(wb, helper, format);
-				return toReturn;
-			}
-			return defaultStyle;
-		} catch (Exception e) {
-			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
-			return defaultStyle;
-		}
-	}
-
+	@Override
 	protected String getNumberFormatByPrecision(int precision, String initialFormat) {
 		String format = initialFormat;
 		if (precision > 0) {
@@ -801,6 +771,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 	 * This method avoids cell style objects number to increase by rows number (see https://production.eng.it/jira/browse/KNOWAGE-6692 and
 	 * https://production.eng.it/jira/browse/KNOWAGE-6693)
 	 */
+	@Override
 	protected CellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format) {
 		if (!format2CellStyle.containsKey(format)) {
 			// if cell style does not exist

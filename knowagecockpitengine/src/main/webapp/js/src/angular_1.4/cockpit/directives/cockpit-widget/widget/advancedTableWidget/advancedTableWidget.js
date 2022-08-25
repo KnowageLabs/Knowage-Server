@@ -535,7 +535,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 						if(typeof valueToCompare != "undefined" && typeof valueToCompare === 'string') valueToCompare = "'"+valueToCompare+"'";
 						if(range.operator === "IN"){
-							if(range.valueArray.includes(params.value)){
+							if(range.valueArray.includes(params.value.toString())){
 								if(range['background-color']) params.eParentOfValue.style.backgroundColor = range['background-color'];
 								if(range['color']) params.eParentOfValue.style.color = range['color'];
 								if(params.colDef.visType && params.colDef.visType.toLowerCase() == 'icon only') tempValue = '<i class="'+range.icon+'"></i>';
