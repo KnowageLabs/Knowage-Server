@@ -199,6 +199,7 @@ export default defineComponent({
             }
         },
         createBreadcrumbs() {
+            if (!this.selectedFolder) return
             let currentFolder = { key: this.selectedFolder.name, label: this.selectedFolder.name, data: this.selectedFolder } as any
             this.breadcrumbs = [] as any[]
             do {

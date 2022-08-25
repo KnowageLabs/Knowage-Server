@@ -323,6 +323,7 @@
         "datasetEditor": {
             "addAssociation": "Add Association",
             "addIndexes": "Add Indexes on Associations",
+            "association": "Association",
             "associationsDetailMsg": "TODO: Write whatever we need to write here after PR",
             "associationsDetailTitle": "Dataset Associations",
             "associationsTabTitle": "Associations",
@@ -340,8 +341,7 @@
             "indexesTitle": "Indexes",
             "selectDatasets": "Select Datasets",
             "static": "Static",
-            "title": "Dataset Manageent",
-            "association": "Association"
+            "title": "Dataset Manageent"
         },
         "widgetEditor": {
             "addWidget": "Add widget",
@@ -574,6 +574,7 @@
             "currentRank": "Curent Rank is...",
             "customMetadata": "Custom Metadata",
             "destinationSelectionTitle": "Selection of the destination document",
+            "editCockpit": "Edit cockpit document",
             "editModeConfirm": "You are leaving edit mode. Continue?",
             "embedInHtml": "Embed in HTML",
             "exportInPDF": "Export in PDF",
@@ -596,6 +597,7 @@
             "showOLAPCustomView": "Show OLAP Custom View",
             "showScheduledExecutions": "Show scheduled executions",
             "userRoleError": "User does not have valid roles for the execution of the selected document",
+            "viewCockpit": "View cockpit document",
             "yourRating": "Your rating"
         },
         "olap": {

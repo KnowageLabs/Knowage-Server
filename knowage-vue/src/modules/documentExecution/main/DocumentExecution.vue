@@ -9,6 +9,20 @@
                 <div class="p-d-flex p-jc-around">
                     <Button v-if="mode == 'dashboard'" icon="fas fa-database" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.datasets')" @click="openDashboardDatasetManagement"></Button>
                     <Button v-if="mode == 'dashboard'" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.save')"></Button>
+                    <Button
+                        icon="pi pi-pencil"
+                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
+                        v-if="mode !== 'dashboard' && document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'VIEW'"
+                        v-tooltip.left="$t('documentExecution.main.editCockpit')"
+                        @click="editCockpitDocumentConfirm"
+                    ></Button>
+                    <Button
+                        icon="fa fa-eye"
+                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
+                        v-if="mode !== 'dashboard' && document?.typeCode === 'DOCUMENT_COMPOSITE' && documentMode === 'EDIT'"
+                        v-tooltip.left="$t('documentExecution.main.viewCockpit')"
+                        @click="editCockpitDocumentConfirm"
+                    ></Button>
                     <Button v-if="mode !== 'dashboard'" icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.onlineHelp')" @click="openHelp"></Button>
                     <Button icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" v-tooltip.left="$t('common.refresh')" @click="refresh"></Button>
                     <Button
@@ -425,7 +439,7 @@ export default defineComponent({
                 this.mode = 'dossier'
             } else if (this.$route.path.includes('olap')) {
                 this.mode = 'olap'
-            } else if (this.$route.path.includes('document-composite')) {
+            } else if (this.$route.path.includes('dashboard')) {
                 this.mode = 'dashboard'
             } else {
                 this.mode = 'iframe'
@@ -453,7 +467,7 @@ export default defineComponent({
                 this.mode = 'dossier'
             } else if (this.document.typeCode === 'OLAP') {
                 this.mode = 'olap'
-            } else if (this.document.typeCode === 'DOCUMENT_COMPOSITE') {
+            } else if (this.document.typeCode === 'DOCUMENT_COMPOSITE' && this.$route.path.includes('dashboard')) {
                 this.mode = 'dashboard'
             } else {
                 this.mode = 'iframe'
@@ -696,7 +710,7 @@ export default defineComponent({
 
             this.hiddenFormData.append('documentMode', this.documentMode)
 
-            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP' || this.document.typeCode === 'DOCUMENT_COMPOSITE') {
+            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP' || (this.document.typeCode === 'DOCUMENT_COMPOSITE' && this.mode === 'dashboard')) {
                 await this.sendHiddenFormData()
             } else {
                 postForm.submit()

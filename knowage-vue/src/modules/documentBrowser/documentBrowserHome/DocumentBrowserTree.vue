@@ -45,6 +45,7 @@ export default defineComponent({
         },
         selectedFolderProp() {
             this.selectedFolder = this.selectedFolderProp
+            if (!this.selectedFolder) return
             this.selectedFolderKey = {}
             this.selectedFolderKey[this.selectedFolder.key] = true
             let temp = null as any
