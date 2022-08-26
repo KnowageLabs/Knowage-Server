@@ -341,10 +341,10 @@ export function formatTableWidgetForSave(widget: IWidget) {
     if (!widget) return
 
     formatTablePagination(widget.settings.pagination)
-    formatTableSelectedColumns(widget.columns)
-    formatRowHeaderSettings(widget)
-    formatRowStyleSettings(widget)
-    formatBorderSettings(widget)
+    // formatTableSelectedColumns(widget.columns)
+    // formatRowHeaderSettings(widget)
+    // formatRowStyleSettings(widget)
+    // formatBorderSettings(widget)
 }
 
 function formatTablePagination(pagination: { enabled: boolean, itemsNumber: string | number }) {
@@ -364,6 +364,7 @@ function formatColumnTooltipSettings(column: IWidgetColumn) {
     if (column.enableTooltip) {
         column.style.tooltip.precision = +column.style.tooltip.precision
     } else {
+        if (!column.style) return // TODO
         column.style.tooltip = { prefix: '', suffix: '', precision: 0 }
         column.style.enableCustomHeaderTooltip = false
         column.style.customHeaderTooltip = ''

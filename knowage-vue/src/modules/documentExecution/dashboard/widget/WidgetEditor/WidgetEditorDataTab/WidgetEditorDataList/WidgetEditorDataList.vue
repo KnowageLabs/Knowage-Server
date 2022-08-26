@@ -72,9 +72,18 @@ export default defineComponent({
                       }
                   })
                 : []
+            console.log(' ---------------------  !!! SELECTED DATASET OPTIONS: ', this.datasetOptions)
         },
         loadModel() {
             this.model = this.widgetModel
+            this.loadSelectedDataset()
+            this.loadDatasetColumns()
+        },
+        loadSelectedDataset() {
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> MODEL: ', this.model)
+            const index = this.datasetOptions?.findIndex((dataset: IWidgetEditorDataset) => dataset.id === this.model?.dataset)
+            console.log('INDEX: ', index)
+            if (index !== -1) this.selectedDataset = this.datasetOptions[index]
         },
         onDatasetSelected() {
             this.loadDatasetColumns()
@@ -96,19 +105,14 @@ export default defineComponent({
             if (!this.selectedDatasets || this.selectedDatasets.length === 0) return
 
             const index = this.selectedDatasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
+            console.log('INDEX 2: ', index)
             if (index !== -1) this.addSelectedDatasetColumnsFromMetadata(this.selectedDatasets[index].metadata.fieldsMeta)
+            console.log('aaaaaaaaaaaaaaaaaaaaaaaaa this.selectedDatasets[index]', this.selectedDatasets[index])
         },
         addSelectedDatasetColumnsFromMetadata(fieldsMeta: any[]) {
             for (let i = 0; i < fieldsMeta.length; i++) {
-                if (!this.columnIsPresentInModel(fieldsMeta[i])) this.selectedDatasetColumns.push({ ...fieldsMeta[i], dataset: this.selectedDataset?.id })
+                this.selectedDatasetColumns.push({ ...fieldsMeta[i], dataset: this.selectedDataset?.id })
             }
-        },
-        columnIsPresentInModel(column: IDatasetColumn) {
-            const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => {
-                if (tempColumn.columnName?.startsWith('(')) tempColumn.columnName = tempColumn.columnName?.slice(1, -1)
-                return tempColumn.columnName == column.name
-            })
-            return index !== -1
         },
         onDragStart(event: any, datasetColumn: IDatasetColumn) {
             event.dataTransfer.setData('text/plain', JSON.stringify(datasetColumn))

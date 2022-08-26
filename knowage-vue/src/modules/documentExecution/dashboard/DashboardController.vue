@@ -70,10 +70,10 @@ export default defineComponent({
         loadModel() {
             // TODO
             // this.model = mock
-            console.log('FORMATTED MODEL: ', formatModel(mockedDashboardModel))
             this.model = formatModel(mockedDashboardModel) as any
 
-            this.store.setDashboard(mock)
+            console.log('FORMATTED MODEL: ', formatModel(mockedDashboardModel))
+            this.store.setDashboard(this.model)
         },
         async loadDatasets() {
             this.appStore.setLoading(true)

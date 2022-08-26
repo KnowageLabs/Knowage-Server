@@ -47,7 +47,9 @@ export interface IWidgetEditorDataset {
     id: number
     label: string
     cache: boolean
-    parameters: any[]
+    parameters?: any[],
+    drivers?: any[],
+    indexes?: any[]
 }
 export interface IWidgetPickerType {
     cssClass: string

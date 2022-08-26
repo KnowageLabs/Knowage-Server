@@ -11,7 +11,7 @@ export const formatTableWidget = (widget: any) => {
     } as IWidget
 
     console.log(" ---- --- - -- - - -- FORMATTED WIDGET: ", formattedWidget)
-    return mockedTableWidget
+    return formattedWidget
 }
 
 const getFormattedWidgetColumns = (widget: any) => {

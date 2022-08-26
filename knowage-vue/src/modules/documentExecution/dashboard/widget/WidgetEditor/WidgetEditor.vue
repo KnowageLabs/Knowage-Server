@@ -77,11 +77,12 @@ export default defineComponent({
         },
         loadSelectedModel() {
             if (!this.datasets) return
+            console.log('DATASETS ----: ', this.datasets)
             this.selectedDatasets = [] as IDataset[]
             for (let i = 0; i < this.selectedModelDatasets.length; i++) {
                 const tempDataset = this.selectedModelDatasets[i]
-                const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === tempDataset.id)
-                if (index !== -1) this.selectedDatasets.push({ ...this.datasets[index], cache: tempDataset.cache, indexes: tempDataset.indexes, parameters: tempDataset.parameters as any[], drivers: tempDataset.drivers ?? [] })
+                const index = this.datasets.findIndex((dataset: any) => dataset.id.dsId === tempDataset.id)
+                if (index !== -1) this.selectedDatasets.push({ ...this.datasets[index], cache: tempDataset.cache, indexes: tempDataset.indexes ?? [], parameters: tempDataset.parameters as any[], drivers: tempDataset.drivers ?? [] })
             }
             console.log('SELECTED DATASETS: ', this.selectedDatasets)
         },
@@ -109,6 +110,7 @@ export default defineComponent({
             this.store.setLoading(false)
         },
         async loadAvailableFunctions(dataset: IWidgetEditorDataset) {
+            console.log('DATASET: ', dataset)
             this.store.setLoading(true)
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/availableFunctions/${dataset.id}?useCache=false`)
@@ -126,6 +128,7 @@ export default defineComponent({
                 this.$emit('widgetSaved')
             } else {
                 this.dashboardStore.updateWidget(tempWidget)
+                console.log('WIDGET ON UPDATE: ', tempWidget)
                 this.$emit('widgetUpdated')
             }
         },

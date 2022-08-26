@@ -27,6 +27,7 @@ const store = defineStore('dashboardStore', {
         updateWidget(widget) {
             // TODO - hardcoded 1 for dashboard
             for (let i = 0; i < this.dashboards[1].widgets.length; i++) {
+                console.log(widget.id + ' === ' + this.dashboards[1].widgets[i].id)
                 if (widget.id === this.dashboards[1].widgets[i].id) {
                     this.dashboards[1].widgets[i] = deepcopy(widget)
                 }

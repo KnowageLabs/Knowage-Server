@@ -2,6 +2,7 @@
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
 import { formatTableWidget } from './TableWidgetCompatibilityHelper'
+import { IWidgetEditorDataset } from '../Dashboard'
 
 export const formatModel = (model: any) => {
     console.log("FORMAT MODEL CALLED WITH: ", model)
@@ -12,7 +13,7 @@ export const formatModel = (model: any) => {
         id: 1,
         widgets: [],
         version: model.knowageVersion,
-        configuration: model.configuration,
+        configuration: getFormattedModelConfiguration(model),
         sheets: []
     } as any
     for (let i = 0; i < model.sheets.length; i++) {
@@ -20,6 +21,37 @@ export const formatModel = (model: any) => {
         formattedModel.sheets.push(formattedSheet)
     }
     return formattedModel
+}
+
+const getFormattedModelConfiguration = (model: any) => {
+    // TODO - What is id used for?
+    const formattedConfiguration = { id: '', name: '', label: '', description: '', associations: [], datasets: getFormattedDatasets(model), variables: [], themes: {} }
+
+    return formattedConfiguration
+}
+
+const getFormattedDatasets = (model: any) => {
+    console.log("ORIGINAL DATASETS: ", model.configuration.datasets)
+    if (!model.configuration || !model.configuration.datasets) return
+    const formattedDatasets = [] as IWidgetEditorDataset[]
+    for (let i = 0; i < model.configuration.datasets.length; i++) {
+        formattedDatasets.push(getFormattedDataset(model.configuration.datasets[i]))
+    }
+
+    return formattedDatasets
+}
+
+const getFormattedDataset = (dataset: any) => {
+    const formattedDataset = { id: dataset.dsId, cache: dataset.useCache } as IWidgetEditorDataset
+    if (dataset.indexes) formattedDataset.indexes = dataset.indexes
+    if (dataset.parameters) formattedDataset.parameters = getFormattedDatasetParameters(dataset)
+
+    return formattedDataset
+}
+
+// TODO
+const getFormattedDatasetParameters = (dataset: any) => {
+    return []
 }
 
 const formatSheet = (sheet: any, formattedModel: any) => {
