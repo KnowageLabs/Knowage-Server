@@ -1,7 +1,7 @@
 
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
-import { formatTableWidget } from './TableWidgetHelpers'
+import { formatTableWidget } from './TableWidgetCompatibilityHelper'
 
 export const formatModel = (model: any) => {
     console.log("FORMAT MODEL CALLED WITH: ", model)

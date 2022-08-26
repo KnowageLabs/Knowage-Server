@@ -5,8 +5,25 @@ import descriptor from '../WidgetEditorDescriptor.json'
 import cryptoRandomString from 'crypto-random-string'
 
 const tableWidgetFunctions = {
+    paginationChanged: () => {
+        emitter.emit('paginationChanged')
+    },
     itemsPerPageIsDisabled: (model: IWidget) => {
         return !model.settings?.pagination?.enabled
+    },
+    getSelectedColumnsAsOptions: (model: IWidget) => {
+        const columnOptions = [] as { value: string, label: string }[]
+        for (let i = 0; i < model.columns.length; i++) {
+            const temp = model.columns[i].columnName.slice(1, -1)
+            columnOptions.push({ value: temp, label: temp })
+        }
+        return columnOptions
+    },
+    getSortingOrderOptions: () => {
+        return descriptor.sortingOrderOptions
+    },
+    sortingChanged: () => {
+        emitter.emit('sortingChanged')
     },
     getColumnIcons: (column: any) => {
         return column?.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'
@@ -36,7 +53,7 @@ const tableWidgetFunctions = {
         if (index !== -1) {
             model.columns[index][field] = column[field]
             if (model.columns[index][field].fieldType === 'ATTRIBUTE') model.columns[index][field].aggregation = 'NONE'
-            if (model.temp.selectedColumn.name === model.columns[index].id) model.temp.selectedColumn = { ...model.columns[index] }
+            if (model.temp?.selectedColumn && model.temp.selectedColumn.id === model.columns[index].id) model.temp.selectedColumn = { ...model.columns[index] }
         }
     },
     getColumnAggregationOptions: () => {
@@ -395,6 +412,16 @@ function formatBorderSettings(widget: IWidget) {
         }
     }
     if (widget.styles.border['border-color'] && typeof widget.styles.border['border-color'] !== 'string') widget.styles.border['border-color'] = formatRGBColor(widget.styles.border['border-color'])
+}
+
+export const removeColumnUsageFromModel = (column: IWidgetColumn, model: IWidget) => {
+    console.log("WIDGET COLUMN TO REMOVE: ", column)
+    let name = column.columnName.startsWith('(') ? column.columnName.slice(1, -1) : column.columnName
+    if (model.settings?.sortingColumn && name === model.settings?.sortingColumn) {
+        model.settings.sortingColumn = ''
+        model.settings.sortingOrder = ''
+        emitter.emit("sortingChanged")
+    }
 }
 
 export default tableWidgetFunctions

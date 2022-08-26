@@ -1,7 +1,9 @@
 <template>
     <!-- <div class="p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow" :style="descriptor.style.preview"> -->
     <div :style="descriptor.style.preview">
-        <pre>{{ propWidget }}</pre>
+        <pre>{{ propWidget.settings?.pagination }}</pre>
+        <pre>{{ propWidget.settings?.sortingColumn }}</pre>
+        <pre>{{ propWidget.settings?.sortingOrder }}</pre>
         <!-- <DataTable :value="rows" class="p-datatable-sm kn-table" :style="descriptor.style.previewTable" stripedRows rowHover>
             <Column v-for="col of columns" :field="col.name" :header="col.header" :key="col.dataIndex" class="kn-truncated" />
         </DataTable> -->
@@ -38,6 +40,7 @@ export default defineComponent({
     },
     created() {
         this.setDatatableData()
+        this.setEventListeners()
     },
     methods: {
         setDatatableData() {
@@ -46,7 +49,14 @@ export default defineComponent({
             })
             this.rows = this.mock.previewMock.rows
         },
-        setEventListeners() {}
+        setEventListeners() {
+            emitter.on('paginationChanged', () => {
+                console.log('PAGINATION CHANGED!')
+            })
+            emitter.on('sortingChanged', () => {
+                console.log('SORTING CHANGED!')
+            })
+        }
     }
 })
 </script>

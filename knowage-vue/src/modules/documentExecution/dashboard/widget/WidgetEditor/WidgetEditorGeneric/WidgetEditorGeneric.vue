@@ -146,7 +146,7 @@ export default defineComponent({
         getDropdownOptions(component: any) {
             let temp = []
             const tempFunction = getModelProperty(this.widgetModel, component.options, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') temp = tempFunction()
+            if (tempFunction && typeof tempFunction === 'function') temp = tempFunction(this.widgetModel)
             return temp
         },
         showCardContent(card: any) {

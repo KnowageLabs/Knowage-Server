@@ -28,6 +28,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidgetEditorDataset, IDatasetColumn, IWidgetColumn, IDataset, IWidget } from '../../../../Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
+import { removeColumnUsageFromModel } from '../../helpers/TableWidgetFunctions'
 import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import mainStore from '../../../../../../../App.store'
@@ -83,6 +84,9 @@ export default defineComponent({
         removeSelectedColumnsFromModel() {
             console.log(' --- removeSelectedColumnsFromModel', this.model)
             if (!this.model?.columns) return
+            for (let i = 0; i < this.model.columns.length; i++) {
+                removeColumnUsageFromModel(this.model.columns[i], this.model)
+            }
             this.model.columns = []
         },
         // TODO
@@ -101,8 +105,8 @@ export default defineComponent({
         },
         columnIsPresentInModel(column: IDatasetColumn) {
             const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => {
-                if (tempColumn.name?.startsWith('(')) tempColumn.name = tempColumn.name?.slice(1, -1)
-                return tempColumn.name == column.name
+                if (tempColumn.columnName?.startsWith('(')) tempColumn.columnName = tempColumn.columnName?.slice(1, -1)
+                return tempColumn.columnName == column.name
             })
             return index !== -1
         },

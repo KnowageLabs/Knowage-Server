@@ -31,7 +31,7 @@ const getFormattedWidgetColumn = (widgetColumn: any) => {
 
 
 const getFormattedWidgetSettings = (widget: any) => {
-    const formattedSettings = { updatable: widget.updateble, clickable: widget.cliccable, conditionalStyle: getFormattedConditionalStyles(widget), getFormattedConfiguration: getFormattedConfiguration(widget), interactions: getFormattedInteractions(widget), paginations: getFormattedPaginations(widget), style: getFormattedStyle(widget), tooltips: getFormattedTooltips(widget), visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) }
+    const formattedSettings = { sortingColumn: widget.settings?.sortingColumn, sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyle: getFormattedConditionalStyles(widget), getFormattedConfiguration: getFormattedConfiguration(widget), interactions: getFormattedInteractions(widget), paginations: getFormattedPaginations(widget), style: getFormattedStyle(widget), tooltips: getFormattedTooltips(widget), visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) }
     return formattedSettings
 }
 
@@ -52,7 +52,8 @@ const getFormattedInteractions = (widget: any) => {
 
 // TODO
 const getFormattedPaginations = (widget: any) => {
-    return {}
+    if (!widget.settings?.pagination) return {}
+    return { enabled: widget.settings.pagination.enabled, itemsNumber: widget.settings.itemsNumber }
 }
 
 

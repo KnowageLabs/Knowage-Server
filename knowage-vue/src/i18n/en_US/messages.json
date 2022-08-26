@@ -345,6 +345,7 @@
         },
         "widgetEditor": {
             "addWidget": "Add widget",
+            "ascending": "Ascending",
             "borders": {
                 "borderRadiusBottomLeft": "Border radius bottom left",
                 "borderRadiusBottomRight": "Border radius bottom right",
@@ -369,6 +370,7 @@
                 "title": "Conditional Style"
             },
             "customHeaderTooltip": "Custom Header Tooltip",
+            "descending": "Descending",
             "dragColumnsHint": "Drag columns here",
             "enableTooltip": "Enable Tooltip",
             "fontawesome": "Fontawesome",
@@ -412,6 +414,8 @@
             "settingsListOptions": {
                 "tooltip": "Tooltip"
             },
+            "sortingColumn": "Sorting column",
+            "sortingOrder": "Sorting order",
             "sufix": "Sufix",
             "title": "Widget Editor",
             "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
