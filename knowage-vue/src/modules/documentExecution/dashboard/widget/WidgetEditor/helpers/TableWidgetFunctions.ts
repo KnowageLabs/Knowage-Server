@@ -2,6 +2,7 @@ import { IWidget, IWidgetColumn, IIcon } from "../../../Dashboard"
 import { formatRGBColor } from './WidgetEditorHelpers'
 import { emitter } from '../../../DashboardHelpers'
 import descriptor from '../WidgetEditorDescriptor.json'
+import cryptoRandomString from 'crypto-random-string'
 
 const tableWidgetFunctions = {
     itemsPerPageIsDisabled: (model: IWidget) => {
@@ -18,24 +19,24 @@ const tableWidgetFunctions = {
         emitter.emit('collumnAdded', eventData)  // check if this is needed
     },
     updateColumnVisibility: (column: IWidgetColumn, model: IWidget) => {
-        const index = model.columns?.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
+        const index = model.columns?.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
         if (index !== -1 && model.columns[index] && model.columns[index].style) model.columns[index].style.hiddenColumn = !model.columns[index].style.hiddenColumn
     },
     removeColumn: (column: IWidgetColumn, model: IWidget) => {
-        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
+        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
         if (index !== -1) {
-            if (column.name === model.temp.selectedColumn?.name) model.temp.selectedColumn = null
+            if (column.id === model.temp.selectedColumn?.id) model.temp.selectedColumn = null
             model.columns.splice(index, 1)
-            emitter.emit('collumnRemoved', column)
+            emitter.emit('collumnRemoved', column)  // check if this is needed
         }
     },
     updateColumnValue: (column: IWidgetColumn, model: IWidget, field: string) => {
         if (!model || !model.columns) return
-        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
+        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
         if (index !== -1) {
             model.columns[index][field] = column[field]
             if (model.columns[index][field].fieldType === 'ATTRIBUTE') model.columns[index][field].aggregation = 'NONE'
-            if (model.temp.selectedColumn.name === model.columns[index].name) model.temp.selectedColumn = { ...model.columns[index] }
+            if (model.temp.selectedColumn.name === model.columns[index].id) model.temp.selectedColumn = { ...model.columns[index] }
         }
     },
     getColumnAggregationOptions: () => {
@@ -52,7 +53,7 @@ const tableWidgetFunctions = {
         return model && model.temp.selectedColumn
     },
     updateSelectedColumn: (model: IWidget) => {
-        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === model.temp.selectedColumn.name)
+        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === model.temp.selectedColumn.id)
         if (index !== -1) model.columns[index] = { ...model.temp.selectedColumn }
     },
     tooltipIsDisabled: (model: IWidget) => {
@@ -299,8 +300,8 @@ const tableWidgetFunctions = {
 
 function createNewWidgetColumn(eventData: any) {
     const tempColumn = {
-        dataset: eventData.dataset,
-        name: '(' + eventData.name + ')',
+        id: cryptoRandomString({ length: 16, type: 'base64' }),
+        columnName: '(' + eventData.name + ')',
         alias: eventData.alias,
         type: eventData.type,
         fieldType: eventData.fieldType,
@@ -311,9 +312,9 @@ function createNewWidgetColumn(eventData: any) {
             tooltip: { prefix: '', suffix: '', precision: 0 },
             enableCustomHeaderTooltip: false,
             customHeaderTooltip: ''
-        },
-        enableTooltip: false,
-        visType: ''
+        }, // see about this
+        enableTooltip: false, // see about this
+        visType: '' // see about this
     }
     tempColumn.aggregation = 'NONE'
     return tempColumn
@@ -337,7 +338,7 @@ function formatTablePagination(pagination: { enabled: boolean, itemsNumber: stri
 function formatTableSelectedColumns(columns: IWidgetColumn[]) {
     if (!columns) return
     columns.forEach((column: IWidgetColumn) => {
-        if (column.name?.startsWith('(')) column.name = column.name?.slice(1, -1)
+        if (column.columnName.startsWith('(')) column.columnName = column.columnName.slice(1, -1)
         formatColumnTooltipSettings(column)
     })
 }

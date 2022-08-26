@@ -57,14 +57,8 @@ export default defineComponent({
     async created() {
         this.loadDatasets()
         this.loadModel()
-        this.setEventListeners()
     },
     methods: {
-        setEventListeners() {
-            emitter.on('collumnRemoved', (event) => {
-                this.addColumn(event)
-            })
-        },
         loadDatasets() {
             this.datasetOptions = this.selectedDatasets
                 ? this.selectedDatasets.map((dataset: any) => {
@@ -116,17 +110,6 @@ export default defineComponent({
             event.dataTransfer.setData('text/plain', JSON.stringify(datasetColumn))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
-        },
-        addColumn(column: IWidgetColumn) {
-            if (this.selectedDataset && column.dataset === this.selectedDataset.id && this.datasets) {
-                let tempDatasetColumns = null as IDatasetColumn[] | null
-                const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
-                if (index !== -1) tempDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta
-                if (!tempDatasetColumns) return
-                if (column.name?.startsWith('(')) column.name = column.name.slice(1, -1)
-                const columnIndex = tempDatasetColumns.findIndex((tempColumn: any) => column.name === tempColumn.name)
-                if (columnIndex !== -1) this.selectedDatasetColumns.push({ ...tempDatasetColumns[columnIndex], dataset: this.selectedDataset.id })
-            }
         }
     }
 })

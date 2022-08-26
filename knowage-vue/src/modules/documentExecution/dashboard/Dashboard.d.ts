@@ -20,14 +20,13 @@ export interface IWidget {
 }
 
 export interface IWidgetColumn {
-    dataset?: number // za brisanje
-    columnName: string  // model
-    name?: string  // za brisanje
-    alias: string  // model
-    type: string  // model
-    fieldType: string  // model
-    multiValue: boolean,  // model
-    aggregation?: string,  // model
+    id?: string
+    columnName: string
+    alias: string
+    type: string
+    fieldType: string
+    multiValue: boolean,
+    aggregation?: string,
     style?: any,  // ??? 
     enableTooltip?: boolean, // ???
     visType?: string   // ???
