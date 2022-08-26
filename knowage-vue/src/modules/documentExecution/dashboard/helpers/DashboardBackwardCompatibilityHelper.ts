@@ -17,14 +17,12 @@ export const formatModel = (model: any) => {
     } as any
     for (let i = 0; i < model.sheets.length; i++) {
         const formattedSheet = formatSheet(model.sheets[i], formattedModel)
-        console.log("FORMATTED SHEET: ", formattedSheet)
         formattedModel.sheets.push(formattedSheet)
     }
     return formattedModel
 }
 
 const formatSheet = (sheet: any, formattedModel: any) => {
-    console.log("SHEET: ", sheet)
     if (!sheet.widgets) return
 
     const formattedSheet = deepcopy(sheet)
@@ -41,7 +39,6 @@ const formatSheet = (sheet: any, formattedModel: any) => {
 }
 
 const addWidgetToModel = (widget: any, formattedModel: any) => {
-    console.log("checkIfWidgetInModel: ", checkIfWidgetInModel(widget, formattedModel))
     if (checkIfWidgetInModel(widget, formattedModel)) return
     formattedModel.widgets.push(formatWidget(widget))
 }
@@ -60,7 +57,6 @@ const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
 }
 
 export const formatWidget = (widget: any) => {
-    console.log("FORMAT WIDGET FOR: ", widget)
     let formattedWidget = {} as any
 
     switch (widget.type) {

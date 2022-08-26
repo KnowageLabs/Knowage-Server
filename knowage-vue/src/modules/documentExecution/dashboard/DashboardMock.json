@@ -50,19 +50,7 @@
             "dashboard": "556c8992-ff7b-42d4-a540-cf1741a1b8ae",
             "html": "d4a3e2c1-6b23-4bc5-8095-8991cf118844",
             "table": "d4a3e2c1-6b23-4bc5-8095-8991cf118844"
-        },
-        "variables": [
-            {
-                "name": "number variable",
-                "type": "static",
-                "value": 6
-            },
-            {
-                "name": "dynamic variable",
-                "type": "dataset",
-                "value": 123
-            }
-        ]
+        }
     },
     "id": 1,
     "sheets": [
@@ -122,6 +110,18 @@
                     }
                 ]
             }
+        }
+    ],
+    "variables": [
+        {
+            "name": "number variable",
+            "type": "static",
+            "value": 6
+        },
+        {
+            "name": "dynamic variable",
+            "type": "dataset",
+            "value": 123
         }
     ],
     "version": "8.2.0",

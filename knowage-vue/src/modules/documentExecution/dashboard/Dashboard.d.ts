@@ -6,29 +6,38 @@ export interface ISheet {
 
 export interface IWidget {
     id?: string
+    dataset: number
     type: string
     columns: IWidgetColumn[]
     conditionalStyles: any[]
-    datasets: any[]
     interactions: any[]
     theme: string
     styles: any
     settings: any
     temp?: any
-    functions?: any,
+    functions?: any
     new?: boolean
 }
 
 export interface IWidgetColumn {
-    dataset: number
-    name: string
-    alias: string
-    type: string
-    fieldType: string
-    aggregation: string
-    style: any,
-    enableTooltip?: boolean,
-    visType?: string
+    dataset?: number // za brisanje
+    columnName: string  // model
+    name?: string  // za brisanje
+    alias: string  // model
+    type: string  // model
+    fieldType: string  // model
+    multiValue: boolean,  // model
+    aggregation?: string,  // model
+    style?: any,  // ??? 
+    enableTooltip?: boolean, // ???
+    visType?: string   // ???
+    filter?: IWidgetColumnFilter
+}
+
+export interface IWidgetColumnFilter {
+    enabled: boolean
+    operator: string
+    value: string
 }
 
 export interface IInteraction {
@@ -130,7 +139,8 @@ export interface IDataset {
     isIterable: boolean
     isNearRealtimeSupported: boolean,
     cache?: boolean,
-    indexes?: any[]
+    indexes?: any[],
+    drivers?: any[]
 }
 
 interface IDatasetParameters {
@@ -158,7 +168,8 @@ export interface IModelDataset {
     id: number
     cache: boolean
     indexes: string[]
-    parameters: IModelDatasetParameter[]
+    parameters: IModelDatasetParameter[],
+    drivers: any[]
 }
 
 interface IModelDatasetParameter {

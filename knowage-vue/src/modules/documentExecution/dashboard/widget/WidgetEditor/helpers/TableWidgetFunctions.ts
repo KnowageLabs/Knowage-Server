@@ -14,8 +14,8 @@ const tableWidgetFunctions = {
         if (event.dataTransfer.getData('text/plain') === 'b') return
         const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
         const tempColumn = createNewWidgetColumn(eventData)
-        model.columns.push(tempColumn)
-        emitter.emit('collumnAdded', eventData)
+        model.columns.push(tempColumn as any)
+        emitter.emit('collumnAdded', eventData)  // check if this is needed
     },
     updateColumnVisibility: (column: IWidgetColumn, model: IWidget) => {
         const index = model.columns?.findIndex((tempColumn: IWidgetColumn) => tempColumn.name === column.name)
@@ -324,7 +324,6 @@ export function formatTableWidgetForSave(widget: IWidget) {
 
     formatTablePagination(widget.settings.pagination)
     formatTableSelectedColumns(widget.columns)
-    formatWidgetDatasetKeysArray(widget)
     formatRowHeaderSettings(widget)
     formatRowStyleSettings(widget)
     formatBorderSettings(widget)
@@ -338,17 +337,9 @@ function formatTablePagination(pagination: { enabled: boolean, itemsNumber: stri
 function formatTableSelectedColumns(columns: IWidgetColumn[]) {
     if (!columns) return
     columns.forEach((column: IWidgetColumn) => {
-        if (column.name.startsWith('(')) column.name = column.name.slice(1, -1)
+        if (column.name?.startsWith('(')) column.name = column.name?.slice(1, -1)
         formatColumnTooltipSettings(column)
     })
-}
-
-function formatWidgetDatasetKeysArray(widget: IWidget) {
-    if (!widget.columns || !widget.datasets) return
-    for (let i = 0; i < widget.columns.length; i++) {
-        const index = widget.datasets.findIndex((id: number) => id === widget.columns[i].dataset)
-        if (index == -1) widget.datasets.push(widget.columns[i].dataset)
-    }
 }
 
 function formatColumnTooltipSettings(column: IWidgetColumn) {

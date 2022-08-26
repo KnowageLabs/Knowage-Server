@@ -68,19 +68,22 @@ export default defineComponent({
             formatWidgetColumnsForDisplay(this.widget)
             setWidgetModelTempProperty(this.widget)
             setWidgetModelFunctions(this.widget)
+            console.log('--- --- LOADED WIDGET IN WIDGET EDITOR: ', this.widget)
         },
         loadSelectedModelDatasets() {
             // TODO - remove hardcoded dashboard index
             this.selectedModelDatasets = this.dashboardStore.getDashboardSelectedDatastes(1)
+            console.log('---- selectedModelDatasets', this.selectedModelDatasets)
         },
         loadSelectedModel() {
             if (!this.datasets) return
-            this.selectedDatasets = []
+            this.selectedDatasets = [] as IDataset[]
             for (let i = 0; i < this.selectedModelDatasets.length; i++) {
                 const tempDataset = this.selectedModelDatasets[i]
                 const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === tempDataset.id)
-                if (index !== -1) this.selectedDatasets.push({ ...this.datasets[index], cache: tempDataset.cache, indexes: tempDataset.indexes, parameters: tempDataset.parameters as any[] })
+                if (index !== -1) this.selectedDatasets.push({ ...this.datasets[index], cache: tempDataset.cache, indexes: tempDataset.indexes, parameters: tempDataset.parameters as any[], drivers: tempDataset.drivers ?? [] })
             }
+            console.log('SELECTED DATASETS: ', this.selectedDatasets)
         },
         onDatasetSelected(dataset: IWidgetEditorDataset) {
             this.loadPreviewData(dataset)

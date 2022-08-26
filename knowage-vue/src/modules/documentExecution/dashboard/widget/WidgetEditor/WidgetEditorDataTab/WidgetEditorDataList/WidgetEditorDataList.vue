@@ -9,7 +9,7 @@
             <Button :label="$t('common.addColumn')" icon="pi pi-plus-circle" class="p-button-outlined p-ml-auto p-mr-1" @click="showCalculatedFieldDialog"></Button>
         </div>
 
-        <Listbox v-if="selectedDataset" class="kn-list kn-list-no-border-right dashboard-editor-list" :options="selectedDatasetColumns" :filter="true" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="[]" :emptyFilterMessage="$t('common.info.noDataFound')">
+        <Listbox v-if="selectedDataset" class="kn-list kn-list-no-border-right dashboard-editor-list" :options="selectedDatasetColumns" :filter="true" :filterPlaceholder="$t('common.search')" :filterFields="descriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
                 <div class="kn-list-item kn-draggable" draggable="true" :style="dataListDescriptor.style.list.listItem" @dragstart="onDragStart($event, slotProps.option)">
@@ -44,6 +44,7 @@ export default defineComponent({
         return {
             descriptor,
             dataListDescriptor,
+            model: null as IWidget | null,
             datasetOptions: [] as IWidgetEditorDataset[],
             selectedDataset: null as IWidgetEditorDataset | null,
             selectedDatasetColumns: [] as IDatasetColumn[]
@@ -55,13 +56,11 @@ export default defineComponent({
     },
     async created() {
         this.loadDatasets()
+        this.loadModel()
         this.setEventListeners()
     },
     methods: {
         setEventListeners() {
-            emitter.on('collumnAdded', (event) => {
-                this.removeColumn(event)
-            })
             emitter.on('collumnRemoved', (event) => {
                 this.addColumn(event)
             })
@@ -79,10 +78,20 @@ export default defineComponent({
                   })
                 : []
         },
+        loadModel() {
+            this.model = this.widgetModel
+        },
         onDatasetSelected() {
             this.loadDatasetColumns()
+            this.removeSelectedColumnsFromModel()
             this.$emit('datasetSelected', this.selectedDataset)
         },
+        removeSelectedColumnsFromModel() {
+            console.log(' --- removeSelectedColumnsFromModel', this.model)
+            if (!this.model?.columns) return
+            this.model.columns = []
+        },
+        // TODO
         showCalculatedFieldDialog() {},
         loadDatasetColumns() {
             this.selectedDatasetColumns = []
@@ -98,7 +107,7 @@ export default defineComponent({
         },
         columnIsPresentInModel(column: IDatasetColumn) {
             const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => {
-                if (tempColumn.name.startsWith('(')) tempColumn.name = tempColumn.name.slice(1, -1)
+                if (tempColumn.name?.startsWith('(')) tempColumn.name = tempColumn.name?.slice(1, -1)
                 return tempColumn.name == column.name
             })
             return index !== -1
@@ -114,14 +123,10 @@ export default defineComponent({
                 const index = this.datasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
                 if (index !== -1) tempDatasetColumns = (this.datasets[index] as any).metadata.fieldsMeta
                 if (!tempDatasetColumns) return
-                if (column.name.startsWith('(')) column.name = column.name.slice(1, -1)
+                if (column.name?.startsWith('(')) column.name = column.name.slice(1, -1)
                 const columnIndex = tempDatasetColumns.findIndex((tempColumn: any) => column.name === tempColumn.name)
                 if (columnIndex !== -1) this.selectedDatasetColumns.push({ ...tempDatasetColumns[columnIndex], dataset: this.selectedDataset.id })
             }
-        },
-        removeColumn(column: IDatasetColumn) {
-            const index = this.selectedDatasetColumns.findIndex((tempColumn: IDatasetColumn) => tempColumn.name === column.name)
-            if (index !== -1) this.selectedDatasetColumns.splice(index, 1)
         }
     }
 })
