@@ -91,6 +91,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
@@ -672,6 +673,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		} catch (HibernateException he) {
 			logger.error("Error modifing BI Object " + String.valueOf(biObject) + " using template " + String.valueOf(objTemp)
 					+ " with load parameters equals to " + loadParsDC, he);
+			if (he.getCause().getMessage().contains("constraint")) {
+				throw new SpagoBIDAOException("Document already exists", he);
+			}
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
