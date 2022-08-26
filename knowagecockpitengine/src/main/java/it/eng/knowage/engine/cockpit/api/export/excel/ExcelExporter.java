@@ -637,7 +637,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 			// cell styles for table widget
 			JSONObject[] columnStyles = getColumnsStyles(columnsOrdered, widgetContent);
-
+			HashMap<String, String> mapColumns = getColumnsMap(columnsOrdered);
+			HashMap<String, String> mapColumnsTypes = getColumnsMapTypes(columnsOrdered);
 			// FILL RECORDS
 			int isGroup = mapGroupsAndColumns.isEmpty() ? 0 : 1;
 			for (int r = 0; r < rows.length(); r++) {
@@ -661,29 +662,36 @@ public class ExcelExporter extends AbstractFormatExporter {
 						switch (type) {
 						case "string":
 							cell.setCellValue(s);
-							cell.setCellStyle(getStringCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, s));
+							cell.setCellStyle(getStringCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, s, rowObject, mapColumns,
+									mapColumnsTypes));
 							break;
 						case "int":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
-								cell.setCellStyle(getIntCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle, settings, Integer.parseInt(s)));
+								cell.setCellStyle(getIntCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle, settings, Integer.parseInt(s),
+										rowObject, mapColumns, mapColumnsTypes));
+							} else {
+								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
+										mapColumns, mapColumnsTypes));
 							}
-
 							break;
 						case "float":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 								cell.setCellStyle(getDoubleCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, Double.parseDouble(s),
-										rowObject));
+										rowObject, mapColumns, mapColumnsTypes));
+							} else {
+								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
+										mapColumns, mapColumnsTypes));
 							}
-
 							break;
 						case "date":
 							try {
 								if (!s.trim().isEmpty()) {
 									Date date = dateFormat.parse(s);
 									cell.setCellValue(date);
-									cell.setCellStyle(dateCellStyle);
+									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
+											mapColumns, mapColumnsTypes));
 								}
 							} catch (Exception e) {
 								logger.debug("Date will be exported as string due to error: ", e);
@@ -696,6 +704,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 									Date ts = timeStampFormat.parse(s);
 									cell.setCellValue(ts);
 									cell.setCellStyle(tsCellStyle);
+									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
+											mapColumns, mapColumnsTypes));
 								}
 							} catch (Exception e) {
 								logger.debug("Timestamp will be exported as string due to error: ", e);
@@ -713,6 +723,36 @@ public class ExcelExporter extends AbstractFormatExporter {
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
 		}
+	}
+
+	private HashMap<String, String> getColumnsMap(JSONArray columnsOrdered) {
+		HashMap<String, String> mapp = new HashMap<String, String>();
+		for (int c = 0; c < columnsOrdered.length(); c++) {
+			try {
+				JSONObject column = columnsOrdered.getJSONObject(c);
+
+				mapp.put(column.getString("header"), column.getString("name"));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return mapp;
+	}
+
+	private HashMap<String, String> getColumnsMapTypes(JSONArray columnsOrdered) {
+		HashMap<String, String> mapp = new HashMap<String, String>();
+		for (int c = 0; c < columnsOrdered.length(); c++) {
+			try {
+				JSONObject column = columnsOrdered.getJSONObject(c);
+
+				mapp.put(column.getString("name"), column.getString("type"));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return mapp;
 	}
 
 	private HashMap<String, HashMap<String, Object>> createSelectionsMap() throws JSONException {
