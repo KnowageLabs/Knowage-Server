@@ -371,6 +371,7 @@
                 "enableConditionalStyle": "Enable Conditional Style",
                 "title": "Conditional Style"
             },
+            "configuration": "Configuration",
             "customHeaderTooltip": "Custom Header Tooltip",
             "descending": "Descending",
             "dragColumnsHint": "Drag columns here",

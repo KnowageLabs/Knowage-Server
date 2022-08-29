@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -29,7 +29,7 @@ const getFormattedWidgetColumn = (widgetColumn: any) => {
 
 
 const getFormattedWidgetSettings = (widget: any) => {
-    const formattedSettings = { sortingColumn: widget.settings?.sortingColumn, sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyle: getFormattedConditionalStyles(widget), getFormattedConfiguration: getFormattedConfiguration(widget), interactions: getFormattedInteractions(widget), pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget), tooltips: getFormattedTooltips(widget), visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) }
+    const formattedSettings = { sortingColumn: widget.settings?.sortingColumn, sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyle: getFormattedConditionalStyles(widget), configuration: getFormattedConfiguration(widget), interactions: getFormattedInteractions(widget), pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget), tooltips: getFormattedTooltips(widget), visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) }
     return formattedSettings
 }
 
@@ -40,7 +40,21 @@ const getFormattedConditionalStyles = (widget: any) => {
 
 // TODO
 const getFormattedConfiguration = (widget: any) => {
-    return {}
+    return { columnGroups: [], exports: {}, headers: {}, rows: getFormattedRows(widget), summaryRows: [] }
+}
+
+const getFormattedRows = (widget: any) => {
+    const formattedRows = { "indexColumn": widget.settings?.indexColumn, rowSpan: { enabled: false, column: [] as string[] } }
+    if (!widget?.content?.columnSelectedOfDataset) return formattedRows
+
+    for (let i = 0; i < widget.content.columnSelectedOfDataset.length; i++) {
+        const tempColumn = widget.content.columnSelectedOfDataset[i]
+        if (tempColumn.rowSpan) {
+            formattedRows.rowSpan.enabled = true;
+            formattedRows.rowSpan.column.push(widget.content.columnSelectedOfDataset[i].name)
+        }
+    }
+    return formattedRows
 }
 
 // TODO
@@ -86,7 +100,7 @@ const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {
         const index = formattedWidget.columns?.findIndex((column: IWidgetColumn) => column.columnName === tempFilter.colName)
         if (index !== -1) {
             formattedWidget.columns[index].filter = { enabled: true, operator: tempFilter.filterOperator, value: tempFilter.filterVal1 }
-            if (tempFilter.filterVal2 && formattedWidget.columns[index].filter) formattedWidget.columns[index].filter.value2 = tempFilter.filterVal2
+            if (tempFilter.filterVal2 && formattedWidget.columns[index].filter) (formattedWidget.columns[index].filter as IWidgetColumnFilter).value2 = tempFilter.filterVal2
         }
     }
 }

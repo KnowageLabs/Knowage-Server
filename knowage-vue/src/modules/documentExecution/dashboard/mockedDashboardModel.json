@@ -86,6 +86,7 @@
                                 "personal": false,
                                 "precision": 0,
                                 "properties": {},
+                                "rowSpan": true,
                                 "scale": 0,
                                 "subjectId": false,
                                 "type": "java.lang.String"
@@ -130,6 +131,7 @@
                                 "personal": false,
                                 "precision": 0,
                                 "properties": {},
+                                "rowSpan": true,
                                 "scale": 0,
                                 "subjectId": false,
                                 "type": "java.lang.Integer"
