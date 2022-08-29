@@ -31,7 +31,7 @@
                     :itemIndex="itemIndex"
                     @change="onChange($event, component, index)"
                 ></WidgetEditorDropdown>
-                <WidgetEditorStyleTooblar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings" :item="item" :itemIndex="itemIndex"></WidgetEditorStyleTooblar>
+                <WidgetEditorStyleToolbar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings" :item="item" :itemIndex="itemIndex"></WidgetEditorStyleToolbar >
                 <i v-if="component.type === 'addDeleteIcon'" :class="[itemIndex === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', disabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="$emit('addNewItem', itemIndex)"></i>
             </template>
         </div>
@@ -46,11 +46,11 @@ import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { getModelProperty } from '../WidgetEditorGenericHelper'
 import WidgetEditorInputText from './WidgetEditorInputText.vue'
 import WidgetEditorDropdown from './WidgetEditorDropdown.vue'
-import WidgetEditorStyleTooblar from './WidgetEditorStyleTooblar.vue'
+import WidgetEditorStyleToolbar from './WidgetEditorStyleToolbar.vue'
 
 export default defineComponent({
     name: 'widget-editor-form-list-item',
-    components: { WidgetEditorInputText, WidgetEditorDropdown, WidgetEditorStyleTooblar },
+    components: { WidgetEditorInputText, WidgetEditorDropdown, WidgetEditorStyleToolbar },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Object, required: true }, propItem: { type: Object }, itemIndex: { type: Number }, reorderEnabled: { type: Boolean } },
     emits: ['change', 'addNewItem', 'moveRows'],
     data() {

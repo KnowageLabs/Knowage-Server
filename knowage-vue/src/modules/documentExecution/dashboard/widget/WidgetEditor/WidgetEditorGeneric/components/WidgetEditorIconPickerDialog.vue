@@ -32,7 +32,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IIcon, IWidget } from '../../../../Dashboard'
 import Dialog from 'primevue/dialog'
-import descriptor from './WidgetEditorStyleTooblarDescriptor.json'
+import descriptor from './WidgetEditorStyleToolbarDescriptor.json'
 import iconsList from '../../../../../../managers/menuManagement/IconPicker/icons'
 import { getModelProperty } from '../WidgetEditorGenericHelper'
 
