@@ -1,6 +1,5 @@
-
-
 import { IWidget, IWidgetColumn } from '../Dashboard'
+import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
     console.log("TableWidgetCompatibilityHelper - formatTableWidget called for: ", widget)
@@ -22,7 +21,7 @@ const getFormattedWidgetColumns = (widget: any) => {
 }
 
 const getFormattedWidgetColumn = (widgetColumn: any) => {
-    const formattedColumn = { columnName: widgetColumn.name, alias: widgetColumn.alias, type: widgetColumn.type, fieldType: widgetColumn.fieldType, multiValue: widgetColumn.multiValue } as IWidgetColumn
+    const formattedColumn = { id: cryptoRandomString({ length: 16, type: 'base64' }), columnName: widgetColumn.name, alias: widgetColumn.alias, type: widgetColumn.type, fieldType: widgetColumn.fieldType, multiValue: widgetColumn.multiValue } as IWidgetColumn
     if (widgetColumn.aggregationSelected) formattedColumn.aggregation = widgetColumn.aggregationSelected
     return formattedColumn
 }

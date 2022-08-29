@@ -44,6 +44,7 @@ const tableWidgetFunctions = {
         if (index !== -1) {
             if (column.id === model.temp.selectedColumn?.id) model.temp.selectedColumn = null
             model.columns.splice(index, 1)
+            removeColumnUsageFromModel(column, model)
             emitter.emit('collumnRemoved', column)
         }
     },
@@ -420,7 +421,9 @@ function formatBorderSettings(widget: IWidget) {
 }
 
 export const removeColumnUsageFromModel = (column: IWidgetColumn, model: IWidget) => {
+    console.log("removeColumnUsageFromModel: ", column)
     let name = column.columnName.startsWith('(') ? column.columnName.slice(1, -1) : column.columnName
+    console.log(model.settings?.sortingColumn + ' && ' + name + ' === ' + model.settings?.sortingColumn)
     if (model.settings?.sortingColumn && name === model.settings?.sortingColumn) {
         model.settings.sortingColumn = ''
         model.settings.sortingOrder = ''
