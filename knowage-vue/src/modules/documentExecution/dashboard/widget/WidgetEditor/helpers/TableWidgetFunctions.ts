@@ -33,7 +33,7 @@ const tableWidgetFunctions = {
         const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
         const tempColumn = createNewWidgetColumn(eventData)
         model.columns.push(tempColumn as any)
-        emitter.emit('collumnAdded', eventData)  // check if this is needed
+        emitter.emit('collumnAdded', eventData)
     },
     updateColumnVisibility: (column: IWidgetColumn, model: IWidget) => {
         const index = model.columns?.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
@@ -44,7 +44,7 @@ const tableWidgetFunctions = {
         if (index !== -1) {
             if (column.id === model.temp.selectedColumn?.id) model.temp.selectedColumn = null
             model.columns.splice(index, 1)
-            emitter.emit('collumnRemoved', column)  // check if this is needed
+            emitter.emit('collumnRemoved', column)
         }
     },
     updateColumnValue: (column: IWidgetColumn, model: IWidget, field: string) => {
@@ -55,6 +55,7 @@ const tableWidgetFunctions = {
             if (model.columns[index][field].fieldType === 'ATTRIBUTE') model.columns[index][field].aggregation = 'NONE'
             if (model.temp?.selectedColumn && model.temp.selectedColumn.id === model.columns[index].id) model.temp.selectedColumn = { ...model.columns[index] }
         }
+        emitter.emit('collumnUpdated', column)
     },
     getColumnAggregationOptions: () => {
         return descriptor.columnAggregationOptions
@@ -71,7 +72,10 @@ const tableWidgetFunctions = {
     },
     updateSelectedColumn: (model: IWidget) => {
         const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === model.temp.selectedColumn.id)
-        if (index !== -1) model.columns[index] = { ...model.temp.selectedColumn }
+        if (index !== -1) {
+            model.columns[index] = { ...model.temp.selectedColumn }
+            emitter.emit('collumnUpdated', model.columns[index])
+        }
     },
     tooltipIsDisabled: (model: IWidget) => {
         return !model?.temp.selectedColumn?.enableTooltip
