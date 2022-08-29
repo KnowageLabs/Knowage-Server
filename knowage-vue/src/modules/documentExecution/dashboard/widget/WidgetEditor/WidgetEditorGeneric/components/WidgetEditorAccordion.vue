@@ -76,7 +76,7 @@ import WidgetEditorColorPicker from './WidgetEditorColorPicker.vue'
 
 export default defineComponent({
     name: 'widget-editor-accordion',
-    components: { Accordion, AccordionTab, WidgetEditorInputSwitch, WidgetEditorDropdown, WidgetEditorInputText, WidgetEditorCheckbox, WidgetEditorStyleToolar, WidgetEditorFormList, WidgetEditorColorPicker },
+    components: { Accordion, AccordionTab, WidgetEditorInputSwitch, WidgetEditorDropdown, WidgetEditorInputText, WidgetEditorCheckbox, WidgetEditorStyleToolbar, WidgetEditorFormList, WidgetEditorColorPicker },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Object, required: true }, accordions: { type: Array as PropType<any[]>, requried: true } },
     emits: ['accordionInputSwitchChanged', 'accordionDropdownChanged', 'accordionInputTextChanged', 'accordionCheckboxChanged'],
     data() {
