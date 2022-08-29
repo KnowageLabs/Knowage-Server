@@ -59,6 +59,7 @@
                                     @accordionDropdownChanged="onDropdownChange($event.value, $event.component)"
                                     @accordionInputTextChanged="onInputTextChange($event.value, $event.component)"
                                     @accordionCheckboxChanged="onCheckboxChanged($event.value, $event.component)"
+                                    @accordionMultiselectChanged="onDropdownChange($event.value, $event.component)"
                                     data-test="widget-editor-accordion"
                                 ></WidgetEditorAccordion>
                                 <WidgetEditorDataTable

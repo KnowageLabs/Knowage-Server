@@ -52,6 +52,17 @@
                             <WidgetEditorStyleTooblar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings" data-test="widget-editor-style-toolbar"></WidgetEditorStyleTooblar>
                             <WidgetEditorFormList v-else-if="component.type === 'formList'" :widgetModel="widgetModel" :settings="component.settings"></WidgetEditorFormList>
                             <WidgetEditorColorPicker v-else-if="component.type === 'colorPicker'" :widgetModel="widgetModel" :class="component.cssClass" :label="component.label" :property="component.property" :settings="component.settings"></WidgetEditorColorPicker>
+                            <WidgetEditorHintIcon v-else-if="component.type === 'hintIcon'" :class="component.cssClass" :settings="component.settings"></WidgetEditorHintIcon>
+                            <WidgetEditorMultiselect
+                                v-else-if="component.type === 'multiselect'"
+                                :widgetModel="widgetModel"
+                                :class="component.cssClass"
+                                :label="component.label"
+                                :property="component.property"
+                                :options="getDropdownOptions(component)"
+                                :settings="component.settings"
+                                @change="$emit('accordionMultiselectChanged', { value: $event, component: component })"
+                            ></WidgetEditorMultiselect>
                         </template>
                     </div>
                 </template>
@@ -73,12 +84,14 @@ import WidgetEditorCheckbox from './WidgetEditorCheckbox.vue'
 import WidgetEditorStyleTooblar from './WidgetEditorStyleTooblar.vue'
 import WidgetEditorFormList from './WidgetEditorFormList.vue'
 import WidgetEditorColorPicker from './WidgetEditorColorPicker.vue'
+import WidgetEditorHintIcon from './WidgetEditorHintIcon.vue'
+import WidgetEditorMultiselect from './WidgetEditorMultiselect.vue'
 
 export default defineComponent({
     name: 'widget-editor-accordion',
-    components: { Accordion, AccordionTab, WidgetEditorInputSwitch, WidgetEditorDropdown, WidgetEditorInputText, WidgetEditorCheckbox, WidgetEditorStyleTooblar, WidgetEditorFormList, WidgetEditorColorPicker },
+    components: { Accordion, AccordionTab, WidgetEditorInputSwitch, WidgetEditorDropdown, WidgetEditorInputText, WidgetEditorCheckbox, WidgetEditorStyleTooblar, WidgetEditorFormList, WidgetEditorColorPicker, WidgetEditorHintIcon, WidgetEditorMultiselect },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Object, required: true }, accordions: { type: Array as PropType<any[]>, requried: true } },
-    emits: ['accordionInputSwitchChanged', 'accordionDropdownChanged', 'accordionInputTextChanged', 'accordionCheckboxChanged'],
+    emits: ['accordionInputSwitchChanged', 'accordionDropdownChanged', 'accordionInputTextChanged', 'accordionCheckboxChanged', 'accordionMultiselectChanged'],
     data() {
         return {}
     },
@@ -87,7 +100,7 @@ export default defineComponent({
         getDropdownOptions(component: any) {
             let temp = []
             const tempFunction = getModelProperty(this.widgetModel, component.options, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') temp = tempFunction()
+            if (tempFunction && typeof tempFunction === 'function') temp = tempFunction(this.widgetModel)
             return temp
         }
     }

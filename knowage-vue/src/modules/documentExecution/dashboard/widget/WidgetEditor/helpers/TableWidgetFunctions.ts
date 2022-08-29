@@ -103,6 +103,21 @@ const tableWidgetFunctions = {
     selectedColumnFilterFromToIsVisible: (model: IWidget) => {
         return model?.temp.selectedColumn?.filter?.operator === 'range'
     },
+    indexColumnChanged: (model: IWidget) => {
+        emitter.emit('indexColumnChanged')
+    },
+    rowSpanChanged: (model: IWidget) => {
+        emitter.emit('rowSpanChanged')
+    },
+    getRowSpanColumnOptions: (model: IWidget) => {
+        const columnOptions = [] as { value: string, label: string }[]
+        for (let i = 0; i < model.columns.length; i++) {
+            const temp = model.columns[i].columnName.startsWith('(') ? model.columns[i].columnName.slice(1, -1) : model.columns[i].columnName
+            columnOptions.push({ value: temp, label: temp })
+        }
+        console.log("COLUMN OPTIONS: ", columnOptions)
+        return columnOptions
+    },
     // tooltipIsDisabled: (model: IWidget) => {
     //     return !model?.temp.selectedColumn?.enableTooltip
     // },
