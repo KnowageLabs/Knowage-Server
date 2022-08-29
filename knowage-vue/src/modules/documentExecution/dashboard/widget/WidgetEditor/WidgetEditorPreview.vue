@@ -64,6 +64,9 @@ export default defineComponent({
       emitter.on("collumnUpdated", (column) =>
         console.log("WidgetEditorPreview  - collumnUpdated!", column)
       );
+      emitter.on("columnsReordered", () =>
+        console.log("WidgetEditorPreview  - columnsReordered!")
+      );
     },
   },
 });

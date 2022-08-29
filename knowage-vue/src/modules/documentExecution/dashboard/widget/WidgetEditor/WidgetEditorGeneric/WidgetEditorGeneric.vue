@@ -83,6 +83,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '../../../Dashboard'
 import { getModelProperty } from './WidgetEditorGenericHelper'
+import { emitter } from '../../../DashboardHelpers'
 import WidgetEditorInputSwitch from './components/WidgetEditorInputSwitch.vue'
 import WidgetEditorInputText from './components/WidgetEditorInputText.vue'
 import WidgetEditorDataTable from './components/WidgetEditorDataTable.vue'
@@ -135,7 +136,10 @@ export default defineComponent({
             if (component.property) this.updateModelProperty(value, component.property)
         },
         onRowReorder(value: any[], component: any) {
-            if (component.settings.property) this.updateModelProperty(value, component.settings.property)
+            if (component.settings.property) {
+                this.updateModelProperty(value, component.settings.property)
+                emitter.emit('columnsReordered')
+            }
         },
         updateModelProperty(value: any, propertyPath: string) {
             getModelProperty(this.widgetModel, propertyPath, 'updateValue', value)
