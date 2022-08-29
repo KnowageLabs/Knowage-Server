@@ -14,7 +14,7 @@ const tableWidgetFunctions = {
     getSelectedColumnsAsOptions: (model: IWidget) => {
         const columnOptions = [] as { value: string, label: string }[]
         for (let i = 0; i < model.columns.length; i++) {
-            const temp = model.columns[i].columnName.slice(1, -1)
+            const temp = model.columns[i].columnName.startsWith('(') ? model.columns[i].columnName.slice(1, -1) : model.columns[i].columnName
             columnOptions.push({ value: temp, label: temp })
         }
         return columnOptions
@@ -33,8 +33,9 @@ const tableWidgetFunctions = {
         const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
         const tempColumn = createNewWidgetColumn(eventData)
         model.columns.push(tempColumn as any)
-        emitter.emit('collumnAdded', eventData)  // check if this is needed
+        emitter.emit('collumnAdded', eventData)
     },
+    // REMOVED FROM TABLE
     updateColumnVisibility: (column: IWidgetColumn, model: IWidget) => {
         const index = model.columns?.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
         if (index !== -1 && model.columns[index] && model.columns[index].style) model.columns[index].style.hiddenColumn = !model.columns[index].style.hiddenColumn
@@ -44,7 +45,8 @@ const tableWidgetFunctions = {
         if (index !== -1) {
             if (column.id === model.temp.selectedColumn?.id) model.temp.selectedColumn = null
             model.columns.splice(index, 1)
-            emitter.emit('collumnRemoved', column)  // check if this is needed
+            removeColumnUsageFromModel(column, model)
+            emitter.emit('collumnRemoved', column)
         }
     },
     updateColumnValue: (column: IWidgetColumn, model: IWidget, field: string) => {
@@ -55,6 +57,7 @@ const tableWidgetFunctions = {
             if (model.columns[index][field].fieldType === 'ATTRIBUTE') model.columns[index][field].aggregation = 'NONE'
             if (model.temp?.selectedColumn && model.temp.selectedColumn.id === model.columns[index].id) model.temp.selectedColumn = { ...model.columns[index] }
         }
+        emitter.emit('collumnUpdated', column)
     },
     getColumnAggregationOptions: () => {
         return descriptor.columnAggregationOptions
@@ -71,7 +74,10 @@ const tableWidgetFunctions = {
     },
     updateSelectedColumn: (model: IWidget) => {
         const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === model.temp.selectedColumn.id)
-        if (index !== -1) model.columns[index] = { ...model.temp.selectedColumn }
+        if (index !== -1) {
+            model.columns[index] = { ...model.temp.selectedColumn }
+            emitter.emit('collumnUpdated', model.columns[index])
+        }
     },
     tooltipIsDisabled: (model: IWidget) => {
         return !model?.temp.selectedColumn?.enableTooltip
@@ -355,6 +361,7 @@ function formatTablePagination(pagination: { enabled: boolean, itemsNumber: stri
 function formatTableSelectedColumns(columns: IWidgetColumn[]) {
     if (!columns) return
     columns.forEach((column: IWidgetColumn) => {
+        delete column.id
         if (column.columnName.startsWith('(')) column.columnName = column.columnName.slice(1, -1)
         formatColumnTooltipSettings(column)
     })
@@ -416,8 +423,9 @@ function formatBorderSettings(widget: IWidget) {
 }
 
 export const removeColumnUsageFromModel = (column: IWidgetColumn, model: IWidget) => {
-    console.log("WIDGET COLUMN TO REMOVE: ", column)
+    console.log("removeColumnUsageFromModel: ", column)
     let name = column.columnName.startsWith('(') ? column.columnName.slice(1, -1) : column.columnName
+    console.log(model.settings?.sortingColumn + ' && ' + name + ' === ' + model.settings?.sortingColumn)
     if (model.settings?.sortingColumn && name === model.settings?.sortingColumn) {
         model.settings.sortingColumn = ''
         model.settings.sortingOrder = ''

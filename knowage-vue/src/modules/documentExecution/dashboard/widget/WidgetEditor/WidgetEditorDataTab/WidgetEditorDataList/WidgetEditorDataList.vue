@@ -72,7 +72,6 @@ export default defineComponent({
                       }
                   })
                 : []
-            console.log(' ---------------------  !!! SELECTED DATASET OPTIONS: ', this.datasetOptions)
         },
         loadModel() {
             this.model = this.widgetModel
@@ -80,9 +79,7 @@ export default defineComponent({
             this.loadDatasetColumns()
         },
         loadSelectedDataset() {
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> MODEL: ', this.model)
             const index = this.datasetOptions?.findIndex((dataset: IWidgetEditorDataset) => dataset.id === this.model?.dataset)
-            console.log('INDEX: ', index)
             if (index !== -1) this.selectedDataset = this.datasetOptions[index]
         },
         onDatasetSelected() {
@@ -91,7 +88,6 @@ export default defineComponent({
             this.$emit('datasetSelected', this.selectedDataset)
         },
         removeSelectedColumnsFromModel() {
-            console.log(' --- removeSelectedColumnsFromModel', this.model)
             if (!this.model?.columns) return
             for (let i = 0; i < this.model.columns.length; i++) {
                 removeColumnUsageFromModel(this.model.columns[i], this.model)
@@ -105,9 +101,7 @@ export default defineComponent({
             if (!this.selectedDatasets || this.selectedDatasets.length === 0) return
 
             const index = this.selectedDatasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
-            console.log('INDEX 2: ', index)
             if (index !== -1) this.addSelectedDatasetColumnsFromMetadata(this.selectedDatasets[index].metadata.fieldsMeta)
-            console.log('aaaaaaaaaaaaaaaaaaaaaaaaa this.selectedDatasets[index]', this.selectedDatasets[index])
         },
         addSelectedDatasetColumnsFromMetadata(fieldsMeta: any[]) {
             for (let i = 0; i < fieldsMeta.length; i++) {

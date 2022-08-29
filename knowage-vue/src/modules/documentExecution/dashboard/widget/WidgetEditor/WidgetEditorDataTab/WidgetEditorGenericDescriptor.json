@@ -96,11 +96,6 @@
                                 },
                                 "buttons": [
                                     {
-                                        "function": "functions.updateColumnVisibility",
-                                        "icon": "fa fa-eye",
-                                        "tooltip": "common.visibility"
-                                    },
-                                    {
                                         "function": "functions.setSelectedColumn",
                                         "icon": "fas fa-cog",
                                         "tooltip": "common.edit"
