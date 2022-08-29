@@ -31,7 +31,8 @@
                                                                 "type": "hintIcon"
                                                             }
                                                         ],
-                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center p-pb-2",
+                                                        "cssStyle": "border-bottom: 1px solid #c2c2c2"
                                                     },
                                                     {
                                                         "components": [
@@ -52,7 +53,7 @@
                                                                 "type": "hintIcon"
                                                             }
                                                         ],
-                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center p-pt-2"
                                                     },
                                                     {
                                                         "components": [

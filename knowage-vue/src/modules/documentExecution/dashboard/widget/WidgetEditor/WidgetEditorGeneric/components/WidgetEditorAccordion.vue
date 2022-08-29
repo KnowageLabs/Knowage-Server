@@ -8,9 +8,9 @@
                 </div>
             </template>
 
-            <div :class="accordion.cssClasses">
+            <div :class="accordion.cssClasses" :style="accordion.cssStyle">
                 <template v-for="(container, containerIndex) in accordion.containers" :key="containerIndex">
-                    <div :class="container.cssClasses">
+                    <div :class="container.cssClasses" :style="container.cssStyle">
                         <template v-for="(component, componentIndex) in container.components" :key="componentIndex">
                             <WidgetEditorInputSwitch
                                 v-if="component.type === 'inputSwitch'"
