@@ -1,4 +1,42 @@
 {
+    "attributeColumnFilterOperators": [
+        {
+            "label": "=",
+            "value": "="
+        },
+        {
+            "label": "!=",
+            "value": "!="
+        },
+        {
+            "label": "IN",
+            "value": "IN"
+        },
+        {
+            "label": "like",
+            "value": "like"
+        },
+        {
+            "label": "is null",
+            "value": "is null"
+        },
+        {
+            "label": "is not null",
+            "value": "is not null"
+        },
+        {
+            "label": "min",
+            "value": "min"
+        },
+        {
+            "label": "max",
+            "value": "max"
+        },
+        {
+            "label": "not IN",
+            "value": "not IN"
+        }
+    ],
     "bordersStyleOptions": [
         {
             "label": "",
@@ -95,44 +133,6 @@
             "value": "IN"
         }
     ],
-    "columnFilterOperators": [
-        {
-            "label": "=",
-            "value": "="
-        },
-        {
-            "label": "!=",
-            "value": "!="
-        },
-        {
-            "label": "IN",
-            "value": "IN"
-        },
-        {
-            "label": "like",
-            "value": "like"
-        },
-        {
-            "label": "is null",
-            "value": "is null"
-        },
-        {
-            "label": "is not null",
-            "value": "is not null"
-        },
-        {
-            "label": "min",
-            "value": "min"
-        },
-        {
-            "label": "max",
-            "value": "max"
-        },
-        {
-            "label": "not IN",
-            "value": "not IN"
-        }
-    ],
     "columnTypeOptions": [
         {
             "label": "ATTRIBUTE",
@@ -205,6 +205,44 @@
         {
             "label": "kpi.kpiDocumentDesigner.font.xxlarge",
             "value": "40px"
+        }
+    ],
+    "measureColumnFilterOperators": [
+        {
+            "label": "=",
+            "value": "="
+        },
+        {
+            "label": "!=",
+            "value": "!="
+        },
+        {
+            "label": "IN",
+            "value": "IN"
+        },
+        {
+            "label": "like",
+            "value": "like"
+        },
+        {
+            "label": "is null",
+            "value": "is null"
+        },
+        {
+            "label": "is not null",
+            "value": "is not null"
+        },
+        {
+            "label": "min",
+            "value": "min"
+        },
+        {
+            "label": "max",
+            "value": "max"
+        },
+        {
+            "label": "not IN",
+            "value": "not IN"
         }
     ],
     "rowStyleCompareValueTypes": [

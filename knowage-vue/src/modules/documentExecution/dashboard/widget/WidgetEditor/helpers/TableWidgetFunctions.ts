@@ -33,7 +33,7 @@ const tableWidgetFunctions = {
         const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
         const tempColumn = createNewWidgetColumn(eventData)
         model.columns.push(tempColumn as any)
-        emitter.emit('collumnAdded', eventData)
+        emitter.emit('collumnAdded', tempColumn)
     },
     // REMOVED FROM TABLE
     updateColumnVisibility: (column: IWidgetColumn, model: IWidget) => {
@@ -89,7 +89,7 @@ const tableWidgetFunctions = {
         }
     },
     getColumnFilterOptions: () => {
-        return descriptor.columnFilterOperators
+        return descriptor.attributeColumnFilterOperators
     },
     selectedColumnFilterIsDisabled: (model: IWidget) => {
         return !model?.temp.selectedColumn?.filter?.enabled
