@@ -1,11 +1,10 @@
-
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
 import { formatTableWidget } from './TableWidgetCompatibilityHelper'
 import { IWidgetEditorDataset } from '../Dashboard'
 
 export const formatModel = (model: any) => {
-    console.log("FORMAT MODEL CALLED WITH: ", model)
+    console.log('FORMAT MODEL CALLED WITH: ', model)
     if (!model.sheets) return
 
     // TODO - id
@@ -31,7 +30,7 @@ const getFormattedModelConfiguration = (model: any) => {
 }
 
 const getFormattedDatasets = (model: any) => {
-    console.log("ORIGINAL DATASETS: ", model.configuration.datasets)
+    console.log('ORIGINAL DATASETS: ', model.configuration.datasets)
     if (!model.configuration || !model.configuration.datasets) return
     const formattedDatasets = [] as IWidgetEditorDataset[]
     for (let i = 0; i < model.configuration.datasets.length; i++) {
@@ -63,7 +62,8 @@ const formatSheet = (sheet: any, formattedModel: any) => {
     for (let i = 0; i < sheet.widgets.length; i++) {
         const tempWidget = sheet.widgets[i]
         // TODO  - changeId
-        formattedSheet.widgets.lg.push({ id: tempWidget.id, x: tempWidget.sizeX, y: tempWidget.sizeY, h: 100, w: 100, i: cryptoRandomString({ length: 16, type: 'base64' }) })
+        // formattedSheet.widgets.lg.push({ id: tempWidget.id, x: tempWidget.sizeX, y: tempWidget.sizeY, h: 100, w: 100, i: cryptoRandomString({ length: 16, type: 'base64' }) })
+        formattedSheet.widgets.lg.push({ id: tempWidget.id, h: 5, w: 10, x: 10, y: 10, i: cryptoRandomString({ length: 16, type: 'base64' }), moved: false })
         addWidgetToModel(tempWidget, formattedModel)
     }
 
@@ -76,16 +76,16 @@ const addWidgetToModel = (widget: any, formattedModel: any) => {
 }
 
 const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
-    let found = false;
+    let found = false
     if (!formattedModel.widgets) return found
     for (let i = 0; i < formattedModel.widgets.length; i++) {
         if (formattedModel.widgets[i].id === widget.id) {
-            found = true;
-            break;
+            found = true
+            break
         }
     }
 
-    return found;
+    return found
 }
 
 export const formatWidget = (widget: any) => {
@@ -94,7 +94,6 @@ export const formatWidget = (widget: any) => {
     switch (widget.type) {
         case 'table':
             formattedWidget = formatTableWidget(widget)
-
     }
 
     return formattedWidget
