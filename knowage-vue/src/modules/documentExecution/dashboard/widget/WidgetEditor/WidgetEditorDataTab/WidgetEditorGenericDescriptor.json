@@ -169,151 +169,58 @@
                             "type": "dropdown"
                         }
                     ],
-                    "containerClasess": "p-d-flex p-flex-row p-ai-center"
+                    "containerClasess": "p-d-flex p-flex-row p-ai-center p-pb-2",
+                    "containerStyle": "border-bottom: 1px solid #c2c2c2"
                 },
                 {
                     "components": [
                         {
-                            "accordions": [
-                                {
-                                    "containers": [
-                                        {
-                                            "components": [
-                                                {
-                                                    "cssClass": "kn-material-input p-d-flex p-flex-row kn-flex p-m-2",
-                                                    "label": "dashboard.widgetEditor.hidden",
-                                                    "property": "temp.selectedColumn.style.hiddenColumn",
-                                                    "settings": {
-                                                        "onUpdate": "functions.updateSelectedColumn"
-                                                    },
-                                                    "type": "inputSwitch"
-                                                },
-                                                {
-                                                    "cssClass": "p-d-flex p-flex-column kn-flex-3 p-m-2",
-                                                    "label": "dashboard.widgetEditor.visualizationType",
-                                                    "options": "functions.getVisualizationTypeOptions",
-                                                    "property": "temp.selectedColumn.visType",
-                                                    "settings": {
-                                                        "onUpdate": "functions.updateSelectedColumn",
-                                                        "translateLabels": true,
-                                                        "visibilityCondition": "functions.visualizationTypeDropdownIsVisible",
-                                                        "watchers": ["temp.selectedColumn.style.hiddenColumn"]
-                                                    },
-                                                    "type": "dropdown"
-                                                }
-                                            ],
-                                            "cssClasses": "p-d-flex p-flex-rows p-ai-center"
-                                        }
-                                    ],
-                                    "icon": "fa fa-table",
-                                    "title": "dashboard.widgetEditor.visualizationType"
-                                }
-                            ],
-                            "settings": {},
-                            "type": "accordion"
+                            "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
+                            "label": "dashboard.widgetEditor.enableFilter",
+                            "property": "temp.selectedColumn.filter.enabled",
+                            "settings": {
+                                "onUpdate": "functions.updateSelectedColumn"
+                            },
+                            "type": "inputSwitch"
+                        }
+                    ],
+                    "containerClasess": "p-d-flex p-flex-row p-ai-center p-mt-2"
+                },
+                {
+                    "components": [
+                        {
+                            "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
+                            "label": "common.operator",
+                            "options": "functions.getColumnFilterOptions",
+                            "property": "temp.selectedColumn.filter.operator",
+                            "settings": {
+                                "disabledCondition": "functions.selectedColumnFilterIsDisabled",
+                                "onUpdate": "functions.updateSelectedColumn",
+                                "watchers": ["temp.selectedColumn.filter.enabled"]
+                            },
+                            "type": "dropdown"
                         },
                         {
-                            "accordions": [
-                                {
-                                    "containers": [
-                                        {
-                                            "components": [
-                                                {
-                                                    "cssClass": "kn-material-input p-d-flex p-flex-row p-ai-center kn-flex p-m-2",
-                                                    "label": "dashboard.widgetEditor.enableTooltip",
-                                                    "property": "temp.selectedColumn.enableTooltip",
-                                                    "settings": {
-                                                        "onUpdate": "functions.updateSelectedColumn"
-                                                    },
-                                                    "type": "inputSwitch"
-                                                }
-                                            ],
-                                            "cssClasses": "p-d-flex p-flex-row p-ai-center"
-                                        },
-                                        {
-                                            "components": [
-                                                {
-                                                    "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
-                                                    "label": "dashboard.widgetEditor.prefix",
-                                                    "property": "temp.selectedColumn.style.tooltip.prefix",
-                                                    "settings": {
-                                                        "disabledCondition": "functions.tooltipIsDisabled",
-                                                        "onUpdate": "functions.updateSelectedColumn",
-                                                        "watchers": ["temp.selectedColumn.enableTooltip"]
-                                                    },
-                                                    "type": "inputText"
-                                                }
-                                            ],
-                                            "cssClasses": "p-d-flex p-flex-row p-ai-center"
-                                        },
-                                        {
-                                            "components": [
-                                                {
-                                                    "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
-                                                    "label": "dashboard.widgetEditor.sufix",
-                                                    "property": "temp.selectedColumn.style.tooltip.sufix",
-                                                    "settings": {
-                                                        "disabledCondition": "functions.tooltipIsDisabled",
-                                                        "onUpdate": "functions.updateSelectedColumn",
-                                                        "watchers": ["temp.selectedColumn.enableTooltip"]
-                                                    },
-                                                    "type": "inputText"
-                                                },
-                                                {
-                                                    "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
-                                                    "label": "dashboard.widgetEditor.precision",
-                                                    "property": "temp.selectedColumn.style.tooltip.precision",
-                                                    "settings": {
-                                                        "disabledCondition": "functions.tooltipIsDisabled",
-                                                        "onUpdate": "functions.updateSelectedColumn",
-                                                        "type": "number",
-                                                        "visibilityCondition": "functions.tooltipPrecisionIsVisible",
-                                                        "watchers": ["temp.selectedColumn.enableTooltip"]
-                                                    },
-                                                    "type": "inputText"
-                                                }
-                                            ],
-                                            "cssClasses": "p-d-flex p-flex-row p-ai-center"
-                                        },
-                                        {
-                                            "components": [
-                                                {
-                                                    "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
-                                                    "label": "dashboard.widgetEditor.customHeaderTooltip",
-                                                    "property": "temp.selectedColumn.style.enableCustomHeaderTooltip",
-                                                    "settings": {
-                                                        "binary": true,
-                                                        "disabledCondition": "functions.tooltipIsDisabled",
-                                                        "onUpdate": "functions.updateSelectedColumn",
-                                                        "watchers": ["temp.selectedColumn.enableTooltip"]
-                                                    },
-                                                    "type": "checkbox"
-                                                },
-                                                {
-                                                    "cssClass": "p-d-flex p-flex-column kn-flex-3 p-m-2",
-                                                    "label": "common.text",
-                                                    "property": "temp.selectedColumn.style.customHeaderTooltip",
-                                                    "settings": {
-                                                        "disabledCondition": "functions.tooltipCustomHeaderTextIsDisabled",
-                                                        "hint": "dashboard.widgetEditor.tooltipTextHint",
-                                                        "hintPlaceholder": "{..}",
-                                                        "onUpdate": "functions.updateSelectedColumn",
-                                                        "watchers": ["temp.selectedColumn.style.enableCustomHeaderTooltip", "temp.selectedColumn.enableTooltip"]
-                                                    },
-                                                    "type": "inputText"
-                                                }
-                                            ],
-                                            "cssClasses": "p-d-flex p-flex-row p-ai-center"
-                                        }
-                                    ],
-                                    "icon": "fa fa-comment",
-                                    "title": "dashboard.widgetEditor.settingsListOptions.tooltip"
-                                }
-                            ],
-                            "settings": {},
-                            "type": "accordion"
+                            "cssClass": "p-d-flex p-flex-column kn-flex-3 p-m-2",
+                            "label": "common.value",
+                            "property": "temp.selectedColumn.filter.value",
+                            "settings": {
+                                "disabledCondition": "functions.selectedColumnFilterIsDisabled",
+                                "onUpdate": "functions.updateSelectedColumn",
+                                "visibilityCondition": "functions.selectedColumnFilterValueIsVisible",
+                                "watchers": ["temp.selectedColumn.filter.enabled", "temp.selectedColumn.filter.operator"]
+                            },
+                            "type": "inputText"
+                        },
+                        {
+                            "cssClass": "p-m-2",
+                            "settings": {
+                                "hint": "dashboard.widgetEditor.columnFilterHint"
+                            },
+                            "type": "hintIcon"
                         }
-                    ]
+                    ],
+                    "containerClasess": "p-d-flex p-flex-row p-ai-center"
                 }
             ],
             "title": "dashboard.widgetEditor.columnDetails",

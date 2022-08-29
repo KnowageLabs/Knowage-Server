@@ -6,6 +6,7 @@ export const formatTableWidget = (widget: any) => {
     const formattedWidget = {
         id: widget.id, dataset: widget.dataset.dsId, type: widget.type, columns: getFormattedWidgetColumns(widget), conditionalStyles: [], interactions: [], theme: '', styles: {}, settings: getFormattedWidgetSettings(widget)
     } as IWidget
+    getFiltersForColumns(formattedWidget, widget)
 
     console.log("TableWidgetCompatibilityHelper - FORMATTED WIDGET: ", formattedWidget)
     return formattedWidget
@@ -21,7 +22,7 @@ const getFormattedWidgetColumns = (widget: any) => {
 }
 
 const getFormattedWidgetColumn = (widgetColumn: any) => {
-    const formattedColumn = { id: cryptoRandomString({ length: 16, type: 'base64' }), columnName: widgetColumn.name, alias: widgetColumn.alias, type: widgetColumn.type, fieldType: widgetColumn.fieldType, multiValue: widgetColumn.multiValue } as IWidgetColumn
+    const formattedColumn = { id: cryptoRandomString({ length: 16, type: 'base64' }), columnName: widgetColumn.name, alias: widgetColumn.alias, type: widgetColumn.type, fieldType: widgetColumn.fieldType, multiValue: widgetColumn.multiValue, filter: {} } as IWidgetColumn
     if (widgetColumn.aggregationSelected) formattedColumn.aggregation = widgetColumn.aggregationSelected
     return formattedColumn
 }
@@ -74,4 +75,17 @@ const getFormattedVisualizations = (widget: any) => {
 // TODO
 const getFormattedResponsivnes = (widget: any) => {
     return {}
+}
+
+const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {
+    // console.log("----------------------- getFiltersForColumns: ", formattedWidget)
+    // console.log("----------------------- getFiltersForColumns oldWidget: ", oldWidget)
+    if (!oldWidget.filters || oldWidget.filters.length === 0) return
+    for (let i = 0; i < oldWidget.filters.length; i++) {
+        const tempFilter = oldWidget.filters[i]
+        const index = formattedWidget.columns?.findIndex((column: IWidgetColumn) => column.columnName === tempFilter.colName)
+        if (index !== -1) {
+            formattedWidget.columns[index].filter = { enabled: true, operator: tempFilter.filterOperator, value: tempFilter.filterVal1 }
+        }
+    }
 }

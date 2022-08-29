@@ -141,7 +141,34 @@
                     "dataset": {
                         "dsId": 166
                     },
-                    "filters": [],
+                    "filters": [
+                        {
+                            "colAlias": "FID",
+                            "colName": "FID",
+                            "dataset": {
+                                "dsId": 166,
+                                "label": "BIG_TEST_GIS"
+                            },
+                            "filterOperator": "=",
+                            "filterVal1": "Test",
+                            "filterVal2": "",
+                            "filterVals": ["Test"],
+                            "type": "java.lang.String"
+                        },
+                        {
+                            "colAlias": "region_id",
+                            "colName": "region_id",
+                            "dataset": {
+                                "dsId": 166,
+                                "label": "BIG_TEST_GIS"
+                            },
+                            "filterOperator": "<=",
+                            "filterVal1": "2",
+                            "filterVal2": "",
+                            "filterVals": ["2"],
+                            "type": "java.lang.Integer"
+                        }
+                    ],
                     "id": 1661757385620,
                     "limitRows": {
                         "enable": false,

@@ -5,7 +5,7 @@
                 <span> {{ card.title ? $t(card.title) : '' }}</span>
                 <div :class="card.cardClasses">
                     <template v-for="(container, containerIndex) in card.containers" :key="containerIndex">
-                        <div :class="container.containerClasess">
+                        <div :class="container.containerClasess" :style="container.containerStyle">
                             <template v-for="(component, componentIndex) in container.components" :key="componentIndex">
                                 <WidgetEditorInputText
                                     v-if="component.type === 'inputText'"
@@ -70,6 +70,7 @@
                                     @rowReorder="onRowReorder($event, component)"
                                     data-test="widget-editor-data-table"
                                 ></WidgetEditorDataTable>
+                                <WidgetEditorHintIcon v-else-if="component.type === 'hintIcon'" :class="component.cssClass" :settings="component.settings"></WidgetEditorHintIcon>
                             </template>
                         </div>
                     </template>
@@ -90,10 +91,11 @@ import WidgetEditorDataTable from './components/WidgetEditorDataTable.vue'
 import WidgetEditorDropdown from './components/WidgetEditorDropdown.vue'
 import WidgetEditorAccordion from './components/WidgetEditorAccordion.vue'
 import WidgetEditorCheckbox from './components/WidgetEditorCheckbox.vue'
+import WidgetEditorHintIcon from './components/WidgetEditorHintIcon.vue'
 
 export default defineComponent({
     name: 'widget-editor-generic',
-    components: { WidgetEditorInputSwitch, WidgetEditorInputText, WidgetEditorDataTable, WidgetEditorDropdown, WidgetEditorAccordion, WidgetEditorCheckbox },
+    components: { WidgetEditorInputSwitch, WidgetEditorInputText, WidgetEditorDataTable, WidgetEditorDropdown, WidgetEditorAccordion, WidgetEditorCheckbox, WidgetEditorHintIcon },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, propDescriptor: { type: Object, required: true } },
     data() {
         return {

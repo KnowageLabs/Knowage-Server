@@ -88,24 +88,35 @@ const tableWidgetFunctions = {
             emitter.emit('collumnUpdated', model.columns[index])
         }
     },
-    tooltipIsDisabled: (model: IWidget) => {
-        return !model?.temp.selectedColumn?.enableTooltip
+    getColumnFilterOptions: () => {
+        return descriptor.columnFilterOperators
     },
-    selectedColumnDropdownIsVisible: (model: IWidget) => {
-        return model?.temp.selectedColumn?.fieldType === 'MEASURE'
+    selectedColumnFilterIsDisabled: (model: IWidget) => {
+        return !model?.temp.selectedColumn?.filter?.enabled
     },
-    getVisualizationTypeOptions: () => {
-        return descriptor.visualizationTypeOptions
+    selectedColumnFilterValueIsVisible: (model: IWidget) => {
+        const operator = model?.temp.selectedColumn?.filter?.operator
+        console.log("OPERATOR", operator)
+        return operator ? ['=', '!=', 'IN', 'like',].includes(operator) : false
     },
-    visualizationTypeDropdownIsVisible: (model: IWidget) => {
-        return model?.temp.selectedColumn?.fieldType === 'MEASURE'
-    },
-    tooltipPrecisionIsVisible: (model: IWidget) => {
-        return model?.temp.selectedColumn?.fieldType === 'MEASURE'
-    },
-    tooltipCustomHeaderTextIsDisabled: (model: IWidget) => {
-        return !model?.temp.selectedColumn?.style?.enableCustomHeaderTooltip || model.functions.tooltipIsDisabled(model)
-    },
+    // tooltipIsDisabled: (model: IWidget) => {
+    //     return !model?.temp.selectedColumn?.enableTooltip
+    // },
+    // selectedColumnDropdownIsVisible: (model: IWidget) => {
+    //     return model?.temp.selectedColumn?.fieldType === 'MEASURE'
+    // },
+    // getVisualizationTypeOptions: () => {
+    //     return descriptor.visualizationTypeOptions
+    // },
+    // visualizationTypeDropdownIsVisible: (model: IWidget) => {
+    //     return model?.temp.selectedColumn?.fieldType === 'MEASURE'
+    // },
+    // tooltipPrecisionIsVisible: (model: IWidget) => {
+    //     return model?.temp.selectedColumn?.fieldType === 'MEASURE'
+    // },
+    // tooltipCustomHeaderTextIsDisabled: (model: IWidget) => {
+    //     return !model?.temp.selectedColumn?.style?.enableCustomHeaderTooltip || model.functions.tooltipIsDisabled(model)
+    // },
     headerIsDisabled: (model: IWidget) => {
         return !model?.styles.th.enabled
     },
@@ -338,6 +349,7 @@ function createNewWidgetColumn(eventData: any) {
         type: eventData.type,
         fieldType: eventData.fieldType,
         aggregation: eventData.aggregation,
+        filter: {},
         style: {
             hiddenColumn: false,
             'white-space': 'nowrap',
@@ -356,7 +368,7 @@ export function formatTableWidgetForSave(widget: IWidget) {
     if (!widget) return
 
     formatTablePagination(widget.settings.pagination)
-    // formatTableSelectedColumns(widget.columns)
+    formatTableSelectedColumns(widget.columns)
     // formatRowHeaderSettings(widget)
     // formatRowStyleSettings(widget)
     // formatBorderSettings(widget)
@@ -372,7 +384,8 @@ function formatTableSelectedColumns(columns: IWidgetColumn[]) {
     columns.forEach((column: IWidgetColumn) => {
         delete column.id
         if (column.columnName.startsWith('(')) column.columnName = column.columnName.slice(1, -1)
-        formatColumnTooltipSettings(column)
+        if (!column.filter?.enabled) delete column.filter
+        // formatColumnTooltipSettings(column)
     })
 }
 
