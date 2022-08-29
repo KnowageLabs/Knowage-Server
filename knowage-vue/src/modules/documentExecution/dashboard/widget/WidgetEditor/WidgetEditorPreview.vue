@@ -1,7 +1,7 @@
 <template>
     <div class="p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow" :style="descriptor.style.preview">
         <!-- <div :style="descriptor.style.preview" class="kn-overflow"> -->
-        <!-- <div>{{ propWidget }}</div> -->
+        <div style="overflow: auto; height: 500px; width: 400px">{{ propWidget }}</div>
         <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="populate" />
 
         <div ref="tabulator"></div>

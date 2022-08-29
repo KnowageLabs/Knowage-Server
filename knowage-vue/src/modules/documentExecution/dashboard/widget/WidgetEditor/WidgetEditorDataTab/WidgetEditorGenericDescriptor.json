@@ -213,6 +213,30 @@
                             "type": "inputText"
                         },
                         {
+                            "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                            "label": "common.from",
+                            "property": "temp.selectedColumn.filter.value",
+                            "settings": {
+                                "disabledCondition": "functions.selectedColumnFilterIsDisabled",
+                                "onUpdate": "functions.updateSelectedColumn",
+                                "visibilityCondition": "functions.selectedColumnFilterFromToIsVisible",
+                                "watchers": ["temp.selectedColumn.filter.enabled", "temp.selectedColumn.filter.operator"]
+                            },
+                            "type": "inputText"
+                        },
+                        {
+                            "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                            "label": "common.to",
+                            "property": "temp.selectedColumn.filter.value2",
+                            "settings": {
+                                "disabledCondition": "functions.selectedColumnFilterIsDisabled",
+                                "onUpdate": "functions.updateSelectedColumn",
+                                "visibilityCondition": "functions.selectedColumnFilterFromToIsVisible",
+                                "watchers": ["temp.selectedColumn.filter.enabled", "temp.selectedColumn.filter.operator"]
+                            },
+                            "type": "inputText"
+                        },
+                        {
                             "cssClass": "p-m-2",
                             "settings": {
                                 "hint": "dashboard.widgetEditor.columnFilterHint"

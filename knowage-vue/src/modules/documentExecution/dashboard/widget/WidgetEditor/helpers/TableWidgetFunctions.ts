@@ -84,20 +84,24 @@ const tableWidgetFunctions = {
             if (model.temp.selectedColumn.fieldType === 'ATTRIBUTE') {
                 model.temp.selectedColumn.aggregation = 'NONE'
             }
+            if (model.temp.selectedColumn.fieldType !== model.columns[index].fieldType) model.temp.selectedColumn.filter = { enabled: false, value: '', operator: '' }
             model.columns[index] = { ...model.temp.selectedColumn }
             emitter.emit('collumnUpdated', model.columns[index])
         }
     },
-    getColumnFilterOptions: () => {
-        return descriptor.attributeColumnFilterOperators
+    getColumnFilterOptions: (model: IWidget) => {
+        const fieldType = model?.temp.selectedColumn?.fieldType
+        return fieldType === 'ATTRIBUTE' ? descriptor.attributeColumnFilterOperators : descriptor.measureColumnFilterOperators
     },
     selectedColumnFilterIsDisabled: (model: IWidget) => {
         return !model?.temp.selectedColumn?.filter?.enabled
     },
     selectedColumnFilterValueIsVisible: (model: IWidget) => {
         const operator = model?.temp.selectedColumn?.filter?.operator
-        console.log("OPERATOR", operator)
-        return operator ? ['=', '!=', 'IN', 'like',].includes(operator) : false
+        return operator ? ['=', '<', '>', '<=', '>=', '!=', 'IN', 'like',].includes(operator) : false
+    },
+    selectedColumnFilterFromToIsVisible: (model: IWidget) => {
+        return model?.temp.selectedColumn?.filter?.operator === 'range'
     },
     // tooltipIsDisabled: (model: IWidget) => {
     //     return !model?.temp.selectedColumn?.enableTooltip
@@ -384,9 +388,16 @@ function formatTableSelectedColumns(columns: IWidgetColumn[]) {
     columns.forEach((column: IWidgetColumn) => {
         delete column.id
         if (column.columnName.startsWith('(')) column.columnName = column.columnName.slice(1, -1)
-        if (!column.filter?.enabled) delete column.filter
+        formatColumnFilter(column)
+
         // formatColumnTooltipSettings(column)
     })
+}
+
+const formatColumnFilter = (column: IWidgetColumn) => {
+    if (!column.filter) return
+    if (!column.filter.enabled) return delete column.filter
+    if (column.filter.operator !== 'range') delete column.filter.value2
 }
 
 function formatColumnTooltipSettings(column: IWidgetColumn) {

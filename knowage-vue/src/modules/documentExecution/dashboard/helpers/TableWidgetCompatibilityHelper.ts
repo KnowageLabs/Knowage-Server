@@ -86,6 +86,7 @@ const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {
         const index = formattedWidget.columns?.findIndex((column: IWidgetColumn) => column.columnName === tempFilter.colName)
         if (index !== -1) {
             formattedWidget.columns[index].filter = { enabled: true, operator: tempFilter.filterOperator, value: tempFilter.filterVal1 }
+            if (tempFilter.filterVal2 && formattedWidget.columns[index].filter) formattedWidget.columns[index].filter.value2 = tempFilter.filterVal2
         }
     }
 }

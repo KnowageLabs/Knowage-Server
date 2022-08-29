@@ -213,16 +213,24 @@
             "value": "="
         },
         {
-            "label": "!=",
-            "value": "!="
+            "label": "<",
+            "value": "<"
+        },
+        {
+            "label": ">",
+            "value": ">"
+        },
+        {
+            "label": "<=",
+            "value": "<="
+        },
+        {
+            "label": ">=",
+            "value": ">="
         },
         {
             "label": "IN",
             "value": "IN"
-        },
-        {
-            "label": "like",
-            "value": "like"
         },
         {
             "label": "is null",
@@ -239,6 +247,10 @@
         {
             "label": "max",
             "value": "max"
+        },
+        {
+            "label": "range",
+            "value": "range"
         },
         {
             "label": "not IN",
