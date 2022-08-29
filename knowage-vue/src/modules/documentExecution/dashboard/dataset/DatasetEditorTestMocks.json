@@ -89,6 +89,120 @@
             "userUp": null
         }
     ],
+    "mockResponse": {
+        "metaData": {
+            "cacheDate": "2021-11-22 11:32:04.000",
+            "fields": [
+                "recNo",
+                {
+                    "dataIndex": "column_1",
+                    "header": "data",
+                    "multiValue": false,
+                    "name": "column_1",
+                    "type": "string"
+                },
+                {
+                    "dataIndex": "column_2",
+                    "header": "documento",
+                    "multiValue": false,
+                    "name": "column_2",
+                    "type": "string"
+                },
+                {
+                    "dataIndex": "column_3",
+                    "header": "motore",
+                    "multiValue": false,
+                    "name": "column_3",
+                    "type": "string"
+                },
+                {
+                    "dataIndex": "column_4",
+                    "header": "esecuzioni",
+                    "multiValue": false,
+                    "name": "column_4",
+                    "precision": 19,
+                    "scale": 0,
+                    "type": "int"
+                }
+            ],
+            "id": "id",
+            "root": "rows",
+            "totalProperty": "results"
+        },
+        "results": 55,
+        "rows": [
+            {
+                "column_1": "2021 12 29",
+                "column_2": "Store Sales Analysis",
+                "column_3": "Birt Report Engine",
+                "column_4": 6,
+                "id": 1
+            },
+            {
+                "column_1": "2021 12 29",
+                "column_2": "OLAP_BASE",
+                "column_3": "OLAP Engine",
+                "column_4": 1,
+                "id": 2
+            },
+            {
+                "column_1": "2021 12 28",
+                "column_2": "Store Sales Analysis",
+                "column_3": "Birt Report Engine",
+                "column_4": 6,
+                "id": 3
+            },
+            {
+                "column_1": "2021 12 28",
+                "column_2": "OLAP_BASE",
+                "column_3": "OLAP Engine",
+                "column_4": 3,
+                "id": 4
+            },
+            {
+                "column_1": "2021 12 27",
+                "column_2": "Store Sales Analysis",
+                "column_3": "Birt Report Engine",
+                "column_4": 4,
+                "id": 5
+            },
+            {
+                "column_1": "2021 12 27",
+                "column_2": "Sales analysis",
+                "column_3": "Cockpit Engine",
+                "column_4": 1,
+                "id": 6
+            },
+            {
+                "column_1": "2021 12 27",
+                "column_2": "OLAP_BASE",
+                "column_3": "OLAP Engine",
+                "column_4": 46,
+                "id": 7
+            },
+            {
+                "column_1": "2021 12 24",
+                "column_2": "Store Sales Analysis",
+                "column_3": "Birt Report Engine",
+                "column_4": 3,
+                "id": 8
+            },
+            {
+                "column_1": "2021 12 24",
+                "column_2": "OLAP_BASE",
+                "column_3": "OLAP Engine",
+                "column_4": 106,
+                "id": 9
+            },
+            {
+                "column_1": "2021 12 23",
+                "column_2": "Store Sales Analysis",
+                "column_3": "Birt Report Engine",
+                "column_4": 1,
+                "id": 10
+            }
+        ]
+    },
     "previewMock": {
         "metaData": {
             "fields": [
