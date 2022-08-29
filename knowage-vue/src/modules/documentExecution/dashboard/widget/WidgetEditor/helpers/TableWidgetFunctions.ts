@@ -59,6 +59,12 @@ const tableWidgetFunctions = {
         }
         emitter.emit('collumnUpdated', column)
     },
+    getColumnTypeOptions: () => {
+        return descriptor.columnTypeOptions
+    },
+    columnIsMeasure: (model: IWidget) => {
+        return model?.temp.selectedColumn?.fieldType === 'MEASURE'
+    },
     getColumnAggregationOptions: () => {
         return descriptor.columnAggregationOptions
     },
@@ -75,6 +81,9 @@ const tableWidgetFunctions = {
     updateSelectedColumn: (model: IWidget) => {
         const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === model.temp.selectedColumn.id)
         if (index !== -1) {
+            if (model.temp.selectedColumn.fieldType === 'ATTRIBUTE') {
+                model.temp.selectedColumn.aggregation = 'NONE'
+            }
             model.columns[index] = { ...model.temp.selectedColumn }
             emitter.emit('collumnUpdated', model.columns[index])
         }
@@ -95,7 +104,7 @@ const tableWidgetFunctions = {
         return model?.temp.selectedColumn?.fieldType === 'MEASURE'
     },
     tooltipCustomHeaderTextIsDisabled: (model: IWidget) => {
-        return !model?.temp.selectedColumn?.style.enableCustomHeaderTooltip || model.functions.tooltipIsDisabled(model)
+        return !model?.temp.selectedColumn?.style?.enableCustomHeaderTooltip || model.functions.tooltipIsDisabled(model)
     },
     headerIsDisabled: (model: IWidget) => {
         return !model?.styles.th.enabled
@@ -423,9 +432,7 @@ function formatBorderSettings(widget: IWidget) {
 }
 
 export const removeColumnUsageFromModel = (column: IWidgetColumn, model: IWidget) => {
-    console.log("removeColumnUsageFromModel: ", column)
     let name = column.columnName.startsWith('(') ? column.columnName.slice(1, -1) : column.columnName
-    console.log(model.settings?.sortingColumn + ' && ' + name + ' === ' + model.settings?.sortingColumn)
     if (model.settings?.sortingColumn && name === model.settings?.sortingColumn) {
         model.settings.sortingColumn = ''
         model.settings.sortingOrder = ''

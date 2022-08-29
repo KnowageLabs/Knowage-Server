@@ -140,6 +140,21 @@
                                 "onUpdate": "functions.updateSelectedColumn"
                             },
                             "type": "inputText"
+                        }
+                    ],
+                    "containerClasess": "p-d-flex p-flex-row p-ai-center"
+                },
+                {
+                    "components": [
+                        {
+                            "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
+                            "label": "common.type",
+                            "options": "functions.getColumnTypeOptions",
+                            "property": "temp.selectedColumn.fieldType",
+                            "settings": {
+                                "onUpdate": "functions.updateSelectedColumn"
+                            },
+                            "type": "dropdown"
                         },
                         {
                             "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
@@ -148,7 +163,8 @@
                             "property": "temp.selectedColumn.aggregation",
                             "settings": {
                                 "onUpdate": "functions.updateSelectedColumn",
-                                "visibilityCondition": "functions.selectedColumnDropdownIsVisible"
+                                "visibilityCondition": "functions.columnIsMeasure",
+                                "watchers": ["temp.selectedColumn.fieldType"]
                             },
                             "type": "dropdown"
                         }

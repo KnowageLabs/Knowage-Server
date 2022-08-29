@@ -95,6 +95,16 @@
             "value": "IN"
         }
     ],
+    "columnTypeOptions": [
+        {
+            "label": "ATTRIBUTE",
+            "value": "ATTRIBUTE"
+        },
+        {
+            "label": "MEASURE",
+            "value": "MEASURE"
+        }
+    ],
     "fontFamilyOptions": [
         {
             "label": "",
