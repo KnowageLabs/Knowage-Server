@@ -95,6 +95,54 @@
             "value": "IN"
         }
     ],
+    "columnFilterOperators": [
+        {
+            "label": "=",
+            "value": "="
+        },
+        {
+            "label": "!=",
+            "value": "!="
+        },
+        {
+            "label": "IN",
+            "value": "IN"
+        },
+        {
+            "label": "like",
+            "value": "like"
+        },
+        {
+            "label": "is null",
+            "value": "is null"
+        },
+        {
+            "label": "is not null",
+            "value": "is not null"
+        },
+        {
+            "label": "min",
+            "value": "min"
+        },
+        {
+            "label": "max",
+            "value": "max"
+        },
+        {
+            "label": "not IN",
+            "value": "not IN"
+        }
+    ],
+    "columnTypeOptions": [
+        {
+            "label": "ATTRIBUTE",
+            "value": "ATTRIBUTE"
+        },
+        {
+            "label": "MEASURE",
+            "value": "MEASURE"
+        }
+    ],
     "fontFamilyOptions": [
         {
             "label": "",

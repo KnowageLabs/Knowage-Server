@@ -129,6 +129,7 @@
         "object": "Object",
         "ok": "ok",
         "onlineHelp": "Help Online",
+        "operator": "Operator",
         "options": "Options",
         "order": "Order",
         "orderBy": "Order by",
@@ -363,6 +364,7 @@
                 "title": "Borders"
             },
             "columnDetails": "Column Details",
+            "columnFilterHint": "Select the filter operator and the value for the column. Remember to use the correct database sintax for the value. ie: %LIKE%",
             "conditionalStyle": {
                 "compareValue": "Compare value",
                 "compareValueType": "Value type",
@@ -372,6 +374,7 @@
             "customHeaderTooltip": "Custom Header Tooltip",
             "descending": "Descending",
             "dragColumnsHint": "Drag columns here",
+            "enableFilter": "Enable Filter",
             "enableTooltip": "Enable Tooltip",
             "fontawesome": "Fontawesome",
             "header": {
