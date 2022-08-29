@@ -1077,7 +1077,7 @@ export default defineComponent({
         async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
             this.formatAngularOutputParameters(angularData.otherOutputParameters)
             const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument ? crossNavigationDocument.navigationParams : [])
-            this.addDocumentOtherParametersToNavigationParamas(navigationParams, angularData, crossNavigationDocument)
+            this.addDocumentOtherParametersToNavigationParams(navigationParams, angularData, crossNavigationDocument)
 
             const popupOptions = crossNavigationDocument?.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
 
@@ -1114,22 +1114,7 @@ export default defineComponent({
             }
             this.documentMode = 'VIEW'
         },
-        addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
-            if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
-            const keys = Object.keys(angularData.outputParameters)
-            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
-            for (let i = 0; i < keys.length; i++) {
-                const tempKey = keys[i]
-                let newKey = ''
-                for (let j = 0; j < documentNavigationParamsKeys.length; j++) {
-                    if (crossNavigationDocument.navigationParams[documentNavigationParamsKeys[j]].value?.label === tempKey) {
-                        newKey = documentNavigationParamsKeys[j]
-                    }
-                }
-                if (newKey) navigationParams[newKey] = angularData.outputParameters[tempKey]
-            }
-        },
-        addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
+        addDocumentOtherParametersToNavigationParams(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
             if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
             const keys = Object.keys(angularData.outputParameters)
             const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
