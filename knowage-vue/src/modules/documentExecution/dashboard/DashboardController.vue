@@ -71,8 +71,7 @@ export default defineComponent({
             // TODO
             // this.model = mock
             this.model = formatModel(mockedDashboardModel) as any
-
-            console.log('FORMATTED MODEL: ', formatModel(mockedDashboardModel))
+            console.log('Dashboard Controller - FORMATTED MODEL: ', formatModel(mockedDashboardModel))
             this.store.setDashboard(this.model)
         },
         async loadDatasets() {

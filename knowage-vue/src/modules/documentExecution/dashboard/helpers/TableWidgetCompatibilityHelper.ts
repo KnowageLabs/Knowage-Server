@@ -1,16 +1,14 @@
 
 
 import { IWidget, IWidgetColumn } from '../Dashboard'
-import mockedTableWidget from '../mockedWidgetExampleModel.json'
-
 
 export const formatTableWidget = (widget: any) => {
-    console.log("formatTableWidget called for: ", widget)
+    console.log("TableWidgetCompatibilityHelper - formatTableWidget called for: ", widget)
     const formattedWidget = {
         id: widget.id, dataset: widget.dataset.dsId, type: widget.type, columns: getFormattedWidgetColumns(widget), conditionalStyles: [], interactions: [], theme: '', styles: {}, settings: getFormattedWidgetSettings(widget)
     } as IWidget
 
-    console.log(" ---- --- - -- - - -- FORMATTED WIDGET: ", formattedWidget)
+    console.log("TableWidgetCompatibilityHelper - FORMATTED WIDGET: ", formattedWidget)
     return formattedWidget
 }
 

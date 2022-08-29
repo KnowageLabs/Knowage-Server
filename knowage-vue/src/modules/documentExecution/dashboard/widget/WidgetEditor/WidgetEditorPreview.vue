@@ -51,10 +51,10 @@ export default defineComponent({
         },
         setEventListeners() {
             emitter.on('paginationChanged', () => {
-                console.log('PAGINATION CHANGED!')
+                console.log('WidgetEditorPreview - PAGINATION CHANGED!')
             })
             emitter.on('sortingChanged', () => {
-                console.log('SORTING CHANGED!')
+                console.log('WidgetEditorPreview  - SORTING CHANGED!')
             })
         }
     }

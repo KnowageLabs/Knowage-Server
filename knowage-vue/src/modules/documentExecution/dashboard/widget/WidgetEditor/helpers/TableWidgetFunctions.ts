@@ -14,7 +14,7 @@ const tableWidgetFunctions = {
     getSelectedColumnsAsOptions: (model: IWidget) => {
         const columnOptions = [] as { value: string, label: string }[]
         for (let i = 0; i < model.columns.length; i++) {
-            const temp = model.columns[i].columnName.slice(1, -1)
+            const temp = model.columns[i].columnName.startsWith('(') ? model.columns[i].columnName.slice(1, -1) : model.columns[i].columnName
             columnOptions.push({ value: temp, label: temp })
         }
         return columnOptions
@@ -416,7 +416,6 @@ function formatBorderSettings(widget: IWidget) {
 }
 
 export const removeColumnUsageFromModel = (column: IWidgetColumn, model: IWidget) => {
-    console.log("WIDGET COLUMN TO REMOVE: ", column)
     let name = column.columnName.startsWith('(') ? column.columnName.slice(1, -1) : column.columnName
     if (model.settings?.sortingColumn && name === model.settings?.sortingColumn) {
         model.settings.sortingColumn = ''

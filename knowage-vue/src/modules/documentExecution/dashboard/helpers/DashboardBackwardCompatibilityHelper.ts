@@ -5,7 +5,7 @@ import { formatTableWidget } from './TableWidgetCompatibilityHelper'
 import { IWidgetEditorDataset } from '../Dashboard'
 
 export const formatModel = (model: any) => {
-    console.log("FORMAT MODEL CALLED WITH: ", model)
+    console.log("DashboardBackwardCompatibilityHelper - FORMAT MODEL CALLED WITH: ", model)
     if (!model.sheets) return
 
     // TODO - id
@@ -24,14 +24,13 @@ export const formatModel = (model: any) => {
 }
 
 const getFormattedModelConfiguration = (model: any) => {
-    // TODO - What is id used for?
+    // TODO - id, name, label, description
     const formattedConfiguration = { id: '', name: '', label: '', description: '', associations: [], datasets: getFormattedDatasets(model), variables: [], themes: {} }
 
     return formattedConfiguration
 }
 
 const getFormattedDatasets = (model: any) => {
-    console.log("ORIGINAL DATASETS: ", model.configuration.datasets)
     if (!model.configuration || !model.configuration.datasets) return
     const formattedDatasets = [] as IWidgetEditorDataset[]
     for (let i = 0; i < model.configuration.datasets.length; i++) {
