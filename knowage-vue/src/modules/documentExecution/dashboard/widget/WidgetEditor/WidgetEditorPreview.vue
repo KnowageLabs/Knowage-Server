@@ -35,46 +35,39 @@ export default defineComponent({
         return {
             descriptor,
             mock,
-            rows: [] as any,
             tabulator: null as any,
             columns: [] as any,
             tableData: [] as any
         }
     },
     mounted() {
-        console.log('MOUNDETE _------------------')
-        this.tabulator = new Tabulator(this.$refs.tabulator, {
-            data: [],
-            columns: [],
-            layout: 'fitDataTable'
-        })
+        this.setDatatableData()
     },
     created() {
-        this.setDatatableData()
         this.setEventListeners()
     },
     methods: {
         populate() {
-            this.tabulator.addColumn({ title: 'Name', field: 'name', width: 150 })
-            // this.tableData = [
-            //     { id: 1, name: 'Oli Bob', age: '12', col: 'red', dob: '' },
-            //     { id: 2, name: 'Mary May', age: '1', col: 'blue', dob: '14/05/1982' },
-            //     { id: 3, name: 'Christine Lobowski', age: '42', col: 'green', dob: '22/05/1982' },
-            //     { id: 4, name: 'Brendon Philips', age: '125', col: 'orange', dob: '01/08/1980' },
-            //     { id: 5, name: 'Margret Marmajuke', age: '16', col: 'yellow', dob: '31/01/1999' }
-            // ]
-            // this.columns = [
-            //     { title: 'Name', field: 'name', width: 150 },
-            //     { title: 'Age', field: 'age', hozAlign: 'left', formatter: 'progress' },
-            //     { title: 'Favourite Color', field: 'col' },
-            //     { title: 'Date Of Birth', field: 'dob', sorter: 'date', hozAlign: 'center' }
-            // ]
+            console.log('PROPERTY WITH DATA', this.propWidget)
+            var formattedColumns = this.propWidget.columns.map((column) => {
+                return { title: column.alias, field: column.id }
+            })
+            this.tabulator.setColumns(formattedColumns)
+            console.log(this.tabulator.getColumnDefinitions())
+            console.log('FOR COLUMNS', formattedColumns)
         },
         setDatatableData() {
-            this.mock.previewMock.metaData.fields.forEach((el: any) => {
-                typeof el != 'object' ? '' : this.columns.push(el)
+            this.tableData = []
+            this.columns = this.propWidget.columns.map((column) => {
+                return { title: column.alias, field: column.id }
             })
-            this.rows = this.mock.previewMock.rows
+            this.tabulator = new Tabulator(this.$refs.tabulator, {
+                data: this.tableData,
+                columns: this.columns
+            })
+            setTimeout(() => {
+                console.log('DEFINIUTONS', this.tabulator.getColumnDefinitions())
+            }, 300)
         },
         setEventListeners() {
             emitter.on('paginationChanged', () => console.log('WidgetEditorPreview - PAGINATION CHANGED!'))
@@ -101,13 +94,13 @@ export default defineComponent({
                 type: 'java.lang.String'
             } as any
             console.log('WidgetEditorPreview  - collumnAdded!', column)
-            this.tabulator.addColumn({ title: column.alias, field: column.name, width: 150 })
+            this.tabulator.addColumn({ title: column.alias, field: column.id })
+            console.log(this.tabulator.getColumnDefinitions())
         },
         onColumnUpdate(column) {
             // console.log('WidgetEditorPreview  - collumnAdded!', this.propWidget)
             console.log('WidgetEditorPreview  - columnEdited!', column)
-            console.log('GET TABULATOR COLUMNS ', column.columnName, this.tabulator.updateColumnDefinition('FID', { title: column.alias }))
-            // this.tabulator.updateColumnDefinition(column.name, { title: column.alias })
+            this.tabulator.updateColumnDefinition(column.id, { title: column.alias })
         }
     }
 })
