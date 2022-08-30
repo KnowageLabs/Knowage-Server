@@ -24,7 +24,7 @@
                     :style="component.style"
                     :label="component.label"
                     :property="''"
-                    :options="getDropdownOptions(component)"
+                    :options="getDropdownOptions(component, itemIndex)"
                     :settings="component.settings"
                     :initialValue="item[component.property]"
                     :item="item"
@@ -81,10 +81,10 @@ export default defineComponent({
             if (!component) return
             this.item[component.property] = newValue
         },
-        getDropdownOptions(component: any) {
+        getDropdownOptions(component: any, itemIndex: number | undefined) {
             let temp = []
             const tempFunction = getModelProperty(this.widgetModel, component.options, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') temp = tempFunction(this.item)
+            if (tempFunction && typeof tempFunction === 'function') temp = tempFunction(this.item, itemIndex)
             return temp
         },
         fieldIsVisible(component: any) {

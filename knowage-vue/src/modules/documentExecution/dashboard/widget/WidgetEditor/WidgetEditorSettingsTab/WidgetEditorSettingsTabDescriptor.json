@@ -129,7 +129,7 @@
                                                                                         "options": "functions.getSummaryRowsAggregationOptions",
                                                                                         "property": "aggregation",
                                                                                         "settings": {
-                                                                                            "disabledCondition": "functions.summaryRowsAreDisabled",
+                                                                                            "disabledCondition": "functions.summaryRowsDropdownIsDisabled",
                                                                                             "onUpdate": "functions.updateSummaryRowsListItem",
                                                                                             "watchers": ["settings.configuration.summaryRows.enabled"]
                                                                                         },

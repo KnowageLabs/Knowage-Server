@@ -134,21 +134,23 @@ const tableWidgetFunctions = {
         emitter.emit('summaryRowsChanged')
     },
     deleteSummaryRowItem: (model: IWidget, itemIndex: number) => {
-        console.log("ITEM INDEX: ", itemIndex)
-        console.log("ITEM INDEX IN LIST: ", model.settings.configuration.summaryRows.list)
         if (model?.settings.configuration?.summaryRows?.enabled) {
             model.settings.configuration.summaryRows.list.splice(itemIndex, 1)
             emitter.emit('summaryRowsChanged')
         }
     },
-    getSummaryRowsAggregationOptions: () => {
-        return descriptor.columnAggregationOptions.slice(1)
+    getSummaryRowsAggregationOptions: (component: any, itemIndex: number) => {
+        console.log("ITEM INDEX: ", itemIndex)
+        return itemIndex !== 0 ? descriptor.columnAggregationOptions.slice(1) : [{ value: 'Columns Default Aggregation', label: 'Columns Default Aggregation' }]
     },
     updateSummaryRowsListItem: (model: IWidget, item: any, index: number) => {
         if (!model || !model.settings.configuration.summaryRows.list) return
         if (index !== -1) {
             model.settings.configuration.summaryRows.list[index] = { ...item }
         }
+    },
+    summaryRowsDropdownIsDisabled: (model: IWidget, itemIndex: number) => {
+        return !model?.settings.configuration?.summaryRows?.enabled || itemIndex === 0
     },
     // tooltipIsDisabled: (model: IWidget) => {
     //     return !model?.temp.selectedColumn?.enableTooltip

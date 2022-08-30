@@ -58,8 +58,9 @@ const getFormattedRows = (widget: any) => {
 }
 
 const getFormattedSummaryRows = (widget: any) => {
-    let formattedSummaryRows = {}
+    let formattedSummaryRows = {} as any
     if (widget.settings.summary) formattedSummaryRows = widget.settings.summary
+    if (formattedSummaryRows.list && formattedSummaryRows.list[0]) formattedSummaryRows.list[0].aggregation = 'Columns Default Aggregation'
     return formattedSummaryRows
 }
 
