@@ -72,13 +72,84 @@
                                                     }
                                                 ],
                                                 "title": "dashboard.widgetEditor.rows.title"
+                                            },
+                                            {
+                                                "containers": [
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
+                                                                "label": "dashboard.widgetEditor.summaryRows.enableSummaryRows",
+                                                                "property": "settings.configuration.summaryRows.enabled",
+                                                                "settings": {
+                                                                    "onUpdate": "functions.summaryRowsChanged"
+                                                                },
+                                                                "type": "inputSwitch"
+                                                            },
+                                                            {
+                                                                "cssClass": "p-d-flex p-flex-row p-jc-center kn-flex p-ml-auto",
+                                                                "label": "dashboard.widgetEditor.summaryRows.pinnedColumnsOnly",
+                                                                "property": "settings.configuration.summaryRows.style.pinnedOnly",
+                                                                "settings": {
+                                                                    "binary": true,
+                                                                    "disabledCondition": "functions.summaryRowsAreDisabled",
+                                                                    "onUpdate": "functions.summaryRowsChanged",
+                                                                    "watchers": ["settings.configuration.summaryRows.enabled"]
+                                                                },
+                                                                "type": "checkbox"
+                                                            }
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                                    },
+                                                    {
+                                                        "components": [
+                                                            {
+                                                                "settings": {
+                                                                    "createItem": "functions.createSummaryRowItem",
+                                                                    "deleteItem": "functions.deleteSummaryRowItem",
+                                                                    "items": "functions.getSummaryRowsList",
+                                                                    "itemsSettings": {
+                                                                        "containers": [
+                                                                            {
+                                                                                "components": [
+                                                                                    {
+                                                                                        "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
+                                                                                        "label": "common.label",
+                                                                                        "property": "label",
+                                                                                        "settings": {
+                                                                                            "disabledCondition": "functions.summaryRowsAreDisabled",
+                                                                                            "onUpdate": "functions.summaryRowsChanged",
+                                                                                            "watchers": ["settings.configuration.summaryRows.enabled"]
+                                                                                        },
+                                                                                        "type": "inputText"
+                                                                                    },
+                                                                                    {
+                                                                                        "type": "addDeleteIcon"
+                                                                                    }
+                                                                                ],
+                                                                                "cssClasses": "p-d-flex p-flex-row p-ai-center p-jc-around"
+                                                                            }
+                                                                        ],
+                                                                        "disabledCondition": "functions.summaryRowsAreDisabled",
+                                                                        "watchers": ["settings.configuration.summaryRows.enabled", "settings.configuration.summaryRows.list"]
+                                                                    },
+                                                                    "watchers": ["settings.configuration.summaryRows.enabled", "settings.configuration.summaryRows.list"]
+                                                                },
+                                                                "type": "formList"
+                                                            }
+                                                        ],
+                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
+                                                    }
+                                                ],
+                                                "cssClasses": "kn-flex test-class",
+                                                "title": "dashboard.widgetEditor.summaryRows.title"
                                             }
                                         ],
                                         "settings": {},
                                         "type": "accordion"
                                     }
                                 ],
-                                "containerClasess": "p-m-2"
+                                "containerClasess": "kn-flex p-m-2"
                             }
                         ]
                     }

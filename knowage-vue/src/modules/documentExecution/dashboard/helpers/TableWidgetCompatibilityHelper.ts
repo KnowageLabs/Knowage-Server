@@ -40,7 +40,7 @@ const getFormattedConditionalStyles = (widget: any) => {
 
 // TODO
 const getFormattedConfiguration = (widget: any) => {
-    return { columnGroups: [], exports: {}, headers: {}, rows: getFormattedRows(widget), summaryRows: [] }
+    return { columnGroups: [], exports: {}, headers: {}, rows: getFormattedRows(widget), summaryRows: getFormattedSummaryRows(widget) }
 }
 
 const getFormattedRows = (widget: any) => {
@@ -55,6 +55,12 @@ const getFormattedRows = (widget: any) => {
         }
     }
     return formattedRows
+}
+
+const getFormattedSummaryRows = (widget: any) => {
+    let formattedSummaryRows = {}
+    if (widget.settings.summary) formattedSummaryRows = widget.settings.summary
+    return formattedSummaryRows
 }
 
 // TODO

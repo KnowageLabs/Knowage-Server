@@ -118,6 +118,29 @@ const tableWidgetFunctions = {
         console.log("COLUMN OPTIONS: ", columnOptions)
         return columnOptions
     },
+    summaryRowsChanged: () => {
+        emitter.emit('summaryRowsChanged')
+    },
+    summaryRowsAreDisabled: (model: IWidget) => {
+        return !model?.settings.configuration?.summaryRows?.enabled
+    },
+    getSummaryRowsList: (model: IWidget) => {
+        const summaryRowsList = model?.settings.configuration?.summaryRows?.list
+        return summaryRowsList ?? []
+    },
+    createSummaryRowItem: (model: IWidget) => {
+        if (!model || !model?.settings.configuration?.summaryRows?.list || !model.settings.configuration.summaryRows.enabled) return
+        model?.settings.configuration.summaryRows.list.push({ label: "", aggregation: "" })
+        emitter.emit('summaryRowsChanged')
+    },
+    deleteSummaryRowItem: (model: IWidget, itemIndex: number) => {
+        console.log("ITEM INDEX: ", itemIndex)
+        console.log("ITEM INDEX IN LIST: ", model.settings.configuration.summaryRows.list)
+        if (model?.settings.configuration?.summaryRows?.enabled) {
+            model.settings.configuration.summaryRows.list.splice(itemIndex, 1)
+            emitter.emit('summaryRowsChanged')
+        }
+    },
     // tooltipIsDisabled: (model: IWidget) => {
     //     return !model?.temp.selectedColumn?.enableTooltip
     // },

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="kn-flex">
         <label v-if="settings.label" class="kn-material-input-label">{{ $t(settings.label) }}</label>
         <div :class="class" :options="options" class="form-list-item-container">
             <WidgetEditorFormListItem

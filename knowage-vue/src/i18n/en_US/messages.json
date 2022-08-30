@@ -426,6 +426,11 @@
             "sortingColumn": "Sorting column",
             "sortingOrder": "Sorting order",
             "sufix": "Sufix",
+            "summaryRows": {
+                "enableSummaryRows": "Enable Summary Rows",
+                "pinnedColumnsOnly": "Pinned columns only",
+                "title": "Summary rows"
+            },
             "title": "Widget Editor",
             "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
             "visualizationOptions": {

@@ -84,6 +84,8 @@ export default defineComponent({
             emitter.on('collumnUpdated', (column) => this.onColumnUpdate(column))
             emitter.on('columnsReordered', () => console.log('WidgetEditorPreview  - columnsReordered!'))
             emitter.on('indexColumnChanged', () => console.log('WidgetEditorPreview  - indexColumnChanged!'))
+            emitter.on('rowSpanChanged', () => console.log('WidgetEditorPreview  - rowSpanChanged!'))
+            emitter.on('summaryRowsChanged', () => console.log('WidgetEditorPreview  - summaryRowsChanged!'))
         },
         onColumnAdd(column) {
             // console.log('WidgetEditorPreview  - collumnAdded!', this.propWidget)
