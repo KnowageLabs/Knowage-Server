@@ -15,10 +15,10 @@
             <Button icon="fas fa-sort-amount-down-alt" class="p-button-text p-button-rounded p-button-plain headerButton" @click="toggleSort" v-tooltip.bottom="$t('common.sort')" />
             <Menu id="sortMenu" ref="sortMenu" :model="settings.sortFields" :popup="true">
                 <template #item="{item}">
-                    <a class="p-menuitem-link" role="menuitem" tabindex="0" @click="sort($event, item)">
-                        <span v-if="selectedDirection === 'asc'" class="p-menuitem-icon fas" :class="{ 'fa-sort-amount-up-alt': selectedSort === item }"></span>
-                        <span v-else class="p-menuitem-icon fas" :class="{ 'fa-sort-amount-down-alt': selectedSort === item }"></span>
-                        <span class="p-menuitem-text">{{ $t(item) }}</span>
+                    <a class="p-menuitem-link" role="menuitem" tabindex="0" @click="sort($event, item.name || item)">
+                        <span v-if="selectedDirection === 'asc'" class="p-menuitem-icon fas" :class="{ 'fa-sort-amount-up-alt': selectedSort === (item.name || item) }"></span>
+                        <span v-else class="p-menuitem-icon fas" :class="{ 'fa-sort-amount-down-alt': selectedSort === (item.name || item) }"></span>
+                        <span class="p-menuitem-text">{{ $t(item.label || item) }}</span>
                     </a>
                 </template>
             </Menu>

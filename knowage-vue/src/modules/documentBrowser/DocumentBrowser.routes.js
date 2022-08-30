@@ -23,7 +23,7 @@ const routes = [
                 props: true
             },
             {
-                path: ':mode(registry|document-composite|report|office-doc|olap|map|report|kpi|dossier|etl)/:id',
+                path: ':mode(registry|document-composite|report|office-doc|olap|map|report|kpi|dossier|etl|dashboard)/:id',
                 name: 'document-browser-document-execution',
                 component: () => import('@/modules/documentBrowser/DocumentBrowserCockpitContainer.vue'),
                 props: true

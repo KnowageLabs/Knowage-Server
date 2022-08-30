@@ -1,0 +1,10 @@
+{
+    "style": {
+        "preview": {
+            "border-left": "1px solid #ccc"
+        },
+        "previewTable": {
+            "height": "unset"
+        }
+    }
+}
