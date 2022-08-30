@@ -1,7 +1,7 @@
 <template>
     <div id="filterPanelContainer" ref="filterPanelContainer" :style="panelDescriptor.style.filterPanelContainer">
         <div id="filterPanel" ref="filterPanel" class="p-d-flex filterPanel p-ai-center" :style="panelDescriptor.style.filterPanel" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone">
-            <Button v-if="scrollContainerWidth < scrollContentWidth" icon="fas fa-arrow-circle-left" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="scrollLeft" />
+            <Button v-if="showScroll" icon="fas fa-arrow-circle-left" class="p-button-text p-button-rounded p-button-plain p-ml-1" @click="scrollLeft" />
             <div ref="filterItemsContainer" class="p-d-flex p-ai-center kn-flex" :style="panelDescriptor.style.containerScroll" @dragover.prevent @dragenter.prevent @dragleave="hideDropzone">
                 <div v-if="filterCardList?.length == 0" class="p-d-flex p-flex-row p-jc-center kn-flex">
                     <InlineMessage class="kn-flex p-m-1" :style="panelDescriptor.style.noFilters" severity="info" closable="false">{{ $t('documentExecution.olap.filterPanel.filterPanelEmpty') }}</InlineMessage>
@@ -9,7 +9,7 @@
                 <FilterCard v-else :filterCardList="filterCardList" :olapDesigner="olapDesigner" @showMultiHierarchy="emitMultiHierarchy" @openFilterDialog="$emit('openFilterDialog', $event)" />
                 <div ref="axisDropzone" class="kn-flex kn-truncated p-mr-1" :style="panelDescriptor.style.filterAxisDropzone">{{ $t('documentExecution.olap.filterPanel.drop') }}</div>
             </div>
-            <Button v-if="scrollContainerWidth < scrollContentWidth" icon="fas fa-arrow-circle-right" class="p-button-text p-button-rounded p-button-plain p-mr-1" @click="scrollRight" />
+            <Button v-if="showScroll" icon="fas fa-arrow-circle-right" class="p-button-text p-button-rounded p-button-plain p-mr-1" @click="scrollRight" />
         </div>
     </div>
 </template>
@@ -26,6 +26,11 @@ export default defineComponent({
     components: { InlineMessage, FilterCard },
     props: { olapProp: { type: Object as PropType<iOlap | null>, required: true }, olapDesigner: { type: Object } },
     emits: ['putFilterOnAxis', 'showMultiHierarchy', 'openFilterDialog'],
+    computed: {
+        showScroll(): Boolean {
+            return this.scrollContainerWidth < this.scrollContentWidth
+        }
+    },
     data() {
         return {
             panelDescriptor,
@@ -83,6 +88,9 @@ export default defineComponent({
                     }
                 }
             }
+            setTimeout(() => {
+                this.assignScrollValues()
+            }, 100)
         },
         emitMultiHierarchy(filter) {
             this.$emit('showMultiHierarchy', filter)

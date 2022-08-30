@@ -2,7 +2,7 @@
     <div id="top-toolbar-container" class="p-d-flex" :style="toolbarDescriptor.style.topToolbarContainer">
         <span id="topaxis" ref="filterPanelContainer" class="kn-flex p-d-flex" :style="toolbarDescriptor.style.topAxis" @drop="onDrop($event)" @dragover.prevent @dragenter="displayDropzone" @dragleave="hideDropzone">
             <Button icon="fa-solid fa-repeat" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.whiteColor" @click="$emit('swapAxis')" />
-            <Button v-if="scrollContainerWidth < scrollContentWidth" icon="fas fa-arrow-circle-left" class="p-button-text p-button-rounded p-button-plain p-ml-1 p-as-center" :style="toolbarDescriptor.style.whiteColor" @click="scrollLeft" />
+            <Button v-if="showScroll" icon="fas fa-arrow-circle-left" class="p-button-text p-button-rounded p-button-plain p-ml-1 p-as-center" :style="toolbarDescriptor.style.whiteColor" @click="scrollLeft" />
             <div ref="filterItemsContainer" class="p-d-flex p-ai-center kn-flex" :style="toolbarDescriptor.style.scroll">
                 <div v-for="(column, index) in columns" :key="index" class="p-d-flex">
                     <div :id="'top-' + column.name" :ref="'top-' + column.name" :style="toolbarDescriptor.style.topAxisCard" draggable="true" @dragstart="onDragStart($event, column, 'top-' + column.name)" @dragend="removeDragClass('top-' + column.name)">
@@ -15,7 +15,7 @@
                 </div>
                 <div ref="axisDropzone" class="kn-flex kn-truncated p-mx-1" :style="toolbarDescriptor.style.topAxisDropzone">{{ $t('documentExecution.olap.filterToolbar.drop') }}</div>
             </div>
-            <Button v-if="scrollContainerWidth < scrollContentWidth" icon="fas fa-arrow-circle-right" class="p-button-text p-button-rounded p-button-plain p-mr-1 p-as-center" :style="toolbarDescriptor.style.whiteColor" @click="scrollRight" />
+            <Button v-if="showScroll" icon="fas fa-arrow-circle-right" class="p-button-text p-button-rounded p-button-plain p-mr-1 p-as-center" :style="toolbarDescriptor.style.whiteColor" @click="scrollRight" />
             <div id="whitespace" :style="toolbarDescriptor.style.whitespace" />
             <Button icon="fas fa-bars" class="p-button-text p-button-rounded p-button-plain" :style="toolbarDescriptor.style.sidebarButton" @click="$emit('openSidebar')" />
         </span>
@@ -32,6 +32,11 @@ export default defineComponent({
     components: {},
     props: { olapProp: { type: Object, required: true } },
     emits: ['openSidebar', 'putFilterOnAxis', 'swapAxis', 'switchPosition', 'showMultiHierarchy', 'openFilterDialog'],
+    computed: {
+        showScroll(): Boolean {
+            return this.scrollContainerWidth < this.scrollContentWidth
+        }
+    },
     data() {
         return {
             toolbarDescriptor,
@@ -111,6 +116,9 @@ export default defineComponent({
                     }
                 }
             }
+            setTimeout(() => {
+                this.assignScrollValues()
+            }, 100)
         },
         scrollLeft() {
             // @ts-ignore
