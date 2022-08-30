@@ -2,8 +2,8 @@
     <div :class="{ 'kn-draggable': reorderEnabled }">
         <div v-show="dropzoneTopVisible" class="form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before')" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
         <div v-show="reorderEnabled" class="form-list-item-dropzone" :class="{ 'form-list-item-dropzone-active': dropzoneTopVisible }" @drop.stop="onDropComplete($event, 'before')" @dragover.prevent @dragenter.prevent="displayDropzone('top')" @dragleave.prevent="hideDropzone('top')"></div>
-        <div v-for="container in settings.containers" :key="cryptoRandomString({ length: 16, type: 'base64' })" :class="container.cssClasses" :draggable="reorderEnabled" @dragstart.stop="onDragStart">
-            <template v-for="component in container.components" :key="cryptoRandomString({ length: 16, type: 'base64' })">
+        <div v-for="(container, index) in settings.containers" :key="itemIndex + '' + index" :class="container.cssClasses" :draggable="reorderEnabled" @dragstart.stop="onDragStart">
+            <template v-for="(component, index) in container.components" :key="itemIndex + '' + index">
                 <i v-if="component.type === 'reorderIcon' && reorderEnabled" :class="{ 'icon-disabled': disabled }" class="pi pi-th-large kn-cursor-pointer p-mr-2" @click="$emit('addNewItem', itemIndex)"></i>
                 <WidgetEditorInputText
                     v-if="component.type === 'inputText' && fieldIsVisible(component)"
@@ -15,7 +15,7 @@
                     :initialValue="item[component.property]"
                     :item="item"
                     :itemIndex="itemIndex"
-                    @input="onChange($event, component, itemIndex)"
+                    @change="onChange($event, component, itemIndex)"
                 ></WidgetEditorInputText>
                 <WidgetEditorDropdown
                     v-else-if="component.type === 'dropdown' && fieldIsVisible(component)"
@@ -135,7 +135,7 @@ export default defineComponent({
                         () => {
                             this.itemIsDisabled()
                         },
-                        { deep: true }
+                        { deep: false }
                     )
                 }
             }

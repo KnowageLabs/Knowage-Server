@@ -118,10 +118,22 @@
                                                                                         "property": "label",
                                                                                         "settings": {
                                                                                             "disabledCondition": "functions.summaryRowsAreDisabled",
-                                                                                            "onUpdate": "functions.summaryRowsChanged",
+                                                                                            "onUpdate": "functions.updateSummaryRowsListItem",
                                                                                             "watchers": ["settings.configuration.summaryRows.enabled"]
                                                                                         },
                                                                                         "type": "inputText"
+                                                                                    },
+                                                                                    {
+                                                                                        "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
+                                                                                        "label": "dashboard.widgetEditor.aggregation",
+                                                                                        "options": "functions.getSummaryRowsAggregationOptions",
+                                                                                        "property": "aggregation",
+                                                                                        "settings": {
+                                                                                            "disabledCondition": "functions.summaryRowsAreDisabled",
+                                                                                            "onUpdate": "functions.updateSummaryRowsListItem",
+                                                                                            "watchers": ["settings.configuration.summaryRows.enabled"]
+                                                                                        },
+                                                                                        "type": "dropdown"
                                                                                     },
                                                                                     {
                                                                                         "type": "addDeleteIcon"
@@ -131,7 +143,7 @@
                                                                             }
                                                                         ],
                                                                         "disabledCondition": "functions.summaryRowsAreDisabled",
-                                                                        "watchers": ["settings.configuration.summaryRows.enabled", "settings.configuration.summaryRows.list"]
+                                                                        "watchers": ["settings.configuration.summaryRows.enabled"]
                                                                     },
                                                                     "watchers": ["settings.configuration.summaryRows.enabled", "settings.configuration.summaryRows.list"]
                                                                 },

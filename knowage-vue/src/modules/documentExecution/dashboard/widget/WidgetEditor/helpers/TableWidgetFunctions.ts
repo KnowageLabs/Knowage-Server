@@ -141,6 +141,15 @@ const tableWidgetFunctions = {
             emitter.emit('summaryRowsChanged')
         }
     },
+    getSummaryRowsAggregationOptions: () => {
+        return descriptor.columnAggregationOptions.slice(1)
+    },
+    updateSummaryRowsListItem: (model: IWidget, item: any, index: number) => {
+        if (!model || !model.settings.configuration.summaryRows.list) return
+        if (index !== -1) {
+            model.settings.configuration.summaryRows.list[index] = { ...item }
+        }
+    },
     // tooltipIsDisabled: (model: IWidget) => {
     //     return !model?.temp.selectedColumn?.enableTooltip
     // },

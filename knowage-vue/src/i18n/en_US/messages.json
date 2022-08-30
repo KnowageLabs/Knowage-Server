@@ -346,6 +346,7 @@
         },
         "widgetEditor": {
             "addWidget": "Add widget",
+            "aggregation": "Aggregation",
             "ascending": "Ascending",
             "borders": {
                 "borderRadiusBottomLeft": "Border radius bottom left",

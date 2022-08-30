@@ -35,11 +35,13 @@ export default defineComponent({
     },
     watch: {},
     async created() {
+        console.log('LOAD VALUE CALLED IN CREATED')
         this.loadValue()
         this.setWatchers()
     },
     methods: {
         loadValue() {
+            console.log('LOAD VALUE CALLED')
             if ((this.initialValue || this.initialValue === '') && !this.property) {
                 this.modelValue = this.initialValue
                 this.visible = true
@@ -59,9 +61,11 @@ export default defineComponent({
             this.callOnUpdateFunction()
         },
         fieldIsDisabled() {
+            console.log('this.disabled ', this.settings.disabledCondition)
             if (!this.settings.disabledCondition) return (this.disabled = false)
             const tempFunction = getModelProperty(this.widgetModel, this.settings.disabledCondition, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel, this.itemIndex))
+            if (tempFunction && typeof tempFunction === 'function') this.disabled = tempFunction(this.widgetModel, this.itemIndex)
+            console.log('this.disabled 2', this.disabled)
         },
         fieldIsVisible() {
             if (!this.settings.visibilityCondition) return (this.visible = true)
@@ -75,7 +79,7 @@ export default defineComponent({
             }
         },
         setWatchers() {
-            this.$watch('widgetModel.' + this.property, () => this.loadValue(), { deep: true })
+            // this.$watch('widgetModel.' + this.property, () => this.loadValue(), { deep: false })
             if (this.settings.watchers) {
                 for (let i = 0; i < this.settings.watchers.length; i++) {
                     this.$watch(
@@ -84,7 +88,7 @@ export default defineComponent({
                             this.fieldIsDisabled()
                             this.fieldIsVisible()
                         },
-                        { deep: true }
+                        { deep: false }
                     )
                 }
             }
