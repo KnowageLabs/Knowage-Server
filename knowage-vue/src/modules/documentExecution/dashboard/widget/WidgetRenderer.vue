@@ -1,5 +1,6 @@
 <template>
     <div class="widget-renderer">
+        <div class="drag-handle">DRAG</div>
         {{ widget.id }}
         {{ widget.type }}
         <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">

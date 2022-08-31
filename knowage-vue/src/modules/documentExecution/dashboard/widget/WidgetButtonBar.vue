@@ -2,6 +2,9 @@
     <div class="widgetButtonBarContainer">
         <Button @click="editWidget" data-test="edit-widget-button">Edit</Button>
     </div>
+    <div class="widgetButtonBarContainer2">
+        <div class="drag-handle">DRAG</div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -25,5 +28,10 @@ export default defineComponent({
     position: absolute;
     top: 0;
     right: 0;
+}
+.widgetButtonBarContainer2 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
 }
 </style>
