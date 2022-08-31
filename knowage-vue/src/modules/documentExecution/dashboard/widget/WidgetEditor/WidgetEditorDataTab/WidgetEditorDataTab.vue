@@ -10,7 +10,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset } from '../../../Dashboard'
-import dataDescriptor from './WidgetEditorGenericDescriptor.json'
 import WidgetEditorDataList from './WidgetEditorDataList/WidgetEditorDataList.vue'
 import WidgetEditorGeneric from '../WidgetEditorGeneric/WidgetEditorGeneric.vue'
 import WidgetEditorHint from '../WidgetEditorHint.vue'
