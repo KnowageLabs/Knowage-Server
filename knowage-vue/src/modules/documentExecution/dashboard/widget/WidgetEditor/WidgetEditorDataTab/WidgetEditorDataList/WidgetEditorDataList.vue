@@ -80,7 +80,10 @@ export default defineComponent({
         },
         loadSelectedDataset() {
             const index = this.datasetOptions?.findIndex((dataset: IWidgetEditorDataset) => dataset.id === this.model?.dataset)
-            if (index !== -1) this.selectedDataset = this.datasetOptions[index]
+            if (index !== -1) {
+                this.selectedDataset = this.datasetOptions[index]
+                this.$emit('datasetSelected', this.selectedDataset)
+            }
         },
         onDatasetSelected() {
             this.loadDatasetColumns()
@@ -90,7 +93,7 @@ export default defineComponent({
         removeSelectedColumnsFromModel() {
             if (!this.model?.columns) return
             for (let i = 0; i < this.model.columns.length; i++) {
-                removeColumnUsageFromModel(this.model.columns[i], this.model)
+                emitter.emit('collumnRemoved', this.model.columns[i])
             }
             this.model.columns = []
         },

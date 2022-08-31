@@ -1,4 +1,61 @@
 {
+    "columnAggregationOptions": [
+        {
+            "label": "NONE",
+            "value": "NONE"
+        },
+        {
+            "label": "SUM",
+            "value": "SUM"
+        },
+        {
+            "label": "AVG",
+            "value": "AVG"
+        },
+        {
+            "label": "MAX",
+            "value": "MAX"
+        },
+        {
+            "label": "MIN",
+            "value": "MIN"
+        },
+        {
+            "label": "COUNT",
+            "value": "COUNT"
+        },
+        {
+            "label": "COUNT_DISTINCT",
+            "value": "COUNT_DISTINCT"
+        }
+    ],
+    "columnTableSettings": {
+        "buttonColumnStyle": {
+            "min-width": "125px",
+            "text-align": "end"
+        },
+        "columns": [
+            {
+                "field": "alias",
+                "style": "max-width: 200px"
+            },
+            {
+                "field": "columnName"
+            },
+            {
+                "field": "aggregation",
+                "style": "max-width: 100px"
+            }
+        ],
+        "dataKey": "columnName",
+        "dragColumnsHint": "dashboard.widgetEditor.dragColumnsHint",
+        "dropIsActive": true,
+        "label": "dashboard.widgetEditor.selectedColumns",
+        "rowReorder": {
+            "enabled": true,
+            "rowReorderColumnStyle": "width: 3rem"
+        }
+    },
     "sortingOrderOptions": [
         {
             "label": "",

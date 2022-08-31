@@ -21,7 +21,7 @@
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.sortingColumn') }}</label>
                 <Dropdown class="kn-material-input" v-model="sortingOrder" :options="descriptor.sortingOrderOptions" optionValue="value" @change="sortingChanged">
                     <template #value="slotProps">
-                        <div v-if="slotProps.value">
+                        <div>
                             <span>{{ slotProps.value }}</span>
                         </div>
                     </template>
@@ -47,34 +47,30 @@ import descriptor from './TableWidgetDescriptor.json'
 export default defineComponent({
     name: 'table-widget-data-form',
     components: { Dropdown, InputSwitch },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, sortingColumnOptions: { type: Array as PropType<IWidgetColumn[]>, required: true } },
     data() {
         return {
             descriptor,
             paginationEnabled: false,
             itemsNumber: '0',
             sortingColumn: '',
-            sortingColumnOptions: [] as IWidgetColumn[],
             sortingOrder: ''
         }
     },
-
     async created() {
-        console.log(' ----- PAGINATION LOADED MODEL: ', this.widgetModel)
+        this.setEventListeners()
         this.loadPagination()
-        this.loadSortingColumnOptions()
         this.loadSortingSettings()
     },
     methods: {
+        setEventListeners() {
+            emitter.on('collumnRemoved', (column) => this.onColumnRemoved(column))
+        },
         loadPagination() {
             if (this.widgetModel?.settings?.pagination) {
                 this.paginationEnabled = this.widgetModel.settings.pagination.enabled
                 this.itemsNumber = this.widgetModel.settings.pagination.itemsNumber
             }
-        },
-        loadSortingColumnOptions() {
-            this.sortingColumnOptions = this.widgetModel?.columns ?? []
-            console.log('loadSortingColumnOptions - options: ', this.sortingColumnOptions)
         },
         loadSortingSettings() {
             if (this.widgetModel?.settings?.sortingColumn) this.sortingColumn = this.widgetModel.settings.sortingColumn
@@ -90,6 +86,13 @@ export default defineComponent({
             this.widgetModel.settings.sortingColumn = this.sortingColumn
             this.widgetModel.settings.sortingOrder = this.sortingOrder
             emitter.emit('sortingChanged', { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder })
+        },
+        onColumnRemoved(column: IWidgetColumn) {
+            if (column.columnName === this.sortingColumn) {
+                this.sortingColumn = ''
+                this.sortingOrder = ''
+                this.paginationChanged()
+            }
         }
     }
 })
