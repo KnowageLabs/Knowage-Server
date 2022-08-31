@@ -50,6 +50,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.gson.Gson;
+
 import it.eng.knowage.engine.cockpit.api.export.AbstractFormatExporter;
 import it.eng.knowage.engine.cockpit.api.export.ExporterClient;
 import it.eng.knowage.engine.cockpit.api.export.excel.exporters.IWidgetExporter;
@@ -508,7 +510,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			JSONArray columns = metadata.getJSONArray("fields");
 			columns = filterDataStoreColumns(columns);
 			JSONArray rows = dataStore.getJSONArray("rows");
-
+			HashMap<String, Object> variablesMap = new HashMap<String, Object>();
 			JSONObject widgetData = dataStore.getJSONObject("widgetData");
 			JSONObject widgetContent = widgetData.getJSONObject("content");
 			HashMap<String, String> arrayHeader = new HashMap<String, String>();
@@ -557,7 +559,13 @@ public class ExcelExporter extends AbstractFormatExporter {
 					}
 				}
 			}
+			if (body.has("COCKPIT_VARIABLES")) {
+				if (body.get("COCKPIT_VARIABLES") instanceof JSONObject) {
+					JSONObject variableOBJ = body.getJSONObject("COCKPIT_VARIABLES");
+					variablesMap = new Gson().fromJson(variableOBJ.toString(), HashMap.class);
 
+				}
+			}
 			// column.header matches with name or alias
 			// Fill Header
 			JSONArray groupsArray = new JSONArray();
@@ -639,6 +647,12 @@ public class ExcelExporter extends AbstractFormatExporter {
 			JSONObject[] columnStyles = getColumnsStyles(columnsOrdered, widgetContent);
 			HashMap<String, String> mapColumns = getColumnsMap(columnsOrdered);
 			HashMap<String, String> mapColumnsTypes = getColumnsMapTypes(columnsOrdered);
+			HashMap<String, Object> mapParameters = new HashMap<String, Object>();
+
+			if (body.has("COCKPIT_SELECTIONS") && body.getJSONObject("COCKPIT_SELECTIONS").has("drivers")) {
+				mapParameters = getParametersMap(body.getJSONObject("COCKPIT_SELECTIONS").getJSONObject("drivers"));
+			}
+
 			// FILL RECORDS
 			int isGroup = mapGroupsAndColumns.isEmpty() ? 0 : 1;
 			for (int r = 0; r < rows.length(); r++) {
@@ -663,26 +677,26 @@ public class ExcelExporter extends AbstractFormatExporter {
 						case "string":
 							cell.setCellValue(s);
 							cell.setCellStyle(getStringCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, s, rowObject, mapColumns,
-									mapColumnsTypes));
+									mapColumnsTypes, variablesMap, mapParameters));
 							break;
 						case "int":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 								cell.setCellStyle(getIntCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle, settings, Integer.parseInt(s),
-										rowObject, mapColumns, mapColumnsTypes));
+										rowObject, mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 							} else {
 								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
-										mapColumns, mapColumnsTypes));
+										mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 							}
 							break;
 						case "float":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
 								cell.setCellStyle(getDoubleCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, Double.parseDouble(s),
-										rowObject, mapColumns, mapColumnsTypes));
+										rowObject, mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 							} else {
 								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
-										mapColumns, mapColumnsTypes));
+										mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 							}
 							break;
 						case "date":
@@ -691,7 +705,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 									Date date = dateFormat.parse(s);
 									cell.setCellValue(date);
 									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
-											mapColumns, mapColumnsTypes));
+											mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 								}
 							} catch (Exception e) {
 								logger.debug("Date will be exported as string due to error: ", e);
@@ -705,7 +719,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 									cell.setCellValue(ts);
 									cell.setCellStyle(tsCellStyle);
 									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
-											mapColumns, mapColumnsTypes));
+											mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 								}
 							} catch (Exception e) {
 								logger.debug("Timestamp will be exported as string due to error: ", e);
@@ -733,8 +747,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 				mapp.put(column.getString("header"), column.getString("name"));
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new SpagoBIRuntimeException("Couldn't create columns map", e);
 			}
 		}
 		return mapp;
@@ -748,10 +761,41 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 				mapp.put(column.getString("name"), column.getString("type"));
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new SpagoBIRuntimeException("Couldn't create columns map", e);
 			}
 		}
+		return mapp;
+	}
+
+	private HashMap<String, Object> getParametersMap(JSONObject drivers) {
+		HashMap<String, Object> mapp = new HashMap<String, Object>();
+
+		Iterator<String> keys = drivers.keys();
+
+		while (keys.hasNext()) {
+			String key = keys.next();
+			try {
+				if (drivers.get(key) instanceof JSONArray) {
+					JSONArray parameterArray = drivers.getJSONArray(key);
+					for (int c = 0; c < parameterArray.length(); c++) {
+
+						JSONObject paramValueOBJ = parameterArray.getJSONObject(c);
+
+						Iterator<String> paramkeys = paramValueOBJ.keys();
+						while (paramkeys.hasNext()) {
+							String paramkey = paramkeys.next();
+							mapp.put(key, paramValueOBJ.get(paramkey));
+
+						}
+
+					}
+
+				}
+			} catch (JSONException e) {
+				throw new SpagoBIRuntimeException("Couldn't create parameter map", e);
+			}
+		}
+
 		return mapp;
 	}
 
