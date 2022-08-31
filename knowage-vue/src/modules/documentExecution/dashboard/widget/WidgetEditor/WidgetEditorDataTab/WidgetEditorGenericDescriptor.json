@@ -1,102 +1,10 @@
 {
     "table": [
         {
-            "cardClasses": "",
-            "containers": [
-                {
-                    "components": [
-                        {
-                            "columns": [
-                                {
-                                    "columnBodyStyle": "max-width: 200px",
-                                    "editableField": {
-                                        "function": "functions.updateColumnValue",
-                                        "type": "inputText"
-                                    },
-                                    "field": "alias"
-                                },
-                                {
-                                    "field": "columnName"
-                                },
-                                {
-                                    "columnBodyStyle": "max-width: 100px",
-                                    "editableField": {
-                                        "function": "functions.updateColumnValue",
-                                        "options": "functions.getColumnAggregationOptions",
-                                        "type": "dropdown",
-                                        "visibilityCondition": "functions.showAggregationDropdown"
-                                    },
-                                    "field": "aggregation"
-                                }
-                            ],
-                            "cssClass": "kn-material-input p-d-flex p-flex-row kn-flex p-m-2",
-                            "settings": {
-                                "buttonColumnStyle": {
-                                    "min-width": "125px",
-                                    "text-align": "end"
-                                },
-                                "buttons": [
-                                    {
-                                        "function": "functions.setSelectedColumn",
-                                        "icon": "fas fa-cog",
-                                        "tooltip": "common.edit"
-                                    },
-                                    {
-                                        "function": "functions.removeColumn",
-                                        "icon": "pi pi-trash",
-                                        "tooltip": "common.delete"
-                                    }
-                                ],
-                                "dataKey": "name",
-                                "dropIsActive": {
-                                    "dropFunction": "functions.onColumnDrop"
-                                },
-                                "hideHeaders": true,
-                                "iconColumn": "functions.getColumnIcons",
-                                "label": "dashboard.widgetEditor.selectedColumns",
-                                "property": "columns",
-                                "responsiveLayout": "stack",
-                                "rowReorder": {
-                                    "enabled": true,
-                                    "rowReorderColumnStyle": "width: 3rem"
-                                }
-                            },
-                            "titleFunction": "functions.getSelectedColumnTitle",
-                            "type": "dataTable"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
             "cardClasses": "p-d-flex p-flex-column",
             "containers": [
                 {
                     "components": [
-                        {
-                            "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
-                            "label": "common.alias",
-                            "property": "temp.selectedColumn.alias",
-                            "settings": {
-                                "onUpdate": "functions.updateSelectedColumn"
-                            },
-                            "type": "inputText"
-                        }
-                    ],
-                    "containerClasess": "p-d-flex p-flex-row p-ai-center"
-                },
-                {
-                    "components": [
-                        {
-                            "cssClass": "p-d-flex p-flex-column kn-flex-2 p-m-2",
-                            "label": "common.type",
-                            "options": "functions.getColumnTypeOptions",
-                            "property": "temp.selectedColumn.fieldType",
-                            "settings": {
-                                "onUpdate": "functions.updateSelectedColumn"
-                            },
-                            "type": "dropdown"
-                        },
                         {
                             "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
                             "label": "qbe.simpleTable.aggregation",

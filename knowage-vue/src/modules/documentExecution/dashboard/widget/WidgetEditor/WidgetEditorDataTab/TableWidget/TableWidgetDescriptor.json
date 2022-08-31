@@ -56,6 +56,16 @@
             "rowReorderColumnStyle": "width: 3rem"
         }
     },
+    "columnTypeOptions": [
+        {
+            "label": "ATTRIBUTE",
+            "value": "ATTRIBUTE"
+        },
+        {
+            "label": "MEASURE",
+            "value": "MEASURE"
+        }
+    ],
     "sortingOrderOptions": [
         {
             "label": "",

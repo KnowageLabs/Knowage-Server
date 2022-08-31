@@ -1,7 +1,8 @@
 <template>
     <div v-if="widgetModel">
-        <TableWidgetDataForm :widgetModel="widgetModel" :sortingColumnOptions="columnTableItems"></TableWidgetDataForm>
+        <TableWidgetDataForm class="p-m-2" :widgetModel="widgetModel" :sortingColumnOptions="columnTableItems"></TableWidgetDataForm>
         <WidgetEditorColumnTable
+            class="p-m-2"
             :widgetModel="widgetModel"
             :items="columnTableItems"
             :settings="descriptor.columnTableSettings"
@@ -11,6 +12,7 @@
             @itemSelected="setSelectedColumn"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
+        <TableWidgetColumnForm class="p-m-2" :widgetModel="widgetModel" :selectedColumn="selectedColumn"></TableWidgetColumnForm>
     </div>
 </template>
 
@@ -18,13 +20,14 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
-import TableWidgetDataForm from './TableWidgetDataForm.vue'
-import WidgetEditorColumnTable from '../common/WidgetEditorColumnTable.vue'
 import descriptor from './TableWidgetDescriptor.json'
+import TableWidgetDataForm from './TableWidgetDataForm.vue'
+import TableWidgetColumnForm from './TableWidgetColumnForm.vue'
+import WidgetEditorColumnTable from '../common/WidgetEditorColumnTable.vue'
 
 export default defineComponent({
     name: 'table-widget-data-container',
-    components: { TableWidgetDataForm, WidgetEditorColumnTable },
+    components: { TableWidgetDataForm, TableWidgetColumnForm, WidgetEditorColumnTable },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
@@ -39,7 +42,6 @@ export default defineComponent({
     },
     methods: {
         loadColumnTableItems() {
-            console.log('LOADED WIDGET MODEL: ', this.widgetModel)
             this.columnTableItems = this.widgetModel.columns ?? []
         },
         onColumnsReorder(columns: IWidgetColumn[]) {
@@ -55,6 +57,7 @@ export default defineComponent({
             if (index !== -1) {
                 this.widgetModel.columns[index] = { ...column }
                 emitter.emit('collumnUpdated', { column: this.widgetModel.columns[index], columnIndex: index })
+                if (this.widgetModel.columns[index].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widgetModel.columns[index] }
             }
         },
         setSelectedColumn(column: IWidgetColumn) {
