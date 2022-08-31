@@ -23,7 +23,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidgetEditorDataset, IDatasetOptions, IWidget, IDataset, IModelDataset } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
-import { createNewWidget, setWidgetModelTempProperty, setWidgetModelFunctions, formatWidgetForSave, formatWidgetColumnsForDisplay } from './helpers/WidgetEditorHelpers'
+import { createNewWidget, setWidgetModelTempProperty, setWidgetModelFunctions, formatWidgetForSave } from './helpers/WidgetEditorHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
 import WidgetEditorTabs from './WidgetEditorTabs.vue'
 import mainStore from '../../../../../App.store'
@@ -65,7 +65,6 @@ export default defineComponent({
         loadWidget() {
             if (!this.propWidget) return
             this.widget = this.propWidget.new ? createNewWidget() : deepcopy(this.propWidget)
-            formatWidgetColumnsForDisplay(this.widget)
             setWidgetModelTempProperty(this.widget)
             setWidgetModelFunctions(this.widget)
             console.log('Widget Editor - LOADED WIDGET IN WIDGET EDITOR: ', this.widget)
@@ -135,6 +134,11 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
+.widget-editor-card {
+    color: rgba(0, 0, 0, 0.87);
+    box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+    border-radius: 4px;
+}
 // @media screen and (max-width: 1199px) {
 //     #widget-editor-preview {
 //         -webkit-transition: width 0.3s;

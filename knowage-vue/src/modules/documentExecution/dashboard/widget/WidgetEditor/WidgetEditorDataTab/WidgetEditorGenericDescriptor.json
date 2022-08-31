@@ -1,65 +1,6 @@
 {
     "table": [
         {
-            "cardClasses": "p-d-flex p-flex-column p-ai-center",
-            "containers": [
-                {
-                    "components": [
-                        {
-                            "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
-                            "label": "dashboard.widgetEditor.pagination",
-                            "property": "settings.pagination.enabled",
-                            "settings": {
-                                "onUpdate": "functions.paginationChanged"
-                            },
-                            "type": "inputSwitch"
-                        },
-                        {
-                            "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
-                            "label": "dashboard.widgetEditor.itemsPerPage",
-                            "property": "settings.pagination.itemsNumber",
-                            "settings": {
-                                "disabledCondition": "functions.itemsPerPageIsDisabled",
-                                "onUpdate": "functions.paginationChanged",
-                                "type": "number",
-                                "watchers": ["settings.pagination.enabled"]
-                            },
-                            "type": "inputText"
-                        }
-                    ],
-                    "containerClasess": "p-d-flex p-flex-row p-ai-center kn-width-full"
-                },
-                {
-                    "components": [
-                        {
-                            "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
-                            "label": "dashboard.widgetEditor.sortingColumn",
-                            "options": "functions.getSelectedColumnsAsOptions",
-                            "property": "settings.sortingColumn",
-                            "settings": {
-                                "onUpdate": "functions.sortingChanged",
-                                "watchers": ["columns"]
-                            },
-                            "type": "dropdown"
-                        },
-                        {
-                            "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
-                            "label": "dashboard.widgetEditor.sortingOrder",
-                            "options": "functions.getSortingOrderOptions",
-                            "property": "settings.sortingOrder",
-                            "settings": {
-                                "onUpdate": "functions.sortingChanged",
-                                "translateLabels": true,
-                                "watchers": ["columns", "settings.sortingColum"]
-                            },
-                            "type": "dropdown"
-                        }
-                    ],
-                    "containerClasess": "p-d-flex p-flex-row p-ai-center kn-width-full"
-                }
-            ]
-        },
-        {
             "cardClasses": "",
             "containers": [
                 {

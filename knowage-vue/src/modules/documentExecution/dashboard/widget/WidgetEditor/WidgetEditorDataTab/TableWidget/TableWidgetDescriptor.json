@@ -1,0 +1,16 @@
+{
+    "sortingOrderOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "dashboard.widgetEditor.ascending",
+            "value": "ASC"
+        },
+        {
+            "label": "dashboard.widgetEditor.descending",
+            "value": "DESC"
+        }
+    ]
+}

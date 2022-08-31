@@ -1,7 +1,9 @@
 <template>
     <div class="p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow" :style="descriptor.style.preview">
         <!-- <div :style="descriptor.style.preview" class="kn-overflow"> -->
-        <div style="overflow: auto; height: 500px; width: 400px">{{ propWidget }}</div>
+        <div style="overflow: auto; height: 500px; width: 400px">
+            {{ propWidget }}
+        </div>
         <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="populate" />
 
         <div ref="tabulator"></div>
@@ -77,8 +79,8 @@ export default defineComponent({
             this.rows = this.mock.previewMock.rows
         },
         setEventListeners() {
-            emitter.on('paginationChanged', () => console.log('WidgetEditorPreview - PAGINATION CHANGED!'))
-            emitter.on('sortingChanged', () => console.log('WidgetEditorPreview  - SORTING CHANGED!'))
+            emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
+            emitter.on('sortingChanged', (sorting) => console.log('WidgetEditorPreview  - SORTING CHANGED!', sorting)) // { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder }
             emitter.on('collumnAdded', (column) => this.onColumnAdd(column))
             emitter.on('collumnRemoved', (column) => console.log('WidgetEditorPreview  - collumnRemoved!', column, this.propWidget))
             emitter.on('collumnUpdated', (column) => this.onColumnUpdate(column))
@@ -104,7 +106,11 @@ export default defineComponent({
                 type: 'java.lang.String'
             } as any
             console.log('WidgetEditorPreview  - collumnAdded!', column)
-            this.tabulator.addColumn({ title: column.alias, field: column.name, width: 150 })
+            this.tabulator.addColumn({
+                title: column.alias,
+                field: column.name,
+                width: 150
+            })
         },
         onColumnUpdate(column) {
             // console.log('WidgetEditorPreview  - collumnAdded!', this.propWidget)

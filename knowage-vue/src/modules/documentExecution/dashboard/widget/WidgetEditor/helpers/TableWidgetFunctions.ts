@@ -5,26 +5,6 @@ import descriptor from '../WidgetEditorDescriptor.json'
 import cryptoRandomString from 'crypto-random-string'
 
 const tableWidgetFunctions = {
-    paginationChanged: () => {
-        emitter.emit('paginationChanged')
-    },
-    itemsPerPageIsDisabled: (model: IWidget) => {
-        return !model.settings?.pagination?.enabled
-    },
-    getSelectedColumnsAsOptions: (model: IWidget) => {
-        const columnOptions = [] as { value: string, label: string }[]
-        for (let i = 0; i < model.columns.length; i++) {
-            const temp = model.columns[i].columnName.startsWith('(') ? model.columns[i].columnName.slice(1, -1) : model.columns[i].columnName
-            columnOptions.push({ value: temp, label: temp })
-        }
-        return columnOptions
-    },
-    getSortingOrderOptions: () => {
-        return descriptor.sortingOrderOptions
-    },
-    sortingChanged: () => {
-        emitter.emit('sortingChanged')
-    },
     getColumnIcons: (column: any) => {
         return column?.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'
     },
@@ -397,7 +377,7 @@ const tableWidgetFunctions = {
 function createNewWidgetColumn(eventData: any) {
     const tempColumn = {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
-        columnName: '(' + eventData.name + ')',
+        columnName: eventData.name,
         alias: eventData.alias,
         type: eventData.type,
         fieldType: eventData.fieldType,
@@ -427,7 +407,7 @@ export function formatTableWidgetForSave(widget: IWidget) {
     // formatBorderSettings(widget)
 }
 
-function formatTablePagination(pagination: { enabled: boolean, itemsNumber: string | number }) {
+const formatTablePagination = (pagination: { enabled: boolean, itemsNumber: string | number }) => {
     if (!pagination) return
     pagination.itemsNumber = pagination.enabled ? +pagination.itemsNumber : 0
 }
