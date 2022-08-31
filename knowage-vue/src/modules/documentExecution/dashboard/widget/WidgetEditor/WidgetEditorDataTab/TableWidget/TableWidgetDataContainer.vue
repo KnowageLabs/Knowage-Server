@@ -20,7 +20,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
-import descriptor from './TableWidgetDescriptor.json'
+import descriptor from './TableWidgetDataDescriptor.json'
 import TableWidgetDataForm from './TableWidgetDataForm.vue'
 import TableWidgetColumnForm from './TableWidgetColumnForm.vue'
 import WidgetEditorColumnTable from '../common/WidgetEditorColumnTable.vue'

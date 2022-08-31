@@ -19,6 +19,20 @@ export interface IWidget {
     new?: boolean
 }
 
+export interface ITableWidgetSettings {
+    clickable: boolean,
+    conditionalStyle: any,
+    configuration: any,
+    interactions: any,
+    pagination: any,
+    responsive: any,
+    sortingColumn: string,
+    sortingOrder: string,
+    style: any,
+    tooltips: any,
+    updatable: boolean
+}
+
 export interface IWidgetColumn {
     id?: string
     columnName: string

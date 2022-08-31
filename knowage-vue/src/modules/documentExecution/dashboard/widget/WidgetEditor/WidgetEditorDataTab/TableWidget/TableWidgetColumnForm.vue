@@ -55,7 +55,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetColumn, IWidgetColumnFilter } from '../../../../Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
-import descriptor from '../TableWidget/TableWidgetDescriptor.json'
+import descriptor from './TableWidgetDataDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
 import Dropdown from 'primevue/dropdown'
 

@@ -22,7 +22,6 @@ export default defineComponent({
     emits: ['datasetSelected'],
     data() {
         return {
-            dataDescriptor,
             selectedDataset: null as IDataset | null
         }
     },

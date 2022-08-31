@@ -65,7 +65,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dropdown from 'primevue/dropdown'
 import deepcopy from 'deepcopy'
-import descriptor from '../TableWidget/TableWidgetDescriptor.json'
+import descriptor from '../TableWidget/TableWidgetDataDescriptor.json'
 
 export default defineComponent({
     name: 'widget-editor-column-table',

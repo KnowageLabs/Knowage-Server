@@ -41,8 +41,8 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
 import Dropdown from 'primevue/dropdown'
+import descriptor from '../TableWidget/TableWidgetDataDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
-import descriptor from './TableWidgetDescriptor.json'
 
 export default defineComponent({
     name: 'table-widget-data-form',
