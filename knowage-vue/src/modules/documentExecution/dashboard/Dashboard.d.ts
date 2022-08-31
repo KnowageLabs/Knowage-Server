@@ -36,7 +36,8 @@ export interface IWidgetColumn {
 export interface IWidgetColumnFilter {
     enabled: boolean
     operator: string
-    value: string
+    value: string,
+    value2?: string
 }
 
 export interface IInteraction {

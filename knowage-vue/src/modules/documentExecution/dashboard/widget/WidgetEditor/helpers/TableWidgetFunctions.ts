@@ -5,26 +5,6 @@ import descriptor from '../WidgetEditorDescriptor.json'
 import cryptoRandomString from 'crypto-random-string'
 
 const tableWidgetFunctions = {
-    paginationChanged: () => {
-        emitter.emit('paginationChanged')
-    },
-    itemsPerPageIsDisabled: (model: IWidget) => {
-        return !model.settings?.pagination?.enabled
-    },
-    getSelectedColumnsAsOptions: (model: IWidget) => {
-        const columnOptions = [] as { value: string, label: string }[]
-        for (let i = 0; i < model.columns.length; i++) {
-            const temp = model.columns[i].columnName.startsWith('(') ? model.columns[i].columnName.slice(1, -1) : model.columns[i].columnName
-            columnOptions.push({ value: temp, label: temp })
-        }
-        return columnOptions
-    },
-    getSortingOrderOptions: () => {
-        return descriptor.sortingOrderOptions
-    },
-    sortingChanged: () => {
-        emitter.emit('sortingChanged')
-    },
     getColumnIcons: (column: any) => {
         return column?.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'
     },
@@ -84,20 +64,73 @@ const tableWidgetFunctions = {
             if (model.temp.selectedColumn.fieldType === 'ATTRIBUTE') {
                 model.temp.selectedColumn.aggregation = 'NONE'
             }
+            if (model.temp.selectedColumn.fieldType !== model.columns[index].fieldType) model.temp.selectedColumn.filter = { enabled: false, value: '', operator: '' }
             model.columns[index] = { ...model.temp.selectedColumn }
             emitter.emit('collumnUpdated', model.columns[index])
         }
     },
-    getColumnFilterOptions: () => {
-        return descriptor.attributeColumnFilterOperators
+    getColumnFilterOptions: (model: IWidget) => {
+        const fieldType = model?.temp.selectedColumn?.fieldType
+        return fieldType === 'ATTRIBUTE' ? descriptor.attributeColumnFilterOperators : descriptor.measureColumnFilterOperators
     },
     selectedColumnFilterIsDisabled: (model: IWidget) => {
         return !model?.temp.selectedColumn?.filter?.enabled
     },
     selectedColumnFilterValueIsVisible: (model: IWidget) => {
         const operator = model?.temp.selectedColumn?.filter?.operator
-        console.log("OPERATOR", operator)
-        return operator ? ['=', '!=', 'IN', 'like',].includes(operator) : false
+        return operator ? ['=', '<', '>', '<=', '>=', '!=', 'IN', 'like',].includes(operator) : false
+    },
+    selectedColumnFilterFromToIsVisible: (model: IWidget) => {
+        return model?.temp.selectedColumn?.filter?.operator === 'range'
+    },
+    indexColumnChanged: (model: IWidget) => {
+        emitter.emit('indexColumnChanged')
+    },
+    rowSpanChanged: (model: IWidget) => {
+        emitter.emit('rowSpanChanged')
+    },
+    getRowSpanColumnOptions: (model: IWidget) => {
+        const columnOptions = [] as { value: string, label: string }[]
+        for (let i = 0; i < model.columns.length; i++) {
+            const temp = model.columns[i].columnName.startsWith('(') ? model.columns[i].columnName.slice(1, -1) : model.columns[i].columnName
+            columnOptions.push({ value: temp, label: temp })
+        }
+        console.log("COLUMN OPTIONS: ", columnOptions)
+        return columnOptions
+    },
+    summaryRowsChanged: () => {
+        emitter.emit('summaryRowsChanged')
+    },
+    summaryRowsAreDisabled: (model: IWidget) => {
+        return !model?.settings.configuration?.summaryRows?.enabled
+    },
+    getSummaryRowsList: (model: IWidget) => {
+        const summaryRowsList = model?.settings.configuration?.summaryRows?.list
+        return summaryRowsList ?? []
+    },
+    createSummaryRowItem: (model: IWidget) => {
+        if (!model || !model?.settings.configuration?.summaryRows?.list || !model.settings.configuration.summaryRows.enabled) return
+        model?.settings.configuration.summaryRows.list.push({ label: "", aggregation: "" })
+        emitter.emit('summaryRowsChanged')
+    },
+    deleteSummaryRowItem: (model: IWidget, itemIndex: number) => {
+        if (model?.settings.configuration?.summaryRows?.enabled) {
+            model.settings.configuration.summaryRows.list.splice(itemIndex, 1)
+            emitter.emit('summaryRowsChanged')
+        }
+    },
+    getSummaryRowsAggregationOptions: (component: any, itemIndex: number) => {
+        console.log("ITEM INDEX: ", itemIndex)
+        return itemIndex !== 0 ? descriptor.columnAggregationOptions.slice(1) : [{ value: 'Columns Default Aggregation', label: 'Columns Default Aggregation' }]
+    },
+    updateSummaryRowsListItem: (model: IWidget, item: any, index: number) => {
+        if (!model || !model.settings.configuration.summaryRows.list) return
+        if (index !== -1) {
+            model.settings.configuration.summaryRows.list[index] = { ...item }
+        }
+    },
+    summaryRowsDropdownIsDisabled: (model: IWidget, itemIndex: number) => {
+        return !model?.settings.configuration?.summaryRows?.enabled || itemIndex === 0
     },
     // tooltipIsDisabled: (model: IWidget) => {
     //     return !model?.temp.selectedColumn?.enableTooltip
@@ -344,7 +377,7 @@ const tableWidgetFunctions = {
 function createNewWidgetColumn(eventData: any) {
     const tempColumn = {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
-        columnName: '(' + eventData.name + ')',
+        columnName: eventData.name,
         alias: eventData.alias,
         type: eventData.type,
         fieldType: eventData.fieldType,
@@ -374,7 +407,7 @@ export function formatTableWidgetForSave(widget: IWidget) {
     // formatBorderSettings(widget)
 }
 
-function formatTablePagination(pagination: { enabled: boolean, itemsNumber: string | number }) {
+const formatTablePagination = (pagination: { enabled: boolean, itemsNumber: string | number }) => {
     if (!pagination) return
     pagination.itemsNumber = pagination.enabled ? +pagination.itemsNumber : 0
 }
@@ -384,9 +417,16 @@ function formatTableSelectedColumns(columns: IWidgetColumn[]) {
     columns.forEach((column: IWidgetColumn) => {
         delete column.id
         if (column.columnName.startsWith('(')) column.columnName = column.columnName.slice(1, -1)
-        if (!column.filter?.enabled) delete column.filter
+        formatColumnFilter(column)
+
         // formatColumnTooltipSettings(column)
     })
+}
+
+const formatColumnFilter = (column: IWidgetColumn) => {
+    if (!column.filter) return
+    if (!column.filter.enabled) return delete column.filter
+    if (column.filter.operator !== 'range') delete column.filter.value2
 }
 
 function formatColumnTooltipSettings(column: IWidgetColumn) {

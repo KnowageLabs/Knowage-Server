@@ -86,6 +86,7 @@
                                 "personal": false,
                                 "precision": 0,
                                 "properties": {},
+                                "rowSpan": true,
                                 "scale": 0,
                                 "subjectId": false,
                                 "type": "java.lang.String"
@@ -130,6 +131,7 @@
                                 "personal": false,
                                 "precision": 0,
                                 "properties": {},
+                                "rowSpan": true,
                                 "scale": 0,
                                 "subjectId": false,
                                 "type": "java.lang.Integer"
@@ -222,11 +224,15 @@
                             "enabled": true,
                             "list": [
                                 {
-                                    "label": "Summary 1"
+                                    "label": "Summary row 1"
                                 },
                                 {
                                     "aggregation": "SUM",
-                                    "label": "Summary 2"
+                                    "label": "Summary row 2"
+                                },
+                                {
+                                    "aggregation": "MAX",
+                                    "label": "Summary row 3"
                                 }
                             ],
                             "style": {

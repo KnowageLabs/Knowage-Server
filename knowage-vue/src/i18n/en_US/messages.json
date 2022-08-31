@@ -346,6 +346,7 @@
         },
         "widgetEditor": {
             "addWidget": "Add widget",
+            "aggregation": "Aggregation",
             "ascending": "Ascending",
             "borders": {
                 "borderRadiusBottomLeft": "Border radius bottom left",
@@ -371,6 +372,7 @@
                 "enableConditionalStyle": "Enable Conditional Style",
                 "title": "Conditional Style"
             },
+            "configuration": "Configuration",
             "customHeaderTooltip": "Custom Header Tooltip",
             "descending": "Descending",
             "dragColumnsHint": "Drag columns here",
@@ -405,9 +407,14 @@
                 "alternatedRowsEven": "Alternated Rows Even",
                 "alternatedRowsOdd": "Alternated Rows Odd",
                 "customEmptyRowsMessage": "Custom empty rows message",
+                "enableIndexColumn": "Enable Index Column",
+                "enableRowspan": "Enable Row Span",
                 "enabledAlternatedRows": "Enabled Alternated Rows",
                 "hideNoRowsAvailable": "Hide \"No Rows Available\" message",
+                "indexColumnHint": "Index column hint placeholder",
                 "multiselectable": "Multiselectable",
+                "rowSpanColumns": "Row span columns",
+                "rowSpanHint": "Row span hint placeholder",
                 "selectionColor": "Selection color",
                 "showIndexesColumn": "Show indexes column",
                 "title": "Rows"
@@ -420,6 +427,11 @@
             "sortingColumn": "Sorting column",
             "sortingOrder": "Sorting order",
             "sufix": "Sufix",
+            "summaryRows": {
+                "enableSummaryRows": "Enable Summary Rows",
+                "pinnedColumnsOnly": "Pinned columns only",
+                "title": "Summary rows"
+            },
             "title": "Widget Editor",
             "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
             "visualizationOptions": {

@@ -1,8 +1,7 @@
 <template>
-    <div v-if="visible" :class="class">
+    <div v-if="visible" :class="class" :style="style">
         <label v-if="label" class="kn-material-input-label p-mr-2"> {{ $t(label) }}</label>
-        <InputText :class="inputClass" class="kn-material-input p-inputtext-sm" :type="settings.type ?? 'text'" v-model="modelValue" :maxLength="settings.maxLength" :disabled="disabled" @input="onInput" @change="onChange" @blur="$emit('blur')" data-test="widget-editor-input-text-input" />
-        <small v-if="settings.hint">{{ $t(settings.hint, { placeholder: settings.hintPlaceholder }) }}</small>
+        <MultiSelect v-model="modelValue" :options="options" :optionLabel="settings.optionLabel ?? 'label'" :optionValue="settings.optionValue ?? 'value'" :disabled="disabled" @change="onChange"> </MultiSelect>
     </div>
 </template>
 
@@ -10,30 +9,37 @@
 import { defineComponent, PropType } from 'vue'
 import { getModelProperty } from '../WidgetEditorGenericHelper'
 import { IWidget } from '../../../../Dashboard'
+import MultiSelect from 'primevue/multiselect'
 
 export default defineComponent({
-    name: 'widget-editor-input-text',
-    components: {},
+    name: 'widget-editor-multiselect',
+    components: { MultiSelect },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         property: { type: String, required: true },
-        label: { type: String },
         class: { type: String },
-        inputClass: { type: String },
+        style: { type: String },
+        label: { type: String },
+        options: { type: Array },
         settings: { type: Object, required: true },
+        visibilityCondition: { type: String },
         initialValue: { type: String },
         item: { type: Object },
         itemIndex: { type: Number }
     },
-    emits: ['input', 'change', 'blur'],
+    emits: ['change'],
     data() {
         return {
-            modelValue: '' as string,
+            modelValue: '' as any,
             disabled: false,
             visible: false
         }
     },
-    watch: {},
+    watch: {
+        initialValue() {
+            this.loadValue()
+        }
+    },
     async created() {
         this.loadValue()
         this.setWatchers()
@@ -43,30 +49,18 @@ export default defineComponent({
             if ((this.initialValue || this.initialValue === '') && !this.property) {
                 this.modelValue = this.initialValue
                 this.visible = true
-                return
+            } else if (!this.property) {
+                this.modelValue = ''
+            } else {
+                this.modelValue = getModelProperty(this.widgetModel, this.property, 'getValue', null) ?? ''
             }
-            this.modelValue = getModelProperty(this.widgetModel, this.property, 'getValue', null) ?? ''
 
-            this.fieldIsDisabled()
             this.fieldIsVisible()
-        },
-        onInput() {
-            this.$emit('input', this.modelValue)
-            this.callOnUpdateFunction()
+            this.fieldIsDisabled()
         },
         onChange() {
             this.$emit('change', this.modelValue)
             this.callOnUpdateFunction()
-        },
-        fieldIsDisabled() {
-            if (!this.settings.disabledCondition) return (this.disabled = false)
-            const tempFunction = getModelProperty(this.widgetModel, this.settings.disabledCondition, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') this.disabled = tempFunction(this.widgetModel, this.itemIndex)
-        },
-        fieldIsVisible() {
-            if (!this.settings.visibilityCondition) return (this.visible = true)
-            const tempFunction = getModelProperty(this.widgetModel, this.settings.visibilityCondition, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') return (this.visible = tempFunction(this.widgetModel))
         },
         callOnUpdateFunction() {
             if (this.settings.onUpdate) {
@@ -74,8 +68,24 @@ export default defineComponent({
                 if (tempFunction && typeof tempFunction === 'function') tempFunction(this.widgetModel, this.item, this.itemIndex)
             }
         },
+        fieldIsVisible() {
+            if (!this.settings.visibilityCondition) return (this.visible = true)
+            const tempFunction = getModelProperty(this.widgetModel, this.settings.visibilityCondition, 'getValue', null)
+            if (tempFunction && typeof tempFunction === 'function') return (this.visible = tempFunction(this.widgetModel))
+        },
+        fieldIsDisabled() {
+            if (!this.settings.disabledCondition) return (this.disabled = false)
+            const tempFunction = getModelProperty(this.widgetModel, this.settings.disabledCondition, 'getValue', null)
+            if (tempFunction && typeof tempFunction === 'function') return (this.disabled = tempFunction(this.widgetModel, this.itemIndex))
+        },
         setWatchers() {
-            this.$watch('widgetModel.' + this.property, () => this.loadValue(), { deep: false })
+            this.$watch(
+                'widgetModel.' + this.property,
+                () => {
+                    this.loadValue(), this.fieldIsDisabled()
+                },
+                { deep: true }
+            )
             if (this.settings.watchers) {
                 for (let i = 0; i < this.settings.watchers.length; i++) {
                     this.$watch(
@@ -84,7 +94,7 @@ export default defineComponent({
                             this.fieldIsDisabled()
                             this.fieldIsVisible()
                         },
-                        { deep: false }
+                        { deep: true }
                     )
                 }
             }

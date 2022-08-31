@@ -2,8 +2,8 @@
     <div :class="{ 'kn-draggable': reorderEnabled }">
         <div v-show="dropzoneTopVisible" class="form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before')" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
         <div v-show="reorderEnabled" class="form-list-item-dropzone" :class="{ 'form-list-item-dropzone-active': dropzoneTopVisible }" @drop.stop="onDropComplete($event, 'before')" @dragover.prevent @dragenter.prevent="displayDropzone('top')" @dragleave.prevent="hideDropzone('top')"></div>
-        <div v-for="(container, containerIndex) in settings.containers" :key="containerIndex" :class="container.cssClasses" :draggable="reorderEnabled" @dragstart.stop="onDragStart">
-            <template v-for="(component, index) in container.components" :key="index">
+        <div v-for="(container, index) in settings.containers" :key="itemIndex + '' + index" :class="container.cssClasses" :draggable="reorderEnabled" @dragstart.stop="onDragStart">
+            <template v-for="(component, index) in container.components" :key="itemIndex + '' + index">
                 <i v-if="component.type === 'reorderIcon' && reorderEnabled" :class="{ 'icon-disabled': disabled }" class="pi pi-th-large kn-cursor-pointer p-mr-2" @click="$emit('addNewItem', itemIndex)"></i>
                 <WidgetEditorInputText
                     v-if="component.type === 'inputText' && fieldIsVisible(component)"
@@ -15,7 +15,7 @@
                     :initialValue="item[component.property]"
                     :item="item"
                     :itemIndex="itemIndex"
-                    @input="onChange($event, component, index)"
+                    @change="onChange($event, component, itemIndex)"
                 ></WidgetEditorInputText>
                 <WidgetEditorDropdown
                     v-else-if="component.type === 'dropdown' && fieldIsVisible(component)"
@@ -24,12 +24,12 @@
                     :style="component.style"
                     :label="component.label"
                     :property="''"
-                    :options="getDropdownOptions(component)"
+                    :options="getDropdownOptions(component, itemIndex)"
                     :settings="component.settings"
                     :initialValue="item[component.property]"
                     :item="item"
                     :itemIndex="itemIndex"
-                    @change="onChange($event, component, index)"
+                    @change="onChange($event, component, itemIndex)"
                 ></WidgetEditorDropdown>
                 <WidgetEditorStyleTooblar v-else-if="component.type === 'styleToolbar'" :widgetModel="widgetModel" :icons="component.icons" :settings="component.settings" :item="item" :itemIndex="itemIndex"></WidgetEditorStyleTooblar>
                 <i v-if="component.type === 'addDeleteIcon'" :class="[itemIndex === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', disabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="$emit('addNewItem', itemIndex)"></i>
@@ -47,6 +47,7 @@ import { getModelProperty } from '../WidgetEditorGenericHelper'
 import WidgetEditorInputText from './WidgetEditorInputText.vue'
 import WidgetEditorDropdown from './WidgetEditorDropdown.vue'
 import WidgetEditorStyleTooblar from './WidgetEditorStyleTooblar.vue'
+import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'widget-editor-form-list-item',
@@ -58,7 +59,8 @@ export default defineComponent({
             item: null as any,
             disabled: false,
             dropzoneTopVisible: false,
-            dropzoneBottomVisible: false
+            dropzoneBottomVisible: false,
+            cryptoRandomString
         }
     },
     watch: {
@@ -79,10 +81,10 @@ export default defineComponent({
             if (!component) return
             this.item[component.property] = newValue
         },
-        getDropdownOptions(component: any) {
+        getDropdownOptions(component: any, itemIndex: number | undefined) {
             let temp = []
             const tempFunction = getModelProperty(this.widgetModel, component.options, 'getValue', null)
-            if (tempFunction && typeof tempFunction === 'function') temp = tempFunction(this.item)
+            if (tempFunction && typeof tempFunction === 'function') temp = tempFunction(this.item, itemIndex)
             return temp
         },
         fieldIsVisible(component: any) {
@@ -133,7 +135,7 @@ export default defineComponent({
                         () => {
                             this.itemIsDisabled()
                         },
-                        { deep: true }
+                        { deep: false }
                     )
                 }
             }
