@@ -191,6 +191,17 @@ public class ExcelExporter extends AbstractFormatExporter {
 					optionsObj = new JSONObject(options);
 				IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString, widgetId, wb, optionsObj);
 				exportedSheets = widgetExporter.export();
+				HashMap<String, HashMap<String, Object>> selectionsMap = new HashMap<String, HashMap<String, Object>>();
+				try {
+					selectionsMap = createSelectionsMap();
+				} catch (JSONException e) {
+					throw new SpagoBIRuntimeException("Unable to get selection map: ", e);
+				}
+				if (!selectionsMap.isEmpty()) {
+					Sheet selectionsSheet = createUniqueSafeSheetForSelections(wb, "Active Selections");
+					fillSelectionsSheetWithData(selectionsMap, wb, selectionsSheet, "Selections");
+					exportedSheets++;
+				}
 			} else {
 				// export whole cockpit
 				JSONArray widgetsJson = getWidgetsJson(templateString);
@@ -649,10 +660,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			HashMap<String, String> mapColumnsTypes = getColumnsMapTypes(columnsOrdered);
 			HashMap<String, Object> mapParameters = new HashMap<String, Object>();
 
-			if (body.has("COCKPIT_SELECTIONS") && body.getJSONObject("COCKPIT_SELECTIONS").has("drivers")) {
-				mapParameters = getParametersMap(body.getJSONObject("COCKPIT_SELECTIONS").getJSONObject("drivers"));
-			}
-
+			mapParameters = createMapParameters(mapParameters);
 			// FILL RECORDS
 			int isGroup = mapGroupsAndColumns.isEmpty() ? 0 : 1;
 			for (int r = 0; r < rows.length(); r++) {
@@ -739,6 +747,19 @@ public class ExcelExporter extends AbstractFormatExporter {
 		}
 	}
 
+	private HashMap<String, Object> createMapParameters(HashMap<String, Object> mapParameters) throws JSONException {
+		if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONObject && body.getJSONObject("COCKPIT_SELECTIONS").has("drivers")) {
+			mapParameters = getParametersMap(body.getJSONObject("COCKPIT_SELECTIONS").getJSONObject("drivers"));
+		} else if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONArray) {
+			for (int j = 0; j < body.getJSONArray("COCKPIT_SELECTIONS").length(); j++) {
+
+				mapParameters = getParametersMap(body.getJSONArray("COCKPIT_SELECTIONS").getJSONObject(j).getJSONObject("drivers"));
+
+			}
+		}
+		return mapParameters;
+	}
+
 	private HashMap<String, String> getColumnsMap(JSONArray columnsOrdered) {
 		HashMap<String, String> mapp = new HashMap<String, String>();
 		for (int c = 0; c < columnsOrdered.length(); c++) {
@@ -800,10 +821,37 @@ public class ExcelExporter extends AbstractFormatExporter {
 	}
 
 	private HashMap<String, HashMap<String, Object>> createSelectionsMap() throws JSONException {
-		JSONArray cockpitSelections = body.getJSONArray("COCKPIT_SELECTIONS");
 		HashMap<String, HashMap<String, Object>> selectionsMap = new HashMap<String, HashMap<String, Object>>();
-		for (int i = 0; i < cockpitSelections.length(); i++) {
-			JSONObject cockpitSelection = cockpitSelections.getJSONObject(i);
+		if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONArray) {
+			JSONArray cockpitSelections = body.getJSONArray("COCKPIT_SELECTIONS");
+
+			for (int i = 0; i < cockpitSelections.length(); i++) {
+				JSONObject cockpitSelection = cockpitSelections.getJSONObject(i);
+
+				JSONObject selections = cockpitSelection.getJSONObject("selections");
+
+				Iterator<String> keys = selections.keys();
+
+				while (keys.hasNext()) {
+					String key = keys.next();
+					if (selections.get(key) instanceof JSONObject) {
+						JSONObject selection = (JSONObject) selections.get(key);
+						Iterator<String> selectionKeys = selection.keys();
+						List<Object> selectList = new ArrayList<Object>();
+						HashMap<String, Object> selects = new HashMap<String, Object>();
+
+						while (selectionKeys.hasNext()) {
+							String selKey = selectionKeys.next();
+							Object select = selection.get(selKey);
+							selects.put(selKey, select);
+						}
+						selectionsMap.put(key, selects);
+					}
+				}
+			}
+		} else if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONObject) {
+
+			JSONObject cockpitSelection = body.getJSONObject("COCKPIT_SELECTIONS");
 
 			JSONObject selections = cockpitSelection.getJSONObject("selections");
 
@@ -827,6 +875,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			}
 
 		}
+
 		return selectionsMap;
 	}
 
