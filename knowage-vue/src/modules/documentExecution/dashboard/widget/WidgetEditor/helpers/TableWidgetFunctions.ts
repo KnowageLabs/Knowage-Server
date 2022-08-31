@@ -5,37 +5,6 @@ import descriptor from '../WidgetEditorDescriptor.json'
 import cryptoRandomString from 'crypto-random-string'
 
 const tableWidgetFunctions = {
-    getColumnTypeOptions: () => {
-        return descriptor.columnTypeOptions
-    },
-    columnIsSelected: (model: IWidget) => {
-        return model && model.temp.selectedColumn
-    },
-    updateSelectedColumn: (model: IWidget) => {
-        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === model.temp.selectedColumn.id)
-        if (index !== -1) {
-            if (model.temp.selectedColumn.fieldType === 'ATTRIBUTE') {
-                model.temp.selectedColumn.aggregation = 'NONE'
-            }
-            if (model.temp.selectedColumn.fieldType !== model.columns[index].fieldType) model.temp.selectedColumn.filter = { enabled: false, value: '', operator: '' }
-            model.columns[index] = { ...model.temp.selectedColumn }
-            emitter.emit('collumnUpdated', model.columns[index])
-        }
-    },
-    getColumnFilterOptions: (model: IWidget) => {
-        const fieldType = model?.temp.selectedColumn?.fieldType
-        return fieldType === 'ATTRIBUTE' ? descriptor.attributeColumnFilterOperators : descriptor.measureColumnFilterOperators
-    },
-    selectedColumnFilterIsDisabled: (model: IWidget) => {
-        return !model?.temp.selectedColumn?.filter?.enabled
-    },
-    selectedColumnFilterValueIsVisible: (model: IWidget) => {
-        const operator = model?.temp.selectedColumn?.filter?.operator
-        return operator ? ['=', '<', '>', '<=', '>=', '!=', 'IN', 'like',].includes(operator) : false
-    },
-    selectedColumnFilterFromToIsVisible: (model: IWidget) => {
-        return model?.temp.selectedColumn?.filter?.operator === 'range'
-    },
     indexColumnChanged: (model: IWidget) => {
         emitter.emit('indexColumnChanged')
     },
