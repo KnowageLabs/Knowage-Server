@@ -5,55 +5,8 @@ import descriptor from '../WidgetEditorDescriptor.json'
 import cryptoRandomString from 'crypto-random-string'
 
 const tableWidgetFunctions = {
-    getColumnIcons: (column: any) => {
-        return column?.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'
-    },
-    onColumnDrop: (event: any, model: IWidget) => {
-        if (event.dataTransfer.getData('text/plain') === 'b') return
-        const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
-        const tempColumn = createNewWidgetColumn(eventData)
-        model.columns.push(tempColumn as any)
-        emitter.emit('collumnAdded', tempColumn)
-    },
-    // REMOVED FROM TABLE
-    updateColumnVisibility: (column: IWidgetColumn, model: IWidget) => {
-        const index = model.columns?.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
-        if (index !== -1 && model.columns[index] && model.columns[index].style) model.columns[index].style.hiddenColumn = !model.columns[index].style.hiddenColumn
-    },
-    removeColumn: (column: IWidgetColumn, model: IWidget) => {
-        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
-        if (index !== -1) {
-            if (column.id === model.temp.selectedColumn?.id) model.temp.selectedColumn = null
-            model.columns.splice(index, 1)
-            removeColumnUsageFromModel(column, model)
-            emitter.emit('collumnRemoved', column)
-        }
-    },
-    updateColumnValue: (column: IWidgetColumn, model: IWidget, field: string) => {
-        if (!model || !model.columns) return
-        const index = model.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
-        if (index !== -1) {
-            model.columns[index][field] = column[field]
-            if (model.columns[index][field].fieldType === 'ATTRIBUTE') model.columns[index][field].aggregation = 'NONE'
-            if (model.temp?.selectedColumn && model.temp.selectedColumn.id === model.columns[index].id) model.temp.selectedColumn = { ...model.columns[index] }
-        }
-        emitter.emit('collumnUpdated', column)
-    },
     getColumnTypeOptions: () => {
         return descriptor.columnTypeOptions
-    },
-    columnIsMeasure: (model: IWidget) => {
-        return model?.temp.selectedColumn?.fieldType === 'MEASURE'
-    },
-    getColumnAggregationOptions: () => {
-        return descriptor.columnAggregationOptions
-    },
-    showAggregationDropdown: (column: IWidgetColumn) => {
-        return column.fieldType === 'MEASURE'
-    },
-    setSelectedColumn: (column: IWidgetColumn, model: IWidget) => {
-        if (!model || !model.temp) return
-        model.temp.selectedColumn = { ...column }
     },
     columnIsSelected: (model: IWidget) => {
         return model && model.temp.selectedColumn
@@ -374,14 +327,14 @@ const tableWidgetFunctions = {
     },
 }
 
-function createNewWidgetColumn(eventData: any) {
+export const createNewWidgetColumn = (eventData: any) => {
+    console.log("AAAAAAAAAAAAAA - EVENT DATA: ", eventData)
     const tempColumn = {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
         columnName: eventData.name,
         alias: eventData.alias,
         type: eventData.type,
         fieldType: eventData.fieldType,
-        aggregation: eventData.aggregation,
         filter: {},
         style: {
             hiddenColumn: false,
@@ -392,8 +345,8 @@ function createNewWidgetColumn(eventData: any) {
         }, // see about this
         enableTooltip: false, // see about this
         visType: '' // see about this
-    }
-    tempColumn.aggregation = 'NONE'
+    } as IWidgetColumn
+    if (tempColumn.fieldType === 'MEASURE') tempColumn.aggregation = 'SUM'
     return tempColumn
 }
 

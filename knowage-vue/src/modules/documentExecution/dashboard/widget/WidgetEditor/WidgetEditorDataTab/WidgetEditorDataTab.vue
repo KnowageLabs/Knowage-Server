@@ -1,8 +1,7 @@
 <template>
     <WidgetEditorDataList :widgetModel="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="setSelectDataset"></WidgetEditorDataList>
-
     <div class="p-d-flex kn-flex kn-overflow" v-if="propWidget">
-        <WidgetEditorHint v-if="!selectedDataset && propWidget.columns.length === 0"></WidgetEditorHint>
+        <WidgetEditorHint v-if="!selectedDataset"></WidgetEditorHint>
         <!-- <WidgetEditorGeneric v-else id="model-div" class="kn-flex kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :propDescriptor="dataDescriptor"></WidgetEditorGeneric> -->
         <TableWidgetDataContainer v-else id="model-div" class="kn-flex kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget"></TableWidgetDataContainer>
     </div>
