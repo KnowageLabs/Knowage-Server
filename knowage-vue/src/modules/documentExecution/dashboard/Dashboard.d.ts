@@ -72,13 +72,14 @@ export interface ITableWidgetExports {
 }
 
 export interface ITableWidgetHeaders {
-    "enabled": boolean,
-    "enabledMultiline": boolean,
-    "custom": {
-        "enabled": boolean,
-        "array": [{
-            "target": string[],
-            "action": string
+    enabled: boolean,
+    enabledMultiline: boolean,
+    custom: {
+        enabled: boolean,
+        rules: [{
+            target: string[],
+            action: string,
+            variable?: string
         }]
     }
 }

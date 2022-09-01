@@ -8,6 +8,10 @@
             {
                 "title": "dashboard.widgetEditor.summaryRows.title",
                 "type": "SummaryRows"
+            },
+            {
+                "title": "dashboard.widgetEditor.headers.title",
+                "type": "Headers"
             }
         ]
     },
