@@ -127,4 +127,8 @@ export default defineComponent({
 .editorEnter-leave-to {
     opacity: 0;
 }
+
+.vue-resizable-handle {
+    z-index: 9999;
+}
 </style>
