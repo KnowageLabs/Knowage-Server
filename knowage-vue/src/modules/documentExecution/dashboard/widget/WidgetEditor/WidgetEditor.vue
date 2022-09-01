@@ -139,6 +139,10 @@ export default defineComponent({
     box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
     border-radius: 4px;
 }
+
+.icon-disabled {
+    color: #c2c2c2;
+}
 // @media screen and (max-width: 1199px) {
 //     #widget-editor-preview {
 //         -webkit-transition: width 0.3s;

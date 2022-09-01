@@ -50,7 +50,7 @@ export interface ITableWidgetConfiguration {
     exports: ITableWidgetExports
     headers: ITableWidgetHeaders
     rows: ITableWidgetRows
-    summaryRows: ITableWidgetSummaryRow[]
+    summaryRows: ITableWidgetSummaryRows
 }
 
 export interface ITableWidgetColumnGroup {
@@ -72,13 +72,14 @@ export interface ITableWidgetExports {
 }
 
 export interface ITableWidgetHeaders {
-    "enabled": boolean,
-    "enabledMultiline": boolean,
-    "custom": {
-        "enabled": boolean,
-        "array": [{
-            "target": string[],
-            "action": string
+    enabled: boolean,
+    enabledMultiline: boolean,
+    custom: {
+        enabled: boolean,
+        rules: [{
+            target: string[],
+            action: string,
+            variable?: string
         }]
     }
 }
@@ -91,9 +92,15 @@ export interface ITableWidgetRows {
     }
 }
 
+export interface ITableWidgetSummaryRows {
+    enabled: boolean,
+    list: ITableWidgetSummaryRow[],
+    style: { pinnedOnly: boolean }
+}
+
 export interface ITableWidgetSummaryRow {
-    "label": string,
-    "aggregation": string
+    label: string,
+    aggregation: string
 }
 
 export interface ITableWidgetInteraction {

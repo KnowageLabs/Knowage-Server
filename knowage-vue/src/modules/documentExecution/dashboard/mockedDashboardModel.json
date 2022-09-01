@@ -88,6 +88,9 @@
                                 "properties": {},
                                 "rowSpan": true,
                                 "scale": 0,
+                                "style": {
+                                    "hideHeader": true
+                                },
                                 "subjectId": false,
                                 "type": "java.lang.String"
                             },
@@ -116,6 +119,9 @@
                                 "precision": 0,
                                 "properties": {},
                                 "scale": 0,
+                                "style": {
+                                    "hideHeader": true
+                                },
                                 "subjectId": false,
                                 "type": "java.lang.String"
                             },

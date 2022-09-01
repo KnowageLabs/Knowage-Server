@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -8,6 +8,7 @@ export const formatTableWidget = (widget: any) => {
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(formattedWidget, widget)
     getFiltersForColumns(formattedWidget, widget)
+    getSettingsFromWidgetColumns(formattedWidget, widget)
 
     console.log("TableWidgetCompatibilityHelper - FORMATTED WIDGET: ", formattedWidget)
     return formattedWidget
@@ -45,25 +46,45 @@ const getFormattedConditionalStyles = (widget: any) => {
 
 // TODO
 const getFormattedConfiguration = (formattedWidget: IWidget, widget: any) => {
-    return { columnGroups: [], exports: {}, headers: {}, rows: getFormattedRows(formattedWidget, widget), summaryRows: getFormattedSummaryRows(widget) }
+    return { columnGroups: [], exports: {}, headers: getHeadersConfiguration(widget), rows: getFormattedRows(widget), summaryRows: getFormattedSummaryRows(widget) }
 }
 
-const getFormattedRows = (formattedWidget: IWidget, widget: any) => {
-    const formattedRows = { indexColumn: widget.settings?.indexColumn, rowSpan: { enabled: false, columns: [] as string[] } } as ITableWidgetRows
-    if (!widget?.content?.columnSelectedOfDataset) return formattedRows
+const getHeadersConfiguration = (widget: any) => {
+    return { enabled: widget.style?.th?.enabled ?? false, enabledMultiline: widget.style?.th?.multiline ?? false, custom: { enabled: false, rules: [] } }
+}
 
+const getFormattedRows = (widget: any) => {
+    return { indexColumn: widget.settings?.indexColumn, rowSpan: { enabled: false, columns: [] as string[] } } as ITableWidgetRows
+}
+
+// IMPORTANT
+const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any) => {
     for (let i = 0; i < widget.content.columnSelectedOfDataset.length; i++) {
         const tempColumn = widget.content.columnSelectedOfDataset[i]
-        if (tempColumn.rowSpan) {
-            formattedRows.rowSpan.enabled = true;
-            formattedRows.rowSpan.columns.push(getColumnId(formattedWidget, widget.content.columnSelectedOfDataset[i].name))
-        }
+        getRowConfigurationFromWidgetColumn(formattedWidget, tempColumn)
+        getHeaderConfigurationFromWidgetColumn(formattedWidget, tempColumn)
     }
-    return formattedRows
+
+}
+
+const getRowConfigurationFromWidgetColumn = (formattedWidget: IWidget, column: any) => {
+    if (column.rowSpan) {
+        formattedWidget.settings.configuration.rows.rowSpan.enabled = true;
+        formattedWidget.settings.configuration.rows.rowSpan.columns.push(getColumnId(formattedWidget, column.name))
+    }
+}
+
+const getHeaderConfigurationFromWidgetColumn = (formattedWidget: IWidget, column: any) => {
+    if (column.style && column.style.hasOwnProperty('hideHeader')) {
+        formattedWidget.settings.configuration.headers.custom.enabled = true;
+        formattedWidget.settings.configuration.headers.custom.rules.push({ target: [getColumnId(formattedWidget, column.name)], action: 'hide' })
+
+    }
+
 }
 
 const getFormattedSummaryRows = (widget: any) => {
-    let formattedSummaryRows = {} as any
+    let formattedSummaryRows = {} as ITableWidgetSummaryRows
     if (widget.settings.summary) formattedSummaryRows = widget.settings.summary
     if (formattedSummaryRows.list && formattedSummaryRows.list[0]) formattedSummaryRows.list[0].aggregation = 'Columns Default Aggregation'
     return formattedSummaryRows

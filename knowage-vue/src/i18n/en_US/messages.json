@@ -379,12 +379,12 @@
             "enableFilter": "Enable Filter",
             "enableTooltip": "Enable Tooltip",
             "fontawesome": "Fontawesome",
-            "header": {
-                "allowMultiline": "Allow Multiline",
+            "headers": {
                 "enableHeader": "Enable Header",
+                "enableMultiline": "Enable Multiline",
                 "headerHeight": "Header height",
                 "headerHeightHint": "Header height in px (default is 25px)",
-                "title": "header"
+                "title": "Headers"
             },
             "hidden": "Hidden",
             "hint": "Select dataset",

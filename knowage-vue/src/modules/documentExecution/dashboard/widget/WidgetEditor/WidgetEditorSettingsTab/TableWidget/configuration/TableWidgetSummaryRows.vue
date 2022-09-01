@@ -1,0 +1,81 @@
+<template>
+    <div v-if="summaryRowsModel">
+        <div class="p-d-flex p-flex-row p-ai-center p-m-3">
+            <div class="kn-flex p-m-2">
+                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.summaryRows.enableSummaryRows') }}</label>
+                <InputSwitch v-model="summaryRowsModel.enabled" @change="onSummarRowEnabledChange"></InputSwitch>
+            </div>
+            <div class="p-ml-auto p-mr-2">
+                <label class="kn-material-input-label p-mr-2"> {{ $t('dashboard.widgetEditor.summaryRows.pinnedColumnsOnly') }}</label>
+                <Checkbox v-model="summaryRowsModel.style.pinnedOnly" :binary="true" :disabled="!summaryRowsModel.enabled" @change="summaryRowsChanged" />
+            </div>
+        </div>
+
+        <div class="p-d-flex p-flex-column p-m-3">
+            <div v-for="(summaryRow, index) in summaryRowsModel.list" :key="index" class="p-d-flex p-flex-row p-ai-center">
+                <div class="p-d-flex p-flex-column kn-flex p-mt-1">
+                    <label class="kn-material-input-label p-mr-2">{{ $t('common.label') }}</label>
+                    <InputText class="kn-material-input p-inputtext-sm" v-model="summaryRow.label" :disabled="!summaryRowsModel.enabled" @change="summaryRowsChanged" />
+                </div>
+                <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
+                    <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.aggregation') }}</label>
+                    <Dropdown class="kn-material-input" v-model="summaryRow.aggregation" :options="getAggregationOptions(index)" optionValue="value" optionLabel="label" :disabled="index === 0 || !summaryRowsModel.enabled" @change="summaryRowsChanged"> </Dropdown>
+                </div>
+                <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', !summaryRowsModel.enabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="index === 0 ? addSummaryRow() : removeSummaryRow(index)"></i>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, PropType } from 'vue'
+import { IWidget, ITableWidgetSummaryRows } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { emitter } from '../../../../../DashboardHelpers'
+import descriptor from '../TableWidgetSettingsDescriptor.json'
+import Checkbox from 'primevue/checkbox'
+import Dropdown from 'primevue/dropdown'
+import InputSwitch from 'primevue/inputswitch'
+
+export default defineComponent({
+    name: 'table-widget-summary-rows',
+    components: { Checkbox, Dropdown, InputSwitch },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
+    data() {
+        return {
+            descriptor,
+            summaryRowsModel: null as ITableWidgetSummaryRows | null
+        }
+    },
+    created() {
+        this.loadSummaryRowsModel()
+    },
+    methods: {
+        loadSummaryRowsModel() {
+            if (this.widgetModel?.settings?.configuration) this.summaryRowsModel = this.widgetModel.settings.configuration.summaryRows
+        },
+        summaryRowsChanged() {
+            emitter.emit('summaryRowsChanged', this.summaryRowsModel)
+        },
+        onSummarRowEnabledChange() {
+            if (!this.summaryRowsModel) return
+            if (this.summaryRowsModel.enabled && this.summaryRowsModel.list.length === 0) {
+                this.summaryRowsModel.list.push({ label: '', aggregation: 'Columns Default Aggregation' })
+            }
+            this.summaryRowsChanged()
+        },
+        getAggregationOptions(index: number) {
+            return index === 0 ? [{ value: 'Columns Default Aggregation', label: 'Columns Default Aggregation' }] : this.descriptor.aggregationOptions
+        },
+        addSummaryRow() {
+            if (!this.summaryRowsModel) return
+            this.summaryRowsModel.list.push({ label: '', aggregation: '' })
+            this.summaryRowsChanged()
+        },
+        removeSummaryRow(index: number) {
+            if (!this.summaryRowsModel) return
+            this.summaryRowsModel.list.splice(index, 1)
+            this.summaryRowsChanged()
+        }
+    }
+})
+</script>
