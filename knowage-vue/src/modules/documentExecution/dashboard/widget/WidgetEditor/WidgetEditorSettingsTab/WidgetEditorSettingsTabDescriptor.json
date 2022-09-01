@@ -16,69 +16,6 @@
                                                         "components": [
                                                             {
                                                                 "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
-                                                                "label": "dashboard.widgetEditor.rows.enableIndexColumn",
-                                                                "property": "settings.configuration.rows.indexColumn",
-                                                                "settings": {
-                                                                    "onUpdate": "functions.indexColumnChanged"
-                                                                },
-                                                                "type": "inputSwitch"
-                                                            },
-                                                            {
-                                                                "cssClass": "p-m-2",
-                                                                "settings": {
-                                                                    "hint": "dashboard.widgetEditor.rows.indexColumnHint"
-                                                                },
-                                                                "type": "hintIcon"
-                                                            }
-                                                        ],
-                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center p-pb-2",
-                                                        "cssStyle": "border-bottom: 1px solid #c2c2c2"
-                                                    },
-                                                    {
-                                                        "components": [
-                                                            {
-                                                                "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
-                                                                "label": "dashboard.widgetEditor.rows.enableRowspan",
-                                                                "property": "settings.configuration.rows.rowSpan.enabled",
-                                                                "settings": {
-                                                                    "onUpdate": "functions.rowSpanChanged"
-                                                                },
-                                                                "type": "inputSwitch"
-                                                            },
-                                                            {
-                                                                "cssClass": "p-m-2",
-                                                                "settings": {
-                                                                    "hint": "dashboard.widgetEditor.rows.rowSpanHint"
-                                                                },
-                                                                "type": "hintIcon"
-                                                            }
-                                                        ],
-                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center p-pt-2"
-                                                    },
-                                                    {
-                                                        "components": [
-                                                            {
-                                                                "cssClass": "p-d-flex p-flex-column kn-flex p-m-2",
-                                                                "label": "dashboard.widgetEditor.rows.rowSpanColumns",
-                                                                "options": "functions.getRowSpanColumnOptions",
-                                                                "property": "settings.configuration.rows.rowSpan.column",
-                                                                "settings": {
-                                                                    "onUpdate": "functions.rowSpanChanged"
-                                                                },
-                                                                "type": "multiselect"
-                                                            }
-                                                        ],
-                                                        "cssClasses": "p-d-flex p-flex-row p-ai-center"
-                                                    }
-                                                ],
-                                                "title": "dashboard.widgetEditor.rows.title"
-                                            },
-                                            {
-                                                "containers": [
-                                                    {
-                                                        "components": [
-                                                            {
-                                                                "cssClass": "p-d-flex p-flex-row kn-flex p-m-2",
                                                                 "label": "dashboard.widgetEditor.summaryRows.enableSummaryRows",
                                                                 "property": "settings.configuration.summaryRows.enabled",
                                                                 "settings": {

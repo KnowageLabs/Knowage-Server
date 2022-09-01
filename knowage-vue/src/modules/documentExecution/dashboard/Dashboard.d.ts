@@ -9,15 +9,200 @@ export interface IWidget {
     dataset: number
     type: string
     columns: IWidgetColumn[]
-    conditionalStyles: any[]
-    interactions: any[]
-    theme: string
-    styles: any
-    settings: any
-    temp?: any
-    functions?: any
+    conditionalStyles: any[]  // TO REMOVE
+    interactions: any[]  // TO REMOVE
+    theme: string  // TO REMOVE
+    styles: any  // TO REMOVE
+    settings: ITableWidgetSettings | any
     new?: boolean
 }
+
+export interface ITableWidgetSettings {
+    sortingColumn?: string,
+    sortingOrder?: string,
+    updatable: boolean,
+    clickable: boolean,
+    conditionalStyles: ITableWidgetConditionalStyle[],
+    configuration: ITableWidgetConfiguration,
+    interactions: ITableWidgetInteraction,
+    pagination: ITableWidgetPagination,
+    style: ITableWidgetStyle,
+    tooltips: ITableWidgetTooltips,
+    visualization: ITableWidgetVisualization,
+    responsive: ITableWidgetResponsive,
+}
+
+export interface ITableWidgetConditionalStyle {
+    target: string
+    condition: {
+        type: string,
+        variable: string,
+        operator: string,
+        value: string
+    },
+    properties: {
+        "font-size": string,
+        icon: string
+    }
+}
+export interface ITableWidgetConfiguration {
+    columnGroups: ITableWidgetColumnGroup[]
+    exports: ITableWidgetExports
+    headers: ITableWidgetHeaders
+    rows: ITableWidgetRows
+    summaryRows: ITableWidgetSummaryRow[]
+}
+
+export interface ITableWidgetColumnGroup {
+    label: string,
+    columns: string[]
+}
+
+export interface ITableWidgetExports {
+    "pdf": {
+        "enabled": boolean,
+        "custom": {
+            "height": number,
+            "width": number,
+            "enabled": boolean
+        },
+        "a4landscape": boolean,
+        "a4portrait": boolean
+    }
+}
+
+export interface ITableWidgetHeaders {
+    "enabled": boolean,
+    "enabledMultiline": boolean,
+    "custom": {
+        "enabled": boolean,
+        "array": [{
+            "target": string[],
+            "action": string
+        }]
+    }
+}
+
+export interface ITableWidgetRows {
+    indexColumn: boolean,
+    rowSpan: {
+        enabled: boolean,
+        columns: string[]
+    }
+}
+
+export interface ITableWidgetSummaryRow {
+    "label": string,
+    "aggregation": string
+}
+
+export interface ITableWidgetInteraction {
+    crosssNavigation: {
+        "enabled": boolean,
+        "type": string,
+        "column": string,
+        "name": string,
+        "parameters": ITableWidgetParameter[]
+    },
+    link: {
+        "enabled": boolean,
+        "type": string,  //column, row, icon
+        "icon": string,
+        "baseurl": string,
+        "action": string,
+        "parameters": ITableWidgetParameter[]
+    },
+    preview: ITableWidgetPreview,
+    selection: ITableWidgetSelection
+}
+
+export interface ITableWidgetParameter {
+    "enabled"?: boolean,
+    "name": string,
+    "type": string,
+    "value"?: string,
+    "column"?: string,
+    "driver"?: string
+}
+
+export interface ITableWidgetPreview {
+    "enabled": boolean,
+    "type": string,
+    "parameters": ITableWidgetParameter[],
+    "dataset": number,
+    "column": string,
+    "directDownload": boolean
+}
+
+export interface ITableWidgetSelection {
+    "enabled": boolean,
+    "modalColumn": string,
+    "multiselection": {
+        "enabled": boolean,
+        "properties": {
+            "background-color": string,
+            "color": string
+        }
+    }
+}
+
+export interface ITableWidgetPagination {
+    "enabled": boolean,
+    "itemsNumber": number
+}
+
+export interface ITableWidgetStyle { }
+
+export interface ITableWidgetTooltips {
+    "target": string,
+    "enabled": true,
+    "prefix": string,
+    "suffix": string,
+    "precision": string,
+    "header": {
+        "enabled": boolean,
+        "text": string
+    }
+}
+
+export interface ITableWidgetVisualization {
+    types: ITableWidgetVisualization[],
+    visibilityConditions: ITableWidgetVisibilityCondition[]
+}
+export interface ITableWidgetVisualization {
+    target: string | string[],
+    type: string,
+    precision: number,
+    prefix?: string,
+    suffix?: string,
+    pinned?: string,
+    min: number,
+    max: number,
+    alignment: string,
+    color: string,
+    "background-color": string
+}
+
+export interface ITableWidgetVisibilityCondition {
+    target: string[],
+    hide: boolean,
+    hidePdf: boolean,
+    condition: {
+        type: string,
+        variable: string,
+        operator: string,
+        value: string
+    }
+}
+
+export interface ITableWidgetResponsive {
+    xs: boolean,
+    sm: boolean,
+    md: boolean,
+    lg: boolean,
+    xl: boolean
+}
+
 
 export interface IWidgetColumn {
     id?: string
@@ -38,10 +223,6 @@ export interface IWidgetColumnFilter {
     operator: string
     value: string,
     value2?: string
-}
-
-export interface IInteraction {
-    type: string
 }
 
 export interface IWidgetEditorDataset {

@@ -15,7 +15,7 @@
         <div class="p-d-flex p-flex-row p-ai-center p-mt-2">
             <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.sortingColumn') }}</label>
-                <Dropdown class="kn-material-input" v-model="sortingColumn" :options="sortingColumnOptions" optionValue="columnName" optionLabel="alias" @change="sortingChanged"> </Dropdown>
+                <Dropdown class="kn-material-input" v-model="sortingColumn" :options="sortingColumnOptions" optionValue="id" optionLabel="alias" @change="sortingChanged"> </Dropdown>
             </div>
             <div class="p-d-flex p-flex-column kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.sortingColumn') }}</label>
@@ -38,11 +38,11 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, IWidgetColumn, ITableWidgetPagination } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
 import Dropdown from 'primevue/dropdown'
+import descriptor from '../TableWidget/TableWidgetDataDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
-import descriptor from './TableWidgetDescriptor.json'
 
 export default defineComponent({
     name: 'table-widget-data-form',
@@ -78,7 +78,7 @@ export default defineComponent({
         },
         paginationChanged() {
             if (!this.widgetModel.settings) return
-            this.widgetModel.settings.pagination = { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
+            this.widgetModel.settings.pagination = { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber } as ITableWidgetPagination
             emitter.emit('paginationChanged', this.widgetModel.settings.pagination)
         },
         sortingChanged() {

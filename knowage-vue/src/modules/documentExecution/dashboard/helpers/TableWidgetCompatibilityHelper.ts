@@ -1,11 +1,12 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
     console.log("TableWidgetCompatibilityHelper - formatTableWidget called for: ", widget)
     const formattedWidget = {
-        id: widget.id, dataset: widget.dataset.dsId, type: widget.type, columns: getFormattedWidgetColumns(widget), conditionalStyles: [], interactions: [], theme: '', styles: {}, settings: getFormattedWidgetSettings(widget)
+        id: widget.id, dataset: widget.dataset.dsId, type: widget.type, columns: getFormattedWidgetColumns(widget), conditionalStyles: [], interactions: [], theme: '', styles: {}, settings: {}
     } as IWidget
+    formattedWidget.settings = getFormattedWidgetSettings(formattedWidget, widget)
     getFiltersForColumns(formattedWidget, widget)
 
     console.log("TableWidgetCompatibilityHelper - FORMATTED WIDGET: ", formattedWidget)
@@ -27,9 +28,13 @@ const getFormattedWidgetColumn = (widgetColumn: any) => {
     return formattedColumn
 }
 
+const getColumnId = (formattedWidget: IWidget, widgetColumnName: string) => {
+    const index = formattedWidget.columns.findIndex((modelColumn: IWidgetColumn) => widgetColumnName === modelColumn.columnName)
+    return (index !== -1) ? formattedWidget.columns[index].id as string : ''
+}
 
-const getFormattedWidgetSettings = (widget: any) => {
-    const formattedSettings = { sortingColumn: widget.settings?.sortingColumn, sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyle: getFormattedConditionalStyles(widget), configuration: getFormattedConfiguration(widget), interactions: getFormattedInteractions(widget), pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget), tooltips: getFormattedTooltips(widget), visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) }
+const getFormattedWidgetSettings = (formattedWidget: IWidget, widget: any) => {
+    const formattedSettings = { sortingColumn: getColumnId(formattedWidget, widget.settings?.sortingColumn), sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(widget) as any, configuration: getFormattedConfiguration(formattedWidget, widget) as any, interactions: getFormattedInteractions(widget) as any, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as any, tooltips: getFormattedTooltips(widget) as any, visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) } as ITableWidgetSettings
     return formattedSettings
 }
 
@@ -39,19 +44,19 @@ const getFormattedConditionalStyles = (widget: any) => {
 }
 
 // TODO
-const getFormattedConfiguration = (widget: any) => {
-    return { columnGroups: [], exports: {}, headers: {}, rows: getFormattedRows(widget), summaryRows: getFormattedSummaryRows(widget) }
+const getFormattedConfiguration = (formattedWidget: IWidget, widget: any) => {
+    return { columnGroups: [], exports: {}, headers: {}, rows: getFormattedRows(formattedWidget, widget), summaryRows: getFormattedSummaryRows(widget) }
 }
 
-const getFormattedRows = (widget: any) => {
-    const formattedRows = { "indexColumn": widget.settings?.indexColumn, rowSpan: { enabled: false, column: [] as string[] } }
+const getFormattedRows = (formattedWidget: IWidget, widget: any) => {
+    const formattedRows = { indexColumn: widget.settings?.indexColumn, rowSpan: { enabled: false, columns: [] as string[] } } as ITableWidgetRows
     if (!widget?.content?.columnSelectedOfDataset) return formattedRows
 
     for (let i = 0; i < widget.content.columnSelectedOfDataset.length; i++) {
         const tempColumn = widget.content.columnSelectedOfDataset[i]
         if (tempColumn.rowSpan) {
             formattedRows.rowSpan.enabled = true;
-            formattedRows.rowSpan.column.push(widget.content.columnSelectedOfDataset[i].name)
+            formattedRows.rowSpan.columns.push(getColumnId(formattedWidget, widget.content.columnSelectedOfDataset[i].name))
         }
     }
     return formattedRows
@@ -72,7 +77,7 @@ const getFormattedInteractions = (widget: any) => {
 // TODO
 const getFormattedPaginations = (widget: any) => {
     if (!widget.settings?.pagination) return {}
-    return { enabled: widget.settings.pagination.enabled, itemsNumber: widget.settings.pagination.itemsNumber }
+    return { enabled: widget.settings.pagination.enabled, itemsNumber: widget.settings.pagination.itemsNumber } as ITableWidgetPagination
 }
 
 

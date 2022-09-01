@@ -60,11 +60,12 @@ import { defineComponent, PropType } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { IWidget, IWidgetColumn } from '../../../../Dashboard'
 import { createNewWidgetColumn } from '../../helpers/TableWidgetFunctions' // TODO - See if it should still be inside helper
+import { emitter } from '../../../../DashboardHelpers'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import Dropdown from 'primevue/dropdown'
 import deepcopy from 'deepcopy'
-import descriptor from '../TableWidget/TableWidgetDescriptor.json'
+import descriptor from '../TableWidget/TableWidgetDataDescriptor.json'
 
 export default defineComponent({
     name: 'widget-editor-column-table',
@@ -85,10 +86,14 @@ export default defineComponent({
         }
     },
     created() {
+        this.setEventListeners()
         this.loadItems()
         this.setFilters()
     },
     methods: {
+        setEventListeners() {
+            emitter.on('selectedColumnUpdated', (column) => this.onSelectedColumnUpdated(column))
+        },
         loadItems() {
             this.rows = deepcopy(this.items) as IWidgetColumn[]
         },
@@ -115,6 +120,13 @@ export default defineComponent({
         },
         aggregationDropdownIsVisible(row: any) {
             return row.fieldType === 'MEASURE'
+        },
+        onSelectedColumnUpdated(selectedColumn: IWidgetColumn) {
+            const index = this.rows.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === selectedColumn.id)
+            if (index !== -1) {
+                this.rows[index] = { ...selectedColumn }
+                this.$emit('itemUpdated', this.rows[index])
+            }
         }
     }
 })
