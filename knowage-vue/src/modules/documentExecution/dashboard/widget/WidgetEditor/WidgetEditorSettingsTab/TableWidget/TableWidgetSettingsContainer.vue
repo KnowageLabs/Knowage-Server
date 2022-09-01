@@ -1,6 +1,6 @@
 <template>
     <div v-if="widgetModel">
-        <TableWidgetConfigurationConatiner v-if="selectedSetting === 'Comfiguration'" :widgetModel="widgetModel"></TableWidgetConfigurationConatiner>
+        <TableWidgetSettingsAccordion v-if="selectedSetting" :widgetModel="widgetModel" :settings="descriptor.settings[selectedSetting]"></TableWidgetSettingsAccordion>
     </div>
 </template>
 
@@ -9,11 +9,11 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './TableWidgetSettingsDescriptor.json'
-import TableWidgetConfigurationConatiner from '../TableWidget/configuration/TableWidgetConfigurationConatiner.vue'
+import TableWidgetSettingsAccordion from '../TableWidget/configuration/TableWidgetSettingsAccordion.vue'
 
 export default defineComponent({
     name: 'table-widget-settings-container',
-    components: { TableWidgetConfigurationConatiner },
+    components: { TableWidgetSettingsAccordion },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedSetting: { type: String, required: true } },
     data() {
         return {

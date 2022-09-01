@@ -1,5 +1,5 @@
 <template>
-    <div v-if="rowsModel" class="widget-editor-card p-p-2">
+    <div v-if="rowsModel">
         <div class="p-d-flex p-flex-row p-ai-center p-m-3">
             <div class="kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.rows.enableIndexColumn') }}</label>
