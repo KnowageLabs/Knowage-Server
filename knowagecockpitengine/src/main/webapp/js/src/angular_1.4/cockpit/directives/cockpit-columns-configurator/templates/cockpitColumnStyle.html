@@ -106,8 +106,8 @@
 		        	</div>
 	       			
 				  </div> 
-				  
-				  <md-card>
+	  
+				  <md-card ng-if="['timestamp','date','time'].indexOf(cockpitModule_generalOptions.typesMap[selectedColumn.type].label) < 0">
 		       			<md-toolbar class="ternaryToolbar ">
 					      <div class="md-toolbar-tools">
 					        <h2>{{::translate.load('sbi.cockpit.table.threshold')}}</h2>
