@@ -67,6 +67,7 @@ export default defineComponent({
             const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
             if (index !== -1) {
                 this.widgetModel.columns.splice(index, 1)
+                if (column.id === this.selectedColumn?.id) this.selectedColumn = null
                 emitter.emit('collumnRemoved', column)
             }
         }

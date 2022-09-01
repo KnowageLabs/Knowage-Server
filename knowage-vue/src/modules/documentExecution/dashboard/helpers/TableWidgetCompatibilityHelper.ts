@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -29,7 +29,7 @@ const getFormattedWidgetColumn = (widgetColumn: any) => {
 
 
 const getFormattedWidgetSettings = (widget: any) => {
-    const formattedSettings = { sortingColumn: widget.settings?.sortingColumn, sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyle: getFormattedConditionalStyles(widget), configuration: getFormattedConfiguration(widget), interactions: getFormattedInteractions(widget), pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget), tooltips: getFormattedTooltips(widget), visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) }
+    const formattedSettings = { sortingColumn: widget.settings?.sortingColumn, sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(widget) as any, configuration: getFormattedConfiguration(widget) as any, interactions: getFormattedInteractions(widget) as any, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as any, tooltips: getFormattedTooltips(widget) as any, visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) } as ITableWidgetSettings
     return formattedSettings
 }
 
@@ -72,7 +72,7 @@ const getFormattedInteractions = (widget: any) => {
 // TODO
 const getFormattedPaginations = (widget: any) => {
     if (!widget.settings?.pagination) return {}
-    return { enabled: widget.settings.pagination.enabled, itemsNumber: widget.settings.pagination.itemsNumber }
+    return { enabled: widget.settings.pagination.enabled, itemsNumber: widget.settings.pagination.itemsNumber } as ITableWidgetPagination
 }
 
 

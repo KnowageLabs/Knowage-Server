@@ -18,10 +18,10 @@ export interface IWidget {
 }
 
 export interface ITableWidgetSettings {
-    sortingColumn: string,
-    sortingOrder: string,
+    sortingColumn?: string,
+    sortingOrder?: string,
+    updatable: boolean,
     clickable: boolean,
-    updatable: boolean
     conditionalStyles: ITableWidgetConditionalStyle[],
     configuration: ITableWidgetConfiguration,
     interactions: ITableWidgetInteraction,

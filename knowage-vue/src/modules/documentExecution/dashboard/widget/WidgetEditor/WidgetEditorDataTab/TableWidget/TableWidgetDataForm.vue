@@ -38,7 +38,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, IWidgetColumn, ITableWidgetPagination } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
 import Dropdown from 'primevue/dropdown'
 import descriptor from '../TableWidget/TableWidgetDataDescriptor.json'
@@ -78,7 +78,7 @@ export default defineComponent({
         },
         paginationChanged() {
             if (!this.widgetModel.settings) return
-            this.widgetModel.settings.pagination = { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
+            this.widgetModel.settings.pagination = { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber } as ITableWidgetPagination
             emitter.emit('paginationChanged', this.widgetModel.settings.pagination)
         },
         sortingChanged() {
