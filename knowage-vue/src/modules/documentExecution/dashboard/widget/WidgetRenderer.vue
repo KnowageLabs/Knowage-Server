@@ -1,12 +1,11 @@
 <template>
     <div class="widget-renderer">
-        <div class="drag-handle">DRAG</div>
-        {{ widget.id }}
-        {{ widget.type }}
-        <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
+        <TableWidget v-if="widget.type === 'table'" />
+        <!-- <div class="drag-handle">{{ widget.id }} {{ widget.type }}</div> -->
+        <!-- <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
             <div>{{ data }}</div>
             <button @click="click">CLICKME</button>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -16,10 +15,12 @@
  * TODO: the switch between different widget types will be added here
  */
 import { defineComponent } from 'vue'
+import TableWidget from './TableWidget/TableWidget.vue'
 
 export default defineComponent({
     name: 'widget-renderer',
     emits: ['interaction'],
+    components: { TableWidget },
     props: {
         widget: {
             required: true,
@@ -43,5 +44,7 @@ export default defineComponent({
     height: 100%;
     background-color: #ccc;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 </style>
