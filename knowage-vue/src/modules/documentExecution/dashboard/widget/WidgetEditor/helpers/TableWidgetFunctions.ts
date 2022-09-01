@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IIcon } from "../../../Dashboard"
+import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration } from "../../../Dashboard"
 import { formatRGBColor } from './WidgetEditorHelpers'
 import { emitter } from '../../../DashboardHelpers'
 import descriptor from '../WidgetEditorDescriptor.json'
@@ -322,25 +322,42 @@ export const createNewWidgetColumn = (eventData: any) => {
 export function formatTableWidgetForSave(widget: IWidget) {
     if (!widget) return
 
-    formatTablePagination(widget.settings.pagination)
+    formatTableSettings(widget.settings, widget.columns)
     formatTableSelectedColumns(widget.columns)
     // formatRowHeaderSettings(widget)
     // formatRowStyleSettings(widget)
     // formatBorderSettings(widget)
 }
 
-const formatTablePagination = (pagination: { enabled: boolean, itemsNumber: string | number }) => {
-    if (!pagination) return
-    pagination.itemsNumber = pagination.enabled ? +pagination.itemsNumber : 0
+const formatTableSettings = (widgetSettings: ITableWidgetSettings, widgetColumns: IWidgetColumn[]) => {
+    formatTableWidgetConfiguration(widgetSettings.configuration, widgetColumns)
+}
+
+const formatTableWidgetConfiguration = (widgetConfiguration: ITableWidgetConfiguration, widgetColumns: IWidgetColumn[]) => {
+    // formatRowsConfiguration(widgetConfiguration, widgetColumns) // TODO - BE SAVE
+}
+
+
+// TODO - BE SAVE
+const formatRowsConfiguration = (widgetConfiguration: ITableWidgetConfiguration, widgetColumns: IWidgetColumn[]) => {
+    if (!widgetConfiguration.rows) return
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TEEEEEEST COLUMNS: ", widgetColumns)
+    for (let i = 0; i < widgetConfiguration.rows.rowSpan.columns.length; i++) {
+        widgetConfiguration.rows.rowSpan.columns[i] = getColumnName(widgetConfiguration.rows.rowSpan.columns[i], widgetColumns)
+    }
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TEEEEEEST: ", widgetConfiguration.rows)
+}
+
+const getColumnName = (columnsId: string, widgetColumns: IWidgetColumn[]) => {
+    const index = widgetColumns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === columnsId)
+    return index !== -1 ? widgetColumns[index].columnName : ''
 }
 
 function formatTableSelectedColumns(columns: IWidgetColumn[]) {
     if (!columns) return
     columns.forEach((column: IWidgetColumn) => {
-        delete column.id
-        if (column.columnName.startsWith('(')) column.columnName = column.columnName.slice(1, -1)
+        // delete column.id
         formatColumnFilter(column)
-
         // formatColumnTooltipSettings(column)
     })
 }
@@ -404,15 +421,6 @@ function formatBorderSettings(widget: IWidget) {
         }
     }
     if (widget.styles.border['border-color'] && typeof widget.styles.border['border-color'] !== 'string') widget.styles.border['border-color'] = formatRGBColor(widget.styles.border['border-color'])
-}
-
-export const removeColumnUsageFromModel = (column: IWidgetColumn, model: IWidget) => {
-    let name = column.columnName.startsWith('(') ? column.columnName.slice(1, -1) : column.columnName
-    if (model.settings?.sortingColumn && name === model.settings?.sortingColumn) {
-        model.settings.sortingColumn = ''
-        model.settings.sortingOrder = ''
-        emitter.emit("sortingChanged")
-    }
 }
 
 export default tableWidgetFunctions

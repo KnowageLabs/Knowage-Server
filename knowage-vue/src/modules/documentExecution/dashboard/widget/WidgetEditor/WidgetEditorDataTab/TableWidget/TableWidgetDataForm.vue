@@ -15,7 +15,7 @@
         <div class="p-d-flex p-flex-row p-ai-center p-mt-2">
             <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.sortingColumn') }}</label>
-                <Dropdown class="kn-material-input" v-model="sortingColumn" :options="sortingColumnOptions" optionValue="columnName" optionLabel="alias" @change="sortingChanged"> </Dropdown>
+                <Dropdown class="kn-material-input" v-model="sortingColumn" :options="sortingColumnOptions" optionValue="id" optionLabel="alias" @change="sortingChanged"> </Dropdown>
             </div>
             <div class="p-d-flex p-flex-column kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.sortingColumn') }}</label>

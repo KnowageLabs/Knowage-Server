@@ -84,10 +84,10 @@ export interface ITableWidgetHeaders {
 }
 
 export interface ITableWidgetRows {
-    "indexColumn": boolean,
-    "rowSpan": {
-        "enabled": boolean,
-        "column": string
+    indexColumn: boolean,
+    rowSpan: {
+        enabled: boolean,
+        columns: string[]
     }
 }
 

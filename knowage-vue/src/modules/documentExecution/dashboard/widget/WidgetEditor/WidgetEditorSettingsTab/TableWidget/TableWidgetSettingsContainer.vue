@@ -1,6 +1,4 @@
 <template>
-    {{ 'sel' }}
-    {{ selectedSetting }}
     <div v-if="widgetModel">
         <TableWidgetConfigurationConatiner v-if="selectedSetting === 'Comfiguration'" :widgetModel="widgetModel"></TableWidgetConfigurationConatiner>
     </div>
