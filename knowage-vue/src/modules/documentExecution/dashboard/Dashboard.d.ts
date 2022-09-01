@@ -50,7 +50,7 @@ export interface ITableWidgetConfiguration {
     exports: ITableWidgetExports
     headers: ITableWidgetHeaders
     rows: ITableWidgetRows
-    summaryRows: ITableWidgetSummaryRow[]
+    summaryRows: ITableWidgetSummaryRows
 }
 
 export interface ITableWidgetColumnGroup {
@@ -91,9 +91,15 @@ export interface ITableWidgetRows {
     }
 }
 
+export interface ITableWidgetSummaryRows {
+    enabled: boolean,
+    list: ITableWidgetSummaryRow[],
+    style: { pinnedOnly: boolean }
+}
+
 export interface ITableWidgetSummaryRow {
-    "label": string,
-    "aggregation": string
+    label: string,
+    aggregation: string
 }
 
 export interface ITableWidgetInteraction {

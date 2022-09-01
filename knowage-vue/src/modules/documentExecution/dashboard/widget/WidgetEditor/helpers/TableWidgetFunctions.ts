@@ -5,55 +5,6 @@ import descriptor from '../WidgetEditorDescriptor.json'
 import cryptoRandomString from 'crypto-random-string'
 
 const tableWidgetFunctions = {
-    indexColumnChanged: (model: IWidget) => {
-        emitter.emit('indexColumnChanged')
-    },
-    rowSpanChanged: (model: IWidget) => {
-        emitter.emit('rowSpanChanged')
-    },
-    getRowSpanColumnOptions: (model: IWidget) => {
-        const columnOptions = [] as { value: string, label: string }[]
-        for (let i = 0; i < model.columns.length; i++) {
-            const temp = model.columns[i].columnName.startsWith('(') ? model.columns[i].columnName.slice(1, -1) : model.columns[i].columnName
-            columnOptions.push({ value: temp, label: temp })
-        }
-        console.log("COLUMN OPTIONS: ", columnOptions)
-        return columnOptions
-    },
-    summaryRowsChanged: () => {
-        emitter.emit('summaryRowsChanged')
-    },
-    summaryRowsAreDisabled: (model: IWidget) => {
-        return !model?.settings.configuration?.summaryRows?.enabled
-    },
-    getSummaryRowsList: (model: IWidget) => {
-        const summaryRowsList = model?.settings.configuration?.summaryRows?.list
-        return summaryRowsList ?? []
-    },
-    createSummaryRowItem: (model: IWidget) => {
-        if (!model || !model?.settings.configuration?.summaryRows?.list || !model.settings.configuration.summaryRows.enabled) return
-        model?.settings.configuration.summaryRows.list.push({ label: "", aggregation: "" })
-        emitter.emit('summaryRowsChanged')
-    },
-    deleteSummaryRowItem: (model: IWidget, itemIndex: number) => {
-        if (model?.settings.configuration?.summaryRows?.enabled) {
-            model.settings.configuration.summaryRows.list.splice(itemIndex, 1)
-            emitter.emit('summaryRowsChanged')
-        }
-    },
-    getSummaryRowsAggregationOptions: (component: any, itemIndex: number) => {
-        console.log("ITEM INDEX: ", itemIndex)
-        return itemIndex !== 0 ? descriptor.columnAggregationOptions.slice(1) : [{ value: 'Columns Default Aggregation', label: 'Columns Default Aggregation' }]
-    },
-    updateSummaryRowsListItem: (model: IWidget, item: any, index: number) => {
-        if (!model || !model.settings.configuration.summaryRows.list) return
-        if (index !== -1) {
-            model.settings.configuration.summaryRows.list[index] = { ...item }
-        }
-    },
-    summaryRowsDropdownIsDisabled: (model: IWidget, itemIndex: number) => {
-        return !model?.settings.configuration?.summaryRows?.enabled || itemIndex === 0
-    },
     // tooltipIsDisabled: (model: IWidget) => {
     //     return !model?.temp.selectedColumn?.enableTooltip
     // },
@@ -297,7 +248,6 @@ const tableWidgetFunctions = {
 }
 
 export const createNewWidgetColumn = (eventData: any) => {
-    console.log("AAAAAAAAAAAAAA - EVENT DATA: ", eventData)
     const tempColumn = {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
         columnName: eventData.name,
@@ -335,6 +285,7 @@ const formatTableSettings = (widgetSettings: ITableWidgetSettings, widgetColumns
 
 const formatTableWidgetConfiguration = (widgetConfiguration: ITableWidgetConfiguration, widgetColumns: IWidgetColumn[]) => {
     // formatRowsConfiguration(widgetConfiguration, widgetColumns) // TODO - BE SAVE
+    formatSummaryRows(widgetConfiguration)
 }
 
 
@@ -346,6 +297,14 @@ const formatRowsConfiguration = (widgetConfiguration: ITableWidgetConfiguration,
         widgetConfiguration.rows.rowSpan.columns[i] = getColumnName(widgetConfiguration.rows.rowSpan.columns[i], widgetColumns)
     }
     console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TEEEEEEST: ", widgetConfiguration.rows)
+}
+
+const formatSummaryRows = (widgetConfiguration: ITableWidgetConfiguration) => {
+    if (!widgetConfiguration.summaryRows) return
+    if (!widgetConfiguration.summaryRows.enabled) {
+        widgetConfiguration.summaryRows.style.pinnedOnly = false
+        widgetConfiguration.summaryRows.list = []
+    }
 }
 
 const getColumnName = (columnsId: string, widgetColumns: IWidgetColumn[]) => {

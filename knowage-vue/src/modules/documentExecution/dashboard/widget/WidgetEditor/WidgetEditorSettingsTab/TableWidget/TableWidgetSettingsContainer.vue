@@ -9,7 +9,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './TableWidgetSettingsDescriptor.json'
-import TableWidgetSettingsAccordion from '../TableWidget/configuration/TableWidgetSettingsAccordion.vue'
+import TableWidgetSettingsAccordion from './TableWidgetSettingsAccordion.vue'
 
 export default defineComponent({
     name: 'table-widget-settings-container',

@@ -34,7 +34,7 @@ import InputSwitch from 'primevue/inputswitch'
 import MultiSelect from 'primevue/multiselect'
 
 export default defineComponent({
-    name: 'table-widget-configuration-container',
+    name: 'table-widget-rows',
     components: { InputSwitch, MultiSelect },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {

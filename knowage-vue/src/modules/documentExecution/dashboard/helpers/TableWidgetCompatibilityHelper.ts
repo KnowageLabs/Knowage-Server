@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -63,7 +63,7 @@ const getFormattedRows = (formattedWidget: IWidget, widget: any) => {
 }
 
 const getFormattedSummaryRows = (widget: any) => {
-    let formattedSummaryRows = {} as any
+    let formattedSummaryRows = {} as ITableWidgetSummaryRows
     if (widget.settings.summary) formattedSummaryRows = widget.settings.summary
     if (formattedSummaryRows.list && formattedSummaryRows.list[0]) formattedSummaryRows.list[0].aggregation = 'Columns Default Aggregation'
     return formattedSummaryRows
