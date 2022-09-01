@@ -18,15 +18,27 @@
 
 package it.eng.knowage.engine.cockpit.api.export;
 
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,6 +61,7 @@ public abstract class AbstractFormatExporter {
 	public static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
 	protected List<Integer> hiddenColumns;
 	protected Map<String, String> i18nMessages;
+	protected Map<String, CellStyle> format2CellStyle = new HashMap<String, CellStyle>();
 
 	public AbstractFormatExporter(String userUniqueIdentifier, JSONObject body) {
 		this.userUniqueIdentifier = userUniqueIdentifier;
@@ -211,11 +224,18 @@ public abstract class AbstractFormatExporter {
 					continue;
 
 				JSONObject columnNew = columnsNew.getJSONObject(i);
+
 				String newHeader = getTableColumnHeaderValue(columnNew);
 
 				for (int j = 0; j < columnsOld.length(); j++) {
 					JSONObject columnOld = columnsOld.getJSONObject(j);
 					if (columnOld.getString("header").equals(newHeader)) {
+
+						if (columnNew.has("ranges")) {
+							JSONArray ranges = columnNew.getJSONArray("ranges");
+							columnOld.put("ranges", ranges); // added ranges for column thresholds
+						}
+
 						columnsOrdered.put(columnOld);
 						break;
 					}
@@ -642,4 +662,437 @@ public abstract class AbstractFormatExporter {
 		return arr;
 	}
 
+	protected CellStyle getIntCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, CellStyle defaultStyle, JSONObject settings,
+			int value) {
+		String colName = null;
+		CreationHelper createHelper = wb.getCreationHelper();
+		XSSFCellStyle toReturn = (XSSFCellStyle) wb.createCellStyle();
+		toReturn.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+		try {
+			colName = column.getString("name");
+			boolean isAvoidSeparator = isAvoidSeparator(colStyle);
+			String format = null;
+			if (isAvoidSeparator) {
+				format = "0";
+			} else {
+				format = "#,##0";
+			}
+
+			// precision (i.e. number of digits to right of the decimal point) that is specified on dashboard design wins
+			if ((colStyle != null && colStyle.has("precision")) || isAvoidSeparator) {
+				int precision = (colStyle != null && colStyle.has("precision")) ? colStyle.getInt("precision") : 2;
+				format = getNumberFormatByPrecision(precision, format);
+				CellStyle toReturnn = getCellStyleByFormat(wb, helper, format);
+				return toReturnn;
+			}
+
+			if (column.has("ranges")) {
+				JSONArray ranges = column.getJSONArray("ranges");
+
+				for (int jj = 0; jj < ranges.length(); jj++) {
+
+					JSONObject threshold = ranges.getJSONObject(jj);
+
+					if (threshold.has("compareValueType") && threshold.getString("compareValueType").equals("static")) {
+						Color userColor = parseColor(threshold.getString("background-color"));
+						if (threshold.has("value")) {
+							int valueToPut = threshold.getInt("value");
+
+							if (threshold.getString("operator").equals(">")) {
+
+								if (value > valueToPut) {
+
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							} else if (threshold.getString("operator").equals("<")) {
+
+								if (value < valueToPut) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							} else if (threshold.getString("operator").equals("==")) {
+
+								if (value == valueToPut) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							} else if (threshold.getString("operator").equals("<=")) {
+
+								if (value <= valueToPut) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							} else if (threshold.getString("operator").equals(">=")) {
+
+								if (value >= valueToPut) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							} else if (threshold.getString("operator").equals("!=")) {
+
+								if (value != valueToPut) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							}
+						} else {
+							if (threshold.getString("operator").equals("IN")) {
+
+								String[] valueArray = threshold.getString("valueArray").replace("[", "").replace("]", "").replaceAll("\"", "").split(",");
+								int[] numbers = new int[valueArray.length];
+								for (int i = 0; i < valueArray.length; i++) {
+									numbers[i] = Integer.parseInt(valueArray[i]);
+								}
+								if (containsInt(numbers, value)) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+							}
+						}
+					}
+
+				}
+
+			}
+
+			return toReturn;
+		} catch (Exception e) {
+			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			return toReturn;
+		}
+	}
+
+	protected CellStyle getDoubleCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, XSSFCellStyle defaultStyle,
+			JSONObject settings, Double value, JSONObject rowObject) {
+		String colName = null;
+		CreationHelper createHelper = wb.getCreationHelper();
+		XSSFCellStyle toReturn = (XSSFCellStyle) wb.createCellStyle();
+		toReturn.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+		try {
+			colName = column.getString("name");
+			boolean isAvoidSeparator = isAvoidSeparator(colStyle);
+			String format = null;
+			if (isAvoidSeparator) {
+				format = "0";
+			} else {
+				format = "#,##0";
+			}
+
+			// precision (i.e. number of digits to right of the decimal point) that is specified on dashboard design wins
+			if ((colStyle != null && colStyle.has("precision")) || isAvoidSeparator) {
+				int precision = (colStyle != null && colStyle.has("precision")) ? colStyle.getInt("precision") : 2;
+				format = getNumberFormatByPrecision(precision, format);
+				CellStyle toReturnFormat = getCellStyleByFormat(wb, helper, format);
+				return toReturnFormat;
+			}
+			/*
+			 * if (settings.has("rowThresholds") && settings.getJSONObject("rowThresholds").getString("enabled").equals("true")) {
+			 *
+			 * JSONArray listOfThresholds = settings.getJSONObject("rowThresholds").getJSONArray("list");
+			 *
+			 * for (int i = 0; i < listOfThresholds.length(); i++) {
+			 *
+			 * JSONObject entry = listOfThresholds.getJSONObject(i);
+			 *
+			 * if (entry.getString("compareValueType").equals("static")) { Color userColor =
+			 * parseColor(entry.getJSONObject("style").getString("background-color")); Double valueToPut = entry.getDouble("compareValue");
+			 *
+			 * if (entry.getString("condition").equals(">")) {
+			 *
+			 * if (value > valueToPut) { // value = getColumnValueByRow(entry.getString("column"), rowObject)
+			 *
+			 * toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND); toReturn.setFillForegroundColor(new XSSFColor(userColor, new
+			 * DefaultIndexedColorMap())); }
+			 *
+			 * } else if (entry.getString("condition").equals("<")) {
+			 *
+			 * if (value < valueToPut) { toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND); toReturn.setFillForegroundColor(new XSSFColor(userColor, new
+			 * DefaultIndexedColorMap())); }
+			 *
+			 * } else if (entry.getString("condition").equals("==")) {
+			 *
+			 * if (value == valueToPut) { toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND); toReturn.setFillForegroundColor(new XSSFColor(userColor,
+			 * new DefaultIndexedColorMap())); }
+			 *
+			 * } else if (entry.getString("condition").equals("<=")) {
+			 *
+			 * if (value <= valueToPut) { toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND); toReturn.setFillForegroundColor(new XSSFColor(userColor,
+			 * new DefaultIndexedColorMap())); }
+			 *
+			 * } else if (entry.getString("condition").equals(">=")) {
+			 *
+			 * if (value >= valueToPut) { toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND); toReturn.setFillForegroundColor(new XSSFColor(userColor,
+			 * new DefaultIndexedColorMap())); }
+			 *
+			 * } else if (entry.getString("condition").equals("!=")) {
+			 *
+			 * if (value != valueToPut) { toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND); toReturn.setFillForegroundColor(new XSSFColor(userColor,
+			 * new DefaultIndexedColorMap())); }
+			 *
+			 * } else if (entry.getString("condition").equals("IN")) {
+			 *
+			 * if (value != valueToPut) { toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND); toReturn.setFillForegroundColor(new XSSFColor(userColor,
+			 * new DefaultIndexedColorMap())); }
+			 *
+			 * }
+			 *
+			 * }
+			 *
+			 * }
+			 *
+			 * }
+			 */
+			if (column.has("ranges")) {
+				JSONArray ranges = column.getJSONArray("ranges");
+
+				for (int jj = 0; jj < ranges.length(); jj++) {
+
+					JSONObject threshold = ranges.getJSONObject(jj);
+
+					if (threshold.has("compareValueType") && threshold.has("background-color") && threshold.getString("compareValueType").equals("static")) {
+						Color userColor = parseColor(threshold.getString("background-color"));
+						if (threshold.has("value")) {
+							Double valueToPut = threshold.getDouble("value");
+
+							if (threshold.getString("operator").equals(">")) {
+
+								if (value > valueToPut) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							} else if (threshold.getString("operator").equals("<")) {
+
+								if (value < valueToPut) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							} else if (threshold.getString("operator").equals("==")) {
+
+								if (value == valueToPut) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							} else if (threshold.getString("operator").equals("<=")) {
+
+								if (value <= valueToPut) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							} else if (threshold.getString("operator").equals(">=")) {
+
+								if (value >= valueToPut) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							} else if (threshold.getString("operator").equals("!=")) {
+
+								if (value != valueToPut) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							}
+						} else {
+							if (threshold.getString("operator").equals("IN")) {
+
+								String[] valueArray = threshold.getString("valueArray").replace("[", "").replace("]", "").replaceAll("\"", "").split(",");
+								double[] numbers = new double[valueArray.length];
+								for (int i = 0; i < valueArray.length; i++) {
+									numbers[i] = Double.parseDouble(valueArray[i]);
+								}
+								if (containsDouble(numbers, value)) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+							}
+						}
+					}
+
+				}
+
+			}
+
+			return toReturn;
+		} catch (Exception e) {
+			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			return toReturn;
+		}
+	}
+
+	public boolean containsInt(final int[] array, final int key) {
+		return ArrayUtils.contains(array, key);
+	}
+
+	public boolean containsDouble(final double[] array, final double key) {
+		return ArrayUtils.contains(array, key);
+	}
+
+	protected CellStyle getStringCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, XSSFCellStyle defaultStyle,
+			JSONObject settings, String value) {
+		String colName = null;
+		CreationHelper createHelper = wb.getCreationHelper();
+		XSSFCellStyle toReturn = (XSSFCellStyle) wb.createCellStyle();
+		try {
+			colName = column.getString("name");
+			boolean isAvoidSeparator = isAvoidSeparator(colStyle);
+			String format = null;
+			if (isAvoidSeparator) {
+				format = "0";
+			} else {
+				format = "#,##0";
+			}
+
+			// precision (i.e. number of digits to right of the decimal point) that is specified on dashboard design wins
+			if ((colStyle != null && colStyle.has("precision")) || isAvoidSeparator) {
+				int precision = (colStyle != null && colStyle.has("precision")) ? colStyle.getInt("precision") : 2;
+				format = getNumberFormatByPrecision(precision, format);
+				CellStyle toReturnFormat = getCellStyleByFormat(wb, helper, format);
+				return toReturnFormat;
+			}
+			if (column.has("ranges")) {
+				JSONArray ranges = column.getJSONArray("ranges");
+
+				for (int jj = 0; jj < ranges.length(); jj++) {
+
+					JSONObject threshold = ranges.getJSONObject(jj);
+
+					if (threshold.has("compareValueType") && threshold.has("background-color") && threshold.getString("compareValueType").equals("static")) {
+						Color userColor = parseColor(threshold.getString("background-color"));
+						if (threshold.has("value")) {
+							String valueToPut = threshold.getString("value");
+
+							if (threshold.getString("operator").equals(">")) {
+
+								if (value.compareTo(valueToPut) > 0) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							} else if (threshold.getString("operator").equals("<")) {
+
+								if (value.compareTo(valueToPut) < 0) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							} else if (threshold.getString("operator").equals("==")) {
+
+								if (value.equals(valueToPut)) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							} else if (threshold.getString("operator").equals("<=")) {
+
+								if (value.compareTo(valueToPut) <= 0) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							} else if (threshold.getString("operator").equals(">=")) {
+
+								if (value.compareTo(valueToPut) >= 0) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							} else if (threshold.getString("operator").equals("!=")) {
+
+								if (!value.equals(valueToPut)) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							}
+						} else {
+							if (threshold.getString("operator").equals("IN")) {
+								String[] valueArray = threshold.getString("valueArray").replace("[", "").replace("]", "").replaceAll("\"", "").split(",");
+								if (Arrays.stream(valueArray).anyMatch(value::equals)) {
+									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+								}
+
+							}
+						}
+					}
+
+				}
+
+			}
+
+			return toReturn;
+		} catch (Exception e) {
+			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			return toReturn;
+		}
+	}
+
+	public static Color parseColor(String input) {
+		Pattern c = Pattern.compile("rgb *\\( *([0-9]+), *([0-9]+), *([0-9]+) *\\)");
+		Matcher m = c.matcher(input);
+		Color color = null;
+		if (m.matches()) {
+			color = new Color(Integer.valueOf(m.group(1)), // r
+					Integer.valueOf(m.group(2)), // g
+					Integer.valueOf(m.group(3))); // b
+		} else {
+			color = Color.decode(input);
+		}
+		return color;
+	}
+
+	private String getCellType(JSONObject column, String colName, JSONObject colStyle) {
+		try {
+			return column.getString("type");
+		} catch (Exception e) {
+			logger.error("Error while retrieving column {" + colName + "} type. It will be treated as string.", e);
+			return "string";
+		}
+	}
+
+	private boolean isAvoidSeparator(JSONObject colStyle) throws JSONException {
+		if (colStyle != null && colStyle.has("asString")) {
+			if (colStyle.getBoolean("asString")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/*
+	 * This method avoids cell style objects number to increase by rows number (see https://production.eng.it/jira/browse/KNOWAGE-6692 and
+	 * https://production.eng.it/jira/browse/KNOWAGE-6693)
+	 */
+	protected CellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format) {
+		if (!format2CellStyle.containsKey(format)) {
+			// if cell style does not exist
+			CellStyle cellStyle = wb.createCellStyle();
+			cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
+			format2CellStyle.put(format, cellStyle);
+		}
+		return format2CellStyle.get(format);
+	}
+
+	protected String getNumberFormatByPrecision(int precision, String initialFormat) {
+		String format = initialFormat;
+		if (precision > 0) {
+			format += ".";
+			for (int j = 0; j < precision; j++) {
+				format += "0";
+			}
+		}
+		return format;
+	}
 }
