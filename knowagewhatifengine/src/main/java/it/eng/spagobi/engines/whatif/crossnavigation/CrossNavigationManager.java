@@ -19,12 +19,15 @@
 package it.eng.spagobi.engines.whatif.crossnavigation;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Dimension;
@@ -48,41 +51,34 @@ public class CrossNavigationManager {
 		SpagoBIPivotModel modelWrapper = ei.getSpagoBIPivotModel();
 		List<TargetParameter> parameters = modelWrapper.getCrossNavigation().getParameters();
 
-		StringBuffer buffer = new StringBuffer("parent.execExternalCrossNavigation({");
+		JSONObject outputParameters = new JSONObject();
 		if (!parameters.isEmpty()) {
 			for (int i = 0; i < parameters.size(); i++) {
 				TargetParameter aParameter = parameters.get(i);
 				if (!aParameter.isAbsolute()) {// absolute will be managed from external cross navigation
 					String parameterName = aParameter.name;
-					String parameterValue = getParameterValue(aParameter, ei, cellWrapper);
-					if (parameterValue != null && !parameterValue.equals("")) {
-						parameterValue = "'" + StringEscapeUtils.escapeJavaScript(parameterValue) + "'";
-					} else {
-						parameterValue = "''";
-					}
-					if (parameterValue != null) {
-						buffer.append(parameterName + ":" + parameterValue + ",");
+					List<String> parameterValues = getParameterValues(aParameter, ei, cellWrapper);
+					if (parameterValues != null && !parameterValues.isEmpty()) {
+						outputParameters.put(parameterName, parameterValues.size() == 1 ? parameterValues.get(0) : parameterValues);
 					}
 				}
 			}
 		}
 
-		if (buffer.charAt(buffer.length() - 1) == ',') {
-			buffer.deleteCharAt(buffer.length() - 1);
-		}
-
-		buffer.append("});");
+		StringBuffer buffer = new StringBuffer("parent.execExternalCrossNavigation(");
+		buffer.append(outputParameters);
+		buffer.append(");");
 		String toReturn = buffer.toString();
 		logger.debug("OUT: returning [" + toReturn + "]");
 		return toReturn;
 
 	}
 
-	private static String getParameterValue(TargetParameter parameter, WhatIfEngineInstance ei, SpagoBICellWrapper cell) {
+	private static List<String> getParameterValues(TargetParameter parameter, WhatIfEngineInstance ei, SpagoBICellWrapper cell) {
 		if (parameter.isAbsolute()) {
-			return parameter.getValue();
+			return Arrays.asList(parameter.getValue());
 		}
-		String value = null;
+		List<String> values = null;
 		String dimensionName = parameter.getDimension();
 		String hierarchyName = parameter.getHierarchy();
 		String levelName = parameter.getLevel();
@@ -90,17 +86,39 @@ public class CrossNavigationManager {
 		logger.debug(
 				"Looking for dimension " + dimensionName + ", hierarchy " + hierarchyName + ", level " + levelName + ", property " + propertyName + " ...");
 		Hierarchy hierarchy = getHierarchy(ei.getSpagoBIPivotModel().getCube(), ei.getModelConfig(), dimensionName, hierarchyName);
-		Member member = cell.getContextMember(hierarchy);
-		logger.debug("Considering context member " + member.getUniqueName());
+		Member[] members = cell.getContextMembers(hierarchy);
+		logger.debug("Considering context member " + members[0].getUniqueName());
 		logger.debug("Member hierarchy is " + hierarchy.getUniqueName());
 		if (hierarchy.getUniqueName().equals(hierarchyName)) {
 			if (propertyName == null || propertyName.trim().equals("")) {
-				value = getLevelValue(member, levelName);
+				values = getLevelValues(members, levelName);
 			} else {
-				value = getMemberPropertyValue(member, propertyName);
+				values = getMemberPropertyValues(members, propertyName);
 			}
 		}
-		return value;
+		return values;
+	}
+
+	private static List<String> getLevelValues(Member[] members, String levelName) {
+		List<String> values = new ArrayList<String>();
+		for (Member member : members) {
+			String aValue = getLevelValue(member, levelName);
+			if (aValue != null) {
+				values.add(aValue);
+			}
+		}
+		return values;
+	}
+
+	private static List<String> getMemberPropertyValues(Member[] members, String levelName) {
+		List<String> values = new ArrayList<String>();
+		for (Member member : members) {
+			String aValue = getMemberPropertyValue(member, levelName);
+			if (aValue != null) {
+				values.add(aValue);
+			}
+		}
+		return values;
 	}
 
 	private static String getLevelValue(Member member, String levelName) {
