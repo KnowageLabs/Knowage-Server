@@ -27,7 +27,7 @@
 						<md-icon md-font-icon="fa fa-filter"></md-icon>
 					</md-button>
 				</div>
-				<div ng-hide="hideSwitchIcon(column.positionInAxis,0)"> <!-- column.positionInAxis == columns.length-1 -->
+				<div ng-hide="$last">
 					<md-button class="md-icon-button top-axis-switch"  ng-click="switchPosition(column)">
 						<md-icon md-font-icon="fa fa-arrows-h" class="icon-color-white"></md-icon>	
 					</md-button>
