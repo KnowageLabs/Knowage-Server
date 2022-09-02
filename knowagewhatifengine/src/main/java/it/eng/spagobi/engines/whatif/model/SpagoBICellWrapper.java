@@ -18,12 +18,6 @@
 
 package it.eng.spagobi.engines.whatif.model;
 
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.model.transform.CellRelation;
-import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,9 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import mondrian.olap.Util;
-import mondrian.util.Format;
 
 import org.olap4j.AllocationPolicy;
 import org.olap4j.Cell;
@@ -46,6 +37,14 @@ import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
 import org.olap4j.metadata.Property;
+
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.model.transform.CellRelation;
+import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import mondrian.olap.Util;
+import mondrian.util.Format;
 
 public class SpagoBICellWrapper implements Cell {
 
@@ -62,53 +61,64 @@ public class SpagoBICellWrapper implements Cell {
 		this.members = null;
 	}
 
+	@Override
 	public CellSet getCellSet() {
 		return this.cellSetWrapper;
 	}
 
+	@Override
 	public int getOrdinal() {
 		return cell.getOrdinal();
 	}
 
+	@Override
 	public List<Integer> getCoordinateList() {
 		return cell.getCoordinateList();
 	}
 
+	@Override
 	public Object getPropertyValue(Property property) {
 		return cell.getPropertyValue(property);
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return cell.isEmpty();
 	}
 
+	@Override
 	public boolean isError() {
 		return cell.isEmpty();
 	}
 
+	@Override
 	public boolean isNull() {
 		return cell.isNull();
 	}
 
+	@Override
 	public double getDoubleValue() throws OlapException {
 		Object o = this.getValue();
 		if (o instanceof Number) {
 			Number number = (Number) o;
 			return number.doubleValue();
-		} else if ( o == null){
+		} else if (o == null) {
 			return 0;
 		}
 		throw new OlapException("not a number");
 	}
 
+	@Override
 	public String getErrorText() {
 		return cell.getErrorText();
 	}
 
+	@Override
 	public Object getValue() {
 		return value;
 	}
 
+	@Override
 	public String getFormattedValue() {
 		String formatString = (String) cell.getPropertyValue(Property.StandardCellProperty.FORMAT_STRING);
 		SpagoBICellSetWrapper cellSet = (SpagoBICellSetWrapper) this.getCellSet();
@@ -124,10 +134,12 @@ public class SpagoBICellWrapper implements Cell {
 		return format.format(value);
 	}
 
+	@Override
 	public ResultSet drillThrough() throws OlapException {
 		return cell.drillThrough();
 	}
 
+	@Override
 	public void setValue(Object value, AllocationPolicy allocationPolicy, Object... allocationArgs) throws OlapException {
 		throw new UnreachableCodeException("You cannot invoke this method, since no AllocationPolicy is implemented");
 	}
@@ -207,7 +219,11 @@ public class SpagoBICellWrapper implements Cell {
 		for (int i = 0; i < members.length; i++) {
 			Member thatMember = members[i];
 			Hierarchy hierarchy = thatMember.getHierarchy();
-			Member thisMember = this.getContextMember(hierarchy);
+			Member[] thisMembers = this.getContextMembers(hierarchy);
+			if (thisMembers.length > 1) {
+				throw new RuntimeException("Cannot get cell relation in case members of hierarchy is more than one");
+			}
+			Member thisMember = thisMembers[0];
 			// FIXME: isChildOrEqualTo is very inefficient. It should use
 			// level depth as a guideline, at least.
 			if (isChildOrEqualTo(thatMember, thisMember)) {
@@ -247,16 +263,20 @@ public class SpagoBICellWrapper implements Cell {
 		return new SpagoBICellWrapper(cell, cellSetWrapper);
 	}
 
-	public Member getContextMember(Hierarchy hierarchy) {
+	public Member[] getContextMembers(Hierarchy hierarchy) {
+		List<Member> toReturn = new ArrayList<Member>();
 		Member[] members = this.getMembers();
 		for (int i = 0; i < members.length; i++) {
 			Member member = members[i];
 			Hierarchy aHierarchy = member.getHierarchy();
 			if (aHierarchy.getUniqueName().equals(hierarchy.getUniqueName())) {
-				return member;
+				toReturn.add(member);
 			}
 		}
-		throw new SpagoBIEngineRuntimeException("No member found on hierarchy " + hierarchy.getUniqueName());
+		if (toReturn.isEmpty()) {
+			throw new SpagoBIEngineRuntimeException("No member found on hierarchy " + hierarchy.getUniqueName());
+		}
+		return toReturn.toArray(new Member[0]);
 	}
 
 	public String getMeasureName() {
@@ -330,17 +350,15 @@ public class SpagoBICellWrapper implements Cell {
 			return true;
 		}
 
-
-		if(member1.getLevel().getDepth()<=member2.getDepth())
+		if (member1.getLevel().getDepth() <= member2.getDepth())
 			return false;
-		
-		Member aMember=member1.getParentMember();
-		while(aMember.getLevel().getDepth()>=member2.getDepth() && !aMember.equals(member2)){
+
+		Member aMember = member1.getParentMember();
+		while (aMember.getLevel().getDepth() >= member2.getDepth() && !aMember.equals(member2)) {
 			aMember = aMember.getParentMember();
 		}
 		return (aMember.equals(member2));
 
-	
 	}
 
 }
