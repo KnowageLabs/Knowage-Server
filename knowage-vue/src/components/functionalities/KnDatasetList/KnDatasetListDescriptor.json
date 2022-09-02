@@ -15,6 +15,11 @@
             "field": "dsTypeCd",
             "header": "common.type",
             "style": {}
+        },
+        {
+            "field": "icon",
+            "header": "",
+            "style": {}
         }
     ],
     "responsiveLayout": "stack",
