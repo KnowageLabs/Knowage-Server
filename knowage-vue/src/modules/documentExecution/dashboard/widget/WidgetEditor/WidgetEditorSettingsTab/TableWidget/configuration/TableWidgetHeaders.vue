@@ -11,6 +11,12 @@
                 <InputSwitch v-model="headersModel.enabledMultiline" :disabled="!headersModel.enabled" @change="headersConfigurationChanged"></InputSwitch>
             </div>
         </div>
+
+        <div class="p-d-flex p-flex-column p-m-3">
+            <div v-for="(rule, index) in headersModel.custom.rules" :key="index" class="p-d-flex p-flex-row p-ai-center">
+                {{ rule }}
+            </div>
+        </div>
     </div>
 </template>
 
