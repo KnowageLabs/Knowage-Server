@@ -24,7 +24,7 @@ export const formatModel = (model: any) => {
 
 const getFormattedModelConfiguration = (model: any) => {
     // TODO - id, name, label, description
-    const formattedConfiguration = { id: '', name: '', label: '', description: '', associations: [], datasets: getFormattedDatasets(model), variables: [], themes: {} }
+    const formattedConfiguration = { id: '', name: '', label: '', description: '', associations: [], datasets: getFormattedDatasets(model), variables: getFormattedVariables(model), themes: {} }
 
     return formattedConfiguration
 }
@@ -50,6 +50,33 @@ const getFormattedDataset = (dataset: any) => {
 // TODO
 const getFormattedDatasetParameters = (dataset: any) => {
     return []
+}
+
+const getFormattedVariables = (model: any) => {
+    console.log("GET FORMATTED VARIABLES: ", model)
+    const formattedVariables = [] as { name: string, type: string, value: string }[]
+    if (!model.configuration || !model.configuration.variables) return formattedVariables
+    for (let i = 0; i < model.configuration.variables.length; i++) {
+        const tempVariable = model.configuration.variables[i]
+        const formattedVariable = { name: tempVariable.name, type: tempVariable.type, value: '' }
+        switch (formattedVariable.type) {
+            case 'static':
+                formattedVariable.value = tempVariable.value;
+                break
+            case 'dataset':
+                formattedVariable.value = tempVariable.column;
+                break
+            case 'driver':
+                formattedVariable.value = tempVariable.driver;
+                break
+            case 'profile':
+                formattedVariable.value = tempVariable.attribute;
+                break
+        }
+        formattedVariables.push(formattedVariable)
+    }
+
+    return formattedVariables
 }
 
 const formatSheet = (sheet: any, formattedModel: any) => {

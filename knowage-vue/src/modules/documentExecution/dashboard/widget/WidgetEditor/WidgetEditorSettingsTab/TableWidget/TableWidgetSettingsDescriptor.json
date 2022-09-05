@@ -1,20 +1,4 @@
 {
-    "settings": {
-        "Configuration": [
-            {
-                "title": "dashboard.widgetEditor.rows.title",
-                "type": "Rows"
-            },
-            {
-                "title": "dashboard.widgetEditor.summaryRows.title",
-                "type": "SummaryRows"
-            },
-            {
-                "title": "dashboard.widgetEditor.headers.title",
-                "type": "Headers"
-            }
-        ]
-    },
     "aggregationOptions": [
         {
             "label": "SUM",
@@ -40,5 +24,45 @@
             "label": "COUNT_DISTINCT",
             "value": "COUNT_DISTINCT"
         }
-    ]
+    ],
+    "customHeadersActionOptions": [
+        {
+            "label": "dashboard.widgetEditor.headers.hideHeader",
+            "value": "hide"
+        },
+        {
+            "label": "dashboard.widgetEditor.headers.setLabel",
+            "value": "setLabel"
+        }
+    ],
+    "headersCompareValueType": [
+        {
+            "label": "common.static",
+            "value": "static"
+        },
+        {
+            "label": "common.variable",
+            "value": "variable"
+        },
+        {
+            "label": "common.parameter",
+            "value": "parameter"
+        }
+    ],
+    "settings": {
+        "Configuration": [
+            {
+                "title": "dashboard.widgetEditor.rows.title",
+                "type": "Rows"
+            },
+            {
+                "title": "dashboard.widgetEditor.summaryRows.title",
+                "type": "SummaryRows"
+            },
+            {
+                "title": "dashboard.widgetEditor.headers.title",
+                "type": "Headers"
+            }
+        ]
+    }
 }

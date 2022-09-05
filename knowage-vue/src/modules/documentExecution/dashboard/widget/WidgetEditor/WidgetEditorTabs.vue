@@ -4,7 +4,7 @@
             <WidgetEditorDataTab :propWidget="propWidget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="$emit('datasetSelected', $event)" data-test="data-tab"></WidgetEditorDataTab>
         </TabPanel>
         <TabPanel :header="$t('common.settings')">
-            <WidgetEditorSettingsTab :propWidget="propWidget"></WidgetEditorSettingsTab>
+            <WidgetEditorSettingsTab :propWidget="propWidget" :drivers="drivers" :variables="variables"></WidgetEditorSettingsTab>
         </TabPanel>
     </TabView>
 </template>
@@ -23,7 +23,7 @@ import WidgetEditorSettingsTab from './WidgetEditorSettingsTab/WidgetEditorSetti
 export default defineComponent({
     name: 'widget-editor-tabs',
     components: { TabView, TabPanel, WidgetEditorDataTab, WidgetEditorSettingsTab },
-    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, selectedDatasets: { type: Array as PropType<IDataset[]> } },
+    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, selectedDatasets: { type: Array as PropType<IDataset[]> }, drivers: { type: Array }, variables: { type: Array } },
     emits: ['datasetSelected'],
     data() {
         return {

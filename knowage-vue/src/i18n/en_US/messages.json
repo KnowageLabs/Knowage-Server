@@ -177,6 +177,7 @@
         "sqlExpression": "SQL expression",
         "start": "Start",
         "state": "State",
+        "static": "Static",
         "status": "Status",
         "style": "Style",
         "suspended": "Suspended",
@@ -229,6 +230,7 @@
         },
         "value": "Value",
         "values": "Values",
+        "variable": "Variable",
         "variables": "Variables",
         "version": "version",
         "view": "View",
@@ -366,6 +368,7 @@
             },
             "columnDetails": "Column Details",
             "columnFilterHint": "Select the filter operator and the value for the column. Remember to use the correct database sintax for the value. ie: %LIKE%",
+            "compareValueType": "Compare value type",
             "conditionalStyle": {
                 "compareValue": "Compare value",
                 "compareValueType": "Value type",
@@ -380,10 +383,14 @@
             "enableTooltip": "Enable Tooltip",
             "fontawesome": "Fontawesome",
             "headers": {
+                "action": "Action",
+                "enableCustomHeaders": "Enable Custom Headers",
                 "enableHeader": "Enable Header",
                 "enableMultiline": "Enable Multiline",
                 "headerHeight": "Header height",
                 "headerHeightHint": "Header height in px (default is 25px)",
+                "hideHeader": "Hide header",
+                "setLabel": "Set label",
                 "title": "Headers"
             },
             "hidden": "Hidden",

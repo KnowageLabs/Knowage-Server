@@ -76,12 +76,17 @@ export interface ITableWidgetHeaders {
     enabledMultiline: boolean,
     custom: {
         enabled: boolean,
-        rules: [{
-            target: string[],
-            action: string,
-            variable?: string
-        }]
+        rules: ITableWidgetHeadersRule[]
     }
+}
+
+export interface ITableWidgetHeadersRule {
+    target: string[],
+    action: string,
+    compareType?: string,
+    variable?: string,
+    value?: string,
+    parameter?: string
 }
 
 export interface ITableWidgetRows {
