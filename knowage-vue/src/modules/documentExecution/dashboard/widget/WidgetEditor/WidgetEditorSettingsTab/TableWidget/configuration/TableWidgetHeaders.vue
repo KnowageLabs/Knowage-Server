@@ -1,6 +1,5 @@
 <template>
     <div v-if="headersModel">
-        {{ headersModel }}
         <div class="p-d-flex p-flex-row p-ai-center p-m-3">
             <div class="kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.headers.enableHeader') }}</label>
