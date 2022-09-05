@@ -23,7 +23,6 @@
 package it.eng.spagobi.tools.dataset.service;
 
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.io.File;
@@ -50,6 +49,7 @@ import org.json.JSONObject;
 import org.json.JSONObjectDeserializator;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
@@ -970,7 +970,7 @@ public class ManageDataSetsForREST {
 
 		File originalDatasetFile = new File(filePath + originalFileName);
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
-
+		PathTraversalChecker.preventPathTraversalAttack(newDatasetFile, new File(fileNewPath));
 		String filePathCloning = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
 		File originalDatasetFileCloning = new File(filePathCloning + originalFileName);
 
