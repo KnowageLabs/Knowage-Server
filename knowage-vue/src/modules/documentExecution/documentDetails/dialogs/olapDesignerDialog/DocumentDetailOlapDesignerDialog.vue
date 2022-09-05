@@ -41,7 +41,7 @@
 import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iDocument, iMondrianSchema, iXMLATemplate, iMondrianTemplate } from '../../DocumentDetails'
-import { mapState } from 'pinia'
+import { mapState, mapActions } from 'pinia'
 import Dialog from 'primevue/dialog'
 import descriptor from './DocumentDetailOlapDesignerDialogDescriptor.json'
 import DocumentDetailXMLAForm from './DocumentDetailXMLAForm.vue'
@@ -53,8 +53,17 @@ import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'document-detail-olap-designer-dialog',
-    components: { Dialog, DocumentDetailXMLAForm, DocumentDetailMondrianForm, Dropdown, ProgressSpinner },
-    props: { visible: { type: Boolean }, selectedDocument: { type: Object as PropType<iDocument> } },
+    components: {
+        Dialog,
+        DocumentDetailXMLAForm,
+        DocumentDetailMondrianForm,
+        Dropdown,
+        ProgressSpinner
+    },
+    props: {
+        visible: { type: Boolean },
+        selectedDocument: { type: Object as PropType<iDocument> }
+    },
     emits: ['designerStarted', 'close'],
     data() {
         return {
@@ -83,6 +92,7 @@ export default defineComponent({
         this.loadDocument()
     },
     methods: {
+        ...mapActions(mainStore, ['setLoading']),
         async loadDocument() {
             this.document = this.selectedDocument ? { ...this.selectedDocument } : ({} as iDocument)
             this.sbiExecutionId = cryptoRandomString({ length: 16, type: 'base64' })
@@ -112,14 +122,20 @@ export default defineComponent({
             hiddenFormData.set('timereloadurl', decodeURIComponent('' + new Date().getTime()))
             hiddenFormData.set('ENGINE', 'knowageolapengine')
 
-            this.store.setLoading(true)
-            await this.$http.post(import.meta.env.VITE_OLAP_PATH + `olap/startolap/edit`, hiddenFormData, { headers: { Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' } }).then(() => {})
-            this.store.setLoading(false)
+            this.setLoading(true)
+            await this.$http
+                .post(import.meta.env.VITE_OLAP_PATH + `olap/startolap/edit`, hiddenFormData, {
+                    headers: {
+                        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+                    }
+                })
+                .then(() => {})
+            this.setLoading(false)
         },
         async loadMondrianSchemaResources() {
-            this.store.setLoading(true)
+            this.setLoading(true)
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/mondrianSchemasResource`).then((response: AxiosResponse<any>) => (this.mondrianSchemas = response.data))
-            this.store.setLoading(false)
+            this.setLoading(false)
         },
         closeDialog() {
             this.$emit('close')
@@ -129,14 +145,19 @@ export default defineComponent({
         },
         async start() {
             const postData = this.type === 'xmla' ? { ...this.xmlModel } : { ...this.mondrianModel }
-            this.store.setLoading(true)
+            this.setLoading(true)
             await this.$http
                 .post(import.meta.env.VITE_OLAP_PATH + `1.0/designer/cubes?SBI_EXECUTION_ID=${this.sbiExecutionId}`, postData, { headers: { Accept: 'application/json, text/plain, */*' } })
                 .then(() => {
-                    this.$emit('designerStarted', { ...this.selectedDocument, sbiExecutionId: this.sbiExecutionId, reference: this.mondrianModel?.mondrianSchema, artifactId: this.mondrianModel.mondrianSchemaId })
+                    this.$emit('designerStarted', {
+                        ...this.selectedDocument,
+                        sbiExecutionId: this.sbiExecutionId,
+                        reference: this.mondrianModel?.mondrianSchema,
+                        artifactId: this.mondrianModel.mondrianSchemaId
+                    })
                 })
                 .catch(() => {})
-            this.store.setLoading(false)
+            this.setLoading(false)
         }
     }
 })

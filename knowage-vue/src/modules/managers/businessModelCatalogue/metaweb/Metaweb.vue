@@ -42,7 +42,8 @@ import TabPanel from 'primevue/tabpanel'
 import BusinessModelTab from './businessModel/MetawebBusinessModel.vue'
 import MetawebPhysicalModel from './physicalModel/MetawebPhysicalModel.vue'
 import MetawebInvalidRelationshipsDialog from './invalidRelationshipsDialog/MetawebInvalidRelationshipsDialog.vue'
-
+import { mapActions } from 'pinia'
+import mainStore from '@/App.store'
 import { observe, generate, applyPatch } from 'fast-json-patch'
 
 export default defineComponent({
@@ -72,6 +73,7 @@ export default defineComponent({
         this.loadMeta()
     },
     methods: {
+        ...mapActions(mainStore, ['setInfo']),
         loadMeta() {
             this.meta = this.propMeta
 
@@ -113,7 +115,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_META_API_URL + `/1.0/metaWeb/generateModel`, postData)
                 .then(() => {
-                    this.store.setInfo({
+                    this.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })

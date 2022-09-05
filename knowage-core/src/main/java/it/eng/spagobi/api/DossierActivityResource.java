@@ -45,6 +45,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.knowage.engine.dossier.activity.bo.DossierActivity;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -131,7 +132,10 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 		byte[] bytes;
 		File file = new File(outPath);
 		JSONObject response = new JSONObject();
+		File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator);
 		try {
+			PathTraversalChecker.isValidFileName(fileName);
+			PathTraversalChecker.preventPathTraversalAttack(file, dossierDir);
 			bytes = Files.readAllBytes(file.toPath());
 			responseBuilder = Response.ok(bytes);
 			responseBuilder.header("Content-Disposition", "attachment; filename=" + fileName);
@@ -159,8 +163,11 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 		String outPath = SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + fileName;
 		byte[] bytes;
 		File file = new File(outPath);
+		File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator);
 		JSONObject response = new JSONObject();
 		try {
+			PathTraversalChecker.isValidFileName(fileName);
+			PathTraversalChecker.preventPathTraversalAttack(file, dossierDir);
 			bytes = Files.readAllBytes(file.toPath());
 			response.put("STATUS", "OK");
 		} catch (Exception e) {
@@ -183,7 +190,6 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 		byte[] archiveBytes = null;
 		JSONObject response = new JSONObject();
 		try {
-
 			String separator = File.separator;
 			final FormFile file = multipartFormDataInput.getFormFileParameterValues("file")[0];
 			String fileName = file.getFileName();
@@ -192,7 +198,9 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 			if (!dossierDir.exists()) {
 				dossierDir.mkdir();
 			}
+			PathTraversalChecker.isValidFileName(fileName);
 			File f = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + fileName);
+			PathTraversalChecker.preventPathTraversalAttack(f, dossierDir);
 			FileOutputStream outputStream = new FileOutputStream(f);
 			outputStream.write(archiveBytes);
 			outputStream.close();

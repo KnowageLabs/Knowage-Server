@@ -231,7 +231,16 @@ export default defineComponent({
         if (this.dataset) {
             await this.initDsMetadata()
             this.initTransformations()
-            this.initWebsocket()
+
+            var url = new URL(window.location.origin)
+            url.protocol = url.protocol.replace('http', 'ws')
+            var uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VITE_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
+            this.client = new Client({
+                brokerURL: uri,
+                connectHeaders: {},
+                heartbeatIncoming: 4000,
+                heartbeatOutgoing: 4000
+            })
 
             this.client.onConnect = () => {
                 this.client.subscribe(
@@ -421,17 +430,6 @@ export default defineComponent({
                 this.loading++
             }
         },
-        initWebsocket(): void {
-            var url = new URL(window.location.origin)
-            url.protocol = url.protocol.replace('http', 'ws')
-            var uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VITE_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
-            this.client = new Client({
-                brokerURL: uri,
-                connectHeaders: {},
-                heartbeatIncoming: 4000,
-                heartbeatOutgoing: 4000
-            })
-        },
         async initDsMetadata() {
             if (this.existingProcessId) this.processId = this.existingProcessId
             if (this.existingInstanceId) this.instanceId = this.existingInstanceId
@@ -599,7 +597,10 @@ export default defineComponent({
         }
     },
     unmounted() {
-        if (this.client) this.client.deactivate()
+        if (Object.keys(this.client).length > 0) {
+            this.client.deactivate()
+            this.client = {}
+        }
     }
 })
 </script>

@@ -44,8 +44,8 @@
             <Column :style="mainDescriptor.style.iconColumn">
                 <template #header> &ensp; </template>
                 <template #body="slotProps">
-                    <Button icon="fas fa-check" v-if="isAvroLoaded(slotProps.data)" class="p-button-link" v-tooltip.left="$t('workspace.advancedData.avroReady')" />
-                    <Button icon="fa-solid fa-spinner" v-if="isAvroLoading(slotProps.data)" class="p-button-link" v-tooltip.left="$t('workspace.advancedData.avroLoading')" />
+                    <Button icon="far fa-circle-check" v-if="isAvroLoaded(slotProps.data.id)" class="p-button-link" v-tooltip.left="$t('workspace.advancedData.avroReady')" />
+                    <Button icon="fa-solid fa-spinner" v-if="isAvroLoading(slotProps.data.id)" class="p-button-link" v-tooltip.left="$t('workspace.advancedData.avroLoading')" />
                     <Button icon="fas fa-ellipsis-v" class="p-button-link" @click.stop="showMenu($event, slotProps.data)" />
                     <Button icon="fas fa-info-circle" class="p-button-link" v-tooltip.left="$t('workspace.myModels.showInfo')" @click.stop="showSidebar(slotProps.data)" :data-test="'info-button-' + slotProps.data.name" />
                     <Button icon="fas fa-eye" class="p-button-link" @click.stop="previewDataset(slotProps.data)" />
@@ -152,12 +152,15 @@ import { AxiosResponse } from 'axios'
 import { downloadDirectFromResponseWithCustomName } from '@/helpers/commons/fileHelper'
 import SelectButton from 'primevue/selectbutton'
 import QBE from '@/modules/qbe/QBE.vue'
-import { Client } from '@stomp/stompjs'
 import DataPreparationMonitoringDialog from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDialog.vue'
 import MultiSelect from 'primevue/multiselect'
 import moment from 'moment'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
+import { mapState, mapActions } from 'pinia'
+
 import mainStore from '../../../../App.store'
+import workspaceStore from '@/modules/workspace/Workspace.store.js'
+import { Client } from '@stomp/stompjs'
 
 export default defineComponent({
     components: {
@@ -184,14 +187,16 @@ export default defineComponent({
     emits: ['toggleDisplayView'],
     props: { toggleCardDisplay: { type: Boolean } },
     computed: {
+        ...mapState(mainStore, ['user']),
+        ...mapState(workspaceStore, ['dataPreparation', 'isAvroLoaded', 'isAvroLoading', 'isAvroReady']),
         isDatasetOwner(): any {
-            return (this.store.$state as any).user.userId === this.selectedDataset.owner
+            return this.user.userId === this.selectedDataset.owner
         },
         showCkanIntegration(): any {
-            return (this.store.$state as any).user.functionalities.indexOf('CkanIntegrationFunctionality') > -1
+            return this.user.functionalities.indexOf('CkanIntegrationFunctionality') > -1
         },
         showQbeEditButton(): any {
-            return (this.store.$state as any).user.userId === this.selectedDataset.owner && (this.selectedDataset.dsTypeCd == 'Federated' || this.selectedDataset.dsTypeCd == 'Qbe')
+            return this.user.userId === this.selectedDataset.owner && (this.selectedDataset.dsTypeCd == 'Federated' || this.selectedDataset.dsTypeCd == 'Qbe')
         },
         datasetHasDrivers(): any {
             return this.selectedDataset.drivers && this.selectedDataset.length > 0
@@ -228,9 +233,6 @@ export default defineComponent({
             selectedCategories: [] as any,
             selectedCategoryIds: [] as any,
             filteredDatasets: [] as any,
-            avroDatasets: [] as any,
-            loadingAvros: [] as any,
-            loadedAvros: [] as any,
             datasetCategories: [] as any,
             selectedDataset: {} as any,
             menuButtons: [] as any,
@@ -249,7 +251,6 @@ export default defineComponent({
             qbeVisible: false,
             client: {} as any,
             selectedQbeDataset: null,
-            user: null as any,
             showMonitoring: false,
             filtersData: {} as any,
             userRole: null,
@@ -257,16 +258,11 @@ export default defineComponent({
             exportFormat: ''
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     async created() {
-        this.userRole = (this.store.$state as any).user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? (this.store.$state as any).user.sessionRole : null
+        this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
         await this.getAllData()
-        this.user = (this.store.$state as any).user
 
-        if ((this.store.$state as any).user?.functionalities.includes('DataPreparation')) {
+        if (this.user?.functionalities.includes('DataPreparation')) {
             var url = new URL(window.location.origin)
             url.protocol = url.protocol.replace('http', 'ws')
             let uri = url + 'knowage-data-preparation/ws?' + import.meta.env.VITE_DEFAULT_AUTH_HEADER + '=' + localStorage.getItem('token')
@@ -287,16 +283,15 @@ export default defineComponent({
                     if (message.body) {
                         let avroJobResponse = JSON.parse(message.body)
                         if (avroJobResponse.statusOk) {
-                            this.store.setInfo({ title: 'Dataset prepared successfully' })
-                            this.loadedAvros.push(avroJobResponse.dsId)
-                            this.avroDatasets.push(avroJobResponse.dsId)
+                            this.setInfo({ title: 'Dataset prepared successfully' })
+                            this.addToLoadedAvros(avroJobResponse.dsId)
+                            this.addToAvroDatasets(avroJobResponse.dsId)
                         } else {
-                            this.store.setError({ title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
+                            this.setError({ title: 'Cannot prepare dataset', msg: avroJobResponse.errorMessage })
                         }
-                        let idx = this.loadingAvros.indexOf(avroJobResponse.dsId)
-                        if (idx >= 0) this.loadingAvros.splice(idx, 1)
+                        this.removeFromLoadingAvros(avroJobResponse.dsId)
                     } else {
-                        this.store.setError({ title: 'Websocket error', msg: 'got empty message' })
+                        this.setError({ title: 'Websocket error', msg: 'got empty message' })
                     }
                 })
             }
@@ -314,6 +309,8 @@ export default defineComponent({
     },
 
     methods: {
+        ...mapActions(mainStore, ['setInfo', 'setError']),
+        ...mapActions(workspaceStore, ['addToLoadedAvros', 'addToLoadingAvros', 'addToAvroDatasets', 'removeFromLoadingAvros', 'removeFromLoadedAvros', 'setAvroDatasets', 'setLoadedAvros']),
         async updatePreparedDataset(newDataset) {
             this.showEditPreparedDatasetDialog = false
             this.selectedDataset.name = newDataset.name
@@ -333,19 +330,14 @@ export default defineComponent({
                 }
             })
                 .then(() => {
-                    this.store.setInfo({ title: 'Updated successfully' })
+                    this.setInfo({ title: 'Updated successfully' })
                 })
                 .catch(() => {
-                    this.store.setError({ title: 'Save error', msg: 'Cannot update Prepared Dataset' })
+                    this.setError({ title: 'Save error', msg: 'Cannot update Prepared Dataset' })
                 })
             await this.getAllData()
         },
-        isAvroLoaded(dataset) {
-            return this.loadedAvros.indexOf(dataset.id) >= 0
-        },
-        isAvroLoading(dataset) {
-            return this.loadingAvros.indexOf(dataset.id) >= 0
-        },
+
         getDatasets(filter: string) {
             this.loading = true
             return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/${filter}/`)
@@ -354,7 +346,8 @@ export default defineComponent({
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/datasets/avro`)
                 .then((response: AxiosResponse<any>) => {
-                    this.avroDatasets = response.data
+                    this.setAvroDatasets(response.data)
+                    this.setLoadedAvros(response.data)
                 })
                 .catch(() => {})
         },
@@ -472,7 +465,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/export/dataset/${this.selectedDataset.id}/${this.exportFormat}`, postData ?? {}, { headers: { Accept: 'application/json, text/plain, */*', 'Content-Type': 'application/json;charset=UTF-8' } })
                 .then(() => {
-                    this.store.setInfo({
+                    this.setInfo({
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('workspace.myData.exportSuccess')
                     })
@@ -542,10 +535,7 @@ export default defineComponent({
             if (this.selectedDataset.dsTypeCd == 'File') this.showDatasetDialog = true
             else if (this.selectedDataset.dsTypeCd == 'Prepared') this.showEditPreparedDatasetDialog = true
         },
-        isAvroReady(dsId: Number) {
-            if (this.avroDatasets.indexOf(dsId) >= 0 || (dsId && this.avroDatasets.indexOf(dsId.toString())) >= 0) return true
-            else return false
-        },
+
         async generateAvro(dsId: Number) {
             // launch avro export job
             this.$http
@@ -560,17 +550,17 @@ export default defineComponent({
                     }
                 )
                 .then(() => {
-                    this.store.setInfo({
+                    this.setInfo({
                         title: this.$t('workspace.myData.isPreparing')
                     })
-                    this.loadingAvros.push(dsId)
-                    let idx = this.loadedAvros.indexOf(dsId)
-                    if (idx >= 0) this.loadedAvros.splice(idx, 1)
+                    this.addToLoadingAvros(dsId)
+                    let idx = this.dataPreparation.loadedAvros.indexOf(dsId)
+                    if (idx >= 0) this.removeFromLoadedAvros(idx)
                 })
                 .catch(() => {})
 
             // listen on websocket for avro export job to be finished
-            if ((this.store.$state as any).user?.functionalities.includes('DataPreparation')) this.client.publish({ destination: '/app/prepare', body: dsId })
+            if (this.user?.functionalities.includes('DataPreparation') && Object.keys(this.client).length > 0) this.client.publish({ destination: '/app/prepare', body: dsId })
         },
         openDataPreparation(dataset: any) {
             if (dataset.dsTypeCd == 'Prepared') {
@@ -591,12 +581,12 @@ export default defineComponent({
                                 }
                             },
                             () => {
-                                this.store.setError({ title: 'Save error', msg: 'Cannot create process' })
+                                this.setError({ title: 'Save error', msg: 'Cannot create process' })
                             }
                         )
                     },
                     () => {
-                        this.store.setError({
+                        this.setError({
                             title: 'Cannot open data preparation'
                         })
                     }
@@ -623,14 +613,14 @@ export default defineComponent({
                 })
                 .then((response: AxiosResponse<any>) => {
                     if (response.data.errors) {
-                        this.store.setError({
+                        this.setError({
                             title: this.$t('common.error.downloading'),
                             msg: this.$t('common.error.downloading')
                         })
                     } else {
                         let fileName = response.headers['content-disposition'].split('fileName=')[1].split(';')[0]
                         downloadDirectFromResponseWithCustomName(response, fileName)
-                        this.store.setInfo({ title: this.$t('common.toast.success') })
+                        this.setInfo({ title: this.$t('common.toast.success') })
                     }
                 })
         },
@@ -655,7 +645,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url)
                 .then(() => {
-                    this.store.setInfo({
+                    this.setInfo({
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -674,7 +664,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets`, dataset, { headers: { 'X-Disable-Errors': 'true' } })
                 .then(() => {
-                    this.store.setInfo({
+                    this.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -704,7 +694,7 @@ export default defineComponent({
             await this.$http
                 .delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/${dataset.label}`)
                 .then(() => {
-                    this.store.setInfo({
+                    this.setInfo({
                         title: this.$t('common.toast.deleteTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -810,16 +800,19 @@ export default defineComponent({
             await this.$http.post(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/process', newCron).then(
                 () => {
                     this.loadDataset(this.selectedDataset.label)
-                    this.store.setInfo({ title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
+                    this.setInfo({ title: this.$t('common.save'), msg: this.$t('common.toast.updateSuccess') })
                 },
                 () => {
-                    this.store.setError({ title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })
+                    this.setError({ title: this.$t('common.error.saving'), msg: this.$t('managers.workspaceManagement.dataPreparation.errors.updatingSchedulation') })
                 }
             )
         }
     },
     unmounted() {
-        if ((this.store.$state as any).user?.functionalities.includes('DataPreparation')) this.client.deactivate()
+        if (this.user?.functionalities.includes('DataPreparation') && this.client && Object.keys(this.client).length > 0) {
+            this.client.deactivate()
+            this.client = {}
+        }
     }
 })
 </script>

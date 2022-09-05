@@ -1052,36 +1052,6 @@ export default defineComponent({
                 if (newKey) navigationParams[newKey] = angularData.outputParameters[tempKey]
             }
         },
-        addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
-            if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
-            const keys = Object.keys(angularData.outputParameters)
-            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
-            for (let i = 0; i < keys.length; i++) {
-                const tempKey = keys[i]
-                let newKey = ''
-                for (let j = 0; j < documentNavigationParamsKeys.length; j++) {
-                    if (crossNavigationDocument.navigationParams[documentNavigationParamsKeys[j]].value?.label === tempKey) {
-                        newKey = documentNavigationParamsKeys[j]
-                    }
-                }
-                if (newKey) navigationParams[newKey] = angularData.outputParameters[tempKey]
-            }
-        },
-        addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
-            if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
-            const keys = Object.keys(angularData.outputParameters)
-            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
-            for (let i = 0; i < keys.length; i++) {
-                const tempKey = keys[i]
-                let newKey = ''
-                for (let j = 0; j < documentNavigationParamsKeys.length; j++) {
-                    if (crossNavigationDocument.navigationParams[documentNavigationParamsKeys[j]].value?.label === tempKey) {
-                        newKey = documentNavigationParamsKeys[j]
-                    }
-                }
-                if (newKey) navigationParams[newKey] = angularData.outputParameters[tempKey]
-            }
-        },
         openCrossNavigationInNewWindow(popupOptions: any, crossNavigationDocument: any, navigationParams: any) {
             if (!crossNavigationDocument || !crossNavigationDocument.document) return
             const parameters = encodeURI(JSON.stringify(navigationParams))
@@ -1240,7 +1210,7 @@ export default defineComponent({
         onCrossNavigationContainerClose() {
             this.crossNavigationContainerData = null
             this.crossNavigationContainerVisible = true
-            this.onBreadcrumbClick(this.breadcrumbs[0])
+            this.onBreadcrumbClick(this.breadcrumbs[this.breadcrumbs.length - 1])
         },
         addWidget() {
             emitter.emit('openNewWidgetPicker')

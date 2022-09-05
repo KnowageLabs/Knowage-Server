@@ -29,6 +29,7 @@ axios.interceptors.response.use(
         return res
     },
     function (error) {
+        const store = mainStore()
         if (error.response && error.response.status) {
             if (error.response.status === 401) {
                 authHelper.handleUnauthorized()

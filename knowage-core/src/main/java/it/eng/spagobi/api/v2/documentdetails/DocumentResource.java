@@ -47,6 +47,7 @@ import it.eng.spagobi.api.v2.documentdetails.subresources.TemplateResource;
 import it.eng.spagobi.api.v2.documentdetails.subresources.VisualDependenciesResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -129,6 +130,9 @@ public class DocumentResource extends AbstractSpagoBIResource {
 
 			documentDao.modifyBIObject(document);
 			document = documentDao.loadBIObjectById(document.getId());
+		} catch (SpagoBIDAOException e) {
+			logger.error("Document can not be updated", e);
+			throw new SpagoBIRestServiceException("Updating document has failed, document already exists", buildLocaleFromSession(), e);
 		} catch (EMFUserError e) {
 			logger.error("Document can not be updated", e);
 			throw new SpagoBIRestServiceException("Updating document has failed", buildLocaleFromSession(), e);
