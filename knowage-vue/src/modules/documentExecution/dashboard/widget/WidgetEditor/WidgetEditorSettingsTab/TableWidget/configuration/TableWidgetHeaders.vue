@@ -158,6 +158,7 @@ export default defineComponent({
                 }
                 if (this.headersModel.custom.rules[i].target.length === 0) this.headersModel.custom.rules.splice(i, 1)
             }
+            this.headersConfigurationChanged()
         }
     }
 })
