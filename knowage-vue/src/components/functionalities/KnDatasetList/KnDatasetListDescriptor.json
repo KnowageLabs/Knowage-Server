@@ -19,7 +19,9 @@
         {
             "field": "icon",
             "header": "",
-            "style": {}
+            "style": {
+                "width": "40px"
+            }
         }
     ],
     "responsiveLayout": "stack",
