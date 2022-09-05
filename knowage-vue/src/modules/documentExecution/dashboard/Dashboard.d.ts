@@ -54,6 +54,7 @@ export interface ITableWidgetConfiguration {
 }
 
 export interface ITableWidgetColumnGroup {
+    id: string,
     label: string,
     columns: string[]
 }

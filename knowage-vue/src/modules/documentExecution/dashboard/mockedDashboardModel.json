@@ -103,6 +103,7 @@
                                 "aliasToShow": "FID",
                                 "decript": false,
                                 "fieldType": "ATTRIBUTE",
+                                "group": "d83a2272-8887-4222-8a50-ef5df2cb72fa",
                                 "multiValue": false,
                                 "name": "FID",
                                 "personal": false,
@@ -121,6 +122,7 @@
                                 "aliasToShow": "the_geom",
                                 "decript": false,
                                 "fieldType": "ATTRIBUTE",
+                                "group": "de477ba5-6589-44f3-aba7-79eecb134615",
                                 "multiValue": false,
                                 "name": "the_geom",
                                 "personal": false,
@@ -135,6 +137,7 @@
                                 "aliasToShow": "store_id",
                                 "decript": false,
                                 "fieldType": "ATTRIBUTE",
+                                "group": "de477ba5-6589-44f3-aba7-79eecb134615",
                                 "multiValue": false,
                                 "name": "store_id",
                                 "personal": false,
@@ -197,6 +200,16 @@
                             "filterVal2": "",
                             "filterVals": ["2"],
                             "type": "java.lang.Integer"
+                        }
+                    ],
+                    "groups": [
+                        {
+                            "id": "d83a2272-8887-4222-8a50-ef5df2cb72fa",
+                            "name": "Column Group 1"
+                        },
+                        {
+                            "id": "de477ba5-6589-44f3-aba7-79eecb134615",
+                            "name": "Column Group 2"
                         }
                     ],
                     "id": 1661757385620,

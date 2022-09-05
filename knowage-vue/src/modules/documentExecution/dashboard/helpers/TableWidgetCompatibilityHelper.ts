@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -46,7 +46,15 @@ const getFormattedConditionalStyles = (widget: any) => {
 
 // TODO
 const getFormattedConfiguration = (formattedWidget: IWidget, widget: any) => {
-    return { columnGroups: [], exports: {}, headers: getHeadersConfiguration(widget), rows: getFormattedRows(widget), summaryRows: getFormattedSummaryRows(widget) }
+    return { columnGroups: getFormattedColumnGroups(widget), exports: {}, headers: getHeadersConfiguration(widget), rows: getFormattedRows(widget), summaryRows: getFormattedSummaryRows(widget) }
+}
+
+const getFormattedColumnGroups = (widget: any) => {
+    console.log("!!!!!!!!!!!!!!!! WIDGET: ", widget)
+    if (!widget.groups) return []
+    const formattedColumnGroups = [] as ITableWidgetColumnGroup[]
+    widget.groups.forEach((group: { id: string, name: string }) => formattedColumnGroups.push({ id: group.id, label: group.name, columns: [] }))
+
 }
 
 const getHeadersConfiguration = (widget: any) => {
@@ -63,7 +71,14 @@ const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any) => 
         const tempColumn = widget.content.columnSelectedOfDataset[i]
         getRowConfigurationFromWidgetColumn(formattedWidget, tempColumn)
         getHeaderConfigurationFromWidgetColumn(formattedWidget, tempColumn)
+        if (tempColumn.group) addColumnToColumnGroup(formattedWidget, tempColumn)
     }
+
+}
+
+const addColumnToColumnGroup = (formattedWidget: IWidget, tempColumn: any) => {
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>> formattedWidget, formattedWidget, ", formattedWidget)
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>> addColumnToColumnGroup, addColumnToColumnGroup, ", tempColumn)
 
 }
 
