@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration } from "../../../Dashboard"
+import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration, ITableWidgetHeaders } from "../../../Dashboard"
 import { formatRGBColor } from './WidgetEditorHelpers'
 import { emitter } from '../../../DashboardHelpers'
 import descriptor from '../WidgetEditorDescriptor.json'
@@ -285,6 +285,7 @@ const formatTableSettings = (widgetSettings: ITableWidgetSettings, widgetColumns
 
 const formatTableWidgetConfiguration = (widgetConfiguration: ITableWidgetConfiguration, widgetColumns: IWidgetColumn[]) => {
     // formatRowsConfiguration(widgetConfiguration, widgetColumns) // TODO - BE SAVE
+    formatHeadersConfiguration(widgetConfiguration, widgetColumns) // TODO - BE SAVE
     formatSummaryRows(widgetConfiguration)
 }
 
@@ -298,6 +299,30 @@ const formatRowsConfiguration = (widgetConfiguration: ITableWidgetConfiguration,
     }
     console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TEEEEEEST: ", widgetConfiguration.rows)
 }
+
+
+const formatHeadersConfiguration = (widgetConfiguration: ITableWidgetConfiguration, widgetColumns: IWidgetColumn[]) => {
+    if (!widgetConfiguration.headers) return
+    if (!widgetConfiguration.headers.custom.enabled) {
+        widgetConfiguration.headers.custom.rules = []
+        return
+    }
+
+    // formatHeaderConfigurationRules(widgetConfiguration.headers, widgetColumns) // TODO - BE SAVE
+}
+
+const formatHeaderConfigurationRules = (configurationHeaders: ITableWidgetHeaders, widgetColumns: IWidgetColumn[]) => {
+    for (let i = 0; i < configurationHeaders.custom.rules.length; i++) {
+        const tempRule = configurationHeaders.custom.rules[i]
+        const formattedRuleColumns = [] as string[]
+        for (let j = 0; j < tempRule.target.length; j++) {
+            formattedRuleColumns.push(getColumnName(tempRule.target[j], widgetColumns))
+        }
+        tempRule.target = formattedRuleColumns
+    }
+
+}
+
 
 const formatSummaryRows = (widgetConfiguration: ITableWidgetConfiguration) => {
     if (!widgetConfiguration.summaryRows) return

@@ -1,6 +1,6 @@
 <template>
     <div v-if="widgetModel">
-        <TableWidgetSettingsAccordion v-if="selectedSetting" :widgetModel="widgetModel" :settings="descriptor.settings[selectedSetting]"></TableWidgetSettingsAccordion>
+        <TableWidgetSettingsAccordion v-if="selectedSetting" :widgetModel="widgetModel" :settings="descriptor.settings[selectedSetting]" :drivers="drivers" :variables="variables"></TableWidgetSettingsAccordion>
     </div>
 </template>
 
@@ -14,7 +14,7 @@ import TableWidgetSettingsAccordion from './TableWidgetSettingsAccordion.vue'
 export default defineComponent({
     name: 'table-widget-settings-container',
     components: { TableWidgetSettingsAccordion },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedSetting: { type: String, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedSetting: { type: String, required: true }, drivers: { type: Array }, variables: { type: Array } },
     data() {
         return {
             descriptor

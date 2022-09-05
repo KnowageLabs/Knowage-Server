@@ -2,7 +2,7 @@
     <WidgetEditorList :widgetModel="propWidget" :settings="descriptor[propWidget.type].listSettings" :options="descriptor[propWidget.type].listOptions" @itemClicked="onItemClicked" data-test="widget-editor-settings-list"></WidgetEditorList>
     <div class="p-d-flex kn-flex kn-overflow">
         <!-- <WidgetEditorGeneric v-if="propWidget" id="model-div" class="kn-flex kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :propDescriptor="selectedDescriptor" data-test="widget-editor-generic"></WidgetEditorGeneric> -->
-        <TableWidgetSettingsContainer v-if="propWidget" id="model-div" class="kn-flex kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedSetting="selectedSetting"></TableWidgetSettingsContainer>
+        <TableWidgetSettingsContainer v-if="propWidget" id="model-div" class="kn-flex kn-overflow p-mx-2 p-my-3" :widgetModel="propWidget" :selectedSetting="selectedSetting" :drivers="drivers" :variables="variables"></TableWidgetSettingsContainer>
     </div>
 </template>
 
@@ -17,7 +17,7 @@ import WidgetEditorGeneric from '../WidgetEditorGeneric/WidgetEditorGeneric.vue'
 export default defineComponent({
     name: 'widget-editor-settings-tab',
     components: { TableWidgetSettingsContainer, WidgetEditorList, WidgetEditorGeneric },
-    props: { propWidget: { type: Object as PropType<IWidget>, required: true } },
+    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, drivers: { type: Array }, variables: { type: Array } },
     emits: [],
     data() {
         return {

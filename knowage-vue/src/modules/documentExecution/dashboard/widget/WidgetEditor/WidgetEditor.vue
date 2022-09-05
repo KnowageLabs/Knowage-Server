@@ -9,7 +9,7 @@
                 </template>
             </Toolbar>
             <div class="datasetEditor-container kn-overflow">
-                <WidgetEditorTabs class="dashboardEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" @datasetSelected="onDatasetSelected" />
+                <WidgetEditorTabs class="dashboardEditor-tabs" :propWidget="widget" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers" :variables="variables" @datasetSelected="onDatasetSelected" />
                 <WidgetEditorPreview id="widget-editor-preview" :propWidget="widget" />
             </div>
         </div>
@@ -35,7 +35,7 @@ export default defineComponent({
     name: 'widget-editor',
     components: { WidgetEditorPreview, WidgetEditorTabs },
     emits: ['close', 'widgetUpdated', 'widgetSaved'],
-    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> } },
+    props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, drivers: { type: Array }, variables: { type: Array } },
     data() {
         return {
             descriptor,
@@ -43,7 +43,8 @@ export default defineComponent({
             previewData: null as any,
             datasetFunctions: {} as { availableFunctions: string[]; nullifFunction: string[] },
             selectedModelDatasets: [] as IModelDataset[],
-            selectedDatasets: [] as IDataset[]
+            selectedDatasets: [] as IDataset[],
+            drivers: [] as any[]
         }
     },
     watch: {
@@ -60,6 +61,7 @@ export default defineComponent({
         this.loadWidget()
         this.loadSelectedModelDatasets()
         this.loadSelectedModel()
+        this.loadDrivers()
     },
     methods: {
         loadWidget() {
@@ -81,6 +83,23 @@ export default defineComponent({
                 const index = this.datasets.findIndex((dataset: any) => dataset.id.dsId === tempDataset.id)
                 if (index !== -1) this.selectedDatasets.push({ ...this.datasets[index], cache: tempDataset.cache, indexes: tempDataset.indexes ?? [], parameters: tempDataset.parameters as any[], drivers: tempDataset.drivers ?? [] })
             }
+        },
+        loadDrivers() {
+            // TODO - remove mock
+            this.drivers = [
+                {
+                    name: 'Driver 1',
+                    type: 'static',
+                    multivalue: false,
+                    value: 'Driver 1'
+                },
+                {
+                    name: 'Driver 2',
+                    type: 'dynamic',
+                    multivalue: false,
+                    value: 'Driver 2'
+                }
+            ]
         },
         onDatasetSelected(dataset: IWidgetEditorDataset) {
             this.loadPreviewData(dataset)

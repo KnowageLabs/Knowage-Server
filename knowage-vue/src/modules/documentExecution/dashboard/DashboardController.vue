@@ -10,7 +10,17 @@
 
         <WidgetPickerDialog v-if="widgetPickerVisible" :visible="widgetPickerVisible" @openNewWidgetEditor="openNewWidgetEditor" @closeWidgetPicker="widgetPickerVisible = false" />
     </div>
-    <WidgetEditor v-if="widgetEditorVisible" :propWidget="selectedWidget" :datasets="datasets" @close="closeWidgetEditor" @widgetSaved="closeWidgetEditor" @widgetUpdated="closeWidgetEditor" data-test="widget-editor"></WidgetEditor>
+    <WidgetEditor
+        v-if="widgetEditorVisible"
+        :propWidget="selectedWidget"
+        :datasets="datasets"
+        :documentDrivers="[]"
+        :variables="model ? model.configuration.variables : []"
+        @close="closeWidgetEditor"
+        @widgetSaved="closeWidgetEditor"
+        @widgetUpdated="closeWidgetEditor"
+        data-test="widget-editor"
+    ></WidgetEditor>
 </template>
 
 <script lang="ts">
@@ -39,7 +49,7 @@ export default defineComponent({
     props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> } },
     data() {
         return {
-            model: mock,
+            model: mock as any,
             widgetPickerVisible: false,
             datasetEditorVisible: false,
             datasets: [] as any[],

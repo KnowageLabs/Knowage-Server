@@ -63,7 +63,29 @@
             },
             "titles": false
         },
-        "variables": []
+        "variables": [
+            {
+                "name": "Variable Static",
+                "type": "static",
+                "value": "Static Value"
+            },
+            {
+                "column": "FID",
+                "dataset": 166,
+                "name": "Variable Dataset",
+                "type": "dataset"
+            },
+            {
+                "driver": "Driver",
+                "name": "Variable Driver",
+                "type": "driver"
+            },
+            {
+                "attribute": "user_id",
+                "name": "Variable Profile",
+                "type": "profile"
+            }
+        ]
     },
     "knowageVersion": "8.1.0-S",
     "sheets": [
