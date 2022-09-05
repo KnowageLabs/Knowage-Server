@@ -37,6 +37,7 @@ public class TableExporter extends GenericWidgetExporter implements IWidgetExpor
 		try {
 			JSONObject template = new JSONObject(templateString);
 			JSONObject widget = getWidgetById(template, widgetId);
+			JSONObject settings = widget.getJSONObject("settings");
 			String widgetName = getWidgetName(widget);
 			String cockpitSheetName = getCockpitSheetName(template, widgetId);
 			Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
@@ -47,7 +48,7 @@ public class TableExporter extends GenericWidgetExporter implements IWidgetExpor
 			if (dataStore != null) {
 				int totalNumberOfRows = dataStore.getInt("results");
 				while (offset < totalNumberOfRows) {
-					excelExporter.fillSheetWithData(dataStore, wb, sheet, widgetName, offset);
+					excelExporter.fillSheetWithData(dataStore, wb, sheet, widgetName, offset, settings);
 					offset += fetchSize;
 					dataStore = excelExporter.getDataStoreForWidget(template, widget, offset, fetchSize);
 				}
