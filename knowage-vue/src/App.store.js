@@ -27,7 +27,12 @@ const store = createStore({
             },
             documentExecution: {},
             theme: {},
-            defaultTheme: {}
+            defaultTheme: {},
+            dataPreparation: {
+                loadedAvros: [],
+                loadingAvros: [],
+                avroDatasets: []
+            }
         }
     },
     actions: {
@@ -106,6 +111,51 @@ const store = createStore({
         },
         setDefaultTheme(state, defaultTheme) {
             state.defaultTheme = defaultTheme
+        },
+        addToLoadedAvros(state, dsId) {
+            let stringId = dsId.toString()
+            let idx = state.dataPreparation.loadedAvros.indexOf(stringId)
+            if (idx == -1) state.dataPreparation.loadedAvros.push(stringId)
+        },
+        addToAvroDatasets(state, dsId) {
+            let stringId = dsId.toString()
+            let idx = state.dataPreparation.avroDatasets.indexOf(stringId)
+            if (idx == -1) state.dataPreparation.avroDatasets.push(stringId)
+        },
+        addToLoadingAvros(state, dsId) {
+            let stringId = dsId.toString()
+            let idx = state.dataPreparation.loadingAvros.indexOf(stringId)
+            if (idx == -1) state.dataPreparation.loadingAvros.push(stringId)
+        },
+        removeFromLoadedAvros(state, dsId) {
+            let stringId = dsId.toString()
+            let idx = state.dataPreparation.loadedAvros.indexOf(stringId)
+            if (idx >= 0) state.dataPreparation.loadedAvros.splice(idx, 1)
+        },
+        removeFromLoadingAvros(state, dsId) {
+            let stringId = dsId.toString()
+            let idx = state.dataPreparation.loadingAvros.indexOf(stringId)
+            if (idx >= 0) state.dataPreparation.loadingAvros.splice(idx, 1)
+        },
+        setAvroDatasets(state, data) {
+            state.dataPreparation.avroDatasets = data
+        },
+        setLoadedAvros(state, data) {
+            state.dataPreparation.loadedAvros = data
+        }
+    },
+    getters: {
+        isAvroLoaded(state) {
+            return (id) => state.dataPreparation.loadedAvros.indexOf(id.toString()) >= 0
+        },
+        isAvroLoading(state) {
+            return (id) => state.dataPreparation.loadingAvros.indexOf(id.toString()) >= 0
+        },
+        isAvroReady(state) {
+            return (dsId) => {
+                if ((dsId && state.dataPreparation.avroDatasets.indexOf(dsId.toString()) >= 0) || (dsId && state.dataPreparation.avroDatasets.indexOf(dsId.toString())) >= 0) return true
+                else return false
+            }
         }
     }
 })

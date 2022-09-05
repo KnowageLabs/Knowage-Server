@@ -121,6 +121,7 @@
         "object": "Object",
         "ok": "ok",
         "onlineHelp": "Help Online",
+        "open": "Open",
         "options": "Options",
         "order": "Order",
         "orderBy": "Order by",
@@ -2459,6 +2460,7 @@
     },
     "workspace": {
         "advancedData": {
+            "chooseDataset": "Choose dataset",
             "title": "Data preparation"
         },
         "buttonsTooltips": {
