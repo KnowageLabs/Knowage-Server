@@ -23,7 +23,6 @@
 package it.eng.spagobi.tools.dataset.service;
 
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.io.File;
@@ -50,6 +49,7 @@ import org.json.JSONObject;
 import org.json.JSONObjectDeserializator;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
@@ -723,14 +723,13 @@ public class ManageDataSetsForREST {
 					if (isNotEmpty(tempVal) && tempVal.startsWith("[") && tempVal.endsWith("]")) {
 						JSONArray arrayValue = new JSONArray(tempVal);
 
-						for (int j=0; j < arrayValue.length(); j++) {
+						for (int j = 0; j < arrayValue.length(); j++) {
 							listValue.add(arrayValue.get(j));
 						}
 					} else {
 						// TODO : Delete this branch when the format between preview and save dataset will be the same
 						listValue = Arrays.asList(tempVal.split(","));
 					}
-
 
 					value = getMultiValueForSolr(listValue, type);
 				} else {
@@ -893,7 +892,7 @@ public class ManageDataSetsForREST {
 
 		File originalDatasetFile = new File(filePath + originalFileName);
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
-
+		PathTraversalChecker.preventPathTraversalAttack(newDatasetFile, new File(fileNewPath));
 		String filePathCloning = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
 		File originalDatasetFileCloning = new File(filePathCloning + originalFileName);
 
@@ -1569,10 +1568,7 @@ public class ManageDataSetsForREST {
 	}
 
 	private String getMultiValueForSolr(List<Object> value, String type) {
-		return value.stream()
-			.map(String::valueOf)
-			.map(e -> getSingleValueForSolr(e, type))
-			.collect(joining(" OR ", "(", ")"));
+		return value.stream().map(String::valueOf).map(e -> getSingleValueForSolr(e, type)).collect(joining(" OR ", "(", ")"));
 	}
 
 	private void checkFileDataset(IDataSet dataSet) {

@@ -71,6 +71,7 @@ import org.safehaus.uuid.UUIDGenerator;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.SessionContainer;
@@ -1245,6 +1246,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				}
 				String tempFile = Paths.get(saveDirectoryPath.toString(), file.getFileName()).toString();
 				File tempFileToSave = new File(tempFile);
+				PathTraversalChecker.preventPathTraversalAttack(tempFileToSave, saveDirectory);
 				tempFileToSave.createNewFile();
 				DataOutputStream os = new DataOutputStream(new FileOutputStream(tempFileToSave));
 				os.write(bytes);

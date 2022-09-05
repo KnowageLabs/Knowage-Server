@@ -54,6 +54,7 @@ import org.json.JSONObject;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
@@ -354,7 +355,7 @@ public class SelfServiceDataSetCRUD {
 				String fileName = fileDataset.getFileName();
 				String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
 				File datasetFile = new File(filePath + fileName);
-
+				PathTraversalChecker.preventPathTraversalAttack(datasetFile, new File(filePath));
 				if (datasetFile.exists()) {
 					boolean isDeleted = datasetFile.delete();
 					if (isDeleted) {
