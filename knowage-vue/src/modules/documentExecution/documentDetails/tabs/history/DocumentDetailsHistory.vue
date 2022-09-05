@@ -180,7 +180,6 @@ export default defineComponent({
             }
         },
         selectTemplate(event) {
-            console.log('-----------', event)
             this.selectedTemplate = event as iTemplate
             this.setFileType(event)
             this.changeCodemirrorMode()
@@ -199,7 +198,6 @@ export default defineComponent({
         async uploadTemplate(uploadedFile) {
             var formData = new FormData()
             formData.append('file', uploadedFile)
-            console.log(uploadedFile)
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates`, formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
                 .then(async () => {
