@@ -1,5 +1,6 @@
 <template>
     <div v-if="headersModel">
+        {{ headersModel }}
         <div class="p-d-flex p-flex-row p-ai-center p-m-3">
             <div class="kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.headers.enableHeader') }}</label>
@@ -77,7 +78,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetHeaders, ITableWidgetHeadersRule } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, ITableWidgetHeaders, ITableWidgetHeadersRule, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -96,9 +97,13 @@ export default defineComponent({
         }
     },
     created() {
+        this.setEventListeners()
         this.loadHeadersModel()
     },
     methods: {
+        setEventListeners() {
+            emitter.on('collumnRemoved', (column) => this.onColumnRemoved(column))
+        },
         loadHeadersModel() {
             if (this.widgetModel?.settings?.configuration) this.headersModel = this.widgetModel.settings.configuration.headers
         },
@@ -143,6 +148,16 @@ export default defineComponent({
             if (!this.headersModel) return
             this.headersModel.custom.rules.splice(index, 1)
             this.headersConfigurationChanged()
+        },
+        onColumnRemoved(column: IWidgetColumn) {
+            if (!this.headersModel) return
+            for (let i = this.headersModel.custom.rules.length - 1; i >= 0; i--) {
+                for (let j = this.headersModel.custom.rules[i].target.length; j >= 0; j--) {
+                    const tempTarget = this.headersModel.custom.rules[i].target[j]
+                    if (column.id === tempTarget) this.headersModel.custom.rules[i].target.splice(j, 1)
+                }
+                if (this.headersModel.custom.rules[i].target.length === 0) this.headersModel.custom.rules.splice(i, 1)
+            }
         }
     }
 })
