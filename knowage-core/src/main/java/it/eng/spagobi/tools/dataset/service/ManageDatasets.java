@@ -38,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import commonj.work.WorkException;
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
@@ -1599,6 +1600,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 		File originalDatasetFile = new File(filePath + originalFileName);
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
+		PathTraversalChecker.preventPathTraversalAttack(newDatasetFile, new File(fileNewPath));
 		if (originalDatasetFile.exists()) {
 			/*
 			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
