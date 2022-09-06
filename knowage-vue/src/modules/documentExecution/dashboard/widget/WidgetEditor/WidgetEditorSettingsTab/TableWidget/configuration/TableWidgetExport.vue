@@ -17,7 +17,7 @@
             </div>
 
             <div class="p-d-flex p-flex-row p-ai-center kn-flex">
-                <div class="field-radiobutton p-m-2">
+                <div class="field-radiobutton p-d-flex p-ai-center p-m-2">
                     <RadioButton v-model="selectedExport" name="export" value="custom" :disabled="!exportModel.pdf.enabled" @change="onSelectedExportChanged" />
                     <label class="kn-material-input-label p-m-2"> {{ $t('common.custom') }}</label>
                 </div>
