@@ -41,7 +41,7 @@
                 </div>
                 <div v-if="rule.action === 'setLabel'" class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.compareValueType') }}</label>
-                    <Dropdown class="kn-material-input" v-model="rule.compareType" :options="descriptor.headersCompareValueType" optionValue="value" :disabled="!headersModel.custom.enabled" @change="onHeadersCompareValueChanged(rule)">
+                    <Dropdown class="kn-material-input" v-model="rule.compareType" :options="descriptor.headersCompareValueType" optionValue="value" :disabled="!headersModel.custom.enabled" @change="headersConfigurationChanged">
                         <template #value="slotProps">
                             <div>
                                 <span>{{ slotProps.value }}</span>
@@ -62,11 +62,11 @@
                     </div>
                     <div v-else-if="rule.compareType === 'variable'" class="p-d-flex p-flex-column kn-flex p-m-2">
                         <label class="kn-material-input-label p-mr-2">{{ $t('common.variable') }}</label>
-                        <Dropdown class="kn-material-input" v-model="rule.variable" :options="variables" optionValue="value" optionLabel="name" :disabled="!headersModel.custom.enabled" @change="headersConfigurationChanged"> </Dropdown>
+                        <Dropdown class="kn-material-input" v-model="rule.value" :options="variables" optionValue="value" optionLabel="name" :disabled="!headersModel.custom.enabled" @change="headersConfigurationChanged"> </Dropdown>
                     </div>
                     <div v-else-if="rule.compareType === 'parameter'" class="p-d-flex p-flex-column kn-flex p-m-2">
                         <label class="kn-material-input-label p-mr-2">{{ $t('common.parameter') }}</label>
-                        <Dropdown class="kn-material-input" v-model="rule.parameter" :options="drivers" optionValue="value" optionLabel="name" :disabled="!headersModel.custom.enabled" @change="headersConfigurationChanged"> </Dropdown>
+                        <Dropdown class="kn-material-input" v-model="rule.value" :options="drivers" optionValue="value" optionLabel="name" :disabled="!headersModel.custom.enabled" @change="headersConfigurationChanged"> </Dropdown>
                     </div>
                 </div>
                 <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', !headersModel.custom.enabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="index === 0 ? addHeadersRule() : removeHeadersRule(index)"></i>
@@ -111,23 +111,7 @@ export default defineComponent({
         },
         onHeadersRuleActionChanged(rule: ITableWidgetHeadersRule) {
             if (rule.action === 'hide') {
-                delete rule.variable
-            }
-            this.headersConfigurationChanged()
-        },
-        onHeadersCompareValueChanged(rule: ITableWidgetHeadersRule) {
-            switch (rule.compareType) {
-                case 'static':
-                    ;['variable', 'parameter'].forEach((field: string) => delete rule[field])
-                    rule.value = ''
-                    break
-                case 'variable':
-                    ;['static', 'parameter'].forEach((field: string) => delete rule[field])
-                    rule.variable = ''
-                    break
-                case 'parameter':
-                    ;['static', 'variable'].forEach((field: string) => delete rule[field])
-                    rule.parameter = ''
+                delete rule.value
             }
             this.headersConfigurationChanged()
         },
