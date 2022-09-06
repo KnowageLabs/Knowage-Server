@@ -46,11 +46,16 @@ export interface ITableWidgetConditionalStyle {
     }
 }
 export interface ITableWidgetConfiguration {
-    columnGroups: ITableWidgetColumnGroup[]
+    columnGroups: ITableWidgetColumnGroups,
     exports: ITableWidgetExports
     headers: ITableWidgetHeaders
     rows: ITableWidgetRows
     summaryRows: ITableWidgetSummaryRows
+}
+
+export interface ITableWidgetColumnGroups {
+    enabled: boolean,
+    groups: ITableWidgetColumnGroup[]
 }
 
 export interface ITableWidgetColumnGroup {

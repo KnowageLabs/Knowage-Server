@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -50,10 +50,10 @@ const getFormattedConfiguration = (formattedWidget: IWidget, widget: any) => {
 }
 
 const getFormattedColumnGroups = (widget: any) => {
-    console.log("!!!!!!!!!!!!!!!! WIDGET: ", widget)
     if (!widget.groups) return []
     const formattedColumnGroups = [] as ITableWidgetColumnGroup[]
     widget.groups.forEach((group: { id: string, name: string }) => formattedColumnGroups.push({ id: group.id, label: group.name, columns: [] }))
+    return { enabled: true, groups: formattedColumnGroups } as ITableWidgetColumnGroups
 
 }
 
@@ -77,9 +77,9 @@ const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any) => 
 }
 
 const addColumnToColumnGroup = (formattedWidget: IWidget, tempColumn: any) => {
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>> formattedWidget, formattedWidget, ", formattedWidget)
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>> addColumnToColumnGroup, addColumnToColumnGroup, ", tempColumn)
-
+    const columnGroups = formattedWidget.settings.configuration.columnGroups.groups
+    const index = columnGroups.findIndex((columnGroup: ITableWidgetColumnGroup) => columnGroup.id === tempColumn.group)
+    if (index !== -1) columnGroups[index].columns.push(getColumnId(formattedWidget, tempColumn.name))
 }
 
 const getRowConfigurationFromWidgetColumn = (formattedWidget: IWidget, column: any) => {
@@ -140,8 +140,6 @@ const getFormattedResponsivnes = (widget: any) => {
 }
 
 const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {
-    // console.log("----------------------- getFiltersForColumns: ", formattedWidget)
-    // console.log("----------------------- getFiltersForColumns oldWidget: ", oldWidget)
     if (!oldWidget.filters || oldWidget.filters.length === 0) return
     for (let i = 0; i < oldWidget.filters.length; i++) {
         const tempFilter = oldWidget.filters[i]

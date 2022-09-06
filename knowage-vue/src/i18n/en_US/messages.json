@@ -368,6 +368,10 @@
             },
             "columnDetails": "Column Details",
             "columnFilterHint": "Select the filter operator and the value for the column. Remember to use the correct database sintax for the value. ie: %LIKE%",
+            "columnGroups": {
+                "enableColumnGroups": "Enable Column Groups",
+                "title": "Column Groups"
+            },
             "compareValueType": "Compare value type",
             "conditionalStyle": {
                 "compareValue": "Compare value",
