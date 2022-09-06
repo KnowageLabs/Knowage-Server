@@ -374,7 +374,7 @@ public abstract class AbstractFormatExporter {
 				JSONObject orderedCol = columnsOrdered.getJSONObject(i);
 				for (int j = 0; j < columns.length(); j++) {
 					JSONObject col = columns.getJSONObject(j);
-					if (orderedCol.getString("header").equals(getTableColumnHeaderValue(col))) {
+					if (col.has("aliasToShow") && orderedCol.getString("header").equals(getTableColumnHeaderValue(col))) {
 						if (col.has("style")) {
 							toReturn[i] = col.getJSONObject("style");
 						}
@@ -686,8 +686,8 @@ public abstract class AbstractFormatExporter {
 				CellStyle toReturnn = getCellStyleByFormat(wb, helper, format);
 				return toReturnn;
 			}
-
-			setRowStyle(settings, rowObject, mapColumns, toReturn, mapColumnsTypes, variablesMap, parametersMap);
+			if (settings != null)
+				setRowStyle(settings, rowObject, mapColumns, toReturn, mapColumnsTypes, variablesMap, parametersMap);
 
 			if (column.has("ranges")) {
 				JSONArray ranges = column.getJSONArray("ranges");
@@ -804,8 +804,8 @@ public abstract class AbstractFormatExporter {
 				CellStyle toReturnFormat = getCellStyleByFormat(wb, helper, format);
 				return toReturnFormat;
 			}
-
-			setRowStyle(settings, rowObject, mapColumns, toReturn, mapColumnsTypes, variablesMap, parametersMap);
+			if (settings != null)
+				setRowStyle(settings, rowObject, mapColumns, toReturn, mapColumnsTypes, variablesMap, parametersMap);
 
 			if (column.has("ranges")) {
 				JSONArray ranges = column.getJSONArray("ranges");
@@ -821,7 +821,10 @@ public abstract class AbstractFormatExporter {
 							if (threshold.getString("compareValueType").equals("static"))
 								valueToPut = threshold.getDouble("value");
 							else if (threshold.getString("compareValueType").equals("variable")) {
-								valueToPut = Double.parseDouble(variablesMap.get(threshold.getString("value")).toString());
+								valueToPut = variablesMap.get(threshold.getString("value")) == null ? null
+										: Double.parseDouble(variablesMap.get(threshold.getString("value")).toString());
+								if (valueToPut == null)
+									break;
 							} else if (threshold.getString("compareValueType").equals("parameter") && parametersMap.get(threshold.getString("value")) != null) {
 								valueToPut = Double.parseDouble(parametersMap.get(threshold.getString("value")).toString());
 							} else {
@@ -1160,8 +1163,8 @@ public abstract class AbstractFormatExporter {
 				CellStyle toReturnFormat = getCellStyleByFormat(wb, helper, format);
 				return toReturnFormat;
 			}
-
-			setRowStyle(settings, rowObject, mapColumns, toReturn, mapColumnsTypes, variablesMap, parametersMap);
+			if (settings != null)
+				setRowStyle(settings, rowObject, mapColumns, toReturn, mapColumnsTypes, variablesMap, parametersMap);
 
 			if (column.has("ranges")) {
 				JSONArray ranges = column.getJSONArray("ranges");
@@ -1258,8 +1261,8 @@ public abstract class AbstractFormatExporter {
 		XSSFCellStyle toReturn = (XSSFCellStyle) wb.createCellStyle();
 		toReturn.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
 		try {
-
-			setRowStyle(settings, rowObject, mapColumns, toReturn, mapColumnsTypes, variablesMap, parametersMap);
+			if (settings != null)
+				setRowStyle(settings, rowObject, mapColumns, toReturn, mapColumnsTypes, variablesMap, parametersMap);
 
 			return toReturn;
 		} catch (Exception e) {

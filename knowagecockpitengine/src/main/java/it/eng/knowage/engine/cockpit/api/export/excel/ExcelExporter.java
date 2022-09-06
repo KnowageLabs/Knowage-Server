@@ -23,12 +23,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -350,21 +348,20 @@ public class ExcelExporter extends AbstractFormatExporter {
 						currWidgetOptions);
 				exportedSheets += widgetExporter.export();
 
-				HashMap<String, HashMap<String, Object>> selectionsMap = new HashMap<String, HashMap<String, Object>>();
-				try {
-					selectionsMap = createSelectionsMap();
-				} catch (JSONException e) {
-					throw new SpagoBIRuntimeException("Unable to get selection map: ", e);
-				}
-				if (!selectionsMap.isEmpty()) {
-					Sheet selectionsSheet = createUniqueSafeSheetForSelections(wb, "Active Selections");
-					fillSelectionsSheetWithData(selectionsMap, wb, selectionsSheet, "Selections");
-					exportedSheets++;
-				}
-
 			} catch (Exception e) {
 				logger.error("Error while exporting widget [" + widgetId + "]", e);
 			}
+		}
+		HashMap<String, HashMap<String, Object>> selectionsMap = new HashMap<String, HashMap<String, Object>>();
+		try {
+			selectionsMap = createSelectionsMap();
+		} catch (JSONException e) {
+			throw new SpagoBIRuntimeException("Unable to get selection map: ", e);
+		}
+		if (!selectionsMap.isEmpty()) {
+			Sheet selectionsSheet = createUniqueSafeSheetForSelections(wb, "Active Selections");
+			fillSelectionsSheetWithData(selectionsMap, wb, selectionsSheet, "Selections");
+			exportedSheets++;
 		}
 		return exportedSheets;
 	}
@@ -488,25 +485,22 @@ public class ExcelExporter extends AbstractFormatExporter {
 		int j = 1;
 		for (String key : selectionsMap.keySet()) {
 
-			for (int i = 0; i < selectionsMap.size(); i++) {
+			for (String selectionskey : selectionsMap.get(key).keySet()) {
 
-				for (String selectionskey : selectionsMap.get(key).keySet()) {
+				Row row = sheet.createRow(j++);
 
-					Row row = sheet.createRow(j++);
+				Cell cellData0 = row.createCell(0);
+				cellData0.setCellValue(key);
 
-					Cell cellData0 = row.createCell(0);
-					cellData0.setCellValue(key);
+				Cell cellData1 = row.createCell(1);
+				cellData1.setCellValue(selectionskey);
 
-					Cell cellData1 = row.createCell(1);
-					cellData1.setCellValue(selectionskey);
+				Cell cellData2 = row.createCell(2);
 
-					Cell cellData2 = row.createCell(2);
-
-					cellData2.setCellValue(extractSelectionValues("" + selectionsMap.get(key).get(selectionskey)));
-
-				}
+				cellData2.setCellValue(extractSelectionValues("" + selectionsMap.get(key).get(selectionskey)));
 
 			}
+
 		}
 
 	}
@@ -570,13 +564,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 					}
 				}
 			}
-			if (body.has("COCKPIT_VARIABLES")) {
-				if (body.get("COCKPIT_VARIABLES") instanceof JSONObject) {
-					JSONObject variableOBJ = body.getJSONObject("COCKPIT_VARIABLES");
-					variablesMap = new Gson().fromJson(variableOBJ.toString(), HashMap.class);
 
-				}
-			}
 			// column.header matches with name or alias
 			// Fill Header
 			JSONArray groupsArray = new JSONArray();
@@ -661,6 +649,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			HashMap<String, Object> mapParameters = new HashMap<String, Object>();
 
 			mapParameters = createMapParameters(mapParameters);
+			variablesMap = createMapVariables(variablesMap);
 			// FILL RECORDS
 			int isGroup = mapGroupsAndColumns.isEmpty() ? 0 : 1;
 			for (int r = 0; r < rows.length(); r++) {
@@ -747,14 +736,34 @@ public class ExcelExporter extends AbstractFormatExporter {
 		}
 	}
 
+	private HashMap<String, Object> createMapVariables(HashMap<String, Object> variablesMap) throws JSONException {
+		if (body.has("COCKPIT_VARIABLES")) {
+			if (body.get("COCKPIT_VARIABLES") instanceof JSONObject) {
+				JSONObject variableOBJ = body.getJSONObject("COCKPIT_VARIABLES");
+				variablesMap = new Gson().fromJson(variableOBJ.toString(), HashMap.class);
+
+			} else if (body.get("COCKPIT_VARIABLES") instanceof JSONArray) {
+
+				for (int j = 0; j < body.getJSONArray("COCKPIT_VARIABLES").length(); j++) {
+					JSONObject variableOBJ = body.getJSONArray("COCKPIT_VARIABLES").getJSONObject(j);
+					variablesMap = new Gson().fromJson(variableOBJ.toString(), HashMap.class);
+
+				}
+
+			}
+
+		}
+		return variablesMap;
+	}
+
 	private HashMap<String, Object> createMapParameters(HashMap<String, Object> mapParameters) throws JSONException {
 		if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONObject && body.getJSONObject("COCKPIT_SELECTIONS").has("drivers")) {
 			mapParameters = getParametersMap(body.getJSONObject("COCKPIT_SELECTIONS").getJSONObject("drivers"));
 		} else if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONArray) {
 			for (int j = 0; j < body.getJSONArray("COCKPIT_SELECTIONS").length(); j++) {
-
-				mapParameters = getParametersMap(body.getJSONArray("COCKPIT_SELECTIONS").getJSONObject(j).getJSONObject("drivers"));
-
+				if (body.getJSONArray("COCKPIT_SELECTIONS").getJSONObject(j).has("drivers")) {
+					mapParameters = getParametersMap(body.getJSONArray("COCKPIT_SELECTIONS").getJSONObject(j).getJSONObject("drivers"));
+				}
 			}
 		}
 		return mapParameters;
@@ -828,6 +837,34 @@ public class ExcelExporter extends AbstractFormatExporter {
 			for (int i = 0; i < cockpitSelections.length(); i++) {
 				JSONObject cockpitSelection = cockpitSelections.getJSONObject(i);
 
+				if (cockpitSelection.has("selections")) {
+					JSONObject selections = cockpitSelection.getJSONObject("selections");
+
+					Iterator<String> keys = selections.keys();
+
+					while (keys.hasNext()) {
+						String key = keys.next();
+						if (selections.get(key) instanceof JSONObject) {
+							JSONObject selection = (JSONObject) selections.get(key);
+							Iterator<String> selectionKeys = selection.keys();
+							HashMap<String, Object> selects = new HashMap<String, Object>();
+
+							while (selectionKeys.hasNext()) {
+								String selKey = selectionKeys.next();
+								Object select = selection.get(selKey);
+								if (!selKey.contains(",")) {
+									selects.put(selKey, select);
+								}
+							}
+							selectionsMap.put(key, selects);
+						}
+					}
+				}
+			}
+		} else if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONObject) {
+
+			JSONObject cockpitSelection = body.getJSONObject("COCKPIT_SELECTIONS");
+			if (cockpitSelection.has("selections")) {
 				JSONObject selections = cockpitSelection.getJSONObject("selections");
 
 				Iterator<String> keys = selections.keys();
@@ -837,43 +874,19 @@ public class ExcelExporter extends AbstractFormatExporter {
 					if (selections.get(key) instanceof JSONObject) {
 						JSONObject selection = (JSONObject) selections.get(key);
 						Iterator<String> selectionKeys = selection.keys();
-						List<Object> selectList = new ArrayList<Object>();
 						HashMap<String, Object> selects = new HashMap<String, Object>();
 
 						while (selectionKeys.hasNext()) {
 							String selKey = selectionKeys.next();
 							Object select = selection.get(selKey);
-							selects.put(selKey, select);
+							if (!selKey.contains(",")) {
+								selects.put(selKey, select);
+							}
 						}
 						selectionsMap.put(key, selects);
 					}
 				}
 			}
-		} else if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONObject) {
-
-			JSONObject cockpitSelection = body.getJSONObject("COCKPIT_SELECTIONS");
-
-			JSONObject selections = cockpitSelection.getJSONObject("selections");
-
-			Iterator<String> keys = selections.keys();
-
-			while (keys.hasNext()) {
-				String key = keys.next();
-				if (selections.get(key) instanceof JSONObject) {
-					JSONObject selection = (JSONObject) selections.get(key);
-					Iterator<String> selectionKeys = selection.keys();
-					List<Object> selectList = new ArrayList<Object>();
-					HashMap<String, Object> selects = new HashMap<String, Object>();
-
-					while (selectionKeys.hasNext()) {
-						String selKey = selectionKeys.next();
-						Object select = selection.get(selKey);
-						selects.put(selKey, select);
-					}
-					selectionsMap.put(key, selects);
-				}
-			}
-
 		}
 
 		return selectionsMap;

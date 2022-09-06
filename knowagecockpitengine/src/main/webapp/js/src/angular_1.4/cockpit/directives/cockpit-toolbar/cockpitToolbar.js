@@ -274,7 +274,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 				requestUrl.widget[i] = widget;
 				if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
 					for (var k in widget.content.columnSelectedOfDataset) {
-						if(Array.isArray(widget.content.columnSelectedOfDataset[k].variables) && widget.content.columnSelectedOfDataset[k].variables.length) {
+						if(Array.isArray(widget.content.columnSelectedOfDataset[k].variables) && widget.content.columnSelectedOfDataset[k].variables.length >0) {
 							if (widget.type == "table" && widget.content.columnSelectedOfDataset[k].variables[0].action == 'header') {
 								for (var j in cockpitModule_properties.VARIABLES) {
 									if (j == widget.content.columnSelectedOfDataset[k].variables[0].variable){
@@ -316,7 +316,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 						requestUrl.COCKPIT_SELECTIONS[i][k].drivers = drivers;
 						requestUrl.COCKPIT_SELECTIONS[i][k].selections = selections;
 					}
-					requestUrl.COCKPIT_VARIABLES[i] = cockpitModule_properties.VARIABLES;
+					
 				}
 				else if (widget.dataset && Object.keys(widget.dataset).length != 0) {
 					var dsId = widget.dataset.dsId
@@ -340,8 +340,8 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 					requestUrl.COCKPIT_SELECTIONS[i].parameters = paramsToSend;
 					requestUrl.COCKPIT_SELECTIONS[i].drivers = drivers;
 					requestUrl.COCKPIT_SELECTIONS[i].selections = selections;
-					requestUrl.COCKPIT_VARIABLES[i] = cockpitModule_properties.VARIABLES;
 				}
+				requestUrl.COCKPIT_VARIABLES= cockpitModule_properties.VARIABLES;
 			}
 
 			var config = {"responseType": "arraybuffer"};
