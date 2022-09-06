@@ -107,12 +107,15 @@
                                 "multiValue": false,
                                 "name": "FID",
                                 "personal": false,
+                                "pinned": "left",
                                 "precision": 0,
                                 "properties": {},
                                 "rowSpan": true,
                                 "scale": 0,
                                 "style": {
-                                    "hideHeader": true
+                                    "hideHeader": true,
+                                    "prefix": "Prefix",
+                                    "suffix": "Suffix"
                                 },
                                 "subjectId": false,
                                 "type": "java.lang.String"
@@ -154,6 +157,16 @@
                                 "aggregationSelected": "SUM",
                                 "alias": "region_id",
                                 "aliasToShow": "region_id",
+                                "barchart": {
+                                    "enabled": true,
+                                    "maxValue": 4,
+                                    "minValue": 1,
+                                    "style": {
+                                        "background-color": "#3b678c",
+                                        "color": "white",
+                                        "justify-content": "flex-start"
+                                    }
+                                },
                                 "decript": false,
                                 "fieldType": "MEASURE",
                                 "funcSummary": "SUM",
@@ -165,7 +178,8 @@
                                 "rowSpan": true,
                                 "scale": 0,
                                 "subjectId": false,
-                                "type": "java.lang.Integer"
+                                "type": "java.lang.Integer",
+                                "visType": "Chart"
                             }
                         ],
                         "name": "widget_table_1661757385620"

@@ -71,6 +71,12 @@
                 "title": "dashboard.widgetEditor.export.title",
                 "type": "Export"
             }
+        ],
+        "Visualization": [
+            {
+                "title": "dashboard.widgetEditor.visualizationType.title",
+                "type": "VisualizationType"
+            }
         ]
     }
 }

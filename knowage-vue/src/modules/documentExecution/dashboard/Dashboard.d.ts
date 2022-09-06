@@ -190,14 +190,14 @@ export interface ITableWidgetVisualization {
 export interface ITableWidgetVisualization {
     target: string | string[],
     type: string,
-    precision: number,
+    precision?: number,
     prefix?: string,
     suffix?: string,
     pinned?: string,
-    min: number,
-    max: number,
-    alignment: string,
-    color: string,
+    min?: number,
+    max?: number,
+    alignment?: string,
+    color?: string,
     "background-color": string
 }
 

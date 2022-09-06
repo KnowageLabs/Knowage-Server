@@ -453,12 +453,15 @@
             },
             "title": "Widget Editor",
             "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
+            "visualization": "Visualization",
             "visualizationOptions": {
                 "chart": "Chart",
                 "iconOnly": "Icon only",
                 "textAndChart": "Text & Chart"
             },
-            "visualizationType": "Visualization Type"
+            "visualizationType": {
+                "title": "Visualization Type"
+            }
         }
     },
     "documentBrowser": {

@@ -89,6 +89,7 @@ const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any) => 
         getRowConfigurationFromWidgetColumn(formattedWidget, tempColumn)
         getHeaderConfigurationFromWidgetColumn(formattedWidget, tempColumn)
         if (tempColumn.group) addColumnToColumnGroup(formattedWidget, tempColumn)
+        getVisualizationTypeConfigurationsFromColumn(formattedWidget, tempColumn)
     }
 
 }
@@ -97,6 +98,15 @@ const addColumnToColumnGroup = (formattedWidget: IWidget, tempColumn: any) => {
     const columnGroups = formattedWidget.settings.configuration.columnGroups.groups
     const index = columnGroups.findIndex((columnGroup: ITableWidgetColumnGroup) => columnGroup.id === tempColumn.group)
     if (index !== -1) columnGroups[index].columns.push(getColumnId(formattedWidget, tempColumn.name))
+}
+
+const getVisualizationTypeConfigurationsFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
+    console.log(">>>>>>>>>>>>>>>>>>>>> getVisualizationTypeConfigurationsFromColumn: ", formattedWidget)
+    console.log(">>>>>>>>>>>>>>>>>>>>> tempColumn: ", tempColumn)
+    if (tempColumn.fieldType === "ATTRIBUTE" && tempColumn.precision !== 0 || tempColumn.style?.prefix || tempColumn.style?.suffix || tempColumn.pinned) {
+        formattedWidget.settings.visualization.types.push({ target: [getColumnId(formattedWidget, tempColumn.name)], type: 'text', precision: tempColumn.precision, prefix: tempColumn.style?.prefix ?? '', suffix: tempColumn.style?.suffix, pinned: tempColumn.pinned ?? '' })
+    }
+
 }
 
 const getRowConfigurationFromWidgetColumn = (formattedWidget: IWidget, column: any) => {
@@ -148,7 +158,7 @@ const getFormattedTooltips = (widget: any) => {
 
 // TODO
 const getFormattedVisualizations = (widget: any) => {
-    return {}
+    return { types: [], visibilityConditions: [] }
 }
 
 // TODO
