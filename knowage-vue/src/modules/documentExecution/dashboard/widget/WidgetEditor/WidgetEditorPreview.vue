@@ -56,14 +56,14 @@ export default defineComponent({
     methods: {
         setEventListeners() {
             emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
-            emitter.on('sortingChanged', (sorting) => this.onColumnSort(sorting)) // { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder }
-            emitter.on('collumnAdded', () => this.onColumnAdd())
-            emitter.on('collumnRemoved', () => this.onColumnDelete())
-            emitter.on('collumnUpdated', (column) => this.onColumnUpdate(column))
-            emitter.on('columnsReordered', () => this.onColumnReorder())
-            emitter.on('indexColumnChanged', (rows) => this.onIndexColumnChange(rows))
+            emitter.on('sortingChanged', (sorting) => this.sortColumn(sorting)) // { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder }
+            emitter.on('collumnAdded', () => this.gridApi.setColumnDefs(this.getDatatableColumns()))
+            emitter.on('collumnRemoved', () => this.gridApi.setColumnDefs(this.getDatatableColumns()))
+            emitter.on('collumnUpdated', () => this.gridApi.setColumnDefs(this.getDatatableColumns()))
+            emitter.on('columnsReordered', () => this.gridApi.setColumnDefs(this.getDatatableColumns()))
+            emitter.on('indexColumnChanged', (rows) => this.gridApi.setColumnDefs(this.getDatatableColumns(rows.indexColumn)))
             emitter.on('rowSpanChanged', (rows) => console.log('WidgetEditorPreview  - rowSpanChanged!', rows))
-            emitter.on('summaryRowsChanged', () => console.log('WidgetEditorPreview  - summaryRowsChanged!'))
+            emitter.on('summaryRowsChanged', (rows) => console.log('WidgetEditorPreview  - summaryRowsChanged!', rows))
             emitter.on('headersConfigurationChanged', (headersConfiguration) => this.onHeaderChange(headersConfiguration))
         },
         setupDatatableOptions() {
@@ -86,14 +86,16 @@ export default defineComponent({
             this.gridApi = params.api
             this.columnApi = params.columnApi
 
-            this.gridApi.setColumnDefs(this.getDatatableColumns())
+            this.gridApi.setColumnDefs(this.getDatatableColumns(this.propWidget.settings.configuration.rows.indexColumn))
             this.setInitialSorting()
             this.setInitialHeaders()
-            this.setInitialIndexColumn()
 
             const updateData = (data) => {
-                this.rowData = data
+                this.rowData = data.slice(0, this.propWidget.settings.pagination.itemsNumber)
+                console.log(data.slice(this.propWidget.settings.pagination.itemsNumber))
+                this.gridApi.setPinnedBottomRowData(data.slice(this.propWidget.settings.pagination.itemsNumber))
             }
+
             updateData(this.mock.mockResponse.rows)
         },
         setInitialSorting() {
@@ -106,46 +108,18 @@ export default defineComponent({
                 this.onHeaderChange(this.propWidget.settings.configuration.headers)
             }
         },
-        setInitialIndexColumn() {
-            if (this.propWidget.settings.configuration.rows && this.propWidget.settings.configuration.rows.indexColumn) {
-                this.onIndexColumnChange(this.propWidget.settings.configuration.rows)
-            }
-        },
-        getDatatableColumns() {
-            console.log('COLUMNS IN MODEL -------------------', this.propWidget.columns)
+        getDatatableColumns(showIndexColumn?) {
             const columns = this.propWidget.columns.map((column, index) => {
                 return { colId: column.id, field: `column_${index + 1}`, headerName: column.alias }
             })
+
+            showIndexColumn ? columns.unshift({ colId: 'indexColumn', valueGetter: `node.rowIndex + 1`, headerName: '#' }) : ''
+
             return columns
-        },
-        onColumnAdd() {
-            console.log('ADDED -------------------')
-            this.gridApi.setColumnDefs(this.getDatatableColumns())
-        },
-        onColumnDelete() {
-            console.log('DELETED -------------------')
-            this.gridApi.setColumnDefs(this.getDatatableColumns())
-        },
-        onColumnUpdate(column) {
-            console.log('WidgetEditorPreview  - columnEdited!', column)
-            this.gridApi.setColumnDefs(this.getDatatableColumns())
-        },
-        onColumnSort(sorting) {
-            this.sortColumn(sorting)
-        },
-        onColumnReorder() {
-            console.log('WidgetEditorPreview  - columnsReordered!')
-            this.gridApi.setColumnDefs(this.getDatatableColumns())
         },
         onHeaderChange(headersConfiguration) {
             console.log('WidgetEditorPreview  - headersConfigurationChanged!', headersConfiguration)
             headersConfiguration.enabled ? this.gridApi.setHeaderHeight(25) : this.gridApi.setHeaderHeight(0)
-        },
-        onIndexColumnChange(rows) {
-            console.log('INDEX COLUMN CHANGE -0000000000000000000000000')
-            const columns = this.getDatatableColumns()
-            rows.indexColumn ? columns.unshift({ colId: 'indexColumn', valueGetter: `node.rowIndex + 1`, headerName: '#' }) : ''
-            this.gridApi.setColumnDefs(columns)
         },
         sortColumn(sorting) {
             this.columnApi.applyColumnState({
