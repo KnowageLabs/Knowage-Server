@@ -46,28 +46,34 @@ export interface ITableWidgetConditionalStyle {
     }
 }
 export interface ITableWidgetConfiguration {
-    columnGroups: ITableWidgetColumnGroup[]
+    columnGroups: ITableWidgetColumnGroups,
     exports: ITableWidgetExports
     headers: ITableWidgetHeaders
     rows: ITableWidgetRows
     summaryRows: ITableWidgetSummaryRows
 }
 
+export interface ITableWidgetColumnGroups {
+    enabled: boolean,
+    groups: ITableWidgetColumnGroup[]
+}
+
 export interface ITableWidgetColumnGroup {
+    id: string,
     label: string,
     columns: string[]
 }
 
 export interface ITableWidgetExports {
-    "pdf": {
-        "enabled": boolean,
-        "custom": {
-            "height": number,
-            "width": number,
-            "enabled": boolean
+    pdf: {
+        enabled: boolean,
+        custom: {
+            height: number,
+            width: number,
+            enabled: boolean
         },
-        "a4landscape": boolean,
-        "a4portrait": boolean
+        a4landscape: boolean,
+        a4portrait: boolean
     }
 }
 
@@ -184,14 +190,14 @@ export interface ITableWidgetVisualization {
 export interface ITableWidgetVisualization {
     target: string | string[],
     type: string,
-    precision: number,
+    precision?: number,
     prefix?: string,
     suffix?: string,
     pinned?: string,
-    min: number,
-    max: number,
-    alignment: string,
-    color: string,
+    min?: number,
+    max?: number,
+    alignment?: string,
+    color?: string,
     "background-color": string
 }
 

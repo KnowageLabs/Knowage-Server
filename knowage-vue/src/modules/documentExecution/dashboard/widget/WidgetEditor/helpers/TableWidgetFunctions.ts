@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration, ITableWidgetHeaders } from "../../../Dashboard"
+import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetColumnGroups } from "../../../Dashboard"
 import { formatRGBColor } from './WidgetEditorHelpers'
 import { emitter } from '../../../DashboardHelpers'
 import descriptor from '../WidgetEditorDescriptor.json'
@@ -287,6 +287,7 @@ const formatTableWidgetConfiguration = (widgetConfiguration: ITableWidgetConfigu
     // formatRowsConfiguration(widgetConfiguration, widgetColumns) // TODO - BE SAVE
     formatHeadersConfiguration(widgetConfiguration, widgetColumns) // TODO - BE SAVE
     formatSummaryRows(widgetConfiguration)
+    formatColumnGroups(widgetConfiguration, widgetColumns)
 }
 
 
@@ -323,6 +324,28 @@ const formatHeaderConfigurationRules = (configurationHeaders: ITableWidgetHeader
 
 }
 
+const formatColumnGroups = (widgetConfiguration: ITableWidgetConfiguration, widgetColumns: IWidgetColumn[]) => {
+    console.log("FORMAT COLUMN GROUPS: ", widgetConfiguration)
+    if (!widgetConfiguration.columnGroups) return
+    if (!widgetConfiguration.columnGroups.enabled) {
+        widgetConfiguration.columnGroups.groups = []
+        return
+    }
+
+    // formatColumnGroupsColumnIdToName(widgetConfiguration.columnGroups, widgetColumns) TODO - BE SAVE
+
+}
+
+const formatColumnGroupsColumnIdToName = (columnGroupsConfiguration: ITableWidgetColumnGroups, widgetColumns: IWidgetColumn[]) => {
+    for (let i = 0; i < columnGroupsConfiguration.groups.length; i++) {
+        const tempColumnGroup = columnGroupsConfiguration.groups[i]
+        const formattedColumnGroupColumns = [] as string[]
+        for (let j = 0; j < tempColumnGroup.columns.length; j++) {
+            formattedColumnGroupColumns.push(getColumnName(tempColumnGroup.columns[j], widgetColumns))
+        }
+        tempColumnGroup.columns = formattedColumnGroupColumns
+    }
+}
 
 const formatSummaryRows = (widgetConfiguration: ITableWidgetConfiguration) => {
     if (!widgetConfiguration.summaryRows) return

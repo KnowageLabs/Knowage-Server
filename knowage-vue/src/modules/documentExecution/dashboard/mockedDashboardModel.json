@@ -103,15 +103,19 @@
                                 "aliasToShow": "FID",
                                 "decript": false,
                                 "fieldType": "ATTRIBUTE",
+                                "group": "d83a2272-8887-4222-8a50-ef5df2cb72fa",
                                 "multiValue": false,
                                 "name": "FID",
                                 "personal": false,
+                                "pinned": "left",
                                 "precision": 0,
                                 "properties": {},
                                 "rowSpan": true,
                                 "scale": 0,
                                 "style": {
-                                    "hideHeader": true
+                                    "hideHeader": true,
+                                    "prefix": "Prefix",
+                                    "suffix": "Suffix"
                                 },
                                 "subjectId": false,
                                 "type": "java.lang.String"
@@ -121,6 +125,7 @@
                                 "aliasToShow": "the_geom",
                                 "decript": false,
                                 "fieldType": "ATTRIBUTE",
+                                "group": "de477ba5-6589-44f3-aba7-79eecb134615",
                                 "multiValue": false,
                                 "name": "the_geom",
                                 "personal": false,
@@ -135,6 +140,7 @@
                                 "aliasToShow": "store_id",
                                 "decript": false,
                                 "fieldType": "ATTRIBUTE",
+                                "group": "de477ba5-6589-44f3-aba7-79eecb134615",
                                 "multiValue": false,
                                 "name": "store_id",
                                 "personal": false,
@@ -151,6 +157,16 @@
                                 "aggregationSelected": "SUM",
                                 "alias": "region_id",
                                 "aliasToShow": "region_id",
+                                "barchart": {
+                                    "enabled": true,
+                                    "maxValue": 4,
+                                    "minValue": 1,
+                                    "style": {
+                                        "background-color": "#3b678c",
+                                        "color": "white",
+                                        "justify-content": "flex-start"
+                                    }
+                                },
                                 "decript": false,
                                 "fieldType": "MEASURE",
                                 "funcSummary": "SUM",
@@ -162,7 +178,8 @@
                                 "rowSpan": true,
                                 "scale": 0,
                                 "subjectId": false,
-                                "type": "java.lang.Integer"
+                                "type": "java.lang.Integer",
+                                "visType": "Chart"
                             }
                         ],
                         "name": "widget_table_1661757385620"
@@ -197,6 +214,16 @@
                             "filterVal2": "",
                             "filterVals": ["2"],
                             "type": "java.lang.Integer"
+                        }
+                    ],
+                    "groups": [
+                        {
+                            "id": "d83a2272-8887-4222-8a50-ef5df2cb72fa",
+                            "name": "Column Group 1"
+                        },
+                        {
+                            "id": "de477ba5-6589-44f3-aba7-79eecb134615",
+                            "name": "Column Group 2"
                         }
                     ],
                     "id": 1661757385620,

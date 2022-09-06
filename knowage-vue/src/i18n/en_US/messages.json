@@ -39,6 +39,7 @@
         "copyOf": "Copy of",
         "create": "Create",
         "creationDate": "Creation Date",
+        "custom": "Custom",
         "data": "Data",
         "dataset": "Dataset",
         "datasets": "Datasets",
@@ -238,6 +239,7 @@
         "visible": "Visible",
         "warning": "Warning",
         "widget": "Widget",
+        "width": "Width",
         "yes": "Yes"
     },
     "components": {
@@ -368,6 +370,10 @@
             },
             "columnDetails": "Column Details",
             "columnFilterHint": "Select the filter operator and the value for the column. Remember to use the correct database sintax for the value. ie: %LIKE%",
+            "columnGroups": {
+                "enableColumnGroups": "Enable Column Groups",
+                "title": "Column Groups"
+            },
             "compareValueType": "Compare value type",
             "conditionalStyle": {
                 "compareValue": "Compare value",
@@ -381,6 +387,12 @@
             "dragColumnsHint": "Drag columns here",
             "enableFilter": "Enable Filter",
             "enableTooltip": "Enable Tooltip",
+            "export": {
+                "a4landscape": "A4 Landscape",
+                "a4portrait": "A4 Portrait",
+                "exportPdf": "Export PDF",
+                "title": "Export"
+            },
             "fontawesome": "Fontawesome",
             "headers": {
                 "action": "Action",
@@ -441,12 +453,15 @@
             },
             "title": "Widget Editor",
             "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
+            "visualization": "Visualization",
             "visualizationOptions": {
                 "chart": "Chart",
                 "iconOnly": "Icon only",
                 "textAndChart": "Text & Chart"
             },
-            "visualizationType": "Visualization Type"
+            "visualizationType": {
+                "title": "Visualization Type"
+            }
         }
     },
     "documentBrowser": {

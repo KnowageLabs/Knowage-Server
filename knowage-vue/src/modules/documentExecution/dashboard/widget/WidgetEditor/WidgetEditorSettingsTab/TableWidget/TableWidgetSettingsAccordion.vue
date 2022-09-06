@@ -10,6 +10,9 @@
                 <TableWidgetRows v-if="accordion.type === 'Rows'" :widgetModel="widgetModel"></TableWidgetRows>
                 <TableWidgetSummaryRows v-else-if="accordion.type === 'SummaryRows'" :widgetModel="widgetModel"></TableWidgetSummaryRows>
                 <TableWidgetHeaders v-else-if="accordion.type === 'Headers'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetHeaders>
+                <TableWidgetColumnGroups v-else-if="accordion.type === 'ColumnGroups'" :widgetModel="widgetModel"></TableWidgetColumnGroups>
+                <TableWidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></TableWidgetExport>
+                <TableWidgetVisualizationType v-else-if="accordion.type === 'VisualizationType'" :widgetModel="widgetModel"></TableWidgetVisualizationType>
             </AccordionTab>
         </Accordion>
     </div>
@@ -24,10 +27,13 @@ import descriptor from './TableWidgetSettingsDescriptor.json'
 import TableWidgetRows from './configuration/TableWidgetRows.vue'
 import TableWidgetSummaryRows from './configuration/TableWidgetSummaryRows.vue'
 import TableWidgetHeaders from './configuration/TableWidgetHeaders.vue'
+import TableWidgetColumnGroups from './configuration/TableWidgetColumnGroups.vue'
+import TableWidgetExport from './configuration/TableWidgetExport.vue'
+import TableWidgetVisualizationType from './visualization/TableWidgetVisualizationType.vue'
 
 export default defineComponent({
     name: 'table-widget-configuration-container',
-    components: { Accordion, AccordionTab, TableWidgetRows, TableWidgetSummaryRows, TableWidgetHeaders },
+    components: { Accordion, AccordionTab, TableWidgetRows, TableWidgetSummaryRows, TableWidgetHeaders, TableWidgetColumnGroups, TableWidgetExport, TableWidgetVisualizationType },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Array as PropType<{ title: string; type: string }[]> }, drivers: { type: Array }, variables: { type: Array } },
     data() {
         return {
