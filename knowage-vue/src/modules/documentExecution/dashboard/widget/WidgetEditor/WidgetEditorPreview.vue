@@ -49,9 +49,7 @@ export default defineComponent({
         this.setEventListeners()
         this.setupDatatableOptions()
     },
-    mounted() {
-        this.getDatatableColumns()
-    },
+    mounted() {},
 
     methods: {
         setEventListeners() {
@@ -63,7 +61,7 @@ export default defineComponent({
             emitter.on('columnsReordered', () => this.gridApi.setColumnDefs(this.getDatatableColumns()))
             emitter.on('indexColumnChanged', (rows) => this.gridApi.setColumnDefs(this.getDatatableColumns(rows.indexColumn)))
             emitter.on('rowSpanChanged', (rows) => console.log('WidgetEditorPreview  - rowSpanChanged!', rows))
-            emitter.on('summaryRowsChanged', (rows) => console.log('WidgetEditorPreview  - summaryRowsChanged!', rows))
+            emitter.on('summaryRowsChanged', (rows) => console.log('WidgetEditorPreview  - summaryRowsChanged!', rows)) //TODO: Servis nam treba za ovo
             emitter.on('headersConfigurationChanged', (headersConfiguration) => this.onHeaderChange(headersConfiguration))
         },
         setupDatatableOptions() {
@@ -86,7 +84,9 @@ export default defineComponent({
             this.gridApi = params.api
             this.columnApi = params.columnApi
 
-            this.gridApi.setColumnDefs(this.getDatatableColumns(this.propWidget.settings.configuration.rows.indexColumn))
+            const datatableColumns = this.getDatatableColumns(this.propWidget.settings.configuration.rows.indexColumn)
+            this.gridApi.setColumnDefs(datatableColumns)
+
             this.setInitialSorting()
             this.setInitialHeaders()
 
@@ -113,9 +113,62 @@ export default defineComponent({
                 return { colId: column.id, field: `column_${index + 1}`, headerName: column.alias }
             })
 
-            showIndexColumn ? columns.unshift({ colId: 'indexColumn', valueGetter: `node.rowIndex + 1`, headerName: '#' }) : ''
+            // const columns = [] as any
+            // this.propWidget.columns.forEach((column, index) => {
+            //     let tempCol = { colId: column.id, field: `column_${index + 1}`, headerName: column.alias } as any
+
+            //     if (this.propWidget.settings.configuration.rows.rowSpan.enabled && this.propWidget.settings.configuration.rows.rowSpan.columns.includes(column.id)) {
+            //         console.log('HAS ROW SPAN', column.alias)
+            //         tempCol.rowSpan = this.RowSpanCalculator
+            //         tempCol.cellClassRules = {
+            //             'cell-span': function (params) {
+            //                 return this.mock.mockResponse.rows.slice(0, this.propWidget.settings.pagination.itemsNumber)[params.rowIndex].span > 1
+            //             }
+            //         }
+            //     }
+
+            //     columns.push(tempCol)
+            // })
+
+            showIndexColumn ? columns.unshift({ colId: 'indexColumn', valueGetter: `node.rowIndex + 1`, headerName: '#', pinned: 'left', width: 50, sortable: false, filter: false }) : ''
 
             return columns
+        },
+        RowSpanCalculator(params) {
+            if (params.data.span > 1) {
+                return params.data.span
+            } else return 1
+        },
+
+        setRowSpanForSingleColumn(columnField) {
+            var responseData = this.mock.mockResponse.rows.slice(0, this.propWidget.settings.pagination.itemsNumber) as any
+            var previousValue
+            var previousIndex
+
+            // responseData.forEach((row, index) => {
+            //     console.log('row', row[columnField])
+            //     if (previousValue != row[columnField]) {
+            //         previousValue = row[columnField]
+            //         previousIndex = index - 1
+            //         row.span = 1
+            //     } else {
+            //         row[previousIndex].span++
+            //     }
+            // })
+
+            for (var r in responseData) {
+                // console.log('row --------------------------')
+                // console.log(previousValue, ' = ', responseData[r][columnField])
+                // console.log('--------------------------------')
+
+                if (previousValue != responseData[r][columnField]) {
+                    previousValue = responseData[r][columnField]
+                    previousIndex = r
+                    responseData[r].span = 1
+                } else {
+                    responseData[previousIndex].span = responseData[previousIndex].span + 1
+                }
+            }
         },
         onHeaderChange(headersConfiguration) {
             console.log('WidgetEditorPreview  - headersConfigurationChanged!', headersConfiguration)
