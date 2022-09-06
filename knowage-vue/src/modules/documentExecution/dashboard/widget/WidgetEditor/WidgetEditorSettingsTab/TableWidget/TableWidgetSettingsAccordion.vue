@@ -11,6 +11,7 @@
                 <TableWidgetSummaryRows v-else-if="accordion.type === 'SummaryRows'" :widgetModel="widgetModel"></TableWidgetSummaryRows>
                 <TableWidgetHeaders v-else-if="accordion.type === 'Headers'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetHeaders>
                 <TableWidgetColumnGroups v-else-if="accordion.type === 'ColumnGroups'" :widgetModel="widgetModel"></TableWidgetColumnGroups>
+                <TableWidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></TableWidgetExport>
             </AccordionTab>
         </Accordion>
     </div>
@@ -26,10 +27,11 @@ import TableWidgetRows from './configuration/TableWidgetRows.vue'
 import TableWidgetSummaryRows from './configuration/TableWidgetSummaryRows.vue'
 import TableWidgetHeaders from './configuration/TableWidgetHeaders.vue'
 import TableWidgetColumnGroups from './configuration/TableWidgetColumnGroups.vue'
+import TableWidgetExport from './configuration/TableWidgetExport.vue'
 
 export default defineComponent({
     name: 'table-widget-configuration-container',
-    components: { Accordion, AccordionTab, TableWidgetRows, TableWidgetSummaryRows, TableWidgetHeaders, TableWidgetColumnGroups },
+    components: { Accordion, AccordionTab, TableWidgetRows, TableWidgetSummaryRows, TableWidgetHeaders, TableWidgetColumnGroups, TableWidgetExport },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Array as PropType<{ title: string; type: string }[]> }, drivers: { type: Array }, variables: { type: Array } },
     data() {
         return {

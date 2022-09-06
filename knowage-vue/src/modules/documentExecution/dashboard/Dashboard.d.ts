@@ -65,15 +65,15 @@ export interface ITableWidgetColumnGroup {
 }
 
 export interface ITableWidgetExports {
-    "pdf": {
-        "enabled": boolean,
-        "custom": {
-            "height": number,
-            "width": number,
-            "enabled": boolean
+    pdf: {
+        enabled: boolean,
+        custom: {
+            height: number,
+            width: number,
+            enabled: boolean
         },
-        "a4landscape": boolean,
-        "a4portrait": boolean
+        a4landscape: boolean,
+        a4portrait: boolean
     }
 }
 

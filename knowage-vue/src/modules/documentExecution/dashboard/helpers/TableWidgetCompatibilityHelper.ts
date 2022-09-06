@@ -46,7 +46,7 @@ const getFormattedConditionalStyles = (widget: any) => {
 
 // TODO
 const getFormattedConfiguration = (formattedWidget: IWidget, widget: any) => {
-    return { columnGroups: getFormattedColumnGroups(widget), exports: {}, headers: getHeadersConfiguration(widget), rows: getFormattedRows(widget), summaryRows: getFormattedSummaryRows(widget) }
+    return { columnGroups: getFormattedColumnGroups(widget), exports: getFormattedExport(widget), headers: getHeadersConfiguration(widget), rows: getFormattedRows(widget), summaryRows: getFormattedSummaryRows(widget) }
 }
 
 const getFormattedColumnGroups = (widget: any) => {
@@ -54,6 +54,23 @@ const getFormattedColumnGroups = (widget: any) => {
     const formattedColumnGroups = [] as ITableWidgetColumnGroup[]
     widget.groups.forEach((group: { id: string, name: string }) => formattedColumnGroups.push({ id: group.id, label: group.name, columns: [] }))
     return { enabled: true, groups: formattedColumnGroups } as ITableWidgetColumnGroups
+
+}
+
+const getFormattedExport = (widget: any) => {
+    if (!widget.settings || !widget.settings.exportpdf) return {
+        pdf: {
+            enabled: false,
+            custom: {
+                height: 0,
+                width: 0,
+                enabled: false
+            },
+            a4landscape: false,
+            a4portrait: false
+        }
+    }
+    return { pdf: widget.settings.exportpdf }
 
 }
 

@@ -39,6 +39,7 @@
         "copyOf": "Copy of",
         "create": "Create",
         "creationDate": "Creation Date",
+        "custom": "Custom",
         "data": "Data",
         "dataset": "Dataset",
         "datasets": "Datasets",
@@ -238,6 +239,7 @@
         "visible": "Visible",
         "warning": "Warning",
         "widget": "Widget",
+        "width": "Width",
         "yes": "Yes"
     },
     "components": {
@@ -385,6 +387,12 @@
             "dragColumnsHint": "Drag columns here",
             "enableFilter": "Enable Filter",
             "enableTooltip": "Enable Tooltip",
+            "export": {
+                "a4landscape": "A4 Landscape",
+                "a4portrait": "A4 Portrait",
+                "exportPdf": "Export PDF",
+                "title": "Export"
+            },
             "fontawesome": "Fontawesome",
             "headers": {
                 "action": "Action",

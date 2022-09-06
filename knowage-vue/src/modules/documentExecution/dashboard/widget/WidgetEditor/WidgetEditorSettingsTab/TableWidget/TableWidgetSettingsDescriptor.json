@@ -66,6 +66,10 @@
             {
                 "title": "dashboard.widgetEditor.columnGroups.title",
                 "type": "ColumnGroups"
+            },
+            {
+                "title": "dashboard.widgetEditor.export.title",
+                "type": "Export"
             }
         ]
     }

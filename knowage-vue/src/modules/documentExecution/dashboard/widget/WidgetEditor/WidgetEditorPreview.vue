@@ -66,6 +66,7 @@ export default defineComponent({
             emitter.on('summaryRowsChanged', (rows) => console.log('WidgetEditorPreview  - summaryRowsChanged!', rows))
             emitter.on('headersConfigurationChanged', (headersConfiguration) => this.onHeaderChange(headersConfiguration))
             emitter.on('columnGroupsConfigurationChanged', (columnGroupConfiguration) => console.log('WidgetEditorPreview  - columnGroupsConfigurationChanged!', columnGroupConfiguration))
+            emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
         },
         setupDatatableOptions() {
             this.gridOptions = {
