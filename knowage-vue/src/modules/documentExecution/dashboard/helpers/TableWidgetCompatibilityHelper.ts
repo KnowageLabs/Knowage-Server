@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -35,7 +35,7 @@ const getColumnId = (formattedWidget: IWidget, widgetColumnName: string) => {
 }
 
 const getFormattedWidgetSettings = (formattedWidget: IWidget, widget: any) => {
-    const formattedSettings = { sortingColumn: getColumnId(formattedWidget, widget.settings?.sortingColumn), sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(widget) as any, configuration: getFormattedConfiguration(formattedWidget, widget) as any, interactions: getFormattedInteractions(widget) as any, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as any, tooltips: getFormattedTooltips(widget) as any, visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) } as ITableWidgetSettings
+    const formattedSettings = { sortingColumn: getColumnId(formattedWidget, widget.settings?.sortingColumn), sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(widget) as any, configuration: getFormattedConfiguration(formattedWidget, widget) as any, interactions: getFormattedInteractions(widget) as any, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as any, tooltips: getFormattedTooltips(widget) as any, visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) as any } as ITableWidgetSettings
     return formattedSettings
 }
 
@@ -104,9 +104,40 @@ const getVisualizationTypeConfigurationsFromColumn = (formattedWidget: IWidget, 
     console.log(">>>>>>>>>>>>>>>>>>>>> getVisualizationTypeConfigurationsFromColumn: ", formattedWidget)
     console.log(">>>>>>>>>>>>>>>>>>>>> tempColumn: ", tempColumn)
     if (tempColumn.fieldType === "ATTRIBUTE" && tempColumn.precision !== 0 || tempColumn.style?.prefix || tempColumn.style?.suffix || tempColumn.pinned) {
-        formattedWidget.settings.visualization.types.push({ target: [getColumnId(formattedWidget, tempColumn.name)], type: 'text', precision: tempColumn.precision, prefix: tempColumn.style?.prefix ?? '', suffix: tempColumn.style?.suffix, pinned: tempColumn.pinned ?? '' })
+        addVisualisationTypeAttributeColumn(formattedWidget, tempColumn)
+    } else if (tempColumn.fieldType === 'MEASURE' && tempColumn.visType) {
+        addVisualisationTypeMeasureColumn(formattedWidget, tempColumn)
     }
 
+}
+
+const addVisualisationTypeAttributeColumn = (formattedWidget: IWidget, tempColumn: any) => {
+    formattedWidget.settings.visualization.types.push({ target: [getColumnId(formattedWidget, tempColumn.name)], type: 'Text', prefix: tempColumn.style?.prefix ?? '', suffix: tempColumn.style?.suffix ?? '', pinned: tempColumn.pinned ?? '' })
+}
+
+const addVisualisationTypeMeasureColumn = (formattedWidget: IWidget, tempColumn: any) => {
+    const tempVisualizationType = { target: [getColumnId(formattedWidget, tempColumn.name)], type: formatColumnVisualizationTypeFromOldModel(tempColumn.visType), precision: tempColumn.precision, prefix: tempColumn.style?.prefix ?? '', suffix: tempColumn.style?.suffix, pinned: tempColumn.pinned ?? '' } as ITableWidgetVisualizationType
+    if ((tempColumn.visType === 'Chart' || tempColumn.visType === 'Text & Chart') && tempColumn.barchart) {
+        tempVisualizationType.min = tempColumn.barchart.minValue ?? 0
+        tempVisualizationType.max = tempColumn.barchart.maxValue ?? 0
+        tempVisualizationType.alignment = tempColumn.barchart.style ? tempColumn.barchart.style['justify-content'] ?? '' : ''
+        tempVisualizationType.color = tempColumn.barchart.style?.color ?? ''
+        tempVisualizationType['background-color'] = tempColumn.barchart.style ? tempColumn.barchart.style['background-color'] ?? '' : ''
+    }
+    formattedWidget.settings.visualization.types.push(tempVisualizationType)
+}
+
+const formatColumnVisualizationTypeFromOldModel = (visType: string) => {
+    switch (visType) {
+        case 'Text & Chart':
+            return 'Bar'
+        case 'Chart':
+            return 'Bar'
+        case 'Icon only':
+            return 'Icon'
+        default:
+            return 'Text'
+    }
 }
 
 const getRowConfigurationFromWidgetColumn = (formattedWidget: IWidget, column: any) => {
@@ -139,7 +170,7 @@ const getFormattedInteractions = (widget: any) => {
 
 // TODO
 const getFormattedPaginations = (widget: any) => {
-    if (!widget.settings?.pagination) return {}
+    if (!widget.settings?.pagination) return { enabled: false, itemsNumber: 0 }
     return { enabled: widget.settings.pagination.enabled, itemsNumber: widget.settings.pagination.itemsNumber } as ITableWidgetPagination
 }
 

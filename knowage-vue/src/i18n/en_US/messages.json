@@ -89,6 +89,7 @@
         "group": "Group",
         "height": "Height",
         "home": "Home",
+        "icon": "Icon",
         "id": "id",
         "image": "image",
         "import": "import",
@@ -460,6 +461,9 @@
                 "textAndChart": "Text & Chart"
             },
             "visualizationType": {
+                "bar": "Bar",
+                "sparkline": "Sparkline",
+                "textAndIcon": "Text & Icon",
                 "title": "Visualization Type"
             }
         }

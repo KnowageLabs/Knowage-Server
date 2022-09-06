@@ -184,10 +184,10 @@ export interface ITableWidgetTooltips {
 }
 
 export interface ITableWidgetVisualization {
-    types: ITableWidgetVisualization[],
+    types: ITableWidgetVisualizationType[],
     visibilityConditions: ITableWidgetVisibilityCondition[]
 }
-export interface ITableWidgetVisualization {
+export interface ITableWidgetVisualizationType {
     target: string | string[],
     type: string,
     precision?: number,

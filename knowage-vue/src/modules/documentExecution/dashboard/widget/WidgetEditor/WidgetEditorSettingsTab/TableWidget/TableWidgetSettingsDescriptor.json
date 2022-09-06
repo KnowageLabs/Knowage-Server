@@ -78,5 +78,27 @@
                 "type": "VisualizationType"
             }
         ]
-    }
+    },
+    "visualizationTypes": [
+        {
+            "label": "common.text",
+            "value": "Text"
+        },
+        {
+            "label": "common.icon",
+            "value": "Icon"
+        },
+        {
+            "label": "dashboard.widgetEditor.visualizationType.textAndIcon",
+            "value": "Text & Icon"
+        },
+        {
+            "label": "dashboard.widgetEditor.visualizationType.bar",
+            "value": "Bar"
+        },
+        {
+            "label": "dashboard.widgetEditor.visualizationType.sparkline",
+            "value": "Sparkline"
+        }
+    ]
 }
