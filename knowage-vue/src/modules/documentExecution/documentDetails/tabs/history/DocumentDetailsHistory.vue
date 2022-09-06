@@ -200,9 +200,10 @@ export default defineComponent({
             formData.append('file', uploadedFile)
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails/${this.selectedDocument.id}/templates`, formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
-                .then(() => {
+                .then(async () => {
                     this.store.setInfo({ title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
-                    this.getAllTemplates()
+                    await this.getAllTemplates()
+                    this.selectTemplate(this.listOfTemplates[0])
                 })
                 .catch(() => this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('documentExecution.documentDetails.history.uploadError') }))
                 .finally(() => (this.triggerUpload = false))
