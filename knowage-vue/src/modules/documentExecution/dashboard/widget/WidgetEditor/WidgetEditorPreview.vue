@@ -56,7 +56,7 @@ export default defineComponent({
             emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
             emitter.on('sortingChanged', (sorting) => this.sortColumn(sorting)) // { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder }
             emitter.on('collumnAdded', () => this.gridApi.setColumnDefs(this.getDatatableColumns()))
-            emitter.on('collumnRemoved', () => this.gridApi.setColumnDefs(this.getDatatableColumns()))
+            emitter.on('columnRemoved', () => this.gridApi.setColumnDefs(this.getDatatableColumns()))
             emitter.on('collumnUpdated', () => this.gridApi.setColumnDefs(this.getDatatableColumns()))
             emitter.on('columnsReordered', () => this.gridApi.setColumnDefs(this.getDatatableColumns()))
             emitter.on('indexColumnChanged', (rows) => this.gridApi.setColumnDefs(this.getDatatableColumns(rows.indexColumn)))

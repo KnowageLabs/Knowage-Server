@@ -49,7 +49,7 @@ export default defineComponent({
     },
     methods: {
         setEventListeners() {
-            emitter.on('collumnRemoved', (column) => this.onColumnRemoved(column))
+            emitter.on('columnRemoved', (column) => this.onColumnRemoved(column))
         },
         loadRowsModel() {
             if (this.widgetModel?.settings?.configuration) this.rowsModel = this.widgetModel.settings.configuration.rows

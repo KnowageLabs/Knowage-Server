@@ -64,7 +64,7 @@ export default defineComponent({
     },
     methods: {
         setEventListeners() {
-            emitter.on('collumnRemoved', (column) => this.onColumnRemoved(column))
+            emitter.on('columnRemoved', (column) => this.onColumnRemoved(column))
         },
         loadPagination() {
             if (this.widgetModel?.settings?.pagination) {

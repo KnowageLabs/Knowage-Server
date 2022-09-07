@@ -27,7 +27,7 @@
                 <Column class="kn-truncated" v-for="column in settings.columns" :key="column.field" :field="column.field" :header="column.header ? $t(column.header) : ''" :sortable="column.sortable">
                     <template #body="slotProps">
                         <div :style="column.style ?? ''">
-                            <InputText v-if="column.field === 'alias'" class="kn-material-input" v-model="slotProps.data[column.field]" @change="$emit('itemUpdated', slotProps.data)" />
+                            <InputText v-if="column.field === 'alias'" class="kn-material-input" v-model="slotProps.data[column.field]" @change="onColumnAliasRenamed(slotProps.data)" />
                             <Dropdown
                                 v-else-if="column.field === 'aggregation' && aggregationDropdownIsVisible(slotProps.data)"
                                 class="kn-material-input column-aggregation-dropdown"
@@ -127,6 +127,10 @@ export default defineComponent({
                 this.rows[index] = { ...selectedColumn }
                 this.$emit('itemUpdated', this.rows[index])
             }
+        },
+        onColumnAliasRenamed(column: IWidgetColumn) {
+            emitter.emit('columnAliasRenamed', column)
+            this.$emit('itemUpdated', column)
         }
     }
 })

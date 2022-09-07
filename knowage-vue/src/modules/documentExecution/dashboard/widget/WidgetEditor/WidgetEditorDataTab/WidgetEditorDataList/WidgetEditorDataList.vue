@@ -93,7 +93,7 @@ export default defineComponent({
         removeSelectedColumnsFromModel() {
             if (!this.model?.columns) return
             for (let i = 0; i < this.model.columns.length; i++) {
-                emitter.emit('collumnRemoved', this.model.columns[i])
+                emitter.emit('columnRemoved', this.model.columns[i])
             }
             this.model.columns = []
         },

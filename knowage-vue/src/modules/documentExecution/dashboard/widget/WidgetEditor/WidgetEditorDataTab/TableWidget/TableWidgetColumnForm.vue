@@ -4,7 +4,7 @@
             <div class="p-d-flex p-flex-row p-ai-center">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.alias') }}</label>
-                    <InputText class="kn-material-input p-inputtext-sm" v-model="column.alias" @change="selectedColumnUpdated" />
+                    <InputText class="kn-material-input p-inputtext-sm" v-model="column.alias" @change="onColumnAliasRenamed" />
                 </div>
             </div>
 
@@ -101,6 +101,10 @@ export default defineComponent({
             if (!this.column || !this.column.filter) return
             if (!['=', '<', '>', '<=', '>=', '!=', 'IN', 'like', 'range'].includes(this.column.filter.operator)) this.column.filter.value = ''
             if (this.column.filter.operator !== 'range') delete this.column.filter.value2
+            this.selectedColumnUpdated()
+        },
+        onColumnAliasRenamed() {
+            emitter.emit('columnAliasRenamed', this.column)
             this.selectedColumnUpdated()
         }
     }
