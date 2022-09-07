@@ -1,5 +1,14 @@
 <template>
     <div v-if="headersModel">
+        {{ headersModel }}
+
+        <hr />
+
+        {{ 'AVAILABLE TARGET: ' }}
+        {{ availableTargetOptions }}
+
+        <hr />
+        {{ widgetColumnsAliasMap }}
         <div class="p-d-flex p-flex-row p-ai-center p-m-3">
             <div class="kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.headers.enableHeader') }}</label>
@@ -22,7 +31,8 @@
             <div v-for="(rule, index) in headersModel.custom.rules" :key="index" class="p-d-flex p-flex-row p-ai-center">
                 <div class="p-d-flex p-flex-column kn-flex p-mt-1">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-                    <MultiSelect v-model="rule.target" :options="widgetModel.columns" optionLabel="alias" optionValue="id" :disabled="!headersModel.custom.enabled" @change="headersConfigurationChanged"> </MultiSelect>
+                    <WidgetEditorColumnsMultiselect :value="rule.target" :availableTargetOptions="availableTargetOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" :disabled="!headersModel.custom.enabled" @change="onColumnsSelected($event, rule)">
+                    </WidgetEditorColumnsMultiselect>
                 </div>
                 <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.headers.action') }}</label>
@@ -78,33 +88,63 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetHeaders, ITableWidgetHeadersRule, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { getColumnById } from '@/modules/documentExecution/dashboard/helpers/TableWidgetCompatibilityHelper'
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
-import MultiSelect from 'primevue/multiselect'
+import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
 
 export default defineComponent({
     name: 'table-widget-headers',
-    components: { Dropdown, InputSwitch, MultiSelect },
+    components: { Dropdown, InputSwitch, WidgetEditorColumnsMultiselect },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, drivers: { type: Array }, variables: { type: Array } },
     data() {
         return {
             descriptor,
             headersModel: null as ITableWidgetHeaders | null,
-            targetOptions: [] as string[]
+            availableTargetOptions: [] as (IWidgetColumn | { id: string; alias: string })[],
+            widgetColumnsAliasMap: {} as any
         }
     },
     created() {
         this.setEventListeners()
+        this.loadTargetOptions()
         this.loadHeadersModel()
+        this.loadWidgetColumnAliasMap()
     },
     methods: {
         setEventListeners() {
             emitter.on('collumnRemoved', (column) => this.onColumnRemoved(column))
         },
+        loadTargetOptions() {
+            this.availableTargetOptions = [...this.widgetModel.columns]
+        },
         loadHeadersModel() {
-            if (this.widgetModel?.settings?.configuration) this.headersModel = this.widgetModel.settings.configuration.headers
+            if (this.widgetModel?.settings?.configuration) {
+                this.headersModel = this.widgetModel.settings.configuration.headers
+            }
+            if (this.headersModel?.custom.enabled) this.removeColumnsFromTargetOptions()
+        },
+        loadWidgetColumnAliasMap() {
+            this.widgetModel.columns.forEach((column: IWidgetColumn) => {
+                if (column.id) this.widgetColumnsAliasMap[column.id] = column.alias
+            })
+        },
+        removeColumnsFromTargetOptions() {
+            if (!this.headersModel) return
+            for (let i = 0; i < this.headersModel.custom.rules.length; i++) {
+                for (let j = 0; j < this.headersModel.custom.rules[i].target.length; j++) {
+                    const tempColumn = getColumnById(this.widgetModel, this.headersModel.custom.rules[i].target[j])
+                    if (tempColumn) this.removeColumnFromAvailableTargetOptions(tempColumn)
+                }
+            }
+        },
+        removeColumnFromAvailableTargetOptions(tempColumn: IWidgetColumn) {
+            console.log('TEMP COLUMN: ', tempColumn)
+            const index = this.availableTargetOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === tempColumn.id)
+            console.log('INDEX: ', index)
+            if (index !== -1) this.availableTargetOptions.splice(index, 1)
         },
         headersConfigurationChanged() {
             emitter.emit('headersConfigurationChanged', this.headersModel)
@@ -121,6 +161,21 @@ export default defineComponent({
                 this.headersModel.custom.rules.push({ target: [], action: '' })
             }
             this.headersConfigurationChanged()
+        },
+        onColumnsSelected(event: any, rule: ITableWidgetHeadersRule) {
+            const intersection = rule.target.filter((el: string) => !event.value.includes(el))
+            rule.target = event.value
+            intersection.length > 0 ? this.onColumnsRemovedFromMultiselect(intersection) : this.onColumnsAddedFromMultiselect(rule)
+            this.headersConfigurationChanged()
+        },
+        onColumnsRemovedFromMultiselect(intersection: string[]) {
+            intersection.forEach((el: string) => this.availableTargetOptions.push({ id: el, alias: this.widgetColumnsAliasMap[el] }))
+        },
+        onColumnsAddedFromMultiselect(rule: ITableWidgetHeadersRule) {
+            rule.target.forEach((target: string) => {
+                const index = this.availableTargetOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === target)
+                if (index !== -1) this.availableTargetOptions.splice(index, 1)
+            })
         },
         addHeadersRule() {
             if (!this.headersModel) return
@@ -141,6 +196,8 @@ export default defineComponent({
                 }
                 if (this.headersModel.custom.rules[i].target.length === 0) this.headersModel.custom.rules.splice(i, 1)
             }
+            const index = this.availableTargetOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === column.id)
+            if (index !== -1) this.availableTargetOptions.splice(index, 1)
             this.headersConfigurationChanged()
         }
     }
