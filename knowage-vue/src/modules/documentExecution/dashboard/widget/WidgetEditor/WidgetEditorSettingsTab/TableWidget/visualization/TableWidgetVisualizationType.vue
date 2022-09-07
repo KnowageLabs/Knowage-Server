@@ -38,7 +38,50 @@
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.precision') }}</label>
                     <InputNumber class="kn-material-input p-inputtext-sm" v-model="visualizationType.precision" @change="visualizationTypeChanged" />
                 </div>
+                <div v-if="optionsContainMeasureColumn(visualizationType)" class="p-d-flex p-flex-column kn-flex-2 p-m-2">
+                    <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.visualizationType.pinned') }}</label>
+                    <Dropdown class="kn-material-input" v-model="visualizationType.pinned" :options="descriptor.pinnedOptions" optionValue="value" @change="visualizationTypeChanged">
+                        <template #value="slotProps">
+                            <div>
+                                <span>{{ getTranslatedLabel(slotProps.value, descriptor.pinnedOptions, $t) }}</span>
+                            </div>
+                        </template>
+                        <template #option="slotProps">
+                            <div>
+                                <span>{{ $t(slotProps.option.label) }}</span>
+                            </div>
+                        </template>
+                    </Dropdown>
+                </div>
             </div>
+            <div class="p-d-flex p-flex-row p-ai-center kn-flex p-mt-1">
+                <div class="p-d-flex p-flex-column p-mx-2">
+                    <label class="kn-material-input-label p-mr-2">{{ $t('common.min') }}</label>
+                    <InputNumber class="kn-material-input p-inputtext-sm" v-model="visualizationType.min" @change="visualizationTypeChanged" />
+                </div>
+                <div class="p-d-flex p-flex-column p-mx-2">
+                    <label class="kn-material-input-label p-mr-2">{{ $t('common.max') }}</label>
+                    <InputNumber class="kn-material-input p-inputtext-sm" v-model="visualizationType.max" @change="visualizationTypeChanged" />
+                </div>
+
+                <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
+                    <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.visualizationType.alignment') }}</label>
+                    <Dropdown class="kn-material-input" v-model="visualizationType.alignment" :options="descriptor.alignmentOptions" optionValue="value" @change="visualizationTypeChanged">
+                        <template #value="slotProps">
+                            <div>
+                                <span>{{ getTranslatedLabel(slotProps.value, descriptor.alignmentOptions, $t) }}</span>
+                            </div>
+                        </template>
+                        <template #option="slotProps">
+                            <div>
+                                <span>{{ $t(slotProps.option.label) }}</span>
+                            </div>
+                        </template>
+                    </Dropdown>
+                </div>
+            </div>
+
+            <hr />
         </div>
     </div>
 </template>
@@ -47,6 +90,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetVisualizationType, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
+import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
@@ -63,7 +107,8 @@ export default defineComponent({
             visualizationTypes: [] as ITableWidgetVisualizationType[],
             availableColumnOptions: [] as (IWidgetColumn | { id: string; alias: string })[],
             widgetColumnsAliasMap: {} as any,
-            widgetColumnsTypeMap: {} as any
+            widgetColumnsTypeMap: {} as any,
+            getTranslatedLabel
         }
     },
     created() {

@@ -4,8 +4,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import MultiSelect from 'primevue/multiselect'
 import { IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import MultiSelect from 'primevue/multiselect'
 
 export default defineComponent({
     name: 'table-widget-visualization-type-multiselect',

@@ -461,7 +461,9 @@
                 "textAndChart": "Text & Chart"
             },
             "visualizationType": {
+                "alignment": "Alignment",
                 "bar": "Bar",
+                "pinned": "Pinned",
                 "sparkline": "Sparkline",
                 "textAndIcon": "Text & Icon",
                 "title": "Visualization Type"
