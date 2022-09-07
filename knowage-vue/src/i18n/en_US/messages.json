@@ -446,7 +446,7 @@
             },
             "sortingColumn": "Sorting column",
             "sortingOrder": "Sorting order",
-            "sufix": "Sufix",
+            "suffix": "Suffix",
             "summaryRows": {
                 "enableSummaryRows": "Enable Summary Rows",
                 "pinnedColumnsOnly": "Pinned columns only",

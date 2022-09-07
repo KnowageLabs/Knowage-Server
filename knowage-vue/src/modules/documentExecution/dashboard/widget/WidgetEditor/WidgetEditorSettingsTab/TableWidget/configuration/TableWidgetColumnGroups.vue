@@ -63,11 +63,14 @@ export default defineComponent({
         removeColumnsFromAvailableOptions() {
             for (let i = 0; i < this.widgetModel.settings.configuration.columnGroups.groups.length; i++) {
                 for (let j = 0; j < this.widgetModel.settings.configuration.columnGroups.groups[i].columns.length; j++) {
-                    this.removeColumnFromAvailableTargetOptions({ id: this.widgetModel.settings.configuration.columnGroups.groups[i].columns[j], alias: this.widgetModel.settings.configuration.columnGroups.groups[i].columns[j] })
+                    this.removeColumnFromAvailableOptions({
+                        id: this.widgetModel.settings.configuration.columnGroups.groups[i].columns[j],
+                        alias: this.widgetModel.settings.configuration.columnGroups.groups[i].columns[j]
+                    })
                 }
             }
         },
-        removeColumnFromAvailableTargetOptions(tempColumn: IWidgetColumn | { id: string; alias: string }) {
+        removeColumnFromAvailableOptions(tempColumn: IWidgetColumn | { id: string; alias: string }) {
             const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === tempColumn.id)
             if (index !== -1) this.availableColumnOptions.splice(index, 1)
         },
@@ -82,7 +85,11 @@ export default defineComponent({
         onEnableColumnGroupsChanged() {
             if (!this.columnGroupsModel) return
             if (this.columnGroupsModel.enabled && this.columnGroupsModel.groups.length === 0) {
-                this.columnGroupsModel.groups.push({ id: cryptoRandomString({ length: 16, type: 'base64' }), label: '', columns: [] })
+                this.columnGroupsModel.groups.push({
+                    id: cryptoRandomString({ length: 16, type: 'base64' }),
+                    label: '',
+                    columns: []
+                })
             }
             this.columnGroupsConfigurationChanged()
         },
@@ -93,7 +100,12 @@ export default defineComponent({
             this.columnGroupsConfigurationChanged()
         },
         onColumnsRemovedFromMultiselect(intersection: string[]) {
-            intersection.forEach((el: string) => this.availableColumnOptions.push({ id: el, alias: this.widgetColumnsAliasMap[el] }))
+            intersection.forEach((el: string) =>
+                this.availableColumnOptions.push({
+                    id: el,
+                    alias: this.widgetColumnsAliasMap[el]
+                })
+            )
         },
         onColumnsAddedFromMultiselect(columnGroup: ITableWidgetColumnGroup) {
             columnGroup.columns.forEach((target: string) => {
@@ -103,12 +115,21 @@ export default defineComponent({
         },
         addColumnGroup() {
             if (!this.columnGroupsModel) return
-            this.columnGroupsModel.groups.push({ id: cryptoRandomString({ length: 16, type: 'base64' }), label: '', columns: [] })
+            this.columnGroupsModel.groups.push({
+                id: cryptoRandomString({ length: 16, type: 'base64' }),
+                label: '',
+                columns: []
+            })
             this.columnGroupsConfigurationChanged()
         },
         removeColumnGroup(index: number) {
             if (!this.columnGroupsModel) return
-            this.columnGroupsModel.groups[index].columns.forEach((target: string) => this.availableColumnOptions.push({ id: target, alias: this.widgetColumnsAliasMap[target] }))
+            this.columnGroupsModel.groups[index].columns.forEach((target: string) =>
+                this.availableColumnOptions.push({
+                    id: target,
+                    alias: this.widgetColumnsAliasMap[target]
+                })
+            )
             this.columnGroupsModel.groups.splice(index, 1)
             this.columnGroupsConfigurationChanged()
         },
