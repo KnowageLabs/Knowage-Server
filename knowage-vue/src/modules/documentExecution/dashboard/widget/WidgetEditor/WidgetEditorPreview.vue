@@ -61,7 +61,7 @@ export default defineComponent({
             emitter.on('columnsReordered', () => this.createDatatableColumns())
             emitter.on('indexColumnChanged', (rows) => this.createDatatableColumns())
             emitter.on('rowSpanChanged', (rows) => console.log('WidgetEditorPreview  - rowSpanChanged!', rows))
-            emitter.on('summaryRowsChanged', (rows) => console.log('WidgetEditorPreview  - summaryRowsChanged!', rows)) //TODO: Servis nam treba za ovo
+            emitter.on('summaryRowsChanged', (rows) => this.createDatatableColumns()) //TODO: Servis nam treba za ovo
             // TODO: Trenutno se gleda svaka promena u header config, mozda staviti event emit samo na promene koje trebaju.
             emitter.on('headersConfigurationChanged', () => this.createDatatableColumns())
             emitter.on('columnGroupsConfigurationChanged', (columnGroupConfiguration) => console.log('WidgetEditorPreview  - columnGroupsConfigurationChanged!', columnGroupConfiguration))
@@ -76,7 +76,8 @@ export default defineComponent({
                 rowSelection: 'single',
 
                 // EVENTS
-                onRowClicked: (event) => console.log('A row was clicked'),
+                onRowClicked: (event, params) => console.log('A row was clicked', event),
+                onCellClicked: (event, params) => console.log('A cell was clicked', event),
                 onColumnResized: (event) => console.log('A column was resized'),
                 onGridReady: (event) => console.log('The grid is now ready'),
 
@@ -101,7 +102,6 @@ export default defineComponent({
 
             const updateData = (data) => {
                 this.rowData = data.slice(0, this.propWidget.settings.pagination.itemsNumber)
-                console.log(data.slice(this.propWidget.settings.pagination.itemsNumber))
                 this.gridApi.setPinnedBottomRowData(data.slice(this.propWidget.settings.pagination.itemsNumber))
             }
             updateData(this.mock.mockResponse.rows)
@@ -109,8 +109,41 @@ export default defineComponent({
 
         getDatatableColumns() {
             const columns = this.propWidget.columns.map((column, index) => {
-                return { colId: column.id, field: `column_${index + 1}`, headerName: column.alias }
+                return {
+                    colId: column.id,
+                    field: `column_${index + 1}`,
+                    headerName: column.alias,
+                    cellRendererSelector: (params) => {
+                        if (params.node.rowPinned) {
+                            return {
+                                component: SummaryRowRenderer,
+                                params: {
+                                    summaryRows: this.propWidget.settings.configuration.summaryRows.list.map((row) => {
+                                        return row.label
+                                    })
+                                }
+                            }
+                        } else {
+                            // rows that are not pinned don't use any cell renderer
+                            return undefined
+                        }
+                    }
+                }
             })
+            class SummaryRowRenderer {
+                eGui: HTMLDivElement | undefined
+                init(params) {
+                    this.eGui = document.createElement('div')
+                    params.value ? (this.eGui.innerHTML = '<b style="margin-right: 4px;">' + params.summaryRows[params.rowIndex] + '</b>') : ''
+                    this.eGui.innerHTML += params.value
+                }
+                getGui() {
+                    return this.eGui
+                }
+                refresh() {
+                    return false
+                }
+            }
 
             return columns
         },
