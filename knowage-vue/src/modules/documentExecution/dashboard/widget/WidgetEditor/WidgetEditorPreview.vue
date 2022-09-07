@@ -62,7 +62,7 @@ export default defineComponent({
             emitter.on('indexColumnChanged', (rows) => this.createDatatableColumns())
             emitter.on('rowSpanChanged', (rows) => console.log('WidgetEditorPreview  - rowSpanChanged!', rows))
             emitter.on('summaryRowsChanged', (rows) => console.log('WidgetEditorPreview  - summaryRowsChanged!', rows)) //TODO: Servis nam treba za ovo
-            emitter.on('headersConfigurationChanged', (headersConfiguration) => this.createDatatableColumns())
+            emitter.on('headersConfigurationChanged', () => this.createDatatableColumns())
             emitter.on('columnGroupsConfigurationChanged', (columnGroupConfiguration) => console.log('WidgetEditorPreview  - columnGroupsConfigurationChanged!', columnGroupConfiguration))
             emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
             emitter.on('visualizationTypeChanged', (visuelizationTypes) => console.log('WidgetEditorPreview  - visualizationTypeChanged!', visuelizationTypes))
@@ -133,9 +133,16 @@ export default defineComponent({
             if (headersConfiguration.enabled && headersConfiguration.custom.enabled) {
                 headersConfiguration.custom.rules.forEach((rule) => {
                     rule.target.forEach((columnId) => {
-                        if (rule.action === 'hide') {
-                            var columnIndex = datatableColumns.findIndex((datatableColumn) => datatableColumn.colId == columnId)
-                            datatableColumns[columnIndex].headerName = ''
+                        var columnIndex = datatableColumns.findIndex((datatableColumn) => datatableColumn.colId == columnId)
+                        switch (rule.action) {
+                            case 'hide':
+                                datatableColumns[columnIndex].headerName = ''
+                                break
+                            case 'setLabel':
+                                rule.value ? (datatableColumns[columnIndex].headerName = rule.value) : ''
+                                break
+                            default:
+                                break
                         }
                     })
                 })
