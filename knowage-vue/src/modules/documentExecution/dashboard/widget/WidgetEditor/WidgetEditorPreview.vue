@@ -55,14 +55,14 @@ export default defineComponent({
         setEventListeners() {
             emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
             emitter.on('sortingChanged', (sorting) => this.sortColumn(sorting)) // { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder }
-            emitter.on('collumnAdded', () => this.gridApi.setColumnDefs(this.getDatatableColumns()))
-            emitter.on('collumnRemoved', () => this.gridApi.setColumnDefs(this.getDatatableColumns()))
-            emitter.on('collumnUpdated', () => this.gridApi.setColumnDefs(this.getDatatableColumns()))
-            emitter.on('columnsReordered', () => this.gridApi.setColumnDefs(this.getDatatableColumns()))
-            emitter.on('indexColumnChanged', (rows) => this.gridApi.setColumnDefs(this.getDatatableColumns(rows.indexColumn)))
+            emitter.on('collumnAdded', () => this.createDatatableColumns())
+            emitter.on('collumnRemoved', () => this.createDatatableColumns())
+            emitter.on('collumnUpdated', () => this.createDatatableColumns())
+            emitter.on('columnsReordered', () => this.createDatatableColumns())
+            emitter.on('indexColumnChanged', (rows) => this.createDatatableColumns())
             emitter.on('rowSpanChanged', (rows) => console.log('WidgetEditorPreview  - rowSpanChanged!', rows))
             emitter.on('summaryRowsChanged', (rows) => console.log('WidgetEditorPreview  - summaryRowsChanged!', rows)) //TODO: Servis nam treba za ovo
-            emitter.on('headersConfigurationChanged', (headersConfiguration) => this.onHeaderChange(headersConfiguration))
+            emitter.on('headersConfigurationChanged', (headersConfiguration) => this.createDatatableColumns())
             emitter.on('columnGroupsConfigurationChanged', (columnGroupConfiguration) => console.log('WidgetEditorPreview  - columnGroupsConfigurationChanged!', columnGroupConfiguration))
             emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
             emitter.on('visualizationTypeChanged', (visuelizationTypes) => console.log('WidgetEditorPreview  - visualizationTypeChanged!', visuelizationTypes))
@@ -87,101 +87,59 @@ export default defineComponent({
             this.gridApi = params.api
             this.columnApi = params.columnApi
 
-            const datatableColumns = this.getDatatableColumns(this.propWidget.settings.configuration.rows.indexColumn)
-            this.gridApi.setColumnDefs(datatableColumns)
+            this.createDatatableColumns()
+        },
+        createDatatableColumns() {
+            const datatableColumns = this.getDatatableColumns()
 
-            this.setInitialSorting()
-            this.setInitialHeaders()
+            this.setSorting()
+            this.setIndexColumn(this.propWidget.settings.configuration.rows.indexColumn, datatableColumns)
+            this.setHeaders(this.propWidget.settings.configuration.headers, datatableColumns)
+
+            this.gridApi.setColumnDefs(datatableColumns)
 
             const updateData = (data) => {
                 this.rowData = data.slice(0, this.propWidget.settings.pagination.itemsNumber)
                 console.log(data.slice(this.propWidget.settings.pagination.itemsNumber))
                 this.gridApi.setPinnedBottomRowData(data.slice(this.propWidget.settings.pagination.itemsNumber))
             }
-
             updateData(this.mock.mockResponse.rows)
         },
-        setInitialSorting() {
-            if (this.propWidget.settings.sortingColumn && this.propWidget.settings.sortingOrder) {
-                this.sortColumn({ sortingColumn: this.propWidget.settings.sortingColumn, sortingOrder: this.propWidget.settings.sortingOrder })
-            }
-        },
-        setInitialHeaders() {
-            if (this.propWidget.settings.configuration.headers && this.propWidget.settings.configuration.headers.enabled) {
-                this.onHeaderChange(this.propWidget.settings.configuration.headers)
-            }
-        },
-        getDatatableColumns(showIndexColumn?) {
+
+        getDatatableColumns() {
             const columns = this.propWidget.columns.map((column, index) => {
                 return { colId: column.id, field: `column_${index + 1}`, headerName: column.alias }
             })
 
-            // const columns = [] as any
-            // this.propWidget.columns.forEach((column, index) => {
-            //     let tempCol = { colId: column.id, field: `column_${index + 1}`, headerName: column.alias } as any
-
-            //     if (this.propWidget.settings.configuration.rows.rowSpan.enabled && this.propWidget.settings.configuration.rows.rowSpan.columns.includes(column.id)) {
-            //         console.log('HAS ROW SPAN', column.alias)
-            //         tempCol.rowSpan = this.RowSpanCalculator
-            //         tempCol.cellClassRules = {
-            //             'cell-span': function (params) {
-            //                 return this.mock.mockResponse.rows.slice(0, this.propWidget.settings.pagination.itemsNumber)[params.rowIndex].span > 1
-            //             }
-            //         }
-            //     }
-
-            //     columns.push(tempCol)
-            // })
-
-            showIndexColumn ? columns.unshift({ colId: 'indexColumn', valueGetter: `node.rowIndex + 1`, headerName: '#', pinned: 'left', width: 50, sortable: false, filter: false }) : ''
-
             return columns
         },
-        RowSpanCalculator(params) {
-            if (params.data.span > 1) {
-                return params.data.span
-            } else return 1
-        },
-
-        setRowSpanForSingleColumn(columnField) {
-            var responseData = this.mock.mockResponse.rows.slice(0, this.propWidget.settings.pagination.itemsNumber) as any
-            var previousValue
-            var previousIndex
-
-            // responseData.forEach((row, index) => {
-            //     console.log('row', row[columnField])
-            //     if (previousValue != row[columnField]) {
-            //         previousValue = row[columnField]
-            //         previousIndex = index - 1
-            //         row.span = 1
-            //     } else {
-            //         row[previousIndex].span++
-            //     }
-            // })
-
-            for (var r in responseData) {
-                // console.log('row --------------------------')
-                // console.log(previousValue, ' = ', responseData[r][columnField])
-                // console.log('--------------------------------')
-
-                if (previousValue != responseData[r][columnField]) {
-                    previousValue = responseData[r][columnField]
-                    previousIndex = r
-                    responseData[r].span = 1
-                } else {
-                    responseData[previousIndex].span = responseData[previousIndex].span + 1
-                }
+        setSorting() {
+            if (this.propWidget.settings.sortingColumn && this.propWidget.settings.sortingOrder) {
+                this.sortColumn({ sortingColumn: this.propWidget.settings.sortingColumn, sortingOrder: this.propWidget.settings.sortingOrder })
             }
-        },
-        onHeaderChange(headersConfiguration) {
-            console.log('WidgetEditorPreview  - headersConfigurationChanged!', headersConfiguration)
-            headersConfiguration.enabled ? this.gridApi.setHeaderHeight(25) : this.gridApi.setHeaderHeight(0)
         },
         sortColumn(sorting) {
             this.columnApi.applyColumnState({
                 state: [{ colId: sorting.sortingColumn, sort: sorting.sortingOrder.toLowerCase() }],
                 defaultState: { sort: null }
             })
+        },
+        setIndexColumn(showIndexColumn, datatableColumns) {
+            showIndexColumn ? datatableColumns.unshift({ colId: 'indexColumn', valueGetter: `node.rowIndex + 1`, headerName: '#', pinned: 'left', width: 50, sortable: false, filter: false }) : ''
+        },
+        setHeaders(headersConfiguration, datatableColumns) {
+            headersConfiguration.enabled ? this.gridApi.setHeaderHeight(25) : this.gridApi.setHeaderHeight(0)
+
+            if (headersConfiguration.enabled && headersConfiguration.custom.enabled) {
+                headersConfiguration.custom.rules.forEach((rule) => {
+                    rule.target.forEach((columnId) => {
+                        if (rule.action === 'hide') {
+                            var columnIndex = datatableColumns.findIndex((datatableColumn) => datatableColumn.colId == columnId)
+                            datatableColumns[columnIndex].headerName = ''
+                        }
+                    })
+                })
+            }
         }
     }
 })
