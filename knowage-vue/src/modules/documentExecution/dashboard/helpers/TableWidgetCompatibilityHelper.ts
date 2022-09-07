@@ -208,3 +208,10 @@ const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {
         }
     }
 }
+
+export const getColumnById = (formattedWidget: IWidget, columnId: string) => {
+    console.log("COLUMN ID: ", columnId)
+    const index = formattedWidget.columns.findIndex((column: IWidgetColumn) => column.id === columnId)
+    console.log("INDEX: ", index)
+    return index !== -1 ? formattedWidget.columns[index] : null
+}
