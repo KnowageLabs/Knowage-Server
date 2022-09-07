@@ -62,6 +62,7 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 
 /**
  * @author Francesco Lucchi (francesco.lucchi@eng.it)
@@ -476,11 +477,11 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 		Row newheader = sheet.createRow((short) 0);
 		Cell cell = newheader.createCell(0);
-		cell.setCellValue("Dataset");
+		cell.setCellValue(EngineMessageBundle.getMessage("sbi.cockpit.export.dataset.name", locale));
 		Cell cell2 = newheader.createCell(1);
-		cell2.setCellValue("Field");
+		cell2.setCellValue(EngineMessageBundle.getMessage("sbi.cockpit.export.column.name", locale));
 		Cell cell3 = newheader.createCell(2);
-		cell3.setCellValue("Values");
+		cell3.setCellValue(EngineMessageBundle.getMessage("sbi.cockpit.export.columnValues", locale));
 
 		int j = 1;
 		for (String key : selectionsMap.keySet()) {
