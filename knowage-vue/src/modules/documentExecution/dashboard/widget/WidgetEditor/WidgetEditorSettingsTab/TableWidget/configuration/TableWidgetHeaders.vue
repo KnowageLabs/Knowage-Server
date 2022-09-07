@@ -4,6 +4,7 @@
 
         <hr />
 
+        {{ 'AVAILABLE TARGET: ' }}
         {{ availableTargetOptions }}
 
         <hr />
@@ -31,7 +32,7 @@
                 <div class="p-d-flex p-flex-column kn-flex p-mt-1">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
                     <!-- <MultiSelect v-model="rule.target" :options="getTargetOptions(rule)" optionLabel="alias" optionValue="id" :disabled="!headersModel.custom.enabled" @change="onColumnsSelected(rule)"> </MultiSelect> -->
-                    <WidgetEditorMultiselect :value="rule.target" :availableTargetOptions="availableTargetOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" :disabled="!headersModel.custom.enabled" @change="onColumnsSelected(rule)">
+                    <WidgetEditorMultiselect :value="rule.target" :availableTargetOptions="availableTargetOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" :disabled="!headersModel.custom.enabled" @change="onColumnsSelected($event, rule)">
                     </WidgetEditorMultiselect>
                 </div>
                 <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
@@ -163,20 +164,28 @@ export default defineComponent({
             }
             this.headersConfigurationChanged()
         },
-        getTargetOptions(rule: ITableWidgetHeadersRule) {
-            const targetOptions = [] as (IWidgetColumn | { id: string; alias: string })[]
-            rule.target.forEach((target: string) => {
-                const tempColumn = { id: target, alias: this.widgetColumnsAliasMap[target] }
-                if (tempColumn) targetOptions.push(tempColumn)
-            })
-            console.log('TARGET OPTIONS: ', targetOptions)
-            return targetOptions.concat(this.availableTargetOptions)
+        // getTargetOptions(rule: ITableWidgetHeadersRule) {
+        //     const targetOptions = [] as (IWidgetColumn | { id: string; alias: string })[]
+        //     rule.target.forEach((target: string) => {
+        //         const tempColumn = { id: target, alias: this.widgetColumnsAliasMap[target] }
+        //         if (tempColumn) targetOptions.push(tempColumn)
+        //     })
+        //     console.log('TARGET OPTIONS: ', targetOptions)
+        //     return targetOptions.concat(this.availableTargetOptions)
+        // },
+        onColumnsSelected(event: any, rule: ITableWidgetHeadersRule) {
+            const intersection = rule.target.filter((el: string) => !event.value.includes(el))
+            rule.target = event.value
+            intersection.length > 0 ? this.onColumnsRemovedFromMultiselect(intersection) : this.onColumnsAddedFromMultiselect(rule)
         },
-        onColumnsSelected(rule: ITableWidgetHeadersRule) {
-            // rule.target.forEach((target: string) => {
-            //     const index = this.availableTargetOptions.findIndex((targetOption: IWidgetColumn) => targetOption.id === target)
-            //     if (index !== 1) this.availableTargetOptions.splice(index, 1)
-            // })
+        onColumnsRemovedFromMultiselect(intersection: string[]) {
+            intersection.forEach((el: string) => this.availableTargetOptions.push({ id: el, alias: this.widgetColumnsAliasMap[el] }))
+        },
+        onColumnsAddedFromMultiselect(rule: ITableWidgetHeadersRule) {
+            rule.target.forEach((target: string) => {
+                const index = this.availableTargetOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === target)
+                if (index !== -1) this.availableTargetOptions.splice(index, 1)
+            })
         },
         addHeadersRule() {
             if (!this.headersModel) return
