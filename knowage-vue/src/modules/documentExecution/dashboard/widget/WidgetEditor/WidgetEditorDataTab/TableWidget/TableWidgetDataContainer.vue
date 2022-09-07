@@ -50,7 +50,7 @@ export default defineComponent({
         },
         onColumnAdded(column: IWidgetColumn) {
             this.widgetModel.columns.push(column)
-            emitter.emit('collumnAdded', column)
+            emitter.emit('columnAdded', column)
         },
         onColumnItemUpdate(column: IWidgetColumn) {
             const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
