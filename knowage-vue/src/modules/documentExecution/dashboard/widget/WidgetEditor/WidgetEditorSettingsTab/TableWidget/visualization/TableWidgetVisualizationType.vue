@@ -1,10 +1,19 @@
 <template>
     <div>
+        {{ visualizationTypes }}
         <div v-for="(visualizationType, index) in visualizationTypes" :key="index" class="visualization-type-container p-d-flex p-flex-column p-my-2 p-pb-2">
             <div class="p-d-flex p-flex-row p-ai-center kn-flex">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-                    <TableWidgetVisualizationTypeMultiselect :value="(visualizationType.target as string[])" :availableTargetOptions="availableColumnOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" @change="onColumnsSelected($event, visualizationType)">
+                    <TableWidgetVisualizationTypeMultiselect
+                        :value="(visualizationType.target as string[])"
+                        :availableTargetOptions="availableColumnOptions"
+                        :widgetColumnsAliasMap="widgetColumnsAliasMap"
+                        :allColumnsSelected="allColumnsSelected"
+                        optionLabel="alias"
+                        optionValue="id"
+                        @change="onColumnsSelected($event, visualizationType)"
+                    >
                     </TableWidgetVisualizationTypeMultiselect>
                 </div>
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
@@ -109,6 +118,7 @@ export default defineComponent({
             availableColumnOptions: [] as (IWidgetColumn | { id: string; alias: string })[],
             widgetColumnsAliasMap: {} as any,
             widgetColumnsTypeMap: {} as any,
+            allColumnsSelected: false,
             getTranslatedLabel
         }
     },
@@ -153,8 +163,20 @@ export default defineComponent({
         onColumnsSelected(event: any, visualizationType: ITableWidgetVisualizationType) {
             const intersection = visualizationType.target.filter((el: string) => !event.value.includes(el))
             visualizationType.target = event.value
+
             intersection.length > 0 ? this.onColumnsRemovedFromMultiselect(intersection) : this.onColumnsAddedFromMultiselect(visualizationType)
             this.visualizationTypeChanged()
+        },
+        checkIfAllColumnsSelected(visualizationType: ITableWidgetVisualizationType) {
+            console.log('visualizationType: ', visualizationType)
+            let selected = false
+            for (let i = 0; i < visualizationType.target.length; i++) {
+                if (visualizationType.target[i] === 'All Columns') {
+                    selected = true
+                    break
+                }
+            }
+            return selected
         },
         onColumnsRemovedFromMultiselect(intersection: string[]) {
             intersection.forEach((el: string) =>
@@ -175,7 +197,6 @@ export default defineComponent({
             return this.optionsContainMeasureColumn(visualizationType) ? descriptor.visualizationTypes : descriptor.visualizationTypes.slice(0, 3)
         },
         optionsContainMeasureColumn(visualizationType: ITableWidgetVisualizationType) {
-            console.log('visualizationType: ', visualizationType)
             let found = false
             for (let i = 0; i < visualizationType.target.length; i++) {
                 if (this.widgetColumnsTypeMap[visualizationType.target[i]] === 'MEASURE') {
