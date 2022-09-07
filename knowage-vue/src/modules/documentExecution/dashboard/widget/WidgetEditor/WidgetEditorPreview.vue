@@ -55,8 +55,8 @@ export default defineComponent({
         setEventListeners() {
             emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
             emitter.on('sortingChanged', (sorting) => this.sortColumn(sorting)) // { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder }
-            emitter.on('collumnAdded', () => this.createDatatableColumns())
-            emitter.on('collumnRemoved', () => this.createDatatableColumns())
+            emitter.on('columnAdded', () => this.createDatatableColumns())
+            emitter.on('columnRemoved', () => this.createDatatableColumns())
             emitter.on('collumnUpdated', () => this.createDatatableColumns())
             emitter.on('columnsReordered', () => this.createDatatableColumns())
             emitter.on('indexColumnChanged', (rows) => this.createDatatableColumns())

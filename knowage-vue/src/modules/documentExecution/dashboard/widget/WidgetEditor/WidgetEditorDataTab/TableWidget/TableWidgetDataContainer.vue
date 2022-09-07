@@ -50,7 +50,7 @@ export default defineComponent({
         },
         onColumnAdded(column: IWidgetColumn) {
             this.widgetModel.columns.push(column)
-            emitter.emit('collumnAdded', column)
+            emitter.emit('columnAdded', column)
         },
         onColumnItemUpdate(column: IWidgetColumn) {
             const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
@@ -68,7 +68,7 @@ export default defineComponent({
             if (index !== -1) {
                 this.widgetModel.columns.splice(index, 1)
                 if (column.id === this.selectedColumn?.id) this.selectedColumn = null
-                emitter.emit('collumnRemoved', column)
+                emitter.emit('columnRemoved', column)
             }
         }
     }

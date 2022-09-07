@@ -44,7 +44,7 @@ export default defineComponent({
     },
     methods: {
         setEventListeners() {
-            emitter.on('collumnRemoved', (column) => this.onColumnRemoved(column))
+            emitter.on('columnRemoved', (column) => this.onColumnRemoved(column))
         },
         loadColumnGroups() {
             if (this.widgetModel?.settings?.configuration) this.columnGroupsModel = this.widgetModel.settings.configuration.columnGroups
