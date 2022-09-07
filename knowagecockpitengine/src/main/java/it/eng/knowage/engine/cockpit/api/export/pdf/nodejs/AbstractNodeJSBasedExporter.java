@@ -215,6 +215,10 @@ public abstract class AbstractNodeJSBasedExporter {
 		return Double.valueOf(renderOptions.getDimensions().getDeviceScaleFactor());
 	}
 
+	protected boolean getIsMultiSheet(BIObject document) {
+		return Boolean.parseBoolean(renderOptions.getDimensions().getIsMultiSheet());
+	}
+
 	protected FrontpageDetails getFrontpageDetails(boolean includeFrontPage, BIObject document) {
 		FrontpageDetails toReturn = null;
 
@@ -242,7 +246,7 @@ public abstract class AbstractNodeJSBasedExporter {
 		int sheetWidth = getSheetWidth(document);
 		int sheetHeight = getSheetHeight(document);
 		double deviceScaleFactor = getDeviceScaleFactor(document);
-
+		boolean isMultiSheet = getIsMultiSheet(document);
 		String encodedUserId = Base64.encodeBase64String(userId.getBytes("UTF-8"));
 		logger.debug("Encoded User Id: " + encodedUserId);
 
@@ -264,7 +268,8 @@ public abstract class AbstractNodeJSBasedExporter {
 		}
 
 		ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), url.toString(), encodedUserId, outputDir.toString(),
-				Integer.toString(sheetCount), Integer.toString(sheetWidth), Integer.toString(sheetHeight), Double.toString(deviceScaleFactor));
+				Integer.toString(sheetCount), Integer.toString(sheetWidth), Integer.toString(sheetHeight), Double.toString(deviceScaleFactor),
+				Boolean.toString(isMultiSheet));
 
 		logger.info("Node complete command line: " + processBuilder.command());
 
