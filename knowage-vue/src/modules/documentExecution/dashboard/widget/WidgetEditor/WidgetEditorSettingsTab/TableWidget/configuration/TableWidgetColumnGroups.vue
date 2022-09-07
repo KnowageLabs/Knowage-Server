@@ -12,7 +12,6 @@
             </div>
             <div class="p-d-flex p-flex-column kn-flex p-m-2">
                 <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-                <!-- <MultiSelect v-model="columnGroup.columns" :options="widgetModel.columns" optionLabel="alias" optionValue="id" :disabled="!columnGroupsModel.enabled" @change="columnGroupsConfigurationChanged"> </MultiSelect> -->
                 <WidgetEditorColumnsMultiselect :value="columnGroup.columns" :availableTargetOptions="availableColumnOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" :disabled="!columnGroupsModel.enabled" @change="onColumnsSelected($event, columnGroup)">
                 </WidgetEditorColumnsMultiselect>
             </div>
@@ -70,7 +69,6 @@ export default defineComponent({
         },
         removeColumnFromAvailableTargetOptions(tempColumn: IWidgetColumn | { id: string; alias: string }) {
             const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === tempColumn.id)
-            console.log('INDEX: ', index)
             if (index !== -1) this.availableColumnOptions.splice(index, 1)
         },
         loadWidgetColumnAliasMap() {
