@@ -36,6 +36,7 @@ export default defineComponent({
             descriptor,
             mock,
             gridOptions: null as any,
+            columnsNameArray: [] as any,
             rowData: [] as any,
             columnDefs: [] as any,
             defaultColDef: {
@@ -74,6 +75,7 @@ export default defineComponent({
                 defaultColDef: this.defaultColDef,
                 pagination: false,
                 rowSelection: 'single',
+                suppressRowTransform: true,
 
                 // EVENTS
                 onRowClicked: (event, params) => console.log('A row was clicked', event),
@@ -92,19 +94,26 @@ export default defineComponent({
             this.createDatatableColumns()
         },
         createDatatableColumns() {
-            const datatableColumns = this.getDatatableColumns()
+            // const datatableColumns = this.getDatatableColumns()
 
-            this.setSorting()
-            this.setIndexColumn(this.propWidget.settings.configuration.rows.indexColumn, datatableColumns)
-            this.setHeaders(this.propWidget.settings.configuration.headers, datatableColumns)
+            // this.setSorting()
+            // this.setIndexColumn(this.propWidget.settings.configuration.rows.indexColumn, datatableColumns)
+            // this.setHeaders(this.propWidget.settings.configuration.headers, datatableColumns)
 
-            this.gridApi.setColumnDefs(datatableColumns)
+            // datatableColumns[1].children = [{ field: 'athlete' }, { field: 'age' }, { field: 'country' }]
+
+            // this.gridApi.setColumnDefs(datatableColumns)
 
             const updateData = (data) => {
                 this.rowData = data.slice(0, this.propWidget.settings.pagination.itemsNumber)
-                this.gridApi.setPinnedBottomRowData(data.slice(this.propWidget.settings.pagination.itemsNumber))
+
+                if (this.propWidget.settings.configuration.summaryRows.enabled) {
+                    this.gridApi.setPinnedBottomRowData(data.slice(this.propWidget.settings.pagination.itemsNumber))
+                } else this.gridApi.setPinnedBottomRowData()
             }
             updateData(this.mock.mockResponse.rows)
+
+            this.gridApi.setColumnDefs(this.newGetColumns(this.mock.mockResponse.metaData.fields))
         },
 
         getDatatableColumns() {
@@ -114,7 +123,7 @@ export default defineComponent({
                     field: `column_${index + 1}`,
                     headerName: column.alias,
                     cellRendererSelector: (params) => {
-                        if (params.node.rowPinned) {
+                        if (params.node.rowPinned && this.propWidget.settings.configuration.summaryRows.enabled) {
                             return {
                                 component: SummaryRowRenderer,
                                 params: {
@@ -179,6 +188,49 @@ export default defineComponent({
                     })
                 })
             }
+        },
+        newGetColumns(responseFields) {
+            var columns = [] as any
+            var columnGroups = {}
+            this.columnsNameArray = []
+
+            // TODO: Get whole dataset here i guess...
+            var dataset = { type: 'SbiFileDataSet' }
+
+            if (this.propWidget.settings.configuration.rows.indexColumn) {
+                columns.push({ colId: 'indexColumn', valueGetter: `node.rowIndex + 1`, headerName: '#', pinned: 'left', width: 50, sortable: false, filter: false })
+            }
+            // c = datasetColumn
+            // f = responseField, fields = responseFields
+            // this.propWidget.columns[datasetColumn] = this.propWidget.columns[datasetColumn]
+            for (var datasetColumn in this.propWidget.columns) {
+                for (var responseField in responseFields) {
+                    var thisColumn = this.propWidget.columns[datasetColumn]
+
+                    if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && thisColumn.columnName.toLowerCase() === responseFields[responseField].header) || thisColumn.alias.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
+                        this.columnsNameArray.push(responseFields[responseField].name)
+                        var tempCol = { headerName: this.propWidget.columns[datasetColumn].alias, field: responseFields[responseField].name, measure: this.propWidget.columns[datasetColumn].fieldType } as any
+
+                        if (this.propWidget.columns[datasetColumn].style && this.propWidget.columns[datasetColumn].style.enableCustomHeaderTooltip) {
+                            // tempCol.headerTooltip = replacePlaceholders(this.propWidget.columns[datasetColumn].style.customHeaderTooltip, null, true)
+                            //TODO: add custom tooltips for headers if there are any
+                        } else {
+                            tempCol.headerTooltip = this.propWidget.columns[datasetColumn].alias
+                        }
+
+                        if (tempCol.measure === 'MEASURE') tempCol.aggregationSelected = this.propWidget.columns[datasetColumn].aggregation
+                        // tempCol.pinned = this.propWidget.columns[datasetColumn].pinned
+
+                        columns.push(tempCol)
+                    }
+                }
+            }
+
+            console.log(this.columnsNameArray)
+
+            console.log('COLUMNS --------------------------')
+            console.log(columns)
+            return columns
         }
     }
 })
