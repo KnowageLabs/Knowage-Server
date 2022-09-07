@@ -79,7 +79,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetHeaders, ITableWidgetHeadersRule, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
-import { getColumnById } from '@/modules/documentExecution/dashboard/helpers/TableWidgetCompatibilityHelper'
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -128,12 +127,11 @@ export default defineComponent({
             if (!this.headersModel) return
             for (let i = 0; i < this.headersModel.custom.rules.length; i++) {
                 for (let j = 0; j < this.headersModel.custom.rules[i].target.length; j++) {
-                    const tempColumn = getColumnById(this.widgetModel, this.headersModel.custom.rules[i].target[j])
-                    if (tempColumn) this.removeColumnFromAvailableTargetOptions(tempColumn)
+                    this.removeColumnFromAvailableTargetOptions({ id: this.headersModel.custom.rules[i].target[j], alias: this.widgetColumnsAliasMap[this.headersModel.custom.rules[i].target[j]] })
                 }
             }
         },
-        removeColumnFromAvailableTargetOptions(tempColumn: IWidgetColumn) {
+        removeColumnFromAvailableTargetOptions(tempColumn: IWidgetColumn | { id: string; alias: string }) {
             const index = this.availableTargetOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === tempColumn.id)
             if (index !== -1) this.availableTargetOptions.splice(index, 1)
         },
@@ -194,10 +192,8 @@ export default defineComponent({
         },
         onColumnAliasRenamed(column: IWidgetColumn) {
             if (!this.headersModel) return
-            if (column.id && this.widgetColumnsAliasMap[column.id]) {
-                this.widgetColumnsAliasMap[column.id] = column.alias
-                return
-            }
+            if (column.id && this.widgetColumnsAliasMap[column.id]) this.widgetColumnsAliasMap[column.id] = column.alias
+
             const index = this.availableTargetOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === column.id)
             if (index !== -1) this.availableTargetOptions[index].alias = column.alias
             this.headersConfigurationChanged()

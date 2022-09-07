@@ -188,7 +188,7 @@ export interface ITableWidgetVisualization {
     visibilityConditions: ITableWidgetVisibilityCondition[]
 }
 export interface ITableWidgetVisualizationType {
-    target: string | string[],
+    target: string[],
     type: string,
     precision?: number,
     prefix?: string,
