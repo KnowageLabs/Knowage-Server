@@ -108,6 +108,7 @@ export default defineComponent({
         setEventListeners() {
             emitter.on('columnRemoved', (column) => this.onColumnRemoved(column))
             emitter.on('columnAliasRenamed', (column) => this.onColumnAliasRenamed(column))
+            emitter.on('columnAdded', () => this.onColumnAdded(column))
         },
         loadTargetOptions() {
             this.availableTargetOptions = [...this.widgetModel.columns]
@@ -199,6 +200,10 @@ export default defineComponent({
             const index = this.availableTargetOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === column.id)
             if (index !== -1) this.availableTargetOptions[index].alias = column.alias
             this.headersConfigurationChanged()
+        },
+        onColumnAdded(column: IWidgetColumn) {
+            this.availableTargetOptions.push(column)
+            if (column.id) this.widgetColumnsAliasMap[column.id] = column.alias
         }
     }
 })
