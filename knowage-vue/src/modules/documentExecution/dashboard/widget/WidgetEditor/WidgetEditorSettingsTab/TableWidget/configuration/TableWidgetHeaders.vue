@@ -108,7 +108,7 @@ export default defineComponent({
         setEventListeners() {
             emitter.on('columnRemoved', (column) => this.onColumnRemoved(column))
             emitter.on('columnAliasRenamed', (column) => this.onColumnAliasRenamed(column))
-            emitter.on('columnAdded', () => this.onColumnAdded(column))
+            emitter.on('columnAdded', (column) => this.onColumnAdded(column))
         },
         loadTargetOptions() {
             this.availableTargetOptions = [...this.widgetModel.columns]
@@ -175,6 +175,7 @@ export default defineComponent({
         },
         removeHeadersRule(index: number) {
             if (!this.headersModel) return
+            this.headersModel.custom.rules[index].target.forEach((target: string) => this.availableTargetOptions.push({ id: target, alias: this.widgetColumnsAliasMap[target] }))
             this.headersModel.custom.rules.splice(index, 1)
             this.headersConfigurationChanged()
         },
