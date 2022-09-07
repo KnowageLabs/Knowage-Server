@@ -31,9 +31,8 @@
             <div v-for="(rule, index) in headersModel.custom.rules" :key="index" class="p-d-flex p-flex-row p-ai-center">
                 <div class="p-d-flex p-flex-column kn-flex p-mt-1">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-                    <!-- <MultiSelect v-model="rule.target" :options="getTargetOptions(rule)" optionLabel="alias" optionValue="id" :disabled="!headersModel.custom.enabled" @change="onColumnsSelected(rule)"> </MultiSelect> -->
-                    <WidgetEditorMultiselect :value="rule.target" :availableTargetOptions="availableTargetOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" :disabled="!headersModel.custom.enabled" @change="onColumnsSelected($event, rule)">
-                    </WidgetEditorMultiselect>
+                    <WidgetEditorColumnsMultiselect :value="rule.target" :availableTargetOptions="availableTargetOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" :disabled="!headersModel.custom.enabled" @change="onColumnsSelected($event, rule)">
+                    </WidgetEditorColumnsMultiselect>
                 </div>
                 <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.headers.action') }}</label>
@@ -94,12 +93,11 @@ import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
-import MultiSelect from 'primevue/multiselect'
-import WidgetEditorMultiselect from '../../common/WidgetEditorMultiselect.vue'
+import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
 
 export default defineComponent({
     name: 'table-widget-headers',
-    components: { Dropdown, InputSwitch, MultiSelect, WidgetEditorMultiselect },
+    components: { Dropdown, InputSwitch, WidgetEditorColumnsMultiselect },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, drivers: { type: Array }, variables: { type: Array } },
     data() {
         return {
@@ -164,19 +162,11 @@ export default defineComponent({
             }
             this.headersConfigurationChanged()
         },
-        // getTargetOptions(rule: ITableWidgetHeadersRule) {
-        //     const targetOptions = [] as (IWidgetColumn | { id: string; alias: string })[]
-        //     rule.target.forEach((target: string) => {
-        //         const tempColumn = { id: target, alias: this.widgetColumnsAliasMap[target] }
-        //         if (tempColumn) targetOptions.push(tempColumn)
-        //     })
-        //     console.log('TARGET OPTIONS: ', targetOptions)
-        //     return targetOptions.concat(this.availableTargetOptions)
-        // },
         onColumnsSelected(event: any, rule: ITableWidgetHeadersRule) {
             const intersection = rule.target.filter((el: string) => !event.value.includes(el))
             rule.target = event.value
             intersection.length > 0 ? this.onColumnsRemovedFromMultiselect(intersection) : this.onColumnsAddedFromMultiselect(rule)
+            this.headersConfigurationChanged()
         },
         onColumnsRemovedFromMultiselect(intersection: string[]) {
             intersection.forEach((el: string) => this.availableTargetOptions.push({ id: el, alias: this.widgetColumnsAliasMap[el] }))
@@ -206,6 +196,8 @@ export default defineComponent({
                 }
                 if (this.headersModel.custom.rules[i].target.length === 0) this.headersModel.custom.rules.splice(i, 1)
             }
+            const index = this.availableTargetOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === column.id)
+            if (index !== -1) this.availableTargetOptions.splice(index, 1)
             this.headersConfigurationChanged()
         }
     }
