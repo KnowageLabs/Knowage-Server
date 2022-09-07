@@ -62,6 +62,7 @@ export default defineComponent({
             emitter.on('indexColumnChanged', (rows) => this.createDatatableColumns())
             emitter.on('rowSpanChanged', (rows) => console.log('WidgetEditorPreview  - rowSpanChanged!', rows))
             emitter.on('summaryRowsChanged', (rows) => console.log('WidgetEditorPreview  - summaryRowsChanged!', rows)) //TODO: Servis nam treba za ovo
+            // TODO: Trenutno se gleda svaka promena u header config, mozda staviti event emit samo na promene koje trebaju.
             emitter.on('headersConfigurationChanged', () => this.createDatatableColumns())
             emitter.on('columnGroupsConfigurationChanged', (columnGroupConfiguration) => console.log('WidgetEditorPreview  - columnGroupsConfigurationChanged!', columnGroupConfiguration))
             emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
@@ -140,8 +141,6 @@ export default defineComponent({
                                 break
                             case 'setLabel':
                                 rule.value ? (datatableColumns[columnIndex].headerName = rule.value) : ''
-                                break
-                            default:
                                 break
                         }
                     })
