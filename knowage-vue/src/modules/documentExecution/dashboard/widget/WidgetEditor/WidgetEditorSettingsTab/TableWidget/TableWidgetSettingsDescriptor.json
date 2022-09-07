@@ -111,6 +111,14 @@
             }
         ]
     },
+    "styleToolbarVisualizationTypeOptions": [
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
     "visualizationTypes": [
         {
             "label": "common.text",

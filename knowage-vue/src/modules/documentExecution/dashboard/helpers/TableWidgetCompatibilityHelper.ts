@@ -121,11 +121,18 @@ const addVisualisationTypeMeasureColumn = (formattedWidget: IWidget, tempColumn:
         tempVisualizationType.min = tempColumn.barchart.minValue ?? 0
         tempVisualizationType.max = tempColumn.barchart.maxValue ?? 0
         tempVisualizationType.alignment = tempColumn.barchart.style ? tempColumn.barchart.style['justify-content'] ?? '' : ''
-        tempVisualizationType.color = tempColumn.barchart.style?.color ?? ''
-        tempVisualizationType['background-color'] = tempColumn.barchart.style ? tempColumn.barchart.style['background-color'] ?? '' : ''
+        tempVisualizationType.color = tempColumn.barchart.style ? hexToRgb(tempColumn.barchart.style.color) : ''
+        tempVisualizationType['background-color'] = tempColumn.barchart.style ? hexToRgb(tempColumn.barchart.style['background-color']) ?? '' : ''
     }
     formattedWidget.settings.visualization.types.push(tempVisualizationType)
 }
+
+const hexToRgb = (hex: string) => {
+    if (!hex.startsWith('#')) return 'rgb(0, 0, 0)'
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? "rgb(" + parseInt(result[1], 16) + ', ' + parseInt(result[2], 16) + ', ' + parseInt(result[3], 16) + ')' : '';
+}
+
 
 const formatColumnVisualizationTypeFromOldModel = (visType: string) => {
     switch (visType) {

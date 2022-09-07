@@ -1,7 +1,6 @@
 <template>
     <div>
-        {{ visualizationTypes }}
-        <div v-for="(visualizationType, index) in visualizationTypes" :key="index" class="p-d-flex p-flex-column p-mt-2">
+        <div v-for="(visualizationType, index) in visualizationTypes" :key="index" class="visualization-type-container p-d-flex p-flex-column p-my-2 p-pb-2">
             <div class="p-d-flex p-flex-row p-ai-center kn-flex">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
@@ -34,11 +33,11 @@
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.suffix') }}</label>
                     <InputText class="kn-material-input p-inputtext-sm" v-model="visualizationType.suffix" @change="visualizationTypeChanged" />
                 </div>
-                <div v-if="optionsContainMeasureColumn(visualizationType)" class="p-d-flex p-flex-column p-mx-2">
+                <div v-if="(optionsContainMeasureColumn(visualizationType) && visualizationType.type === 'Text') || visualizationType.type === 'Text & Icon'" class="p-d-flex p-flex-column p-mx-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.precision') }}</label>
                     <InputNumber class="kn-material-input p-inputtext-sm" v-model="visualizationType.precision" @change="visualizationTypeChanged" />
                 </div>
-                <div v-if="optionsContainMeasureColumn(visualizationType)" class="p-d-flex p-flex-column kn-flex-2 p-m-2">
+                <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.visualizationType.pinned') }}</label>
                     <Dropdown class="kn-material-input" v-model="visualizationType.pinned" :options="descriptor.pinnedOptions" optionValue="value" @change="visualizationTypeChanged">
                         <template #value="slotProps">
@@ -54,7 +53,7 @@
                     </Dropdown>
                 </div>
             </div>
-            <div class="p-d-flex p-flex-row p-ai-center kn-flex p-mt-1">
+            <div v-if="optionsContainMeasureColumn(visualizationType) && (visualizationType.type === 'Bar' || visualizationType.type === 'Sparkline')" class="p-d-flex p-flex-row p-ai-center kn-flex p-mt-1">
                 <div class="p-d-flex p-flex-column p-mx-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.min') }}</label>
                     <InputNumber class="kn-material-input p-inputtext-sm" v-model="visualizationType.min" @change="visualizationTypeChanged" />
@@ -79,16 +78,17 @@
                         </template>
                     </Dropdown>
                 </div>
+                <div class="kn-flex style-toolbar-container">
+                    <WidgetEditorStyleToolbar :options="descriptor.styleToolbarVisualizationTypeOptions" :propModel="{ color: visualizationType.color, 'background-color': visualizationType['background-color'] }" @change="onStyleToolbarChange($event, visualizationType)"></WidgetEditorStyleToolbar>
+                </div>
             </div>
-
-            <hr />
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetVisualizationType, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, ITableWidgetVisualizationType, IWidgetColumn, IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
@@ -96,10 +96,11 @@ import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import InputNumber from 'primevue/inputnumber'
 import TableWidgetVisualizationTypeMultiselect from './TableWidgetVisualizationTypeMultiselect.vue'
+import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 
 export default defineComponent({
     name: 'table-widget-visualization-type',
-    components: { Dropdown, InputSwitch, InputNumber, TableWidgetVisualizationTypeMultiselect },
+    components: { Dropdown, InputSwitch, InputNumber, TableWidgetVisualizationTypeMultiselect, WidgetEditorStyleToolbar },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
@@ -171,7 +172,6 @@ export default defineComponent({
         },
         onColumnsSelectedChange() {},
         getVisualizationTypeOptions(visualizationType: ITableWidgetVisualizationType) {
-            console.log('TEST: ', this.optionsContainMeasureColumn(visualizationType))
             return this.optionsContainMeasureColumn(visualizationType) ? descriptor.visualizationTypes : descriptor.visualizationTypes.slice(0, 3)
         },
         optionsContainMeasureColumn(visualizationType: ITableWidgetVisualizationType) {
@@ -183,17 +183,54 @@ export default defineComponent({
                     break
                 }
             }
-            if (!found && (visualizationType.type === 'Bar' || visualizationType.type === 'Sparkline')) visualizationType.type = 'Text'
+            if (!found && (visualizationType.type === 'Bar' || visualizationType.type === 'Sparkline')) this.resetMeasureProperties(visualizationType)
             return found
+        },
+        resetMeasureProperties(visualizationType: ITableWidgetVisualizationType) {
+            visualizationType.type = 'Text'
+            const fields = ['min', 'max', 'alignment']
+            fields.forEach((field: string) => delete visualizationType[field])
+        },
+        onStyleToolbarChange(model: IWidgetStyleToolbarModel, visualizationType: ITableWidgetVisualizationType) {
+            visualizationType.color = model.color
+            visualizationType['background-color'] = model['background-color'] ?? ''
+            this.visualizationTypeChanged()
         },
         onTypeChanged(visualizationType: ITableWidgetVisualizationType) {
             console.log('onTypeChanged visualizationType: ', visualizationType)
         },
-        addVisualizationType() {},
-        removeVisualizationType(index: number) {},
+        addVisualizationType() {
+            this.visualizationTypes.push({ target: [], type: '', prefix: '', suffix: '', pinned: '' })
+        },
+        removeVisualizationType(index: number) {
+            this.visualizationTypes[index].target.forEach((target: string) => this.availableColumnOptions.push({ id: target, alias: this.widgetColumnsAliasMap[target] }))
+            this.visualizationTypes.splice(index, 1)
+            this.visualizationTypeChanged()
+        },
         onColumnRemoved(column: IWidgetColumn) {
-            console.log('ON COLUMN REMOVED: ', column)
+            for (let i = this.visualizationTypes.length - 1; i >= 0; i--) {
+                for (let j = this.visualizationTypes[i].target.length; j >= 0; j--) {
+                    const tempTarget = this.visualizationTypes[i].target[j]
+                    if (column.id === tempTarget) this.visualizationTypes[i].target.splice(j, 1)
+                }
+                if (this.visualizationTypes[i].target.length === 0) this.visualizationTypes.splice(i, 1)
+            }
+            const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === column.id)
+            if (index !== -1) this.availableColumnOptions.splice(index, 1)
         }
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.visualization-type-container {
+    border-bottom: 1px solid #c2c2c2;
+}
+
+.visualization-type-containerr:last-child {
+    border-bottom: none;
+}
+.style-toolbar-container {
+    max-width: 120px;
+}
+</style>
