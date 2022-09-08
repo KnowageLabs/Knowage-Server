@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -90,6 +90,7 @@ const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any) => 
         getHeaderConfigurationFromWidgetColumn(formattedWidget, tempColumn)
         if (tempColumn.group) addColumnToColumnGroup(formattedWidget, tempColumn)
         getVisualizationTypeConfigurationsFromColumn(formattedWidget, tempColumn)
+        getVisibilityConditionsFromColumn(formattedWidget, tempColumn)
     }
 
 }
@@ -101,14 +102,43 @@ const addColumnToColumnGroup = (formattedWidget: IWidget, tempColumn: any) => {
 }
 
 const getVisualizationTypeConfigurationsFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
-    console.log(">>>>>>>>>>>>>>>>>>>>> getVisualizationTypeConfigurationsFromColumn: ", formattedWidget)
-    console.log(">>>>>>>>>>>>>>>>>>>>> tempColumn: ", tempColumn)
     if (tempColumn.fieldType === "ATTRIBUTE" && tempColumn.precision !== 0 || tempColumn.style?.prefix || tempColumn.style?.suffix || tempColumn.pinned) {
         addVisualisationTypeAttributeColumn(formattedWidget, tempColumn)
     } else if (tempColumn.fieldType === 'MEASURE' && tempColumn.visType) {
         addVisualisationTypeMeasureColumn(formattedWidget, tempColumn)
     }
+}
 
+const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
+    console.log("teeeeeeeeeeeeeeeeest: ", tempColumn)
+    if (tempColumn.style && tempColumn.style.hasOwnProperty('hiddenColumn') || tempColumn.style.hasOwnProperty('hideFromPdf')) {
+        const tempVisibiilityCondition = {
+            target: [getColumnId(formattedWidget, tempColumn.name)],
+            hide: tempColumn.style.hiddenColumn ?? false, hidePdf: tempColumn.style.hideFromPdf ?? false, condition: {
+                type: 'always'
+            }
+        } as ITableWidgetVisibilityCondition
+        if (tempColumn.variables) {
+            getVisibilityConditionVariable(formattedWidget, tempColumn.variables, tempVisibiilityCondition)
+        } else {
+            formattedWidget.settings.visualization.visibilityConditions.push(tempVisibiilityCondition)
+        }
+    }
+}
+
+const getVisibilityConditionVariable = (formattedWidget: IWidget, variables: { action: string, variable: string, condition: string, value: string }[], tempVisibiilityCondition: ITableWidgetVisibilityCondition) => {
+    variables.forEach((variable: { action: string, variable: string, condition: string, value: string }) => {
+        if (variable.action === 'hide') {
+            tempVisibiilityCondition.condition = {
+                type: 'variable',
+                variable: variable.variable,
+                variableValue: 'MOCK',
+                operator: variable.condition,
+                value: variable.value,
+            }
+            formattedWidget.settings.visualization.visibilityConditions.push(tempVisibiilityCondition)
+        }
+    })
 }
 
 const addVisualisationTypeAttributeColumn = (formattedWidget: IWidget, tempColumn: any) => {
@@ -194,7 +224,6 @@ const getFormattedTooltips = (widget: any) => {
 }
 
 
-// TODO
 const getFormattedVisualizations = (widget: any) => {
     return { types: [], visibilityConditions: [] }
 }

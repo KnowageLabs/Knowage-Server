@@ -208,9 +208,10 @@ export interface ITableWidgetVisibilityCondition {
     hidePdf: boolean,
     condition: {
         type: string,
-        variable: string,
-        operator: string,
-        value: string
+        variable?: string,
+        variableValue?: string,
+        operator?: string,
+        value?: string
     }
 }
 

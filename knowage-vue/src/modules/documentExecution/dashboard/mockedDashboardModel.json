@@ -113,12 +113,22 @@
                                 "rowSpan": true,
                                 "scale": 0,
                                 "style": {
+                                    "hiddenColumn": true,
+                                    "hideFromPdf": true,
                                     "hideHeader": true,
                                     "prefix": "Prefix",
                                     "suffix": "Suffix"
                                 },
                                 "subjectId": false,
-                                "type": "java.lang.String"
+                                "type": "java.lang.String",
+                                "variables": [
+                                    {
+                                        "action": "hide",
+                                        "condition": "<",
+                                        "value": "Static Value",
+                                        "variable": "Variable Static"
+                                    }
+                                ]
                             },
                             {
                                 "alias": "the_geom",
@@ -132,6 +142,9 @@
                                 "precision": 0,
                                 "properties": {},
                                 "scale": 0,
+                                "style": {
+                                    "hideFromPdf": true
+                                },
                                 "subjectId": false,
                                 "type": "java.lang.String"
                             },
@@ -177,6 +190,9 @@
                                 "properties": {},
                                 "rowSpan": true,
                                 "scale": 0,
+                                "style": {
+                                    "hiddenColumn": true
+                                },
                                 "subjectId": false,
                                 "type": "java.lang.Integer",
                                 "visType": "Chart"
