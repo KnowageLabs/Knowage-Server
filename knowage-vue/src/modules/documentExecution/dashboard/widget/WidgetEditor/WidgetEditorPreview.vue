@@ -4,9 +4,7 @@
             {{ propWidget }}
         </div>
 
-        <TableWidget v-if="propWidget.settings" :propWidget="propWidget" />
-
-        <!-- <ag-grid-vue style="flex: 0.5; min-width: 500px; min-height: 250px" class="ag-theme-alpine" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" @grid-ready="onGridReady"></ag-grid-vue> -->
+        <TableWidget v-if="propWidget.settings" :propWidget="propWidget" style="flex: 0.5; min-width: 500px; min-height: 250px" />
     </div>
 </template>
 
