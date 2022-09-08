@@ -35,6 +35,7 @@ import org.json.JSONObject;
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -164,18 +165,30 @@ public class TestConnection {
 				connection = ds.getConnection();
 			} else {
 
+				// If password is not provided, use the old one if exist
+				if (!StringUtils.isEmpty(label) && StringUtils.isEmpty(pwd)) {
+					IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+					IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(label);
+					if (dataSource != null) {
+						pwd = dataSource.getPwd();
+					}
+				}
+
 				if (driver.toLowerCase().contains("mongo")) {
 					logger.debug("Checking the connection for MONGODB");
 					MongoClient mongoClient = null;
 					try {
-						int databaseNameStart = url.lastIndexOf("/");
-						if (databaseNameStart < 0) {
-							logger.error("Error connecting to the mongoDB. No database selected");
-						}
-						String databaseUrl = url.substring(0, databaseNameStart);
-						String databaseName = url.substring(databaseNameStart + 1);
 
-						mongoClient = new MongoClient(databaseUrl);
+						if (!StringUtils.isEmpty(user) && !StringUtils.isEmpty(pwd)) {
+							String authPart = "mongodb://" + user + ":" + pwd + "@";
+							url = url.replace("mongodb://", authPart);
+						}
+
+						logger.debug("Connecting to [" + url + "] ...");
+						MongoClientURI mongoClientURI = new MongoClientURI(url);
+
+						mongoClient = new MongoClient(mongoClientURI);
+						String databaseName = mongoClientURI.getDatabase();
 						DB database = mongoClient.getDB(databaseName);
 						database.getCollectionNames();
 
@@ -190,16 +203,6 @@ public class TestConnection {
 						}
 					}
 				} else {
-
-					// If password is not provided, use the old one if exist
-					if (!StringUtils.isEmpty(label) && StringUtils.isEmpty(pwd)) {
-						IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
-						IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(label);
-						if (dataSource != null) {
-							pwd = dataSource.getPwd();
-						}
-					}
-
 					Class.forName(driver);
 					connection = DriverManager.getConnection(url, user, pwd);
 				}
