@@ -1,0 +1,20 @@
+{
+    "icons": {
+        "background-color": "fas fa-paint-roller",
+        "color": "fas fa-fill-drip",
+        "font-family": "fas fa-font",
+        "font-size": "fas fa-text-height",
+        "font-style": "fas fa-italic",
+        "font-weight": "fas fa-bold",
+        "justify-content": "fas fa-align-left"
+    },
+    "tooltips": {
+        "background-color": "dashboard.widgetEditor.iconTooltips.backgroundColor",
+        "color": "dashboard.widgetEditor.iconTooltips.fontColor",
+        "font-family": "dashboard.widgetEditor.iconTooltips.fontFamily",
+        "font-size": "dashboard.widgetEditor.iconTooltips.fontSize",
+        "font-style": "dashboard.widgetEditor.iconTooltips.italic",
+        "font-weight": "dashboard.widgetEditor.iconTooltips.bold",
+        "justify-content": "dashboard.widgetEditor.iconTooltips.textAlignment"
+    }
+}

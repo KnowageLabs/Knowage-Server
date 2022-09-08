@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -90,6 +90,7 @@ const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any) => 
         getHeaderConfigurationFromWidgetColumn(formattedWidget, tempColumn)
         if (tempColumn.group) addColumnToColumnGroup(formattedWidget, tempColumn)
         getVisualizationTypeConfigurationsFromColumn(formattedWidget, tempColumn)
+        getVisibilityConditionsFromColumn(formattedWidget, tempColumn)
     }
 
 }
@@ -101,14 +102,43 @@ const addColumnToColumnGroup = (formattedWidget: IWidget, tempColumn: any) => {
 }
 
 const getVisualizationTypeConfigurationsFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
-    console.log(">>>>>>>>>>>>>>>>>>>>> getVisualizationTypeConfigurationsFromColumn: ", formattedWidget)
-    console.log(">>>>>>>>>>>>>>>>>>>>> tempColumn: ", tempColumn)
     if (tempColumn.fieldType === "ATTRIBUTE" && tempColumn.precision !== 0 || tempColumn.style?.prefix || tempColumn.style?.suffix || tempColumn.pinned) {
         addVisualisationTypeAttributeColumn(formattedWidget, tempColumn)
     } else if (tempColumn.fieldType === 'MEASURE' && tempColumn.visType) {
         addVisualisationTypeMeasureColumn(formattedWidget, tempColumn)
     }
+}
 
+const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
+    console.log("teeeeeeeeeeeeeeeeest: ", tempColumn)
+    if (tempColumn.style && tempColumn.style.hasOwnProperty('hiddenColumn') || tempColumn.style.hasOwnProperty('hideFromPdf')) {
+        const tempVisibiilityCondition = {
+            target: [getColumnId(formattedWidget, tempColumn.name)],
+            hide: tempColumn.style.hiddenColumn ?? false, hidePdf: tempColumn.style.hideFromPdf ?? false, condition: {
+                type: 'always'
+            }
+        } as ITableWidgetVisibilityCondition
+        if (tempColumn.variables) {
+            getVisibilityConditionVariable(formattedWidget, tempColumn.variables, tempVisibiilityCondition)
+        } else {
+            formattedWidget.settings.visualization.visibilityConditions.push(tempVisibiilityCondition)
+        }
+    }
+}
+
+const getVisibilityConditionVariable = (formattedWidget: IWidget, variables: { action: string, variable: string, condition: string, value: string }[], tempVisibiilityCondition: ITableWidgetVisibilityCondition) => {
+    variables.forEach((variable: { action: string, variable: string, condition: string, value: string }) => {
+        if (variable.action === 'hide') {
+            tempVisibiilityCondition.condition = {
+                type: 'variable',
+                variable: variable.variable,
+                variableValue: 'MOCK',
+                operator: variable.condition,
+                value: variable.value,
+            }
+            formattedWidget.settings.visualization.visibilityConditions.push(tempVisibiilityCondition)
+        }
+    })
 }
 
 const addVisualisationTypeAttributeColumn = (formattedWidget: IWidget, tempColumn: any) => {
@@ -121,11 +151,18 @@ const addVisualisationTypeMeasureColumn = (formattedWidget: IWidget, tempColumn:
         tempVisualizationType.min = tempColumn.barchart.minValue ?? 0
         tempVisualizationType.max = tempColumn.barchart.maxValue ?? 0
         tempVisualizationType.alignment = tempColumn.barchart.style ? tempColumn.barchart.style['justify-content'] ?? '' : ''
-        tempVisualizationType.color = tempColumn.barchart.style?.color ?? ''
-        tempVisualizationType['background-color'] = tempColumn.barchart.style ? tempColumn.barchart.style['background-color'] ?? '' : ''
+        tempVisualizationType.color = tempColumn.barchart.style ? hexToRgb(tempColumn.barchart.style.color) : ''
+        tempVisualizationType['background-color'] = tempColumn.barchart.style ? hexToRgb(tempColumn.barchart.style['background-color']) ?? '' : ''
     }
     formattedWidget.settings.visualization.types.push(tempVisualizationType)
 }
+
+const hexToRgb = (hex: string) => {
+    if (!hex.startsWith('#')) return 'rgb(0, 0, 0)'
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? "rgb(" + parseInt(result[1], 16) + ', ' + parseInt(result[2], 16) + ', ' + parseInt(result[3], 16) + ')' : '';
+}
+
 
 const formatColumnVisualizationTypeFromOldModel = (visType: string) => {
     switch (visType) {
@@ -187,7 +224,6 @@ const getFormattedTooltips = (widget: any) => {
 }
 
 
-// TODO
 const getFormattedVisualizations = (widget: any) => {
     return { types: [], visibilityConditions: [] }
 }

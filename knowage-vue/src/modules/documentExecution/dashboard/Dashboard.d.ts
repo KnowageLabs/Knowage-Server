@@ -198,7 +198,8 @@ export interface ITableWidgetVisualizationType {
     max?: number,
     alignment?: string,
     color?: string,
-    "background-color": string
+    "background-color"?: string,
+    allColumnSelected?: boolean
 }
 
 export interface ITableWidgetVisibilityCondition {
@@ -207,9 +208,10 @@ export interface ITableWidgetVisibilityCondition {
     hidePdf: boolean,
     condition: {
         type: string,
-        variable: string,
-        operator: string,
-        value: string
+        variable?: string,
+        variableValue?: string,
+        operator?: string,
+        value?: string
     }
 }
 
@@ -384,4 +386,14 @@ export interface IIcon {
     id: number
     name: string
     value: string
+}
+
+export interface IWidgetStyleToolbarModel {
+    'font-weight'?: string,
+    'font-style'?: string,
+    'font-size'?: string,
+    'font-family'?: string,
+    'justify-content'?: string,
+    color?: string,
+    'background-color'?: string
 }

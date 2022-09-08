@@ -25,6 +25,24 @@
             "value": "COUNT_DISTINCT"
         }
     ],
+    "alignmentOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "common.left",
+            "value": "flex-start"
+        },
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.right",
+            "value": "flex-end"
+        }
+    ],
     "customHeadersActionOptions": [
         {
             "label": "dashboard.widgetEditor.headers.hideHeader",
@@ -47,6 +65,20 @@
         {
             "label": "common.parameter",
             "value": "parameter"
+        }
+    ],
+    "pinnedOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "common.left",
+            "value": "left"
+        },
+        {
+            "label": "common.right",
+            "value": "right"
         }
     ],
     "settings": {
@@ -76,9 +108,61 @@
             {
                 "title": "dashboard.widgetEditor.visualizationType.title",
                 "type": "VisualizationType"
+            },
+            {
+                "title": "dashboard.widgetEditor.visibilityConditions.title",
+                "type": "VisibilityConditions"
             }
         ]
     },
+    "visibilityConditionOperators": [
+        {
+            "label": ">",
+            "value": ">"
+        },
+        {
+            "label": "<",
+            "value": "<"
+        },
+        {
+            "label": "==",
+            "value": "=="
+        },
+        {
+            "label": ">=",
+            "value": ">="
+        },
+        {
+            "label": "<=",
+            "value": "<="
+        },
+        {
+            "label": "!=",
+            "value": "!="
+        },
+        {
+            "label": "IN",
+            "value": "IN"
+        }
+    ],
+    "styleToolbarVisualizationTypeOptions": [
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
+    "visibilityConditionsOptions": [
+        {
+            "label": "dashboard.widgetEditor.visibilityConditions.always",
+            "value": "always"
+        },
+        {
+            "label": "dashboard.widgetEditor.visibilityConditions.onVariableValue",
+            "value": "variable"
+        }
+    ],
     "visualizationTypes": [
         {
             "label": "common.text",

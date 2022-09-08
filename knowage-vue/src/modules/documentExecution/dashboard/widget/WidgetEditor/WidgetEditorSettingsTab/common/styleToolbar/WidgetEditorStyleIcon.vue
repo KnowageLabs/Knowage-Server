@@ -1,0 +1,160 @@
+<template>
+    <div v-if="model" class="icon-container" :class="{ 'icon-disabled': disabled }">
+        <div id="color-picker-target" class="p-d-flex p-flex-row p-jc-center p-ai-center" v-tooltip.top="{ value: option.tooltip ? $t(option.tooltip) : getDefaultTooltip() }" @click="openAdditionalComponents">
+            <i :class="[getIconClass(), active ? 'active-icon' : '']" class="widget-editor-icon kn-cursor-pointer p-mr-2" @click="onIconClicked"></i>
+            <div v-show="showArowDown || showCircleIcon">
+                <div v-show="showCircleIcon" class="style-circle-icon" :style="{ 'background-color': newColor }"></div>
+                <i v-show="showArowDown" class="fas fa-arrow-down style-arrow-down-icon"></i>
+            </div>
+            <!-- <span v-if="icon.contextMenuSettings?.displayValue" class="icon-display-value-span p-ml-1">{{ '(' + displayValue + ')' }}</span>  -->
+        </div>
+        <ColorPicker class="style-icon-color-picker" v-if="(option.type === 'color' || option.type === 'background-color') && colorPickerVisible" v-model="color" :inline="true" format="rgb" @change="onColorPickerChange" />
+        <!-- <WidgetEditorToolbarContextMenu class="context-menu" v-if="icon.contextMenuSettings && contextMenuVisible" :settings="icon.contextMenuSettings" :options="getContextMenuOptions()" @selected="onContextItemSelected" @inputChanged="onContextInputChanged"></WidgetEditorToolbarContextMenu> -->
+        <!-- <WidgetEditorIconPickerDialog v-if="iconPickerDialogVisible" :widgetModel="widgetModel" :settings="icon.iconPickerSettings" :itemIndex="itemIndex" @close="iconPickerDialogVisible = false" @save="onIconSelected"></WidgetEditorIconPickerDialog> -->
+    </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, PropType } from 'vue'
+import { IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { emitter } from '../../../../../DashboardHelpers'
+import ColorPicker from 'primevue/colorpicker'
+import descriptor from './WidgetEditorStyleToolbarDescriptor.json'
+
+export default defineComponent({
+    name: 'widget-editor-colo-picker-icon',
+    components: { ColorPicker },
+    props: { option: { type: Object as PropType<any>, required: true }, propModel: { type: Object as PropType<IWidgetStyleToolbarModel | null>, required: true }, disabled: { type: Boolean } },
+    emits: ['change'],
+    data() {
+        return {
+            descriptor,
+            model: null as IWidgetStyleToolbarModel | null,
+            active: false,
+            contextMenuVisible: false,
+            contextMenuInput: '',
+            displayValue: '',
+            color: null as string | null,
+            newColor: 'rgb(255, 255, 255)',
+            colorPickerVisible: false,
+            iconPickerDialogVisible: false
+        }
+    },
+    computed: {
+        showArowDown() {
+            return ['color', 'background-color'].includes(this.option.type)
+        },
+        showCircleIcon() {
+            return ['color', 'background-color'].includes(this.option.type)
+        }
+    },
+    created() {
+        this.setEventListeners()
+        this.loadModel()
+    },
+    methods: {
+        setEventListeners() {
+            emitter.on('toolbarIconColorPickerOpened', (event) => this.closePopups(event))
+        },
+        loadModel() {
+            this.model = this.propModel
+            if (!this.model) return
+            if (this.option.type === 'color') {
+                this.color = this.model.color ?? null
+                this.newColor = this.color ?? ''
+            } else if (this.option.type === 'backround-color') {
+                this.color = this.model['backround-color']
+                this.newColor = this.color ?? ''
+            }
+        },
+        getIconClass() {
+            return this.option.type ? descriptor.icons[this.option.type] : ''
+        },
+        getDefaultTooltip() {
+            return this.option.type ? this.$t(descriptor.tooltips[this.option.type]) : ''
+        },
+        onColorPickerChange(event: any) {
+            if (!event.value || !this.model) return
+            console.log('EVENT: ', event)
+            this.newColor = `rgb(${event.value.r}, ${event.value.g}, ${event.value.b})`
+            this.option.type === 'color' ? (this.model.color = this.newColor) : (this.model['background-color'] = this.newColor)
+            this.$emit('change')
+        },
+        onIconClicked(icon: any) {
+            if (!icon || !icon.function || this.disabled) return
+        },
+        iconIsActive() {},
+        loadInitialColorValue() {},
+        openAdditionalComponents() {
+            if (this.disabled) return
+            switch (this.option.type) {
+                case 'color':
+                case 'background-color':
+                    this.changeColorPickerVisibility()
+            }
+        },
+        changeColorPickerVisibility() {
+            this.colorPickerVisible = !this.colorPickerVisible
+            if (this.colorPickerVisible) {
+                emitter.emit('toolbarIconColorPickerOpened', this.option)
+            }
+        },
+        closePopups(event: any) {
+            // this.closeContextMenu(event)
+            this.closeColorPicker(event)
+        },
+        closeColorPicker(option: any) {
+            if (this.option.type !== option.type) {
+                this.colorPickerVisible = false
+            }
+        }
+    }
+})
+</script>
+
+<style lang="scss" scoped>
+.active-icon {
+    color: blue;
+}
+
+.widget-editor-icon {
+    font-size: 1.2rem;
+}
+
+.style-circle-icon {
+    margin: 0;
+    border: 1px solid grey;
+    border-radius: 6px;
+    height: 10px;
+    width: 10px;
+}
+.style-arrow-down-icon {
+    font-size: 0.8rem;
+}
+
+.icon-container {
+    position: relative;
+}
+
+.context-menu {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 999999;
+}
+
+.icon-display-value-span {
+    font-size: 0.7rem;
+}
+
+.style-icon-color-picker {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 100000;
+}
+
+.icon-disabled {
+    color: #c2c2c2;
+}
+</style>

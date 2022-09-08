@@ -115,9 +115,11 @@
         "locked": "Locked",
         "loggedUser": "logged user",
         "login": "Login",
+        "max": "Max",
         "menu": "Menu",
         "message": "Message",
         "metadata": "Metadata",
+        "min": "Min",
         "modify": "modify",
         "move": "Move",
         "name": "name",
@@ -454,6 +456,13 @@
             },
             "title": "Widget Editor",
             "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
+            "visibilityConditions": {
+                "always": "Always",
+                "hideColumn": "Hide Column",
+                "hideOnPdf": "Hide on PDF",
+                "onVariableValue": "On Variable Value",
+                "title": "Visibility Conditions"
+            },
             "visualization": "Visualization",
             "visualizationOptions": {
                 "chart": "Chart",
@@ -461,7 +470,9 @@
                 "textAndChart": "Text & Chart"
             },
             "visualizationType": {
+                "alignment": "Alignment",
                 "bar": "Bar",
+                "pinned": "Pinned",
                 "sparkline": "Sparkline",
                 "textAndIcon": "Text & Icon",
                 "title": "Visualization Type"
