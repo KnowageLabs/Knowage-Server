@@ -188,7 +188,7 @@
                                 "personal": false,
                                 "precision": 0,
                                 "properties": {},
-                                "rowSpan": true,
+                                "rowSpan": false,
                                 "scale": 0,
                                 "style": {
                                     "hiddenColumn": true
