@@ -104,6 +104,11 @@ import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExec
 import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
 
 const deepcopy = require('deepcopy')
+// @ts-ignore
+// eslint-disable-next-line
+window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
+    postMessage({ type: 'crossNavigation', outputParameters: outputParameters, inputParameters: {}, targetCrossNavigation: crossNavigationLabel, docLabel: null, otherOutputParameters: [otherOutputParameters] }, '*')
+}
 
 export default defineComponent({
     name: 'document-execution',
