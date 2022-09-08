@@ -107,7 +107,17 @@ const deepcopy = require('deepcopy')
 // @ts-ignore
 // eslint-disable-next-line
 window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
-    postMessage({ type: 'crossNavigation', outputParameters: outputParameters, inputParameters: {}, targetCrossNavigation: crossNavigationLabel, docLabel: null, otherOutputParameters: [otherOutputParameters] }, '*')
+    postMessage(
+        {
+            type: 'crossNavigation',
+            outputParameters: outputParameters,
+            inputParameters: {},
+            targetCrossNavigation: crossNavigationLabel,
+            docLabel: null,
+            otherOutputParameters: otherOutputParameters ? [otherOutputParameters] : []
+        },
+        '*'
+    )
 }
 
 export default defineComponent({
