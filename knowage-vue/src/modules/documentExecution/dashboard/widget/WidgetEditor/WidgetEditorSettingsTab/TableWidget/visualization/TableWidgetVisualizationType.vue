@@ -1,6 +1,5 @@
 <template>
     <div>
-        {{ visualizationTypes }}
         <div v-for="(visualizationType, index) in visualizationTypes" :key="index" class="visualization-type-container p-d-flex p-flex-column p-my-2 p-pb-2">
             <div class="p-d-flex p-flex-row p-ai-center kn-flex">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
@@ -19,7 +18,7 @@
                 </div>
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.type') }}</label>
-                    <Dropdown class="kn-material-input" v-model="visualizationType.type" :options="getVisualizationTypeOptions(visualizationType)" optionValue="value" @change="onTypeChanged(visualizationType)">
+                    <Dropdown class="kn-material-input" v-model="visualizationType.type" :options="getVisualizationTypeOptions(visualizationType)" optionValue="value" @change="visualizationTypeChanged">
                         <template #value="slotProps">
                             <div>
                                 <span>{{ slotProps.value }}</span>
@@ -107,7 +106,6 @@ import InputSwitch from 'primevue/inputswitch'
 import InputNumber from 'primevue/inputnumber'
 import TableWidgetVisualizationTypeMultiselect from './TableWidgetVisualizationTypeMultiselect.vue'
 import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
-import { ViewportSizeFeature } from 'ag-grid-community/dist/lib/gridBodyComp/viewportSizeFeature'
 
 export default defineComponent({
     name: 'table-widget-visualization-type',
@@ -133,6 +131,8 @@ export default defineComponent({
     methods: {
         setEventListeners() {
             emitter.on('columnRemoved', (column) => this.onColumnRemoved(column))
+            emitter.on('columnAliasRenamed', (column) => this.onColumnAliasRenamed(column))
+            emitter.on('columnAdded', (column) => this.onColumnAdded(column))
         },
         loadColumnOptions() {
             this.availableColumnOptions = [...this.widgetModel.columns]
@@ -147,7 +147,6 @@ export default defineComponent({
             emitter.emit('visualizationTypeChanged', this.visualizationTypes)
         },
         loadVisualizationTypes() {
-            console.log(' ----- loadVisualizationTypes - model: ', this.widgetModel)
             if (this.widgetModel.settings?.visualization?.types) this.visualizationTypes = [...this.widgetModel.settings.visualization.types]
             this.removeColumnsFromAvailableOptions()
         },
@@ -194,7 +193,6 @@ export default defineComponent({
                 if (index !== -1) this.availableColumnOptions.splice(index, 1)
             })
         },
-        onColumnsSelectedChange() {},
         getVisualizationTypeOptions(visualizationType: ITableWidgetVisualizationType) {
             return this.optionsContainMeasureColumn(visualizationType) ? descriptor.visualizationTypes : descriptor.visualizationTypes.slice(0, 3)
         },
@@ -219,9 +217,6 @@ export default defineComponent({
             visualizationType['background-color'] = model['background-color'] ?? ''
             this.visualizationTypeChanged()
         },
-        onTypeChanged(visualizationType: ITableWidgetVisualizationType) {
-            console.log('onTypeChanged visualizationType: ', visualizationType)
-        },
         addVisualizationType() {
             this.visualizationTypes.push({ target: [], type: '', prefix: '', suffix: '', pinned: '' })
         },
@@ -241,6 +236,17 @@ export default defineComponent({
             }
             const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === column.id)
             if (index !== -1) this.availableColumnOptions.splice(index, 1)
+        },
+        onColumnAliasRenamed(column: IWidgetColumn) {
+            if (column.id && this.widgetColumnsAliasMap[column.id]) this.widgetColumnsAliasMap[column.id] = column.alias
+
+            const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === column.id)
+            if (index !== -1) this.availableColumnOptions[index].alias = column.alias
+            this.visualizationTypeChanged()
+        },
+        onColumnAdded(column: IWidgetColumn) {
+            this.availableColumnOptions.push(column)
+            if (column.id) this.widgetColumnsAliasMap[column.id] = column.alias
         }
     }
 })
