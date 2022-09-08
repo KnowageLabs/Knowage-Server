@@ -79,7 +79,7 @@ const getHeadersConfiguration = (widget: any) => {
 }
 
 const getFormattedRows = (widget: any) => {
-    return { indexColumn: widget.settings?.indexColumn, rowSpan: { enabled: false, columns: [] as string[] } } as ITableWidgetRows
+    return { indexColumn: widget.settings?.indexColumn, rowSpan: { enabled: false, column: '' } } as ITableWidgetRows
 }
 
 // IMPORTANT
@@ -180,7 +180,7 @@ const formatColumnVisualizationTypeFromOldModel = (visType: string) => {
 const getRowConfigurationFromWidgetColumn = (formattedWidget: IWidget, column: any) => {
     if (column.rowSpan) {
         formattedWidget.settings.configuration.rows.rowSpan.enabled = true;
-        formattedWidget.settings.configuration.rows.rowSpan.columns.push(getColumnId(formattedWidget, column.name))
+        formattedWidget.settings.configuration.rows.rowSpan.column = getColumnId(formattedWidget, column.name)
     }
 }
 
