@@ -1,10 +1,10 @@
 <template>
     <div class="p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow" :style="descriptor.style.preview">
-        <!-- <div style="overflow: auto; height: 500px; width: 400px">
+        <div style="overflow: auto; height: 500px; width: 400px">
             {{ propWidget }}
-        </div> -->
+        </div>
 
-        <ag-grid-vue style="flex: 0.5; min-width: 800px; min-height: 500px" class="ag-theme-alpine" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" @grid-ready="onGridReady"></ag-grid-vue>
+        <ag-grid-vue style="flex: 0.5; min-width: 500px; min-height: 250px" class="ag-theme-alpine" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" @grid-ready="onGridReady"></ag-grid-vue>
     </div>
 </template>
 
