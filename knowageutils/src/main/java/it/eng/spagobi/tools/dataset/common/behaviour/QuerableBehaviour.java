@@ -81,13 +81,19 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 			if (queryTransformer != null) {
 				statement = (String) queryTransformer.transformQuery(statement);
 			}
+
+			if (!isMongoDBDataset() && statement.endsWith(";")) {
+				statement = statement.substring(0, statement.length() - 1);
+			}
 		} finally {
 			logger.debug("OUT");
 		}
-		if (statement.endsWith(";")) {
-			statement = statement.substring(0, statement.length() - 1);
-		}
+
 		return statement;
+	}
+
+	private boolean isMongoDBDataset() {
+		return this.getTargetDataSet() instanceof MongoDataSet;
 	}
 
 	private String getBaseStatement() {
