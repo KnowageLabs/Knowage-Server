@@ -31,8 +31,6 @@ export default defineComponent({
                 if (tempColumn && tempColumn.id !== 'All Columns') targetOptions.push(tempColumn)
             })
             targetOptions = targetOptions.concat(this.availableTargetOptions as any)
-            console.log('============ availableTargetOptions: ', this.availableTargetOptions)
-            console.log('============ TARGET OPTIONS: ', targetOptions)
             return targetOptions
         }
     },
@@ -41,9 +39,6 @@ export default defineComponent({
             this.modelValue = this.value as any[]
         },
         onChange(event: any) {
-            console.log('MODEL VALUE: ', this.modelValue)
-            console.log('EVENT: ', event.value)
-            console.log(' >>>> ALL SELECTED: ', this.checkIfAllColumnsSelected(event))
             if (this.checkIfAllColumnsSelected(event)) {
                 this.onAllColumnsSelected(event)
             } else this.$emit('change', event)
@@ -61,17 +56,7 @@ export default defineComponent({
         onAllColumnsSelected() {
             this.modelValue = ['All Columns']
             this.$emit('allColumnsSelected', this.modelValue)
-            console.log('OPTIONS: ', this.options)
         }
-        //            if (this.checkIfAllColumnsSelected(visualizationType)) {
-        //                 this.onAllColumnsSelected(visualizationType)
-        // }
-        //                     onAllColumnsSelected(visualizationType: ITableWidgetVisualizationType) {
-        //             console.log('onAllColumnsSelected visualizationType: ', visualizationType)
-        //             const forRemoval = visualizationType.target.filter((target: string) => target !== 'All Columns')
-        //             this.onColumnsRemovedFromMultiselect(forRemoval)
-        //             visualizationType.target = ['All Columns']
-        //         },
     }
 })
 </script>

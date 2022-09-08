@@ -154,6 +154,7 @@ export default defineComponent({
         removeColumnsFromAvailableOptions() {
             for (let i = 0; i < this.widgetModel.settings.visualization.types.length; i++) {
                 for (let j = 0; j < this.widgetModel.settings.visualization.types[i].target.length; j++) {
+                    if (this.widgetModel.settings.visualization.types[i].target[j] === 'All Columns') this.allColumnsSelected = true
                     this.removeColumnFromAvailableOptions({ id: this.widgetModel.settings.visualization.types[i].target[j], alias: this.widgetModel.settings.visualization.types[i].target[j] })
                 }
             }
@@ -163,8 +164,6 @@ export default defineComponent({
             if (index !== -1) this.availableColumnOptions.splice(index, 1)
         },
         onAllColumnsSelected(values: string[], visualizationType: ITableWidgetVisualizationType) {
-            console.log('onAllColumnsSelected: ', values)
-            console.log('onAllColumnsSelected vis type: ', visualizationType)
             this.allColumnsSelected = true
             visualizationType.allColumnSelected = true
             this.onColumnsRemovedFromMultiselect(visualizationType.target)
@@ -178,7 +177,6 @@ export default defineComponent({
             this.visualizationTypeChanged()
         },
         onColumnsRemovedFromMultiselect(intersection: string[]) {
-            console.log('onColumnsRemovedFromMultiselect: ', intersection)
             if (intersection[0] === 'All Columns') {
                 this.allColumnsSelected = false
                 return
@@ -228,7 +226,8 @@ export default defineComponent({
             this.visualizationTypes.push({ target: [], type: '', prefix: '', suffix: '', pinned: '' })
         },
         removeVisualizationType(index: number) {
-            this.visualizationTypes[index].target.forEach((target: string) => this.availableColumnOptions.push({ id: target, alias: this.widgetColumnsAliasMap[target] }))
+            if (this.visualizationTypes[index].target[0] === 'All Columns') this.allColumnsSelected = false
+            else this.visualizationTypes[index].target.forEach((target: string) => this.availableColumnOptions.push({ id: target, alias: this.widgetColumnsAliasMap[target] }))
             this.visualizationTypes.splice(index, 1)
             this.visualizationTypeChanged()
         },
