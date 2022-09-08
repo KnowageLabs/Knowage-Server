@@ -1,6 +1,6 @@
 <template>
     <div class="widget-renderer">
-        <TableWidget v-if="widget.type === 'table'" />
+        <!-- <TableWidget v-if="widget.type === 'table'" /> -->
         <!-- <div class="drag-handle">{{ widget.id }} {{ widget.type }}</div> -->
         <!-- <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
             <div>{{ data }}</div>
