@@ -88,7 +88,14 @@
                     </Dropdown>
                 </div>
                 <div class="kn-flex style-toolbar-container">
-                    <WidgetEditorStyleToolbar :options="descriptor.styleToolbarVisualizationTypeOptions" :propModel="{ color: visualizationType.color, 'background-color': visualizationType['background-color'] }" @change="onStyleToolbarChange($event, visualizationType)"></WidgetEditorStyleToolbar>
+                    <WidgetEditorStyleToolbar
+                        :options="descriptor.styleToolbarVisualizationTypeOptions"
+                        :propModel="{
+                            color: visualizationType.color,
+                            'background-color': visualizationType['background-color']
+                        }"
+                        @change="onStyleToolbarChange($event, visualizationType)"
+                    ></WidgetEditorStyleToolbar>
                 </div>
             </div>
         </div>
@@ -109,7 +116,13 @@ import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyl
 
 export default defineComponent({
     name: 'table-widget-visualization-type',
-    components: { Dropdown, InputSwitch, InputNumber, TableWidgetVisualizationTypeMultiselect, WidgetEditorStyleToolbar },
+    components: {
+        Dropdown,
+        InputSwitch,
+        InputNumber,
+        TableWidgetVisualizationTypeMultiselect,
+        WidgetEditorStyleToolbar
+    },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
@@ -130,7 +143,7 @@ export default defineComponent({
     },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemoved', (column) => this.onColumnRemoved(column))
+            emitter.on('columnRemovedFromVisibilityTypes', () => this.onColumnRemoved())
             emitter.on('columnAliasRenamed', (column) => this.onColumnAliasRenamed(column))
             emitter.on('columnAdded', (column) => this.onColumnAdded(column))
         },
@@ -154,7 +167,10 @@ export default defineComponent({
             for (let i = 0; i < this.widgetModel.settings.visualization.types.length; i++) {
                 for (let j = 0; j < this.widgetModel.settings.visualization.types[i].target.length; j++) {
                     if (this.widgetModel.settings.visualization.types[i].target[j] === 'All Columns') this.allColumnsSelected = true
-                    this.removeColumnFromAvailableOptions({ id: this.widgetModel.settings.visualization.types[i].target[j], alias: this.widgetModel.settings.visualization.types[i].target[j] })
+                    this.removeColumnFromAvailableOptions({
+                        id: this.widgetModel.settings.visualization.types[i].target[j],
+                        alias: this.widgetModel.settings.visualization.types[i].target[j]
+                    })
                 }
             }
         },
@@ -218,24 +234,29 @@ export default defineComponent({
             this.visualizationTypeChanged()
         },
         addVisualizationType() {
-            this.visualizationTypes.push({ target: [], type: '', prefix: '', suffix: '', pinned: '' })
+            this.visualizationTypes.push({
+                target: [],
+                type: '',
+                prefix: '',
+                suffix: '',
+                pinned: ''
+            })
         },
         removeVisualizationType(index: number) {
             if (this.visualizationTypes[index].target[0] === 'All Columns') this.allColumnsSelected = false
-            else this.visualizationTypes[index].target.forEach((target: string) => this.availableColumnOptions.push({ id: target, alias: this.widgetColumnsAliasMap[target] }))
+            else
+                this.visualizationTypes[index].target.forEach((target: string) =>
+                    this.availableColumnOptions.push({
+                        id: target,
+                        alias: this.widgetColumnsAliasMap[target]
+                    })
+                )
             this.visualizationTypes.splice(index, 1)
             this.visualizationTypeChanged()
         },
-        onColumnRemoved(column: IWidgetColumn) {
-            for (let i = this.visualizationTypes.length - 1; i >= 0; i--) {
-                for (let j = this.visualizationTypes[i].target.length; j >= 0; j--) {
-                    const tempTarget = this.visualizationTypes[i].target[j]
-                    if (column.id === tempTarget) this.visualizationTypes[i].target.splice(j, 1)
-                }
-                if (this.visualizationTypes[i].target.length === 0) this.visualizationTypes.splice(i, 1)
-            }
-            const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === column.id)
-            if (index !== -1) this.availableColumnOptions.splice(index, 1)
+        onColumnRemoved() {
+            this.loadColumnOptions()
+            this.loadVisualizationTypes()
         },
         onColumnAliasRenamed(column: IWidgetColumn) {
             if (column.id && this.widgetColumnsAliasMap[column.id]) this.widgetColumnsAliasMap[column.id] = column.alias

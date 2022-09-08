@@ -61,6 +61,7 @@ export default defineComponent({
             emitter.emit('rowSpanChanged', this.rowsModel)
         },
         onColumnRemoved() {
+            this.loadRowsModel()
             this.onRowSpanChanged()
         }
     }

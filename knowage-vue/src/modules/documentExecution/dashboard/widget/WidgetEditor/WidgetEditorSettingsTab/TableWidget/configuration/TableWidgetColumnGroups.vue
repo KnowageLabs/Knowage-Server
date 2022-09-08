@@ -49,7 +49,7 @@ export default defineComponent({
     },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemoved', (column) => this.onColumnRemoved(column))
+            emitter.on('columnRemovedFromColumnGroups', () => this.onColumnRemoved())
             emitter.on('columnAliasRenamed', (column) => this.onColumnAliasRenamed(column))
             emitter.on('columnAdded', (column) => this.onColumnAdded(column))
         },
@@ -133,16 +133,9 @@ export default defineComponent({
             this.columnGroupsModel.groups.splice(index, 1)
             this.columnGroupsConfigurationChanged()
         },
-        onColumnRemoved(column: IWidgetColumn) {
-            if (!this.columnGroupsModel) return
-            for (let i = this.columnGroupsModel.groups.length - 1; i >= 0; i--) {
-                for (let j = this.columnGroupsModel.groups[i].columns.length; j >= 0; j--) {
-                    const tempColumn = this.columnGroupsModel.groups[i].columns[j]
-                    if (column.id === tempColumn) this.columnGroupsModel.groups[i].columns.splice(j, 1)
-                }
-            }
-            const index = this.availableColumnOptions.findIndex((columnOption: IWidgetColumn | { id: string; alias: string }) => columnOption.id === column.id)
-            if (index !== -1) this.availableColumnOptions.splice(index, 1)
+        onColumnRemoved() {
+            this.loadColumnGroups()
+            this.loadColumnOptions()
             this.columnGroupsConfigurationChanged()
         },
         onColumnAliasRenamed(column: IWidgetColumn) {

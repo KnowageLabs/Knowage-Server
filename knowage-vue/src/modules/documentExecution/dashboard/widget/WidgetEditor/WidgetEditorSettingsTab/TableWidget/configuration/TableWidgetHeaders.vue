@@ -88,7 +88,11 @@ import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMult
 export default defineComponent({
     name: 'table-widget-headers',
     components: { Dropdown, InputSwitch, WidgetEditorColumnsMultiselect },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, drivers: { type: Array }, variables: { type: Array } },
+    props: {
+        widgetModel: { type: Object as PropType<IWidget>, required: true },
+        drivers: { type: Array },
+        variables: { type: Array }
+    },
     data() {
         return {
             descriptor,
@@ -105,7 +109,7 @@ export default defineComponent({
     },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemoved', (column) => this.onColumnRemoved(column))
+            emitter.on('headersColumnRemoved', (column) => this.onColumnRemoved(column))
             emitter.on('columnAliasRenamed', (column) => this.onColumnAliasRenamed(column))
             emitter.on('columnAdded', (column) => this.onColumnAdded(column))
         },
@@ -127,7 +131,10 @@ export default defineComponent({
             if (!this.headersModel) return
             for (let i = 0; i < this.headersModel.custom.rules.length; i++) {
                 for (let j = 0; j < this.headersModel.custom.rules[i].target.length; j++) {
-                    this.removeColumnFromAvailableTargetOptions({ id: this.headersModel.custom.rules[i].target[j], alias: this.widgetColumnsAliasMap[this.headersModel.custom.rules[i].target[j]] })
+                    this.removeColumnFromAvailableTargetOptions({
+                        id: this.headersModel.custom.rules[i].target[j],
+                        alias: this.widgetColumnsAliasMap[this.headersModel.custom.rules[i].target[j]]
+                    })
                 }
             }
         },
@@ -158,7 +165,12 @@ export default defineComponent({
             this.headersConfigurationChanged()
         },
         onColumnsRemovedFromMultiselect(intersection: string[]) {
-            intersection.forEach((el: string) => this.availableTargetOptions.push({ id: el, alias: this.widgetColumnsAliasMap[el] }))
+            intersection.forEach((el: string) =>
+                this.availableTargetOptions.push({
+                    id: el,
+                    alias: this.widgetColumnsAliasMap[el]
+                })
+            )
         },
         onColumnsAddedFromMultiselect(rule: ITableWidgetHeadersRule) {
             rule.target.forEach((target: string) => {
@@ -173,21 +185,18 @@ export default defineComponent({
         },
         removeHeadersRule(index: number) {
             if (!this.headersModel) return
-            this.headersModel.custom.rules[index].target.forEach((target: string) => this.availableTargetOptions.push({ id: target, alias: this.widgetColumnsAliasMap[target] }))
+            this.headersModel.custom.rules[index].target.forEach((target: string) =>
+                this.availableTargetOptions.push({
+                    id: target,
+                    alias: this.widgetColumnsAliasMap[target]
+                })
+            )
             this.headersModel.custom.rules.splice(index, 1)
             this.headersConfigurationChanged()
         },
         onColumnRemoved(column: IWidgetColumn) {
-            if (!this.headersModel) return
-            for (let i = this.headersModel.custom.rules.length - 1; i >= 0; i--) {
-                for (let j = this.headersModel.custom.rules[i].target.length; j >= 0; j--) {
-                    const tempTarget = this.headersModel.custom.rules[i].target[j]
-                    if (column.id === tempTarget) this.headersModel.custom.rules[i].target.splice(j, 1)
-                }
-                if (this.headersModel.custom.rules[i].target.length === 0) this.headersModel.custom.rules.splice(i, 1)
-            }
-            const index = this.availableTargetOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === column.id)
-            if (index !== -1) this.availableTargetOptions.splice(index, 1)
+            this.loadHeadersModel()
+            this.loadTargetOptions()
             this.headersConfigurationChanged()
         },
         onColumnAliasRenamed(column: IWidgetColumn) {
