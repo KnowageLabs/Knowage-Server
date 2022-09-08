@@ -198,7 +198,8 @@ export interface ITableWidgetVisualizationType {
     max?: number,
     alignment?: string,
     color?: string,
-    "background-color"?: string
+    "background-color"?: string,
+    allColumnSelected?: boolean
 }
 
 export interface ITableWidgetVisibilityCondition {

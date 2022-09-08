@@ -1,5 +1,5 @@
 <template>
-    <MultiSelect v-model="modelValue" :options="options" :optionLabel="optionLabel" :optionValue="optionsValue" :disabled="disabled" @change="onChange"> </MultiSelect>
+    <MultiSelect v-model="modelValue" :options="options" :optionLabel="optionLabel" :optionValue="optionsValue" :showToggleAll="false" :disabled="disabled" @change="onChange"> </MultiSelect>
 </template>
 
 <script lang="ts">
@@ -11,7 +11,7 @@ export default defineComponent({
     name: 'table-widget-visualization-type-multiselect',
     components: { MultiSelect },
     props: { value: { type: Array }, availableTargetOptions: { type: Array, required: true }, widgetColumnsAliasMap: { type: Object, required: true }, allColumnsSelected: { type: Boolean }, optionLabel: { type: String }, optionsValue: { type: String }, disabled: { type: Boolean } },
-    emits: ['change'],
+    emits: ['change', 'allColumnsSelected'],
     data() {
         return {
             modelValue: [] as any[]
@@ -23,13 +23,16 @@ export default defineComponent({
     },
     computed: {
         options() {
-            const targetOptions = [] as (IWidgetColumn | { id: string; alias: string })[]
-            if (!this.allColumnsSelected) targetOptions.push({ id: 'All Columns', alias: 'All Columns' })
+            let targetOptions = [] as (IWidgetColumn | { id: string; alias: string })[]
+            if (!this.allColumnsSelected || this.modelValue[0] === 'All Columns') targetOptions.push({ id: 'All Columns', alias: 'All Columns' })
+            if (this.modelValue[0] === 'All Columns') return targetOptions
             this.modelValue.forEach((target: string) => {
                 const tempColumn = { id: target, alias: this.widgetColumnsAliasMap[target] }
-                if (tempColumn) targetOptions.push(tempColumn)
+                if (tempColumn && tempColumn.id !== 'All Columns') targetOptions.push(tempColumn)
             })
-            targetOptions.concat(this.availableTargetOptions as any)
+            targetOptions = targetOptions.concat(this.availableTargetOptions as any)
+            console.log('============ availableTargetOptions: ', this.availableTargetOptions)
+            console.log('============ TARGET OPTIONS: ', targetOptions)
             return targetOptions
         }
     },
@@ -40,7 +43,25 @@ export default defineComponent({
         onChange(event: any) {
             console.log('MODEL VALUE: ', this.modelValue)
             console.log('EVENT: ', event.value)
-            this.$emit('change', event)
+            console.log(' >>>> ALL SELECTED: ', this.checkIfAllColumnsSelected(event))
+            if (this.checkIfAllColumnsSelected(event)) {
+                this.onAllColumnsSelected(event)
+            } else this.$emit('change', event)
+        },
+        checkIfAllColumnsSelected(event: any) {
+            let selected = false
+            for (let i = 0; i < event.value.length; i++) {
+                if (event.value[i] === 'All Columns') {
+                    selected = true
+                    break
+                }
+            }
+            return selected
+        },
+        onAllColumnsSelected() {
+            this.modelValue = ['All Columns']
+            this.$emit('allColumnsSelected', this.modelValue)
+            console.log('OPTIONS: ', this.options)
         }
         //            if (this.checkIfAllColumnsSelected(visualizationType)) {
         //                 this.onAllColumnsSelected(visualizationType)

@@ -13,6 +13,7 @@
                         optionLabel="alias"
                         optionValue="id"
                         @change="onColumnsSelected($event, visualizationType)"
+                        @allColumnsSelected="onAllColumnsSelected($event, visualizationType)"
                     >
                     </TableWidgetVisualizationTypeMultiselect>
                 </div>
@@ -106,6 +107,7 @@ import InputSwitch from 'primevue/inputswitch'
 import InputNumber from 'primevue/inputnumber'
 import TableWidgetVisualizationTypeMultiselect from './TableWidgetVisualizationTypeMultiselect.vue'
 import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
+import { ViewportSizeFeature } from 'ag-grid-community/dist/lib/gridBodyComp/viewportSizeFeature'
 
 export default defineComponent({
     name: 'table-widget-visualization-type',
@@ -160,6 +162,14 @@ export default defineComponent({
             const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === tempColumn.id)
             if (index !== -1) this.availableColumnOptions.splice(index, 1)
         },
+        onAllColumnsSelected(values: string[], visualizationType: ITableWidgetVisualizationType) {
+            console.log('onAllColumnsSelected: ', values)
+            console.log('onAllColumnsSelected vis type: ', visualizationType)
+            this.allColumnsSelected = true
+            visualizationType.allColumnSelected = true
+            this.onColumnsRemovedFromMultiselect(visualizationType.target)
+            visualizationType.target = ['All Columns']
+        },
         onColumnsSelected(event: any, visualizationType: ITableWidgetVisualizationType) {
             const intersection = visualizationType.target.filter((el: string) => !event.value.includes(el))
             visualizationType.target = event.value
@@ -167,18 +177,12 @@ export default defineComponent({
             intersection.length > 0 ? this.onColumnsRemovedFromMultiselect(intersection) : this.onColumnsAddedFromMultiselect(visualizationType)
             this.visualizationTypeChanged()
         },
-        checkIfAllColumnsSelected(visualizationType: ITableWidgetVisualizationType) {
-            console.log('visualizationType: ', visualizationType)
-            let selected = false
-            for (let i = 0; i < visualizationType.target.length; i++) {
-                if (visualizationType.target[i] === 'All Columns') {
-                    selected = true
-                    break
-                }
-            }
-            return selected
-        },
         onColumnsRemovedFromMultiselect(intersection: string[]) {
+            console.log('onColumnsRemovedFromMultiselect: ', intersection)
+            if (intersection[0] === 'All Columns') {
+                this.allColumnsSelected = false
+                return
+            }
             intersection.forEach((el: string) =>
                 this.availableColumnOptions.push({
                     id: el,
