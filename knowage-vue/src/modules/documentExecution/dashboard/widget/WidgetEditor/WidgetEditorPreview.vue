@@ -78,15 +78,16 @@ export default defineComponent({
                 pagination: false,
                 rowSelection: 'single',
                 suppressRowTransform: true,
+                rowHeight: 25,
 
                 // EVENTS
                 onRowClicked: (event, params) => console.log('A row was clicked', event),
                 onCellClicked: (event, params) => console.log('A cell was clicked', event),
                 onColumnResized: (event) => console.log('A column was resized'),
-                onGridReady: (event) => console.log('The grid is now ready'),
+                onGridReady: (event) => console.log('The grid is now ready')
 
                 // CALLBACKS
-                getRowHeight: (params) => 25
+                // getRowHeight: (params) => 25
             }
         },
         onGridReady(params) {
@@ -212,20 +213,19 @@ export default defineComponent({
 
                         //ROWSPAN MANAGEMENT
                         if (this.propWidget.settings.configuration.rows.rowSpan.columns.includes(this.propWidget.columns[datasetColumn].id)) {
-                            // var previousValue
-                            // var previousIndex
+                            var previousValue
+                            var previousIndex
                             var tempRows = this.datasetRecordsRows as any
-                            // for (var r in tempRows as any) {
-                            //     if (previousValue != tempRows[r][responseFields[responseField].name]) {
-                            //         previousValue = tempRows[r][responseFields[responseField].name]
-                            //         previousIndex = r
-                            //         tempRows[r].span = 1
-                            //     } else {
-                            //         tempRows[previousIndex].span++
-                            //     }
-                            // }
+                            for (var r in tempRows as any) {
+                                if (previousValue != tempRows[r][responseFields[responseField].name]) {
+                                    previousValue = tempRows[r][responseFields[responseField].name]
+                                    previousIndex = r
+                                    tempRows[r].span = 1
+                                } else {
+                                    tempRows[previousIndex].span++
+                                }
+                            }
                             tempCol.rowSpan = function RowSpanCalculator(params) {
-                                console.log('cell DATA \n', params)
                                 if (params.data.span > 1) {
                                     return params.data.span
                                 } else return 1
