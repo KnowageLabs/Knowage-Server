@@ -132,77 +132,77 @@
         "results": 25,
         "rows": [
             {
-                "column_1": "foodmart_store.12",
+                "column_1": "store.12",
                 "column_2": "-122.7497184 45.527440511",
                 "column_3": "Supermarket",
                 "column_4": 22,
                 "id": 1
             },
             {
-                "column_1": "foodmart_store.13",
+                "column_1": "store.12",
                 "column_2": "-102.5152609 22.752039312",
                 "column_3": "Deluxe Supermarket",
                 "column_4": 25,
                 "id": 2
             },
             {
-                "column_1": "foodmart_store.14",
+                "column_1": "store.12",
                 "column_2": "-123.0362824 44.937496713",
                 "column_3": "Deluxe Supermarket",
                 "column_4": 23,
                 "id": 3
             },
             {
-                "column_1": "foodmart_store.15",
+                "column_1": "store.15",
                 "column_2": "-122.4531371 37.75781514",
                 "column_3": "Small Grocery",
                 "column_4": 1,
                 "id": 4
             },
             {
-                "column_1": "foodmart_store.16",
+                "column_1": "store.16",
                 "column_2": "-122.3101131 47.682903715",
                 "column_3": "Supermarket",
                 "column_4": 18,
                 "id": 5
             },
             {
-                "column_1": "foodmart_store.17",
+                "column_1": "store.17",
                 "column_2": "-117.4948579 47.675041516",
                 "column_3": "Supermarket",
                 "column_4": 87,
                 "id": 6
             },
             {
-                "column_1": "foodmart_store.18",
+                "column_1": "store.18",
                 "column_2": "-122.553689 47.242860817",
                 "column_3": "Deluxe Supermarket",
-                "column_4": 84,
+                "column_4": 6,
                 "id": 7
             },
             {
-                "column_1": "foodmart_store.19",
+                "column_1": "store.19",
                 "column_2": "-103.012048 21.633049718",
                 "column_3": "Mid-Size Grocery",
-                "column_4": 25,
+                "column_4": 6,
                 "id": 8
             },
             {
-                "column_1": "foodmart_store.20",
+                "column_1": "store.20",
                 "column_2": "-123.1848491 49.268665519",
                 "column_3": "Deluxe Supermarket",
-                "column_4": 5,
+                "column_4": 6,
                 "id": 9
             },
             {
-                "column_1": "foodmart_store.21",
+                "column_1": "store.21",
                 "column_2": "-123.4355336 48.428274120",
                 "column_3": "Mid-Size Grocery",
-                "column_4": 6,
+                "column_4": 5,
                 "id": 10
             },
             {
-                "column_1": "",
+                "column_1": "test1",
                 "column_2": "",
                 "column_3": "",
                 "column_4": 901,
@@ -210,7 +210,7 @@
             },
             {
                 "column_1": "",
-                "column_2": "",
+                "column_2": "test2",
                 "column_3": "",
                 "column_4": 36.04,
                 "id": 12

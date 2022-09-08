@@ -1,10 +1,10 @@
 <template>
     <div class="p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow" :style="descriptor.style.preview">
-        <div style="overflow: auto; height: 500px; width: 400px">
+        <!-- <div style="overflow: auto; height: 500px; width: 400px">
             {{ propWidget }}
-        </div>
+        </div> -->
 
-        <ag-grid-vue style="flex: 0.5; min-width: 500px" class="ag-theme-alpine" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" @grid-ready="onGridReady"></ag-grid-vue>
+        <ag-grid-vue style="flex: 0.5; min-width: 800px; min-height: 500px" class="ag-theme-alpine" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" @grid-ready="onGridReady"></ag-grid-vue>
     </div>
 </template>
 
@@ -36,6 +36,7 @@ export default defineComponent({
             descriptor,
             mock,
             gridOptions: null as any,
+            datasetRecordsRows: mock.mockResponse.rows as any,
             columnsNameArray: [] as any,
             rowData: [] as any,
             columnDefs: [] as any,
@@ -65,7 +66,7 @@ export default defineComponent({
             emitter.on('summaryRowsChanged', (rows) => this.createDatatableColumns()) //TODO: Servis nam treba za ovo
             // TODO: Trenutno se gleda svaka promena u header config, mozda staviti event emit samo na promene koje trebaju.
             emitter.on('headersConfigurationChanged', () => this.createDatatableColumns())
-            emitter.on('columnGroupsConfigurationChanged', (columnGroupConfiguration) => console.log('WidgetEditorPreview  - columnGroupsConfigurationChanged!', columnGroupConfiguration))
+            emitter.on('columnGroupsConfigurationChanged', (columnGroupConfiguration) => this.createDatatableColumns())
             emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
             emitter.on('visualizationTypeChanged', (visuelizationTypes) => console.log('WidgetEditorPreview  - visualizationTypeChanged!', visuelizationTypes))
         },
@@ -95,14 +96,15 @@ export default defineComponent({
         },
         createDatatableColumns() {
             // const datatableColumns = this.getDatatableColumns()
-
             // this.setSorting()
             // this.setIndexColumn(this.propWidget.settings.configuration.rows.indexColumn, datatableColumns)
             // this.setHeaders(this.propWidget.settings.configuration.headers, datatableColumns)
-
             // datatableColumns[1].children = [{ field: 'athlete' }, { field: 'age' }, { field: 'country' }]
-
             // this.gridApi.setColumnDefs(datatableColumns)
+
+            const datatableColumns = this.newGetColumns(this.mock.mockResponse.metaData.fields)
+            this.setHeaders(this.propWidget.settings.configuration.headers, datatableColumns)
+            this.gridApi.setColumnDefs(datatableColumns)
 
             const updateData = (data) => {
                 this.rowData = data.slice(0, this.propWidget.settings.pagination.itemsNumber)
@@ -111,9 +113,7 @@ export default defineComponent({
                     this.gridApi.setPinnedBottomRowData(data.slice(this.propWidget.settings.pagination.itemsNumber))
                 } else this.gridApi.setPinnedBottomRowData()
             }
-            updateData(this.mock.mockResponse.rows)
-
-            this.gridApi.setColumnDefs(this.newGetColumns(this.mock.mockResponse.metaData.fields))
+            updateData(this.datasetRecordsRows)
         },
 
         getDatatableColumns() {
@@ -172,22 +172,6 @@ export default defineComponent({
         },
         setHeaders(headersConfiguration, datatableColumns) {
             headersConfiguration.enabled ? this.gridApi.setHeaderHeight(25) : this.gridApi.setHeaderHeight(0)
-
-            if (headersConfiguration.enabled && headersConfiguration.custom.enabled) {
-                headersConfiguration.custom.rules.forEach((rule) => {
-                    rule.target.forEach((columnId) => {
-                        var columnIndex = datatableColumns.findIndex((datatableColumn) => datatableColumn.colId == columnId)
-                        switch (rule.action) {
-                            case 'hide':
-                                datatableColumns[columnIndex].headerName = ''
-                                break
-                            case 'setLabel':
-                                rule.value ? (datatableColumns[columnIndex].headerName = rule.value) : ''
-                                break
-                        }
-                    })
-                })
-            }
         },
         newGetColumns(responseFields) {
             var columns = [] as any
@@ -207,9 +191,9 @@ export default defineComponent({
                 for (var responseField in responseFields) {
                     var thisColumn = this.propWidget.columns[datasetColumn]
 
-                    if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && thisColumn.columnName.toLowerCase() === responseFields[responseField].header) || thisColumn.alias.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
+                    if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && thisColumn.columnName.toLowerCase() === responseFields[responseField].header) || thisColumn.columnName.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
                         this.columnsNameArray.push(responseFields[responseField].name)
-                        var tempCol = { headerName: this.propWidget.columns[datasetColumn].alias, field: responseFields[responseField].name, measure: this.propWidget.columns[datasetColumn].fieldType } as any
+                        var tempCol = { colId: this.propWidget.columns[datasetColumn].id, headerName: this.propWidget.columns[datasetColumn].alias, field: responseFields[responseField].name, measure: this.propWidget.columns[datasetColumn].fieldType } as any
 
                         if (this.propWidget.columns[datasetColumn].style && this.propWidget.columns[datasetColumn].style.enableCustomHeaderTooltip) {
                             // tempCol.headerTooltip = replacePlaceholders(this.propWidget.columns[datasetColumn].style.customHeaderTooltip, null, true)
@@ -221,17 +205,125 @@ export default defineComponent({
                         if (tempCol.measure === 'MEASURE') tempCol.aggregationSelected = this.propWidget.columns[datasetColumn].aggregation
                         // tempCol.pinned = this.propWidget.columns[datasetColumn].pinned
 
-                        columns.push(tempCol)
+                        if (this.propWidget.columns[datasetColumn].isCalculated) {
+                            tempCol.isCalculated = this.propWidget.columns[datasetColumn].isCalculated
+                        }
+
+                        //ROWSPAN MANAGEMENT
+                        if (this.propWidget.settings.configuration.rows.rowSpan.columns.includes(this.propWidget.columns[datasetColumn].id)) {
+                            // var previousValue
+                            // var previousIndex
+                            var tempRows = this.datasetRecordsRows as any
+                            // for (var r in tempRows as any) {
+                            //     if (previousValue != tempRows[r][responseFields[responseField].name]) {
+                            //         previousValue = tempRows[r][responseFields[responseField].name]
+                            //         previousIndex = r
+                            //         tempRows[r].span = 1
+                            //     } else {
+                            //         tempRows[previousIndex].span++
+                            //     }
+                            // }
+                            tempCol.rowSpan = function RowSpanCalculator(params) {
+                                console.log('cell DATA \n', params)
+                                if (params.data.span > 1) {
+                                    return params.data.span
+                                } else return 1
+                            }
+                            tempCol.cellClassRules = {
+                                'cell-span': function (params) {
+                                    return tempRows[params.rowIndex].span > 1
+                                }
+                            }
+                        }
+                        // SUMMARY ROW  -----------------------------------------------------------------
+                        if (this.propWidget.settings.configuration.summaryRows.enabled) {
+                            tempCol.cellRendererSelector = (params) => {
+                                if (params.node.rowPinned && this.propWidget.settings.configuration.summaryRows.enabled) {
+                                    return {
+                                        component: SummaryRowRenderer,
+                                        params: {
+                                            summaryRows: this.propWidget.settings.configuration.summaryRows.list.map((row) => {
+                                                return row.label
+                                            })
+                                        }
+                                    }
+                                } else {
+                                    // rows that are not pinned don't use any cell renderer
+                                    return undefined
+                                }
+                            }
+                            class SummaryRowRenderer {
+                                eGui: HTMLDivElement | undefined
+                                init(params) {
+                                    this.eGui = document.createElement('div')
+                                    params.value ? (this.eGui.innerHTML = '<b style="margin-right: 4px;">' + params.summaryRows[params.rowIndex] + '</b>') : ''
+                                    this.eGui.innerHTML += params.value
+                                }
+                                getGui() {
+                                    return this.eGui
+                                }
+                                refresh() {
+                                    return false
+                                }
+                            }
+                        }
+
+                        var headersConfiguration = this.propWidget.settings.configuration.headers
+                        if (headersConfiguration.enabled && headersConfiguration.custom.enabled) {
+                            headersConfiguration.custom.rules.forEach((rule) => {
+                                rule.target.forEach((columnId) => {
+                                    if (columnId === tempCol.colId) {
+                                        switch (rule.action) {
+                                            case 'hide':
+                                                tempCol.headerName = ''
+                                                break
+                                            case 'setLabel':
+                                                rule.value ? (tempCol.headerName = rule.value) : ''
+                                                break
+                                        }
+                                    }
+                                })
+                            })
+                        }
+
+                        // COLUMN GROUPING -----------------------------------------------------------------
+                        var group = this.getColumnGroup(this.propWidget.columns[datasetColumn])
+                        if (group) {
+                            if (typeof columnGroups[group.id] != 'undefined') {
+                                columns[columnGroups[group.id]].children.push(tempCol)
+                            } else {
+                                columnGroups[group.id] = columns.length
+                                columns.push({
+                                    headerName: group.label,
+                                    children: [tempCol]
+                                })
+                            }
+                        } else columns.push(tempCol)
+                        break
                     }
                 }
             }
 
-            console.log(this.columnsNameArray)
-
-            console.log('COLUMNS --------------------------')
-            console.log(columns)
             return columns
+        },
+        getColumnGroup(col) {
+            var modelGroups = this.propWidget.settings.configuration.columnGroups.groups
+            if (this.propWidget.settings.configuration.columnGroups.enabled && modelGroups && modelGroups.length > 0) {
+                for (var k in modelGroups) {
+                    if (modelGroups[k].columns.includes(col.id)) {
+                        return modelGroups[k]
+                    }
+                }
+            } else return false
         }
     }
 })
 </script>
+<style lang="scss">
+.cell-span {
+    background: white;
+    border-left: 1px solid lightgrey !important;
+    border-right: 1px solid lightgrey !important;
+    border-bottom: 1px solid lightgrey !important;
+}
+</style>
