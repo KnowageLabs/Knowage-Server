@@ -171,7 +171,7 @@ export default defineComponent({
                         var columnIndex = datatableColumns.findIndex((datatableColumn) => datatableColumn.colId == columnId)
                         switch (rule.action) {
                             case 'hide':
-                                datatableColumns[columnIndex].headerName = ''
+                                if (datatableColumns[columnIndex]) datatableColumns[columnIndex].headerName = '' // Code broke here
                                 break
                             case 'setLabel':
                                 rule.value ? (datatableColumns[columnIndex].headerName = rule.value) : ''
