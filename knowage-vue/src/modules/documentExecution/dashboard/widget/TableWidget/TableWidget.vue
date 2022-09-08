@@ -204,7 +204,7 @@ export default defineComponent({
                         }
 
                         //ROWSPAN MANAGEMENT
-                        if (this.propWidget.settings.configuration.rows.rowSpan.columns.includes(this.propWidget.columns[datasetColumn].id)) {
+                        if (this.propWidget.settings.configuration.rows.rowSpan.column === this.propWidget.columns[datasetColumn].id) {
                             var previousValue
                             var previousIndex
                             var tempRows = this.datasetRecordsRows as any
