@@ -52,9 +52,9 @@ const formatTableWidgetConfiguration = (widgetConfiguration: ITableWidgetConfigu
 const formatRowsConfiguration = (widgetConfiguration: ITableWidgetConfiguration, widgetColumns: IWidgetColumn[]) => {
     if (!widgetConfiguration.rows) return
     console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TEEEEEEST COLUMNS: ", widgetColumns)
-    for (let i = 0; i < widgetConfiguration.rows.rowSpan.columns.length; i++) {
-        widgetConfiguration.rows.rowSpan.columns[i] = getColumnName(widgetConfiguration.rows.rowSpan.columns[i], widgetColumns)
-    }
+
+    widgetConfiguration.rows.rowSpan.column = getColumnName(widgetConfiguration.rows.rowSpan.column, widgetColumns)
+
     console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TEEEEEEST: ", widgetConfiguration.rows)
 }
 
@@ -148,7 +148,15 @@ function formatColumnTooltipSettings(column: IWidgetColumn) {
 
 //#region ===================== Remove Column ====================================================
 export const removeColumnFromModel = (widgetModel: IWidget, column: IWidgetColumn) => {
+    removeColumnFromRows(widgetModel, column)
     removeColumnFromVisibilityConditions(widgetModel, column)
+}
+
+const removeColumnFromRows = (widgetModel: IWidget, column: IWidgetColumn) => {
+    if (column.id === widgetModel.settings.configuration.rows.rowSpan.column) {
+        widgetModel.settings.configuration.rows.rowSpan.column = ''
+        emitter.emit('columnRemovedFromRows')
+    }
 }
 
 const removeColumnFromVisibilityConditions = (widgetModel: IWidget, column: IWidgetColumn) => {

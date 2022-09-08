@@ -20,7 +20,7 @@
 
         <div class="p-d-flex p-flex-column p-m-3">
             <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.rows.rowSpanColumns') }}</label>
-            <MultiSelect v-model="rowsModel.rowSpan.columns" :options="widgetModel.columns" optionLabel="alias" optionValue="id" :disabled="!rowsModel.rowSpan.enabled" @change="onRowSpanChanged"> </MultiSelect>
+            <Dropdown class="kn-material-input" v-model="rowsModel.rowSpan.column" :options="widgetModel.columns" optionLabel="alias" optionValue="id" :disabled="!rowsModel.rowSpan.enabled" @change="onRowSpanChanged"> </Dropdown>
         </div>
     </div>
 </template>
@@ -31,11 +31,11 @@ import { IWidget, ITableWidgetRows, IWidgetColumn } from '@/modules/documentExec
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
-import MultiSelect from 'primevue/multiselect'
+import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
     name: 'table-widget-rows',
-    components: { InputSwitch, MultiSelect },
+    components: { InputSwitch, Dropdown },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
@@ -49,7 +49,7 @@ export default defineComponent({
     },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemoved', (column) => this.onColumnRemoved(column))
+            emitter.on('columnRemovedFromRows', () => this.onColumnRemoved())
         },
         loadRowsModel() {
             if (this.widgetModel?.settings?.configuration) this.rowsModel = this.widgetModel.settings.configuration.rows
@@ -60,14 +60,8 @@ export default defineComponent({
         onRowSpanChanged() {
             emitter.emit('rowSpanChanged', this.rowsModel)
         },
-        onColumnRemoved(column: IWidgetColumn) {
-            console.log('ON COLUMN REMOVED: ', column)
-            if (!this.rowsModel) return
-            const index = this.rowsModel.rowSpan.columns.findIndex((id: string) => column.id)
-            if (index !== -1) {
-                this.rowsModel?.rowSpan.columns.splice(index, 1)
-                this.onRowSpanChanged()
-            }
+        onColumnRemoved() {
+            this.onRowSpanChanged()
         }
     }
 })
