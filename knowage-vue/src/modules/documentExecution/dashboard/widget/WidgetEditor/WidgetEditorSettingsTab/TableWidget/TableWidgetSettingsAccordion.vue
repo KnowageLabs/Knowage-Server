@@ -1,5 +1,5 @@
 <template>
-    <div v-if="widgetModel">
+    <div v-show="widgetModel">
         <Accordion class="widget-editor-accordion">
             <AccordionTab v-for="(accordion, index) in settings" :key="index">
                 <template #header>
@@ -7,13 +7,13 @@
                         <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
                     </div>
                 </template>
-                <TableWidgetRows v-if="accordion.type === 'Rows'" :widgetModel="widgetModel"></TableWidgetRows>
-                <TableWidgetSummaryRows v-else-if="accordion.type === 'SummaryRows'" :widgetModel="widgetModel"></TableWidgetSummaryRows>
-                <TableWidgetHeaders v-else-if="accordion.type === 'Headers'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetHeaders>
-                <TableWidgetColumnGroups v-else-if="accordion.type === 'ColumnGroups'" :widgetModel="widgetModel"></TableWidgetColumnGroups>
-                <TableWidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></TableWidgetExport>
-                <TableWidgetVisualizationType v-else-if="accordion.type === 'VisualizationType'" :widgetModel="widgetModel"></TableWidgetVisualizationType>
-                <TableWidgetVisibilityConditions v-else-if="accordion.type === 'VisibilityConditions'" :widgetModel="widgetModel" :variables="variables"></TableWidgetVisibilityConditions>
+                <TableWidgetRows v-show="accordion.type === 'Rows'" :widgetModel="widgetModel"></TableWidgetRows>
+                <TableWidgetSummaryRows v-show="accordion.type === 'SummaryRows'" :widgetModel="widgetModel"></TableWidgetSummaryRows>
+                <TableWidgetHeaders v-show="accordion.type === 'Headers'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetHeaders>
+                <TableWidgetColumnGroups v-show="accordion.type === 'ColumnGroups'" :widgetModel="widgetModel"></TableWidgetColumnGroups>
+                <TableWidgetExport v-show="accordion.type === 'Export'" :widgetModel="widgetModel"></TableWidgetExport>
+                <TableWidgetVisualizationType v-show="accordion.type === 'VisualizationType'" :widgetModel="widgetModel"></TableWidgetVisualizationType>
+                <TableWidgetVisibilityConditions v-show="accordion.type === 'VisibilityConditions'" :widgetModel="widgetModel" :variables="variables"></TableWidgetVisibilityConditions>
             </AccordionTab>
         </Accordion>
     </div>

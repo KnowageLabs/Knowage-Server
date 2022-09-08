@@ -19,6 +19,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { removeColumnFromModel } from '../../helpers/TableWidgetFunctions'
 import { emitter } from '../../../../DashboardHelpers'
 import descriptor from './TableWidgetDataDescriptor.json'
 import TableWidgetDataForm from './TableWidgetDataForm.vue'
@@ -68,6 +69,7 @@ export default defineComponent({
             if (index !== -1) {
                 this.widgetModel.columns.splice(index, 1)
                 if (column.id === this.selectedColumn?.id) this.selectedColumn = null
+                removeColumnFromModel(this.widgetModel, column)
                 emitter.emit('columnRemoved', column)
             }
         }

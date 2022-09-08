@@ -1,6 +1,6 @@
 <template>
-    <div v-if="widgetModel">
-        <TableWidgetSettingsAccordion v-if="selectedSetting" :widgetModel="widgetModel" :settings="descriptor.settings[selectedSetting]" :drivers="drivers" :variables="variables"></TableWidgetSettingsAccordion>
+    <div v-show="widgetModel">
+        <TableWidgetSettingsAccordion v-show="selectedSetting" :widgetModel="widgetModel" :settings="descriptor.settings[selectedSetting]" :drivers="drivers" :variables="variables"></TableWidgetSettingsAccordion>
     </div>
 </template>
 
