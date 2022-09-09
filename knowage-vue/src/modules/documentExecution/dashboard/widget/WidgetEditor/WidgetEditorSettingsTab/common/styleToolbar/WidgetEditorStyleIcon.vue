@@ -93,7 +93,6 @@ export default defineComponent({
         },
         onColorPickerChange(event: any) {
             if (!event.value || !this.model) return
-            console.log('EVENT: ', event)
             this.newColor = `rgb(${event.value.r}, ${event.value.g}, ${event.value.b})`
             this.option.type === 'color' ? (this.model.color = this.newColor) : (this.model['background-color'] = this.newColor)
             this.$emit('change')

@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -127,7 +127,6 @@ const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn:
 }
 
 const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
-    console.log("getStyleFromColumn getStyleFromColumn getStyleFromColumn: ", tempColumn)
     if (!tempColumn.style) return
     let hasStyle = false
     let fields = ['background-color', 'color', "justify-content", "font-size", "font-family", "font-style", "font-weight"]
@@ -138,7 +137,6 @@ const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
         }
     }
 
-    console.log("HAS STYLE: ", hasStyle)
     if (hasStyle) formattedWidget.settings.style.columns.push({
         target: [getColumnId(formattedWidget, tempColumn.name)], properties: {
             "background-color": tempColumn.style['background-color'] ?? "rgb(0, 0, 0)",
@@ -238,17 +236,47 @@ const getFormattedPaginations = (widget: any) => {
     return { enabled: widget.settings.pagination.enabled, itemsNumber: widget.settings.pagination.itemsNumber } as ITableWidgetPagination
 }
 
+// STYLE!!!
 
 const getFormattedStyle = (widget: any) => {
     return {
         borders: {},
         columns: [],
-        columnGroups: [],
+        columnGroups: getFormattedColumnGroupsStyle(widget),
         headers: getFormattedHeadersStyle(widget),
         padding: {},
         rows: {},
         shadows: {}
     }
+}
+
+const getFormattedColumnGroupsStyle = (widget: any) => {
+    console.log(" >>>>>>>>>>>>>> getFormattedColumnGroupsStyle", widget)
+    const formattedColumnGroupsStyles = [] as ITableWidgetColumnStyle[]
+    if (!widget.groups) return formattedColumnGroupsStyles
+    let fields = ['background-color', 'color', "justify-content", "font-size", "font-family", "font-style", "font-weight"]
+    for (let i = 0; i < widget.groups.length; i++) {
+        const tempGroup = widget.groups[i]
+        let hasStyle = false;
+        for (let j = 0; j < fields.length; j++) {
+            if (tempGroup.hasOwnProperty(fields[j])) {
+                hasStyle = true;
+                break
+            }
+        }
+        if (hasStyle) formattedColumnGroupsStyles.push({
+            target: [tempGroup.id], properties: {
+                "background-color": tempGroup['background-color'] ?? "rgb(0, 0, 0)",
+                color: tempGroup.color ?? 'rgb(255, 255, 255)',
+                "justify-content": tempGroup['justify-content'] ?? '',
+                "font-size": tempGroup['font-size'] ?? "",
+                "font-family": tempGroup['font-family'] ?? '',
+                "font-style": tempGroup['font-style'] ?? '',
+                "font-weight": tempGroup['font-weight'] ?? '',
+            }
+        })
+    }
+    return formattedColumnGroupsStyles
 }
 
 const getFormattedHeadersStyle = (widget: any) => {

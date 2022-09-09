@@ -135,6 +135,10 @@
             {
                 "title": "common.columns",
                 "type": "ColumnStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.columnGroups.title",
+                "type": "ColumnGroupsStyle"
             }
         ],
         "Visualization": [
@@ -148,7 +152,7 @@
             }
         ]
     },
-    "styleToolbarHeadersStyleOptions": [
+    "styleToolbarVisualizationTypeOptions": [
         {
             "type": "color"
         },

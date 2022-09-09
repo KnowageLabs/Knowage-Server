@@ -16,6 +16,8 @@
                 <TableWidgetVisibilityConditions v-show="accordion.type === 'VisibilityConditions'" :widgetModel="widgetModel" :variables="variables"></TableWidgetVisibilityConditions>
                 <TableWidgetHeaders v-show="accordion.type === 'Headers'" :widgetModel="widgetModel"></TableWidgetHeaders>
                 <TableWidgetColumnStyle v-show="accordion.type === 'ColumnStyle'" :widgetModel="widgetModel"></TableWidgetColumnStyle>
+                <TableWidgetColumnStyle v-show="accordion.type === 'ColumnGroupsStyle'" :widgetModel="widgetModel" mode="columnGroups"></TableWidgetColumnStyle>
+                <TableWidgetColumnGroupStyle v-show="accordion.type === 'ColumnGroupsStyle'" :widgetModel="widgetModel"></TableWidgetColumnGroupStyle>
             </AccordionTab>
         </Accordion>
     </div>
@@ -36,10 +38,11 @@ import TableWidgetVisualizationType from './visualization/TableWidgetVisualizati
 import TableWidgetVisibilityConditions from './visualization/TableWidgetVisibilityConditions.vue'
 import TableWidgetHeaders from './style/TableWidgetHeaders.vue'
 import TableWidgetColumnStyle from './style/TableWidgetColumnStyle.vue'
+import TableWidgetColumnGroupStyle from './style/TableWidgetColumnGroupStyle.vue'
 
 export default defineComponent({
     name: 'table-widget-configuration-container',
-    components: { Accordion, AccordionTab, TableWidgetRows, TableWidgetSummaryRows, TableWidgetHeader, TableWidgetColumnGroups, TableWidgetExport, TableWidgetVisualizationType, TableWidgetVisibilityConditions, TableWidgetHeaders, TableWidgetColumnStyle },
+    components: { Accordion, AccordionTab, TableWidgetRows, TableWidgetSummaryRows, TableWidgetHeader, TableWidgetColumnGroups, TableWidgetExport, TableWidgetVisualizationType, TableWidgetVisibilityConditions, TableWidgetHeaders, TableWidgetColumnStyle, TableWidgetColumnGroupStyle },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Array as PropType<{ title: string; type: string }[]> }, drivers: { type: Array }, variables: { type: Array } },
     data() {
         return {

@@ -181,19 +181,20 @@ export default defineComponent({
         onAllColumnsSelected(visualizationType: ITableWidgetVisualizationType) {
             this.allColumnsSelected = true
             visualizationType.allColumnSelected = true
-            this.onColumnsRemovedFromMultiselect(visualizationType.target)
+            this.onColumnsRemovedFromMultiselect(visualizationType.target, visualizationType)
             visualizationType.target = ['All Columns']
         },
         onColumnsSelected(event: any, visualizationType: ITableWidgetVisualizationType) {
             const intersection = visualizationType.target.filter((el: string) => !event.value.includes(el))
             visualizationType.target = event.value
 
-            intersection.length > 0 ? this.onColumnsRemovedFromMultiselect(intersection) : this.onColumnsAddedFromMultiselect(visualizationType)
+            intersection.length > 0 ? this.onColumnsRemovedFromMultiselect(intersection, visualizationType) : this.onColumnsAddedFromMultiselect(visualizationType)
             this.visualizationTypeChanged()
         },
-        onColumnsRemovedFromMultiselect(intersection: string[]) {
+        onColumnsRemovedFromMultiselect(intersection: string[], visualizationType: ITableWidgetVisualizationType) {
             if (intersection[0] === 'All Columns') {
                 this.allColumnsSelected = false
+                visualizationType.allColumnSelected = false
                 return
             }
             intersection.forEach((el: string) =>
