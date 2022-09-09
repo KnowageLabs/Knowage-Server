@@ -191,7 +191,7 @@ export default defineComponent({
                     this.formatPivotRows(el)
                 }
 
-                if (el.isNew || this.isPivot) delete el.id
+                delete el.id
                 delete el.isNew
                 delete el.edited
             })

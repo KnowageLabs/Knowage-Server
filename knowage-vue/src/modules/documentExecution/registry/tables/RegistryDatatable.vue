@@ -418,7 +418,11 @@ export default defineComponent({
             this.$emit('rowChanged', row)
         },
         onCellEditComplete(event: any) {
-            this.rows[event.index] = event.newData
+            let id = event.newData.id
+            if (id) {
+                var foundIndex = this.rows.findIndex((x) => x.id == id)
+                this.rows[foundIndex] = event.newData
+            }
         }
     }
 })
