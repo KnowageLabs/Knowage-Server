@@ -4,7 +4,7 @@ import cryptoRandomString from 'crypto-random-string'
 export const formatTableWidget = (widget: any) => {
     console.log("TableWidgetCompatibilityHelper - formatTableWidget called for: ", widget)
     const formattedWidget = {
-        id: widget.id, dataset: widget.dataset.dsId, type: widget.type, columns: getFormattedWidgetColumns(widget), conditionalStyles: [], interactions: [], theme: '', styles: {}, settings: {}
+        id: widget.id, dataset: widget.dataset.dsId, type: widget.type, columns: getFormattedWidgetColumns(widget), conditionalStyles: [], interactions: [], theme: '', style: {}, settings: {}
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(formattedWidget, widget)
     getFiltersForColumns(formattedWidget, widget)
@@ -205,16 +205,52 @@ const getFormattedInteractions = (widget: any) => {
     return {}
 }
 
-// TODO
+
 const getFormattedPaginations = (widget: any) => {
     if (!widget.settings?.pagination) return { enabled: false, itemsNumber: 0 }
     return { enabled: widget.settings.pagination.enabled, itemsNumber: widget.settings.pagination.itemsNumber } as ITableWidgetPagination
 }
 
 
-// TODO
 const getFormattedStyle = (widget: any) => {
-    return {}
+    return {
+        borders: {},
+        columns: [],
+        columnGroups: [],
+        headers: getFormattedHeadersStyle(widget),
+        padding: {},
+        rows: {},
+        shadows: {}
+    }
+}
+
+const getFormattedHeadersStyle = (widget: any) => {
+    if (!widget.style?.th) return {
+        height: 25,
+        properties: {
+            "background-color": "rgb(137, 158, 175)",
+            color: 'rgb(255, 255, 255)',
+            "justify-content": 'center',
+            "font-size": "14px",
+            "font-family": "",
+            "font-style": "normal",
+            "font-weight": "",
+        }
+    }
+
+
+    return {
+        height: widget.style.th.height,
+        properties: {
+            "background-color": widget.style.th['background-color'] ?? "rgb(137, 158, 175)",
+            color: widget.style.th.color ?? 'rgb(255, 255, 255)',
+            "justify-content": widget.style.th['justify-content'] ?? 'center',
+            "font-size": widget.style.th['font-sizer'] ?? "14px",
+            "font-family": widget.style.th['font-family'] ?? '',
+            "font-style": widget.style.th['font-style'] ?? 'normal',
+            "font-weight": widget.style.th['font-weight'] ?? '',
+        }
+    }
 }
 
 

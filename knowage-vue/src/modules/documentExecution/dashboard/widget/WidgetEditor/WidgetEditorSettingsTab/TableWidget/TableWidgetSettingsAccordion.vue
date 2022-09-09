@@ -9,11 +9,12 @@
                 </template>
                 <TableWidgetRows v-show="accordion.type === 'Rows'" :widgetModel="widgetModel"></TableWidgetRows>
                 <TableWidgetSummaryRows v-show="accordion.type === 'SummaryRows'" :widgetModel="widgetModel"></TableWidgetSummaryRows>
-                <TableWidgetHeaders v-show="accordion.type === 'Headers'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetHeaders>
+                <TableWidgetHeader v-show="accordion.type === 'Header'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetHeader>
                 <TableWidgetColumnGroups v-show="accordion.type === 'ColumnGroups'" :widgetModel="widgetModel"></TableWidgetColumnGroups>
                 <TableWidgetExport v-show="accordion.type === 'Export'" :widgetModel="widgetModel"></TableWidgetExport>
                 <TableWidgetVisualizationType v-show="accordion.type === 'VisualizationType'" :widgetModel="widgetModel"></TableWidgetVisualizationType>
                 <TableWidgetVisibilityConditions v-show="accordion.type === 'VisibilityConditions'" :widgetModel="widgetModel" :variables="variables"></TableWidgetVisibilityConditions>
+                <TableWidgetHeaders v-show="accordion.type === 'Headers'" :widgetModel="widgetModel"></TableWidgetHeaders>
             </AccordionTab>
         </Accordion>
     </div>
@@ -21,21 +22,22 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import descriptor from './TableWidgetSettingsDescriptor.json'
 import TableWidgetRows from './configuration/TableWidgetRows.vue'
 import TableWidgetSummaryRows from './configuration/TableWidgetSummaryRows.vue'
-import TableWidgetHeaders from './configuration/TableWidgetHeaders.vue'
+import TableWidgetHeader from './configuration/TableWidgetHeader.vue'
 import TableWidgetColumnGroups from './configuration/TableWidgetColumnGroups.vue'
 import TableWidgetExport from './configuration/TableWidgetExport.vue'
 import TableWidgetVisualizationType from './visualization/TableWidgetVisualizationType.vue'
 import TableWidgetVisibilityConditions from './visualization/TableWidgetVisibilityConditions.vue'
+import TableWidgetHeaders from './style/TableWidgetHeaders.vue'
 
 export default defineComponent({
     name: 'table-widget-configuration-container',
-    components: { Accordion, AccordionTab, TableWidgetRows, TableWidgetSummaryRows, TableWidgetHeaders, TableWidgetColumnGroups, TableWidgetExport, TableWidgetVisualizationType, TableWidgetVisibilityConditions },
+    components: { Accordion, AccordionTab, TableWidgetRows, TableWidgetSummaryRows, TableWidgetHeader, TableWidgetColumnGroups, TableWidgetExport, TableWidgetVisualizationType, TableWidgetVisibilityConditions, TableWidgetHeaders },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Array as PropType<{ title: string; type: string }[]> }, drivers: { type: Array }, variables: { type: Array } },
     data() {
         return {

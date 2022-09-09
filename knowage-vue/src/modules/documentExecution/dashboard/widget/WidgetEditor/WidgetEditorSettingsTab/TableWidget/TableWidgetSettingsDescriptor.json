@@ -93,7 +93,7 @@
             },
             {
                 "title": "dashboard.widgetEditor.headers.title",
-                "type": "Headers"
+                "type": "Header"
             },
             {
                 "title": "dashboard.widgetEditor.columnGroups.title",
@@ -102,6 +102,12 @@
             {
                 "title": "dashboard.widgetEditor.export.title",
                 "type": "Export"
+            }
+        ],
+        "Style": [
+            {
+                "title": "dashboard.widgetEditor.headers.title",
+                "type": "Headers"
             }
         ],
         "Visualization": [
@@ -115,6 +121,37 @@
             }
         ]
     },
+    "styleToolbarHeadersStyleOptions": [
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
+    "styleToolbarVisualizationTypeOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-style"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "justify-content"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
     "visibilityConditionOperators": [
         {
             "label": ">",
@@ -143,14 +180,6 @@
         {
             "label": "IN",
             "value": "IN"
-        }
-    ],
-    "styleToolbarVisualizationTypeOptions": [
-        {
-            "type": "color"
-        },
-        {
-            "type": "background-color"
         }
     ],
     "visibilityConditionsOptions": [

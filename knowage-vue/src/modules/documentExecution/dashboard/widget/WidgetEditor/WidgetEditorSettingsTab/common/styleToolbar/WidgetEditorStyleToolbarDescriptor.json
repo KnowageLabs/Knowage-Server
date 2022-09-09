@@ -1,4 +1,86 @@
 {
+    "cellAlignmentOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "common.left",
+            "value": "flex-start"
+        },
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.right",
+            "value": "flex-end"
+        }
+    ],
+    "fontFamilyOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.roboto",
+            "value": "roboto"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.arial",
+            "value": "arial"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.courierNew",
+            "value": "courier-new"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.tahoma",
+            "value": "tahoma"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.timesNewRoman",
+            "value": "times-new-roman"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.verdana",
+            "value": "verdana"
+        }
+    ],
+    "fontSizeOptions": [
+        {
+            "label": "dashboard.widgetEditor.manualInput",
+            "value": "input"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.xsmall",
+            "value": "8px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.small",
+            "value": "10px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.medium",
+            "value": "14px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.extended",
+            "value": "16px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.large",
+            "value": "18px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.xlarge",
+            "value": "24px"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.font.xxlarge",
+            "value": "40px"
+        }
+    ],
     "icons": {
         "background-color": "fas fa-paint-roller",
         "color": "fas fa-fill-drip",

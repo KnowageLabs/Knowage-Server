@@ -193,7 +193,7 @@ const removeColumnFromColumnGroups = (widgetModel: IWidget, column: IWidgetColum
     if (removed) emitter.emit('columnRemovedFromColumnGroups')
 }
 
-const removeColumnFromVisualizationType = (widgetModel: IWidget, column: IWidget) => {
+const removeColumnFromVisualizationType = (widgetModel: IWidget, column: IWidgetColumn) => {
     let removed = false
     const visualizationTypes = widgetModel.settings.visualization.types
     for (let i = visualizationTypes.length - 1; i >= 0; i--) {
@@ -224,8 +224,6 @@ const removeColumnFromVisibilityConditions = (widgetModel: IWidget, column: IWid
     }
     if (removed) emitter.emit('columnRemovedFromVisibilityConditions')
 }
-
-
 export default removeColumnFromModel
 //#endregion ================================================================================================
 

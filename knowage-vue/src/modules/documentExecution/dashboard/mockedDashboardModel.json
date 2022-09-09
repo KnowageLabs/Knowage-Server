@@ -324,16 +324,16 @@
                         },
                         "showExcelExport": true,
                         "th": {
-                            "background-color": "rgb(137, 158, 175)",
-                            "color": "rgb(255, 255, 255)",
+                            "background-color": "rgb(15, 77, 126)",
+                            "color": "rgb(138, 15, 15)",
                             "enabled": true,
-                            "font-family": "roboto",
+                            "font-family": "arial",
                             "font-size": "14px",
                             "font-style": "normal",
-                            "font-weight": "regular",
-                            "height": 4,
+                            "font-weight": "bold",
+                            "height": 25,
                             "justify-content": "center",
-                            "multiline": true
+                            "multiline": false
                         },
                         "title": {
                             "label": "Table Widget"

@@ -111,6 +111,11 @@
                 "icon": "pi pi-cog",
                 "label": "dashboard.widgetEditor.visualization",
                 "value": "Visualization"
+            },
+            {
+                "icon": "pi pi-cog",
+                "label": "common.style",
+                "value": "Style"
             }
         ],
         "listSettings": {
