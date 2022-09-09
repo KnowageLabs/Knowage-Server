@@ -63,6 +63,7 @@ export default defineComponent({
             emitter.on('visualizationTypeChanged', (visuelizationTypes) => console.log('WidgetEditorPreview  - visualizationTypeChanged!', visuelizationTypes))
             emitter.on('visibilityConditionsChanged', (visibilityConditions) => console.log('WidgetEditorPreview  - visibilityConditionsChanged!', visibilityConditions))
             emitter.on('headersStyleChanged', (headersStyle) => console.log('WidgetEditorPreview  - headersStyleChanged!', headersStyle))
+            emitter.on('columnStylesChanged', (columnStyles) => console.log('WidgetEditorPreview  - columnStylesChanged!', columnStyles))
         },
         setupDatatableOptions() {
             this.gridOptions = {

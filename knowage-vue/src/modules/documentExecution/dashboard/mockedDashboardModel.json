@@ -113,9 +113,17 @@
                                 "rowSpan": true,
                                 "scale": 0,
                                 "style": {
+                                    "align-items": "flex-start",
+                                    "background-color": "rgb(53, 172, 10)",
+                                    "color": "rgb(232, 3, 3)",
+                                    "font-family": "roboto",
+                                    "font-size": "14px",
+                                    "font-style": "italic",
+                                    "font-weight": "bold",
                                     "hiddenColumn": true,
                                     "hideFromPdf": true,
                                     "hideHeader": true,
+                                    "justify-content": "flex-start",
                                     "prefix": "Prefix",
                                     "suffix": "Suffix"
                                 },
@@ -143,7 +151,14 @@
                                 "properties": {},
                                 "scale": 0,
                                 "style": {
-                                    "hideFromPdf": true
+                                    "background-color": "rgb(195, 242, 146)",
+                                    "color": "rgb(206, 35, 35)",
+                                    "font-family": "courier-new",
+                                    "font-size": "14px",
+                                    "font-style": "normal",
+                                    "font-weight": "regular",
+                                    "hideFromPdf": true,
+                                    "justify-content": "center"
                                 },
                                 "subjectId": false,
                                 "type": "java.lang.String"

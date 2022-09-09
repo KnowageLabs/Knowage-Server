@@ -15,6 +15,7 @@
                 <TableWidgetVisualizationType v-show="accordion.type === 'VisualizationType'" :widgetModel="widgetModel"></TableWidgetVisualizationType>
                 <TableWidgetVisibilityConditions v-show="accordion.type === 'VisibilityConditions'" :widgetModel="widgetModel" :variables="variables"></TableWidgetVisibilityConditions>
                 <TableWidgetHeaders v-show="accordion.type === 'Headers'" :widgetModel="widgetModel"></TableWidgetHeaders>
+                <TableWidgetColumnStyle v-show="accordion.type === 'ColumnStyle'" :widgetModel="widgetModel"></TableWidgetColumnStyle>
             </AccordionTab>
         </Accordion>
     </div>
@@ -34,10 +35,11 @@ import TableWidgetExport from './configuration/TableWidgetExport.vue'
 import TableWidgetVisualizationType from './visualization/TableWidgetVisualizationType.vue'
 import TableWidgetVisibilityConditions from './visualization/TableWidgetVisibilityConditions.vue'
 import TableWidgetHeaders from './style/TableWidgetHeaders.vue'
+import TableWidgetColumnStyle from './style/TableWidgetColumnStyle.vue'
 
 export default defineComponent({
     name: 'table-widget-configuration-container',
-    components: { Accordion, AccordionTab, TableWidgetRows, TableWidgetSummaryRows, TableWidgetHeader, TableWidgetColumnGroups, TableWidgetExport, TableWidgetVisualizationType, TableWidgetVisibilityConditions, TableWidgetHeaders },
+    components: { Accordion, AccordionTab, TableWidgetRows, TableWidgetSummaryRows, TableWidgetHeader, TableWidgetColumnGroups, TableWidgetExport, TableWidgetVisualizationType, TableWidgetVisibilityConditions, TableWidgetHeaders, TableWidgetColumnStyle },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Array as PropType<{ title: string; type: string }[]> }, drivers: { type: Array }, variables: { type: Array } },
     data() {
         return {

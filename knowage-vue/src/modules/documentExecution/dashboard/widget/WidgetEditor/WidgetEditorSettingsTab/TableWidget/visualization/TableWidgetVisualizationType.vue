@@ -12,7 +12,7 @@
                         optionLabel="alias"
                         optionValue="id"
                         @change="onColumnsSelected($event, visualizationType)"
-                        @allColumnsSelected="onAllColumnsSelected($event, visualizationType)"
+                        @allColumnsSelected="onAllColumnsSelected(visualizationType)"
                     >
                     </TableWidgetVisualizationTypeMultiselect>
                 </div>
@@ -178,7 +178,7 @@ export default defineComponent({
             const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === tempColumn.id)
             if (index !== -1) this.availableColumnOptions.splice(index, 1)
         },
-        onAllColumnsSelected(values: string[], visualizationType: ITableWidgetVisualizationType) {
+        onAllColumnsSelected(visualizationType: ITableWidgetVisualizationType) {
             this.allColumnsSelected = true
             visualizationType.allColumnSelected = true
             this.onColumnsRemovedFromMultiselect(visualizationType.target)

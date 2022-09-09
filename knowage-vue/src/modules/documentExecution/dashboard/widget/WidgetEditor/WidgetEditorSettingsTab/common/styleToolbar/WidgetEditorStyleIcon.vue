@@ -80,8 +80,8 @@ export default defineComponent({
                     this.color = this.model.color ?? null
                     this.newColor = this.color ?? ''
                     break
-                case 'backround-color':
-                    this.color = this.model['backround-color']
+                case 'background-color':
+                    this.color = this.model['background-color'] ?? null
                     this.newColor = this.color ?? ''
             }
         },
@@ -106,6 +106,7 @@ export default defineComponent({
                     this.active = !this.active
                     this.model['font-weight'] = this.active ? 'bold' : ''
                     this.$emit('change')
+                    break
                 case 'font-style':
                     this.active = !this.active
                     this.model['font-style'] = this.active ? 'italic' : ''

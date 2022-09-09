@@ -53,6 +53,29 @@
             "value": "setLabel"
         }
     ],
+    "defaultToolbarStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-style"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "justify-content"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
     "headersCompareValueType": [
         {
             "label": "common.static",
@@ -108,6 +131,10 @@
             {
                 "title": "dashboard.widgetEditor.headers.title",
                 "type": "Headers"
+            },
+            {
+                "title": "common.columns",
+                "type": "ColumnStyle"
             }
         ],
         "Visualization": [
@@ -122,29 +149,6 @@
         ]
     },
     "styleToolbarHeadersStyleOptions": [
-        {
-            "type": "color"
-        },
-        {
-            "type": "background-color"
-        }
-    ],
-    "styleToolbarVisualizationTypeOptions": [
-        {
-            "type": "font-weight"
-        },
-        {
-            "type": "font-style"
-        },
-        {
-            "type": "font-size"
-        },
-        {
-            "type": "justify-content"
-        },
-        {
-            "type": "font-family"
-        },
         {
             "type": "color"
         },

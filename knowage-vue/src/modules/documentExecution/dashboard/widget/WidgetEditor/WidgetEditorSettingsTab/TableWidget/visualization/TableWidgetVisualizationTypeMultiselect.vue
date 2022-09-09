@@ -55,7 +55,7 @@ export default defineComponent({
         },
         onAllColumnsSelected() {
             this.modelValue = ['All Columns']
-            this.$emit('allColumnsSelected', this.modelValue)
+            this.$emit('allColumnsSelected')
         }
     }
 })

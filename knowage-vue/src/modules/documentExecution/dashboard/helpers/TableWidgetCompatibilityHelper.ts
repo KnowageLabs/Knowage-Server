@@ -91,6 +91,7 @@ const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any) => 
         if (tempColumn.group) addColumnToColumnGroup(formattedWidget, tempColumn)
         getVisualizationTypeConfigurationsFromColumn(formattedWidget, tempColumn)
         getVisibilityConditionsFromColumn(formattedWidget, tempColumn)
+        getStyleFromColumn(formattedWidget, tempColumn)
     }
 
 }
@@ -110,7 +111,6 @@ const getVisualizationTypeConfigurationsFromColumn = (formattedWidget: IWidget, 
 }
 
 const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
-    console.log("teeeeeeeeeeeeeeeeest: ", tempColumn)
     if (tempColumn.style && tempColumn.style.hasOwnProperty('hiddenColumn') || tempColumn.style.hasOwnProperty('hideFromPdf')) {
         const tempVisibiilityCondition = {
             target: [getColumnId(formattedWidget, tempColumn.name)],
@@ -124,6 +124,33 @@ const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn:
             formattedWidget.settings.visualization.visibilityConditions.push(tempVisibiilityCondition)
         }
     }
+}
+
+const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
+    console.log("getStyleFromColumn getStyleFromColumn getStyleFromColumn: ", tempColumn)
+    if (!tempColumn.style) return
+    let hasStyle = false
+    let fields = ['background-color', 'color', "justify-content", "font-size", "font-family", "font-style", "font-weight"]
+    for (let i = 0; i < fields.length; i++) {
+        if (tempColumn.style.hasOwnProperty(fields[i])) {
+            hasStyle = true;
+            break;
+        }
+    }
+
+    console.log("HAS STYLE: ", hasStyle)
+    if (hasStyle) formattedWidget.settings.style.columns.push({
+        target: [getColumnId(formattedWidget, tempColumn.name)], properties: {
+            "background-color": tempColumn.style['background-color'] ?? "rgb(0, 0, 0)",
+            color: tempColumn.style.color ?? 'rgb(255, 255, 255)',
+            "justify-content": tempColumn.style['justify-content'] ?? '',
+            "font-size": tempColumn.style['font-size'] ?? "",
+            "font-family": tempColumn.style['font-family'] ?? '',
+            "font-style": tempColumn.style['font-style'] ?? '',
+            "font-weight": tempColumn.style['font-weight'] ?? '',
+        }
+    })
+
 }
 
 const getVisibilityConditionVariable = (formattedWidget: IWidget, variables: { action: string, variable: string, condition: string, value: string }[], tempVisibiilityCondition: ITableWidgetVisibilityCondition) => {
@@ -245,7 +272,7 @@ const getFormattedHeadersStyle = (widget: any) => {
             "background-color": widget.style.th['background-color'] ?? "rgb(137, 158, 175)",
             color: widget.style.th.color ?? 'rgb(255, 255, 255)',
             "justify-content": widget.style.th['justify-content'] ?? 'center',
-            "font-size": widget.style.th['font-sizer'] ?? "14px",
+            "font-size": widget.style.th['font-size'] ?? "14px",
             "font-family": widget.style.th['font-family'] ?? '',
             "font-style": widget.style.th['font-style'] ?? 'normal',
             "font-weight": widget.style.th['font-weight'] ?? '',

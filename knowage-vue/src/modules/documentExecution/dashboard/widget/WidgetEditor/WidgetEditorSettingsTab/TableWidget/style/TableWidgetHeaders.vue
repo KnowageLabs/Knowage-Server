@@ -6,7 +6,7 @@
         </div>
 
         <div class="p-my-4">
-            <WidgetEditorStyleToolbar :options="descriptor.styleToolbarVisualizationTypeOptions" :propModel="headersStyleModel.properties" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="descriptor.defaultToolbarStyleOptions" :propModel="headersStyleModel.properties" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
     </div>
 </template>

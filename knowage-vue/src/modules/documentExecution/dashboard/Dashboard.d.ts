@@ -188,10 +188,16 @@ export interface ITableWidgetBordersStyle {
 }
 
 export interface ITableWidgetColumnStyle {
-    "target": string[],
-    "properties": {
+    allColumnSelected?: boolean,
+    target: string[],
+    properties: {
         "background-color": string,
-        "color": string,
+        color: string,
+        "justify-content": string,
+        "font-size": string,
+        "font-family": string,
+        "font-style": string,
+        "font-weight": string
     }
 
 }
