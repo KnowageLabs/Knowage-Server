@@ -7,17 +7,17 @@
                         <label class="kn-material-input-label">{{ $t(accordion.title) }}</label>
                     </div>
                 </template>
-                <TableWidgetRows v-show="accordion.type === 'Rows'" :widgetModel="widgetModel"></TableWidgetRows>
-                <TableWidgetSummaryRows v-show="accordion.type === 'SummaryRows'" :widgetModel="widgetModel"></TableWidgetSummaryRows>
-                <TableWidgetHeader v-show="accordion.type === 'Header'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetHeader>
-                <TableWidgetColumnGroups v-show="accordion.type === 'ColumnGroups'" :widgetModel="widgetModel"></TableWidgetColumnGroups>
-                <TableWidgetExport v-show="accordion.type === 'Export'" :widgetModel="widgetModel"></TableWidgetExport>
-                <TableWidgetVisualizationType v-show="accordion.type === 'VisualizationType'" :widgetModel="widgetModel"></TableWidgetVisualizationType>
-                <TableWidgetVisibilityConditions v-show="accordion.type === 'VisibilityConditions'" :widgetModel="widgetModel" :variables="variables"></TableWidgetVisibilityConditions>
-                <TableWidgetHeaders v-show="accordion.type === 'Headers'" :widgetModel="widgetModel"></TableWidgetHeaders>
-                <TableWidgetColumnStyle v-show="accordion.type === 'ColumnStyle'" :widgetModel="widgetModel"></TableWidgetColumnStyle>
-                <TableWidgetColumnStyle v-show="accordion.type === 'ColumnGroupsStyle'" :widgetModel="widgetModel" mode="columnGroups"></TableWidgetColumnStyle>
-                <TableWidgetColumnGroupStyle v-show="accordion.type === 'ColumnGroupsStyle'" :widgetModel="widgetModel"></TableWidgetColumnGroupStyle>
+                <TableWidgetRows v-if="accordion.type === 'Rows'" :widgetModel="widgetModel"></TableWidgetRows>
+                <TableWidgetSummaryRows v-else-if="accordion.type === 'SummaryRows'" :widgetModel="widgetModel"></TableWidgetSummaryRows>
+                <TableWidgetHeader v-else-if="accordion.type === 'Header'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetHeader>
+                <TableWidgetColumnGroups v-else-if="accordion.type === 'ColumnGroups'" :widgetModel="widgetModel"></TableWidgetColumnGroups>
+                <TableWidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></TableWidgetExport>
+                <TableWidgetVisualizationType v-else-if="accordion.type === 'VisualizationType'" :widgetModel="widgetModel"></TableWidgetVisualizationType>
+                <TableWidgetVisibilityConditions v-else-if="accordion.type === 'VisibilityConditions'" :widgetModel="widgetModel" :variables="variables"></TableWidgetVisibilityConditions>
+                <TableWidgetHeaders v-else-if="accordion.type === 'Headers'" :widgetModel="widgetModel"></TableWidgetHeaders>
+                <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnStyle'" :widgetModel="widgetModel"></TableWidgetColumnStyle>
+                <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnGroupsStyle'" :widgetModel="widgetModel" mode="columnGroups"></TableWidgetColumnStyle>
+                <!-- <TableWidgetColumnGroupStyle :widgetModel="widgetModel"></TableWidgetColumnGroupStyle> -->
             </AccordionTab>
         </Accordion>
     </div>

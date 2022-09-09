@@ -1,6 +1,7 @@
 <template>
     <div>
         {{ columnStyles }}
+        {{ 'test' }}
         <div v-for="(columnStyle, index) in columnStyles" :key="index" class="p-d-flex p-flex-column p-my-2 p-pb-2">
             <div class="p-d-flex p-flex-row p-ai-center">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">

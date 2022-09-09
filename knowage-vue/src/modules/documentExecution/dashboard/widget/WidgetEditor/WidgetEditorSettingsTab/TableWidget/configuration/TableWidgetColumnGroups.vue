@@ -8,7 +8,7 @@
         <div v-for="(columnGroup, index) in columnGroupsModel.groups" :key="index" class="p-d-flex p-flex-row p-ai-center">
             <div class="p-d-flex p-flex-column kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('common.label') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="columnGroup.label" :disabled="!columnGroupsModel.enabled" @change="columnGroupsConfigurationChanged" />
+                <InputText class="kn-material-input p-inputtext-sm" v-model="columnGroup.label" :disabled="!columnGroupsModel.enabled" @change="onColumnGroupLabelChanged(columnGroup)" />
             </div>
             <div class="p-d-flex p-flex-column kn-flex p-m-2">
                 <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
@@ -24,6 +24,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetColumnGroups, IWidgetColumn, ITableWidgetColumnGroup } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
+import { removeColumnGroupFromModel } from '../../../helpers/TableWidgetFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
@@ -130,6 +131,7 @@ export default defineComponent({
                     alias: this.widgetColumnsAliasMap[target]
                 })
             )
+            removeColumnGroupFromModel(this.widgetModel, this.columnGroupsModel.groups[index])
             this.columnGroupsModel.groups.splice(index, 1)
             this.columnGroupsConfigurationChanged()
         },
@@ -149,6 +151,10 @@ export default defineComponent({
         onColumnAdded(column: IWidgetColumn) {
             this.availableColumnOptions.push(column)
             if (column.id) this.widgetColumnsAliasMap[column.id] = column.alias
+        },
+        onColumnGroupLabelChanged(columnGroup: ITableWidgetColumnGroup) {
+            emitter.emit('columnGroupLabelChanged', columnGroup)
+            this.columnGroupsConfigurationChanged()
         }
     }
 })

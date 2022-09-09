@@ -1,5 +1,9 @@
 <template>
     <div>
+        {{ columnStyles }}
+
+        {{ 'AVAL OPTIONS' }}
+        {{ availableColumnOptions }}
         <div v-for="(columnStyle, index) in columnStyles" :key="index" class="p-d-flex p-flex-column p-my-2 p-pb-2">
             <div class="p-d-flex p-flex-row p-ai-center">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
@@ -28,7 +32,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetColumnStyle, IWidgetStyleToolbarModel, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, ITableWidgetColumnStyle, IWidgetStyleToolbarModel, IWidgetColumn, ITableWidgetColumnGroup } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import InputNumber from 'primevue/inputnumber'
@@ -38,12 +42,12 @@ import TableWidgetVisualizationTypeMultiselect from '../visualization/TableWidge
 export default defineComponent({
     name: 'table-widget-column-style',
     components: { InputNumber, TableWidgetVisualizationTypeMultiselect, WidgetEditorStyleToolbar },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, mode: { type: String } },
     data() {
         return {
             descriptor,
             columnStyles: [] as ITableWidgetColumnStyle[],
-            availableColumnOptions: [] as (IWidgetColumn | { id: string; alias: string })[],
+            availableColumnOptions: [] as (IWidgetColumn | ITableWidgetColumnGroup | { id: string; alias: string })[],
             widgetColumnsAliasMap: {} as any,
             allColumnsSelected: false
         }
@@ -57,36 +61,45 @@ export default defineComponent({
     methods: {
         setEventListeners() {
             emitter.on('columnRemovedFromColumnStyle', () => this.onColumnRemoved())
-            emitter.on('columnAdded', (column) => this.onColumnAdded(column))
+            emitter.on('columnGroupRemoved', () => this.onColumnRemoved())
+            emitter.on('columnAdded', () => this.onColumnAdded())
         },
         loadColumnStyles() {
-            if (this.widgetModel?.settings?.style?.columns) this.columnStyles = this.widgetModel.settings.style.columns
+            this.columnStyles = this.mode === 'columnGroups' ? this.widgetModel.settings.style.columnGroups : this.widgetModel.settings.style.columns
             this.removeColumnsFromAvailableOptions()
         },
         loadColumnOptions() {
-            this.availableColumnOptions = [...this.widgetModel.columns]
+            this.availableColumnOptions =
+                this.mode === 'columnGroups'
+                    ? this.widgetModel.settings.configuration.columnGroups.groups?.map((columnGroup: ITableWidgetColumnGroup) => {
+                          return { id: columnGroup.id, alias: columnGroup.label }
+                      })
+                    : [...this.widgetModel.columns]
         },
         columnStylesChanged() {
-            emitter.emit('columnStyleChanged', this.columnStyles)
+            const event = this.mode === 'columnGroups' ? 'columnGroupStylesChanged' : 'columnStyleChanged'
+            emitter.emit(event, this.columnStyles)
         },
         loadWidgetColumnMaps() {
-            this.widgetModel.columns.forEach((column: IWidgetColumn) => {
-                if (column.id) this.widgetColumnsAliasMap[column.id] = column.alias
+            const array = this.mode === 'columnGroups' ? this.widgetModel.settings.configuration.columnGroups.groups : this.widgetModel.columns
+            array.forEach((column: IWidgetColumn | ITableWidgetColumnGroup) => {
+                if (column.id) this.widgetColumnsAliasMap[column.id] = this.mode === 'columnGroups' ? (column as ITableWidgetColumnGroup).label : (column as IWidgetColumn).alias
             })
         },
         removeColumnsFromAvailableOptions() {
-            for (let i = 0; i < this.widgetModel.settings.style.columns.length; i++) {
-                for (let j = 0; j < this.widgetModel.settings.style.columns[i].target.length; j++) {
-                    if (this.widgetModel.settings.style.columns[i].target[j] === 'All Columns') this.allColumnsSelected = true
+            const array = this.mode === 'columnGroups' ? this.widgetModel.settings.style.columnGroups : this.widgetModel.settings.style.columns
+            for (let i = 0; i < array.length; i++) {
+                for (let j = 0; j < array[i].target.length; j++) {
+                    if (array[i].target[j] === 'All Columns') this.allColumnsSelected = true
                     this.removeColumnFromAvailableOptions({
-                        id: this.widgetModel.settings.style.columns[i].target[j],
-                        alias: this.widgetModel.settings.style.columns[i].target[j]
+                        id: array[i].target[j],
+                        alias: array[i].target[j]
                     })
                 }
             }
         },
         removeColumnFromAvailableOptions(tempColumn: IWidgetColumn | { id: string; alias: string }) {
-            const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === tempColumn.id)
+            const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | ITableWidgetColumnGroup | { id: string; alias: string }) => targetOption.id === tempColumn.id)
             if (index !== -1) this.availableColumnOptions.splice(index, 1)
         },
         onAllColumnsSelected(columnStyle: ITableWidgetColumnStyle) {
@@ -104,7 +117,7 @@ export default defineComponent({
         },
         onColumnsAddedFromMultiselect(columnStyle: ITableWidgetColumnStyle) {
             columnStyle.target.forEach((target: string) => {
-                const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === target)
+                const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | ITableWidgetColumnGroup | { id: string; alias: string }) => targetOption.id === target)
                 if (index !== -1) this.availableColumnOptions.splice(index, 1)
             })
         },
@@ -148,13 +161,11 @@ export default defineComponent({
             this.columnStyles.splice(index, 1)
             this.columnStylesChanged()
         },
-        onColumnAdded(column: IWidgetColumn) {
-            this.availableColumnOptions.push(column)
-            if (column.id) this.widgetColumnsAliasMap[column.id] = column.alias
+        onColumnAdded() {
+            this.reloadModel()
         },
         onColumnRemoved() {
-            this.loadColumnOptions()
-            this.loadColumnStyles()
+            this.reloadModel()
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel, columnStyle: ITableWidgetColumnStyle) {
             columnStyle.properties = {
@@ -167,6 +178,11 @@ export default defineComponent({
                 'font-weight': model['font-weight'] ?? ''
             }
             this.columnStylesChanged()
+        },
+        reloadModel() {
+            this.loadColumnOptions()
+            this.loadColumnStyles()
+            this.loadWidgetColumnMaps()
         }
     }
 })

@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetColumnGroups } from "../../../Dashboard"
+import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetColumnGroups, ITableWidgetColumnGroup } from "../../../Dashboard"
 import { formatRGBColor } from './WidgetEditorHelpers'
 import { emitter } from '../../../DashboardHelpers'
 import descriptor from '../WidgetEditorDescriptor.json'
@@ -153,6 +153,7 @@ export const removeColumnFromModel = (widgetModel: IWidget, column: IWidgetColum
     removeColumnFromColumnGroups(widgetModel, column)
     removeColumnFromVisualizationType(widgetModel, column)
     removeColumnFromVisibilityConditions(widgetModel, column)
+    removeColumnFromColumnStyle(widgetModel, column)
 }
 
 const removeColumnFromRows = (widgetModel: IWidget, column: IWidgetColumn) => {
@@ -224,6 +225,39 @@ const removeColumnFromVisibilityConditions = (widgetModel: IWidget, column: IWid
     }
     if (removed) emitter.emit('columnRemovedFromVisibilityConditions')
 }
+
+const removeColumnFromColumnStyle = (widgetModel: IWidget, column: IWidgetColumn) => {
+    let removed = false
+    const visibilityConditions = widgetModel.settings.style.columns
+    for (let i = visibilityConditions.length - 1; i >= 0; i--) {
+        for (let j = visibilityConditions[i].target.length; j >= 0; j--) {
+            const tempTarget = visibilityConditions[i].target[j]
+            if (column.id === tempTarget) {
+                visibilityConditions[i].target.splice(j, 1)
+                removed = true
+            }
+        }
+        if (visibilityConditions[i].target.length === 0) visibilityConditions.splice(i, 1)
+    }
+    if (removed) emitter.emit('columnRemovedFromColumnStyle')
+}
+
+export const removeColumnGroupFromModel = (widgetModel: IWidget, columnGroup: ITableWidgetColumnGroup) => {
+    let removed = false
+    for (let i = widgetModel.settings.style.columnGroups.length - 1; i >= 0; i--) {
+        for (let j = widgetModel.settings.style.columnGroups[i].target.length; j >= 0; j--) {
+            const tempTarget = widgetModel.settings.style.columnGroups[i].target[j]
+            console.log(columnGroup.id + ' === ' + tempTarget)
+            if (columnGroup.id === tempTarget) {
+                widgetModel.settings.style.columnGroups[i].target.splice(j, 1)
+                removed = true
+            }
+        }
+        if (widgetModel.settings.style.columnGroups[i].target.length === 0) widgetModel.settings.style.columnGroups.splice(i, 1)
+    }
+    if (removed) emitter.emit('columnGroupRemoved')
+}
+
 export default removeColumnFromModel
 //#endregion ================================================================================================
 

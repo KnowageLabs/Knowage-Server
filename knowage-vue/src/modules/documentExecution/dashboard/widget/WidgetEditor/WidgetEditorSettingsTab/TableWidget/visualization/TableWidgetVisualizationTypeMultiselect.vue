@@ -35,6 +35,7 @@ export default defineComponent({
                 if (tempColumn && tempColumn.id !== 'All Columns') targetOptions.push(tempColumn)
             })
             targetOptions = targetOptions.concat(this.availableTargetOptions as any)
+
             return targetOptions
         }
     },

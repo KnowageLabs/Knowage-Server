@@ -273,6 +273,10 @@
                             "id": "de477ba5-6589-44f3-aba7-79eecb134615",
                             "justify-content": "flex-start",
                             "name": "Column Group 2"
+                        },
+                        {
+                            "id": "adsadasda-6589-44f3-aba7-79eecb134615",
+                            "name": "Column Group 3"
                         }
                     ],
                     "id": 1661757385620,
