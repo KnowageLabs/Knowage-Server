@@ -160,12 +160,23 @@ export default defineComponent({
         },
 
         formatDatasetMetaColumns(measures: any[], categories: any[]) {
-            const datasetMetaColumns = this.selectedDataset?.meta.columns
-            for (let i = 0; i < datasetMetaColumns.length; i += 3) {
-                const name = datasetMetaColumns[i].column
-                const object = { id: name, alias: datasetMetaColumns[i + 2].pvalue, columnName: name, funct: 'NONE' } as any
-                this.addObjectToMeasuresOrCategories(datasetMetaColumns[i + 1].pvalue, object, measures, categories, name)
+            const datasetMetaColumns = this.getFormattedColumnsMap(this.selectedDataset?.meta.columns)
+            const keys = Object.keys(datasetMetaColumns)
+            
+            for (let i = 0; i < keys.length; i ++) {
+                const name = keys[i]
+                const tempColumn = datasetMetaColumns[keys[i]]
+                const object = { id: name, alias: tempColumn.fieldAlias, columnName: name, funct: 'NONE' } as any
+                this.addObjectToMeasuresOrCategories( tempColumn.fieldType, object, measures, categories, name)
             }
+        },
+        getFormattedColumnsMap(columns: {column: string, pname: string, pvalue: string}[]) {
+            const columnMap = {}
+            for (let i = 0;  i < columns.length; i++) {
+                if (!columnMap[columns[i].column]) columnMap[columns[i].column] = {}
+                columnMap[columns[i].column][columns[i].pname] = columns[i].pvalue
+            }
+            return columnMap
         },
         formatFunctionConfig(measures: any[], categories: any[]) {
             const functionConfig = { inputColumns: this.propFunction.inputColumns, inputVariables: this.propFunction.inputVariables, outputColumns: this.propFunction.outputColumns, environment: this.environment }
