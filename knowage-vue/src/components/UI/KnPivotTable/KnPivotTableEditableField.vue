@@ -18,6 +18,7 @@
             :showSeconds="column.columnInfo.type === 'timestamp'"
             :showButtonBar="true"
             @date-select="$emit('rowChanged', row)"
+            :dateFormat="column.columnInfo.type === 'date' ? getCurrentLocaleDefaultDateFormat(column) : ''"
         />
         <Dropdown
             class="kn-material-input"
@@ -46,6 +47,7 @@
 import { defineComponent } from 'vue'
 import { setInputDataType, getInputStep } from '@/helpers/commons/tableHelpers'
 import { formatDate } from '@/helpers/commons/localeHelper'
+import { luxonFormatDate, primeVueDate } from '@/helpers/commons/localeHelper'
 import Calendar from 'primevue/calendar'
 import Dropdown from 'primevue/dropdown'
 import knPivotTableDescriptor from '@/components/UI/KnPivotTable/KnPivotTableDescriptor.json'
@@ -77,11 +79,21 @@ export default defineComponent({
         this.loadRow()
         this.loadColumnOptions()
     },
+    computed: {
+        getCurrentLocaleDefaultDateFormat() {
+            return (column) => column.format || primeVueDate()
+        }
+    },
     methods: {
         loadRow() {
             this.row = this.propRow
-            if ((this.column?.columnInfo.type === 'date' || this.column?.columnInfo.type === 'timestamp') && this.row[this.column.field].data) {
-                this.row[this.column.field].data = this.getFormattedDate(this.row[this.column.field].data, 'MM/DD/YYYY HH:mm:ss')
+            let data = this.row[this.column?.field]?.data
+            if (data && typeof data === 'string') {
+                if (this.column?.columnInfo.type === 'date') {
+                    this.row[this.column.field].data = new Date(luxonFormatDate(data, 'yyyy-MM-dd', 'yyyy-MM-dd'))
+                } else if (this.column?.columnInfo.type === 'timestamp') {
+                    this.row[this.column.field].data = new Date(luxonFormatDate(data, 'yyyy-MM-dd HH:mm:ss.S', 'yyyy-MM-dd HH:mm:ss.S'))
+                }
             }
         },
         setDataType(columnType: string) {
@@ -103,5 +115,6 @@ export default defineComponent({
 <style scoped>
 .pivot-calendar .p-inputtext {
     border: none;
+    background-color: transparent;
 }
 </style>
