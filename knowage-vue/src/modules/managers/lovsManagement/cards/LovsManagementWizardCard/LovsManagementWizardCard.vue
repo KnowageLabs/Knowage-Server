@@ -270,6 +270,7 @@ export default defineComponent({
             } else {
                 await this.previewLov(this.pagination, false, showPreview)
                 this.buildTestTable()
+                this.touchedForTest = true
             }
         },
         async previewLov(value: any, hasDependencies: boolean, showPreview: boolean) {
