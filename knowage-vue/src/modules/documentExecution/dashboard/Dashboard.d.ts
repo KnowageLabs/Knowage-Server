@@ -176,7 +176,8 @@ export interface ITableWidgetStyle {
     headers: ITawbleWidgetHeadersStyle,
     padding: ITableWidgetPaddingStyle,
     rows: ITableWidgetRowsStyle,
-    shadows: ITableWidgetShadowsStyle
+    shadows: ITableWidgetShadowsStyle,
+    summary: ITableWidgetSummaryStyle
 }
 
 export interface ITableWidgetBordersStyle {
@@ -241,6 +242,16 @@ export interface ITableWidgetShadowsStyle {
     "properties": {
         "box-shadow": string
     }
+}
+
+export interface ITableWidgetSummaryStyle {
+    "font-family": string,
+    "font-style": string,
+    "font-size": string,
+    "font-weight": string,
+    color: string,
+    "background-color": string,
+    'justify-content': string
 }
 
 export interface ITableWidgetTooltips {

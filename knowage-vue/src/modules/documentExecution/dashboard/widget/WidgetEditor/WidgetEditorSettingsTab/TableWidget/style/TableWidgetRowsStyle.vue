@@ -56,7 +56,7 @@ export default defineComponent({
     },
     methods: {
         loadRowsModel() {
-            if (this.widgetModel?.settings?.style?.headers) this.rowsStyleModel = this.widgetModel.settings.style.rows
+            if (this.widgetModel?.settings?.style?.rows) this.rowsStyleModel = this.widgetModel.settings.style.rows
         },
         rowsStyleChanged() {
             emitter.emit('rowsStyleChanged', this.rowsStyleModel)

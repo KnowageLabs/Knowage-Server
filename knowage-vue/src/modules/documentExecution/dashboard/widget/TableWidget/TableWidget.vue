@@ -66,6 +66,7 @@ export default defineComponent({
             emitter.on('columnStylesChanged', (columnStyles) => console.log('WidgetEditorPreview  - columnStylesChanged!', columnStyles))
             emitter.on('columnGroupStylesChanged', (columnGroupStyles) => console.log('WidgetEditorPreview  - columnGroupStylesChanged!', columnGroupStyles))
             emitter.on('rowsStyleChanged', (rowsStyle) => console.log('WidgetEditorPreview  - rowsStyleChanged!', rowsStyle))
+            emitter.on('summaryStyleChanged', (summaryStyle) => console.log('WidgetEditorPreview  - summaryStyleChanged!', summaryStyle))
         },
         setupDatatableOptions() {
             this.gridOptions = {

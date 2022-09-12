@@ -449,6 +449,7 @@
             "sortingColumn": "Sorting column",
             "sortingOrder": "Sorting order",
             "suffix": "Suffix",
+            "summary": "Summary",
             "summaryRows": {
                 "enableSummaryRows": "Enable Summary Rows",
                 "pinnedColumnsOnly": "Pinned columns only",

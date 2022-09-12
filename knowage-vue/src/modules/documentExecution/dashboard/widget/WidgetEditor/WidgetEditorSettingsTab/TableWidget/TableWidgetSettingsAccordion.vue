@@ -18,6 +18,7 @@
                 <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnStyle'" :widgetModel="widgetModel"></TableWidgetColumnStyle>
                 <TableWidgetColumnStyle v-else-if="accordion.type === 'ColumnGroupsStyle'" :widgetModel="widgetModel" mode="columnGroups"></TableWidgetColumnStyle>
                 <TableWidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></TableWidgetRowsStyle>
+                <TableWidgetSummaryStyle v-else-if="accordion.type === 'SummaryStyle'" :widgetModel="widgetModel"></TableWidgetSummaryStyle>
             </AccordionTab>
         </Accordion>
     </div>
@@ -39,10 +40,25 @@ import TableWidgetVisibilityConditions from './visualization/TableWidgetVisibili
 import TableWidgetHeaders from './style/TableWidgetHeaders.vue'
 import TableWidgetColumnStyle from './style/TableWidgetColumnStyle.vue'
 import TableWidgetRowsStyle from './style/TableWidgetRowsStyle.vue'
+import TableWidgetSummaryStyle from './style/TableWidgetSummaryStyle.vue'
 
 export default defineComponent({
     name: 'table-widget-configuration-container',
-    components: { Accordion, AccordionTab, TableWidgetRows, TableWidgetSummaryRows, TableWidgetHeader, TableWidgetColumnGroups, TableWidgetExport, TableWidgetVisualizationType, TableWidgetVisibilityConditions, TableWidgetHeaders, TableWidgetColumnStyle, TableWidgetRowsStyle },
+    components: {
+        Accordion,
+        AccordionTab,
+        TableWidgetRows,
+        TableWidgetSummaryRows,
+        TableWidgetHeader,
+        TableWidgetColumnGroups,
+        TableWidgetExport,
+        TableWidgetVisualizationType,
+        TableWidgetVisibilityConditions,
+        TableWidgetHeaders,
+        TableWidgetColumnStyle,
+        TableWidgetRowsStyle,
+        TableWidgetSummaryStyle
+    },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Array as PropType<{ title: string; type: string }[]> }, drivers: { type: Array }, variables: { type: Array } },
     data() {
         return {

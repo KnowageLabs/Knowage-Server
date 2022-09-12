@@ -143,6 +143,10 @@
             {
                 "title": "dashboard.widgetEditor.rows.title",
                 "type": "RowsStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.summary",
+                "type": "SummaryStyle"
             }
         ],
         "Visualization": [

@@ -246,12 +246,12 @@ const getFormattedStyle = (widget: any) => {
         headers: getFormattedHeadersStyle(widget),
         padding: {},
         rows: getFormattedRowsStyle(widget),
-        shadows: {}
+        shadows: {},
+        summary: getFormattedSummaryStyle(widget)
     }
 }
 
 const getFormattedColumnGroupsStyle = (widget: any) => {
-    console.log(" >>>>>>>>>>>>>> getFormattedColumnGroupsStyle", widget)
     const formattedColumnGroupsStyles = [] as ITableWidgetColumnStyle[]
     if (!widget.groups) return formattedColumnGroupsStyles
     let fields = ['background-color', 'color', "justify-content", "font-size", "font-family", "font-style", "font-weight"]
@@ -320,8 +320,51 @@ const getFormattedRowsStyle = (widget: any) => {
 
         }
     }
-    console.log(">>> getFormattedRowsStyle widget: ", widget)
     return formattedRowsStyle as ITableWidgetRowsStyle
+}
+
+const getFormattedSummaryStyle = (widget: any) => {
+    if (!widget.settings.summary || !widget.settings.summary.style) return {
+        "background-color": "",
+        "color": "",
+        "font-family": "",
+        "font-size": "",
+        "font-style": "",
+        "font-weight": "",
+        "justify-content": ""
+    }
+
+    return {
+        "background-color": convertColorFromHSLtoRGB(widget.settings.summary.style['background-color']),
+        "color": convertColorFromHSLtoRGB(widget.settings.summary.style.color),
+        "font-family": widget.settings.summary.style['font-family'] ?? '',
+        "font-size": widget.settings.summary.style['font-size'] ?? '',
+        "font-style": widget.settings.summary.style['font-style'] ?? '',
+        "font-weight": widget.settings.summary.style['font-weight'] ?? '',
+        "justify-content": ""
+    }
+}
+
+const convertColorFromHSLtoRGB = (hslColor: string | null) => {
+    if (!hslColor) return 'rgb(0, 0, 0)'
+    const temp = hslColor
+        ?.trim()
+        ?.substring(4, hslColor.length - 1)
+        ?.split(',')
+
+    const h = temp[0] ? +temp[0] : 0
+    let s = temp[1] ? +(temp[1].replace('%', '').trim()) : 0
+    let l = temp[2] ? +(temp[2].replace('%', '').trim()) : 0
+
+
+    s /= 100;
+    l /= 100;
+    const k = n => (n + h / 30) % 12;
+    const a = s * Math.min(l, 1 - l);
+    const f = (n: number) =>
+        l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    const tempResult = [Math.round(255 * f(0)), Math.round(255 * f(8)), Math.round(255 * f(4))]
+    return 'rgb(' + tempResult[0] + ', ' + tempResult[1] + ', ' + tempResult[2] + ')'
 }
 
 
@@ -353,8 +396,6 @@ const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {
 }
 
 export const getColumnById = (formattedWidget: IWidget, columnId: string) => {
-    console.log("COLUMN ID: ", columnId)
     const index = formattedWidget.columns.findIndex((column: IWidgetColumn) => column.id === columnId)
-    console.log("INDEX: ", index)
     return index !== -1 ? formattedWidget.columns[index] : null
 }

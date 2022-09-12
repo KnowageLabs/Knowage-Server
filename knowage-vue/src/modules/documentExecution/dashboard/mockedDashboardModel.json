@@ -346,6 +346,12 @@
                                 }
                             ],
                             "style": {
+                                "background-color": "hsl(0, 93%, 31%)",
+                                "color": "hsl(128, 100%, 42%)",
+                                "font-family": "roboto",
+                                "font-size": "12",
+                                "font-style": "normal",
+                                "font-weight": "bold",
                                 "pinnedOnly": true
                             }
                         }
