@@ -507,18 +507,10 @@
         {
             "category": "temporal",
             "formula": "quarter(date)",
-            "help": "dataPreparation.quarter1",
-            "label": "quarter1",
-            "name": "quarter1",
-            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#quarter1"
-        },
-        {
-            "category": "temporal",
-            "formula": "quarter(date)",
-            "help": "dataPreparation.quarter2",
-            "label": "quarter2",
-            "name": "quarter2",
-            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#quarter2"
+            "help": "dataPreparation.quarter",
+            "label": "quarter",
+            "name": "quarter",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#quarter"
         },
         {
             "category": "temporal",
