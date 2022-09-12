@@ -134,7 +134,7 @@ import DashboardController from '../dashboard/DashboardController.vue'
 
 // @ts-ignore
 // eslint-disable-next-line
-window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
+window.execExternalCrossNavigation = function (outputParameters, otherOutputParameters, crossNavigationLabel) {
     postMessage(
         {
             type: 'crossNavigation',
@@ -821,6 +821,7 @@ export default defineComponent({
                             tempString += parameter.parameterValue[i].description
                             tempString += i === parameter.parameterValue.length - 1 ? '' : ';'
                         }
+                        parameters[parameter.urlName] = tempString
                         parameters[parameter.urlName + '_field_visible_description'] = tempString
                     } else {
                         parameters[parameter.urlName] = parameter.parameterValue[0].value
