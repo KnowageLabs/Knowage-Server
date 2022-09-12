@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -245,7 +245,7 @@ const getFormattedStyle = (widget: any) => {
         columnGroups: getFormattedColumnGroupsStyle(widget),
         headers: getFormattedHeadersStyle(widget),
         padding: {},
-        rows: {},
+        rows: getFormattedRowsStyle(widget),
         shadows: {}
     }
 }
@@ -306,6 +306,22 @@ const getFormattedHeadersStyle = (widget: any) => {
             "font-weight": widget.style.th['font-weight'] ?? '',
         }
     }
+}
+
+const getFormattedRowsStyle = (widget: any) => {
+    const formattedRowsStyle = {
+        height: widget.style.tr?.height ?? 0,
+        multiselectable: widget.settings.multiselectable ?? false,
+        selectionColor: widget.settings.multiselectablecolor ?? '',
+        alternatedRows: {
+            enabled: widget.settings.alternateRows.enabled ?? false,
+            evenBackgroundColor: widget.settings.alternateRows.evenRowsColor ?? 'rgb(228, 232, 236)',
+            oddBackgroundColor: widget.settings.alternateRows.oddRowsColor ?? ''
+
+        }
+    }
+    console.log(">>> getFormattedRowsStyle widget: ", widget)
+    return formattedRowsStyle as ITableWidgetRowsStyle
 }
 
 

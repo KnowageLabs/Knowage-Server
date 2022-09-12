@@ -291,7 +291,8 @@
                     "settings": {
                         "alternateRows": {
                             "enabled": true,
-                            "evenRowsColor": "rgb(228, 232, 236)"
+                            "evenRowsColor": "rgb(0, 66, 131)",
+                            "oddRowsColor": "rgb(14, 158, 62)"
                         },
                         "exportpdf": {
                             "a4landscape": true,
@@ -307,7 +308,8 @@
                         "multiselectable": true,
                         "multiselectablecolor": "rgb(11, 78, 124)",
                         "norows": {
-                            "hide": true
+                            "hide": true,
+                            "message": "Custom empty rows message"
                         },
                         "page": 1,
                         "pagination": {
@@ -376,7 +378,7 @@
                             "label": "Table Widget"
                         },
                         "tr": {
-                            "height": 4
+                            "height": 34
                         }
                     },
                     "type": "table",

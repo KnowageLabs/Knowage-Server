@@ -225,12 +225,13 @@ export interface ITableWidgetPaddingStyle {
 }
 
 export interface ITableWidgetRowsStyle {
-    "height": string,
-    "selectionColor": string,
-    "alternatedRows": {
-        "enabled": boolean,
-        "evenBackgroundColor": string,
-        "oddBackgroundColor": string
+    height: number,
+    selectionColor: string,
+    multiselectable: boolean,
+    alternatedRows: {
+        enabled: boolean,
+        evenBackgroundColor: string,
+        oddBackgroundColor: string
 
     }
 }

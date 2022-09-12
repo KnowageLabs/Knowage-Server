@@ -139,6 +139,10 @@
             {
                 "title": "dashboard.widgetEditor.columnGroups.title",
                 "type": "ColumnGroupsStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.rows.title",
+                "type": "RowsStyle"
             }
         ],
         "Visualization": [
