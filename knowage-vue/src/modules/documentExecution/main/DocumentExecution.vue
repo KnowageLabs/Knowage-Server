@@ -132,6 +132,22 @@ import mainStore from '../../../App.store'
 import deepcopy from 'deepcopy'
 import DashboardController from '../dashboard/DashboardController.vue'
 
+// @ts-ignore
+// eslint-disable-next-line
+window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
+    postMessage(
+        {
+            type: 'crossNavigation',
+            outputParameters: outputParameters,
+            inputParameters: {},
+            targetCrossNavigation: crossNavigationLabel,
+            docLabel: null,
+            otherOutputParameters: otherOutputParameters ? [otherOutputParameters] : []
+        },
+        '*'
+    )
+}
+
 export default defineComponent({
     name: 'document-execution',
     components: {

@@ -76,7 +76,7 @@
                     <Column header :style="dossierDescriptor.table.iconColumn.style" @rowClick="false">
                         <template #body="slotProps">
                             <Button icon="pi pi-download" class="p-button-link" @click="downloadActivity(slotProps.data)" />
-                            <Button icon="pi pi-trash" class="p-button-link" @click="deleteDossierConfirm(slotProps.data)" data-test="delete-button" />
+                            <Button icon="pi pi-trash" class="p-button-link"  :disabled="dateCheck(slotProps.data)" @click="deleteDossierConfirm(slotProps.data)" data-test="delete-button" />
                         </template>
                     </Column>
                 </DataTable>
@@ -162,6 +162,9 @@ export default defineComponent({
         formatDate(date) {
             return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
         },
+        dateCheck(item): boolean {              
+            return (((Date.now() - item.creationDate ) <86400000) && item.status ==='STARTED') 
+        },
         async getDossierActivities() {
             this.loading = true
             await this.$http
@@ -203,7 +206,7 @@ export default defineComponent({
         async deleteDossier(selectedDossier) {
             let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedDossier.id}`
 
-            if (selectedDossier.status == 'DOWNLOAD' || selectedDossier.status == 'ERROR') {
+            if (selectedDossier.status == 'DOWNLOAD' || selectedDossier.status == 'ERROR' || this.dateCheck(selectedDossier)) {
                 await this.$http
                     .delete(url, { headers: { Accept: 'application/json, text/plain, */*' } })
                     .then(() => {
