@@ -58,7 +58,7 @@ export function createToolbarMenuItems(document: any, functions: any, exporters:
         if (index !== -1) toolbarMenuItems[index].items.push({ icon: 'pi pi-file', label: $t('common.notes'), command: () => functions.openNotes() })
     }
 
-    if (user.functionalities.includes('SeeSnapshotsFunctionality') && user.enterprise) {
+    if (user.functionalities.includes('SeeSnapshotsFunctionality') && user.enterprise && document.typeCode !== 'OLAP') {
         const index = toolbarMenuItems.findIndex((item: any) => item.label === $t('common.shortcuts'))
         if (index !== -1) toolbarMenuItems[index].items.unshift({ icon: '', label: $t('documentExecution.main.showScheduledExecutions'), command: () => functions.showScheduledExecutions() })
     }

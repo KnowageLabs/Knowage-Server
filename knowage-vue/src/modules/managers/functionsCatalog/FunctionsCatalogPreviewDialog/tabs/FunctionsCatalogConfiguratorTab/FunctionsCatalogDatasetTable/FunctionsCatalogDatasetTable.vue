@@ -6,9 +6,10 @@
                 :value="datasets"
                 :paginator="true"
                 :rows="15"
-                :loading="loading"
                 class="p-datatable-sm kn-table kn-small-paginator"
                 dataKey="id"
+                v-model:selection="selectedDataset"
+                selectionMode="single"
                 v-model:filters="filters"
                 filterDisplay="menu"
                 :globalFilterFields="functionsCatalogDatasetTableDescriptor.globalFilterFields"
@@ -33,7 +34,7 @@
                     </div>
                 </template>
                 <Column class="kn-truncated" :style="col.style" v-for="col of functionsCatalogDatasetTableDescriptor.columns" :field="col.field" :header="$t(col.header)" :key="col.field" :sortable="true">
-                    <template #filter="{filterModel}">
+                    <template #filter="{ filterModel }">
                         <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                     </template>
                 </Column>
@@ -59,6 +60,7 @@ export default defineComponent({
     data() {
         return {
             functionsCatalogDatasetTableDescriptor,
+            selectedDataset: null,
             filters: {
                 global: [filterDefault],
                 label: {
