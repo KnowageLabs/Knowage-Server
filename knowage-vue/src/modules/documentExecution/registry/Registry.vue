@@ -57,7 +57,7 @@ import registryDescriptor from './RegistryDescriptor.json'
 import RegistryDatatable from './tables/RegistryDatatable.vue'
 import RegistryPivotDatatable from './tables/RegistryPivotDatatable.vue'
 import RegistryFiltersCard from './RegistryFiltersCard.vue'
-import mainStore from '../../../App.store'
+import { formatDate } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     name: 'registry',
@@ -94,10 +94,6 @@ export default defineComponent({
             await this.loadPage()
             this.stopWarningsState = []
         }
-    },
-    setup() {
-        const store = mainStore()
-        return { store }
     },
     async created() {
         await this.loadPage()
@@ -194,12 +190,30 @@ export default defineComponent({
                 if (this.isPivot) {
                     this.formatPivotRows(el)
                 }
+
                 delete el.id
                 delete el.isNew
                 delete el.edited
             })
+
+            const updatedRowsToIsoStrings = JSON.parse(JSON.stringify(this.updatedRows))
+            updatedRowsToIsoStrings.forEach((el: any) => {
+                this.registry.metaData.fields.forEach((element) => {
+                    if (el[element.header]) {
+                        if (element.type === 'date') {
+                            let date = new Date(formatDate(el[element.header], 'toISOString'))
+                            let offset = new Date().getTimezoneOffset()
+
+                            el[element.header] = new Date(date.getTime() - offset * 60000)
+                        } else if (element.type === 'timestamp') {
+                            el[element.header] = formatDate(el[element.header], 'toISOString')
+                        }
+                    }
+                })
+            })
+
             const postData = new URLSearchParams()
-            postData.append('records', '' + JSON.stringify(this.updatedRows))
+            postData.append('records', '' + JSON.stringify(updatedRowsToIsoStrings))
             await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=UPDATE_RECORDS_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
                 .then(() => {
