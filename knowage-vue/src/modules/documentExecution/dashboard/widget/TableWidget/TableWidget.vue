@@ -54,11 +54,10 @@ export default defineComponent({
             emitter.on('collumnUpdated', () => this.createDatatableColumns())
             emitter.on('columnsReordered', () => this.createDatatableColumns())
             emitter.on('indexColumnChanged', (rows) => this.createDatatableColumns())
-            emitter.on('rowSpanChanged', (rows) => console.log('WidgetEditorPreview  - rowSpanChanged!', rows))
+            emitter.on('rowSpanChanged', (rows) => this.createDatatableColumns())
             emitter.on('summaryRowsChanged', (rows) => this.createDatatableColumns()) //TODO: Servis nam treba za ovo
-            // TODO: Trenutno se gleda svaka promena u header config, mozda staviti event emit samo na promene koje trebaju.
-            emitter.on('headersConfigurationChanged', () => this.createDatatableColumns())
-            emitter.on('columnGroupsConfigurationChanged', (columnGroupConfiguration) => this.createDatatableColumns())
+            emitter.on('headersConfigurationChanged', () => this.createDatatableColumns()) // TODO: Trenutno se gleda svaka promena u header config, mozda staviti event emit samo na promene koje trebaju.
+            emitter.on('columnGroupsConfigurationChanged', () => this.createDatatableColumns())
             emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
             emitter.on('visualizationTypeChanged', (visuelizationTypes) => console.log('WidgetEditorPreview  - visualizationTypeChanged!', visuelizationTypes))
             emitter.on('visibilityConditionsChanged', (visibilityConditions) => console.log('WidgetEditorPreview  - visibilityConditionsChanged!', visibilityConditions))
