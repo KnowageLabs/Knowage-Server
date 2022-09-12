@@ -43,7 +43,7 @@
                     <template v-for="col of columns.slice(1)" :key="col.field">
                         <Column
                             class="kn-truncated"
-                            style="width:200px"
+                            style="width: 200px"
                             :field="col.field"
                             :style="col.columnInfo?.type === 'date' ? registryDatatableDescriptor.dateColumn.style : ''"
                             :bodyStyle="{
@@ -59,7 +59,13 @@
                             </template>
                             <template #editor="slotProps">
                                 <div :data-test="col.field + '-editor'">
-                                    <span v-if="!col.isEditable && col.columnInfo?.type !== 'boolean'">{{ slotProps.data[col.field] }}</span>
+                                    <span v-if="!col.isEditable">
+                                        <span v-if="col.columnInfo?.type !== 'boolean' && col.columnInfo?.type !== 'date' && col.columnInfo?.type !== 'timestamp'">{{ slotProps.data[col.field] }}</span>
+                                        <span v-if="slotProps.data[col.field] && col.columnInfo?.type === 'date'">
+                                            {{ getFormattedDate(slotProps.data[col.field], 'yyyy-MM-dd', getCurrentLocaleDefaultDateFormat(col)) }}
+                                        </span>
+                                        <span v-else-if="slotProps.data[col.field] && col.columnInfo?.type === 'timestamp'"> {{ getFormattedDateTime(slotProps.data[col.field], { dateStyle: 'short', timeStyle: 'medium' }, true) }}</span>
+                                    </span>
                                     <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo?.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                                     <RegistryDatatableEditableField
                                         v-else-if="col.isEditable"
@@ -76,7 +82,7 @@
                                 <div class="p-d-flex p-flex-row" :data-test="col.field + '-body'">
                                     <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo?.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                                     <RegistryDatatableEditableField
-                                        v-else-if="col.isEditable && col.columnInfo?.type === 'date'"
+                                        v-else-if="col.isEditable && (col.columnInfo?.type === 'date' || col.columnInfo?.type === 'timestamp')"
                                         :column="col"
                                         :propRow="slotProps.data"
                                         :comboColumnOptions="comboColumnOptions"
@@ -85,11 +91,18 @@
                                         @dropdownOpened="addColumnOptions"
                                     ></RegistryDatatableEditableField>
                                     <div v-else-if="col.isEditable">
-                                        <span v-if="(col.columnInfo?.type === 'int' || col.columnInfo?.type === 'float') && slotProps.data[col.field]">{{ getFormatedNumber(slotProps.data[col.field]) }}</span>
+                                        <span v-if="(col.columnInfo?.type === 'int' || col.columnInfo?.type === 'float') && slotProps.data[col.field]">{{ getFormattedNumber(slotProps.data[col.field]) }}</span>
                                         <span v-else> {{ slotProps.data[col.field] }}</span>
                                     </div>
-                                    <span v-else-if="col.columnInfo?.type === 'date'"> {{ getFormattedDate(slotProps.data[col.field], 'MM/DD/YYYY hh:mm:ss') }}</span>
-                                    <span v-else> {{ slotProps.data[col.field] }}</span>
+
+                                    <span v-else-if="!col.isEditable">
+                                        <span v-if="slotProps.data[col.field] && col.columnInfo?.type === 'date'">
+                                            {{ getFormattedDate(slotProps.data[col.field], 'yyyy-MM-dd', getCurrentLocaleDefaultDateFormat(col)) }}
+                                        </span>
+                                        <span v-else-if="slotProps.data[col.field] && col.columnInfo?.type === 'timestamp'"> {{ getFormattedDateTime(slotProps.data[col.field], { dateStyle: 'short', timeStyle: 'medium' }, true) }}</span>
+
+                                        <span v-else>{{ slotProps.data[col.field] }}</span></span
+                                    >
                                 </div>
                             </template>
                         </Column>
@@ -112,7 +125,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { formatDate, formatNumberWithLocale } from '@/helpers/commons/localeHelper'
+import { luxonFormatDate, formatDateWithLocale, formatNumberWithLocale, localeDate, primeVueDate } from '@/helpers/commons/localeHelper'
 import { AxiosResponse } from 'axios'
 import Card from 'primevue/card'
 import Checkbox from 'primevue/checkbox'
@@ -196,6 +209,11 @@ export default defineComponent({
         this.loadConfiguration()
         this.loadPagination()
         this.loadWarningState()
+    },
+    computed: {
+        getCurrentLocaleDefaultDateFormat() {
+            return (column) => (column.isEditable ? column.format || primeVueDate() : localeDate())
+        }
     },
     methods: {
         loadColumns() {
@@ -292,10 +310,13 @@ export default defineComponent({
                 return 'any'
             }
         },
-        getFormattedDate(date: any, format: any) {
-            return formatDate(date, format)
+        getFormattedDate(date: any, format: any, incomingFormat?: string) {
+            return luxonFormatDate(date, format, incomingFormat)
         },
-        getFormatedNumber(number: number, precision?: number, format?: any) {
+        getFormattedDateTime(date: any, format?: any, keepNull?: boolean) {
+            return formatDateWithLocale(date, format, keepNull)
+        },
+        getFormattedNumber(number: number, precision?: number, format?: any) {
             return formatNumberWithLocale(number, precision, format)
         },
         addColumnOptions(payload: any) {
@@ -331,7 +352,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.comboColumnOptions[column.field][row[column.dependences]] = response.data.rows))
         },
         addNewRow() {
-            const newRow = { id: this.rows.length, isNew: true }
+            const newRow = { id: this.rows.length + 1, isNew: true }
             this.columns.forEach((el: any) => {
                 if (el.isVisible && el.field !== 'id') {
                     newRow[el.field] = el.defaultValue ?? ''
@@ -397,7 +418,11 @@ export default defineComponent({
             this.$emit('rowChanged', row)
         },
         onCellEditComplete(event: any) {
-            this.rows[event.index] = event.newData
+            let id = event.newData.id
+            if (id) {
+                var foundIndex = this.rows.findIndex((x) => x.id == id)
+                this.rows[foundIndex] = event.newData
+            }
         }
     }
 })
