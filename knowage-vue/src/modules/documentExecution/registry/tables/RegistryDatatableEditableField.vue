@@ -29,6 +29,7 @@
         :showSeconds="column.columnInfo.type === 'timestamp'"
         :showButtonBar="true"
         @date-select="$emit('rowChanged', row)"
+        :dateFormat="column.columnInfo.type === 'date' ? getCurrentLocaleDefaultDateFormat(column) : ''"
     />
 </template>
 
@@ -36,6 +37,7 @@
 import { defineComponent } from 'vue'
 import { setInputDataType, getInputStep } from '@/helpers/commons/tableHelpers'
 import { formatDate } from '@/helpers/commons/localeHelper'
+import { luxonFormatDate, primeVueDate } from '@/helpers/commons/localeHelper'
 import Calendar from 'primevue/calendar'
 import Dropdown from 'primevue/dropdown'
 import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
@@ -68,11 +70,20 @@ export default defineComponent({
         this.loadRow()
         this.loadColumnOptions()
     },
+    computed: {
+        getCurrentLocaleDefaultDateFormat() {
+            return (column) => column.format || primeVueDate()
+        }
+    },
     methods: {
         loadRow() {
             this.row = this.propRow
-            if ((this.column?.columnInfo.type === 'date' || this.column?.columnInfo.type === 'timestamp') && this.row[this.column.field]) {
-                this.row[this.column.field] = this.getFormattedDate(this.row[this.column.field], 'MM/DD/YYYY HH:mm:ss')
+            if (this.row[this.column?.field]) {
+                if (this.column?.columnInfo.type === 'date' && typeof this.row[this.column.field] === 'string') {
+                    this.row[this.column.field] = new Date(luxonFormatDate(this.row[this.column.field], 'yyyy-MM-dd', 'yyyy-MM-dd'))
+                } else if (this.column?.columnInfo.type === 'timestamp' && typeof this.row[this.column.field] === 'string') {
+                    this.row[this.column.field] = new Date(luxonFormatDate(this.row[this.column.field], 'yyyy-MM-dd HH:mm:ss.S', 'yyyy-MM-dd HH:mm:ss.S'))
+                }
             }
         },
         setDataType(columnType: string) {
@@ -84,8 +95,8 @@ export default defineComponent({
         loadColumnOptions() {
             this.columnOptions = this.comboColumnOptions as any[]
         },
-        getFormattedDate(date: any, format: any) {
-            return formatDate(date, format)
+        getFormattedDate(date: any, format: any, incomingFormat?: string) {
+            return formatDate(date, format, incomingFormat)
         }
     }
 })
@@ -94,5 +105,6 @@ export default defineComponent({
 <style>
 .pivot-calendar .p-inputtext {
     border: none;
+    background-color: transparent;
 }
 </style>
