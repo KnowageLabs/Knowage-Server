@@ -193,17 +193,17 @@ public class PdfExporter extends AbstractFormatExporter {
 			// Check if summary row is enabled
 			boolean summaryRowEnabled = false;
 			String summaryRowLabel = null;
-
-			JSONObject summary = settings.getJSONObject("summary");
-			if (nonNull(summary)) {
-				summaryRowEnabled = Boolean.parseBoolean(summary.getString("enabled"));
-				JSONArray list = summary.getJSONArray("list");
-				int listLenght = list.length();
-				if (listLenght > 0) {
-					summaryRowLabel = list.getJSONObject(0).getString("label");
+			if (settings.has("summary")) {
+				JSONObject summary = settings.getJSONObject("summary");
+				if (nonNull(summary)) {
+					summaryRowEnabled = Boolean.parseBoolean(summary.getString("enabled"));
+					JSONArray list = summary.getJSONArray("list");
+					int listLenght = list.length();
+					if (listLenght > 0) {
+						summaryRowLabel = list.getJSONObject(0).getString("label");
+					}
 				}
 			}
-
 			DateFormat inputDateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
 
 			for (int r = 0; r < rows.length(); r++) {
@@ -249,9 +249,7 @@ public class PdfExporter extends AbstractFormatExporter {
 						}
 
 						// If summary row is enabled, add the summary label to the value
-						if (r == (rows.length() - 1)
-								&& summaryRowEnabled
-								&& !StringUtils.isEmpty(valueStr)) {
+						if (r == (rows.length() - 1) && summaryRowEnabled && !StringUtils.isEmpty(valueStr)) {
 							valueStr = summaryRowLabel + " " + valueStr;
 						}
 
