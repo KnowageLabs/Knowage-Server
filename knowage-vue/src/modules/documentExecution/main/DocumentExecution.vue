@@ -410,7 +410,7 @@ export default defineComponent({
                     })
             }
 
-            if (this.user.functionalities.includes('SeeSnapshotsFunctionality') && this.user.enterprise) {
+            if (this.user.functionalities.includes('SeeSnapshotsFunctionality') && this.user.enterprise && this.document.typeCode !== 'OLAP') {
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.shortcuts'))
                 if (index !== -1)
                     this.toolbarMenuItems[index].items.unshift({
