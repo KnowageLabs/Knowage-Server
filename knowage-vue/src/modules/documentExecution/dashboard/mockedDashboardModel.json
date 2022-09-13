@@ -359,15 +359,29 @@
                     "sizeX": 10,
                     "sizeY": 7,
                     "style": {
+                        "backgroundColor": "rgb(23, 67, 215)",
+                        "border": {
+                            "border-bottom-left-radius": "9px",
+                            "border-bottom-right-radius": "11px",
+                            "border-color": "rgb(96, 6, 6)",
+                            "border-style": "dashed",
+                            "border-top-left-radius": "5px",
+                            "border-top-right-radius": "7px",
+                            "border-width": "2px"
+                        },
                         "padding": {
                             "enabled": true,
-                            "padding-bottom": "5px",
+                            "padding-bottom": "13px",
                             "padding-left": "5px",
-                            "padding-right": "5px",
-                            "padding-top": "",
+                            "padding-right": "11px",
+                            "padding-top": "7px",
                             "unlinked": true
                         },
+                        "shadow": {
+                            "box-shadow": "0px 8px 19px #ccc"
+                        },
                         "showExcelExport": true,
+                        "showScreenshot": true,
                         "th": {
                             "background-color": "rgb(15, 77, 126)",
                             "color": "rgb(138, 15, 15)",

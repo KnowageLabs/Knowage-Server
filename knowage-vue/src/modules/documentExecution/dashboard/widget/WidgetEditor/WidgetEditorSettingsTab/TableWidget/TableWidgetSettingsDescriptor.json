@@ -90,6 +90,24 @@
             "value": "parameter"
         }
     ],
+    "bordersStyleOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.solid",
+            "value": "solid"
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.dashed",
+            "value": "dashed"
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.dotted",
+            "value": "dotted"
+        }
+    ],
     "pinnedOptions": [
         {
             "label": "",
@@ -147,6 +165,10 @@
             {
                 "title": "dashboard.widgetEditor.summary",
                 "type": "SummaryStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.borders.title",
+                "type": "BordersStyle"
             }
         ],
         "Visualization": [

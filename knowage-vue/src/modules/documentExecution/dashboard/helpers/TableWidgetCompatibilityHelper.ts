@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -240,7 +240,7 @@ const getFormattedPaginations = (widget: any) => {
 
 const getFormattedStyle = (widget: any) => {
     return {
-        borders: {},
+        borders: getFormattedBorderStyle(widget),
         columns: [],
         columnGroups: getFormattedColumnGroupsStyle(widget),
         headers: getFormattedHeadersStyle(widget),
@@ -249,6 +249,24 @@ const getFormattedStyle = (widget: any) => {
         shadows: {},
         summary: getFormattedSummaryStyle(widget)
     }
+}
+
+const getFormattedBorderStyle = (widget: any) => {
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getFormattedBorderStyle: ", widget)
+    if (!widget.style || !widget.style.border) return {
+        enabled: false,
+        properties: {
+            "border-bottom-left-radius": "",
+            "border-bottom-right-radius": "",
+            "border-style": "",
+            "border-top-left-radius": "",
+            "border-top-right-radius": "",
+            "border-width": "",
+            "border-color": "rgb(212, 212, 212)"
+        }
+    } as ITableWidgetBordersStyle
+
+    return { enabled: true, properties: { ...widget.style.border, 'border-color': convertColorFromHSLtoRGB(widget.style.border['border-color']) } } as ITableWidgetBordersStyle
 }
 
 const getFormattedColumnGroupsStyle = (widget: any) => {

@@ -31,10 +31,10 @@ export default defineComponent({
         }
     },
     created() {
-        this.loadRowsModel()
+        this.loadSummaryRowsStyle()
     },
     methods: {
-        loadRowsModel() {
+        loadSummaryRowsStyle() {
             if (this.widgetModel?.settings?.style?.summary) this.summaryStyleModel = this.widgetModel.settings.style.summary
         },
         summaryStyleChanged() {

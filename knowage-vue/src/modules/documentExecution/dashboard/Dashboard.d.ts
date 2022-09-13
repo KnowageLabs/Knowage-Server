@@ -181,10 +181,15 @@ export interface ITableWidgetStyle {
 }
 
 export interface ITableWidgetBordersStyle {
-    "enabled": boolean,
-    "properties": {
+    enabled: boolean,
+    properties: {
+        "border-bottom-left-radius": string,
+        "border-bottom-right-radius": string,
         "border-style": string,
-        "border-bottom-left-radius": string
+        "border-top-left-radius": string,
+        "border-top-right-radius": string,
+        "border-width": string,
+        "border-color": string
     }
 }
 
