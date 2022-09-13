@@ -120,10 +120,6 @@
 			<version>2.0.5</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-web</artifactId>
-		</dependency>
 
 		<!-- Provides support for Graylog in log4j2 -->
 		<dependency>
