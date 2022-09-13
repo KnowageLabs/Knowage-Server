@@ -190,6 +190,23 @@
             }
         ]
     },
+    "settingsListOptions": [
+        {
+            "icon": "pi pi-cog",
+            "label": "dashboard.widgetEditor.configuration",
+            "value": "Configuration"
+        },
+        {
+            "icon": "pi pi-eye",
+            "label": "dashboard.widgetEditor.visualization",
+            "value": "Visualization"
+        },
+        {
+            "icon": "fas fa-pen",
+            "label": "common.style",
+            "value": "Style"
+        }
+    ],
     "shadowsSizeOptions": [
         {
             "label": "common.small",
