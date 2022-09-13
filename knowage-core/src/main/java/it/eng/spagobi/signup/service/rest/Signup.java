@@ -422,6 +422,14 @@ public class Signup {
 		Locale locale = msgBuilder.getLocale(request);
 
 		String name = signupDTO.getName();
+
+		String strActiveSignup = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
+		boolean activeSignup = "true".equalsIgnoreCase(strActiveSignup);
+		if (!activeSignup) {
+			logger.error(String.format("Attempt to register with signup not active for the user [%s]", name));
+			throw new SpagoBIServiceException(this.request.getPathInfo(), msgBuilder.getMessage("signup.check.error", "messages", locale));
+		}
+
 		String surname = signupDTO.getSurname();
 		String username = signupDTO.getUsername();
 		if (username == null || username.equals("")) {

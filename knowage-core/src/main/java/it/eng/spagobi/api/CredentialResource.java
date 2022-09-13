@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Vector;
 
 import javax.validation.constraints.NotNull;
@@ -43,7 +44,9 @@ import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.validation.PasswordChecker;
 import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
@@ -142,7 +145,18 @@ public class CredentialResource {
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			SbiUser tmpUser = userDao.loadSbiUserByUserId(userId);
 
+			Boolean blockedFlag = tmpUser.getFlgPwdBlocked();
+			if (blockedFlag != null && blockedFlag) {
+				logger.error(String.format("Attempt to change the password for the inactive user [%s]", tmpUser.getFullName()));
+				MessageBuilder msgBuilder = new MessageBuilder();
+				Locale locale = GeneralUtilities.getDefaultLocale();
+
+				return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(msgBuilder.getMessage("signup.changePwd.error", "messages", locale))
+						.build();
+			}
+
 			try {
+
 				if (PasswordChecker.getInstance().isValid(tmpUser, oldPassword, newPassword, newPasswordConfirm)) {
 					// getting days number for calculate new expiration date
 					IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
