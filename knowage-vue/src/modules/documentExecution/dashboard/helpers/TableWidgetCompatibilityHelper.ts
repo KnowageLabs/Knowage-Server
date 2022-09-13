@@ -1,10 +1,10 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
     console.log("TableWidgetCompatibilityHelper - formatTableWidget called for: ", widget)
     const formattedWidget = {
-        id: widget.id, dataset: widget.dataset.dsId, type: widget.type, columns: getFormattedWidgetColumns(widget), conditionalStyles: [], interactions: [], theme: '', styles: {}, settings: {}
+        id: widget.id, dataset: widget.dataset.dsId, type: widget.type, columns: getFormattedWidgetColumns(widget), conditionalStyles: [], interactions: [], theme: '', style: {}, settings: {}
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(formattedWidget, widget)
     getFiltersForColumns(formattedWidget, widget)
@@ -91,6 +91,7 @@ const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any) => 
         if (tempColumn.group) addColumnToColumnGroup(formattedWidget, tempColumn)
         getVisualizationTypeConfigurationsFromColumn(formattedWidget, tempColumn)
         getVisibilityConditionsFromColumn(formattedWidget, tempColumn)
+        getStyleFromColumn(formattedWidget, tempColumn)
     }
 
 }
@@ -110,7 +111,6 @@ const getVisualizationTypeConfigurationsFromColumn = (formattedWidget: IWidget, 
 }
 
 const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
-    console.log("teeeeeeeeeeeeeeeeest: ", tempColumn)
     if (tempColumn.style && tempColumn.style.hasOwnProperty('hiddenColumn') || tempColumn.style.hasOwnProperty('hideFromPdf')) {
         const tempVisibiilityCondition = {
             target: [getColumnId(formattedWidget, tempColumn.name)],
@@ -124,6 +124,31 @@ const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn:
             formattedWidget.settings.visualization.visibilityConditions.push(tempVisibiilityCondition)
         }
     }
+}
+
+const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
+    if (!tempColumn.style) return
+    let hasStyle = false
+    let fields = ['background-color', 'color', "justify-content", "font-size", "font-family", "font-style", "font-weight"]
+    for (let i = 0; i < fields.length; i++) {
+        if (tempColumn.style.hasOwnProperty(fields[i])) {
+            hasStyle = true;
+            break;
+        }
+    }
+
+    if (hasStyle) formattedWidget.settings.style.columns.push({
+        target: [getColumnId(formattedWidget, tempColumn.name)], properties: {
+            "background-color": tempColumn.style['background-color'] ?? "rgb(0, 0, 0)",
+            color: tempColumn.style.color ?? 'rgb(255, 255, 255)',
+            "justify-content": tempColumn.style['justify-content'] ?? '',
+            "font-size": tempColumn.style['font-size'] ?? "",
+            "font-family": tempColumn.style['font-family'] ?? '',
+            "font-style": tempColumn.style['font-style'] ?? '',
+            "font-weight": tempColumn.style['font-weight'] ?? '',
+        }
+    })
+
 }
 
 const getVisibilityConditionVariable = (formattedWidget: IWidget, variables: { action: string, variable: string, condition: string, value: string }[], tempVisibiilityCondition: ITableWidgetVisibilityCondition) => {
@@ -205,16 +230,159 @@ const getFormattedInteractions = (widget: any) => {
     return {}
 }
 
-// TODO
+
 const getFormattedPaginations = (widget: any) => {
     if (!widget.settings?.pagination) return { enabled: false, itemsNumber: 0 }
     return { enabled: widget.settings.pagination.enabled, itemsNumber: widget.settings.pagination.itemsNumber } as ITableWidgetPagination
 }
 
+// STYLE!!!
 
-// TODO
 const getFormattedStyle = (widget: any) => {
-    return {}
+    return {
+        borders: getFormattedBorderStyle(widget),
+        columns: [],
+        columnGroups: getFormattedColumnGroupsStyle(widget),
+        headers: getFormattedHeadersStyle(widget),
+        padding: {},
+        rows: getFormattedRowsStyle(widget),
+        shadows: {},
+        summary: getFormattedSummaryStyle(widget)
+    }
+}
+
+const getFormattedBorderStyle = (widget: any) => {
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getFormattedBorderStyle: ", widget)
+    if (!widget.style || !widget.style.border) return {
+        enabled: false,
+        properties: {
+            "border-bottom-left-radius": "",
+            "border-bottom-right-radius": "",
+            "border-style": "",
+            "border-top-left-radius": "",
+            "border-top-right-radius": "",
+            "border-width": "",
+            "border-color": "rgb(212, 212, 212)"
+        }
+    } as ITableWidgetBordersStyle
+
+    return { enabled: true, properties: { ...widget.style.border, 'border-color': convertColorFromHSLtoRGB(widget.style.border['border-color']) } } as ITableWidgetBordersStyle
+}
+
+const getFormattedColumnGroupsStyle = (widget: any) => {
+    const formattedColumnGroupsStyles = [] as ITableWidgetColumnStyle[]
+    if (!widget.groups) return formattedColumnGroupsStyles
+    let fields = ['background-color', 'color', "justify-content", "font-size", "font-family", "font-style", "font-weight"]
+    for (let i = 0; i < widget.groups.length; i++) {
+        const tempGroup = widget.groups[i]
+        let hasStyle = false;
+        for (let j = 0; j < fields.length; j++) {
+            if (tempGroup.hasOwnProperty(fields[j])) {
+                hasStyle = true;
+                break
+            }
+        }
+        if (hasStyle) formattedColumnGroupsStyles.push({
+            target: [tempGroup.id], properties: {
+                "background-color": tempGroup['background-color'] ?? "rgb(0, 0, 0)",
+                color: tempGroup.color ?? 'rgb(255, 255, 255)',
+                "justify-content": tempGroup['justify-content'] ?? '',
+                "font-size": tempGroup['font-size'] ?? "",
+                "font-family": tempGroup['font-family'] ?? '',
+                "font-style": tempGroup['font-style'] ?? '',
+                "font-weight": tempGroup['font-weight'] ?? '',
+            }
+        })
+    }
+    return formattedColumnGroupsStyles
+}
+
+const getFormattedHeadersStyle = (widget: any) => {
+    if (!widget.style?.th) return {
+        height: 25,
+        properties: {
+            "background-color": "rgb(137, 158, 175)",
+            color: 'rgb(255, 255, 255)',
+            "justify-content": 'center',
+            "font-size": "14px",
+            "font-family": "",
+            "font-style": "normal",
+            "font-weight": "",
+        }
+    }
+
+
+    return {
+        height: widget.style.th.height,
+        properties: {
+            "background-color": widget.style.th['background-color'] ?? "rgb(137, 158, 175)",
+            color: widget.style.th.color ?? 'rgb(255, 255, 255)',
+            "justify-content": widget.style.th['justify-content'] ?? 'center',
+            "font-size": widget.style.th['font-size'] ?? "14px",
+            "font-family": widget.style.th['font-family'] ?? '',
+            "font-style": widget.style.th['font-style'] ?? 'normal',
+            "font-weight": widget.style.th['font-weight'] ?? '',
+        }
+    }
+}
+
+const getFormattedRowsStyle = (widget: any) => {
+    const formattedRowsStyle = {
+        height: widget.style.tr?.height ?? 0,
+        multiselectable: widget.settings.multiselectable ?? false,
+        selectionColor: widget.settings.multiselectablecolor ?? '',
+        alternatedRows: {
+            enabled: widget.settings.alternateRows.enabled ?? false,
+            evenBackgroundColor: widget.settings.alternateRows.evenRowsColor ?? 'rgb(228, 232, 236)',
+            oddBackgroundColor: widget.settings.alternateRows.oddRowsColor ?? ''
+
+        }
+    }
+    return formattedRowsStyle as ITableWidgetRowsStyle
+}
+
+const getFormattedSummaryStyle = (widget: any) => {
+    if (!widget.settings.summary || !widget.settings.summary.style) return {
+        "background-color": "",
+        "color": "",
+        "font-family": "",
+        "font-size": "",
+        "font-style": "",
+        "font-weight": "",
+        "justify-content": ""
+    }
+
+    return {
+        "background-color": convertColorFromHSLtoRGB(widget.settings.summary.style['background-color']),
+        "color": convertColorFromHSLtoRGB(widget.settings.summary.style.color),
+        "font-family": widget.settings.summary.style['font-family'] ?? '',
+        "font-size": widget.settings.summary.style['font-size'] ?? '',
+        "font-style": widget.settings.summary.style['font-style'] ?? '',
+        "font-weight": widget.settings.summary.style['font-weight'] ?? '',
+        "justify-content": ""
+    }
+}
+
+const convertColorFromHSLtoRGB = (hslColor: string | null) => {
+    if (!hslColor) return 'rgb(0, 0, 0)'
+    const temp = hslColor
+        ?.trim()
+        ?.substring(4, hslColor.length - 1)
+        ?.split(',')
+
+    const h = temp[0] ? +temp[0] : 0
+    let s = temp[1] ? +(temp[1].replace('%', '').trim()) : 0
+    let l = temp[2] ? +(temp[2].replace('%', '').trim()) : 0
+
+
+    s /= 100;
+    l /= 100;
+    const k = n => (n + h / 30) % 12;
+    const a = s * Math.min(l, 1 - l);
+    const f = (n: number) =>
+        l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    const tempResult = [Math.round(255 * f(0)), Math.round(255 * f(8)), Math.round(255 * f(4))]
+    return 'rgb(' + tempResult[0] + ', ' + tempResult[1] + ', ' + tempResult[2] + ')'
 }
 
 
@@ -246,8 +414,6 @@ const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {
 }
 
 export const getColumnById = (formattedWidget: IWidget, columnId: string) => {
-    console.log("COLUMN ID: ", columnId)
     const index = formattedWidget.columns.findIndex((column: IWidgetColumn) => column.id === columnId)
-    console.log("INDEX: ", index)
     return index !== -1 ? formattedWidget.columns[index] : null
 }

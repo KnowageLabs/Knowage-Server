@@ -17,7 +17,11 @@ export default defineComponent({
             modelValue: [] as any[]
         }
     },
-    watch: {},
+    watch: {
+        value() {
+            this.loadValue()
+        }
+    },
     created() {
         this.loadValue()
     },
@@ -31,6 +35,7 @@ export default defineComponent({
                 if (tempColumn && tempColumn.id !== 'All Columns') targetOptions.push(tempColumn)
             })
             targetOptions = targetOptions.concat(this.availableTargetOptions as any)
+
             return targetOptions
         }
     },
@@ -55,7 +60,7 @@ export default defineComponent({
         },
         onAllColumnsSelected() {
             this.modelValue = ['All Columns']
-            this.$emit('allColumnsSelected', this.modelValue)
+            this.$emit('allColumnsSelected')
         }
     }
 })

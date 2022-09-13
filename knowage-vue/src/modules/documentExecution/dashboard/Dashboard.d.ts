@@ -12,7 +12,7 @@ export interface IWidget {
     conditionalStyles: any[]  // TO REMOVE
     interactions: any[]  // TO REMOVE
     theme: string  // TO REMOVE
-    styles: any  // TO REMOVE
+    style: any  // TO REMOVE
     settings: ITableWidgetSettings | any
     new?: boolean
 }
@@ -169,7 +169,95 @@ export interface ITableWidgetPagination {
     "itemsNumber": number
 }
 
-export interface ITableWidgetStyle { }
+export interface ITableWidgetStyle {
+    borders: ITableWidgetBordersStyle,
+    columns: ITableWidgetColumnStyle[],
+    columnGroups: ITableWidgetColumnStyle[],
+    headers: ITawbleWidgetHeadersStyle,
+    padding: ITableWidgetPaddingStyle,
+    rows: ITableWidgetRowsStyle,
+    shadows: ITableWidgetShadowsStyle,
+    summary: ITableWidgetSummaryStyle
+}
+
+export interface ITableWidgetBordersStyle {
+    enabled: boolean,
+    properties: {
+        "border-bottom-left-radius": string,
+        "border-bottom-right-radius": string,
+        "border-style": string,
+        "border-top-left-radius": string,
+        "border-top-right-radius": string,
+        "border-width": string,
+        "border-color": string
+    }
+}
+
+export interface ITableWidgetColumnStyle {
+    allColumnSelected?: boolean,
+    target: string[],
+    properties: {
+        "background-color": string,
+        color: string,
+        "justify-content": string,
+        "font-size": string,
+        "font-family": string,
+        "font-style": string,
+        "font-weight": string
+    }
+
+}
+
+export interface ITawbleWidgetHeadersStyle {
+    height: number,
+    properties: {
+        "background-color": string,
+        color: string,
+        "justify-content": string,
+        "font-size": string,
+        "font-family": string,
+        "font-style": string,
+        "font-weight": string
+    }
+}
+
+export interface ITableWidgetPaddingStyle {
+    "enabled": boolean,
+    "properties": {
+        "padding-top": string,
+        "padding-left": string
+
+    }
+}
+
+export interface ITableWidgetRowsStyle {
+    height: number,
+    selectionColor: string,
+    multiselectable: boolean,
+    alternatedRows: {
+        enabled: boolean,
+        evenBackgroundColor: string,
+        oddBackgroundColor: string
+
+    }
+}
+
+export interface ITableWidgetShadowsStyle {
+    "enabled": boolean,
+    "properties": {
+        "box-shadow": string
+    }
+}
+
+export interface ITableWidgetSummaryStyle {
+    "font-family": string,
+    "font-style": string,
+    "font-size": string,
+    "font-weight": string,
+    color: string,
+    "background-color": string,
+    'justify-content': string
+}
 
 export interface ITableWidgetTooltips {
     "target": string,

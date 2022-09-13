@@ -103,7 +103,7 @@ export default defineComponent({
     },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemoved', () => this.onColumnRemoved())
+            emitter.on('columnRemovedFromVisibilityConditions', () => this.onColumnRemoved())
         },
         loadVisibilityConditions() {
             if (this.widgetModel.settings?.visualization?.visibilityConditions) this.visibilityConditions = [...this.widgetModel.settings.visualization.visibilityConditions]

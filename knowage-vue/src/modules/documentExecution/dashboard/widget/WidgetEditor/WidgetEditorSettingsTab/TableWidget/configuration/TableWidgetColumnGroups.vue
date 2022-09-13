@@ -8,7 +8,7 @@
         <div v-for="(columnGroup, index) in columnGroupsModel.groups" :key="index" class="p-d-flex p-flex-row p-ai-center">
             <div class="p-d-flex p-flex-column kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('common.label') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="columnGroup.label" :disabled="!columnGroupsModel.enabled" @change="columnGroupsConfigurationChanged" />
+                <InputText class="kn-material-input p-inputtext-sm" v-model="columnGroup.label" :disabled="!columnGroupsModel.enabled" @change="onColumnGroupLabelChanged(columnGroup)" />
             </div>
             <div class="p-d-flex p-flex-column kn-flex p-m-2">
                 <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
@@ -24,6 +24,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetColumnGroups, IWidgetColumn, ITableWidgetColumnGroup } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
+import { removeColumnGroupFromModel } from '../../../helpers/TableWidgetFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import InputSwitch from 'primevue/inputswitch'
@@ -49,7 +50,7 @@ export default defineComponent({
     },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemoved', (column) => this.onColumnRemoved(column))
+            emitter.on('columnRemovedFromColumnGroups', () => this.onColumnRemoved())
             emitter.on('columnAliasRenamed', (column) => this.onColumnAliasRenamed(column))
             emitter.on('columnAdded', (column) => this.onColumnAdded(column))
         },
@@ -130,19 +131,13 @@ export default defineComponent({
                     alias: this.widgetColumnsAliasMap[target]
                 })
             )
+            removeColumnGroupFromModel(this.widgetModel, this.columnGroupsModel.groups[index])
             this.columnGroupsModel.groups.splice(index, 1)
             this.columnGroupsConfigurationChanged()
         },
-        onColumnRemoved(column: IWidgetColumn) {
-            if (!this.columnGroupsModel) return
-            for (let i = this.columnGroupsModel.groups.length - 1; i >= 0; i--) {
-                for (let j = this.columnGroupsModel.groups[i].columns.length; j >= 0; j--) {
-                    const tempColumn = this.columnGroupsModel.groups[i].columns[j]
-                    if (column.id === tempColumn) this.columnGroupsModel.groups[i].columns.splice(j, 1)
-                }
-            }
-            const index = this.availableColumnOptions.findIndex((columnOption: IWidgetColumn | { id: string; alias: string }) => columnOption.id === column.id)
-            if (index !== -1) this.availableColumnOptions.splice(index, 1)
+        onColumnRemoved() {
+            this.loadColumnGroups()
+            this.loadColumnOptions()
             this.columnGroupsConfigurationChanged()
         },
         onColumnAliasRenamed(column: IWidgetColumn) {
@@ -156,6 +151,10 @@ export default defineComponent({
         onColumnAdded(column: IWidgetColumn) {
             this.availableColumnOptions.push(column)
             if (column.id) this.widgetColumnsAliasMap[column.id] = column.alias
+        },
+        onColumnGroupLabelChanged(columnGroup: ITableWidgetColumnGroup) {
+            emitter.emit('columnGroupLabelChanged', columnGroup)
+            this.columnGroupsConfigurationChanged()
         }
     }
 })

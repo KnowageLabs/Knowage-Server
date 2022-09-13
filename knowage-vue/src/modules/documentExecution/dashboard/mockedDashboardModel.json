@@ -113,9 +113,17 @@
                                 "rowSpan": true,
                                 "scale": 0,
                                 "style": {
+                                    "align-items": "flex-start",
+                                    "background-color": "rgb(53, 172, 10)",
+                                    "color": "rgb(232, 3, 3)",
+                                    "font-family": "roboto",
+                                    "font-size": "14px",
+                                    "font-style": "italic",
+                                    "font-weight": "bold",
                                     "hiddenColumn": true,
                                     "hideFromPdf": true,
                                     "hideHeader": true,
+                                    "justify-content": "flex-start",
                                     "prefix": "Prefix",
                                     "suffix": "Suffix"
                                 },
@@ -143,7 +151,14 @@
                                 "properties": {},
                                 "scale": 0,
                                 "style": {
-                                    "hideFromPdf": true
+                                    "background-color": "rgb(195, 242, 146)",
+                                    "color": "rgb(206, 35, 35)",
+                                    "font-family": "courier-new",
+                                    "font-size": "14px",
+                                    "font-style": "normal",
+                                    "font-weight": "regular",
+                                    "hideFromPdf": true,
+                                    "justify-content": "center"
                                 },
                                 "subjectId": false,
                                 "type": "java.lang.String"
@@ -234,12 +249,34 @@
                     ],
                     "groups": [
                         {
+                            "background-color": "rgb(58, 141, 6)",
+                            "border-bottom-left-radius": "3px",
+                            "border-bottom-right-radius": "4px",
+                            "border-top-left-radius": "1px",
+                            "border-top-right-radius": "2px",
+                            "color": "rgb(215, 62, 62)",
+                            "font-family": "roboto",
+                            "font-size": "12px",
+                            "font-style": "italic",
+                            "font-weight": "regular",
                             "id": "d83a2272-8887-4222-8a50-ef5df2cb72fa",
+                            "justify-content": "flex-start",
                             "name": "Column Group 1"
                         },
                         {
+                            "background-color": "rgb(22, 1, 1)",
+                            "color": "rgb(225, 0, 0)",
+                            "font-family": "times-new-roman",
+                            "font-size": "24[x",
+                            "font-style": "normal",
+                            "font-weight": "bold",
                             "id": "de477ba5-6589-44f3-aba7-79eecb134615",
+                            "justify-content": "flex-start",
                             "name": "Column Group 2"
+                        },
+                        {
+                            "id": "adsadasda-6589-44f3-aba7-79eecb134615",
+                            "name": "Column Group 3"
                         }
                     ],
                     "id": 1661757385620,
@@ -254,7 +291,8 @@
                     "settings": {
                         "alternateRows": {
                             "enabled": true,
-                            "evenRowsColor": "rgb(228, 232, 236)"
+                            "evenRowsColor": "rgb(0, 66, 131)",
+                            "oddRowsColor": "rgb(14, 158, 62)"
                         },
                         "exportpdf": {
                             "a4landscape": true,
@@ -270,7 +308,8 @@
                         "multiselectable": true,
                         "multiselectablecolor": "rgb(11, 78, 124)",
                         "norows": {
-                            "hide": true
+                            "hide": true,
+                            "message": "Custom empty rows message"
                         },
                         "page": 1,
                         "pagination": {
@@ -307,6 +346,12 @@
                                 }
                             ],
                             "style": {
+                                "background-color": "hsl(0, 93%, 31%)",
+                                "color": "hsl(128, 100%, 42%)",
+                                "font-family": "roboto",
+                                "font-size": "12",
+                                "font-style": "normal",
+                                "font-weight": "bold",
                                 "pinnedOnly": true
                             }
                         }
@@ -314,32 +359,46 @@
                     "sizeX": 10,
                     "sizeY": 7,
                     "style": {
+                        "backgroundColor": "rgb(23, 67, 215)",
+                        "border": {
+                            "border-bottom-left-radius": "9px",
+                            "border-bottom-right-radius": "11px",
+                            "border-color": "rgb(96, 6, 6)",
+                            "border-style": "dashed",
+                            "border-top-left-radius": "5px",
+                            "border-top-right-radius": "7px",
+                            "border-width": "2px"
+                        },
                         "padding": {
                             "enabled": true,
-                            "padding-bottom": "5px",
+                            "padding-bottom": "13px",
                             "padding-left": "5px",
-                            "padding-right": "5px",
-                            "padding-top": "",
+                            "padding-right": "11px",
+                            "padding-top": "7px",
                             "unlinked": true
                         },
+                        "shadow": {
+                            "box-shadow": "0px 8px 19px #ccc"
+                        },
                         "showExcelExport": true,
+                        "showScreenshot": true,
                         "th": {
-                            "background-color": "rgb(137, 158, 175)",
-                            "color": "rgb(255, 255, 255)",
+                            "background-color": "rgb(15, 77, 126)",
+                            "color": "rgb(138, 15, 15)",
                             "enabled": true,
-                            "font-family": "roboto",
+                            "font-family": "arial",
                             "font-size": "14px",
                             "font-style": "normal",
-                            "font-weight": "regular",
-                            "height": 4,
+                            "font-weight": "bold",
+                            "height": 25,
                             "justify-content": "center",
-                            "multiline": true
+                            "multiline": false
                         },
                         "title": {
                             "label": "Table Widget"
                         },
                         "tr": {
-                            "height": 4
+                            "height": 34
                         }
                     },
                     "type": "table",

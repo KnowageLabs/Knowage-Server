@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetColumnGroups } from "../../../Dashboard"
+import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetColumnGroups, ITableWidgetColumnGroup } from "../../../Dashboard"
 import { formatRGBColor } from './WidgetEditorHelpers'
 import { emitter } from '../../../DashboardHelpers'
 import descriptor from '../WidgetEditorDescriptor.json'
@@ -149,7 +149,11 @@ function formatColumnTooltipSettings(column: IWidgetColumn) {
 //#region ===================== Remove Column ====================================================
 export const removeColumnFromModel = (widgetModel: IWidget, column: IWidgetColumn) => {
     removeColumnFromRows(widgetModel, column)
+    removeColumnFromHeadersConfiguration(widgetModel, column)
+    removeColumnFromColumnGroups(widgetModel, column)
+    removeColumnFromVisualizationType(widgetModel, column)
     removeColumnFromVisibilityConditions(widgetModel, column)
+    removeColumnFromColumnStyle(widgetModel, column)
 }
 
 const removeColumnFromRows = (widgetModel: IWidget, column: IWidgetColumn) => {
@@ -159,15 +163,99 @@ const removeColumnFromRows = (widgetModel: IWidget, column: IWidgetColumn) => {
     }
 }
 
+const removeColumnFromHeadersConfiguration = (widgetModel: IWidget, column: IWidgetColumn) => {
+    let removed = false
+    const headersModel = widgetModel.settings.configuration.headers
+    for (let i = headersModel.custom.rules.length - 1; i >= 0; i--) {
+        for (let j = headersModel.custom.rules[i].target.length; j >= 0; j--) {
+            const tempTarget = headersModel.custom.rules[i].target[j]
+            if (column.id === tempTarget) {
+                headersModel.custom.rules[i].target.splice(j, 1)
+                removed = true
+            }
+        }
+        if (headersModel.custom.rules[i].target.length === 0) headersModel.custom.rules.splice(i, 1)
+    }
+    if (removed) emitter.emit('headersColumnRemoved')
+}
+
+const removeColumnFromColumnGroups = (widgetModel: IWidget, column: IWidgetColumn) => {
+    let removed = false
+    const columnGroupsModel = widgetModel.settings.configuration.columnGroups
+    for (let i = columnGroupsModel.groups.length - 1; i >= 0; i--) {
+        for (let j = columnGroupsModel.groups[i].columns.length; j >= 0; j--) {
+            const tempColumn = columnGroupsModel.groups[i].columns[j]
+            if (column.id === tempColumn) {
+                columnGroupsModel.groups[i].columns.splice(j, 1)
+                removed = true
+            }
+        }
+    }
+    if (removed) emitter.emit('columnRemovedFromColumnGroups')
+}
+
+const removeColumnFromVisualizationType = (widgetModel: IWidget, column: IWidgetColumn) => {
+    let removed = false
+    const visualizationTypes = widgetModel.settings.visualization.types
+    for (let i = visualizationTypes.length - 1; i >= 0; i--) {
+        for (let j = visualizationTypes[i].target.length; j >= 0; j--) {
+            const tempTarget = visualizationTypes[i].target[j]
+            if (column.id === tempTarget) {
+                visualizationTypes[i].target.splice(j, 1)
+                removed = true;
+            }
+        }
+        if (visualizationTypes[i].target.length === 0) visualizationTypes.splice(i, 1)
+    }
+    if (removed) emitter.emit('columnRemovedFromVisibilityTypes')
+}
+
 const removeColumnFromVisibilityConditions = (widgetModel: IWidget, column: IWidgetColumn) => {
+    let removed = false
     const visibilityConditions = widgetModel.settings.visualization.visibilityConditions
     for (let i = visibilityConditions.length - 1; i >= 0; i--) {
         for (let j = visibilityConditions[i].target.length; j >= 0; j--) {
             const tempTarget = visibilityConditions[i].target[j]
-            if (column.id === tempTarget) visibilityConditions[i].target.splice(j, 1)
+            if (column.id === tempTarget) {
+                visibilityConditions[i].target.splice(j, 1)
+                removed = true
+            }
         }
         if (visibilityConditions[i].target.length === 0) visibilityConditions.splice(i, 1)
     }
+    if (removed) emitter.emit('columnRemovedFromVisibilityConditions')
+}
+
+const removeColumnFromColumnStyle = (widgetModel: IWidget, column: IWidgetColumn) => {
+    let removed = false
+    const visibilityConditions = widgetModel.settings.style.columns
+    for (let i = visibilityConditions.length - 1; i >= 0; i--) {
+        for (let j = visibilityConditions[i].target.length; j >= 0; j--) {
+            const tempTarget = visibilityConditions[i].target[j]
+            if (column.id === tempTarget) {
+                visibilityConditions[i].target.splice(j, 1)
+                removed = true
+            }
+        }
+        if (visibilityConditions[i].target.length === 0) visibilityConditions.splice(i, 1)
+    }
+    if (removed) emitter.emit('columnRemovedFromColumnStyle')
+}
+
+export const removeColumnGroupFromModel = (widgetModel: IWidget, columnGroup: ITableWidgetColumnGroup) => {
+    let removed = false
+    for (let i = widgetModel.settings.style.columnGroups.length - 1; i >= 0; i--) {
+        for (let j = widgetModel.settings.style.columnGroups[i].target.length; j >= 0; j--) {
+            const tempTarget = widgetModel.settings.style.columnGroups[i].target[j]
+            console.log(columnGroup.id + ' === ' + tempTarget)
+            if (columnGroup.id === tempTarget) {
+                widgetModel.settings.style.columnGroups[i].target.splice(j, 1)
+                removed = true
+            }
+        }
+        if (widgetModel.settings.style.columnGroups[i].target.length === 0) widgetModel.settings.style.columnGroups.splice(i, 1)
+    }
+    if (removed) emitter.emit('columnGroupRemoved')
 }
 
 export default removeColumnFromModel

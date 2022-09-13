@@ -53,6 +53,29 @@
             "value": "setLabel"
         }
     ],
+    "defaultToolbarStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-style"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "justify-content"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
     "headersCompareValueType": [
         {
             "label": "common.static",
@@ -65,6 +88,24 @@
         {
             "label": "common.parameter",
             "value": "parameter"
+        }
+    ],
+    "bordersStyleOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.solid",
+            "value": "solid"
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.dashed",
+            "value": "dashed"
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.dotted",
+            "value": "dotted"
         }
     ],
     "pinnedOptions": [
@@ -93,7 +134,7 @@
             },
             {
                 "title": "dashboard.widgetEditor.headers.title",
-                "type": "Headers"
+                "type": "Header"
             },
             {
                 "title": "dashboard.widgetEditor.columnGroups.title",
@@ -102,6 +143,32 @@
             {
                 "title": "dashboard.widgetEditor.export.title",
                 "type": "Export"
+            }
+        ],
+        "Style": [
+            {
+                "title": "dashboard.widgetEditor.headers.title",
+                "type": "Headers"
+            },
+            {
+                "title": "common.columns",
+                "type": "ColumnStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.columnGroups.title",
+                "type": "ColumnGroupsStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.rows.title",
+                "type": "RowsStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.summary",
+                "type": "SummaryStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.borders.title",
+                "type": "BordersStyle"
             }
         ],
         "Visualization": [
@@ -115,6 +182,14 @@
             }
         ]
     },
+    "styleToolbarVisualizationTypeOptions": [
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
     "visibilityConditionOperators": [
         {
             "label": ">",
@@ -143,14 +218,6 @@
         {
             "label": "IN",
             "value": "IN"
-        }
-    ],
-    "styleToolbarVisualizationTypeOptions": [
-        {
-            "type": "color"
-        },
-        {
-            "type": "background-color"
         }
     ],
     "visibilityConditionsOptions": [

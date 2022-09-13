@@ -6,10 +6,16 @@
                 <div v-show="showCircleIcon" class="style-circle-icon" :style="{ 'background-color': newColor }"></div>
                 <i v-show="showArowDown" class="fas fa-arrow-down style-arrow-down-icon"></i>
             </div>
-            <!-- <span v-if="icon.contextMenuSettings?.displayValue" class="icon-display-value-span p-ml-1">{{ '(' + displayValue + ')' }}</span>  -->
+            <span v-if="option.type === 'font-size'" class="icon-display-value-span p-ml-1">{{ '(' + displayValue + ')' }}</span>
         </div>
         <ColorPicker class="style-icon-color-picker" v-if="(option.type === 'color' || option.type === 'background-color') && colorPickerVisible" v-model="color" :inline="true" format="rgb" @change="onColorPickerChange" />
-        <!-- <WidgetEditorToolbarContextMenu class="context-menu" v-if="icon.contextMenuSettings && contextMenuVisible" :settings="icon.contextMenuSettings" :options="getContextMenuOptions()" @selected="onContextItemSelected" @inputChanged="onContextInputChanged"></WidgetEditorToolbarContextMenu> -->
+        <WidgetEditorToolbarContextMenu
+            class="context-menu"
+            v-if="(option.type === 'font-size' || option.type === 'justify-content' || option.type === 'font-family') && contextMenuVisible"
+            :option="option"
+            @selected="onContextItemSelected"
+            @inputChanged="onContextInputChanged"
+        ></WidgetEditorToolbarContextMenu>
         <!-- <WidgetEditorIconPickerDialog v-if="iconPickerDialogVisible" :widgetModel="widgetModel" :settings="icon.iconPickerSettings" :itemIndex="itemIndex" @close="iconPickerDialogVisible = false" @save="onIconSelected"></WidgetEditorIconPickerDialog> -->
     </div>
 </template>
@@ -18,12 +24,14 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
+import { getRGBColorFromString } from '../../../helpers/WidgetEditorHelpers'
 import ColorPicker from 'primevue/colorpicker'
 import descriptor from './WidgetEditorStyleToolbarDescriptor.json'
+import WidgetEditorToolbarContextMenu from './WidgetEditorToolbarContextMenu.vue'
 
 export default defineComponent({
     name: 'widget-editor-colo-picker-icon',
-    components: { ColorPicker },
+    components: { ColorPicker, WidgetEditorToolbarContextMenu },
     props: { option: { type: Object as PropType<any>, required: true }, propModel: { type: Object as PropType<IWidgetStyleToolbarModel | null>, required: true }, disabled: { type: Boolean } },
     emits: ['change'],
     data() {
@@ -32,9 +40,8 @@ export default defineComponent({
             model: null as IWidgetStyleToolbarModel | null,
             active: false,
             contextMenuVisible: false,
-            contextMenuInput: '',
             displayValue: '',
-            color: null as string | null,
+            color: null as { r: number; g: number; b: number } | null,
             newColor: 'rgb(255, 255, 255)',
             colorPickerVisible: false,
             iconPickerDialogVisible: false
@@ -42,7 +49,7 @@ export default defineComponent({
     },
     computed: {
         showArowDown() {
-            return ['color', 'background-color'].includes(this.option.type)
+            return ['font-size', 'justify-content', 'font-style', 'color', 'background-color'].includes(this.option.type)
         },
         showCircleIcon() {
             return ['color', 'background-color'].includes(this.option.type)
@@ -54,43 +61,75 @@ export default defineComponent({
     },
     methods: {
         setEventListeners() {
+            emitter.on('toolbarIconContextMenuOpened', (event) => this.closePopups(event))
             emitter.on('toolbarIconColorPickerOpened', (event) => this.closePopups(event))
         },
         loadModel() {
             this.model = this.propModel
             if (!this.model) return
-            if (this.option.type === 'color') {
-                this.color = this.model.color ?? null
-                this.newColor = this.color ?? ''
-            } else if (this.option.type === 'backround-color') {
-                this.color = this.model['backround-color']
-                this.newColor = this.color ?? ''
+            switch (this.option.type) {
+                case 'font-weight':
+                    this.active = this.model['font-weight'] === 'bold'
+                    break
+                case 'font-style':
+                    this.active = this.model['font-style'] === 'italic'
+                    break
+                case 'font-size':
+                    this.displayValue = this.model['font-size'] ?? ''
+                    break
+                case 'color':
+                    this.color = this.model.color ? getRGBColorFromString(this.model.color) : null
+                    this.newColor = this.model.color ?? ''
+                    break
+                case 'background-color':
+                    this.color = this.model['background-color'] ? getRGBColorFromString(this.model['background-color']) : null
+                    this.newColor = this.model.color ?? ''
             }
         },
         getIconClass() {
             return this.option.type ? descriptor.icons[this.option.type] : ''
         },
         getDefaultTooltip() {
-            return this.option.type ? this.$t(descriptor.tooltips[this.option.type]) : ''
+            return this.option.type && descriptor.tooltips[this.option.type] ? this.$t(descriptor.tooltips[this.option.type]) : ''
         },
         onColorPickerChange(event: any) {
             if (!event.value || !this.model) return
-            console.log('EVENT: ', event)
             this.newColor = `rgb(${event.value.r}, ${event.value.g}, ${event.value.b})`
             this.option.type === 'color' ? (this.model.color = this.newColor) : (this.model['background-color'] = this.newColor)
             this.$emit('change')
         },
-        onIconClicked(icon: any) {
-            if (!icon || !icon.function || this.disabled) return
+        onIconClicked() {
+            if (!this.model || this.disabled) return
+
+            switch (this.option.type) {
+                case 'font-weight':
+                    this.active = !this.active
+                    this.model['font-weight'] = this.active ? 'bold' : ''
+                    this.$emit('change')
+                    break
+                case 'font-style':
+                    this.active = !this.active
+                    this.model['font-style'] = this.active ? 'italic' : ''
+                    this.$emit('change')
+            }
         },
-        iconIsActive() {},
-        loadInitialColorValue() {},
         openAdditionalComponents() {
             if (this.disabled) return
             switch (this.option.type) {
                 case 'color':
                 case 'background-color':
                     this.changeColorPickerVisibility()
+                    break
+                case 'font-size':
+                case 'justify-content':
+                case 'font-family':
+                    this.changeContextMenuVisibility()
+            }
+        },
+        changeContextMenuVisibility() {
+            this.contextMenuVisible = !this.contextMenuVisible
+            if (this.contextMenuVisible) {
+                emitter.emit('toolbarIconContextMenuOpened', this.option)
             }
         },
         changeColorPickerVisibility() {
@@ -100,13 +139,45 @@ export default defineComponent({
             }
         },
         closePopups(event: any) {
-            // this.closeContextMenu(event)
+            this.closeContextMenu(event)
             this.closeColorPicker(event)
+        },
+        closeContextMenu(option: any) {
+            if (this.option.type !== option.type) {
+                this.contextMenuVisible = false
+            }
         },
         closeColorPicker(option: any) {
             if (this.option.type !== option.type) {
                 this.colorPickerVisible = false
             }
+        },
+        onContextItemSelected(item: string) {
+            if (item === 'input') return
+            this.contextMenuVisible = false
+            this.updateModelAfterContextItemSelected(item)
+        },
+        updateModelAfterContextItemSelected(item: string) {
+            console.log('updateModelAfterContextItemSelected: ', item)
+            if (!this.model) return
+            switch (this.option.type) {
+                case 'font-size':
+                    this.model['font-size'] = item
+                    this.displayValue = item
+                    break
+                case 'justify-content':
+                    this.model['justify-content'] = item
+                    break
+                case 'font-family':
+                    this.model['font-family'] = item
+            }
+            this.$emit('change')
+        },
+        onContextInputChanged(item: string) {
+            if (!this.model) return
+            this.model['font-size'] = item
+            this.displayValue = item
+            this.$emit('change')
         }
     }
 })

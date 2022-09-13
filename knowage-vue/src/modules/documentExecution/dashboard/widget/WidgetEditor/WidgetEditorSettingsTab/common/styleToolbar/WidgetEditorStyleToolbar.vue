@@ -1,7 +1,7 @@
 <template>
     <div class="widget-editor-toolbar p-d-flex p-flex-row p-ai-center kn-flex">
         <div v-for="(option, index) in options" :key="index" class="kn-flex">
-            <WidgetEditorStyleIcon v-if="option.type === 'color' || option.type === 'background-color'" :option="option" :propModel="model" @change="onChange"></WidgetEditorStyleIcon>
+            <WidgetEditorStyleIcon :option="option" :propModel="model" :disabled="disabled" @change="onChange"></WidgetEditorStyleIcon>
         </div>
     </div>
 </template>
