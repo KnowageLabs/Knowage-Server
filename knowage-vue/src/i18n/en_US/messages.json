@@ -2161,6 +2161,7 @@
                     "newChar": "New char",
                     "number": "Number",
                     "numberOfChars": "Number of characters",
+                    "numOfChars": "Number of characters",
                     "oldChar": "Old char",
                     "outputType": "Output Type",
                     "padding": {
