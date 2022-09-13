@@ -203,6 +203,22 @@
                                 "personal": false,
                                 "precision": 0,
                                 "properties": {},
+                                "ranges": [
+                                    {
+                                        "background-color": "rgb(206, 22, 22)",
+                                        "color": "rgb(181, 17, 17)",
+                                        "icon": "fas fa-adjust",
+                                        "operator": ">",
+                                        "value": 5
+                                    },
+                                    {
+                                        "background-color": "rgb(75, 5, 5)",
+                                        "color": "rgb(18, 174, 95)",
+                                        "icon": "fab fa-adversal",
+                                        "operator": "<=",
+                                        "value": 16
+                                    }
+                                ],
                                 "rowSpan": false,
                                 "scale": 0,
                                 "style": {
@@ -324,7 +340,18 @@
                                     "column": "FID",
                                     "compareValue": "test",
                                     "compareValueType": "static",
-                                    "condition": "=="
+                                    "condition": "==",
+                                    "style": {
+                                        "background-color": "rgb(29, 190, 19)",
+                                        "border-bottom-color": "rgb(3, 0, 162)",
+                                        "border-top-color": "rgb(205, 37, 37)",
+                                        "color": "rgb(191, 12, 12)",
+                                        "font-family": "tahoma",
+                                        "font-size": "24px",
+                                        "font-style": "normal",
+                                        "font-weight": "light",
+                                        "justify-content": "flex-start"
+                                    }
                                 },
                                 {
                                     "column": "the_geom",
@@ -342,7 +369,16 @@
                                     "column": "region_id",
                                     "compareValue": "test 2",
                                     "compareValueType": "static",
-                                    "condition": "IN"
+                                    "condition": "IN",
+                                    "style": {
+                                        "background-color": "rgb(43, 161, 10)",
+                                        "color": "rgb(212, 2, 2)",
+                                        "font-family": "courier-new",
+                                        "font-size": "12px",
+                                        "font-style": "normal",
+                                        "font-weight": "light",
+                                        "justify-content": "flex-end"
+                                    }
                                 }
                             ]
                         },

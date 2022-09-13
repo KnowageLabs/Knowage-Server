@@ -81,6 +81,10 @@
             "value": "40px"
         }
     ],
+    "iconPickerDialogStyle": {
+        "height": "60%",
+        "width": "60%"
+    },
     "icons": {
         "background-color": "fas fa-paint-roller",
         "color": "fas fa-fill-drip",
@@ -88,6 +92,7 @@
         "font-size": "fas fa-text-height",
         "font-style": "fas fa-italic",
         "font-weight": "fas fa-bold",
+        "icon": "fas fa-icons",
         "justify-content": "fas fa-align-left"
     },
     "tooltips": {
@@ -97,6 +102,7 @@
         "font-size": "dashboard.widgetEditor.iconTooltips.fontSize",
         "font-style": "dashboard.widgetEditor.iconTooltips.italic",
         "font-weight": "dashboard.widgetEditor.iconTooltips.bold",
+        "icon": "dashboard.widgetEditor.iconTooltips.iconPicker",
         "justify-content": "dashboard.widgetEditor.iconTooltips.textAlignment"
     }
 }

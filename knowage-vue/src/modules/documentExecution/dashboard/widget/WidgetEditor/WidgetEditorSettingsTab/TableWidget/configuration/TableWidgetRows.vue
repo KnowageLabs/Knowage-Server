@@ -19,7 +19,7 @@
         </div>
 
         <div class="p-d-flex p-flex-column p-m-3">
-            <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.rows.rowSpanColumns') }}</label>
+            <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.rows.rowSpanColumn') }}</label>
             <Dropdown class="kn-material-input" v-model="rowsModel.rowSpan.column" :options="widgetModel.columns" optionLabel="alias" optionValue="id" :disabled="!rowsModel.rowSpan.enabled" @change="onRowSpanChanged"> </Dropdown>
         </div>
     </div>

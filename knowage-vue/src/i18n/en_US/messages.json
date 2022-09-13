@@ -381,11 +381,11 @@
                 "title": "Column Groups"
             },
             "compareValueType": "Compare value type",
-            "conditionalStyle": {
-                "compareValue": "Compare value",
+            "conditionalStyle": "Conditional Style",
+            "conditions": {
+                "applyToWholeRow": "Apply to whole row",
                 "compareValueType": "Value type",
-                "enableConditionalStyle": "Enable Conditional Style",
-                "title": "Conditional Style"
+                "title": "Conditions"
             },
             "configuration": "Configuration",
             "customHeaderTooltip": "Custom Header Tooltip",
@@ -451,7 +451,7 @@
                 "hideNoRowsAvailable": "Hide \"No Rows Available\" message",
                 "indexColumnHint": "Index column hint placeholder",
                 "multiselectable": "Multiselectable",
-                "rowSpanColumns": "Row span columns",
+                "rowSpanColumn": "Row span column",
                 "rowSpanHint": "Row span hint placeholder",
                 "selectionColor": "Selection color",
                 "showIndexesColumn": "Show indexes column",

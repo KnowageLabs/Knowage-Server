@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -34,14 +34,57 @@ const getColumnId = (formattedWidget: IWidget, widgetColumnName: string) => {
     return (index !== -1) ? formattedWidget.columns[index].id as string : ''
 }
 
+// SETTINGS !!!
 const getFormattedWidgetSettings = (formattedWidget: IWidget, widget: any) => {
-    const formattedSettings = { sortingColumn: getColumnId(formattedWidget, widget.settings?.sortingColumn), sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(widget) as any, configuration: getFormattedConfiguration(formattedWidget, widget) as any, interactions: getFormattedInteractions(widget) as any, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as any, tooltips: getFormattedTooltips(widget) as any, visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) as any } as ITableWidgetSettings
+    const formattedSettings = { sortingColumn: getColumnId(formattedWidget, widget.settings?.sortingColumn), sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(formattedWidget, widget), configuration: getFormattedConfiguration(formattedWidget, widget) as any, interactions: getFormattedInteractions(widget) as any, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as any, tooltips: getFormattedTooltips(widget) as any, visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) as any } as ITableWidgetSettings
     return formattedSettings
 }
+const getFormattedConditionalStyles = (formattedWidget: IWidget, widget: any) => {
+    console.log("<<<<<<<<<<< getFormattedConditionalStyles: ", widget)
+    const formattedStyles = [] as ITableWidgetConditionalStyle[]
+    if (widget.settings.rowThresholds?.enabled) {
+        widget.settings.rowThresholds.list.forEach((rowThreshold: any) => {
+            formattedStyles.push(createConditionFromRowThreshold(formattedWidget, rowThreshold))
+        })
+    }
 
-// TODO
-const getFormattedConditionalStyles = (widget: any) => {
-    return {}
+    return formattedStyles
+}
+
+const createConditionFromRowThreshold = (formattedWidget: IWidget, rowThreshold: any) => {
+    const conditionStyle = {
+        target: getColumnId(formattedWidget, rowThreshold.column), applyToWholeRow: false, condition: { type: rowThreshold.compareValueType, operator: rowThreshold.condition, value: '' },
+        properties: {
+            "justify-content": '',
+            "font-family": '',
+            "font-size": '',
+            "font-style": '',
+            "font-weight": '',
+            color: '',
+            "background-color": '',
+            icon: ''
+        }
+    } as ITableWidgetConditionalStyle
+    switch (conditionStyle.condition.type) {
+        case 'static':
+            conditionStyle.condition.value = rowThreshold.compareValue
+            break;
+        case 'parameter':
+            conditionStyle.condition.value = getParameterValue(rowThreshold.compareValue)
+            conditionStyle.condition.parameter = rowThreshold.parameter
+            break
+        case 'variable':
+            conditionStyle.condition.value = getVariableValue(rowThreshold.compareValue)
+            conditionStyle.condition.variable = rowThreshold.parameter
+    }
+
+    if (rowThreshold.style) {
+        delete rowThreshold.style['border-top-color']
+        delete rowThreshold.style['border-bottom-color']
+        conditionStyle.properties = { ...rowThreshold.style, icon: '' }
+    }
+
+    return conditionStyle
 }
 
 // TODO
@@ -99,6 +142,7 @@ const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any) => 
         getVisualizationTypeConfigurationsFromColumn(formattedWidget, tempColumn)
         getVisibilityConditionsFromColumn(formattedWidget, tempColumn)
         getStyleFromColumn(formattedWidget, tempColumn)
+        getConditionalStyleFromColumn(formattedWidget, tempColumn)
     }
 
 }
@@ -156,6 +200,33 @@ const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
         }
     })
 
+}
+
+const getConditionalStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
+    if (!tempColumn.ranges || tempColumn.ranges.length === 0) return
+    const columnId = getColumnId(formattedWidget, tempColumn.name)
+    tempColumn.ranges.forEach((range: any) => {
+        const tempConditionalStyle = {
+            target: columnId,
+            applyToWholeRow: true,
+            condition: {
+                type: 'static',
+                operator: range.operator,
+                value: range.value
+            },
+            properties: {
+                "justify-content": '',
+                "font-family": '',
+                "font-size": '',
+                "font-style": '',
+                "font-weight": '',
+                color: range.color ?? '',
+                "background-color": range['background-color'] ?? '',
+                icon: range.icon ?? ''
+            }
+        } as ITableWidgetConditionalStyle
+        formattedWidget.settings.conditionalStyles.push(tempConditionalStyle)
+    })
 }
 
 const getVisibilityConditionVariable = (formattedWidget: IWidget, variables: { action: string, variable: string, condition: string, value: string }[], tempVisibiilityCondition: ITableWidgetVisibilityCondition) => {
@@ -465,4 +536,15 @@ const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {
 export const getColumnById = (formattedWidget: IWidget, columnId: string) => {
     const index = formattedWidget.columns.findIndex((column: IWidgetColumn) => column.id === columnId)
     return index !== -1 ? formattedWidget.columns[index] : null
+}
+
+
+// TODO - PARAMETER VALUE
+const getParameterValue = (parameterName: string) => {
+    return 'MOCKED PARAMETER VALUE';
+}
+
+// TODO - VARIABLE VALUE
+const getVariableValue = (variable: string) => {
+    return 'MOCKED VARIABLE VALUE';
 }

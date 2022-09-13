@@ -61,6 +61,50 @@
             "value": "dotted"
         }
     ],
+    "columnConditionOptions": [
+        {
+            "label": ">",
+            "value": ">"
+        },
+        {
+            "label": "<",
+            "value": "<"
+        },
+        {
+            "label": "==",
+            "value": "=="
+        },
+        {
+            "label": ">=",
+            "value": ">="
+        },
+        {
+            "label": "<=",
+            "value": "<="
+        },
+        {
+            "label": "!=",
+            "value": "!="
+        },
+        {
+            "label": "IN",
+            "value": "IN"
+        }
+    ],
+    "conditionCompareValueTypes": [
+        {
+            "label": "common.static",
+            "value": "static"
+        },
+        {
+            "label": "common.parameter",
+            "value": "parameter"
+        },
+        {
+            "label": "common.variable",
+            "value": "variable"
+        }
+    ],
     "customHeadersActionOptions": [
         {
             "label": "dashboard.widgetEditor.headers.hideHeader",
@@ -94,6 +138,32 @@
             "type": "background-color"
         }
     ],
+    "conditionsToolbarStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-style"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "justify-content"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        },
+        {
+            "type": "icon"
+        }
+    ],
     "headersCompareValueType": [
         {
             "label": "common.static",
@@ -123,6 +193,12 @@
         }
     ],
     "settings": {
+        "ConditionalStyle": [
+            {
+                "title": "dashboard.widgetEditor.conditions.title",
+                "type": "Conditions"
+            }
+        ],
         "Configuration": [
             {
                 "title": "dashboard.widgetEditor.rows.title",
@@ -205,6 +281,11 @@
             "icon": "fas fa-pen",
             "label": "common.style",
             "value": "Style"
+        },
+        {
+            "icon": "fas fa-pen",
+            "label": "dashboard.widgetEditor.conditionalStyle",
+            "value": "ConditionalStyle"
         }
     ],
     "shadowsSizeOptions": [

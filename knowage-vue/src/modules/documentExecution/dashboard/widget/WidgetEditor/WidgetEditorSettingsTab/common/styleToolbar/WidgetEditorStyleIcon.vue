@@ -33,7 +33,7 @@ export default defineComponent({
     name: 'widget-editor-colo-picker-icon',
     components: { ColorPicker, WidgetEditorToolbarContextMenu },
     props: { option: { type: Object as PropType<any>, required: true }, propModel: { type: Object as PropType<IWidgetStyleToolbarModel | null>, required: true }, disabled: { type: Boolean } },
-    emits: ['change'],
+    emits: ['change', 'openIconPicker'],
     data() {
         return {
             descriptor,
@@ -49,7 +49,7 @@ export default defineComponent({
     },
     computed: {
         showArowDown() {
-            return ['font-size', 'justify-content', 'font-style', 'color', 'background-color'].includes(this.option.type)
+            return ['font-size', 'justify-content', 'color', 'background-color'].includes(this.option.type)
         },
         showCircleIcon() {
             return ['color', 'background-color'].includes(this.option.type)
@@ -111,6 +111,8 @@ export default defineComponent({
                     this.active = !this.active
                     this.model['font-style'] = this.active ? 'italic' : ''
                     this.$emit('change')
+                case 'icon':
+                    this.$emit('openIconPicker')
             }
         },
         openAdditionalComponents() {

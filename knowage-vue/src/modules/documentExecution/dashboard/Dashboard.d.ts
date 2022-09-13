@@ -34,14 +34,22 @@ export interface ITableWidgetSettings {
 
 export interface ITableWidgetConditionalStyle {
     target: string
+    applyToWholeRow: boolean,
     condition: {
         type: string,
-        variable: string,
+        variable?: string,
+        parameter?: string,
         operator: string,
         value: string
     },
     properties: {
+        "justify-content": string,
+        "font-family": string,
         "font-size": string,
+        "font-style": string,
+        "font-weight": string,
+        color: string,
+        "background-color": string,
         icon: string
     }
 }
@@ -488,5 +496,6 @@ export interface IWidgetStyleToolbarModel {
     'font-family'?: string,
     'justify-content'?: string,
     color?: string,
-    'background-color'?: string
+    'background-color'?: string,
+    icon?: string
 }

@@ -70,6 +70,7 @@ export default defineComponent({
             emitter.on('bordersStyleChanged', (bordersStyle) => console.log('WidgetEditorPreview  - bordersStyleChanged!', bordersStyle))
             emitter.on('paddingStyleChanged', (paddingStyle) => console.log('WidgetEditorPreview  - paddingStyleChanged!', paddingStyle))
             emitter.on('shadowStyleChanged', (shadowsStyle) => console.log('WidgetEditorPreview  - shadowStyleChanged!', shadowsStyle))
+            emitter.on('conditionalStylesChanged', (conditionalStyles) => console.log('WidgetEditorPreview  - conditionalStylesChanged!', conditionalStyles))
         },
         setupDatatableOptions() {
             this.gridOptions = {
