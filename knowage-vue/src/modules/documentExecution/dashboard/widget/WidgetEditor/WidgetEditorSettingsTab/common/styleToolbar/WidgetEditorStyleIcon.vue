@@ -24,6 +24,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
+import { getRGBColorFromString } from '../../../helpers/WidgetEditorHelpers'
 import ColorPicker from 'primevue/colorpicker'
 import descriptor from './WidgetEditorStyleToolbarDescriptor.json'
 import WidgetEditorToolbarContextMenu from './WidgetEditorToolbarContextMenu.vue'
@@ -40,7 +41,7 @@ export default defineComponent({
             active: false,
             contextMenuVisible: false,
             displayValue: '',
-            color: null as string | null,
+            color: null as { r: number; g: number; b: number } | null,
             newColor: 'rgb(255, 255, 255)',
             colorPickerVisible: false,
             iconPickerDialogVisible: false
@@ -77,12 +78,12 @@ export default defineComponent({
                     this.displayValue = this.model['font-size'] ?? ''
                     break
                 case 'color':
-                    this.color = this.model.color ?? null
-                    this.newColor = this.color ?? ''
+                    this.color = this.model.color ? getRGBColorFromString(this.model.color) : null
+                    this.newColor = this.model.color ?? ''
                     break
                 case 'background-color':
-                    this.color = this.model['background-color'] ?? null
-                    this.newColor = this.color ?? ''
+                    this.color = this.model['background-color'] ? getRGBColorFromString(this.model['background-color']) : null
+                    this.newColor = this.model.color ?? ''
             }
         },
         getIconClass() {
@@ -98,7 +99,7 @@ export default defineComponent({
             this.$emit('change')
         },
         onIconClicked() {
-            if (!this.model) return
+            if (!this.model || this.disabled) return
 
             switch (this.option.type) {
                 case 'font-weight':

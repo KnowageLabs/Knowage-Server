@@ -1,8 +1,7 @@
 <template>
     <div v-if="summaryStyleModel">
-        {{ summaryStyleModel }}
         <div class="p-m-4">
-            <WidgetEditorStyleToolbar :options="descriptor.defaultToolbarStyleOptions" :propModel="summaryStyleModel" @change="onStyleToolbarChange($event)"> </WidgetEditorStyleToolbar>
+            <WidgetEditorStyleToolbar :options="descriptor.defaultToolbarStyleOptions" :propModel="summaryStyleModel" :disabled="summaryStyleDisabled" @change="onStyleToolbarChange($event)"> </WidgetEditorStyleToolbar>
         </div>
     </div>
 </template>
@@ -26,6 +25,11 @@ export default defineComponent({
             summaryStyleModel: null as ITableWidgetSummaryStyle | null
         }
     },
+    computed: {
+        summaryStyleDisabled() {
+            return !this.widgetModel.settings?.configuration?.summaryRows?.enabled
+        }
+    },
     created() {
         this.loadRowsModel()
     },
@@ -37,6 +41,7 @@ export default defineComponent({
             emitter.emit('summaryStyleChanged', this.summaryStyleModel)
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
+            console.log('ON CHANGE MODEL: ', model)
             this.summaryStyleModel = {
                 'background-color': model['background-color'] ?? '',
                 color: model.color ?? '',
@@ -46,6 +51,7 @@ export default defineComponent({
                 'font-style': model['font-style'] ?? '',
                 'font-weight': model['font-weight'] ?? ''
             }
+            this.widgetModel.settings.style.summary = this.summaryStyleModel
             this.summaryStyleChanged()
         }
     }

@@ -8,6 +8,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import ColorPicker from 'primevue/colorpicker'
+import { getRGBColorFromString } from '../../helpers/WidgetEditorHelpers'
 
 export default defineComponent({
     name: 'widget-editor-color-picker',
@@ -29,23 +30,13 @@ export default defineComponent({
     },
     methods: {
         loadValue() {
-            this.modelValue = this.initialValue ? this.getRGBColorFromString(this.initialValue) : {}
+            this.modelValue = this.initialValue ? getRGBColorFromString(this.initialValue) : {}
             this.color = this.initialValue ?? ''
         },
         onChange() {
             if (!this.modelValue) return
             this.color = `rgb(${this.modelValue.r}, ${this.modelValue.g}, ${this.modelValue.b})`
             this.$emit('change', this.color)
-        },
-        getRGBColorFromString(color: string) {
-            const temp = color
-                ?.trim()
-                ?.substring(4, color.length - 1)
-                ?.split(',')
-
-            if (temp) {
-                return { r: +temp[0], g: +temp[1], b: +temp[2] }
-            } else return { r: 0, g: 0, b: 0 }
         }
     }
 })
