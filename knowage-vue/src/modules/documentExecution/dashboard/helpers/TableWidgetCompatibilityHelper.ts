@@ -58,7 +58,7 @@ const getFormattedColumnGroups = (widget: any) => {
 }
 
 const getFormattedExport = (widget: any) => {
-    if (!widget.settings || !widget.settings.exportpdf) return {
+    const formattedExport = {
         pdf: {
             enabled: false,
             custom: {
@@ -68,9 +68,16 @@ const getFormattedExport = (widget: any) => {
             },
             a4landscape: false,
             a4portrait: false
-        }
+        },
+        showExcelExport: false,
+        showScreenshot: false
     }
-    return { pdf: widget.settings.exportpdf }
+    if (widget.settings.exportpdf) formattedExport.pdf = widget.settings.exportpdf
+    if (widget.style) {
+        formattedExport.showExcelExport = widget.style.showExcelExport ?? false
+        formattedExport.showScreenshot = widget.style.showScreenshot ?? false
+    }
+    return formattedExport
 
 }
 
@@ -365,7 +372,6 @@ const getFormattedRowsStyle = (widget: any) => {
 }
 
 const getFormattedShadowsStyle = (widget: any) => {
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>> getFormattedShadowsStyle: ", widget)
     if (!widget.style || !widget.style.shadow) return {
         enabled: false,
         properties: {

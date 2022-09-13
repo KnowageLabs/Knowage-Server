@@ -74,7 +74,9 @@ export interface ITableWidgetExports {
         },
         a4landscape: boolean,
         a4portrait: boolean
-    }
+    },
+    showExcelExport: string,
+    showScreenshot: string
 }
 
 export interface ITableWidgetHeaders {

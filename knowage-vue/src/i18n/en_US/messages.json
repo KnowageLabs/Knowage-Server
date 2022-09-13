@@ -396,7 +396,9 @@
             "export": {
                 "a4landscape": "A4 Landscape",
                 "a4portrait": "A4 Portrait",
+                "enableScreenshots": "Enable Screenshots",
                 "exportPdf": "Export PDF",
+                "showExcelExport": "Enable show excel export (when available)",
                 "title": "Export"
             },
             "fontawesome": "Fontawesome",
