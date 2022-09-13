@@ -20,6 +20,7 @@
                 <TableWidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widgetModel="widgetModel"></TableWidgetRowsStyle>
                 <TableWidgetSummaryStyle v-else-if="accordion.type === 'SummaryStyle'" :widgetModel="widgetModel"></TableWidgetSummaryStyle>
                 <TableWidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></TableWidgetBordersStyle>
+                <TableWidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></TableWidgetPaddingStyle>
             </AccordionTab>
         </Accordion>
     </div>
@@ -43,6 +44,7 @@ import TableWidgetColumnStyle from './style/TableWidgetColumnStyle.vue'
 import TableWidgetRowsStyle from './style/TableWidgetRowsStyle.vue'
 import TableWidgetSummaryStyle from './style/TableWidgetSummaryStyle.vue'
 import TableWidgetBordersStyle from './style/TableWidgetBordersStyle.vue'
+import TableWidgetPaddingStyle from './style/TableWidgetPaddingStyle.vue'
 
 export default defineComponent({
     name: 'table-widget-configuration-container',
@@ -60,7 +62,8 @@ export default defineComponent({
         TableWidgetColumnStyle,
         TableWidgetRowsStyle,
         TableWidgetSummaryStyle,
-        TableWidgetBordersStyle
+        TableWidgetBordersStyle,
+        TableWidgetPaddingStyle
     },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Array as PropType<{ title: string; type: string }[]> }, drivers: { type: Array }, variables: { type: Array } },
     data() {

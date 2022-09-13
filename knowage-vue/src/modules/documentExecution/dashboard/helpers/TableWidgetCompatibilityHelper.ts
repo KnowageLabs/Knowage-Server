@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -244,7 +244,7 @@ const getFormattedStyle = (widget: any) => {
         columns: [],
         columnGroups: getFormattedColumnGroupsStyle(widget),
         headers: getFormattedHeadersStyle(widget),
-        padding: {},
+        padding: getFormattedPaddingStyle(widget),
         rows: getFormattedRowsStyle(widget),
         shadows: {},
         summary: getFormattedSummaryStyle(widget)
@@ -252,7 +252,6 @@ const getFormattedStyle = (widget: any) => {
 }
 
 const getFormattedBorderStyle = (widget: any) => {
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> getFormattedBorderStyle: ", widget)
     if (!widget.style || !widget.style.border) return {
         enabled: false,
         properties: {
@@ -324,6 +323,31 @@ const getFormattedHeadersStyle = (widget: any) => {
             "font-weight": widget.style.th['font-weight'] ?? '',
         }
     }
+}
+
+const getFormattedPaddingStyle = (widget: any) => {
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>> getFormattedPaddingStyle: ", widget)
+    if (!widget.style || !widget.style.padding) return {
+        enabled: false,
+        properties: {
+            "padding-top": '',
+            "padding-left": '',
+            "padding-bottom": '',
+            "padding-right": '',
+            unlinked: false
+        }
+    } as ITableWidgetPaddingStyle
+
+    return {
+        enabled: widget.style.padding.enabled,
+        properties: {
+            "padding-top": widget.style.padding['padding-top'],
+            "padding-left": widget.style.padding['padding-left'],
+            "padding-bottom": widget.style.padding['padding-bottom'],
+            "padding-right": widget.style.padding['padding-right'],
+            unlinked: widget.style.padding.unlinked
+        }
+    } as ITableWidgetPaddingStyle
 }
 
 const getFormattedRowsStyle = (widget: any) => {

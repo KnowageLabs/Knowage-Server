@@ -37,22 +37,22 @@
             <div class="p-d-flex p-flex-column kn-flex p-mx-2 p-mt-4">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.borders.borderRadiusTopLeft') }}</label>
                 <InputText class="kn-material-input p-inputtext-sm" v-model="bordersStyleModel.properties['border-top-left-radius']" :disabled="bordersStyleDisabled" @change="bordersStyleChanged" />
-                <small>{{ $t('dashboard.widgetEditor.borders.borderRadiusHint') }}</small>
+                <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
             <div class="p-d-flex p-flex-column kn-flex p-mx-2 p-mt-4">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.borders.borderRadiusTopRight') }}</label>
                 <InputText class="kn-material-input p-inputtext-sm" v-model="bordersStyleModel.properties['border-top-right-radius']" :disabled="bordersStyleDisabled" @change="bordersStyleChanged" />
-                <small>{{ $t('dashboard.widgetEditor.borders.borderRadiusHint') }}</small>
+                <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
             <div class="p-d-flex p-flex-column kn-flex p-mx-2 p-mt-4">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.borders.borderRadiusBottomLeft') }}</label>
                 <InputText class="kn-material-input p-inputtext-sm" v-model="bordersStyleModel.properties['border-bottom-left-radius']" :disabled="bordersStyleDisabled" @change="bordersStyleChanged" />
-                <small>{{ $t('dashboard.widgetEditor.borders.borderRadiusHint') }}</small>
+                <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
             <div class="p-d-flex p-flex-column kn-flex p-mx-2 p-mt-4">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.borders.borderRadiusBottomRight') }}</label>
                 <InputText class="kn-material-input p-inputtext-sm" v-model="bordersStyleModel.properties['border-bottom-right-radius']" :disabled="bordersStyleDisabled" @change="bordersStyleChanged" />
-                <small>{{ $t('dashboard.widgetEditor.borders.borderRadiusHint') }}</small>
+                <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
         </div>
     </div>

@@ -43,6 +43,24 @@
             "value": "flex-end"
         }
     ],
+    "bordersStyleOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.solid",
+            "value": "solid"
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.dashed",
+            "value": "dashed"
+        },
+        {
+            "label": "dashboard.widgetEditor.borders.dotted",
+            "value": "dotted"
+        }
+    ],
     "customHeadersActionOptions": [
         {
             "label": "dashboard.widgetEditor.headers.hideHeader",
@@ -88,24 +106,6 @@
         {
             "label": "common.parameter",
             "value": "parameter"
-        }
-    ],
-    "bordersStyleOptions": [
-        {
-            "label": "",
-            "value": ""
-        },
-        {
-            "label": "dashboard.widgetEditor.borders.solid",
-            "value": "solid"
-        },
-        {
-            "label": "dashboard.widgetEditor.borders.dashed",
-            "value": "dashed"
-        },
-        {
-            "label": "dashboard.widgetEditor.borders.dotted",
-            "value": "dotted"
         }
     ],
     "pinnedOptions": [
@@ -169,6 +169,10 @@
             {
                 "title": "dashboard.widgetEditor.borders.title",
                 "type": "BordersStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.padding.title",
+                "type": "PaddingStyle"
             }
         ],
         "Visualization": [

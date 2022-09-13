@@ -222,11 +222,13 @@ export interface ITawbleWidgetHeadersStyle {
 }
 
 export interface ITableWidgetPaddingStyle {
-    "enabled": boolean,
-    "properties": {
+    enabled: boolean,
+    properties: {
         "padding-top": string,
-        "padding-left": string
-
+        "padding-left": string,
+        "padding-bottom": string,
+        "padding-right": string,
+        unlinked: boolean
     }
 }
 

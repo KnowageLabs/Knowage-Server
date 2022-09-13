@@ -358,7 +358,6 @@
             "borders": {
                 "borderRadiusBottomLeft": "Border radius bottom left",
                 "borderRadiusBottomRight": "Border radius bottom right",
-                "borderRadiusHint": "use px measure unit, ie: 5px",
                 "borderRadiusTopLeft": "Border radius top left",
                 "borderRadiusTopRight": "Border radius top right",
                 "bordersColor": "Borders Color",
@@ -420,8 +419,19 @@
                 "italic": "Italic",
                 "textAlignment": "Text alignment"
             },
+            "inputHintForPixels": "use px measure unit, ie: 5px",
             "itemsPerPage": "Items per page",
             "manualInput": "Manual input",
+            "padding": {
+                "enablePadding": "Enable Padding",
+                "linkAllHint": "Link all paddings",
+                "paddingBottom": "Padding Bottom",
+                "paddingLeft": "Padding Left",
+                "paddingRight": "Padding Right",
+                "paddingTop": "Padding Top",
+                "title": "Padding",
+                "unlinkAllHint": "Unink all paddings"
+            },
             "pagination": "Pagination",
             "precision": "Precision",
             "prefix": "Prefix",
