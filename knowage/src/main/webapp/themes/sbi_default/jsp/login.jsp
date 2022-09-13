@@ -49,14 +49,12 @@
 	String authFailed = "";
 	ResponseContainer aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
 	RequestContainer requestContainer = RequestContainer.getRequestContainer();
-
 	String activationMsg = request.getParameter("activationMsg");
 	
 	SingletonConfig serverConfig = SingletonConfig.getInstance();
 	String strActiveSignup = serverConfig
 			.getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
 	boolean activeSignup = (strActiveSignup.equalsIgnoreCase("true"))?true:false;
-
 	String roleToCheckLbl = 
 			(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE_LOGIN") == null)?"" :
 			 SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE_LOGIN");
@@ -71,11 +69,9 @@
 					.getAttribute(roleToCheckLbl) : "";
 		}
 	}
-
 	String currTheme = ThemesManager.getCurrentTheme(requestContainer);
 	if (currTheme == null)
 		currTheme = ThemesManager.getDefaultTheme();
-
 	if (aResponseContainer != null) {
 		SourceBean aServiceResponse = aResponseContainer
 				.getServiceResponse();
@@ -90,13 +86,10 @@
 			}
 		}
 	}
-
 	IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-
 	String sbiMode = "WEB";
 	IUrlBuilder urlBuilder = null;
 	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
-
 %>
 
 <%@page import="it.eng.spagobi.commons.SingletonConfig"%>
@@ -269,7 +262,7 @@
 				<div>
 					<div class="row">
 						<!-- Uncomment this for adding the Change Password Link -->
-						<!-- <div class="col-sm-6"><a class="lightLink" href="<%=contextName %>/ChangePwdServlet">	<%=msgBuilder.getMessage("changePwd")%> </a></div> -->
+						<!-- <div class="col-sm-12"><a href="<%=contextName %>/ChangePwdServlet">	<%=msgBuilder.getMessage("changePwd")%> </a></div> -->
 					</div>
 			
 		 			<spagobi:error/>
