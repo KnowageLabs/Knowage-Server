@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -246,7 +246,7 @@ const getFormattedStyle = (widget: any) => {
         headers: getFormattedHeadersStyle(widget),
         padding: getFormattedPaddingStyle(widget),
         rows: getFormattedRowsStyle(widget),
-        shadows: {},
+        shadows: getFormattedShadowsStyle(widget),
         summary: getFormattedSummaryStyle(widget)
     }
 }
@@ -265,7 +265,7 @@ const getFormattedBorderStyle = (widget: any) => {
         }
     } as ITableWidgetBordersStyle
 
-    return { enabled: true, properties: { ...widget.style.border, 'border-color': convertColorFromHSLtoRGB(widget.style.border['border-color']) } } as ITableWidgetBordersStyle
+    return { enabled: true, properties: { ...widget.style.border, 'border-color': hexToRgb(widget.style.border['border-color']) } } as ITableWidgetBordersStyle
 }
 
 const getFormattedColumnGroupsStyle = (widget: any) => {
@@ -326,7 +326,6 @@ const getFormattedHeadersStyle = (widget: any) => {
 }
 
 const getFormattedPaddingStyle = (widget: any) => {
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>> getFormattedPaddingStyle: ", widget)
     if (!widget.style || !widget.style.padding) return {
         enabled: false,
         properties: {
@@ -364,6 +363,26 @@ const getFormattedRowsStyle = (widget: any) => {
     }
     return formattedRowsStyle as ITableWidgetRowsStyle
 }
+
+const getFormattedShadowsStyle = (widget: any) => {
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>> getFormattedShadowsStyle: ", widget)
+    if (!widget.style || !widget.style.shadow) return {
+        enabled: false,
+        properties: {
+            "box-shadow": '',
+            "backgroundColor": ''
+        }
+    } as ITableWidgetShadowsStyle
+
+    return {
+        enabled: true,
+        properties: {
+            "box-shadow": widget.style.shadow,
+            "backgroundColor": hexToRgb(widget.style.backgroundColor)
+        }
+    } as ITableWidgetShadowsStyle
+}
+
 
 const getFormattedSummaryStyle = (widget: any) => {
     if (!widget.settings.summary || !widget.settings.summary.style) return {

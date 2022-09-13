@@ -173,6 +173,10 @@
             {
                 "title": "dashboard.widgetEditor.padding.title",
                 "type": "PaddingStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.shadows.title",
+                "type": "ShadowsStyle"
             }
         ],
         "Visualization": [
@@ -186,6 +190,24 @@
             }
         ]
     },
+    "shadowsSizeOptions": [
+        {
+            "label": "common.small",
+            "value": "small"
+        },
+        {
+            "label": "common.medium",
+            "value": "medium"
+        },
+        {
+            "label": "common.large",
+            "value": "large"
+        },
+        {
+            "label": "common.extraLarge",
+            "value": "extraLarge"
+        }
+    ],
     "styleToolbarVisualizationTypeOptions": [
         {
             "type": "color"

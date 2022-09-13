@@ -78,6 +78,7 @@
         "export": "export",
         "exportCSV": "Export CSV",
         "exportSuccess": "The download has started in background. You will find the result file in your download page.",
+        "extraLarge": "Extra Large",
         "field": "Field",
         "file": "File",
         "fileName": "File Name",
@@ -107,6 +108,7 @@
         "kpi": "KPI",
         "label": "label",
         "language": "Language",
+        "large": "Large",
         "lastChangeDate": "Last change date",
         "left": "Left",
         "library": "Library",
@@ -116,6 +118,7 @@
         "loggedUser": "logged user",
         "login": "Login",
         "max": "Max",
+        "medium": "Medium",
         "menu": "Menu",
         "message": "Message",
         "metadata": "Metadata",
@@ -175,6 +178,7 @@
         "shortcuts": "Shortcuts",
         "show": "Show",
         "size": "Size",
+        "small": "Small",
         "snapshot": "Snapshot",
         "sort": "sort",
         "source": "Source",
@@ -455,6 +459,11 @@
             "selectedColumns": "Selected Columns",
             "settingsListOptions": {
                 "tooltip": "Tooltip"
+            },
+            "shadows": {
+                "enableShadows": "Enable Shadows",
+                "shadowSize": "Shadow Size",
+                "title": "Shadows"
             },
             "sortingColumn": "Sorting column",
             "sortingOrder": "Sorting order",

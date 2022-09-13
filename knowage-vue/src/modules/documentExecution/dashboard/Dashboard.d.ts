@@ -245,9 +245,10 @@ export interface ITableWidgetRowsStyle {
 }
 
 export interface ITableWidgetShadowsStyle {
-    "enabled": boolean,
-    "properties": {
-        "box-shadow": string
+    enabled: boolean,
+    properties: {
+        "box-shadow": string,
+        backgroundColor: strubg
     }
 }
 
