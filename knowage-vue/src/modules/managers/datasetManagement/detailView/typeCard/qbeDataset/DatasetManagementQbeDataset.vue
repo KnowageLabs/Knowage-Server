@@ -160,7 +160,7 @@ export default defineComponent({
             this.getQueryFromDataset = false
             const bmId = this.businessModels.find((bm) => bm.name === event.value).id
             await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${bmId}`)
+                .get(process.env.VUE_RESTFUL_SERVICES_PATH + `2.0/businessmodels/${bmId}`)
                 .then((response: AxiosResponse<any>) => {
                     this.selectedBusinessModel = response.data
                 })
