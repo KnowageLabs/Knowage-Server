@@ -321,10 +321,28 @@
                             "enabled": true,
                             "list": [
                                 {
-                                    "column": "the_geom",
-                                    "compareValue": "4",
+                                    "column": "FID",
+                                    "compareValue": "test",
                                     "compareValueType": "static",
                                     "condition": "=="
+                                },
+                                {
+                                    "column": "the_geom",
+                                    "compareValue": "Driver 1",
+                                    "compareValueType": "parameter",
+                                    "condition": "<="
+                                },
+                                {
+                                    "column": "store_id",
+                                    "compareValue": "Variable 1",
+                                    "compareValueType": "variable",
+                                    "condition": ">="
+                                },
+                                {
+                                    "column": "region_id",
+                                    "compareValue": "test 2",
+                                    "compareValueType": "static",
+                                    "condition": "IN"
                                 }
                             ]
                         },
