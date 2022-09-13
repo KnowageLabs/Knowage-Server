@@ -7,7 +7,7 @@
                 </template>
                 <template #end>
                     <Button v-if="isParameterSidebarVisible" icon="pi pi-filter" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.filter')" @click="parameterSidebarVisible = !parameterSidebarVisible" />
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="savingDialogVisible = true" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" @click="openSavingDialog" />
                     <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="$emit('close')" />
                 </template>
             </Toolbar>
@@ -232,8 +232,8 @@ export default defineComponent({
         KnCalculatedField,
         Dropdown
     },
-    props: { visible: { type: Boolean }, dataset: { type: Object } },
-    emits: ['close'],
+    props: { visible: { type: Boolean }, dataset: { type: Object }, returnQueryMode: { type: Boolean }, getQueryFromDatasetProp: { type: Boolean } },
+    emits: ['close', 'querySaved'],
     data() {
         return {
             moment,
@@ -342,22 +342,32 @@ export default defineComponent({
                 this.qbe = response.data[0]
                 if (this.qbe && this.qbe.qbeJSONQuery) this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
             })
+
+            if (this.qbe && this.getQueryFromDatasetProp) {
+                this.qbe = deepcopy(this.dataset) as any
+                if (this.qbe && this.qbe.qbeJSONQuery && typeof this.qbe.qbeJSONQuery === 'string') this.qbe.qbeJSONQuery = JSON.parse(this.qbe.qbeJSONQuery)
+            }
+
+            if (this.qbe && this.dataset) {
+                this.qbe.pars = this.dataset.pars ?? []
+            }
         },
         getQBEFromModel() {
             if (!this.dataset) return {}
-
             this.smartView = this.dataset.smartView
             return {
                 dsTypeCd: 'Qbe',
                 qbeDatamarts: this.dataset.name,
                 qbeDataSource: this.dataset.dataSourceLabel,
-                qbeJSONQuery: {
-                    catalogue: {
-                        queries: [{ id: 'q1', name: 'Main', fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] }]
-                    }
-                },
+                qbeJSONQuery: this.getQueryFromDatasetProp
+                    ? this.dataset.qbeJSONQuery
+                    : {
+                          catalogue: {
+                              queries: [{ id: 'q1', name: 'Main', fields: [], distinct: false, filters: [], calendar: {}, expression: {}, isNestedExpression: false, havings: [], graph: [], relationRoles: [], subqueries: [] }]
+                          }
+                      },
                 meta: [],
-                pars: [],
+                pars: this.dataset.pars ?? [],
                 scopeId: null,
                 scopeCd: '',
                 label: '',
@@ -932,7 +942,6 @@ export default defineComponent({
             this.smartView && this.selectedQuery.fields.length > 0 ? this.executeQBEQuery(false) : this.resetQueryPreviewAndPagination()
         },
         resetQueryPreviewAndPagination() {
-            console.log('called')
             this.pagination = { start: 0, limit: 25, size: 0 }
             this.queryPreviewData = {} as any
         },
@@ -982,8 +991,15 @@ export default defineComponent({
             }
             this.loadQuery()
             await this.loadDatasetDrivers()
-        }
+        },
         //#endregion ================================================================================================
+        openSavingDialog() {
+            if (this.returnQueryMode) {
+                this.$emit('querySaved', this.qbe?.qbeJSONQuery)
+            } else {
+                this.savingDialogVisible = true
+            }
+        }
     }
 })
 </script>
