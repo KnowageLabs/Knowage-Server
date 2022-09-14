@@ -1,9 +1,11 @@
 <template>
     <div>
+        {{ conditionalStyles }}
         <div v-for="(conditionalStyle, index) in conditionalStyles" :key="index" class="p-d-flex p-flex-column p-my-2 p-pb-2">
-            {{ conditionalStyle }}
+            <div v-show="dropzoneTopVisible[index]" class="form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
+            <div class="form-list-item-dropzone" :class="{ 'form-list-item-dropzone-active': dropzoneTopVisible[index] }" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent="displayDropzone('top', index)" @dragleave.prevent="hideDropzone('top', index)"></div>
 
-            <div class="p-d-flex p-flex-row">
+            <div class="p-d-flex p-flex-row" :draggable="true" @dragstart.stop="onDragStart($event, index)">
                 <div class="p-d-flex p-flex-column p-jc-center">
                     <i class="pi pi-th-large kn-cursor-pointer p-mr-2"></i>
                 </div>
@@ -58,6 +60,16 @@
                     <i :class="index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash'" class="kn-cursor-pointer p-ml-2" @click="index === 0 ? addConditionalStyle() : removeConditionalStyle(index)"></i>
                 </div>
             </div>
+
+            <div
+                class="form-list-item-dropzone"
+                :class="{ 'form-list-item-dropzone-active': dropzoneBottomVisible[index] }"
+                @drop.stop="onDropComplete($event, 'after', index)"
+                @dragover.prevent
+                @dragenter.prevent="displayDropzone('bottom', index)"
+                @dragleave.prevent="hideDropzone('bottom', index)"
+            ></div>
+            <div v-show="dropzoneBottomVisible[index]" class="form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'after', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
         </div>
     </div>
 </template>
@@ -82,6 +94,8 @@ export default defineComponent({
             conditionalStyles: [] as ITableWidgetConditionalStyle[],
             parameterValuesMap: {},
             variableValuesMap: {},
+            dropzoneTopVisible: {},
+            dropzoneBottomVisible: {},
             getTranslatedLabel
         }
     },
@@ -174,6 +188,37 @@ export default defineComponent({
             this.conditionalStyles.splice(index, 1)
             this.conditionalStylesChanged()
         },
+        onDragStart(event: any, index: number) {
+            event.dataTransfer.setData('text/plain', JSON.stringify(index))
+            event.dataTransfer.dropEffect = 'move'
+            event.dataTransfer.effectAllowed = 'move'
+        },
+        onDropComplete(event: any, position: 'before' | 'after', index: number) {
+            this.hideDropzone('bottom', index)
+            this.hideDropzone('top', index)
+            const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
+            this.onRowsMove(eventData, index, position)
+        },
+        onRowsMove(sourceRowIndex: number, targetRowIndex: number, position: string) {
+            const newIndex = position === 'before' ? targetRowIndex : targetRowIndex + 1
+            if (newIndex < 0 || newIndex > this.conditionalStyles.length) return
+            this.conditionalStyles.splice(newIndex, 0, this.conditionalStyles.splice(sourceRowIndex, 1)[0])
+            this.conditionalStylesChanged()
+        },
+        displayDropzone(position: string, index: number) {
+            if (position === 'top') {
+                this.dropzoneTopVisible[index] = true
+            } else {
+                this.dropzoneBottomVisible[index] = true
+            }
+        },
+        hideDropzone(position: string, index: number) {
+            if (position === 'top') {
+                this.dropzoneTopVisible[index] = false
+            } else {
+                this.dropzoneBottomVisible[index] = false
+            }
+        },
         onColumnRemoved() {
             this.loadConditionalStyles()
         }
@@ -190,5 +235,16 @@ export default defineComponent({
 .value-type-dropdown {
     min-width: 150px;
     max-width: 150px;
+}
+
+.form-list-item-dropzone {
+    height: 20px;
+    width: 100%;
+    background-color: white;
+}
+
+.form-list-item-dropzone-active {
+    height: 10px;
+    background-color: #aec1d3;
 }
 </style>

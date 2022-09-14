@@ -484,9 +484,14 @@ interface IModelDatasetParameter {
 }
 
 export interface IIcon {
-    id: number
-    name: string
-    value: string
+    category: string,
+    className: string,
+    fontFamily: string,
+    fontWeight: number,
+    id: number,
+    label: string,
+    unicode: string,
+    visible: booleam
 }
 
 export interface IWidgetStyleToolbarModel {

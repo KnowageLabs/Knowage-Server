@@ -454,7 +454,7 @@ const getFormattedShadowsStyle = (widget: any) => {
     return {
         enabled: true,
         properties: {
-            "box-shadow": widget.style.shadow,
+            "box-shadow": widget.style.shadow["box-shadow"],
             "backgroundColor": hexToRgb(widget.style.backgroundColor)
         }
     } as ITableWidgetShadowsStyle
