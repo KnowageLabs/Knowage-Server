@@ -13,17 +13,52 @@
                 @dragleave.prevent="hideDropzone('top', index)"
             ></div>
 
-            <WidgetEditorColumnsMultiselect
-                v-if="index !== 0"
-                :value="(tooltip.target as string[])"
-                :availableTargetOptions="availableColumnOptions"
-                :widgetColumnsAliasMap="widgetColumnsAliasMap"
-                optionLabel="alias"
-                optionValue="id"
-                @change="onColumnsSelected($event, tooltip)"
-            ></WidgetEditorColumnsMultiselect>
-
-            <div class="p-d-flex p-flex-row" :draggable="true" @dragstart.stop="onDragStart($event, index)"></div>
+            <div class="p-d-flex p-flex-column" :draggable="true" @dragstart.stop="onDragStart($event, index)">
+                <div class="p-d-flex p-flex-row p-ai-center">
+                    <div class="p-d-flex p-flex-column kn-flex">
+                        <label class="kn-material-input-label">{{ $t('common.columns') }}</label>
+                        <Dropdown v-if="index === 0" class="kn-material-input" v-model="tooltip.target" :options="descriptor.allColumnOption" optionValue="value" optionLabel="label" :disabled="true"> </Dropdown>
+                        <WidgetEditorColumnsMultiselect
+                            v-else
+                            :value="(tooltip.target as string[])"
+                            :availableTargetOptions="availableColumnOptions"
+                            :widgetColumnsAliasMap="widgetColumnsAliasMap"
+                            optionLabel="alias"
+                            optionValue="id"
+                            @change="onColumnsSelected($event, tooltip)"
+                        ></WidgetEditorColumnsMultiselect>
+                    </div>
+                    <div class="kn-flex p-mt-4 p-mx-4">
+                        <InputSwitch v-model="tooltip.enabled" @change="tooltipsChanged"></InputSwitch>
+                        <label class="kn-material-input-label p-m-3">{{ $t('common.enabled') }}</label>
+                    </div>
+                    <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash']" class="kn-cursor-pointer p-ml-2 p-mt-4" @click="index === 0 ? addTooltip() : removeTooltip(index)"></i>
+                </div>
+                <div class="p-d-flex p-flex-row p-ai-center p-mt-3">
+                    <div class="p-d-flex p-flex-column kn-flex p-mx-2">
+                        <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.prefix') }}</label>
+                        <InputText class="kn-material-input p-inputtext-sm" v-model="tooltip.prefix" :disabled="!tooltip.enabled" @change="tooltipsChanged" />
+                    </div>
+                    <div class="p-d-flex p-flex-column kn-flex p-mx-2">
+                        <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.suffix') }}</label>
+                        <InputText class="kn-material-input p-inputtext-sm" v-model="tooltip.suffix" :disabled="!tooltip.enabled" @change="tooltipsChanged" />
+                    </div>
+                    <div v-if="optionsContainMeasureColumn(tooltip)" class="p-d-flex p-flex-column p-mx-2">
+                        <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.precision') }}</label>
+                        <InputNumber class="kn-material-input p-inputtext-sm" v-model="tooltip.precision" :disabled="!tooltip.enabled" @blur="tooltipsChanged" />
+                    </div>
+                </div>
+                <div class="p-d-flex p-flex-row p-ai-center p-mt-3">
+                    <div class="kn-flex p-mt-4 p-mx-4">
+                        <InputSwitch v-model="tooltip.header.enabled" :disabled="!tooltip.enabled" @change="tooltipsChanged"></InputSwitch>
+                        <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.tooltips.customHeader') }}</label>
+                    </div>
+                    <div class="p-d-flex p-flex-column kn-flex-2 p-mx-2">
+                        <label class="kn-material-input-label">{{ $t('common.text') }}</label>
+                        <InputText class="kn-material-input p-inputtext-sm" v-model="tooltip.header.text" :disabled="!tooltip.enabled || !tooltip.header.enabled" @change="tooltipsChanged" />
+                    </div>
+                </div>
+            </div>
 
             <div
                 v-show="index !== 0"
@@ -44,11 +79,14 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetTooltipStyle, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
+import Dropdown from 'primevue/dropdown'
+import InputSwitch from 'primevue/inputswitch'
+import InputNumber from 'primevue/inputnumber'
 import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
 
 export default defineComponent({
     name: 'table-widget-conditions',
-    components: { WidgetEditorColumnsMultiselect },
+    components: { Dropdown, InputSwitch, InputNumber, WidgetEditorColumnsMultiselect },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, drivers: { type: Array }, variables: { type: Array } },
     data() {
         return {
@@ -56,6 +94,7 @@ export default defineComponent({
             tooltips: [] as ITableWidgetTooltipStyle[],
             availableColumnOptions: [] as (IWidgetColumn | { id: string; alias: string })[],
             widgetColumnsAliasMap: {} as any,
+            widgetColumnsTypeMap: {} as any,
             dropzoneTopVisible: {},
             dropzoneBottomVisible: {}
         }
@@ -64,7 +103,7 @@ export default defineComponent({
         this.setEventListeners()
         this.loadColumnOptions()
         this.loadTooltips()
-        this.loadWidgetColumnAliasMap()
+        this.loadWidgetColumnMaps()
     },
     methods: {
         setEventListeners() {
@@ -72,22 +111,39 @@ export default defineComponent({
         },
         loadTooltips() {
             if (this.widgetModel?.settings?.tooltips) this.tooltips = [...this.widgetModel.settings.tooltips]
+            this.removeColumnsFromAvailableOptions()
+        },
+
+        removeColumnsFromAvailableOptions() {
+            for (let i = 1; i < this.widgetModel.settings.tooltips.length; i++) {
+                for (let j = 0; j < this.widgetModel.settings.tooltips[i].target.length; j++) {
+                    this.removeColumnFromAvailableOptions({
+                        id: this.widgetModel.settings.tooltips[i].target[j],
+                        alias: this.widgetModel.settings.tooltips[i].target[j]
+                    })
+                }
+            }
+        },
+        removeColumnFromAvailableOptions(tempColumn: IWidgetColumn | { id: string; alias: string }) {
+            const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === tempColumn.id)
+            if (index !== -1) this.availableColumnOptions.splice(index, 1)
         },
         loadColumnOptions() {
             this.availableColumnOptions = [...this.widgetModel.columns]
         },
-        tooltipsChanged() {
-            emitter.emit('tooltipsChanged', this.tooltips)
-        },
-        loadWidgetColumnAliasMap() {
+        loadWidgetColumnMaps() {
             this.widgetModel.columns.forEach((column: IWidgetColumn) => {
                 if (column.id) this.widgetColumnsAliasMap[column.id] = column.alias
+                if (column.id && column.fieldType) this.widgetColumnsTypeMap[column.id] = column.fieldType
             })
+        },
+        tooltipsChanged() {
+            emitter.emit('tooltipsChanged', this.tooltips)
         },
         onColumnsSelected(event: any, tooltip: ITableWidgetTooltipStyle) {
             const intersection = (tooltip.target as string[]).filter((el: string) => !event.value.includes(el))
             tooltip.target = event.value
-            intersection.length > 0 ? this.onColumnsRemovedFromMultiselect(intersection) : this.onColumnsAddedFromMultiselect(columnGroup)
+            intersection.length > 0 ? this.onColumnsRemovedFromMultiselect(intersection) : this.onColumnsAddedFromMultiselect(tooltip)
             this.tooltipsChanged()
         },
         onColumnsRemovedFromMultiselect(intersection: string[]) {
@@ -103,6 +159,33 @@ export default defineComponent({
                 const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === target)
                 if (index !== -1) this.availableColumnOptions.splice(index, 1)
             })
+        },
+        optionsContainMeasureColumn(tooltip: ITableWidgetTooltipStyle) {
+            let found = false
+            for (let i = 0; i < tooltip.target.length; i++) {
+                if (this.widgetColumnsTypeMap[tooltip.target[i]] === 'MEASURE') {
+                    found = true
+                    break
+                }
+            }
+            return found
+        },
+        addTooltip() {
+            this.tooltips.push({
+                target: [],
+                enabled: true,
+                prefix: '',
+                suffix: '',
+                precision: 0,
+                header: {
+                    enabled: false,
+                    text: ''
+                }
+            })
+        },
+        removeTooltip(index: number) {
+            this.tooltips.splice(index, 1)
+            this.tooltipsChanged()
         },
         onDragStart(event: any, index: number) {
             event.dataTransfer.setData('text/plain', JSON.stringify(index))

@@ -44,7 +44,7 @@
                 </div>
                 <div v-if="(optionsContainMeasureColumn(visualizationType) && visualizationType.type === 'Text') || visualizationType.type === 'Text & Icon'" class="p-d-flex p-flex-column p-mx-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.precision') }}</label>
-                    <InputNumber class="kn-material-input p-inputtext-sm" v-model="visualizationType.precision" @change="visualizationTypeChanged" />
+                    <InputNumber class="kn-material-input p-inputtext-sm" v-model="visualizationType.precision" @blur="visualizationTypeChanged" />
                 </div>
                 <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.visualizationType.pinned') }}</label>

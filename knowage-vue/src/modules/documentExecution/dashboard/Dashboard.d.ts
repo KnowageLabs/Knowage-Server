@@ -277,7 +277,7 @@ export interface ITableWidgetTooltipStyle {
     enabled: true,
     prefix: string,
     suffix: string,
-    precision: string
+    precision: number,
     header: {
         enabled: boolean,
         text: string

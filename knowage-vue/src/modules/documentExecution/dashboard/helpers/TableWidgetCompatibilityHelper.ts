@@ -235,7 +235,7 @@ const getTooltipFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
     if (tempColumn.hasOwnProperty('hideTooltip') || tempColumn.style.hasOwnProperty('tooltip')) {
         const tempTooltipStyle = {
             target: [getColumnId(formattedWidget, tempColumn.name)],
-            enabled: tempColumn.hideTooltip ?? false,
+            enabled: !tempColumn.hideTooltip,
             prefix: tempColumn.style?.tooltip?.prefix ?? '',
             suffix: tempColumn.style?.tooltip?.suffix ?? '',
             precision: tempColumn.style?.tooltip?.precision ?? 0,

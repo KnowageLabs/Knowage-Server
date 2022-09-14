@@ -58,6 +58,7 @@
         "driver": "Driver",
         "edit": "edit",
         "enable": "Enable",
+        "enabled": "Enabled",
         "environment": "Environment",
         "error": {
             "allowedFileTypes": "File type allowed are {types}",
@@ -479,6 +480,7 @@
             "title": "Widget Editor",
             "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
             "tooltips": {
+                "customHeader": "Custom Header",
                 "title": "Tooltips"
             },
             "visibilityConditions": {

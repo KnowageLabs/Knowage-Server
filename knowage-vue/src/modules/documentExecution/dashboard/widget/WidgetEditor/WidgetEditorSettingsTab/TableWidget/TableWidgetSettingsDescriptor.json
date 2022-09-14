@@ -43,6 +43,12 @@
             "value": "flex-end"
         }
     ],
+    "allColumnOption": [
+        {
+            "label": "all",
+            "value": "all"
+        }
+    ],
     "bordersStyleOptions": [
         {
             "label": "",
