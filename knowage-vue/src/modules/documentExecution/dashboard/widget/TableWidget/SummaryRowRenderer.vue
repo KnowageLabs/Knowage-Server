@@ -1,6 +1,9 @@
 <template>
-    <div class="custom-header-container" style="height: 100%; width: 100%" :style="params.styleString">
-        <div class="custom-header-label">{{ params.displayName }}</div>
+    <div class="custom-header-group-container" style="height: 100%; width: 100%" :style="params.styleString">
+        <span class="custom-header-group-label">
+            <b style="margin-right: 4px">{{ params.value ? params.summaryRows[params.rowIndex] : '' }} </b>
+            {{ params.value ?? '' }}
+        </span>
     </div>
 </template>
 
@@ -21,9 +24,7 @@ export default defineComponent({
             noSort: null as any
         }
     },
-    mounted() {
-        console.log('\n \n HEADER RENDERER PARAMS \n', this.params)
-    },
+    mounted() {},
     methods: {}
 })
 </script>

@@ -13,11 +13,12 @@ import descriptor from '../../dataset/DatasetEditorDescriptor.json'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
-import HeaderRenderer from './TableWidgetHeaderRenderer.vue'
+import HeaderRenderer from './HeaderRenderer.vue'
+import SummaryRowRenderer from './SummaryRowRenderer.vue'
 
 export default defineComponent({
     name: 'table-widget',
-    components: { AgGridVue, HeaderRenderer },
+    components: { AgGridVue, HeaderRenderer, SummaryRowRenderer },
     props: {
         propWidget: {
             required: true,
@@ -67,7 +68,7 @@ export default defineComponent({
             emitter.on('columnStylesChanged', (columnStyles) => console.log('WidgetEditorPreview  - columnStylesChanged!', columnStyles))
             emitter.on('columnGroupStylesChanged', (columnGroupStyles) => console.log('WidgetEditorPreview  - columnGroupStylesChanged!', columnGroupStyles))
             emitter.on('rowsStyleChanged', (rowsStyle) => console.log('WidgetEditorPreview  - rowsStyleChanged!', rowsStyle))
-            emitter.on('summaryStyleChanged', (summaryStyle) => console.log('WidgetEditorPreview  - summaryStyleChanged!', summaryStyle))
+            emitter.on('summaryStyleChanged', () => this.createDatatableColumns())
             emitter.on('bordersStyleChanged', (bordersStyle) => console.log('WidgetEditorPreview  - bordersStyleChanged!', bordersStyle))
             emitter.on('paddingStyleChanged', (paddingStyle) => console.log('WidgetEditorPreview  - paddingStyleChanged!', paddingStyle))
             emitter.on('shadowStyleChanged', (shadowsStyle) => console.log('WidgetEditorPreview  - shadowStyleChanged!', shadowsStyle))
@@ -194,6 +195,7 @@ export default defineComponent({
                         }
                         // SUMMARY ROW  -----------------------------------------------------------------
                         if (this.propWidget.settings.configuration.summaryRows.enabled) {
+                            const summaryStyleString = this.getWidgetStyleByType('summary', true)
                             tempCol.cellRendererSelector = (params) => {
                                 if (params.node.rowPinned && this.propWidget.settings.configuration.summaryRows.enabled) {
                                     return {
@@ -201,26 +203,13 @@ export default defineComponent({
                                         params: {
                                             summaryRows: this.propWidget.settings.configuration.summaryRows.list.map((row) => {
                                                 return row.label
-                                            })
+                                            }),
+                                            styleString: summaryStyleString
                                         }
                                     }
                                 } else {
                                     // rows that are not pinned don't use any cell renderer
                                     return undefined
-                                }
-                            }
-                            class SummaryRowRenderer {
-                                eGui: HTMLDivElement | undefined
-                                init(params) {
-                                    this.eGui = document.createElement('div')
-                                    params.value ? (this.eGui.innerHTML = '<b style="margin-right: 4px;">' + params.summaryRows[params.rowIndex] + '</b>') : ''
-                                    this.eGui.innerHTML += params.value
-                                }
-                                getGui() {
-                                    return this.eGui
-                                }
-                                refresh() {
-                                    return false
                                 }
                             }
                         }
@@ -278,7 +267,7 @@ export default defineComponent({
         getWidgetStyleByType(styleType: string, overrideEnable?: boolean) {
             const styleSettings = this.propWidget.settings.style[styleType]
             if (styleSettings.enabled || overrideEnable) {
-                const styleString = Object.entries(styleSettings.properties)
+                const styleString = Object.entries(styleSettings.properties ?? styleSettings)
                     .map(([k, v]) => `${k}:${v}`)
                     .join(';')
                 return styleString + ';'

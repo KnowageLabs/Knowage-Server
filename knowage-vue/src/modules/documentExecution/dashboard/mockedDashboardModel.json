@@ -402,15 +402,15 @@
                             "enabled": true,
                             "list": [
                                 {
-                                    "label": "Summary row 1"
+                                    "label": "SR 1"
                                 },
                                 {
                                     "aggregation": "SUM",
-                                    "label": "Summary row 2"
+                                    "label": "SR 2"
                                 },
                                 {
                                     "aggregation": "MAX",
-                                    "label": "Summary row 3"
+                                    "label": "SR 3"
                                 }
                             ],
                             "style": {
