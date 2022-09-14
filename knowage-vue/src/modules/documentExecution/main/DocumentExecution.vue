@@ -598,20 +598,29 @@ export default defineComponent({
                 for (let i = 0; i < this.filtersData.filterStatus.length; i++) {
                     const tempParam = this.filtersData.filterStatus[i]
                     if (key === tempParam.urlName || key === tempParam.label) {
-                        tempParam.parameterValue[0].value = this.document.navigationParams[key]
-                        if (this.document.navigationParams[key + '_field_visible_description']) tempParam.parameterValue[0].description = this.document.navigationParams[key + '_field_visible_description']
-                        if (tempParam.selectionType === 'COMBOBOX') this.setCrossNavigationComboParameterDescription(tempParam)
-                        if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
-                            tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
+                        if (tempParam.multivalue) {
+                            tempParam.parameterValue = this.document.navigationParams[key].map((value: string) => {
+                                return { value: value, description: '' }
+                            })
+                            this.setCrossNavigationComboParameterDescription(tempParam)
+                        } else {
+                            tempParam.parameterValue[0].value = this.document.navigationParams[key]
+                            if (this.document.navigationParams[key + '_field_visible_description']) tempParam.parameterValue[0].description = this.document.navigationParams[key + '_field_visible_description']
+                            if (tempParam.selectionType === 'COMBOBOX') this.setCrossNavigationComboParameterDescription(tempParam)
+                            if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
+                                tempParam.parameterValue[0].value = new Date(tempParam.parameterValue[0].value)
+                            }
                         }
                     }
                 }
             })
         },
         setCrossNavigationComboParameterDescription(tempParam: any) {
-            if (tempParam.parameterValue[0]) {
-                const index = tempParam.data.findIndex((option: any) => option.value === tempParam.parameterValue[0].value)
-                if (index !== -1) tempParam.parameterValue[0].description = tempParam.data[index].description
+            for (let i = 0; i < tempParam.parameterValue.length; i++) {
+                if (tempParam.parameterValue[i].value) {
+                    const index = tempParam.data.findIndex((option: any) => option.value === tempParam.parameterValue[i].value)
+                    if (index !== -1) tempParam.parameterValue[i].description = tempParam.data[index].description
+                }
             }
         },
         formatParameterDataOptions(parameter: iParameter, data: any) {
