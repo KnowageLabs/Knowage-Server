@@ -1,6 +1,7 @@
 <template>
-    <div class="widget-renderer">
-        <TableWidget v-if="widget.type === 'table'" :propWidget="widget" style="flex: 1" />
+    <div class="widget-renderer" :style="getWidgetStyleString()">
+        {{ widget.id }}
+        <!-- <TableWidget v-if="widget.type === 'table'" :propWidget="widget" style="flex: 1" /> -->
         <!-- <div class="drag-handle">{{ widget.id }} {{ widget.type }}</div> -->
         <!-- <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
             <div>{{ data }}</div>
@@ -31,9 +32,25 @@ export default defineComponent({
             type: Object
         }
     },
+    created() {
+        this.getWidgetStyleString()
+    },
     methods: {
         click(e) {
             this.$emit('interaction', e, this.widget)
+        },
+        getWidgetStyleByType(styleType: string) {
+            const styleSettings = this.widget.settings.style[styleType]
+            if (styleSettings.enabled) {
+                const styleString = Object.entries(styleSettings.properties)
+                    .map(([k, v]) => `${k}:${v}`)
+                    .join(';')
+                return styleString + ';'
+            } else return ''
+        },
+        getWidgetStyleString() {
+            const styleString = this.getWidgetStyleByType('shadows') + this.getWidgetStyleByType('padding') + this.getWidgetStyleByType('borders')
+            return styleString
         }
     }
 })
