@@ -36,11 +36,10 @@ const getColumnId = (formattedWidget: IWidget, widgetColumnName: string) => {
 
 // SETTINGS !!!
 const getFormattedWidgetSettings = (formattedWidget: IWidget, widget: any) => {
-    const formattedSettings = { sortingColumn: getColumnId(formattedWidget, widget.settings?.sortingColumn), sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(formattedWidget, widget), configuration: getFormattedConfiguration(formattedWidget, widget) as any, interactions: getFormattedInteractions(widget) as any, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as any, tooltips: [] as ITableWidgetTooltipStyle[], visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) as any } as ITableWidgetSettings
+    const formattedSettings = { sortingColumn: getColumnId(formattedWidget, widget.settings?.sortingColumn), sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(formattedWidget, widget), configuration: getFormattedConfiguration(formattedWidget, widget) as any, interactions: getFormattedInteractions(widget) as any, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as any, tooltips: getFormattedTooltips() as ITableWidgetTooltipStyle[], visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) as any } as ITableWidgetSettings
     return formattedSettings
 }
 const getFormattedConditionalStyles = (formattedWidget: IWidget, widget: any) => {
-    console.log("<<<<<<<<<<< getFormattedConditionalStyles: ", widget)
     const formattedStyles = [] as ITableWidgetConditionalStyle[]
     if (widget.settings.rowThresholds?.enabled) {
         widget.settings.rowThresholds.list.forEach((rowThreshold: any) => {
@@ -233,7 +232,20 @@ const getConditionalStyleFromColumn = (formattedWidget: IWidget, tempColumn: any
 const getTooltipFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
     console.log("getTooltipFromColumn - formattedWidget ", formattedWidget)
     console.log("getTooltipFromColumn - tempColumn ", tempColumn)
-
+    if (tempColumn.hasOwnProperty('hideTooltip') || tempColumn.style.hasOwnProperty('tooltip')) {
+        const tempTooltipStyle = {
+            target: [getColumnId(formattedWidget, tempColumn.name)],
+            enabled: tempColumn.hideTooltip ?? false,
+            prefix: tempColumn.style?.tooltip?.prefix ?? '',
+            suffix: tempColumn.style?.tooltip?.suffix ?? '',
+            precision: tempColumn.style?.tooltip?.precision ?? 0,
+            header: {
+                enabled: tempColumn.style?.enableCustomHeaderTooltip ?? false,
+                text: tempColumn.style?.customHeaderTooltip ?? ''
+            }
+        }
+        formattedWidget.settings.tooltips.push(tempTooltipStyle)
+    }
 }
 
 const getVisibilityConditionVariable = (formattedWidget: IWidget, variables: { action: string, variable: string, condition: string, value: string }[], tempVisibiilityCondition: ITableWidgetVisibilityCondition) => {
@@ -334,6 +346,21 @@ const getFormattedStyle = (widget: any) => {
         shadows: getFormattedShadowsStyle(widget),
         summary: getFormattedSummaryStyle(widget)
     }
+}
+
+const getFormattedTooltips = () => {
+    const allTooltip = {
+        target: 'all',
+        enabled: false,
+        prefix: '',
+        suffix: '',
+        precision: '',
+        header: {
+            enabled: false,
+            text: ''
+        }
+    }
+    return [allTooltip]
 }
 
 const getFormattedBorderStyle = (widget: any) => {

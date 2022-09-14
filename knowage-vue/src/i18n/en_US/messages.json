@@ -478,6 +478,9 @@
             },
             "title": "Widget Editor",
             "tooltipTextHint": "This text will overwrite the columns header default tooltip, variables and parameters placeholders ($V{placeholder} and $P{placeholder}) are available.",
+            "tooltips": {
+                "title": "Tooltips"
+            },
             "visibilityConditions": {
                 "always": "Always",
                 "hideColumn": "Hide Column",

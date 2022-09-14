@@ -273,11 +273,11 @@ export interface ITableWidgetSummaryStyle {
 }
 
 export interface ITableWidgetTooltipStyle {
-    target: string[],
+    target: string | string[],
     enabled: true,
     prefix: string,
     suffix: string,
-    precision: string,
+    precision: string
     header: {
         enabled: boolean,
         text: string

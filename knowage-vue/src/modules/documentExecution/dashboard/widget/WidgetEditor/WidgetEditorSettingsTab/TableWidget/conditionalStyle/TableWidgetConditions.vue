@@ -214,7 +214,6 @@ export default defineComponent({
             }
         },
         onColumnRemoved() {
-            console.log('ON COLUMN REMOVED')
             this.loadConditionalStyles()
         }
     }

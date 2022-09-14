@@ -105,6 +105,32 @@
             "value": "variable"
         }
     ],
+    "conditionsToolbarStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-style"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "justify-content"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        },
+        {
+            "type": "icon"
+        }
+    ],
     "customHeadersActionOptions": [
         {
             "label": "dashboard.widgetEditor.headers.hideHeader",
@@ -136,32 +162,6 @@
         },
         {
             "type": "background-color"
-        }
-    ],
-    "conditionsToolbarStyleOptions": [
-        {
-            "type": "font-weight"
-        },
-        {
-            "type": "font-style"
-        },
-        {
-            "type": "font-size"
-        },
-        {
-            "type": "justify-content"
-        },
-        {
-            "type": "font-family"
-        },
-        {
-            "type": "color"
-        },
-        {
-            "type": "background-color"
-        },
-        {
-            "type": "icon"
         }
     ],
     "headersCompareValueType": [
@@ -255,6 +255,12 @@
                 "type": "ShadowsStyle"
             }
         ],
+        "Tooltips": [
+            {
+                "title": "dashboard.widgetEditor.tooltips.title",
+                "type": "Tooltips"
+            }
+        ],
         "Visualization": [
             {
                 "title": "dashboard.widgetEditor.visualizationType.title",
@@ -286,6 +292,11 @@
             "icon": "fas fa-pen",
             "label": "dashboard.widgetEditor.conditionalStyle",
             "value": "ConditionalStyle"
+        },
+        {
+            "icon": "fas fa-pen",
+            "label": "dashboard.widgetEditor.tooltips.title",
+            "value": "Tooltips"
         }
     ],
     "shadowsSizeOptions": [
