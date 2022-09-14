@@ -167,8 +167,8 @@ export default defineComponent({
             }
         },
         onRowsMove(sourceRowIndex: number, targetRowIndex: number, position: string) {
-            const newIndex = position === 'before' ? targetRowIndex : targetRowIndex + 1
-            if (newIndex < 0 || newIndex > this.visibilityConditions.length) return
+            if (sourceRowIndex === targetRowIndex) return
+            const newIndex = sourceRowIndex > targetRowIndex && position === 'after' ? targetRowIndex + 1 : targetRowIndex
             this.visibilityConditions.splice(newIndex, 0, this.visibilityConditions.splice(sourceRowIndex, 1)[0])
             this.visibilityConditionsChanged()
         }

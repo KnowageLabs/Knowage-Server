@@ -27,7 +27,7 @@ export interface ITableWidgetSettings {
     interactions: ITableWidgetInteraction,
     pagination: ITableWidgetPagination,
     style: ITableWidgetStyle,
-    tooltips: ITableWidgetTooltips,
+    tooltips: ITableWidgetTooltipStyle[],
     visualization: ITableWidgetVisualization,
     responsive: ITableWidgetResponsive,
 }
@@ -272,15 +272,15 @@ export interface ITableWidgetSummaryStyle {
     'justify-content': string
 }
 
-export interface ITableWidgetTooltips {
-    "target": string,
-    "enabled": true,
-    "prefix": string,
-    "suffix": string,
-    "precision": string,
-    "header": {
-        "enabled": boolean,
-        "text": string
+export interface ITableWidgetTooltipStyle {
+    target: string | string[],
+    enabled: true,
+    prefix: string,
+    suffix: string,
+    precision: string
+    header: {
+        enabled: boolean,
+        text: string
     }
 }
 

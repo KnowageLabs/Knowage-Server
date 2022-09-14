@@ -1,6 +1,5 @@
 <template>
     <div>
-        {{ conditionalStyles }}
         <div v-for="(conditionalStyle, index) in conditionalStyles" :key="index" class="p-d-flex p-flex-column p-my-2 p-pb-2">
             <div v-show="dropzoneTopVisible[index]" class="form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
             <div class="form-list-item-dropzone" :class="{ 'form-list-item-dropzone-active': dropzoneTopVisible[index] }" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent="displayDropzone('top', index)" @dragleave.prevent="hideDropzone('top', index)"></div>
@@ -107,10 +106,9 @@ export default defineComponent({
     },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemovedFromConditions', () => this.onColumnRemoved())
+            emitter.on('columnRemovedFromConditionalStyles', () => this.onColumnRemoved())
         },
         loadConditionalStyles() {
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> IN LOAD: ', this.widgetModel)
             if (this.widgetModel?.settings?.conditionalStyles) this.conditionalStyles = [...this.widgetModel.settings.conditionalStyles]
         },
         loadParameterValuesMap() {
@@ -125,7 +123,6 @@ export default defineComponent({
             emitter.emit('conditionalStylesChanged', this.conditionalStyles)
         },
         onCompareValueTypeChanged(conditionalStyle: ITableWidgetConditionalStyle) {
-            console.log('onCompareValueTypeChanged: ', conditionalStyle)
             conditionalStyle.condition.value = ''
             switch (conditionalStyle.condition.type) {
                 case 'static':
@@ -142,14 +139,11 @@ export default defineComponent({
             this.conditionalStylesChanged()
         },
         onDriverChanged(conditionalStyle: ITableWidgetConditionalStyle) {
-            console.log('onDriverChanged: ', conditionalStyle)
             const temp = conditionalStyle.condition.parameter
             if (temp) conditionalStyle.condition.value = this.parameterValuesMap[temp]
             this.conditionalStylesChanged()
         },
         onVariableChanged(conditionalStyle: ITableWidgetConditionalStyle) {
-            console.log('onVariableChanged: ', conditionalStyle)
-            console.log('onDriverChanged: ', conditionalStyle)
             const temp = conditionalStyle.condition.variable
             if (temp) conditionalStyle.condition.value = this.variableValuesMap[temp]
             this.conditionalStylesChanged()
@@ -200,8 +194,8 @@ export default defineComponent({
             this.onRowsMove(eventData, index, position)
         },
         onRowsMove(sourceRowIndex: number, targetRowIndex: number, position: string) {
-            const newIndex = position === 'before' ? targetRowIndex : targetRowIndex + 1
-            if (newIndex < 0 || newIndex > this.conditionalStyles.length) return
+            if (sourceRowIndex === targetRowIndex) return
+            const newIndex = sourceRowIndex > targetRowIndex && position === 'after' ? targetRowIndex + 1 : targetRowIndex
             this.conditionalStyles.splice(newIndex, 0, this.conditionalStyles.splice(sourceRowIndex, 1)[0])
             this.conditionalStylesChanged()
         },

@@ -104,6 +104,7 @@
                                 "decript": false,
                                 "fieldType": "ATTRIBUTE",
                                 "group": "d83a2272-8887-4222-8a50-ef5df2cb72fa",
+                                "hideTooltip": true,
                                 "multiValue": false,
                                 "name": "FID",
                                 "personal": false,
@@ -153,12 +154,18 @@
                                 "style": {
                                     "background-color": "rgb(195, 242, 146)",
                                     "color": "rgb(206, 35, 35)",
+                                    "customHeaderTooltip": "Custom Text",
+                                    "enableCustomHeaderTooltip": true,
                                     "font-family": "courier-new",
                                     "font-size": "14px",
                                     "font-style": "normal",
                                     "font-weight": "regular",
                                     "hideFromPdf": true,
-                                    "justify-content": "center"
+                                    "justify-content": "center",
+                                    "tooltip": {
+                                        "prefix": "Prefix",
+                                        "suffix": "Suffix"
+                                    }
                                 },
                                 "subjectId": false,
                                 "type": "java.lang.String"
@@ -222,7 +229,14 @@
                                 "rowSpan": false,
                                 "scale": 0,
                                 "style": {
-                                    "hiddenColumn": true
+                                    "customHeaderTooltip": "Measure Text",
+                                    "enableCustomHeaderTooltip": true,
+                                    "hiddenColumn": true,
+                                    "tooltip": {
+                                        "precision": 2,
+                                        "prefix": "Pre",
+                                        "suffix": "Suff"
+                                    }
                                 },
                                 "subjectId": false,
                                 "type": "java.lang.Integer",
@@ -361,7 +375,7 @@
                                 },
                                 {
                                     "column": "store_id",
-                                    "compareValue": "Variable 1",
+                                    "compareValue": "Variable Static",
                                     "compareValueType": "variable",
                                     "condition": ">="
                                 },
