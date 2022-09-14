@@ -1,5 +1,5 @@
 <template>
-    <ag-grid-vue class="ag-theme-alpine" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" @grid-ready="onGridReady"></ag-grid-vue>
+    <ag-grid-vue class="ag-theme-alpine p-m-2" :style="getWidgetStyleString()" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" @grid-ready="onGridReady"></ag-grid-vue>
 </template>
 
 <script lang="ts">
@@ -317,6 +317,19 @@ export default defineComponent({
                     }
                 }
             } else return false
+        },
+        getWidgetStyleByType(styleType: string) {
+            const styleSettings = this.propWidget.settings.style[styleType]
+            if (styleSettings.enabled) {
+                const styleString = Object.entries(styleSettings.properties)
+                    .map(([k, v]) => `${k}:${v}`)
+                    .join(';')
+                return styleString + ';'
+            } else return ''
+        },
+        getWidgetStyleString() {
+            const styleString = this.getWidgetStyleByType('shadows') + this.getWidgetStyleByType('padding') + this.getWidgetStyleByType('borders')
+            return styleString
         }
     }
 })
