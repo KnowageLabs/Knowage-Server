@@ -106,10 +106,9 @@ export default defineComponent({
     },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemovedFromConditions', () => this.onColumnRemoved())
+            emitter.on('columnRemovedFromConditionalStyles', () => this.onColumnRemoved())
         },
         loadConditionalStyles() {
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> IN LOAD: ', this.widgetModel)
             if (this.widgetModel?.settings?.conditionalStyles) this.conditionalStyles = [...this.widgetModel.settings.conditionalStyles]
         },
         loadParameterValuesMap() {
@@ -124,7 +123,6 @@ export default defineComponent({
             emitter.emit('conditionalStylesChanged', this.conditionalStyles)
         },
         onCompareValueTypeChanged(conditionalStyle: ITableWidgetConditionalStyle) {
-            console.log('onCompareValueTypeChanged: ', conditionalStyle)
             conditionalStyle.condition.value = ''
             switch (conditionalStyle.condition.type) {
                 case 'static':
@@ -141,14 +139,11 @@ export default defineComponent({
             this.conditionalStylesChanged()
         },
         onDriverChanged(conditionalStyle: ITableWidgetConditionalStyle) {
-            console.log('onDriverChanged: ', conditionalStyle)
             const temp = conditionalStyle.condition.parameter
             if (temp) conditionalStyle.condition.value = this.parameterValuesMap[temp]
             this.conditionalStylesChanged()
         },
         onVariableChanged(conditionalStyle: ITableWidgetConditionalStyle) {
-            console.log('onVariableChanged: ', conditionalStyle)
-            console.log('onDriverChanged: ', conditionalStyle)
             const temp = conditionalStyle.condition.variable
             if (temp) conditionalStyle.condition.value = this.variableValuesMap[temp]
             this.conditionalStylesChanged()
@@ -219,6 +214,7 @@ export default defineComponent({
             }
         },
         onColumnRemoved() {
+            console.log('ON COLUMN REMOVED')
             this.loadConditionalStyles()
         }
     }

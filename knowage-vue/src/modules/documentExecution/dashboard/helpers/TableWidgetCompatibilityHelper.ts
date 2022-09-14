@@ -71,11 +71,11 @@ const createConditionFromRowThreshold = (formattedWidget: IWidget, rowThreshold:
             break;
         case 'parameter':
             conditionStyle.condition.value = getParameterValue(rowThreshold.compareValue)
-            conditionStyle.condition.parameter = rowThreshold.parameter
+            conditionStyle.condition.parameter = rowThreshold.compareValue
             break
         case 'variable':
             conditionStyle.condition.value = getVariableValue(rowThreshold.compareValue)
-            conditionStyle.condition.variable = rowThreshold.parameter
+            conditionStyle.condition.variable = rowThreshold.compareValue
     }
 
     if (rowThreshold.style) {

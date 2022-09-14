@@ -361,7 +361,7 @@
                                 },
                                 {
                                     "column": "store_id",
-                                    "compareValue": "Variable 1",
+                                    "compareValue": "Variable Static",
                                     "compareValueType": "variable",
                                     "condition": ">="
                                 },
