@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -36,7 +36,7 @@ const getColumnId = (formattedWidget: IWidget, widgetColumnName: string) => {
 
 // SETTINGS !!!
 const getFormattedWidgetSettings = (formattedWidget: IWidget, widget: any) => {
-    const formattedSettings = { sortingColumn: getColumnId(formattedWidget, widget.settings?.sortingColumn), sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(formattedWidget, widget), configuration: getFormattedConfiguration(formattedWidget, widget) as any, interactions: getFormattedInteractions(widget) as any, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as any, tooltips: getFormattedTooltips(widget) as any, visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) as any } as ITableWidgetSettings
+    const formattedSettings = { sortingColumn: getColumnId(formattedWidget, widget.settings?.sortingColumn), sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(formattedWidget, widget), configuration: getFormattedConfiguration(formattedWidget, widget) as any, interactions: getFormattedInteractions(widget) as any, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as any, tooltips: [] as ITableWidgetTooltipStyle[], visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) as any } as ITableWidgetSettings
     return formattedSettings
 }
 const getFormattedConditionalStyles = (formattedWidget: IWidget, widget: any) => {
@@ -143,6 +143,7 @@ const getSettingsFromWidgetColumns = (formattedWidget: IWidget, widget: any) => 
         getVisibilityConditionsFromColumn(formattedWidget, tempColumn)
         getStyleFromColumn(formattedWidget, tempColumn)
         getConditionalStyleFromColumn(formattedWidget, tempColumn)
+        getTooltipFromColumn(formattedWidget, tempColumn)
     }
 
 }
@@ -227,6 +228,12 @@ const getConditionalStyleFromColumn = (formattedWidget: IWidget, tempColumn: any
         } as ITableWidgetConditionalStyle
         formattedWidget.settings.conditionalStyles.push(tempConditionalStyle)
     })
+}
+
+const getTooltipFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
+    console.log("getTooltipFromColumn - formattedWidget ", formattedWidget)
+    console.log("getTooltipFromColumn - tempColumn ", tempColumn)
+
 }
 
 const getVisibilityConditionVariable = (formattedWidget: IWidget, variables: { action: string, variable: string, condition: string, value: string }[], tempVisibiilityCondition: ITableWidgetVisibilityCondition) => {
@@ -503,12 +510,6 @@ const convertColorFromHSLtoRGB = (hslColor: string | null) => {
         l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
     const tempResult = [Math.round(255 * f(0)), Math.round(255 * f(8)), Math.round(255 * f(4))]
     return 'rgb(' + tempResult[0] + ', ' + tempResult[1] + ', ' + tempResult[2] + ')'
-}
-
-
-// TODO
-const getFormattedTooltips = (widget: any) => {
-    return []
 }
 
 

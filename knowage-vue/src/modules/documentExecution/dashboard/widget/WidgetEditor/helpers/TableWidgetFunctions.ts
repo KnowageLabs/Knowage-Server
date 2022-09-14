@@ -11,16 +11,7 @@ export const createNewWidgetColumn = (eventData: any) => {
         alias: eventData.alias,
         type: eventData.type,
         fieldType: eventData.fieldType,
-        filter: {},
-        style: {
-            hiddenColumn: false,
-            'white-space': 'nowrap',
-            tooltip: { prefix: '', suffix: '', precision: 0 },
-            enableCustomHeaderTooltip: false,
-            customHeaderTooltip: ''
-        }, // see about this
-        enableTooltip: false, // see about this
-        visType: '' // see about this
+        filter: {}
     } as IWidgetColumn
     if (tempColumn.fieldType === 'MEASURE') tempColumn.aggregation = 'SUM'
     return tempColumn
