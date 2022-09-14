@@ -17,7 +17,11 @@ export default defineComponent({
             modelValue: [] as any[]
         }
     },
-    watch: {},
+    watch: {
+        value() {
+            this.loadValue()
+        }
+    },
     created() {
         this.loadValue()
     },

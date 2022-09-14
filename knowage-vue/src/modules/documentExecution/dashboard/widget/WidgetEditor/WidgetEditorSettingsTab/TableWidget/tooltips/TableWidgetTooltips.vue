@@ -1,6 +1,5 @@
 <template>
     <div>
-        {{ tooltips }}
         <div v-for="(tooltip, index) in tooltips" :key="index" class="p-d-flex p-flex-column p-my-2 p-pb-2">
             <div v-show="index !== 0 && dropzoneTopVisible[index]" class="form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
             <div
@@ -15,6 +14,9 @@
 
             <div class="p-d-flex p-flex-column" :draggable="true" @dragstart.stop="onDragStart($event, index)">
                 <div class="p-d-flex p-flex-row p-ai-center">
+                    <div v-if="index !== 0" class="p-d-flex p-flex-column p-jc-center p-mr-4">
+                        <i class="pi pi-th-large kn-cursor-pointer"></i>
+                    </div>
                     <div class="p-d-flex p-flex-column kn-flex">
                         <label class="kn-material-input-label">{{ $t('common.columns') }}</label>
                         <Dropdown v-if="index === 0" class="kn-material-input" v-model="tooltip.target" :options="descriptor.allColumnOption" optionValue="value" optionLabel="label" :disabled="true"> </Dropdown>
@@ -85,7 +87,7 @@ import InputNumber from 'primevue/inputnumber'
 import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
 
 export default defineComponent({
-    name: 'table-widget-conditions',
+    name: 'table-widget-tooltips',
     components: { Dropdown, InputSwitch, InputNumber, WidgetEditorColumnsMultiselect },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, drivers: { type: Array }, variables: { type: Array } },
     data() {
@@ -184,6 +186,12 @@ export default defineComponent({
             })
         },
         removeTooltip(index: number) {
+            ;(this.tooltips[index].target as string[]).forEach((target: string) =>
+                this.availableColumnOptions.push({
+                    id: target,
+                    alias: this.widgetColumnsAliasMap[target]
+                })
+            )
             this.tooltips.splice(index, 1)
             this.tooltipsChanged()
         },
@@ -199,8 +207,12 @@ export default defineComponent({
             this.onRowsMove(eventData, index, position)
         },
         onRowsMove(sourceRowIndex: number, targetRowIndex: number, position: string) {
+            console.log('SORUCE ROW INDEX: ', sourceRowIndex)
+            console.log('TARGET ROW INDEX: ', targetRowIndex)
+            console.log('position: ', position)
             if (sourceRowIndex === targetRowIndex) return
             const newIndex = sourceRowIndex > targetRowIndex && position === 'after' ? targetRowIndex + 1 : targetRowIndex
+            console.log('newIndex: ', newIndex)
             this.tooltips.splice(newIndex, 0, this.tooltips.splice(sourceRowIndex, 1)[0])
             this.tooltipsChanged()
         },
@@ -219,6 +231,7 @@ export default defineComponent({
             }
         },
         onColumnRemoved() {
+            this.loadColumnOptions()
             this.loadTooltips()
         }
     }

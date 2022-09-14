@@ -146,6 +146,7 @@ export const removeColumnFromModel = (widgetModel: IWidget, column: IWidgetColum
     removeColumnFromVisibilityConditions(widgetModel, column)
     removeColumnFromColumnStyle(widgetModel, column)
     removeColumnFromConditionalStyles(widgetModel, column)
+    removeColumnFromTooltips(widgetModel, column)
 }
 
 const removeColumnFromRows = (widgetModel: IWidget, column: IWidgetColumn) => {
@@ -244,6 +245,22 @@ const removeColumnFromConditionalStyles = (widgetModel: IWidget, column: IWidget
         }
     }
     if (removed) emitter.emit('columnRemovedFromConditionalStyles')
+}
+
+const removeColumnFromTooltips = (widgetModel: IWidget, column: IWidgetColumn) => {
+    let removed = false
+    const tooltips = widgetModel.settings.tooltips
+    for (let i = tooltips.length - 1; i >= 1; i--) {
+        for (let j = tooltips[i].target.length; j >= 0; j--) {
+            const tempTarget = tooltips[i].target[j]
+            if (column.id === tempTarget) {
+                tooltips[i].target.splice(j, 1)
+                removed = true
+            }
+        }
+        if (tooltips[i].target.length === 0) tooltips.splice(i, 1)
+    }
+    if (removed) emitter.emit('columnRemovedFromTooltips')
 }
 
 export const removeColumnGroupFromModel = (widgetModel: IWidget, columnGroup: ITableWidgetColumnGroup) => {
