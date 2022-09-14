@@ -1,6 +1,5 @@
 <template>
     <div>
-        {{ conditionalStyles }}
         <div v-for="(conditionalStyle, index) in conditionalStyles" :key="index" class="p-d-flex p-flex-column p-my-2 p-pb-2">
             <div v-show="dropzoneTopVisible[index]" class="form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
             <div class="form-list-item-dropzone" :class="{ 'form-list-item-dropzone-active': dropzoneTopVisible[index] }" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent="displayDropzone('top', index)" @dragleave.prevent="hideDropzone('top', index)"></div>
@@ -200,8 +199,8 @@ export default defineComponent({
             this.onRowsMove(eventData, index, position)
         },
         onRowsMove(sourceRowIndex: number, targetRowIndex: number, position: string) {
-            const newIndex = position === 'before' ? targetRowIndex : targetRowIndex + 1
-            if (newIndex < 0 || newIndex > this.conditionalStyles.length) return
+            if (sourceRowIndex === targetRowIndex) return
+            const newIndex = sourceRowIndex > targetRowIndex && position === 'after' ? targetRowIndex + 1 : targetRowIndex
             this.conditionalStyles.splice(newIndex, 0, this.conditionalStyles.splice(sourceRowIndex, 1)[0])
             this.conditionalStylesChanged()
         },

@@ -111,6 +111,7 @@ export default defineComponent({
                     this.active = !this.active
                     this.model['font-style'] = this.active ? 'italic' : ''
                     this.$emit('change')
+                    break
                 case 'icon':
                     this.$emit('openIconPicker')
             }
