@@ -48,7 +48,7 @@ export default defineComponent({
             return this.selectionTypes.filter((type) => type.VALUE_CD != 'SLIDER')
         },
         isDateType(): any {
-            return this.driver.type.toLowerCase() === 'date'
+            return this.driver.type?.toLowerCase() === 'date'
         }
     },
     data() {
