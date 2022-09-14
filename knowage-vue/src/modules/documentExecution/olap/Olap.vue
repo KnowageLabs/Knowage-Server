@@ -652,14 +652,10 @@ export default defineComponent({
             this.loading = false
         },
         async executeCrossnavigationFromCell(crossNavigationString: string | null) {
-            const tempString = crossNavigationString?.substring(crossNavigationString.indexOf('{') + 1, crossNavigationString.indexOf('}'))
+            const tempString = crossNavigationString?.substring(crossNavigationString.indexOf('(') + 1, crossNavigationString.indexOf(')'))
             const tempArray = tempString?.split(',')
 
-            const object = {}
-            tempArray?.forEach((el: string) => {
-                object[el.substring(0, el.indexOf(':'))] = el.substring(el.indexOf(':') + 2, el.length - 1)
-            })
-
+            const object = tempString ? JSON.parse(tempString) : {}
             this.$emit('executeCrossNavigation', object)
         },
         enterSelectMode(mode: string) {
