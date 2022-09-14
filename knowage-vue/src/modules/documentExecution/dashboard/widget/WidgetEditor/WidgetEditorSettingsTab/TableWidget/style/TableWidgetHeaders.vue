@@ -2,7 +2,7 @@
     <div v-if="headersStyleModel">
         <div id="height-input-container" class="p-d-flex p-flex-column kn-flex">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.height') }}</label>
-            <InputNumber class="kn-material-input p-inputtext-sm" v-model="headersStyleModel.height" @input="headersStyleChanged" />
+            <InputNumber class="kn-material-input p-inputtext-sm" v-model="headersStyleModel.height" @blur="headersStyleChanged" />
         </div>
 
         <div class="p-my-4">
@@ -39,7 +39,9 @@ export default defineComponent({
             if (this.widgetModel?.settings?.style?.headers) this.headersStyleModel = this.widgetModel.settings.style.headers
         },
         headersStyleChanged() {
-            emitter.emit('headersStyleChanged', this.headersStyleModel)
+            setTimeout(() => {
+                emitter.emit('headersStyleChanged', this.headersStyleModel)
+            }, 0)
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
             if (!this.headersStyleModel) return

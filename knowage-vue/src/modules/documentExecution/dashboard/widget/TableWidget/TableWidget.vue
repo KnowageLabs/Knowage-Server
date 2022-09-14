@@ -1,5 +1,5 @@
 <template>
-    <ag-grid-vue class="ag-theme-alpine p-m-2" :style="getWidgetStyleString()" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" @grid-ready="onGridReady"></ag-grid-vue>
+    <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2" :style="getWidgetStyleString()" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" @grid-ready="onGridReady"></ag-grid-vue>
 </template>
 
 <script lang="ts">
@@ -13,10 +13,11 @@ import descriptor from '../../dataset/DatasetEditorDescriptor.json'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
+import HeaderRenderer from './TableWidgetHeaderRenderer.vue'
 
 export default defineComponent({
     name: 'table-widget',
-    components: { AgGridVue },
+    components: { AgGridVue, HeaderRenderer },
     props: {
         propWidget: {
             required: true,
@@ -62,7 +63,7 @@ export default defineComponent({
             emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
             emitter.on('visualizationTypeChanged', (visuelizationTypes) => console.log('WidgetEditorPreview  - visualizationTypeChanged!', visuelizationTypes))
             emitter.on('visibilityConditionsChanged', (visibilityConditions) => console.log('WidgetEditorPreview  - visibilityConditionsChanged!', visibilityConditions))
-            emitter.on('headersStyleChanged', (headersStyle) => console.log('WidgetEditorPreview  - headersStyleChanged!', headersStyle))
+            emitter.on('headersStyleChanged', (headersStyle) => this.changeHeaderHeight(headersStyle))
             emitter.on('columnStylesChanged', (columnStyles) => console.log('WidgetEditorPreview  - columnStylesChanged!', columnStyles))
             emitter.on('columnGroupStylesChanged', (columnGroupStyles) => console.log('WidgetEditorPreview  - columnGroupStylesChanged!', columnGroupStyles))
             emitter.on('rowsStyleChanged', (rowsStyle) => console.log('WidgetEditorPreview  - rowsStyleChanged!', rowsStyle))
@@ -80,6 +81,9 @@ export default defineComponent({
                 rowSelection: 'single',
                 suppressRowTransform: true,
                 rowHeight: 25,
+                components: {
+                    agColumnHeader: HeaderRenderer
+                },
 
                 // EVENTS
                 onRowClicked: (event, params) => console.log('A row was clicked', event),
@@ -98,15 +102,8 @@ export default defineComponent({
             this.createDatatableColumns()
         },
         createDatatableColumns() {
-            // const datatableColumns = this.getDatatableColumns()
-            // this.setSorting()
-            // this.setIndexColumn(this.propWidget.settings.configuration.rows.indexColumn, datatableColumns)
-            // this.setHeaders(this.propWidget.settings.configuration.headers, datatableColumns)
-            // datatableColumns[1].children = [{ field: 'athlete' }, { field: 'age' }, { field: 'country' }]
-            // this.gridApi.setColumnDefs(datatableColumns)
-
-            const datatableColumns = this.newGetColumns(this.mock.mockResponse.metaData.fields)
-            this.setHeaders(this.propWidget.settings.configuration.headers, datatableColumns)
+            const datatableColumns = this.getTableColumns(this.mock.mockResponse.metaData.fields)
+            this.toggleHeaders(this.propWidget.settings.configuration.headers)
             this.gridApi.setColumnDefs(datatableColumns)
 
             const updateData = (data) => {
@@ -118,65 +115,16 @@ export default defineComponent({
             }
             updateData(this.datasetRecordsRows)
         },
-
-        getDatatableColumns() {
-            const columns = this.propWidget.columns.map((column, index) => {
-                return {
-                    colId: column.id,
-                    field: `column_${index + 1}`,
-                    headerName: column.alias,
-                    cellRendererSelector: (params) => {
-                        if (params.node.rowPinned && this.propWidget.settings.configuration.summaryRows.enabled) {
-                            return {
-                                component: SummaryRowRenderer,
-                                params: {
-                                    summaryRows: this.propWidget.settings.configuration.summaryRows.list.map((row) => {
-                                        return row.label
-                                    })
-                                }
-                            }
-                        } else {
-                            // rows that are not pinned don't use any cell renderer
-                            return undefined
-                        }
-                    }
-                }
-            })
-            class SummaryRowRenderer {
-                eGui: HTMLDivElement | undefined
-                init(params) {
-                    this.eGui = document.createElement('div')
-                    params.value ? (this.eGui.innerHTML = '<b style="margin-right: 4px;">' + params.summaryRows[params.rowIndex] + '</b>') : ''
-                    this.eGui.innerHTML += params.value
-                }
-                getGui() {
-                    return this.eGui
-                }
-                refresh() {
-                    return false
-                }
-            }
-
-            return columns
-        },
-        setSorting() {
-            if (this.propWidget.settings.sortingColumn && this.propWidget.settings.sortingOrder) {
-                this.sortColumn({ sortingColumn: this.propWidget.settings.sortingColumn, sortingOrder: this.propWidget.settings.sortingOrder })
-            }
-        },
         sortColumn(sorting) {
             this.columnApi.applyColumnState({
                 state: [{ colId: sorting.sortingColumn, sort: sorting.sortingOrder.toLowerCase() }],
                 defaultState: { sort: null }
             })
         },
-        setIndexColumn(showIndexColumn, datatableColumns) {
-            showIndexColumn ? datatableColumns.unshift({ colId: 'indexColumn', valueGetter: `node.rowIndex + 1`, headerName: '#', pinned: 'left', width: 50, sortable: false, filter: false }) : ''
+        toggleHeaders(headersConfiguration) {
+            headersConfiguration.enabled ? this.gridApi.setHeaderHeight(this.propWidget.settings.style.headers.height) : this.gridApi.setHeaderHeight(0)
         },
-        setHeaders(headersConfiguration, datatableColumns) {
-            headersConfiguration.enabled ? this.gridApi.setHeaderHeight(25) : this.gridApi.setHeaderHeight(0)
-        },
-        newGetColumns(responseFields) {
+        getTableColumns(responseFields) {
             var columns = [] as any
             var columnGroups = {}
             this.columnsNameArray = []
@@ -196,7 +144,13 @@ export default defineComponent({
 
                     if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && thisColumn.columnName.toLowerCase() === responseFields[responseField].header) || thisColumn.columnName.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
                         this.columnsNameArray.push(responseFields[responseField].name)
-                        var tempCol = { colId: this.propWidget.columns[datasetColumn].id, headerName: this.propWidget.columns[datasetColumn].alias, field: responseFields[responseField].name, measure: this.propWidget.columns[datasetColumn].fieldType } as any
+                        var tempCol = {
+                            colId: this.propWidget.columns[datasetColumn].id,
+                            headerName: this.propWidget.columns[datasetColumn].alias,
+                            field: responseFields[responseField].name,
+                            measure: this.propWidget.columns[datasetColumn].fieldType,
+                            headerComponentParams: { styleString: this.getWidgetStyleByType('headers', true) }
+                        } as any
 
                         if (this.propWidget.columns[datasetColumn].style && this.propWidget.columns[datasetColumn].style.enableCustomHeaderTooltip) {
                             // tempCol.headerTooltip = replacePlaceholders(this.propWidget.columns[datasetColumn].style.customHeaderTooltip, null, true)
@@ -270,6 +224,7 @@ export default defineComponent({
                             }
                         }
 
+                        // HEADERS CONFIGURATION  -----------------------------------------------------------------
                         var headersConfiguration = this.propWidget.settings.configuration.headers
                         if (headersConfiguration.enabled && headersConfiguration.custom.enabled) {
                             headersConfiguration.custom.rules.forEach((rule) => {
@@ -287,6 +242,7 @@ export default defineComponent({
                                 })
                             })
                         }
+                        headersConfiguration.test = 'TEEEEEEEEEEEEEEEEEEEEEEEST'
 
                         // COLUMN GROUPING -----------------------------------------------------------------
                         var group = this.getColumnGroup(this.propWidget.columns[datasetColumn])
@@ -318,9 +274,9 @@ export default defineComponent({
                 }
             } else return false
         },
-        getWidgetStyleByType(styleType: string) {
+        getWidgetStyleByType(styleType: string, overrideEnable?: boolean) {
             const styleSettings = this.propWidget.settings.style[styleType]
-            if (styleSettings.enabled) {
+            if (styleSettings.enabled || overrideEnable) {
                 const styleString = Object.entries(styleSettings.properties)
                     .map(([k, v]) => `${k}:${v}`)
                     .join(';')
@@ -330,6 +286,10 @@ export default defineComponent({
         getWidgetStyleString() {
             const styleString = this.getWidgetStyleByType('shadows') + this.getWidgetStyleByType('padding') + this.getWidgetStyleByType('borders')
             return styleString
+        },
+        changeHeaderHeight(headersStyle) {
+            console.log('change hewight - ', headersStyle)
+            this.propWidget.settings.configuration.headers.enabled ? this.gridApi.setHeaderHeight(headersStyle.height) : ''
         }
     }
 })

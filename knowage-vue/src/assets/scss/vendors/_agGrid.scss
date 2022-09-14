@@ -1,0 +1,14 @@
+.kn-table-widget-grid {
+    .ag-header-cell-comp-wrapper {
+        height: 100%;
+        display: flex;
+    }
+    .ag-header-cell {
+        padding: 0 !important;
+    }
+    .custom-header-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+}
