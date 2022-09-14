@@ -44,7 +44,8 @@ export default defineComponent({
             color: null as { r: number; g: number; b: number } | null,
             newColor: 'rgb(255, 255, 255)',
             colorPickerVisible: false,
-            iconPickerDialogVisible: false
+            iconPickerDialogVisible: false,
+            colorPickTimer: null as any
         }
     },
     computed: {
@@ -93,10 +94,16 @@ export default defineComponent({
             return this.option.type && descriptor.tooltips[this.option.type] ? this.$t(descriptor.tooltips[this.option.type]) : ''
         },
         onColorPickerChange(event: any) {
-            if (!event.value || !this.model) return
-            this.newColor = `rgb(${event.value.r}, ${event.value.g}, ${event.value.b})`
-            this.option.type === 'color' ? (this.model.color = this.newColor) : (this.model['background-color'] = this.newColor)
-            this.$emit('change')
+            if (this.colorPickTimer) {
+                clearTimeout(this.colorPickTimer)
+                this.colorPickTimer = null
+            }
+            this.colorPickTimer = setTimeout(() => {
+                if (!event.value || !this.model) return
+                this.newColor = `rgb(${event.value.r}, ${event.value.g}, ${event.value.b})`
+                this.option.type === 'color' ? (this.model.color = this.newColor) : (this.model['background-color'] = this.newColor)
+                this.$emit('change')
+            }, 200)
         },
         onIconClicked() {
             if (!this.model || this.disabled) return
@@ -104,7 +111,7 @@ export default defineComponent({
             switch (this.option.type) {
                 case 'font-weight':
                     this.active = !this.active
-                    this.model['font-weight'] = this.active ? 'bold' : ''
+                    this.model['font-weight'] = this.active ? 'bold' : 'normal'
                     this.$emit('change')
                     break
                 case 'font-style':

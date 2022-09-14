@@ -63,7 +63,7 @@ export default defineComponent({
             emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
             emitter.on('visualizationTypeChanged', (visuelizationTypes) => console.log('WidgetEditorPreview  - visualizationTypeChanged!', visuelizationTypes))
             emitter.on('visibilityConditionsChanged', (visibilityConditions) => console.log('WidgetEditorPreview  - visibilityConditionsChanged!', visibilityConditions))
-            emitter.on('headersStyleChanged', (headersStyle) => this.changeHeaderHeight(headersStyle))
+            emitter.on('headersStyleChanged', () => this.createDatatableColumns())
             emitter.on('columnStylesChanged', (columnStyles) => console.log('WidgetEditorPreview  - columnStylesChanged!', columnStyles))
             emitter.on('columnGroupStylesChanged', (columnGroupStyles) => console.log('WidgetEditorPreview  - columnGroupStylesChanged!', columnGroupStyles))
             emitter.on('rowsStyleChanged', (rowsStyle) => console.log('WidgetEditorPreview  - rowsStyleChanged!', rowsStyle))
