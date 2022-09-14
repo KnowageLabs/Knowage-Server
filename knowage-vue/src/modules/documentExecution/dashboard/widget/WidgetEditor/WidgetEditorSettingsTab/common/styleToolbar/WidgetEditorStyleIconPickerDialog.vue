@@ -15,8 +15,8 @@
 
             <label class="kn-material-input-label p-my-3"> {{ $t('dashboard.widgetEditor.fontawesome') }}</label>
             <div class="widget-editor-icon-picker-icons-container">
-                <div v-for="(icon, index) in filteredIcons" :key="index" :class="{ 'widget-editor-selected-icon-container': selectedIcon?.value === icon.value }" class="widget-editor-icon-container kn-cursor-pointer" @click.stop="setSelectedIcon(icon)">
-                    <i :class="'fas fa-' + icon.name"></i>
+                <div v-for="(icon, index) in filteredIcons" :key="index" :class="{ 'widget-editor-selected-icon-container': selectedIcon?.className === icon.className }" class="widget-editor-icon-container kn-cursor-pointer" @click.stop="setSelectedIcon(icon)">
+                    <i :class="icon.className"></i>
                 </div>
             </div>
         </div>
@@ -33,7 +33,6 @@ import { defineComponent, PropType } from 'vue'
 import { IIcon, IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
 import Dialog from 'primevue/dialog'
 import descriptor from './WidgetEditorStyleToolbarDescriptor.json'
-import iconsList from '@/modules/managers/menuManagement/IconPicker/icons'
 
 export default defineComponent({
     name: 'widget-editor-icon-picker-dialog',
@@ -55,14 +54,12 @@ export default defineComponent({
     },
     methods: {
         loadIcons() {
-            this.icons = iconsList
+            this.icons = descriptor.iconsList
             this.filteredIcons = this.icons ? [...this.icons] : []
-            console.log('LOAD ICONS: ', this.icons)
         },
         getSelectedIcon() {
-            console.log('getSelectedIcon', this.propModel)
             if (!this.propModel || !this.propModel.icon) return
-            const index = this.icons.findIndex((icon: IIcon) => icon.value === this.propModel?.icon)
+            const index = this.icons.findIndex((icon: IIcon) => icon.className === this.propModel?.icon)
             if (index !== -1) this.selectedIcon = { ...this.icons[index] }
         },
         setSelectedIcon(icon: IIcon) {
@@ -82,7 +79,7 @@ export default defineComponent({
                     this.filteredIcons = [...this.icons] as IIcon[]
                 } else {
                     this.filteredIcons = this.filteredIcons.filter((icon: IIcon) => {
-                        return icon.name?.toLowerCase().includes(this.searchWord.toLowerCase())
+                        return icon.label?.toLowerCase().includes(this.searchWord.toLowerCase())
                     })
                 }
             }, 250)
