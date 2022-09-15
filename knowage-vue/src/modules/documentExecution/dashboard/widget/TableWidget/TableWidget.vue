@@ -58,9 +58,9 @@ export default defineComponent({
             emitter.on('columnRemoved', () => this.createDatatableColumns())
             emitter.on('collumnUpdated', () => this.createDatatableColumns())
             emitter.on('columnsReordered', () => this.createDatatableColumns())
-            emitter.on('indexColumnChanged', (rows) => this.createDatatableColumns())
-            emitter.on('rowSpanChanged', (rows) => this.createDatatableColumns())
-            emitter.on('summaryRowsChanged', (rows) => this.createDatatableColumns()) //TODO: Servis nam treba za ovo
+            emitter.on('indexColumnChanged', () => this.createDatatableColumns())
+            emitter.on('rowSpanChanged', () => this.createDatatableColumns())
+            emitter.on('summaryRowsChanged', () => this.createDatatableColumns()) //TODO: Servis nam treba za ovo
             emitter.on('headersConfigurationChanged', () => this.createDatatableColumns()) // TODO: Trenutno se gleda svaka promena u header config, mozda staviti event emit samo na promene koje trebaju.
             emitter.on('columnGroupsConfigurationChanged', () => this.createDatatableColumns())
             emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
@@ -68,14 +68,14 @@ export default defineComponent({
             emitter.on('visibilityConditionsChanged', (visibilityConditions) => console.log('WidgetEditorPreview  - visibilityConditionsChanged!', visibilityConditions))
             emitter.on('headersStyleChanged', () => this.createDatatableColumns())
             emitter.on('columnStylesChanged', (columnStyles) => console.log('WidgetEditorPreview  - columnStylesChanged!', columnStyles))
-            emitter.on('columnGroupStylesChanged', (columnGroupStyles) => this.createDatatableColumns())
-            emitter.on('rowsStyleChanged', (rowsStyle) => console.log('WidgetEditorPreview  - rowsStyleChanged!', rowsStyle))
+            emitter.on('columnGroupStylesChanged', () => this.createDatatableColumns())
+            emitter.on('rowsStyleChanged', () => this.createDatatableColumns())
             emitter.on('summaryStyleChanged', () => this.createDatatableColumns())
-            emitter.on('bordersStyleChanged', (bordersStyle) => console.log('WidgetEditorPreview  - bordersStyleChanged!', bordersStyle))
-            emitter.on('paddingStyleChanged', (paddingStyle) => console.log('WidgetEditorPreview  - paddingStyleChanged!', paddingStyle))
-            emitter.on('shadowStyleChanged', (shadowsStyle) => console.log('WidgetEditorPreview  - shadowStyleChanged!', shadowsStyle))
+            // emitter.on('bordersStyleChanged', (bordersStyle) => console.log('WidgetEditorPreview  - bordersStyleChanged!', bordersStyle))
+            // emitter.on('paddingStyleChanged', (paddingStyle) => console.log('WidgetEditorPreview  - paddingStyleChanged!', paddingStyle))
+            // emitter.on('shadowStyleChanged', (shadowsStyle) => console.log('WidgetEditorPreview  - shadowStyleChanged!', shadowsStyle))
             emitter.on('conditionalStylesChanged', (conditionalStyles) => console.log('WidgetEditorPreview  - conditionalStylesChanged!', conditionalStyles))
-            emitter.on('tooltipsChanged', (tooltips) => this.createDatatableColumns())
+            emitter.on('tooltipsChanged', () => this.createDatatableColumns())
             emitter.on('selectionChanged', (selectionModel) => console.log('WidgetEditorPreview  - selectionChanged!', selectionModel))
         },
         setupDatatableOptions() {
@@ -85,7 +85,7 @@ export default defineComponent({
                 pagination: false,
                 rowSelection: 'single',
                 suppressRowTransform: true,
-                rowHeight: 25
+                rowHeight: 25,
 
                 // EVENTS
                 // onRowClicked: (event, params) => console.log('A row was clicked', event),
@@ -95,6 +95,7 @@ export default defineComponent({
 
                 // CALLBACKS
                 // getRowHeight: (params) => 25
+                getRowStyle: this.getRowStyle
             }
         },
         onGridReady(params) {
@@ -135,7 +136,7 @@ export default defineComponent({
             var dataset = { type: 'SbiFileDataSet' }
 
             if (this.propWidget.settings.configuration.rows.indexColumn) {
-                columns.push({ colId: 'indexColumn', valueGetter: `node.rowIndex + 1`, headerName: '', pinned: 'left', width: 55, sortable: false, filter: false })
+                columns.push({ colId: 'indexColumn', valueGetter: `node.rowIndex + 1`, headerName: '', pinned: 'left', width: 55, sortable: false, filter: false, headerComponent: HeaderRenderer, headerComponentParams: { styleString: this.getWidgetStyleByType('headers', true) } })
             }
             // c = datasetColumn
             // f = responseField, fields = responseFields
@@ -193,6 +194,7 @@ export default defineComponent({
                                     return tempRows[params.rowIndex].span > 1
                                 }
                             }
+                            tempCol.cellStyle = this.getRowStyle
                         }
                         // SUMMARY ROW  -----------------------------------------------------------------
                         if (this.propWidget.settings.configuration.summaryRows.enabled) {
@@ -319,13 +321,25 @@ export default defineComponent({
             })
 
             return columnGroupStyleString
+        },
+        getRowStyle(params) {
+            console.log('params')
+            var rowStyles = this.propWidget.settings.style.rows
+
+            if (rowStyles.alternatedRows && rowStyles.alternatedRows.enabled) {
+                if (rowStyles.alternatedRows.oddBackgroundColor && params.node.rowIndex % 2 === 0) {
+                    return { background: rowStyles.alternatedRows.oddBackgroundColor }
+                }
+                if (rowStyles.alternatedRows.evenBackgroundColor && params.node.rowIndex % 2 != 0) {
+                    return { background: rowStyles.alternatedRows.evenBackgroundColor }
+                }
+            }
         }
     }
 })
 </script>
 <style lang="scss">
 .cell-span {
-    background: white;
     border-left: 1px solid lightgrey !important;
     border-right: 1px solid lightgrey !important;
     border-bottom: 1px solid lightgrey !important;
