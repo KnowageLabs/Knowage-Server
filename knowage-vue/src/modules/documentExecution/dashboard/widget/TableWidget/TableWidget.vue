@@ -1,5 +1,5 @@
 <template>
-    <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2" :style="getWidgetStyleString()" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" @grid-ready="onGridReady"></ag-grid-vue>
+    <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2" :style="getWidgetStyleString()" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" :tooltipShowDelay="100" :tooltipMouseTrack="true" @grid-ready="onGridReady"></ag-grid-vue>
 </template>
 
 <script lang="ts">
@@ -16,10 +16,11 @@ import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import HeaderRenderer from './HeaderRenderer.vue'
 import SummaryRowRenderer from './SummaryRowRenderer.vue'
 import HeaderGroupRenderer from './HeaderGroupRenderer.vue'
+import TooltipRenderer from './TooltipRenderer.vue'
 
 export default defineComponent({
     name: 'table-widget',
-    components: { AgGridVue, HeaderRenderer, SummaryRowRenderer, HeaderGroupRenderer },
+    components: { AgGridVue, HeaderRenderer, SummaryRowRenderer, HeaderGroupRenderer, TooltipRenderer },
     props: {
         propWidget: {
             required: true,
@@ -74,7 +75,7 @@ export default defineComponent({
             emitter.on('paddingStyleChanged', (paddingStyle) => console.log('WidgetEditorPreview  - paddingStyleChanged!', paddingStyle))
             emitter.on('shadowStyleChanged', (shadowsStyle) => console.log('WidgetEditorPreview  - shadowStyleChanged!', shadowsStyle))
             emitter.on('conditionalStylesChanged', (conditionalStyles) => console.log('WidgetEditorPreview  - conditionalStylesChanged!', conditionalStyles))
-            emitter.on('tooltipsChanged', (tooltips) => console.log('WidgetEditorPreview  - tooltipsChanged!', tooltips))
+            emitter.on('tooltipsChanged', (tooltips) => this.createDatatableColumns())
             emitter.on('selectionChanged', (selectionModel) => console.log('WidgetEditorPreview  - selectionChanged!', selectionModel))
         },
         setupDatatableOptions() {
@@ -87,13 +88,13 @@ export default defineComponent({
                 rowHeight: 25,
                 components: {
                     agColumnHeader: HeaderRenderer
-                },
+                }
 
                 // EVENTS
-                onRowClicked: (event, params) => console.log('A row was clicked', event),
-                onCellClicked: (event, params) => console.log('A cell was clicked', event),
-                onColumnResized: (event) => console.log('A column was resized'),
-                onGridReady: (event) => console.log('The grid is now ready')
+                // onRowClicked: (event, params) => console.log('A row was clicked', event),
+                // onCellClicked: (event, params) => console.log('A cell was clicked', event),
+                // onColumnResized: (event) => console.log('A column was resized'),
+                // onGridReady: (event) => console.log('The grid is now ready')
 
                 // CALLBACKS
                 // getRowHeight: (params) => 25
@@ -235,6 +236,18 @@ export default defineComponent({
                             })
                         }
 
+                        // TOOLTIP CONFIGURATION  -----------------------------------------------------------------
+                        var tooltipConfig = this.getColumnTooltipConfig(tempCol.colId)
+                        if (tooltipConfig !== null) {
+                            tempCol.tooltipComponent = TooltipRenderer
+                            tempCol.tooltipField = tempCol.field
+                            tempCol.headerTooltip = tooltipConfig.header.enabled ? tooltipConfig.header.text : null
+
+                            tempCol.tooltipComponentParams = { tooltipConfig: tooltipConfig }
+                        } else {
+                            tempCol.headerTooltip = null
+                        }
+
                         // COLUMN GROUPING -----------------------------------------------------------------
                         var group = this.getColumnGroup(this.propWidget.columns[datasetColumn])
                         if (group) {
@@ -279,6 +292,16 @@ export default defineComponent({
         getWidgetStyleString() {
             const styleString = this.getWidgetStyleByType('shadows') + this.getWidgetStyleByType('padding') + this.getWidgetStyleByType('borders')
             return styleString
+        },
+        getColumnTooltipConfig(colId) {
+            var tooltipConfig = this.propWidget.settings.tooltips
+            var columntooltipConfig = null as any
+            tooltipConfig[0].enabled ? (columntooltipConfig = tooltipConfig[0]) : ''
+            tooltipConfig.forEach((config) => {
+                config.target.includes(colId) ? (columntooltipConfig = config) : ''
+            })
+
+            return columntooltipConfig
         }
     }
 })
