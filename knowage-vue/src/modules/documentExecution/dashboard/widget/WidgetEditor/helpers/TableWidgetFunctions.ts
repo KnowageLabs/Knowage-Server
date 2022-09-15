@@ -190,7 +190,7 @@ const removeColumnFromColumnGroups = (widgetModel: IWidget, column: IWidgetColum
 const removeColumnFromVisualizationType = (widgetModel: IWidget, column: IWidgetColumn) => {
     let removed = false
     const visualizationTypes = widgetModel.settings.visualization.types
-    for (let i = visualizationTypes.length - 1; i >= 0; i--) {
+    for (let i = visualizationTypes.length - 1; i >= 1; i--) {
         for (let j = visualizationTypes[i].target.length; j >= 0; j--) {
             const tempTarget = visualizationTypes[i].target[j]
             if (column.id === tempTarget) {

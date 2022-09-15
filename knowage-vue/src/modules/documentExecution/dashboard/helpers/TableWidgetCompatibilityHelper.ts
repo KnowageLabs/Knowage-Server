@@ -563,7 +563,15 @@ const convertColorFromHSLtoRGB = (hslColor: string | null) => {
 
 
 const getFormattedVisualizations = (widget: any) => {
-    return { types: [], visibilityConditions: [] }
+    return {
+        types: [{
+            target: 'all',
+            type: 'Text',
+            prefix: '',
+            suffix: '',
+            pinned: '',
+        }], visibilityConditions: []
+    }
 }
 
 const getFormattedResponsivnes = (widget: any) => {

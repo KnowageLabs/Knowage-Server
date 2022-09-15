@@ -284,7 +284,7 @@ export interface ITableWidgetVisualization {
     visibilityConditions: ITableWidgetVisibilityCondition[]
 }
 export interface ITableWidgetVisualizationType {
-    target: string[],
+    target: string | string[],
     type: string,
     precision?: number,
     prefix?: string,
@@ -294,8 +294,7 @@ export interface ITableWidgetVisualizationType {
     max?: number,
     alignment?: string,
     color?: string,
-    "background-color"?: string,
-    allColumnSelected?: boolean
+    "background-color"?: string
 }
 
 export interface ITableWidgetVisibilityCondition {
