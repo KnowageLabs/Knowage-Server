@@ -1,6 +1,6 @@
 <template>
-    <div class="custom-header-group-container" style="height: 100%; width: 100%" :style="params.styleString">
-        <div class="custom-header-group-label">{{ params.displayName }}</div>
+    <div class="custom-header-group-container" :style="params.styleString">
+        <div class="custom-header-group-label" :style="params.styleString">{{ params.displayName }}</div>
     </div>
 </template>
 

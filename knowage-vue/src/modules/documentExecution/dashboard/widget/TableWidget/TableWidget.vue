@@ -68,7 +68,7 @@ export default defineComponent({
             emitter.on('visibilityConditionsChanged', (visibilityConditions) => console.log('WidgetEditorPreview  - visibilityConditionsChanged!', visibilityConditions))
             emitter.on('headersStyleChanged', () => this.createDatatableColumns())
             emitter.on('columnStylesChanged', (columnStyles) => console.log('WidgetEditorPreview  - columnStylesChanged!', columnStyles))
-            emitter.on('columnGroupStylesChanged', (columnGroupStyles) => console.log('WidgetEditorPreview  - columnGroupStylesChanged!', columnGroupStyles))
+            emitter.on('columnGroupStylesChanged', (columnGroupStyles) => this.createDatatableColumns())
             emitter.on('rowsStyleChanged', (rowsStyle) => console.log('WidgetEditorPreview  - rowsStyleChanged!', rowsStyle))
             emitter.on('summaryStyleChanged', () => this.createDatatableColumns())
             emitter.on('bordersStyleChanged', (bordersStyle) => console.log('WidgetEditorPreview  - bordersStyleChanged!', bordersStyle))
@@ -85,10 +85,7 @@ export default defineComponent({
                 pagination: false,
                 rowSelection: 'single',
                 suppressRowTransform: true,
-                rowHeight: 25,
-                components: {
-                    agColumnHeader: HeaderRenderer
-                }
+                rowHeight: 25
 
                 // EVENTS
                 // onRowClicked: (event, params) => console.log('A row was clicked', event),
@@ -154,6 +151,7 @@ export default defineComponent({
                             headerName: this.propWidget.columns[datasetColumn].alias,
                             field: responseFields[responseField].name,
                             measure: this.propWidget.columns[datasetColumn].fieldType,
+                            headerComponent: HeaderRenderer,
                             headerComponentParams: { styleString: this.getWidgetStyleByType('headers', true) }
                         } as any
 
@@ -256,9 +254,11 @@ export default defineComponent({
                             } else {
                                 columnGroups[group.id] = columns.length
                                 columns.push({
+                                    colId: group.id,
                                     headerName: group.label,
                                     headerGroupComponent: HeaderGroupRenderer,
-                                    headerParams: group,
+                                    headerGroupComponentParams: { styleString: this.getColumnGroupStyle(group.id) },
+
                                     children: [tempCol]
                                 })
                             }
@@ -302,6 +302,23 @@ export default defineComponent({
             })
 
             return columntooltipConfig
+        },
+        getColumnGroupStyle(colId) {
+            var modelGroups = this.propWidget.settings.style.columnGroups
+            var columnGroupStyleString = null as any
+            columnGroupStyleString = Object.entries(modelGroups[0].properties)
+                .map(([k, v]) => `${k}:${v}`)
+                .join(';')
+
+            modelGroups.forEach((group) => {
+                if (group.target.includes(colId)) {
+                    columnGroupStyleString = Object.entries(group.properties)
+                        .map(([k, v]) => `${k}:${v}`)
+                        .join(';')
+                }
+            })
+
+            return columnGroupStyleString
         }
     }
 })
