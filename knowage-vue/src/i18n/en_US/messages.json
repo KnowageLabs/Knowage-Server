@@ -427,6 +427,9 @@
                 "textAlignment": "Text alignment"
             },
             "inputHintForPixels": "use px measure unit, ie: 5px",
+            "interactions": {
+                "title": "Interactions"
+            },
             "itemsPerPage": "Items per page",
             "manualInput": "Manual input",
             "padding": {
@@ -442,6 +445,14 @@
             "pagination": "Pagination",
             "precision": "Precision",
             "prefix": "Prefix",
+            "responsive": {
+                "extraLargeDevices": "Show On Extra Large Devices",
+                "extraSmallDevices": "Show On Extra Small Devices",
+                "largeDevices": "Show On Large Devices",
+                "smallerDevices": "Show On Smaller Devices",
+                "tablets": "Show On Tablets",
+                "title": "Responsive"
+            },
             "rows": {
                 "alternatedRowsEven": "Alternated Rows Even",
                 "alternatedRowsOdd": "Alternated Rows Odd",
