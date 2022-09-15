@@ -198,6 +198,7 @@
             "value": "right"
         }
     ],
+    "responsiveInputSwiitches": ["xs", "sm", "md", "lg", "xl"],
     "settings": {
         "ConditionalStyle": [
             {
@@ -225,6 +226,12 @@
             {
                 "title": "dashboard.widgetEditor.export.title",
                 "type": "Export"
+            }
+        ],
+        "Responsive": [
+            {
+                "title": "dashboard.widgetEditor.responsive.title",
+                "type": "Responsive"
             }
         ],
         "Style": [
@@ -280,7 +287,7 @@
     },
     "settingsListOptions": [
         {
-            "icon": "pi pi-cog",
+            "icon": "fa fa-cogs",
             "label": "dashboard.widgetEditor.configuration",
             "value": "Configuration"
         },
@@ -290,19 +297,29 @@
             "value": "Visualization"
         },
         {
-            "icon": "fas fa-pen",
+            "icon": "fa fa-paint-brush",
             "label": "common.style",
             "value": "Style"
         },
         {
-            "icon": "fas fa-pen",
+            "icon": "fa fa-toggle-on",
             "label": "dashboard.widgetEditor.conditionalStyle",
             "value": "ConditionalStyle"
         },
         {
-            "icon": "fas fa-pen",
+            "icon": "fa fa-hand-pointer",
+            "label": "dashboard.widgetEditor.interactions.title",
+            "value": "Interactions"
+        },
+        {
+            "icon": "fa fa-commenting",
             "label": "dashboard.widgetEditor.tooltips.title",
             "value": "Tooltips"
+        },
+        {
+            "icon": "pi pi-tablet",
+            "label": "dashboard.widgetEditor.responsive.title",
+            "value": "Responsive"
         }
     ],
     "shadowsSizeOptions": [

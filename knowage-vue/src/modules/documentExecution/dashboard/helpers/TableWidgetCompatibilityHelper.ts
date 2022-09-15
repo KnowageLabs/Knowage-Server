@@ -354,13 +354,13 @@ const getFormattedTooltips = () => {
         enabled: false,
         prefix: '',
         suffix: '',
-        precision: '',
+        precision: 0,
         header: {
             enabled: false,
             text: ''
         }
     }
-    return [allTooltip]
+    return [allTooltip] as ITableWidgetTooltipStyle[]
 }
 
 const getFormattedBorderStyle = (widget: any) => {
@@ -544,9 +544,8 @@ const getFormattedVisualizations = (widget: any) => {
     return { types: [], visibilityConditions: [] }
 }
 
-// TODO
 const getFormattedResponsivnes = (widget: any) => {
-    return {}
+    return { xs: true, sm: true, md: true, lg: true, xl: true }
 }
 
 const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {
