@@ -106,7 +106,7 @@ public class OAuth2Client {
 			httppost.setParameter("code", code);
 			httppost.setParameter("redirect_uri", config.getRedirectUrl());
 
-			return sendHttpPost(httppost);
+			return getAccessTokenFullResponse(httppost);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while trying to get access token from OAuth2 provider", e);
 		} finally {
@@ -166,4 +166,19 @@ public class OAuth2Client {
 
 		return accessToken;
 	}
+
+	private String getAccessTokenFullResponse(PostMethod httppost) throws HttpException, IOException, JSONException {
+		HttpClient httpClient = getHttpClient();
+		int statusCode = httpClient.executeMethod(httppost);
+		byte[] response = httppost.getResponseBody();
+		if (statusCode != 200) {
+			logger.error("Error while getting access token from OAuth2 provider: server returned statusCode = " + statusCode);
+			LogMF.error(logger, "Server response is:\n{0}", new Object[] { new String(response) });
+			throw new SpagoBIRuntimeException("Error while getting access token from OAuth2 provider: server returned statusCode = " + statusCode);
+		}
+
+		String responseStr = new String(response);
+		return responseStr;
+	}
+
 }
