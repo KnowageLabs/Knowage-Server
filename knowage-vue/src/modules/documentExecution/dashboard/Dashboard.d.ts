@@ -9,10 +9,6 @@ export interface IWidget {
     dataset: number
     type: string
     columns: IWidgetColumn[]
-    conditionalStyles: any[]  // TO REMOVE
-    interactions: any[]  // TO REMOVE
-    theme: string  // TO REMOVE
-    style: any  // TO REMOVE
     settings: ITableWidgetSettings | any
     new?: boolean
 }
@@ -204,8 +200,7 @@ export interface ITableWidgetBordersStyle {
 }
 
 export interface ITableWidgetColumnStyle {
-    allColumnSelected?: boolean,
-    target: string[],
+    target: string | string[],
     properties: {
         "background-color": string,
         color: string,

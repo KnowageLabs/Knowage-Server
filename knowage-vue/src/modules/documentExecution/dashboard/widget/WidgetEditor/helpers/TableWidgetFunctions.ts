@@ -221,16 +221,16 @@ const removeColumnFromVisibilityConditions = (widgetModel: IWidget, column: IWid
 
 const removeColumnFromColumnStyle = (widgetModel: IWidget, column: IWidgetColumn) => {
     let removed = false
-    const visibilityConditions = widgetModel.settings.style.columns
-    for (let i = visibilityConditions.length - 1; i >= 0; i--) {
-        for (let j = visibilityConditions[i].target.length; j >= 0; j--) {
-            const tempTarget = visibilityConditions[i].target[j]
+    const columnStyles = widgetModel.settings.style.columns
+    for (let i = columnStyles.length - 1; i >= 1; i--) {
+        for (let j = columnStyles[i].target.length; j >= 0; j--) {
+            const tempTarget = columnStyles[i].target[j]
             if (column.id === tempTarget) {
-                visibilityConditions[i].target.splice(j, 1)
+                columnStyles[i].target.splice(j, 1)
                 removed = true
             }
         }
-        if (visibilityConditions[i].target.length === 0) visibilityConditions.splice(i, 1)
+        if (columnStyles[i].target.length === 0) columnStyles.splice(i, 1)
     }
     if (removed) emitter.emit('columnRemovedFromColumnStyle')
 }

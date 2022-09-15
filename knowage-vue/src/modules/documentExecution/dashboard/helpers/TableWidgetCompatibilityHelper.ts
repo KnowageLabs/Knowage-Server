@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -338,14 +338,25 @@ const getFormattedPaginations = (widget: any) => {
 const getFormattedStyle = (widget: any) => {
     return {
         borders: getFormattedBorderStyle(widget),
-        columns: [],
+        columns: [{
+            target: 'all',
+            properties: {
+                "background-color": '',
+                color: '',
+                "justify-content": '',
+                "font-size": '',
+                "font-family": '',
+                "font-style": '',
+                "font-weight": ''
+            }
+        }],
         columnGroups: getFormattedColumnGroupsStyle(widget),
         headers: getFormattedHeadersStyle(widget),
         padding: getFormattedPaddingStyle(widget),
         rows: getFormattedRowsStyle(widget),
         shadows: getFormattedShadowsStyle(widget),
         summary: getFormattedSummaryStyle(widget)
-    }
+    } as ITableWidgetStyle
 }
 
 const getFormattedTooltips = () => {
@@ -381,7 +392,18 @@ const getFormattedBorderStyle = (widget: any) => {
 }
 
 const getFormattedColumnGroupsStyle = (widget: any) => {
-    const formattedColumnGroupsStyles = [] as ITableWidgetColumnStyle[]
+    const formattedColumnGroupsStyles = [{
+        target: 'all',
+        properties: {
+            "background-color": '',
+            color: '',
+            "justify-content": '',
+            "font-size": '',
+            "font-family": '',
+            "font-style": '',
+            "font-weight": ''
+        }
+    }] as ITableWidgetColumnStyle[]
     if (!widget.groups) return formattedColumnGroupsStyles
     let fields = ['background-color', 'color', "justify-content", "font-size", "font-family", "font-style", "font-weight"]
     for (let i = 0; i < widget.groups.length; i++) {

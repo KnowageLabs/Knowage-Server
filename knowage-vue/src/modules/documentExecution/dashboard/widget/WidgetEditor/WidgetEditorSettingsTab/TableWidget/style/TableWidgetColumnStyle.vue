@@ -4,17 +4,9 @@
             <div class="p-d-flex p-flex-row p-ai-center">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-                    <TableWidgetVisualizationTypeMultiselect
-                        :value="(columnStyle.target as string[])"
-                        :availableTargetOptions="availableColumnOptions"
-                        :widgetColumnsAliasMap="widgetColumnsAliasMap"
-                        :allColumnsSelected="allColumnsSelected"
-                        optionLabel="alias"
-                        optionValue="id"
-                        @change="onColumnsSelected($event, columnStyle)"
-                        @allColumnsSelected="onAllColumnsSelected(columnStyle)"
-                    >
-                    </TableWidgetVisualizationTypeMultiselect>
+                    <Dropdown v-if="index === 0" class="kn-material-input" v-model="columnStyle.target" :options="descriptor.allColumnOption" optionValue="value" optionLabel="label" :disabled="true"> </Dropdown>
+                    <WidgetEditorColumnsMultiselect v-else :value="(columnStyle.target as string[])" :availableTargetOptions="availableColumnOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" @change="onColumnsSelected($event, columnStyle)">
+                    </WidgetEditorColumnsMultiselect>
                 </div>
                 <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash']" class="kn-cursor-pointer p-ml-2 p-mt-3" @click="index === 0 ? addColumnStyle() : removeColumnStyle(index)"></i>
             </div>
@@ -31,21 +23,21 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetColumnStyle, IWidgetStyleToolbarModel, IWidgetColumn, ITableWidgetColumnGroup } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
+import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
 import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
-import TableWidgetVisualizationTypeMultiselect from '../visualization/TableWidgetVisualizationTypeMultiselect.vue'
+import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
 
 export default defineComponent({
     name: 'table-widget-column-style',
-    components: { InputNumber, TableWidgetVisualizationTypeMultiselect, WidgetEditorStyleToolbar },
+    components: { Dropdown, InputNumber, WidgetEditorColumnsMultiselect, WidgetEditorStyleToolbar },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, mode: { type: String } },
     data() {
         return {
             descriptor,
             columnStyles: [] as ITableWidgetColumnStyle[],
             availableColumnOptions: [] as (IWidgetColumn | ITableWidgetColumnGroup | { id: string; alias: string })[],
-            widgetColumnsAliasMap: {} as any,
-            allColumnsSelected: false
+            widgetColumnsAliasMap: {} as any
         }
     },
     created() {
@@ -73,7 +65,7 @@ export default defineComponent({
                     : [...this.widgetModel.columns]
         },
         columnStylesChanged() {
-            const event = this.mode === 'columnGroups' ? 'columnGroupStylesChanged' : 'columnStyleChanged'
+            const event = this.mode === 'columnGroups' ? 'columnGroupStylesChanged' : 'columnStylesChanged'
             emitter.emit(event, this.columnStyles)
         },
         loadWidgetColumnMaps() {
@@ -84,9 +76,8 @@ export default defineComponent({
         },
         removeColumnsFromAvailableOptions() {
             const array = this.mode === 'columnGroups' ? this.widgetModel.settings.style.columnGroups : this.widgetModel.settings.style.columns
-            for (let i = 0; i < array.length; i++) {
+            for (let i = 1; i < array.length; i++) {
                 for (let j = 0; j < array[i].target.length; j++) {
-                    if (array[i].target[j] === 'All Columns') this.allColumnsSelected = true
                     this.removeColumnFromAvailableOptions({
                         id: array[i].target[j],
                         alias: array[i].target[j]
@@ -98,31 +89,20 @@ export default defineComponent({
             const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | ITableWidgetColumnGroup | { id: string; alias: string }) => targetOption.id === tempColumn.id)
             if (index !== -1) this.availableColumnOptions.splice(index, 1)
         },
-        onAllColumnsSelected(columnStyle: ITableWidgetColumnStyle) {
-            this.allColumnsSelected = true
-            columnStyle.allColumnSelected = true
-            this.onColumnsRemovedFromMultiselect(columnStyle.target, columnStyle)
-            columnStyle.target = ['All Columns']
-        },
         onColumnsSelected(event: any, columnStyle: ITableWidgetColumnStyle) {
-            const intersection = columnStyle.target.filter((el: string) => !event.value.includes(el))
+            const intersection = (columnStyle.target as string[]).filter((el: string) => !event.value.includes(el))
             columnStyle.target = event.value
 
             intersection.length > 0 ? this.onColumnsRemovedFromMultiselect(intersection, columnStyle) : this.onColumnsAddedFromMultiselect(columnStyle)
             this.columnStylesChanged()
         },
         onColumnsAddedFromMultiselect(columnStyle: ITableWidgetColumnStyle) {
-            columnStyle.target.forEach((target: string) => {
+            ;(columnStyle.target as string[]).forEach((target: string) => {
                 const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | ITableWidgetColumnGroup | { id: string; alias: string }) => targetOption.id === target)
                 if (index !== -1) this.availableColumnOptions.splice(index, 1)
             })
         },
         onColumnsRemovedFromMultiselect(intersection: string[], columnStyle: ITableWidgetColumnStyle) {
-            if (intersection[0] === 'All Columns') {
-                this.allColumnsSelected = false
-                columnStyle.allColumnSelected = false
-                return
-            }
             intersection.forEach((el: string) =>
                 this.availableColumnOptions.push({
                     id: el,
@@ -133,7 +113,6 @@ export default defineComponent({
         addColumnStyle() {
             this.columnStyles.push({
                 target: [],
-                allColumnSelected: false,
                 properties: {
                     'background-color': 'rgb(0, 0, 0)',
                     color: 'rgb(255, 255, 255)',
@@ -146,14 +125,12 @@ export default defineComponent({
             })
         },
         removeColumnStyle(index: number) {
-            if (this.columnStyles[index].target[0] === 'All Columns') this.allColumnsSelected = false
-            else
-                this.columnStyles[index].target.forEach((target: string) =>
-                    this.availableColumnOptions.push({
-                        id: target,
-                        alias: this.widgetColumnsAliasMap[target]
-                    })
-                )
+            ;(this.columnStyles[index].target as string[]).forEach((target: string) =>
+                this.availableColumnOptions.push({
+                    id: target,
+                    alias: this.widgetColumnsAliasMap[target]
+                })
+            )
             this.columnStyles.splice(index, 1)
             this.columnStylesChanged()
         },
