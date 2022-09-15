@@ -241,7 +241,7 @@
     "components": {
         "knCalculatedField": {
             "columnName": "Column Name",
-            "description": "Calculated field description",
+            "description": "Choose a name, select a type and add an expression for the calculated field. Drag and drop the functions and the fields from the list into the expression text area.",
             "fields": "Fields",
             "formula": "Formula",
             "functions": "Functions",
@@ -2283,9 +2283,9 @@
                         "label": "Merge columns"
                     },
                     "newChar": "New char",
+                    "numOfChars": "Number of characters",
                     "number": "Number",
                     "numberOfChars": "Number of characters",
-                    "numOfChars": "Number of characters",
                     "oldChar": "Old char",
                     "outputType": "Output Type",
                     "padding": {
