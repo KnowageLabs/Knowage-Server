@@ -5,7 +5,9 @@ const store = defineStore('dashboardStore', {
     state() {
         return {
             dashboards: {},
-            selectedSheetIndex: 0
+            selectedSheetIndex: 0,
+            crossNavigations: [],
+            outputParameters: []
         }
     },
     actions: {
@@ -39,6 +41,18 @@ const store = defineStore('dashboardStore', {
         getDashboardSelectedDatastes(index) {
             const temp = this.dashboards[index]?.configuration?.datasets
             return temp ?? []
+        },
+        getCrossNavigations() {
+            return this.crossNavigations
+        },
+        setCrosssNavigations(crossNavigations) {
+            this.crossNavigations = crossNavigations
+        },
+        getOutputParameters() {
+            return this.outputParameters
+        },
+        setOutputParameters(outputParameters) {
+            this.outputParameters = outputParameters
         }
     }
 })

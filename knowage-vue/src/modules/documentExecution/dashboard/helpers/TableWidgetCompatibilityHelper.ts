@@ -36,7 +36,7 @@ const getColumnId = (formattedWidget: IWidget, widgetColumnName: string) => {
 
 // SETTINGS !!!
 const getFormattedWidgetSettings = (formattedWidget: IWidget, widget: any) => {
-    const formattedSettings = { sortingColumn: getColumnId(formattedWidget, widget.settings?.sortingColumn), sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(formattedWidget, widget), configuration: getFormattedConfiguration(formattedWidget, widget) as any, interactions: getFormattedInteractions(widget) as ITableWidgetInteractions, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as any, tooltips: getFormattedTooltips() as ITableWidgetTooltipStyle[], visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) as any } as ITableWidgetSettings
+    const formattedSettings = { sortingColumn: getColumnId(formattedWidget, widget.settings?.sortingColumn), sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(formattedWidget, widget), configuration: getFormattedConfiguration(formattedWidget, widget) as any, interactions: getFormattedInteractions(formattedWidget, widget) as ITableWidgetInteractions, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as any, tooltips: getFormattedTooltips() as ITableWidgetTooltipStyle[], visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) as any } as ITableWidgetSettings
     return formattedSettings
 }
 const getFormattedConditionalStyles = (formattedWidget: IWidget, widget: any) => {
@@ -323,12 +323,30 @@ const getFormattedSummaryRows = (widget: any) => {
 }
 
 // INTERACTIONS !!!
-const getFormattedInteractions = (widget: any) => {
+const getFormattedInteractions = (formattedWidget: IWidget, widget: any) => {
     return {
-        crosssNavigation: {},
-        link: {},
-        preview: {},
+        crosssNavigation: getFormattedCrossNavigation(formattedWidget, widget),
+        link: {} as any,
+        preview: {} as any,
         selection: getFormattedSelection(widget),
+    }
+}
+
+const getFormattedCrossNavigation = (formattedWidget: IWidget, widget: any) => {
+    if (!widget.cross || !widget.cross.cross) return {
+        enabled: false,
+        type: '',
+        column: '',
+        name: '',
+        parameters: []
+    }
+
+    return {
+        enabled: widget.cross.cross.enabled,
+        type: widget.cross.cross.crossType,
+        column: getColumnId(formattedWidget, widget.cross.cross.column),
+        name: widget.cross.cross.crossName,
+        parameters: []
     }
 }
 

@@ -245,7 +245,26 @@
                         ],
                         "name": "widget_table_1661757385620"
                     },
-                    "cross": {},
+                    "cross": {
+                        "cross": {
+                            "column": "FID",
+                            "crossName": "WidgetEditor",
+                            "crossType": "icon",
+                            "enable": true,
+                            "icon": " fab fa-500px",
+                            "outputParameter": "Output Parameter",
+                            "outputParametersList": {
+                                "Output Parameter": {
+                                    "column": "FID",
+                                    "dataType": "text",
+                                    "dataset": "BIG_TEST_GIS",
+                                    "enabled": true,
+                                    "type": "selection",
+                                    "value": "Static"
+                                }
+                            }
+                        }
+                    },
                     "dataset": {
                         "dsId": 166
                     },

@@ -428,6 +428,7 @@
             },
             "inputHintForPixels": "use px measure unit, ie: 5px",
             "interactions": {
+                "crossNavigation": "Cross-navigation",
                 "enableMultiselection": "Enable Multiselection",
                 "enableSelection": "Enable Selection",
                 "modalColumn": "Modal Column",
