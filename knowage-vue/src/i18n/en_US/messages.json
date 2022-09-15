@@ -1215,6 +1215,9 @@
             "confirmMsg": "You will lose all unsaved changes, are you sure you want to open Data Preparation?",
             "creationUser": "Creation User",
             "dataframeName": "Dataframe variable name",
+            "dataPreparation": {
+                "datasetInvolvedIntoDataPrep": "Dataset is involved in a Data Preparation process, do you want to proceed?"
+            },
             "decrypt": "Decrypt",
             "deleteAllParams": "Clear all dataset parameters",
             "deleteAllParamsMsg": "Are you sure you want to delete all dataset parameters?",
@@ -1287,6 +1290,7 @@
             "restRequestBody": "Request Body",
             "restoreMsg": "Do you want to restore the dataset version?",
             "restoreTitle": "Restore dataset version",
+            "saveTitle": "Save dataset",
             "scheduling": "Scheduling",
             "scope": "Scope",
             "selectDatasetType": "DataSet Type",
