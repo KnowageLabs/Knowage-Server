@@ -20,7 +20,7 @@ export interface ITableWidgetSettings {
     clickable: boolean,
     conditionalStyles: ITableWidgetConditionalStyle[],
     configuration: ITableWidgetConfiguration,
-    interactions: ITableWidgetInteraction,
+    interactions: ITableWidgetInteractions,
     pagination: ITableWidgetPagination,
     style: ITableWidgetStyle,
     tooltips: ITableWidgetTooltipStyle[],
@@ -120,7 +120,7 @@ export interface ITableWidgetSummaryRow {
     aggregation: string
 }
 
-export interface ITableWidgetInteraction {
+export interface ITableWidgetInteractions {
     crosssNavigation: {
         "enabled": boolean,
         "type": string,
@@ -159,13 +159,13 @@ export interface ITableWidgetPreview {
 }
 
 export interface ITableWidgetSelection {
-    "enabled": boolean,
-    "modalColumn": string,
-    "multiselection": {
-        "enabled": boolean,
-        "properties": {
+    enabled: boolean,
+    modalColumn: string,
+    multiselection: {
+        enabled: boolean,
+        properties: {
             "background-color": string,
-            "color": string
+            color: string
         }
     }
 }

@@ -1,0 +1,80 @@
+<template>
+    <div v-if="selectionModel">
+        <div class="p-d-flex p-flex-column">
+            <div class="p-d-flex p-flex-row p-ai-center">
+                <div class="kn-flex p-mt-4 p-mx-4">
+                    <InputSwitch v-model="selectionModel.enabled" @change="selectionChanged"></InputSwitch>
+                    <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.interactions.enableSelection') }}</label>
+                </div>
+                <div class="kn-flex p-mt-4 p-mr-4">
+                    <InputSwitch v-model="selectionModel.multiselection.enabled" @change="selectionChanged"></InputSwitch>
+                    <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.interactions.enableMultiselection') }}</label>
+                </div>
+                <div class="kn-flex style-toolbar-container p-mt-3 p-mr-5">
+                    <WidgetEditorStyleToolbar
+                        :options="descriptor.styleToolbarSelectionOptions"
+                        :propModel="{
+                            color: selectionModel.multiselection.properties.color,
+                            'background-color': selectionModel.multiselection.properties['background-color']
+                        }"
+                        :disabled="!selectionModel.multiselection.enabled"
+                        @change="onStyleToolbarChange($event)"
+                    ></WidgetEditorStyleToolbar>
+                </div>
+            </div>
+            <div class="p-d-flex p-flex-row p-ai-center p-m-3">
+                <div class="p-d-flex p-flex-column kn-flex p-m-2">
+                    <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.interactions.modalColumn') }}</label>
+                    <Dropdown class="kn-material-input" v-model="selectionModel.modalColumn" :options="widgetModel.columns" optionLabel="alias" optionValue="id" @change="selectionChanged"> </Dropdown>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, PropType } from 'vue'
+import { IWidget, ITableWidgetSelection, IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { emitter } from '../../../../../DashboardHelpers'
+import descriptor from '../TableWidgetSettingsDescriptor.json'
+import Dropdown from 'primevue/dropdown'
+import InputSwitch from 'primevue/inputswitch'
+import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
+
+export default defineComponent({
+    name: 'table-widget-selection',
+    components: { Dropdown, InputSwitch, WidgetEditorStyleToolbar },
+    props: {
+        widgetModel: { type: Object as PropType<IWidget>, required: true }
+    },
+    data() {
+        return {
+            descriptor,
+            selectionModel: null as ITableWidgetSelection | null
+        }
+    },
+    created() {
+        this.loadSelectionModel()
+    },
+    methods: {
+        loadSelectionModel() {
+            if (this.widgetModel?.settings?.interactions?.selection) this.selectionModel = this.widgetModel.settings.interactions.selection
+        },
+        selectionChanged() {
+            emitter.emit('selectionChanged', this.selectionModel)
+        },
+        onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
+            if (!this.selectionModel) return
+            this.selectionModel.multiselection.properties.color = model.color ?? ''
+            this.selectionModel.multiselection.properties['background-color'] = model['background-color'] ?? ''
+            this.selectionChanged()
+        }
+    }
+})
+</script>
+
+<style lang="scss" scoped>
+.style-toolbar-container {
+    max-width: 120px;
+}
+</style>

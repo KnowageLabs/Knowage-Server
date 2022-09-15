@@ -101,7 +101,6 @@ import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
-import InputSwitch from 'primevue/inputswitch'
 import InputNumber from 'primevue/inputnumber'
 import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
 import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
@@ -110,7 +109,6 @@ export default defineComponent({
     name: 'table-widget-visualization-type',
     components: {
         Dropdown,
-        InputSwitch,
         InputNumber,
         WidgetEditorColumnsMultiselect,
         WidgetEditorStyleToolbar

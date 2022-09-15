@@ -228,6 +228,12 @@
                 "type": "Export"
             }
         ],
+        "Interactions": [
+            {
+                "title": "dashboard.widgetEditor.interactions.selection",
+                "type": "Selection"
+            }
+        ],
         "Responsive": [
             {
                 "title": "dashboard.widgetEditor.responsive.title",
@@ -341,6 +347,14 @@
         }
     ],
     "styleToolbarVisualizationTypeOptions": [
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
+    "styleToolbarSelectionOptions": [
         {
             "type": "color"
         },
