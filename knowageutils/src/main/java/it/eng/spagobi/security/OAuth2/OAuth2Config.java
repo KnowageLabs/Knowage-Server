@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -200,6 +201,10 @@ public class OAuth2Config {
 
 	public String getTokenBody() {
 		return this.tokenBody;
+	}
+
+	public boolean hasUserInfoUrl() {
+		return StringUtils.isNotBlank(this.userInfoUrl);
 	}
 
 	@Override

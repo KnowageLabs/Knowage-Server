@@ -32,6 +32,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Servlet Filter implementation class OAuthFilter
@@ -71,15 +75,27 @@ public class OAuth2Filter implements Filter {
 				// to the OAuth2 provider
 				String url = oauth2Config.getAuthorizeUrl();
 				url += "?response_type=code&client_id=" + oauth2Config.getClientId();
-				url += "&scope=" + OAuth2Config.getInstance().getScopes();
+				url += "&scope=" + URLEncoder.encode(OAuth2Config.getInstance().getScopes(), "UTF-8");
 				url += "&redirect_uri=" + URLEncoder.encode(oauth2Config.getRedirectUrl(), "UTF-8");
 				url += "&state=" + URLEncoder.encode(UUID.randomUUID().toString(), "UTF-8");
 				((HttpServletResponse) response).sendRedirect(url);
 			} else {
 				// Using the code we get the access token and put it in session
 				OAuth2Client client = new OAuth2Client();
-				String accessToken = client.getAccessToken(((HttpServletRequest) request).getParameter("code"));
-				session.setAttribute("access_token", accessToken);
+				String accessTokenResponse = client.getAccessToken(((HttpServletRequest) request).getParameter("code"));
+				JSONObject jsonObject;
+				try {
+					jsonObject = new JSONObject(accessTokenResponse);
+
+					String accessToken = jsonObject.getString("access_token");
+					String idToken = jsonObject.getString("id_token");
+
+					session.setAttribute("access_token", accessToken);
+					session.setAttribute("id_token", idToken);
+
+				} catch (JSONException e) {
+					throw new SpagoBIRuntimeException("Error while getting access token", e);
+				}
 
 				chain.doFilter(request, response);
 			}

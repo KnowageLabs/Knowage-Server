@@ -143,6 +143,8 @@ if (profile != null) {
 	AuditLogUtilities.updateAudit(request, profile, "SPAGOBI.Logout", logParam, "OK");
 }
 
+String idToken = (String) session.getAttribute("id_token");
+
 // invalidate http session
 session.invalidate();
 
@@ -169,6 +171,9 @@ else if (active != null && active.equalsIgnoreCase("true")) {
 		redirectUrl = backUrl; 
 	}
 	redirectUrl = urlLogout;
+	if (idToken != null) {
+		redirectUrl = redirectUrl.replace("${id_token}", idToken);
+	}
 
 } %>
 
