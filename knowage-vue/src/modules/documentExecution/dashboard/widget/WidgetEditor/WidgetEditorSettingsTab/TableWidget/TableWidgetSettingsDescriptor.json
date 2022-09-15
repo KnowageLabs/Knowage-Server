@@ -232,6 +232,10 @@
             {
                 "title": "dashboard.widgetEditor.interactions.selection",
                 "type": "Selection"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.crossNavigation",
+                "type": "CrossNavigation"
             }
         ],
         "Responsive": [

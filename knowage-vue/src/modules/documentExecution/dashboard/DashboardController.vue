@@ -54,7 +54,8 @@ export default defineComponent({
             datasetEditorVisible: false,
             datasets: [] as any[],
             widgetEditorVisible: false,
-            selectedWidget: null as any
+            selectedWidget: null as any,
+            crossNavigations: [] as any[]
         }
     },
     provide() {
@@ -70,11 +71,14 @@ export default defineComponent({
     created() {
         this.setEventListeners()
         this.loadDatasets()
+        this.loadCrossNavigations()
+        this.loadOutputParameters()
         this.loadModel()
     },
-
     unmounted() {
         this.store.removeDashboard({ id: (this as any).dHash as any })
+        this.store.setCrosssNavigations([])
+        this.store.setOutputParameters([])
     },
     methods: {
         loadModel() {
@@ -91,6 +95,41 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.datasets = response.data ? response.data.item : []))
                 .catch(() => {})
             this.appStore.setLoading(false)
+        },
+        async loadCrossNavigations() {
+            // TODO - Remove mocked document label
+            this.appStore.setLoading(true)
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/Test%20Drivers//loadCrossNavigationByDocument`)
+                .then((response: AxiosResponse<any>) => (this.crossNavigations = response.data))
+                .catch(() => {})
+            this.appStore.setLoading(false)
+            this.store.setCrosssNavigations(this.crossNavigations)
+        },
+        loadOutputParameters() {
+            console.log('>>>>>>>>>>>>>>>> LOADED DOCUMENT: ', this.document)
+            // TODO - Remove Mocked Output Parameters
+            const mockedParameters = [
+                {
+                    id: 4206,
+                    name: 'Output Parameter',
+                    type: {
+                        valueId: 30,
+                        valueCd: 'STRING',
+                        valueName: 'sbidomains.nm.string',
+                        valueDescription: 'sbidomains.ds.string',
+                        domainCode: 'PAR_TYPE',
+                        domainName: 'Parameter type',
+                        translatedValueDescription: 'Parameter expects textual values',
+                        translatedValueName: 'String'
+                    },
+                    biObjectId: 3495,
+                    formatCode: null,
+                    formatValue: null,
+                    isUserDefined: true
+                }
+            ]
+            this.store.setOutputParameters(this.mockedParameters)
         },
         setEventListeners() {
             emitter.on('openNewWidgetPicker', () => {

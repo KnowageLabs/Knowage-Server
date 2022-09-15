@@ -112,7 +112,7 @@ export default defineComponent({
             emitter.on('columnRemovedFromTooltips', () => this.onColumnRemoved())
         },
         loadTooltips() {
-            if (this.widgetModel?.settings?.tooltips) this.tooltips = [...this.widgetModel.settings.tooltips]
+            if (this.widgetModel?.settings?.tooltips) this.tooltips = this.widgetModel.settings.tooltips
             this.removeColumnsFromAvailableOptions()
         },
 

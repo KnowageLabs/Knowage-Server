@@ -26,6 +26,7 @@
                 <TableWidgetTooltips v-else-if="accordion.type === 'Tooltips'" :widgetModel="widgetModel"></TableWidgetTooltips>
                 <TableWidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></TableWidgetResponsive>
                 <TableWidgetSelection v-else-if="accordion.type === 'Selection'" :widgetModel="widgetModel"></TableWidgetSelection>
+                <TableWidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel"></TableWidgetCrossNavigation>
             </AccordionTab>
         </Accordion>
     </div>
@@ -55,6 +56,7 @@ import TableWidgetConditions from './conditionalStyle/TableWidgetConditions.vue'
 import TableWidgetTooltips from './tooltips/TableWidgetTooltips.vue'
 import TableWidgetResponsive from './responsive/TableWidgetResponsive.vue'
 import TableWidgetSelection from './interactions/TableWidgetSelection.vue'
+import TableWidgetCrossNavigation from './interactions/TableWidgetCrossNavigation.vue'
 
 export default defineComponent({
     name: 'table-widget-configuration-container',
@@ -78,7 +80,8 @@ export default defineComponent({
         TableWidgetConditions,
         TableWidgetTooltips,
         TableWidgetResponsive,
-        TableWidgetSelection
+        TableWidgetSelection,
+        TableWidgetCrossNavigation
     },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Array as PropType<{ title: string; type: string }[]> }, drivers: { type: Array }, variables: { type: Array } },
     data() {
