@@ -648,8 +648,6 @@ export default defineComponent({
         },
         async executeCrossnavigationFromCell(crossNavigationString: string | null) {
             const tempString = crossNavigationString?.substring(crossNavigationString.indexOf('(') + 1, crossNavigationString.indexOf(')'))
-            const tempArray = tempString?.split(',')
-
             const object = tempString ? JSON.parse(tempString) : {}
             this.$emit('executeCrossNavigation', object)
         },
