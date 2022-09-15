@@ -184,6 +184,34 @@
             "value": "parameter"
         }
     ],
+    "interactionTypes": [
+        {
+            "label": "dashboard.widgetEditor.interactions.enableClickOnWholeRow",
+            "value": "allRow"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.enableClickOnSingleColumn",
+            "value": "singleColumn"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.enableClickOnIcon",
+            "value": "icon"
+        }
+    ],
+    "outputParameterTypeOptions": [
+        {
+            "label": "dashboard.widgetEditor.interactions.static",
+            "value": "static"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.dynamic",
+            "value": "dynamic"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.selection",
+            "value": "selection"
+        }
+    ],
     "pinnedOptions": [
         {
             "label": "",
@@ -350,7 +378,7 @@
             "value": "extraLarge"
         }
     ],
-    "styleToolbarVisualizationTypeOptions": [
+    "styleToolbarSelectionOptions": [
         {
             "type": "color"
         },
@@ -358,7 +386,7 @@
             "type": "background-color"
         }
     ],
-    "styleToolbarSelectionOptions": [
+    "styleToolbarVisualizationTypeOptions": [
         {
             "type": "color"
         },

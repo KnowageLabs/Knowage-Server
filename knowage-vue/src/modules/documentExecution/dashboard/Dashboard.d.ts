@@ -139,16 +139,18 @@ export interface ITableWidgetCorssNavigation {
     type: string,
     column: string,
     name: string,
+    parameter: '',
     parameters: ITableWidgetParameter[]
 }
 
 export interface ITableWidgetParameter {
-    "enabled"?: boolean,
-    "name": string,
-    "type": string,
-    "value"?: string,
-    "column"?: string,
-    "driver"?: string
+    enabled: boolean,
+    name: string,
+    type: string,
+    value: string,
+    column?: string,
+    driver?: string,
+    dataset?: string
 }
 
 export interface ITableWidgetPreview {

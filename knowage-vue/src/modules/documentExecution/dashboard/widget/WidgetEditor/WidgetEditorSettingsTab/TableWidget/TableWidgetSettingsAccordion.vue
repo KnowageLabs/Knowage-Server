@@ -26,7 +26,7 @@
                 <TableWidgetTooltips v-else-if="accordion.type === 'Tooltips'" :widgetModel="widgetModel"></TableWidgetTooltips>
                 <TableWidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></TableWidgetResponsive>
                 <TableWidgetSelection v-else-if="accordion.type === 'Selection'" :widgetModel="widgetModel"></TableWidgetSelection>
-                <TableWidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel"></TableWidgetCrossNavigation>
+                <TableWidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets"></TableWidgetCrossNavigation>
             </AccordionTab>
         </Accordion>
     </div>
@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, IDataset } from '@/modules/documentExecution/Dashboard/Dashboard'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import descriptor from './TableWidgetSettingsDescriptor.json'
@@ -83,7 +83,14 @@ export default defineComponent({
         TableWidgetSelection,
         TableWidgetCrossNavigation
     },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, settings: { type: Array as PropType<{ title: string; type: string }[]> }, drivers: { type: Array }, variables: { type: Array } },
+    props: {
+        widgetModel: { type: Object as PropType<IWidget>, required: true },
+        settings: { type: Array as PropType<{ title: string; type: string }[]> },
+        datasets: { type: Array as PropType<IDataset[]> },
+        selectedDatasets: { type: Array as PropType<IDataset[]> },
+        drivers: { type: Array },
+        variables: { type: Array }
+    },
     data() {
         return {
             descriptor

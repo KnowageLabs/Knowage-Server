@@ -26,9 +26,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidgetEditorDataset, IDatasetColumn, IWidgetColumn, IDataset, IWidget } from '../../../../Dashboard'
+import { IWidgetEditorDataset, IDatasetColumn, IDataset, IWidget } from '../../../../Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
-import { removeColumnUsageFromModel } from '../../helpers/TableWidgetFunctions'
 import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import mainStore from '../../../../../../../App.store'
