@@ -1,0 +1,86 @@
+<template>
+    <div>
+        {{ parameters }}
+        <div v-for="(parameter, index) in parameters" :key="index" class="p-d-flex p-flex-row p-m-2">
+            <div class="p-d-flex p-flex-row p-ai-center">
+                <div class="kn-flex p-mx-4 p-my-2">
+                    <InputSwitch v-model="parameter.enabled"></InputSwitch>
+                </div>
+            </div>
+            <div class="p-d-flex p-flex-column kn-flex p-mr-2">
+                <label class="kn-material-input-label p-mr-2">{{ $t('common.parameter') }}</label>
+                <InputText class="kn-material-input p-inputtext-sm" v-model="parameter.name" :disabled="true" />
+            </div>
+            <div class="p-d-flex p-flex-column kn-flex p-m-2 value-type-dropdown">
+                <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
+                <Dropdown class="kn-material-input" v-model="parameter.type" :options="descriptor.outputParameterTypeOptions" optionValue="value" @change="onParameterTypeChanged(parameter)">
+                    <template #value="slotProps">
+                        <div>
+                            <span>{{ getTranslatedLabel(slotProps.value, descriptor.outputParameterTypeOptions, $t) }}</span>
+                        </div>
+                    </template>
+                    <template #option="slotProps">
+                        <div>
+                            <span>{{ $t(slotProps.option.label) }}</span>
+                        </div>
+                    </template>
+                </Dropdown>
+            </div>
+            <div v-if="parameter.type === 'static'" class="p-d-flex p-flex-column kn-flex p-mr-2">
+                <label class="kn-material-input-label p-mr-2">{{ $t('common.value') }}</label>
+                <InputText class="kn-material-input p-inputtext-sm" v-model="parameter.value" />
+            </div>
+            <div v-else-if="parameter.type === 'dynamic'" class="p-d-flex p-flex-row p-ai-center p-m-3">
+                <div class="p-d-flex p-flex-column kn-flex p-m-2">
+                    <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.interactions.modalColumn') }}</label>
+                    <Dropdown class="kn-material-input" v-model="parameter.column" :options="widgetModel.columns" optionLabel="alias" optionValue="id"> </Dropdown>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script lang="ts">
+import { ITableWidgetParameter, IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { defineComponent, PropType } from 'vue'
+import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
+import descriptor from '../TableWidgetSettingsDescriptor.json'
+import Dropdown from 'primevue/dropdown'
+import InputSwitch from 'primevue/inputswitch'
+
+export default defineComponent({
+    name: 'table-widget-output-parameters-list',
+    components: { Dropdown, InputSwitch },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, propParameters: { type: Array as PropType<ITableWidgetParameter[]>, required: true } },
+    data() {
+        return {
+            descriptor,
+            parameters: [] as ITableWidgetParameter[],
+            getTranslatedLabel
+        }
+    },
+    created() {
+        this.loadParameters()
+    },
+    methods: {
+        loadParameters() {
+            this.parameters = this.propParameters
+        },
+        onParameterTypeChanged(parameter: ITableWidgetParameter) {
+            switch (parameter.type) {
+                case 'static':
+                    delete parameter.column
+                    delete parameter.dataset
+                    break
+                case 'dynmaic':
+                    parameter.value = 'Static'
+                    delete parameter.dataset
+                    break
+                case 'selection':
+                    parameter.value = 'Static'
+                    break
+            }
+        }
+    }
+})
+</script>

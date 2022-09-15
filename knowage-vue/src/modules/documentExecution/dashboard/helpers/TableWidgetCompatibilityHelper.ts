@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetParameter } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -338,16 +338,37 @@ const getFormattedCrossNavigation = (formattedWidget: IWidget, widget: any) => {
         type: '',
         column: '',
         name: '',
+        parameter: '',
         parameters: []
     }
 
     return {
-        enabled: widget.cross.cross.enabled,
+        enabled: widget.cross.cross.enable,
         type: widget.cross.cross.crossType,
         column: getColumnId(formattedWidget, widget.cross.cross.column),
         name: widget.cross.cross.crossName,
-        parameters: []
+        parameter: widget.cross.cross.outputParameter ?? '',
+        parameters: widget.cross.cross.outputParametersList ? getFormattedCrossNavigationParameters(widget.cross.cross.outputParametersList) : []
     }
+}
+
+const getFormattedCrossNavigationParameters = (outputParameterList: any) => {
+    const formattedParameters = [] as ITableWidgetParameter[]
+    if (outputParameterList) {
+        Object.keys(outputParameterList).forEach((key: string) => {
+            const tempParameter = outputParameterList[key]
+            const formattedParameter = {
+                enabled: tempParameter.enabled,
+                name: key,
+                type: tempParameter.type,
+                value: tempParameter.value
+            } as ITableWidgetParameter
+            if (tempParameter) formattedParameter.column = tempParameter.column
+            if (tempParameter) formattedParameter.dataset = tempParameter.dataset
+            formattedParameters.push(formattedParameter)
+        })
+    }
+    return formattedParameters
 }
 
 const getFormattedSelection = (widget: any) => {
