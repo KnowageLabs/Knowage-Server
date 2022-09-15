@@ -1132,6 +1132,7 @@
             "hindDesc": "Hint about Description",
             "hindDescMessage": "This field set the description of the navigation visualizable within the selection popup. The popup will be shown if there are multiple cross navigations startable by the same document.It's possible to use parameters (output or input types) of the original document through the syntax $P(source_parameter_name).",
             "hint": "Cross-navigation management functionality allows you to create the link between document navigations. You can select the type of navigation and connect che parameters value from output to input. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "hintDrag": "To connect parameters between documents drag and drop them from the starting document to the target one.",
             "incompatibleTypes": "Incompatible types",
             "incompatibleTypesMessage": "{originParam} parameter's type not compatible with type of parameter {targetParam}",
             "input": "Input",
@@ -1214,10 +1215,10 @@
             "ckanXslSheetNumber": "Sheet Number",
             "confirmMsg": "You will lose all unsaved changes, are you sure you want to open Data Preparation?",
             "creationUser": "Creation User",
-            "dataframeName": "Dataframe variable name",
             "dataPreparation": {
                 "datasetInvolvedIntoDataPrep": "Dataset is involved in a Data Preparation process, do you want to proceed?"
             },
+            "dataframeName": "Dataframe variable name",
             "decrypt": "Decrypt",
             "deleteAllParams": "Clear all dataset parameters",
             "deleteAllParamsMsg": "Are you sure you want to delete all dataset parameters?",
@@ -2163,9 +2164,9 @@
                         "label": "Merge columns"
                     },
                     "newChar": "New char",
+                    "numOfChars": "Number of characters",
                     "number": "Number",
                     "numberOfChars": "Number of characters",
-                    "numOfChars": "Number of characters",
                     "oldChar": "Old char",
                     "outputType": "Output Type",
                     "padding": {
