@@ -4,24 +4,16 @@
             <div class="p-d-flex p-flex-row p-ai-center kn-flex">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-                    <TableWidgetVisualizationTypeMultiselect
-                        :value="(visualizationType.target as string[])"
-                        :availableTargetOptions="availableColumnOptions"
-                        :widgetColumnsAliasMap="widgetColumnsAliasMap"
-                        :allColumnsSelected="allColumnsSelected"
-                        optionLabel="alias"
-                        optionValue="id"
-                        @change="onColumnsSelected($event, visualizationType)"
-                        @allColumnsSelected="onAllColumnsSelected(visualizationType)"
-                    >
-                    </TableWidgetVisualizationTypeMultiselect>
+                    <Dropdown v-if="index === 0" class="kn-material-input" v-model="visualizationType.target" :options="descriptor.allColumnOption" optionValue="value" optionLabel="label" :disabled="true"> </Dropdown>
+                    <WidgetEditorColumnsMultiselect v-else :value="(visualizationType.target as string[])" :availableTargetOptions="availableColumnOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" @change="onColumnsSelected($event, visualizationType)">
+                    </WidgetEditorColumnsMultiselect>
                 </div>
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.type') }}</label>
                     <Dropdown class="kn-material-input" v-model="visualizationType.type" :options="getVisualizationTypeOptions(visualizationType)" optionValue="value" @change="visualizationTypeChanged">
                         <template #value="slotProps">
                             <div>
-                                <span>{{ slotProps.value }}</span>
+                                <span>{{ getTranslatedLabel(slotProps.value, getVisualizationTypeOptions(visualizationType), $t) }}</span>
                             </div>
                         </template>
                         <template #option="slotProps">
@@ -109,18 +101,16 @@ import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
-import InputSwitch from 'primevue/inputswitch'
 import InputNumber from 'primevue/inputnumber'
-import TableWidgetVisualizationTypeMultiselect from './TableWidgetVisualizationTypeMultiselect.vue'
+import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
 import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 
 export default defineComponent({
     name: 'table-widget-visualization-type',
     components: {
         Dropdown,
-        InputSwitch,
         InputNumber,
-        TableWidgetVisualizationTypeMultiselect,
+        WidgetEditorColumnsMultiselect,
         WidgetEditorStyleToolbar
     },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
@@ -131,7 +121,6 @@ export default defineComponent({
             availableColumnOptions: [] as (IWidgetColumn | { id: string; alias: string })[],
             widgetColumnsAliasMap: {} as any,
             widgetColumnsTypeMap: {} as any,
-            allColumnsSelected: false,
             getTranslatedLabel
         }
     },
@@ -166,7 +155,6 @@ export default defineComponent({
         removeColumnsFromAvailableOptions() {
             for (let i = 0; i < this.widgetModel.settings.visualization.types.length; i++) {
                 for (let j = 0; j < this.widgetModel.settings.visualization.types[i].target.length; j++) {
-                    if (this.widgetModel.settings.visualization.types[i].target[j] === 'All Columns') this.allColumnsSelected = true
                     this.removeColumnFromAvailableOptions({
                         id: this.widgetModel.settings.visualization.types[i].target[j],
                         alias: this.widgetModel.settings.visualization.types[i].target[j]
@@ -178,25 +166,14 @@ export default defineComponent({
             const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === tempColumn.id)
             if (index !== -1) this.availableColumnOptions.splice(index, 1)
         },
-        onAllColumnsSelected(visualizationType: ITableWidgetVisualizationType) {
-            this.allColumnsSelected = true
-            visualizationType.allColumnSelected = true
-            this.onColumnsRemovedFromMultiselect(visualizationType.target, visualizationType)
-            visualizationType.target = ['All Columns']
-        },
         onColumnsSelected(event: any, visualizationType: ITableWidgetVisualizationType) {
-            const intersection = visualizationType.target.filter((el: string) => !event.value.includes(el))
+            const intersection = (visualizationType.target as string[]).filter((el: string) => !event.value.includes(el))
             visualizationType.target = event.value
 
-            intersection.length > 0 ? this.onColumnsRemovedFromMultiselect(intersection, visualizationType) : this.onColumnsAddedFromMultiselect(visualizationType)
+            intersection.length > 0 ? this.onColumnsRemovedFromMultiselect(intersection) : this.onColumnsAddedFromMultiselect(visualizationType)
             this.visualizationTypeChanged()
         },
-        onColumnsRemovedFromMultiselect(intersection: string[], visualizationType: ITableWidgetVisualizationType) {
-            if (intersection[0] === 'All Columns') {
-                this.allColumnsSelected = false
-                visualizationType.allColumnSelected = false
-                return
-            }
+        onColumnsRemovedFromMultiselect(intersection: string[]) {
             intersection.forEach((el: string) =>
                 this.availableColumnOptions.push({
                     id: el,
@@ -205,7 +182,7 @@ export default defineComponent({
             )
         },
         onColumnsAddedFromMultiselect(visualizationType: ITableWidgetVisualizationType) {
-            visualizationType.target.forEach((target: string) => {
+            ;(visualizationType.target as string[]).forEach((target: string) => {
                 const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === target)
                 if (index !== -1) this.availableColumnOptions.splice(index, 1)
             })
@@ -244,14 +221,12 @@ export default defineComponent({
             })
         },
         removeVisualizationType(index: number) {
-            if (this.visualizationTypes[index].target[0] === 'All Columns') this.allColumnsSelected = false
-            else
-                this.visualizationTypes[index].target.forEach((target: string) =>
-                    this.availableColumnOptions.push({
-                        id: target,
-                        alias: this.widgetColumnsAliasMap[target]
-                    })
-                )
+            ;(this.visualizationTypes[index].target as string[]).forEach((target: string) =>
+                this.availableColumnOptions.push({
+                    id: target,
+                    alias: this.widgetColumnsAliasMap[target]
+                })
+            )
             this.visualizationTypes.splice(index, 1)
             this.visualizationTypeChanged()
         },

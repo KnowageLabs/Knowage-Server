@@ -16,7 +16,6 @@
             @selected="onContextItemSelected"
             @inputChanged="onContextInputChanged"
         ></WidgetEditorToolbarContextMenu>
-        <!-- <WidgetEditorIconPickerDialog v-if="iconPickerDialogVisible" :widgetModel="widgetModel" :settings="icon.iconPickerSettings" :itemIndex="itemIndex" @close="iconPickerDialogVisible = false" @save="onIconSelected"></WidgetEditorIconPickerDialog> -->
     </div>
 </template>
 
@@ -84,7 +83,7 @@ export default defineComponent({
                     break
                 case 'background-color':
                     this.color = this.model['background-color'] ? getRGBColorFromString(this.model['background-color']) : null
-                    this.newColor = this.model.color ?? ''
+                    this.newColor = this.model['background-color'] ?? ''
             }
         },
         getIconClass() {

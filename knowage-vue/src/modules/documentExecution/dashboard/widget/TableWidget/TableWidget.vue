@@ -76,6 +76,7 @@ export default defineComponent({
             emitter.on('shadowStyleChanged', (shadowsStyle) => console.log('WidgetEditorPreview  - shadowStyleChanged!', shadowsStyle))
             emitter.on('conditionalStylesChanged', (conditionalStyles) => console.log('WidgetEditorPreview  - conditionalStylesChanged!', conditionalStyles))
             emitter.on('tooltipsChanged', (tooltips) => this.createDatatableColumns())
+            emitter.on('selectionChanged', (selectionModel) => console.log('WidgetEditorPreview  - selectionChanged!', selectionModel))
         },
         setupDatatableOptions() {
             this.gridOptions = {

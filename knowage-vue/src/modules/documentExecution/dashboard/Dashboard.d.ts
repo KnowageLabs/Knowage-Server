@@ -9,10 +9,6 @@ export interface IWidget {
     dataset: number
     type: string
     columns: IWidgetColumn[]
-    conditionalStyles: any[]  // TO REMOVE
-    interactions: any[]  // TO REMOVE
-    theme: string  // TO REMOVE
-    style: any  // TO REMOVE
     settings: ITableWidgetSettings | any
     new?: boolean
 }
@@ -24,7 +20,7 @@ export interface ITableWidgetSettings {
     clickable: boolean,
     conditionalStyles: ITableWidgetConditionalStyle[],
     configuration: ITableWidgetConfiguration,
-    interactions: ITableWidgetInteraction,
+    interactions: ITableWidgetInteractions,
     pagination: ITableWidgetPagination,
     style: ITableWidgetStyle,
     tooltips: ITableWidgetTooltipStyle[],
@@ -124,7 +120,7 @@ export interface ITableWidgetSummaryRow {
     aggregation: string
 }
 
-export interface ITableWidgetInteraction {
+export interface ITableWidgetInteractions {
     crosssNavigation: {
         "enabled": boolean,
         "type": string,
@@ -163,13 +159,13 @@ export interface ITableWidgetPreview {
 }
 
 export interface ITableWidgetSelection {
-    "enabled": boolean,
-    "modalColumn": string,
-    "multiselection": {
-        "enabled": boolean,
-        "properties": {
+    enabled: boolean,
+    modalColumn: string,
+    multiselection: {
+        enabled: boolean,
+        properties: {
             "background-color": string,
-            "color": string
+            color: string
         }
     }
 }
@@ -204,8 +200,7 @@ export interface ITableWidgetBordersStyle {
 }
 
 export interface ITableWidgetColumnStyle {
-    allColumnSelected?: boolean,
-    target: string[],
+    target: string | string[],
     properties: {
         "background-color": string,
         color: string,
@@ -289,7 +284,7 @@ export interface ITableWidgetVisualization {
     visibilityConditions: ITableWidgetVisibilityCondition[]
 }
 export interface ITableWidgetVisualizationType {
-    target: string[],
+    target: string | string[],
     type: string,
     precision?: number,
     prefix?: string,
@@ -299,8 +294,7 @@ export interface ITableWidgetVisualizationType {
     max?: number,
     alignment?: string,
     color?: string,
-    "background-color"?: string,
-    allColumnSelected?: boolean
+    "background-color"?: string
 }
 
 export interface ITableWidgetVisibilityCondition {

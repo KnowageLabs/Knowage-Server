@@ -1,10 +1,10 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
     console.log("TableWidgetCompatibilityHelper - formatTableWidget called for: ", widget)
     const formattedWidget = {
-        id: widget.id, dataset: widget.dataset.dsId, type: widget.type, columns: getFormattedWidgetColumns(widget), conditionalStyles: [], interactions: [], theme: '', style: {}, settings: {}
+        id: widget.id, dataset: widget.dataset.dsId, type: widget.type, columns: getFormattedWidgetColumns(widget), conditionalStyles: [], theme: '', style: {}, settings: {}
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(formattedWidget, widget)
     getFiltersForColumns(formattedWidget, widget)
@@ -36,7 +36,7 @@ const getColumnId = (formattedWidget: IWidget, widgetColumnName: string) => {
 
 // SETTINGS !!!
 const getFormattedWidgetSettings = (formattedWidget: IWidget, widget: any) => {
-    const formattedSettings = { sortingColumn: getColumnId(formattedWidget, widget.settings?.sortingColumn), sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(formattedWidget, widget), configuration: getFormattedConfiguration(formattedWidget, widget) as any, interactions: getFormattedInteractions(widget) as any, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as any, tooltips: getFormattedTooltips() as ITableWidgetTooltipStyle[], visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) as any } as ITableWidgetSettings
+    const formattedSettings = { sortingColumn: getColumnId(formattedWidget, widget.settings?.sortingColumn), sortingOrder: widget.settings?.sortingOrder, updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(formattedWidget, widget), configuration: getFormattedConfiguration(formattedWidget, widget) as any, interactions: getFormattedInteractions(widget) as ITableWidgetInteractions, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as any, tooltips: getFormattedTooltips() as ITableWidgetTooltipStyle[], visualization: getFormattedVisualizations(widget), responsive: getFormattedResponsivnes(widget) as any } as ITableWidgetSettings
     return formattedSettings
 }
 const getFormattedConditionalStyles = (formattedWidget: IWidget, widget: any) => {
@@ -322,9 +322,28 @@ const getFormattedSummaryRows = (widget: any) => {
     return formattedSummaryRows
 }
 
-// TODO
+// INTERACTIONS !!!
 const getFormattedInteractions = (widget: any) => {
-    return {}
+    return {
+        crosssNavigation: {},
+        link: {},
+        preview: {},
+        selection: getFormattedSelection(widget),
+    }
+}
+
+const getFormattedSelection = (widget: any) => {
+    return {
+        enabled: true,
+        modalColumn: '',
+        multiselection: {
+            enabled: widget.settings.multiselectable ?? false,
+            properties: {
+                "background-color": '',
+                color: widget.settings.multiselectablecolor ?? ''
+            }
+        }
+    }
 }
 
 
@@ -338,14 +357,25 @@ const getFormattedPaginations = (widget: any) => {
 const getFormattedStyle = (widget: any) => {
     return {
         borders: getFormattedBorderStyle(widget),
-        columns: [],
+        columns: [{
+            target: 'all',
+            properties: {
+                "background-color": '',
+                color: '',
+                "justify-content": '',
+                "font-size": '',
+                "font-family": '',
+                "font-style": '',
+                "font-weight": ''
+            }
+        }],
         columnGroups: getFormattedColumnGroupsStyle(widget),
         headers: getFormattedHeadersStyle(widget),
         padding: getFormattedPaddingStyle(widget),
         rows: getFormattedRowsStyle(widget),
         shadows: getFormattedShadowsStyle(widget),
         summary: getFormattedSummaryStyle(widget)
-    }
+    } as ITableWidgetStyle
 }
 
 const getFormattedTooltips = () => {
@@ -381,7 +411,18 @@ const getFormattedBorderStyle = (widget: any) => {
 }
 
 const getFormattedColumnGroupsStyle = (widget: any) => {
-    const formattedColumnGroupsStyles = [] as ITableWidgetColumnStyle[]
+    const formattedColumnGroupsStyles = [{
+        target: 'all',
+        properties: {
+            "background-color": '',
+            color: '',
+            "justify-content": '',
+            "font-size": '',
+            "font-family": '',
+            "font-style": '',
+            "font-weight": ''
+        }
+    }] as ITableWidgetColumnStyle[]
     if (!widget.groups) return formattedColumnGroupsStyles
     let fields = ['background-color', 'color', "justify-content", "font-size", "font-family", "font-style", "font-weight"]
     for (let i = 0; i < widget.groups.length; i++) {
@@ -541,7 +582,15 @@ const convertColorFromHSLtoRGB = (hslColor: string | null) => {
 
 
 const getFormattedVisualizations = (widget: any) => {
-    return { types: [], visibilityConditions: [] }
+    return {
+        types: [{
+            target: 'all',
+            type: 'Text',
+            prefix: '',
+            suffix: '',
+            pinned: '',
+        }], visibilityConditions: []
+    }
 }
 
 const getFormattedResponsivnes = (widget: any) => {
