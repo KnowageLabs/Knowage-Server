@@ -1,5 +1,5 @@
 <template>
-    <div class="custom-header-container" style="height: 100%; width: 100%" :style="params.styleString">
+    <div class="custom-header-container" :style="params.styleString">
         <div class="custom-header-label">{{ params.displayName }}</div>
     </div>
 </template>
