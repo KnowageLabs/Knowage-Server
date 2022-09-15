@@ -216,8 +216,26 @@ export default defineComponent({
 
         //#region ===================== Save/Update Dataset & Tags =================================================
         async saveDataset() {
-            this.$emit('showSavingSpinner')
             let dsToSave = { ...this.selectedDataset } as any
+            if (this.user?.functionalities?.includes('DataPreparation')) {
+                await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/dataset/' + dsToSave.id).then((response: AxiosResponse<any>) => {
+                    if (response.data) {
+                        this.$confirm.require({
+                            icon: 'pi pi-exclamation-triangle',
+                            message: this.$t('managers.datasetManagement.dataPreparation.datasetInvolvedIntoDataPrep'),
+                            header: this.$t('managers.datasetManagement.saveTitle'),
+                            accept: () => this.proceedOnSaving(dsToSave)
+                        })
+                    } else {
+                        this.proceedOnSaving(dsToSave)
+                    }
+                })
+            } else {
+                this.proceedOnSaving(dsToSave)
+            }
+        },
+        async proceedOnSaving(dsToSave) {
+            this.$emit('showSavingSpinner')
             let restRequestHeadersTemp = {}
             if (dsToSave.dsTypeCd.toLowerCase() == 'rest' || dsToSave.dsTypeCd.toLowerCase() == 'solr') {
                 for (let i = 0; i < dsToSave.restRequestHeaders.length; i++) {
@@ -253,6 +271,7 @@ export default defineComponent({
                 .catch()
                 .finally(() => this.$emit('hideSavingSpinner'))
         },
+
         async saveTags(dsToSave, id) {
             let tags = {} as any
             tags.versNum = dsToSave.versNum + 1
