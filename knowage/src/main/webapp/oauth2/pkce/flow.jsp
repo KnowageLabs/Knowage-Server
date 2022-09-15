@@ -104,7 +104,7 @@ OAuth2Config oauth2Config = OAuth2Config.getInstance();
                     redirect_uri: redirectUri,
                     scope: "openid profile"
                 });
-                window.location = authorizeEndpoint + "/?" + args;
+                window.location = authorizeEndpoint + "?" + args;
             });
         }
 
