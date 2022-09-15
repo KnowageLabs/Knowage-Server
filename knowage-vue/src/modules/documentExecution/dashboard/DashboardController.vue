@@ -129,7 +129,7 @@ export default defineComponent({
                     isUserDefined: true
                 }
             ]
-            this.store.setOutputParameters(this.mockedParameters)
+            this.store.setOutputParameters(mockedParameters)
         },
         setEventListeners() {
             emitter.on('openNewWidgetPicker', () => {
