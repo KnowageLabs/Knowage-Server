@@ -15,10 +15,11 @@ import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import HeaderRenderer from './HeaderRenderer.vue'
 import SummaryRowRenderer from './SummaryRowRenderer.vue'
+import HeaderGroupRenderer from './HeaderGroupRenderer.vue'
 
 export default defineComponent({
     name: 'table-widget',
-    components: { AgGridVue, HeaderRenderer, SummaryRowRenderer },
+    components: { AgGridVue, HeaderRenderer, SummaryRowRenderer, HeaderGroupRenderer },
     props: {
         propWidget: {
             required: true,
@@ -135,7 +136,7 @@ export default defineComponent({
             var dataset = { type: 'SbiFileDataSet' }
 
             if (this.propWidget.settings.configuration.rows.indexColumn) {
-                columns.push({ colId: 'indexColumn', valueGetter: `node.rowIndex + 1`, headerName: '#', pinned: 'left', width: 50, sortable: false, filter: false })
+                columns.push({ colId: 'indexColumn', valueGetter: `node.rowIndex + 1`, headerName: '', pinned: 'left', width: 55, sortable: false, filter: false })
             }
             // c = datasetColumn
             // f = responseField, fields = responseFields
@@ -232,7 +233,6 @@ export default defineComponent({
                                 })
                             })
                         }
-                        headersConfiguration.test = 'TEEEEEEEEEEEEEEEEEEEEEEEST'
 
                         // COLUMN GROUPING -----------------------------------------------------------------
                         var group = this.getColumnGroup(this.propWidget.columns[datasetColumn])
@@ -243,6 +243,8 @@ export default defineComponent({
                                 columnGroups[group.id] = columns.length
                                 columns.push({
                                     headerName: group.label,
+                                    headerGroupComponent: HeaderGroupRenderer,
+                                    headerParams: group,
                                     children: [tempCol]
                                 })
                             }
@@ -276,10 +278,6 @@ export default defineComponent({
         getWidgetStyleString() {
             const styleString = this.getWidgetStyleByType('shadows') + this.getWidgetStyleByType('padding') + this.getWidgetStyleByType('borders')
             return styleString
-        },
-        changeHeaderHeight(headersStyle) {
-            console.log('change hewight - ', headersStyle)
-            this.propWidget.settings.configuration.headers.enabled ? this.gridApi.setHeaderHeight(headersStyle.height) : ''
         }
     }
 })
