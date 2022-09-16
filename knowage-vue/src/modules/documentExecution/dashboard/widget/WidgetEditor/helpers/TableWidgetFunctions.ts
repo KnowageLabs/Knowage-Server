@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetColumnGroups, ITableWidgetColumnGroup } from "../../../Dashboard"
+import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetColumnGroups, ITableWidgetColumnGroup, ITableWidgetParameter } from "../../../Dashboard"
 import { formatRGBColor } from './WidgetEditorHelpers'
 import { emitter } from '../../../DashboardHelpers'
 import descriptor from '../WidgetEditorDescriptor.json'
@@ -147,6 +147,7 @@ export const removeColumnFromModel = (widgetModel: IWidget, column: IWidgetColum
     removeColumnFromColumnStyle(widgetModel, column)
     removeColumnFromConditionalStyles(widgetModel, column)
     removeColumnFromTooltips(widgetModel, column)
+    removeColumnFromCrossNavigation(widgetModel, column)
 }
 
 const removeColumnFromRows = (widgetModel: IWidget, column: IWidgetColumn) => {
@@ -261,6 +262,19 @@ const removeColumnFromTooltips = (widgetModel: IWidget, column: IWidgetColumn) =
         if (tooltips[i].target.length === 0) tooltips.splice(i, 1)
     }
     if (removed) emitter.emit('columnRemovedFromTooltips')
+}
+
+const removeColumnFromCrossNavigation = (widgetModel: IWidget, column: IWidgetColumn) => {
+    const crossNavigation = widgetModel.settings.interactions.crosssNavigation
+    if (crossNavigation.column === column.id) {
+        crossNavigation.enabled = false;
+        crossNavigation.parameters.forEach((parameter: ITableWidgetParameter) => {
+            parameter.enabled = false
+            console.log(parameter.column + ' === ' + column.columnName)
+            if (parameter.column === column.columnName) parameter.column = ''
+        })
+        emitter.emit('columnRemovedFromCrossNavigation')
+    }
 }
 
 export const removeColumnGroupFromModel = (widgetModel: IWidget, columnGroup: ITableWidgetColumnGroup) => {
