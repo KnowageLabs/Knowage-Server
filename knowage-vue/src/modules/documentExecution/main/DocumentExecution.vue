@@ -106,7 +106,7 @@ import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNCon
 const deepcopy = require('deepcopy')
 // @ts-ignore
 // eslint-disable-next-line
-window.execExternalCrossNavigation = function (outputParameters, otherOutputParameters, crossNavigationLabel) {
+window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
     postMessage(
         {
             type: 'crossNavigation',
@@ -1166,7 +1166,7 @@ export default defineComponent({
 
             return finalString
         },
-        addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
+        addDocumentOtherParametersToNavigationParams(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
             if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
             const keys = Object.keys(angularData.outputParameters)
             const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
