@@ -242,8 +242,8 @@ export default defineComponent({
                     restRequestHeadersTemp[dsToSave.restRequestHeaders[i]['name']] = dsToSave.restRequestHeaders[i]['value']
                 }
             }
-            dsToSave['restRequestHeaders'] = JSON.stringify(restRequestHeadersTemp)
-            dsToSave['restJsonPathAttributes'] && dsToSave['restJsonPathAttributes'].length > 0 ? (dsToSave.restJsonPathAttributes = JSON.stringify(dsToSave.restJsonPathAttributes)) : (dsToSave.restJsonPathAttributes = '')
+            dsToSave['restRequestHeaders'] = restRequestHeadersTemp
+
             dsToSave.pars ? '' : (dsToSave.pars = [])
             dsToSave.pythonEnvironment ? (dsToSave.pythonEnvironment = JSON.stringify(dsToSave.pythonEnvironment)) : ''
             dsToSave.meta ? (dsToSave.meta = await this.manageDatasetFieldMetadata(dsToSave.meta)) : (dsToSave.meta = [])
@@ -442,7 +442,7 @@ export default defineComponent({
                     }
                 }
                 this.previewDataset['restRequestHeaders'] = JSON.stringify(restRequestHeadersTemp)
-                this.previewDataset['restJsonPathAttributes'] && this.previewDataset['restJsonPathAttributes'].length > 0 ? (this.previewDataset.restJsonPathAttributes = JSON.stringify(this.previewDataset.restJsonPathAttributes)) : (this.previewDataset.restJsonPathAttributes = '')
+                this.previewDataset['restJsonPathAttributes'] && this.previewDataset['restJsonPathAttributes'].length > 0 ? (this.previewDataset.restJsonPathAttributes = JSON.stringify(this.previewDataset.restJsonPathAttributes)) : (this.previewDataset.restJsonPathAttributes = [])
                 this.previewDataset.pars ? '' : (this.previewDataset.pars = [])
                 this.previewDataset.pythonEnvironment ? (this.previewDataset.pythonEnvironment = JSON.stringify(this.previewDataset.pythonEnvironment)) : ''
                 this.previewDataset.meta ? (this.previewDataset.meta = await this.manageDatasetFieldMetadata(this.previewDataset.meta)) : (this.previewDataset.meta = [])
