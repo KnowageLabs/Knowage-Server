@@ -230,11 +230,11 @@ public class OAuth2Config {
 
 	@Override
 	public String toString() {
-		return "OAuth2Config [authorizeUrl=" + authorizeUrl + ", redirectUrl=" + redirectUrl + ", clientId=" + clientId + ", clientSecret=" + clientSecret
-				+ ", accessTokenUrl=" + accessTokenUrl + ", jwksUrl=" + jwksUrl + ", userInfoUrl=" + userInfoUrl + ", adminId=" + adminId + ", adminEmail="
-				+ adminEmail + ", adminPassword=" + adminPassword + ", scopes=" + scopes + ", userIdClaim=" + userIdClaim + ", userNameClaim=" + userNameClaim
-				+ ", profileAttributes=" + profileAttributes + ", restApiBaseUrl=" + restApiBaseUrl + ", organizationInfoPath=" + organizationInfoPath
-				+ ", rolesPath=" + rolesPath + ", applicationId=" + applicationId + ", tokenPath=" + tokenPath + ", tokenBody=" + tokenBody + "]";
+		return "OAuth2Config [type=" + type + ", authorizeUrl=" + authorizeUrl + ", redirectUrl=" + redirectUrl + ", clientId=" + clientId + ", accessTokenUrl="
+				+ accessTokenUrl + ", jwksUrl=" + jwksUrl + ", userInfoUrl=" + userInfoUrl + ", adminId=" + adminId + ", adminEmail=" + adminEmail + ", scopes="
+				+ scopes + ", userIdClaim=" + userIdClaim + ", userNameClaim=" + userNameClaim + ", profileAttributes=" + profileAttributes
+				+ ", restApiBaseUrl=" + restApiBaseUrl + ", organizationInfoPath=" + organizationInfoPath + ", rolesPath=" + rolesPath + ", applicationId="
+				+ applicationId + ", tokenPath=" + tokenPath + ", tokenBody=" + tokenBody + "]";
 	}
 
 }
