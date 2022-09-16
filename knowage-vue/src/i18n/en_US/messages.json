@@ -241,7 +241,7 @@
     "components": {
         "knCalculatedField": {
             "columnName": "Column Name",
-            "description": "Calculated field description",
+            "description": "Choose a name, select a type and add an expression for the calculated field. Drag and drop the functions and the fields from the list into the expression text area.",
             "fields": "Fields",
             "formula": "Formula",
             "functions": "Functions",
@@ -1250,6 +1250,7 @@
             "hindBreadMessage": "This field set the breadcrumb text visualizable within a cross navigation.It's possible to use parameters (output or input types) of the original document through the syntax $P(source_parameter_name).",
             "hindDesc": "Hint about Description",
             "hindDescMessage": "This field set the description of the navigation visualizable within the selection popup. The popup will be shown if there are multiple cross navigations startable by the same document.It's possible to use parameters (output or input types) of the original document through the syntax $P(source_parameter_name).",
+            "hintDrag": "To connect parameters between documents drag and drop them from the starting document to the target one.",
             "hint": "Cross-navigation management functionality allows you to create the link between document navigations. You can select the type of navigation and connect che parameters value from output to input. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
             "incompatibleTypes": "Incompatible types",
             "incompatibleTypesMessage": "{originParam} parameter's type not compatible with type of parameter {targetParam}",
@@ -1334,6 +1335,9 @@
             "confirmMsg": "You will lose all unsaved changes, are you sure you want to open Data Preparation?",
             "creationUser": "Creation User",
             "dataframeName": "Dataframe variable name",
+            "dataPreparation": {
+                "datasetInvolvedIntoDataPrep": "Dataset is involved in a Data Preparation process, do you want to proceed?"
+            },
             "decrypt": "Decrypt",
             "deleteAllParams": "Clear all dataset parameters",
             "deleteAllParamsMsg": "Are you sure you want to delete all dataset parameters?",
@@ -1406,6 +1410,7 @@
             "restRequestBody": "Request Body",
             "restoreMsg": "Do you want to restore the dataset version?",
             "restoreTitle": "Restore dataset version",
+            "saveTitle": "Save dataset",
             "scheduling": "Scheduling",
             "scope": "Scope",
             "selectDatasetType": "DataSet Type",
@@ -2278,9 +2283,9 @@
                         "label": "Merge columns"
                     },
                     "newChar": "New char",
+                    "numOfChars": "Number of characters",
                     "number": "Number",
                     "numberOfChars": "Number of characters",
-                    "numOfChars": "Number of characters",
                     "oldChar": "Old char",
                     "outputType": "Output Type",
                     "padding": {

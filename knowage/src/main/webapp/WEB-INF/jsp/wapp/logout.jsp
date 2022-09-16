@@ -169,7 +169,6 @@ else if (active != null && active.equalsIgnoreCase("true")) {
 		redirectUrl = backUrl; 
 	}
 	redirectUrl = urlLogout;
-
 } %>
 
 <script>

@@ -699,16 +699,22 @@ export default defineComponent({
             deep: true
         },
         cronExpression(newFormula) {
-            this.localCronExpression = newFormula
-            this.parseFormula(this.localCronExpression)
+            if (newFormula) {
+                this.localCronExpression = newFormula
+                this.parseFormula(this.localCronExpression)
+            }
         },
         cronExpressionType(newCronExpressionType) {
             this.selectedRefreshRate = newCronExpressionType
-            this.parseFormula(this.localCronExpression)
+            if (this.localCronExpression) {
+                this.parseFormula(this.localCronExpression)
+            }
         },
         localCronExpression() {
             if (this.localCronExpression !== this.cronExpression) this.$emit('touched')
-            this.parseFormula(this.localCronExpression)
+            if (this.localCronExpression) {
+                this.parseFormula(this.localCronExpression)
+            }
         },
         schedulationPaused(newSchedulationPaused) {
             this.paused = newSchedulationPaused

@@ -147,7 +147,7 @@ export default defineComponent({
                 postData.DRIVERS = this.formatDriversForPreviewData()
             }
             await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, postData)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/preview`, postData, { headers: { 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
                     this.setPreviewColumns(response.data)
                     this.rows = response.data.rows
@@ -175,7 +175,7 @@ export default defineComponent({
                 postData.drivers = this.formatDriversForPreviewData()
             }
             await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.dataset.label}/preview`, postData)
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/datasets/${this.dataset.label}/preview`, postData, { headers: { 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
                     this.setPreviewColumns(response.data)
                     this.rows = response.data.rows
