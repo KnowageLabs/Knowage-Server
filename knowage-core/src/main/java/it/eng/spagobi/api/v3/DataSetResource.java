@@ -25,10 +25,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -434,8 +438,26 @@ public class DataSetResource {
 			File[] datasets = avroExportFolder.toFile().listFiles(File::isDirectory);
 			for (int i = 0; i < datasets.length; i++) {
 				boolean avroReady = new File(datasets[i], "ready").exists();
-				if (avroReady) {
-					avroDataSets.add(datasets[i].getName());
+				Integer idToCheck;
+				try {
+					idToCheck = Integer.parseInt(datasets[i].getName());
+				} catch (NumberFormatException e) {
+					continue; // workaround for first developments with label datasets
+				}
+				IDataSet datasetToCheck = DAOFactory.getDataSetDAO().loadDataSetById(idToCheck);
+				if (datasetToCheck != null) {
+					FileTime creationTime = (FileTime) Files.getAttribute(Paths.get(datasets[i].getCanonicalPath() + File.separator + "data"), "creationTime");
+					BasicFileAttributes attr = Files.readAttributes(Paths.get(datasets[i].getCanonicalPath() + File.separator + "data"),
+							BasicFileAttributes.class);
+					Date fileDate = null;
+					if (attr.lastModifiedTime() != null) {
+						fileDate = new Date(attr.lastModifiedTime().toMillis());
+					} else {
+						fileDate = new Date(creationTime.toMillis());
+					}
+					if (avroReady && fileDate.compareTo(datasetToCheck.getDateIn()) > 0) {
+						avroDataSets.add(datasets[i].getName());
+					}
 				}
 			}
 		} catch (Exception e) {
