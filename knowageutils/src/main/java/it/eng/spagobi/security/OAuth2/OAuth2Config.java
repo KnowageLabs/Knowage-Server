@@ -18,9 +18,11 @@
 package it.eng.spagobi.security.OAuth2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -30,10 +32,15 @@ import org.apache.log4j.Logger;
  */
 public class OAuth2Config {
 
+	public static enum FLOWTYPE {
+		PKCE, AUTHORIZATION_CODE;
+	}
+
 	static private Logger logger = Logger.getLogger(OAuth2Config.class);
 
 	private static OAuth2Config INSTANCE = new OAuth2Config();
 
+	private final FLOWTYPE type;
 	private final String authorizeUrl;
 	private final String redirectUrl;
 	private final String clientId;
@@ -56,6 +63,16 @@ public class OAuth2Config {
 	private final String tokenBody;
 
 	public OAuth2Config() {
+
+		String typeStr = Optional.ofNullable(System.getProperty("oauth2_flow_type", System.getenv("OAUTH2_FLOW_TYPE")))
+				.orElseThrow(() -> new RuntimeException("Missing both oauth2_flow_type system property and OAUTH2_FLOW_TYPE environment variable"));
+
+		if (!EnumUtils.isValidEnum(FLOWTYPE.class, typeStr.toUpperCase())) {
+			throw new RuntimeException("Specified OAUTH2_FLOW_TYPE [" + typeStr + "] is not valid. Valid values are " + Arrays.toString(FLOWTYPE.values())
+					+ " and check is case insensitive.");
+		}
+
+		this.type = FLOWTYPE.valueOf(typeStr.toUpperCase());
 
 		this.clientId = Optional.ofNullable(System.getProperty("oauth2_client_id", System.getenv("OAUTH2_CLIENT_ID")))
 				.orElseThrow(() -> new RuntimeException("Missing OAUTH2_CLIENT_ID"));
@@ -121,6 +138,10 @@ public class OAuth2Config {
 
 	public static OAuth2Config getInstance() {
 		return INSTANCE;
+	}
+
+	public FLOWTYPE getFlowType() {
+		return this.type;
 	}
 
 	public String getAuthorizeUrl() {
