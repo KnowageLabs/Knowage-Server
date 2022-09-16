@@ -1,5 +1,110 @@
 <template>
-    <Card class="p-m-2 kn-card no-padding">
+    <DataTable
+        class="p-datatable-sm kn-table"
+        :scrollable="true"
+        v-model:first="first"
+        :value="rows"
+        editMode="cell"
+        dataKey="id"
+        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+        :lazy="lazyParams.size > registryDescriptor.paginationLimit"
+        :paginator="true"
+        :rows="registryDescriptor.paginationNumberOfItems"
+        :currentPageReportTemplate="
+            $t('common.table.footer.paginated', {
+                first: '{first}',
+                last: '{last}',
+                totalRecords: '{totalRecords}'
+            })
+        "
+        :totalRecords="lazyParams.size"
+        responsiveLayout="stack"
+        breakpoint="960px"
+        stripedRows
+        showGridlines
+        @page="onPage($event)"
+        @cell-edit-complete="onCellEditComplete"
+    >
+        <template #empty>{{ $t('common.info.noDataFound') }}</template>
+        <Column class="kn-truncated" :style="registryDatatableDescriptor.numerationColumn.style" :field="columns[0].field" :header="columns[0].title"></Column>
+
+        <template v-for="col of columns.slice(1)" :key="col.field">
+            <Column
+                class="kn-truncated"
+                style="width: 200px"
+                :field="col.field"
+                :style="col.columnInfo?.type === 'date' ? registryDatatableDescriptor.dateColumn.style : ''"
+                :bodyStyle="{
+                    'background-color': col.color,
+                    width: col.size + 'px'
+                }"
+            >
+                <template #header>
+                    <div class="table-header">
+                        {{ col.title }}
+                        <i v-if="col.isEditable && col.columnInfo?.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
+                    </div>
+                </template>
+                <template #editor="slotProps">
+                    <div :data-test="col.field + '-editor'">
+                        <span v-if="!col.isEditable">
+                            <span v-if="col.columnInfo?.type !== 'boolean' && col.columnInfo?.type !== 'date' && col.columnInfo?.type !== 'timestamp'">{{ slotProps.data[col.field] }}</span>
+                            <span v-if="slotProps.data[col.field] && col.columnInfo?.type === 'date'">
+                                {{ getFormattedDate(slotProps.data[col.field], 'yyyy-MM-dd', getCurrentLocaleDefaultDateFormat(col)) }}
+                            </span>
+                            <span v-else-if="slotProps.data[col.field] && col.columnInfo?.type === 'timestamp'"> {{ getFormattedDateTime(slotProps.data[col.field], { dateStyle: 'short', timeStyle: 'medium' }, true) }}</span>
+                        </span>
+                        <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo?.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
+                        <RegistryDatatableEditableField
+                            v-else-if="col.isEditable"
+                            :column="col"
+                            :propRow="slotProps.data"
+                            :comboColumnOptions="comboColumnOptions"
+                            @rowChanged="setRowEdited(slotProps.data)"
+                            @dropdownChanged="onDropdownChange"
+                            @dropdownOpened="addColumnOptions"
+                        ></RegistryDatatableEditableField>
+                    </div>
+                </template>
+                <template #body="slotProps">
+                    <div class="p-d-flex p-flex-row" :data-test="col.field + '-body'">
+                        <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo?.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
+                        <RegistryDatatableEditableField
+                            v-else-if="col.isEditable && (col.columnInfo?.type === 'date' || col.columnInfo?.type === 'timestamp')"
+                            :column="col"
+                            :propRow="slotProps.data"
+                            :comboColumnOptions="comboColumnOptions"
+                            @rowChanged="setRowEdited(slotProps.data)"
+                            @dropdownChanged="onDropdownChange"
+                            @dropdownOpened="addColumnOptions"
+                        ></RegistryDatatableEditableField>
+                        <div v-else-if="col.isEditable">
+                            <span v-if="(col.columnInfo?.type === 'int' || col.columnInfo?.type === 'float') && slotProps.data[col.field]">{{ getFormattedNumber(slotProps.data[col.field]) }}</span>
+                            <span v-else> {{ slotProps.data[col.field] }}</span>
+                        </div>
+
+                        <span v-else-if="!col.isEditable">
+                            <span v-if="slotProps.data[col.field] && col.columnInfo?.type === 'date'">
+                                {{ getFormattedDate(slotProps.data[col.field], 'yyyy-MM-dd', getCurrentLocaleDefaultDateFormat(col)) }}
+                            </span>
+                            <span v-else-if="slotProps.data[col.field] && col.columnInfo?.type === 'timestamp'"> {{ getFormattedDateTime(slotProps.data[col.field], { dateStyle: 'short', timeStyle: 'medium' }, true) }}</span>
+
+                            <span v-else>{{ slotProps.data[col.field] }}</span></span
+                        >
+                    </div>
+                </template>
+            </Column>
+        </template>
+        <Column :style="registryDatatableDescriptor.iconColumn.style" :headerStyle="registryDatatableDescriptor.headerIconColumn.style">
+            <template #body="slotProps">
+                <Button v-if="buttons.enableButtons || buttons.enableDeleteRecords" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)">
+                    <i class="pi pi-flag" :class="[slotProps.data.edited ? flagShown : flagHidden]" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
+                    <i class="p-button-link pi pi-trash p-ml-2" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
+                </Button>
+            </template>
+        </Column>
+    </DataTable>
+    <!-- <Card class="p-m-2 kn-card no-padding">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
                 <template #end>
@@ -118,7 +223,7 @@
                 </DataTable>
             </div>
         </template>
-    </Card>
+    </Card> -->
 
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
 </template>

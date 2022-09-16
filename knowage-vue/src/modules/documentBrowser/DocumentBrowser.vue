@@ -1,6 +1,6 @@
 <template>
     <div class="kn-page">
-        <div class="document-browser-tab-container kn-page-content">
+        <div class="document-browser-tab-container kn-flex">
             <TabView id="document-browser-tab-view" class="p-d-flex p-flex-column kn-flex kn-tab" v-model:activeIndex="activeIndex" @tab-change="onTabChange">
                 <TabPanel>
                     <template #header>
