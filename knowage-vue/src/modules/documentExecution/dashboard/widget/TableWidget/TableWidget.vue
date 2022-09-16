@@ -323,7 +323,6 @@ export default defineComponent({
             return columnGroupStyleString
         },
         getRowStyle(params) {
-            console.log('params')
             var rowStyles = this.propWidget.settings.style.rows
 
             if (rowStyles.alternatedRows && rowStyles.alternatedRows.enabled) {
