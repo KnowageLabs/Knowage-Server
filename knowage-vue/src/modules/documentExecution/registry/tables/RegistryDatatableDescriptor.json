@@ -12,8 +12,8 @@
     },
     "iconColumn": {
         "style": {
-            "max-width": "70px",
-            "text-align": "center"
+            "justify-content": "center",
+            "width": "60px"
         }
     },
     "numerationColumn": {
