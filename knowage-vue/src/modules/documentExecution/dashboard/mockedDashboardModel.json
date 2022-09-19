@@ -286,6 +286,60 @@
                                 }
                             }
                         },
+                        "link": {
+                            "enable": true,
+                            "links": [
+                                {
+                                    "baseurl": "basic url",
+                                    "interactionType": "allRow",
+                                    "parameters": [
+                                        {
+                                            "bindType": "static",
+                                            "name": "Parameter Static",
+                                            "value": "static value"
+                                        },
+                                        {
+                                            "bindType": "dynamic",
+                                            "column": "FID",
+                                            "name": "Parameter Dynamic"
+                                        },
+                                        {
+                                            "bindType": "driver",
+                                            "driver": "Driver",
+                                            "name": "Parameter Analytical Driver"
+                                        },
+                                        {
+                                            "bindType": "json",
+                                            "json": "{\n\t'TEST\": \"TEST\"\n}",
+                                            "name": "Parameter JSON"
+                                        },
+                                        {
+                                            "bindType": "selection",
+                                            "column": "the_day",
+                                            "dataset": "DOC_SALES_UNIT_COST_BY_MONTH",
+                                            "name": "Parameter Selection"
+                                        },
+                                        {
+                                            "bindType": "jwt",
+                                            "name": "Parameter JWT"
+                                        }
+                                    ],
+                                    "type": "replace"
+                                },
+                                {
+                                    "baseurl": "url single column",
+                                    "column": "FID",
+                                    "interactionType": "singleColumn",
+                                    "type": "blank"
+                                },
+                                {
+                                    "baseurl": "url base url icon",
+                                    "icon": " fab fa-accessible-icon",
+                                    "interactionType": "icon",
+                                    "type": "replace"
+                                }
+                            ]
+                        },
                         "preview": {
                             "background": true,
                             "column": "product_id",

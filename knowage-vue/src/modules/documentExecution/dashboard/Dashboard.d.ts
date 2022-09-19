@@ -128,14 +128,7 @@ export interface ITableWidgetSummaryRow {
 
 export interface ITableWidgetInteractions {
     crosssNavigation: ITableWidgetCrossNavigation,
-    link: {
-        "enabled": boolean,
-        "type": string,  //column, row, icon
-        "icon": string,
-        "baseurl": string,
-        "action": string,
-        "parameters": ITableWidgetParameter[]
-    },
+    link: ITableWidgetLinks,
     preview: ITableWidgetPreview,
     selection: ITableWidgetSelection
 }
@@ -149,6 +142,20 @@ export interface ITableWidgetCrossNavigation {
     parameters: ITableWidgetParameter[]
 }
 
+export interface ITableWidgetLinks {
+    enabled: boolean,
+    links: ITableWidgetLink[]
+}
+
+export interface ITableWidgetLink {
+    type: string,
+    icon?: string,
+    baseurl: string,
+    column?: string,
+    action: string,
+    parameters: ITableWidgetParameter[]
+}
+
 export interface ITableWidgetParameter {
     enabled: boolean,
     name: string,
@@ -156,7 +163,8 @@ export interface ITableWidgetParameter {
     value: string,
     column?: string,
     driver?: string,
-    dataset?: string
+    dataset?: string,
+    json?: string
 }
 
 export interface ITableWidgetPreview {

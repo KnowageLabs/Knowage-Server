@@ -1,5 +1,6 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetParameter, ITableWidgetCrossNavigation, ITableWidgetPreview, ITableWidgetSelection } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetParameter, ITableWidgetCrossNavigation, ITableWidgetPreview, ITableWidgetSelection, ITableWidgetLinks, ITableWidgetLink } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
+import { findProp } from '@vue/compiler-core'
 
 export const formatTableWidget = (widget: any) => {
     console.log("TableWidgetCompatibilityHelper - formatTableWidget called for: ", widget)
@@ -326,7 +327,7 @@ const getFormattedSummaryRows = (widget: any) => {
 const getFormattedInteractions = (formattedWidget: IWidget, widget: any) => {
     return {
         crosssNavigation: getFormattedCrossNavigation(formattedWidget, widget) as ITableWidgetCrossNavigation,
-        link: {} as any,
+        link: getFormattedLinkInteraction(formattedWidget, widget) as ITableWidgetLinks,
         preview: getFormattedPreview(formattedWidget, widget) as ITableWidgetPreview,
         selection: getFormattedSelection(widget) as ITableWidgetSelection,
     }
@@ -367,6 +368,58 @@ const getFormattedCrossNavigationParameters = (formattedWidget: IWidget, outputP
             formattedParameters.push(formattedParameter)
         })
     }
+    return formattedParameters
+}
+
+const getFormattedLinkInteraction = (formattedWidget: IWidget, widget: any) => {
+    if (!widget.cross || !widget.cross.link) return {
+        enabled: false,
+        links: []
+    }
+
+    return {
+        enabled: widget.cross.link.enable,
+        links: getFormattededLinks(widget.cross.link.links)
+    }
+}
+
+const getFormattededLinks = (links: any) => {
+    const formattedLinks = [] as ITableWidgetLink[]
+    links.forEach((link: any) => {
+        const formattedLink = {
+            type: link.interactionType,
+            baseurl: link.baseurl,
+            action: link.type,
+            parameters: getFormattedLinkParameters(link.parameters)
+        } as ITableWidgetLink
+
+        if (link.icon) formattedLink.icon = link.icon
+        if (link.column) formattedLink.column = link.column
+
+        formattedLinks.push(formattedLink)
+    })
+
+    return formattedLinks
+}
+
+const getFormattedLinkParameters = (linkParameters: any[]) => {
+    if (!linkParameters || linkParameters.length === 0) return []
+    const formattedParameters = [] as ITableWidgetParameter[]
+    linkParameters.forEach((linkParameter: any) => {
+        const formattedParameter = {
+            enabled: true,
+            name: linkParameter.name,
+            type: linkParameter.bindType,
+            value: linkParameter.value ?? ''
+        } as ITableWidgetParameter
+
+        if (linkParameter.column) formattedParameter.column = linkParameter.column
+        if (linkParameter.dataset) formattedParameter.dataset = linkParameter.dataset
+        if (linkParameter.driver) formattedParameter.driver = linkParameter.driver
+        if (linkParameter.json) formattedParameter.json = linkParameter.json
+
+        formattedParameters.push(formattedParameter)
+    })
     return formattedParameters
 }
 

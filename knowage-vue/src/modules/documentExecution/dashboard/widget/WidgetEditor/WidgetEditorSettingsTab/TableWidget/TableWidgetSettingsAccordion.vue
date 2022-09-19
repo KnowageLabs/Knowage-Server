@@ -27,6 +27,7 @@
                 <TableWidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></TableWidgetResponsive>
                 <TableWidgetSelection v-else-if="accordion.type === 'Selection'" :widgetModel="widgetModel"></TableWidgetSelection>
                 <TableWidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets"></TableWidgetCrossNavigation>
+                <TableWidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers"></TableWidgetInteractionsLinks>
                 <TableWidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :drivers="drivers"></TableWidgetPreview>
             </AccordionTab>
         </Accordion>
@@ -56,9 +57,10 @@ import TableWidgetShadowsStyle from './style/TableWidgetShadowsStyle.vue'
 import TableWidgetConditions from './conditionalStyle/TableWidgetConditions.vue'
 import TableWidgetTooltips from './tooltips/TableWidgetTooltips.vue'
 import TableWidgetResponsive from './responsive/TableWidgetResponsive.vue'
-import TableWidgetSelection from './interactions/TableWidgetSelection.vue'
-import TableWidgetCrossNavigation from './interactions/TableWidgetCrossNavigation.vue'
-import TableWidgetPreview from './interactions/TableWidgetPreview.vue'
+import TableWidgetSelection from './interactions/selection/TableWidgetSelection.vue'
+import TableWidgetCrossNavigation from './interactions/crossNavigation/TableWidgetCrossNavigation.vue'
+import TableWidgetInteractionsLinks from './interactions/link/TableWidgetInteractionsLinks.vue'
+import TableWidgetPreview from './interactions/preview/TableWidgetPreview.vue'
 
 export default defineComponent({
     name: 'table-widget-configuration-container',
@@ -84,6 +86,7 @@ export default defineComponent({
         TableWidgetResponsive,
         TableWidgetSelection,
         TableWidgetCrossNavigation,
+        TableWidgetInteractionsLinks,
         TableWidgetPreview
     },
     props: {

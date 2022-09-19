@@ -48,13 +48,13 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetCrossNavigation, ITableWidgetParameter, IDataset, IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
-import { emitter } from '../../../../../DashboardHelpers'
-import descriptor from '../TableWidgetSettingsDescriptor.json'
+import { emitter } from '../../../../../../DashboardHelpers'
+import descriptor from '../../TableWidgetSettingsDescriptor.json'
 import dashboardStore from '@/modules/documentExecution/Dashboard/Dashboard.store'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import TableWidgetOutputParametersList from './TableWidgetOutputParametersList.vue'
-import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
+import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 
 export default defineComponent({
     name: 'table-widget-cross-navigation',
