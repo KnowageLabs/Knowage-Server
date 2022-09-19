@@ -86,13 +86,18 @@
                             </span>
                             <span v-else-if="slotProps.data[col.field] && col.columnInfo?.type === 'timestamp'"> {{ getFormattedDateTime(slotProps.data[col.field], { dateStyle: 'short', timeStyle: 'medium' }, true) }}</span>
 
-                            <span v-else>{{ slotProps.data[col.field] }}</span></span
-                        >
+                            <span v-else>{{ slotProps.data[col.field] }}</span>
+                        </span>
                     </div>
                 </template>
             </Column>
         </template>
-        <Column :style="registryDatatableDescriptor.iconColumn.style">
+        <Column>
+            <template #header>
+                <div class="table-header">
+                    <Button class="kn-button" :style="registryDatatableDescriptor.iconColumn.style" :label="$t('managers.businessModelManager.add')" v-if="buttons.enableButtons || buttons.enableAddRecords" @click="addNewRow" data-test="new-row-button" />
+                </div>
+            </template>
             <template #body="slotProps">
                 <Button v-if="buttons.enableButtons || buttons.enableDeleteRecords" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)">
                     <i class="pi pi-flag" :class="[slotProps.data.edited ? flagShown : flagHidden]" :style="registryDatatableDescriptor.primevueTableStyles.trashNormal" />
