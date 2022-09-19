@@ -347,34 +347,11 @@ const getFormattedCrossNavigation = (formattedWidget: IWidget, widget: any) => {
         icon: widget.cross.cross.icon ? widget.cross.cross.icon.trim() : '',
         column: getColumnId(formattedWidget, widget.cross.cross.column),
         name: widget.cross.cross.crossName,
-        parameters: widget.cross.cross.outputParametersList ? getFormattedCrossNavigationParameters(widget.cross.cross.outputParametersList) : []
+        parameters: widget.cross.cross.outputParametersList ? getFormattedCrossNavigationParameters(formattedWidget, widget.cross.cross.outputParametersList) : []
     }
 }
 
-const getFormattedPreview = (formattedWidget: IWidget, widget: any) => {
-    if (!widget.cross || !widget.cross.preview) return {
-        enabled: false,
-        type: '',
-        dataset: '',
-        parameters: [],
-        directDownload: false
-    }
-
-    const formattedPreview = {
-        enabled: widget.cross.preview.enable,
-        type: widget.cross.preview.previewType,
-        icon: widget.cross.preview.icon ? widget.cross.preview.icon.trim() : '',
-        dataset: widget.cross.preview.dataset,
-        directDownload: widget.cross.preview.background,
-        parameters: widget.cross.preview.parameters ? getFormattedCrossNavigationParameters(widget.cross.preview.parameters) : []
-    } as ITableWidgetPreview
-
-    if (widget.cross.preview.column) formattedPreview.column = getColumnId(formattedWidget, widget.cross.preview.column)
-
-    return formattedPreview
-}
-
-const getFormattedCrossNavigationParameters = (outputParameterList: any) => {
+const getFormattedCrossNavigationParameters = (formattedWidget: IWidget, outputParameterList: any) => {
     const formattedParameters = [] as ITableWidgetParameter[]
     if (outputParameterList) {
         Object.keys(outputParameterList).forEach((key: string) => {
@@ -392,6 +369,81 @@ const getFormattedCrossNavigationParameters = (outputParameterList: any) => {
     }
     return formattedParameters
 }
+
+const getFormattedPreview = (formattedWidget: IWidget, widget: any) => {
+    if (!widget.cross || !widget.cross.preview) return {
+        enabled: false,
+        type: '',
+        dataset: '',
+        parameters: [],
+        directDownload: false
+    }
+
+    const formattedPreview = {
+        enabled: widget.cross.preview.enable,
+        type: widget.cross.preview.previewType,
+        icon: widget.cross.preview.icon ? widget.cross.preview.icon.trim() : '',
+        dataset: widget.cross.preview.dataset,
+        directDownload: widget.cross.preview.background,
+        parameters: widget.cross.preview.parameters ? getFormattedPreviewParameters(formattedWidget, widget.cross.preview.parameters) : []
+    } as ITableWidgetPreview
+
+    if (widget.cross.preview.column) formattedPreview.column = widget.cross.preview.column
+
+    return formattedPreview
+}
+
+
+
+const getFormattedPreviewParameters = (formattedWidget: IWidget, previewParameters: any) => {
+    const formattedParameters = [] as ITableWidgetParameter[]
+
+    previewParameters?.forEach((previewParameter: any) => {
+        const formattedParameter = {
+            enabled: true,
+            name: previewParameter.name,
+            type: previewParameter.bindType,
+            value: previewParameter.value ?? ''
+        } as ITableWidgetParameter
+
+        if (previewParameter.driver) formattedParameter.driver = previewParameter.driver
+        if (previewParameter.column) formattedParameter.column = previewParameter.column
+        if (previewParameter.dataset) formattedParameter.dataset = previewParameter.dataset
+
+        formattedParameters.push(formattedParameter)
+    })
+
+
+    return formattedParameters
+}
+
+// [
+//     {
+//         "bindType": "selection",
+//         "column": "FID",
+//         "dataset": "BIG_TEST_GIS",
+//         "defaultValue": "",
+//         "multiValue": false,
+//         "name": "par_category",
+//         "type": "String"
+//     },
+//     {
+//         "bindType": "driver",
+//         "defaultValue": "",
+//         "driver": "Driver",
+//         "multiValue": false,
+//         "name": "par_department",
+//         "type": "String"
+//     },
+//     {
+//         "bindType": "dynamic",
+//         "column": "FID",
+//         "defaultValue": "",
+//         "multiValue": false,
+//         "name": "par_family",
+//         "type": "String"
+//     }
+// ]
 
 const getFormattedSelection = (widget: any) => {
     return {

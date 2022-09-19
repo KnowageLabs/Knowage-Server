@@ -3,7 +3,7 @@
         <div v-for="(parameter, index) in parameters" :key="index" class="p-d-flex p-flex-row p-ai-center p-m-2">
             <div class="p-d-flex p-flex-row p-ai-center">
                 <div class="kn-flex p-mx-4 p-my-2">
-                    <InputSwitch v-model="parameter.enabled" @change="parametersChanged" :disabled="disabled"></InputSwitch>
+                    <InputSwitch v-model="parameter.enabled" :disabled="disabled" @change="parametersChanged"></InputSwitch>
                 </div>
             </div>
             <div class="p-d-flex p-flex-column kn-flex">

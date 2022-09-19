@@ -1,6 +1,5 @@
 <template>
     <div v-if="previewModel" class="p-grid">
-        {{ previewModel }}
         <div class="p-grid p-col-12 p-pt-4 p-ai-center">
             <div class="p-col-6 p-sm-12 p-md-6">
                 <InputSwitch v-model="previewModel.enabled"></InputSwitch>
@@ -36,11 +35,19 @@
                 </div>
             </div>
             <div v-else-if="previewModel.type === 'icon'" class="p-col-2 p-p-4">
-                <WidgetEditorStyleToolbar :options="[{ type: 'icon' }]" :propModel="{ icon: previewModel.icon }" @change="onStyleToolbarChange($event)"> </WidgetEditorStyleToolbar>
+                <WidgetEditorStyleToolbar :options="[{ type: 'icon' }]" :propModel="{ icon: previewModel.icon }" :disabled="previewDisabled" @change="onStyleToolbarChange($event)"> </WidgetEditorStyleToolbar>
             </div>
         </div>
-        <div v-if="selectedDatasetParameters.length > 0" class="p-col-12 p-p-2">
-            <TableWidgetPreviewParameterList class="kn-flex p-mr-2" :widgetModel="widgetModel" :propParameters="previewModel.parameters" :datasetParameters="selectedDatasetParameters" :disabled="previewDisabled" @change="onParametersChanged"></TableWidgetPreviewParameterList>
+        <div v-if="previewModel.parameters.length > 0" class="p-col-12 p-p-2">
+            <TableWidgetPreviewParameterList
+                class="kn-flex p-mr-2"
+                :widgetModel="widgetModel"
+                :propParameters="previewModel.parameters"
+                :selectedDatasetsColumnsMap="selectedDatasetColumnNameMap"
+                :drivers="drivers"
+                :disabled="previewDisabled"
+                @change="onParametersChanged"
+            ></TableWidgetPreviewParameterList>
         </div>
     </div>
 </template>
@@ -63,7 +70,8 @@ export default defineComponent({
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
-        selectedDatasets: { type: Array as PropType<IDataset[]> }
+        selectedDatasets: { type: Array as PropType<IDataset[]> },
+        drivers: { type: Array }
     },
     data() {
         return {
@@ -71,8 +79,8 @@ export default defineComponent({
             previewModel: null as ITableWidgetPreview | null,
             dashboardModel: null as any,
             dashboardDatasets: [] as any[],
-            selectedDatasetParameters: [] as IDatasetParameter[],
-            selectedDatasetColumnNamesMap: {},
+            selectedDatasetColumnIdMap: {},
+            selectedDatasetColumnNameMap: {},
             getTranslatedLabel
         }
     },
@@ -97,21 +105,14 @@ export default defineComponent({
         },
         loadPreviewModel() {
             if (this.widgetModel?.settings?.interactions?.preview) this.previewModel = this.widgetModel.settings.interactions.preview
-            this.loadSelectedDatasetParameters()
         },
         loadDashboardModel() {
             // TODO - remove hardcoded id
             this.dashboardModel = this.store.getDashboard(1)
-            console.log('LOADED MODEL: ', this.dashboardModel)
             this.loadDatasetsFromModel()
         },
         loadDatasetsFromModel() {
             this.dashboardDatasets = this.dashboardModel.configuration.datasets
-        },
-        loadSelectedDatasetParameters() {
-            this.selectedDatasetParameters = []
-            const index = this.dashboardDatasets.findIndex((dataset: any) => dataset.id === this.previewModel?.dataset)
-            if (index !== -1) this.selectedDatasetParameters = this.dashboardDatasets[index].parameters
         },
         onColumnRemoved() {
             this.loadPreviewModel()
@@ -121,9 +122,11 @@ export default defineComponent({
             this.selectedDatasets.forEach((dataset: IDataset) => this.loadCrossSelectedDatasetColumnName(dataset))
         },
         loadCrossSelectedDatasetColumnName(dataset: IDataset) {
-            this.selectedDatasetColumnNamesMap[dataset.id.dsId] = []
+            this.selectedDatasetColumnNameMap[dataset.name] = []
+            this.selectedDatasetColumnIdMap[dataset.id.dsId] = []
             for (let i = 0; i < dataset.metadata.fieldsMeta.length; i++) {
-                this.selectedDatasetColumnNamesMap[dataset.id.dsId].push(dataset.metadata.fieldsMeta[i].name)
+                this.selectedDatasetColumnIdMap[dataset.id.dsId].push(dataset.metadata.fieldsMeta[i].name)
+                this.selectedDatasetColumnNameMap[dataset.name].push(dataset.metadata.fieldsMeta[i].name)
             }
         },
         onInteractionTypeChanged() {
@@ -148,14 +151,18 @@ export default defineComponent({
         },
         getSelectionDatasetColumnOptions() {
             if (!this.previewModel) return []
-            console.log('>>>>>>>>>>>>>>>>>>>> TEST 1: ', this.selectedDatasetColumnNamesMap)
-            console.log('>>>>>>>>>>>>>>>>>>>> TEST 2: ', this.selectedDatasetColumnNamesMap[this.previewModel.dataset])
-            return this.previewModel?.dataset && this.selectedDatasetColumnNamesMap ? this.selectedDatasetColumnNamesMap[this.previewModel.dataset] : []
+            return this.previewModel?.dataset && this.selectedDatasetColumnIdMap ? this.selectedDatasetColumnIdMap[this.previewModel.dataset] : []
         },
         onDatasetChanged() {
             if (!this.previewModel) return
             this.previewModel.column = ''
-            this.loadSelectedDatasetParameters()
+            this.previewModel.parameters = []
+            const index = this.dashboardDatasets.findIndex((dataset: any) => dataset.id === this.previewModel?.dataset)
+            if (index !== -1)
+                this.previewModel.parameters = this.dashboardDatasets[index].parameters.map((tempParameter: IDatasetParameter) => {
+                    console.log('TEMP PARAMETER: ', tempParameter)
+                    return { enabled: true, name: tempParameter.name, type: '', value: '' }
+                })
         }
     }
 })

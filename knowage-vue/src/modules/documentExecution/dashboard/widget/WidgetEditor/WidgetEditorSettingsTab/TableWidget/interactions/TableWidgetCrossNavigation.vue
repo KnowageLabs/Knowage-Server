@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div v-if="crossNavigationModel.type === 'icon'" class="p-m-4">
-                <WidgetEditorStyleToolbar :options="[{ type: 'icon' }]" :propModel="{ icon: crossNavigationModel.icon }" @change="onStyleToolbarChange($event)"> </WidgetEditorStyleToolbar>
+                <WidgetEditorStyleToolbar :options="[{ type: 'icon' }]" :propModel="{ icon: crossNavigationModel.icon }" :disabled="crossNavigationDisabled" @change="onStyleToolbarChange($event)"> </WidgetEditorStyleToolbar>
             </div>
         </div>
         <div v-if="crossNavigationModel.parameters" class="p-d-flex p-flex-row p-ai-center p-m-2">
@@ -108,10 +108,12 @@ export default defineComponent({
             this.loadParameterList()
         },
         loadOutputParameters() {
+            console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA >  ', this.store.getOutputParameters())
             this.outputParameters = this.store.getOutputParameters() ?? []
         },
         loadParameterList() {
             if (!this.crossNavigationModel) return
+            console.log('OUTPUT PARAMETERS: ', this.outputParameters)
             this.parameterList = []
             for (let i = 0; i < this.outputParameters.length; i++) {
                 const outputParameter = this.outputParameters[i]

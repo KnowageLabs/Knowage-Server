@@ -75,6 +75,10 @@ export default defineComponent({
         this.loadOutputParameters()
         this.loadModel()
     },
+    moundet() {
+        this.loadCrossNavigations()
+        this.loadOutputParameters()
+    },
     unmounted() {
         // TODO
         // this.store.removeDashboard({ id: (this as any).dHash as any })

@@ -429,6 +429,7 @@
             },
             "inputHintForPixels": "use px measure unit, ie: 5px",
             "interactions": {
+                "analyticalDriver": "Analytical Driver",
                 "crossNavigation": "Cross-navigation",
                 "crossNavigationName": "Cross Navigation Name",
                 "dynamic": "Dynamic",
