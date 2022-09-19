@@ -226,6 +226,12 @@ public class JDBCHiveDataReader extends AbstractDataReader {
 			return java.net.URL.class;
 		} else if (type.equals("MAP")) {
 			return String.class;
+		} else if (type.equals("INTERVAL DAY TO SECOND")) {
+			return String.class;
+		} else if (type.equals("INTERVAL YEAR TO MONTH")) {
+			return String.class;
+		} else if (type.equals("INTERVAL HOUR TO SECOND")) {
+			return String.class;
 		}
 		throw new SpagoBIEngineException("Can not find a java type for [" + type + "]");
 	}
