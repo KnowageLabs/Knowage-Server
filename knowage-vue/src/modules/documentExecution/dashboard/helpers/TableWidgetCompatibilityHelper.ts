@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetParameter } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetParameter, ITableWidgetCrossNavigation, ITableWidgetPreview, ITableWidgetSelection } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 
 export const formatTableWidget = (widget: any) => {
@@ -325,10 +325,10 @@ const getFormattedSummaryRows = (widget: any) => {
 // INTERACTIONS !!!
 const getFormattedInteractions = (formattedWidget: IWidget, widget: any) => {
     return {
-        crosssNavigation: getFormattedCrossNavigation(formattedWidget, widget),
+        crosssNavigation: getFormattedCrossNavigation(formattedWidget, widget) as ITableWidgetCrossNavigation,
         link: {} as any,
-        preview: {} as any,
-        selection: getFormattedSelection(widget),
+        preview: getFormattedPreview(formattedWidget, widget) as ITableWidgetPreview,
+        selection: getFormattedSelection(widget) as ITableWidgetSelection,
     }
 }
 
@@ -349,6 +349,29 @@ const getFormattedCrossNavigation = (formattedWidget: IWidget, widget: any) => {
         name: widget.cross.cross.crossName,
         parameters: widget.cross.cross.outputParametersList ? getFormattedCrossNavigationParameters(widget.cross.cross.outputParametersList) : []
     }
+}
+
+const getFormattedPreview = (formattedWidget: IWidget, widget: any) => {
+    if (!widget.cross || !widget.cross.preview) return {
+        enabled: false,
+        type: '',
+        dataset: '',
+        parameters: [],
+        directDownload: false
+    }
+
+    const formattedPreview = {
+        enabled: widget.cross.preview.enable,
+        type: widget.cross.preview.previewType,
+        icon: widget.cross.preview.icon ? widget.cross.preview.icon.trim() : '',
+        dataset: widget.cross.preview.dataset,
+        directDownload: widget.cross.preview.background,
+        parameters: widget.cross.preview.parameters ? getFormattedCrossNavigationParameters(widget.cross.preview.parameters) : []
+    } as ITableWidgetPreview
+
+    if (widget.cross.preview.column) formattedPreview.column = getColumnId(formattedWidget, widget.cross.preview.column)
+
+    return formattedPreview
 }
 
 const getFormattedCrossNavigationParameters = (outputParameterList: any) => {

@@ -437,9 +437,11 @@
                 "enableClickOnWholeRow": "Enable click on whole row",
                 "enableCrossNavigation": "Enable Cross-navigation",
                 "enableMultiselection": "Enable Multiselection",
+                "enablePreview": "Enable Preview",
                 "enableSelection": "Enable Selection",
                 "modalColumn": "Modal Column",
                 "outputParameter": "Output Parameter",
+                "preview": "Preview",
                 "selection": "Selection",
                 "static": "Static",
                 "title": "Interactions"

@@ -1,7 +1,7 @@
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
 import { formatTableWidget } from './TableWidgetCompatibilityHelper'
-import { IWidgetEditorDataset } from '../Dashboard'
+import { IDatasetParameter, IWidgetEditorDataset } from '../Dashboard'
 
 export const formatModel = (model: any) => {
     console.log('DashboardBackwardCompatibilityHelper - FORMAT MODEL CALLED WITH: ', model)
@@ -47,9 +47,15 @@ const getFormattedDataset = (dataset: any) => {
     return formattedDataset
 }
 
-// TODO
 const getFormattedDatasetParameters = (dataset: any) => {
-    return []
+    // TODO - see about hardcoded  multivalue
+    const parameters = [] as IDatasetParameter[]
+    Object.keys(dataset.parameters).forEach((key: string) => parameters.push({
+        name: key,
+        type: "static",
+        value: dataset.parameters[key]
+    }))
+    return parameters
 }
 
 const getFormattedVariables = (model: any) => {

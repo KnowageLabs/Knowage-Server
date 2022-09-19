@@ -5,7 +5,7 @@
                 <InputSwitch v-model="crossNavigationModel.enabled"></InputSwitch>
                 <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.interactions.enableCrossNavigation') }}</label>
             </div>
-            <div class="p-d-flex p-flex-column kn-flex p-m-2 value-type-dropdown">
+            <div class="p-d-flex p-flex-column kn-flex p-m-2">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
                 <Dropdown class="kn-material-input" v-model="crossNavigationModel.type" :options="descriptor.interactionTypes" optionValue="value" :disabled="crossNavigationDisabled" @change="onInteractionTypeChanged">
                     <template #value="slotProps">
@@ -131,9 +131,9 @@ export default defineComponent({
         loadSelectedDatasetColumnNames() {
             if (!this.selectedDatasets || this.selectedDatasets.length === 0) return
 
-            this.selectedDatasets.forEach((dataset: IDataset) => this.loadCroaddSelectedDatasetColumnName(dataset))
+            this.selectedDatasets.forEach((dataset: IDataset) => this.loadCrossSelectedDatasetColumnName(dataset))
         },
-        loadCroaddSelectedDatasetColumnName(dataset: IDataset) {
+        loadCrossSelectedDatasetColumnName(dataset: IDataset) {
             this.selectedDatasetsColumnsMap[dataset.name] = []
             for (let i = 0; i < dataset.metadata.fieldsMeta.length; i++) {
                 this.selectedDatasetsColumnsMap[dataset.name].push(dataset.metadata.fieldsMeta[i].name)

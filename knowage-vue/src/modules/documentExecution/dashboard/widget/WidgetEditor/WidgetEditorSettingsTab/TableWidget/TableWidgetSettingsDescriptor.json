@@ -264,6 +264,10 @@
             {
                 "title": "dashboard.widgetEditor.interactions.crossNavigation",
                 "type": "CrossNavigation"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.preview",
+                "type": "Preview"
             }
         ],
         "Responsive": [

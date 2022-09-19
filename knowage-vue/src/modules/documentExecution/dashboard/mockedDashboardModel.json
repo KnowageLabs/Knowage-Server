@@ -28,12 +28,34 @@
                 "useCache": false
             },
             {
-            "dsId": 166,
+                "dsId": 166,
                 "dsLabel": "BIG_TEST_GIS",
                 "frequency": 0,
                 "name": "BIG_TEST_GIS",
                 "parameters": {},
                 "useCache": true
+            },
+            {
+                "dsId": 18,
+                "dsLabel": "DOC_SALES_UNIT_COST_BY_MONTH",
+                "frequency": 0,
+                "name": "Sales, Unit sales and cost",
+                "parameters": {
+                    "year": "2015"
+                },
+                "useCache": false
+            },
+            {
+                "dsId": 5,
+                "dsLabel": "DOC_measures_parallell_DEF",
+                "frequency": 0,
+                "name": "Sales and Costs by Product Name",
+                "parameters": {
+                    "par_category": "$P{Driver}",
+                    "par_department": "$P{Driver}",
+                    "par_family": "$P{Driver}"
+                },
+                "useCache": false
             }
         ],
         "documents": [],
@@ -263,6 +285,40 @@
                                     "value": "Static"
                                 }
                             }
+                        },
+                        "preview": {
+                            "background": true,
+                            "column": "product_id",
+                            "dataset": 5,
+                            "enable": true,
+                            "parameters": [
+                                {
+                                    "bindType": "selection",
+                                    "column": "FID",
+                                    "dataset": "BIG_TEST_GIS",
+                                    "defaultValue": "",
+                                    "multiValue": false,
+                                    "name": "par_category",
+                                    "type": "String"
+                                },
+                                {
+                                    "bindType": "driver",
+                                    "defaultValue": "",
+                                    "driver": "Driver",
+                                    "multiValue": false,
+                                    "name": "par_department",
+                                    "type": "String"
+                                },
+                                {
+                                    "bindType": "dynamic",
+                                    "column": "FID",
+                                    "defaultValue": "",
+                                    "multiValue": false,
+                                    "name": "par_family",
+                                    "type": "String"
+                                }
+                            ],
+                            "previewType": "singleColumn"
                         }
                     },
                     "dataset": {
