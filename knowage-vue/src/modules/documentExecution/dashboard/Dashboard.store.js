@@ -14,10 +14,12 @@ const store = defineStore('dashboardStore', {
         removeDashboard(state, dashboard) {
             delete state.dashboards[dashboard.id]
         },
+        getDashboard(dashboardId) {
+            return this.dashboards[dashboardId]
+        },
         setDashboard(dashboard) {
             this.dashboards[dashboard.id] = dashboard
         },
-
         setDashboardSheet(dashboard) {
             this.dashboardModel[dashboard.id].sheet = dashboard.sheet
         },

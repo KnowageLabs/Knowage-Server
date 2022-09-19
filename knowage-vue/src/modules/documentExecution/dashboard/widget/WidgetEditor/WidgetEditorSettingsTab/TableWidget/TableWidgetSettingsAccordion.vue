@@ -27,6 +27,7 @@
                 <TableWidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></TableWidgetResponsive>
                 <TableWidgetSelection v-else-if="accordion.type === 'Selection'" :widgetModel="widgetModel"></TableWidgetSelection>
                 <TableWidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets"></TableWidgetCrossNavigation>
+                <TableWidgetPreview v-else-if="accordion.type === 'Preview'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets"></TableWidgetPreview>
             </AccordionTab>
         </Accordion>
     </div>
@@ -57,6 +58,7 @@ import TableWidgetTooltips from './tooltips/TableWidgetTooltips.vue'
 import TableWidgetResponsive from './responsive/TableWidgetResponsive.vue'
 import TableWidgetSelection from './interactions/TableWidgetSelection.vue'
 import TableWidgetCrossNavigation from './interactions/TableWidgetCrossNavigation.vue'
+import TableWidgetPreview from './interactions/TableWidgetPreview.vue'
 
 export default defineComponent({
     name: 'table-widget-configuration-container',
@@ -81,7 +83,8 @@ export default defineComponent({
         TableWidgetTooltips,
         TableWidgetResponsive,
         TableWidgetSelection,
-        TableWidgetCrossNavigation
+        TableWidgetCrossNavigation,
+        TableWidgetPreview
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

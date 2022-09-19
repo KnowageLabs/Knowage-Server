@@ -1,3 +1,9 @@
+export interface IDatasetParameter {
+    name: string,
+    type: "static" | "dynamic",
+    value: string
+}
+
 export interface ISheet {
     label: string
     icon?: string
@@ -154,12 +160,13 @@ export interface ITableWidgetParameter {
 }
 
 export interface ITableWidgetPreview {
-    "enabled": boolean,
-    "type": string,
-    "parameters": ITableWidgetParameter[],
-    "dataset": number,
-    "column": string,
-    "directDownload": boolean
+    enabled: boolean,
+    type: string,
+    parameters: ITableWidgetParameter[],
+    dataset: number,
+    column?: string,
+    directDownload: boolean,
+    icon?: stirng
 }
 
 export interface ITableWidgetSelection {
