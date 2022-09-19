@@ -75,7 +75,7 @@ export default defineComponent({
     },
     methods: {
         addNewParam() {
-            this.dataset.restRequestHeaders ? '' : (this.dataset.restRequestHeaders = {})
+            this.dataset.restRequestHeaders ? '' : (this.dataset.restRequestHeaders = [])
             const newParam = { ...tableDescriptor.newRequestHeader }
             this.dataset.restRequestHeaders.push(newParam)
         },
@@ -92,7 +92,7 @@ export default defineComponent({
                 message: this.$t('managers.datasetManagement.deleteAllRequestHeaderMsg'),
                 header: this.$t('managers.datasetManagement.deleteAllRequestHeaderTitle'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => (this.dataset.restRequestHeaders = {})
+                accept: () => (this.dataset.restRequestHeaders = [])
             })
         },
 
