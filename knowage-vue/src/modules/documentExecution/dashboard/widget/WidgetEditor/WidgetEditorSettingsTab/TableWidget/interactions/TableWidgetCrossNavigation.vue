@@ -1,8 +1,5 @@
 <template>
     <div v-if="crossNavigationModel">
-        {{ crossNavigationModel }}
-        {{ 'OUTPUT PARS: ' }}
-        {{ outputParameters }}
         <div class="p-d-flex p-flex-row p-ai-center">
             <div class="kn-flex p-mx-4 p-my-2">
                 <InputSwitch v-model="crossNavigationModel.enabled"></InputSwitch>
@@ -24,45 +21,44 @@
                 </Dropdown>
             </div>
         </div>
-        <div class="p-d-flex p-flex-row p-ai-center">
-            <div class="p-d-flex p-flex-row p-ai-center p-m-3">
-                <div class="p-d-flex p-flex-column kn-flex p-m-2">
+        <div class="p-d-flex p-flex-row p-ai-center p-mt-2">
+            <div class="p-d-flex p-flex-row p-ai-center kn-flex p-mx-2">
+                <div class="p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                    <Dropdown class="kn-material-input" v-model="crossNavigationModel.column" :options="widgetModel.columns" optionLabel="alias" optionValue="id"> </Dropdown>
+                    <Dropdown class="kn-material-input" v-model="crossNavigationModel.column" :options="widgetModel.columns" optionLabel="alias" optionValue="id" :disabled="crossNavigationDisabled"> </Dropdown>
                 </div>
             </div>
-            <div v-if="outputParameters.length > 0" class="p-d-flex p-flex-row p-ai-center p-m-3">
-                <div class="p-d-flex p-flex-column kn-flex p-m-2">
-                    <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.interactions.outputParameter') }}</label>
-                    <Dropdown class="kn-material-input" v-model="crossNavigationModel.parameter" :options="outputParameters" optionValue="name" optionLabel="name"> </Dropdown>
-                </div>
-            </div>
-            <div class="p-d-flex p-flex-row p-ai-center p-m-3">
-                <div class="p-d-flex p-flex-column kn-flex p-m-2">
+            <div class="p-d-flex p-flex-row p-ai-center kn-flex">
+                <div class="p-d-flex p-flex-column kn-flex p-mx-2">
                     <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.interactions.crossNavigationName') }}</label>
-                    <Dropdown class="kn-material-input" v-model="crossNavigationModel.name" :options="crossNavigationOptions"> </Dropdown>
+                    <Dropdown class="kn-material-input" v-model="crossNavigationModel.name" :options="crossNavigationOptions" :disabled="crossNavigationDisabled"> </Dropdown>
                 </div>
+            </div>
+            <div v-if="crossNavigationModel.type === 'icon'" class="p-m-4">
+                <WidgetEditorStyleToolbar :options="[{ type: 'icon' }]" :propModel="{ icon: crossNavigationModel.icon }" @change="onStyleToolbarChange($event)"> </WidgetEditorStyleToolbar>
             </div>
         </div>
-        <div v-if="crossNavigationModel.parameters" class="p-d-flex p-flex-row p-ai-center">
-            <TableWidgetOutputParametersList :widgetModel="widgetModel" :propParameters="parameterList"></TableWidgetOutputParametersList>
+        <div v-if="crossNavigationModel.parameters" class="p-d-flex p-flex-row p-ai-center p-m-2">
+            <TableWidgetOutputParametersList class="kn-flex p-mr-2" :widgetModel="widgetModel" :propParameters="parameterList" :selectedDatasetsColumnsMap="selectedDatasetsColumnsMap" :disabled="crossNavigationDisabled" @change="onParametersChanged"></TableWidgetOutputParametersList>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, ITableWidgetCorssNavigation, ITableWidgetParameter, IDataset } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, ITableWidgetCrossNavigation, ITableWidgetParameter, IDataset, IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
+import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import dashboardStore from '@/modules/documentExecution/Dashboard/Dashboard.store'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import TableWidgetOutputParametersList from './TableWidgetOutputParametersList.vue'
+import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 
 export default defineComponent({
     name: 'table-widget-cross-navigation',
-    components: { Dropdown, InputSwitch, TableWidgetOutputParametersList },
+    components: { Dropdown, InputSwitch, TableWidgetOutputParametersList, WidgetEditorStyleToolbar },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
@@ -71,11 +67,11 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            crossNavigationModel: null as ITableWidgetCorssNavigation | null,
+            crossNavigationModel: null as ITableWidgetCrossNavigation | null,
             crossNavigationOptions: [] as string[],
             outputParameters: [] as any[],
             parameterList: [] as ITableWidgetParameter[],
-            selectedDatasetsColumnNames: [] as string[],
+            selectedDatasetsColumnsMap: {},
             getTranslatedLabel
         }
     },
@@ -89,13 +85,17 @@ export default defineComponent({
         return { store }
     },
     created() {
+        this.setEventListeners()
         this.loadCrossNavigationModel()
         this.loadCrossNavigationOptions()
         this.loadOutputParameters()
         this.loadParameterList()
-        // this.loadSelectedDatasetColumnNames()
+        this.loadSelectedDatasetColumnNames()
     },
     methods: {
+        setEventListeners() {
+            emitter.on('columnRemovedFromCrossNavigation', () => this.onColumnRemoved())
+        },
         loadCrossNavigationModel() {
             if (this.widgetModel?.settings?.interactions?.crosssNavigation) this.crossNavigationModel = this.widgetModel.settings.interactions.crosssNavigation
         },
@@ -103,12 +103,14 @@ export default defineComponent({
             const temp = this.store.getCrossNavigations()
             if (temp) this.crossNavigationOptions = temp.map((crossNavigation: any) => crossNavigation.crossName)
         },
+        onColumnRemoved() {
+            this.loadCrossNavigationModel()
+            this.loadParameterList()
+        },
         loadOutputParameters() {
             this.outputParameters = this.store.getOutputParameters() ?? []
         },
         loadParameterList() {
-            console.log('>>>>>>>>>>>>>> OUTPUT PARAMETERS: ', this.outputParameters)
-            console.log('>>>>>>>>>>>>>> OUTPUT PARAMETERS: ', this.crossNavigationModel?.parameters)
             if (!this.crossNavigationModel) return
             this.parameterList = []
             for (let i = 0; i < this.outputParameters.length; i++) {
@@ -121,24 +123,31 @@ export default defineComponent({
                     temp.type = modelParameter.type
                     temp.value = modelParameter.value
                     if (modelParameter.column) temp.column = modelParameter.column
-                    if (modelParameter.dataset) temp.column = modelParameter.dataset
+                    if (modelParameter.dataset) temp.dataset = modelParameter.dataset
                 }
                 this.parameterList.push(temp)
             }
         },
-        // loadSelectedDatasetColumnNames() {
-        //     this.selectedDatasetsColumnNames = []
-        //     if (!this.selectedDatasets || this.selectedDatasets.length === 0) return
+        loadSelectedDatasetColumnNames() {
+            if (!this.selectedDatasets || this.selectedDatasets.length === 0) return
 
-        //     const index = this.selectedDatasets.findIndex((dataset: any) => dataset.id?.dsId === this.selectedDataset?.id)
-        //     if (index !== -1) this.loadCroaddSelectedDatasetColumnName(this.selectedDatasets[index].metadata.fieldsMeta)
-        // },
-        // loadCroaddSelectedDatasetColumnName(fieldsMeta: any[]) {
-        //     for (let i = 0; i < fieldsMeta.length; i++) {
-        //         this.selectedDatasetColumns.push({ ...fieldsMeta[i], dataset: this.selectedDataset?.id })
-        //     }
-        // },
-        onInteractionTypeChanged() {}
+            this.selectedDatasets.forEach((dataset: IDataset) => this.loadCroaddSelectedDatasetColumnName(dataset))
+        },
+        loadCroaddSelectedDatasetColumnName(dataset: IDataset) {
+            this.selectedDatasetsColumnsMap[dataset.name] = []
+            for (let i = 0; i < dataset.metadata.fieldsMeta.length; i++) {
+                this.selectedDatasetsColumnsMap[dataset.name].push(dataset.metadata.fieldsMeta[i].name)
+            }
+        },
+        onInteractionTypeChanged() {
+            if (this.crossNavigationModel && this.crossNavigationModel.type !== 'icon') delete this.crossNavigationModel.icon
+        },
+        onParametersChanged(parameters: ITableWidgetParameter[]) {
+            if (this.crossNavigationModel) this.crossNavigationModel.parameters = parameters
+        },
+        onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
+            if (this.crossNavigationModel) this.crossNavigationModel.icon = model.icon
+        }
     }
 })
 </script>

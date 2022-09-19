@@ -338,16 +338,15 @@ const getFormattedCrossNavigation = (formattedWidget: IWidget, widget: any) => {
         type: '',
         column: '',
         name: '',
-        parameter: '',
         parameters: []
     }
 
     return {
         enabled: widget.cross.cross.enable,
         type: widget.cross.cross.crossType,
+        icon: widget.cross.cross.icon ? widget.cross.cross.icon.trim() : '',
         column: getColumnId(formattedWidget, widget.cross.cross.column),
         name: widget.cross.cross.crossName,
-        parameter: widget.cross.cross.outputParameter ?? '',
         parameters: widget.cross.cross.outputParametersList ? getFormattedCrossNavigationParameters(widget.cross.cross.outputParametersList) : []
     }
 }
