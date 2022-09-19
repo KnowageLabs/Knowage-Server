@@ -427,7 +427,7 @@
                 "total": "totale"
             },
             "hint": "Nessuna attività è stata avviata. Imposta un nome e fai clic su 'Avvia attività' per creare la prima.",
-            "launchActivity": "attività eseguite",
+            "launchActivity": "Esegui attività",
             "launchedActivities": "attività eseguite per il documento corrente",
             "progressNotFinished": "attendere la generazione del documento",
             "saveSuccess": "attività salvata correttamente",
