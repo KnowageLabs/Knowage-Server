@@ -358,7 +358,7 @@
                 "persistError": "errore salvando il parametro di output",
                 "priorityError": "errore aggiornando la priorità",
                 "title": "drivers",
-                "visibilityTitle": "condizione di visibilità sui deriver",
+                "visibilityTitle": "condizione di visibilità sui driver",
                 "visualizationHint": "imposta la condizione di visualizzazione sul driver",
                 "visualizationTitle": "visualizzazione del driver"
             },
