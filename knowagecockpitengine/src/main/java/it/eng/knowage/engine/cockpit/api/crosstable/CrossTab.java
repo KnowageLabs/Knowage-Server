@@ -490,6 +490,31 @@ public class CrossTab {
 			}
 		}
 
+		if (isHideZeroRows()) {
+			List<Integer> nullRows = new ArrayList<>();
+
+			for (index = 0; index < dataStoredata.length(); index++) {
+				JSONObject currRecord = dataStoredata.getJSONObject(index);
+
+				boolean areAllMeasuresNull = true;
+				for (String currMeasure : measuresNameList) {
+					Object currValue = currRecord.get(currMeasure);
+
+					areAllMeasuresNull &= currValue != null && StringUtils.isEmpty(currValue.toString());
+				}
+
+				if (areAllMeasuresNull) {
+					nullRows.add(index);
+				}
+			}
+
+			Collections.reverse(nullRows);
+
+			for (int i : nullRows) {
+				dataStoredata.remove(i);
+			}
+		}
+
 		int cellCount = 0;
 		int actualRows = 0;
 		int actualColumns = 0;
