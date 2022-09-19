@@ -4,10 +4,12 @@
         display: flex;
     }
     .ag-header-cell,
+    .ag-cell-value,
     .ag-header-group-cell,
     .ag-floating-bottom-container .ag-cell {
         padding: 0 !important;
     }
+
     .custom-header-container,
     .custom-header-group-container {
         display: flex;
