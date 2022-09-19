@@ -15,7 +15,7 @@ Create an **.env.local** file in the project root and set the following properti
 ### Compiles and hot-reloads for development
 
 ```
-npm run serve
+npm run dev
 ```
 
 ### Compiles and minifies for production
