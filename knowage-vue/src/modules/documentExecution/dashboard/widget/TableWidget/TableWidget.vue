@@ -17,6 +17,7 @@ import HeaderRenderer from './HeaderRenderer.vue'
 import SummaryRowRenderer from './SummaryRowRenderer.vue'
 import HeaderGroupRenderer from './HeaderGroupRenderer.vue'
 import TooltipRenderer from './TooltipRenderer.vue'
+import CellRenderer from './CellRenderer.vue'
 
 export default defineComponent({
     name: 'table-widget',
@@ -65,9 +66,9 @@ export default defineComponent({
             emitter.on('columnGroupsConfigurationChanged', () => this.createDatatableColumns())
             emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
             emitter.on('visualizationTypeChanged', (visuelizationTypes) => console.log('WidgetEditorPreview  - visualizationTypeChanged!', visuelizationTypes))
-            emitter.on('visibilityConditionsChanged', (visibilityConditions) => console.log('WidgetEditorPreview  - visibilityConditionsChanged!', visibilityConditions))
+            emitter.on('visibilityConditionsChanged', () => this.createDatatableColumns())
             emitter.on('headersStyleChanged', () => this.createDatatableColumns())
-            emitter.on('columnStylesChanged', (columnStyles) => console.log('WidgetEditorPreview  - columnStylesChanged!', columnStyles))
+            emitter.on('columnStylesChanged', (columnStyles) => this.createDatatableColumns())
             emitter.on('columnGroupStylesChanged', () => this.createDatatableColumns())
             emitter.on('rowsStyleChanged', () => this.createDatatableColumns())
             emitter.on('summaryStyleChanged', () => this.createDatatableColumns())
@@ -148,12 +149,15 @@ export default defineComponent({
                     if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && thisColumn.columnName.toLowerCase() === responseFields[responseField].header) || thisColumn.columnName.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
                         this.columnsNameArray.push(responseFields[responseField].name)
                         var tempCol = {
+                            hide: this.getColumnVisibilityCondition(this.propWidget.columns[datasetColumn].id),
                             colId: this.propWidget.columns[datasetColumn].id,
                             headerName: this.propWidget.columns[datasetColumn].alias,
                             field: responseFields[responseField].name,
                             measure: this.propWidget.columns[datasetColumn].fieldType,
                             headerComponent: HeaderRenderer,
-                            headerComponentParams: { styleString: this.getWidgetStyleByType('headers', true) }
+                            headerComponentParams: { styleString: this.getWidgetStyleByType('headers', true) },
+                            cellRenderer: CellRenderer,
+                            cellRendererParams: { styleString: this.getColumnStyle(this.propWidget.columns[datasetColumn].id) }
                         } as any
 
                         if (this.propWidget.columns[datasetColumn].style && this.propWidget.columns[datasetColumn].style.enableCustomHeaderTooltip) {
@@ -333,7 +337,44 @@ export default defineComponent({
                     return { background: rowStyles.alternatedRows.evenBackgroundColor }
                 }
             }
-        }
+        },
+        getColumnStyle(colId) {
+            var columnStyles = this.propWidget.settings.style.columns
+            var columnStyleString = null as any
+            columnStyleString = Object.entries(columnStyles[0].properties)
+                .map(([k, v]) => `${k}:${v}`)
+                .join(';')
+
+            columnStyles.forEach((group) => {
+                if (group.target.includes(colId)) {
+                    columnStyleString = Object.entries(group.properties)
+                        .map(([k, v]) => `${k}:${v}`)
+                        .join(';')
+                }
+            })
+
+            return columnStyleString
+        },
+        getColumnVisibilityCondition(colId) {
+            var visCond = this.propWidget.settings.visualization.visibilityConditions
+            var columnHidden = false as boolean
+
+            var colConditions = visCond.filter((condition) => condition.target.includes(colId))
+
+            //We always take the 1st condition as a priority for the column and use that one.
+            if (colConditions[0]) {
+                console.log('conds', colConditions[0])
+                if (colConditions[0].condition.type === 'always') {
+                    columnHidden = colConditions[0].hide
+                } else {
+                }
+            }
+
+            return columnHidden
+        },
+
+        //TODO: Ask Davide how should this method work
+        formatVisibilityCondition(condition) {}
     }
 })
 </script>
