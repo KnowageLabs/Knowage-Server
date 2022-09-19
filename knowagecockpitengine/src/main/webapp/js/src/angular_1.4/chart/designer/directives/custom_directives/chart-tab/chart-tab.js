@@ -113,7 +113,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 	});
 
 	$scope.$watch('chartTemplate',function(newValue,oldValue){
-		if($scope.chartTemplate.type.toLowerCase()=="bar" || $scope.chartTemplate.type.toLowerCase()=="line" || $scope.chartTemplate.type.toLowerCase()=="radar"){
+		if($scope.chartTemplate.type?.toLowerCase()=="bar" || $scope.chartTemplate.type?.toLowerCase()=="line" || $scope.chartTemplate.type?.toLowerCase()=="radar"){
 			$scope.minMaxCategories = {};
 			$scope.minMaxSeries = {};
 			if(newValue.groupCategories){
@@ -134,7 +134,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				$scope.minMaxCategories.min = 1;
 				$scope.minMaxSeries.min = 1;
 			}
-		} else if($scope.chartTemplate.type.toLowerCase()=="bubble"){
+		} else if($scope.chartTemplate.type?.toLowerCase()=="bubble"){
 			if (newValue.groupSeriesCateg){
 				$scope.minMaxCategories.max = 2;
 				$scope.minMaxCategories.min = 1;

@@ -436,6 +436,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.result[i].fieldType = $scope.selectedFunction.outputColumns[i].fieldType;
 					$scope.result[i].isFunction = true;
 					$scope.result[i].type = getResultType($scope.selectedFunction.outputColumns[i].type);
+					$scope.result[i].aggregationSelected = 'NONE'
 				}
 				promise.resolve($scope.result);
 				$mdDialog.hide();

@@ -297,10 +297,12 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		}
 
 	$scope.getAggregationFunction = function(serieName) {
+		if ($scope.chartTemplate.VALUES){
 		for (i=0; i<$scope.chartTemplate.VALUES.SERIE.length; i++) {
 			if ($scope.chartTemplate.VALUES.SERIE[i].column == serieName) {
 				return $scope.chartTemplate.VALUES.SERIE[i].groupingFunction;
 			}
+		}
 		}
 	}
 
@@ -422,7 +424,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 			var chartType = $scope.selectedChartType.toLowerCase();
 			var typesWithMultipleSeriesContainersEnabled = $scope.seriesContainerAddAndRemoveIncludeTypes;
-			var allChartAxes = $scope.chartTemplate.AXES_LIST.AXIS;
+			var allChartAxes = $scope.chartTemplate.AXES_LIST ? $scope.chartTemplate.AXES_LIST.AXIS : $scope.chartTemplate.CHART.AXES_LIST;
 
 			// If the chart type is not GAUGE (in other words); if there is only one axis (only Series container)
 			if (allChartAxes.length) {
@@ -454,7 +456,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 		if (editingMode !=undefined) {
 
-			var allSeries = $scope.chartTemplate.VALUES.SERIE;
+			var allSeries = $scope.chartTemplate.VALUES ?  $scope.chartTemplate.VALUES.SERIE : $scope.chartTemplate.CHART.VALUES.SERIE;
 
 			for (i=0; i<$scope.seriesContainers.length; i++) {
 
@@ -477,7 +479,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 				}
 
 			}
-			if($scope.chartTemplate.type.toUpperCase() == 'SCATTER'  || $scope.chartTemplate.type.toUpperCase()=="BUBBLE"){
+			if($scope.chartTemplate.type?.toUpperCase() == 'SCATTER'  || $scope.chartTemplate.type?.toUpperCase()=="BUBBLE" || $scope.chartTemplate.CHART?.type.toUpperCase() == 'SCATTER' || $scope.chartTemplate.CHART?.type.toUpperCase()=="BUBBLE"  ){
 				for (j=0; j<allSeries.length; j++) {
 					if(allSeries[j].fakeSerie){
 						$scope.indexSerie = j
@@ -676,6 +678,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			var series = [];
 			   var chartSeries = [];
 			   // Series from chart template (from its JSON)
+				if ($scope.chartTemplate.CHART) $scope.chartTemplate = $scope.chartTemplate.CHART;
 			   if($scope.chartTemplate.VALUES.SERIE.constructor===Object){
 			    var temp = $scope.chartTemplate.VALUES.SERIE;
 			    chartSeries.push(temp);

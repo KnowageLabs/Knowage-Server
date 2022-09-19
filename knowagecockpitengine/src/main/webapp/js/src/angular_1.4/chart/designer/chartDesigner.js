@@ -207,7 +207,7 @@ function chartDesignerFunction($scope, sbiModule_translate,channelMessaging,sbiM
 
 		//attach categories to template for chart types that have an object for categories
 		} else if (chartType.toUpperCase() != "GAUGE"){
-			if($scope.chartTemplate.VALUES.CATEGORY.drillOrder){
+			if($scope.chartTemplate.VALUES?.CATEGORY.drillOrder){
 				var tempDrillOrder = $scope.chartTemplate.VALUES.CATEGORY.drillOrder;
 			}
 

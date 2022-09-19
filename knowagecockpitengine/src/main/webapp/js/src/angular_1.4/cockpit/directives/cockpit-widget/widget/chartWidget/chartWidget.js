@@ -686,33 +686,6 @@ function cockpitChartWidgetControllerFunction(
 	    				  return true;
 			    	  }
 
-	   				var checkFunctions=function(){
-						var measuresFound = [];
-							for (var i=0; i<$scope.localModel.columnSelectedOfDatasetAggregations.length; i++) {
-			  					var col = $scope.localModel.columnSelectedOfDatasetAggregations[i];
-			  					if (col.isFunction) {
-			  						for (var j=0; j<$scope.localModel.columnSelectedOfDatasetAggregations[i].boundFunction.inputColumns.length; j++) {
-										var foundField = false;
-										var columnToCheck = $scope.localModel.columnSelectedOfDatasetAggregations[i].boundFunction.inputColumns[j].dsColumn;										
-										for (var ij=0; ij<$scope.localModel.columnSelectedOfDataset.length; ij++) {
-											if ($scope.localModel.columnSelectedOfDataset[ij].fieldType == 'MEASURE') {
-												if ($scope.localModel.columnSelectedOfDataset[ij].aliasToShow == columnToCheck) {													
-													foundField = true;
-												}
-											}										
-										}
-										if (foundField == false) {
-											measuresFound.push(columnToCheck);
-										}
-									}
-									if (measuresFound.length>0) {
-										sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.widget.designer.chartValidation.missingFunctionsMeasures").replace("{0}", measuresFound));
-										return false;
-									}
-								}
-			  				}
-					   return true;
-					}
 
 // check if right number of operands have been specified depending on operator
 // type
@@ -845,7 +818,6 @@ function cockpitChartWidgetControllerFunction(
 // }
 			    		  else {
 			    			  if(checkConfiguration()){
-								if (checkFunctions()){
 			    				  if($scope.somethingChanged){
 			    					  $scope.localModel.wtype = "chart";
 			    					  $scope.localModel.designer = "Chart Engine Designer";
@@ -861,7 +833,7 @@ function cockpitChartWidgetControllerFunction(
 			    				  $scope.$destroy();
 			    				  doRefresh(undefined,'init');
 			    				  finishEdit.resolve();
-		    				  }
+		    				  
 							}
 			    		  }
 			    	  }
