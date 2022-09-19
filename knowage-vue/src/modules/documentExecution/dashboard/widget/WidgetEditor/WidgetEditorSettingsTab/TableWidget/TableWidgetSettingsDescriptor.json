@@ -198,6 +198,16 @@
             "value": "icon"
         }
     ],
+    "linkTypes": [
+        {
+            "label": "dashboard.widgetEditor.interactions.openInSamePage",
+            "value": "replace"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.openInNewPage",
+            "value": "blank"
+        }
+    ],
     "outputParameterTypeOptions": [
         {
             "label": "dashboard.widgetEditor.interactions.static",
