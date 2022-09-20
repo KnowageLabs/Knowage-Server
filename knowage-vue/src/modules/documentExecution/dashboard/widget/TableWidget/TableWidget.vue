@@ -175,7 +175,7 @@ export default defineComponent({
                         }
 
                         //ROWSPAN MANAGEMENT
-                        if (this.propWidget.settings.configuration.rows.rowSpan.column === this.propWidget.columns[datasetColumn].id) {
+                        if (this.propWidget.settings.configuration.rows.rowSpan.enabled && this.propWidget.settings.configuration.rows.rowSpan.column === this.propWidget.columns[datasetColumn].id) {
                             var previousValue
                             var previousIndex
                             var tempRows = this.datasetRecordsRows as any
@@ -367,6 +367,7 @@ export default defineComponent({
                 if (colConditions[0].condition.type === 'always') {
                     columnHidden = colConditions[0].hide
                 } else {
+                    this.formatVisibilityCondition(colConditions[0].condition) ? (columnHidden = colConditions[0].hide) : ''
                 }
             }
 
@@ -374,7 +375,33 @@ export default defineComponent({
         },
 
         //TODO: Ask Davide how should this method work
-        formatVisibilityCondition(condition) {}
+        formatVisibilityCondition(condition) {
+            var operators = {
+                '>': function (a, b) {
+                    return a > b
+                },
+                '<': function (a, b) {
+                    return a < b
+                },
+                '==': function (a, b) {
+                    return a == b
+                },
+                '<=': function (a, b) {
+                    return a <= b
+                },
+                '=<': function (a, b) {
+                    return a >= b
+                },
+                '!=': function (a, b) {
+                    return a != b
+                },
+                IN: function (a, b) {
+                    return b.split(',').indexOf(a) != -1
+                }
+            }
+            // console.log('EVAL', operators[condition.operator](condition.value, condition.variableValue))
+            return operators[condition.operator](condition.value, condition.variableValue)
+        }
     }
 })
 </script>
