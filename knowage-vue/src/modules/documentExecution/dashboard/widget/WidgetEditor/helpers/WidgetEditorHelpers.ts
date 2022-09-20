@@ -9,7 +9,7 @@ export function createNewWidget() {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
         new: true,
         type: 'table',
-        dataset: null, // TODO - HARCODED
+        dataset: null,
         columns: [],
         settings: {
             sortingColumn: '',
@@ -212,15 +212,6 @@ export function createNewWidget() {
 }
 
 
-
-export function setWidgetModelFunctions(widget: IWidget) {
-    if (widget.type === 'table') {
-        if (!widget.settings.pagination) widget.settings.pagination = { enabled: false, itemsNumber: 0 }
-        widget.functions = tableWidgetFunctions
-    }
-}
-
-
 export function formatWidgetForSave(tempWidget: IWidget) {
     if (!tempWidget) return
 
@@ -231,11 +222,6 @@ export function formatWidgetForSave(tempWidget: IWidget) {
     }
 
     return widget
-}
-
-export function formatRGBColor(color: { r: string, g: string, b: string }) {
-
-    return `rgb(${color.r}, ${color.g}, ${color.b})`
 }
 
 export function getRGBColorFromString(color: string) {

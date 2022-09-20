@@ -23,7 +23,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidgetEditorDataset, IDatasetOptions, IWidget, IDataset, IModelDataset } from '../../Dashboard'
 import { AxiosResponse } from 'axios'
-import { createNewWidget, setWidgetModelTempProperty, setWidgetModelFunctions, formatWidgetForSave } from './helpers/WidgetEditorHelpers'
+import { createNewWidget, formatWidgetForSave } from './helpers/WidgetEditorHelpers'
 import WidgetEditorPreview from './WidgetEditorPreview.vue'
 import WidgetEditorTabs from './WidgetEditorTabs.vue'
 import mainStore from '../../../../../App.store'
@@ -67,8 +67,6 @@ export default defineComponent({
         loadWidget() {
             if (!this.propWidget) return
             this.widget = this.propWidget.new ? createNewWidget() : deepcopy(this.propWidget)
-            setWidgetModelTempProperty(this.widget)
-            setWidgetModelFunctions(this.widget)
             console.log('Widget Editor - LOADED WIDGET IN WIDGET EDITOR: ', this.widget)
         },
         loadSelectedModelDatasets() {

@@ -1,7 +1,5 @@
 import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetColumnGroups, ITableWidgetColumnGroup, ITableWidgetParameter } from "../../../../Dashboard"
-import { formatRGBColor } from '../WidgetEditorHelpers'
 import { emitter } from '../../../../DashboardHelpers'
-import descriptor from '../../WidgetEditorDescriptor.json'
 import cryptoRandomString from 'crypto-random-string'
 
 export const createNewWidgetColumn = (eventData: any) => {
@@ -112,29 +110,9 @@ function formatTableSelectedColumns(columns: IWidgetColumn[]) {
     if (!columns) return
     columns.forEach((column: IWidgetColumn) => {
         // delete column.id
-        formatColumnFilter(column)
         // formatColumnTooltipSettings(column)
     })
 }
-
-const formatColumnFilter = (column: IWidgetColumn) => {
-    if (!column.filter) return
-    if (!column.filter.enabled) return delete column.filter
-    if (column.filter.operator !== 'range') delete column.filter.value2
-}
-
-function formatColumnTooltipSettings(column: IWidgetColumn) {
-    if (column.enableTooltip) {
-        column.style.tooltip.precision = +column.style.tooltip.precision
-    } else {
-        if (!column.style) return // TODO
-        column.style.tooltip = { prefix: '', suffix: '', precision: 0 }
-        column.style.enableCustomHeaderTooltip = false
-        column.style.customHeaderTooltip = ''
-    }
-}
-
-
 
 
 //#region ===================== Remove Column ====================================================
@@ -195,7 +173,7 @@ const removeColumnFromVisualizationType = (widgetModel: IWidget, column: IWidget
         for (let j = visualizationTypes[i].target.length; j >= 0; j--) {
             const tempTarget = visualizationTypes[i].target[j]
             if (column.id === tempTarget) {
-                visualizationTypes[i].target.splice(j, 1)
+                (visualizationTypes[i].target as string[]).splice(j, 1)
                 removed = true;
             }
         }
@@ -227,7 +205,7 @@ const removeColumnFromColumnStyle = (widgetModel: IWidget, column: IWidgetColumn
         for (let j = columnStyles[i].target.length; j >= 0; j--) {
             const tempTarget = columnStyles[i].target[j]
             if (column.id === tempTarget) {
-                columnStyles[i].target.splice(j, 1)
+                (columnStyles[i].target as string[]).splice(j, 1)
                 removed = true
             }
         }
@@ -255,7 +233,7 @@ const removeColumnFromTooltips = (widgetModel: IWidget, column: IWidgetColumn) =
         for (let j = tooltips[i].target.length; j >= 0; j--) {
             const tempTarget = tooltips[i].target[j]
             if (column.id === tempTarget) {
-                tooltips[i].target.splice(j, 1)
+                (tooltips[i].target as string[]).splice(j, 1)
                 removed = true
             }
         }
@@ -284,7 +262,7 @@ export const removeColumnGroupFromModel = (widgetModel: IWidget, columnGroup: IT
             const tempTarget = widgetModel.settings.style.columnGroups[i].target[j]
             console.log(columnGroup.id + ' === ' + tempTarget)
             if (columnGroup.id === tempTarget) {
-                widgetModel.settings.style.columnGroups[i].target.splice(j, 1)
+                (widgetModel.settings.style.columnGroups[i].target as string[]).splice(j, 1)
                 removed = true
             }
         }

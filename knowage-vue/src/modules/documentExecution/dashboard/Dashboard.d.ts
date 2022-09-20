@@ -351,11 +351,8 @@ export interface IWidgetColumn {
     type: string
     fieldType: string
     multiValue: boolean,
-    aggregation?: string,
-    style?: any,  // ??? 
-    enableTooltip?: boolean, // ???
-    visType?: string   // ???
-    filter?: IWidgetColumnFilter
+    aggregation: string,
+    filter: IWidgetColumnFilter
 }
 
 export interface IWidgetColumnFilter {
