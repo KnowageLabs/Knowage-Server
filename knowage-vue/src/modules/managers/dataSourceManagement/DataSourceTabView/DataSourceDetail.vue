@@ -485,7 +485,7 @@ export default defineComponent({
             this.$emit('touched')
         },
         closeTemplate() {
-            this.$router.push('/datasource-management')
+            this.$router.push({ name: 'datasource-hint' })
             this.$emit('closed')
         }
     }

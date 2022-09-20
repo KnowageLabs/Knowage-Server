@@ -1,4 +1,5 @@
 <template>
+    <Message class="p-col-12 p-mb-3">{{ $t('managers.crossNavigationManagement.hintDrag') }}</Message>
     <div class="p-field p-col-6 p-mb-3">
         <Toolbar class="kn-toolbar kn-toolbar--secondary">
             <template #start>
@@ -55,12 +56,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Listbox from 'primevue/listbox'
+import Message from 'primevue/message'
 import dialogDescriptor from './CrossNavigationManagementDialogDescriptor.json'
 import mainStore from '../../../../App.store'
 
 export default defineComponent({
     name: 'cross-navigation-detail',
-    components: { Listbox },
+    components: { Listbox, Message },
     props: {
         selectedNavigation: {
             type: Object

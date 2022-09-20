@@ -1,6 +1,6 @@
 <template>
-    <div class="kn-page--full">
-        <Toolbar class="kn-toolbar kn-toolbar--secondary">
+    <div class="p-d-flex p-flex-column kn-width-full kn-height-full">
+        <Toolbar class="kn-toolbar kn-toolbar--secondary kn-width-full">
             <template #start>
                 {{ $t('documentExecution.registry.title') }}
             </template>
@@ -10,41 +10,43 @@
                 </div>
             </template>
         </Toolbar>
-        <div class="kn-page-content p-m-0">
+        <div class="p-d-flex p-flex-column kn-overflow kn-flex">
             <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-            <div class="p-col-12 p-p-0">
+            <div class="">
                 <RegistryFiltersCard v-if="filters.length > 0" :id="id" :propFilters="filters" :entity="entity" @filter="filterRegistry" class=""></RegistryFiltersCard>
             </div>
-            <div class="p-col-12 p-p-0" v-if="!loading">
-                <RegistryPivotDatatable
-                    v-if="isPivot"
-                    :columns="columns"
-                    :id="id"
-                    :rows="rows"
-                    :entity="entity"
-                    :propConfiguration="configuration"
-                    :propPagination="pagination"
-                    @rowChanged="onRowChanged"
-                    @rowDeleted="onRowDeleted"
-                    @pageChanged="updatePagination"
-                    @resetRows="updatedRows = []"
-                    @warningChanged="setWarningState"
-                ></RegistryPivotDatatable>
-                <RegistryDatatable
-                    v-else
-                    :propColumns="columns"
-                    :id="id"
-                    :propRows="rows"
-                    :propConfiguration="configuration"
-                    :columnMap="columnMap"
-                    :pagination="pagination"
-                    :entity="entity"
-                    :stopWarningsState="stopWarningsState"
-                    @rowChanged="onRowChanged"
-                    @rowDeleted="onRowDeleted"
-                    @pageChanged="updatePagination"
-                    @warningChanged="setWarningState"
-                ></RegistryDatatable>
+            <div class="kn-relative kn-flex p-m-2 registry-custom-card">
+                <div class="kn-height-full kn-width-full kn-absolute">
+                    <RegistryPivotDatatable
+                        v-if="isPivot"
+                        :columns="columns"
+                        :id="id"
+                        :rows="rows"
+                        :entity="entity"
+                        :propConfiguration="configuration"
+                        :propPagination="pagination"
+                        @rowChanged="onRowChanged"
+                        @rowDeleted="onRowDeleted"
+                        @pageChanged="updatePagination"
+                        @resetRows="updatedRows = []"
+                        @warningChanged="setWarningState"
+                    ></RegistryPivotDatatable>
+                    <RegistryDatatable
+                        v-else
+                        :propColumns="columns"
+                        :id="id"
+                        :propRows="rows"
+                        :propConfiguration="configuration"
+                        :columnMap="columnMap"
+                        :pagination="pagination"
+                        :entity="entity"
+                        :stopWarningsState="stopWarningsState"
+                        @rowChanged="onRowChanged"
+                        @rowDeleted="onRowDeleted"
+                        @pageChanged="updatePagination"
+                        @warningChanged="setWarningState"
+                    ></RegistryDatatable>
+                </div>
             </div>
         </div>
     </div>
@@ -308,3 +310,10 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss">
+.registry-custom-card {
+    background: #ffffff;
+    color: rgba(0, 0, 0, 0.87);
+    box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+}
+</style>

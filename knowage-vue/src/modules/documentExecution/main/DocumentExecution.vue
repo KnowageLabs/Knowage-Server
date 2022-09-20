@@ -598,7 +598,7 @@ export default defineComponent({
                 for (let i = 0; i < this.filtersData.filterStatus.length; i++) {
                     const tempParam = this.filtersData.filterStatus[i]
                     if (key === tempParam.urlName || key === tempParam.label) {
-                        if (tempParam.multivalue) {
+                        if (tempParam.multivalue && Array.isArray(this.document.navigationParams[key])) {
                             tempParam.parameterValue = this.document.navigationParams[key].map((value: string) => {
                                 return { value: value, description: '' }
                             })
@@ -830,7 +830,6 @@ export default defineComponent({
                             tempString += parameter.parameterValue[i].description
                             tempString += i === parameter.parameterValue.length - 1 ? '' : ';'
                         }
-                        parameters[parameter.urlName] = tempString
                         parameters[parameter.urlName + '_field_visible_description'] = tempString
                     } else {
                         parameters[parameter.urlName] = parameter.parameterValue[0].value
@@ -1055,13 +1054,41 @@ export default defineComponent({
                     this.breadcrumbs.push({
                         label: this.document.label,
                         document: this.document,
-                        crossBreadcrumb: crossNavigationDocument.crossBreadcrumb ?? this.document.name
+                        crossBreadcrumb: this.getCrossBeadcrumb(crossNavigationDocument, angularData)
                     })
                 }
 
                 await this.loadPage()
             }
             this.documentMode = 'VIEW'
+        },
+        getCrossBeadcrumb(crossNavigationDocument: any, angularData: any) {
+            let tempCrossBreadcrumb = crossNavigationDocument.crossBreadcrumb
+            if (tempCrossBreadcrumb?.includes('$P{')) {
+                tempCrossBreadcrumb = this.updateCrossBreadCrumbWithParameterValues(tempCrossBreadcrumb, angularData)
+            }
+
+            return tempCrossBreadcrumb ?? this.document.name
+        },
+        updateCrossBreadCrumbWithParameterValues(tempCrossBreadcrumb: string, angularData: any) {
+            const parameterPlaceholders = tempCrossBreadcrumb.match(/{[\w\d]+}/g)
+            if (!parameterPlaceholders) return ''
+            const parameters = angularData.outputParameters
+            for (let i = 0; i < angularData.otherOutputParameters.length; i++) {
+                const key = Object.keys(angularData.otherOutputParameters[i])[0]
+                parameters[key] = angularData.otherOutputParameters[i][key]
+            }
+            const temp = [] as any[]
+            for (let i = 0; i < parameterPlaceholders.length; i++) {
+                const tempParameterName = parameterPlaceholders[i].substring(1, parameterPlaceholders[i].length - 1)
+                temp.push({ parameterPlaceholder: parameterPlaceholders[i], value: parameters[tempParameterName] })
+            }
+            let finalString = tempCrossBreadcrumb
+            for (let i = 0; i < temp.length; i++) {
+                finalString = finalString.replaceAll('$P' + temp[i].parameterPlaceholder, temp[i].value)
+            }
+
+            return finalString
         },
         addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
             if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return

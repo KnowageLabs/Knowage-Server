@@ -90,7 +90,7 @@ import { AxiosResponse } from 'axios'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import { defineComponent } from 'vue'
 import { IKnCalculatedField, IKnCalculatedFieldFunction } from '@/components/functionalities/KnCalculatedField/KnCalculatedField'
-import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
+import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 
 import Dropdown from 'primevue/dropdown'
 import Dialog from 'primevue/dialog'
@@ -275,7 +275,7 @@ export default defineComponent({
             let to = { line: cursor.line, ch: end }
 
             let range = editor.getRange(from, to)
-            let fieldAlias = this.source !== 'QBE' ? '$F{'+data.item.fieldAlias+'}' : data.item.fieldAlias
+            let fieldAlias = this.source !== 'QBE' ? '$F{' + data.item.fieldAlias + '}' : data.item.fieldAlias
             let spContent = data.elementType === 'function' ? data.item : fieldAlias
 
             if (range === '' || range.match(/\(|\)|,|\./g)) {
@@ -359,8 +359,8 @@ export default defineComponent({
 }
 
 .codeMirrorClass {
-    height: 80px;
-    max-height: 80px;
+    height: 80px !important;
+    max-height: 80px !important;
     border: 1px solid var(--kn-color-borders);
 
     .CodeMirror-scroll {
