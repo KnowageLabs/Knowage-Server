@@ -196,8 +196,8 @@ export interface ITableWidgetSelection {
 }
 
 export interface ITableWidgetPagination {
-    "enabled": boolean,
-    "itemsNumber": number
+    enabled: boolean,
+    itemsNumber: number
 }
 
 export interface ITableWidgetStyle {

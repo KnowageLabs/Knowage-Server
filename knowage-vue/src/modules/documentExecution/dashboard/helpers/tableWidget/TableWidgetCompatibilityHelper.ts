@@ -3,6 +3,7 @@ import { getFormattedConfiguration } from './TableWidgetConfigurationHelper'
 import { getFormattedInteractions } from './TableWidgetInteractionsHelper'
 import { getFormattedStyle } from './TableWidgetStyleHelper'
 import { getSettingsFromWidgetColumns } from './TableWidgetColumnSettingsHelper'
+import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
 import cryptoRandomString from 'crypto-random-string'
 
 const columnNameIdMap = {}
@@ -38,7 +39,7 @@ const getFormattedWidgetColumn = (widgetColumn: any) => {
 
 
 const getFormattedWidgetSettings = (formattedWidget: IWidget, widget: any) => {
-    const formattedSettings = { sortingColumn: getColumnId(widget.settings?.sortingColumn) ?? '', sortingOrder: widget.settings?.sortingOrder ?? '', updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(widget), configuration: getFormattedConfiguration(widget) as ITableWidgetConfiguration, interactions: getFormattedInteractions(formattedWidget, widget) as ITableWidgetInteractions, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as ITableWidgetStyle, tooltips: getFormattedTooltips() as ITableWidgetTooltipStyle[], visualization: getFormattedVisualizations(), responsive: getFormattedResponsivnes() as ITableWidgetResponsive } as ITableWidgetSettings
+    const formattedSettings = { sortingColumn: getColumnId(widget.settings?.sortingColumn) ?? '', sortingOrder: widget.settings?.sortingOrder ?? '', updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(widget), configuration: getFormattedConfiguration(widget) as ITableWidgetConfiguration, interactions: getFormattedInteractions(widget) as ITableWidgetInteractions, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as ITableWidgetStyle, tooltips: tableWidgetDefaultValues.getDefaultTooltips() as ITableWidgetTooltipStyle[], visualization: tableWidgetDefaultValues.getDefaultVisualizations(), responsive: tableWidgetDefaultValues.getDefaultResponsivnes() as ITableWidgetResponsive } as ITableWidgetSettings
     return formattedSettings
 }
 const getFormattedConditionalStyles = (widget: any) => {
@@ -89,41 +90,8 @@ const createConditionFromRowThreshold = (rowThreshold: any) => {
 }
 
 const getFormattedPaginations = (widget: any) => {
-    if (!widget.settings?.pagination) return { enabled: false, itemsNumber: 0 }
+    if (!widget.settings?.pagination) return tableWidgetDefaultValues.getDefaultPagination()
     return { enabled: widget.settings.pagination.enabled, itemsNumber: widget.settings.pagination.itemsNumber } as ITableWidgetPagination
-}
-
-
-const getFormattedTooltips = () => {
-    const allTooltip = {
-        target: 'all',
-        enabled: false,
-        prefix: '',
-        suffix: '',
-        precision: 0,
-        header: {
-            enabled: false,
-            text: ''
-        }
-    }
-    return [allTooltip] as ITableWidgetTooltipStyle[]
-}
-
-
-const getFormattedVisualizations = () => {
-    return {
-        types: [{
-            target: 'all',
-            type: 'Text',
-            prefix: '',
-            suffix: '',
-            pinned: '',
-        }], visibilityConditions: []
-    }
-}
-
-const getFormattedResponsivnes = () => {
-    return { xs: true, sm: true, md: true, lg: true, xl: true }
 }
 
 const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {

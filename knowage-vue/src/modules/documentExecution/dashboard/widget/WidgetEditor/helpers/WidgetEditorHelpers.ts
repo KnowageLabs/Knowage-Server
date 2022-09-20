@@ -1,8 +1,8 @@
 import { IWidget } from '../../../Dashboard'
 import { formatTableWidgetForSave } from './tableWidget/TableWidgetFunctions'
-import tableWidgetFunctions from './tableWidget/TableWidgetFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
+import * as  tableWidgetDefaultValues from './tableWidget/TableWidgetDefaultValues'
 
 export function createNewWidget() {
     const widget = {
@@ -18,191 +18,33 @@ export function createNewWidget() {
             clickable: true,
             conditionalStyles: [],
             configuration: {
-                columnGroups: {
-                    enabled: false,
-                    groups: []
-                },
-                exports: {
-                    pdf: {
-                        enabled: false,
-                        custom: {
-                            height: 0,
-                            width: 0,
-                            enabled: false
-                        },
-                        a4landscape: false,
-                        a4portrait: false
-                    },
-                    showExcelExport: false,
-                    showScreenshot: false
-                },
-                headers: {
-                    enabled: false, enabledMultiline: false, custom: { enabled: false, rules: [] }
-                },
-                rows: {
-                    indexColumn: false,
-                    rowSpan: {
-                        enabled: false,
-                        column: ''
-                    }
-                },
-                summaryRows: {
-                    enabled: false,
-                    list: [],
-                    style: { pinnedOnly: false }
-                },
-                customMessages: {
-                    hideNoRowsMessage: false,
-                    noRowsMessage: ''
-                }
+                columnGroups: tableWidgetDefaultValues.getFormattedColumnGroups(),
+                exports: tableWidgetDefaultValues.getDefaultExportsConfiguration(),
+                headers: tableWidgetDefaultValues.getDefaultHeadersConfiguration(),
+                rows: tableWidgetDefaultValues.getDefaultRowsConfiguration(),
+                summaryRows: tableWidgetDefaultValues.getDefaultSummaryRowsConfiguration(),
+                customMessages: tableWidgetDefaultValues.getDefaultCustomMessages()
             },
             interactions: {
-                crosssNavigation: {
-                    enabled: false,
-                    type: '',
-                    column: '',
-                    name: '',
-                    parameters: []
-                },
-                link: {
-                    enabled: false,
-                    links: []
-                },
-                preview: {
-                    enabled: false,
-                    type: '',
-                    dataset: -1,
-                    parameters: [],
-                    directDownload: false
-                },
-                selection: {
-                    enabled: false,
-                    modalColumn: '',
-                    multiselection: {
-                        enabled: false,
-                        properties: {
-                            "background-color": '',
-                            color: ''
-                        }
-                    }
-                }
+                crosssNavigation: tableWidgetDefaultValues.getDefaultCrossNavigation(),
+                link: tableWidgetDefaultValues.getDefaultLinks(),
+                preview: tableWidgetDefaultValues.getDefaultPreview(),
+                selection: tableWidgetDefaultValues.getDefaultSelection()
             },
-            pagination: { enabled: false, itemsNumber: 0 },
+            pagination: tableWidgetDefaultValues.getDefaultPagination(),
             style: {
-                borders: {
-                    enabled: false,
-                    properties: {
-                        "border-bottom-left-radius": "",
-                        "border-bottom-right-radius": "",
-                        "border-style": "",
-                        "border-top-left-radius": "",
-                        "border-top-right-radius": "",
-                        "border-width": "",
-                        "border-color": "rgb(212, 212, 212)"
-                    }
-                },
-                columns: [{
-                    target: 'all',
-                    properties: {
-                        "background-color": '',
-                        color: '',
-                        "justify-content": '',
-                        "font-size": '',
-                        "font-family": '',
-                        "font-style": '',
-                        "font-weight": ''
-                    }
-                }],
-                columnGroups: [{
-                    target: 'all',
-                    properties: {
-                        "background-color": '',
-                        color: '',
-                        "justify-content": '',
-                        "font-size": '',
-                        "font-family": '',
-                        "font-style": '',
-                        "font-weight": ''
-                    }
-                }],
-                headers: {
-                    height: 25,
-                    properties: {
-                        "background-color": "rgb(137, 158, 175)",
-                        color: 'rgb(255, 255, 255)',
-                        "justify-content": 'center',
-                        "font-size": "14px",
-                        "font-family": "",
-                        "font-style": "normal",
-                        "font-weight": "",
-                    }
-                },
-                padding: {
-                    enabled: false,
-                    properties: {
-                        "padding-top": '',
-                        "padding-left": '',
-                        "padding-bottom": '',
-                        "padding-right": '',
-                        unlinked: false
-                    }
-                },
-                rows: {
-                    height: 0,
-                    multiselectable: false,
-                    selectionColor: '',
-                    alternatedRows: {
-                        enabled: false,
-                        evenBackgroundColor: 'rgb(228, 232, 236)',
-                        oddBackgroundColor: ''
-
-                    }
-                },
-                shadows: {
-                    enabled: false,
-                    properties: {
-                        "box-shadow": '',
-                        "backgroundColor": ''
-                    }
-                },
-                summary: {
-                    "background-color": "",
-                    "color": "",
-                    "font-family": "",
-                    "font-size": "",
-                    "font-style": "",
-                    "font-weight": "",
-                    "justify-content": ""
-                }
+                borders: tableWidgetDefaultValues.getDefaultBordersStyle(),
+                columns: tableWidgetDefaultValues.getDefaultColumnStyles(),
+                columnGroups: tableWidgetDefaultValues.getDefaultColumnStyles(),
+                headers: tableWidgetDefaultValues.getDefaultHeadersStyle(),
+                padding: tableWidgetDefaultValues.getDefaultPaddingStyle(),
+                rows: tableWidgetDefaultValues.getDefaultRowsStyle(),
+                shadows: tableWidgetDefaultValues.getDefaultShadowsStyle(),
+                summary: tableWidgetDefaultValues.getDefualtSummryStyle()
             },
-            tooltips: [{
-                target: 'all',
-                enabled: false,
-                prefix: '',
-                suffix: '',
-                precision: 0,
-                header: {
-                    enabled: false,
-                    text: ''
-                }
-            }],
-            visualization: {
-                types: [{
-                    target: 'all',
-                    type: 'Text',
-                    prefix: '',
-                    suffix: '',
-                    pinned: '',
-                }],
-                visibilityConditions: []
-            },
-            responsive: {
-                xs: true,
-                sm: true,
-                md: true,
-                lg: true,
-                xl: true
-            }
+            tooltips: tableWidgetDefaultValues.getDefaultTooltips(),
+            visualization: tableWidgetDefaultValues.getDefaultVisualizations(),
+            responsive: tableWidgetDefaultValues.getDefaultResponsivnes()
 
         }
 

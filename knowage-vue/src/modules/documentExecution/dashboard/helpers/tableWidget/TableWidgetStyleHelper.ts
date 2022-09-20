@@ -1,22 +1,12 @@
-import { ITableWidgetBordersStyle, ITableWidgetColumnStyle, ITableWidgetPaddingStyle, ITableWidgetRowsStyle, ITableWidgetShadowsStyle, ITableWidgetStyle } from "../../Dashboard"
+import { ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetRowsStyle, ITableWidgetShadowsStyle, ITableWidgetStyle } from "../../Dashboard"
 import { hexToRgb, convertColorFromHSLtoRGB } from '../FormattingHelpers'
+import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
 
 
 export const getFormattedStyle = (widget: any) => {
     return {
         borders: getFormattedBorderStyle(widget),
-        columns: [{
-            target: 'all',
-            properties: {
-                "background-color": '',
-                color: '',
-                "justify-content": '',
-                "font-size": '',
-                "font-family": '',
-                "font-style": '',
-                "font-weight": ''
-            }
-        }],
+        columns: tableWidgetDefaultValues.getDefaultColumnStyles(),
         columnGroups: getFormattedColumnGroupsStyle(widget),
         headers: getFormattedHeadersStyle(widget),
         padding: getFormattedPaddingStyle(widget),
@@ -27,35 +17,13 @@ export const getFormattedStyle = (widget: any) => {
 }
 
 const getFormattedBorderStyle = (widget: any) => {
-    if (!widget.style || !widget.style.border) return {
-        enabled: false,
-        properties: {
-            "border-bottom-left-radius": "",
-            "border-bottom-right-radius": "",
-            "border-style": "",
-            "border-top-left-radius": "",
-            "border-top-right-radius": "",
-            "border-width": "",
-            "border-color": "rgb(212, 212, 212)"
-        }
-    } as ITableWidgetBordersStyle
+    if (!widget.style || !widget.style.border) return tableWidgetDefaultValues.getDefaultBordersStyle()
 
     return { enabled: true, properties: { ...widget.style.border, 'border-color': hexToRgb(widget.style.border['border-color']) } } as ITableWidgetBordersStyle
 }
 
 const getFormattedColumnGroupsStyle = (widget: any) => {
-    const formattedColumnGroupsStyles = [{
-        target: 'all',
-        properties: {
-            "background-color": '',
-            color: '',
-            "justify-content": '',
-            "font-size": '',
-            "font-family": '',
-            "font-style": '',
-            "font-weight": ''
-        }
-    }] as ITableWidgetColumnStyle[]
+    const formattedColumnGroupsStyles = tableWidgetDefaultValues.getDefaultColumnStyles()
     if (!widget.groups) return formattedColumnGroupsStyles
     let fields = ['background-color', 'color', "justify-content", "font-size", "font-family", "font-style", "font-weight"]
     for (let i = 0; i < widget.groups.length; i++) {
@@ -83,19 +51,7 @@ const getFormattedColumnGroupsStyle = (widget: any) => {
 }
 
 const getFormattedHeadersStyle = (widget: any) => {
-    if (!widget.style?.th) return {
-        height: 25,
-        properties: {
-            "background-color": "rgb(137, 158, 175)",
-            color: 'rgb(255, 255, 255)',
-            "justify-content": 'center',
-            "font-size": "14px",
-            "font-family": "",
-            "font-style": "normal",
-            "font-weight": "",
-        }
-    }
-
+    if (!widget.style?.th) return tableWidgetDefaultValues.getDefaultHeadersStyle()
 
     return {
         height: widget.style.th.height,
@@ -112,16 +68,7 @@ const getFormattedHeadersStyle = (widget: any) => {
 }
 
 const getFormattedPaddingStyle = (widget: any) => {
-    if (!widget.style || !widget.style.padding) return {
-        enabled: false,
-        properties: {
-            "padding-top": '',
-            "padding-left": '',
-            "padding-bottom": '',
-            "padding-right": '',
-            unlinked: false
-        }
-    } as ITableWidgetPaddingStyle
+    if (!widget.style || !widget.style.padding) return tableWidgetDefaultValues.getDefaultPaddingStyle()
 
     return {
         enabled: widget.style.padding.enabled,
@@ -151,13 +98,7 @@ const getFormattedRowsStyle = (widget: any) => {
 }
 
 const getFormattedShadowsStyle = (widget: any) => {
-    if (!widget.style || !widget.style.shadow) return {
-        enabled: false,
-        properties: {
-            "box-shadow": '',
-            "backgroundColor": ''
-        }
-    } as ITableWidgetShadowsStyle
+    if (!widget.style || !widget.style.shadow) return tableWidgetDefaultValues.getDefaultShadowsStyle()
 
     return {
         enabled: true,
@@ -170,15 +111,7 @@ const getFormattedShadowsStyle = (widget: any) => {
 
 
 const getFormattedSummaryStyle = (widget: any) => {
-    if (!widget.settings.summary || !widget.settings.summary.style) return {
-        "background-color": "",
-        "color": "",
-        "font-family": "",
-        "font-size": "",
-        "font-style": "",
-        "font-weight": "",
-        "justify-content": ""
-    }
+    if (!widget.settings.summary || !widget.settings.summary.style) return tableWidgetDefaultValues.getDefualtSummryStyle()
 
     return {
         "background-color": convertColorFromHSLtoRGB(widget.settings.summary.style['background-color']),

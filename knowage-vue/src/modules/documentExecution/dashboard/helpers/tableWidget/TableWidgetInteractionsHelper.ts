@@ -1,23 +1,18 @@
-import { ITableWidgetCrossNavigation, ITableWidgetLink, ITableWidgetLinks, ITableWidgetParameter, ITableWidgetPreview, ITableWidgetSelection, IWidget } from "../../Dashboard"
+import { ITableWidgetCrossNavigation, ITableWidgetLink, ITableWidgetLinks, ITableWidgetParameter, ITableWidgetPreview, ITableWidgetSelection } from "../../Dashboard"
 import { getColumnId } from './TableWidgetCompatibilityHelper'
+import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
 
-export const getFormattedInteractions = (formattedWidget: IWidget, widget: any) => {
+export const getFormattedInteractions = (widget: any) => {
     return {
-        crosssNavigation: getFormattedCrossNavigation(formattedWidget, widget) as ITableWidgetCrossNavigation,
+        crosssNavigation: getFormattedCrossNavigation(widget) as ITableWidgetCrossNavigation,
         link: getFormattedLinkInteraction(widget) as ITableWidgetLinks,
-        preview: getFormattedPreview(formattedWidget, widget) as ITableWidgetPreview,
-        selection: getFormattedSelection(widget) as ITableWidgetSelection
+        preview: getFormattedPreview(widget) as ITableWidgetPreview,
+        selection: tableWidgetDefaultValues.getDefaultSelection() as ITableWidgetSelection
     }
 }
 
-const getFormattedCrossNavigation = (formattedWidget: IWidget, widget: any) => {
-    if (!widget.cross || !widget.cross.cross) return {
-        enabled: false,
-        type: '',
-        column: '',
-        name: '',
-        parameters: []
-    }
+const getFormattedCrossNavigation = (widget: any) => {
+    if (!widget.cross || !widget.cross.cross) return tableWidgetDefaultValues.getDefaultCrossNavigation()
 
     return {
         enabled: widget.cross.cross.enable,
@@ -49,10 +44,7 @@ const getFormattedCrossNavigationParameters = (outputParameterList: any) => {
 }
 
 const getFormattedLinkInteraction = (widget: any) => {
-    if (!widget.cross || !widget.cross.link) return {
-        enabled: false,
-        links: []
-    }
+    if (!widget.cross || !widget.cross.link) return tableWidgetDefaultValues.getDefaultLinks()
 
     return {
         enabled: widget.cross.link.enable,
@@ -100,14 +92,8 @@ const getFormattedLinkParameters = (linkParameters: any[]) => {
     return formattedParameters
 }
 
-const getFormattedPreview = (formattedWidget: IWidget, widget: any) => {
-    if (!widget.cross || !widget.cross.preview) return {
-        enabled: false,
-        type: '',
-        dataset: '',
-        parameters: [],
-        directDownload: false
-    }
+const getFormattedPreview = (widget: any) => {
+    if (!widget.cross || !widget.cross.preview) return tableWidgetDefaultValues.getDefaultPreview()
 
     const formattedPreview = {
         enabled: widget.cross.preview.enable,
@@ -115,7 +101,7 @@ const getFormattedPreview = (formattedWidget: IWidget, widget: any) => {
         icon: widget.cross.preview.icon ? widget.cross.preview.icon.trim() : '',
         dataset: widget.cross.preview.dataset,
         directDownload: widget.cross.preview.background,
-        parameters: widget.cross.preview.parameters ? getFormattedPreviewParameters(formattedWidget, widget.cross.preview.parameters) : []
+        parameters: widget.cross.preview.parameters ? getFormattedPreviewParameters(widget.cross.preview.parameters) : []
     } as ITableWidgetPreview
 
     if (widget.cross.preview.column) formattedPreview.column = widget.cross.preview.column
@@ -125,7 +111,7 @@ const getFormattedPreview = (formattedWidget: IWidget, widget: any) => {
 
 
 
-const getFormattedPreviewParameters = (formattedWidget: IWidget, previewParameters: any) => {
+const getFormattedPreviewParameters = (previewParameters: any) => {
     const formattedParameters = [] as ITableWidgetParameter[]
 
     previewParameters?.forEach((previewParameter: any) => {
@@ -145,19 +131,4 @@ const getFormattedPreviewParameters = (formattedWidget: IWidget, previewParamete
 
 
     return formattedParameters
-}
-
-
-const getFormattedSelection = (widget: any) => {
-    return {
-        enabled: true,
-        modalColumn: '',
-        multiselection: {
-            enabled: widget.settings.multiselectable ?? false,
-            properties: {
-                "background-color": '',
-                color: widget.settings.multiselectablecolor ?? ''
-            }
-        }
-    }
 }
