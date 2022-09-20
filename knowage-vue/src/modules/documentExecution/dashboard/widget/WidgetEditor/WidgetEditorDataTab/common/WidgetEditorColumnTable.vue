@@ -59,7 +59,7 @@
 import { defineComponent, PropType } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { IWidget, IWidgetColumn } from '../../../../Dashboard'
-import { createNewWidgetColumn } from '../../helpers/TableWidgetFunctions' // TODO - See if it should still be inside helper
+import { createNewWidgetColumn } from '../../helpers/tableWidget/TableWidgetFunctions' // TODO - See if it should still be inside helper
 import { emitter } from '../../../../DashboardHelpers'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'

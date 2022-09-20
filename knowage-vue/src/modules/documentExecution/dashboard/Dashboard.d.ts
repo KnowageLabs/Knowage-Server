@@ -12,10 +12,10 @@ export interface ISheet {
 
 export interface IWidget {
     id?: string
-    dataset: number
+    dataset: number | null
     type: string
     columns: IWidgetColumn[]
-    settings: ITableWidgetSettings | any
+    settings: ITableWidgetSettings
     new?: boolean
 }
 
@@ -86,8 +86,8 @@ export interface ITableWidgetExports {
         a4landscape: boolean,
         a4portrait: boolean
     },
-    showExcelExport: string,
-    showScreenshot: string
+    showExcelExport: boolean,
+    showScreenshot: boolean
 }
 
 export interface ITableWidgetHeaders {
@@ -294,7 +294,7 @@ export interface ITableWidgetSummaryStyle {
 
 export interface ITableWidgetTooltipStyle {
     target: string | string[],
-    enabled: true,
+    enabled: boolean,
     prefix: string,
     suffix: string,
     precision: number,

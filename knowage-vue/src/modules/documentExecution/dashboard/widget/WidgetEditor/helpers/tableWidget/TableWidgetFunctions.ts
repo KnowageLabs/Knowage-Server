@@ -1,7 +1,7 @@
-import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetColumnGroups, ITableWidgetColumnGroup, ITableWidgetParameter } from "../../../Dashboard"
-import { formatRGBColor } from './WidgetEditorHelpers'
-import { emitter } from '../../../DashboardHelpers'
-import descriptor from '../WidgetEditorDescriptor.json'
+import { IWidget, IWidgetColumn, IIcon, ITableWidgetSettings, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetColumnGroups, ITableWidgetColumnGroup, ITableWidgetParameter } from "../../../../Dashboard"
+import { formatRGBColor } from '../WidgetEditorHelpers'
+import { emitter } from '../../../../DashboardHelpers'
+import descriptor from '../../WidgetEditorDescriptor.json'
 import cryptoRandomString from 'crypto-random-string'
 
 export const createNewWidgetColumn = (eventData: any) => {

@@ -1,6 +1,6 @@
 import { IWidget } from '../../../Dashboard'
-import { formatTableWidgetForSave } from './TableWidgetFunctions'
-import tableWidgetFunctions from './TableWidgetFunctions'
+import { formatTableWidgetForSave } from './tableWidget/TableWidgetFunctions'
+import tableWidgetFunctions from './tableWidget/TableWidgetFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 
@@ -9,66 +9,209 @@ export function createNewWidget() {
         id: cryptoRandomString({ length: 16, type: 'base64' }),
         new: true,
         type: 'table',
+        dataset: null, // TODO - HARCODED
         columns: [],
-        conditionalStyles: [],
-        datasets: [],
-        interactions: [],
-        theme: '',
-        styles: {
-            borders: true,
-            border: {
-                "border-top-left-radius": "",
-                "border-top-right-radius": "",
-                "border-bottom-left-radius": "",
-                "border-bottom-right-radius": "",
-                "border-color": "rgb(212, 212, 212)",
-                "border-width": "1px",
-                "border-style": "solid"
-
-            },
-            th: {
-                enabled: true,
-                'background-color': 'rgb(255, 255, 255)',
-                color: 'rgb(137, 158, 175)',
-                'justify-content': 'flex-start',
-                'font-size': '14px',
-                multiline: false,
-                height: 25,
-                'font-style': '',
-                'font-weight': '',
-                'font-family': ''
-            },
-            tr: {
-                height: 0
-            }
-        },
         settings: {
-            alternateRows: {
-                enabled: true,
-                evenRowsColor: "rgb(228, 232, 236)",
-                oddRowsColor: ""
+            sortingColumn: '',
+            sortingOrder: '',
+            updatable: true,
+            clickable: true,
+            conditionalStyles: [],
+            configuration: {
+                columnGroups: {
+                    enabled: false,
+                    groups: []
+                },
+                exports: {
+                    pdf: {
+                        enabled: false,
+                        custom: {
+                            height: 0,
+                            width: 0,
+                            enabled: false
+                        },
+                        a4landscape: false,
+                        a4portrait: false
+                    },
+                    showExcelExport: false,
+                    showScreenshot: false
+                },
+                headers: {
+                    enabled: false, enabledMultiline: false, custom: { enabled: false, rules: [] }
+                },
+                rows: {
+                    indexColumn: false,
+                    rowSpan: {
+                        enabled: false,
+                        column: ''
+                    }
+                },
+                summaryRows: {
+                    enabled: false,
+                    list: [],
+                    style: { pinnedOnly: false }
+                },
+                customMessages: {
+                    hideNoRowsMessage: false,
+                    noRowsMessage: ''
+                }
             },
-            indexColumn: false,
-            multiselectable: false,
-            multiselectablecolor: "",
-            norows: {
-                hide: false,
-                message: ""
+            interactions: {
+                crosssNavigation: {
+                    enabled: false,
+                    type: '',
+                    column: '',
+                    name: '',
+                    parameters: []
+                },
+                link: {
+                    enabled: false,
+                    links: []
+                },
+                preview: {
+                    enabled: false,
+                    type: '',
+                    dataset: -1,
+                    parameters: [],
+                    directDownload: false
+                },
+                selection: {
+                    enabled: false,
+                    modalColumn: '',
+                    multiselection: {
+                        enabled: false,
+                        properties: {
+                            "background-color": '',
+                            color: ''
+                        }
+                    }
+                }
             },
-            rowThresholds: {
+            pagination: { enabled: false, itemsNumber: 0 },
+            style: {
+                borders: {
+                    enabled: false,
+                    properties: {
+                        "border-bottom-left-radius": "",
+                        "border-bottom-right-radius": "",
+                        "border-style": "",
+                        "border-top-left-radius": "",
+                        "border-top-right-radius": "",
+                        "border-width": "",
+                        "border-color": "rgb(212, 212, 212)"
+                    }
+                },
+                columns: [{
+                    target: 'all',
+                    properties: {
+                        "background-color": '',
+                        color: '',
+                        "justify-content": '',
+                        "font-size": '',
+                        "font-family": '',
+                        "font-style": '',
+                        "font-weight": ''
+                    }
+                }],
+                columnGroups: [{
+                    target: 'all',
+                    properties: {
+                        "background-color": '',
+                        color: '',
+                        "justify-content": '',
+                        "font-size": '',
+                        "font-family": '',
+                        "font-style": '',
+                        "font-weight": ''
+                    }
+                }],
+                headers: {
+                    height: 25,
+                    properties: {
+                        "background-color": "rgb(137, 158, 175)",
+                        color: 'rgb(255, 255, 255)',
+                        "justify-content": 'center',
+                        "font-size": "14px",
+                        "font-family": "",
+                        "font-style": "normal",
+                        "font-weight": "",
+                    }
+                },
+                padding: {
+                    enabled: false,
+                    properties: {
+                        "padding-top": '',
+                        "padding-left": '',
+                        "padding-bottom": '',
+                        "padding-right": '',
+                        unlinked: false
+                    }
+                },
+                rows: {
+                    height: 0,
+                    multiselectable: false,
+                    selectionColor: '',
+                    alternatedRows: {
+                        enabled: false,
+                        evenBackgroundColor: 'rgb(228, 232, 236)',
+                        oddBackgroundColor: ''
+
+                    }
+                },
+                shadows: {
+                    enabled: false,
+                    properties: {
+                        "box-shadow": '',
+                        "backgroundColor": ''
+                    }
+                },
+                summary: {
+                    "background-color": "",
+                    "color": "",
+                    "font-family": "",
+                    "font-size": "",
+                    "font-style": "",
+                    "font-weight": "",
+                    "justify-content": ""
+                }
+            },
+            tooltips: [{
+                target: 'all',
                 enabled: false,
-                list: []
+                prefix: '',
+                suffix: '',
+                precision: 0,
+                header: {
+                    enabled: false,
+                    text: ''
+                }
+            }],
+            visualization: {
+                types: [{
+                    target: 'all',
+                    type: 'Text',
+                    prefix: '',
+                    suffix: '',
+                    pinned: '',
+                }],
+                visibilityConditions: []
+            },
+            responsive: {
+                xs: true,
+                sm: true,
+                md: true,
+                lg: true,
+                xl: true
             }
-        },
-        temp: {}
-    } as any
+
+        }
+
+    } as IWidget
 
     return widget
 }
 
-export function setWidgetModelTempProperty(widget: IWidget) {
-    if (!widget.temp) widget.temp = {}
-}
+
 
 export function setWidgetModelFunctions(widget: IWidget) {
     if (widget.type === 'table') {

@@ -1,6 +1,6 @@
 import deepcopy from 'deepcopy'
 import cryptoRandomString from 'crypto-random-string'
-import { formatTableWidget } from './TableWidgetCompatibilityHelper'
+import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { IDatasetParameter, IWidgetEditorDataset } from '../Dashboard'
 
 export const formatModel = (model: any) => {

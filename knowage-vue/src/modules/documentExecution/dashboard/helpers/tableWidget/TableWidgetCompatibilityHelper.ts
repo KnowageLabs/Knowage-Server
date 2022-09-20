@@ -1,11 +1,10 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetParameter, ITableWidgetCrossNavigation, ITableWidgetPreview, ITableWidgetSelection, ITableWidgetLinks, ITableWidgetLink, ITableWidgetCustomMessages } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetParameter, ITableWidgetCrossNavigation, ITableWidgetPreview, ITableWidgetSelection, ITableWidgetLinks, ITableWidgetLink, ITableWidgetCustomMessages } from '../../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
-import { findProp } from '@vue/compiler-core'
 
 export const formatTableWidget = (widget: any) => {
     console.log("TableWidgetCompatibilityHelper - formatTableWidget called for: ", widget)
     const formattedWidget = {
-        id: widget.id, dataset: widget.dataset.dsId, type: widget.type, columns: getFormattedWidgetColumns(widget), conditionalStyles: [], theme: '', style: {}, settings: {}
+        id: widget.id, dataset: widget.dataset.dsId, type: widget.type, columns: getFormattedWidgetColumns(widget), conditionalStyles: [], theme: '', style: {}, settings: {} as ITableWidgetSettings
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(formattedWidget, widget)
     getFiltersForColumns(formattedWidget, widget)
