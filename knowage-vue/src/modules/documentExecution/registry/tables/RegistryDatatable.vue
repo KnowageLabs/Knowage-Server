@@ -24,7 +24,7 @@
         @cell-edit-complete="onCellEditComplete"
     >
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
-        <Column class="kn-truncated" style="max-width: 35px" :field="columns[0].field" :header="columns[0].title"></Column>
+        <Column class="kn-truncated" :style="registryDatatableDescriptor.numerationColumn.style" :headerStyle="registryDatatableDescriptor.numerationColumn.style" :field="columns[0].field" :header="columns[0].title"></Column>
 
         <template v-for="col of columns.slice(1)" :key="col.field">
             <Column
@@ -92,11 +92,9 @@
                 </template>
             </Column>
         </template>
-        <Column>
+        <Column :style="registryDatatableDescriptor.iconColumn.style" :headerStyle="registryDatatableDescriptor.iconColumn.style">
             <template #header>
-                <div class="table-header">
-                    <Button class="kn-button" :style="registryDatatableDescriptor.iconColumn.style" :label="$t('managers.businessModelManager.add')" v-if="buttons.enableButtons || buttons.enableAddRecords" @click="addNewRow" data-test="new-row-button" />
-                </div>
+                <Button class="kn-button" :label="$t('managers.businessModelManager.add')" v-if="buttons.enableButtons || buttons.enableAddRecords" @click="addNewRow" data-test="new-row-button" />
             </template>
             <template #body="slotProps">
                 <Button v-if="buttons.enableButtons || buttons.enableDeleteRecords" class="p-button-link" @click="rowDeleteConfirm(slotProps.index, slotProps.data)">
