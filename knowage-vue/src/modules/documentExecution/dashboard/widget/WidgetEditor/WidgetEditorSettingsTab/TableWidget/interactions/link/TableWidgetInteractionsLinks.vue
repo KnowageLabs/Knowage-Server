@@ -1,6 +1,5 @@
 <template>
     <div v-if="linksModel" class="p-grid">
-        {{ linksModel }}
         <div class="p-col-12">
             <InputSwitch v-model="linksModel.enabled"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.interactions.enableLinkNavigation') }}</label>
@@ -67,6 +66,8 @@
                     :drivers="drivers"
                     :disabled="linksDisabled"
                     @change="onParametersChanged($event, link)"
+                    @addParameter="onAddParameter(link)"
+                    @delete="onParameterDelete($event, link)"
                 ></TableWidgetLinkParameterList>
             </div>
         </div>
@@ -126,7 +127,6 @@ export default defineComponent({
         loadSelectedDatasetColumnName(dataset: IDataset) {
             this.selectedDatasetColumnNameMap[dataset.name] = []
             for (let i = 0; i < dataset.metadata.fieldsMeta.length; i++) {
-                console.log('>>>>>>>>>>>>>>>>>>>>>> DATASET: ', dataset)
                 this.selectedDatasetColumnNameMap[dataset.name].push(dataset.metadata.fieldsMeta[i].name)
             }
         },
@@ -159,6 +159,12 @@ export default defineComponent({
         },
         onParametersChanged(parameters: ITableWidgetParameter[], link: ITableWidgetLink) {
             link.parameters = parameters
+        },
+        onAddParameter(link: ITableWidgetLink) {
+            link.parameters.push({ enabled: true, name: '', type: '' })
+        },
+        onParameterDelete(index: number, link: ITableWidgetLink) {
+            link.parameters.splice(index, 1)
         }
     }
 })
