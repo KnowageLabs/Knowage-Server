@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetParameter, ITableWidgetCrossNavigation, ITableWidgetPreview, ITableWidgetSelection, ITableWidgetLinks, ITableWidgetLink } from '../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetParameter, ITableWidgetCrossNavigation, ITableWidgetPreview, ITableWidgetSelection, ITableWidgetLinks, ITableWidgetLink, ITableWidgetCustomMessages } from '../Dashboard'
 import cryptoRandomString from 'crypto-random-string'
 import { findProp } from '@vue/compiler-core'
 
@@ -89,7 +89,7 @@ const createConditionFromRowThreshold = (formattedWidget: IWidget, rowThreshold:
 
 // TODO
 const getFormattedConfiguration = (formattedWidget: IWidget, widget: any) => {
-    return { columnGroups: getFormattedColumnGroups(widget), exports: getFormattedExport(widget), headers: getHeadersConfiguration(widget), rows: getFormattedRows(widget), summaryRows: getFormattedSummaryRows(widget) }
+    return { columnGroups: getFormattedColumnGroups(widget), exports: getFormattedExport(widget), headers: getHeadersConfiguration(widget), rows: getFormattedRows(widget), summaryRows: getFormattedSummaryRows(widget), customMessages: getFormattedCustomMessages(widget) as ITableWidgetCustomMessages }
 }
 
 const getFormattedColumnGroups = (widget: any) => {
@@ -321,6 +321,15 @@ const getFormattedSummaryRows = (widget: any) => {
     if (widget.settings.summary) formattedSummaryRows = widget.settings.summary
     if (formattedSummaryRows.list && formattedSummaryRows.list[0]) formattedSummaryRows.list[0].aggregation = 'Columns Default Aggregation'
     return formattedSummaryRows
+}
+
+const getFormattedCustomMessages = (widget: any) => {
+    if (!widget.settings || !widget.settings.norows) return {
+        hideNoRowsMessage: false,
+        noRowsMessage: ''
+    } as ITableWidgetCustomMessages
+
+    return { hideNoRowsMessage: widget.settings.norows.hide, noRowsMessage: widget.settings.norows.message } as ITableWidgetCustomMessages
 }
 
 // INTERACTIONS !!!

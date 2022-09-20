@@ -31,7 +31,7 @@ export interface ITableWidgetSettings {
     style: ITableWidgetStyle,
     tooltips: ITableWidgetTooltipStyle[],
     visualization: ITableWidgetVisualization,
-    responsive: ITableWidgetResponsive,
+    responsive: ITableWidgetResponsive
 }
 
 export interface ITableWidgetConditionalStyle {
@@ -60,7 +60,8 @@ export interface ITableWidgetConfiguration {
     exports: ITableWidgetExports
     headers: ITableWidgetHeaders
     rows: ITableWidgetRows
-    summaryRows: ITableWidgetSummaryRows
+    summaryRows: ITableWidgetSummaryRows,
+    customMessages: ITableWidgetCustomMessages
 }
 
 export interface ITableWidgetColumnGroups {
@@ -119,6 +120,11 @@ export interface ITableWidgetSummaryRows {
     enabled: boolean,
     list: ITableWidgetSummaryRow[],
     style: { pinnedOnly: boolean }
+}
+
+export interface ITableWidgetCustomMessages {
+    hideNoRowsMessage: boolean,
+    noRowsMessage: string
 }
 
 export interface ITableWidgetSummaryRow {
