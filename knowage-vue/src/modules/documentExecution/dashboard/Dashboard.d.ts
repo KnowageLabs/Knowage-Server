@@ -160,7 +160,7 @@ export interface ITableWidgetParameter {
     enabled: boolean,
     name: string,
     type: string,
-    value: string,
+    value?: string,
     column?: string,
     driver?: string,
     dataset?: string,

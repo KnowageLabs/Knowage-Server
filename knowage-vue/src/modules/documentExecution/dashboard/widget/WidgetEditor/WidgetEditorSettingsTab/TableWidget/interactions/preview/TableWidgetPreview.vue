@@ -1,6 +1,5 @@
 <template>
     <div v-if="previewModel" class="p-grid">
-        {{ previewModel }}
         <div class="p-grid p-col-12 p-pt-4 p-ai-center">
             <div class="p-col-6 p-sm-12 p-md-6">
                 <InputSwitch v-model="previewModel.enabled"></InputSwitch>

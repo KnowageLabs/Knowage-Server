@@ -7,7 +7,7 @@
         </div>
 
         <div v-for="(link, index) in linksModel.links" :key="index" class="p-grid p-ai-center p-col-12">
-            <div class="p-sm-12 p-md-4 p-d-flex p-flex-column">
+            <div class="p-sm-11 p-md-10 p-d-flex p-flex-column">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
                 <Dropdown class="kn-material-input" v-model="link.type" :options="descriptor.interactionTypes" optionValue="value" :disabled="linksDisabled" @change="onInteractionTypeChanged(link)">
                     <template #value="slotProps">
@@ -22,23 +22,28 @@
                     </template>
                 </Dropdown>
             </div>
-            <div class="p-sm-12 p-md-8 p-d-flex p-flex-column p-pt-2">
+
+            <div class="p-sm-1 p-md-2 p-text-center">
+                <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash']" class="kn-cursor-pointer" @click="index === 0 ? addLink() : removeLink(index)"></i>
+            </div>
+
+            <div class="p-sm-12 p-md-4 p-d-flex p-flex-column p-pt-2">
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.interactions.basicUrl') }}</label>
                 <InputText class="kn-material-input p-inputtext-sm" v-model="link.baseurl" :disabled="linksDisabled" />
             </div>
 
-            <div v-if="link.type === 'singleColumn'" class="p-sm-11 p-md-5">
+            <div v-if="link.type === 'singleColumn'" class="p-sm-12 p-md-3">
                 <div class="p-d-flex p-flex-column kn-flex p-mx-2">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
                     <Dropdown class="kn-material-input" v-model="link.column" :options="widgetModel.columns" optionLabel="alias" optionValue="columnName" :disabled="linksDisabled"> </Dropdown>
                 </div>
             </div>
-            <div v-else-if="link.type === 'icon'" class="p-sm-11 p-md-5 p-p-4">
+            <div v-else-if="link.type === 'icon'" class="p-sm-6 p-md-3 p-p-4">
                 <WidgetEditorStyleToolbar :options="[{ type: 'icon' }]" :propModel="{ icon: link.icon }" :disabled="linksDisabled" @change="onStyleToolbarChange($event, link)"> </WidgetEditorStyleToolbar>
             </div>
 
-            <div class="p-sm-12 p-md-6 p-d-flex p-flex-column">
-                <label class="kn-material-input-label"> {{ $t('common.linkType') }}</label>
+            <div class="p-sm-6 p-md-4 p-d-flex p-flex-column">
+                <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.interactions.linkType') }}</label>
                 <Dropdown class="kn-material-input" v-model="link.action" :options="descriptor.linkTypes" optionValue="value" :disabled="linksDisabled" @change="onInteractionTypeChanged(link)">
                     <template #value="slotProps">
                         <div>
@@ -52,13 +57,25 @@
                     </template>
                 </Dropdown>
             </div>
+
+            <div class="p-sm-12 p-md-12">
+                <TableWidgetLinkParameterList
+                    class="kn-flex p-mr-2"
+                    :widgetModel="widgetModel"
+                    :propParameters="link.parameters"
+                    :selectedDatasetsColumnsMap="selectedDatasetColumnNameMap"
+                    :drivers="drivers"
+                    :disabled="linksDisabled"
+                    @change="onParametersChanged($event, link)"
+                ></TableWidgetLinkParameterList>
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IDataset, ITableWidgetLinks, ITableWidgetLink, IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IWidget, IDataset, ITableWidgetLinks, ITableWidgetLink, IWidgetStyleToolbarModel, ITableWidgetParameter } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../../TableWidgetSettingsDescriptor.json'
@@ -66,10 +83,11 @@ import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
+import TableWidgetLinkParameterList from './TableWidgetLinkParameterList.vue'
 
 export default defineComponent({
     name: 'table-widget-interactions-links',
-    components: { Checkbox, Dropdown, InputSwitch, WidgetEditorStyleToolbar },
+    components: { Checkbox, Dropdown, InputSwitch, TableWidgetLinkParameterList, WidgetEditorStyleToolbar },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
@@ -80,6 +98,7 @@ export default defineComponent({
         return {
             descriptor,
             linksModel: null as ITableWidgetLinks | null,
+            selectedDatasetColumnNameMap: {},
             getTranslatedLabel
         }
     },
@@ -91,6 +110,7 @@ export default defineComponent({
     created() {
         this.setEventListeners()
         this.loadLinksModel()
+        this.loadSelectedDatasetColumnNames()
     },
     methods: {
         setEventListeners() {
@@ -98,6 +118,17 @@ export default defineComponent({
         },
         loadLinksModel() {
             if (this.widgetModel?.settings?.interactions?.link) this.linksModel = this.widgetModel.settings.interactions.link
+        },
+        loadSelectedDatasetColumnNames() {
+            if (!this.selectedDatasets || this.selectedDatasets.length === 0) return
+            this.selectedDatasets.forEach((dataset: IDataset) => this.loadSelectedDatasetColumnName(dataset))
+        },
+        loadSelectedDatasetColumnName(dataset: IDataset) {
+            this.selectedDatasetColumnNameMap[dataset.name] = []
+            for (let i = 0; i < dataset.metadata.fieldsMeta.length; i++) {
+                console.log('>>>>>>>>>>>>>>>>>>>>>> DATASET: ', dataset)
+                this.selectedDatasetColumnNameMap[dataset.name].push(dataset.metadata.fieldsMeta[i].name)
+            }
         },
         onInteractionTypeChanged(link: ITableWidgetLink) {
             switch (link.type) {
@@ -117,6 +148,17 @@ export default defineComponent({
         },
         onColumnRemoved() {
             this.loadLinksModel()
+        },
+        addLink() {
+            if (!this.linksModel || this.linksDisabled) return
+            this.linksModel.links.push({ type: '', baseurl: '', action: '', parameters: [] })
+        },
+        removeLink(index: number) {
+            if (!this.linksModel || this.linksDisabled) return
+            this.linksModel.links.splice(index, 1)
+        },
+        onParametersChanged(parameters: ITableWidgetParameter[], link: ITableWidgetLink) {
+            link.parameters = parameters
         }
     }
 })
