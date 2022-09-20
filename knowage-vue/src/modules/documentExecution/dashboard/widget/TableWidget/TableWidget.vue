@@ -394,6 +394,9 @@ export default defineComponent({
                 },
                 '!=': function (a, b) {
                     return a != b
+                },
+                IN: function (a, b) {
+                    return b.split(',').indexOf(a) != -1
                 }
             }
             // console.log('EVAL', operators[condition.operator](condition.value, condition.variableValue))
