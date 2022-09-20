@@ -443,6 +443,8 @@
                 "enableMultiselection": "Enable Multiselection",
                 "enablePreview": "Enable Preview",
                 "enableSelection": "Enable Selection",
+                "json": "JSON",
+                "jwt": "JWT",
                 "link": "Link",
                 "linkType": "Link type",
                 "modalColumn": "Modal Column",

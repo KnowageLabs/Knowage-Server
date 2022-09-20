@@ -305,7 +305,7 @@
                                         },
                                         {
                                             "bindType": "driver",
-                                            "driver": "Driver",
+                                            "driver": "Driver 1",
                                             "name": "Parameter Analytical Driver"
                                         },
                                         {
@@ -315,8 +315,8 @@
                                         },
                                         {
                                             "bindType": "selection",
-                                            "column": "the_day",
-                                            "dataset": "DOC_SALES_UNIT_COST_BY_MONTH",
+                                            "column": "month_of_year",
+                                            "dataset": "Sales, Unit sales and cost",
                                             "name": "Parameter Selection"
                                         },
                                         {

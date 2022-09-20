@@ -198,6 +198,32 @@
             "value": "icon"
         }
     ],
+    "linkParameterTypeOptions": [
+        {
+            "label": "dashboard.widgetEditor.interactions.static",
+            "value": "static"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.dynamic",
+            "value": "dynamic"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.analyticalDriver",
+            "value": "driver"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.json",
+            "value": "json"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.selection",
+            "value": "selection"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.jwt",
+            "value": "jwt"
+        }
+    ],
     "linkTypes": [
         {
             "label": "dashboard.widgetEditor.interactions.openInSamePage",
