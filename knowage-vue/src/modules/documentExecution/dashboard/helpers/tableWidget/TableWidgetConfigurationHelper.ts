@@ -2,11 +2,11 @@ import { ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetCustomMe
 import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
 
 export const getFormattedConfiguration = (widget: any) => {
-    return { columnGroups: getFormattedColumnGroups(widget), exports: getFormattedExport(widget), headers: getHeadersConfiguration(widget), rows: getFormattedRows(widget), summaryRows: getFormattedSummaryRows(widget), customMessages: getFormattedCustomMessages(widget) as ITableWidgetCustomMessages }
+    return { columnGroups: getDefaultColumnGroups(widget), exports: getFormattedExport(widget), headers: getHeadersConfiguration(widget), rows: getFormattedRows(widget), summaryRows: getFormattedSummaryRows(widget), customMessages: getFormattedCustomMessages(widget) as ITableWidgetCustomMessages }
 }
 
-const getFormattedColumnGroups = (widget: any) => {
-    if (!widget.groups) return tableWidgetDefaultValues.getFormattedColumnGroups()
+const getDefaultColumnGroups = (widget: any) => {
+    if (!widget.groups) return tableWidgetDefaultValues.getDefaultColumnGroups()
     const formattedColumnGroups = [] as ITableWidgetColumnGroup[]
     widget.groups.forEach((group: { id: string, name: string }) => formattedColumnGroups.push({ id: group.id, label: group.name, columns: [] }))
     return { enabled: true, groups: formattedColumnGroups } as ITableWidgetColumnGroups

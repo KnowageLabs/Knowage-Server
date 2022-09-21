@@ -1,4 +1,4 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetRows, ITableWidgetSummaryRows, ITableWidgetColumnGroup, ITableWidgetColumnGroups, ITableWidgetVisualization, ITableWidgetVisualizationType, ITableWidgetVisibilityCondition, ITableWidgetColumnStyle, ITableWidgetRowsStyle, ITableWidgetBordersStyle, ITableWidgetPaddingStyle, ITableWidgetShadowsStyle, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetParameter, ITableWidgetCrossNavigation, ITableWidgetPreview, ITableWidgetSelection, ITableWidgetLinks, ITableWidgetLink, ITableWidgetCustomMessages, ITableWidgetConfiguration, ITableWidgetResponsive } from '../../Dashboard'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetConfiguration, ITableWidgetResponsive, ITableWidgetConditionalStyles } from '../../Dashboard'
 import { getFormattedConfiguration } from './TableWidgetConfigurationHelper'
 import { getFormattedInteractions } from './TableWidgetInteractionsHelper'
 import { getFormattedStyle } from './TableWidgetStyleHelper'
@@ -13,7 +13,7 @@ export const formatTableWidget = (widget: any) => {
     const formattedWidget = {
         id: widget.id, dataset: widget.dataset.dsId, type: widget.type, columns: getFormattedWidgetColumns(widget), conditionalStyles: [], theme: '', style: {}, settings: {} as ITableWidgetSettings
     } as IWidget
-    formattedWidget.settings = getFormattedWidgetSettings(formattedWidget, widget)
+    formattedWidget.settings = getFormattedWidgetSettings(widget)
     getFiltersForColumns(formattedWidget, widget)
     getSettingsFromWidgetColumns(formattedWidget, widget)
 
@@ -38,15 +38,15 @@ const getFormattedWidgetColumn = (widgetColumn: any) => {
 }
 
 
-const getFormattedWidgetSettings = (formattedWidget: IWidget, widget: any) => {
+const getFormattedWidgetSettings = (widget: any) => {
     const formattedSettings = { sortingColumn: getColumnId(widget.settings?.sortingColumn) ?? '', sortingOrder: widget.settings?.sortingOrder ?? '', updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(widget), configuration: getFormattedConfiguration(widget) as ITableWidgetConfiguration, interactions: getFormattedInteractions(widget) as ITableWidgetInteractions, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as ITableWidgetStyle, tooltips: tableWidgetDefaultValues.getDefaultTooltips() as ITableWidgetTooltipStyle[], visualization: tableWidgetDefaultValues.getDefaultVisualizations(), responsive: tableWidgetDefaultValues.getDefaultResponsivnes() as ITableWidgetResponsive } as ITableWidgetSettings
     return formattedSettings
 }
 const getFormattedConditionalStyles = (widget: any) => {
-    const formattedStyles = [] as ITableWidgetConditionalStyle[]
+    const formattedStyles = { enabled: false, conditions: [] } as ITableWidgetConditionalStyles
     if (widget.settings.rowThresholds?.enabled) {
         widget.settings.rowThresholds.list.forEach((rowThreshold: any) => {
-            formattedStyles.push(createConditionFromRowThreshold(rowThreshold))
+            formattedStyles.conditions.push(createConditionFromRowThreshold(rowThreshold))
         })
     }
 

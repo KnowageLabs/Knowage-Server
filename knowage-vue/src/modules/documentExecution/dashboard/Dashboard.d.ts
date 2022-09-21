@@ -24,7 +24,7 @@ export interface ITableWidgetSettings {
     sortingOrder?: string,
     updatable: boolean,
     clickable: boolean,
-    conditionalStyles: ITableWidgetConditionalStyle[],
+    conditionalStyles: ITableWidgetConditionalStyles,
     configuration: ITableWidgetConfiguration,
     interactions: ITableWidgetInteractions,
     pagination: ITableWidgetPagination,
@@ -32,6 +32,11 @@ export interface ITableWidgetSettings {
     tooltips: ITableWidgetTooltipStyle[],
     visualization: ITableWidgetVisualization,
     responsive: ITableWidgetResponsive
+}
+
+export interface ITableWidgetConditionalStyles {
+    enabled: boolean,
+    conditions: ITableWidgetConditionalStyle[]
 }
 
 export interface ITableWidgetConditionalStyle {
@@ -306,7 +311,7 @@ export interface ITableWidgetTooltipStyle {
 
 export interface ITableWidgetVisualization {
     types: ITableWidgetVisualizationType[],
-    visibilityConditions: ITableWidgetVisibilityCondition[]
+    visibilityConditions: ITableWidgetVisibilityConditions
 }
 export interface ITableWidgetVisualizationType {
     target: string | string[],
@@ -320,6 +325,11 @@ export interface ITableWidgetVisualizationType {
     alignment?: string,
     color?: string,
     "background-color"?: string
+}
+
+export interface ITableWidgetVisibilityConditions {
+    enabled: boolean,
+    conditions: ITableWidgetVisibilityCondition[]
 }
 
 export interface ITableWidgetVisibilityCondition {

@@ -7,7 +7,7 @@ export const getFormattedStyle = (widget: any) => {
     return {
         borders: getFormattedBorderStyle(widget),
         columns: tableWidgetDefaultValues.getDefaultColumnStyles(),
-        columnGroups: getFormattedColumnGroupsStyle(widget),
+        columnGroups: getDefaultColumnGroupsStyle(widget),
         headers: getFormattedHeadersStyle(widget),
         padding: getFormattedPaddingStyle(widget),
         rows: getFormattedRowsStyle(widget),
@@ -22,7 +22,7 @@ const getFormattedBorderStyle = (widget: any) => {
     return { enabled: true, properties: { ...widget.style.border, 'border-color': hexToRgb(widget.style.border['border-color']) } } as ITableWidgetBordersStyle
 }
 
-const getFormattedColumnGroupsStyle = (widget: any) => {
+const getDefaultColumnGroupsStyle = (widget: any) => {
     const formattedColumnGroupsStyles = tableWidgetDefaultValues.getDefaultColumnStyles()
     if (!widget.groups) return formattedColumnGroupsStyles
     let fields = ['background-color', 'color', "justify-content", "font-size", "font-family", "font-style", "font-weight"]

@@ -1,7 +1,14 @@
-import { ITableWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyle, ITableWidgetCrossNavigation, ITableWidgetCustomMessages, ITableWidgetExports, ITableWidgetHeaders, ITableWidgetLinks, ITableWidgetPaddingStyle, ITableWidgetPagination, ITableWidgetPreview, ITableWidgetResponsive, ITableWidgetRows, ITableWidgetRowsStyle, ITableWidgetSelection, ITableWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
+import { ITableWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyle, ITableWidgetConditionalStyles, ITableWidgetCrossNavigation, ITableWidgetCustomMessages, ITableWidgetExports, ITableWidgetHeaders, ITableWidgetLinks, ITableWidgetPaddingStyle, ITableWidgetPagination, ITableWidgetPreview, ITableWidgetResponsive, ITableWidgetRows, ITableWidgetRowsStyle, ITableWidgetSelection, ITableWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
 
 
-export const getFormattedColumnGroups = () => {
+export const getDefaultConditionalStyles = () => {
+    return {
+        enabled: false,
+        conditions: []
+    } as ITableWidgetConditionalStyles
+}
+
+export const getDefaultColumnGroups = () => {
     return {
         enabled: false,
         groups: []
@@ -206,7 +213,10 @@ export const getDefaultVisualizations = () => {
             prefix: '',
             suffix: '',
             pinned: '',
-        }], visibilityConditions: []
+        }], visibilityConditions: {
+            enabled: false,
+            conditions: []
+        }
     } as ITableWidgetVisualization
 }
 

@@ -16,9 +16,9 @@ export function createNewWidget() {
             sortingOrder: '',
             updatable: true,
             clickable: true,
-            conditionalStyles: [],
+            conditionalStyles: tableWidgetDefaultValues.getDefaultConditionalStyles(),
             configuration: {
-                columnGroups: tableWidgetDefaultValues.getFormattedColumnGroups(),
+                columnGroups: tableWidgetDefaultValues.getDefaultColumnGroups(),
                 exports: tableWidgetDefaultValues.getDefaultExportsConfiguration(),
                 headers: tableWidgetDefaultValues.getDefaultHeadersConfiguration(),
                 rows: tableWidgetDefaultValues.getDefaultRowsConfiguration(),

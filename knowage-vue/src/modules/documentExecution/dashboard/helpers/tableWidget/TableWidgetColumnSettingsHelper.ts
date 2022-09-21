@@ -42,9 +42,24 @@ const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn:
         if (tempColumn.variables) {
             getVisibilityConditionVariable(formattedWidget, tempColumn.variables, tempVisibiilityCondition)
         } else {
-            formattedWidget.settings.visualization.visibilityConditions.push(tempVisibiilityCondition)
+            formattedWidget.settings.visualization.visibilityConditions.conditions.push(tempVisibiilityCondition)
         }
     }
+}
+
+const getVisibilityConditionVariable = (formattedWidget: IWidget, variables: { action: string, variable: string, condition: string, value: string }[], tempVisibiilityCondition: ITableWidgetVisibilityCondition) => {
+    variables.forEach((variable: { action: string, variable: string, condition: string, value: string }) => {
+        if (variable.action === 'hide') {
+            tempVisibiilityCondition.condition = {
+                type: 'variable',
+                variable: variable.variable,
+                variableValue: 'MOCK',
+                operator: variable.condition,
+                value: variable.value,
+            }
+            formattedWidget.settings.visualization.visibilityConditions.conditions.push(tempVisibiilityCondition)
+        }
+    })
 }
 
 const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
@@ -95,7 +110,7 @@ const getConditionalStyleFromColumn = (formattedWidget: IWidget, tempColumn: any
                 icon: range.icon ?? ''
             }
         } as ITableWidgetConditionalStyle
-        formattedWidget.settings.conditionalStyles.push(tempConditionalStyle)
+        formattedWidget.settings.conditionalStyles.conditions.push(tempConditionalStyle)
     })
 }
 
@@ -117,20 +132,7 @@ const getTooltipFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
 }
 
 
-const getVisibilityConditionVariable = (formattedWidget: IWidget, variables: { action: string, variable: string, condition: string, value: string }[], tempVisibiilityCondition: ITableWidgetVisibilityCondition) => {
-    variables.forEach((variable: { action: string, variable: string, condition: string, value: string }) => {
-        if (variable.action === 'hide') {
-            tempVisibiilityCondition.condition = {
-                type: 'variable',
-                variable: variable.variable,
-                variableValue: 'MOCK',
-                operator: variable.condition,
-                value: variable.value,
-            }
-            formattedWidget.settings.visualization.visibilityConditions.push(tempVisibiilityCondition)
-        }
-    })
-}
+
 
 const addVisualisationTypeAttributeColumn = (formattedWidget: IWidget, tempColumn: any) => {
     formattedWidget.settings.visualization.types.push({ target: [getColumnId(tempColumn.name)], type: 'Text', prefix: tempColumn.style?.prefix ?? '', suffix: tempColumn.style?.suffix ?? '', pinned: tempColumn.pinned ?? '' })
