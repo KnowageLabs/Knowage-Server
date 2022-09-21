@@ -19,7 +19,7 @@ import SummaryRowRenderer from './SummaryRowRenderer.vue'
 import HeaderGroupRenderer from './HeaderGroupRenderer.vue'
 import TooltipRenderer from './TooltipRenderer.vue'
 import CellRenderer from './CellRenderer.vue'
-import { getWidgetStyleByType } from './TableWidgetHelper'
+import { getWidgetStyleByType, getRowStyle } from './TableWidgetHelper'
 
 export default defineComponent({
     name: 'table-widget',
@@ -93,13 +93,13 @@ export default defineComponent({
 
                 // EVENTS
                 // onRowClicked: (event, params) => console.log('A row was clicked', event),
-                onCellClicked: (event, params) => console.log('A cell was clicked', event),
+                onCellClicked: (event, params) => console.log('A cell was clicked', event, params)
                 // onColumnResized: (event) => console.log('A column was resized'),
                 // onGridReady: (event) => console.log('The grid is now ready')
 
                 // CALLBACKS
                 // getRowHeight: (params) => 25
-                getRowStyle: this.getRowStyle
+                // getRowStyle: this.getRowStyle
             }
         },
         onGridReady(params) {
@@ -171,16 +171,9 @@ export default defineComponent({
                             headerComponent: HeaderRenderer,
                             headerComponentParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget },
                             cellRenderer: CellRenderer,
-                            cellRendererParams: { styleString: this.getColumnStyle(this.propWidget.columns[datasetColumn].id) }
+                            cellRendererParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget, styleString: '' }
                             // cellRendererParams: { styleString: this.getColumnStyle(this.propWidget.columns[datasetColumn].id), conditionalStyle: this.getColumnConditionalStyle(this.propWidget.columns[datasetColumn].id) }
                         } as any
-
-                        if (this.propWidget.columns[datasetColumn].style && this.propWidget.columns[datasetColumn].style.enableCustomHeaderTooltip) {
-                            // tempCol.headerTooltip = replacePlaceholders(this.propWidget.columns[datasetColumn].style.customHeaderTooltip, null, true)
-                            //TODO: add custom tooltips for headers if there are any
-                        } else {
-                            tempCol.headerTooltip = this.propWidget.columns[datasetColumn].alias
-                        }
 
                         if (tempCol.measure === 'MEASURE') tempCol.aggregationSelected = this.propWidget.columns[datasetColumn].aggregation
                         // tempCol.pinned = this.propWidget.columns[datasetColumn].pinned
@@ -213,10 +206,10 @@ export default defineComponent({
                                     return tempRows[params.rowIndex].span > 1
                                 }
                             }
-                            tempCol.cellStyle = this.getRowStyle
+                            // tempCol.cellStyle = getRowStyle
                         }
 
-                        tempCol.cellRendererParams.condStyles = this.getColumnConditionalStyle
+                        // tempCol.cellRendererParams.condStyles = this.getColumnConditionalStyle
 
                         // SUMMARY ROW  -----------------------------------------------------------------
                         if (this.propWidget.settings.configuration.summaryRows.enabled) {
@@ -316,18 +309,18 @@ export default defineComponent({
 
             return columntooltipConfig
         },
-        getRowStyle(params) {
-            var rowStyles = this.propWidget.settings.style.rows
+        // getRowStyle(params) {
+        //     var rowStyles = this.propWidget.settings.style.rows
 
-            if (rowStyles.alternatedRows && rowStyles.alternatedRows.enabled) {
-                if (rowStyles.alternatedRows.oddBackgroundColor && params.node.rowIndex % 2 === 0) {
-                    return { background: rowStyles.alternatedRows.oddBackgroundColor }
-                }
-                if (rowStyles.alternatedRows.evenBackgroundColor && params.node.rowIndex % 2 != 0) {
-                    return { background: rowStyles.alternatedRows.evenBackgroundColor }
-                }
-            }
-        },
+        //     if (rowStyles.alternatedRows && rowStyles.alternatedRows.enabled) {
+        //         if (rowStyles.alternatedRows.oddBackgroundColor && params.node.rowIndex % 2 === 0) {
+        //             return { background: rowStyles.alternatedRows.oddBackgroundColor }
+        //         }
+        //         if (rowStyles.alternatedRows.evenBackgroundColor && params.node.rowIndex % 2 != 0) {
+        //             return { background: rowStyles.alternatedRows.evenBackgroundColor }
+        //         }
+        //     }
+        // },
         getColumnStyle(colId) {
             var columnStyles = this.propWidget.settings.style.columns
             var columnStyleString = null as any
@@ -349,14 +342,15 @@ export default defineComponent({
             var visCond = this.propWidget.settings.visualization.visibilityConditions
             var columnHidden = false as boolean
 
-            var colConditions = visCond.filter((condition) => condition.target.includes(colId))
-
-            //We always take the 1st condition as a priority for the column and use that one.
-            if (colConditions[0]) {
-                if (colConditions[0].condition.type === 'always') {
-                    columnHidden = colConditions[0].hide
-                } else {
-                    this.formatVisibilityCondition(colConditions[0].condition) ? (columnHidden = colConditions[0].hide) : ''
+            if (visCond.enabled) {
+                var colConditions = visCond.filter((condition) => condition.target.includes(colId))
+                //We always take the 1st condition as a priority for the column and use that one.
+                if (colConditions[0]) {
+                    if (colConditions[0].condition.type === 'always') {
+                        columnHidden = colConditions[0].hide
+                    } else {
+                        this.formatVisibilityCondition(colConditions[0].condition) ? (columnHidden = colConditions[0].hide) : ''
+                    }
                 }
             }
 
