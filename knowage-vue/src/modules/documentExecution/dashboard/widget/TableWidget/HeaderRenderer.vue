@@ -1,5 +1,5 @@
 <template>
-    <div class="custom-header-container" :style="params.styleString">
+    <div class="custom-header-container" :style="getHeaderStyle()">
         <div class="custom-header-label">{{ params.displayName }}</div>
     </div>
 </template>
@@ -15,15 +15,19 @@ export default defineComponent({
         }
     },
     data() {
-        return {
-            ascSort: null as any,
-            descSort: null as any,
-            noSort: null as any
-        }
+        return {}
     },
     mounted() {
         // console.log('\n \n HEADER RENDERER PARAMS \n', this.params)
     },
-    methods: {}
+    methods: {
+        getHeaderStyle() {
+            const styleSettings = this.params.propWidget.settings.style.headers
+            const styleString = Object.entries(styleSettings.properties ?? styleSettings)
+                .map(([k, v]) => `${k}:${v}`)
+                .join(';')
+            return styleString + ';'
+        }
+    }
 })
 </script>
