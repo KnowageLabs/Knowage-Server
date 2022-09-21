@@ -1,76 +1,77 @@
 <template>
-    <div v-if="headersModel">
-        <div class="p-d-flex p-flex-row p-ai-center p-m-3">
-            <div class="kn-flex p-m-2">
-                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.headers.enableHeader') }}</label>
+    <div v-if="headersModel" class="p-grid p-ai-center p-p-4">
+        <div id="input-switches-container" class="p-grid p-col-12 p-p-3">
+            <div class="p-col-12 p-md-6 p-p-2">
                 <InputSwitch v-model="headersModel.enabled" @change="headersConfigurationChanged"></InputSwitch>
+                <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.headers.enableHeader') }}</label>
             </div>
-            <div class="p-ml-auto p-mr-2">
-                <label class="kn-material-input-label p-mr-2"> {{ $t('dashboard.widgetEditor.headers.enableMultiline') }}</label>
-                <InputSwitch v-model="headersModel.enabledMultiline" :disabled="!headersModel.enabled" @change="headersConfigurationChanged"></InputSwitch>
+            <div class="p-col-12 p-md-6 p-p-2">
+                <InputSwitch v-model="headersModel.enabledMultiline" :disabled="headersDisabled" @change="headersConfigurationChanged"></InputSwitch>
+                <label class="kn-material-input-label p-ml-3"> {{ $t('dashboard.widgetEditor.headers.enableMultiline') }}</label>
             </div>
         </div>
 
-        <hr />
-
-        <div class="p-d-flex p-flex-column p-m-3">
-            <div class="kn-flex p-m-2">
-                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.headers.enableCustomHeaders') }}</label>
+        <div class="p-col-12 p-p-3">
+            <div class="p-col-12 p-p-2">
                 <InputSwitch v-model="headersModel.custom.enabled" @change="onCustomHeadersEnabledChange"></InputSwitch>
+                <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.headers.enableCustomHeaders') }}</label>
             </div>
 
-            <div v-for="(rule, index) in headersModel.custom.rules" :key="index" class="p-d-flex p-flex-row p-ai-center">
-                <div class="p-d-flex p-flex-column kn-flex p-mt-1">
+            <div v-for="(rule, index) in headersModel.custom.rules" :key="index" class="p-grid p-ai-center">
+                <div class="p-col-12 p-sm-12 p-md-3 p-d-flex p-flex-column p-pt-1">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-                    <WidgetEditorColumnsMultiselect :value="rule.target" :availableTargetOptions="availableTargetOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" :disabled="!headersModel.custom.enabled" @change="onColumnsSelected($event, rule)">
+                    <WidgetEditorColumnsMultiselect :value="rule.target" :availableTargetOptions="availableTargetOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" :disabled="headersCustomDisabled" @change="onColumnsSelected($event, rule)">
                     </WidgetEditorColumnsMultiselect>
                 </div>
-                <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
-                    <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.headers.action') }}</label>
-                    <Dropdown class="kn-material-input" v-model="rule.action" :options="descriptor.customHeadersActionOptions" optionValue="value" :disabled="!headersModel.custom.enabled" @change="onHeadersRuleActionChanged(rule)">
-                        <template #value="slotProps">
-                            <div>
-                                <span>{{ slotProps.value }}</span>
-                            </div>
-                        </template>
-                        <template #option="slotProps">
-                            <div>
-                                <span>{{ $t(slotProps.option.label) }}</span>
-                            </div>
-                        </template>
-                    </Dropdown>
-                </div>
-                <div v-if="rule.action === 'setLabel'" class="p-d-flex p-flex-column kn-flex p-m-2">
-                    <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.compareValueType') }}</label>
-                    <Dropdown class="kn-material-input" v-model="rule.compareType" :options="descriptor.headersCompareValueType" optionValue="value" :disabled="!headersModel.custom.enabled" @change="headersConfigurationChanged">
-                        <template #value="slotProps">
-                            <div>
-                                <span>{{ slotProps.value }}</span>
-                            </div>
-                        </template>
-                        <template #option="slotProps">
-                            <div>
-                                <span>{{ $t(slotProps.option.label) }}</span>
-                            </div>
-                        </template>
-                    </Dropdown>
-                </div>
-
-                <div v-if="rule.action === 'setLabel'" class="p-d-flex p-flex-row kn-flex">
-                    <div v-if="rule.compareType === 'static'" class="p-d-flex p-flex-column kn-flex p-mr-2">
-                        <label class="kn-material-input-label p-mr-2">{{ $t('common.value') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="rule.value" :disabled="!headersModel.custom.enabled" @change="headersConfigurationChanged" />
+                <div class="p-col-11 p-sm-11 p-md-8 p-grid">
+                    <div class="p-col-12 p-sm-12 p-md-4 kn-flex p-d-flex p-flex-column p-p-2">
+                        <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.headers.action') }}</label>
+                        <Dropdown class="kn-material-input" v-model="rule.action" :options="descriptor.customHeadersActionOptions" optionValue="value" :disabled="headersCustomDisabled" @change="onHeadersRuleActionChanged(rule)">
+                            <template #value="slotProps">
+                                <div>
+                                    <span>{{ slotProps.value }}</span>
+                                </div>
+                            </template>
+                            <template #option="slotProps">
+                                <div>
+                                    <span>{{ $t(slotProps.option.label) }}</span>
+                                </div>
+                            </template>
+                        </Dropdown>
                     </div>
-                    <div v-else-if="rule.compareType === 'variable'" class="p-d-flex p-flex-column kn-flex p-m-2">
-                        <label class="kn-material-input-label p-mr-2">{{ $t('common.variable') }}</label>
-                        <Dropdown class="kn-material-input" v-model="rule.value" :options="variables" optionValue="value" optionLabel="name" :disabled="!headersModel.custom.enabled" @change="headersConfigurationChanged"> </Dropdown>
+                    <div v-if="rule.action === 'setLabel'" class="p-col-12 p-sm-12 p-md-4 p-d-flex p-flex-column">
+                        <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.compareValueType') }}</label>
+                        <Dropdown class="kn-material-input" v-model="rule.compareType" :options="descriptor.headersCompareValueType" optionValue="value" :disabled="headersCustomDisabled" @change="headersConfigurationChanged">
+                            <template #value="slotProps">
+                                <div>
+                                    <span>{{ getTranslatedLabel(slotProps.value, descriptor.headersCompareValueType, $t) }}</span>
+                                </div>
+                            </template>
+                            <template #option="slotProps">
+                                <div>
+                                    <span>{{ $t(slotProps.option.label) }}</span>
+                                </div>
+                            </template>
+                        </Dropdown>
                     </div>
-                    <div v-else-if="rule.compareType === 'parameter'" class="p-d-flex p-flex-column kn-flex p-m-2">
-                        <label class="kn-material-input-label p-mr-2">{{ $t('common.parameter') }}</label>
-                        <Dropdown class="kn-material-input" v-model="rule.value" :options="drivers" optionValue="value" optionLabel="name" :disabled="!headersModel.custom.enabled" @change="headersConfigurationChanged"> </Dropdown>
+                    <div v-if="rule.action === 'setLabel'" class="p-col-12 p-sm-12 p-md-4 p-d-flex p-flex-row p-ai-center">
+                        <div v-if="rule.compareType === 'static'" class="p-d-flex p-flex-column kn-flex">
+                            <label class="kn-material-input-label p-mr-2">{{ $t('common.value') }}</label>
+                            <InputText class="kn-material-input p-inputtext-sm" v-model="rule.value" :disabled="headersCustomDisabled" @change="headersConfigurationChanged" />
+                        </div>
+                        <div v-else-if="rule.compareType === 'variable'" class="p-d-flex p-flex-column kn-flex">
+                            <label class="kn-material-input-label p-mr-2">{{ $t('common.variable') }}</label>
+                            <Dropdown class="kn-material-input" v-model="rule.value" :options="variables" optionValue="value" optionLabel="name" :disabled="headersCustomDisabled" @change="headersConfigurationChanged"> </Dropdown>
+                        </div>
+                        <div v-else-if="rule.compareType === 'parameter'" class="p-d-flex p-flex-column kn-flex">
+                            <label class="kn-material-input-label p-mr-2">{{ $t('common.parameter') }}</label>
+                            <Dropdown class="kn-material-input" v-model="rule.value" :options="drivers" optionValue="value" optionLabel="name" :disabled="headersCustomDisabled" @change="headersConfigurationChanged"> </Dropdown>
+                        </div>
                     </div>
                 </div>
-                <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', !headersModel.custom.enabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="index === 0 ? addHeadersRule() : removeHeadersRule(index)"></i>
+                <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2">
+                    <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', headersCustomDisabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="index === 0 ? addHeadersRule() : removeHeadersRule(index)"></i>
+                </div>
             </div>
         </div>
     </div>
@@ -80,6 +81,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetHeaders, ITableWidgetHeadersRule, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
+import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
@@ -98,7 +100,16 @@ export default defineComponent({
             descriptor,
             headersModel: null as ITableWidgetHeaders | null,
             availableTargetOptions: [] as (IWidgetColumn | { id: string; alias: string })[],
-            widgetColumnsAliasMap: {} as any
+            widgetColumnsAliasMap: {} as any,
+            getTranslatedLabel
+        }
+    },
+    computed: {
+        headersDisabled() {
+            return !this.headersModel || !this.headersModel.enabled
+        },
+        headersCustomDisabled() {
+            return !this.headersModel || !this.headersModel.custom.enabled
         }
     },
     created() {
@@ -214,3 +225,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+#input-switches-container {
+    border-bottom: 1px solid #c2c2c2;
+}
+</style>
