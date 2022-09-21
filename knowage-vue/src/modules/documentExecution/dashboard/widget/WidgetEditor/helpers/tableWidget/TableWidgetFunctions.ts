@@ -118,13 +118,20 @@ function formatTableSelectedColumns(columns: IWidgetColumn[]) {
 //#region ===================== Remove Column ====================================================
 export const removeColumnFromModel = (widgetModel: IWidget, column: IWidgetColumn) => {
     removeColumnFromRows(widgetModel, column)
-    removeColumnFromHeadersConfiguration(widgetModel, column)
-    removeColumnFromColumnGroups(widgetModel, column)
-    removeColumnFromVisualizationType(widgetModel, column)
-    removeColumnFromVisibilityConditions(widgetModel, column)
-    removeColumnFromColumnStyle(widgetModel, column)
-    removeColumnFromConditionalStyles(widgetModel, column)
-    removeColumnFromTooltips(widgetModel, column)
+    removeColumnFromSubmodel(column, widgetModel.settings.configuration.headers.custom.rules, 'target', 'headersColumnRemoved', false)
+    removeColumnFromSubmodel(column, widgetModel.settings.configuration.columnGroups.groups, 'columns', 'columnRemovedFromColumnGroups', false)
+    removeColumnFromSubmodel(column, widgetModel.settings.visualization.types, 'target', 'columnRemovedFromVisibilityTypes', true)
+    removeColumnFromSubmodel(column, widgetModel.settings.visualization.visibilityConditions.conditions, 'target', 'columnRemovedFromVisibilityConditions', false)
+    removeColumnFromSubmodel(column, widgetModel.settings.style.columns, 'target', 'columnRemovedFromColumnStyle', true)
+    removeColumnFromSubmodel(column, widgetModel.settings.conditionalStyles.conditions, 'target', 'columnRemovedFromConditionalStyles', false)
+    removeColumnFromSubmodel(column, widgetModel.settings.tooltips, 'target', 'columnRemovedFromTooltips', true)
+    // removeColumnFromHeadersConfiguration(widgetModel, column)
+    // removeColumnFromColumnGroups(widgetModel, column)
+    //  removeColumnFromVisualizationType(widgetModel, column)
+    // removeColumnFromVisibilityConditions(widgetModel, column)
+    // removeColumnFromColumnStyle(widgetModel, column)
+    // removeColumnFromConditionalStyles(widgetModel, column)
+    // removeColumnFromTooltips(widgetModel, column)
     removeColumnFromCrossNavigation(widgetModel, column)
 }
 
@@ -135,6 +142,23 @@ const removeColumnFromRows = (widgetModel: IWidget, column: IWidgetColumn) => {
     }
 }
 
+const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[], subProperty: string, eventToEmit: string, allColumnsOption: boolean) => {
+    let removed = false
+    for (let i = array.length - 1; i >= (allColumnsOption ? 1 : 0); i--) {
+        for (let j = (array[i][subProperty] as string[]).length; j >= 0; j--) {
+            const tempTarget = array[i][subProperty][j]
+            if (column.id === tempTarget) {
+                (array[i][subProperty] as string[]).splice(j, 1)
+                removed = true
+            }
+        }
+        if ((array[i][subProperty] as string[]).length === 0) array.splice(i, 1)
+    }
+    if (removed) emitter.emit(eventToEmit)
+}
+
+
+// TODO - Remove methods
 const removeColumnFromHeadersConfiguration = (widgetModel: IWidget, column: IWidgetColumn) => {
     let removed = false
     const headersModel = widgetModel.settings.configuration.headers
