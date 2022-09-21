@@ -53,12 +53,7 @@ const formatRowsConfiguration = (widgetConfiguration: ITableWidgetConfiguration)
 
 const formatHeadersConfiguration = (widgetConfiguration: ITableWidgetConfiguration) => {
     if (!widgetConfiguration.headers) return
-    if (!widgetConfiguration.headers.custom.enabled) {
-        widgetConfiguration.headers.custom.rules = []
-        return
-    }
-
-    formatHeaderConfigurationRules(widgetConfiguration.headers) // TODO - BE SAVE
+    formatHeaderConfigurationRules(widgetConfiguration.headers)
 }
 
 const formatHeaderConfigurationRules = (configurationHeaders: ITableWidgetHeaders) => {
@@ -70,8 +65,10 @@ const formatHeaderConfigurationRules = (configurationHeaders: ITableWidgetHeader
         }
         tempRule.target = formattedRuleColumns
     }
-
 }
+
+
+
 
 const formatColumnGroups = (widgetConfiguration: ITableWidgetConfiguration) => {
     if (!widgetConfiguration.columnGroups) return

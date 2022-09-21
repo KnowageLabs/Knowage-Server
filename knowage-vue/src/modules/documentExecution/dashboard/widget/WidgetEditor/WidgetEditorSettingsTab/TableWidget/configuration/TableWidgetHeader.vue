@@ -17,7 +17,7 @@
                 <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.headers.enableCustomHeaders') }}</label>
             </div>
 
-            <div v-for="(rule, index) in headersModel.custom.rules" :key="index" class="p-grid p-ai-center">
+            <div v-for="(rule, index) in headersModel.custom.rules" :key="index" class="p-grid p-ai-center p-pt-2">
                 <div class="p-col-12 p-sm-12 p-md-3 p-d-flex p-flex-column p-pt-1">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
                     <WidgetEditorColumnsMultiselect :value="rule.target" :availableTargetOptions="availableTargetOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" :disabled="headersCustomDisabled" @change="onColumnsSelected($event, rule)">
@@ -41,7 +41,7 @@
                     </div>
                     <div v-if="rule.action === 'setLabel'" class="p-col-12 p-sm-12 p-md-4 p-d-flex p-flex-column">
                         <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.compareValueType') }}</label>
-                        <Dropdown class="kn-material-input" v-model="rule.compareType" :options="descriptor.headersCompareValueType" optionValue="value" :disabled="headersCustomDisabled" @change="headersConfigurationChanged">
+                        <Dropdown class="kn-material-input" v-model="rule.compareType" :options="descriptor.headersCompareValueType" optionValue="value" :disabled="headersCustomDisabled" @change="onCompareValueTypeChanged(rule)">
                             <template #value="slotProps">
                                 <div>
                                     <span>{{ getTranslatedLabel(slotProps.value, descriptor.headersCompareValueType, $t) }}</span>
@@ -61,11 +61,11 @@
                         </div>
                         <div v-else-if="rule.compareType === 'variable'" class="p-d-flex p-flex-column kn-flex">
                             <label class="kn-material-input-label p-mr-2">{{ $t('common.variable') }}</label>
-                            <Dropdown class="kn-material-input" v-model="rule.value" :options="variables" optionValue="value" optionLabel="name" :disabled="headersCustomDisabled" @change="headersConfigurationChanged"> </Dropdown>
+                            <Dropdown class="kn-material-input" v-model="rule.variable" :options="variables" optionValue="name" optionLabel="name" :disabled="headersCustomDisabled" @change="onVariableChanged(rule)"> </Dropdown>
                         </div>
                         <div v-else-if="rule.compareType === 'parameter'" class="p-d-flex p-flex-column kn-flex">
                             <label class="kn-material-input-label p-mr-2">{{ $t('common.parameter') }}</label>
-                            <Dropdown class="kn-material-input" v-model="rule.value" :options="drivers" optionValue="value" optionLabel="name" :disabled="headersCustomDisabled" @change="headersConfigurationChanged"> </Dropdown>
+                            <Dropdown class="kn-material-input" v-model="rule.parameter" :options="drivers" optionValue="name" optionLabel="name" :disabled="headersCustomDisabled" @change="onDriverChanged(rule)"> </Dropdown>
                         </div>
                     </div>
                 </div>
@@ -101,6 +101,8 @@ export default defineComponent({
             headersModel: null as ITableWidgetHeaders | null,
             availableTargetOptions: [] as (IWidgetColumn | { id: string; alias: string })[],
             widgetColumnsAliasMap: {} as any,
+            parameterValuesMap: {},
+            variableValuesMap: {},
             getTranslatedLabel
         }
     },
@@ -117,10 +119,12 @@ export default defineComponent({
         this.loadTargetOptions()
         this.loadHeadersModel()
         this.loadWidgetColumnAliasMap()
+        this.loadParameterValuesMap()
+        this.loadVariableValuesMap()
     },
     methods: {
         setEventListeners() {
-            emitter.on('headersColumnRemoved', (column) => this.onColumnRemoved(column))
+            emitter.on('headersColumnRemoved', () => this.onColumnRemoved())
             emitter.on('columnAliasRenamed', (column) => this.onColumnAliasRenamed(column))
             emitter.on('columnAdded', (column) => this.onColumnAdded(column))
         },
@@ -132,11 +136,6 @@ export default defineComponent({
                 this.headersModel = this.widgetModel.settings.configuration.headers
             }
             if (this.headersModel?.custom.enabled) this.removeColumnsFromTargetOptions()
-        },
-        loadWidgetColumnAliasMap() {
-            this.widgetModel.columns.forEach((column: IWidgetColumn) => {
-                if (column.id) this.widgetColumnsAliasMap[column.id] = column.alias
-            })
         },
         removeColumnsFromTargetOptions() {
             if (!this.headersModel) return
@@ -153,6 +152,30 @@ export default defineComponent({
             const index = this.availableTargetOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === tempColumn.id)
             if (index !== -1) this.availableTargetOptions.splice(index, 1)
         },
+        loadWidgetColumnAliasMap() {
+            this.widgetModel.columns.forEach((column: IWidgetColumn) => {
+                if (column.id) this.widgetColumnsAliasMap[column.id] = column.alias
+            })
+        },
+        loadParameterValuesMap() {
+            if (!this.drivers) return
+            this.drivers.forEach((driver: any) => (this.parameterValuesMap[driver.name] = driver.value))
+        },
+        loadVariableValuesMap() {
+            if (!this.variables) return
+            this.variables.forEach((variables: any) => (this.variableValuesMap[variables.name] = variables.value))
+        },
+        onDriverChanged(rule: ITableWidgetHeadersRule) {
+            const temp = rule.parameter
+            if (temp) rule.value = this.parameterValuesMap[temp]
+            this.headersConfigurationChanged()
+        },
+        onVariableChanged(rule: ITableWidgetHeadersRule) {
+            const temp = rule.variable
+            if (temp) rule.value = this.variableValuesMap[temp]
+            this.headersConfigurationChanged()
+        },
+
         headersConfigurationChanged() {
             emitter.emit('headersConfigurationChanged', this.headersModel)
         },
@@ -166,6 +189,21 @@ export default defineComponent({
             if (!this.headersModel) return
             if (this.headersModel.custom.enabled && this.headersModel.custom.rules.length === 0) {
                 this.headersModel.custom.rules.push({ target: [], action: '' })
+            }
+            this.headersConfigurationChanged()
+        },
+        onCompareValueTypeChanged(rule: ITableWidgetHeadersRule) {
+            rule.value = ''
+            switch (rule.compareType) {
+                case 'static':
+                    delete rule.parameter
+                    delete rule.variable
+                    break
+                case 'parameter':
+                    delete rule.variable
+                    break
+                case 'variable':
+                    delete rule.parameter
             }
             this.headersConfigurationChanged()
         },
@@ -205,7 +243,7 @@ export default defineComponent({
             this.headersModel.custom.rules.splice(index, 1)
             this.headersConfigurationChanged()
         },
-        onColumnRemoved(column: IWidgetColumn) {
+        onColumnRemoved() {
             this.loadHeadersModel()
             this.loadTargetOptions()
             this.headersConfigurationChanged()
