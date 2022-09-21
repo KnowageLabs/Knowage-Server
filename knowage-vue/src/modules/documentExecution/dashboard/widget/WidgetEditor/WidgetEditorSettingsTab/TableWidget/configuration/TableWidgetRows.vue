@@ -9,8 +9,6 @@
             </div>
         </div>
 
-        <hr />
-
         <div class="p-col-12 p-grid p-px-3 p-py-4">
             <div class="p-col-3 p-sm-12 p-md-3">
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.rows.enableRowspan') }}</label>
