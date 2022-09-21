@@ -241,7 +241,8 @@
     "components": {
         "knCalculatedField": {
             "columnName": "Column Name",
-            "description": "Choose a name, select a type and add an expression for the calculated field. Drag and drop the functions and the fields from the list into the expression text area.",
+            "description": "Choose a name, select a type and add an expression for the calculated field. Drag and drop the functions and the fields from the list into the expression text area. Note that fields should be written the format $F{'{'}fieldName{'}'}",
+            "fieldName": "fieldName",
             "fields": "Fields",
             "formula": "Formula",
             "functions": "Functions",
@@ -1250,8 +1251,8 @@
             "hindBreadMessage": "This field set the breadcrumb text visualizable within a cross navigation.It's possible to use parameters (output or input types) of the original document through the syntax $P(source_parameter_name).",
             "hindDesc": "Hint about Description",
             "hindDescMessage": "This field set the description of the navigation visualizable within the selection popup. The popup will be shown if there are multiple cross navigations startable by the same document.It's possible to use parameters (output or input types) of the original document through the syntax $P(source_parameter_name).",
-            "hintDrag": "To connect parameters between documents drag and drop them from the starting document to the target one.",
             "hint": "Cross-navigation management functionality allows you to create the link between document navigations. You can select the type of navigation and connect che parameters value from output to input. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
+            "hintDrag": "To connect parameters between documents drag and drop them from the starting document to the target one.",
             "incompatibleTypes": "Incompatible types",
             "incompatibleTypesMessage": "{originParam} parameter's type not compatible with type of parameter {targetParam}",
             "input": "Input",
@@ -1334,10 +1335,10 @@
             "ckanXslSheetNumber": "Sheet Number",
             "confirmMsg": "You will lose all unsaved changes, are you sure you want to open Data Preparation?",
             "creationUser": "Creation User",
-            "dataframeName": "Dataframe variable name",
             "dataPreparation": {
                 "datasetInvolvedIntoDataPrep": "Dataset is involved in a Data Preparation process, do you want to proceed?"
             },
+            "dataframeName": "Dataframe variable name",
             "decrypt": "Decrypt",
             "deleteAllParams": "Clear all dataset parameters",
             "deleteAllParamsMsg": "Are you sure you want to delete all dataset parameters?",

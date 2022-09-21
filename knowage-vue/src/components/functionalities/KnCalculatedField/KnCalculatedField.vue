@@ -1,6 +1,6 @@
 <template>
     <Dialog class="kn-dialog--toolbar--primary calculatedFieldDialogClass" v-bind:visible="visibility" :header="$t('components.knCalculatedField.title')" :closable="false" modal :breakpoints="{ '960px': '75vw', '640px': '100vw' }">
-        <Message severity="info" :closable="false"> {{ $t('components.knCalculatedField.description') }} </Message>
+        <Message severity="info" :closable="false">{{ $t('components.knCalculatedField.description') }}</Message>
 
         <div class="p-fluid p-grid">
             <div class="p-col">
@@ -29,41 +29,45 @@
                     <div class="p-col-4">
                         <h5 class="p-float-label p-text-uppercase p-m-2">{{ $t('components.knCalculatedField.fields') }}</h5>
 
-                        <Listbox class="kn-list kn-flex kn-list-no-border-right" :options="fields" optionLabel="name" listStyle="max-height:200px"
-                            ><template #option="slotProps">
-                                <div class="p-text-uppercase kn-list-item fieldType" draggable="true" @dragstart="dragElement($event, slotProps.option, 'field')">
-                                    <div><i class="fa fa-solid fa-bars"></i></div>
-                                    <div v-if="source === 'QBE'" class="p-ml-2">{{ slotProps.option.fieldLabel }}</div>
-                                    <div v-else class="p-ml-2">{{ slotProps.option.fieldAlias }}</div>
-                                </div>
-                            </template></Listbox
-                        >
+                        <ScrollPanel class="kn-list knListBox kn-flex kn-list-no-border-right" style="height: 140px !important; border: 1px">
+                            <div v-for="field in fields" class="kn-list-item p-d-flex p-ai-center fieldType kn-truncated" draggable="true" @dragstart="dragElement($event, field, 'field')" v-tooltip.bottom="source === 'QBE' ? field.fieldLabel : field.fieldAlias">
+                                <div><i class="fa fa-solid fa-bars"></i></div>
+                                <div v-if="source === 'QBE'" class="p-ml-2">{{ field.fieldLabel }}</div>
+                                <div v-else class="p-ml-2">{{ field.fieldAlias }}</div>
+                            </div>
+                        </ScrollPanel>
                     </div>
                     <div class="p-col-4">
                         <span class="p-float-label">
-                            <Dropdown id="category" v-model="selectedCategory" :options="handleOptions()" class="kn-material-input" optionLabel="name" optionValue="code" @change="filterFunctions" />
+                            <Dropdown id="category" v-model="selectedCategory" :options="availableCategories" class="kn-material-input" optionLabel="name" optionValue="code" @change="filterFunctions" />
                             <label for="category" class="kn-material-input-label"> {{ $t(descriptor.category.label) }} </label>
                         </span>
 
                         <h5 class="p-float-label p-text-uppercase p-m-2">{{ $t('components.knCalculatedField.functions') }}</h5>
-                        <Listbox class="kn-list kn-flex kn-list-no-border-right" v-model="selectedFunction" :options="availableFunctions" optionLabel="name" listStyle="max-height:160px"
-                            ><template #option="slotProps">
-                                <div class="kn-list-item p-d-flex p-ai-center formulaType kn-truncated" draggable="true" @dragstart="dragElement($event, slotProps.option, 'function')" v-tooltip.bottom="slotProps.option.formula">
-                                    <div><i class="fa fa-solid fa-bars"></i></div>
-                                    <div class="p-ml-2">{{ slotProps.option.formula }}</div>
-                                </div>
-                            </template></Listbox
-                        >
+                        <ScrollPanel class="kn-list knListBox kn-flex kn-list-no-border-right" style="height: 140px !important; border: 1px">
+                            <div
+                                v-for="af in availableFunctions"
+                                class="kn-list-item p-d-flex p-ai-center formulaType kn-truncated"
+                                :class="{ selected: af.formula === selectedFunction.formula }"
+                                draggable="true"
+                                @dragstart="dragElement($event, af, 'function')"
+                                v-tooltip.bottom="af.formula"
+                                @click="handleClick(af)"
+                            >
+                                <div><i class="fa fa-solid fa-bars"></i></div>
+                                <div class="p-ml-2">{{ af.formula }}</div>
+                            </div>
+                        </ScrollPanel>
                     </div>
                     <div class="p-col-4">
-                        <span v-if="selectedFunction && Object.keys(selectedFunction).length > 0" class="kn-flex p-d-flex p-flex-column p-jc-between helpCol p-m-2">
+                        <span v-if="showHelpPanel" class="kn-flex p-d-flex p-flex-column p-jc-between helpCol p-m-2">
                             <h5 class="p-float-label p-text-uppercase p-m-2">
                                 {{ selectedFunction.label }}
                             </h5>
 
-                            <ScrollPanel class="helpScrollPanel custombar1 formulaType"> <div v-html="$t(selectedFunction.help)"></div></ScrollPanel>
+                            <ScrollPanel class="helpScrollPanel custombar1"> <div v-html="$t(selectedFunction.help)"></div></ScrollPanel>
 
-                            <div v-if="selectedFunction.officialDocumentationLink" class="formulaType">
+                            <div v-if="selectedFunction.officialDocumentationLink" class="helpClass">
                                 <a :href="selectedFunction.officialDocumentationLink" target="_blank"> {{ $t('components.knCalculatedField.officialDocumentation', { function: selectedFunction.label }) }}</a>
                             </div>
                         </span>
@@ -75,7 +79,7 @@
             </template>
         </Card>
 
-        <VCodeMirror :class="['p-mt-2 codeMirrorClass', this.readOnly ? 'readOnly' : '', v$.cf.formula.$invalid ? 'p-invalid' : '']" ref="formula" v-model:value="cf.formula" :options="scriptOptions" @drop="drop($event)" @dragover="handleDragover($event)" v-model="v$.cf.formula.$model" />
+        <VCodeMirror :class="['p-mt-2 codeMirrorClass', this.readOnly ? 'readOnly' : '', v$.cf.formula.$invalid ? 'p-invalid' : '']" ref="codeMirror" v-model:value="cf.formula" :options="scriptOptions" @drop="drop" v-model="v$.cf.formula.$model" />
 
         <template #footer>
             <Button :class="readOnly ? 'kn-button kn-button--primary' : 'kn-button kn-button--secondary'" :label="$t('common.cancel')" @click="cancel" />
@@ -119,7 +123,8 @@ export default defineComponent({
             allCategories: { name: 'ALL', code: 'ALL' },
             selectedFunction: {},
             selectedCategory: '',
-
+            availableCategories: [] as any,
+            codeMirror: null as any,
             availableFunctions: [] as any,
             scriptOptions: {
                 mode: 'text/x-mathematica',
@@ -135,7 +140,8 @@ export default defineComponent({
             v$: useValidate() as any,
             formulaValidationInterval: {} as any,
             isValidFormula: false,
-            calcFieldFunctions: [] as IKnCalculatedFieldFunction[]
+            calcFieldFunctions: [] as IKnCalculatedFieldFunction[],
+            showHelpPanel: false
         }
     },
     emits: ['save', 'cancel', 'update:readOnly'],
@@ -153,9 +159,11 @@ export default defineComponent({
         if (!this.readOnly && this.template && !this.template.parameters && this.source === 'QBE') {
             this.cf = { colName: this.template.alias, formula: this.template.expression } as IKnCalculatedField
         }
+        this.handleCategories()
     },
 
     updated() {
+        this.setupCodeMirror()
         if (!this.cf.formula) this.cf.formula = ''
 
         if (this.readOnly && this.template && this.template.parameters) {
@@ -179,6 +187,24 @@ export default defineComponent({
     },
 
     methods: {
+        handleClick(af) {
+            if (JSON.stringify(this.selectedFunction) === JSON.stringify(af)) {
+                this.selectedFunction = {}
+            } else {
+                this.selectedFunction = af
+            }
+        },
+        setupCodeMirror() {
+            CodeMirror.Pos(0, 0)
+            const interval = setInterval(() => {
+                if (!this.$refs.codeMirror) return
+                this.codeMirror = (this.$refs.codeMirror as any).cminstance as any
+                setTimeout(() => {
+                    this.codeMirror.refresh()
+                }, 0)
+                clearInterval(interval)
+            }, 200)
+        },
         apply(): void {
             this.$emit('save', this.cf)
             this.clearForm()
@@ -206,7 +232,7 @@ export default defineComponent({
                 this.availableFunctions = tmp.filter((x) => x.category.toUpperCase() === cat.toUpperCase())
             }
         },
-        handleOptions() {
+        handleCategories() {
             let tmp = [] as any
 
             this.calcFieldFunctions
@@ -220,98 +246,97 @@ export default defineComponent({
 
             if (tmp.filter((x) => x.name === this.allCategories.name).length == 0) tmp = [this.allCategories, ...tmp]
 
-            return tmp
+            this.availableCategories = tmp
         },
         allowDrop(ev) {
             ev.preventDefault()
         },
-        clearCodemirror(editor, cursor, data) {
-            if (editor.somethingSelected()) {
-                let selections = editor.getSelections()
+        clearCodemirror(cursor, data) {
+            if (this.codeMirror.somethingSelected()) {
+                let selections = this.codeMirror.getSelections()
                 for (var sel of selections) {
-                    editor.replaceRange('', { line: cursor.line, ch: cursor.ch - JSON.stringify(data).length }, { line: cursor.line, ch: cursor.ch - JSON.stringify(data).length + sel.length })
+                    this.codeMirror.replaceRange('', { line: cursor.line, ch: cursor.ch - JSON.stringify(data).length }, { line: cursor.line, ch: cursor.ch - JSON.stringify(data).length + sel.length })
                 }
             }
         },
-        handleDragover(ev) {
-            if (this.readOnly) return
-            const doc = this.$refs.formula as any
-            var cursor = doc.editor.getCursor()
-            if (ev.target.className.includes('field-')) {
-                doc.editor.markText(0, cursor)
-            }
-        },
+
         dragElement(ev, item, elementType: String) {
             if (this.readOnly) return
             if (elementType === 'function') {
-                ev.dataTransfer.setData('text/plain', JSON.stringify({ item: item.formula, elementType: elementType }))
+                ev.dataTransfer.setData('myItem', JSON.stringify({ item: item.formula, elementType: elementType }))
             } else if (elementType === 'field') {
-                ev.dataTransfer.setData('text/plain', JSON.stringify({ item: item, elementType: elementType }))
+                ev.dataTransfer.setData('myItem', JSON.stringify({ item: item, elementType: elementType }))
             }
             ev.dataTransfer.effectAllowed = 'copy'
         },
 
-        drop(ev) {
+        drop(cm, ev) {
             if (this.readOnly) return
             ev.stopPropagation()
             ev.preventDefault()
 
-            var data = JSON.parse(ev.dataTransfer.getData('text/plain'))
+            var data = JSON.parse(ev.dataTransfer.getData('myItem'))
 
-            const doc = this.$refs.formula as any
-            let editor = doc.editor
-            var cursor = editor.getCursor()
+            var cursor = cm.coordsChar({
+                left: ev.x,
+                top: ev.y
+            })
 
-            this.clearCodemirror(editor, cursor, data)
+            this.clearCodemirror(cursor, data)
 
-            editor.clearHistory()
+            this.codeMirror.clearHistory()
 
-            cursor = editor.getCursor()
-
-            let start = editor.findWordAt(cursor).anchor.ch
-            let end = editor.findWordAt(cursor).head.ch
+            let start = -1
+            let end = -1
+            if (cm.getLine(cursor.line).length == cursor.ch) {
+                start = cursor.ch
+                end = cursor.ch
+            } else {
+                start = this.codeMirror.findWordAt(cursor).anchor.ch
+                end = this.codeMirror.findWordAt(cursor).head.ch
+            }
 
             let from = { line: cursor.line, ch: start }
             let to = { line: cursor.line, ch: end }
 
-            let range = editor.getRange(from, to)
+            let range = this.codeMirror.getDoc().getRange(from, to)
             let fieldAlias = this.source !== 'QBE' ? '$F{' + data.item.fieldAlias + '}' : data.item.fieldAlias
             let spContent = data.elementType === 'function' ? data.item : fieldAlias
 
-            if (range === '' || range.match(/\(|\)|,|\./g)) {
-                editor.replaceSelection(spContent, cursor)
+            if (range.match(/\(|\)|,|\./g)) {
+                this.codeMirror.getDoc().replaceSelection(spContent, cursor)
             } else {
-                const sp = document.createElement('span')
-                sp.textContent = spContent
-                editor.doc.markText(from, to, {
-                    replacedWith: sp,
-                    inclusiveLeft: false,
-                    inclusiveRight: false
-                })
+                this.codeMirror.getDoc().replaceRange(spContent, from, to)
             }
 
-            let lines = document.querySelector('.CodeMirror-lines')
+            let lines = document.querySelector('.CodeMirror-line')
             if (lines) {
                 let textEl = lines.querySelector('div span') as any
 
                 if (textEl) this.cf.formula = textEl.innerText
             }
+
+            this.codeMirror.refresh()
         },
         applyValidationResultsToFormula() {
-            const doc = this.$refs.formula as any
-            let editor = doc.editor
-
-            let from = { line: editor.firstLine(), ch: 0 }
-            let to = { line: editor.lastLine(), ch: editor.getLine(editor.lastLine()).length }
+            let from = { line: this.codeMirror.getDoc().firstLine(), ch: 0 }
+            let to = { line: this.codeMirror.getDoc().lastLine(), ch: this.codeMirror.getDoc().getLine(this.codeMirror.getDoc().lastLine()).length }
 
             if (!this.isValidFormula) {
-                editor.markText(from, to, { className: 'syntax-error' })
+                this.codeMirror.getDoc().markText(from, to, { className: 'syntax-error' })
             } else {
-                editor.markText(from, to, { className: 'no-syntax-error' })
+                this.codeMirror.getDoc().markText(from, to, { className: 'no-syntax-error' })
             }
         }
     },
     watch: {
+        selectedFunction(newValue, oldValue) {
+            if (newValue && oldValue !== newValue && newValue.label) {
+                this.showHelpPanel = true
+            } else {
+                this.showHelpPanel = false
+            }
+        },
         readOnly(value) {
             this.scriptOptions.readOnly = value
         },
@@ -389,9 +414,9 @@ export default defineComponent({
 }
 
 .p-listbox-item {
-    height: 24px;
+    height: 15px;
     .kn-list-item {
-        height: 24px;
+        height: 15px;
     }
 }
 
@@ -405,7 +430,8 @@ export default defineComponent({
     width: 100%;
 
     .helpScrollPanel {
-        height: 140px;
+        font-size: 0.75em !important;
+        height: 140px !important;
     }
 }
 
@@ -440,11 +466,24 @@ export default defineComponent({
     text-decoration: none;
 }
 
-.fieldType {
+.helpClass {
     font-size: 0.75em;
 }
 
+.fieldType,
 .formulaType {
     font-size: 0.75em;
+    height: 25px !important;
+    border-bottom: 1px solid var(--kn-list-border-color);
+    cursor: -webkit-grab;
+    cursor: grab;
+
+    &.selected {
+        background-color: var(--kn-list-item-selected-background-color) !important;
+    }
+
+    &:hover {
+        background-color: var(--kn-list-item-hover-background-color);
+    }
 }
 </style>
