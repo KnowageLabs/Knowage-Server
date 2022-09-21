@@ -114,7 +114,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			eventService.getAllEvents($scope.filter)
 				.then(function(response){
 					$scope.events=response.data.results;
-					$scope.events = [{"user":"Davide","formattedDate":"16-10-1985","type":"SCHEDULER"},{"user":"Davide","formattedDate":"16-10-1985","type":"SCHEDULER"}];
+					$scope.events = [];
 					$scope.eventsGrid.api.setRowData($scope.events);
 					$scope.eventsGrid.api.sizeColumnsToFit();
 				},	  function(response){
