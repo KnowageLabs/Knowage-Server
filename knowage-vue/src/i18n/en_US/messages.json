@@ -490,10 +490,8 @@
                 "enableIndexColumn": "Enable Index Column",
                 "enableRowspan": "Enable Row Span",
                 "enabledAlternatedRows": "Enabled Alternated Rows",
-                "indexColumnHint": "Index column hint placeholder",
                 "multiselectable": "Multiselectable",
                 "rowSpanColumn": "Row span column",
-                "rowSpanHint": "Row span hint placeholder",
                 "selectionColor": "Selection color",
                 "showIndexesColumn": "Show indexes column",
                 "title": "Rows"

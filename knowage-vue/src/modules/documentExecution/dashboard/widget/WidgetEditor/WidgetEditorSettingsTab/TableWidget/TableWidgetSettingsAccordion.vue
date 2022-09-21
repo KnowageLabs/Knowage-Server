@@ -110,10 +110,14 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .widget-editor-accordion {
     ::v-deep(.p-accordion-tab-active) {
         margin: 0;
     }
+}
+
+.p-accordion-content {
+    padding: 0 !important;
 }
 </style>

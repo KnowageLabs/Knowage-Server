@@ -8,14 +8,20 @@ export function formatTableWidgetForSave(widget: IWidget) {
     const tempWidget = deepcopy(widget)
 
     if (!tempWidget) return
+
     loadColumnIdNameMap(tempWidget)
-    formatTableSettings(tempWidget.settings, tempWidget.columns)
     formatTableSelectedColumns(tempWidget.columns)
-    // formatRowHeaderSettings(widget)
-    // formatRowStyleSettings(widget)
-    // formatBorderSettings(widget)
+    formatTableSettings(tempWidget.settings, tempWidget.columns)
+
 
     console.log(">>>>>>>>>>>>>>>>>>>>>>>>>> BE SAVE - FORMATTED WIDGET: ", tempWidget)
+}
+
+function formatTableSelectedColumns(columns: IWidgetColumn[]) {
+    if (!columns) return
+    columns.forEach((column: IWidgetColumn) => {
+        delete column.id
+    })
 }
 
 const loadColumnIdNameMap = (widget: IWidget) => {
@@ -33,35 +39,29 @@ const formatTableSettings = (widgetSettings: ITableWidgetSettings, widgetColumns
 }
 
 const formatTableWidgetConfiguration = (widgetConfiguration: ITableWidgetConfiguration, widgetColumns: IWidgetColumn[]) => {
-    // formatRowsConfiguration(widgetConfiguration, widgetColumns) // TODO - BE SAVE
-    formatHeadersConfiguration(widgetConfiguration, widgetColumns) // TODO - BE SAVE
+    formatRowsConfiguration(widgetConfiguration)
+    formatHeadersConfiguration(widgetConfiguration)
     formatSummaryRows(widgetConfiguration)
-    formatColumnGroups(widgetConfiguration, widgetColumns)
+    formatColumnGroups(widgetConfiguration)
 }
 
-
-// TODO - BE SAVE
-const formatRowsConfiguration = (widgetConfiguration: ITableWidgetConfiguration, widgetColumns: IWidgetColumn[]) => {
+const formatRowsConfiguration = (widgetConfiguration: ITableWidgetConfiguration) => {
     if (!widgetConfiguration.rows) return
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TEEEEEEST COLUMNS: ", widgetColumns)
-
     widgetConfiguration.rows.rowSpan.column = getColumnName(widgetConfiguration.rows.rowSpan.column)
-
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TEEEEEEST: ", widgetConfiguration.rows)
 }
 
 
-const formatHeadersConfiguration = (widgetConfiguration: ITableWidgetConfiguration, widgetColumns: IWidgetColumn[]) => {
+const formatHeadersConfiguration = (widgetConfiguration: ITableWidgetConfiguration) => {
     if (!widgetConfiguration.headers) return
     if (!widgetConfiguration.headers.custom.enabled) {
         widgetConfiguration.headers.custom.rules = []
         return
     }
 
-    // formatHeaderConfigurationRules(widgetConfiguration.headers, widgetColumns) // TODO - BE SAVE
+    formatHeaderConfigurationRules(widgetConfiguration.headers) // TODO - BE SAVE
 }
 
-const formatHeaderConfigurationRules = (configurationHeaders: ITableWidgetHeaders, widgetColumns: IWidgetColumn[]) => {
+const formatHeaderConfigurationRules = (configurationHeaders: ITableWidgetHeaders) => {
     for (let i = 0; i < configurationHeaders.custom.rules.length; i++) {
         const tempRule = configurationHeaders.custom.rules[i]
         const formattedRuleColumns = [] as string[]
@@ -73,19 +73,17 @@ const formatHeaderConfigurationRules = (configurationHeaders: ITableWidgetHeader
 
 }
 
-const formatColumnGroups = (widgetConfiguration: ITableWidgetConfiguration, widgetColumns: IWidgetColumn[]) => {
-    console.log("FORMAT COLUMN GROUPS: ", widgetConfiguration)
+const formatColumnGroups = (widgetConfiguration: ITableWidgetConfiguration) => {
     if (!widgetConfiguration.columnGroups) return
     if (!widgetConfiguration.columnGroups.enabled) {
         widgetConfiguration.columnGroups.groups = []
         return
     }
 
-    // formatColumnGroupsColumnIdToName(widgetConfiguration.columnGroups, widgetColumns) TODO - BE SAVE
-
+    formatColumnGroupsColumnIdToName(widgetConfiguration.columnGroups)
 }
 
-const formatColumnGroupsColumnIdToName = (columnGroupsConfiguration: ITableWidgetColumnGroups, widgetColumns: IWidgetColumn[]) => {
+const formatColumnGroupsColumnIdToName = (columnGroupsConfiguration: ITableWidgetColumnGroups) => {
     for (let i = 0; i < columnGroupsConfiguration.groups.length; i++) {
         const tempColumnGroup = columnGroupsConfiguration.groups[i]
         const formattedColumnGroupColumns = [] as string[]
@@ -102,12 +100,4 @@ const formatSummaryRows = (widgetConfiguration: ITableWidgetConfiguration) => {
         widgetConfiguration.summaryRows.style.pinnedOnly = false
         widgetConfiguration.summaryRows.list = []
     }
-}
-
-function formatTableSelectedColumns(columns: IWidgetColumn[]) {
-    if (!columns) return
-    columns.forEach((column: IWidgetColumn) => {
-        // delete column.id
-        // formatColumnTooltipSettings(column)
-    })
 }
