@@ -72,11 +72,6 @@ const formatHeaderConfigurationRules = (configurationHeaders: ITableWidgetHeader
 
 const formatColumnGroups = (widgetConfiguration: ITableWidgetConfiguration) => {
     if (!widgetConfiguration.columnGroups) return
-    if (!widgetConfiguration.columnGroups.enabled) {
-        widgetConfiguration.columnGroups.groups = []
-        return
-    }
-
     formatColumnGroupsColumnIdToName(widgetConfiguration.columnGroups)
 }
 

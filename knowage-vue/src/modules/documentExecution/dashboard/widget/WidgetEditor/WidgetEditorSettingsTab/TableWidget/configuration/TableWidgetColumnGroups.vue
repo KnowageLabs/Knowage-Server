@@ -1,21 +1,23 @@
 <template>
-    <div v-if="columnGroupsModel">
-        <div class="kn-flex p-m-2">
-            <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.columnGroups.enableColumnGroups') }}</label>
+    <div v-if="columnGroupsModel" class="p-grid p-ai-center p-p-4">
+        <div class="p-col-12 p-px-2 p-pb-4">
             <InputSwitch v-model="columnGroupsModel.enabled" @change="onEnableColumnGroupsChanged"></InputSwitch>
+            <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.columnGroups.enableColumnGroups') }}</label>
         </div>
 
-        <div v-for="(columnGroup, index) in columnGroupsModel.groups" :key="index" class="p-d-flex p-flex-row p-ai-center">
-            <div class="p-d-flex p-flex-column kn-flex p-m-2">
+        <div v-for="(columnGroup, index) in columnGroupsModel.groups" :key="index" class="p-grid p-col-12 p-ai-center p-ai-center p-pt-2">
+            <div class="p-col-12 p-sm-12 p-md-4 p-d-flex p-flex-column p-p-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('common.label') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="columnGroup.label" :disabled="!columnGroupsModel.enabled" @change="onColumnGroupLabelChanged(columnGroup)" />
+                <InputText class="kn-material-input p-inputtext-sm" v-model="columnGroup.label" :disabled="columnGroupsDisabled" @change="onColumnGroupLabelChanged(columnGroup)" />
             </div>
-            <div class="p-d-flex p-flex-column kn-flex p-m-2">
+            <div class="p-col-11 p-sm-11 p-md-7 p-d-flex p-flex-column p-p-2">
                 <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-                <WidgetEditorColumnsMultiselect :value="columnGroup.columns" :availableTargetOptions="availableColumnOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" :disabled="!columnGroupsModel.enabled" @change="onColumnsSelected($event, columnGroup)">
+                <WidgetEditorColumnsMultiselect :value="columnGroup.columns" :availableTargetOptions="availableColumnOptions" :widgetColumnsAliasMap="widgetColumnsAliasMap" optionLabel="alias" optionValue="id" :disabled="columnGroupsDisabled" @change="onColumnsSelected($event, columnGroup)">
                 </WidgetEditorColumnsMultiselect>
             </div>
-            <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', !columnGroupsModel.enabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="index === 0 ? addColumnGroup() : removeColumnGroup(index)"></i>
+            <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2">
+                <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', columnGroupsDisabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="index === 0 ? addColumnGroup() : removeColumnGroup(index)"></i>
+            </div>
         </div>
     </div>
 </template>
@@ -40,6 +42,11 @@ export default defineComponent({
             columnGroupsModel: null as ITableWidgetColumnGroups | null,
             availableColumnOptions: [] as (IWidgetColumn | { id: string; alias: string })[],
             widgetColumnsAliasMap: {} as any
+        }
+    },
+    computed: {
+        columnGroupsDisabled() {
+            return !this.columnGroupsModel || !this.columnGroupsModel.enabled
         }
     },
     created() {
@@ -136,8 +143,8 @@ export default defineComponent({
             this.columnGroupsConfigurationChanged()
         },
         onColumnRemoved() {
-            this.loadColumnGroups()
             this.loadColumnOptions()
+            this.loadColumnGroups()
             this.columnGroupsConfigurationChanged()
         },
         onColumnAliasRenamed(column: IWidgetColumn) {
