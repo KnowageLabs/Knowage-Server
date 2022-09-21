@@ -229,7 +229,8 @@
     "components": {
         "knCalculatedField": {
             "columnName": "Column Name",
-            "description": "Choose a name, select a type and add an expression for the calculated field. Drag and drop the functions and the fields from the list into the expression text area.",
+            "description": "Choose a name, select a type and add an expression for the calculated field. Drag and drop the functions and the fields from the list into the expression text area. Note that fields should be written the format $F{'{'}fieldName{'}'}",
+            "fieldName": "fieldName",
             "fields": "Fields",
             "formula": "Formula",
             "functions": "Functions",
