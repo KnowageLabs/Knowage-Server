@@ -310,9 +310,15 @@ export interface ITableWidgetTooltipStyle {
 }
 
 export interface ITableWidgetVisualization {
-    types: ITableWidgetVisualizationType[],
+    visualizationTypes: ITableWidgetVisualizationTypes,
     visibilityConditions: ITableWidgetVisibilityConditions
 }
+
+export interface ITableWidgetVisualizationTypes {
+    enabled: boolean,
+    types: ITableWidgetVisualizationType[]
+}
+
 export interface ITableWidgetVisualizationType {
     target: string | string[],
     type: string,

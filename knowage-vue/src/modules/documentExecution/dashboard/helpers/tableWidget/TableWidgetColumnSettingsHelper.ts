@@ -135,10 +135,12 @@ const getTooltipFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
 
 
 const addVisualisationTypeAttributeColumn = (formattedWidget: IWidget, tempColumn: any) => {
-    formattedWidget.settings.visualization.types.push({ target: [getColumnId(tempColumn.name)], type: 'Text', prefix: tempColumn.style?.prefix ?? '', suffix: tempColumn.style?.suffix ?? '', pinned: tempColumn.pinned ?? '' })
+    formattedWidget.settings.visualization.visualizationTypes.enabled = true
+    formattedWidget.settings.visualization.visualizationTypes.types.push({ target: [getColumnId(tempColumn.name)], type: 'Text', prefix: tempColumn.style?.prefix ?? '', suffix: tempColumn.style?.suffix ?? '', pinned: tempColumn.pinned ?? '' })
 }
 
 const addVisualisationTypeMeasureColumn = (formattedWidget: IWidget, tempColumn: any) => {
+    formattedWidget.settings.visualization.visualizationTypes.enabled = true
     const tempVisualizationType = { target: [getColumnId(tempColumn.name)], type: formatColumnVisualizationTypeFromOldModel(tempColumn.visType), precision: tempColumn.precision, prefix: tempColumn.style?.prefix ?? '', suffix: tempColumn.style?.suffix, pinned: tempColumn.pinned ?? '' } as ITableWidgetVisualizationType
     if ((tempColumn.visType === 'Chart' || tempColumn.visType === 'Text & Chart') && tempColumn.barchart) {
         tempVisualizationType.min = tempColumn.barchart.minValue ?? 0
@@ -147,7 +149,7 @@ const addVisualisationTypeMeasureColumn = (formattedWidget: IWidget, tempColumn:
         tempVisualizationType.color = tempColumn.barchart.style ? hexToRgb(tempColumn.barchart.style.color) : ''
         tempVisualizationType['background-color'] = tempColumn.barchart.style ? hexToRgb(tempColumn.barchart.style['background-color']) ?? '' : ''
     }
-    formattedWidget.settings.visualization.types.push(tempVisualizationType)
+    formattedWidget.settings.visualization.visualizationTypes.types.push(tempVisualizationType)
 }
 
 

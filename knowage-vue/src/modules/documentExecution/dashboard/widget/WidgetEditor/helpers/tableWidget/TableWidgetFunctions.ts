@@ -20,7 +20,7 @@ export const removeColumnFromModel = (widgetModel: IWidget, column: IWidgetColum
     removeColumnFromRows(widgetModel, column)
     removeColumnFromSubmodel(column, widgetModel.settings.configuration.headers.custom.rules, 'target', 'headersColumnRemoved', false)
     removeColumnFromSubmodel(column, widgetModel.settings.configuration.columnGroups.groups, 'columns', 'columnRemovedFromColumnGroups', false)
-    removeColumnFromSubmodel(column, widgetModel.settings.visualization.types, 'target', 'columnRemovedFromVisibilityTypes', true)
+    removeColumnFromSubmodel(column, widgetModel.settings.visualization.visualizationTypes.types, 'target', 'columnRemovedFromVisibilityTypes', true)
     removeColumnFromSubmodel(column, widgetModel.settings.visualization.visibilityConditions.conditions, 'target', 'columnRemovedFromVisibilityConditions', false)
     removeColumnFromSubmodel(column, widgetModel.settings.style.columns, 'target', 'columnRemovedFromColumnStyle', true)
     removeColumnFromSubmodel(column, widgetModel.settings.conditionalStyles.conditions, 'target', 'columnRemovedFromConditionalStyles', false)
@@ -55,115 +55,6 @@ const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[], subProper
         if ((array[i][subProperty] as string[]).length === 0) array.splice(i, 1)
     }
     if (removed) emitter.emit(eventToEmit)
-}
-
-
-// TODO - Remove methods
-const removeColumnFromHeadersConfiguration = (widgetModel: IWidget, column: IWidgetColumn) => {
-    let removed = false
-    const headersModel = widgetModel.settings.configuration.headers
-    for (let i = headersModel.custom.rules.length - 1; i >= 0; i--) {
-        for (let j = headersModel.custom.rules[i].target.length; j >= 0; j--) {
-            const tempTarget = headersModel.custom.rules[i].target[j]
-            if (column.id === tempTarget) {
-                headersModel.custom.rules[i].target.splice(j, 1)
-                removed = true
-            }
-        }
-        if (headersModel.custom.rules[i].target.length === 0) headersModel.custom.rules.splice(i, 1)
-    }
-    if (removed) emitter.emit('headersColumnRemoved')
-}
-
-const removeColumnFromColumnGroups = (widgetModel: IWidget, column: IWidgetColumn) => {
-    let removed = false
-    const columnGroupsModel = widgetModel.settings.configuration.columnGroups
-    for (let i = columnGroupsModel.groups.length - 1; i >= 0; i--) {
-        for (let j = columnGroupsModel.groups[i].columns.length; j >= 0; j--) {
-            const tempColumn = columnGroupsModel.groups[i].columns[j]
-            if (column.id === tempColumn) {
-                columnGroupsModel.groups[i].columns.splice(j, 1)
-                removed = true
-            }
-        }
-    }
-    if (removed) emitter.emit('columnRemovedFromColumnGroups')
-}
-
-const removeColumnFromVisualizationType = (widgetModel: IWidget, column: IWidgetColumn) => {
-    let removed = false
-    const visualizationTypes = widgetModel.settings.visualization.types
-    for (let i = visualizationTypes.length - 1; i >= 1; i--) {
-        for (let j = visualizationTypes[i].target.length; j >= 0; j--) {
-            const tempTarget = visualizationTypes[i].target[j]
-            if (column.id === tempTarget) {
-                (visualizationTypes[i].target as string[]).splice(j, 1)
-                removed = true;
-            }
-        }
-        if (visualizationTypes[i].target.length === 0) visualizationTypes.splice(i, 1)
-    }
-    if (removed) emitter.emit('columnRemovedFromVisibilityTypes')
-}
-
-const removeColumnFromVisibilityConditions = (widgetModel: IWidget, column: IWidgetColumn) => {
-    let removed = false
-    const visibilityConditions = widgetModel.settings.visualization.visibilityConditions
-    for (let i = visibilityConditions.conditions.length - 1; i >= 0; i--) {
-        for (let j = visibilityConditions[i].target.length; j >= 0; j--) {
-            const tempTarget = visibilityConditions[i].target[j]
-            if (column.id === tempTarget) {
-                visibilityConditions[i].target.splice(j, 1)
-                removed = true
-            }
-        }
-        if (visibilityConditions[i].target.length === 0) visibilityConditions.conditions.splice(i, 1)
-    }
-    if (removed) emitter.emit('columnRemovedFromVisibilityConditions')
-}
-
-const removeColumnFromColumnStyle = (widgetModel: IWidget, column: IWidgetColumn) => {
-    let removed = false
-    const columnStyles = widgetModel.settings.style.columns
-    for (let i = columnStyles.length - 1; i >= 1; i--) {
-        for (let j = columnStyles[i].target.length; j >= 0; j--) {
-            const tempTarget = columnStyles[i].target[j]
-            if (column.id === tempTarget) {
-                (columnStyles[i].target as string[]).splice(j, 1)
-                removed = true
-            }
-        }
-        if (columnStyles[i].target.length === 0) columnStyles.splice(i, 1)
-    }
-    if (removed) emitter.emit('columnRemovedFromColumnStyle')
-}
-
-const removeColumnFromConditionalStyles = (widgetModel: IWidget, column: IWidgetColumn) => {
-    let removed = false
-    const conditionalStyles = widgetModel.settings.conditionalStyles
-    for (let i = conditionalStyles.conditions.length - 1; i >= 0; i--) {
-        if (column.id === conditionalStyles[i].target) {
-            conditionalStyles.conditions.splice(i, 1)
-            removed = true
-        }
-    }
-    if (removed) emitter.emit('columnRemovedFromConditionalStyles')
-}
-
-const removeColumnFromTooltips = (widgetModel: IWidget, column: IWidgetColumn) => {
-    let removed = false
-    const tooltips = widgetModel.settings.tooltips
-    for (let i = tooltips.length - 1; i >= 1; i--) {
-        for (let j = tooltips[i].target.length; j >= 0; j--) {
-            const tempTarget = tooltips[i].target[j]
-            if (column.id === tempTarget) {
-                (tooltips[i].target as string[]).splice(j, 1)
-                removed = true
-            }
-        }
-        if (tooltips[i].target.length === 0) tooltips.splice(i, 1)
-    }
-    if (removed) emitter.emit('columnRemovedFromTooltips')
 }
 
 const removeColumnFromCrossNavigation = (widgetModel: IWidget, column: IWidgetColumn) => {

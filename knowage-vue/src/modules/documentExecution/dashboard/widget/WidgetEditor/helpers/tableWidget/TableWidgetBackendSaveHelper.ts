@@ -1,4 +1,4 @@
-import { ITableWidgetColumnGroups, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetSettings, IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard"
+import { ITableWidgetColumnGroups, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetSettings, ITableWidgetVisualization, IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard"
 import deepcopy from 'deepcopy'
 
 const columnIdNameMap = {}
@@ -11,7 +11,7 @@ export function formatTableWidgetForSave(widget: IWidget) {
 
     loadColumnIdNameMap(tempWidget)
     formatTableSelectedColumns(tempWidget.columns)
-    formatTableSettings(tempWidget.settings, tempWidget.columns)
+    formatTableSettings(tempWidget.settings)
 
 
     console.log(">>>>>>>>>>>>>>>>>>>>>>>>>> BE SAVE - FORMATTED WIDGET: ", tempWidget)
@@ -34,11 +34,12 @@ const getColumnName = (columnId: string) => {
     return columnId ? columnIdNameMap[columnId] : ''
 }
 
-const formatTableSettings = (widgetSettings: ITableWidgetSettings, widgetColumns: IWidgetColumn[]) => {
-    formatTableWidgetConfiguration(widgetSettings.configuration, widgetColumns)
+const formatTableSettings = (widgetSettings: ITableWidgetSettings) => {
+    formatTableWidgetConfiguration(widgetSettings.configuration)
+    formatTableWidgetVisualisation(widgetSettings.visualization)
 }
 
-const formatTableWidgetConfiguration = (widgetConfiguration: ITableWidgetConfiguration, widgetColumns: IWidgetColumn[]) => {
+const formatTableWidgetConfiguration = (widgetConfiguration: ITableWidgetConfiguration) => {
     formatRowsConfiguration(widgetConfiguration)
     formatHeadersConfiguration(widgetConfiguration)
     formatColumnGroups(widgetConfiguration)
@@ -66,11 +67,27 @@ const formatHeaderConfigurationRules = (configurationHeaders: ITableWidgetHeader
     }
 }
 
-
 const formatColumnGroups = (widgetConfiguration: ITableWidgetConfiguration) => {
     if (!widgetConfiguration.columnGroups) return
     formatColumnGroupsColumnIdToName(widgetConfiguration.columnGroups)
 }
+
+const formatTableWidgetVisualisation = (widgetVisualization: ITableWidgetVisualization) => {
+    formatVisualizationTypes(widgetVisualization)
+    formatConditionalStyles(widgetVisualization)
+}
+
+const formatVisualizationTypes = (widgetVisualization: ITableWidgetVisualization) => {
+    for (let i = 1; i < widgetVisualization.visualizationTypes.types.length; i++) {
+        const tempVisualization = widgetVisualization.visualizationTypes.types[i]
+        const formattedRuleColumns = [] as string[]
+        for (let j = 0; j < tempVisualization.target.length; j++) {
+            formattedRuleColumns.push(getColumnName(tempVisualization.target[j]))
+        }
+        tempVisualization.target = formattedRuleColumns
+    }
+}
+const formatConditionalStyles = (widgetVisualization: ITableWidgetVisualization) => { }
 
 const formatColumnGroupsColumnIdToName = (columnGroupsConfiguration: ITableWidgetColumnGroups) => {
     for (let i = 0; i < columnGroupsConfiguration.groups.length; i++) {

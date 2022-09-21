@@ -207,13 +207,17 @@ export const getDefualtSummryStyle = () => {
 
 export const getDefaultVisualizations = () => {
     return {
-        types: [{
-            target: 'all',
-            type: 'Text',
-            prefix: '',
-            suffix: '',
-            pinned: '',
-        }], visibilityConditions: {
+        visualizationTypes: {
+            enabled: false,
+            types: [{
+                target: 'all',
+                type: 'Text',
+                prefix: '',
+                suffix: '',
+                pinned: '',
+            }]
+        },
+        visibilityConditions: {
             enabled: false,
             conditions: []
         }
