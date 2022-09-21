@@ -29,8 +29,8 @@
                     <div class="p-col-4">
                         <h5 class="p-float-label p-text-uppercase p-m-2">{{ $t('components.knCalculatedField.fields') }}</h5>
 
-                        <ScrollPanel class="kn-list knListBox kn-flex kn-list-no-border-right" style="height: 140px !important; border: 1px">
-                            <div v-for="field in fields" class="kn-list-item p-d-flex p-ai-center fieldType kn-truncated" draggable="true" @dragstart="dragElement($event, field, 'field')" v-tooltip.bottom="source === 'QBE' ? field.fieldLabel : field.fieldAlias">
+                        <ScrollPanel class="kn-list knListBox kn-flex kn-list-no-border-right" style="height: 200px !important; border: 1px">
+                            <div v-for="(field, index) in fields" v-bind:key="index" class="kn-list-item p-d-flex p-ai-center fieldType kn-truncated p-ml-2" draggable="true" @dragstart="dragElement($event, field, 'field')" v-tooltip.bottom="source === 'QBE' ? field.fieldLabel : field.fieldAlias">
                                 <div><i class="fa fa-solid fa-bars"></i></div>
                                 <div v-if="source === 'QBE'" class="p-ml-2">{{ field.fieldLabel }}</div>
                                 <div v-else class="p-ml-2">{{ field.fieldAlias }}</div>
@@ -38,16 +38,17 @@
                         </ScrollPanel>
                     </div>
                     <div class="p-col-4">
-                        <span class="p-float-label">
+                        <span class="p-float-label p-m-2">
                             <Dropdown id="category" v-model="selectedCategory" :options="availableCategories" class="kn-material-input" optionLabel="name" optionValue="code" @change="filterFunctions" />
                             <label for="category" class="kn-material-input-label"> {{ $t(descriptor.category.label) }} </label>
                         </span>
 
                         <h5 class="p-float-label p-text-uppercase p-m-2">{{ $t('components.knCalculatedField.functions') }}</h5>
-                        <ScrollPanel class="kn-list knListBox kn-flex kn-list-no-border-right" style="height: 140px !important; border: 1px">
+                        <ScrollPanel class="kn-list knListBox kn-flex kn-list-no-border-right" style="height: 150px !important; border: 1px">
                             <div
-                                v-for="af in availableFunctions"
-                                class="kn-list-item p-d-flex p-ai-center formulaType kn-truncated"
+                                v-for="(af, index) in availableFunctions"
+                                v-bind:key="index"
+                                class="kn-list-item p-d-flex p-ai-center formulaType kn-truncated p-ml-2"
                                 :class="{ selected: af.formula === selectedFunction.formula }"
                                 draggable="true"
                                 @dragstart="dragElement($event, af, 'function')"
@@ -99,14 +100,13 @@ import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import Dropdown from 'primevue/dropdown'
 import Dialog from 'primevue/dialog'
 import KnHint from '@/components/UI/KnHint.vue'
-import Listbox from 'primevue/listbox'
 import Message from 'primevue/message'
 import ScrollPanel from 'primevue/scrollpanel'
 import useValidate from '@vuelidate/core'
 
 export default defineComponent({
     name: 'calculated-field',
-    components: { Dialog, Dropdown, KnHint, Listbox, Message, ScrollPanel, VCodeMirror },
+    components: { Dialog, Dropdown, KnHint, Message, ScrollPanel, VCodeMirror },
     props: {
         fields: Array,
         visibility: Boolean,
@@ -414,9 +414,9 @@ export default defineComponent({
 }
 
 .p-listbox-item {
-    height: 15px;
+    height: 24px;
     .kn-list-item {
-        height: 15px;
+        height: 24px;
     }
 }
 
