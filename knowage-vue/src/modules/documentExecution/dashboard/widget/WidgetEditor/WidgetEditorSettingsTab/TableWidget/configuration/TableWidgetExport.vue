@@ -1,48 +1,46 @@
 <template>
-    <div v-if="exportModel">
-        <div>
-            <div class="kn-flex p-m-2">
-                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.export.exportPdf') }}</label>
-                <InputSwitch v-model="exportModel.pdf.enabled" @change="onEnableExportChanged"></InputSwitch>
-            </div>
-
-            <div class="p-d-flex p-flex-row p-ai-center p-mt-2">
-                <div class="field-radiobutton kn-flex p-mx-2">
-                    <RadioButton v-model="selectedExport" name="export" value="a4portrait" :disabled="!exportModel.pdf.enabled" @change="onSelectedExportChanged" />
+    <div v-if="exportModel" class="p-grid p-ai-center p-p-4">
+        <div class="p-col-12 p-p-2">
+            <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.export.exportPdf') }}</label>
+            <InputSwitch v-model="exportModel.pdf.enabled" @change="onEnableExportChanged"></InputSwitch>
+        </div>
+        <div class="p-grid p-col-12 p-ai-center">
+            <div class="p-grid p-col-12 p-md-6 p-ai-center p-pt-4">
+                <div class="p-col-6 field-radiobutton p-px-2">
+                    <RadioButton v-model="selectedExport" name="export" value="a4portrait" :disabled="pdfExportDisabled" @change="onSelectedExportChanged" />
                     <label class="kn-material-input-label p-m-2"> {{ $t('dashboard.widgetEditor.export.a4portrait') }}</label>
                 </div>
 
-                <div class="field-radiobutton kn-flex p-mx-2">
-                    <RadioButton v-model="selectedExport" name="export" value="a4landscape" :disabled="!exportModel.pdf.enabled" @change="onSelectedExportChanged" />
+                <div class="p-col-6 field-radiobutton p-px-2">
+                    <RadioButton v-model="selectedExport" name="export" value="a4landscape" :disabled="pdfExportDisabled" @change="onSelectedExportChanged" />
                     <label class="kn-material-input-label p-m-2"> {{ $t('dashboard.widgetEditor.export.a4landscape') }}</label>
                 </div>
+            </div>
+            <div class="p-col-12 p-md-6 p-grid p-ai-center">
+                <div class="p-col-12 p-md-3 field-radiobutton p-d-flex p-ai-center p-pt-4">
+                    <RadioButton v-model="selectedExport" name="export" value="custom" :disabled="pdfExportDisabled" @change="onSelectedExportChanged" />
+                    <label class="kn-material-input-label p-m-2"> {{ $t('common.custom') }}</label>
+                </div>
 
-                <div class="p-d-flex p-flex-row p-ai-center kn-flex">
-                    <div class="field-radiobutton p-d-flex p-ai-center p-m-2">
-                        <RadioButton v-model="selectedExport" name="export" value="custom" :disabled="!exportModel.pdf.enabled" @change="onSelectedExportChanged" />
-                        <label class="kn-material-input-label p-m-2"> {{ $t('common.custom') }}</label>
-                    </div>
+                <div class="p-col-12 p-md-5 p-d-flex p-flex-column p-px-4">
+                    <label class="kn-material-input-label">{{ $t('common.width') }}</label>
+                    <InputNumber class="kn-material-input p-inputtext-sm" v-model="exportModel.pdf.custom.width" :disabled="pdfExportDisabled || selectedExport !== 'custom'" @change="exportConfigurationChanged" />
+                </div>
 
-                    <div class="p-d-flex p-flex-column p-mx-2">
-                        <label class="kn-material-input-label p-mr-2">{{ $t('common.width') }}</label>
-                        <InputNumber class="kn-material-input p-inputtext-sm" v-model="exportModel.pdf.custom.width" :disabled="!exportModel.pdf.enabled || selectedExport !== 'custom'" @change="exportConfigurationChanged" />
-                    </div>
-
-                    <div class="p-d-flex p-flex-column p-mx-2">
-                        <label class="kn-material-input-label p-mr-2">{{ $t('common.height') }}</label>
-                        <InputNumber class="kn-material-input p-inputtext-sm" v-model="exportModel.pdf.custom.height" :disabled="!exportModel.pdf.enabled || selectedExport !== 'custom'" @change="exportConfigurationChanged" />
-                    </div>
+                <div class="p-col-12 p-md-4 p-d-flex p-flex-column p-px-4">
+                    <label class="kn-material-input-label">{{ $t('common.height') }}</label>
+                    <InputNumber class="kn-material-input p-inputtext-sm" v-model="exportModel.pdf.custom.height" :disabled="pdfExportDisabled || selectedExport !== 'custom'" @change="exportConfigurationChanged" />
                 </div>
             </div>
         </div>
-        <div>
-            <div class="p-my-4">
-                <label class="kn-material-input-label p-mr-4">{{ $t('dashboard.widgetEditor.export.enableScreenshots') }}</label>
+        <div class="p-grid p-col-12">
+            <div class="p-col-12 p-md-6 p-p-4">
                 <InputSwitch v-model="exportModel.showScreenshot" @change="onEnableExportChanged"></InputSwitch>
+                <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.export.enableScreenshots') }}</label>
             </div>
-            <div class="p-my-2">
-                <label class="kn-material-input-label p-mr-4">{{ $t('dashboard.widgetEditor.export.showExcelExport') }}</label>
+            <div class="p-col-12 p-md-6 p-p-4">
                 <InputSwitch v-model="exportModel.showExcelExport" @change="onEnableExportChanged"></InputSwitch>
+                <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.export.showExcelExport') }}</label>
             </div>
         </div>
     </div>
@@ -66,6 +64,11 @@ export default defineComponent({
             descriptor,
             exportModel: null as ITableWidgetExports | null,
             selectedExport: ''
+        }
+    },
+    computed: {
+        pdfExportDisabled() {
+            return !this.exportModel || !this.exportModel.pdf.enabled
         }
     },
     created() {

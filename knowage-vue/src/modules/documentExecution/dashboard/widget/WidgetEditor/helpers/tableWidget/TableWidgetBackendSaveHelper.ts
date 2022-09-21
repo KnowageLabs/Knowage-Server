@@ -41,7 +41,6 @@ const formatTableSettings = (widgetSettings: ITableWidgetSettings, widgetColumns
 const formatTableWidgetConfiguration = (widgetConfiguration: ITableWidgetConfiguration, widgetColumns: IWidgetColumn[]) => {
     formatRowsConfiguration(widgetConfiguration)
     formatHeadersConfiguration(widgetConfiguration)
-    formatSummaryRows(widgetConfiguration)
     formatColumnGroups(widgetConfiguration)
 }
 
@@ -68,8 +67,6 @@ const formatHeaderConfigurationRules = (configurationHeaders: ITableWidgetHeader
 }
 
 
-
-
 const formatColumnGroups = (widgetConfiguration: ITableWidgetConfiguration) => {
     if (!widgetConfiguration.columnGroups) return
     formatColumnGroupsColumnIdToName(widgetConfiguration.columnGroups)
@@ -83,13 +80,5 @@ const formatColumnGroupsColumnIdToName = (columnGroupsConfiguration: ITableWidge
             formattedColumnGroupColumns.push(getColumnName(tempColumnGroup.columns[j]))
         }
         tempColumnGroup.columns = formattedColumnGroupColumns
-    }
-}
-
-const formatSummaryRows = (widgetConfiguration: ITableWidgetConfiguration) => {
-    if (!widgetConfiguration.summaryRows) return
-    if (!widgetConfiguration.summaryRows.enabled) {
-        widgetConfiguration.summaryRows.style.pinnedOnly = false
-        widgetConfiguration.summaryRows.list = []
     }
 }
