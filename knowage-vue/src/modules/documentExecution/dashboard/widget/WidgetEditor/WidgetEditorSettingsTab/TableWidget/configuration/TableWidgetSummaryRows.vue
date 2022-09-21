@@ -1,27 +1,31 @@
 <template>
-    <div v-if="summaryRowsModel">
-        <div class="p-d-flex p-flex-row p-ai-center p-m-3">
-            <div class="kn-flex p-m-2">
-                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.summaryRows.enableSummaryRows') }}</label>
+    <div v-if="summaryRowsModel" class="p-grid p-ai-center p-p-4">
+        <div class="p-col-12 p-grid p-p-3">
+            <div class="p-col-12 p-md-6 p-p-2">
                 <InputSwitch v-model="summaryRowsModel.enabled" @change="onSummarRowEnabledChange"></InputSwitch>
+                <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.summaryRows.enableSummaryRows') }}</label>
             </div>
-            <div class="p-ml-auto p-mr-2">
-                <label class="kn-material-input-label p-mr-2"> {{ $t('dashboard.widgetEditor.summaryRows.pinnedColumnsOnly') }}</label>
-                <Checkbox v-model="summaryRowsModel.style.pinnedOnly" :binary="true" :disabled="!summaryRowsModel.enabled" @change="summaryRowsChanged" />
+            <div class="p-col-12 p-md-6 p-text-left p-text-md-right p-pr-4">
+                <label class="kn-material-input-label p-mr-3"> {{ $t('dashboard.widgetEditor.summaryRows.pinnedColumnsOnly') }}</label>
+                <Checkbox v-model="summaryRowsModel.style.pinnedOnly" :binary="true" :disabled="summaryRowsDiabled" @change="summaryRowsChanged" />
             </div>
         </div>
 
-        <div class="p-d-flex p-flex-column p-m-3">
-            <div v-for="(summaryRow, index) in summaryRowsModel.list" :key="index" class="p-d-flex p-flex-row p-ai-center">
-                <div class="p-d-flex p-flex-column kn-flex p-mt-1">
+        <div class="p-col-12 p-p-3">
+            <div v-for="(summaryRow, index) in summaryRowsModel.list" :key="index" class="p-grid p-ai-center">
+                <div class="p-col-12 p-md-4 p-d-flex p-flex-column p-pt-1">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.label') }}</label>
-                    <InputText class="kn-material-input p-inputtext-sm" v-model="summaryRow.label" :disabled="!summaryRowsModel.enabled" @change="summaryRowsChanged" />
+                    <InputText class="kn-material-input p-inputtext-sm" v-model="summaryRow.label" :disabled="summaryRowsDiabled" @change="summaryRowsChanged" />
                 </div>
-                <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
-                    <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.aggregation') }}</label>
-                    <Dropdown class="kn-material-input" v-model="summaryRow.aggregation" :options="getAggregationOptions(index)" optionValue="value" optionLabel="label" :disabled="index === 0 || !summaryRowsModel.enabled" @change="summaryRowsChanged"> </Dropdown>
+                <div class="p-col-12 p-md-8 p-grid p-p-2">
+                    <div class="p-col-11 p-d-flex p-flex-column">
+                        <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.aggregation') }}</label>
+                        <Dropdown class="kn-material-input" v-model="summaryRow.aggregation" :options="getAggregationOptions(index)" optionValue="value" optionLabel="label" :disabled="index === 0 || !summaryRowsModel.enabled" @change="summaryRowsChanged"> </Dropdown>
+                    </div>
+                    <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-3">
+                        <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', summaryRowsDiabled ? 'icon-disabled' : '']" class="kn-cursor-pointer" @click="index === 0 ? addSummaryRow() : removeSummaryRow(index)"></i>
+                    </div>
                 </div>
-                <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', !summaryRowsModel.enabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="index === 0 ? addSummaryRow() : removeSummaryRow(index)"></i>
             </div>
         </div>
     </div>
@@ -44,6 +48,11 @@ export default defineComponent({
         return {
             descriptor,
             summaryRowsModel: null as ITableWidgetSummaryRows | null
+        }
+    },
+    computed: {
+        summaryRowsDiabled() {
+            return !this.summaryRowsModel || !this.summaryRowsModel.enabled
         }
     },
     created() {
