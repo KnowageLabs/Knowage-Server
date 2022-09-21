@@ -185,7 +185,7 @@ const removeColumnFromVisualizationType = (widgetModel: IWidget, column: IWidget
 const removeColumnFromVisibilityConditions = (widgetModel: IWidget, column: IWidgetColumn) => {
     let removed = false
     const visibilityConditions = widgetModel.settings.visualization.visibilityConditions
-    for (let i = visibilityConditions.length - 1; i >= 0; i--) {
+    for (let i = visibilityConditions.conditions.length - 1; i >= 0; i--) {
         for (let j = visibilityConditions[i].target.length; j >= 0; j--) {
             const tempTarget = visibilityConditions[i].target[j]
             if (column.id === tempTarget) {
@@ -193,7 +193,7 @@ const removeColumnFromVisibilityConditions = (widgetModel: IWidget, column: IWid
                 removed = true
             }
         }
-        if (visibilityConditions[i].target.length === 0) visibilityConditions.splice(i, 1)
+        if (visibilityConditions[i].target.length === 0) visibilityConditions.conditions.splice(i, 1)
     }
     if (removed) emitter.emit('columnRemovedFromVisibilityConditions')
 }
@@ -217,9 +217,9 @@ const removeColumnFromColumnStyle = (widgetModel: IWidget, column: IWidgetColumn
 const removeColumnFromConditionalStyles = (widgetModel: IWidget, column: IWidgetColumn) => {
     let removed = false
     const conditionalStyles = widgetModel.settings.conditionalStyles
-    for (let i = conditionalStyles.length - 1; i >= 0; i--) {
+    for (let i = conditionalStyles.conditions.length - 1; i >= 0; i--) {
         if (column.id === conditionalStyles[i].target) {
-            conditionalStyles.splice(i, 1)
+            conditionalStyles.conditions.splice(i, 1)
             removed = true
         }
     }
