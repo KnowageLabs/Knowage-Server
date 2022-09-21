@@ -229,7 +229,7 @@ export default defineComponent({
         },
         loadSavedCockpit(cockpit: any) {
             this.closeIframe()
-            this.selectedItem = { item: { ...cockpit, routerId: cryptoRandomString({ length: 16, type: 'base64' }), name: cockpit.DOCUMENT_NAME, label: cockpit.DOCUMENT_LABEL, showMode: 'execute' }, mode: 'execute' }
+            this.selectedItem = { item: { ...cockpit, routerId: crypto.randomBytes(16).toString('hex'), name: cockpit.DOCUMENT_NAME, label: cockpit.DOCUMENT_LABEL, showMode: 'execute' }, mode: 'execute' }
             this.tabs[this.activeIndex - 1] = this.selectedItem
             this.$router.push(`/document-browser/document-composite/${cockpit.DOCUMENT_LABEL}`)
         },

@@ -1146,6 +1146,42 @@ export default defineComponent({
 
             return tempCrossBreadcrumb ?? this.document.name
         },
+        updateCrossBreadCrumbWithParameterValues(tempCrossBreadcrumb: string, angularData: any) {
+            const parameterPlaceholders = tempCrossBreadcrumb.match(/{[\w\d]+}/g)
+            if (!parameterPlaceholders) return ''
+            const parameters = angularData.outputParameters
+            for (let i = 0; i < angularData.otherOutputParameters.length; i++) {
+                const key = Object.keys(angularData.otherOutputParameters[i])[0]
+                parameters[key] = angularData.otherOutputParameters[i][key]
+            }
+            const temp = [] as any[]
+            for (let i = 0; i < parameterPlaceholders.length; i++) {
+                const tempParameterName = parameterPlaceholders[i].substring(1, parameterPlaceholders[i].length - 1)
+                temp.push({ parameterPlaceholder: parameterPlaceholders[i], value: parameters[tempParameterName] })
+            }
+            let finalString = tempCrossBreadcrumb
+            for (let i = 0; i < temp.length; i++) {
+                finalString = finalString.replaceAll('$P' + temp[i].parameterPlaceholder, temp[i].value)
+            }
+
+            return finalString
+        },
+        addDocumentOtherParametersToNavigationParams(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
+            if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
+            const keys = Object.keys(angularData.outputParameters)
+            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
+            for (let i = 0; i < keys.length; i++) {
+                const tempKey = keys[i]
+                let newKey = ''
+                for (let j = 0; j < documentNavigationParamsKeys.length; j++) {
+                    if (crossNavigationDocument.navigationParams[documentNavigationParamsKeys[j]].value?.label === tempKey) {
+                        newKey = documentNavigationParamsKeys[j]
+                    }
+                }
+                if (newKey) navigationParams[newKey] = angularData.outputParameters[tempKey]
+            }
+        },
+
         openCrossNavigationInNewWindow(popupOptions: any, crossNavigationDocument: any, navigationParams: any) {
             if (!crossNavigationDocument || !crossNavigationDocument.document) return
             const parameters = encodeURI(JSON.stringify(navigationParams))
