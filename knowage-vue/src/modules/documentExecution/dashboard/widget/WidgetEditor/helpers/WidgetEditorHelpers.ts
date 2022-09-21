@@ -1,5 +1,5 @@
 import { IWidget } from '../../../Dashboard'
-import { formatTableWidgetForSave } from './tableWidget/TableWidgetFunctions'
+import { formatTableWidgetForSave } from './tableWidget/TableWidgetBackendSaveHelper'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 import * as  tableWidgetDefaultValues from './tableWidget/TableWidgetDefaultValues'
