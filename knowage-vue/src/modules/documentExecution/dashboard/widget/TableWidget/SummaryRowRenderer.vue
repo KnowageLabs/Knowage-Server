@@ -1,5 +1,5 @@
 <template>
-    <div class="custom-header-group-container" style="height: 100%; width: 100%" :style="params.styleString">
+    <div class="custom-header-group-container" :style="getSummaryStyle()">
         <span class="custom-header-group-label">
             <b style="margin-right: 4px">{{ params.value ? params.summaryRows[params.rowIndex] : '' }} </b>
             {{ params.value ?? '' }}
@@ -18,13 +18,17 @@ export default defineComponent({
         }
     },
     data() {
-        return {
-            ascSort: null as any,
-            descSort: null as any,
-            noSort: null as any
-        }
+        return {}
     },
     mounted() {},
-    methods: {}
+    methods: {
+        getSummaryStyle() {
+            const styleSettings = this.params.propWidget.settings.style.summary
+            const styleString = Object.entries(styleSettings.properties ?? styleSettings)
+                .map(([k, v]) => `${k}:${v}`)
+                .join(';')
+            return styleString + ';'
+        }
+    }
 })
 </script>

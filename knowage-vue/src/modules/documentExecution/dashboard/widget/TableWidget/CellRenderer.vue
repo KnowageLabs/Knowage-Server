@@ -18,7 +18,7 @@ export default defineComponent({
         return {}
     },
     mounted() {
-        // console.log('\n \n cell RENDERER PARAMS \n', this.params)
+        // if (this.params && this.params.conditionalStyle) console.log('\n \n cell RENDERER PARAMS \n', this.params.conditionalStyle)
     },
     methods: {}
 })

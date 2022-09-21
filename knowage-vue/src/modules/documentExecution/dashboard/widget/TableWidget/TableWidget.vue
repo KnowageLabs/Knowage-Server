@@ -1,5 +1,6 @@
 <template>
-    <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2" :style="getWidgetStyleString()" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" :tooltipShowDelay="100" :tooltipMouseTrack="true" @grid-ready="onGridReady"></ag-grid-vue>
+    <!-- <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2" :style="getWidgetStyleString()" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" :tooltipShowDelay="100" :tooltipMouseTrack="true" @grid-ready="onGridReady"></ag-grid-vue> -->
+    <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" :tooltipShowDelay="100" :tooltipMouseTrack="true" @grid-ready="onGridReady"></ag-grid-vue>
 </template>
 
 <script lang="ts">
@@ -18,6 +19,7 @@ import SummaryRowRenderer from './SummaryRowRenderer.vue'
 import HeaderGroupRenderer from './HeaderGroupRenderer.vue'
 import TooltipRenderer from './TooltipRenderer.vue'
 import CellRenderer from './CellRenderer.vue'
+import { getWidgetStyleByType } from './TableWidgetHelper'
 
 export default defineComponent({
     name: 'table-widget',
@@ -64,20 +66,20 @@ export default defineComponent({
             emitter.on('summaryRowsChanged', () => this.createDatatableColumns()) //TODO: Servis nam treba za ovo
             emitter.on('headersConfigurationChanged', () => this.createDatatableColumns()) // TODO: Trenutno se gleda svaka promena u header config, mozda staviti event emit samo na promene koje trebaju.
             emitter.on('columnGroupsConfigurationChanged', () => this.createDatatableColumns())
-            emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
-            emitter.on('visualizationTypeChanged', (visuelizationTypes) => console.log('WidgetEditorPreview  - visualizationTypeChanged!', visuelizationTypes))
             emitter.on('visibilityConditionsChanged', () => this.createDatatableColumns())
             emitter.on('headersStyleChanged', () => this.createDatatableColumns())
-            emitter.on('columnStylesChanged', (columnStyles) => this.createDatatableColumns())
+            emitter.on('columnStylesChanged', () => this.createDatatableColumns())
             emitter.on('columnGroupStylesChanged', () => this.createDatatableColumns())
             emitter.on('rowsStyleChanged', () => this.createDatatableColumns())
             emitter.on('summaryStyleChanged', () => this.createDatatableColumns())
             // emitter.on('bordersStyleChanged', (bordersStyle) => console.log('WidgetEditorPreview  - bordersStyleChanged!', bordersStyle))
             // emitter.on('paddingStyleChanged', (paddingStyle) => console.log('WidgetEditorPreview  - paddingStyleChanged!', paddingStyle))
             // emitter.on('shadowStyleChanged', (shadowsStyle) => console.log('WidgetEditorPreview  - shadowStyleChanged!', shadowsStyle))
-            emitter.on('conditionalStylesChanged', (conditionalStyles) => console.log('WidgetEditorPreview  - conditionalStylesChanged!', conditionalStyles))
+            emitter.on('conditionalStylesChanged', () => this.createDatatableColumns())
             emitter.on('tooltipsChanged', () => this.createDatatableColumns())
             emitter.on('selectionChanged', (selectionModel) => console.log('WidgetEditorPreview  - selectionChanged!', selectionModel))
+            emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
+            emitter.on('visualizationTypeChanged', (visuelizationTypes) => console.log('WidgetEditorPreview  - visualizationTypeChanged!', visuelizationTypes))
         },
         setupDatatableOptions() {
             this.gridOptions = {
@@ -90,7 +92,7 @@ export default defineComponent({
 
                 // EVENTS
                 // onRowClicked: (event, params) => console.log('A row was clicked', event),
-                // onCellClicked: (event, params) => console.log('A cell was clicked', event),
+                onCellClicked: (event, params) => console.log('A cell was clicked', event),
                 // onColumnResized: (event) => console.log('A column was resized'),
                 // onGridReady: (event) => console.log('The grid is now ready')
 
@@ -137,7 +139,17 @@ export default defineComponent({
             var dataset = { type: 'SbiFileDataSet' }
 
             if (this.propWidget.settings.configuration.rows.indexColumn) {
-                columns.push({ colId: 'indexColumn', valueGetter: `node.rowIndex + 1`, headerName: '', pinned: 'left', width: 55, sortable: false, filter: false, headerComponent: HeaderRenderer, headerComponentParams: { styleString: this.getWidgetStyleByType('headers', true) } })
+                columns.push({
+                    colId: 'indexColumn',
+                    valueGetter: `node.rowIndex + 1`,
+                    headerName: '',
+                    pinned: 'left',
+                    width: 55,
+                    sortable: false,
+                    filter: false,
+                    headerComponent: HeaderRenderer,
+                    headerComponentParams: { propWidget: this.propWidget }
+                })
             }
             // c = datasetColumn
             // f = responseField, fields = responseFields
@@ -148,6 +160,7 @@ export default defineComponent({
 
                     if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && thisColumn.columnName.toLowerCase() === responseFields[responseField].header) || thisColumn.columnName.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
                         this.columnsNameArray.push(responseFields[responseField].name)
+                        //TODO: WHat happens when column is hidden?
                         var tempCol = {
                             hide: this.getColumnVisibilityCondition(this.propWidget.columns[datasetColumn].id),
                             colId: this.propWidget.columns[datasetColumn].id,
@@ -155,9 +168,10 @@ export default defineComponent({
                             field: responseFields[responseField].name,
                             measure: this.propWidget.columns[datasetColumn].fieldType,
                             headerComponent: HeaderRenderer,
-                            headerComponentParams: { styleString: this.getWidgetStyleByType('headers', true) },
+                            headerComponentParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget },
                             cellRenderer: CellRenderer,
                             cellRendererParams: { styleString: this.getColumnStyle(this.propWidget.columns[datasetColumn].id) }
+                            // cellRendererParams: { styleString: this.getColumnStyle(this.propWidget.columns[datasetColumn].id), conditionalStyle: this.getColumnConditionalStyle(this.propWidget.columns[datasetColumn].id) }
                         } as any
 
                         if (this.propWidget.columns[datasetColumn].style && this.propWidget.columns[datasetColumn].style.enableCustomHeaderTooltip) {
@@ -200,9 +214,11 @@ export default defineComponent({
                             }
                             tempCol.cellStyle = this.getRowStyle
                         }
+
+                        tempCol.cellRendererParams.condStyles = this.getColumnConditionalStyle
+
                         // SUMMARY ROW  -----------------------------------------------------------------
                         if (this.propWidget.settings.configuration.summaryRows.enabled) {
-                            const summaryStyleString = this.getWidgetStyleByType('summary', true)
                             tempCol.cellRendererSelector = (params) => {
                                 if (params.node.rowPinned && this.propWidget.settings.configuration.summaryRows.enabled) {
                                     return {
@@ -211,7 +227,7 @@ export default defineComponent({
                                             summaryRows: this.propWidget.settings.configuration.summaryRows.list.map((row) => {
                                                 return row.label
                                             }),
-                                            styleString: summaryStyleString
+                                            propWidget: this.propWidget
                                         }
                                     }
                                 } else {
@@ -263,8 +279,7 @@ export default defineComponent({
                                     colId: group.id,
                                     headerName: group.label,
                                     headerGroupComponent: HeaderGroupRenderer,
-                                    headerGroupComponentParams: { styleString: this.getColumnGroupStyle(group.id) },
-
+                                    headerGroupComponentParams: { colId: group.id, propWidget: this.propWidget },
                                     children: [tempCol]
                                 })
                             }
@@ -286,17 +301,8 @@ export default defineComponent({
                 }
             } else return false
         },
-        getWidgetStyleByType(styleType: string, overrideEnable?: boolean) {
-            const styleSettings = this.propWidget.settings.style[styleType]
-            if (styleSettings.enabled || overrideEnable) {
-                const styleString = Object.entries(styleSettings.properties ?? styleSettings)
-                    .map(([k, v]) => `${k}:${v}`)
-                    .join(';')
-                return styleString + ';'
-            } else return ''
-        },
         getWidgetStyleString() {
-            const styleString = this.getWidgetStyleByType('shadows') + this.getWidgetStyleByType('padding') + this.getWidgetStyleByType('borders')
+            const styleString = getWidgetStyleByType(this.propWidget, 'shadows') + getWidgetStyleByType(this.propWidget, 'padding') + getWidgetStyleByType(this.propWidget, 'borders')
             return styleString
         },
         getColumnTooltipConfig(colId) {
@@ -308,23 +314,6 @@ export default defineComponent({
             })
 
             return columntooltipConfig
-        },
-        getColumnGroupStyle(colId) {
-            var modelGroups = this.propWidget.settings.style.columnGroups
-            var columnGroupStyleString = null as any
-            columnGroupStyleString = Object.entries(modelGroups[0].properties)
-                .map(([k, v]) => `${k}:${v}`)
-                .join(';')
-
-            modelGroups.forEach((group) => {
-                if (group.target.includes(colId)) {
-                    columnGroupStyleString = Object.entries(group.properties)
-                        .map(([k, v]) => `${k}:${v}`)
-                        .join(';')
-                }
-            })
-
-            return columnGroupStyleString
         },
         getRowStyle(params) {
             var rowStyles = this.propWidget.settings.style.rows
@@ -363,7 +352,6 @@ export default defineComponent({
 
             //We always take the 1st condition as a priority for the column and use that one.
             if (colConditions[0]) {
-                console.log('conds', colConditions[0])
                 if (colConditions[0].condition.type === 'always') {
                     columnHidden = colConditions[0].hide
                 } else {
@@ -374,7 +362,6 @@ export default defineComponent({
             return columnHidden
         },
 
-        //TODO: Ask Davide how should this method work
         formatVisibilityCondition(condition) {
             var operators = {
                 '>': function (a, b) {
@@ -399,8 +386,20 @@ export default defineComponent({
                     return b.split(',').indexOf(a) != -1
                 }
             }
-            // console.log('EVAL', operators[condition.operator](condition.value, condition.variableValue))
             return operators[condition.operator](condition.value, condition.variableValue)
+        },
+
+        // getColumnConditionalStyle(colId) {
+        //     var conditionalStyles = this.propWidget.settings.conditionalStyles
+
+        //     var columnConditionalStyles = conditionalStyles.filter((condition) => condition.target.includes(colId))
+
+        //     console.log('cond styles', columnConditionalStyles)
+
+        //     return columnConditionalStyles
+        // }
+        getColumnConditionalStyle(params) {
+            console.log('PARAMS', params)
         }
     }
 })
