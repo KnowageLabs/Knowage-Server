@@ -80,6 +80,7 @@ export default defineComponent({
             emitter.on('selectionChanged', (selectionModel) => console.log('WidgetEditorPreview  - selectionChanged!', selectionModel))
             emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
             emitter.on('visualizationTypeChanged', (visuelizationTypes) => console.log('WidgetEditorPreview  - visualizationTypeChanged!', visuelizationTypes))
+            emitter.on('customMessagesChanged', (customMessagesModel) => console.log('WidgetEditorPreview  - customMessagesChanged!', customMessagesModel))
         },
         setupDatatableOptions() {
             this.gridOptions = {

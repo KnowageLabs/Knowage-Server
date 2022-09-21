@@ -12,6 +12,7 @@
                 <TableWidgetHeader v-else-if="accordion.type === 'Header'" :widgetModel="widgetModel" :drivers="drivers" :variables="variables"></TableWidgetHeader>
                 <TableWidgetColumnGroups v-else-if="accordion.type === 'ColumnGroups'" :widgetModel="widgetModel"></TableWidgetColumnGroups>
                 <TableWidgetExport v-else-if="accordion.type === 'Export'" :widgetModel="widgetModel"></TableWidgetExport>
+                <TableWidgetCustomMessages v-else-if="accordion.type === 'CustomMessages'" :widgetModel="widgetModel"></TableWidgetCustomMessages>
                 <TableWidgetVisualizationType v-else-if="accordion.type === 'VisualizationType'" :widgetModel="widgetModel"></TableWidgetVisualizationType>
                 <TableWidgetVisibilityConditions v-else-if="accordion.type === 'VisibilityConditions'" :widgetModel="widgetModel" :variables="variables"></TableWidgetVisibilityConditions>
                 <TableWidgetHeaders v-else-if="accordion.type === 'Headers'" :widgetModel="widgetModel"></TableWidgetHeaders>
@@ -45,6 +46,7 @@ import TableWidgetSummaryRows from './configuration/TableWidgetSummaryRows.vue'
 import TableWidgetHeader from './configuration/TableWidgetHeader.vue'
 import TableWidgetColumnGroups from './configuration/TableWidgetColumnGroups.vue'
 import TableWidgetExport from './configuration/TableWidgetExport.vue'
+import TableWidgetCustomMessages from './configuration/TableWidgetCustomMessages.vue'
 import TableWidgetVisualizationType from './visualization/TableWidgetVisualizationType.vue'
 import TableWidgetVisibilityConditions from './visualization/TableWidgetVisibilityConditions.vue'
 import TableWidgetHeaders from './style/TableWidgetHeaders.vue'
@@ -72,6 +74,7 @@ export default defineComponent({
         TableWidgetHeader,
         TableWidgetColumnGroups,
         TableWidgetExport,
+        TableWidgetCustomMessages,
         TableWidgetVisualizationType,
         TableWidgetVisibilityConditions,
         TableWidgetHeaders,

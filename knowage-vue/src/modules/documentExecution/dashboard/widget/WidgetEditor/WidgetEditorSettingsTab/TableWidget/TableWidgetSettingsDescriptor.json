@@ -308,6 +308,10 @@
             {
                 "title": "dashboard.widgetEditor.export.title",
                 "type": "Export"
+            },
+            {
+                "title": "dashboard.widgetEditor.customMessages.title",
+                "type": "CustomMessages"
             }
         ],
         "Interactions": [

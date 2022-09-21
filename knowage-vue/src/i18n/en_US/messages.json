@@ -391,6 +391,11 @@
             },
             "configuration": "Configuration",
             "customHeaderTooltip": "Custom Header Tooltip",
+            "customMessages": {
+                "customEmptyRowsMessage": "Custom empty rows message",
+                "hideNoRowsAvailable": "Hide \"No Rows Available\" message",
+                "title": "Custom Messages"
+            },
             "descending": "Descending",
             "dragColumnsHint": "Drag columns here",
             "enableFilter": "Enable Filter",
@@ -482,11 +487,9 @@
             "rows": {
                 "alternatedRowsEven": "Alternated Rows Even",
                 "alternatedRowsOdd": "Alternated Rows Odd",
-                "customEmptyRowsMessage": "Custom empty rows message",
                 "enableIndexColumn": "Enable Index Column",
                 "enableRowspan": "Enable Row Span",
                 "enabledAlternatedRows": "Enabled Alternated Rows",
-                "hideNoRowsAvailable": "Hide \"No Rows Available\" message",
                 "indexColumnHint": "Index column hint placeholder",
                 "multiselectable": "Multiselectable",
                 "rowSpanColumn": "Row span column",

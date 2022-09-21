@@ -12,10 +12,10 @@ export interface ISheet {
 
 export interface IWidget {
     id?: string
-    dataset: number
+    dataset: number | null
     type: string
     columns: IWidgetColumn[]
-    settings: ITableWidgetSettings | any
+    settings: ITableWidgetSettings
     new?: boolean
 }
 
@@ -31,7 +31,7 @@ export interface ITableWidgetSettings {
     style: ITableWidgetStyle,
     tooltips: ITableWidgetTooltipStyle[],
     visualization: ITableWidgetVisualization,
-    responsive: ITableWidgetResponsive,
+    responsive: ITableWidgetResponsive
 }
 
 export interface ITableWidgetConditionalStyle {
@@ -60,7 +60,8 @@ export interface ITableWidgetConfiguration {
     exports: ITableWidgetExports
     headers: ITableWidgetHeaders
     rows: ITableWidgetRows
-    summaryRows: ITableWidgetSummaryRows
+    summaryRows: ITableWidgetSummaryRows,
+    customMessages: ITableWidgetCustomMessages
 }
 
 export interface ITableWidgetColumnGroups {
@@ -85,8 +86,8 @@ export interface ITableWidgetExports {
         a4landscape: boolean,
         a4portrait: boolean
     },
-    showExcelExport: string,
-    showScreenshot: string
+    showExcelExport: boolean,
+    showScreenshot: boolean
 }
 
 export interface ITableWidgetHeaders {
@@ -119,6 +120,11 @@ export interface ITableWidgetSummaryRows {
     enabled: boolean,
     list: ITableWidgetSummaryRow[],
     style: { pinnedOnly: boolean }
+}
+
+export interface ITableWidgetCustomMessages {
+    hideNoRowsMessage: boolean,
+    noRowsMessage: string
 }
 
 export interface ITableWidgetSummaryRow {
@@ -190,8 +196,8 @@ export interface ITableWidgetSelection {
 }
 
 export interface ITableWidgetPagination {
-    "enabled": boolean,
-    "itemsNumber": number
+    enabled: boolean,
+    itemsNumber: number
 }
 
 export interface ITableWidgetStyle {
@@ -288,7 +294,7 @@ export interface ITableWidgetSummaryStyle {
 
 export interface ITableWidgetTooltipStyle {
     target: string | string[],
-    enabled: true,
+    enabled: boolean,
     prefix: string,
     suffix: string,
     precision: number,
@@ -345,11 +351,8 @@ export interface IWidgetColumn {
     type: string
     fieldType: string
     multiValue: boolean,
-    aggregation?: string,
-    style?: any,  // ??? 
-    enableTooltip?: boolean, // ???
-    visType?: string   // ???
-    filter?: IWidgetColumnFilter
+    aggregation: string,
+    filter: IWidgetColumnFilter
 }
 
 export interface IWidgetColumnFilter {

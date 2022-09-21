@@ -10,13 +10,12 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset } from '../../../Dashboard'
 import WidgetEditorDataList from './WidgetEditorDataList/WidgetEditorDataList.vue'
-import WidgetEditorGeneric from '../WidgetEditorGeneric/WidgetEditorGeneric.vue'
 import WidgetEditorHint from '../WidgetEditorHint.vue'
 import TableWidgetDataContainer from './TableWidget/TableWidgetDataContainer.vue'
 
 export default defineComponent({
     name: 'widget-editor-data-tab',
-    components: { WidgetEditorDataList, WidgetEditorGeneric, WidgetEditorHint, TableWidgetDataContainer },
+    components: { WidgetEditorDataList, WidgetEditorHint, TableWidgetDataContainer },
     props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, selectedDatasets: { type: Array as PropType<IDataset[]> } },
     emits: ['datasetSelected'],
     data() {

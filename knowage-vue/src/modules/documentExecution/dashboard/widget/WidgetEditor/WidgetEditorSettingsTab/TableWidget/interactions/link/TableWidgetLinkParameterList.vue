@@ -1,58 +1,65 @@
 <template>
     <div class="p-grid">
-        {{ selectedDatasetsColumnsMap }}
+        <div class="p-col-12 p-text-right">
+            <i :class="'pi pi-plus-circle'" class="kn-cursor-pointer" @click="$emit('addParameter')"></i>
+        </div>
         <div v-for="(parameter, index) in parameters" :key="index" class="p-grid p-col-12 p-ai-center p-p-2">
-            <div class="p-col-12">
-                {{ parameter }}
-            </div>
-            <div class="p-sm-6 p-md-2 p-d-flex p-flex-column kn-flex">
-                <label class="kn-material-input-label">{{ $t('common.parameter') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="parameter.name" :disabled="true" />
-            </div>
-            <div class="p-sm-6 p-md-2 p-d-flex p-flex-column kn-flex p-p-2 value-type-dropdown">
-                <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
-                <Dropdown class="kn-material-input" v-model="parameter.type" :options="descriptor.linkParameterTypeOptions" optionValue="value" :disabled="disabled" @change="onParameterTypeChanged(parameter)">
-                    <template #value="slotProps">
-                        <div>
-                            <span>{{ getTranslatedLabel(slotProps.value, descriptor.linkParameterTypeOptions, $t) }}</span>
-                        </div>
-                    </template>
-                    <template #option="slotProps">
-                        <div>
-                            <span>{{ $t(slotProps.option.label) }}</span>
-                        </div>
-                    </template>
-                </Dropdown>
-            </div>
-            <div v-if="parameter.type === 'static'" class="p-sm-12 p-md-7 p-d-flex p-flex-column kn-flex">
-                <label class="kn-material-input-label">{{ $t('common.value') }}</label>
-                <InputText class="kn-material-input p-inputtext-sm" v-model="parameter.value" :disabled="disabled" @change="parametersChanged" />
-            </div>
-            <div v-else-if="parameter.type === 'driver'" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
-                <div class="p-d-flex p-flex-column kn-flex">
-                    <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                    <Dropdown class="kn-material-input" v-model="parameter.driver" :options="drivers" optionLabel="name" optionValue="name" :disabled="disabled" @change="parametersChanged"> </Dropdown>
+            <div class="p-grid p-ai-center p-col-11">
+                <div class="p-sm-12 p-md-3 p-d-flex p-flex-column">
+                    <label class="kn-material-input-label">{{ $t('common.parameter') }}</label>
+                    <InputText class="kn-material-input p-inputtext-sm" v-model="parameter.name" :disabled="disabled" />
                 </div>
-            </div>
-            <div v-else-if="parameter.type === 'dynamic'" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
-                <div class="p-d-flex p-flex-column kn-flex">
-                    <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                    <Dropdown class="kn-material-input" v-model="parameter.column" :options="widgetModel.columns" optionLabel="alias" optionValue="alias" :disabled="disabled" @change="parametersChanged"> </Dropdown>
+                <div class="p-sm-12 p-md-3 kn-flex p-d-flex p-flex-column p-p-2">
+                    <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
+                    <Dropdown class="kn-material-input" v-model="parameter.type" :options="descriptor.linkParameterTypeOptions" optionValue="value" :disabled="disabled" @change="onParameterTypeChanged(parameter)">
+                        <template #value="slotProps">
+                            <div>
+                                <span>{{ getTranslatedLabel(slotProps.value, descriptor.linkParameterTypeOptions, $t) }}</span>
+                            </div>
+                        </template>
+                        <template #option="slotProps">
+                            <div>
+                                <span>{{ $t(slotProps.option.label) }}</span>
+                            </div>
+                        </template>
+                    </Dropdown>
                 </div>
-            </div>
-            <div v-else-if="parameter.type === 'selection'" class="p-grid p-sm-12 p-md-7 p-ai-center kn-flex">
-                <div class="p-sm-12 p-md-6 p-ai-center">
+                <div v-if="parameter.type === 'static'" class="p-sm-11 p-md-5 p-d-flex p-flex-column">
+                    <label class="kn-material-input-label">{{ $t('common.value') }}</label>
+                    <InputText class="kn-material-input p-inputtext-sm" v-model="parameter.value" :disabled="disabled" @change="parametersChanged" />
+                </div>
+                <div v-else-if="parameter.type === 'driver'" class="p-sm-11 p-md-5 p-d-flex p-flex-row p-ai-center">
                     <div class="p-d-flex p-flex-column kn-flex">
-                        <label class="kn-material-input-label"> {{ $t('common.dataset') }}</label>
-                        <Dropdown class="kn-material-input" v-model="parameter.dataset" :options="selectedDatasetNames" :disabled="disabled" @change="onDatasetChanged(parameter)"> </Dropdown>
+                        <label class="kn-material-input-label"> {{ $t('common.driver') }}</label>
+                        <Dropdown class="kn-material-input" v-model="parameter.driver" :options="drivers" optionLabel="name" optionValue="name" :disabled="disabled" @change="parametersChanged"> </Dropdown>
                     </div>
                 </div>
-                <div class="p-sm-12 p-md-6 p-ai-center">
+                <div v-else-if="parameter.type === 'dynamic'" class="p-sm-11 p-md-5 p-d-flex p-flex-row p-ai-center">
                     <div class="p-d-flex p-flex-column kn-flex">
                         <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                        <Dropdown class="kn-material-input" v-model="parameter.column" :options="getSelectionDatasetColumnOptions(parameter)" :disabled="disabled" @change="parametersChanged"> </Dropdown>
+                        <Dropdown class="kn-material-input" v-model="parameter.column" :options="widgetModel.columns" optionLabel="alias" optionValue="alias" :disabled="disabled" @change="parametersChanged"> </Dropdown>
                     </div>
                 </div>
+                <div v-else-if="parameter.type === 'selection'" class="p-grid p-sm-11 p-md-5 p-ai-center">
+                    <div class="p-sm-12 p-md-6 p-ai-center">
+                        <div class="p-d-flex p-flex-column kn-flex">
+                            <label class="kn-material-input-label"> {{ $t('common.dataset') }}</label>
+                            <Dropdown class="kn-material-input" v-model="parameter.dataset" :options="selectedDatasetNames" :disabled="disabled" @change="onDatasetChanged(parameter)"> </Dropdown>
+                        </div>
+                    </div>
+                    <div class="p-sm-12 p-md-6 p-ai-center">
+                        <div class="p-d-flex p-flex-column kn-flex">
+                            <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
+                            <Dropdown class="kn-material-input" v-model="parameter.column" :options="getSelectionDatasetColumnOptions(parameter)" :disabled="disabled" @change="parametersChanged"> </Dropdown>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-col-1 p-text-center p-pt-2">
+                <i :class="'pi pi-trash'" class="kn-cursor-pointer" @click="deleteParameter(index)"></i>
+            </div>
+            <div v-if="parameter.type === 'json'" class="p-grid p-col-12 p-ai-center">
+                <TableWidgetParameterCodeMirror v-if="parameter.type === 'json'" :propParameter="parameter" :visible="parameter.type === 'json'"></TableWidgetParameterCodeMirror>
             </div>
         </div>
     </div>
@@ -65,12 +72,13 @@ import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
+import TableWidgetParameterCodeMirror from './TableWidgetParameterCodeMirror.vue'
 
 export default defineComponent({
     name: 'table-widget-link-parameters-list',
-    components: { Dropdown, InputSwitch },
+    components: { Dropdown, InputSwitch, TableWidgetParameterCodeMirror },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, propParameters: { type: Array as PropType<ITableWidgetParameter[]>, required: true }, selectedDatasetsColumnsMap: { type: Object }, drivers: { type: Array }, disabled: { type: Boolean } },
-    emits: ['change'],
+    emits: ['change', 'addParameter', 'delete'],
     data() {
         return {
             descriptor,
@@ -99,15 +107,6 @@ export default defineComponent({
         parametersChanged() {
             this.$emit('change', this.parameters)
         },
-
-        //      enabled: boolean,
-        // name: string,
-        // type: string,
-        // value?: string,
-        // column?: string,
-        // driver?: string,
-        // dataset?: string,
-        // json?: string
         onParameterTypeChanged(parameter: ITableWidgetParameter) {
             parameter.value = ''
             switch (parameter.type) {
@@ -146,6 +145,9 @@ export default defineComponent({
         },
         getSelectionDatasetColumnOptions(parameter: ITableWidgetParameter) {
             return parameter.dataset && this.selectedDatasetsColumnsMap ? this.selectedDatasetsColumnsMap[parameter.dataset] : []
+        },
+        deleteParameter(index: number) {
+            this.$emit('delete', index)
         }
     }
 })
