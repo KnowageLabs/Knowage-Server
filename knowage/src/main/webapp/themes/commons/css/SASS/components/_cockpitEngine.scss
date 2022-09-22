@@ -102,6 +102,9 @@
         transform: none;
         -webkit-animation: none;
         animation: none;
+	#viewModeMenuSpeedDial md-fab-speed-dial md-fab-trigger .md-fab {
+		display: none;
+	}
         .screenShottingWidget {
             transition: none;
             visibility: visible;
