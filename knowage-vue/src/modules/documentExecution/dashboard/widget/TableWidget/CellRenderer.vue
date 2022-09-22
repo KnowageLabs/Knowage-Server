@@ -1,11 +1,13 @@
 <template>
-    <div class="custom-cell-container p-d-flex" :style="getColumnConditionalStyles()">
+    <div class="custom-cell-container p-d-flex kn-height-full" :style="rowStyles">
+        <!-- <div class="custom-cell-container p-d-flex kn-height-full"> -->
         <div class="custom-cell-label">{{ params.value }}</div>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { getColumnConditionalStyles } from './TableWidgetHelper'
 
 export default defineComponent({
     props: {
@@ -21,7 +23,7 @@ export default defineComponent({
     },
     mounted() {
         // if (this.params) console.log('\n \n cell RENDERER PARAMS \n', this.params)
-        this.getColumnConditionalStyles()
+        if (this.params.propWidget.settings.conditionalStyles.enabled) this.rowStyles = getColumnConditionalStyles(this.params.propWidget, this.params.colId, this.params.value, true)
     },
     methods: {
         setCellStyle() {},
@@ -54,56 +56,7 @@ export default defineComponent({
             })
 
             return columnStyleString
-        },
-        getColumnConditionalStyles() {
-            var conditionalStyles = this.params.propWidget.settings.conditionalStyles
-            var styleString = '' as any
-
-            if (conditionalStyles.enabled) {
-                var columnConditionalStyles = conditionalStyles.conditions.filter((condition) => condition.target.includes(this.params.colId))
-
-                if (columnConditionalStyles.length > 0) console.log(`cond styles ---- ${this.params.colId}`, columnConditionalStyles)
-
-                if (columnConditionalStyles.length > 0 && this.formatCondition(columnConditionalStyles[0].condition)) {
-                    styleString = Object.entries(columnConditionalStyles[0].properties)
-                        .map(([k, v]) => `${k}:${v}`)
-                        .join(';')
-                }
-
-                return styleString
-            }
-
-            return false
-        },
-        formatCondition(condition) {
-            var fullfilledCondition = false
-            switch (condition.operator) {
-                case '==':
-                    fullfilledCondition = this.params.value == condition.value
-                    break
-                case '>=':
-                    fullfilledCondition = this.params.value >= condition.value
-                    break
-                case '<=':
-                    fullfilledCondition = this.params.value <= condition.value
-                    break
-                case 'IN':
-                    fullfilledCondition = condition.value.split(',').indexOf(this.params.value) != -1
-                    break
-                case '>':
-                    fullfilledCondition = this.params.value > condition.value
-                    break
-                case '<':
-                    fullfilledCondition = this.params.value < condition.value
-                    break
-                case '!=':
-                    fullfilledCondition = this.params.value != condition.value
-                    break
-            }
-
-            return fullfilledCondition
-        },
-        getRowspanStyle() {}
+        }
     }
 })
 </script>

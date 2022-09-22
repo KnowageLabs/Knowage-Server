@@ -19,7 +19,7 @@ import SummaryRowRenderer from './SummaryRowRenderer.vue'
 import HeaderGroupRenderer from './HeaderGroupRenderer.vue'
 import TooltipRenderer from './TooltipRenderer.vue'
 import CellRenderer from './CellRenderer.vue'
-import { getWidgetStyleByType, getRowStyle } from './TableWidgetHelper'
+import { getWidgetStyleByType, getColumnConditionalStyles } from './TableWidgetHelper'
 
 export default defineComponent({
     name: 'table-widget',
@@ -93,13 +93,13 @@ export default defineComponent({
 
                 // EVENTS
                 // onRowClicked: (event, params) => console.log('A row was clicked', event),
-                onCellClicked: (event, params) => console.log('A cell was clicked', event, params)
+                onCellClicked: (event, params) => console.log('A cell was clicked', event, params),
                 // onColumnResized: (event) => console.log('A column was resized'),
                 // onGridReady: (event) => console.log('The grid is now ready')
 
                 // CALLBACKS
                 // getRowHeight: (params) => 25
-                // getRowStyle: this.getRowStyle
+                getRowStyle: this.getRowStyle
             }
         },
         onGridReady(params) {
@@ -149,7 +149,9 @@ export default defineComponent({
                     sortable: false,
                     filter: false,
                     headerComponent: HeaderRenderer,
-                    headerComponentParams: { propWidget: this.propWidget }
+                    headerComponentParams: { propWidget: this.propWidget },
+                    cellRenderer: CellRenderer,
+                    cellRendererParams: { colId: 'indexColumn', propWidget: this.propWidget }
                 })
             }
             // c = datasetColumn
@@ -171,7 +173,7 @@ export default defineComponent({
                             headerComponent: HeaderRenderer,
                             headerComponentParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget },
                             cellRenderer: CellRenderer,
-                            cellRendererParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget, styleString: '' }
+                            cellRendererParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget }
                             // cellRendererParams: { styleString: this.getColumnStyle(this.propWidget.columns[datasetColumn].id), conditionalStyle: this.getColumnConditionalStyle(this.propWidget.columns[datasetColumn].id) }
                         } as any
 
@@ -206,7 +208,7 @@ export default defineComponent({
                                     return tempRows[params.rowIndex].span > 1
                                 }
                             }
-                            // tempCol.cellStyle = getRowStyle
+                            // tempCol.cellStyle = this.getRowStyle
                         }
 
                         // tempCol.cellRendererParams.condStyles = this.getColumnConditionalStyle
@@ -309,18 +311,29 @@ export default defineComponent({
 
             return columntooltipConfig
         },
-        // getRowStyle(params) {
-        //     var rowStyles = this.propWidget.settings.style.rows
+        getRowStyle(params) {
+            var rowStyles = this.propWidget.settings.style.rows
 
-        //     if (rowStyles.alternatedRows && rowStyles.alternatedRows.enabled) {
-        //         if (rowStyles.alternatedRows.oddBackgroundColor && params.node.rowIndex % 2 === 0) {
-        //             return { background: rowStyles.alternatedRows.oddBackgroundColor }
-        //         }
-        //         if (rowStyles.alternatedRows.evenBackgroundColor && params.node.rowIndex % 2 != 0) {
-        //             return { background: rowStyles.alternatedRows.evenBackgroundColor }
-        //         }
-        //     }
-        // },
+            if (this.propWidget.settings.conditionalStyles.enabled) {
+                for (let i = 0; i < Object.entries(params.data).length; i++) {
+                    var element = Object.entries(params.data)[i]
+                    if (element[0].includes('column_')) {
+                        if (getColumnConditionalStyles(this.propWidget, this.propWidget.columns[i].id, element[1], false)) {
+                            return getColumnConditionalStyles(this.propWidget, this.propWidget.columns[i].id, element[1], false)
+                        }
+                    }
+                }
+            }
+
+            if (rowStyles.alternatedRows && rowStyles.alternatedRows.enabled) {
+                if (rowStyles.alternatedRows.oddBackgroundColor && params.node.rowIndex % 2 === 0) {
+                    return { background: rowStyles.alternatedRows.oddBackgroundColor }
+                }
+                if (rowStyles.alternatedRows.evenBackgroundColor && params.node.rowIndex % 2 != 0) {
+                    return { background: rowStyles.alternatedRows.evenBackgroundColor }
+                }
+            }
+        },
         getColumnStyle(colId) {
             var columnStyles = this.propWidget.settings.style.columns
             var columnStyleString = null as any
@@ -382,19 +395,6 @@ export default defineComponent({
                 }
             }
             return operators[condition.operator](condition.value, condition.variableValue)
-        },
-
-        // getColumnConditionalStyle(colId) {
-        //     var conditionalStyles = this.propWidget.settings.conditionalStyles
-
-        //     var columnConditionalStyles = conditionalStyles.filter((condition) => condition.target.includes(colId))
-
-        //     console.log('cond styles', columnConditionalStyles)
-
-        //     return columnConditionalStyles
-        // }
-        getColumnConditionalStyle(params) {
-            console.log('PARAMS', params)
         }
     }
 })
