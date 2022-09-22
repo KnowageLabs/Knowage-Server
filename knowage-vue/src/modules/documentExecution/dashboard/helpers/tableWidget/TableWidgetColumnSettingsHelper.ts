@@ -42,6 +42,7 @@ const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn:
         if (tempColumn.variables) {
             getVisibilityConditionVariable(formattedWidget, tempColumn.variables, tempVisibiilityCondition)
         } else {
+            formattedWidget.settings.visualization.visibilityConditions.enabled = true
             formattedWidget.settings.visualization.visibilityConditions.conditions.push(tempVisibiilityCondition)
         }
     }
@@ -57,6 +58,7 @@ const getVisibilityConditionVariable = (formattedWidget: IWidget, variables: { a
                 operator: variable.condition,
                 value: variable.value,
             }
+            formattedWidget.settings.visualization.visibilityConditions.enabled = true
             formattedWidget.settings.visualization.visibilityConditions.conditions.push(tempVisibiilityCondition)
         }
     })
