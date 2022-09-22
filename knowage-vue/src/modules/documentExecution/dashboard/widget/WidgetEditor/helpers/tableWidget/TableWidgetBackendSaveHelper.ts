@@ -1,4 +1,4 @@
-import { ITableWidgetColumnGroups, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetSettings, ITableWidgetVisibilityConditions, ITableWidgetVisualization, IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard"
+import { ITableWidgetColumnGroups, ITableWidgetConfiguration, ITableWidgetCrossNavigation, ITableWidgetHeaders, ITableWidgetInteractions, ITableWidgetSelection, ITableWidgetSettings, ITableWidgetVisibilityConditions, ITableWidgetVisualization, IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard"
 import deepcopy from 'deepcopy'
 
 const columnIdNameMap = {}
@@ -37,6 +37,7 @@ const getColumnName = (columnId: string) => {
 const formatTableSettings = (widgetSettings: ITableWidgetSettings) => {
     formatTableWidgetConfiguration(widgetSettings.configuration)
     formatTableWidgetVisualisation(widgetSettings.visualization)
+    formatTableInteractions(widgetSettings.interactions)
 }
 
 const formatTableWidgetConfiguration = (widgetConfiguration: ITableWidgetConfiguration) => {
@@ -107,4 +108,17 @@ const formatColumnGroupsColumnIdToName = (columnGroupsConfiguration: ITableWidge
         }
         tempColumnGroup.columns = formattedColumnGroupColumns
     }
+}
+
+const formatTableInteractions = (widgetInteractions: ITableWidgetInteractions) => {
+    formatSelection(widgetInteractions.selection)
+    formatCrossNavigation(widgetInteractions.crosssNavigation)
+}
+
+const formatSelection = (selection: ITableWidgetSelection) => {
+    if (selection.modalColumn) selection.modalColumn = getColumnName(selection.modalColumn)
+}
+
+const formatCrossNavigation = (crosssNavigation: ITableWidgetCrossNavigation) => {
+    if (crosssNavigation.column) crosssNavigation.column = getColumnName(crosssNavigation.column)
 }

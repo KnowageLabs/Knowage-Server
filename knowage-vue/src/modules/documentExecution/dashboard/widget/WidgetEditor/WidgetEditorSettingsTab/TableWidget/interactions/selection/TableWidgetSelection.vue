@@ -1,16 +1,16 @@
 <template>
-    <div v-if="selectionModel">
-        <div class="p-d-flex p-flex-column">
-            <div class="p-d-flex p-flex-row p-ai-center">
-                <div class="kn-flex p-mt-4 p-mx-4">
+    <div v-if="selectionModel" class="p-grid p-ai-center p-p-4">
+        <div class="p-col-12 p-grid">
+            <div class="p-col-12 p-grid p-ai-center">
+                <div class="p-col-12 p-md-4 p-pt-4 p-pr-4">
                     <InputSwitch v-model="selectionModel.enabled" @change="selectionChanged"></InputSwitch>
                     <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.interactions.enableSelection') }}</label>
                 </div>
-                <div class="kn-flex p-mt-4 p-mr-4">
+                <div class="p-col-12 p-md-4 p-pt-4 p-pr-4">
                     <InputSwitch v-model="selectionModel.multiselection.enabled" @change="selectionChanged"></InputSwitch>
                     <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.interactions.enableMultiselection') }}</label>
                 </div>
-                <div class="kn-flex style-toolbar-container p-mt-3 p-mr-5">
+                <div class="p-col-12 p-md-4 style-toolbar-container p-pt-3 p-pr-5">
                     <WidgetEditorStyleToolbar
                         :options="descriptor.styleToolbarSelectionOptions"
                         :propModel="{
@@ -22,7 +22,7 @@
                     ></WidgetEditorStyleToolbar>
                 </div>
             </div>
-            <div class="p-d-flex p-flex-row p-ai-center p-m-3">
+            <div class="p-col-12 p-d-flex p-flex-row p-ai-center p-p-3">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.interactions.modalColumn') }}</label>
                     <Dropdown class="kn-material-input" v-model="selectionModel.modalColumn" :options="widgetModel.columns" optionLabel="alias" optionValue="id" @change="selectionChanged"> </Dropdown>

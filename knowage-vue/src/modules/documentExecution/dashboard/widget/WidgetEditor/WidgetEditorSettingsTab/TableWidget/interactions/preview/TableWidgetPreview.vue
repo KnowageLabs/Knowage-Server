@@ -1,11 +1,11 @@
 <template>
-    <div v-if="previewModel" class="p-grid">
+    <div v-if="previewModel" class="p-grid p-ai-center p-p-4">
         <div class="p-grid p-col-12 p-pt-4 p-ai-center">
             <div class="p-col-6 p-sm-12 p-md-6">
                 <InputSwitch v-model="previewModel.enabled"></InputSwitch>
                 <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.interactions.enablePreview') }}</label>
             </div>
-            <div class="p-col-6 p-sm-12 p-md-6 p-d-flex p-flex-column kn-flex p-mx-2">
+            <div class="p-col-6 p-sm-12 p-md-6 p-d-flex p-flex-column kn-flex p-px-2">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
                 <Dropdown class="kn-material-input" v-model="previewModel.type" :options="descriptor.interactionTypes" optionValue="value" :disabled="previewDisabled" @change="onInteractionTypeChanged">
                     <template #value="slotProps">
@@ -71,7 +71,13 @@ import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorS
 
 export default defineComponent({
     name: 'table-widget-preview',
-    components: { Checkbox, Dropdown, InputSwitch, TableWidgetPreviewParameterList, WidgetEditorStyleToolbar },
+    components: {
+        Checkbox,
+        Dropdown,
+        InputSwitch,
+        TableWidgetPreviewParameterList,
+        WidgetEditorStyleToolbar
+    },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDataset[]> },
@@ -165,8 +171,12 @@ export default defineComponent({
             const index = this.dashboardDatasets.findIndex((dataset: any) => dataset.id === this.previewModel?.dataset)
             if (index !== -1)
                 this.previewModel.parameters = this.dashboardDatasets[index].parameters.map((tempParameter: IDatasetParameter) => {
-                    console.log('TEMP PARAMETER: ', tempParameter)
-                    return { enabled: true, name: tempParameter.name, type: '', value: '' }
+                    return {
+                        enabled: true,
+                        name: tempParameter.name,
+                        type: '',
+                        value: ''
+                    }
                 })
         }
     }

@@ -1,10 +1,10 @@
 <template>
-    <div>
-        <div v-for="(tooltip, index) in tooltips" :key="index" class="p-d-flex p-flex-column p-my-2 p-pb-2">
-            <div v-show="index !== 0 && dropzoneTopVisible[index]" class="form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
+    <div class="p-grid p-ai-center p-p-4">
+        <div v-for="(tooltip, index) in tooltips" :key="index" class="p-grid p-col-12 p-ai-center p-py-2 p-pb-2">
+            <div v-show="index !== 0 && dropzoneTopVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
             <div
                 v-show="index !== 0"
-                class="form-list-item-dropzone"
+                class="p-col-12 form-list-item-dropzone"
                 :class="{ 'form-list-item-dropzone-active': dropzoneTopVisible[index] }"
                 @drop.stop="onDropComplete($event, 'before', index)"
                 @dragover.prevent
@@ -12,12 +12,12 @@
                 @dragleave.prevent="hideDropzone('top', index)"
             ></div>
 
-            <div class="p-d-flex p-flex-column" :draggable="true" @dragstart.stop="onDragStart($event, index)">
+            <div class="p-col-12 p-grid p-d-flex p-flex-column" :draggable="true" @dragstart.stop="onDragStart($event, index)">
                 <div class="p-d-flex p-flex-row p-ai-center">
-                    <div v-if="index !== 0" class="p-d-flex p-flex-column p-jc-center p-mr-4">
+                    <div v-if="index !== 0" class="p-col-1 p-d-flex p-flex-column p-jc-center p-pr-4">
                         <i class="pi pi-th-large kn-cursor-pointer"></i>
                     </div>
-                    <div class="p-d-flex p-flex-column kn-flex">
+                    <div class="p-col-5 p-d-flex p-flex-column">
                         <label class="kn-material-input-label">{{ $t('common.columns') }}</label>
                         <Dropdown v-if="index === 0" class="kn-material-input" v-model="tooltip.target" :options="descriptor.allColumnOption" optionValue="value" optionLabel="label" :disabled="true"> </Dropdown>
                         <WidgetEditorColumnsMultiselect
@@ -30,13 +30,15 @@
                             @change="onColumnsSelected($event, tooltip)"
                         ></WidgetEditorColumnsMultiselect>
                     </div>
-                    <div class="kn-flex p-mt-4 p-mx-4">
+                    <div class="p-col-5 p-pt-4 p-px-4">
                         <InputSwitch v-model="tooltip.enabled" @change="tooltipsChanged"></InputSwitch>
                         <label class="kn-material-input-label p-m-3">{{ $t('common.enabled') }}</label>
                     </div>
-                    <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash']" class="kn-cursor-pointer p-ml-2 p-mt-4" @click="index === 0 ? addTooltip() : removeTooltip(index)"></i>
+                    <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2">
+                        <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash']" class="kn-cursor-pointer p-ml-2 p-mt-4" @click="index === 0 ? addTooltip() : removeTooltip(index)"></i>
+                    </div>
                 </div>
-                <div class="p-d-flex p-flex-row p-ai-center p-mt-3">
+                <div class="p-d-flex p-flex-row p-flex-wrap p-ai-center p-mt-3">
                     <div class="p-d-flex p-flex-column kn-flex p-mx-2">
                         <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.prefix') }}</label>
                         <InputText class="kn-material-input p-inputtext-sm" v-model="tooltip.prefix" :disabled="!tooltip.enabled" @change="tooltipsChanged" />
@@ -50,12 +52,12 @@
                         <InputNumber class="kn-material-input p-inputtext-sm" v-model="tooltip.precision" :disabled="!tooltip.enabled" @blur="tooltipsChanged" />
                     </div>
                 </div>
-                <div class="p-d-flex p-flex-row p-ai-center p-mt-3">
-                    <div class="kn-flex p-mt-4 p-mx-4">
+                <div class="p-grid p-ai-center p-pt-3">
+                    <div class="p-col-12 p-md-3 p-mt-4 p-px-4">
                         <InputSwitch v-model="tooltip.header.enabled" :disabled="!tooltip.enabled" @change="tooltipsChanged"></InputSwitch>
                         <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.tooltips.customHeader') }}</label>
                     </div>
-                    <div class="p-d-flex p-flex-column kn-flex-2 p-mx-2">
+                    <div class="p-col-12 p-md-9 p-d-flex p-flex-column p-px-2">
                         <label class="kn-material-input-label">{{ $t('common.text') }}</label>
                         <InputText class="kn-material-input p-inputtext-sm" v-model="tooltip.header.text" :disabled="!tooltip.enabled || !tooltip.header.enabled" @change="tooltipsChanged" />
                     </div>
@@ -64,14 +66,14 @@
 
             <div
                 v-show="index !== 0"
-                class="form-list-item-dropzone"
+                class="p-col-12 form-list-item-dropzone"
                 :class="{ 'form-list-item-dropzone-active': dropzoneBottomVisible[index] }"
                 @drop.stop="onDropComplete($event, 'after', index)"
                 @dragover.prevent
                 @dragenter.prevent="displayDropzone('bottom', index)"
                 @dragleave.prevent="hideDropzone('bottom', index)"
             ></div>
-            <div v-show="index !== 0 && dropzoneBottomVisible[index]" class="form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'after', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
+            <div v-show="index !== 0 && dropzoneBottomVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'after', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
         </div>
     </div>
 </template>

@@ -1,11 +1,11 @@
 <template>
-    <div v-if="crossNavigationModel">
-        <div class="p-d-flex p-flex-row p-ai-center">
-            <div class="kn-flex p-mx-4 p-my-2">
+    <div v-if="crossNavigationModel" class="p-grid p-ai-center p-p-4">
+        <div class="p-grid p-col-12 p-pt-4 p-ai-centerr">
+            <div class="p-col-6 p-sm-12 p-md-6">
                 <InputSwitch v-model="crossNavigationModel.enabled"></InputSwitch>
                 <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.interactions.enableCrossNavigation') }}</label>
             </div>
-            <div class="p-d-flex p-flex-column kn-flex p-m-2">
+            <div class="p-col-6 p-sm-12 p-md-6 p-d-flex p-flex-column kn-flex p-px-2">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
                 <Dropdown class="kn-material-input" v-model="crossNavigationModel.type" :options="descriptor.interactionTypes" optionValue="value" :disabled="crossNavigationDisabled" @change="onInteractionTypeChanged">
                     <template #value="slotProps">
@@ -21,24 +21,24 @@
                 </Dropdown>
             </div>
         </div>
-        <div class="p-d-flex p-flex-row p-ai-center p-mt-2">
-            <div class="p-d-flex p-flex-row p-ai-center kn-flex p-mx-2">
+        <div class="p-grid p-col-12 p-ai-center p-mt-2">
+            <div class="p-sm-12 p-md-5 p-d-flex p-flex-row p-ai-center p-px-2">
                 <div class="p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
                     <Dropdown class="kn-material-input" v-model="crossNavigationModel.column" :options="widgetModel.columns" optionLabel="alias" optionValue="id" :disabled="crossNavigationDisabled"> </Dropdown>
                 </div>
             </div>
-            <div class="p-d-flex p-flex-row p-ai-center kn-flex">
+            <div class="p-sm-10 p-md-5 p-d-flex p-flex-row p-ai-center">
                 <div class="p-d-flex p-flex-column kn-flex p-mx-2">
                     <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.interactions.crossNavigationName') }}</label>
                     <Dropdown class="kn-material-input" v-model="crossNavigationModel.name" :options="crossNavigationOptions" :disabled="crossNavigationDisabled"> </Dropdown>
                 </div>
             </div>
-            <div v-if="crossNavigationModel.type === 'icon'" class="p-m-4">
+            <div v-if="crossNavigationModel.type === 'icon'" class="p-col-2 p-p-4">
                 <WidgetEditorStyleToolbar :options="[{ type: 'icon' }]" :propModel="{ icon: crossNavigationModel.icon }" :disabled="crossNavigationDisabled" @change="onStyleToolbarChange($event)"> </WidgetEditorStyleToolbar>
             </div>
         </div>
-        <div v-if="crossNavigationModel.parameters" class="p-d-flex p-flex-row p-ai-center p-m-2">
+        <div v-if="crossNavigationModel.parameters" class="p-col-12 p-d-flex p-flex-row p-ai-center p-p-2">
             <TableWidgetOutputParametersList class="kn-flex p-mr-2" :widgetModel="widgetModel" :propParameters="parameterList" :selectedDatasetsColumnsMap="selectedDatasetsColumnsMap" :disabled="crossNavigationDisabled" @change="onParametersChanged"></TableWidgetOutputParametersList>
         </div>
     </div>
