@@ -1,6 +1,14 @@
 #app {
     background-color: var(--kn-app-background-color);
 }
+
+.kn-border-none {
+    border: 0;
+    .p-chips-multiple-container {
+        border: 0;
+    }
+}
+
 .kn-decoration-none {
     text-decoration: none;
     color: inherit;

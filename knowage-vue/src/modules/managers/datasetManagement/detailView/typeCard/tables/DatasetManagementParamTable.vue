@@ -28,15 +28,20 @@
                 </Column>
                 <Column field="defaultValue" :header="$t('managers.driversManagement.useModes.defaultValue')" :sortable="true">
                     <template #editor="{data}">
-                        <InputText class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.defaultValue" />
+                        <InputText v-if="data.multiValue === false" class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.defaultValue" />
+                        <Chips class="kn-border-none" v-else v-model="data.defaultValue" />
+                    </template>
+                    <template #body="{data}">
+                        <InputText v-if="data.multiValue === false" class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.defaultValue" />
+                        <Chips class="kn-border-none" v-else v-model="data.defaultValue" />
                     </template>
                 </Column>
                 <Column field="multiValue" :header="$t('managers.profileAttributesManagement.form.multiValue')" :sortable="true">
                     <template #body="{data}">
-                        <Checkbox v-model="data.multiValue" :binary="true" />
+                        <Checkbox v-model="data.multiValue" :binary="true" @change="checkboxChange(data)"/>
                     </template>
                     <template #editor="{data}">
-                        <Checkbox v-model="data.multiValue" :binary="true" />
+                        <Checkbox v-model="data.multiValue" :binary="true" @change="checkboxChange(data)"/>
                     </template>
                 </Column>
                 <Column @rowClick="false">
@@ -50,16 +55,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, nextTick } from 'vue'
 import tableDescriptor from './DatasetManagementTablesDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Checkbox from 'primevue/checkbox'
+import Chips from 'primevue/chips'
 
 export default defineComponent({
-    components: { Card, Dropdown, DataTable, Column, Checkbox },
+    components: { Card, Chips, Dropdown, DataTable, Column, Checkbox },
     props: {
         selectedDataset: { type: Object as any }
     },
@@ -105,6 +111,11 @@ export default defineComponent({
             } else {
                 this.insertParameter()
             }
+        },
+        checkboxChange(data){
+            if(data.multiValue){
+                data.defaultValue = [data.defaultValue]
+            }else data.defaultValue = data.defaultValue.join('')         
         },
         insertParameter() {
             this.dataset.pars ? '' : (this.dataset.pars = [])
