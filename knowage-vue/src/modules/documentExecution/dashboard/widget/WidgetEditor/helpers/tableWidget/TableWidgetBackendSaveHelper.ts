@@ -1,4 +1,4 @@
-import { ITableWidgetColumnGroups, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetSettings, ITableWidgetVisualization, IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard"
+import { ITableWidgetColumnGroups, ITableWidgetConfiguration, ITableWidgetHeaders, ITableWidgetSettings, ITableWidgetVisibilityConditions, ITableWidgetVisualization, IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard"
 import deepcopy from 'deepcopy'
 
 const columnIdNameMap = {}
@@ -74,7 +74,7 @@ const formatColumnGroups = (widgetConfiguration: ITableWidgetConfiguration) => {
 
 const formatTableWidgetVisualisation = (widgetVisualization: ITableWidgetVisualization) => {
     formatVisualizationTypes(widgetVisualization)
-    formatConditionalStyles(widgetVisualization)
+    formatVisibilityConditions(widgetVisualization)
 }
 
 const formatVisualizationTypes = (widgetVisualization: ITableWidgetVisualization) => {
@@ -87,7 +87,16 @@ const formatVisualizationTypes = (widgetVisualization: ITableWidgetVisualization
         tempVisualization.target = formattedRuleColumns
     }
 }
-const formatConditionalStyles = (widgetVisualization: ITableWidgetVisualization) => { }
+const formatVisibilityConditions = (widgetVisualization: ITableWidgetVisualization) => {
+    for (let i = 0; i < widgetVisualization.visibilityConditions.conditions.length; i++) {
+        const tempCondition = widgetVisualization.visibilityConditions.conditions[i]
+        const formattedRuleColumns = [] as string[]
+        for (let j = 0; j < tempCondition.target.length; j++) {
+            formattedRuleColumns.push(getColumnName(tempCondition.target[j]))
+        }
+        tempCondition.target = formattedRuleColumns
+    }
+}
 
 const formatColumnGroupsColumnIdToName = (columnGroupsConfiguration: ITableWidgetColumnGroups) => {
     for (let i = 0; i < columnGroupsConfiguration.groups.length; i++) {

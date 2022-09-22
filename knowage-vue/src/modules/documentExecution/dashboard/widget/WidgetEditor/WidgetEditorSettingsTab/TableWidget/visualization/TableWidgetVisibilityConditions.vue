@@ -9,15 +9,15 @@
                 <div v-show="dropzoneTopVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
                 <div
                     class="p-col-12 form-list-item-dropzone"
-                    :class="[dropzoneTopVisible[index] ? 'form-list-item-dropzone-active' : '', visibilityConditionsDisabled ? 'icon-disabled' : '']"
+                    :class="[dropzoneTopVisible[index] ? 'form-list-item-dropzone-active' : '']"
                     @drop.stop="onDropComplete($event, 'before', index)"
                     @dragover.prevent
                     @dragenter.prevent="displayDropzone('top', index)"
                     @dragleave.prevent="hideDropzone('top', index)"
                 ></div>
-                <div class="p-col-12 p-grid" :draggable="true" @dragstart.stop="onDragStart($event, index)">
+                <div class="p-col-12 p-grid" :draggable="!visibilityConditionsDisabled" @dragstart.stop="onDragStart($event, index)">
                     <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center">
-                        <i class="pi pi-th-large kn-cursor-pointer"></i>
+                        <i class="pi pi-th-large kn-cursor-pointer" :class="[visibilityConditionsDisabled ? 'icon-disabled' : '']"></i>
                     </div>
                     <div class="p-col-11 p-grid p-ai-center">
                         <div class="p-col-12 p-grid p-ai-center p-pt-1">
@@ -37,17 +37,17 @@
                                 </Dropdown>
                             </div>
                             <div v-if="visibilityCondition.condition.type === 'variable'" class="p-col-11 p-md-7 p-grid p-ai-center p-p-2">
-                                <div class="p-col-12 p-md-4 p-pt-3">
+                                <div class="p-col-12 p-md-4 p-d-flex p-flex-column p-px-2 p-pt-3">
                                     <label class="kn-material-input-label">{{ $t('common.variable') }}</label>
                                     <Dropdown class="kn-material-input" v-model="visibilityCondition.condition.variable" :options="variables" optionValue="name" optionLabel="name" :disabled="visibilityConditionsDisabled" @change="onVariabeSelected(visibilityCondition)"> </Dropdown>
                                 </div>
-                                <div class="p-col-12 p-md-2 p-d-flex p-flex-column p-px-2 p-pt-3">
+                                <div class="p-col-12 p-md-3 p-d-flex p-flex-column p-px-2 p-pt-3">
                                     <label class="kn-material-input-label">{{ $t('common.operator') }}</label>
                                     <Dropdown class="kn-material-input" v-model="visibilityCondition.condition.operator" :options="descriptor.visibilityConditionOperators" optionValue="value" optionLabel="label" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged">
                                     </Dropdown>
                                 </div>
-                                <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-fluid p-px-4 p-pt-1">
-                                    <label class="kn-material-input-label p-mb-2">{{ $t('common.value') }}</label>
+                                <div class="p-col-12 p-md-5 p-d-flex p-flex-column p-px-2 p-pt-3">
+                                    <label class="kn-material-input-label p-pb-1">{{ $t('common.value') }}</label>
                                     <InputText class="kn-material-input p-inputtext-sm" v-model="visibilityCondition.condition.value" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged" />
                                 </div>
                             </div>
