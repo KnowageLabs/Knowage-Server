@@ -1,35 +1,38 @@
 <template>
-    <div v-if="paddingStyleModel">
-        <div class="p-d-flex p-flex-row p-ai-center p-mt-2 p-mb-4">
+    <div v-if="paddingStyleModel" class="p-grid p-ai-center p-p-4">
+        <div class="p-col-12 p-d-flex p-flex-row p-ai-center p-pt-2 p-pb-4">
             <div class="kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.padding.enablePadding') }}</label>
                 <InputSwitch v-model="paddingStyleModel.enabled" @change="paddingStyleChanged"></InputSwitch>
             </div>
         </div>
 
-        <div class="p-d-flex p-flex-row p-ai-center">
-            <i
-                :class="paddingStyleModel.properties.unlinked ? 'fa fa-link' : 'fa fa-unlink'"
-                class="kn-cursor-pointer p-mr-2"
-                v-tooltip="paddingStyleModel.properties.unlinked ? $t('dashboard.widgetEditor.padding.linkAllHint') : $t('dashboard.widgetEditor.padding.unlinkAllHint')"
-                @click="onLinkIconClicked"
-            ></i>
-            <div id="padding-left-container" class="p-d-flex p-flex-column kn-flex p-mx-2">
+        <div class="p-col-12 p-grid p-ai-center">
+            <div class="p-d-flex p-jc-center p-ai-center">
+                <i
+                    :class="paddingStyleModel.properties.unlinked ? 'fa fa-link' : 'fa fa-unlink'"
+                    class="kn-cursor-pointer p-mr-2"
+                    v-tooltip="paddingStyleModel.properties.unlinked ? $t('dashboard.widgetEditor.padding.linkAllHint') : $t('dashboard.widgetEditor.padding.unlinkAllHint')"
+                    @click="onLinkIconClicked"
+                ></i>
+            </div>
+
+            <div id="padding-left-container" class="p-col-11 p-md-5 p-lg-2 p-d-flex p-flex-column kn-flex p-px-2">
                 <label class="kn-material-input-label p-mr-2">{{ paddingStyleModel.properties.unlinked ? $t('dashboard.widgetEditor.padding.paddingLeft') : $t('dashboard.widgetEditor.padding.title') }}</label>
                 <InputText class="kn-material-input p-inputtext-sm" v-model="paddingStyleModel.properties['padding-left']" :disabled="paddingStyleDisabled" @change="onPaddingLeftInputChange" />
                 <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
-            <div class="p-d-flex p-flex-column kn-flex p-mx-2" v-if="paddingStyleModel.properties.unlinked">
+            <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-px-2" v-if="paddingStyleModel.properties.unlinked">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.padding.paddingTop') }}</label>
                 <InputText class="kn-material-input p-inputtext-sm" v-model="paddingStyleModel.properties['padding-top']" :disabled="paddingStyleDisabled" @change="paddingStyleChanged" />
                 <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
-            <div class="p-d-flex p-flex-column kn-flex p-mx-2" v-if="paddingStyleModel.properties.unlinked">
+            <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-px-2" v-if="paddingStyleModel.properties.unlinked">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.padding.paddingRight') }}</label>
                 <InputText class="kn-material-input p-inputtext-sm" v-model="paddingStyleModel.properties['padding-right']" :disabled="paddingStyleDisabled" @change="paddingStyleChanged" />
                 <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>
             </div>
-            <div class="p-d-flex p-flex-column kn-flex p-mx-2" v-if="paddingStyleModel.properties.unlinked">
+            <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-px-2" v-if="paddingStyleModel.properties.unlinked">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.padding.paddingBottom') }}</label>
                 <InputText class="kn-material-input p-inputtext-sm" v-model="paddingStyleModel.properties['padding-bottom']" :disabled="paddingStyleDisabled" @change="paddingStyleChanged" />
                 <small>{{ $t('dashboard.widgetEditor.inputHintForPixels') }}</small>

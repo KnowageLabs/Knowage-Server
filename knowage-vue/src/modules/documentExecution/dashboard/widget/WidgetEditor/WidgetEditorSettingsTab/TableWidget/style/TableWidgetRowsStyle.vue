@@ -1,29 +1,29 @@
 <template>
-    <div v-if="rowsStyleModel">
-        <div class="p-d-flex p-flex-row p-ai-center">
-            <div class="p-d-flex p-flex-column kn-flex p-mb-2">
+    <div v-if="rowsStyleModel" class="p-grid p-ai-center p-p-4">
+        <div class="p-col-12 p-grid p-ai-center">
+            <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-pb-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('common.height') }}</label>
-                <InputNumber class="kn-material-input p-inputtext-sm" v-model="rowsStyleModel.height" @input="rowsStyleChanged" />
+                <InputNumber class="kn-material-input p-inputtext-sm" v-model="rowsStyleModel.height" @blur="rowsStyleChanged" />
             </div>
-            <div class="p-d-flex p-flex-row p-jc-end kn-flex p-mx-4">
+            <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-row p-jc-md-end p-px-4">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.rows.multiselectable') }}</label>
                 <InputSwitch v-model="rowsStyleModel.multiselectable" @change="rowsStyleChanged"></InputSwitch>
             </div>
-            <div class="kn-flex">
+            <div class="p-col-12 p-md-12 p-lg-6">
                 <WidgetEditorColorPicker :initialValue="rowsStyleModel.selectionColor" :label="$t('dashboard.widgetEditor.rows.selectionColor')" :disabled="!rowsStyleModel.multiselectable" @change="onSelectionColorChanged"></WidgetEditorColorPicker>
             </div>
         </div>
-        <div class="p-d-flex p-flex-row p-ai-center p-m-4">
+        <div class="p-col-12 p-grid p-ai-center p-p-4">
             <div class="p-d-flex p-flex-row kn-flex">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.rows.enabledAlternatedRows') }}</label>
                 <InputSwitch v-model="rowsStyleModel.alternatedRows.enabled" @change="rowsStyleChanged"></InputSwitch>
             </div>
         </div>
-        <div class="p-d-flex p-flex-row p-ai-center">
-            <div class="kn-flex p-mx-2">
+        <div class="p-col-12 p-grid p-ai-center">
+            <div class="p-col-12 p-md-6 p-px-2">
                 <WidgetEditorColorPicker :initialValue="rowsStyleModel.alternatedRows.evenBackgroundColor" :label="$t('dashboard.widgetEditor.rows.alternatedRowsEven')" :disabled="!rowsStyleModel.alternatedRows.enabled" @change="onBackroundColorChanged($event, 'even')"></WidgetEditorColorPicker>
             </div>
-            <div class="kn-flex p-mx-2">
+            <div class="p-col-12 p-md-6 p-px-2">
                 <WidgetEditorColorPicker :initialValue="rowsStyleModel.alternatedRows.oddBackgroundColor" :label="$t('dashboard.widgetEditor.rows.alternatedRowsOdd')" :disabled="!rowsStyleModel.alternatedRows.enabled" @change="onBackroundColorChanged($event, 'odd')"></WidgetEditorColorPicker>
             </div>
         </div>

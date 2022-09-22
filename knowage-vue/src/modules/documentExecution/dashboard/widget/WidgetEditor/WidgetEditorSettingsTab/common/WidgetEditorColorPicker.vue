@@ -51,6 +51,6 @@ export default defineComponent({
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
-    min-width: 300px;
+    min-width: 100px;
 }
 </style>
