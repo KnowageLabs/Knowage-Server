@@ -207,8 +207,8 @@ export interface ITableWidgetPagination {
 
 export interface ITableWidgetStyle {
     borders: ITableWidgetBordersStyle,
-    columns: ITableWidgetColumnStyle[],
-    columnGroups: ITableWidgetColumnStyle[],
+    columns: ITableWidgetColumnStyles,
+    columnGroups: ITableWidgetColumnStyles,
     headers: ITawbleWidgetHeadersStyle,
     padding: ITableWidgetPaddingStyle,
     rows: ITableWidgetRowsStyle,
@@ -227,6 +227,11 @@ export interface ITableWidgetBordersStyle {
         "border-width": string,
         "border-color": string
     }
+}
+
+export interface ITableWidgetColumnStyles {
+    enabled: boolean,
+    styles: ITableWidgetColumnStyle[]
 }
 
 export interface ITableWidgetColumnStyle {

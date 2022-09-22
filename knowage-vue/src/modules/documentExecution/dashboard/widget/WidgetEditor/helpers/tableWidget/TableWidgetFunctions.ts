@@ -22,7 +22,7 @@ export const removeColumnFromModel = (widgetModel: IWidget, column: IWidgetColum
     removeColumnFromSubmodel(column, widgetModel.settings.configuration.columnGroups.groups, 'columns', 'columnRemovedFromColumnGroups', false)
     removeColumnFromSubmodel(column, widgetModel.settings.visualization.visualizationTypes.types, 'target', 'columnRemovedFromVisibilityTypes', true)
     removeColumnFromSubmodel(column, widgetModel.settings.visualization.visibilityConditions.conditions, 'target', 'columnRemovedFromVisibilityConditions', false)
-    removeColumnFromSubmodel(column, widgetModel.settings.style.columns, 'target', 'columnRemovedFromColumnStyle', true)
+    removeColumnFromSubmodel(column, widgetModel.settings.style.columns.styles, 'target', 'columnRemovedFromColumnStyle', true)
     removeColumnFromSubmodel(column, widgetModel.settings.conditionalStyles.conditions, 'target', 'columnRemovedFromConditionalStyles', false)
     removeColumnFromSubmodel(column, widgetModel.settings.tooltips, 'target', 'columnRemovedFromTooltips', true)
     removeColumnFromCrossNavigation(widgetModel, column)
@@ -65,7 +65,7 @@ const removeColumnFromCrossNavigation = (widgetModel: IWidget, column: IWidgetCo
 
 export const removeColumnGroupFromModel = (widgetModel: IWidget, columnGroup: ITableWidgetColumnGroup) => {
     let removed = false
-    for (let i = widgetModel.settings.style.columnGroups.length - 1; i >= 0; i--) {
+    for (let i = widgetModel.settings.style.columnGroups.styles.length - 1; i >= 0; i--) {
         for (let j = widgetModel.settings.style.columnGroups[i].target.length; j >= 0; j--) {
             const tempTarget = widgetModel.settings.style.columnGroups[i].target[j]
             console.log(columnGroup.id + ' === ' + tempTarget)
@@ -74,7 +74,7 @@ export const removeColumnGroupFromModel = (widgetModel: IWidget, columnGroup: IT
                 removed = true
             }
         }
-        if (widgetModel.settings.style.columnGroups[i].target.length === 0) widgetModel.settings.style.columnGroups.splice(i, 1)
+        if (widgetModel.settings.style.columnGroups[i].target.length === 0) widgetModel.settings.style.columnGroups.styles.splice(i, 1)
     }
     if (removed) emitter.emit('columnGroupRemoved')
 }

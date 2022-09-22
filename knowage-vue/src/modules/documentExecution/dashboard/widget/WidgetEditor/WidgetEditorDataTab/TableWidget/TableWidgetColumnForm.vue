@@ -87,7 +87,7 @@ export default defineComponent({
         },
         columnTypeChanged() {
             if (!this.column) return
-            this.column.fieldType === 'ATTRIBUTE' ? delete this.column.aggregation : (this.column.aggregation = 'NONE')
+            this.column.aggregation = 'NONE'
             if (this.column.filter) {
                 this.column.filter.operator = ''
                 this.column.filter.value = ''

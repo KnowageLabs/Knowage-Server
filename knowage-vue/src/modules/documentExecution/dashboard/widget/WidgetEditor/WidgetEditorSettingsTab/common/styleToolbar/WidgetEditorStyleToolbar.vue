@@ -1,5 +1,5 @@
 <template>
-    <div class="widget-editor-toolbar p-d-flex p-flex-row p-ai-center kn-flex">
+    <div class="widget-editor-toolbar p-d-flex p-flex-md-row p-ai-md-center p-flex-column kn-flex">
         <div v-for="(option, index) in options" :key="index" class="kn-flex">
             <WidgetEditorStyleIcon :option="option" :propModel="model" :disabled="disabled" @change="onChange" @openIconPicker="iconPickerDialogVisible = true"></WidgetEditorStyleIcon>
         </div>

@@ -1,4 +1,4 @@
-import { ITableWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyle, ITableWidgetConditionalStyles, ITableWidgetCrossNavigation, ITableWidgetCustomMessages, ITableWidgetExports, ITableWidgetHeaders, ITableWidgetLinks, ITableWidgetPaddingStyle, ITableWidgetPagination, ITableWidgetPreview, ITableWidgetResponsive, ITableWidgetRows, ITableWidgetRowsStyle, ITableWidgetSelection, ITableWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
+import { ITableWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyle, ITableWidgetColumnStyles, ITableWidgetConditionalStyles, ITableWidgetCrossNavigation, ITableWidgetCustomMessages, ITableWidgetExports, ITableWidgetHeaders, ITableWidgetLinks, ITableWidgetPaddingStyle, ITableWidgetPagination, ITableWidgetPreview, ITableWidgetResponsive, ITableWidgetRows, ITableWidgetRowsStyle, ITableWidgetSelection, ITableWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
 
 
 export const getDefaultConditionalStyles = () => {
@@ -126,18 +126,22 @@ export const getDefaultBordersStyle = () => {
 }
 
 export const getDefaultColumnStyles = () => {
-    return [{
-        target: 'all',
-        properties: {
-            "background-color": '',
-            color: '',
-            "justify-content": '',
-            "font-size": '',
-            "font-family": '',
-            "font-style": '',
-            "font-weight": ''
-        }
-    }] as ITableWidgetColumnStyle[]
+
+    return {
+        enabled: true,
+        styles: [{
+            target: 'all',
+            properties: {
+                "background-color": '',
+                color: '',
+                "justify-content": '',
+                "font-size": '',
+                "font-family": '',
+                "font-style": '',
+                "font-weight": ''
+            }
+        }]
+    } as ITableWidgetColumnStyles
 }
 
 export const getDefaultHeadersStyle = () => {

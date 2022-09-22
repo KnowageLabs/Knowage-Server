@@ -75,7 +75,7 @@ const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
         }
     }
 
-    if (hasStyle) formattedWidget.settings.style.columns.push({
+    if (hasStyle) formattedWidget.settings.style.columns.styles.push({
         target: [getColumnId(tempColumn.name)], properties: {
             "background-color": tempColumn.style['background-color'] ?? "rgb(0, 0, 0)",
             color: tempColumn.style.color ?? 'rgb(255, 255, 255)',
