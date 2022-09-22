@@ -3,6 +3,7 @@
         <div style="overflow: auto; height: 500px; width: 400px">
             {{ propWidget }}
         </div>
+        <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="logModel" />
 
         <TableWidget v-if="propWidget.settings" :propWidget="propWidget" style="flex: 0.5; min-width: 500px; min-height: 250px" />
     </div>
@@ -39,6 +40,10 @@ export default defineComponent({
     created() {},
     mounted() {},
 
-    methods: {}
+    methods: {
+        logModel() {
+            console.log('MODEL ------------- \n', this.propWidget)
+        }
+    }
 })
 </script>
