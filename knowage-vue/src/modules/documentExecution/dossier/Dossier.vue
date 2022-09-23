@@ -185,6 +185,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.jsonTemplate = { ...response.data }
                 })
+                .catch((err) => console.log(err))
                 .finally(() => {
                     this.loading = false
                 })
