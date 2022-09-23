@@ -1,5 +1,5 @@
 <template>
-    <div v-if="linksModel" class="p-grid">
+    <div v-if="linksModel" class="p-grid p-p-4">
         <div class="p-col-12">
             <InputSwitch v-model="linksModel.enabled"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.interactions.enableLinkNavigation') }}</label>
