@@ -1,4 +1,19 @@
-export const getWidgetStyleByType = (propWidget: any, styleType: string) => {
+import { IWidget, ITableWidgetColumnGroup } from '../../Dashboard'
+
+export const getColumnGroup = (propWidget: IWidget, col: ITableWidgetColumnGroup) => {
+    var modelGroups = propWidget.settings.configuration.columnGroups.groups
+    if (propWidget.settings.configuration.columnGroups.enabled && modelGroups && modelGroups.length > 0) {
+        for (var k in modelGroups) {
+            if (modelGroups[k].columns.includes(col.id)) {
+                return modelGroups[k]
+            }
+        }
+    } else return false
+}
+
+// STYLES ------------------------------------
+
+export const getWidgetStyleByType = (propWidget: IWidget, styleType: string) => {
     const styleSettings = propWidget.settings.style[styleType]
     if (styleSettings.enabled) {
         const styleString = Object.entries(styleSettings.properties ?? styleSettings)
@@ -8,24 +23,9 @@ export const getWidgetStyleByType = (propWidget: any, styleType: string) => {
     } else return ''
 }
 
-export const getRowStyle = (params: any) => {
-    console.log('PARAMS _----------------', params)
-    var rowStyles = params.propWidget.settings.style.rows
-    var rowIndex = params.node.rowIndex
-
-    if (rowStyles.alternatedRows && rowStyles.alternatedRows.enabled) {
-        if (rowStyles.alternatedRows.oddBackgroundColor && rowIndex % 2 === 0) {
-            return { background: rowStyles.alternatedRows.oddBackgroundColor }
-        }
-        if (rowStyles.alternatedRows.evenBackgroundColor && rowIndex % 2 != 0) {
-            return { background: rowStyles.alternatedRows.evenBackgroundColor }
-        }
-    } else return false
-}
-
-export const getColumnConditionalStyles = (propWidget: any, colId: string, valueToCompare: any, returnString?: boolean) => {
+export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, valueToCompare: any, returnString?: boolean) => {
     var conditionalStyles = propWidget.settings.conditionalStyles
-    var styleString = false as any
+    var styleString = null as any
 
     var columnConditionalStyles = conditionalStyles.conditions.filter((condition) => condition.target.includes(colId))
     if (columnConditionalStyles.length > 0) {
@@ -38,13 +38,13 @@ export const getColumnConditionalStyles = (propWidget: any, colId: string, value
                         .map(([k, v]) => `${k}:${v}`)
                         .join(';')
                 }
-                break
+                // break
             }
         }
     }
     return styleString
 }
-const isConditionMet = (condition, valueToCompare) => {
+export const isConditionMet = (condition, valueToCompare) => {
     var fullfilledCondition = false
     switch (condition.operator) {
         case '==':

@@ -7,7 +7,7 @@
 /**
  * ! this component will be in charge of managing the widget editing preview.
  */
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { emitter } from '../../DashboardHelpers'
 import mock from '../../dataset/DatasetEditorTestMocks.json'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
@@ -19,15 +19,16 @@ import SummaryRowRenderer from './SummaryRowRenderer.vue'
 import HeaderGroupRenderer from './HeaderGroupRenderer.vue'
 import TooltipRenderer from './TooltipRenderer.vue'
 import CellRenderer from './CellRenderer.vue'
-import { getWidgetStyleByType, getColumnConditionalStyles } from './TableWidgetHelper'
+import { getWidgetStyleByType, getColumnConditionalStyles, isConditionMet } from './TableWidgetHelper'
+import { IWidget } from '../../Dashboard'
 
 export default defineComponent({
     name: 'table-widget',
     components: { AgGridVue, HeaderRenderer, SummaryRowRenderer, HeaderGroupRenderer, TooltipRenderer },
     props: {
         propWidget: {
-            required: true,
-            type: Object
+            type: Object as PropType<IWidget>,
+            required: true
         }
     },
     data() {
@@ -163,7 +164,6 @@ export default defineComponent({
 
                     if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && thisColumn.columnName.toLowerCase() === responseFields[responseField].header) || thisColumn.columnName.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
                         this.columnsNameArray.push(responseFields[responseField].name)
-                        //TODO: WHat happens when column is hidden?
                         var tempCol = {
                             hide: this.getColumnVisibilityCondition(this.propWidget.columns[datasetColumn].id),
                             colId: this.propWidget.columns[datasetColumn].id,
@@ -174,15 +174,14 @@ export default defineComponent({
                             headerComponentParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget },
                             cellRenderer: CellRenderer,
                             cellRendererParams: { colId: this.propWidget.columns[datasetColumn].id, propWidget: this.propWidget }
-                            // cellRendererParams: { styleString: this.getColumnStyle(this.propWidget.columns[datasetColumn].id), conditionalStyle: this.getColumnConditionalStyle(this.propWidget.columns[datasetColumn].id) }
                         } as any
 
                         if (tempCol.measure === 'MEASURE') tempCol.aggregationSelected = this.propWidget.columns[datasetColumn].aggregation
                         // tempCol.pinned = this.propWidget.columns[datasetColumn].pinned
 
-                        if (this.propWidget.columns[datasetColumn].isCalculated) {
-                            tempCol.isCalculated = this.propWidget.columns[datasetColumn].isCalculated
-                        }
+                        // if (this.propWidget.columns[datasetColumn].isCalculated) {
+                        //     tempCol.isCalculated = this.propWidget.columns[datasetColumn].isCalculated
+                        // }
 
                         //ROWSPAN MANAGEMENT
                         if (this.propWidget.settings.configuration.rows.rowSpan.enabled && this.propWidget.settings.configuration.rows.rowSpan.column === this.propWidget.columns[datasetColumn].id) {
@@ -208,10 +207,7 @@ export default defineComponent({
                                     return tempRows[params.rowIndex].span > 1
                                 }
                             }
-                            // tempCol.cellStyle = this.getRowStyle
                         }
-
-                        // tempCol.cellRendererParams.condStyles = this.getColumnConditionalStyle
 
                         // SUMMARY ROW  -----------------------------------------------------------------
                         if (this.propWidget.settings.configuration.summaryRows.enabled) {
@@ -258,7 +254,6 @@ export default defineComponent({
                             tempCol.tooltipComponent = TooltipRenderer
                             tempCol.tooltipField = tempCol.field
                             tempCol.headerTooltip = tooltipConfig.header.enabled ? tooltipConfig.header.text : null
-
                             tempCol.tooltipComponentParams = { tooltipConfig: tooltipConfig }
                         } else {
                             tempCol.headerTooltip = null
@@ -318,9 +313,8 @@ export default defineComponent({
                 for (let i = 0; i < Object.entries(params.data).length; i++) {
                     var element = Object.entries(params.data)[i]
                     if (element[0].includes('column_')) {
-                        if (getColumnConditionalStyles(this.propWidget, this.propWidget.columns[i].id, element[1], false)) {
-                            return getColumnConditionalStyles(this.propWidget, this.propWidget.columns[i].id, element[1], false)
-                        }
+                        var conditionalColumnStyle = getColumnConditionalStyles(this.propWidget, this.propWidget.columns[i].id!, element[1], false)
+                        if (conditionalColumnStyle) return conditionalColumnStyle
                     }
                 }
             }
@@ -334,67 +328,23 @@ export default defineComponent({
                 }
             }
         },
-        getColumnStyle(colId) {
-            var columnStyles = this.propWidget.settings.style.columns
-            var columnStyleString = null as any
-            columnStyleString = Object.entries(columnStyles[0].properties)
-                .map(([k, v]) => `${k}:${v}`)
-                .join(';')
-
-            columnStyles.forEach((group) => {
-                if (group.target.includes(colId)) {
-                    columnStyleString = Object.entries(group.properties)
-                        .map(([k, v]) => `${k}:${v}`)
-                        .join(';')
-                }
-            })
-
-            return columnStyleString
-        },
         getColumnVisibilityCondition(colId) {
             var visCond = this.propWidget.settings.visualization.visibilityConditions
             var columnHidden = false as boolean
 
             if (visCond.enabled) {
-                var colConditions = visCond.filter((condition) => condition.target.includes(colId))
+                var colConditions = visCond.conditions.filter((condition) => condition.target.includes(colId))
                 //We always take the 1st condition as a priority for the column and use that one.
                 if (colConditions[0]) {
                     if (colConditions[0].condition.type === 'always') {
                         columnHidden = colConditions[0].hide
                     } else {
-                        this.formatVisibilityCondition(colConditions[0].condition) ? (columnHidden = colConditions[0].hide) : ''
+                        isConditionMet(colConditions[0].condition, colConditions[0].condition.variableValue) ? (columnHidden = colConditions[0].hide) : ''
                     }
                 }
             }
 
             return columnHidden
-        },
-
-        formatVisibilityCondition(condition) {
-            var operators = {
-                '>': function (a, b) {
-                    return a > b
-                },
-                '<': function (a, b) {
-                    return a < b
-                },
-                '==': function (a, b) {
-                    return a == b
-                },
-                '<=': function (a, b) {
-                    return a <= b
-                },
-                '=<': function (a, b) {
-                    return a >= b
-                },
-                '!=': function (a, b) {
-                    return a != b
-                },
-                IN: function (a, b) {
-                    return b.split(',').indexOf(a) != -1
-                }
-            }
-            return operators[condition.operator](condition.value, condition.variableValue)
         }
     }
 })
