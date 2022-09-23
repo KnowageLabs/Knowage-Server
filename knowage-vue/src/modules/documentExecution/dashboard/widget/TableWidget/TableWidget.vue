@@ -19,7 +19,7 @@ import SummaryRowRenderer from './SummaryRowRenderer.vue'
 import HeaderGroupRenderer from './HeaderGroupRenderer.vue'
 import TooltipRenderer from './TooltipRenderer.vue'
 import CellRenderer from './CellRenderer.vue'
-import { getWidgetStyleByType, getColumnConditionalStyles } from './TableWidgetHelper'
+import { getWidgetStyleByType, getColumnConditionalStyles, isConditionMet } from './TableWidgetHelper'
 import { IWidget } from '../../Dashboard'
 
 export default defineComponent({
@@ -254,7 +254,6 @@ export default defineComponent({
                             tempCol.tooltipComponent = TooltipRenderer
                             tempCol.tooltipField = tempCol.field
                             tempCol.headerTooltip = tooltipConfig.header.enabled ? tooltipConfig.header.text : null
-
                             tempCol.tooltipComponentParams = { tooltipConfig: tooltipConfig }
                         } else {
                             tempCol.headerTooltip = null
@@ -340,39 +339,12 @@ export default defineComponent({
                     if (colConditions[0].condition.type === 'always') {
                         columnHidden = colConditions[0].hide
                     } else {
-                        this.formatVisibilityCondition(colConditions[0].condition) ? (columnHidden = colConditions[0].hide) : ''
+                        isConditionMet(colConditions[0].condition, colConditions[0].condition.variableValue) ? (columnHidden = colConditions[0].hide) : ''
                     }
                 }
             }
 
             return columnHidden
-        },
-
-        formatVisibilityCondition(condition) {
-            var operators = {
-                '>': function (a, b) {
-                    return a > b
-                },
-                '<': function (a, b) {
-                    return a < b
-                },
-                '==': function (a, b) {
-                    return a == b
-                },
-                '<=': function (a, b) {
-                    return a <= b
-                },
-                '=<': function (a, b) {
-                    return a >= b
-                },
-                '!=': function (a, b) {
-                    return a != b
-                },
-                IN: function (a, b) {
-                    return b.split(',').indexOf(a) != -1
-                }
-            }
-            return operators[condition.operator](condition.value, condition.variableValue)
         }
     }
 })

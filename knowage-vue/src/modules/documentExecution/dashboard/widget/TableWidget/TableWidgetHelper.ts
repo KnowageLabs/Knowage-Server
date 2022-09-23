@@ -44,7 +44,7 @@ export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, v
     }
     return styleString
 }
-const isConditionMet = (condition, valueToCompare) => {
+export const isConditionMet = (condition, valueToCompare) => {
     var fullfilledCondition = false
     switch (condition.operator) {
         case '==':

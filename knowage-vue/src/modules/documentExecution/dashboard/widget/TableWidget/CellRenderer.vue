@@ -1,6 +1,6 @@
 <template>
     <div class="custom-cell-container p-d-flex kn-height-full" :style="getConditionalStyle() ?? getColumnStyle()">
-        <div class="custom-cell-label">{{ getConditionalStyle() }}</div>
+        <div class="custom-cell-label">{{ params.value }}</div>
     </div>
 </template>
 
