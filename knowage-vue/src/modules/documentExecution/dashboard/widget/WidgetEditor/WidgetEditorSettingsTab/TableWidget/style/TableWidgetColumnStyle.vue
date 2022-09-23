@@ -148,7 +148,7 @@ export default defineComponent({
         },
         removeColumnStyle(index: number) {
             if (!this.columnStyles) return
-            ;(this.columnStyles[index].target as string[]).forEach((target: string) =>
+            ;(this.columnStyles.styles[index].target as string[]).forEach((target: string) =>
                 this.availableColumnOptions.push({
                     id: target,
                     alias: this.widgetColumnsAliasMap[target]
