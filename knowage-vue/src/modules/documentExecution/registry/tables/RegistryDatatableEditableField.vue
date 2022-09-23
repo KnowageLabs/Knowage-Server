@@ -1,15 +1,27 @@
 <template>
     <InputText
         class="kn-material-input"
-        v-if="column.editorType !== 'COMBO' && column.columnInfo.type !== 'date' && column.columnInfo.type !== 'timestamp'"
-        :type="setDataType(column.columnInfo.type)"
+        v-if="column && column.editorType !== 'COMBO' && column.columnInfo.type !== 'date' && column.columnInfo.type !== 'timestamp' && getDataType(column.columnInfo.type) === 'text'"
+        :type="'text'"
         :step="getStep(column.columnInfo.type)"
         v-model="row[column.field]"
         @input="$emit('rowChanged', row)"
     />
+    <InputNumber
+        class="kn-material-input p-inputtext-sm"
+        v-if="column && column.editorType !== 'COMBO' && column.columnInfo.type !== 'date' && column.columnInfo.type !== 'timestamp' && getDataType(column.columnInfo.type) === 'number'"
+        v-model="row[column.field]"
+        :useGrouping="useGrouping"
+        :locale="locale"
+        :minFractionDigits="minFractionDigits"
+        :maxFractionDigits="maxFractionDigits"
+        :disabled="!column.isEditable"
+        @input="$emit('rowChanged', row)"
+    >
+    </InputNumber>
     <Dropdown
         class="kn-material-input"
-        v-else-if="column.editorType === 'COMBO'"
+        v-else-if="column && column.editorType === 'COMBO'"
         v-model="row[column.field]"
         :options="columnOptions && columnOptions[column.field] ? columnOptions[column.field][row[column.dependences]] : []"
         optionValue="column_1"
@@ -19,11 +31,10 @@
         :filter="true"
     >
     </Dropdown>
-    <!-- Calendar -->
     <Calendar
         :style="registryDatatableDescriptor.pivotStyles.inputFields"
         class="pivot-calendar"
-        v-else-if="column.columnInfo.type === 'date' || column.columnInfo.type === 'timestamp'"
+        v-else-if="column && (column.columnInfo.type === 'date' || column.columnInfo.type === 'timestamp')"
         v-model="row[column.field]"
         :showTime="column.columnInfo.type === 'timestamp'"
         :showSeconds="column.columnInfo.type === 'timestamp'"
@@ -35,16 +46,17 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { setInputDataType, getInputStep } from '@/helpers/commons/tableHelpers'
-import { formatDate } from '@/helpers/commons/localeHelper'
+import { setInputDataType, getInputStep, formatNumber } from '@/helpers/commons/tableHelpers'
+import { formatDate, getLocale } from '@/helpers/commons/localeHelper'
 import { luxonFormatDate, primeVueDate } from '@/helpers/commons/localeHelper'
 import Calendar from 'primevue/calendar'
 import Dropdown from 'primevue/dropdown'
+import InputNumber from 'primevue/inputnumber'
 import registryDatatableDescriptor from './RegistryDatatableDescriptor.json'
 
 export default defineComponent({
     name: 'registry-datatable-editable-field',
-    components: { Calendar, Dropdown },
+    components: { Calendar, Dropdown, InputNumber },
     props: { column: { type: Object }, propRow: { type: Object }, comboColumnOptions: { type: Array } },
     emits: ['rowChanged', 'dropdownChanged', 'dropdownOpened'],
     data() {
@@ -52,7 +64,11 @@ export default defineComponent({
             registryDatatableDescriptor,
             row: {} as any,
             columnOptions: [] as any[],
-            options: [] as any[]
+            options: [] as any[],
+            useGrouping: false,
+            locale: '',
+            minFractionDigits: 2,
+            maxFractionDigits: 2
         }
     },
     watch: {
@@ -67,6 +83,7 @@ export default defineComponent({
         }
     },
     created() {
+        this.setDefaultLocale()
         this.loadRow()
         this.loadColumnOptions()
     },
@@ -78,15 +95,31 @@ export default defineComponent({
     methods: {
         loadRow() {
             this.row = this.propRow
-            if (this.row[this.column?.field]) {
-                if (this.column?.columnInfo.type === 'date' && typeof this.row[this.column.field] === 'string') {
+            if (this.row[this.column?.field] && this.column) {
+                if (this.column.columnInfo.type === 'date' && typeof this.row[this.column.field] === 'string') {
                     this.row[this.column.field] = new Date(luxonFormatDate(this.row[this.column.field], 'yyyy-MM-dd', 'yyyy-MM-dd'))
-                } else if (this.column?.columnInfo.type === 'timestamp' && typeof this.row[this.column.field] === 'string') {
+                } else if (this.column.columnInfo.type === 'timestamp' && typeof this.row[this.column.field] === 'string') {
                     this.row[this.column.field] = new Date(luxonFormatDate(this.row[this.column.field], 'yyyy-MM-dd HH:mm:ss.S', 'yyyy-MM-dd HH:mm:ss.S'))
+                } else if (this.column.editorType !== 'COMBO' && this.column.columnInfo.type !== 'date' && this.column.columnInfo.type !== 'timestamp' && this.getDataType(this.column.columnInfo.type) === 'number') {
+                    this.formatNumberConfiguration()
                 }
             }
         },
-        setDataType(columnType: string) {
+        formatNumberConfiguration() {
+            const configuration = formatNumber(this.column, this.row)
+            if (configuration) {
+                this.useGrouping = configuration.useGrouping
+                if (configuration.locale) this.locale = configuration.locale
+                else this.setDefaultLocale()
+                this.minFractionDigits = configuration.minFractionDigits
+                this.maxFractionDigits = configuration.maxFractionDigits
+            }
+        },
+        setDefaultLocale() {
+            const locale = getLocale()
+            this.locale = locale ? locale.replace('_', '-') : ''
+        },
+        getDataType(columnType: string) {
             return setInputDataType(columnType)
         },
         getStep(dataType: string) {

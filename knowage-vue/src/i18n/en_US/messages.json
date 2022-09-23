@@ -764,6 +764,7 @@
             "column": "Column/s",
             "filter": "Filter",
             "filters": "Filters",
+            "numberFormatNotSupported": "Number format is not supported.",
             "select": "Select",
             "title": "Registry Document",
             "warning": "Warning",

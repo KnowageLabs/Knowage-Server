@@ -21,3 +21,23 @@ export function getInputStep(dataType: string) {
         return 'any'
     }
 }
+
+export const formatNumber = (column: any, row: any) => {
+    const number = row[column.field]
+    switch (column.format) {
+        case '####,##':
+            return { useGrouping: false, locale: 'it-IT', minFractionDigits: 2, maxFractionDigits: 2 }
+        case '####,###':
+            return { useGrouping: false, locale: 'it-IT', minFractionDigits: 3, maxFractionDigits: 3 }
+        case '#.###,##':
+            return { useGrouping: true, locale: 'it-IT', minFractionDigits: 2, maxFractionDigits: 2 }
+        case '####':
+            return { useGrouping: false, locale: '', minFractionDigits: 0, maxFractionDigits: 0 }
+        case '####.##':
+            return { useGrouping: false, locale: 'en-US', minFractionDigits: 2, maxFractionDigits: 2 }
+        case '#,###.##':
+            return { useGrouping: true, locale: 'en-US', minFractionDigits: 2, maxFractionDigits: 2 }
+        default:
+            return null
+    }
+}

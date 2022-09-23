@@ -38,6 +38,7 @@
             >
                 <template #header>
                     <div class="table-header">
+                        <i v-if="showDefaultNumberFormatIcon(col)" v-tooltip.top="$t('documentExecution.registry.numberFormatNotSupported')" class="pi pi-exclamation-triangle kn-cursor-pointer"></i>
                         {{ col.title }}
                         <i v-if="col.isEditable && col.columnInfo?.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
                     </div>
@@ -67,7 +68,7 @@
                     <div class="p-d-flex p-flex-row" :data-test="col.field + '-body'">
                         <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo?.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                         <RegistryDatatableEditableField
-                            v-else-if="col.isEditable && (col.columnInfo?.type === 'date' || col.columnInfo?.type === 'timestamp')"
+                            v-else-if="(col.isEditable && col.columnInfo && (col.columnInfo.type === 'date' || col.columnInfo.type === 'timestamp')) || col.columnInfo?.type === 'int' || col.columnInfo?.type === 'float'"
                             :column="col"
                             :propRow="slotProps.data"
                             :comboColumnOptions="comboColumnOptions"
@@ -76,8 +77,7 @@
                             @dropdownOpened="addColumnOptions"
                         ></RegistryDatatableEditableField>
                         <div v-else-if="col.isEditable">
-                            <span v-if="(col.columnInfo?.type === 'int' || col.columnInfo?.type === 'float') && slotProps.data[col.field]">{{ getFormattedNumber(slotProps.data[col.field]) }}</span>
-                            <span v-else> {{ slotProps.data[col.field] }}</span>
+                            <span> {{ slotProps.data[col.field] }}</span>
                         </div>
 
                         <span v-else-if="!col.isEditable">
@@ -85,7 +85,6 @@
                                 {{ getFormattedDate(slotProps.data[col.field], 'yyyy-MM-dd', getCurrentLocaleDefaultDateFormat(col)) }}
                             </span>
                             <span v-else-if="slotProps.data[col.field] && col.columnInfo?.type === 'timestamp'"> {{ getFormattedDateTime(slotProps.data[col.field], { dateStyle: 'short', timeStyle: 'medium' }, true) }}</span>
-
                             <span v-else>{{ slotProps.data[col.field] }}</span>
                         </span>
                     </div>
@@ -111,6 +110,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { luxonFormatDate, formatDateWithLocale, formatNumberWithLocale, localeDate, primeVueDate } from '@/helpers/commons/localeHelper'
+import { setInputDataType } from '@/helpers/commons/tableHelpers'
 import { AxiosResponse } from 'axios'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
@@ -299,8 +299,8 @@ export default defineComponent({
         getFormattedDateTime(date: any, format?: any, keepNull?: boolean) {
             return formatDateWithLocale(date, format, keepNull)
         },
-        getFormattedNumber(number: number, precision?: number, format?: any) {
-            return formatNumberWithLocale(number, precision, format)
+        getFormattedNumber(number: number, column: any) {
+            return formatNumberWithLocale(number, undefined, null)
         },
         addColumnOptions(payload: any) {
             const column = payload.column
@@ -406,6 +406,12 @@ export default defineComponent({
                 var foundIndex = this.rows.findIndex((x) => x.id == id)
                 this.rows[foundIndex] = event.newData
             }
+        },
+        showDefaultNumberFormatIcon(column: any) {
+            if (!column || !column.columnInfo) return false
+            const inputType = setInputDataType(column.columnInfo.type)
+            const numberFormattSupported = column.format ? ['####,##', '####,###', '#.###,##', '####', '####.##', '#,###.##'].includes(column.format) : true
+            return inputType === 'number' && !numberFormattSupported
         }
     }
 })
