@@ -154,7 +154,14 @@ export default defineComponent({
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/datasets/dataset/id/${this.id}`)
                 .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0] ? { ...response.data[0] } : {}
-                    this.selectedDataset.pythonEnvironment ? (this.selectedDataset.pythonEnvironment = JSON.parse(this.selectedDataset.pythonEnvironment ? this.selectedDataset.pythonEnvironment : '{}')) : ''
+
+                    this.selectedDataset.restJsonPathAttributes ? (this.selectedDataset.restJsonPathAttributes = JSON.parse(this.selectedDataset.restJsonPathAttributes  ? this.selectedDataset.restJsonPathAttributes  : '[]')) : []
+                    this.selectedDataset.restRequestHeaders     ? (this.selectedDataset.restRequestHeaders     = JSON.parse(this.selectedDataset.restRequestHeaders      ? this.selectedDataset.restRequestHeaders      : '{}')) : {}
+
+                    const restRequestHeadersKeys = Object.keys(this.selectedDataset.restRequestHeaders)
+                    this.selectedDataset.restRequestHeaders = restRequestHeadersKeys.map((e) => ({ name: e, value: this.selectedDataset.restRequestHeaders[e] }));
+                    
+                    this.selectedDataset.pythonEnvironment      ? (this.selectedDataset.pythonEnvironment      = JSON.parse(this.selectedDataset.pythonEnvironment       ? this.selectedDataset.pythonEnvironment       : '{}')) : ''
                 })
                 .catch()
         },
@@ -236,16 +243,16 @@ export default defineComponent({
         },
         async proceedOnSaving(dsToSave) {
             this.$emit('showSavingSpinner')
-            let restRequestHeadersTemp = {}
             if (dsToSave.dsTypeCd.toLowerCase() == 'rest' || dsToSave.dsTypeCd.toLowerCase() == 'solr') {
-                for (let i = 0; i < dsToSave.restRequestHeaders.length; i++) {
-                    restRequestHeadersTemp[dsToSave.restRequestHeaders[i]['name']] = dsToSave.restRequestHeaders[i]['value']
-                }
+                dsToSave.restRequestHeaders = (dsToSave.restRequestHeaders || []).reduce((acc,curr) => {
+                    acc[curr["name"]] = curr["value"];
+                    return acc;
+                }, {});
             }
-            dsToSave['restRequestHeaders'] = JSON.stringify(restRequestHeadersTemp)
-            dsToSave['restJsonPathAttributes'] && dsToSave['restJsonPathAttributes'].length > 0 ? (dsToSave.restJsonPathAttributes = JSON.stringify(dsToSave.restJsonPathAttributes)) : (dsToSave.restJsonPathAttributes = '')
+
             dsToSave.pars ? '' : (dsToSave.pars = [])
             dsToSave.pythonEnvironment ? (dsToSave.pythonEnvironment = JSON.stringify(dsToSave.pythonEnvironment)) : ''
+
             dsToSave.meta ? (dsToSave.meta = await this.manageDatasetFieldMetadata(dsToSave.meta)) : (dsToSave.meta = [])
             dsToSave.recalculateMetadata = true
 
@@ -442,7 +449,7 @@ export default defineComponent({
                     }
                 }
                 this.previewDataset['restRequestHeaders'] = JSON.stringify(restRequestHeadersTemp)
-                this.previewDataset['restJsonPathAttributes'] && this.previewDataset['restJsonPathAttributes'].length > 0 ? (this.previewDataset.restJsonPathAttributes = JSON.stringify(this.previewDataset.restJsonPathAttributes)) : (this.previewDataset.restJsonPathAttributes = '')
+                this.previewDataset['restJsonPathAttributes'] && this.previewDataset['restJsonPathAttributes'].length > 0 ? (this.previewDataset.restJsonPathAttributes = JSON.stringify(this.previewDataset.restJsonPathAttributes)) : (this.previewDataset.restJsonPathAttributes = [])
                 this.previewDataset.pars ? '' : (this.previewDataset.pars = [])
                 this.previewDataset.pythonEnvironment ? (this.previewDataset.pythonEnvironment = JSON.stringify(this.previewDataset.pythonEnvironment)) : ''
                 this.previewDataset.meta ? (this.previewDataset.meta = await this.manageDatasetFieldMetadata(this.previewDataset.meta)) : (this.previewDataset.meta = [])

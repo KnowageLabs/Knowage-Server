@@ -213,7 +213,7 @@ export default defineComponent({
             await this.createGetTabViewDataUrl('THRESHOLD_TYPE').then((response: AxiosResponse<any>) => {
                 this.thresholdTypeList = [...response.data]
             })
-            await this.createGetTabViewDataUrl('KPI_KPI_CATEGORY').then((response: AxiosResponse<any>) => {
+            await this.createCategories('KPI_KPI_CATEGORY').then((response: AxiosResponse<any>) => {
                 this.kpiCategoryList = [...response.data]
             })
             await this.loadSelectedKpi()
@@ -222,6 +222,9 @@ export default defineComponent({
 
         createGetTabViewDataUrl(dataType: string) {
             return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/domains/listByCode/${dataType}`)
+        },
+        createCategories(dataType: string) {
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/category/listByCode/${dataType}`)
         },
         createGetKpiDataUrl(dataType: string) {
             return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/kpi/${dataType}`)

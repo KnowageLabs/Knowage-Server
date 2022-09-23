@@ -21,10 +21,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent  } from 'vue'
+import { defineComponent } from 'vue'
 import { iRule } from '../../MeasureDefinition'
 import { AxiosResponse } from 'axios'
-import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
+import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 import queryCardDescriptor from './MeasureDefinitionQueryCardDescriptor.json'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
@@ -32,10 +32,8 @@ import MeasureDefinitionPreviewDialog from './MeasureDefinitionPreviewDialog.vue
 
 export default defineComponent({
     name: 'measure-definition-query-card',
-    components: { Card, Dropdown, 
-    VCodeMirror, 
-    MeasureDefinitionPreviewDialog },
-    props: { rule: { type: Object, required: true }, datasourcesList: { type: Array, required: true }, aliases: { type: Array }, placeholders: { type: Array }, columns: { type: Array }, rows: { type: Array }, codeInput: { type: String }, preview: { type: Boolean }, activeTab: {type: Number} },
+    components: { Card, Dropdown, VCodeMirror, MeasureDefinitionPreviewDialog },
+    props: { rule: { type: Object, required: true }, datasourcesList: { type: Array, required: true }, aliases: { type: Array }, placeholders: { type: Array }, columns: { type: Array }, rows: { type: Array }, codeInput: { type: String }, preview: { type: Boolean }, activeTab: { type: Number } },
     emits: ['touched', 'queryChanged', 'loadPreview', 'closePreview'],
     data() {
         return {

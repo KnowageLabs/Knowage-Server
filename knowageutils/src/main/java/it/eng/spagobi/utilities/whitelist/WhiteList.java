@@ -72,7 +72,7 @@ public class WhiteList implements IWhiteList {
 				stream.close();
 			}
 		} catch (Exception e) {
-			LOGGER.error("Can not read white-list services from configuration file ", e);
+			LOGGER.info("Can not read white-list services from configuration file ", e);
 			return services;
 		} finally {
 			try {
