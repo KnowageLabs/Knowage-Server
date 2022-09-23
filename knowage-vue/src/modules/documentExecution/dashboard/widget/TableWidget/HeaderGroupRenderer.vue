@@ -25,17 +25,19 @@ export default defineComponent({
             var modelGroups = this.params.propWidget.settings.style.columnGroups
             var columnGroupStyleString = null as any
 
-            columnGroupStyleString = Object.entries(modelGroups[0].properties)
-                .map(([k, v]) => `${k}:${v}`)
-                .join(';')
+            if (modelGroups.enabled) {
+                columnGroupStyleString = Object.entries(modelGroups.styles[0].properties)
+                    .map(([k, v]) => `${k}:${v}`)
+                    .join(';')
 
-            modelGroups.forEach((group) => {
-                if (group.target.includes(this.params.colId)) {
-                    columnGroupStyleString = Object.entries(group.properties)
-                        .map(([k, v]) => `${k}:${v}`)
-                        .join(';')
-                }
-            })
+                modelGroups.styles.forEach((group) => {
+                    if (group.target.includes(this.params.colId)) {
+                        columnGroupStyleString = Object.entries(group.properties)
+                            .map(([k, v]) => `${k}:${v}`)
+                            .join(';')
+                    }
+                })
+            }
 
             return columnGroupStyleString
         }
