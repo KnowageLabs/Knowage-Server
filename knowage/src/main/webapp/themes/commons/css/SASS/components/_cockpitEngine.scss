@@ -1654,7 +1654,19 @@
 					opacity: 1 !important;
 				}
 			}
-		}        
+		}      
+		
+		&.loadingScreenshot {
+			#viewModeMenuSpeedDial {
+				md-fab-speed-dial {
+					md-fab-trigger {
+						.md-fab {
+							display: none !important;
+						}
+					}
+				}
+			}			
+		}
 
         .gridster-item{
         	.selectorUtilities {
