@@ -51,11 +51,9 @@ const store = defineStore('dashboardStore', {
             this.crossNavigations = crossNavigations
         },
         getOutputParameters() {
-            console.log('>>>>>>>>>>>>>>>>>>>>> getOutputParameters', this.outputParameters)
             return this.outputParameters
         },
         setOutputParameters(outputParameters) {
-            console.log('>>>>>>>>>>>>>>>>>>>>> setOutputParameters', outputParameters)
             this.outputParameters = outputParameters
         }
     }

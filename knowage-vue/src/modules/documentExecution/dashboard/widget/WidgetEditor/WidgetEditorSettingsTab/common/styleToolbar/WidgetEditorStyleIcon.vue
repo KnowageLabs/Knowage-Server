@@ -1,5 +1,5 @@
 <template>
-    <div v-if="model" class="icon-container" :class="{ 'icon-disabled': disabled }">
+    <div v-show="model" ref="knowageStyleIcon" class="click-outside icon-container" :class="{ 'icon-disabled': disabled }">
         <div id="color-picker-target" class="p-d-flex p-flex-row p-jc-center p-ai-center" v-tooltip.top="{ value: option.tooltip ? $t(option.tooltip) : getDefaultTooltip() }" @click="openAdditionalComponents">
             <i :class="[getIconClass(), active ? 'active-icon' : '']" class="widget-editor-icon kn-cursor-pointer p-mr-2" @click="onIconClicked"></i>
             <div v-show="showArowDown || showCircleIcon">
@@ -11,7 +11,7 @@
         <ColorPicker class="style-icon-color-picker" v-if="(option.type === 'color' || option.type === 'background-color') && colorPickerVisible" v-model="color" :inline="true" format="rgb" @change="onColorPickerChange" />
         <WidgetEditorToolbarContextMenu
             class="context-menu"
-            v-if="(option.type === 'font-size' || option.type === 'justify-content' || option.type === 'font-family') && contextMenuVisible"
+            v-show="(option.type === 'font-size' || option.type === 'justify-content' || option.type === 'font-family') && contextMenuVisible"
             :option="option"
             @selected="onContextItemSelected"
             @inputChanged="onContextInputChanged"
@@ -20,10 +20,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType, ref } from 'vue'
 import { IWidgetStyleToolbarModel } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getRGBColorFromString } from '../../../helpers/WidgetEditorHelpers'
+import { useClickOutside } from './useClickOutside'
 import ColorPicker from 'primevue/colorpicker'
 import descriptor from './WidgetEditorStyleToolbarDescriptor.json'
 import WidgetEditorToolbarContextMenu from './WidgetEditorToolbarContextMenu.vue'
@@ -38,13 +39,12 @@ export default defineComponent({
             descriptor,
             model: null as IWidgetStyleToolbarModel | null,
             active: false,
-            contextMenuVisible: false,
+            iconPickerDialogVisible: false,
             displayValue: '',
             color: null as { r: number; g: number; b: number } | null,
             newColor: 'rgb(255, 255, 255)',
-            colorPickerVisible: false,
-            iconPickerDialogVisible: false,
-            colorPickTimer: null as any
+            colorPickTimer: null as any,
+            useClickOutside
         }
     },
     computed: {
@@ -54,6 +54,16 @@ export default defineComponent({
         showCircleIcon() {
             return ['color', 'background-color'].includes(this.option.type)
         }
+    },
+    setup() {
+        const knowageStyleIcon = ref(null)
+        let colorPickerVisible = ref(false)
+        let contextMenuVisible = ref(false)
+        useClickOutside(knowageStyleIcon, () => {
+            colorPickerVisible.value = false
+            contextMenuVisible.value = false
+        })
+        return { colorPickerVisible, contextMenuVisible, knowageStyleIcon }
     },
     created() {
         this.setEventListeners()
