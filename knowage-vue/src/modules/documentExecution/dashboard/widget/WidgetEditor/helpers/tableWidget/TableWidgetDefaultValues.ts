@@ -1,4 +1,4 @@
-import { ITableWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyles, ITableWidgetCrossNavigation, ITableWidgetCustomMessages, ITableWidgetExports, ITableWidgetHeaders, ITableWidgetLinks, ITableWidgetPaddingStyle, ITableWidgetPagination, ITableWidgetPreview, ITableWidgetResponsive, ITableWidgetRows, ITableWidgetRowsStyle, ITableWidgetSelection, ITableWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
+import { ITableWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetCrossNavigation, ITableWidgetCustomMessages, ITableWidgetExports, ITableWidgetHeaders, ITableWidgetLinks, ITableWidgetPaddingStyle, ITableWidgetPagination, ITableWidgetPreview, ITableWidgetResponsive, ITableWidgetRows, ITableWidgetRowsStyle, ITableWidgetSelection, ITableWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
 
 
 export const getDefaultConditionalStyles = () => {
@@ -6,6 +6,29 @@ export const getDefaultConditionalStyles = () => {
         enabled: false,
         conditions: []
     } as ITableWidgetConditionalStyles
+}
+
+export const getDefaultConditionalStyle = () => {
+    return {
+        target: '',
+        applyToWholeRow: false,
+        condition: {
+            type: '',
+
+            operator: '',
+            value: ''
+        },
+        properties: {
+            "justify-content": '',
+            "font-family": '',
+            "font-size": '',
+            "font-style": '',
+            "font-weight": '',
+            color: '',
+            "background-color": '',
+            icon: ''
+        }
+    } as ITableWidgetConditionalStyle
 }
 
 export const getDefaultColumnGroups = () => {
