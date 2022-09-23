@@ -96,6 +96,12 @@
 	    align-items: center;
     }
 
+	#gridsterContainer{
+		&.loadingScreenshot #viewModeMenuSpeedDial md-fab-speed-dial md-fab-trigger .md-fab {
+			display: none !important;
+		}
+	}
+
     md-tabs.screenShottingSheet md-tab-content{
         animation: none;
         -webkit-transform: none;
@@ -1645,7 +1651,19 @@
 					opacity: 1 !important;
 				}
 			}
-		}        
+		}      
+		
+		&.loadingScreenshot {
+			#viewModeMenuSpeedDial {
+				md-fab-speed-dial {
+					md-fab-trigger {
+						.md-fab {
+							display: none !important;
+						}
+					}
+				}
+			}			
+		}
 
         .gridster-item{
         	.selectorUtilities {
