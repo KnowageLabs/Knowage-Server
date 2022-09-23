@@ -1240,6 +1240,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			updateSbiCommonInfo4Update(hibUpperMenu);
 			tx.commit();
 		} catch (HibernateException he) {
+			logger.error("Hibernate error: " + he.getMessage());
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
