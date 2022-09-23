@@ -475,7 +475,9 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 				 clickOutsideToClose:false
 				 })
 
-			cockpitModule_properties.LOADING_SCREENSHOT = true;
+				 $timeout(function(){
+					cockpitModule_properties.LOADING_SCREENSHOT = true;
+				},0)
 
 			var abortTimeout;
 			function resetTimeout(){
