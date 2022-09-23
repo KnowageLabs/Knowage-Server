@@ -1,4 +1,4 @@
-import { ITableWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyle, ITableWidgetColumnStyles, ITableWidgetConditionalStyles, ITableWidgetCrossNavigation, ITableWidgetCustomMessages, ITableWidgetExports, ITableWidgetHeaders, ITableWidgetLinks, ITableWidgetPaddingStyle, ITableWidgetPagination, ITableWidgetPreview, ITableWidgetResponsive, ITableWidgetRows, ITableWidgetRowsStyle, ITableWidgetSelection, ITableWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
+import { ITableWidgetBordersStyle, ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyles, ITableWidgetCrossNavigation, ITableWidgetCustomMessages, ITableWidgetExports, ITableWidgetHeaders, ITableWidgetLinks, ITableWidgetPaddingStyle, ITableWidgetPagination, ITableWidgetPreview, ITableWidgetResponsive, ITableWidgetRows, ITableWidgetRowsStyle, ITableWidgetSelection, ITableWidgetShadowsStyle, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
 
 
 export const getDefaultConditionalStyles = () => {
@@ -226,6 +226,18 @@ export const getDefaultVisualizations = () => {
             conditions: []
         }
     } as ITableWidgetVisualization
+}
+
+export const getDefaultVisibilityCondition = () => {
+    return {
+        target: [],
+        hide: false,
+        hidePdf: false,
+        condition: {
+            type: '',
+            value: ''
+        }
+    }
 }
 
 export const getDefaultTooltips = () => {

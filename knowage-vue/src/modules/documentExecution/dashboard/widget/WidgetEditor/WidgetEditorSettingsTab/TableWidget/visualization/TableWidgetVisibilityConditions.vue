@@ -1,7 +1,7 @@
 <template>
     <div v-if="visibilityConditionsModel" class="p-grid p-ai-center p-p-4">
         <div class="p-col-12 p-px-2 p-pb-4">
-            <InputSwitch v-model="visibilityConditionsModel.enabled" @change="visibilityConditionsChanged"></InputSwitch>
+            <InputSwitch v-model="visibilityConditionsModel.enabled" @change="onVisibilityConditionsEnabledChange"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('common.enable') }}</label>
         </div>
         <div v-for="(visibilityCondition, index) in visibilityConditionsModel.conditions" :key="index" class="p-grid p-col-12 p-ai-center p-ai-center p-pt-2">
@@ -90,6 +90,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetColumn, ITableWidgetVisibilityCondition, ITableWidgetVisibilityConditions } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
+import { getDefaultVisibilityCondition } from '../../../helpers/tableWidget/TableWidgetDefaultValues'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
@@ -137,6 +138,14 @@ export default defineComponent({
         },
         visibilityConditionsChanged() {
             emitter.emit('visibilityConditionsChanged', this.visibilityConditionsModel)
+        },
+        onVisibilityConditionsEnabledChange() {
+            if (!this.visibilityConditionsModel) return
+            if (this.visibilityConditionsModel.enabled && this.visibilityConditionsModel.conditions.length === 0) {
+                this.visibilityConditionsModel.conditions = [getDefaultVisibilityCondition()]
+            }
+
+            this.visibilityConditionsChanged()
         },
         onVisibilityConditionTypeChanged(visibilityCondition: ITableWidgetVisibilityCondition) {
             if (visibilityCondition.condition.type === 'always') {
