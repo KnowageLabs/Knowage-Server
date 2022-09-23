@@ -11,7 +11,7 @@
             </Toolbar>
         </template>
 
-        <iframe v-if="data" ref="documentFrame" :name="data.iFrameName" class="iframe"></iframe>
+        <iframe v-if="data" ref="documentFramePopup" :name="data.iFrameName" class="iframe"></iframe>
     </Dialog>
 </template>
 

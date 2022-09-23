@@ -43,6 +43,7 @@
                     :rEnvironments="rEnvironments"
                     @fileUploaded="selectedDataset.fileUploaded = true"
                     @touched="$emit('touched')"
+                    @queryEdited="showMetadataQueryInfo = true"
                 />
             </TabPanel>
 
@@ -50,7 +51,7 @@
                 <template #header>
                     <span>{{ $t('kpi.measureDefinition.metadata') }}</span>
                 </template>
-                <MetadataCard :selectedDataset="selectedDataset" @touched="$emit('touched')" />
+                <MetadataCard :selectedDataset="selectedDataset" :showMetadataQueryInfoProp="showMetadataQueryInfo" @touched="$emit('touched')" />
             </TabPanel>
 
             <TabPanel v-if="selectedDataset.dsTypeCd == 'Query'">
@@ -127,6 +128,7 @@ export default defineComponent({
             loading: false,
             loadingVersion: false,
             showPreviewDialog: false,
+            showMetadataQueryInfo: false,
             activeTab: 0
         }
     },
@@ -155,13 +157,15 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.selectedDataset = response.data[0] ? { ...response.data[0] } : {}
 
-                    this.selectedDataset.restJsonPathAttributes ? (this.selectedDataset.restJsonPathAttributes = JSON.parse(this.selectedDataset.restJsonPathAttributes  ? this.selectedDataset.restJsonPathAttributes  : '[]')) : []
-                    this.selectedDataset.restRequestHeaders     ? (this.selectedDataset.restRequestHeaders     = JSON.parse(this.selectedDataset.restRequestHeaders      ? this.selectedDataset.restRequestHeaders      : '{}')) : {}
+                    this.selectedDataset.restJsonPathAttributes ? (this.selectedDataset.restJsonPathAttributes = JSON.parse(this.selectedDataset.restJsonPathAttributes ? this.selectedDataset.restJsonPathAttributes : '[]')) : []
+                    this.selectedDataset.restRequestHeaders ? (this.selectedDataset.restRequestHeaders = JSON.parse(this.selectedDataset.restRequestHeaders ? this.selectedDataset.restRequestHeaders : '{}')) : {}
 
-                    const restRequestHeadersKeys = Object.keys(this.selectedDataset.restRequestHeaders)
-                    this.selectedDataset.restRequestHeaders = restRequestHeadersKeys.map((e) => ({ name: e, value: this.selectedDataset.restRequestHeaders[e] }));
-                    
-                    this.selectedDataset.pythonEnvironment      ? (this.selectedDataset.pythonEnvironment      = JSON.parse(this.selectedDataset.pythonEnvironment       ? this.selectedDataset.pythonEnvironment       : '{}')) : ''
+                    if (this.selectedDataset.restRequestHeaders) {
+                        const restRequestHeadersKeys = Object.keys(this.selectedDataset.restRequestHeaders)
+                        this.selectedDataset.restRequestHeaders = restRequestHeadersKeys.map((e) => ({ name: e, value: this.selectedDataset.restRequestHeaders[e] }))
+                    }
+
+                    this.selectedDataset.pythonEnvironment ? (this.selectedDataset.pythonEnvironment = JSON.parse(this.selectedDataset.pythonEnvironment ? this.selectedDataset.pythonEnvironment : '{}')) : ''
                 })
                 .catch()
         },
@@ -244,10 +248,10 @@ export default defineComponent({
         async proceedOnSaving(dsToSave) {
             this.$emit('showSavingSpinner')
             if (dsToSave.dsTypeCd.toLowerCase() == 'rest' || dsToSave.dsTypeCd.toLowerCase() == 'solr') {
-                dsToSave.restRequestHeaders = (dsToSave.restRequestHeaders || []).reduce((acc,curr) => {
-                    acc[curr["name"]] = curr["value"];
-                    return acc;
-                }, {});
+                dsToSave.restRequestHeaders = (dsToSave.restRequestHeaders || []).reduce((acc, curr) => {
+                    acc[curr['name']] = curr['value']
+                    return acc
+                }, {})
             }
 
             dsToSave.pars ? '' : (dsToSave.pars = [])

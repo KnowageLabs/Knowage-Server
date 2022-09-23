@@ -1416,6 +1416,7 @@
             "scope": "Scope",
             "selectDatasetType": "DataSet Type",
             "selectedTables": "Selected Tables",
+            "showMetadataQueryInfo": "To update the metadata save the data set.",
             "solrCollection": "Collection",
             "solrFacetField": "Facet Field (comma-separated values)",
             "solrFacetPrefix": "Facet Prefix",

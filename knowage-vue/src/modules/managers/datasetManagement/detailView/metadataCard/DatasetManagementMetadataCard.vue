@@ -1,4 +1,6 @@
 <template>
+    <Message v-if="showMetadataQueryInfoProp" severity="info" class="p-mx-2" :closable="true">{{ $t('managers.datasetManagement.showMetadataQueryInfo') }}</Message>
+
     <Card class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
@@ -59,7 +61,8 @@ import mainStore from '../../../../../App.store'
 export default defineComponent({
     components: { Card, Column, DataTable, Message, Dropdown, Checkbox },
     props: {
-        selectedDataset: { type: Object as any }
+        selectedDataset: { type: Object as any },
+        showMetadataQueryInfoProp: { type: Boolean as any }
     },
     computed: {},
     emits: ['touched'],
