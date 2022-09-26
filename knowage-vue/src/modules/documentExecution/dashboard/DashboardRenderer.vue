@@ -1,7 +1,6 @@
 <template>
     <KnDashboardTabsPanel label-position="bottom" v-model:sheets="dashboardModel.sheets" @sheet-change="sheetChange">
         <KnDashboardTab v-for="(sheet, index) in dashboardModel.sheets" :key="index" :index="index">
-            {{ sheet }}
             <grid-layout
                 v-model:layout="sheet.widgets['lg']"
                 :responsive-layouts="sheet.widgets"
