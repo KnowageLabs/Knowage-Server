@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import deepcopy from 'deepcopy'
+import cryptoRandomString from 'crypto-random-string'
 
 const store = defineStore('dashboardStore', {
     state() {
@@ -26,7 +27,7 @@ const store = defineStore('dashboardStore', {
         createNewWidget(widget) {
             // TODO - hardcoded 1 for dashboard
             this.dashboards[1].widgets.push(widget)
-            this.dashboards[1].sheets[this.selectedSheetIndex].widgets.lg.push({ id: widget.id, h: 5, i: 0, w: 10, x: 10, y: 10, moved: false })
+            this.dashboards[1].sheets[this.selectedSheetIndex].widgets.lg.push({ id: widget.id, h: 10, i: cryptoRandomString({ length: 16, type: 'base64' }), w: 10, x: 0, y: 0, moved: false })
         },
         updateWidget(widget) {
             // TODO - hardcoded 1 for dashboard

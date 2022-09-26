@@ -1,4 +1,4 @@
-import { ITableWidgetColumnGroups, ITableWidgetConfiguration, ITableWidgetCrossNavigation, ITableWidgetHeaders, ITableWidgetInteractions, ITableWidgetSelection, ITableWidgetSettings, ITableWidgetVisibilityConditions, ITableWidgetVisualization, IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard"
+import { ITableWidgetColumnGroups, ITableWidgetConfiguration, ITableWidgetCrossNavigation, ITableWidgetHeaders, ITableWidgetInteractions, ITableWidgetSelection, ITableWidgetSettings, ITableWidgetVisualization, IWidget, IWidgetColumn } from "../../../../Dashboard"
 import deepcopy from 'deepcopy'
 
 const columnIdNameMap = {}

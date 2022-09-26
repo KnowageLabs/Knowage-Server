@@ -1,10 +1,10 @@
 <template>
     <div v-if="visibilityConditionsModel" class="p-grid p-ai-center p-p-4">
         <div class="p-col-12 p-px-2 p-pb-4">
-            <InputSwitch v-model="visibilityConditionsModel.enabled" @change="visibilityConditionsChanged"></InputSwitch>
+            <InputSwitch v-model="visibilityConditionsModel.enabled" @change="onVisibilityConditionsEnabledChange"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('common.enable') }}</label>
         </div>
-        <div v-for="(visibilityCondition, index) in visibilityConditionsModel.conditions" :key="index" class="p-grid p-col-12 p-ai-center p-ai-center p-pt-2">
+        <div v-for="(visibilityCondition, index) in visibilityConditionsModel.conditions" :key="index" class="p-grid p-col-12 p-ai-center p-pt-2">
             <div class="p-grid p-col-12 p-ai-center">
                 <div v-show="dropzoneTopVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
                 <div
@@ -73,7 +73,9 @@
                 </div>
                 <div
                     class="p-col-12 form-list-item-dropzone"
-                    :class="{ 'form-list-item-dropzone-active': dropzoneBottomVisible[index] }"
+                    :class="{
+                        'form-list-item-dropzone-active': dropzoneBottomVisible[index]
+                    }"
                     @drop.stop="onDropComplete($event, 'after', index)"
                     @dragover.prevent
                     @dragenter.prevent="displayDropzone('bottom', index)"
@@ -90,6 +92,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetColumn, ITableWidgetVisibilityCondition, ITableWidgetVisibilityConditions } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
+import { getDefaultVisibilityCondition } from '../../../helpers/tableWidget/TableWidgetDefaultValues'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
@@ -98,7 +101,10 @@ import MultiSelect from 'primevue/multiselect'
 export default defineComponent({
     name: 'table-widget-visibility-condition',
     components: { Dropdown, InputSwitch, MultiSelect },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, variables: { type: Array } },
+    props: {
+        widgetModel: { type: Object as PropType<IWidget>, required: true },
+        variables: { type: Array }
+    },
     data() {
         return {
             descriptor,
@@ -138,6 +144,14 @@ export default defineComponent({
         visibilityConditionsChanged() {
             emitter.emit('visibilityConditionsChanged', this.visibilityConditionsModel)
         },
+        onVisibilityConditionsEnabledChange() {
+            if (!this.visibilityConditionsModel) return
+            if (this.visibilityConditionsModel.enabled && this.visibilityConditionsModel.conditions.length === 0) {
+                this.visibilityConditionsModel.conditions = [getDefaultVisibilityCondition()]
+            }
+
+            this.visibilityConditionsChanged()
+        },
         onVisibilityConditionTypeChanged(visibilityCondition: ITableWidgetVisibilityCondition) {
             if (visibilityCondition.condition.type === 'always') {
                 const fields = ['variable', 'variableValue', 'operator', 'value']
@@ -151,7 +165,12 @@ export default defineComponent({
         },
         addVisibilityCondition() {
             if (!this.visibilityConditionsModel || this.visibilityConditionsDisabled) return
-            this.visibilityConditionsModel.conditions.push({ target: [], hide: false, hidePdf: false, condition: { type: 'Always' } })
+            this.visibilityConditionsModel.conditions.push({
+                target: [],
+                hide: false,
+                hidePdf: false,
+                condition: { type: 'Always' }
+            })
         },
         removeVisibilityCondition(index: number) {
             if (!this.visibilityConditionsModel || this.visibilityConditionsDisabled) return

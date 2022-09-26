@@ -87,6 +87,8 @@ export default defineComponent({
         onDatasetSelected() {
             this.loadDatasetColumns()
             this.removeSelectedColumnsFromModel()
+            console.log('SELECTED DATASE: ', this.selectedDataset)
+            this.widgetModel.dataset = this.selectedDataset ? this.selectedDataset.id : null
             this.$emit('datasetSelected', this.selectedDataset)
         },
         removeSelectedColumnsFromModel() {

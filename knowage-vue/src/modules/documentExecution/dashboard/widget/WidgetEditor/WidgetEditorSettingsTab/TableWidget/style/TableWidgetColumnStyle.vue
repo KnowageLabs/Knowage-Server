@@ -181,10 +181,11 @@ export default defineComponent({
             this.loadWidgetColumnMaps()
         },
         onColumnAliasRenamed() {
-            // TODO
-            this.loadColumnOptions()
-            this.loadColumnStyles()
-            this.loadWidgetColumnMaps()
+            setTimeout(() => {
+                this.loadColumnOptions()
+                this.loadColumnStyles()
+                this.loadWidgetColumnMaps()
+            }, 1000)
         }
     }
 })

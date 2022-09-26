@@ -1,80 +1,90 @@
 <template>
-    <div v-if="conditionalStylesModel">
-        <div class="p-d-flex p-flex-row p-ai-center p-mt-2 p-mb-4">
+    <div v-if="conditionalStylesModel" class="p-grid p-ai-center p-p-4">
+        <div class="p-col-12 p-px-2 p-pb-4">
             <div class="kn-flex p-m-2">
-                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.borders.enableBorders') }}</label>
-                <InputSwitch v-model="conditionalStylesModel.enabled" @change="conditionalStylesChanged"></InputSwitch>
+                <label class="kn-material-input-label p-mr-2">{{ $t('common.enable') }}</label>
+                <InputSwitch v-model="conditionalStylesModel.enabled" @change="onConditionalStylesEnabledChange"></InputSwitch>
             </div>
         </div>
-        <div v-for="(conditionalStyle, index) in conditionalStylesModel.conditions" :key="index" class="p-d-flex p-flex-column p-my-2 p-pb-2">
-            <div v-show="dropzoneTopVisible[index]" class="form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
-            <div class="form-list-item-dropzone" :class="{ 'form-list-item-dropzone-active': dropzoneTopVisible[index] }" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent="displayDropzone('top', index)" @dragleave.prevent="hideDropzone('top', index)"></div>
+        <div v-for="(conditionalStyle, index) in conditionalStylesModel.conditions" :key="index" class="p-grid p-col-12 p-ai-center p-pt-2">
+            <div class="p-grid p-col-12 p-ai-center">
+                <div v-show="dropzoneTopVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
+                <div
+                    class="p-col-12 form-list-item-dropzone"
+                    :class="{ 'form-list-item-dropzone-active': dropzoneTopVisible[index] }"
+                    @drop.stop="onDropComplete($event, 'before', index)"
+                    @dragover.prevent
+                    @dragenter.prevent="displayDropzone('top', index)"
+                    @dragleave.prevent="hideDropzone('top', index)"
+                ></div>
 
-            <div class="p-d-flex p-flex-row" :draggable="true" @dragstart.stop="onDragStart($event, index)">
-                <div class="p-d-flex p-flex-column p-jc-center">
-                    <i class="pi pi-th-large kn-cursor-pointer p-mr-2"></i>
-                </div>
-                <div class="p-d-flex p-flex-column kn-flex">
-                    <div class="p-d-flex p-flex-row p-ai-center kn-flex">
-                        <div class="p-d-flex p-flex-column kn-flex p-m-2">
-                            <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                            <Dropdown class="kn-material-input" v-model="conditionalStyle.target" :options="widgetModel.columns" optionLabel="alias" optionValue="id" :disabled="visibilityConditionsDisabled" @change="conditionalStylesChanged"> </Dropdown>
-                        </div>
-                        <div class="p-d-flex p-flex-column p-m-2 operator-dropdown-container">
-                            <label class="kn-material-input-label"> {{ $t('common.operator') }}</label>
-                            <Dropdown class="kn-material-input" v-model="conditionalStyle.condition.operator" :options="descriptor.columnConditionOptions" optionLabel="label" optionValue="value" :disabled="visibilityConditionsDisabled" @change="conditionalStylesChanged"> </Dropdown>
-                        </div>
-                        <div class="p-d-flex p-flex-column p-m-2 value-type-dropdown">
-                            <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.conditions.compareValueType') }}</label>
-                            <Dropdown class="kn-material-input" v-model="conditionalStyle.condition.type" :options="descriptor.conditionCompareValueTypes" optionValue="value" :disabled="visibilityConditionsDisabled" @change="onCompareValueTypeChanged(conditionalStyle)">
-                                <template #value="slotProps">
-                                    <div>
-                                        <span>{{ getTranslatedLabel(slotProps.value, descriptor.conditionCompareValueTypes, $t) }}</span>
-                                    </div>
-                                </template>
-                                <template #option="slotProps">
-                                    <div>
-                                        <span>{{ $t(slotProps.option.label) }}</span>
-                                    </div>
-                                </template>
-                            </Dropdown>
-                        </div>
-                        <div v-if="conditionalStyle.condition.type === 'static'" class="p-d-flex p-flex-column p-ml-2 p-mt-2 kn-flex-2">
-                            <label class="kn-material-input-label">{{ $t('common.value') }}</label>
-                            <InputText class="kn-material-input p-inputtext-sm" v-model="conditionalStyle.condition.value" :disabled="visibilityConditionsDisabled" @change="conditionalStylesChanged" />
-                        </div>
-                        <div v-else-if="conditionalStyle.condition.type === 'parameter'" class="p-d-flex p-flex-column p-ml-2 kn-flex-2">
-                            <label class="kn-material-input-label">{{ $t('common.value') }}</label>
-                            <Dropdown class="kn-material-input" v-model="conditionalStyle.condition.parameter" :options="drivers" optionLabel="name" optionValue="name" :disabled="visibilityConditionsDisabled" @change="onDriverChanged(conditionalStyle)"> </Dropdown>
-                        </div>
-                        <div v-else-if="conditionalStyle.condition.type === 'variable'" class="p-d-flex p-flex-column p-ml-2 kn-flex-2">
-                            <label class="kn-material-input-label">{{ $t('common.value') }}</label>
-                            <Dropdown class="kn-material-input" v-model="conditionalStyle.condition.variable" :options="variables" optionLabel="name" optionValue="name" :disabled="visibilityConditionsDisabled" @change="onVariableChanged(conditionalStyle)"> </Dropdown>
-                        </div>
+                <div class="p-col-12 p-grid" :draggable="!conditionalStylesDisabled" @dragstart.stop="onDragStart($event, index)">
+                    <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center">
+                        <i class="pi pi-th-large kn-cursor-pointer" :class="[conditionalStylesDisabled ? 'icon-disabled' : '']"></i>
                     </div>
-                    <div class="p-m-4">
-                        <WidgetEditorStyleToolbar :options="descriptor.conditionsToolbarStyleOptions" :propModel="conditionalStyle.properties" :disabled="visibilityConditionsDisabled" @change="onStyleToolbarChange($event, conditionalStyle)"> </WidgetEditorStyleToolbar>
+                    <div class="p-col-10 p-grid p-ai-center">
+                        <div class="p-grid p-col-12 p-ai-center">
+                            <div class="p-sm-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-p-2">
+                                <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
+                                <Dropdown class="kn-material-input" v-model="conditionalStyle.target" :options="widgetModel.columns" optionLabel="alias" optionValue="id" :disabled="conditionalStylesDisabled" @change="conditionalStylesChanged"> </Dropdown>
+                            </div>
+                            <div class="p-sm-12 p-md-6 p-lg-2 p-d-flex p-flex-column p-p-2 operator-dropdown-container">
+                                <label class="kn-material-input-label"> {{ $t('common.operator') }}</label>
+                                <Dropdown class="kn-material-input" v-model="conditionalStyle.condition.operator" :options="descriptor.columnConditionOptions" optionLabel="label" optionValue="value" :disabled="conditionalStylesDisabled" @change="conditionalStylesChanged"> </Dropdown>
+                            </div>
+                            <div class="p-sm-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-p-2 value-type-dropdown">
+                                <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.conditions.compareValueType') }}</label>
+                                <Dropdown class="kn-material-input" v-model="conditionalStyle.condition.type" :options="descriptor.conditionCompareValueTypes" optionValue="value" :disabled="conditionalStylesDisabled" @change="onCompareValueTypeChanged(conditionalStyle)">
+                                    <template #value="slotProps">
+                                        <div>
+                                            <span>{{ getTranslatedLabel(slotProps.value, descriptor.conditionCompareValueTypes, $t) }}</span>
+                                        </div>
+                                    </template>
+                                    <template #option="slotProps">
+                                        <div>
+                                            <span>{{ $t(slotProps.option.label) }}</span>
+                                        </div>
+                                    </template>
+                                </Dropdown>
+                            </div>
+                            <div v-if="conditionalStyle.condition.type === 'static'" class="p-sm-12 p-md-6 p-lg-4 p-d-flex p-flex-column p-pl-2 p-pt-2">
+                                <label class="kn-material-input-label">{{ $t('common.value') }}</label>
+                                <InputText class="kn-material-input p-inputtext-sm" v-model="conditionalStyle.condition.value" :disabled="conditionalStylesDisabled" @change="conditionalStylesChanged" />
+                            </div>
+                            <div v-else-if="conditionalStyle.condition.type === 'parameter'" class="p-sm-12 p-md-6 p-lg-4 p-d-flex p-flex-column p-pl-2">
+                                <label class="kn-material-input-label">{{ $t('common.value') }}</label>
+                                <Dropdown class="kn-material-input" v-model="conditionalStyle.condition.parameter" :options="drivers" optionLabel="name" optionValue="name" :disabled="conditionalStylesDisabled" @change="onDriverChanged(conditionalStyle)"> </Dropdown>
+                            </div>
+                            <div v-else-if="conditionalStyle.condition.type === 'variable'" class="p-sm-12 p-md-6 p-lg-4 p-pl-2 p-d-flex p-flex-column p-pl-2">
+                                <label class="kn-material-input-label">{{ $t('common.value') }}</label>
+                                <Dropdown class="kn-material-input" v-model="conditionalStyle.condition.variable" :options="variables" optionLabel="name" optionValue="name" :disabled="conditionalStylesDisabled" @change="onVariableChanged(conditionalStyle)"> </Dropdown>
+                            </div>
+                        </div>
+                        <div class="p-col-12 p-p-4">
+                            <WidgetEditorStyleToolbar :options="descriptor.conditionsToolbarStyleOptions" :propModel="conditionalStyle.properties" :disabled="conditionalStylesDisabled" @change="onStyleToolbarChange($event, conditionalStyle)"> </WidgetEditorStyleToolbar>
+                        </div>
+
+                        <div class="p-col-12 p-px-4 p-py-2">
+                            <InputSwitch v-model="conditionalStyle.applyToWholeRow" :disabled="conditionalStylesDisabled" @change="conditionalStylesChanged"></InputSwitch>
+                            <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.conditions.applyToWholeRow') }}</label>
+                        </div>
                     </div>
 
-                    <div class="p-mx-4 p-my-2">
-                        <InputSwitch v-model="conditionalStyle.applyToWholeRow" :disabled="visibilityConditionsDisabled" @change="conditionalStylesChanged"></InputSwitch>
-                        <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.conditions.applyToWholeRow') }}</label>
+                    <div class="p-col-1 p-grid p-jc-center p-ai-center">
+                        <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', conditionalStylesDisabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="index === 0 ? addConditionalStyle() : removeConditionalStyle(index)"></i>
                     </div>
                 </div>
-                <div class="p-d-flex p-flex-column p-jc-center p-ml-2">
-                    <i :class="index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash'" class="kn-cursor-pointer p-ml-2" @click="index === 0 ? addConditionalStyle() : removeConditionalStyle(index)"></i>
-                </div>
+
+                <div
+                    class="p-col-12 form-list-item-dropzone"
+                    :class="{ 'form-list-item-dropzone-active': dropzoneBottomVisible[index] }"
+                    @drop.stop="onDropComplete($event, 'after', index)"
+                    @dragover.prevent
+                    @dragenter.prevent="displayDropzone('bottom', index)"
+                    @dragleave.prevent="hideDropzone('bottom', index)"
+                ></div>
+                <div v-show="dropzoneBottomVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'after', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
             </div>
-
-            <div
-                class="form-list-item-dropzone"
-                :class="{ 'form-list-item-dropzone-active': dropzoneBottomVisible[index] }"
-                @drop.stop="onDropComplete($event, 'after', index)"
-                @dragover.prevent
-                @dragenter.prevent="displayDropzone('bottom', index)"
-                @dragleave.prevent="hideDropzone('bottom', index)"
-            ></div>
-            <div v-show="dropzoneBottomVisible[index]" class="form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'after', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
         </div>
     </div>
 </template>
@@ -84,6 +94,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetConditionalStyle, IWidgetStyleToolbarModel, ITableWidgetConditionalStyles } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { emitter } from '../../../../../DashboardHelpers'
+import { getDefaultConditionalStyle } from '../../../helpers/tableWidget/TableWidgetDefaultValues'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
@@ -105,7 +116,7 @@ export default defineComponent({
         }
     },
     computed: {
-        visibilityConditionsDisabled() {
+        conditionalStylesDisabled() {
             return !this.conditionalStylesModel || !this.conditionalStylesModel.enabled
         }
     },
@@ -132,6 +143,13 @@ export default defineComponent({
         },
         conditionalStylesChanged() {
             emitter.emit('conditionalStylesChanged', this.conditionalStylesModel)
+        },
+        onConditionalStylesEnabledChange() {
+            if (!this.conditionalStylesModel) return
+            if (this.conditionalStylesModel.enabled && this.conditionalStylesModel.conditions.length === 0) {
+                this.conditionalStylesModel.conditions.push(getDefaultConditionalStyle())
+            }
+            this.conditionalStylesChanged()
         },
         onCompareValueTypeChanged(conditionalStyle: ITableWidgetConditionalStyle) {
             conditionalStyle.condition.value = ''
@@ -173,7 +191,7 @@ export default defineComponent({
             this.conditionalStylesChanged()
         },
         addConditionalStyle() {
-            if (!this.conditionalStylesModel || this.visibilityConditionsDisabled) return
+            if (!this.conditionalStylesModel || this.conditionalStylesDisabled) return
             this.conditionalStylesModel.conditions.push({
                 target: '',
                 applyToWholeRow: false,
@@ -191,18 +209,18 @@ export default defineComponent({
             })
         },
         removeConditionalStyle(index: number) {
-            if (!this.conditionalStylesModel || this.visibilityConditionsDisabled) return
+            if (!this.conditionalStylesModel || this.conditionalStylesDisabled) return
             this.conditionalStylesModel.conditions.splice(index, 1)
             this.conditionalStylesChanged()
         },
         onDragStart(event: any, index: number) {
-            if (!this.conditionalStylesModel || this.visibilityConditionsDisabled) return
+            if (!this.conditionalStylesModel || this.conditionalStylesDisabled) return
             event.dataTransfer.setData('text/plain', JSON.stringify(index))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
         },
         onDropComplete(event: any, position: 'before' | 'after', index: number) {
-            if (!this.conditionalStylesModel || this.visibilityConditionsDisabled) return
+            if (!this.conditionalStylesModel || this.conditionalStylesDisabled) return
             this.hideDropzone('bottom', index)
             this.hideDropzone('top', index)
             const eventData = JSON.parse(event.dataTransfer.getData('text/plain'))
@@ -217,7 +235,7 @@ export default defineComponent({
             }
         },
         displayDropzone(position: string, index: number) {
-            if (!this.conditionalStylesModel || this.visibilityConditionsDisabled) return
+            if (!this.conditionalStylesModel || this.conditionalStylesDisabled) return
             if (position === 'top') {
                 this.dropzoneTopVisible[index] = true
             } else {
@@ -225,7 +243,7 @@ export default defineComponent({
             }
         },
         hideDropzone(position: string, index: number) {
-            if (!this.conditionalStylesModel || this.visibilityConditionsDisabled) return
+            if (!this.conditionalStylesModel || this.conditionalStylesDisabled) return
             if (position === 'top') {
                 this.dropzoneTopVisible[index] = false
             } else {

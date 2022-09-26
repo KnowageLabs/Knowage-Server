@@ -52,8 +52,8 @@ export default defineComponent({
     },
     data() {
         return {
-            loading: true,
-            initialized: false,
+            loading: false,
+            initialized: true,
             widgetData: [] as any,
             widgetEditorVisible: false,
             selectedWidgetId: '' as string
@@ -84,7 +84,7 @@ export default defineComponent({
             })
         },
         async initializeWidget() {
-            this.widgetData = await getData([{ test: 'test' }])
+            // this.widgetData = await getData([{ test: 'test' }])
             this.initialized = true
             this.loading = false
         },
