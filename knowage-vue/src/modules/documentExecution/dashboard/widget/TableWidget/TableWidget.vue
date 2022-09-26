@@ -60,23 +60,11 @@ export default defineComponent({
         }
     },
     created() {
-        console.log('CREATED ----------------------')
         if (this.editorMode) this.setEventListeners()
         this.setupDatatableOptions()
     },
     unmounted() {
-        console.log('UNMOUNTED ----------------------')
-        // emitter.all.clear()
-        // emitter.all.delete('paginationChanged')
-        // emitter.all.delete('sortingChanged')
-        // emitter.all.delete('columnAdded')
-        // emitter.all.delete('columnRemoved')
-        // emitter.all.delete('collumnUpdated')
-        // emitter.all.delete('columnsReordered')
-        // emitter.all.delete('indexColumnChanged')
-        emitter.off('indexColumnChanged', this.createDatatableColumns)
-
-        // emitter.off('indexColumnChanged')
+        emitter.off('refreshTable', this.createDatatableColumns)
     },
     mounted() {},
 
@@ -84,32 +72,8 @@ export default defineComponent({
         setEventListeners() {
             console.log('setEventListener')
             // emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
-            // emitter.on('sortingChanged', this.sortColumn) // { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder }
-            // emitter.on('columnAdded', this.createDatatableColumns)
-            // emitter.on('columnRemoved', this.createDatatableColumns)
-            // emitter.on('collumnUpdated', this.createDatatableColumns)
-            // emitter.on('columnsReordered', this.createDatatableColumns)
-            // emitter.on('indexColumnChanged', this.createDatatableColumns)
-            // emitter.on('rowSpanChanged', this.createDatatableColumns)
-            // emitter.on('summaryRowsChanged', this.createDatatableColumns) //TODO: Servis nam treba za ovo
-            // emitter.on('headersConfigurationChanged', this.createDatatableColumns) // TODO: Trenutno se gleda svaka promena u header config, mozda staviti event emit samo na promene koje trebaju.
-            // emitter.on('columnGroupsConfigurationChanged', this.createDatatableColumns)
-            //emitter.on('visibilityConditionsChanged', this.createDatatableColumns)
-            //emitter.on('headersStyleChanged', this.createDatatableColumns)
-            //emitter.on('columnStylesChanged', this.createDatatableColumns)
-            //emitter.on('columnGroupStylesChanged', this.createDatatableColumns)
-            //emitter.on('rowsStyleChanged', this.createDatatableColumns)
-            // emitter.on('summaryStyleChanged', this.createDatatableColumns)
-            // emitter.on('bordersStyleChanged', (bordersStyle) => console.log('WidgetEditorPreview  - bordersStyleChanged!', bordersStyle))
-            // emitter.on('paddingStyleChanged', (paddingStyle) => console.log('WidgetEditorPreview  - paddingStyleChanged!', paddingStyle))
-            // emitter.on('shadowStyleChanged', (shadowsStyle) => console.log('WidgetEditorPreview  - shadowStyleChanged!', shadowsStyle))
-            //emitter.on('conditionalStylesChanged', this.createDatatableColumns)
-            //emitter.on('tooltipsChanged', this.createDatatableColumns)
-            //emitter.on('selectionChanged', (selectionModel) => console.log('WidgetEditorPreview  - selectionChanged!', selectionModel))
-            // emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
-            // emitter.on('visualizationTypeChanged', (visuelizationTypes) => console.log('WidgetEditorPreview  - visualizationTypeChanged!', visuelizationTypes))
-            // emitter.on('customMessagesChanged', (customMessagesModel) => console.log('WidgetEditorPreview  - customMessagesChanged!', customMessagesModel))
-            emitter.on('refreshTable', (id) => console.log('>>>>>>>>> ID: ', id))
+            emitter.on('sortingChanged', this.sortColumn) // { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder }
+            emitter.on('refreshTable', this.createDatatableColumns)
         },
         setupDatatableOptions() {
             this.gridOptions = {
@@ -118,16 +82,15 @@ export default defineComponent({
                 pagination: false,
                 rowSelection: 'single',
                 suppressRowTransform: true,
+                suppressMovableColumns: true,
+                suppressDragLeaveHidesColumns: true,
+                suppressRowGroupHidesColumns: true,
                 rowHeight: 25,
 
                 // EVENTS
-                // onRowClicked: (event, params) => console.log('A row was clicked', event),
                 onCellClicked: (event, params) => console.log('A cell was clicked', event, params),
-                // onColumnResized: (event) => console.log('A column was resized'),
-                // onGridReady: (event) => console.log('The grid is now ready')
 
                 // CALLBACKS
-                // getRowHeight: (params) => 25
                 getRowStyle: this.getRowStyle
             }
         },
@@ -307,8 +270,6 @@ export default defineComponent({
                     }
                 }
             }
-
-            console.log('CREATE TABLE COLUMNS \n', columns)
 
             return columns
         },

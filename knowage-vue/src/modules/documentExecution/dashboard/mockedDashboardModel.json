@@ -263,6 +263,18 @@
                                 "subjectId": false,
                                 "type": "java.lang.Integer",
                                 "visType": "Chart"
+                            },
+                            {
+                                "aggregationSelected": "NONE",
+                                "alias": "123",
+                                "aliasToShow": "123",
+                                "fieldType": "MEASURE",
+                                "formula": "123 + 555 - 22",
+                                "formulaEditor": "123 + 555 - 22",
+                                "funcSummary": "SUM",
+                                "isCalculated": true,
+                                "name": "123",
+                                "type": "java.lang.Double"
                             }
                         ],
                         "name": "widget_table_1661757385620"
