@@ -1,5 +1,12 @@
 <template>
     <div v-if="columnStyles" class="p-grid p-ai-center p-p-4">
+        {{ availableColumnOptions }}
+        <br />
+        <br />
+        {{ widgetColumnsAliasMap }}
+        <br />
+        <br />
+        {{ widgetModel.columns }}
         <div class="p-col-12 p-px-2 p-pb-4">
             <InputSwitch v-model="columnStyles.enabled" @change="columnStylesChanged"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('common.enable') }}</label>
@@ -91,7 +98,9 @@ export default defineComponent({
         },
         loadWidgetColumnMaps() {
             const array = this.mode === 'columnGroups' ? this.widgetModel.settings.configuration.columnGroups.groups : this.widgetModel.columns
+            console.log('>>>>>>> TEEEEEEMP: ', array)
             array.forEach((column: IWidgetColumn | ITableWidgetColumnGroup) => {
+                console.log('>>>>>>>>AAAAAAAAAAAAAAAAA: ', column)
                 if (column.id) this.widgetColumnsAliasMap[column.id] = this.mode === 'columnGroups' ? (column as ITableWidgetColumnGroup).label : (column as IWidgetColumn).alias
             })
         },
@@ -181,10 +190,11 @@ export default defineComponent({
             this.loadWidgetColumnMaps()
         },
         onColumnAliasRenamed() {
-            // TODO
-            this.loadColumnOptions()
-            this.loadColumnStyles()
-            this.loadWidgetColumnMaps()
+            setTimeout(() => {
+                this.loadColumnOptions()
+                this.loadColumnStyles()
+                this.loadWidgetColumnMaps()
+            }, 1000)
         }
     }
 })
