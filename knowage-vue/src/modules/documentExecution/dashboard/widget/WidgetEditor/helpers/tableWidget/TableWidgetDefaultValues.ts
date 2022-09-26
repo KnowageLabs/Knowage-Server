@@ -81,7 +81,7 @@ export const getDefaultSummaryRowsConfiguration = () => {
 
 export const getDefaultCustomMessages = () => {
     return {
-        hideNoRowsMessage: false,
+        hideNoRowsMessage: true,
         noRowsMessage: ''
     } as ITableWidgetCustomMessages
 }
