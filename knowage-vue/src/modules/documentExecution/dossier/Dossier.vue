@@ -47,7 +47,6 @@
                         {{ $t('documentExecution.dossier.launchedActivities') }}
                     </template>
                 </Toolbar>
-                <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
             </template>
             <template #content>
                 <KnHint v-if="showHint" :title="'documentExecution.dossier.title'" :hint="'documentExecution.dossier.hint'" data-test="hint"></KnHint>
@@ -76,7 +75,7 @@
                     <Column header :style="dossierDescriptor.table.iconColumn.style" @rowClick="false">
                         <template #body="slotProps">
                             <Button icon="pi pi-download" class="p-button-link" @click="downloadActivity(slotProps.data)" />
-                            <Button icon="pi pi-trash" class="p-button-link"  :disabled="dateCheck(slotProps.data)" @click="deleteDossierConfirm(slotProps.data)" data-test="delete-button" />
+                            <Button icon="pi pi-trash" class="p-button-link" :disabled="dateCheck(slotProps.data)" @click="deleteDossierConfirm(slotProps.data)" data-test="delete-button" />
                         </template>
                     </Column>
                 </DataTable>
@@ -162,8 +161,8 @@ export default defineComponent({
         formatDate(date) {
             return formatDateWithLocale(date, { dateStyle: 'short', timeStyle: 'short' })
         },
-        dateCheck(item): boolean {              
-            return (((Date.now() - item.creationDate ) <86400000) && item.status ==='STARTED') 
+        dateCheck(item): boolean {
+            return Date.now() - item.creationDate < 86400000 && item.status === 'STARTED'
         },
         async getDossierActivities() {
             this.loading = true
@@ -189,6 +188,7 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.jsonTemplate = { ...response.data }
                 })
+                .catch((err) => console.log(err))
                 .finally(() => {
                     this.loading = false
                 })
@@ -204,7 +204,7 @@ export default defineComponent({
         async deleteDossier(selectedDossier) {
             let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/activity/${selectedDossier.id}`
 
-            if (selectedDossier.status == 'DOWNLOAD' || selectedDossier.status == 'ERROR' || this.dateCheck(selectedDossier)) {
+            if (selectedDossier.status == 'DOWNLOAD' || selectedDossier.status == 'ERROR' || !this.dateCheck(selectedDossier)) {
                 await this.$http
                     .delete(url, { headers: { Accept: 'application/json, text/plain, */*' } })
                     .then(() => {
