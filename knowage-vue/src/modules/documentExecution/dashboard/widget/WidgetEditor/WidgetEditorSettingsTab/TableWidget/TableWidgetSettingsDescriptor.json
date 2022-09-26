@@ -137,6 +137,7 @@
             "type": "icon"
         }
     ],
+    "configurationExportNumberInputStyle": "max-width: 100px",
     "customHeadersActionOptions": [
         {
             "label": "dashboard.widgetEditor.headers.hideHeader",

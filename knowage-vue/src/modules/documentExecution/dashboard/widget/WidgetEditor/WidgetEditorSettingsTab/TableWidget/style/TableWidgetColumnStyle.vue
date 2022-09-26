@@ -1,5 +1,5 @@
 <template>
-    <div v-if="columnStyles" class="p-grid p-ai-center p-p-4">
+    <div v-if="columnStyles" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-col-12 p-px-2 p-pb-4">
             <InputSwitch v-model="columnStyles.enabled" @change="columnStylesChanged"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('common.enable') }}</label>

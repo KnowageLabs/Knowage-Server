@@ -1,5 +1,5 @@
 <template>
-    <div v-if="responsiveModel" class="p-grid p-ai-center p-p-4">
+    <div v-if="responsiveModel" class="p-grid p-jc-center p-ai-center p-p-4">
         <div v-for="(field, index) in descriptor.responsiveInputSwiitches" :key="index" class="p-col-12 p-grid p-d-flex p-flex-row p-jc-start p-p-4">
             <div class="p-sm-12 p-md-2">
                 <InputSwitch v-model="responsiveModel[field]"></InputSwitch>

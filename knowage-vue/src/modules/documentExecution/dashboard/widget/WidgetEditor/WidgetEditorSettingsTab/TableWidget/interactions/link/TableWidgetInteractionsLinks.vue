@@ -5,7 +5,7 @@
             <label class="kn-material-input-label p-ml-3">{{ $t('dashboard.widgetEditor.interactions.enableLinkNavigation') }}</label>
         </div>
 
-        <div v-for="(link, index) in linksModel.links" :key="index" class="p-grid p-ai-center p-col-12">
+        <div v-for="(link, index) in linksModel.links" :key="index" class="dynamic-form-item p-grid p-ai-center p-col-12">
             <div class="p-sm-11 p-md-10 p-d-flex p-flex-column">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
                 <Dropdown class="kn-material-input" v-model="link.type" :options="descriptor.interactionTypes" optionValue="value" :disabled="linksDisabled" @change="onInteractionTypeChanged(link)">

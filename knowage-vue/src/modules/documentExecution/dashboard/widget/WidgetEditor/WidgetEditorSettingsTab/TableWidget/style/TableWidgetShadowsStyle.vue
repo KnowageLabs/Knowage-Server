@@ -1,5 +1,5 @@
 <template>
-    <div v-if="shadowsStyleModel" class="p-grid p-ai-center p-p-4">
+    <div v-if="shadowsStyleModel" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-col-12 p-d-flex p-flex-row p-ai-center p-mb-4">
             <div class="kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.shadows.enableShadows') }}</label>
