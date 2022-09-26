@@ -278,7 +278,7 @@ export default defineComponent({
         getFormattedDateTime(date: any, format?: any, keepNull?: boolean) {
             return formatDateWithLocale(date, format, keepNull)
         },
-        getFormattedNumber(number: number, column: any) {
+        getFormattedNumber(number: number) {
             return formatNumberWithLocale(number, undefined, null)
         },
         addColumnOptions(payload: any) {
