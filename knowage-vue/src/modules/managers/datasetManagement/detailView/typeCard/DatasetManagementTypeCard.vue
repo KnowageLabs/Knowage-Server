@@ -34,7 +34,7 @@
         </Card>
     </div>
     <FileDataset v-if="dataset.dsTypeCd == 'File'" :selectedDataset="selectedDataset" @fileUploaded="$emit('fileUploaded')" />
-    <QueryDataset v-if="dataset.dsTypeCd == 'Query'" :selectedDataset="selectedDataset" :dataSources="dataSources" :scriptTypes="scriptTypes" />
+    <QueryDataset v-if="dataset.dsTypeCd == 'Query'" :selectedDataset="selectedDataset" :dataSources="dataSources" :scriptTypes="scriptTypes" :activeTab="activeTab" @queryEdited="$emit('queryEdited')" />
     <JavaDataset v-if="dataset.dsTypeCd == 'Java Class'" :selectedDataset="selectedDataset" />
     <ScriptDataset v-if="dataset.dsTypeCd == 'Script'" :selectedDataset="selectedDataset" :scriptTypes="scriptTypes" :activeTab="activeTab" />
     <QbeDataset v-if="dataset.dsTypeCd == 'Qbe' || dataset.dsTypeCd == 'Federated'" :selectedDataset="selectedDataset" :businessModels="businessModels" :dataSources="dataSources" :parentValid="parentValid" />
@@ -82,7 +82,7 @@ export default defineComponent({
         rEnvironments: { type: Array as any }
     },
     computed: {},
-    emits: ['touched', 'fileUploaded', 'qbeSaved'],
+    emits: ['touched', 'fileUploaded', 'qbeSaved', 'queryEdited'],
     data() {
         return {
             typeTabDescriptor,

@@ -37,7 +37,7 @@
             </Toolbar>
             <Card v-show="expandQueryCard">
                 <template #content>
-                    <VCodeMirror ref="codeMirror" v-model:value="dataset.query" :autoHeight="true" :options="codemirrorOptions" @keyup="$emit('touched')" />
+                    <VCodeMirror ref="codeMirror" v-model:value="dataset.query" :autoHeight="true" :options="codemirrorOptions" @keyup="$emit('queryEdited')" />
                 </template>
             </Card>
 
@@ -76,8 +76,8 @@ import HelpDialog from './DatasetManagementQueryHelpDialog.vue'
 
 export default defineComponent({
     components: { Card, Dropdown, KnValidationMessages, VCodeMirror, HelpDialog },
-    props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, scriptTypes: { type: Array as any } },
-    emits: ['touched'],
+    props: { selectedDataset: { type: Object as any }, dataSources: { type: Array as any }, scriptTypes: { type: Array as any }, activeTab: { type: Number as any } },
+    emits: ['touched', 'queryEdited'],
     data() {
         return {
             queryDescriptor,

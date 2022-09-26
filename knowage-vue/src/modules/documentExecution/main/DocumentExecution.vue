@@ -41,14 +41,7 @@
                 ></Olap>
             </template>
 
-            <iframe
-                v-for="(item, index) in breadcrumbs"
-                :key="index"
-                ref="documentFrame"
-                :name="'documentFrame' + index"
-                v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && item.label === document.label"
-                class="document-execution-iframe"
-            ></iframe>
+            <iframe v-for="(item, index) in breadcrumbs" :key="index" ref="documentFrame" :name="'documentFrame' + index" v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible" class="document-execution-iframe"></iframe>
 
             <DocumentExecutionSchedulationsTable id="document-execution-schedulations-table" v-if="schedulationsTableVisible" :propSchedulations="schedulations" @deleteSchedulation="onDeleteSchedulation" @close="schedulationsTableVisible = false"></DocumentExecutionSchedulationsTable>
 
@@ -535,13 +528,13 @@ export default defineComponent({
                 this.mode = 'iframe'
             }
         },
-        async loadPage(initialLoading: boolean = false, documentLabel: string | null = null) {
+        async loadPage(initialLoading: boolean = false, documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             this.loading = true
 
             await this.loadFilters(initialLoading)
             if (this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = false
-                await this.loadURL(null, documentLabel)
+                await this.loadURL(null, documentLabel, crossNavigationPopupMode)
                 await this.loadExporters()
             } else if (this.filtersData?.filterStatus) {
                 this.parameterSidebarVisible = true
@@ -710,7 +703,7 @@ export default defineComponent({
                 description: descriptionIndex ? data[descriptionIndex] : ''
             }
         },
-        async loadURL(olapParameters: any, documentLabel: string | null = null) {
+        async loadURL(olapParameters: any, documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             const postData = {
                 label: this.document.label,
                 role: this.userRole,
@@ -744,12 +737,12 @@ export default defineComponent({
                 this.sbiExecutionId = this.urlData?.sbiExecutionId as string
             }
 
-            await this.sendForm(documentLabel)
+            await this.sendForm(documentLabel, crossNavigationPopupMode)
         },
         async loadExporters() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
-        async sendForm(documentLabel: string | null = null) {
+        async sendForm(documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label) as any
 
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
@@ -774,7 +767,8 @@ export default defineComponent({
             postForm.id = 'postForm_' + postObject.params.document
             postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
             postForm.method = 'post'
-            postForm.target = tempIndex !== -1 ? 'documentFrame' + tempIndex : documentLabel
+            const iframeName = crossNavigationPopupMode ? 'documentFramePopup' : 'documentFrame'
+            postForm.target = tempIndex !== -1 ? iframeName + tempIndex : documentLabel
             postForm.acceptCharset = 'UTF-8'
             document.body.appendChild(postForm)
 
@@ -1121,7 +1115,7 @@ export default defineComponent({
                     iFrameName: documentLabel
                 }
                 this.crossNavigationContainerVisible = true
-                await this.loadPage(false, documentLabel)
+                await this.loadPage(false, documentLabel, true)
             } else {
                 const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
                 if (index !== -1) {
@@ -1157,7 +1151,10 @@ export default defineComponent({
             const temp = [] as any[]
             for (let i = 0; i < parameterPlaceholders.length; i++) {
                 const tempParameterName = parameterPlaceholders[i].substring(1, parameterPlaceholders[i].length - 1)
-                temp.push({ parameterPlaceholder: parameterPlaceholders[i], value: parameters[tempParameterName] })
+                temp.push({
+                    parameterPlaceholder: parameterPlaceholders[i],
+                    value: parameters[tempParameterName]
+                })
             }
             let finalString = tempCrossBreadcrumb
             for (let i = 0; i < temp.length; i++) {
