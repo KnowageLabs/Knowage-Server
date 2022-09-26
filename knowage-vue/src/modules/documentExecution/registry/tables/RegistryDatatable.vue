@@ -4,7 +4,6 @@
         :scrollable="true"
         v-model:first="first"
         :value="rows"
-        editMode="cell"
         dataKey="id"
         paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
         :lazy="lazyParams.size > registryDescriptor.paginationLimit"
@@ -21,7 +20,6 @@
         stripedRows
         showGridlines
         @page="onPage($event)"
-        @cell-edit-complete="onCellEditComplete"
     >
         <template #empty>{{ $t('common.info.noDataFound') }}</template>
         <Column class="kn-truncated" :style="registryDatatableDescriptor.numerationColumn.style" :headerStyle="registryDatatableDescriptor.numerationColumn.style" :field="columns[0].field" :header="columns[0].title"></Column>
@@ -38,36 +36,16 @@
             >
                 <template #header>
                     <div class="table-header">
+                        <i v-if="showDefaultNumberFormatIcon(col)" v-tooltip.top="$t('documentExecution.registry.numberFormatNotSupported')" class="pi pi-exclamation-triangle kn-cursor-pointer"></i>
                         {{ col.title }}
                         <i v-if="col.isEditable && col.columnInfo?.type !== 'boolean'" class="pi pi-pencil edit-icon p-ml-2" :data-test="col.field + '-icon'" />
-                    </div>
-                </template>
-                <template #editor="slotProps">
-                    <div :data-test="col.field + '-editor'">
-                        <span v-if="!col.isEditable">
-                            <span v-if="col.columnInfo?.type !== 'boolean' && col.columnInfo?.type !== 'date' && col.columnInfo?.type !== 'timestamp'">{{ slotProps.data[col.field] }}</span>
-                            <span v-if="slotProps.data[col.field] && col.columnInfo?.type === 'date'">
-                                {{ getFormattedDate(slotProps.data[col.field], 'yyyy-MM-dd', getCurrentLocaleDefaultDateFormat(col)) }}
-                            </span>
-                            <span v-else-if="slotProps.data[col.field] && col.columnInfo?.type === 'timestamp'"> {{ getFormattedDateTime(slotProps.data[col.field], { dateStyle: 'short', timeStyle: 'medium' }, true) }}</span>
-                        </span>
-                        <Checkbox v-else-if="col.editorType === 'TEXT' && col.columnInfo?.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
-                        <RegistryDatatableEditableField
-                            v-else-if="col.isEditable"
-                            :column="col"
-                            :propRow="slotProps.data"
-                            :comboColumnOptions="comboColumnOptions"
-                            @rowChanged="setRowEdited(slotProps.data)"
-                            @dropdownChanged="onDropdownChange"
-                            @dropdownOpened="addColumnOptions"
-                        ></RegistryDatatableEditableField>
                     </div>
                 </template>
                 <template #body="slotProps">
                     <div class="p-d-flex p-flex-row" :data-test="col.field + '-body'">
                         <Checkbox v-if="col.editorType == 'TEXT' && col.columnInfo?.type === 'boolean'" v-model="slotProps.data[slotProps.column.props.field]" :binary="true" @change="setRowEdited(slotProps.data)" :disabled="!col.isEditable"></Checkbox>
                         <RegistryDatatableEditableField
-                            v-else-if="col.isEditable && (col.columnInfo?.type === 'date' || col.columnInfo?.type === 'timestamp')"
+                            v-else-if="col.isEditable || col.columnInfo?.type === 'int' || col.columnInfo?.type === 'float'"
                             :column="col"
                             :propRow="slotProps.data"
                             :comboColumnOptions="comboColumnOptions"
@@ -75,17 +53,11 @@
                             @dropdownChanged="onDropdownChange"
                             @dropdownOpened="addColumnOptions"
                         ></RegistryDatatableEditableField>
-                        <div v-else-if="col.isEditable">
-                            <span v-if="(col.columnInfo?.type === 'int' || col.columnInfo?.type === 'float') && slotProps.data[col.field]">{{ getFormattedNumber(slotProps.data[col.field]) }}</span>
-                            <span v-else> {{ slotProps.data[col.field] }}</span>
-                        </div>
-
                         <span v-else-if="!col.isEditable">
                             <span v-if="slotProps.data[col.field] && col.columnInfo?.type === 'date'">
                                 {{ getFormattedDate(slotProps.data[col.field], 'yyyy-MM-dd', getCurrentLocaleDefaultDateFormat(col)) }}
                             </span>
                             <span v-else-if="slotProps.data[col.field] && col.columnInfo?.type === 'timestamp'"> {{ getFormattedDateTime(slotProps.data[col.field], { dateStyle: 'short', timeStyle: 'medium' }, true) }}</span>
-
                             <span v-else>{{ slotProps.data[col.field] }}</span>
                         </span>
                     </div>
@@ -111,6 +83,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { luxonFormatDate, formatDateWithLocale, formatNumberWithLocale, localeDate, primeVueDate } from '@/helpers/commons/localeHelper'
+import { setInputDataType, numberFormatRegex } from '@/helpers/commons/tableHelpers'
 import { AxiosResponse } from 'axios'
 import Checkbox from 'primevue/checkbox'
 import Column from 'primevue/column'
@@ -214,6 +187,7 @@ export default defineComponent({
                 if (el.isVisible) this.columns.push(el)
             })
             this.setColumnDependencies()
+            this.loadInitialDropdownOptions()
         },
         setColumnDependencies() {
             this.columns.forEach((column: any) => {
@@ -224,6 +198,11 @@ export default defineComponent({
                         this.comboColumnOptions[column.dependences] = []
                     }
                 }
+            })
+        },
+        loadInitialDropdownOptions() {
+            this.columns.forEach((column: any) => {
+                if (column.editorType === 'COMBO') this.addColumnOptions({ column: column, row: {} })
             })
         },
         loadRows() {
@@ -299,8 +278,8 @@ export default defineComponent({
         getFormattedDateTime(date: any, format?: any, keepNull?: boolean) {
             return formatDateWithLocale(date, format, keepNull)
         },
-        getFormattedNumber(number: number, precision?: number, format?: any) {
-            return formatNumberWithLocale(number, precision, format)
+        getFormattedNumber(number: number, column: any) {
+            return formatNumberWithLocale(number, undefined, null)
         },
         addColumnOptions(payload: any) {
             const column = payload.column
@@ -406,6 +385,12 @@ export default defineComponent({
                 var foundIndex = this.rows.findIndex((x) => x.id == id)
                 this.rows[foundIndex] = event.newData
             }
+        },
+        showDefaultNumberFormatIcon(column: any) {
+            if (!column || !column.columnInfo || !column.format) return false
+            const inputType = setInputDataType(column.columnInfo.type)
+            const temp = column.format.trim().match(numberFormatRegex)
+            return inputType === 'number' && !temp
         }
     }
 })
