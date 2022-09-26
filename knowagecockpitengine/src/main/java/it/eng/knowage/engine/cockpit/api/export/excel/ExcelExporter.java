@@ -636,11 +636,11 @@ public class ExcelExporter extends AbstractFormatExporter {
 			floatCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
 
 			DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
-			CellStyle dateCellStyle = wb.createCellStyle();
+			XSSFCellStyle dateCellStyle = (XSSFCellStyle) wb.createCellStyle();
 			dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(DATE_FORMAT));
 
 			SimpleDateFormat timeStampFormat = new SimpleDateFormat(TIMESTAMP_FORMAT, getLocale());
-			CellStyle tsCellStyle = wb.createCellStyle();
+			XSSFCellStyle tsCellStyle = (XSSFCellStyle) wb.createCellStyle();
 			tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
 
 			// cell styles for table widget
@@ -702,7 +702,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 								if (!s.trim().isEmpty()) {
 									Date date = dateFormat.parse(s);
 									cell.setCellValue(date);
-									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
+									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], dateCellStyle, settings, rowObject,
 											mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 								}
 							} catch (Exception e) {
@@ -716,7 +716,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 									Date ts = timeStampFormat.parse(s);
 									cell.setCellValue(ts);
 									cell.setCellStyle(tsCellStyle);
-									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
+									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], tsCellStyle, settings, rowObject,
 											mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 								}
 							} catch (Exception e) {
