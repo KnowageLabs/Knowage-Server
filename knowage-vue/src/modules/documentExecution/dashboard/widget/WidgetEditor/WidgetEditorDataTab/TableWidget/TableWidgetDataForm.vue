@@ -69,7 +69,7 @@ export default defineComponent({
         loadPagination() {
             if (this.widgetModel?.settings?.pagination) {
                 this.paginationEnabled = this.widgetModel.settings.pagination.enabled
-                this.itemsNumber = this.widgetModel.settings.pagination.itemsNumber
+                this.itemsNumber = '' + this.widgetModel.settings.pagination.itemsNumber
             }
         },
         loadSortingSettings() {
@@ -80,6 +80,7 @@ export default defineComponent({
             if (!this.widgetModel.settings) return
             this.widgetModel.settings.pagination = { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber } as ITableWidgetPagination
             emitter.emit('paginationChanged', this.widgetModel.settings.pagination)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         sortingChanged() {
             if (!this.widgetModel.settings) return

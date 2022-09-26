@@ -82,6 +82,7 @@ export default defineComponent({
             emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
             emitter.on('visualizationTypeChanged', (visuelizationTypes) => console.log('WidgetEditorPreview  - visualizationTypeChanged!', visuelizationTypes))
             emitter.on('customMessagesChanged', (customMessagesModel) => console.log('WidgetEditorPreview  - customMessagesChanged!', customMessagesModel))
+            emitter.on('refreshTable', (id) => console.log('>>>>>>>>> ID: ', id))
         },
         setupDatatableOptions() {
             this.gridOptions = {
