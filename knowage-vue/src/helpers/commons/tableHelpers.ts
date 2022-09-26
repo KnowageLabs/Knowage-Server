@@ -22,22 +22,18 @@ export function getInputStep(dataType: string) {
     }
 }
 
-export const formatNumber = (column: any, row: any) => {
-    const number = row[column.field]
-    switch (column.format) {
-        case '####,##':
-            return { useGrouping: false, locale: 'it-IT', minFractionDigits: 2, maxFractionDigits: 2 }
-        case '####,###':
-            return { useGrouping: false, locale: 'it-IT', minFractionDigits: 3, maxFractionDigits: 3 }
-        case '#.###,##':
-            return { useGrouping: true, locale: 'it-IT', minFractionDigits: 2, maxFractionDigits: 2 }
-        case '####':
-            return { useGrouping: false, locale: '', minFractionDigits: 0, maxFractionDigits: 0 }
-        case '####.##':
-            return { useGrouping: false, locale: 'en-US', minFractionDigits: 2, maxFractionDigits: 2 }
-        case '#,###.##':
-            return { useGrouping: true, locale: 'en-US', minFractionDigits: 2, maxFractionDigits: 2 }
-        default:
-            return null
-    }
+export const numberFormatRegex = '^(####|#\.###|#\,###){1}([,.]?)(#*)$'
+
+export const formatNumber = (column: any) => {
+    if (!column.format) return null
+
+    const result = column.format.trim().match(numberFormatRegex)
+    if (!result) return null
+
+    const useGrouping = result[2] === '.' || result[2] === ','
+    const maxFractionDigits = result[3].length
+    const configuration = { useGrouping: useGrouping, minFractionDigits: maxFractionDigits, maxFractionDigits: maxFractionDigits }
+
+    return configuration
+
 }
