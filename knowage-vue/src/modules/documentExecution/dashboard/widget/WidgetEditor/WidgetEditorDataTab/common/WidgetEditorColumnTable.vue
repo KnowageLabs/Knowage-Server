@@ -45,6 +45,7 @@
                 <Column :style="settings.buttonColumnStyle">
                     <template #body="slotProps">
                         <div>
+                            <Button v-if="slotProps.data.formula" icon="fas fa-calculator" class="p-button-link" v-tooltip.top="$t('common.edit')" @click.stop="openCalculatedFieldDialog(slotProps.data)"></Button>
                             <Button icon="fas fa-cog" class="p-button-link" v-tooltip.top="$t('common.edit')" @click.stop="$emit('itemSelected', slotProps.data)"></Button>
                             <Button icon="pi pi-trash" class="p-button-link" v-tooltip.top="$t('common.delete')" @click.stop="deleteItem(slotProps.data, slotProps.index)"></Button>
                         </div>
@@ -90,9 +91,13 @@ export default defineComponent({
         this.loadItems()
         this.setFilters()
     },
+    unmounted() {
+        emitter.off('addNewCalculatedField', this.onCalcFieldAdded)
+    },
     methods: {
         setEventListeners() {
             emitter.on('selectedColumnUpdated', (column) => this.onSelectedColumnUpdated(column))
+            emitter.on('addNewCalculatedField', this.onCalcFieldAdded)
         },
         loadItems() {
             this.rows = deepcopy(this.items) as IWidgetColumn[]
@@ -131,6 +136,13 @@ export default defineComponent({
         onColumnAliasRenamed(column: IWidgetColumn) {
             emitter.emit('columnAliasRenamed', column)
             this.$emit('itemUpdated', column)
+        },
+        openCalculatedFieldDialog(column: IWidgetColumn) {
+            emitter.emit('editCalculatedField', column)
+        },
+        onCalcFieldAdded(field) {
+            this.rows.push(field as IWidgetColumn)
+            this.$emit('itemAdded', field)
         }
     }
 })

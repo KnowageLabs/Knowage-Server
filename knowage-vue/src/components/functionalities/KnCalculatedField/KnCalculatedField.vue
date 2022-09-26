@@ -90,7 +90,7 @@ import { AxiosResponse } from 'axios'
 import { createValidations } from '@/helpers/commons/validationHelper'
 import { defineComponent } from 'vue'
 import { IKnCalculatedField, IKnCalculatedFieldFunction } from '@/components/functionalities/KnCalculatedField/KnCalculatedField'
-import VCodeMirror, { CodeMirror  } from 'codemirror-editor-vue3'
+import VCodeMirror, { CodeMirror } from 'codemirror-editor-vue3'
 
 import Dropdown from 'primevue/dropdown'
 import Dialog from 'primevue/dialog'
@@ -153,6 +153,10 @@ export default defineComponent({
         if (!this.readOnly && this.template && !this.template.parameters && this.source === 'QBE') {
             this.cf = { colName: this.template.alias, formula: this.template.expression } as IKnCalculatedField
         }
+
+        if (!this.readOnly && this.template && !this.template.parameters && this.source === 'dashboard') {
+            this.cf = { colName: this.template.alias, formula: this.template.formula } as IKnCalculatedField
+        }
     },
 
     updated() {
@@ -168,6 +172,10 @@ export default defineComponent({
 
         if (!this.readOnly && this.template && !this.template.parameters && this.source === 'QBE') {
             this.cf = { colName: this.template.alias, formula: this.template.expression } as IKnCalculatedField
+        }
+
+        if (!this.readOnly && this.template && !this.template.parameters && this.source === 'dashboard') {
+            this.cf = { colName: this.template.alias, formula: this.template.formula } as IKnCalculatedField
         }
     },
 
@@ -275,7 +283,7 @@ export default defineComponent({
             let to = { line: cursor.line, ch: end }
 
             let range = editor.getRange(from, to)
-            let fieldAlias = this.source !== 'QBE' ? '$F{'+data.item.fieldAlias+'}' : data.item.fieldAlias
+            let fieldAlias = this.source !== 'QBE' ? '$F{' + data.item.fieldAlias + '}' : data.item.fieldAlias
             let spContent = data.elementType === 'function' ? data.item : fieldAlias
 
             if (range === '' || range.match(/\(|\)|,|\./g)) {

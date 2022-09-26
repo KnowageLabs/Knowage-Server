@@ -1,6 +1,6 @@
 export interface IDatasetParameter {
-    name: string,
-    type: "static" | "dynamic",
+    name: string
+    type: 'static' | 'dynamic'
     value: string
 }
 
@@ -20,350 +20,347 @@ export interface IWidget {
 }
 
 export interface ITableWidgetSettings {
-    sortingColumn?: string,
-    sortingOrder?: string,
-    updatable: boolean,
-    clickable: boolean,
-    conditionalStyles: ITableWidgetConditionalStyles,
-    configuration: ITableWidgetConfiguration,
-    interactions: ITableWidgetInteractions,
-    pagination: ITableWidgetPagination,
-    style: ITableWidgetStyle,
-    tooltips: ITableWidgetTooltipStyle[],
-    visualization: ITableWidgetVisualization,
+    sortingColumn?: string
+    sortingOrder?: string
+    updatable: boolean
+    clickable: boolean
+    conditionalStyles: ITableWidgetConditionalStyles
+    configuration: ITableWidgetConfiguration
+    interactions: ITableWidgetInteractions
+    pagination: ITableWidgetPagination
+    style: ITableWidgetStyle
+    tooltips: ITableWidgetTooltipStyle[]
+    visualization: ITableWidgetVisualization
     responsive: ITableWidgetResponsive
 }
 
 export interface ITableWidgetConditionalStyles {
-    enabled: boolean,
+    enabled: boolean
     conditions: ITableWidgetConditionalStyle[]
 }
 
 export interface ITableWidgetConditionalStyle {
     target: string
-    applyToWholeRow: boolean,
+    applyToWholeRow: boolean
     condition: {
-        type: string,
-        variable?: string,
-        parameter?: string,
-        operator: string,
+        type: string
+        variable?: string
+        parameter?: string
+        operator: string
         value: string
-    },
+    }
     properties: {
-        "justify-content": string,
-        "font-family": string,
-        "font-size": string,
-        "font-style": string,
-        "font-weight": string,
-        color: string,
-        "background-color": string,
+        'justify-content': string
+        'font-family': string
+        'font-size': string
+        'font-style': string
+        'font-weight': string
+        color: string
+        'background-color': string
         icon: string
     }
 }
 export interface ITableWidgetConfiguration {
-    columnGroups: ITableWidgetColumnGroups,
+    columnGroups: ITableWidgetColumnGroups
     exports: ITableWidgetExports
     headers: ITableWidgetHeaders
     rows: ITableWidgetRows
-    summaryRows: ITableWidgetSummaryRows,
+    summaryRows: ITableWidgetSummaryRows
     customMessages: ITableWidgetCustomMessages
 }
 
 export interface ITableWidgetColumnGroups {
-    enabled: boolean,
+    enabled: boolean
     groups: ITableWidgetColumnGroup[]
 }
 
 export interface ITableWidgetColumnGroup {
-    id: string,
-    label: string,
+    id: string
+    label: string
     columns: string[]
 }
 
 export interface ITableWidgetExports {
     pdf: {
-        enabled: boolean,
+        enabled: boolean
         custom: {
-            height: number,
-            width: number,
+            height: number
+            width: number
             enabled: boolean
-        },
-        a4landscape: boolean,
+        }
+        a4landscape: boolean
         a4portrait: boolean
-    },
-    showExcelExport: boolean,
+    }
+    showExcelExport: boolean
     showScreenshot: boolean
 }
 
 export interface ITableWidgetHeaders {
-    enabled: boolean,
-    enabledMultiline: boolean,
+    enabled: boolean
+    enabledMultiline: boolean
     custom: {
-        enabled: boolean,
+        enabled: boolean
         rules: ITableWidgetHeadersRule[]
     }
 }
 
 export interface ITableWidgetHeadersRule {
-    target: string[],
-    action: string,
-    compareType?: string,
-    variable?: string,
-    value?: string,
+    target: string[]
+    action: string
+    compareType?: string
+    variable?: string
+    value?: string
     parameter?: string
 }
 
 export interface ITableWidgetRows {
-    indexColumn: boolean,
+    indexColumn: boolean
     rowSpan: {
-        enabled: boolean,
+        enabled: boolean
         column: string
     }
 }
 
 export interface ITableWidgetSummaryRows {
-    enabled: boolean,
-    list: ITableWidgetSummaryRow[],
+    enabled: boolean
+    list: ITableWidgetSummaryRow[]
     style: { pinnedOnly: boolean }
 }
 
 export interface ITableWidgetCustomMessages {
-    hideNoRowsMessage: boolean,
+    hideNoRowsMessage: boolean
     noRowsMessage: string
 }
 
 export interface ITableWidgetSummaryRow {
-    label: string,
+    label: string
     aggregation: string
 }
 
 export interface ITableWidgetInteractions {
-    crosssNavigation: ITableWidgetCrossNavigation,
-    link: ITableWidgetLinks,
-    preview: ITableWidgetPreview,
+    crosssNavigation: ITableWidgetCrossNavigation
+    link: ITableWidgetLinks
+    preview: ITableWidgetPreview
     selection: ITableWidgetSelection
 }
 
 export interface ITableWidgetCrossNavigation {
-    enabled: boolean,
-    type: string,
-    column: string,
-    icon?: string,
-    name: string,
+    enabled: boolean
+    type: string
+    column: string
+    icon?: string
+    name: string
     parameters: ITableWidgetParameter[]
 }
 
 export interface ITableWidgetLinks {
-    enabled: boolean,
+    enabled: boolean
     links: ITableWidgetLink[]
 }
 
 export interface ITableWidgetLink {
-    type: string,
-    icon?: string,
-    baseurl: string,
-    column?: string,
-    action: string,
+    type: string
+    icon?: string
+    baseurl: string
+    column?: string
+    action: string
     parameters: ITableWidgetParameter[]
 }
 
 export interface ITableWidgetParameter {
-    enabled: boolean,
-    name: string,
-    type: string,
-    value?: string,
-    column?: string,
-    driver?: string,
-    dataset?: string,
+    enabled: boolean
+    name: string
+    type: string
+    value?: string
+    column?: string
+    driver?: string
+    dataset?: string
     json?: string
 }
 
 export interface ITableWidgetPreview {
-    enabled: boolean,
-    type: string,
-    parameters: ITableWidgetParameter[],
-    dataset: number,
-    column?: string,
-    directDownload: boolean,
+    enabled: boolean
+    type: string
+    parameters: ITableWidgetParameter[]
+    dataset: number
+    column?: string
+    directDownload: boolean
     icon?: stirng
 }
 
 export interface ITableWidgetSelection {
-    enabled: boolean,
-    modalColumn: string,
+    enabled: boolean
+    modalColumn: string
     multiselection: {
-        enabled: boolean,
+        enabled: boolean
         properties: {
-            "background-color": string,
+            'background-color': string
             color: string
         }
     }
 }
 
 export interface ITableWidgetPagination {
-    enabled: boolean,
+    enabled: boolean
     itemsNumber: number
 }
 
 export interface ITableWidgetStyle {
-    borders: ITableWidgetBordersStyle,
-    columns: ITableWidgetColumnStyles,
-    columnGroups: ITableWidgetColumnStyles,
-    headers: ITawbleWidgetHeadersStyle,
-    padding: ITableWidgetPaddingStyle,
-    rows: ITableWidgetRowsStyle,
-    shadows: ITableWidgetShadowsStyle,
+    borders: ITableWidgetBordersStyle
+    columns: ITableWidgetColumnStyles
+    columnGroups: ITableWidgetColumnStyles
+    headers: ITawbleWidgetHeadersStyle
+    padding: ITableWidgetPaddingStyle
+    rows: ITableWidgetRowsStyle
+    shadows: ITableWidgetShadowsStyle
     summary: ITableWidgetSummaryStyle
 }
 
 export interface ITableWidgetBordersStyle {
-    enabled: boolean,
+    enabled: boolean
     properties: {
-        "border-bottom-left-radius": string,
-        "border-bottom-right-radius": string,
-        "border-style": string,
-        "border-top-left-radius": string,
-        "border-top-right-radius": string,
-        "border-width": string,
-        "border-color": string
+        'border-bottom-left-radius': string
+        'border-bottom-right-radius': string
+        'border-style': string
+        'border-top-left-radius': string
+        'border-top-right-radius': string
+        'border-width': string
+        'border-color': string
     }
 }
 
 export interface ITableWidgetColumnStyles {
-    enabled: boolean,
+    enabled: boolean
     styles: ITableWidgetColumnStyle[]
 }
 
 export interface ITableWidgetColumnStyle {
-    target: string | string[],
+    target: string | string[]
     properties: {
-        "background-color": string,
-        color: string,
-        "justify-content": string,
-        "font-size": string,
-        "font-family": string,
-        "font-style": string,
-        "font-weight": string
+        'background-color': string
+        color: string
+        'justify-content': string
+        'font-size': string
+        'font-family': string
+        'font-style': string
+        'font-weight': string
     }
-
 }
 
 export interface ITawbleWidgetHeadersStyle {
-    height: number,
+    height: number
     properties: {
-        "background-color": string,
-        color: string,
-        "justify-content": string,
-        "font-size": string,
-        "font-family": string,
-        "font-style": string,
-        "font-weight": string
+        'background-color': string
+        color: string
+        'justify-content': string
+        'font-size': string
+        'font-family': string
+        'font-style': string
+        'font-weight': string
     }
 }
 
 export interface ITableWidgetPaddingStyle {
-    enabled: boolean,
+    enabled: boolean
     properties: {
-        "padding-top": string,
-        "padding-left": string,
-        "padding-bottom": string,
-        "padding-right": string,
+        'padding-top': string
+        'padding-left': string
+        'padding-bottom': string
+        'padding-right': string
         unlinked: boolean
     }
 }
 
 export interface ITableWidgetRowsStyle {
-    height: number,
-    selectionColor: string,
-    multiselectable: boolean,
+    height: number
+    selectionColor: string
+    multiselectable: boolean
     alternatedRows: {
-        enabled: boolean,
-        evenBackgroundColor: string,
+        enabled: boolean
+        evenBackgroundColor: string
         oddBackgroundColor: string
-
     }
 }
 
 export interface ITableWidgetShadowsStyle {
-    enabled: boolean,
+    enabled: boolean
     properties: {
-        "box-shadow": string,
+        'box-shadow': string
         backgroundColor: strubg
     }
 }
 
 export interface ITableWidgetSummaryStyle {
-    "font-family": string,
-    "font-style": string,
-    "font-size": string,
-    "font-weight": string,
-    color: string,
-    "background-color": string,
+    'font-family': string
+    'font-style': string
+    'font-size': string
+    'font-weight': string
+    color: string
+    'background-color': string
     'justify-content': string
 }
 
 export interface ITableWidgetTooltipStyle {
-    target: string | string[],
-    enabled: boolean,
-    prefix: string,
-    suffix: string,
-    precision: number,
+    target: string | string[]
+    enabled: boolean
+    prefix: string
+    suffix: string
+    precision: number
     header: {
-        enabled: boolean,
+        enabled: boolean
         text: string
     }
 }
 
 export interface ITableWidgetVisualization {
-    visualizationTypes: ITableWidgetVisualizationTypes,
+    visualizationTypes: ITableWidgetVisualizationTypes
     visibilityConditions: ITableWidgetVisibilityConditions
 }
 
 export interface ITableWidgetVisualizationTypes {
-    enabled: boolean,
+    enabled: boolean
     types: ITableWidgetVisualizationType[]
 }
 
 export interface ITableWidgetVisualizationType {
-    target: string | string[],
-    type: string,
-    precision?: number,
-    prefix?: string,
-    suffix?: string,
-    pinned?: string,
-    min?: number,
-    max?: number,
-    alignment?: string,
-    color?: string,
-    "background-color"?: string
+    target: string | string[]
+    type: string
+    precision?: number
+    prefix?: string
+    suffix?: string
+    pinned?: string
+    min?: number
+    max?: number
+    alignment?: string
+    color?: string
+    'background-color'?: string
 }
 
 export interface ITableWidgetVisibilityConditions {
-    enabled: boolean,
+    enabled: boolean
     conditions: ITableWidgetVisibilityCondition[]
 }
 
 export interface ITableWidgetVisibilityCondition {
-    target: string[],
-    hide: boolean,
-    hidePdf: boolean,
+    target: string[]
+    hide: boolean
+    hidePdf: boolean
     condition: {
-        type: string,
-        variable?: string,
-        variableValue?: string,
-        operator?: string,
+        type: string
+        variable?: string
+        variableValue?: string
+        operator?: string
         value?: string
     }
 }
 
 export interface ITableWidgetResponsive {
-    xs: boolean,
-    sm: boolean,
-    md: boolean,
-    lg: boolean,
+    xs: boolean
+    sm: boolean
+    md: boolean
+    lg: boolean
     xl: boolean
 }
-
 
 export interface IWidgetColumn {
     id?: string
@@ -371,15 +368,17 @@ export interface IWidgetColumn {
     alias: string
     type: string
     fieldType: string
-    multiValue: boolean,
-    aggregation: string,
+    multiValue: boolean
+    aggregation: string
     filter: IWidgetColumnFilter
+    formula?: string
+    formulaEditor?: string
 }
 
 export interface IWidgetColumnFilter {
     enabled: boolean
     operator: string
-    value: string,
+    value: string
     value2?: string
 }
 
@@ -387,8 +386,8 @@ export interface IWidgetEditorDataset {
     id: number
     label: string
     cache: boolean
-    parameters?: any[],
-    drivers?: any[],
+    parameters?: any[]
+    drivers?: any[]
     indexes?: any[]
 }
 export interface IWidgetPickerType {
@@ -478,9 +477,9 @@ export interface IDataset {
     isRealtime: boolean
     isCachingSupported: boolean
     isIterable: boolean
-    isNearRealtimeSupported: boolean,
-    cache?: boolean,
-    indexes?: any[],
+    isNearRealtimeSupported: boolean
+    cache?: boolean
+    indexes?: any[]
     drivers?: any[]
 }
 
@@ -509,7 +508,7 @@ export interface IModelDataset {
     id: number
     cache: boolean
     indexes: string[]
-    parameters: IModelDatasetParameter[],
+    parameters: IModelDatasetParameter[]
     drivers: any[]
 }
 
@@ -521,23 +520,23 @@ interface IModelDatasetParameter {
 }
 
 export interface IIcon {
-    category: string,
-    className: string,
-    fontFamily: string,
-    fontWeight: number,
-    id: number,
-    label: string,
-    unicode: string,
+    category: string
+    className: string
+    fontFamily: string
+    fontWeight: number
+    id: number
+    label: string
+    unicode: string
     visible: booleam
 }
 
 export interface IWidgetStyleToolbarModel {
-    'font-weight'?: string,
-    'font-style'?: string,
-    'font-size'?: string,
-    'font-family'?: string,
-    'justify-content'?: string,
-    color?: string,
-    'background-color'?: string,
+    'font-weight'?: string
+    'font-style'?: string
+    'font-size'?: string
+    'font-family'?: string
+    'justify-content'?: string
+    color?: string
+    'background-color'?: string
     icon?: string
 }

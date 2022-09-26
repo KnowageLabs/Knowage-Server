@@ -6,7 +6,7 @@
         </span>
         <div class="p-col-12 p-d-flex">
             <label class="kn-material-input-label p-as-center p-ml-1"> {{ $t('common.columns') }} </label>
-            <Button :label="$t('common.addColumn')" icon="pi pi-plus-circle" class="p-button-outlined p-ml-auto p-mr-1" @click="showCalculatedFieldDialog"></Button>
+            <Button :label="$t('common.addColumn')" icon="pi pi-plus-circle" class="p-button-outlined p-ml-auto p-mr-1" @click="createNewCalcField"></Button>
         </div>
 
         <Listbox v-if="selectedDataset" class="kn-list kn-list-no-border-right dashboard-editor-list" :options="selectedDatasetColumns" :filter="true" :filterPlaceholder="$t('common.search')" :filterFields="descriptor.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')">
@@ -22,6 +22,21 @@
             </template>
         </Listbox>
     </div>
+
+    <KnCalculatedField
+        v-if="calcFieldDialogVisible"
+        v-model:template="selectedCalcField"
+        v-model:visibility="calcFieldDialogVisible"
+        :fields="calcFieldColumns"
+        :descriptor="calcFieldDescriptor"
+        :propCalcFieldFunctions="calcFieldDescriptor.availableFunctions"
+        :readOnly="false"
+        :valid="true"
+        source="dashboard"
+        @save="onCalcFieldSave"
+        @cancel="calcFieldDialogVisible = false"
+    >
+    </KnCalculatedField>
 </template>
 
 <script lang="ts">
@@ -34,10 +49,13 @@ import mainStore from '../../../../../../../App.store'
 import Listbox from 'primevue/listbox'
 import Card from 'primevue/card'
 import dataListDescriptor from '../../../../dataset/DatasetEditorDataTab/DatasetEditorDataList/DatasetEditorDataListDescriptor.json'
+import KnCalculatedField from '@/components/functionalities/KnCalculatedField/KnCalculatedField.vue'
+import calcFieldDescriptor from './WidgetEditorCalcFieldDescriptor.json'
+import cryptoRandomString from 'crypto-random-string'
 
 export default defineComponent({
     name: 'widget-editor-data-list',
-    components: { Card, Dropdown, Listbox },
+    components: { Card, Dropdown, Listbox, KnCalculatedField },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array }, selectedDatasets: { type: Array as PropType<IDataset[]> } },
     emits: ['datasetSelected'],
     data() {
@@ -47,7 +65,12 @@ export default defineComponent({
             model: null as IWidget | null,
             datasetOptions: [] as IWidgetEditorDataset[],
             selectedDataset: null as IWidgetEditorDataset | null,
-            selectedDatasetColumns: [] as IDatasetColumn[]
+            selectedDatasetColumns: [] as IDatasetColumn[],
+            calcFieldDescriptor,
+            calcFieldDialogVisible: false,
+            calcFieldColumns: [] as any,
+            selectedCalcField: null as any,
+            calcFieldFunctionsToShow: [] as any
         }
     },
     setup() {
@@ -57,6 +80,7 @@ export default defineComponent({
     async created() {
         this.loadDatasets()
         this.loadModel()
+        emitter.on('editCalculatedField', this.editCalcField)
     },
     methods: {
         loadDatasets() {
@@ -99,8 +123,6 @@ export default defineComponent({
             emitter.emit('refreshTable', this.widgetModel.id)
             this.model.columns = []
         },
-        // TODO
-        showCalculatedFieldDialog() {},
         loadDatasetColumns() {
             this.selectedDatasetColumns = []
             if (!this.selectedDatasets || this.selectedDatasets.length === 0) return
@@ -117,6 +139,43 @@ export default defineComponent({
             event.dataTransfer.setData('text/plain', JSON.stringify(datasetColumn))
             event.dataTransfer.dropEffect = 'move'
             event.dataTransfer.effectAllowed = 'move'
+        },
+        createNewCalcField() {
+            this.createCalcFieldColumns()
+            this.selectedCalcField = { alias: '', expression: '', format: undefined, nature: 'ATTRIBUTE', type: 'STRING' } as any
+            this.calcFieldDialogVisible = true
+        },
+        editCalcField(calcField) {
+            console.log('CALC IFELD ', calcField)
+            this.createCalcFieldColumns()
+            this.selectedCalcField = calcField
+            this.calcFieldDialogVisible = true
+        },
+        createCalcFieldColumns() {
+            this.calcFieldColumns = []
+            this.model?.columns.forEach((field) => {
+                if (field.fieldType === 'MEASURE') this.calcFieldColumns.push({ fieldAlias: `$F{${field.alias}}`, fieldLabel: field.alias })
+            })
+        },
+        onCalcFieldSave(calcFieldOutput) {
+            if (this.selectedCalcField.id) {
+                this.selectedCalcField.alias = calcFieldOutput.colName
+                this.selectedCalcField.formula = calcFieldOutput.formula
+            } else {
+                emitter.emit('addNewCalculatedField', {
+                    id: cryptoRandomString({ length: 16, type: 'base64' }),
+                    columnName: calcFieldOutput.colName,
+                    alias: calcFieldOutput.colName,
+                    type: 'java.lang.Double',
+                    fieldType: 'MEASURE',
+                    filter: {},
+                    formula: calcFieldOutput.formula,
+                    formulaEditor: calcFieldOutput.formula,
+                    aggregation: 'NONE'
+                })
+            }
+
+            this.calcFieldDialogVisible = false
         }
     }
 })

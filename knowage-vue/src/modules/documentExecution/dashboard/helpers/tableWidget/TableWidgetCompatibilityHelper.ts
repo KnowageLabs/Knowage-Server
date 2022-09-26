@@ -1,23 +1,43 @@
-import { IWidget, IWidgetColumn, IWidgetColumnFilter, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, ITableWidgetInteractions, ITableWidgetConfiguration, ITableWidgetResponsive, ITableWidgetConditionalStyles } from '../../Dashboard'
+import {
+    IWidget,
+    IWidgetColumn,
+    IWidgetColumnFilter,
+    ITableWidgetSettings,
+    ITableWidgetPagination,
+    ITableWidgetConditionalStyle,
+    ITableWidgetTooltipStyle,
+    ITableWidgetStyle,
+    ITableWidgetInteractions,
+    ITableWidgetConfiguration,
+    ITableWidgetResponsive,
+    ITableWidgetConditionalStyles
+} from '../../Dashboard'
 import { getFormattedConfiguration } from './TableWidgetConfigurationHelper'
 import { getFormattedInteractions } from './TableWidgetInteractionsHelper'
 import { getFormattedStyle } from './TableWidgetStyleHelper'
 import { getSettingsFromWidgetColumns } from './TableWidgetColumnSettingsHelper'
-import * as  tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
+import * as tableWidgetDefaultValues from '../../widget/WidgetEditor/helpers/tableWidget/TableWidgetDefaultValues'
 import cryptoRandomString from 'crypto-random-string'
 
 const columnNameIdMap = {}
 
 export const formatTableWidget = (widget: any) => {
-    console.log("TableWidgetCompatibilityHelper - formatTableWidget called for: ", widget)
+    console.log('TableWidgetCompatibilityHelper - formatTableWidget called for: ', widget)
     const formattedWidget = {
-        id: widget.id, dataset: widget.dataset.dsId, type: widget.type, columns: getFormattedWidgetColumns(widget), conditionalStyles: [], theme: '', style: {}, settings: {} as ITableWidgetSettings
+        id: widget.id,
+        dataset: widget.dataset.dsId,
+        type: widget.type,
+        columns: getFormattedWidgetColumns(widget),
+        conditionalStyles: [],
+        theme: '',
+        style: {},
+        settings: {} as ITableWidgetSettings
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(widget)
     getFiltersForColumns(formattedWidget, widget)
     getSettingsFromWidgetColumns(formattedWidget, widget)
 
-    console.log("TableWidgetCompatibilityHelper - FORMATTED WIDGET: ", formattedWidget)
+    console.log('TableWidgetCompatibilityHelper - FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
 }
 
@@ -32,14 +52,30 @@ const getFormattedWidgetColumns = (widget: any) => {
 
 const getFormattedWidgetColumn = (widgetColumn: any) => {
     const formattedColumn = { id: cryptoRandomString({ length: 16, type: 'base64' }), columnName: widgetColumn.name, alias: widgetColumn.alias, type: widgetColumn.type, fieldType: widgetColumn.fieldType, multiValue: widgetColumn.multiValue, filter: {} } as IWidgetColumn
+    if (widgetColumn.isCalculated) {
+        formattedColumn.formula = widgetColumn.formula
+        formattedColumn.formulaEditor = widgetColumn.formulaEditor
+    }
     columnNameIdMap[formattedColumn.columnName] = formattedColumn.id
     if (widgetColumn.aggregationSelected) formattedColumn.aggregation = widgetColumn.aggregationSelected
     return formattedColumn
 }
 
-
 const getFormattedWidgetSettings = (widget: any) => {
-    const formattedSettings = { sortingColumn: getColumnId(widget.settings?.sortingColumn) ?? '', sortingOrder: widget.settings?.sortingOrder ?? '', updatable: widget.updateble, clickable: widget.cliccable, conditionalStyles: getFormattedConditionalStyles(widget), configuration: getFormattedConfiguration(widget) as ITableWidgetConfiguration, interactions: getFormattedInteractions(widget) as ITableWidgetInteractions, pagination: getFormattedPaginations(widget), style: getFormattedStyle(widget) as ITableWidgetStyle, tooltips: tableWidgetDefaultValues.getDefaultTooltips() as ITableWidgetTooltipStyle[], visualization: tableWidgetDefaultValues.getDefaultVisualizations(), responsive: tableWidgetDefaultValues.getDefaultResponsivnes() as ITableWidgetResponsive } as ITableWidgetSettings
+    const formattedSettings = {
+        sortingColumn: getColumnId(widget.settings?.sortingColumn) ?? '',
+        sortingOrder: widget.settings?.sortingOrder ?? '',
+        updatable: widget.updateble,
+        clickable: widget.cliccable,
+        conditionalStyles: getFormattedConditionalStyles(widget),
+        configuration: getFormattedConfiguration(widget) as ITableWidgetConfiguration,
+        interactions: getFormattedInteractions(widget) as ITableWidgetInteractions,
+        pagination: getFormattedPaginations(widget),
+        style: getFormattedStyle(widget) as ITableWidgetStyle,
+        tooltips: tableWidgetDefaultValues.getDefaultTooltips() as ITableWidgetTooltipStyle[],
+        visualization: tableWidgetDefaultValues.getDefaultVisualizations(),
+        responsive: tableWidgetDefaultValues.getDefaultResponsivnes() as ITableWidgetResponsive
+    } as ITableWidgetSettings
     return formattedSettings
 }
 const getFormattedConditionalStyles = (widget: any) => {
@@ -55,22 +91,24 @@ const getFormattedConditionalStyles = (widget: any) => {
 
 const createConditionFromRowThreshold = (rowThreshold: any) => {
     const conditionStyle = {
-        target: getColumnId(rowThreshold.column), applyToWholeRow: false, condition: { type: rowThreshold.compareValueType, operator: rowThreshold.condition, value: '' },
+        target: getColumnId(rowThreshold.column),
+        applyToWholeRow: false,
+        condition: { type: rowThreshold.compareValueType, operator: rowThreshold.condition, value: '' },
         properties: {
-            "justify-content": '',
-            "font-family": '',
-            "font-size": '',
-            "font-style": '',
-            "font-weight": '',
+            'justify-content': '',
+            'font-family': '',
+            'font-size': '',
+            'font-style': '',
+            'font-weight': '',
             color: '',
-            "background-color": '',
+            'background-color': '',
             icon: ''
         }
     } as ITableWidgetConditionalStyle
     switch (conditionStyle.condition.type) {
         case 'static':
             conditionStyle.condition.value = rowThreshold.compareValue
-            break;
+            break
         case 'parameter':
             conditionStyle.condition.value = getParameterValue(rowThreshold.compareValue)
             conditionStyle.condition.parameter = rowThreshold.compareValue
@@ -108,12 +146,12 @@ const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {
 
 // TODO - PARAMETER VALUE
 const getParameterValue = (parameterName: string) => {
-    return 'MOCKED PARAMETER VALUE';
+    return 'MOCKED PARAMETER VALUE'
 }
 
 // TODO - VARIABLE VALUE
 const getVariableValue = (variable: string) => {
-    return 'MOCKED VARIABLE VALUE';
+    return 'MOCKED VARIABLE VALUE'
 }
 
 export const getColumnId = (widgetColumnName: string) => {
