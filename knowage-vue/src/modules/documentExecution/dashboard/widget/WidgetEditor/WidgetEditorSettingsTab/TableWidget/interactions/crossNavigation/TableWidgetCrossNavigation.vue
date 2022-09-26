@@ -1,5 +1,5 @@
 <template>
-    <div v-if="crossNavigationModel" class="p-grid p-ai-center p-p-4">
+    <div v-if="crossNavigationModel" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-grid p-col-12 p-pt-4 p-ai-centerr">
             <div class="p-col-6 p-sm-12 p-md-6">
                 <InputSwitch v-model="crossNavigationModel.enabled"></InputSwitch>

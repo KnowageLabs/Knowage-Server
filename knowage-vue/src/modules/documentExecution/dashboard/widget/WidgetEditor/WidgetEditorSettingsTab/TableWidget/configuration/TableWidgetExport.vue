@@ -1,11 +1,11 @@
 <template>
-    <div v-if="exportModel" class="p-grid p-ai-center p-p-4">
+    <div v-if="exportModel" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-col-12 p-p-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.export.exportPdf') }}</label>
             <InputSwitch v-model="exportModel.pdf.enabled" @change="onEnableExportChanged"></InputSwitch>
         </div>
         <div class="p-grid p-col-12 p-ai-center">
-            <div class="p-grid p-col-12 p-md-6 p-ai-center p-pt-4">
+            <div class="p-grid p-col-12 p-lg-3 p-ai-center p-pt-4">
                 <div class="p-col-6 field-radiobutton p-px-2">
                     <RadioButton v-model="selectedExport" name="export" value="a4portrait" :disabled="pdfExportDisabled" @change="onSelectedExportChanged" />
                     <label class="kn-material-input-label p-m-2"> {{ $t('dashboard.widgetEditor.export.a4portrait') }}</label>
@@ -16,29 +16,29 @@
                     <label class="kn-material-input-label p-m-2"> {{ $t('dashboard.widgetEditor.export.a4landscape') }}</label>
                 </div>
             </div>
-            <div class="p-col-12 p-md-6 p-grid p-ai-center">
-                <div class="p-col-12 p-md-3 field-radiobutton p-d-flex p-ai-center p-pt-4">
+            <div class="p-col-12 p-lg-9 p-grid p-ai-center">
+                <div class="p-col-12 p-md-12 p-lg-3 field-radiobutton p-d-flex p-ai-center p-pt-4">
                     <RadioButton v-model="selectedExport" name="export" value="custom" :disabled="pdfExportDisabled" @change="onSelectedExportChanged" />
                     <label class="kn-material-input-label p-m-2"> {{ $t('common.custom') }}</label>
                 </div>
 
-                <div class="p-col-12 p-md-5 p-d-flex p-flex-column p-px-4">
+                <div class="p-col-12 p-md-6 p-lg-5 p-d-flex p-flex-column p-px-4">
                     <label class="kn-material-input-label">{{ $t('common.width') }}</label>
-                    <InputNumber class="kn-material-input p-inputtext-sm" v-model="exportModel.pdf.custom.width" :disabled="pdfExportDisabled || selectedExport !== 'custom'" @blur="exportConfigurationChanged" />
+                    <InputNumber class="kn-material-input p-inputtext-sm export-number-input" :inputStyle="descriptor.configurationExportNumberInputStyle" v-model="exportModel.pdf.custom.width" :disabled="pdfExportDisabled || selectedExport !== 'custom'" @blur="exportConfigurationChanged" />
                 </div>
 
-                <div class="p-col-12 p-md-4 p-d-flex p-flex-column p-px-4">
+                <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column p-px-4">
                     <label class="kn-material-input-label">{{ $t('common.height') }}</label>
-                    <InputNumber class="kn-material-input p-inputtext-sm" v-model="exportModel.pdf.custom.height" :disabled="pdfExportDisabled || selectedExport !== 'custom'" @blur="exportConfigurationChanged" />
+                    <InputNumber class="kn-material-input p-inputtext-sm export-number-input" :inputStyle="descriptor.configurationExportNumberInputStyle" v-model="exportModel.pdf.custom.height" :disabled="pdfExportDisabled || selectedExport !== 'custom'" @blur="exportConfigurationChanged" />
                 </div>
             </div>
         </div>
         <div class="p-grid p-col-12">
-            <div class="p-col-12 p-md-6 p-p-4">
+            <div class="p-col-12 p-lg-6 p-p-4">
                 <InputSwitch v-model="exportModel.showScreenshot" @change="onEnableExportChanged"></InputSwitch>
                 <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.export.enableScreenshots') }}</label>
             </div>
-            <div class="p-col-12 p-md-6 p-p-4">
+            <div class="p-col-12 p-lg-6 p-p-4">
                 <InputSwitch v-model="exportModel.showExcelExport" @change="onEnableExportChanged"></InputSwitch>
                 <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.export.showExcelExport') }}</label>
             </div>

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="summaryRowsModel" class="p-grid p-ai-center p-p-4">
+    <div v-if="summaryRowsModel" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-col-12 p-grid p-p-3">
             <div class="p-col-12 p-md-6 p-p-2">
                 <InputSwitch v-model="summaryRowsModel.enabled" @change="onSummarRowEnabledChange"></InputSwitch>
@@ -18,11 +18,11 @@
                     <InputText class="kn-material-input p-inputtext-sm" v-model="summaryRow.label" :disabled="summaryRowsDiabled" @change="summaryRowsChanged" />
                 </div>
                 <div class="p-col-12 p-md-8 p-grid p-p-2">
-                    <div class="p-col-11 p-d-flex p-flex-column">
+                    <div class="p-col-10 p-d-flex p-flex-column">
                         <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.aggregation') }}</label>
                         <Dropdown class="kn-material-input" v-model="summaryRow.aggregation" :options="getAggregationOptions(index)" optionValue="value" optionLabel="label" :disabled="index === 0 || !summaryRowsModel.enabled" @change="summaryRowsChanged"> </Dropdown>
                     </div>
-                    <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-3">
+                    <div class="p-col-2 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-3">
                         <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', summaryRowsDiabled ? 'icon-disabled' : '']" class="kn-cursor-pointer" @click="index === 0 ? addSummaryRow() : removeSummaryRow(index)"></i>
                     </div>
                 </div>
@@ -77,12 +77,12 @@ export default defineComponent({
             return index === 0 ? [{ value: 'Columns Default Aggregation', label: 'Columns Default Aggregation' }] : this.descriptor.aggregationOptions
         },
         addSummaryRow() {
-            if (!this.summaryRowsModel) return
+            if (!this.summaryRowsModel || this.summaryRowsDiabled) return
             this.summaryRowsModel.list.push({ label: '', aggregation: '' })
             this.summaryRowsChanged()
         },
         removeSummaryRow(index: number) {
-            if (!this.summaryRowsModel) return
+            if (!this.summaryRowsModel || this.summaryRowsDiabled) return
             this.summaryRowsModel.list.splice(index, 1)
             this.summaryRowsChanged()
         }
