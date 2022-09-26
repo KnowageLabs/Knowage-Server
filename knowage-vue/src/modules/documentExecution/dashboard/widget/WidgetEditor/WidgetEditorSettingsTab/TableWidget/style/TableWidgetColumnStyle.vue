@@ -1,12 +1,5 @@
 <template>
     <div v-if="columnStyles" class="p-grid p-ai-center p-p-4">
-        {{ availableColumnOptions }}
-        <br />
-        <br />
-        {{ widgetColumnsAliasMap }}
-        <br />
-        <br />
-        {{ widgetModel.columns }}
         <div class="p-col-12 p-px-2 p-pb-4">
             <InputSwitch v-model="columnStyles.enabled" @change="columnStylesChanged"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('common.enable') }}</label>
