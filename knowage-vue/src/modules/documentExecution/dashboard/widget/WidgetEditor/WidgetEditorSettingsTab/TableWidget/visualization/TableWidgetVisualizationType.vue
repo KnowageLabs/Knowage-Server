@@ -4,7 +4,7 @@
             <InputSwitch v-model="visualizationTypeModel.enabled" @change="visualizationTypeChanged"></InputSwitch>
             <label class="kn-material-input-label p-ml-3">{{ $t('common.enable') }}</label>
         </div>
-        <div v-for="(visualizationType, index) in visualizationTypeModel.types" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center p-ai-center p-pt-2">
+        <div v-for="(visualizationType, index) in visualizationTypeModel.types" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center p-pt-4">
             <div class="p-col-12 p-grid p-ai-center">
                 <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-p-2">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
