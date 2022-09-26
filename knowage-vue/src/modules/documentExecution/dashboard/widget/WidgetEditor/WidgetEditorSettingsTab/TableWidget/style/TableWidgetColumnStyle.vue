@@ -133,7 +133,7 @@ export default defineComponent({
             )
         },
         addColumnStyle() {
-            if (!this.columnStyles) return
+            if (!this.columnStyles || this.columnStylesDisabled) return
             this.columnStyles.styles.push({
                 target: [],
                 properties: {
@@ -148,7 +148,7 @@ export default defineComponent({
             })
         },
         removeColumnStyle(index: number) {
-            if (!this.columnStyles) return
+            if (!this.columnStyles || this.columnStylesDisabled) return
             ;(this.columnStyles.styles[index].target as string[]).forEach((target: string) =>
                 this.availableColumnOptions.push({
                     id: target,
