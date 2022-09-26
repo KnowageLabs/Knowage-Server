@@ -91,9 +91,7 @@ export default defineComponent({
         },
         loadWidgetColumnMaps() {
             const array = this.mode === 'columnGroups' ? this.widgetModel.settings.configuration.columnGroups.groups : this.widgetModel.columns
-            console.log('>>>>>>> TEEEEEEMP: ', array)
             array.forEach((column: IWidgetColumn | ITableWidgetColumnGroup) => {
-                console.log('>>>>>>>>AAAAAAAAAAAAAAAAA: ', column)
                 if (column.id) this.widgetColumnsAliasMap[column.id] = this.mode === 'columnGroups' ? (column as ITableWidgetColumnGroup).label : (column as IWidgetColumn).alias
             })
         },

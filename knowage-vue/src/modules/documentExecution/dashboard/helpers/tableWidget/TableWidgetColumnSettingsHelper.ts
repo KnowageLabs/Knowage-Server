@@ -112,6 +112,7 @@ const getConditionalStyleFromColumn = (formattedWidget: IWidget, tempColumn: any
                 icon: range.icon ?? ''
             }
         } as ITableWidgetConditionalStyle
+        formattedWidget.settings.conditionalStyles.enabled = true
         formattedWidget.settings.conditionalStyles.conditions.push(tempConditionalStyle)
     })
 }

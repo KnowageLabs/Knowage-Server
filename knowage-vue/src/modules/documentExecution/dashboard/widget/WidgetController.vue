@@ -53,7 +53,7 @@ export default defineComponent({
     data() {
         return {
             loading: false,
-            initialized: false,
+            initialized: true,
             widgetData: [] as any,
             widgetEditorVisible: false,
             selectedWidgetId: '' as string

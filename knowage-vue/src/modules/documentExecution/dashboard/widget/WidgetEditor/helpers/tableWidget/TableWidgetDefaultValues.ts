@@ -57,7 +57,7 @@ export const getDefaultExportsConfiguration = () => {
 
 export const getDefaultHeadersConfiguration = () => {
     return {
-        enabled: false, enabledMultiline: false, custom: { enabled: false, rules: [] }
+        enabled: true, enabledMultiline: false, custom: { enabled: false, rules: [] }
     } as ITableWidgetHeaders
 }
 
