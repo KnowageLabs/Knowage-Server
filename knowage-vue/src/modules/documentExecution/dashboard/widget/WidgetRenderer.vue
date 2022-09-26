@@ -1,7 +1,7 @@
 <template>
     <div class="widget-renderer" :style="getWidgetStyleString()">
         {{ widget.id }}
-        <!-- <TableWidget v-if="widget.type === 'table'" :propWidget="widget" style="flex: 1" /> -->
+        <TableWidget v-if="widget.type === 'table'" :propWidget="widget" :editorMode="false" style="flex: 1" />
         <!-- <div class="drag-handle">{{ widget.id }} {{ widget.type }}</div> -->
         <!-- <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
             <div>{{ data }}</div>
@@ -17,6 +17,7 @@
  */
 import { defineComponent } from 'vue'
 import TableWidget from './TableWidget/TableWidget.vue'
+import { getWidgetStyleByType } from '../widget/TableWidget/TableWidgetHelper'
 
 export default defineComponent({
     name: 'widget-renderer',
@@ -25,7 +26,7 @@ export default defineComponent({
     props: {
         widget: {
             required: true,
-            type: Object
+            type: Object as any
         },
         data: {
             required: true,
@@ -39,17 +40,8 @@ export default defineComponent({
         click(e) {
             this.$emit('interaction', e, this.widget)
         },
-        getWidgetStyleByType(styleType: string) {
-            const styleSettings = this.widget.settings.style[styleType]
-            if (styleSettings.enabled) {
-                const styleString = Object.entries(styleSettings.properties)
-                    .map(([k, v]) => `${k}:${v}`)
-                    .join(';')
-                return styleString + ';'
-            } else return ''
-        },
         getWidgetStyleString() {
-            const styleString = this.getWidgetStyleByType('shadows') + this.getWidgetStyleByType('padding') + this.getWidgetStyleByType('borders')
+            const styleString = getWidgetStyleByType(this.widget, 'shadows') + getWidgetStyleByType(this.widget, 'padding') + getWidgetStyleByType(this.widget, 'borders')
             return styleString
         }
     }
