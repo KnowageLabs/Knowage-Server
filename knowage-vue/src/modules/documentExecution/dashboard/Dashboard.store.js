@@ -26,7 +26,7 @@ const store = defineStore('dashboardStore', {
         createNewWidget(widget) {
             // TODO - hardcoded 1 for dashboard
             this.dashboards[1].widgets.push(widget)
-            this.dashboards[1].sheets[this.selectedSheetIndex].widgets.lg.push({ id: widget.id, h: 5, i: 0, w: 10, x: 10, y: 10, moved: false })
+            this.dashboards[1].sheets[this.selectedSheetIndex].widgets.lg.push({ id: widget.id, h: 5, i: 0, w: 100, x: 200, y: 200, moved: false })
         },
         updateWidget(widget) {
             // TODO - hardcoded 1 for dashboard
