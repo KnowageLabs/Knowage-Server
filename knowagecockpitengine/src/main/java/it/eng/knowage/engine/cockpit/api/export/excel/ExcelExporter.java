@@ -640,7 +640,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			// Cell styles for int and float
 			CreationHelper createHelper = wb.getCreationHelper();
 
-			CellStyle intCellStyle = wb.createCellStyle();
+			XSSFCellStyle intCellStyle = (XSSFCellStyle) wb.createCellStyle();
 			intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
 
 			XSSFCellStyle floatCellStyle = (XSSFCellStyle) wb.createCellStyle();
