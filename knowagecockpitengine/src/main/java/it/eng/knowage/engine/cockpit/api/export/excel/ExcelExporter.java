@@ -693,8 +693,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 								cell.setCellStyle(getIntCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle, settings, Integer.parseInt(s),
 										rowObject, mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 							} else {
-								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
-										mapColumns, mapColumnsTypes, variablesMap, mapParameters));
+								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle, settings, rowObject, mapColumns,
+										mapColumnsTypes, variablesMap, mapParameters));
 							}
 							break;
 						case "float":
@@ -712,7 +712,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 								if (!s.trim().isEmpty()) {
 									Date date = dateFormat.parse(s);
 									cell.setCellValue(date);
-									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], dateCellStyle, settings, rowObject,
+									cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c], dateCellStyle, settings, rowObject,
 											mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 								}
 							} catch (Exception e) {
@@ -726,8 +726,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 									Date ts = timeStampFormat.parse(s);
 									cell.setCellValue(ts);
 									cell.setCellStyle(tsCellStyle);
-									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], tsCellStyle, settings, rowObject,
-											mapColumns, mapColumnsTypes, variablesMap, mapParameters));
+									cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c], tsCellStyle, settings, rowObject, mapColumns,
+											mapColumnsTypes, variablesMap, mapParameters));
 								}
 							} catch (Exception e) {
 								logger.debug("Timestamp will be exported as string due to error: ", e);
