@@ -182,12 +182,10 @@ export default defineComponent({
             let filters = this.filterData ? this.filterData : {}
             let config = {
                 headers: { Accept: 'application/json, text/plain, */*' },
-                params: {
-                    filterData: encodeURIComponent(JSON.stringify(filters))
-                }
+                data: encodeURIComponent(JSON.stringify(filters))
             }
             await this.$http
-                .get(url, config)
+                .post(url, config)
                 .then((response: AxiosResponse<any>) => {
                     this.jsonTemplate = { ...response.data }
                 })
