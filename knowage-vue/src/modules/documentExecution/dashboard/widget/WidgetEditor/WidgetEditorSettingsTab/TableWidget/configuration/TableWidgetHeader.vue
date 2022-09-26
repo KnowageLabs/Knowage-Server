@@ -178,6 +178,7 @@ export default defineComponent({
 
         headersConfigurationChanged() {
             emitter.emit('headersConfigurationChanged', this.headersModel)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         onHeadersRuleActionChanged(rule: ITableWidgetHeadersRule) {
             if (rule.action === 'hide') {

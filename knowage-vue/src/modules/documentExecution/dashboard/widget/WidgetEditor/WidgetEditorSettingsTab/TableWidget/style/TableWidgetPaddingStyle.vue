@@ -74,6 +74,7 @@ export default defineComponent({
         },
         paddingStyleChanged() {
             emitter.emit('paddingStyleChanged', this.paddingStyleModel)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         onLinkIconClicked() {
             if (!this.paddingStyleModel) return

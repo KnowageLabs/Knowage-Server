@@ -143,6 +143,7 @@ export default defineComponent({
         },
         tooltipsChanged() {
             emitter.emit('tooltipsChanged', this.tooltips)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         onColumnsSelected(event: any, tooltip: ITableWidgetTooltipStyle) {
             const intersection = (tooltip.target as string[]).filter((el: string) => !event.value.includes(el))

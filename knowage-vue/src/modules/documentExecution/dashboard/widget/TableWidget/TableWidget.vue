@@ -83,32 +83,32 @@ export default defineComponent({
     methods: {
         setEventListeners() {
             console.log('setEventListener')
-            emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
-            emitter.on('sortingChanged', this.sortColumn) // { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder }
-            emitter.on('columnAdded', this.createDatatableColumns)
-            emitter.on('columnRemoved', this.createDatatableColumns)
-            emitter.on('collumnUpdated', this.createDatatableColumns)
-            emitter.on('columnsReordered', this.createDatatableColumns)
-            emitter.on('indexColumnChanged', this.createDatatableColumns)
-            emitter.on('rowSpanChanged', this.createDatatableColumns)
-            emitter.on('summaryRowsChanged', this.createDatatableColumns) //TODO: Servis nam treba za ovo
-            emitter.on('headersConfigurationChanged', this.createDatatableColumns) // TODO: Trenutno se gleda svaka promena u header config, mozda staviti event emit samo na promene koje trebaju.
-            emitter.on('columnGroupsConfigurationChanged', this.createDatatableColumns)
-            emitter.on('visibilityConditionsChanged', this.createDatatableColumns)
-            emitter.on('headersStyleChanged', this.createDatatableColumns)
-            emitter.on('columnStylesChanged', this.createDatatableColumns)
-            emitter.on('columnGroupStylesChanged', this.createDatatableColumns)
-            emitter.on('rowsStyleChanged', this.createDatatableColumns)
-            emitter.on('summaryStyleChanged', this.createDatatableColumns)
+            // emitter.on('paginationChanged', (pagination) => console.log('WidgetEditorPreview - PAGINATION CHANGED!', pagination)) //  { enabled: this.paginationEnabled, itemsNumber: +this.itemsNumber }
+            // emitter.on('sortingChanged', this.sortColumn) // { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder }
+            // emitter.on('columnAdded', this.createDatatableColumns)
+            // emitter.on('columnRemoved', this.createDatatableColumns)
+            // emitter.on('collumnUpdated', this.createDatatableColumns)
+            // emitter.on('columnsReordered', this.createDatatableColumns)
+            // emitter.on('indexColumnChanged', this.createDatatableColumns)
+            // emitter.on('rowSpanChanged', this.createDatatableColumns)
+            // emitter.on('summaryRowsChanged', this.createDatatableColumns) //TODO: Servis nam treba za ovo
+            // emitter.on('headersConfigurationChanged', this.createDatatableColumns) // TODO: Trenutno se gleda svaka promena u header config, mozda staviti event emit samo na promene koje trebaju.
+            // emitter.on('columnGroupsConfigurationChanged', this.createDatatableColumns)
+            //emitter.on('visibilityConditionsChanged', this.createDatatableColumns)
+            //emitter.on('headersStyleChanged', this.createDatatableColumns)
+            //emitter.on('columnStylesChanged', this.createDatatableColumns)
+            //emitter.on('columnGroupStylesChanged', this.createDatatableColumns)
+            //emitter.on('rowsStyleChanged', this.createDatatableColumns)
+            // emitter.on('summaryStyleChanged', this.createDatatableColumns)
             // emitter.on('bordersStyleChanged', (bordersStyle) => console.log('WidgetEditorPreview  - bordersStyleChanged!', bordersStyle))
             // emitter.on('paddingStyleChanged', (paddingStyle) => console.log('WidgetEditorPreview  - paddingStyleChanged!', paddingStyle))
             // emitter.on('shadowStyleChanged', (shadowsStyle) => console.log('WidgetEditorPreview  - shadowStyleChanged!', shadowsStyle))
-            emitter.on('conditionalStylesChanged', this.createDatatableColumns)
-            emitter.on('tooltipsChanged', this.createDatatableColumns)
-            emitter.on('selectionChanged', (selectionModel) => console.log('WidgetEditorPreview  - selectionChanged!', selectionModel))
-            emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
-            emitter.on('visualizationTypeChanged', (visuelizationTypes) => console.log('WidgetEditorPreview  - visualizationTypeChanged!', visuelizationTypes))
-            emitter.on('customMessagesChanged', (customMessagesModel) => console.log('WidgetEditorPreview  - customMessagesChanged!', customMessagesModel))
+            //emitter.on('conditionalStylesChanged', this.createDatatableColumns)
+            //emitter.on('tooltipsChanged', this.createDatatableColumns)
+            //emitter.on('selectionChanged', (selectionModel) => console.log('WidgetEditorPreview  - selectionChanged!', selectionModel))
+            // emitter.on('exportModelChanged', (exportModel) => console.log('WidgetEditorPreview  - exportModelChanged!', exportModel))
+            // emitter.on('visualizationTypeChanged', (visuelizationTypes) => console.log('WidgetEditorPreview  - visualizationTypeChanged!', visuelizationTypes))
+            // emitter.on('customMessagesChanged', (customMessagesModel) => console.log('WidgetEditorPreview  - customMessagesChanged!', customMessagesModel))
             emitter.on('refreshTable', (id) => console.log('>>>>>>>>> ID: ', id))
         },
         setupDatatableOptions() {

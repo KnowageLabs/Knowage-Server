@@ -41,6 +41,7 @@ export default defineComponent({
         headersStyleChanged() {
             setTimeout(() => {
                 emitter.emit('headersStyleChanged', this.headersStyleModel)
+                emitter.emit('refreshTable', this.widgetModel.id)
             }, 0)
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {

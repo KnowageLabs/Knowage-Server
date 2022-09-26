@@ -89,6 +89,7 @@ export default defineComponent({
         },
         columnGroupsConfigurationChanged() {
             emitter.emit('columnGroupsConfigurationChanged', this.columnGroupsModel)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         onEnableColumnGroupsChanged() {
             if (!this.columnGroupsModel) return

@@ -143,6 +143,7 @@ export default defineComponent({
         },
         visibilityConditionsChanged() {
             emitter.emit('visibilityConditionsChanged', this.visibilityConditionsModel)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         onVisibilityConditionsEnabledChange() {
             if (!this.visibilityConditionsModel) return

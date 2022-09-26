@@ -60,6 +60,7 @@ export default defineComponent({
         },
         rowsStyleChanged() {
             emitter.emit('rowsStyleChanged', this.rowsStyleModel)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         onSelectionColorChanged(event: string | null) {
             if (!event || !this.rowsStyleModel) return

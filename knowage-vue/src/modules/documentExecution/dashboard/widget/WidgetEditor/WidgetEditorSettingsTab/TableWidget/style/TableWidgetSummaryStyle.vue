@@ -39,6 +39,7 @@ export default defineComponent({
         },
         summaryStyleChanged() {
             emitter.emit('summaryStyleChanged', this.summaryStyleModel)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
             console.log('ON CHANGE MODEL: ', model)

@@ -87,6 +87,7 @@ export default defineComponent({
             this.widgetModel.settings.sortingColumn = this.sortingColumn
             this.widgetModel.settings.sortingOrder = this.sortingOrder
             emitter.emit('sortingChanged', { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder })
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         onColumnRemoved(column: IWidgetColumn) {
             if (column.columnName === this.sortingColumn) {

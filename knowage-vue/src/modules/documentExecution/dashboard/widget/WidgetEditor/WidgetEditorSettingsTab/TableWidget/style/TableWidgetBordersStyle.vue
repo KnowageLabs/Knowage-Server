@@ -95,6 +95,7 @@ export default defineComponent({
         },
         bordersStyleChanged() {
             emitter.emit('bordersStyleChanged', this.bordersStyleModel)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         onSelectionColorChanged(event: string | null) {
             if (!event || !this.bordersStyleModel) return

@@ -56,9 +56,11 @@ export default defineComponent({
         },
         onIndexColumnChanged() {
             emitter.emit('indexColumnChanged', this.rowsModel)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         onRowSpanChanged() {
             emitter.emit('rowSpanChanged', this.rowsModel)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         onColumnRemoved() {
             this.loadRowsModel()

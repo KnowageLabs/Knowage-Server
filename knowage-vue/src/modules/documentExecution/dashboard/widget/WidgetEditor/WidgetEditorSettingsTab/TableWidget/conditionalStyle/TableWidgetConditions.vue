@@ -143,6 +143,7 @@ export default defineComponent({
         },
         conditionalStylesChanged() {
             emitter.emit('conditionalStylesChanged', this.conditionalStylesModel)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         onConditionalStylesEnabledChange() {
             if (!this.conditionalStylesModel) return

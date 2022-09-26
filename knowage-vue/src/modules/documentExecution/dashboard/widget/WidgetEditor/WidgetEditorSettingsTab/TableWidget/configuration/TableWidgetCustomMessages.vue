@@ -37,6 +37,7 @@ export default defineComponent({
         },
         customMessagesChanged() {
             emitter.emit('customMessagesChanged', this.customMessagesModel)
+            emitter.emit('refreshTable', this.widgetModel.id)
         }
     }
 })

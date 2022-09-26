@@ -71,6 +71,7 @@ export default defineComponent({
         },
         shadowStyleChanged() {
             emitter.emit('shadowStyleChanged', this.shadowsStyleModel)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         getShadowSize() {
             if (!this.shadowsStyleModel) return

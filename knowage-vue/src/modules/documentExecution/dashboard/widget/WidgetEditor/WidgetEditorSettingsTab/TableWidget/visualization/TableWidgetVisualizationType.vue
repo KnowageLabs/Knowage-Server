@@ -170,6 +170,7 @@ export default defineComponent({
         },
         visualizationTypeChanged() {
             emitter.emit('visualizationTypeChanged', this.visualizationTypeModel)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         loadVisualizationTypes() {
             if (this.widgetModel.settings?.visualization?.visualizationTypes) this.visualizationTypeModel = this.widgetModel.settings.visualization.visualizationTypes

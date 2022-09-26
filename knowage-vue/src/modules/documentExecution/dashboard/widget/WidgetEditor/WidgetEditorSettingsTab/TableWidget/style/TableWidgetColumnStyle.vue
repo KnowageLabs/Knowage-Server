@@ -88,6 +88,7 @@ export default defineComponent({
         columnStylesChanged() {
             const event = this.mode === 'columnGroups' ? 'columnGroupStylesChanged' : 'columnStylesChanged'
             emitter.emit(event, this.columnStyles)
+            emitter.emit('refreshTable', this.widgetModel.id)
         },
         loadWidgetColumnMaps() {
             const array = this.mode === 'columnGroups' ? this.widgetModel.settings.configuration.columnGroups.groups : this.widgetModel.columns
