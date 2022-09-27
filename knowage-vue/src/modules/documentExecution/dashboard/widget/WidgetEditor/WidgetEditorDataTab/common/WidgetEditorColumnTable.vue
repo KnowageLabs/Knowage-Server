@@ -60,7 +60,7 @@
 import { defineComponent, PropType } from 'vue'
 import { filterDefault } from '@/helpers/commons/filterHelper'
 import { IWidget, IWidgetColumn } from '../../../../Dashboard'
-import { createNewWidgetColumn } from '../../helpers/tableWidget/TableWidgetFunctions' // TODO - See if it should still be inside helper
+import { createNewWidgetColumn } from '../../helpers/tableWidget/TableWidgetFunctions'
 import { emitter } from '../../../../DashboardHelpers'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -92,12 +92,19 @@ export default defineComponent({
         this.setFilters()
     },
     unmounted() {
-        emitter.off('addNewCalculatedField', this.onCalcFieldAdded)
+        this.removeEventListeners()
     },
     methods: {
         setEventListeners() {
-            emitter.on('selectedColumnUpdated', (column) => this.onSelectedColumnUpdated(column))
+            emitter.on('selectedColumnUpdated', this.onSelectedColumnUpdated)
             emitter.on('addNewCalculatedField', this.onCalcFieldAdded)
+        },
+        removeEventListeners() {
+            emitter.off('selectedColumnUpdated', this.onSelectedColumnUpdated)
+            emitter.off('addNewCalculatedField', this.onCalcFieldAdded)
+        },
+        onSelectedColumnUpdated(column: any) {
+            this.updateSelectedColumn(column)
         },
         loadItems() {
             this.rows = deepcopy(this.items) as IWidgetColumn[]
@@ -126,7 +133,7 @@ export default defineComponent({
         aggregationDropdownIsVisible(row: any) {
             return row.fieldType === 'MEASURE'
         },
-        onSelectedColumnUpdated(selectedColumn: IWidgetColumn) {
+        updateSelectedColumn(selectedColumn: IWidgetColumn) {
             const index = this.rows.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === selectedColumn.id)
             if (index !== -1) {
                 this.rows[index] = { ...selectedColumn }
@@ -134,7 +141,7 @@ export default defineComponent({
             }
         },
         onColumnAliasRenamed(column: IWidgetColumn) {
-            emitter.emit('columnAliasRenamed', column)
+            emitter.emit('columnAliasRenamed', column as IWidgetColumn)
             this.$emit('itemUpdated', column)
         },
         openCalculatedFieldDialog(column: IWidgetColumn) {

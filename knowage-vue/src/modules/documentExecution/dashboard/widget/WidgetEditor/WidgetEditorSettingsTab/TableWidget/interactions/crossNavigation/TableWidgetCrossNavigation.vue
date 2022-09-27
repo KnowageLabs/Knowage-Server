@@ -92,9 +92,18 @@ export default defineComponent({
         this.loadParameterList()
         this.loadSelectedDatasetColumnNames()
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemovedFromCrossNavigation', () => this.onColumnRemoved())
+            emitter.on('columnRemovedFromCrossNavigation', this.onColumnRemovedFromCrossNavigation)
+        },
+        removeEventListeners() {
+            emitter.off('columnRemovedFromCrossNavigation', this.onColumnRemovedFromCrossNavigation)
+        },
+        onColumnRemovedFromCrossNavigation() {
+            this.onColumnRemoved()
         },
         loadCrossNavigationModel() {
             if (this.widgetModel?.settings?.interactions?.crosssNavigation) this.crossNavigationModel = this.widgetModel.settings.interactions.crosssNavigation

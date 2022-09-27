@@ -110,9 +110,18 @@ export default defineComponent({
         this.loadPreviewModel()
         this.loadSelectedDatasetColumnNames()
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemovedFromPreview', () => this.onColumnRemoved())
+            emitter.on('columnRemovedFromPreview', this.onColumnRemovedFromPreview)
+        },
+        removeEventListeners() {
+            emitter.off('columnRemovedFromPreview', this.onColumnRemovedFromPreview)
+        },
+        onColumnRemovedFromPreview() {
+            this.onColumnRemoved()
         },
         loadPreviewModel() {
             if (this.widgetModel?.settings?.interactions?.preview) this.previewModel = this.widgetModel.settings.interactions.preview

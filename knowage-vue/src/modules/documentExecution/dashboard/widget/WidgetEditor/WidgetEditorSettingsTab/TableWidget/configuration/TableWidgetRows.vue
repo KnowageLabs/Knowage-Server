@@ -47,9 +47,18 @@ export default defineComponent({
         this.setEventListeners()
         this.loadRowsModel()
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemovedFromRows', () => this.onColumnRemoved())
+            emitter.on('columnRemovedFromRows', this.onColumnRemovedFromRows)
+        },
+        removeEventListeners() {
+            emitter.off('columnRemovedFromRows', this.onColumnRemovedFromRows)
+        },
+        onColumnRemovedFromRows() {
+            this.onColumnRemoved()
         },
         loadRowsModel() {
             if (this.widgetModel?.settings?.configuration?.rows) this.rowsModel = this.widgetModel.settings.configuration.rows

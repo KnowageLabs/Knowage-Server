@@ -66,12 +66,30 @@ export default defineComponent({
         this.loadColumnStyles()
         this.loadWidgetColumnMaps()
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemovedFromColumnStyle', () => this.onColumnRemoved())
-            emitter.on('columnGroupRemoved', () => this.onColumnRemoved())
-            emitter.on('columnAdded', () => this.onColumnAdded())
-            emitter.on('columnAliasRenamed', () => this.onColumnAliasRenamed())
+            emitter.on('columnRemovedFromColumnStyle', this.onColumnOrGroupRemoved)
+            emitter.on('columnGroupRemoved', this.onColumnOrGroupRemoved)
+            emitter.on('columnAdded', this.onColumnAdded)
+            emitter.on('columnAliasRenamed', this.onColumnAliasRenamed)
+        },
+        removeEventListeners() {
+            emitter.off('columnRemovedFromColumnStyle', this.onColumnOrGroupRemoved)
+            emitter.off('columnGroupRemoved', this.onColumnOrGroupRemoved)
+            emitter.off('columnAdded', this.onColumnAdded)
+            emitter.off('columnAliasRenamed', this.onColumnAliasRenamed)
+        },
+        onColumnOrGroupRemoved() {
+            this.onColumnRemoved()
+        },
+        onColumnAliasRenamed() {
+            this.updateColumnAliases()
+        },
+        onColumnAdded() {
+            this.addColumnAsOption()
         },
         loadColumnStyles() {
             this.columnStyles = this.mode === 'columnGroups' ? this.widgetModel.settings.style.columnGroups : this.widgetModel.settings.style.columns
@@ -133,7 +151,7 @@ export default defineComponent({
             )
         },
         addColumnStyle() {
-            if (!this.columnStyles) return
+            if (!this.columnStyles || this.columnStylesDisabled) return
             this.columnStyles.styles.push({
                 target: [],
                 properties: {
@@ -148,7 +166,7 @@ export default defineComponent({
             })
         },
         removeColumnStyle(index: number) {
-            if (!this.columnStyles) return
+            if (!this.columnStyles || this.columnStylesDisabled) return
             ;(this.columnStyles.styles[index].target as string[]).forEach((target: string) =>
                 this.availableColumnOptions.push({
                     id: target,
@@ -158,7 +176,7 @@ export default defineComponent({
             this.columnStyles.styles.splice(index, 1)
             this.columnStylesChanged()
         },
-        onColumnAdded() {
+        addColumnAsOption() {
             this.reloadModel()
         },
         onColumnRemoved() {
@@ -181,7 +199,7 @@ export default defineComponent({
             this.loadColumnStyles()
             this.loadWidgetColumnMaps()
         },
-        onColumnAliasRenamed() {
+        updateColumnAliases() {
             setTimeout(() => {
                 this.loadColumnOptions()
                 this.loadColumnStyles()

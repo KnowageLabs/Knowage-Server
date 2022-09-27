@@ -77,12 +77,21 @@ export default defineComponent({
         const store = mainStore()
         return { store }
     },
-    async created() {
+    created() {
+        this.setEventListeners()
         this.loadDatasets()
         this.loadModel()
-        emitter.on('editCalculatedField', this.editCalcField)
+    },
+    unmounted() {
+        this.removeEventListeners()
     },
     methods: {
+        setEventListeners() {
+            emitter.on('editCalculatedField', this.editCalcField)
+        },
+        removeEventListeners() {
+            emitter.off('editCalculatedField', this.editCalcField)
+        },
         loadDatasets() {
             this.datasetOptions = this.selectedDatasets
                 ? this.selectedDatasets.map((dataset: any) => {
@@ -111,7 +120,6 @@ export default defineComponent({
         onDatasetSelected() {
             this.loadDatasetColumns()
             this.removeSelectedColumnsFromModel()
-            console.log('SELECTED DATASE: ', this.selectedDataset)
             this.widgetModel.dataset = this.selectedDataset ? this.selectedDataset.id : null
             this.$emit('datasetSelected', this.selectedDataset)
         },

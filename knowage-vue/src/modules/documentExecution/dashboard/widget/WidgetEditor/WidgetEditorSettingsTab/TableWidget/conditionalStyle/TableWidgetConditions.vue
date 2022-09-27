@@ -126,9 +126,18 @@ export default defineComponent({
         this.loadVariableValuesMap()
         this.loadConditionalStyles()
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemovedFromConditionalStyles', () => this.onColumnRemoved())
+            emitter.on('columnRemovedFromConditionalStyles', this.onColumnRemovedFromConditionalStyles)
+        },
+        removeEventListeners() {
+            emitter.off('columnRemovedFromConditionalStyles', this.onColumnRemovedFromConditionalStyles)
+        },
+        onColumnRemovedFromConditionalStyles() {
+            this.onColumnRemoved()
         },
         loadConditionalStyles() {
             if (this.widgetModel?.settings?.conditionalStyles) this.conditionalStylesModel = this.widgetModel.settings.conditionalStyles

@@ -93,7 +93,7 @@ const formatSheet = (sheet: any, formattedModel: any) => {
         const tempWidget = sheet.widgets[i]
         // TODO  - changeId
         // formattedSheet.widgets.lg.push({ id: tempWidget.id, x: tempWidget.sizeX, y: tempWidget.sizeY, h: 100, w: 100, i: cryptoRandomString({ length: 16, type: 'base64' }) })
-        formattedSheet.widgets.lg.push({ id: tempWidget.id, h: 5, w: 10, x: 10, y: 10, i: cryptoRandomString({ length: 16, type: 'base64' }), moved: false })
+        formattedSheet.widgets.lg.push({ id: tempWidget.id, h: 5, w: 10, x: 0, y: 0, i: cryptoRandomString({ length: 16, type: 'base64' }), moved: false })
         addWidgetToModel(tempWidget, formattedModel)
     }
 

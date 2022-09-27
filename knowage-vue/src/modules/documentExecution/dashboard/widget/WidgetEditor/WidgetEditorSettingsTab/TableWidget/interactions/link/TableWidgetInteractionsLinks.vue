@@ -113,9 +113,18 @@ export default defineComponent({
         this.loadLinksModel()
         this.loadSelectedDatasetColumnNames()
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemovedFromLinks', () => this.onColumnRemoved())
+            emitter.on('columnRemovedFromLinks', this.onColumnRemovedFromLinks)
+        },
+        removeEventListeners() {
+            emitter.off('columnRemovedFromLinks', this.onColumnRemovedFromLinks)
+        },
+        onColumnRemovedFromLinks() {
+            this.onColumnRemoved()
         },
         loadLinksModel() {
             if (this.widgetModel?.settings?.interactions?.link) this.linksModel = this.widgetModel.settings.interactions.link
