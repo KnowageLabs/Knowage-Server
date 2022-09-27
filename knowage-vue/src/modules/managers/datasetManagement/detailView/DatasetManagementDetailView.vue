@@ -228,7 +228,7 @@ export default defineComponent({
         //#region ===================== Save/Update Dataset & Tags =================================================
         async saveDataset() {
             let dsToSave = { ...this.selectedDataset } as any
-            if (this.user?.functionalities?.includes('DataPreparation')) {
+            if (this.user?.functionalities?.includes('DataPreparation') && dsToSave.id) {
                 await this.$http.get(process.env.VUE_APP_DATA_PREPARATION_PATH + '1.0/instance/dataset/' + dsToSave.id).then((response: AxiosResponse<any>) => {
                     if (response.data) {
                         this.$confirm.require({
