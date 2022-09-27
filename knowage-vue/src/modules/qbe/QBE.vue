@@ -326,8 +326,8 @@ export default defineComponent({
             this.loadQuery()
             this.qbeMetadata = this.extractFieldsMetadata(this.qbe?.meta.columns)
             this.generateFieldsAndMetadataId()
-            await this.loadDatasetDrivers()
-            if (this.qbe?.pars?.length === 0 && this.filtersData?.isReadyForExecution) {
+            if (!this.dataset?.federation_id) await this.loadDatasetDrivers()
+            if (this.qbe?.pars?.length === 0 && (this.filtersData?.isReadyForExecution || this.dataset?.federation_id)) {
                 await this.loadQBE()
             } else if (this.qbe?.pars?.length !== 0 || !this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = true
@@ -440,9 +440,12 @@ export default defineComponent({
             const datamart = this.dataset?.dataSourceLabel ? this.dataset.name : this.qbe?.qbeDatamarts
             const temp = this.getFormattedParameters(this.filtersData)
             const drivers = encodeURI(JSON.stringify(temp))
+            const url = this.dataset?.federation_id
+                ? `start-federation?federationId=${this.dataset.federation_id}&datasourceForCache=cache&drivers=%7B%7D`
+                : `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`
             if (this.dataset) {
                 await this.$http
-                    .get(import.meta.env.VITE_QBE_PATH + `start-qbe?datamart=${datamart}&user_id=${this.user?.userUniqueIdentifier}&SBI_EXECUTION_ID=${this.uniqueID}&DATA_SOURCE_LABEL=${label}&drivers=${drivers}`)
+                    .get(import.meta.env.VITE_QBE_PATH + url)
                     .then(() => {
                         this.qbeLoaded = true
                     })
@@ -451,6 +454,7 @@ export default defineComponent({
         },
         getFormattedParameters(loadedParameters: { filterStatus: any[]; isReadyForExecution: boolean }) {
             let parameters = {} as any
+            if (!loadedParameters.filterStatus) return parameters
             Object.keys(loadedParameters.filterStatus).forEach((key: any) => {
                 const parameter = loadedParameters.filterStatus[key]
                 if (!parameter.multivalue) {
@@ -462,6 +466,7 @@ export default defineComponent({
             return parameters
         },
         async loadCustomizedDatasetFunctions() {
+            if (this.dataset && this.dataset.federation_id) return
             const id = this.dataset?.dataSourceId ? this.dataset.dataSourceId : this.qbe?.qbeDataSourceId
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/configs/KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS/${id}`).then((response: AxiosResponse<any>) => {
                 this.customizedDatasetFunctions = response.data
@@ -990,7 +995,7 @@ export default defineComponent({
                 this.qbe = this.getQBEFromModel()
             }
             this.loadQuery()
-            await this.loadDatasetDrivers()
+            if (!this.dataset?.federation_id) await this.loadDatasetDrivers()
         },
         //#endregion ================================================================================================
         openSavingDialog() {
