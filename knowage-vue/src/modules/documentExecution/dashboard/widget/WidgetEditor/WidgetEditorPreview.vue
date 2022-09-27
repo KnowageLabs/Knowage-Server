@@ -2,7 +2,7 @@
     <div class="p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow" :style="descriptor.style.preview">
         <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="logModel" />
 
-        <TableWidget v-if="propWidget.settings" :propWidget="propWidget" :editorMode="true" style="flex: 0.5; min-width: 500px; min-height: 250px" />
+        <TableWidget class="p-m-2" v-if="propWidget.settings" :propWidget="propWidget" :editorMode="true" style="height: 30%" />
     </div>
 </template>
 
@@ -10,8 +10,7 @@
 /**
  * ! this component will be in charge of managing the widget editing preview.
  */
-import { defineComponent, PropType, reactive } from 'vue'
-import { emitter } from '../../DashboardHelpers'
+import { defineComponent, PropType } from 'vue'
 import mock from '../../dataset/DatasetEditorTestMocks.json'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
