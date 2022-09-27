@@ -22,7 +22,7 @@ export function getInputStep(dataType: string) {
     }
 }
 
-export const numberFormatRegex = '^(####|#\.###|#\,###){1}([,.]?)(#*)$'
+export const numberFormatRegex = '^(####|#\.###|#\,###){1}([,.]?)(#*)$' //eslint-disable-line no-useless-escape 
 
 export const formatNumber = (column: any) => {
     if (!column.format) return null
