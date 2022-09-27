@@ -11,7 +11,7 @@
             <div class="p-d-flex p-flex-row p-ai-center p-mt-2">
                 <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.type') }}</label>
-                    <Dropdown class="kn-material-input" v-model="column.fieldType" :options="descriptor.columnTypeOptions" optionValue="value" optionLabel="label" @change="columnTypeChanged"> </Dropdown>
+                    <Dropdown class="kn-material-input" v-model="column.fieldType" :options="descriptor.columnTypeOptions" optionValue="value" optionLabel="label" :disabled="column.formula !== undefined" @change="columnTypeChanged"> </Dropdown>
                 </div>
                 <div v-if="column.fieldType === 'MEASURE'" class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.aggregation') }}</label>
