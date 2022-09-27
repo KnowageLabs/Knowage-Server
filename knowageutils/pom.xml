@@ -124,7 +124,7 @@
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-1.2-api</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
@@ -227,7 +227,7 @@
 			<version>1.5.1</version>
 			<scope>runtime</scope>
 		</dependency>
-		
+
 		<!-- Replace Axis 1.4 -->
 		<dependency>
 			<groupId>com.sun.xml.ws</groupId>
@@ -609,11 +609,11 @@
 			<artifactId>java-jwt</artifactId>
 			<version>3.3.0</version>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>com.auth0</groupId>
-		    <artifactId>jwks-rsa</artifactId>
-		    <version>0.21.1</version>
+			<groupId>com.auth0</groupId>
+			<artifactId>jwks-rsa</artifactId>
+			<version>0.21.1</version>
 		</dependency>
 
 		<dependency>
@@ -677,6 +677,12 @@
 		<dependency>
 			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
 			<artifactId>owasp-java-html-sanitizer</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt</artifactId>
+			<version>1.9.3</version>
 		</dependency>
 
 	</dependencies>
