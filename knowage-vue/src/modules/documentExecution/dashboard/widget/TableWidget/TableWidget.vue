@@ -1,6 +1,6 @@
 <template>
     <!-- <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2" :style="getWidgetStyleString()" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" :tooltipShowDelay="100" :tooltipMouseTrack="true" @grid-ready="onGridReady"></ag-grid-vue> -->
-    <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" :tooltipShowDelay="100" :tooltipMouseTrack="true" @grid-ready="onGridReady"></ag-grid-vue>
+    <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine p-m-2" :gridOptions="gridOptions" :rowData="rowData" :columnDefs="columnDefs" :tooltipShowDelay="100" :tooltipMouseTrack="true" :overlayNoRowsTemplate="overlayNoRowsTemplateTest" @grid-ready="onGridReady"></ag-grid-vue>
 </template>
 
 <script lang="ts">
@@ -56,7 +56,8 @@ export default defineComponent({
                 flex: 1
             },
             gridApi: null as any,
-            columnApi: null as any
+            columnApi: null as any,
+            overlayNoRowsTemplateTest: null as any
         }
     },
     created() {
@@ -88,7 +89,7 @@ export default defineComponent({
                 rowHeight: 25,
 
                 // EVENTS
-                onCellClicked: (event, params) => console.log('A cell was clicked', event, params),
+                // onCellClicked: (event, params) => console.log('A cell was clicked', event, params),
 
                 // CALLBACKS
                 getRowStyle: this.getRowStyle
@@ -106,11 +107,14 @@ export default defineComponent({
             this.gridApi.setColumnDefs(datatableColumns)
 
             const updateData = (data) => {
-                this.rowData = data.slice(0, this.propWidget.settings.pagination.itemsNumber)
-
                 if (this.propWidget.settings.configuration.summaryRows.enabled) {
-                    this.gridApi.setPinnedBottomRowData(data.slice(this.propWidget.settings.pagination.itemsNumber))
-                } else this.gridApi.setPinnedBottomRowData()
+                    var rowsNumber = this.propWidget.settings.configuration.summaryRows.list.length
+                    this.gridApi.setRowData(data.slice(0, data.length - rowsNumber))
+                    this.gridApi.setPinnedBottomRowData(data.slice(-rowsNumber))
+                } else {
+                    this.gridApi.setRowData(data)
+                    this.gridApi.setPinnedBottomRowData()
+                }
             }
             updateData(this.datasetRecordsRows)
         },
@@ -241,6 +245,13 @@ export default defineComponent({
                             tempCol.tooltipComponentParams = { tooltipConfig: tooltipConfig }
                         } else {
                             tempCol.headerTooltip = null
+                        }
+
+                        // CUSTOM MESSAGE CONFIGURATION  -----------------------------------------------------------------
+                        var customMessageConfig = this.propWidget.settings.configuration.customMessages
+                        if (customMessageConfig) {
+                            if (customMessageConfig.hideNoRowsMessage) this.gridApi.hideOverlay()
+                            if (customMessageConfig.noRowsMessage) this.overlayNoRowsTemplateTest = customMessageConfig.noRowsMessage
                         }
 
                         // COLUMN GROUPING -----------------------------------------------------------------
