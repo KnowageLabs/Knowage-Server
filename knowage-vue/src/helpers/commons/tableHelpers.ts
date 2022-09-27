@@ -30,7 +30,7 @@ export const formatNumber = (column: any) => {
     const result = column.format.trim().match(numberFormatRegex)
     if (!result) return null
 
-    const useGrouping = result[2] === '.' || result[2] === ','
+    const useGrouping = result[1].includes('.') || result[1].includes(',')
     const maxFractionDigits = result[3].length
     const configuration = { useGrouping: useGrouping, minFractionDigits: maxFractionDigits, maxFractionDigits: maxFractionDigits }
 
