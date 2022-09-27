@@ -243,7 +243,6 @@ export default defineComponent({
                     this.$emit('closeDialogAndReload')
                 })
                 .catch((error: any) => {
-                    console.log('ERROR ', error)
                     this.store.setError({ title: this.$t('common.toast.errorTitle'), msg: this.$t('common.error.uploading') })
                 })
         }
