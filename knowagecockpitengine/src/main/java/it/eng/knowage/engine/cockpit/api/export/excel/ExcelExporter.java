@@ -640,18 +640,18 @@ public class ExcelExporter extends AbstractFormatExporter {
 			// Cell styles for int and float
 			CreationHelper createHelper = wb.getCreationHelper();
 
-			CellStyle intCellStyle = wb.createCellStyle();
+			XSSFCellStyle intCellStyle = (XSSFCellStyle) wb.createCellStyle();
 			intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
 
 			XSSFCellStyle floatCellStyle = (XSSFCellStyle) wb.createCellStyle();
 			floatCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
 
 			DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
-			CellStyle dateCellStyle = wb.createCellStyle();
+			XSSFCellStyle dateCellStyle = (XSSFCellStyle) wb.createCellStyle();
 			dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(DATE_FORMAT));
 
 			SimpleDateFormat timeStampFormat = new SimpleDateFormat(TIMESTAMP_FORMAT, getLocale());
-			CellStyle tsCellStyle = wb.createCellStyle();
+			XSSFCellStyle tsCellStyle = (XSSFCellStyle) wb.createCellStyle();
 			tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
 
 			// cell styles for table widget
@@ -693,8 +693,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 								cell.setCellStyle(getIntCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle, settings, Integer.parseInt(s),
 										rowObject, mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 							} else {
-								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
-										mapColumns, mapColumnsTypes, variablesMap, mapParameters));
+								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle, settings, rowObject, mapColumns,
+										mapColumnsTypes, variablesMap, mapParameters));
 							}
 							break;
 						case "float":
@@ -712,7 +712,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 								if (!s.trim().isEmpty()) {
 									Date date = dateFormat.parse(s);
 									cell.setCellValue(date);
-									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
+									cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c], dateCellStyle, settings, rowObject,
 											mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 								}
 							} catch (Exception e) {
@@ -726,8 +726,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 									Date ts = timeStampFormat.parse(s);
 									cell.setCellValue(ts);
 									cell.setCellStyle(tsCellStyle);
-									cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
-											mapColumns, mapColumnsTypes, variablesMap, mapParameters));
+									cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c], tsCellStyle, settings, rowObject, mapColumns,
+											mapColumnsTypes, variablesMap, mapParameters));
 								}
 							} catch (Exception e) {
 								logger.debug("Timestamp will be exported as string due to error: ", e);

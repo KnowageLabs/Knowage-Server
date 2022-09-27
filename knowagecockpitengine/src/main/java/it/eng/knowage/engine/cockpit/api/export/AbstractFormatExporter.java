@@ -662,13 +662,12 @@ public abstract class AbstractFormatExporter {
 		return arr;
 	}
 
-	protected CellStyle getIntCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, CellStyle defaultStyle, JSONObject settings,
-			Integer value, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
+	protected CellStyle getIntCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, XSSFCellStyle defaultStyle,
+			JSONObject settings, Integer value, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
 			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
 		String colName = null;
 		CreationHelper createHelper = wb.getCreationHelper();
-		XSSFCellStyle toReturn = (XSSFCellStyle) wb.createCellStyle();
-		toReturn.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+		XSSFCellStyle toReturn = defaultStyle;
 		try {
 			colName = column.getString("name");
 			boolean isAvoidSeparator = isAvoidSeparator(colStyle);
@@ -691,7 +690,8 @@ public abstract class AbstractFormatExporter {
 
 			if (column.has("ranges")) {
 				JSONArray ranges = column.getJSONArray("ranges");
-
+				toReturn = (XSSFCellStyle) wb.createCellStyle();
+				toReturn.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
 				for (int jj = 0; jj < ranges.length(); jj++) {
 
 					JSONObject threshold = ranges.getJSONObject(jj);
@@ -785,7 +785,7 @@ public abstract class AbstractFormatExporter {
 			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
 		String colName = null;
 		CreationHelper createHelper = wb.getCreationHelper();
-		XSSFCellStyle toReturn = (XSSFCellStyle) wb.createCellStyle();
+		XSSFCellStyle toReturn = defaultStyle;
 		toReturn.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
 		try {
 			colName = column.getString("name");
@@ -809,7 +809,8 @@ public abstract class AbstractFormatExporter {
 
 			if (column.has("ranges")) {
 				JSONArray ranges = column.getJSONArray("ranges");
-
+				toReturn = (XSSFCellStyle) wb.createCellStyle();
+				toReturn.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
 				for (int jj = 0; jj < ranges.length(); jj++) {
 
 					JSONObject threshold = ranges.getJSONObject(jj);
@@ -1141,8 +1142,7 @@ public abstract class AbstractFormatExporter {
 			JSONObject settings, String value, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
 			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
 		String colName = null;
-		CreationHelper createHelper = wb.getCreationHelper();
-		XSSFCellStyle toReturn = (XSSFCellStyle) wb.createCellStyle();
+		XSSFCellStyle toReturn = defaultStyle;
 		try {
 			colName = column.getString("name");
 			boolean isAvoidSeparator = isAvoidSeparator(colStyle);
@@ -1165,7 +1165,7 @@ public abstract class AbstractFormatExporter {
 
 			if (column.has("ranges")) {
 				JSONArray ranges = column.getJSONArray("ranges");
-
+				toReturn = (XSSFCellStyle) wb.createCellStyle();
 				for (int jj = 0; jj < ranges.length(); jj++) {
 
 					JSONObject threshold = ranges.getJSONObject(jj);
@@ -1250,16 +1250,32 @@ public abstract class AbstractFormatExporter {
 		}
 	}
 
-	protected CellStyle getGenericCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, XSSFCellStyle defaultStyle,
+	protected CellStyle getDateCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, XSSFCellStyle defaultStyle,
 			JSONObject settings, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
 			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
 		String colName = null;
 		CreationHelper createHelper = wb.getCreationHelper();
-		XSSFCellStyle toReturn = (XSSFCellStyle) wb.createCellStyle();
+		XSSFCellStyle toReturn = defaultStyle;
 		toReturn.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
 		try {
 
 			setRowStyle(settings, rowObject, mapColumns, toReturn, mapColumnsTypes, variablesMap, parametersMap);
+
+			return toReturn;
+		} catch (Exception e) {
+			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			return toReturn;
+		}
+	}
+
+	protected CellStyle getGenericCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, XSSFCellStyle defaultStyle,
+			JSONObject settings, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
+			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
+		String colName = null;
+		XSSFCellStyle toReturn = defaultStyle;
+		try {
+			if (settings != null)
+				setRowStyle(settings, rowObject, mapColumns, toReturn, mapColumnsTypes, variablesMap, parametersMap);
 
 			return toReturn;
 		} catch (Exception e) {

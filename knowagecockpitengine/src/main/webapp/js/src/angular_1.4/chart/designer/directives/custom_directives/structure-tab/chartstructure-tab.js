@@ -45,6 +45,10 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 
 	$scope.categ = {};
 	$scope.categ.lengthh = $scope.checkCategoriesLength;
+	
+	$scope.hasFunctions = function(){
+		return $scope.fieldsMetadata.filter(i=>i.boundFunction).length > 0
+	}
 
 	$scope.$watch('categories',function(newValue,oldValue){
 		$scope.categ.lengthh = $scope.categories.length;
