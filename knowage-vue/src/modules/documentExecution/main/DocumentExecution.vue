@@ -40,8 +40,14 @@
                     @executeCrossNavigation="executeOLAPCrossNavigation"
                 ></Olap>
             </template>
-
-            <iframe v-for="(item, index) in breadcrumbs" :key="index" ref="documentFrame" :name="'documentFrame' + index" v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible" class="document-execution-iframe"></iframe>
+            <iframe
+                v-for="(item, index) in breadcrumbs"
+                :key="index"
+                ref="documentFrame"
+                :name="'documentFrame' + index"
+                v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1))"
+                class="document-execution-iframe"
+            ></iframe>
 
             <DocumentExecutionSchedulationsTable id="document-execution-schedulations-table" v-if="schedulationsTableVisible" :propSchedulations="schedulations" @deleteSchedulation="onDeleteSchedulation" @close="schedulationsTableVisible = false"></DocumentExecutionSchedulationsTable>
 
@@ -456,7 +462,7 @@ export default defineComponent({
             if (this.document.typeCode === 'OLAP') {
                 this.exportOlap(type)
             } else {
-                const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+                const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
                 let tempFrame = window.frames[tempIndex]
                 while (tempFrame && tempFrame.name !== 'documentFrame' + tempIndex) {
                     tempFrame = tempFrame[0].frames
@@ -557,13 +563,12 @@ export default defineComponent({
         async loadDocument() {
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/documents/${this.document?.label}`).then((response: AxiosResponse<any>) => (this.document = response.data))
 
-            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
-
+            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
                 this.breadcrumbs.push({
-                    label: this.document.label,
+                    label: this.document.name,
                     document: this.document
                 })
             }
@@ -659,7 +664,7 @@ export default defineComponent({
             this.setFiltersForBreadcrumbItem()
         },
         setFiltersForBreadcrumbItem() {
-            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
             if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
         },
         loadNavigationParamsInitialValue() {
@@ -731,7 +736,7 @@ export default defineComponent({
                     this.sbiExecutionId = this.urlData?.sbiExecutionId as string
                 })
 
-            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
             if (index !== -1) {
                 this.breadcrumbs[index].urlData = this.urlData
                 this.sbiExecutionId = this.urlData?.sbiExecutionId as string
@@ -743,7 +748,7 @@ export default defineComponent({
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData?.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
         async sendForm(documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
-            let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label) as any
+            let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any
 
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
             const postObject = {
@@ -811,7 +816,7 @@ export default defineComponent({
                 postForm.submit()
             }
 
-            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
             if (index !== -1) this.breadcrumbs[index].hiddenFormData = this.hiddenFormData
         },
         async sendHiddenFormData() {
@@ -1117,12 +1122,12 @@ export default defineComponent({
                 this.crossNavigationContainerVisible = true
                 await this.loadPage(false, documentLabel, true)
             } else {
-                const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+                const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
                 if (index !== -1) {
                     this.breadcrumbs[index].document = this.document
                 } else {
                     this.breadcrumbs.push({
-                        label: this.document.label,
+                        label: this.document.name,
                         document: this.document,
                         crossBreadcrumb: this.getCrossBeadcrumb(crossNavigationDocument, angularData)
                     })
@@ -1273,12 +1278,12 @@ export default defineComponent({
                 navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams)
             }
 
-            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.label)
+            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
             if (index !== -1) {
                 this.breadcrumbs[index].document = this.document
             } else {
                 this.breadcrumbs.push({
-                    label: this.document.label,
+                    label: this.document.name,
                     document: this.document
                 })
             }
