@@ -1,6 +1,6 @@
 <template>
     <div v-show="widgetModel">
-        <Accordion class="widget-editor-accordion">
+        <Accordion class="widget-editor-accordion" v-model:activeIndex="activeIndex">
             <AccordionTab v-for="(accordion, index) in settings" :key="index">
                 <template #header>
                     <div>
@@ -100,9 +100,15 @@ export default defineComponent({
         drivers: { type: Array },
         variables: { type: Array }
     },
+    watch: {
+        settings() {
+            this.activeIndex = -1
+        }
+    },
     data() {
         return {
-            descriptor
+            descriptor,
+            activeIndex: -1
         }
     },
     created() {},
