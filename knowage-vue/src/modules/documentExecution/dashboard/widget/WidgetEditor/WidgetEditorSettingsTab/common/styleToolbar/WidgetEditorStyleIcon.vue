@@ -49,7 +49,7 @@ export default defineComponent({
     },
     computed: {
         showArowDown() {
-            return ['font-size', 'justify-content', 'color', 'background-color'].includes(this.option.type)
+            return ['font-size', 'justify-content', 'color', 'background-color', 'font-family'].includes(this.option.type)
         },
         showCircleIcon() {
             return ['color', 'background-color'].includes(this.option.type)
@@ -69,10 +69,20 @@ export default defineComponent({
         this.setEventListeners()
         this.loadModel()
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
         setEventListeners() {
-            emitter.on('toolbarIconContextMenuOpened', (event) => this.closePopups(event))
-            emitter.on('toolbarIconColorPickerOpened', (event) => this.closePopups(event))
+            emitter.on('toolbarIconContextMenuOpened', this.onIconMenuColorPickerOpened)
+            emitter.on('toolbarIconColorPickerOpened', this.onIconMenuColorPickerOpened)
+        },
+        removeEventListeners() {
+            emitter.off('toolbarIconContextMenuOpened', this.onIconMenuColorPickerOpened)
+            emitter.off('toolbarIconColorPickerOpened', this.onIconMenuColorPickerOpened)
+        },
+        onIconMenuColorPickerOpened(event: any) {
+            this.closePopups(event)
         },
         loadModel() {
             this.model = this.propModel
@@ -177,7 +187,6 @@ export default defineComponent({
             this.updateModelAfterContextItemSelected(item)
         },
         updateModelAfterContextItemSelected(item: string) {
-            console.log('updateModelAfterContextItemSelected: ', item)
             if (!this.model) return
             switch (this.option.type) {
                 case 'font-size':

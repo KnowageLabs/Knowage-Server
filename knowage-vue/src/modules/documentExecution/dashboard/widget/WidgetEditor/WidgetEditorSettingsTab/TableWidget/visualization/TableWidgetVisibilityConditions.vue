@@ -126,9 +126,18 @@ export default defineComponent({
         this.loadVisibilityConditions()
         this.variablesMap()
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemovedFromVisibilityConditions', () => this.onColumnRemoved())
+            emitter.on('columnRemovedFromVisibilityConditions', this.onColumnRemovedFromVisibilityConditions)
+        },
+        removeEventListeners() {
+            emitter.off('columnRemovedFromVisibilityConditions', this.onColumnRemovedFromVisibilityConditions)
+        },
+        onColumnRemovedFromVisibilityConditions() {
+            this.onColumnRemoved()
         },
         loadVisibilityConditions() {
             if (this.widgetModel.settings?.visualization?.visibilityConditions) this.visibilityConditionsModel = this.widgetModel.settings.visualization.visibilityConditions

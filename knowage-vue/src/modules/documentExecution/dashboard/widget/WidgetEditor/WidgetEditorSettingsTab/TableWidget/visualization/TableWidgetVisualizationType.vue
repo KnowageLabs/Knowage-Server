@@ -153,11 +153,28 @@ export default defineComponent({
         this.loadVisualizationTypes()
         this.loadWidgetColumnMaps()
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemovedFromVisibilityTypes', () => this.onColumnRemoved())
-            emitter.on('columnAliasRenamed', (column) => this.onColumnAliasRenamed(column))
-            emitter.on('columnAdded', (column) => this.onColumnAdded(column))
+            emitter.on('columnRemovedFromVisibilityTypes', this.onColumnRemovedFromVisibilityTypes)
+            emitter.on('columnAliasRenamed', this.onColumnAliasRenamed)
+            emitter.on('columnAdded', this.onColumnAdded)
+        },
+        removeEventListeners() {
+            emitter.off('columnRemovedFromVisibilityTypes', this.onColumnRemovedFromVisibilityTypes)
+            emitter.off('columnAliasRenamed', this.onColumnAliasRenamed)
+            emitter.off('columnAdded', this.onColumnAdded)
+        },
+        onColumnRemovedFromVisibilityTypes() {
+            this.onColumnRemoved()
+        },
+        onColumnAliasRenamed(column: any) {
+            this.updateColumnAliases(column)
+        },
+        onColumnAdded(column: any) {
+            this.addColumnAsOption(column)
         },
         loadColumnOptions() {
             this.availableColumnOptions = [...this.widgetModel.columns]
@@ -260,14 +277,14 @@ export default defineComponent({
             this.loadColumnOptions()
             this.loadVisualizationTypes()
         },
-        onColumnAliasRenamed(column: IWidgetColumn) {
+        updateColumnAliases(column: IWidgetColumn) {
             if (column.id && this.widgetColumnsAliasMap[column.id]) this.widgetColumnsAliasMap[column.id] = column.alias
 
             const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === column.id)
             if (index !== -1) this.availableColumnOptions[index].alias = column.alias
             this.visualizationTypeChanged()
         },
-        onColumnAdded(column: IWidgetColumn) {
+        addColumnAsOption(column: IWidgetColumn) {
             this.availableColumnOptions.push(column)
             if (column.id) this.widgetColumnsAliasMap[column.id] = column.alias
         }

@@ -109,9 +109,18 @@ export default defineComponent({
         this.loadTooltips()
         this.loadWidgetColumnMaps()
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemovedFromTooltips', () => this.onColumnRemoved())
+            emitter.on('columnRemovedFromTooltips', this.onColumnRemovedFromTooltips)
+        },
+        removeEventListeners() {
+            emitter.off('columnRemovedFromTooltips', this.onColumnRemovedFromTooltips)
+        },
+        onColumnRemovedFromTooltips() {
+            this.onColumnRemoved()
         },
         loadTooltips() {
             if (this.widgetModel?.settings?.tooltips) this.tooltips = this.widgetModel.settings.tooltips

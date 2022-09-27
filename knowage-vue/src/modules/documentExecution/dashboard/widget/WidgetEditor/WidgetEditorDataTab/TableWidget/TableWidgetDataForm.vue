@@ -57,14 +57,23 @@ export default defineComponent({
             sortingOrder: ''
         }
     },
-    async created() {
+    created() {
         this.setEventListeners()
         this.loadPagination()
         this.loadSortingSettings()
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
         setEventListeners() {
-            emitter.on('columnRemoved', (column) => this.onColumnRemoved(column))
+            emitter.on('columnRemoved', this.onColumnRemoved)
+        },
+        removeEventListeners() {
+            emitter.off('columnRemoved', this.onColumnRemoved)
+        },
+        onColumnRemoved(column: any) {
+            this.updateSortingColumn(column)
         },
         loadPagination() {
             if (this.widgetModel?.settings?.pagination) {
@@ -89,7 +98,7 @@ export default defineComponent({
             emitter.emit('sortingChanged', { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder })
             emitter.emit('refreshTable', this.widgetModel.id)
         },
-        onColumnRemoved(column: IWidgetColumn) {
+        updateSortingColumn(column: IWidgetColumn) {
             if (column.columnName === this.sortingColumn) {
                 this.sortingColumn = ''
                 this.sortingOrder = ''
