@@ -4,7 +4,7 @@
             <template #header>
                 <Toolbar class="kn-toolbar kn-toolbar--secondary">
                     <template #start>
-                        {{ $t('managers.glossary.common.details') }}
+                        {{ $t('common.details') }}
                     </template>
                 </Toolbar>
             </template>
@@ -66,7 +66,7 @@
                         <InputText type="text" v-model="filterModel.value" class="p-column-filter"></InputText>
                     </template>
                     <Column field="activity" :header="$t('documentExecution.dossier.headers.activity')" :sortable="true" />
-                    <Column field="creationDate" :header="$t('managers.mondrianSchemasManagement.headers.creationDate')" :sortable="true" dataType="date">
+                    <Column field="creationDate" :header="$t('common.creationDate')" :sortable="true" dataType="date">
                         <template #body="{ data }">
                             {{ formatDate(data.creationDate) }}
                         </template>
